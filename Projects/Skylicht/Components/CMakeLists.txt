@@ -19,6 +19,10 @@ add_library(Components ${ENGINE_SHARED_OR_STATIC_LIB}
 	${skylicht_components}
 )
 
+if (BUILD_SHARED_LIBS)
+set_target_properties(Components PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS true)
+endif()
+
 target_precompiled_header(Components ./Source/pch.cpp ${skylicht_components})
 
 set_target_properties(Components PROPERTIES VERSION ${SKYLICHT_VERSION})

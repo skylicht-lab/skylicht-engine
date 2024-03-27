@@ -34,11 +34,11 @@ namespace Skylicht
 	public:
 		CEntityHandler* Handler;
 
-		DECLARE_DATA_TYPE_INDEX;
-
 	public:
 		CEntityHandleData();
 
 		virtual ~CEntityHandleData();
 	};
+
+	DECLARE_DATA_TYPE_INDEX(CEntityHandleData);
 }

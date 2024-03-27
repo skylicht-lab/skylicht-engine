@@ -36,13 +36,13 @@ namespace Skylicht
 		ITexture* Texture;
 		CMaterial* Material;
 
-		DECLARE_DATA_TYPE_INDEX;
-
 	public:
 		CDecalRenderData();
 
 		virtual ~CDecalRenderData();
 	};
+
+	DECLARE_DATA_TYPE_INDEX(CDecalRenderData);
 
 	class CDecalData : public IEntityData
 	{
@@ -57,11 +57,11 @@ namespace Skylicht
 
 		IMeshBuffer* MeshBuffer;
 
-		DECLARE_DATA_TYPE_INDEX;
-
 	public:
 		CDecalData();
 
 		virtual ~CDecalData();
 	};
+
+	DECLARE_DATA_TYPE_INDEX(CDecalData);
 }

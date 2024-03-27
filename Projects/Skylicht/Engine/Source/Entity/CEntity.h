@@ -32,11 +32,11 @@ namespace Skylicht
 	class CEntityManager;
 	class CEntityPrefab;
 
-#define GET_ENTITY_DATA(entity, DataType) ((DataType*)(entity->Data[DataType::DataTypeIndex]))
+#define GET_ENTITY_DATA(entity, DataType) ((DataType*)(entity->Data[DataType##_DataTypeIndex]))
 
-#define GET_LIST_ENTITY_DATA(DataType) { DataType::DataTypeIndex }
+#define GET_LIST_ENTITY_DATA(DataType) { DataType##_DataTypeIndex }
 
-#define GET_LIST_ENTITY_DATA2(DataType1, DataType2) { DataType1::DataTypeIndex, DataType2::DataTypeIndex }
+#define GET_LIST_ENTITY_DATA2(DataType1, DataType2) { DataType1##_DataTypeIndex, DataType2##_DataTypeIndex }
 
 #define MAX_ENTITY_DATA 64
 

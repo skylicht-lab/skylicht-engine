@@ -50,7 +50,7 @@ namespace Skylicht
 	{
 		if (m_group == NULL)
 		{
-			const u32 type[] = { CCullingData::DataTypeIndex };
+			const u32 type[] = { DATA_TYPE_INDEX(CCullingData) };
 			m_group = entityManager->createGroup(type, 1);
 		}
 
