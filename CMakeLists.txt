@@ -132,11 +132,6 @@ if (CMAKE_SYSTEM_NAME STREQUAL Darwin OR CMAKE_SYSTEM_NAME STREQUAL iOS)
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-deprecated-declarations")
 endif()
 
-# irrlicht static lib
-if (NOT BUILD_SHARED_LIBS)
-	add_definitions(-D_IRR_STATIC_LIB_ )
-endif()
-
 # skylicht engine option
 option(BUILD_DEBUG_VLD "Build with debug visual leak detector" OFF)
 
@@ -296,6 +291,14 @@ set(CMAKE_INSTALL_PREFIX ${SKYLICHT_ENGINE_SOURCE_DIR}/Install)
 set(SKYLICHT_LIBRARY_INSTALL_DIR ${CMAKE_INSTALL_PREFIX})
 set(SKYLICHT_INCLUDE_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/include)
 
+if (BUILD_SHARED_LIBS)
+	message(STATUS "Building dynamic libs")
+	set(ENGINE_SHARED_OR_STATIC_LIB "SHARED")
+else()
+	message(STATUS "Building static libs")
+	set(ENGINE_SHARED_OR_STATIC_LIB "STATIC")
+endif()
+
 # add project
 
 # core library
@@ -327,11 +330,11 @@ endif()
 
 subdirs (Projects/Skylicht/Client)
 
+if (NOT INSTALL_LIBS)
+
 if (BUILD_ENGINE_TOOL)
 subdirs (Projects/Editor)
 endif()
-
-if (NOT INSTALL_LIBS)
 
 include(CMakeProjects.cmake)
 

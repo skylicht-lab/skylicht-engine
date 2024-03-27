@@ -13,7 +13,7 @@ file(GLOB_RECURSE skylicht_lightmapper_source
 	
 setup_project_group("${skylicht_lightmapper_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 	
-add_library(Lightmapper STATIC ${skylicht_lightmapper_source})
+add_library(Lightmapper ${ENGINE_SHARED_OR_STATIC_LIB} ${skylicht_lightmapper_source})
 
 target_precompiled_header(Lightmapper ./Source/pch.cpp ${skylicht_lightmapper_source})
 

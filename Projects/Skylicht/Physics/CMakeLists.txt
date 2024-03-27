@@ -20,7 +20,7 @@ file(GLOB_RECURSE skylicht_physics
 	./Source/*.h)
 setup_project_group("${skylicht_physics}" ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_library(Physics STATIC
+add_library(Physics ${ENGINE_SHARED_OR_STATIC_LIB}
 	${skylicht_physics}
 )
 

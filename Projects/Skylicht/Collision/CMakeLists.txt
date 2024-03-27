@@ -15,7 +15,7 @@ file(GLOB_RECURSE skylicht_collision
 	./Source/*.h)
 setup_project_group("${skylicht_collision}" ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_library(Collision STATIC
+add_library(Collision ${ENGINE_SHARED_OR_STATIC_LIB}
 	${skylicht_collision}
 )
 

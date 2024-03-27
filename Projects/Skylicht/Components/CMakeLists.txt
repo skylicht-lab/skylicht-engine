@@ -15,7 +15,7 @@ file(GLOB_RECURSE skylicht_components
 	./Source/*.h)
 setup_project_group("${skylicht_components}" ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_library(Components STATIC
+add_library(Components ${ENGINE_SHARED_OR_STATIC_LIB}
 	${skylicht_components}
 )
 

@@ -16,7 +16,7 @@ file(GLOB_RECURSE skylicht_network
 	./Source/*.h)
 setup_project_group("${skylicht_network}" ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_library(Network STATIC
+add_library(Network ${ENGINE_SHARED_OR_STATIC_LIB}
 	${skylicht_network}
 )
 

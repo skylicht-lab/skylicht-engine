@@ -16,7 +16,7 @@ file(GLOB_RECURSE skylicht_source
 	./Source/*.h)
 setup_project_group("${skylicht_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_library(Engine STATIC ${skylicht_source})
+add_library(Engine ${ENGINE_SHARED_OR_STATIC_LIB} ${skylicht_source})
 
 target_precompiled_header(Engine ./Source/pch.cpp ${skylicht_source})
 
