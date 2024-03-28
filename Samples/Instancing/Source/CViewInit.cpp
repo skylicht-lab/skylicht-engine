@@ -84,7 +84,7 @@ void CViewInit::initScene()
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
 
 	core::vector3df direction = core::vector3df(1.0f, -1.5f, 2.0f);
-	lightTransform->setOrientation(direction, CTransform::s_oy);
+	lightTransform->setOrientation(direction, Transform::Oy);
 
 	CMeshManager* meshManager = CMeshManager::getInstance();
 	CMaterialManager* materialMgr = CMaterialManager::getInstance();

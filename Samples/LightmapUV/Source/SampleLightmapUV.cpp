@@ -92,7 +92,7 @@ void SampleLightmapUV::onInitApp()
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
 
 	core::vector3df direction = core::vector3df(-2.0f, -7.0f, -1.5f);
-	lightTransform->setOrientation(direction, CTransform::s_oy);
+	lightTransform->setOrientation(direction, Transform::Oy);
 
 	// 3D model	
 #ifdef LIGHTMAP_SPONZA

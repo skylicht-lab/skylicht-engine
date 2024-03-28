@@ -8,19 +8,19 @@ void testTransform(CGameObject *obj)
 	TEST_ASSERT_THROW(transform != NULL);
 	
 	core::vector3df front = transform->getFront();
-	TEST_ASSERT_FLOAT_EQUAL(front.X, CTransform::s_oz.X);
-	TEST_ASSERT_FLOAT_EQUAL(front.Y, CTransform::s_oz.Y);
-	TEST_ASSERT_FLOAT_EQUAL(front.Z, CTransform::s_oz.Z);
+	TEST_ASSERT_FLOAT_EQUAL(front.X, Transform::Oz.X);
+	TEST_ASSERT_FLOAT_EQUAL(front.Y, Transform::Oz.Y);
+	TEST_ASSERT_FLOAT_EQUAL(front.Z, Transform::Oz.Z);
 
 	core::vector3df up = transform->getUp();
-	TEST_ASSERT_FLOAT_EQUAL(up.X, CTransform::s_oy.X);
-	TEST_ASSERT_FLOAT_EQUAL(up.Y, CTransform::s_oy.Y);
-	TEST_ASSERT_FLOAT_EQUAL(up.Z, CTransform::s_oy.Z);
+	TEST_ASSERT_FLOAT_EQUAL(up.X, Transform::Oy.X);
+	TEST_ASSERT_FLOAT_EQUAL(up.Y, Transform::Oy.Y);
+	TEST_ASSERT_FLOAT_EQUAL(up.Z, Transform::Oy.Z);
 
 	core::vector3df right = transform->getRight();
-	TEST_ASSERT_FLOAT_EQUAL(right.X, CTransform::s_ox.X);
-	TEST_ASSERT_FLOAT_EQUAL(right.Y, CTransform::s_ox.Y);
-	TEST_ASSERT_FLOAT_EQUAL(right.Z, CTransform::s_ox.Z);
+	TEST_ASSERT_FLOAT_EQUAL(right.X, Transform::Ox.X);
+	TEST_ASSERT_FLOAT_EQUAL(right.Y, Transform::Ox.Y);
+	TEST_ASSERT_FLOAT_EQUAL(right.Z, Transform::Ox.Z);
 
 
 
@@ -38,15 +38,15 @@ void testTransform(CGameObject *obj)
 	TEST_ASSERT_FLOAT_EQUAL(rot.Y, 90.0f);
 	// front oz is rotate 90 to right
 	front = transform->getFront();
-	TEST_ASSERT_FLOAT_EQUAL(front.X, CTransform::s_ox.X);
-	TEST_ASSERT_FLOAT_EQUAL(front.Y, CTransform::s_ox.Y);
-	TEST_ASSERT_FLOAT_EQUAL(front.Z, CTransform::s_ox.Z);
+	TEST_ASSERT_FLOAT_EQUAL(front.X, Transform::Ox.X);
+	TEST_ASSERT_FLOAT_EQUAL(front.Y, Transform::Ox.Y);
+	TEST_ASSERT_FLOAT_EQUAL(front.Z, Transform::Ox.Z);
 
 
 	TEST_CASE("Test get transform matrix");
 	// rotate ox 90
 	core::quaternion q;
-	q.fromAngleAxis(90.0f * core::DEGTORAD, CTransform::s_ox);
+	q.fromAngleAxis(90.0f * core::DEGTORAD, Transform::Ox);
 	transform->setPosition(core::vector3df(100.0f, 200.0f, 300.0f));
 	transform->setRotation(q);
 	transform->getRelativeTransform(m);
@@ -63,7 +63,7 @@ void testTransform(CGameObject *obj)
 
 	// front is rotate (90) become to down vector
 	front = transform->getFront();
-	TEST_ASSERT_FLOAT_EQUAL(front.X, -CTransform::s_oy.X);
-	TEST_ASSERT_FLOAT_EQUAL(front.Y, -CTransform::s_oy.Y);
-	TEST_ASSERT_FLOAT_EQUAL(front.Z, -CTransform::s_oy.Z);
+	TEST_ASSERT_FLOAT_EQUAL(front.X, -Transform::Oy.X);
+	TEST_ASSERT_FLOAT_EQUAL(front.Y, -Transform::Oy.Y);
+	TEST_ASSERT_FLOAT_EQUAL(front.Z, -Transform::Oy.Z);
 }

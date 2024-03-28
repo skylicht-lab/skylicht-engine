@@ -110,8 +110,8 @@ namespace Skylicht
 
 	void CTransformEuler::setRelativeTransform(const core::matrix4& mat)
 	{
-		core::vector3df front = s_oz;
-		core::vector3df up = s_oy;
+		core::vector3df front = Transform::Oz;
+		core::vector3df up = Transform::Oy;
 
 		mat.rotateVect(front);
 		mat.rotateVect(up);
@@ -210,7 +210,7 @@ namespace Skylicht
 		core::matrix4 mat;
 		mat.setRotationDegrees(m_rotation);
 
-		front = s_oz;
+		front = Transform::Oz;
 		mat.rotateVect(front);
 	}
 
@@ -219,7 +219,7 @@ namespace Skylicht
 		core::matrix4 mat;
 		mat.setRotationDegrees(m_rotation);
 
-		core::vector3df front = s_oz;
+		core::vector3df front = Transform::Oz;
 		mat.rotateVect(front);
 		return front;
 	}
@@ -229,7 +229,7 @@ namespace Skylicht
 		core::matrix4 mat;
 		mat.setRotationDegrees(m_rotation);
 
-		up = s_oy;
+		up = Transform::Oy;
 		mat.rotateVect(up);
 	}
 
@@ -238,7 +238,7 @@ namespace Skylicht
 		core::matrix4 mat;
 		mat.setRotationDegrees(m_rotation);
 
-		core::vector3df up = s_oy;
+		core::vector3df up = Transform::Oy;
 		mat.rotateVect(up);
 		return up;
 	}
@@ -248,7 +248,7 @@ namespace Skylicht
 		core::matrix4 mat;
 		mat.setRotationDegrees(m_rotation);
 
-		right = s_ox;
+		right = Transform::Ox;
 		mat.rotateVect(right);
 	}
 
@@ -257,7 +257,7 @@ namespace Skylicht
 		core::matrix4 mat;
 		mat.setRotationDegrees(m_rotation);
 
-		core::vector3df right = s_ox;
+		core::vector3df right = Transform::Ox;
 		mat.rotateVect(right);
 		return right;
 	}

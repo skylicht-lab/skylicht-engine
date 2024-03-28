@@ -144,7 +144,7 @@ namespace Skylicht
 		core::vector3df center = camPos;
 		core::vector3df viewDir = camForward;
 
-		core::vector3df right = viewDir.crossProduct(CTransform::s_oy);
+		core::vector3df right = viewDir.crossProduct(Transform::Oy);
 		right.normalize();
 
 		for (int i = 0; i < m_splitCount; i++)
@@ -229,7 +229,7 @@ namespace Skylicht
 			ortho.buildProjectionMatrixOrthoLH(max.X - min.X, max.Y - min.Y, -m_nearOffset, m_nearOffset + cascadeExtents.Z);
 
 			core::matrix4 view;
-			view.buildCameraLookAtMatrixLH(shadowCameraPos, frustum.Center, CTransform::s_oy);
+			view.buildCameraLookAtMatrixLH(shadowCameraPos, frustum.Center, Transform::Oy);
 
 			m_projMatrices[i] = ortho;
 			m_viewMatrices[i] = view;

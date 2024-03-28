@@ -30,13 +30,15 @@ namespace Skylicht
 {
 	class CEntity;
 
+	namespace Transform
+	{
+		extern core::vector3df Ox;
+		extern core::vector3df Oy;
+		extern core::vector3df Oz;
+	}
+
 	class CTransform : public CComponentSystem
 	{
-	public:
-		static core::vector3df s_ox;
-		static core::vector3df s_oy;
-		static core::vector3df s_oz;
-
 	protected:
 		bool m_hasChanged;
 		bool m_attached;
