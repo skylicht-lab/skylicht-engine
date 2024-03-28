@@ -38,16 +38,8 @@ namespace Skylicht
 		virtual void OnSetConstants(CShader* shader, SUniform* uniform, IMaterialRenderer* matRender, bool vertexShader);
 
 	public:
-		static void setProjection(const core::matrix4& mat)
-		{
-			s_projection = mat;
-			s_viewProjection = s_projection;
-		}
+		static void setProjection(const core::matrix4& mat);
 
-		static void setView(const core::matrix4& mat)
-		{
-			s_view = mat;
-			s_viewProjection = s_projection * s_view;
-		}
+		static void setView(const core::matrix4& mat);
 	};
 }
