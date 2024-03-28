@@ -111,7 +111,7 @@ void CViewInit::initScene()
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
 
 	core::vector3df direction = core::vector3df(4.0f, -6.0f, -4.5f);
-	lightTransform->setOrientation(direction, CTransform::s_oy);
+	lightTransform->setOrientation(direction, Transform::Oy);
 
 	// load dae animation
 	CAnimationManager* animManager = CAnimationManager::getInstance();
@@ -327,8 +327,8 @@ void CViewInit::onRender()
 
 			core::vector3df pos(0.0f, 0.0f, 0.0f);
 
-			core::vector3df normal = CTransform::s_oy;
-			core::vector3df tangent = CTransform::s_ox;
+			core::vector3df normal = Transform::Oy;
+			core::vector3df tangent = Transform::Ox;
 			core::vector3df binormal = normal.crossProduct(tangent);
 			binormal.normalize();
 

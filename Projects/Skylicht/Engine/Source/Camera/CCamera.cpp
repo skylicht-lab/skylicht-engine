@@ -35,7 +35,7 @@ namespace Skylicht
 		m_farValue(1500.0f),
 		m_fov(60.0f),
 		m_aspect(-1.0f),
-		m_up(CTransform::s_oy),
+		m_up(Transform::Oy),
 		m_cullingMask(1),
 		m_orthoScale(10.0f),
 		m_customOrthoSize(false),
@@ -54,7 +54,7 @@ namespace Skylicht
 		getGameObject()->setEnableEndUpdate(true);
 
 		core::vector3df target(0.0f, 0.0f, 1.0f);
-		lookAt(target, CTransform::s_oy);
+		lookAt(target, Transform::Oy);
 
 		recalculateProjectionMatrix();
 	}
@@ -84,7 +84,7 @@ namespace Skylicht
 			const core::matrix4& mat = m_gameObject->getTransform()->getRelativeTransform();
 			position = mat.getTranslation();
 
-			core::vector3df target = CTransform::s_oz;
+			core::vector3df target = Transform::Oz;
 			mat.rotateVect(target);
 			target.normalize();
 
@@ -182,7 +182,7 @@ namespace Skylicht
 	{
 		const core::matrix4& m = m_gameObject->getTransform()->getRelativeTransform();
 
-		core::vector3df look = CTransform::s_oz;
+		core::vector3df look = Transform::Oz;
 		m.rotateVect(look);
 
 		look.normalize();

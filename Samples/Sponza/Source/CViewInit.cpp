@@ -113,7 +113,7 @@ void CViewInit::initScene()
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
 
 	core::vector3df direction = core::vector3df(2.0f, -5.0f, 1.0f);
-	lightTransform->setOrientation(direction, CTransform::s_oy);
+	lightTransform->setOrientation(direction, Transform::Oy);
 
 	core::vector3df pointLightPosition[] = {
 		{-11.19f, 2.4f, 4.01f},
@@ -331,7 +331,7 @@ void CViewInit::initFireParticle(Particle::CParticleComponent* ps)
 	core::vector3df position(0.15f, -1.2f, 0.075f);
 	core::vector3df direction(0.6f, 0.5f, 0.0f);
 	core::quaternion q;
-	q.fromAngleAxis(72.0f * core::DEGTORAD, CTransform::s_oy);
+	q.fromAngleAxis(72.0f * core::DEGTORAD, Transform::Oy);
 	float radius = 0.2f;
 
 	Particle::CStraightEmitter* fireEmitter2 = factory->createStraightEmitter(core::vector3df(direction));

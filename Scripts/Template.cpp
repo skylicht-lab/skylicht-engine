@@ -75,7 +75,7 @@ void @project_name@::onInitApp()
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
 
 	core::vector3df direction = core::vector3df(0.0f, -1.5f, 2.0f);
-	lightTransform->setOrientation(direction, CTransform::s_oy);
+	lightTransform->setOrientation(direction, Transform::Oy);
 
 	m_largeFont = new CGlyphFont();
 	m_largeFont->setFont("Segoe UI Light", 50);

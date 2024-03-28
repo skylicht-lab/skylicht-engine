@@ -35,9 +35,12 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	core::vector3df CTransform::s_ox = core::vector3df(1.0f, 0.0f, 0.0f);
-	core::vector3df CTransform::s_oy = core::vector3df(0.0f, 1.0f, 0.0f);
-	core::vector3df CTransform::s_oz = core::vector3df(0.0f, 0.0f, 1.0f);
+	namespace Transform
+	{
+		core::vector3df Ox = core::vector3df(1.0f, 0.0f, 0.0f);
+		core::vector3df Oy = core::vector3df(0.0f, 1.0f, 0.0f);
+		core::vector3df Oz = core::vector3df(0.0f, 0.0f, 1.0f);
+	}
 
 	CTransform::CTransform() :
 		m_hasChanged(true),
