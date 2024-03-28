@@ -21,7 +21,7 @@
 
 // GCC or OTHER
 // Force symbol export in shared libraries built with gcc.
-#if (__GNUC__ >= 4) && !defined(_SKYLICHT_STATIC_LIB_) && defined(SKYLICHT_EXPORTS)
+#if (__GNUC__ >= 4) && !defined(_SKYLICHT_STATIC_LIB_) && defined(COMPONENTS_EXPORTS)
 #define COMPONENT_API __attribute__ ((visibility("default")))
 #else
 #define COMPONENT_API
