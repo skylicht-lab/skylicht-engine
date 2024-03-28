@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
+#include "Utils/CSingleton.h"
 #include "Editor/Components/CComponentEditor.h"
 #include "Editor/EntityData/CEntityDataEditor.h"
 #include "Editor/AssetEditor/CAssetEditor.h"
@@ -56,8 +56,11 @@ namespace Skylicht
 		CGUIEditor* type##ext##CreateFunc() { return new type(); } \
 		bool type##ext##Activator = CEditorActivator::createGetInstance()->registerGUIEditor(#ext, &type##ext##CreateFunc);
 
-		class CEditorActivator : public CGameSingleton<CEditorActivator>
+		class CEditorActivator
 		{
+		public:
+			DECLARE_SINGLETON(CEditorActivator)
+
 		protected:
 			std::vector<ActivatorCreateEditor> m_factoryFunc;
 			std::vector<ActivatorCreateAssetEditor> m_factoryAssetFunc;

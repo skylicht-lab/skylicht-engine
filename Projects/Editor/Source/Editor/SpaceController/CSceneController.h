@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
+#include "Utils/CSingleton.h"
 
 #include "Scene/CScene.h"
 
@@ -48,10 +48,12 @@ namespace Skylicht
 	namespace Editor
 	{
 		class CSceneController :
-			public CGameSingleton<CSceneController>,
 			public IObserver,
 			public IFileLoader
 		{
+		public:
+			DECLARE_SINGLETON(CSceneController)
+
 		protected:
 			CSpaceScene* m_spaceScene;
 

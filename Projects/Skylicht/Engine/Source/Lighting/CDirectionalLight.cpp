@@ -34,7 +34,7 @@ namespace Skylicht
 
 	CATEGORY_COMPONENT(CDirectionalLight, "Direction Light", "Lighting");
 
-	CDirectionalLight* CDirectionalLight::s_currentLight = NULL;
+	CDirectionalLight* g_currentLight = NULL;
 
 	CDirectionalLight::CDirectionalLight()
 	{
@@ -53,7 +53,7 @@ namespace Skylicht
 	{
 		CShaderLighting::setDirectionalLight(this);
 
-		s_currentLight = this;
+		g_currentLight = this;
 	}
 
 	void CDirectionalLight::updateComponent()
@@ -62,5 +62,10 @@ namespace Skylicht
 		const core::matrix4& transform = m_gameObject->getTransform()->getRelativeTransform();
 		transform.rotateVect(m_direction);
 		m_direction.normalize();
+	}
+
+	CDirectionalLight* CDirectionalLight::getCurrentDirectionLight()
+	{
+		return g_currentLight;
 	}
 }

@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
+#include "Utils/CSingleton.h"
 
 #include <functional>
 
@@ -87,8 +87,11 @@ namespace Skylicht
 		class CAssetImporter;
 		class CAssetWatcher;
 
-		class CAssetManager : public CGameSingleton<CAssetManager>
+		class CAssetManager
 		{
+		public:
+			DECLARE_SINGLETON(CAssetManager)
+
 		protected:
 			std::string m_workingFolder;
 			std::string m_assetFolder;

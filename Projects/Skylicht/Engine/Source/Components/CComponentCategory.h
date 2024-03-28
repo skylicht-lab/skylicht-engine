@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
+#include "Utils/CSingleton.h"
 
 namespace Skylicht
 {
@@ -33,8 +33,11 @@ namespace Skylicht
 	// please register at CEngineEditor.cpp (Projects/Editor/Source/Editor/Components)
 #define CATEGORY_COMPONENT(component, name, path) int component##_category = CComponentCategory::createGetInstance()->addToCategory(#component, name, path);
 
-	class CComponentCategory : public CGameSingleton<CComponentCategory>
+	class CComponentCategory
 	{
+	public:
+		DECLARE_SINGLETON(CComponentCategory)
+
 	public:
 		struct SComponent
 		{

@@ -30,6 +30,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	IMPLEMENT_SINGLETON(CImguiManager);
+
 	CImguiManager::CImguiManager()
 	{
 		IMGUI_CHECKVERSION();

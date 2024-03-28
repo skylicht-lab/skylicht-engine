@@ -38,6 +38,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	IMPLEMENT_SINGLETON(CGraphics2D);
 
 	CGraphics2D::CGraphics2D() :
 		m_currentW(-1),

@@ -7,12 +7,15 @@
 #include "CTweenColor.h"
 #include "CTweenMatrix4.h"
 
-#include "Utils/CGameSingleton.h"
+#include "Utils/CSingleton.h"
 
 namespace Skylicht
 {
-	class CTweenManager : public CGameSingleton<CTweenManager>
+	class CTweenManager
 	{
+	public:
+		DECLARE_SINGLETON(CTweenManager)
+
 	protected:
 		std::vector<CTween*> m_tweens;
 		std::vector<CTween*> m_insert;

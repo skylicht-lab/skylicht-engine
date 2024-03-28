@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
+#include "Utils/CSingleton.h"
 #include "Scene/CScene.h"
 
 namespace Skylicht
@@ -34,10 +34,11 @@ namespace Skylicht
 		class CHandlesRenderer;
 		class CGizmosRenderer;
 
-		class CHandles :
-			public CGameSingleton<CHandles>,
-			public IEventReceiver
+		class CHandles : public IEventReceiver
 		{
+		public:
+			DECLARE_SINGLETON(CHandles);
+
 		protected:
 			core::matrix4 m_world;
 			core::matrix4 m_worldInv;

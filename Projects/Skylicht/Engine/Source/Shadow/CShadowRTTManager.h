@@ -26,7 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Lighting/CPointLight.h"
 #include "Lighting/CSpotLight.h"
 #include "TextureManager/CTextureManager.h"
-#include "Utils/CGameSingleton.h"
+#include "Utils/CSingleton.h"
 
 namespace Skylicht
 {
@@ -36,8 +36,11 @@ namespace Skylicht
 		ITexture* Texture;
 	};
 
-	class CShadowRTTManager : public CGameSingleton<CShadowRTTManager>
+	class CShadowRTTManager
 	{
+	public:
+		DECLARE_SINGLETON(CShadowRTTManager)
+
 	protected:
 		std::vector<SDepthShadowRTT*> m_pointLightDepthStatic;
 		std::vector<SDepthShadowRTT*> m_pointLightDepthDynamic;

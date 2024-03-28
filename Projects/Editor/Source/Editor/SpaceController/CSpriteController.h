@@ -26,17 +26,18 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "GUI/CGUIContext.h"
 
-#include "Utils/CGameSingleton.h"
+#include "Utils/CSingleton.h"
 #include "AssetManager/CAssetManager.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSpriteController :
-			public CGameSingleton<CSpriteController>,
-			public IFileLoader
+		class CSpriteController : public IFileLoader
 		{
+		public:
+			DECLARE_SINGLETON(CSpriteController)
+
 		protected:
 			GUI::CCanvas* m_canvas;
 

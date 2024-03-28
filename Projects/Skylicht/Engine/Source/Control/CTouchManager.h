@@ -25,14 +25,17 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Thread/IMutex.h"
-#include "Utils/CGameSingleton.h"
+#include "Utils/CSingleton.h"
 #include "CTouchIdentify.h"
 
 namespace Skylicht
 {
 
-	class CTouchManager : public CGameSingleton<CTouchManager>
+	class CTouchManager
 	{
+	public:
+		DECLARE_SINGLETON(CTouchManager)
+
 	public:
 		enum ETouchEvent
 		{

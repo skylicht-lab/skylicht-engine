@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
+#include "Utils/CSingleton.h"
 #include "Selection/CSelectObject.h"
 #include "Editor/Space/Property/CSpaceProperty.h"
 
@@ -32,8 +32,11 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		class CPropertyController : public CGameSingleton<CPropertyController>
+		class CPropertyController
 		{
+		public:
+			DECLARE_SINGLETON(CPropertyController)
+
 		public:
 			CPropertyController();
 

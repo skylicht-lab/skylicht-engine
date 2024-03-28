@@ -24,15 +24,18 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
+#include "Utils/CSingleton.h"
 #include "CSelectObject.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSelection : public CGameSingleton<CSelection>
+		class CSelection
 		{
+		public:
+			DECLARE_SINGLETON(CSelection)
+
 		protected:
 			std::vector<CSelectObject*> m_selected;
 

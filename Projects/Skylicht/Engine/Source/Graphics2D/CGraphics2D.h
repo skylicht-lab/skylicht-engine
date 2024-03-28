@@ -26,7 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 
-#include "Utils/CGameSingleton.h"
+#include "Utils/CSingleton.h"
 #include "Graphics2D/SpriteFrame/CSpriteFrame.h"
 #include "Graphics2D/SpriteFrame/CGlyphFont.h"
 #include "Material/CMaterial.h"
@@ -36,8 +36,11 @@ namespace Skylicht
 	class CCamera;
 	class CCanvas;
 
-	class CGraphics2D : public CGameSingleton<CGraphics2D>
+	class CGraphics2D
 	{
+	public:
+		DECLARE_SINGLETON(CGraphics2D)
+
 	protected:
 		int m_currentW;
 		int m_currentH;

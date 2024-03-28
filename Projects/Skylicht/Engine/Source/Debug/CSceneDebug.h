@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
+#include "Utils/CSingleton.h"
 
 #define MAX_DEBUGGEOMETRY 20000
 
@@ -61,8 +61,11 @@ namespace Skylicht
 		SColor color;
 	};
 
-	class CSceneDebug : public CGameSingleton<CSceneDebug>
+	class CSceneDebug
 	{
+	public:
+		DECLARE_SINGLETON(CSceneDebug)
+
 	protected:
 		SLineDebug* m_lines;
 		SLineStripDebug* m_linestrip;

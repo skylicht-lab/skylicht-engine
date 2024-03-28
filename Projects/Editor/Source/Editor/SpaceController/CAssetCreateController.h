@@ -24,21 +24,24 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
+#include "Utils/CSingleton.h"
 #include "Editor/Space/Assets/CSpaceAssets.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CAssetCreateController : public CGameSingleton<CAssetCreateController>
+		class CAssetCreateController
 		{
+		public:
+			DECLARE_SINGLETON(CAssetCreateController)
+
 		public:
 			CAssetCreateController();
 
 			virtual ~CAssetCreateController();
 
-			void createEmptyMaterial();			
+			void createEmptyMaterial();
 
 			void createEmptyScene();
 

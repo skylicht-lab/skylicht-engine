@@ -38,6 +38,8 @@ namespace Skylicht
 {
 	namespace Editor
 	{
+		IMPLEMENT_SINGLETON(CGUIDesignController)
+
 		CGUIDesignController::CGUIDesignController() :
 			m_rootNode(NULL),
 			m_spaceHierarchy(NULL),

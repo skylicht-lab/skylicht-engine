@@ -15,6 +15,8 @@
 
 namespace Skylicht
 {
+	IMPLEMENT_SINGLETON(CMeshManager);
+
 	CMeshManager::CMeshManager()
 	{
 

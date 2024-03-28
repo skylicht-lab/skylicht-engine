@@ -24,13 +24,16 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
+#include "Utils/CSingleton.h"
 
 namespace Skylicht
 {
 
-	class CAccelerometer : public CGameSingleton < CAccelerometer >
+	class CAccelerometer
 	{
+	public: 
+		DECLARE_SINGLETON(CAccelerometer)
+
 	protected:
 		bool				m_support;
 		bool				m_enable;

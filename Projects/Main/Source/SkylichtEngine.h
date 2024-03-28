@@ -29,8 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 // Build Info
 #include "BuildConfig/CBuildConfig.h"
 
-// Singleton
-#include "Utils/CGameSingleton.h"
+#include "Utils/CSingleton.h"
 
 // Control
 #include "Control/CTouchManager.h"

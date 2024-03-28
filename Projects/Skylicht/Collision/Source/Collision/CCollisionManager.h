@@ -24,7 +24,6 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
 #include "CCollisionNode.h"
 #include "COctreeNode.h"
 #include "COctreeBuilder.h"

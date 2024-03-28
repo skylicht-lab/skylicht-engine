@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
+#include "Utils/CSingleton.h"
 
 namespace Skylicht
 {
@@ -32,10 +32,11 @@ namespace Skylicht
 	{
 		class CGUIHandlesRenderer;
 
-		class CGUIHandles :
-			public CGameSingleton<CGUIHandles>,
-			public IEventReceiver
+		class CGUIHandles : public IEventReceiver
 		{
+		public:
+			DECLARE_SINGLETON(CGUIHandles)
+
 		protected:
 			core::matrix4 m_world;
 			core::matrix4 m_worldInv;

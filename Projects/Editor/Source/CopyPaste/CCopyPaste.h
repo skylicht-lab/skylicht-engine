@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
+#include "Utils/CSingleton.h"
 #include "Serializable/CObjectSerializable.h"
 #include "Scene/CSceneExporter.h"
 
@@ -33,8 +33,11 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		class CCopyPaste : public CGameSingleton<CCopyPaste>
+		class CCopyPaste
 		{
+		public:
+			DECLARE_SINGLETON(CCopyPaste)
+
 		protected:
 			std::vector<CObjectSerializable*> m_gameObjects;
 

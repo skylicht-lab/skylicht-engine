@@ -24,14 +24,17 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
+#include "Utils/CSingleton.h"
 
 namespace Skylicht
 {
 #define MAX_JOYSTICK_DEVICE	2
 
-	class CJoystick : public CGameSingleton<CJoystick>
+	class CJoystick
 	{
+	public:
+		DECLARE_SINGLETON(CJoystick)
+
 	protected:
 		bool m_support;
 

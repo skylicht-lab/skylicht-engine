@@ -27,6 +27,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	IMPLEMENT_SINGLETON(CEventManager);
+
 	CEventManager::CEventManager()
 	{
 
@@ -39,7 +41,7 @@ namespace Skylicht
 		m_eventProcessors.clear();
 	}
 
-	void CEventManager::registerEvent(std::string name, IEventReceiver *pEvent)
+	void CEventManager::registerEvent(std::string name, IEventReceiver* pEvent)
 	{
 		std::vector<eventType>::iterator i = m_eventReceivers.begin(), end = m_eventReceivers.end();
 		while (i != end)
@@ -52,7 +54,7 @@ namespace Skylicht
 		m_eventReceivers.push_back(eventType(name, pEvent));
 	}
 
-	void CEventManager::unRegisterEvent(IEventReceiver *pEvent)
+	void CEventManager::unRegisterEvent(IEventReceiver* pEvent)
 	{
 		std::vector<eventType>::iterator i = m_eventReceivers.begin(), end = m_eventReceivers.end();
 		while (i != end)
@@ -66,7 +68,7 @@ namespace Skylicht
 		}
 	}
 
-	void CEventManager::registerProcessorEvent(std::string name, IEventProcessor *pEvent)
+	void CEventManager::registerProcessorEvent(std::string name, IEventProcessor* pEvent)
 	{
 		std::vector<eventProcessorType>::iterator i = m_eventProcessors.begin(), end = m_eventProcessors.end();
 		while (i != end)
@@ -79,7 +81,7 @@ namespace Skylicht
 		m_eventProcessors.push_back(eventProcessorType(name, pEvent));
 	}
 
-	void CEventManager::unRegisterProcessorEvent(IEventProcessor *pEvent)
+	void CEventManager::unRegisterProcessorEvent(IEventProcessor* pEvent)
 	{
 		std::vector<eventProcessorType>::iterator i = m_eventProcessors.begin(), end = m_eventProcessors.end();
 		while (i != end)

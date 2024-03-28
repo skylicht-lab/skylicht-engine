@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
+#include "Utils/CSingleton.h"
 
 #define ACTIVATOR_REGISTER(type)  \
 	IActivatorObject* type##CreateFunc() { return new type(); } \
@@ -46,8 +46,11 @@ namespace Skylicht
 
 	typedef IActivatorObject* (*ActivatorCreateInstance)();
 
-	class CActivator : public CGameSingleton<CActivator>
+	class CActivator
 	{
+	public:
+		DECLARE_SINGLETON(CActivator)
+
 	protected:
 		std::map<std::string, int> m_factoryName;
 		std::vector<ActivatorCreateInstance> m_factoryFunc;

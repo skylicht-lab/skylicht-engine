@@ -25,14 +25,17 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CObjectLayer.h"
-#include "Utils/CGameSingleton.h"
+#include "Utils/CSingleton.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CProjectSettings : public CGameSingleton<CProjectSettings>
+		class CProjectSettings
 		{
+		public:
+			DECLARE_SINGLETON(CProjectSettings);
+
 		protected:
 			CObjectLayer* m_objectLayer;
 

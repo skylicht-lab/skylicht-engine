@@ -24,14 +24,17 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
+#include "Utils/CSingleton.h"
 #include "CAnimation.h"
 #include "CAnimationClip.h"
 
 namespace Skylicht
 {
-	class CAnimationManager : public CGameSingleton<CAnimationManager>
+	class CAnimationManager
 	{
+	public:
+		DECLARE_SINGLETON(CAnimationManager)
+
 	protected:
 		std::map<std::string, CAnimationClip*> m_clips;
 		std::map<std::string, CAnimation*> m_animations;

@@ -24,13 +24,16 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
+#include "Utils/CSingleton.h"
 #include "CSpriteFrame.h"
 
 namespace Skylicht
 {
-	class CSpriteManager : public CGameSingleton<CSpriteManager>
+	class CSpriteManager
 	{
+	public:
+		DECLARE_SINGLETON(CSpriteManager)
+
 	protected:
 		struct SSpritePackage
 		{

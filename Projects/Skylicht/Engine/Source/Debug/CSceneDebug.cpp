@@ -27,6 +27,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	IMPLEMENT_SINGLETON(CSceneDebug);
+
 	CSceneDebug::CSceneDebug() :
 		m_nLine(0),
 		m_nLineStrip(0),

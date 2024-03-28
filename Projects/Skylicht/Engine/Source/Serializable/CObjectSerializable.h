@@ -27,7 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CValueProperty.h"
 #include "CValuePropertyTemplate.h"
 
-#include "Utils/CGameSingleton.h"
+#include "Utils/CSingleton.h"
 #include "Utils/CActivator.h"
 
 namespace Skylicht
@@ -141,8 +141,11 @@ namespace Skylicht
 
 	typedef CObjectSerializable* (*SerializableCreateInstance)();
 
-	class CSerializableActivator : public CGameSingleton<CSerializableActivator>
+	class CSerializableActivator
 	{
+	public:
+		DECLARE_SINGLETON(CSerializableActivator)
+
 	protected:
 		std::map<std::string, int> m_factoryName;
 
