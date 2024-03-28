@@ -14,14 +14,6 @@ environment:
       configuration: Release
       cmake_args: -B ./PrjCygwin -G "Unix Makefiles"
       
-    # Win32/x64/Release
-    - platform: Win64 x64
-      arch: x64
-      toolchain: MSVC
-      configuration: Release
-      cmake_args: -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A x64
-      cmake_build: /verbosity:minimal /maxcpucount
-      
     # Win32/x86/Release
     - platform: Win32 x86
       arch: x86
