@@ -41,5 +41,5 @@ namespace Skylicht
 		virtual ~CCullingBBoxData();
 	};
 
-	DECLARE_DATA_TYPE_INDEX(CCullingBBoxData);
+	DECLARE_PUBLIC_DATA_TYPE_INDEX(CCullingBBoxData);
 }

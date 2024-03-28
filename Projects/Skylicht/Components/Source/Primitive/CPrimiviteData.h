@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "DataTypeIndex.h"
 #include "Entity/IEntityData.h"
 #include "Material/CMaterial.h"
 
@@ -54,5 +55,5 @@ namespace Skylicht
 		bool NormalMap;
 	};
 
-	DECLARE_LOCAL_DATA_TYPE_INDEX(CPrimiviteData);
+	DECLARE_COMPONENT_DATA_TYPE_INDEX(CPrimiviteData);
 }

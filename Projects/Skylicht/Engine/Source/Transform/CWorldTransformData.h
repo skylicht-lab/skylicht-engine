@@ -56,5 +56,5 @@ namespace Skylicht
 		DECLARE_GETTYPENAME(CWorldTransformData);
 	};
 
-	DECLARE_DATA_TYPE_INDEX(CWorldTransformData);
+	DECLARE_PUBLIC_DATA_TYPE_INDEX(CWorldTransformData);
 }

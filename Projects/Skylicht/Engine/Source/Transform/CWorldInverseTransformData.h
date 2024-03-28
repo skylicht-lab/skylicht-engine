@@ -39,5 +39,5 @@ namespace Skylicht
 		virtual ~CWorldInverseTransformData();
 	};
 
-	DECLARE_DATA_TYPE_INDEX(CWorldInverseTransformData);
+	DECLARE_PUBLIC_DATA_TYPE_INDEX(CWorldInverseTransformData);
 }

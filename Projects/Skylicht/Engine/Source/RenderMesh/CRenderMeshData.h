@@ -123,5 +123,5 @@ namespace Skylicht
 		DECLARE_GETTYPENAME(CRenderMeshData)
 	};
 
-	DECLARE_DATA_TYPE_INDEX(CRenderMeshData);
+	DECLARE_PUBLIC_DATA_TYPE_INDEX(CRenderMeshData);
 }

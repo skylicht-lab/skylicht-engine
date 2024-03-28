@@ -18,7 +18,7 @@ public:
 	void initCubeMesh(float size);
 };
 
-DECLARE_DATA_TYPE_INDEX(CTestEntityData);
+DECLARE_PRIVATE_DATA_TYPE_INDEX(CTestEntityData);
 
 class CTestRenderSystem : public Skylicht::IRenderSystem
 {

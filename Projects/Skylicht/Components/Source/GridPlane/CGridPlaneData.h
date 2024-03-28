@@ -2,6 +2,7 @@
 
 #include "Entity/IEntityData.h"
 #include "LineDraw/CLineDrawData.h"
+#include "DataTypeIndex.h"
 
 namespace Skylicht
 {
@@ -21,5 +22,5 @@ namespace Skylicht
 		void init();
 	};
 
-	DECLARE_LOCAL_DATA_TYPE_INDEX(CGridPlaneData);
+	DECLARE_COMPONENT_DATA_TYPE_INDEX(CGridPlaneData);
 }

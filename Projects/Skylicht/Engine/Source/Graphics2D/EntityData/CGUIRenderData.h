@@ -48,5 +48,5 @@ namespace Skylicht
 		DECLARE_GETTYPENAME(CGUIRenderData);
 	};
 
-	DECLARE_DATA_TYPE_INDEX(CGUIRenderData);
+	DECLARE_PUBLIC_DATA_TYPE_INDEX(CGUIRenderData);
 }

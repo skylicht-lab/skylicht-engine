@@ -53,5 +53,5 @@ namespace Skylicht
 		DECLARE_GETTYPENAME(CJointData)
 	};
 
-	DECLARE_DATA_TYPE_INDEX(CJointData);
+	DECLARE_PUBLIC_DATA_TYPE_INDEX(CJointData);
 }
