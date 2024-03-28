@@ -118,6 +118,11 @@ namespace Skylicht
 		// apply material
 		m_renderData->Material->applyMaterial(decalData->MeshBuffer->getMaterial());
 
+		// fix uv clamp
+		SMaterial& mat = decalData->MeshBuffer->getMaterial();
+		mat.TextureLayer[0].TextureWrapU = E_TEXTURE_CLAMP::ETC_CLAMP_TO_EDGE;
+		mat.TextureLayer[0].TextureWrapV = E_TEXTURE_CLAMP::ETC_CLAMP_TO_EDGE;
+
 		return entity;
 	}
 
