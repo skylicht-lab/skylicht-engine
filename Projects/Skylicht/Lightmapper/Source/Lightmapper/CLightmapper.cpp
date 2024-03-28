@@ -158,8 +158,8 @@ namespace Skylicht
 				CLightProbe* probe = probes[i];
 
 				core::vector3df pos = probe->getGameObject()->getPosition();
-				core::vector3df normal = CTransform::s_oy;
-				core::vector3df tangent = CTransform::s_ox;
+				core::vector3df normal = Transform::Oy;
+				core::vector3df tangent = Transform::Ox;
 				core::vector3df binormal = normal.crossProduct(tangent);
 				binormal.normalize();
 
@@ -200,8 +200,8 @@ namespace Skylicht
 			for (u32 i = 0, n = (u32)position.size(); i < n; i++)
 			{
 				core::vector3df pos = position[i];
-				core::vector3df normal = CTransform::s_oy;
-				core::vector3df tangent = CTransform::s_ox;
+				core::vector3df normal = Transform::Oy;
+				core::vector3df tangent = Transform::Ox;
 				core::vector3df binormal = normal.crossProduct(tangent);
 				binormal.normalize();
 

@@ -86,7 +86,7 @@ void SampleMaterials::onInitApp()
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
 
 	core::vector3df direction = core::vector3df(0.0f, -1.5f, 2.0f);
-	lightTransform->setOrientation(direction, CTransform::s_oy);
+	lightTransform->setOrientation(direction, Transform::Oy);
 
 	// 3D grid
 	// CGameObject *grid = zone->createEmptyObject();
@@ -150,8 +150,8 @@ void SampleMaterials::onRender()
 
 		core::vector3df pos(0.0f, 0.0f, 0.0f);
 
-		core::vector3df normal = CTransform::s_oy;
-		core::vector3df tangent = CTransform::s_ox;
+		core::vector3df normal = Transform::Oy;
+		core::vector3df tangent = Transform::Ox;
 		core::vector3df binormal = normal.crossProduct(tangent);
 		binormal.normalize();
 

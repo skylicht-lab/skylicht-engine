@@ -346,7 +346,7 @@ void SampleParticlesMagicSkill::initProjectiles(Particle::CParticleComponent* ps
 	sphereGroup->LifeMax = 1.5f;
 	sphereGroup->Friction = 1.0f;
 
-	Particle::CEmitter* sphereEmitter = factory->createSphericEmitter(-CTransform::s_oy, 0.0f, 60.0f * core::DEGTORAD);
+	Particle::CEmitter* sphereEmitter = factory->createSphericEmitter(-Transform::Oy, 0.0f, 60.0f * core::DEGTORAD);
 	sphereEmitter->setFlow(20.0f);
 	sphereEmitter->setTank(-1);
 	sphereEmitter->setForce(0.0f, 0.6f);
@@ -466,7 +466,7 @@ void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent* ps)
 	sphereGroup->Friction = 0.5f;
 	sphereGroup->Gravity.set(0.0f, -10.0f, 0.0f);
 
-	Particle::CEmitter* sphereEmitter = factory->createSphericEmitter(CTransform::s_oy, 0.0f, core::PI);
+	Particle::CEmitter* sphereEmitter = factory->createSphericEmitter(Transform::Oy, 0.0f, core::PI);
 	sphereEmitter->setFlow(-1);
 	sphereEmitter->setTank(5);
 	sphereEmitter->setForce(3.0f, 5.0f);
@@ -523,7 +523,7 @@ void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent* ps)
 	pointGroup->LifeMax = 1.5f;
 	pointGroup->Friction = 0.1f;
 
-	Particle::CEmitter* randomEmitter = factory->createSphericEmitter(CTransform::s_oy, 0.0f, core::PI);
+	Particle::CEmitter* randomEmitter = factory->createSphericEmitter(Transform::Oy, 0.0f, core::PI);
 	randomEmitter->setFlow(-1);
 	randomEmitter->setTank(10);
 	randomEmitter->setForce(0.1f, 0.6f);

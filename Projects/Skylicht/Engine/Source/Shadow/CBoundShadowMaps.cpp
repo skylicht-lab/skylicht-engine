@@ -126,7 +126,7 @@ namespace Skylicht
 		ortho.buildProjectionMatrixOrthoLH(max.X - min.X, max.Y - min.Y, -m_nearOffset, m_nearOffset + cascadeExtents.Z + m_farValue);
 
 		core::matrix4 view;
-		view.buildCameraLookAtMatrixLH(shadowCameraPos, center, CTransform::s_oy);
+		view.buildCameraLookAtMatrixLH(shadowCameraPos, center, Transform::Oy);
 
 		m_projMatrices = ortho;
 		m_viewMatrices = view;

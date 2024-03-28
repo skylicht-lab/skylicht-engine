@@ -151,7 +151,7 @@ namespace Skylicht
 						m_direction = base.SubEmitterDirection;
 					m_direction.normalize();
 
-					m_rotate.rotationFromTo(CTransform::s_oy, m_direction);
+					m_rotate.rotationFromTo(Transform::Oy, m_direction);
 
 					// init new particle
 					CParticle* newParticles = create(launch.Number);
