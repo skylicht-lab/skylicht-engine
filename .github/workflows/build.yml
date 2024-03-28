@@ -189,3 +189,24 @@ jobs:
     #  with:
     #    name: SkylichtDemo_IOS
     #    path: Build
+
+  Windows-Shared-Dll:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build
+        shell: cmd
+        run: |
+          cd Assets
+          python BuildAssetBundles.py
+          cd ..
+          cmake -S . -B ./PrjVisualStudio -G "Visual Studio 17 2022" -A x64 -DBUILD_SHARED_LIBS=ON
+          cmake --build ./PrjVisualStudio --config "Release"
+      - name: Unit Test
+        run: |
+          cd PrjVisualStudio
+          ctest -C Release --verpose
+          cd ..
+      - name: Package
+        run: |
+          dir Bin\Release
