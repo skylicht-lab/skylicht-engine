@@ -30,9 +30,6 @@ namespace Skylicht
 {
 	class CShaderSH : public IShaderCallback
 	{
-	protected:
-		static float s_sh9[36];
-
 	public:
 		CShaderSH();
 
