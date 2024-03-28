@@ -66,6 +66,6 @@ namespace Skylicht
 			EAxis hit(CCamera* camera, float x, float y, int viewportW, int viewportH);
 		};
 
-		DECLARE_LOCAL_DATA_TYPE_INDEX(CViewpointData);
+		DECLARE_PRIVATE_DATA_TYPE_INDEX(CViewpointData);
 	}
 }

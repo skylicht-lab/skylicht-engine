@@ -43,5 +43,5 @@ namespace Skylicht
 		virtual ~CVisibleData();
 	};
 
-	DECLARE_DATA_TYPE_INDEX(CVisibleData);
+	DECLARE_PUBLIC_DATA_TYPE_INDEX(CVisibleData);
 }

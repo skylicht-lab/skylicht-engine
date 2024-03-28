@@ -32,9 +32,9 @@ namespace Skylicht
 #define IMPLEMENT_DATA_TYPE_INDEX(type) \
 	u32 type##_DataTypeIndex = CEntityDataTypeManager::getDataIndex(typeid(type));
 
-#define DECLARE_DATA_TYPE_INDEX(type) SKYLICHT_API extern u32 type##_DataTypeIndex
+#define DECLARE_PUBLIC_DATA_TYPE_INDEX(type) SKYLICHT_API extern u32 type##_DataTypeIndex
 
-#define DECLARE_LOCAL_DATA_TYPE_INDEX(type) extern u32 type##_DataTypeIndex
+#define DECLARE_PRIVATE_DATA_TYPE_INDEX(type) extern u32 type##_DataTypeIndex
 
 #define DATA_TYPE_INDEX(type) type##_DataTypeIndex
 

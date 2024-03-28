@@ -41,5 +41,5 @@ namespace Skylicht
 		virtual ~CLightProbeData();
 	};
 
-	DECLARE_DATA_TYPE_INDEX(CLightProbeData);
+	DECLARE_PUBLIC_DATA_TYPE_INDEX(CLightProbeData);
 }

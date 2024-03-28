@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "DataTypeIndex.h"
 #include "Entity/IEntityData.h"
 
 #include "Particles/CGroup.h"
@@ -48,6 +49,6 @@ namespace Skylicht
 			void removeTrail(CParticleTrail* group);
 		};
 
-		DECLARE_LOCAL_DATA_TYPE_INDEX(CParticleTrailData);
+		DECLARE_COMPONENT_DATA_TYPE_INDEX(CParticleTrailData);
 	}
 }

@@ -62,5 +62,5 @@ namespace Skylicht
 		virtual ~CIndirectLightingData();
 	};
 
-	DECLARE_DATA_TYPE_INDEX(CIndirectLightingData);
+	DECLARE_PUBLIC_DATA_TYPE_INDEX(CIndirectLightingData);
 }

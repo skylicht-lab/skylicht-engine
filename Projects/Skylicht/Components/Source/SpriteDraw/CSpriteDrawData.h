@@ -24,6 +24,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "DataTypeIndex.h"
+
 #include "Entity/IEntityData.h"
 #include "Graphics2D/SpriteFrame/CSpriteFrame.h"
 
@@ -51,5 +53,5 @@ namespace Skylicht
 		bool AutoScaleInViewSpace;
 	};
 
-	DECLARE_LOCAL_DATA_TYPE_INDEX(CSpriteDrawData);
+	DECLARE_COMPONENT_DATA_TYPE_INDEX(CSpriteDrawData);
 }

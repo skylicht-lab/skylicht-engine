@@ -47,5 +47,5 @@ namespace Skylicht
 		virtual ~CLightCullingData();
 	};
 
-	DECLARE_DATA_TYPE_INDEX(CLightCullingData);
+	DECLARE_PUBLIC_DATA_TYPE_INDEX(CLightCullingData);
 }

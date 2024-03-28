@@ -112,5 +112,5 @@ namespace Skylicht
 		DECLARE_GETTYPENAME(CGUITransformData);
 	};
 
-	DECLARE_DATA_TYPE_INDEX(CGUITransformData);
+	DECLARE_PUBLIC_DATA_TYPE_INDEX(CGUITransformData);
 }
