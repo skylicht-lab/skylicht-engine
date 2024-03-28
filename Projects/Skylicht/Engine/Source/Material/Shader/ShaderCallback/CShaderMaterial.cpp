@@ -28,11 +28,11 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CMaterial* CShaderMaterial::s_material = NULL;
+	CMaterial* g_material = NULL;
 
 	void CShaderMaterial::setMaterial(CMaterial* material)
 	{
-		s_material = material;
+		g_material = material;
 	}
 
 	CShaderMaterial::CShaderMaterial()
@@ -51,9 +51,9 @@ namespace Skylicht
 		{
 		case MATERIAL_PARAM:
 		{
-			if (s_material != NULL)
+			if (g_material != NULL)
 			{
-				float* f = s_material->getShaderParams().getParamData(uniform->ValueIndex);
+				float* f = g_material->getShaderParams().getParamData(uniform->ValueIndex);
 				if (vertexShader == true)
 					matRender->setShaderVariable(uniform->UniformShaderID, f, uniform->SizeOfUniform, video::EST_VERTEX_SHADER);
 				else

@@ -30,17 +30,12 @@ namespace Skylicht
 {
 	class CShaderDeferred : public IShaderCallback
 	{
-	protected:
-		static core::matrix4 s_projection;
-		static core::matrix4 s_view;
-		static core::matrix4 s_viewProjection;
-
 	public:
 		CShaderDeferred();
 
 		virtual ~CShaderDeferred();
 
-		virtual void OnSetConstants(CShader *shader, SUniform *uniform, IMaterialRenderer* matRender, bool vertexShader);
+		virtual void OnSetConstants(CShader* shader, SUniform* uniform, IMaterialRenderer* matRender, bool vertexShader);
 
 	public:
 		static void setProjection(const core::matrix4& mat)

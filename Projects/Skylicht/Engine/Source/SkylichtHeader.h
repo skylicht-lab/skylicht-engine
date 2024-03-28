@@ -23,7 +23,7 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 #pragma once
 
-#if defined(_WIN32) || defined(_WIN64) || defined(WIN32) || defined(WIN64) || defined(CYGWIN)
+#if defined(_WIN32) || defined(_WIN64) || defined(WIN32) || defined(WIN64)
 
 #ifdef HAVE_SKYLICHT_NETWORK
 #include <Ws2tcpip.h>
