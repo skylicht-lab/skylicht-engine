@@ -61,6 +61,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	IMPLEMENT_SINGLETON(CGlyphFreetype);
+
 	CGlyphFreetype::CGlyphFreetype() :
 		m_width(1024),
 		m_height(1024)

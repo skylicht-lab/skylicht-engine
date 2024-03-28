@@ -41,13 +41,11 @@ namespace Skylicht
 		core::array<CVisibleData*> m_visibles;
 
 		IMesh* ProbeMesh;
-		
+
 		int shaderVertexColor;
 		int shaderReflectionProbe;
 
 		SMaterial m_material;
-
-		static bool s_showProbe;
 
 	public:
 		CReflectionProbeRender();
@@ -64,9 +62,6 @@ namespace Skylicht
 
 		virtual void render(CEntityManager* entityManager);
 
-		static void showProbe(bool b)
-		{
-			s_showProbe = b;
-		}
+		static void showProbe(bool b);
 	};
 }

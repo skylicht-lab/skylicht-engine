@@ -24,12 +24,15 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
+#include "Utils/CSingleton.h"
 
 namespace Skylicht
 {
-	class CConsoleLog : public CGameSingleton<CConsoleLog>
+	class CConsoleLog
 	{
+	public:
+		DECLARE_SINGLETON(CConsoleLog)
+
 	public:
 		struct SLogInfo
 		{
@@ -37,7 +40,7 @@ namespace Skylicht
 			std::string Log;
 			ELOG_LEVEL LogLevel;
 
-			SLogInfo(const char *log, ELOG_LEVEL level, u32 id)
+			SLogInfo(const char* log, ELOG_LEVEL level, u32 id)
 			{
 				ID = id;
 				Log = log;
@@ -64,7 +67,7 @@ namespace Skylicht
 
 		void clear();
 
-		void write(const char *log, ELOG_LEVEL logLevel);
+		void write(const char* log, ELOG_LEVEL logLevel);
 
 		const std::string& getBuffer(bool update);
 

@@ -27,7 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "GUI/CGUIContext.h"
 
-#include "Utils/CGameSingleton.h"
+#include "Utils/CSingleton.h"
 #include "AssetManager/CAssetManager.h"
 #include "Reactive/IObserver.h"
 #include "Editor/Space/GUIHierarchy/CGUIHierachyNode.h"
@@ -40,10 +40,12 @@ namespace Skylicht
 	namespace Editor
 	{
 		class CGUIDesignController :
-			public CGameSingleton<CGUIDesignController>,
 			public IFileLoader,
 			public IObserver
 		{
+		public:
+			DECLARE_SINGLETON(CGUIDesignController)
+
 		protected:
 			GUI::CCanvas* m_canvas;
 

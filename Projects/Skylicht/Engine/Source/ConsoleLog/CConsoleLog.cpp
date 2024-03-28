@@ -27,6 +27,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	IMPLEMENT_SINGLETON(CConsoleLog);
+
 	CConsoleLog::CConsoleLog() :
 		m_enable(false),
 		m_maxLineBuffer(1000),
@@ -54,7 +56,7 @@ namespace Skylicht
 		m_logs.clear();
 	}
 
-	void CConsoleLog::write(const char *log, ELOG_LEVEL logLevel)
+	void CConsoleLog::write(const char* log, ELOG_LEVEL logLevel)
 	{
 		m_logs.push_back(SLogInfo(log, logLevel, m_id++));
 		if (m_logs.size() > m_maxLineBuffer)

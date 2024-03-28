@@ -49,6 +49,8 @@ namespace Skylicht
 {
 	namespace Editor
 	{
+		IMPLEMENT_SINGLETON(CSceneController)
+
 		CSceneController::CSceneController() :
 			m_spaceHierarchy(NULL),
 			m_spaceScene(NULL),

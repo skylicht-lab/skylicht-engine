@@ -48,6 +48,8 @@ namespace Skylicht
 {
 	namespace Editor
 	{
+		IMPLEMENT_SINGLETON(CAssetManager);
+
 		CAssetManager::CAssetManager() :
 			m_haveAssetFolder(false)
 		{

@@ -30,6 +30,8 @@ namespace Skylicht
 {
 	namespace Editor
 	{
+		IMPLEMENT_SINGLETON(CProjectSettings);
+
 		CProjectSettings::CProjectSettings()
 		{
 			m_objectLayer = new CObjectLayer();

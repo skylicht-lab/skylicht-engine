@@ -26,21 +26,23 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 
-#include "Utils/CGameSingleton.h"
+#include "Utils/CSingleton.h"
 #include "Utils/CStringImp.h"
 
 namespace Skylicht
 {
-	class CTextureManager : public CGameSingleton<CTextureManager>
+	class CTextureManager
 	{
 	public:
-		static const char *GlobalPackage;
+		DECLARE_SINGLETON(CTextureManager)
+
+		static const char* getGlobalName();
 
 	protected:
 		struct STexturePackage
 		{
 			std::string package;
-			ITexture *texture;
+			ITexture* texture;
 		};
 
 		std::string m_currentPackage;
@@ -49,14 +51,14 @@ namespace Skylicht
 		std::vector<std::string> m_listCommonTexture;
 		int m_loadCommonPos;
 
-		ITexture *m_nullNormalMap;
-		ITexture *m_nullTexture;
+		ITexture* m_nullNormalMap;
+		ITexture* m_nullTexture;
 
 	public:
 		CTextureManager();
 		virtual ~CTextureManager();
 
-		void setCurrentPackage(const char *name)
+		void setCurrentPackage(const char* name)
 		{
 			m_currentPackage = name;
 		}
@@ -70,34 +72,34 @@ namespace Skylicht
 
 		void removeAllTexture();
 
-		void removeTexture(const char *namePackage);
+		void removeTexture(const char* namePackage);
 
-		void removeTexture(ITexture *tex);
+		void removeTexture(ITexture* tex);
 
-		bool existTexture(const char *path);
+		bool existTexture(const char* path);
 
-		ITexture* getTexture(const char *path);
+		ITexture* getTexture(const char* path);
 
-		ITexture* getTexture(const char *filename, const std::vector<std::string>& folders);
+		ITexture* getTexture(const char* filename, const std::vector<std::string>& folders);
 
-		ITexture* getTextureFromRealPath(const char *path);
+		ITexture* getTextureFromRealPath(const char* path);
 
 		ITexture* getCubeTexture(
-			const char *pathX1,
-			const char *pathX2,
-			const char *pathY1,
-			const char *pathY2,
-			const char *pathZ1,
-			const char *pathZ2);
+			const char* pathX1,
+			const char* pathX2,
+			const char* pathY1,
+			const char* pathY2,
+			const char* pathZ1,
+			const char* pathZ2);
 
 		ITexture* getTextureArray(std::vector<std::string>& listTexture);
 
-		ITexture *getNullNormalMap()
+		ITexture* getNullNormalMap()
 		{
 			return m_nullNormalMap;
 		}
 
-		ITexture *getNullTexture()
+		ITexture* getNullTexture()
 		{
 			return m_nullTexture;
 		}

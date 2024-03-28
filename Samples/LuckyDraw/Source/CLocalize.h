@@ -20,8 +20,11 @@ public:
 	const char* getString(ELanguage lang);
 };
 
-class CLocalize : public CGameSingleton<CLocalize>
+class CLocalize
 {
+public:
+	DECLARE_SINGLETON(CLocalize)
+
 protected:
 	std::vector<CDataText*> m_text;
 	std::map<std::string, CDataText*> m_map;

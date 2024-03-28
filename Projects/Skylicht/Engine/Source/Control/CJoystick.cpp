@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	IMPLEMENT_SINGLETON(CJoystick);
 
 	CJoystick::CJoystick() :
 		m_support(false)
@@ -76,7 +77,7 @@ namespace Skylicht
 	{
 		m_eventQueue.push_back(SInput());
 
-		SInput &input = m_eventQueue.getLast();
+		SInput& input = m_eventQueue.getLast();
 		input.DeviceID = deviceID;
 		input.Key = keyID;
 		input.Press = pressDown;
@@ -92,7 +93,7 @@ namespace Skylicht
 	{
 		m_eventQueue.push_back(SInput());
 
-		SInput &input = m_eventQueue.getLast();
+		SInput& input = m_eventQueue.getLast();
 		input.DeviceID = deviceID;
 		input.Key = 0;
 		input.Press = true;

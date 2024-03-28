@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
+#include "Utils/CSingleton.h"
 #include "Transform/CTransformMatrix.h"
 #include "CPhysicsRaycast.h"
 
@@ -48,10 +48,13 @@ namespace Skylicht
 #endif
 		};
 
-		class CPhysicsEngine : public CGameSingleton<CPhysicsEngine>
+		class CPhysicsEngine
 		{
 			friend class CRigidbody;
+		public:
+			DECLARE_SINGLETON(CPhysicsEngine);
 
+		protected:
 #ifdef USE_BULLET_PHYSIC_ENGINE
 			btBroadphaseInterface* m_broadphase;
 			btCollisionDispatcher* m_dispatcher;

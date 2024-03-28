@@ -24,7 +24,6 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
 #include "Scene/CScene.h"
 
 namespace Skylicht

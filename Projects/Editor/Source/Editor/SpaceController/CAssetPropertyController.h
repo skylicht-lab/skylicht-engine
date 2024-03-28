@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
+#include "Utils/CSingleton.h"
 #include "Editor/Space/Property/CSpaceProperty.h"
 #include "Editor/Space/Assets/CSpaceAssets.h"
 
@@ -32,9 +32,10 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		class CAssetPropertyController : public CGameSingleton<CAssetPropertyController>
+		class CAssetPropertyController
 		{
-		protected:
+		public:
+			DECLARE_SINGLETON(CAssetPropertyController)
 
 		public:
 			CAssetPropertyController();

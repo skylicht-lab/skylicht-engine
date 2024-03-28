@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
+#include "Utils/CSingleton.h"
 
 namespace Skylicht
 {
@@ -32,8 +32,11 @@ namespace Skylicht
 
 #define DEPENDENT_COMPONENT(comp, dependentComp) bool comp##dependentComp##_dependent = CDependentComponent::createGetInstance()->registerDependent(#comp, #dependentComp);
 
-	class CDependentComponent : public CGameSingleton<CDependentComponent>
+	class CDependentComponent
 	{
+	public:
+		DECLARE_SINGLETON(CDependentComponent)
+
 	protected:
 		std::map<std::string, std::vector<std::string>> m_dependent;
 

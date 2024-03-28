@@ -30,15 +30,17 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Space/CSpace.h"
 #include "AssetManager/CAssetWatcher.h"
 #include "Graphics2D/SpriteFrame/CSpriteAtlas.h"
-#include "Utils/CGameSingleton.h"
+#include "Utils/CSingleton.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CEditor : public CGameSingleton<CEditor>
+		class CEditor
 		{
 			friend class CSpace;
+		public:
+			DECLARE_SINGLETON(CEditor)
 
 		private:
 			GUI::CCanvas* m_canvas;

@@ -308,15 +308,17 @@ void CViewBakeLightmap::gotoDemoView()
 	{
 		// bake final, that merge direction light & point light & shadow mask in alpha channel
 		core::dimension2du size((u32)m_lightmapSize, (u32)m_lightmapSize);
+		float lmSize = (float)m_lightmapSize;
+
 		m_result[i] = getVideoDriver()->addRenderTargetTexture(size, "resultLM", video::ECF_A8R8G8B8);
 
 		getVideoDriver()->setRenderTarget(m_result[i]);
-		m_bakeLightRP->beginRender2D(m_lightmapSize, m_lightmapSize);
+		m_bakeLightRP->beginRender2D(lmSize, lmSize);
 		SMaterial material;
 		material.setTexture(0, m_directionLightBake[i]);
 		material.setTexture(1, m_pointLightBake[i]);
 		material.MaterialType = shaderMgr->getShaderIDByName("BakeFinal");
-		m_bakeLightRP->renderBufferToTarget(0, 0, m_lightmapSize, m_lightmapSize, material, false);
+		m_bakeLightRP->renderBufferToTarget(0.0f, 0.0f, lmSize, lmSize, material, false);
 
 		if (m_directionLightBake[i])
 		{

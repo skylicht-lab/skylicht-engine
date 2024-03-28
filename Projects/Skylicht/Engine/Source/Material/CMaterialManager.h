@@ -25,13 +25,16 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CMaterial.h"
-#include "Utils/CGameSingleton.h"
+#include "Utils/CSingleton.h"
 #include "Entity/CEntityPrefab.h"
 
 namespace Skylicht
 {
-	class CMaterialManager : public CGameSingleton<CMaterialManager>
+	class CMaterialManager
 	{
+	public:
+		DECLARE_SINGLETON(CMaterialManager)
+
 	protected:
 		std::map<std::string, ArrayMaterial> m_materials;
 

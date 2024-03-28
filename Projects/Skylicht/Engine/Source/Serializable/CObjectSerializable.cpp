@@ -301,6 +301,7 @@ namespace Skylicht
 		io->drop();
 	}
 
+	IMPLEMENT_SINGLETON(CSerializableActivator);
 
 	bool CSerializableActivator::registerType(const char* type, SerializableCreateInstance func)
 	{

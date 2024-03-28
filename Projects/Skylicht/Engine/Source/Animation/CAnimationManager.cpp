@@ -9,6 +9,8 @@
 
 namespace Skylicht
 {
+	IMPLEMENT_SINGLETON(CAnimationManager);
+
 	CAnimationManager::CAnimationManager()
 	{
 

@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2024 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,44 +24,28 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-namespace Skylicht
-{
+#define DECLARE_SINGLETON(className) \
+static className* createGetInstance();\
+static className* getInstance();\
+static void releaseInstance();
 
-	template <class T> class CGameSingleton
-	{
-	private:
-		CGameSingleton(const CGameSingleton&);
-		CGameSingleton& operator = (const CGameSingleton&);
-	protected:
-		CGameSingleton() {}
-		virtual ~CGameSingleton() { s_instance = 0; }
-	public:
-		static T* s_instance;
-
-		static T* createGetInstance()
-		{
-			if (!s_instance)
-				s_instance = new T();
-
-			return s_instance;
-		};
-
-		inline static T* getInstance()
-		{
-			return s_instance;
-		}
-
-		static void releaseInstance()
-		{
-			if (s_instance)
-			{
-				delete s_instance;
-				s_instance = NULL;
-			}
-		}
-	};
-
-	template <class T>
-	T* CGameSingleton<T>::s_instance = 0;
-
+#define IMPLEMENT_SINGLETON(className) \
+className* className##Instance = NULL;\
+className* className##::createGetInstance()\
+{\
+	if (!className##Instance)\
+		className##Instance = new className();\
+	return className##Instance;\
+}\
+className* className##::getInstance()\
+{\
+	return className##Instance;\
+}\
+void className##::releaseInstance()\
+{\
+	if (className##Instance)\
+	{\
+		delete className##Instance;\
+		className##Instance = NULL;\
+	}\
 }

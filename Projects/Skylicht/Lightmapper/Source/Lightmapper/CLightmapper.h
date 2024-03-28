@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
+#include "Utils/CSingleton.h"
 #include "CBaker.h"
 #include "CMTBaker.h"
 #include "CGPUBaker.h"
@@ -34,11 +34,10 @@ namespace Skylicht
 {
 	namespace Lightmapper
 	{
-		class CLightmapper : public CGameSingleton<CLightmapper>
+		class CLightmapper
 		{
-		protected:
-			static int s_numThread;
-			static int s_hemisphereBakeSize;
+		public:
+			DECLARE_SINGLETON(CLightmapper)
 
 		protected:
 			CBaker* m_singleBaker;
@@ -78,25 +77,13 @@ namespace Skylicht
 
 			int bakeMeshBuffer(IMeshBuffer* mb, const core::matrix4& transform, CCamera* camera, IRenderPipeline* rp, CEntityManager* entityMgr, int begin, int count, core::array<SColor>& outColor, core::array<CSH9>& outSH);
 
-			static void setNumThread(u32 num)
-			{
-				s_numThread = num;
-			}
+			static void setNumThread(u32 num);
 
-			static void setHemisphereBakeSize(u32 size)
-			{
-				s_hemisphereBakeSize = size;
-			}
+			static void setHemisphereBakeSize(u32 size);
 
-			static u32 getNumThread()
-			{
-				return s_numThread;
-			}
+			static u32 getNumThread();
 
-			static u32 getHemisphereBakeSize()
-			{
-				return s_hemisphereBakeSize;
-			}
+			static u32 getHemisphereBakeSize();
 		};
 	}
 }

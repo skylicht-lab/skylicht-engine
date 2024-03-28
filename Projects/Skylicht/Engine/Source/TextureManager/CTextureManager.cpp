@@ -4,7 +4,14 @@
 
 namespace Skylicht
 {
-	const char* CTextureManager::GlobalPackage = "Global";
+	const char* GlobalPackage = "Global";
+
+	IMPLEMENT_SINGLETON(CTextureManager);
+
+	const char* CTextureManager::getGlobalName()
+	{
+		return GlobalPackage;
+	}
 
 	CTextureManager::CTextureManager() :
 		m_nullNormalMap(NULL),
@@ -157,11 +164,11 @@ namespace Skylicht
 			// etc compress
 			CStringImp::replacePathExt(ansiPath, ".etc2");
 #elif defined(IOS)
-	#if defined(USE_ETC_TEXTURE)
+#if defined(USE_ETC_TEXTURE)
 			CStringImp::replacePathExt(ansiPath, ".etc2");
-	#else
+#else
 			CStringImp::replacePathExt(ansiPath, ".pvr");
-	#endif
+#endif
 #elif defined(MACOS)
 			// dxt compress
 			CStringImp::replacePathExt(ansiPath, ".dds");
@@ -273,11 +280,11 @@ namespace Skylicht
 			// etc compress
 			CStringImp::replacePathExt(ansiPath, ".etc2");
 #elif defined(IOS)
-	#if defined(USE_ETC_TEXTURE)
+#if defined(USE_ETC_TEXTURE)
 			CStringImp::replacePathExt(ansiPath, ".etc2");
-	#else
+#else
 			CStringImp::replacePathExt(ansiPath, ".pvr");
-	#endif
+#endif
 #elif defined(MACOS)
 			// dxt compress
 			CStringImp::replacePathExt(ansiPath, ".dds");
@@ -348,7 +355,7 @@ namespace Skylicht
 			m_nullTexture = driver->getTexture("BuiltIn/Textures/NullTexture.png");
 
 		return texture;
-}
+	}
 
 	ITexture* CTextureManager::getTextureArray(std::vector<std::string>& listTexture)
 	{
@@ -381,11 +388,11 @@ namespace Skylicht
 				// etc compress
 				CStringImp::replacePathExt(ansiPath, ".etc2");
 #elif defined(IOS)
-	#if defined(USE_ETC_TEXTURE)
+#if defined(USE_ETC_TEXTURE)
 				CStringImp::replacePathExt(ansiPath, ".etc2");
-	#else
+#else
 				CStringImp::replacePathExt(ansiPath, ".pvr");
-	#endif
+#endif
 #elif defined(MACOS)
 				CStringImp::replacePathExt(ansiPath, ".dds");
 #elif defined(__EMSCRIPTEN__)
@@ -481,7 +488,7 @@ namespace Skylicht
 			}
 
 			listImage.push_back(image);
-	}
+		}
 
 		ITexture* texture = NULL;
 
