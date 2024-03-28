@@ -50,5 +50,5 @@ namespace Skylicht
 		void generateMesh();
 	};
 
-	DECLARE_DATA_TYPE_INDEX(CSkyDomeData);
+	DECLARE_LOCAL_DATA_TYPE_INDEX(CSkyDomeData);
 }

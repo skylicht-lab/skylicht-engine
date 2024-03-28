@@ -32,9 +32,9 @@ namespace Skylicht
 
 	namespace Transform
 	{
-		extern core::vector3df Ox;
-		extern core::vector3df Oy;
-		extern core::vector3df Oz;
+		SKYLICHT_API extern core::vector3df Ox;
+		SKYLICHT_API extern core::vector3df Oy;
+		SKYLICHT_API extern core::vector3df Oz;
 	}
 
 	class CTransform : public CComponentSystem

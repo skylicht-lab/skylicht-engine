@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2024 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -21,35 +21,72 @@ This file is part of the "Skylicht Engine".
 https://github.com/skylicht-lab/skylicht-engine
 !#
 */
-
 #pragma once
 
-#include "Entity/IEntityData.h"
-#include "Graphics2D/SpriteFrame/CSpriteFrame.h"
+#if defined(_WIN32) || defined(_WIN64) || defined(WIN32) || defined(WIN64) || defined(CYGWIN)
+
+#ifdef HAVE_SKYLICHT_NETWORK
+#include <Ws2tcpip.h>
+#include <Winsock2.h>
+#endif
+
+#include <memory.h>
+#include <stdlib.h>
+
+#include <Windows.h>
+
+#else
+
+#include <memory.h>
+#include <unistd.h>
+
+#ifdef HAVE_SKYLICHT_NETWORK
+#include <netinet/in.h>
+#include <net/if.h>
+#include <arpa/inet.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <sys/ioctl.h>
+#include <sys/types.h>
+#include <sys/select.h>
+#include <sys/socket.h>
+#include <netdb.h>
+
+#define SOCKET  int
+#define INVALID_SOCKET  -1
+#define SOCKET_ERROR -1
+#endif
+
+#endif
+
+// IRRLICHT 3D ENGINE
+#include "irrlicht.h"
+#include "IRandomizer.h"
+#include "ILogger.h"
+#include "irrOS.h"
+
+using namespace irr;
+using namespace irr::scene;
+using namespace irr::video;
+
+// STL C++
+#include <algorithm>
+#include <vector>
+#include <list>
+#include <map>
+#include <stack>
+#include <queue>
+#include <fstream>
+#include <string>
+#include <typeinfo>
 
 namespace Skylicht
 {
-	class CSpriteDrawData : public IEntityData
-	{
-	public:
-		CSpriteDrawData();
+	extern IrrlichtDevice* getIrrlichtDevice();
 
-		virtual ~CSpriteDrawData();
+	extern IVideoDriver* getVideoDriver();
 
-		SFrame* Frame;
+	extern float getTimeStep();
 
-		SColor Color;
-
-		float Scale;
-
-		float ViewScale;
-
-		bool Center;
-
-		bool Billboard;
-
-		bool AutoScaleInViewSpace;
-	};
-
-	DECLARE_LOCAL_DATA_TYPE_INDEX(CSpriteDrawData);
+	extern float getTotalTime();
 }

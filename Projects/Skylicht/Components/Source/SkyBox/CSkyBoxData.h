@@ -54,5 +54,5 @@ namespace Skylicht
 		void updateTexture();
 	};
 
-	DECLARE_DATA_TYPE_INDEX(CSkyBoxData);
+	DECLARE_LOCAL_DATA_TYPE_INDEX(CSkyBoxData);
 }

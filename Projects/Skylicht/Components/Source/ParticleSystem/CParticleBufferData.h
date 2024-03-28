@@ -49,6 +49,6 @@ namespace Skylicht
 			void removeGroup(CGroup* group);
 		};
 
-		DECLARE_DATA_TYPE_INDEX(CParticleBufferData);
+		DECLARE_LOCAL_DATA_TYPE_INDEX(CParticleBufferData);
 	}
 }

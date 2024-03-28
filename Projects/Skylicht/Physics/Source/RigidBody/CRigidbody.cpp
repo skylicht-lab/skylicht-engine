@@ -306,6 +306,8 @@ namespace Skylicht
 				return Alway;
 			else if (state == DISABLE_SIMULATION)
 				return Disable;
+
+			return Activate;
 		}
 
 		const char* CRigidbody::getStateName()

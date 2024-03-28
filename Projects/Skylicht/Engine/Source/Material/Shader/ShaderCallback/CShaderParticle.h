@@ -31,17 +31,12 @@ namespace Skylicht
 {
 	class CShaderParticle : public IShaderCallback
 	{
-	protected:
-		static core::vector3df s_viewUp;
-		static core::vector3df s_viewLook;
-		static core::vector3df s_orientationNormal;
-		static core::vector3df s_orientationUp;
 	public:
 		CShaderParticle();
 
 		virtual ~CShaderParticle();
 
-		virtual void OnSetConstants(CShader *shader, SUniform *uniform, IMaterialRenderer* matRender, bool vertexShader);
+		virtual void OnSetConstants(CShader* shader, SUniform* uniform, IMaterialRenderer* matRender, bool vertexShader);
 
 	public:
 
@@ -53,14 +48,8 @@ namespace Skylicht
 
 		static void setOrientationNormal(const core::vector3df& normal);
 
-		static core::vector3df getViewUp()
-		{
-			return s_viewUp;
-		}
+		static core::vector3df getViewUp();
 
-		static core::vector3df getViewLook()
-		{
-			return s_viewLook;
-		}
+		static core::vector3df getViewLook();
 	};
 }

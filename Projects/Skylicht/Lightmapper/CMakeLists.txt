@@ -19,8 +19,6 @@ if (BUILD_SHARED_LIBS)
 set_target_properties(Lightmapper PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS true)
 endif()
 
-target_precompiled_header(Lightmapper ./Source/pch.cpp ${skylicht_lightmapper_source})
-
 set_target_properties(Lightmapper PROPERTIES VERSION ${SKYLICHT_VERSION})
 
 target_link_libraries(Lightmapper Engine Components)
