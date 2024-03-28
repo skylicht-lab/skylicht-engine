@@ -21,5 +21,5 @@ namespace Skylicht
 		void init();
 	};
 
-	DECLARE_DATA_TYPE_INDEX(CGridPlaneData);
+	DECLARE_LOCAL_DATA_TYPE_INDEX(CGridPlaneData);
 }

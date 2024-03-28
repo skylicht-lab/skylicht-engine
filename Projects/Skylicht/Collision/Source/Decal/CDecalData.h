@@ -42,7 +42,7 @@ namespace Skylicht
 		virtual ~CDecalRenderData();
 	};
 
-	DECLARE_DATA_TYPE_INDEX(CDecalRenderData);
+	DECLARE_LOCAL_DATA_TYPE_INDEX(CDecalRenderData);
 
 	class CDecalData : public IEntityData
 	{
@@ -63,5 +63,5 @@ namespace Skylicht
 		virtual ~CDecalData();
 	};
 
-	DECLARE_DATA_TYPE_INDEX(CDecalData);
+	DECLARE_LOCAL_DATA_TYPE_INDEX(CDecalData);
 }

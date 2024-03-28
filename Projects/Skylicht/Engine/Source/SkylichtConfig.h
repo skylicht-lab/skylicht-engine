@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2024 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,32 +24,31 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Entity/IEntityData.h"
-#include "Graphics2D/SpriteFrame/CSpriteFrame.h"
+#if defined(_WIN32) || defined(_WIN64) || defined(WIN32) || defined(WIN64) || defined(CYGWIN)
 
-namespace Skylicht
-{
-	class CSpriteDrawData : public IEntityData
-	{
-	public:
-		CSpriteDrawData();
+// WINDOW
+#ifdef _SKYLICHT_STATIC_LIB_
 
-		virtual ~CSpriteDrawData();
+#define SKYLICHT_API
 
-		SFrame* Frame;
+#else
 
-		SColor Color;
+#ifdef SKYLICHT_EXPORTS
+#define SKYLICHT_API __declspec(dllexport)
+#else
+#define SKYLICHT_API __declspec(dllimport)
+#endif
 
-		float Scale;
+#endif
 
-		float ViewScale;
+#else
 
-		bool Center;
+// GCC or OTHER
+// Force symbol export in shared libraries built with gcc.
+#if (__GNUC__ >= 4) && !defined(_SKYLICHT_STATIC_LIB_) && defined(SKYLICHT_EXPORTS)
+#define SKYLICHT_API __attribute__ ((visibility("default")))
+#else
+#define SKYLICHT_API
+#endif
 
-		bool Billboard;
-
-		bool AutoScaleInViewSpace;
-	};
-
-	DECLARE_LOCAL_DATA_TYPE_INDEX(CSpriteDrawData);
-}
+#endif

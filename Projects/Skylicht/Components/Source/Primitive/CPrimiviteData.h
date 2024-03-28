@@ -54,5 +54,5 @@ namespace Skylicht
 		bool NormalMap;
 	};
 
-	DECLARE_DATA_TYPE_INDEX(CPrimiviteData);
+	DECLARE_LOCAL_DATA_TYPE_INDEX(CPrimiviteData);
 }

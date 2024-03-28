@@ -32,25 +32,18 @@ namespace Skylicht
 	class CShaderShadow : public IShaderCallback
 	{
 	protected:
-		static CShadowMapRP *s_shadowMapRP;
 
 	public:
 		CShaderShadow();
 
 		virtual ~CShaderShadow();
 
-		virtual void OnSetConstants(CShader *shader, SUniform *uniform, IMaterialRenderer* matRender, bool vertexShader);
+		virtual void OnSetConstants(CShader* shader, SUniform* uniform, IMaterialRenderer* matRender, bool vertexShader);
 
 	public:
 
-		static void setShadowMapRP(CShadowMapRP *rp)
-		{
-			s_shadowMapRP = rp;
-		}
+		static void setShadowMapRP(CShadowMapRP* rp);
 
-		static CShadowMapRP* getShadowMapRP()
-		{
-			return s_shadowMapRP;
-		}
+		static CShadowMapRP* getShadowMapRP();
 	};
 }

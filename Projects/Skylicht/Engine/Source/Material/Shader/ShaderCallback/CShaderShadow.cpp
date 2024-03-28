@@ -30,7 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CShadowMapRP* CShaderShadow::s_shadowMapRP = NULL;
+	CShadowMapRP* g_shadowMapRP = NULL;
 
 	CShaderShadow::CShaderShadow()
 	{
@@ -48,9 +48,9 @@ namespace Skylicht
 		{
 		case SHADOW_MAP_MATRIX:
 		{
-			if (s_shadowMapRP != NULL)
+			if (g_shadowMapRP != NULL)
 			{
-				const float* shadowMatrix = s_shadowMapRP->getShadowMatrices();
+				const float* shadowMatrix = g_shadowMapRP->getShadowMatrices();
 				if (vertexShader == true)
 					matRender->setShaderVariable(uniform->UniformShaderID, shadowMatrix, uniform->SizeOfUniform, video::EST_VERTEX_SHADER);
 				else
@@ -60,9 +60,9 @@ namespace Skylicht
 		break;
 		case SHADOW_MAP_DISTANCE:
 		{
-			if (s_shadowMapRP != NULL)
+			if (g_shadowMapRP != NULL)
 			{
-				const float* shadowDistance = s_shadowMapRP->getShadowDistance();
+				const float* shadowDistance = g_shadowMapRP->getShadowDistance();
 				if (vertexShader == true)
 					matRender->setShaderVariable(uniform->UniformShaderID, shadowDistance, uniform->SizeOfUniform, video::EST_VERTEX_SHADER);
 				else
@@ -73,5 +73,15 @@ namespace Skylicht
 		default:
 			break;
 		}
+	}
+
+	void CShaderShadow::setShadowMapRP(CShadowMapRP* rp)
+	{
+		g_shadowMapRP = rp;
+	}
+
+	CShadowMapRP* CShaderShadow::getShadowMapRP()
+	{
+		return g_shadowMapRP;
 	}
 }
