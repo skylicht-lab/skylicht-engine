@@ -27,7 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	float CShaderSH::s_sh9[36];
+	float g_sh9[36];
 
 	CShaderSH::CShaderSH()
 	{
@@ -44,9 +44,9 @@ namespace Skylicht
 		case SH_CONST:
 		{
 			if (vertexShader == true)
-				matRender->setShaderVariable(uniform->UniformShaderID, s_sh9, uniform->SizeOfUniform, video::EST_VERTEX_SHADER);
+				matRender->setShaderVariable(uniform->UniformShaderID, g_sh9, uniform->SizeOfUniform, video::EST_VERTEX_SHADER);
 			else
-				matRender->setShaderVariable(uniform->UniformShaderID, s_sh9, uniform->SizeOfUniform, video::EST_PIXEL_SHADER);
+				matRender->setShaderVariable(uniform->UniformShaderID, g_sh9, uniform->SizeOfUniform, video::EST_PIXEL_SHADER);
 		}
 		break;
 		default:
@@ -56,14 +56,14 @@ namespace Skylicht
 
 	void CShaderSH::setSH9(core::vector3df* sh)
 	{
-		memset(s_sh9, 0, sizeof(float) * 9 * 4);
+		memset(g_sh9, 0, sizeof(float) * 9 * 4);
 
 		for (int i = 0; i < 9; i++)
 		{
-			s_sh9[i * 4] = sh[i].X;
-			s_sh9[i * 4 + 1] = sh[i].Y;
-			s_sh9[i * 4 + 2] = sh[i].Z;
-			s_sh9[i * 4 + 3] = 1.0f;
+			g_sh9[i * 4] = sh[i].X;
+			g_sh9[i * 4 + 1] = sh[i].Y;
+			g_sh9[i * 4 + 2] = sh[i].Z;
+			g_sh9[i * 4 + 3] = 1.0f;
 		}
 	}
 }

@@ -32,9 +32,6 @@ namespace Skylicht
 
 	class CShaderMaterial : public IShaderCallback
 	{
-	protected:
-		static CMaterial *s_material;
-
 	public:
 		CShaderMaterial();
 

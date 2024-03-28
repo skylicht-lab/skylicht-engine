@@ -27,9 +27,21 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	core::matrix4 CShaderDeferred::s_projection;
-	core::matrix4 CShaderDeferred::s_view;
-	core::matrix4 CShaderDeferred::s_viewProjection;
+	core::matrix4 g_projection;
+	core::matrix4 g_view;
+	core::matrix4 g_viewProjection;
+
+	void CShaderDeferred::setProjection(const core::matrix4& mat)
+	{
+		g_projection = mat;
+		g_viewProjection = g_projection;
+	}
+
+	void CShaderDeferred::setView(const core::matrix4& mat)
+	{
+		g_view = mat;
+		g_viewProjection = g_projection * g_view;
+	}
 
 	CShaderDeferred::CShaderDeferred()
 	{
@@ -48,25 +60,25 @@ namespace Skylicht
 		case DEFERRED_VIEW:
 		{
 			if (vertexShader == true)
-				matRender->setShaderVariable(uniform->UniformShaderID, s_view.pointer(), uniform->SizeOfUniform, video::EST_VERTEX_SHADER);
+				matRender->setShaderVariable(uniform->UniformShaderID, g_view.pointer(), uniform->SizeOfUniform, video::EST_VERTEX_SHADER);
 			else
-				matRender->setShaderVariable(uniform->UniformShaderID, s_view.pointer(), uniform->SizeOfUniform, video::EST_PIXEL_SHADER);
+				matRender->setShaderVariable(uniform->UniformShaderID, g_view.pointer(), uniform->SizeOfUniform, video::EST_PIXEL_SHADER);
 		}
 		break;
 		case DEFERRED_PROJECTION:
 		{
 			if (vertexShader == true)
-				matRender->setShaderVariable(uniform->UniformShaderID, s_projection.pointer(), uniform->SizeOfUniform, video::EST_VERTEX_SHADER);
+				matRender->setShaderVariable(uniform->UniformShaderID, g_projection.pointer(), uniform->SizeOfUniform, video::EST_VERTEX_SHADER);
 			else
-				matRender->setShaderVariable(uniform->UniformShaderID, s_projection.pointer(), uniform->SizeOfUniform, video::EST_PIXEL_SHADER);
+				matRender->setShaderVariable(uniform->UniformShaderID, g_projection.pointer(), uniform->SizeOfUniform, video::EST_PIXEL_SHADER);
 		}
 		break;
 		case DEFERRED_VIEW_PROJECTION:
 		{
 			if (vertexShader == true)
-				matRender->setShaderVariable(uniform->UniformShaderID, s_viewProjection.pointer(), uniform->SizeOfUniform, video::EST_VERTEX_SHADER);
+				matRender->setShaderVariable(uniform->UniformShaderID, g_viewProjection.pointer(), uniform->SizeOfUniform, video::EST_VERTEX_SHADER);
 			else
-				matRender->setShaderVariable(uniform->UniformShaderID, s_viewProjection.pointer(), uniform->SizeOfUniform, video::EST_PIXEL_SHADER);
+				matRender->setShaderVariable(uniform->UniformShaderID, g_viewProjection.pointer(), uniform->SizeOfUniform, video::EST_PIXEL_SHADER);
 		}
 		break;
 		default:

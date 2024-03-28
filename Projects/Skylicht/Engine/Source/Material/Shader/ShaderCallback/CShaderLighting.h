@@ -34,13 +34,6 @@ namespace Skylicht
 
 	class CShaderLighting : public IShaderCallback
 	{
-	protected:
-		static CDirectionalLight* s_directionalLight;
-		static CPointLight* s_pointLight;
-		static CSpotLight* s_spotLight;
-
-		static SColorf s_lightAmbient;
-
 	public:
 		CShaderLighting();
 

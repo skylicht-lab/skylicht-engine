@@ -32,18 +32,15 @@ namespace Skylicht
 
 	class CShaderCamera : public IShaderCallback
 	{
-	protected:
-		static CCamera *s_camera;
-
 	public:
 		CShaderCamera();
 
 		virtual ~CShaderCamera();
 
-		virtual void OnSetConstants(CShader *shader, SUniform *uniform, IMaterialRenderer* matRender, bool vertexShader);
+		virtual void OnSetConstants(CShader* shader, SUniform* uniform, IMaterialRenderer* matRender, bool vertexShader);
 
 	public:
-		static void setCamera(CCamera *camera);
+		static void setCamera(CCamera* camera);
 
 	};
 }

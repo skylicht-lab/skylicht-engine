@@ -29,11 +29,11 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CCamera* CShaderCamera::s_camera = NULL;
+	CCamera* g_camera = NULL;
 
 	void CShaderCamera::setCamera(CCamera* camera)
 	{
-		s_camera = camera;
+		g_camera = camera;
 	}
 
 	CShaderCamera::CShaderCamera()
@@ -53,16 +53,16 @@ namespace Skylicht
 		case WORLD_CAMERA_POSITION:
 		{
 			core::vector3df position;
-			if (s_camera != NULL)
-				position = s_camera->getGameObject()->getPosition();
+			if (g_camera != NULL)
+				position = g_camera->getGameObject()->getPosition();
 			shader->setWorldPosition(matRender, uniform->UniformShaderID, position, vertexShader);
 		}
 		break;
 		case CAMERA_POSITION:
 		{
 			core::vector3df position;
-			if (s_camera != NULL)
-				position = s_camera->getGameObject()->getPosition();
+			if (g_camera != NULL)
+				position = g_camera->getGameObject()->getPosition();
 			shader->setPosition(matRender, uniform->UniformShaderID, position, vertexShader);
 		}
 		break;
