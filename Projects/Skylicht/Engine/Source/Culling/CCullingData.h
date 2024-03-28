@@ -61,5 +61,5 @@ namespace Skylicht
 		DECLARE_GETTYPENAME(CCullingData);
 	};
 
-	DECLARE_DATA_TYPE_INDEX(CCullingData);
+	DECLARE_PUBLIC_DATA_TYPE_INDEX(CCullingData);
 }

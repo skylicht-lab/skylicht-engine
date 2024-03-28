@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Entity/IEntityData.h"
 #include "Particles/CGroup.h"
 #include "Particles/CSubGroup.h"
+#include "DataTypeIndex.h"
 
 namespace Skylicht
 {
@@ -49,6 +50,6 @@ namespace Skylicht
 			void removeGroup(CGroup* group);
 		};
 
-		DECLARE_LOCAL_DATA_TYPE_INDEX(CParticleBufferData);
+		DECLARE_COMPONENT_DATA_TYPE_INDEX(CParticleBufferData);
 	}
 }

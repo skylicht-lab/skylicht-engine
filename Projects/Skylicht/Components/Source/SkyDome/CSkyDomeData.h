@@ -24,6 +24,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "DataTypeIndex.h"
+
 #include "Entity/IEntityData.h"
 #include "Material/CMaterial.h"
 
@@ -50,5 +52,5 @@ namespace Skylicht
 		void generateMesh();
 	};
 
-	DECLARE_LOCAL_DATA_TYPE_INDEX(CSkyDomeData);
+	DECLARE_COMPONENT_DATA_TYPE_INDEX(CSkyDomeData);
 }

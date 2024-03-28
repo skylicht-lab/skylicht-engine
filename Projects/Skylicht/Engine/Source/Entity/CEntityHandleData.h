@@ -40,5 +40,5 @@ namespace Skylicht
 		virtual ~CEntityHandleData();
 	};
 
-	DECLARE_DATA_TYPE_INDEX(CEntityHandleData);
+	DECLARE_PUBLIC_DATA_TYPE_INDEX(CEntityHandleData);
 }

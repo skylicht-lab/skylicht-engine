@@ -41,5 +41,5 @@ namespace Skylicht
 		virtual ~CLightmapData();
 	};
 
-	DECLARE_DATA_TYPE_INDEX(CLightmapData);
+	DECLARE_PUBLIC_DATA_TYPE_INDEX(CLightmapData);
 }

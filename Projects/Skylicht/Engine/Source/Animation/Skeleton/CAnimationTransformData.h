@@ -69,5 +69,5 @@ namespace Skylicht
 		void updateTransform();
 	};
 
-	DECLARE_DATA_TYPE_INDEX(CAnimationTransformData);
+	DECLARE_PUBLIC_DATA_TYPE_INDEX(CAnimationTransformData);
 }

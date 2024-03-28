@@ -31,17 +31,17 @@ static void releaseInstance();
 
 #define IMPLEMENT_SINGLETON(className) \
 className* className##Instance = NULL;\
-className* className##::createGetInstance()\
+className* className::createGetInstance()\
 {\
 	if (!className##Instance)\
 		className##Instance = new className();\
 	return className##Instance;\
 }\
-className* className##::getInstance()\
+className* className::getInstance()\
 {\
 	return className##Instance;\
 }\
-void className##::releaseInstance()\
+void className::releaseInstance()\
 {\
 	if (className##Instance)\
 	{\

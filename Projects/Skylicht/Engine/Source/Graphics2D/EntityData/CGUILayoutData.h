@@ -61,7 +61,7 @@ namespace Skylicht
 		DECLARE_GETTYPENAME(CGUILayoutData);
 	};
 
-	DECLARE_DATA_TYPE_INDEX(CGUILayoutData);
+	DECLARE_PUBLIC_DATA_TYPE_INDEX(CGUILayoutData);
 
 
 	class CGUIChildLayoutData : public IEntityData
@@ -80,5 +80,5 @@ namespace Skylicht
 		DECLARE_GETTYPENAME(CGUIChildLayoutData);
 	};
 
-	DECLARE_DATA_TYPE_INDEX(CGUIChildLayoutData);
+	DECLARE_PUBLIC_DATA_TYPE_INDEX(CGUIChildLayoutData);
 }

@@ -41,5 +41,5 @@ namespace Skylicht
 		virtual ~CTransformComponentData();
 	};
 
-	DECLARE_DATA_TYPE_INDEX(CTransformComponentData);
+	DECLARE_PUBLIC_DATA_TYPE_INDEX(CTransformComponentData);
 }
