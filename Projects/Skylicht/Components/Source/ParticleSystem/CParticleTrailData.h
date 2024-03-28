@@ -48,6 +48,6 @@ namespace Skylicht
 			void removeTrail(CParticleTrail* group);
 		};
 
-		DECLARE_DATA_TYPE_INDEX(CParticleTrailData);
+		DECLARE_LOCAL_DATA_TYPE_INDEX(CParticleTrailData);
 	}
 }

@@ -169,6 +169,7 @@ add_definitions(-DFT2_BUILD_LIBRARY)
 # irrlicht shared/static
 if (NOT BUILD_SHARED_LIBS)
 	add_definitions(-D_IRR_STATIC_LIB_)
+	add_definitions(-D_SKYLICHT_STATIC_LIB_)
 endif()
 
 # skylicht debug leak memory
