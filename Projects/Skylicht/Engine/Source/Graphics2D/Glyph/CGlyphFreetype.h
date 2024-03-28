@@ -27,7 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include <ft2build.h>
 #include FT_GLYPH_H
 
-#include "Utils/CGameSingleton.h"
+#include "Utils/CSingleton.h"
 #include "Graphics2D/Atlas/CAtlas.h"
 #include "Graphics2D/SpriteFrame/CSpriteAtlas.h"
 
@@ -73,8 +73,11 @@ namespace Skylicht
 		}
 	};
 
-	class CGlyphFreetype : public CGameSingleton<CGlyphFreetype>
+	class CGlyphFreetype
 	{
+	public:
+		DECLARE_SINGLETON(CGlyphFreetype)
+
 	protected:
 		FT_Library m_lib;
 

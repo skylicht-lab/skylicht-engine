@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "pch.h"
-#include "Utils/CGameSingleton.h"
+#include "Utils/CSingleton.h"
 
 namespace Skylicht
 {
@@ -34,8 +34,11 @@ namespace Skylicht
 	class IShaderCallback;
 	class IShaderInstancing;
 
-	class CShaderManager : public CGameSingleton<CShaderManager>
+	class CShaderManager
 	{
+	public:
+		DECLARE_SINGLETON(CShaderManager)
+
 	protected:
 		IMeshBuffer* m_currentMeshBuffer;
 		SMaterial* m_currentMatRendering;

@@ -34,6 +34,8 @@ namespace Skylicht
 {
 	namespace Editor
 	{
+		IMPLEMENT_SINGLETON(CAssetPropertyController);
+
 		CAssetPropertyController::CAssetPropertyController()
 		{
 
@@ -61,7 +63,7 @@ namespace Skylicht
 			std::string assetPath = CAssetManager::getInstance()->getShortPath(path);
 			btn->OnPress = [&, p = assetPath](GUI::CBase* base) {
 				browseAsset(p.c_str());
-			};
+				};
 
 			// Clear old ui
 			spaceProperty->clearAllGroup();

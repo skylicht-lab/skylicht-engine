@@ -24,17 +24,17 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
 #include "Scene/CScene.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSelecting :
-			public CGameSingleton<CSelecting>,
-			public IEventReceiver
+		class CSelecting :public IEventReceiver
 		{
+		public:
+			DECLARE_SINGLETON(CSelecting)
+
 		protected:
 			core::triangle3df m_triangles[12];
 

@@ -30,6 +30,8 @@ namespace Skylicht
 {
 	namespace Editor
 	{
+		IMPLEMENT_SINGLETON(CGUIHandles);
+
 		CGUIHandles::CGUIHandles() :
 			m_handlePosition(false),
 			m_handleRotation(false),

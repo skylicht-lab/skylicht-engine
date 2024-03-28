@@ -2,12 +2,15 @@
 
 #include "RenderMesh/CMesh.h"
 #include "Entity/CEntityPrefab.h"
-#include "Utils/CGameSingleton.h"
+#include "Utils/CSingleton.h"
 
 namespace Skylicht
 {
-	class CMeshManager : public CGameSingleton<CMeshManager>
+	class CMeshManager
 	{
+	public:
+		DECLARE_SINGLETON(CMeshManager)
+
 	protected:
 		std::map<std::string, CEntityPrefab*> m_meshPrefabs;
 

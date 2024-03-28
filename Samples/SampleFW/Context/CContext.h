@@ -11,8 +11,11 @@
 
 using namespace Lightmapper;
 
-class CContext : public CGameSingleton<CContext>
+class CContext
 {
+public:
+	DECLARE_SINGLETON(CContext)
+
 protected:
 	CScene* m_scene;
 

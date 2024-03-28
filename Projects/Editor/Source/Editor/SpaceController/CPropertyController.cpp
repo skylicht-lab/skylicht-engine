@@ -36,6 +36,8 @@ namespace Skylicht
 {
 	namespace Editor
 	{
+		IMPLEMENT_SINGLETON(CPropertyController)
+
 		CPropertyController::CPropertyController()
 		{
 

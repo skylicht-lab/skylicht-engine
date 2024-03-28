@@ -30,7 +30,12 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	bool CLightProbeRender::s_showProbe = false;
+	bool g_showProbe = false;
+
+	void CLightProbeRender::showProbe(bool b)
+	{
+		g_showProbe = b;
+	}
 
 	CLightProbeRender::CLightProbeRender()
 	{
@@ -63,7 +68,7 @@ namespace Skylicht
 
 	void CLightProbeRender::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
-		if (s_showProbe == false)
+		if (g_showProbe == false)
 			return;
 
 		for (int i = 0; i < numEntity; i++)

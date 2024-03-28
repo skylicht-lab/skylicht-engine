@@ -35,6 +35,8 @@ namespace Skylicht
 {
 	namespace Editor
 	{
+		IMPLEMENT_SINGLETON(CSelecting);
+
 		CSelecting::CSelecting()
 		{
 

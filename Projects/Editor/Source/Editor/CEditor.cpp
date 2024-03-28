@@ -60,6 +60,8 @@ namespace Skylicht
 {
 	namespace Editor
 	{
+		IMPLEMENT_SINGLETON(CEditor)
+
 		CEditor::CEditor() :
 			m_menuBar(NULL),
 			m_canvas(NULL),

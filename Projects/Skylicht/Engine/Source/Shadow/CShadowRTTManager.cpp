@@ -27,6 +27,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	IMPLEMENT_SINGLETON(CShadowRTTManager);
+
 	CShadowRTTManager::CShadowRTTManager()
 	{
 

@@ -40,8 +40,6 @@ namespace Skylicht
 		core::array<CLightProbeData*> m_probes;
 		core::array<CWorldTransformData*> m_transforms;
 
-		static bool s_showProbe;
-
 	public:
 		CLightProbeRender();
 
@@ -57,9 +55,6 @@ namespace Skylicht
 
 		virtual void render(CEntityManager* entityManager);
 
-		static void showProbe(bool b)
-		{
-			s_showProbe = b;
-		}
+		static void showProbe(bool b);
 	};
 }

@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Context/CContext.h"
 
+IMPLEMENT_SINGLETON(CContext);
+
 CContext::CContext() :
 	m_scene(NULL),
 	m_beginRP(NULL),

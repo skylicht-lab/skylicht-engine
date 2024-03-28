@@ -44,6 +44,8 @@ namespace Skylicht
 {
 	namespace Editor
 	{
+		IMPLEMENT_SINGLETON(CAssetCreateController);
+
 		CAssetCreateController::CAssetCreateController()
 		{
 

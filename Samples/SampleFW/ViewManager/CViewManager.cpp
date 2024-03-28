@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "CViewManager.h"
 
+IMPLEMENT_SINGLETON(CViewManager)
+
 CViewManager::CViewManager()
 {
 	initViewLayer(1);

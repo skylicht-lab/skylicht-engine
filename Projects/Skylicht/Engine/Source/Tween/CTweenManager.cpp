@@ -3,6 +3,8 @@
 
 namespace Skylicht
 {
+	IMPLEMENT_SINGLETON(CTweenManager);
+
 	CTweenManager::CTweenManager()
 	{
 

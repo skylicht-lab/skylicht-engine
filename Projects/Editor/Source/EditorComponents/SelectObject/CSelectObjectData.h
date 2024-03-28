@@ -46,6 +46,6 @@ namespace Skylicht
 			virtual ~CSelectObjectData();
 		};
 
-		DECLARE_DATA_TYPE_INDEX(CSelectObjectData);
+		DECLARE_LOCAL_DATA_TYPE_INDEX(CSelectObjectData);
 	}
 }

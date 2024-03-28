@@ -36,6 +36,8 @@ namespace Skylicht
 {
 	namespace Physics
 	{
+		IMPLEMENT_SINGLETON(CPhysicsEngine);
+
 		CPhysicsEngine::CPhysicsEngine() :
 			m_gravity(-10.0f)
 #ifdef USE_BULLET_PHYSIC_ENGINE

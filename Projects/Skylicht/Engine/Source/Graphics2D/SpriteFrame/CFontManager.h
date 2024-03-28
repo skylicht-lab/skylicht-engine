@@ -24,13 +24,16 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
+#include "Utils/CSingleton.h"
 #include "CFontSource.h"
 
 namespace Skylicht
 {
-	class CFontManager : public CGameSingleton<CFontManager>
+	class CFontManager
 	{
+	public:
+		DECLARE_SINGLETON(CFontManager)
+
 	protected:
 		std::map<std::string, CFontSource*> m_idToFont;
 		std::map<std::string, CFontSource*> m_pathToFont;

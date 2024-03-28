@@ -27,6 +27,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	IMPLEMENT_SINGLETON(CActivator);
+
 	bool CActivator::registerType(const char* type, ActivatorCreateInstance func)
 	{
 		std::map<std::string, int>::iterator i = m_factoryName.find(type);

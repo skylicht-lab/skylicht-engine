@@ -32,6 +32,8 @@ namespace Skylicht
 {
 	namespace Editor
 	{
+		IMPLEMENT_SINGLETON(CSpriteController)
+
 		CSpriteController::CSpriteController()
 		{
 			CAssetManager::getInstance()->registerFileLoader("spritedata", this);

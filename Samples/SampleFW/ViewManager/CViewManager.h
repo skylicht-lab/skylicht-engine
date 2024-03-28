@@ -1,10 +1,13 @@
 #pragma once
 
-#include "Utils/CGameSingleton.h"
+#include "Utils/CSingleton.h"
 #include "CViewLayer.h"
 
-class CViewManager : public CGameSingleton<CViewManager>
+class CViewManager
 {
+public:
+	DECLARE_SINGLETON(CViewManager)
+
 protected:
 	std::vector<CViewLayer*> m_viewLayers;
 

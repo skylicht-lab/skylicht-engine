@@ -29,6 +29,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	IMPLEMENT_SINGLETON(CComponentCategory);
+
 	CComponentCategory::CComponentCategory()
 	{
 		m_category = new SCategory();

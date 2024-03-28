@@ -29,7 +29,12 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	bool CReflectionProbeRender::s_showProbe = false;
+	bool g_showReflectionProbe = false;
+
+	void CReflectionProbeRender::showProbe(bool b)
+	{
+		g_showReflectionProbe = b;
+	}
 
 	CReflectionProbeRender::CReflectionProbeRender()
 	{
@@ -61,7 +66,7 @@ namespace Skylicht
 
 	void CReflectionProbeRender::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
-		if (s_showProbe == false)
+		if (g_showReflectionProbe == false)
 			return;
 
 		for (int i = 0; i < numEntity; i++)

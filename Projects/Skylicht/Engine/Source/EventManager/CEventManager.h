@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CGameSingleton.h"
+#include "Utils/CSingleton.h"
 
 namespace Skylicht
 {
@@ -36,10 +36,11 @@ namespace Skylicht
 		virtual bool OnProcessEvent(const SEvent& event) = 0;
 	};
 
-	class CEventManager :
-		public CGameSingleton<CEventManager>,
-		public IEventReceiver
+	class CEventManager :public IEventReceiver
 	{
+	public:
+		DECLARE_SINGLETON(CEventManager)
+
 	protected:
 
 		typedef std::pair<std::string, IEventReceiver*> eventType;
@@ -53,13 +54,13 @@ namespace Skylicht
 
 		virtual ~CEventManager();
 
-		void registerEvent(std::string name, IEventReceiver *pEvent);
+		void registerEvent(std::string name, IEventReceiver* pEvent);
 
-		void unRegisterEvent(IEventReceiver *pEvent);
+		void unRegisterEvent(IEventReceiver* pEvent);
 
-		void registerProcessorEvent(std::string name, IEventProcessor *pEvent);
+		void registerProcessorEvent(std::string name, IEventProcessor* pEvent);
 
-		void unRegisterProcessorEvent(IEventProcessor *pEvent);
+		void unRegisterProcessorEvent(IEventProcessor* pEvent);
 
 		virtual bool OnEvent(const SEvent& event);
 	};

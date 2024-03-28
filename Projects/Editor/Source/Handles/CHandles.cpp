@@ -33,6 +33,8 @@ namespace Skylicht
 {
 	namespace Editor
 	{
+		IMPLEMENT_SINGLETON(CHandles);
+
 		CHandles::CHandles() :
 			m_handlePosition(false),
 			m_handleRotation(false),
