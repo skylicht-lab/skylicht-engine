@@ -11,7 +11,7 @@ setup_project_group("${crypto_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 
 if (BUILD_SHARED_LIBS)
 if (BUILD_LINUX OR BUILD_MACOS)
-add_compile_options(-fPic)
+add_compile_options(-fpic)
 endif()
 endif()
 
