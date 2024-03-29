@@ -34,7 +34,7 @@ namespace Skylicht
 	class CGameObject;
 	class CDependentComponent;
 
-	class CComponentSystem : public IActivatorObject
+	class SKYLICHT_API CComponentSystem : public IActivatorObject
 	{
 	protected:
 		CGameObject* m_gameObject;

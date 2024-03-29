@@ -33,7 +33,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CReflectionProbeRender : public IRenderSystem
+	class SKYLICHT_API CReflectionProbeRender : public IRenderSystem
 	{
 	protected:
 		core::array<CReflectionProbeData*> m_probes;

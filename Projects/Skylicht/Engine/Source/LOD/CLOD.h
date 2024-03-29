@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CLOD : public CComponentSystem
+	class SKYLICHT_API CLOD : public CComponentSystem
 	{
 	protected:
 		float m_distance[4];

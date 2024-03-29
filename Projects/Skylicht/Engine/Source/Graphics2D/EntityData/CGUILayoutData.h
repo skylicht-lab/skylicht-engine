@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CGUILayoutData : public IEntityData
+	class SKYLICHT_API CGUILayoutData : public IEntityData
 	{
 	protected:
 
@@ -64,7 +64,7 @@ namespace Skylicht
 	DECLARE_PUBLIC_DATA_TYPE_INDEX(CGUILayoutData);
 
 
-	class CGUIChildLayoutData : public IEntityData
+	class SKYLICHT_API CGUIChildLayoutData : public IEntityData
 	{
 	protected:
 

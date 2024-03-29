@@ -42,7 +42,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CCanvas : public CComponentSystem
+	class SKYLICHT_API CCanvas : public CComponentSystem
 	{
 	protected:
 		core::rectf m_rect;

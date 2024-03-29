@@ -33,7 +33,7 @@ namespace Skylicht
 {
 	class CFontSource;
 
-	class CGUIText : public CGUIElement
+	class SKYLICHT_API CGUIText : public CGUIElement
 	{
 		friend class CCanvas;
 	public:

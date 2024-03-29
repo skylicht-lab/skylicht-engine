@@ -26,7 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CColor
+	class SKYLICHT_API CColor
 	{
 	public:
 		static SColor toSRGB(const SColor& c);

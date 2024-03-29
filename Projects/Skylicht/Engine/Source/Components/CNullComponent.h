@@ -30,7 +30,7 @@ namespace Skylicht
 {
 	class CGameObject;
 
-	class CNullComponent : public CComponentSystem
+	class SKYLICHT_API CNullComponent : public CComponentSystem
 	{
 	protected:
 		std::string m_name;

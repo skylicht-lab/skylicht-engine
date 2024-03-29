@@ -37,7 +37,7 @@ namespace Skylicht
 		SKYLICHT_API extern core::vector3df Oz;
 	}
 
-	class CTransform : public CComponentSystem
+	class SKYLICHT_API CTransform : public CComponentSystem
 	{
 	protected:
 		bool m_hasChanged;

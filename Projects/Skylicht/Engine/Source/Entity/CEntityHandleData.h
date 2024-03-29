@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CEntityHandleData : public IEntityData
+	class SKYLICHT_API CEntityHandleData : public IEntityData
 	{
 	public:
 		CEntityHandler* Handler;

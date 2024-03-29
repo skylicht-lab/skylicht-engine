@@ -35,7 +35,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class IActivatorObject
+	class SKYLICHT_API IActivatorObject
 	{
 	public:
 		virtual ~IActivatorObject()
@@ -46,7 +46,7 @@ namespace Skylicht
 
 	typedef IActivatorObject* (*ActivatorCreateInstance)();
 
-	class CActivator
+	class SKYLICHT_API CActivator
 	{
 	public:
 		DECLARE_SINGLETON(CActivator)

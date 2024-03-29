@@ -30,7 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CSkinnedMeshSystem : public CMeshSystem
+	class SKYLICHT_API CSkinnedMeshSystem : public CMeshSystem
 	{
 	public:
 		CSkinnedMeshSystem();

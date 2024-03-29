@@ -40,7 +40,7 @@ namespace Skylicht
 
 #define MAX_ENTITY_DATA 64
 
-	class CEntity
+	class SKYLICHT_API CEntity
 	{
 		friend class CEntityManager;
 		friend class CEntityPrefab;

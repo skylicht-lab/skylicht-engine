@@ -7,7 +7,7 @@
 
 namespace Skylicht
 {
-	class CTween
+	class SKYLICHT_API CTween
 	{
 	protected:
 		float m_time;

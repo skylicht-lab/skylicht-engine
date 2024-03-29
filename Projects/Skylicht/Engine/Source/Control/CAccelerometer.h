@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 
-	class CAccelerometer
+	class SKYLICHT_API CAccelerometer
 	{
 	public: 
 		DECLARE_SINGLETON(CAccelerometer)

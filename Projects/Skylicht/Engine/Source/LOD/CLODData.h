@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CLODData : public IEntityData
+	class SKYLICHT_API CLODData : public IEntityData
 	{
 	public:
 		float From;

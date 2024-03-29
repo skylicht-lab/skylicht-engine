@@ -36,7 +36,7 @@ namespace Skylicht
 		ITexture* Texture;
 	};
 
-	class CShadowRTTManager
+	class SKYLICHT_API CShadowRTTManager
 	{
 	public:
 		DECLARE_SINGLETON(CShadowRTTManager)

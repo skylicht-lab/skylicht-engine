@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CPointLight : public CLight
+	class SKYLICHT_API CPointLight : public CLight
 	{
 	protected:
 		CLightCullingData* m_cullingData;

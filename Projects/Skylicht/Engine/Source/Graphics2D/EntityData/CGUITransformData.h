@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CGUITransformData : public IEntityData
+	class SKYLICHT_API CGUITransformData : public IEntityData
 	{
 		friend class CGUILayoutSystem;
 

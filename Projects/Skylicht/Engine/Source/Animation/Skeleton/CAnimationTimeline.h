@@ -26,7 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CAnimationTimeline
+	class SKYLICHT_API CAnimationTimeline
 	{
 	public:
 		float From;

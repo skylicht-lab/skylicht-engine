@@ -26,7 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CMeshUtils
+	class SKYLICHT_API CMeshUtils
 	{
 	public:
 		static void copyVertices(IVertexBuffer *srcBuffer, IVertexBuffer *dstBuffer);

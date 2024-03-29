@@ -31,7 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CLightProbe : public CComponentSystem
+	class SKYLICHT_API CLightProbe : public CComponentSystem
 	{
 	protected:
 		CLightProbeData* m_probeData;

@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CSpriteManager
+	class SKYLICHT_API CSpriteManager
 	{
 	public:
 		DECLARE_SINGLETON(CSpriteManager)

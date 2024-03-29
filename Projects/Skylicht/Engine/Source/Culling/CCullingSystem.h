@@ -53,7 +53,7 @@ namespace Skylicht
 		}
 	};
 
-	class CCullingSystem : public IRenderSystem
+	class SKYLICHT_API CCullingSystem : public IRenderSystem
 	{
 	protected:
 		CFastArray<SBBoxAndMaterial> m_bboxAndMaterials;

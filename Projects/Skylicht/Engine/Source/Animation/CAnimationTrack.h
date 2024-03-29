@@ -27,7 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	template<class T>
-	class CKeyFrameData
+	class SKYLICHT_API CKeyFrameData
 	{
 	public:
 		f32 Frame;
@@ -39,7 +39,7 @@ namespace Skylicht
 	typedef CKeyFrameData<core::vector3df> CScaleKey;
 
 	template<class T>
-	class CArrayKeyFrame
+	class SKYLICHT_API CArrayKeyFrame
 	{
 	public:
 		core::array<CKeyFrameData<T>> Data;
@@ -119,7 +119,7 @@ namespace Skylicht
 		return foundPositionIndex;
 	}
 
-	class CAnimationData
+	class SKYLICHT_API CAnimationData
 	{
 	public:
 		CArrayKeyFrame<core::vector3df> Positions;
@@ -131,7 +131,7 @@ namespace Skylicht
 		}
 	};
 
-	class CAnimationTrack
+	class SKYLICHT_API CAnimationTrack
 	{
 	protected:
 

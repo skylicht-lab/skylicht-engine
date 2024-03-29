@@ -33,7 +33,7 @@ namespace Skylicht
 	// please register at CEngineEditor.cpp (Projects/Editor/Source/Editor/Components)
 #define CATEGORY_COMPONENT(component, name, path) int component##_category = CComponentCategory::createGetInstance()->addToCategory(#component, name, path);
 
-	class CComponentCategory
+	class SKYLICHT_API CComponentCategory
 	{
 	public:
 		DECLARE_SINGLETON(CComponentCategory)

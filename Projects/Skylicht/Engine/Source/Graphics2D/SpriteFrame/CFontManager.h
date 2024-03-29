@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CFontManager
+	class SKYLICHT_API CFontManager
 	{
 	public:
 		DECLARE_SINGLETON(CFontManager)

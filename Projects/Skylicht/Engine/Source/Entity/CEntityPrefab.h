@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CEntityPrefab
+	class SKYLICHT_API CEntityPrefab
 	{
 	protected:
 		core::array<CEntity*> m_entities;

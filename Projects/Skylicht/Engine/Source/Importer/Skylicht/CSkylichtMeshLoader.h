@@ -31,7 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CSkylichtMeshLoader : public CBaseMeshImporter
+	class SKYLICHT_API CSkylichtMeshLoader : public CBaseMeshImporter
 	{
 	protected:
 

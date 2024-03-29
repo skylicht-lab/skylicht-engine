@@ -28,7 +28,7 @@ namespace Skylicht
 {
 	class CEntityPrefab;
 
-	class IMeshImporter
+	class SKYLICHT_API IMeshImporter
 	{
 	public:
 		IMeshImporter()

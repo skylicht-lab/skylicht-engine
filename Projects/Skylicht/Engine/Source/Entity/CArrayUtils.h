@@ -27,7 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	template <class T>
-	class CFastArray
+	class SKYLICHT_API CFastArray
 	{
 	protected:
 		core::array<T> m_array;

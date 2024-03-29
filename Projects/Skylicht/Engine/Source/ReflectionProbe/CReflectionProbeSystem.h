@@ -35,7 +35,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CReflectionProbeSystem : public IEntitySystem
+	class SKYLICHT_API CReflectionProbeSystem : public IEntitySystem
 	{
 	protected:
 		CFastArray<CReflectionProbeData*> m_probes;

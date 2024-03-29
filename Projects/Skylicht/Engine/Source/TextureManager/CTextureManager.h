@@ -31,7 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CTextureManager
+	class SKYLICHT_API CTextureManager
 	{
 	public:
 		DECLARE_SINGLETON(CTextureManager)

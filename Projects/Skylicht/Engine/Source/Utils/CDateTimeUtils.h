@@ -26,7 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CDateTimeUtils
+	class SKYLICHT_API CDateTimeUtils
 	{
 	public:
 		static unsigned long getSecondByDate(int fromYear, int month, int day, int years, int hour, int minute, int second);

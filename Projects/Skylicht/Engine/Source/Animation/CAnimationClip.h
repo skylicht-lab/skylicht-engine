@@ -35,7 +35,7 @@ namespace Skylicht
 		CAnimationData Data;
 	};
 
-	class CAnimationClip
+	class SKYLICHT_API CAnimationClip
 	{
 	public:
 		std::string AnimName;

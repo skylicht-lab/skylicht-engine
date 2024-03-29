@@ -36,7 +36,7 @@ namespace Skylicht
 		virtual bool OnProcessEvent(const SEvent& event) = 0;
 	};
 
-	class CEventManager :public IEventReceiver
+	class SKYLICHT_API CEventManager :public IEventReceiver
 	{
 	public:
 		DECLARE_SINGLETON(CEventManager)

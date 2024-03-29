@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CGUILayout : public CGUIElement
+	class SKYLICHT_API CGUILayout : public CGUIElement
 	{
 		friend class CCanvas;
 	public:

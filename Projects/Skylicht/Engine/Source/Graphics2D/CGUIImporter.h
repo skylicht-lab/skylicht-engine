@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CGUIImporter
+	class SKYLICHT_API CGUIImporter
 	{
 		static io::IXMLReader* s_reader;
 

@@ -31,7 +31,7 @@ namespace Skylicht
 {
 	class CMaterial;
 
-	class CBlendShape : public IReferenceCounted
+	class SKYLICHT_API CBlendShape : public IReferenceCounted
 	{
 	public:
 		std::string Name;
@@ -60,7 +60,7 @@ namespace Skylicht
 		IMesh* InstancingMesh;
 	};
 
-	class CMesh : public IMesh
+	class SKYLICHT_API CMesh : public IMesh
 	{
 	public:
 		CMesh();

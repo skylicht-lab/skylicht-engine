@@ -33,7 +33,7 @@ namespace Skylicht
 	class CShader;
 	class CEntityManager;
 
-	class IRenderPipeline
+	class SKYLICHT_API IRenderPipeline
 	{
 	public:
 		enum ERenderPipelineType

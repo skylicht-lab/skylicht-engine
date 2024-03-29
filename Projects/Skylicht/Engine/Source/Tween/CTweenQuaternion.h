@@ -4,7 +4,7 @@
 
 namespace Skylicht
 {
-	class CTweenQuaternion : public CTween
+	class SKYLICHT_API CTweenQuaternion : public CTween
 	{
 	protected:
 		core::quaternion m_value;

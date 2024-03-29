@@ -37,7 +37,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CIndirectLightingSystem : public IEntitySystem
+	class SKYLICHT_API CIndirectLightingSystem : public IEntitySystem
 	{
 	protected:
 		core::array<CIndirectLightingData*> m_entities;

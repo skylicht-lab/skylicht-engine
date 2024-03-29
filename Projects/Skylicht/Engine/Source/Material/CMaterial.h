@@ -31,7 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CMaterial : public IReferenceCounted
+	class SKYLICHT_API CMaterial : public IReferenceCounted
 	{
 	public:
 		struct SUniformTexture

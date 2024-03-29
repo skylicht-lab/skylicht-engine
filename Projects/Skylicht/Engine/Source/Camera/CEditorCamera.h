@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CEditorCamera :
+	class SKYLICHT_API CEditorCamera :
 		public CComponentSystem,
 		public IEventReceiver
 	{

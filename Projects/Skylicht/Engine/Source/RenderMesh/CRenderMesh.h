@@ -33,7 +33,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CRenderMesh : public CEntityHandler
+	class SKYLICHT_API CRenderMesh : public CEntityHandler
 	{
 	protected:
 		CEntity* m_root;

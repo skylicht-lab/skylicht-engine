@@ -33,7 +33,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CStringImp
+	class SKYLICHT_API CStringImp
 	{
 	public:
 		template <class T>

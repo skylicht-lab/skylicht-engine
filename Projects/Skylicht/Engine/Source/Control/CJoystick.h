@@ -30,7 +30,7 @@ namespace Skylicht
 {
 #define MAX_JOYSTICK_DEVICE	2
 
-	class CJoystick
+	class SKYLICHT_API CJoystick
 	{
 	public:
 		DECLARE_SINGLETON(CJoystick)

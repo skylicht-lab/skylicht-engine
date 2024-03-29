@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CShaderParams
+	class SKYLICHT_API CShaderParams
 	{
 	protected:
 		SVec4 m_shaderParam[MAX_SHADERPARAMS];

@@ -32,7 +32,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CObjectSerializable : public CValueProperty
+	class SKYLICHT_API CObjectSerializable : public CValueProperty
 	{
 		friend class CValueProperty;
 
@@ -141,7 +141,7 @@ namespace Skylicht
 
 	typedef CObjectSerializable* (*SerializableCreateInstance)();
 
-	class CSerializableActivator
+	class SKYLICHT_API CSerializableActivator
 	{
 	public:
 		DECLARE_SINGLETON(CSerializableActivator)

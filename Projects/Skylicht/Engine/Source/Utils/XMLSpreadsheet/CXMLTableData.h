@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CXMLTableData
+	class SKYLICHT_API CXMLTableData
 	{
 	protected:
 		std::vector<std::string> m_column;

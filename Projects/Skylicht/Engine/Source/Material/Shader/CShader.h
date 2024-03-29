@@ -123,7 +123,7 @@ namespace Skylicht
 		}
 	};
 
-	class IShaderCallback
+	class SKYLICHT_API IShaderCallback
 	{
 	public:
 		IShaderCallback()
@@ -139,7 +139,7 @@ namespace Skylicht
 		virtual void OnSetConstants(CShader* shader, SUniform* uniform, IMaterialRenderer* matRender, bool vertexShader) = 0;
 	};
 
-	class CShader : public CBaseShaderCallback
+	class SKYLICHT_API CShader : public CBaseShaderCallback
 	{
 	public:
 		enum EUIControlType

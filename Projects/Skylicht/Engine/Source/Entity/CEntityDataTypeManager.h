@@ -38,7 +38,7 @@ namespace Skylicht
 
 #define DATA_TYPE_INDEX(type) type##_DataTypeIndex
 
-	class CEntityDataTypeManager
+	class SKYLICHT_API CEntityDataTypeManager
 	{
 	public:
 

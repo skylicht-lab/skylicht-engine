@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CDeferredRP : public CBaseRP
+	class SKYLICHT_API CDeferredRP : public CBaseRP
 	{
 	protected:
 		static bool s_enableRenderIndirect;

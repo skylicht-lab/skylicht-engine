@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CVisibleData : public IEntityData
+	class SKYLICHT_API CVisibleData : public IEntityData
 	{
 	public:
 		bool SelfVisible;

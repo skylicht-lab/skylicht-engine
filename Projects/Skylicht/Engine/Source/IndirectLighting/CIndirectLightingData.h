@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CIndirectLightingData : public IEntityData
+	class SKYLICHT_API CIndirectLightingData : public IEntityData
 	{
 	public:
 		enum EType

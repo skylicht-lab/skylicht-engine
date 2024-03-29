@@ -48,7 +48,7 @@ namespace Skylicht
 		X2048
 	};
 
-	class CReflectionProbe : public CComponentSystem
+	class SKYLICHT_API CReflectionProbe : public CComponentSystem
 	{
 	protected:
 		video::ITexture* m_staticTexture;

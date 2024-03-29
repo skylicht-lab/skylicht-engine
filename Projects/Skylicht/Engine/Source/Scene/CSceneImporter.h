@@ -31,7 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CSceneImporter
+	class SKYLICHT_API CSceneImporter
 	{
 		static io::IXMLReader* s_reader;
 

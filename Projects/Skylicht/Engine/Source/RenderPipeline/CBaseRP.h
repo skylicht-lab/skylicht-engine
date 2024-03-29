@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CBaseRP : public IRenderPipeline
+	class SKYLICHT_API CBaseRP : public IRenderPipeline
 	{
 	protected:
 		IRenderPipeline* m_next;

@@ -31,7 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CGlyphFont :
+	class SKYLICHT_API CGlyphFont :
 		public CSpriteFrame,
 		public IFont
 	{

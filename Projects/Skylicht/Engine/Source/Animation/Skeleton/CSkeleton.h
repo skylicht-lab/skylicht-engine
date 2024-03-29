@@ -31,7 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CSkeleton
+	class SKYLICHT_API CSkeleton
 	{
 	public:
 		enum EAnimationType

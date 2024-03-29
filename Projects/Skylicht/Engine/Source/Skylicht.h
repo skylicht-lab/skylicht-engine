@@ -31,21 +31,21 @@ namespace irr
 
 namespace Skylicht
 {
-	void initSkylicht(IrrlichtDevice* device, bool server = false);
+	SKYLICHT_API void initSkylicht(IrrlichtDevice* device, bool server = false);
 
-	void releaseSkylicht();
+	SKYLICHT_API void releaseSkylicht();
 
-	void updateSkylicht();
+	SKYLICHT_API void updateSkylicht();
 
-	IrrlichtDevice* getIrrlichtDevice();
+	SKYLICHT_API IrrlichtDevice* getIrrlichtDevice();
 
-	IVideoDriver* getVideoDriver();
+	SKYLICHT_API IVideoDriver* getVideoDriver();
 
-	float getTimeStep();
+	SKYLICHT_API float getTimeStep();
 
-	void setTimeStep(float timestep);
+	SKYLICHT_API void setTimeStep(float timestep);
 
-	float getTotalTime();
+	SKYLICHT_API float getTotalTime();
 
-	void setTotalTime(float t);
+	SKYLICHT_API void setTotalTime(float t);
 }
