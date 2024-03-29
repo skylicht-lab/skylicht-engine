@@ -31,7 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CPrimitiveBaseRenderer : public IRenderSystem
+	class COMPONENT_API CPrimitiveBaseRenderer : public IRenderSystem
 	{
 	protected:
 		CMesh* m_mesh[CPrimiviteData::Count];

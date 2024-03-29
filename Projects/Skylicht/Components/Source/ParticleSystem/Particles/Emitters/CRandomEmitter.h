@@ -30,7 +30,7 @@ namespace Skylicht
 {
 	namespace Particle
 	{
-		class CRandomEmitter : public CEmitter
+		class COMPONENT_API CRandomEmitter : public CEmitter
 		{
 		public:
 			CRandomEmitter();

@@ -7,7 +7,7 @@
 
 namespace Skylicht
 {
-	class CGridPlaneRender : public IRenderSystem
+	class COMPONENT_API CGridPlaneRender : public IRenderSystem
 	{
 	protected:
 		CEntityGroup* m_group;

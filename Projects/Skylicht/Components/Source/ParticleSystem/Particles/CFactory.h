@@ -50,7 +50,7 @@ namespace Skylicht
 {
 	namespace Particle
 	{
-		class CFactory
+		class COMPONENT_API CFactory
 		{
 		protected:
 			std::vector<IRenderer*> m_renderers;

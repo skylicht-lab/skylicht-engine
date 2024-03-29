@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CBBTriangleSelector : public CTriangleSelector
+	class COLLISION_API CBBTriangleSelector : public CTriangleSelector
 	{
 	public:
 		CBBTriangleSelector(CEntity* entity);

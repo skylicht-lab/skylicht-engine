@@ -30,7 +30,7 @@ namespace Skylicht
 {
 	namespace Particle
 	{
-		class CSubGroup :
+		class COMPONENT_API CSubGroup :
 			public CGroup,
 			public IParticleCallback
 		{

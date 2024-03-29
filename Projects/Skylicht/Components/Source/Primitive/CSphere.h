@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CSphere : public CPrimitive
+	class COMPONENT_API CSphere : public CPrimitive
 	{
 	public:
 		CSphere();

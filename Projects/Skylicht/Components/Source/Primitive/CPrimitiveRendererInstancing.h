@@ -90,7 +90,7 @@ namespace Skylicht
 		IVertexBuffer* IndirectLighting;
 	};
 
-	class CPrimitiveRendererInstancing : public CPrimitiveBaseRenderer
+	class COMPONENT_API CPrimitiveRendererInstancing : public CPrimitiveBaseRenderer
 	{
 	protected:
 		CEntityGroup* m_group;

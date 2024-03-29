@@ -20,7 +20,8 @@ add_library(Collision ${ENGINE_SHARED_OR_STATIC_LIB}
 )
 
 if (BUILD_SHARED_LIBS)
-set_target_properties(Collision PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS true)
+	set_target_properties(Collision PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS true)
+	add_definitions(-DCOLLISION_EXPORTS)
 endif()
 
 target_precompiled_header(Collision ./Source/pch.cpp ${skylicht_collision})

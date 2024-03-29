@@ -30,7 +30,7 @@ namespace Skylicht
 {
 	namespace Particle
 	{
-		class CPoint : public CZone
+		class COMPONENT_API CPoint : public CZone
 		{
 		public:
 			CPoint();

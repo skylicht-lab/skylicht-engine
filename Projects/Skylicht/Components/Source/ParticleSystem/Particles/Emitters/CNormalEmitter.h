@@ -30,7 +30,7 @@ namespace Skylicht
 {
 	namespace Particle
 	{
-		class CNormalEmitter : public CEmitter
+		class COMPONENT_API CNormalEmitter : public CEmitter
 		{
 		protected:
 			bool m_inverted;

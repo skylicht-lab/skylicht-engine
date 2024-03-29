@@ -26,3 +26,4 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "SkylichtConfig.h"
 #include "SkylichtHeader.h"
+#include "ComponentsConfig.h"

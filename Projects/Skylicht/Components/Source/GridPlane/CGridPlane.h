@@ -5,7 +5,7 @@
 
 namespace Skylicht
 {
-	class CGridPlane : public CComponentSystem
+	class COMPONENT_API CGridPlane : public CComponentSystem
 	{
 	protected:
 		CGridPlaneData *m_gridData;

@@ -30,7 +30,7 @@ namespace Skylicht
 {
 	namespace Particle
 	{
-		class CVortexSystem : public ISystem
+		class COMPONENT_API CVortexSystem : public ISystem
 		{
 		protected:
 			core::vector3df m_position;

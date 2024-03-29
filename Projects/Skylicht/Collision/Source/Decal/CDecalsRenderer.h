@@ -30,7 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CDecalsRenderer : public IRenderSystem
+	class COLLISION_API CDecalsRenderer : public IRenderSystem
 	{
 	protected:
 		core::array<CDecalData*> m_decalData;

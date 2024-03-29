@@ -31,7 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CSpriteDrawData : public IEntityData
+	class COMPONENT_API CSpriteDrawData : public IEntityData
 	{
 	public:
 		CSpriteDrawData();

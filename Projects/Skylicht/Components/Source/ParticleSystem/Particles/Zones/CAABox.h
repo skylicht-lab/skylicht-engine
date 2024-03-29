@@ -30,7 +30,7 @@ namespace Skylicht
 {
 	namespace Particle
 	{
-		class CAABox : public CZone
+		class COMPONENT_API CAABox : public CZone
 		{
 		protected:
 			core::vector3df m_position;

@@ -28,15 +28,15 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	io::IXMLReader* CSceneImporter::s_reader = NULL;
-	std::string CSceneImporter::s_scenePath;
-	CScene* CSceneImporter::s_scene = NULL;
+	io::IXMLReader* g_sceneReader = NULL;
+	std::string g_sceneReaderPath;
+	CScene* g_scene = NULL;
 
-	int CSceneImporter::s_loadStep = 10;
-	int CSceneImporter::s_loading = 0;
+	int g_loadSceneStep = 10;
+	int g_loadingScene = 0;
 
-	std::list<CGameObject*> CSceneImporter::s_listObject;
-	std::list<CGameObject*>::iterator CSceneImporter::s_current;
+	std::list<CGameObject*> g_listGameObject;
+	std::list<CGameObject*>::iterator g_currentGameObject;
 
 	void CSceneImporter::buildComponent(CGameObject* object, io::IXMLReader* reader)
 	{
@@ -100,7 +100,7 @@ namespace Skylicht
 		std::stack<std::wstring> serializableTree;
 		std::stack<CContainerObject*> container;
 
-		s_listObject.clear();
+		g_listGameObject.clear();
 
 		CGameObject* currentObject = NULL;
 
@@ -121,7 +121,7 @@ namespace Skylicht
 						{
 							CZone* zone = scene->createZone();
 							container.push((CContainerObject*)zone);
-							s_listObject.push_back(zone);
+							g_listGameObject.push_back(zone);
 							currentObject = zone;
 						}
 						else if (attributeName == L"CContainerObject")
@@ -129,14 +129,14 @@ namespace Skylicht
 							CContainerObject* currentContainer = container.top();
 							CContainerObject* object = currentContainer->createContainerObject();
 							container.push(object);
-							s_listObject.push_back(object);
+							g_listGameObject.push_back(object);
 							currentObject = object;
 						}
 						else if (attributeName == L"CGameObject")
 						{
 							CContainerObject* currentContainer = container.top();
 							CGameObject* object = currentContainer->createEmptyObject();
-							s_listObject.push_back(object);
+							g_listGameObject.push_back(object);
 							currentObject = object;
 						}
 						else if (attributeName == L"Components")
@@ -172,7 +172,7 @@ namespace Skylicht
 			}
 		}
 
-		s_current = s_listObject.begin();
+		g_currentGameObject = g_listGameObject.begin();
 	}
 
 	void CSceneImporter::exportGameObject(CObjectSerializable* data, CContainerObject* target)
@@ -184,20 +184,20 @@ namespace Skylicht
 	{
 		// step 1
 		// build scene object
-		s_reader = getIrrlichtDevice()->getFileSystem()->createXMLReader(file);
-		if (s_reader == NULL)
+		g_sceneReader = getIrrlichtDevice()->getFileSystem()->createXMLReader(file);
+		if (g_sceneReader == NULL)
 			return false;
 
-		buildScene(scene, s_reader);
+		buildScene(scene, g_sceneReader);
 
 		// close
-		s_reader->drop();
+		g_sceneReader->drop();
 
 		// re-open the scene file
-		s_reader = getIrrlichtDevice()->getFileSystem()->createXMLReader(file);
-		s_scenePath = file;
-		s_scene = scene;
-		s_loading = 0;
+		g_sceneReader = getIrrlichtDevice()->getFileSystem()->createXMLReader(file);
+		g_sceneReaderPath = file;
+		g_scene = scene;
+		g_loadingScene = 0;
 
 		return true;
 	}
@@ -209,7 +209,7 @@ namespace Skylicht
 
 		int step = 0;
 
-		while (step < s_loadStep && reader->read())
+		while (step < g_loadSceneStep && reader->read())
 		{
 			switch (reader->getNodeType())
 			{
@@ -231,9 +231,9 @@ namespace Skylicht
 							attributeName == L"CContainerObject" ||
 							attributeName == L"CGameObject")
 						{
-							CGameObject* gameobject = dynamic_cast<CGameObject*>(*s_current);
-							++s_current;
-							++s_loading;
+							CGameObject* gameobject = dynamic_cast<CGameObject*>(*g_currentGameObject);
+							++g_currentGameObject;
+							++g_loadingScene;
 							++step;
 
 							std::string name = CStringImp::convertUnicodeToUTF8(attributeName.c_str());
@@ -253,31 +253,31 @@ namespace Skylicht
 			}
 		}
 
-		return s_current == s_listObject.end();
+		return g_currentGameObject == g_listGameObject.end();
 	}
 
 	float CSceneImporter::getLoadingPercent()
 	{
-		int size = (int)s_listObject.size();
-		return s_loading / (float)size;
+		int size = (int)g_listGameObject.size();
+		return g_loadingScene / (float)size;
 	}
 
 	bool CSceneImporter::updateLoadScene()
 	{
 		// step 2
 		// load object attribute
-		if (CSceneImporter::loadStep(s_scene, s_reader))
+		if (CSceneImporter::loadStep(g_scene, g_sceneReader))
 		{
 			// drop
-			if (s_reader)
+			if (g_sceneReader)
 			{
-				s_reader->drop();
-				s_reader = NULL;
+				g_sceneReader->drop();
+				g_sceneReader = NULL;
 			}
 
 			// final index search object
-			s_scene->updateIndexSearchObject();
-			s_scene = NULL;
+			g_scene->updateIndexSearchObject();
+			g_scene = NULL;
 			return true;
 		}
 

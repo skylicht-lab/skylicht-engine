@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CMeshTriangleSelector : public CTriangleSelector
+	class COLLISION_API CMeshTriangleSelector : public CTriangleSelector
 	{
 	public:
 		CMeshTriangleSelector(CEntity* entity);

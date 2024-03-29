@@ -30,7 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CDecalRenderData : public IEntityData
+	class COLLISION_API CDecalRenderData : public IEntityData
 	{
 	public:
 		ITexture* Texture;
@@ -44,7 +44,7 @@ namespace Skylicht
 
 	DECLARE_PRIVATE_DATA_TYPE_INDEX(CDecalRenderData);
 
-	class CDecalData : public IEntityData
+	class COLLISION_API CDecalData : public IEntityData
 	{
 	public:
 		core::vector3df Dimension;

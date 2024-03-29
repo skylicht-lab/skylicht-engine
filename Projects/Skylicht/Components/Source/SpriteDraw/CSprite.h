@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CSprite : public CComponentSystem
+	class COMPONENT_API CSprite : public CComponentSystem
 	{
 	protected:
 		CSpriteDrawData* m_data;

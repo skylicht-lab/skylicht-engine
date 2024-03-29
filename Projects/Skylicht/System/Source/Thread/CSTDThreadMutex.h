@@ -32,7 +32,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace SkylichtSystem
 {
-	class CSTDThreadMutex : public IMutex
+	class SYSTEM_SHARED_API CSTDThreadMutex : public IMutex
 	{
 	protected:
 		std::mutex m_mutex;
