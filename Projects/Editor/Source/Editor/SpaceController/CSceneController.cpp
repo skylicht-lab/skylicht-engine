@@ -49,7 +49,7 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		IMPLEMENT_SINGLETON(CSceneController)
+		IMPLEMENT_SINGLETON(CSceneController);
 
 		CSceneController::CSceneController() :
 			m_spaceHierarchy(NULL),
