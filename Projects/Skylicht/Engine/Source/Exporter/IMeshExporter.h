@@ -28,7 +28,7 @@ namespace Skylicht
 {
 	class CEntity;
 
-	class IMeshExporter
+	class SKYLICHT_API IMeshExporter
 	{
 	public:
 		IMeshExporter()

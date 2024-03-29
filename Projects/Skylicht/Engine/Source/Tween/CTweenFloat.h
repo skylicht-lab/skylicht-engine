@@ -4,7 +4,7 @@
 
 namespace Skylicht
 {
-	class CTweenFloat : public CTween
+	class SKYLICHT_API CTweenFloat : public CTween
 	{
 	public:
 		CTweenFloat(float begin, float end, float duration);

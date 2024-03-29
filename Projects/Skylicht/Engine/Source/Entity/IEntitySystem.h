@@ -30,7 +30,7 @@ namespace Skylicht
 {
 	class CEntityManager;
 
-	class IEntitySystem
+	class SKYLICHT_API IEntitySystem
 	{
 	public:
 		IEntitySystem()

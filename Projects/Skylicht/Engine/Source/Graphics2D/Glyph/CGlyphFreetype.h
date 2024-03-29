@@ -73,7 +73,7 @@ namespace Skylicht
 		}
 	};
 
-	class CGlyphFreetype
+	class SKYLICHT_API CGlyphFreetype
 	{
 	public:
 		DECLARE_SINGLETON(CGlyphFreetype)

@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CShadowMapRP :
+	class SKYLICHT_API CShadowMapRP :
 		public CBaseRP,
 		public IEventReceiver
 	{

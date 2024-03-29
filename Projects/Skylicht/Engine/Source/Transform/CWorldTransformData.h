@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CWorldTransformData : public IEntityData
+	class SKYLICHT_API CWorldTransformData : public IEntityData
 	{
 	public:
 		bool IsWorldTransform;

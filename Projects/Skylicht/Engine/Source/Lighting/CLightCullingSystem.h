@@ -32,7 +32,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CLightCullingSystem : public IRenderSystem
+	class SKYLICHT_API CLightCullingSystem : public IRenderSystem
 	{
 	protected:
 		core::array<CLightCullingData*> m_cullings;

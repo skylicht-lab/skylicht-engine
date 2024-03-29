@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CGUIExporter
+	class SKYLICHT_API CGUIExporter
 	{
 	public:
 		static bool save(const char* file, CCanvas* canvas);

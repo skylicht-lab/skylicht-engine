@@ -32,7 +32,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CMeshRenderSystem : public IRenderSystem
+	class SKYLICHT_API CMeshRenderSystem : public IRenderSystem
 	{
 	protected:
 		CGroupMesh* m_groupMesh;

@@ -30,7 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	class CScene;
-	class CZone : public CContainerObject
+	class SKYLICHT_API CZone : public CContainerObject
 	{
 	protected:
 		CEntityManager* m_entityManager;

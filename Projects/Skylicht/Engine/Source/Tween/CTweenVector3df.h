@@ -4,7 +4,7 @@
 
 namespace Skylicht
 {
-	class CTweenVector3df : public CTween
+	class SKYLICHT_API CTweenVector3df : public CTween
 	{
 	protected:
 		core::vector3df m_value;

@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CShaderDeferred : public IShaderCallback
+	class SKYLICHT_API CShaderDeferred : public IShaderCallback
 	{
 	public:
 		CShaderDeferred();

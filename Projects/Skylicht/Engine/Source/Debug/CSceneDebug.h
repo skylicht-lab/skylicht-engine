@@ -61,7 +61,7 @@ namespace Skylicht
 		SColor color;
 	};
 
-	class CSceneDebug
+	class SKYLICHT_API CSceneDebug
 	{
 	public:
 		DECLARE_SINGLETON(CSceneDebug)

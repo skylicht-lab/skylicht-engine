@@ -36,7 +36,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CEntityManager
+	class SKYLICHT_API CEntityManager
 	{
 	protected:
 		core::array<CEntity*> m_alives;

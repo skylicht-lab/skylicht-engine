@@ -30,7 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CAnimationManager
+	class SKYLICHT_API CAnimationManager
 	{
 	public:
 		DECLARE_SINGLETON(CAnimationManager)

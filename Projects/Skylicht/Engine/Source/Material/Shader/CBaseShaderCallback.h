@@ -30,7 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 
-	class CBaseShaderCallback : public video::IShaderConstantSetCallBack
+	class SKYLICHT_API CBaseShaderCallback : public video::IShaderConstantSetCallBack
 	{
 	protected:
 		int		m_materialRenderID;

@@ -40,7 +40,7 @@ namespace Skylicht
 		core::vector3df Corners[8];
 	};
 
-	class CCascadedShadowMaps
+	class SKYLICHT_API CCascadedShadowMaps
 	{
 	protected:
 		float m_lambda;

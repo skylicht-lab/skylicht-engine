@@ -68,7 +68,7 @@ namespace Skylicht
 		}
 	};
 
-	class CGUIAlignData : public IEntityData
+	class SKYLICHT_API CGUIAlignData : public IEntityData
 	{
 		friend class CGUILayoutSystem;
 

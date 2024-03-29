@@ -4,7 +4,7 @@
 
 namespace Skylicht
 {
-	class CTweenMatrix4 : public CTween
+	class SKYLICHT_API CTweenMatrix4 : public CTween
 	{
 	protected:
 		core::matrix4 m_value;

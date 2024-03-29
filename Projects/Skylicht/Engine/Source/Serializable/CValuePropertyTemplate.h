@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	template<class T>
-	class CValuePropertyTemplate : public CValueProperty
+	class SKYLICHT_API CValuePropertyTemplate : public CValueProperty
 	{
 	protected:
 		T m_value;
@@ -61,7 +61,7 @@ namespace Skylicht
 		}
 	};
 
-	class CIntProperty : public CValuePropertyTemplate<int>
+	class SKYLICHT_API CIntProperty : public CValuePropertyTemplate<int>
 	{
 	public:
 		int Min;
@@ -137,7 +137,7 @@ namespace Skylicht
 		}
 	};
 
-	class CUIntProperty : public CValuePropertyTemplate<u32>
+	class SKYLICHT_API CUIntProperty : public CValuePropertyTemplate<u32>
 	{
 	public:
 		u32 Max;
@@ -193,7 +193,7 @@ namespace Skylicht
 		}
 	};
 
-	class CFloatProperty : public CValuePropertyTemplate<float>
+	class SKYLICHT_API CFloatProperty : public CValuePropertyTemplate<float>
 	{
 	public:
 		float Min;
@@ -269,7 +269,7 @@ namespace Skylicht
 		}
 	};
 
-	class CStringProperty : public CValuePropertyTemplate<std::string>
+	class SKYLICHT_API CStringProperty : public CValuePropertyTemplate<std::string>
 	{
 	public:
 		CStringProperty() :
@@ -311,7 +311,7 @@ namespace Skylicht
 		}
 	};
 
-	class CFolderPathProperty : public CValuePropertyTemplate<std::string>
+	class SKYLICHT_API CFolderPathProperty : public CValuePropertyTemplate<std::string>
 	{
 	public:
 		CFolderPathProperty() :
@@ -353,7 +353,7 @@ namespace Skylicht
 		}
 	};
 
-	class CFilePathProperty : public CValuePropertyTemplate<std::string>
+	class SKYLICHT_API CFilePathProperty : public CValuePropertyTemplate<std::string>
 	{
 	public:
 		std::vector<std::string> Exts;
@@ -407,7 +407,7 @@ namespace Skylicht
 		}
 	};
 
-	class CGUIDResourceProperty : public CValuePropertyTemplate<std::string>
+	class SKYLICHT_API CGUIDResourceProperty : public CValuePropertyTemplate<std::string>
 	{
 	protected:
 		std::string m_guid;
@@ -453,7 +453,7 @@ namespace Skylicht
 		}
 	};
 
-	class CImageSourceProperty : public CGUIDResourceProperty
+	class SKYLICHT_API CImageSourceProperty : public CGUIDResourceProperty
 	{
 	public:
 		CImageSourceProperty() :
@@ -481,7 +481,7 @@ namespace Skylicht
 		}
 	};
 
-	class CFrameSourceProperty : public CGUIDResourceProperty
+	class SKYLICHT_API CFrameSourceProperty : public CGUIDResourceProperty
 	{
 	protected:
 		std::string m_sprite;
@@ -561,7 +561,7 @@ namespace Skylicht
 		}
 	};
 
-	class CBoolProperty : public CValuePropertyTemplate<bool>
+	class SKYLICHT_API CBoolProperty : public CValuePropertyTemplate<bool>
 	{
 	public:
 		CBoolProperty() :
@@ -598,7 +598,7 @@ namespace Skylicht
 		}
 	};
 
-	class CDateTimeProperty : public CValuePropertyTemplate<long>
+	class SKYLICHT_API CDateTimeProperty : public CValuePropertyTemplate<long>
 	{
 	public:
 		CDateTimeProperty() :
@@ -636,7 +636,7 @@ namespace Skylicht
 		}
 	};
 
-	class CVector3Property : public CValuePropertyTemplate<core::vector3df>
+	class SKYLICHT_API CVector3Property : public CValuePropertyTemplate<core::vector3df>
 	{
 	public:
 		CVector3Property() :
@@ -674,7 +674,7 @@ namespace Skylicht
 		}
 	};
 
-	class CQuaternionProperty : public CValuePropertyTemplate<core::quaternion>
+	class SKYLICHT_API CQuaternionProperty : public CValuePropertyTemplate<core::quaternion>
 	{
 	public:
 		CQuaternionProperty() :
@@ -712,7 +712,7 @@ namespace Skylicht
 		}
 	};
 
-	class CColorProperty : public CValuePropertyTemplate<video::SColor>
+	class SKYLICHT_API CColorProperty : public CValuePropertyTemplate<video::SColor>
 	{
 	public:
 		CColorProperty() :
@@ -750,7 +750,7 @@ namespace Skylicht
 		}
 	};
 
-	class CMatrixProperty : public CValuePropertyTemplate<core::matrix4>
+	class SKYLICHT_API CMatrixProperty : public CValuePropertyTemplate<core::matrix4>
 	{
 	public:
 		CMatrixProperty() :
@@ -788,7 +788,7 @@ namespace Skylicht
 		}
 	};
 
-	class CEnumPropertyData
+	class SKYLICHT_API CEnumPropertyData
 	{
 	public:
 		struct SEnumString

@@ -32,7 +32,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CLightProbeRender : public IRenderSystem
+	class SKYLICHT_API CLightProbeRender : public IRenderSystem
 	{
 	protected:
 		IMesh* ProbeMesh;

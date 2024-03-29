@@ -32,7 +32,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CSkinnedMesh : public CMesh
+	class SKYLICHT_API CSkinnedMesh : public CMesh
 	{
 	public:
 		struct SJoint

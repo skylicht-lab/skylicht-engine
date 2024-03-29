@@ -32,7 +32,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CLODSystem : public IRenderSystem
+	class SKYLICHT_API CLODSystem : public IRenderSystem
 	{
 	protected:
 		CEntityGroup* m_group;

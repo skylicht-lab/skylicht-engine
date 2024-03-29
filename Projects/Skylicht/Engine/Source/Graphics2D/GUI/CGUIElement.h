@@ -37,7 +37,7 @@ namespace Skylicht
 	class CCanvas;
 	class CGUIMask;
 
-	class CGUIElement
+	class SKYLICHT_API CGUIElement
 	{
 		friend class CCanvas;
 

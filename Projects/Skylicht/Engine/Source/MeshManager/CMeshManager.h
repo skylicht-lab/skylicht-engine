@@ -6,7 +6,7 @@
 
 namespace Skylicht
 {
-	class CMeshManager
+	class SKYLICHT_API CMeshManager
 	{
 	public:
 		DECLARE_SINGLETON(CMeshManager)

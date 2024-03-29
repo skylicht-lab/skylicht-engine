@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CCullingData : public IEntityData
+	class SKYLICHT_API CCullingData : public IEntityData
 	{
 	public:
 		enum ECulling

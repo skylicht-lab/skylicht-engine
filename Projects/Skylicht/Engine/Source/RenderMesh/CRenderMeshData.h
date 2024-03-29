@@ -31,7 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CRenderMeshData : public IEntityData
+	class SKYLICHT_API CRenderMeshData : public IEntityData
 	{
 	public:
 		static std::vector<std::string> ImportTextureFolder;

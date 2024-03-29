@@ -31,7 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CGradientBandInterpolation
+	class SKYLICHT_API CGradientBandInterpolation
 	{
 	public:
 		struct SSample

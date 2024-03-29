@@ -32,7 +32,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CVisibleSystem : public IEntitySystem
+	class SKYLICHT_API CVisibleSystem : public IEntitySystem
 	{
 	protected:
 		CEntityGroup* m_group;

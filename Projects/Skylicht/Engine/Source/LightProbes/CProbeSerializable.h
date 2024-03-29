@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CProbeSerializable : public CObjectSerializable
+	class SKYLICHT_API CProbeSerializable : public CObjectSerializable
 	{
 	public:
 		CMatrixProperty Transform;

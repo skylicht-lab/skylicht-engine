@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CFBXAnimLoader : public IAnimationImporter
+	class SKYLICHT_API CFBXAnimLoader : public IAnimationImporter
 	{
 	protected:
 

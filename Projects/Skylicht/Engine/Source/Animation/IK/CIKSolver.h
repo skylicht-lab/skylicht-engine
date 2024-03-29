@@ -26,7 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CIKSolver
+	class SKYLICHT_API CIKSolver
 	{
 	public:
 		CIKSolver();

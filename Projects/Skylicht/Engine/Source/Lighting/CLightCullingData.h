@@ -30,7 +30,7 @@ namespace Skylicht
 {
 	class CLight;
 
-	class CLightCullingData : public IEntityData
+	class SKYLICHT_API CLightCullingData : public IEntityData
 	{
 	public:
 		bool Visible;

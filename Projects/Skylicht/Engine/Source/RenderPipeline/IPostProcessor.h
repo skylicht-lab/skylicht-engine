@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class IPostProcessor
+	class SKYLICHT_API IPostProcessor
 	{
 	public:
 		IPostProcessor()

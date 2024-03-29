@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class IAnimationExporter
+	class SKYLICHT_API IAnimationExporter
 	{
 	public:
 		IAnimationExporter()

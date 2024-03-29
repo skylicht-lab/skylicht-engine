@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CFpsMoveCamera :
+	class SKYLICHT_API CFpsMoveCamera :
 		public CComponentSystem,
 		public IEventReceiver
 	{

@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CCamera : public CComponentSystem
+	class SKYLICHT_API CCamera : public CComponentSystem
 	{
 	public:
 		enum ECameraProjection

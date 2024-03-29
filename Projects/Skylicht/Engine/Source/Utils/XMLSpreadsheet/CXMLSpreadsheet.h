@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CXMLSpreadsheet
+	class SKYLICHT_API CXMLSpreadsheet
 	{
 	public:
 		struct SCell

@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CReflectionProbeData : public IEntityData
+	class SKYLICHT_API CReflectionProbeData : public IEntityData
 	{
 	public:
 		ITexture* ReflectionTexture;

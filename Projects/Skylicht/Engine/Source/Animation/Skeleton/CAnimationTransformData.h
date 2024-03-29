@@ -31,7 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CAnimationTransformData : public IEntityData
+	class SKYLICHT_API CAnimationTransformData : public IEntityData
 	{
 	public:
 		std::string Name;

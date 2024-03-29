@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class IFont
+	class SKYLICHT_API IFont
 	{
 	public:
 		IFont() {}

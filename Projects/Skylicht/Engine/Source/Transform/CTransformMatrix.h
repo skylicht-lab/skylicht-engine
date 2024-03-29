@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CTransformMatrix : public CTransformEuler
+	class SKYLICHT_API CTransformMatrix : public CTransformEuler
 	{
 	protected:
 

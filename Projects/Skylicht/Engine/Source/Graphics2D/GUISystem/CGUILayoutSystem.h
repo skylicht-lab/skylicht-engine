@@ -32,7 +32,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CGUILayoutSystem : public IEntitySystem
+	class SKYLICHT_API CGUILayoutSystem : public IEntitySystem
 	{
 	protected:
 		CFastArray<CWorldTransformData*> m_worldTransforms;

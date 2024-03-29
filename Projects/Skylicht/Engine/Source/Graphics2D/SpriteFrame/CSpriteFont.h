@@ -35,7 +35,7 @@ namespace Skylicht
 	/// https://www.angelcode.com/products/bmfont/
 	/// To generate the font sprite
 	/// </summary>
-	class CSpriteFont :
+	class SKYLICHT_API CSpriteFont :
 		public CSpriteFrame,
 		public IFont
 	{

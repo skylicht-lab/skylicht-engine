@@ -39,7 +39,7 @@ namespace Skylicht
 	class CEntity;
 	class CEntityManager;
 
-	class CGameObject
+	class SKYLICHT_API CGameObject
 	{
 		friend class CDependentComponent;
 

@@ -30,7 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CLightProbes : public CEntityHandler
+	class SKYLICHT_API CLightProbes : public CEntityHandler
 	{
 	protected:
 

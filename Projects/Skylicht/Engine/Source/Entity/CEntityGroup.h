@@ -31,7 +31,7 @@ namespace Skylicht
 {
 	class CEntityManager;
 
-	class CEntityGroup
+	class SKYLICHT_API CEntityGroup
 	{
 	protected:
 		core::array<u32> m_dataTypes;

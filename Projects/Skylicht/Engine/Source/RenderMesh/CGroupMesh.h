@@ -27,7 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CGroupMesh : public CEntityGroup
+	class SKYLICHT_API CGroupMesh : public CEntityGroup
 	{
 	protected:
 		CFastArray<CEntity*> m_staticMesh;

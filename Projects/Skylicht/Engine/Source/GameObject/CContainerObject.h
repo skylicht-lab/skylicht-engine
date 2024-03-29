@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CContainerObject : public CGameObject
+	class SKYLICHT_API CContainerObject : public CGameObject
 	{
 	protected:
 		ArrayGameObject m_childs;

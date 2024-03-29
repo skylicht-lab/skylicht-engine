@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CCullingBBoxData : public IEntityData
+	class SKYLICHT_API CCullingBBoxData : public IEntityData
 	{
 	public:
 		core::aabbox3df BBox;

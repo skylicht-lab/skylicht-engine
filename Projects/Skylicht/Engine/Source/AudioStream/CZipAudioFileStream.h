@@ -9,7 +9,7 @@
 
 namespace Skylicht
 {
-	class CZipAudioFileStreamCursor : public SkylichtAudio::IStreamCursor
+	class SKYLICHT_API CZipAudioFileStreamCursor : public SkylichtAudio::IStreamCursor
 	{
 	protected:
 		io::IReadFile *m_file;
@@ -36,7 +36,7 @@ namespace Skylicht
 		}
 	};
 
-	class CZipAudioFileStream : public SkylichtAudio::IStream
+	class SKYLICHT_API CZipAudioFileStream : public SkylichtAudio::IStream
 	{
 	protected:
 		std::string		m_fileName;

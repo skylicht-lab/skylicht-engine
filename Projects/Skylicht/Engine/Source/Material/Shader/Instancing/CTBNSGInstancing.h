@@ -31,7 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CTBNSGInstancing : public IShaderInstancing
+	class SKYLICHT_API CTBNSGInstancing : public IShaderInstancing
 	{
 	public:
 		CTBNSGInstancing();

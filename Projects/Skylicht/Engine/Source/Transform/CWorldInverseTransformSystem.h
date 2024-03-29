@@ -31,7 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CWorldInverseTransformSystem : public IEntitySystem
+	class SKYLICHT_API CWorldInverseTransformSystem : public IEntitySystem
 	{
 	protected:
 		CEntityGroup* m_group;

@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CConsoleLog
+	class SKYLICHT_API CConsoleLog
 	{
 	public:
 		DECLARE_SINGLETON(CConsoleLog)

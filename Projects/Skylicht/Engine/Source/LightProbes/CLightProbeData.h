@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CLightProbeData : public IEntityData
+	class SKYLICHT_API CLightProbeData : public IEntityData
 	{
 	public:
 		core::vector3df SH[9];

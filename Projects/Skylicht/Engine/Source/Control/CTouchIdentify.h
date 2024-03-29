@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CTouchIdentify
+	class SKYLICHT_API CTouchIdentify
 	{
 	public:
 		enum ETouchIdentify

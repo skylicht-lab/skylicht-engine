@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CPolygonDrawData
+	class SKYLICHT_API CPolygonDrawData
 	{
 	public:
 		IMeshBuffer* PolygonBuffer;

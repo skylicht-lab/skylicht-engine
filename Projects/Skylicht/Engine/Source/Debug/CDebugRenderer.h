@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CDebugRenderer : public IRenderSystem
+	class SKYLICHT_API CDebugRenderer : public IRenderSystem
 	{
 	protected:
 		CLineDrawData* m_drawData;

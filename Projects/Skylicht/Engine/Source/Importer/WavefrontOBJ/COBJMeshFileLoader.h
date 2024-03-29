@@ -67,7 +67,7 @@ namespace Skylicht
 		bool RecalculateNormals;
 	};
 
-	class COBJMeshFileLoader : public CBaseMeshImporter
+	class SKYLICHT_API COBJMeshFileLoader : public CBaseMeshImporter
 	{
 	protected:
 		core::array<SObjMtl*> m_materials;

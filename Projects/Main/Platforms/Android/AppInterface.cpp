@@ -31,6 +31,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "BuildConfig/CBuildConfig.h"
 
+void installApplication(const std::vector<std::string>& argv);
+
 extern "C" {
 
 	bool g_appRun = false;
@@ -44,8 +46,6 @@ extern "C" {
 	int g_height = -1;
 
 	void applicationExitApp();
-
-	void installApplication(const std::vector<std::string>& argv);
 
 	void applicationInitApp(int width, int height)
 	{

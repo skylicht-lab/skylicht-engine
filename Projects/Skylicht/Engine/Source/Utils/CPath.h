@@ -26,7 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CPath
+	class SKYLICHT_API CPath
 	{
 	public:
 		static std::string getFileName(const std::string& path);

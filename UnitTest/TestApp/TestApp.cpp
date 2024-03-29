@@ -9,6 +9,8 @@ using namespace video;
 using namespace io;
 using namespace gui;
 
+void installApplication(const std::vector<std::string>& argv);
+
 CApplication *g_mainApp = NULL;
 irr::IrrlichtDevice *g_device = NULL;
 
@@ -32,6 +34,10 @@ int main(int, char**)
 	g_device->setWindowCaption(L"Skylicht Test Demo");
 
 	g_mainApp->initApplication(g_device);
+
+	installApplication(g_mainApp->getParams());
+
+	g_mainApp->onInit();
 
 	IVideoDriver* driver = g_device->getVideoDriver();
 	while (g_device->run())

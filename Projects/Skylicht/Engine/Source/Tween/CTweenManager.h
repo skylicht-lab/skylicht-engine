@@ -11,7 +11,7 @@
 
 namespace Skylicht
 {
-	class CTweenManager
+	class SKYLICHT_API CTweenManager
 	{
 	public:
 		DECLARE_SINGLETON(CTweenManager)

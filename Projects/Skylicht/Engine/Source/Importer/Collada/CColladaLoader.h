@@ -275,7 +275,7 @@ namespace Skylicht
 		}
 	};
 
-	class CColladaLoader : public CBaseMeshImporter
+	class SKYLICHT_API CColladaLoader : public CBaseMeshImporter
 	{
 	public:
 		static bool s_fixUV;

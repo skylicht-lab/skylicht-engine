@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CLightmapData : public IEntityData
+	class SKYLICHT_API CLightmapData : public IEntityData
 	{
 	public:
 		ITexture* LightmapTexture;
