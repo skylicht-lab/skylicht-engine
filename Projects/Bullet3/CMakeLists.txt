@@ -50,7 +50,7 @@ endif()
 
 if (BUILD_SHARED_LIBS)
 if (BUILD_LINUX OR BUILD_MACOS)
-add_compile_options(-fPic)
+add_compile_options(-fpic)
 endif()
 endif()
 
