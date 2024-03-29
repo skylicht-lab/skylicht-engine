@@ -12,4 +12,6 @@
 #include <math.h>
 #include <string.h>
 
+#include "SkylichtAudioAPI.h"
+
 // TODO: reference additional headers your program requires here

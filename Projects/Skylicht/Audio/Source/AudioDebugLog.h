@@ -27,7 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace SkylichtAudio
 {
-	void printLog(const char *fmt, ...);
+	AUDIO_API void printLog(const char *fmt, ...);
 }
 
 #endif

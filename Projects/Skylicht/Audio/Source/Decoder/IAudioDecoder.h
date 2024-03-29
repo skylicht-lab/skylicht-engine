@@ -40,7 +40,7 @@ namespace SkylichtAudio
 		EndStream,
 	};
 
-	class IAudioDecoder
+	class AUDIO_API IAudioDecoder
 	{
 	public:
 		enum EDecoderType

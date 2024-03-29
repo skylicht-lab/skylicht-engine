@@ -10,7 +10,7 @@ namespace SkylichtAudio
 {
 	class COnlineMemoryStream;
 
-	class COnlineMemoryStreamCursor : public IStreamCursor
+	class AUDIO_API COnlineMemoryStreamCursor : public IStreamCursor
 	{
 	public:
 		int m_pos;
@@ -29,7 +29,7 @@ namespace SkylichtAudio
 		virtual void trim();
 	};
 
-	class COnlineMemoryStream : public IStream
+	class AUDIO_API COnlineMemoryStream : public IStream
 	{
 	protected:
 		unsigned char* m_buffer;
