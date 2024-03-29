@@ -26,18 +26,31 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #if defined(_WIN32) || defined(_WIN64) || defined(WIN32) || defined(WIN64)
 
-// Visual studio
 #ifdef _SKYLICHT_STATIC_LIB_
 	#define SKYLICHT_API
-	#define SKYLICHT_EXPORTS
+	#define SKYLICHT_EXPORT
 #else
-	#define SKYLICHT_API
 
+#ifdef _MSC_VER 
+	// Visual studio
+	#define SKYLICHT_API
 	#ifdef SKYLICHT_EXPORTS
+	#define SKYLICHT_EXPORT __declspec(dllexport)
+	#else
+	#define SKYLICHT_EXPORT __declspec(dllimport)
+	#endif
+
+#else
+	// Cygwin & MinGW
+	#ifdef SKYLICHT_EXPORTS
+		#define SKYLICHT_API __declspec(dllexport)
 		#define SKYLICHT_EXPORT __declspec(dllexport)
 	#else
+		#define SKYLICHT_API __declspec(dllimport)
 		#define SKYLICHT_EXPORT __declspec(dllimport)
 	#endif
+#endif
+
 #endif
 
 #else
