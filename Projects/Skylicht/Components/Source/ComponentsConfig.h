@@ -27,11 +27,13 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #if defined(_WIN32) || defined(_WIN64) || defined(WIN32) || defined(WIN64)
 
-// Visual studio
 #ifdef _SKYLICHT_STATIC_LIB_
 	#define COMPONENT_API
 	#define COMPONENT_EXPORT
 #else
+
+#ifdef _MSC_VER
+	// Visual studio
 	#define COMPONENT_API
 
 	#ifdef COMPONENTS_EXPORTS
@@ -39,6 +41,17 @@ https://github.com/skylicht-lab/skylicht-engine
 	#else
 	#define COMPONENT_EXPORT __declspec(dllimport)
 	#endif
+#else
+	// Cygwin & MinGW
+	#ifdef COMPONENTS_EXPORTS
+		#define COMPONENT_API __declspec(dllexport)
+		#define COMPONENT_EXPORT __declspec(dllexport)
+	#else
+		#define COMPONENT_API __declspec(dllimport)
+		#define COMPONENT_EXPORT __declspec(dllimport)
+	#endif
+#endif
+
 #endif
 
 
