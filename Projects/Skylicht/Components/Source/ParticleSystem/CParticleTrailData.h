@@ -34,7 +34,7 @@ namespace Skylicht
 {
 	namespace Particle
 	{
-		class CParticleTrailData : public IEntityData
+		class COMPONENT_API CParticleTrailData : public IEntityData
 		{
 		public:
 			core::array<CParticleTrail*> Trails;

@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CPrimitive : public CEntityHandler
+	class COMPONENT_API CPrimitive : public CEntityHandler
 	{
 	protected:
 		CPrimiviteData::EPrimitive m_type;

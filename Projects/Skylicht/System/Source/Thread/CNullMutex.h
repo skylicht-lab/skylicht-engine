@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace SkylichtSystem
 {
-	class CNullMutex : public IMutex
+	class SYSTEM_SHARED_API CNullMutex : public IMutex
 	{
 	protected:
 

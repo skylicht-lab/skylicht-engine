@@ -31,7 +31,7 @@ namespace Skylicht
 {
 	namespace Particle
 	{
-		class CParticleTrailComponent : public CComponentSystem
+		class COMPONENT_API CParticleTrailComponent : public CComponentSystem
 		{
 		protected:
 			CParticleTrailData *m_data;

@@ -30,7 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CSkyBox : public CComponentSystem
+	class COMPONENT_API CSkyBox : public CComponentSystem
 	{
 	protected:
 		CSkyBoxData* m_skyboxData;

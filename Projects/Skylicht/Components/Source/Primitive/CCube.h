@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CCube : public CPrimitive
+	class COMPONENT_API CCube : public CPrimitive
 	{
 	public:
 		CCube();

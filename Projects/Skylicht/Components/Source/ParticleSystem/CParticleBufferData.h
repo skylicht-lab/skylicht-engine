@@ -33,7 +33,7 @@ namespace Skylicht
 {
 	namespace Particle
 	{
-		class CParticleBufferData : public IEntityData
+		class COMPONENT_API CParticleBufferData : public IEntityData
 		{
 		public:
 			core::array<CGroup*> Groups;

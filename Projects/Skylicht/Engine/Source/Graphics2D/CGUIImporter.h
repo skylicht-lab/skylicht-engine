@@ -30,20 +30,6 @@ namespace Skylicht
 {
 	class SKYLICHT_API CGUIImporter
 	{
-		static io::IXMLReader* s_reader;
-
-		static std::string s_guiPath;
-
-		static CCanvas* s_canvas;
-
-		static int s_loadStep;
-
-		static int s_loading;
-
-		static std::list<CGUIElement*> s_listObject;
-
-		static std::list<CGUIElement*>::iterator s_current;
-
 	public:
 		static bool beginImport(const char* file, CCanvas* canvas);
 

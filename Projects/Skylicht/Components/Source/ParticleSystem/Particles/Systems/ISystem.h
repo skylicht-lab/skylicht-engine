@@ -31,7 +31,7 @@ namespace Skylicht
 		class CParticle;
 		class CGroup;
 
-		class ISystem
+		class COMPONENT_API ISystem
 		{
 		protected:
 			bool m_enable;

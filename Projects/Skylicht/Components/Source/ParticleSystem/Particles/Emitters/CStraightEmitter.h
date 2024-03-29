@@ -30,7 +30,7 @@ namespace Skylicht
 {
 	namespace Particle
 	{
-		class CStraightEmitter : public CEmitter
+		class COMPONENT_API CStraightEmitter : public CEmitter
 		{
 		protected:
 			core::vector3df m_direction;

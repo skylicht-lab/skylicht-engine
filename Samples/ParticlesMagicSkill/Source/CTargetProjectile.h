@@ -1,5 +1,6 @@
 #pragma once
 
+#include "SkylichtEngine.h"
 #include "ParticleSystem/Particles/CGroup.h"
 #include "ParticleSystem/Particles/Systems/ISystem.h"
 

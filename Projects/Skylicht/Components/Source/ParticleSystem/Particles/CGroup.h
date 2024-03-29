@@ -59,7 +59,7 @@ namespace Skylicht
 			}
 		};
 
-		class IParticleCallback
+		class COMPONENT_API IParticleCallback
 		{
 		public:
 			IParticleCallback()
@@ -98,7 +98,7 @@ namespace Skylicht
 			}
 		};
 
-		class CGroup
+		class COMPONENT_API CGroup
 		{
 		protected:
 			core::array<CParticle> m_particles;

@@ -30,7 +30,7 @@ namespace Skylicht
 {
 	namespace Particle
 	{
-		class CParticleSystem : public ISystem
+		class COMPONENT_API CParticleSystem : public ISystem
 		{
 		public:
 			CParticleSystem();

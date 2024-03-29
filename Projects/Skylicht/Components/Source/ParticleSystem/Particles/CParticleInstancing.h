@@ -50,7 +50,7 @@ namespace Skylicht
 			}
 		};
 
-		class CParticleInstancing
+		class COMPONENT_API CParticleInstancing
 		{
 		protected:
 			IMeshBuffer* m_meshBuffer;

@@ -33,20 +33,6 @@ namespace Skylicht
 {
 	class SKYLICHT_API CSceneImporter
 	{
-		static io::IXMLReader* s_reader;
-
-		static std::string s_scenePath;
-
-		static CScene* s_scene;
-
-		static int s_loadStep;
-
-		static int s_loading;
-
-		static std::list<CGameObject*> s_listObject;
-
-		static std::list<CGameObject*>::iterator s_current;
-
 		static void buildComponent(CGameObject* object, io::IXMLReader* xmlReader);
 
 		static void buildScene(CScene* scene, io::IXMLReader* xmlReader);

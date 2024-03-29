@@ -19,7 +19,8 @@ setup_project_group("${skylicht_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 add_library(Engine ${ENGINE_SHARED_OR_STATIC_LIB} ${skylicht_source})
 
 if (BUILD_SHARED_LIBS)
-add_definitions(-DSKYLICHT_EXPORTS)
+	set_target_properties(Engine PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS true)
+	add_definitions(-DSKYLICHT_EXPORTS)
 endif()
 
 target_precompiled_header(Engine ./Source/pch.cpp ${skylicht_source})

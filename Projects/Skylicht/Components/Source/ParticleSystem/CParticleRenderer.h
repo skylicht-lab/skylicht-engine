@@ -39,7 +39,7 @@ namespace Skylicht
 {
 	namespace Particle
 	{
-		class CParticleRenderer : public IRenderSystem
+		class COMPONENT_API CParticleRenderer : public IRenderSystem
 		{
 		protected:
 			CEntityGroup* m_group;

@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class COctreeNode
+	class COLLISION_API COctreeNode
 	{
 	public:
 		//! Triangle index of CCollisionNode

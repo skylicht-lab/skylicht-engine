@@ -30,7 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CPrimiviteData : public IEntityData
+	class COMPONENT_API CPrimiviteData : public IEntityData
 	{
 	public:
 		enum EPrimitive

@@ -24,21 +24,20 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#if defined(_WIN32) || defined(_WIN64) || defined(WIN32) || defined(WIN64) || defined(CYGWIN)
+#if defined(_WIN32) || defined(_WIN64) || defined(WIN32) || defined(WIN64)
 
-// WINDOW
+// Visual studio
 #ifdef _SKYLICHT_STATIC_LIB_
-
-#define SKYLICHT_API
-
+	#define SKYLICHT_API
+	#define SKYLICHT_EXPORTS
 #else
+	#define SKYLICHT_API
 
-#ifdef SKYLICHT_EXPORTS
-#define SKYLICHT_API __declspec(dllexport)
-#else
-#define SKYLICHT_API __declspec(dllimport)
-#endif
-
+	#ifdef SKYLICHT_EXPORTS
+		#define SKYLICHT_EXPORT __declspec(dllexport)
+	#else
+		#define SKYLICHT_EXPORT __declspec(dllimport)
+	#endif
 #endif
 
 #else
@@ -46,9 +45,11 @@ https://github.com/skylicht-lab/skylicht-engine
 // GCC or OTHER
 // Force symbol export in shared libraries built with gcc.
 #if (__GNUC__ >= 4) && !defined(_SKYLICHT_STATIC_LIB_) && defined(SKYLICHT_EXPORTS)
-#define SKYLICHT_API __attribute__ ((visibility("default")))
+	#define SKYLICHT_API __attribute__ ((visibility("default")))
+	#define SKYLICHT_EXPORT __attribute__ ((visibility("default")))
 #else
-#define SKYLICHT_API
+	#define SKYLICHT_API
+	#define SKYLICHT_EXPORT
 #endif
 
 #endif

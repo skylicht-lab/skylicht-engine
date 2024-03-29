@@ -2,10 +2,10 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2012 - 2019 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -24,30 +24,32 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "GameObject/CGameObject.h"
-#include "Entity/CEntity.h"
-#include "CTriangleSelector.h"
 
-namespace Skylicht
-{
-	class COLLISION_API CCollisionNode
-	{
-	public:
-		CEntity* Entity;
+#if defined(_WIN32) || defined(_WIN64) || defined(WIN32) || defined(WIN64) || defined(CYGWIN)
 
-		CGameObject* GameObject;
+// WINDOW
+#ifdef _SKYLICHT_STATIC_LIB_
 
-		CTriangleSelector* Selector;
+#define SYSTEM_SHARED_API
 
-		//! Triangles that calculated World Transform
-		core::array<core::triangle3df> Triangles;
+#else
 
-	public:
+#ifdef SYSTEM_EXPORTS
+#define SYSTEM_SHARED_API __declspec(dllexport)
+#else
+#define SYSTEM_SHARED_API __declspec(dllimport)
+#endif
 
-		CCollisionNode(CGameObject* gameObject, CEntity* entity, CTriangleSelector* selector);
+#endif
 
-		virtual ~CCollisionNode();
+#else
 
-		void updateTransform();
-	};
-}
+// GCC or OTHER
+// Force symbol export in shared libraries built with gcc.
+#if (__GNUC__ >= 4) && !defined(_SKYLICHT_STATIC_LIB_) && defined(AUDIO_EXPORTS)
+#define SYSTEM_SHARED_API __attribute__ ((visibility("default")))
+#else
+#define SYSTEM_SHARED_API
+#endif
+
+#endif

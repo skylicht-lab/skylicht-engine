@@ -33,7 +33,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CSpriteRenderer : public IRenderSystem
+	class COMPONENT_API CSpriteRenderer : public IRenderSystem
 	{
 	protected:
 		IMeshBuffer* m_meshBuffer;

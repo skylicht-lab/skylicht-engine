@@ -53,7 +53,7 @@ namespace Skylicht
 			}
 		};
 
-		class CEmitter
+		class COMPONENT_API CEmitter
 		{
 		protected:
 			int m_lastTank;

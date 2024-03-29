@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CPlane : public CPrimitive
+	class COMPONENT_API CPlane : public CPrimitive
 	{
 	public:
 		CPlane();

@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "pch.h"
+#include "ComponentsConfig.h"
 #include "Material/CMaterial.h"
 
 namespace Skylicht
@@ -37,7 +37,7 @@ namespace Skylicht
 			BillboardAddtive
 		};
 
-		class IRenderer
+		class COMPONENT_API IRenderer
 		{
 		protected:
 			ERenderer m_type;

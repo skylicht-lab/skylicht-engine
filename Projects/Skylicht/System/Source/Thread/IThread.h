@@ -24,9 +24,11 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "SkylichtSystemAPI.h"
+
 namespace SkylichtSystem
 {
-	class IThreadCallback
+	class SYSTEM_SHARED_API IThreadCallback
 	{
 	public:
 		IThreadCallback()
@@ -50,7 +52,7 @@ namespace SkylichtSystem
 	};
 
 
-	class IThread
+	class SYSTEM_SHARED_API IThread
 	{
 	protected:
 		IThreadCallback *m_callback;

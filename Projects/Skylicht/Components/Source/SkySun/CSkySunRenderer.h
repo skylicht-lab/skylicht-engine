@@ -36,7 +36,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CSkySunRender : public IRenderSystem
+	class COMPONENT_API CSkySunRender : public IRenderSystem
 	{
 	protected:
 		CEntityGroup* m_group;

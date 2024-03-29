@@ -33,7 +33,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CSkySunData : public IEntityData
+	class COMPONENT_API CSkySunData : public IEntityData
 	{
 	public:
 		IMeshBuffer* Buffer;
