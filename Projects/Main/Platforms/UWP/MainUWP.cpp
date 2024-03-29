@@ -18,6 +18,8 @@ using namespace Windows::Graphics::Display;
 CApplication *m_application = NULL;
 irr::IrrlichtDevice *m_device = NULL;
 
+void installApplication(const std::vector<std::string>& argv);
+
 // The main function is only used to initialize our IFrameworkView class.
 [Platform::MTAThread]
 int main(Platform::Array<Platform::String^>^)
@@ -185,6 +187,8 @@ void App::Load(Platform::String^ entryPoint)
 	{
 		m_application->initApplication(m_device);
 		m_application->setLimitFPS(60);
+		installApplication(m_application->getParams());
+		m_application->onInit();
 	}
 }
 

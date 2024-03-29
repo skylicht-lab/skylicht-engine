@@ -45,6 +45,8 @@ extern "C" {
 
 	void applicationExitApp();
 
+	void installApplication(const std::vector<std::string>& argv);
+
 	void applicationInitApp(int width, int height)
 	{
 		if (g_width == -1 || g_height == -1)
@@ -89,6 +91,11 @@ extern "C" {
 			// run app
 			g_appRun = true;
 			g_appRelease = false;
+
+			// install app
+			installApplication(g_myApp->getParams());
+			
+			g_myApp->onInit();
 
 			__android_log_print(ANDROID_LOG_INFO, JNI_APPNAME, "Init Application Success");
 		}

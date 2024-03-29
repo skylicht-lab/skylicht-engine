@@ -30,7 +30,7 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		IMPLEMENT_SINGLETON(CCopyPaste)
+		IMPLEMENT_SINGLETON(CCopyPaste);
 
 		CCopyPaste::CCopyPaste()
 		{
