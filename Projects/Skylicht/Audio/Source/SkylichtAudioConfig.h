@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _SKYLICHT_AUDIO_CONFIG_
-#define _SKYLICHT_AUDIO_CONFIG_
+#pragma once
 
 #if !defined(__EMSCRIPTEN__) && !defined(IOS) && !defined(MACOS)
 // iOS & MacOS can not change the duration length & buffer size, so we dont use multithread
@@ -51,6 +50,3 @@ https://github.com/skylicht-lab/skylicht-engine
 #endif
 #endif
 
-
-
-#endif

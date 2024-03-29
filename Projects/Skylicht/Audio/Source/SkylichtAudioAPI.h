@@ -22,12 +22,34 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _SKYLICHT_AUDIO_H_
-#define _SKYLICHT_AUDIO_H_
+#pragma once
 
-#include "Thread/IMutex.h"
-#include "Thread/IThread.h"
-#include "SkylichtAudioAPI.h"
-#include "Engine/CAudioEngine.h"
+
+#if defined(_WIN32) || defined(_WIN64) || defined(WIN32) || defined(WIN64) || defined(CYGWIN)
+
+// WINDOW
+#ifdef _SKYLICHT_STATIC_LIB_
+
+#define AUDIO_API
+
+#else
+
+#ifdef AUDIO_EXPORTS
+#define AUDIO_API __declspec(dllexport)
+#else
+#define AUDIO_API __declspec(dllimport)
+#endif
+
+#endif
+
+#else
+
+// GCC or OTHER
+// Force symbol export in shared libraries built with gcc.
+#if (__GNUC__ >= 4) && !defined(_SKYLICHT_STATIC_LIB_) && defined(AUDIO_EXPORTS)
+#define AUDIO_API __attribute__ ((visibility("default")))
+#else
+#define AUDIO_API
+#endif
 
 #endif

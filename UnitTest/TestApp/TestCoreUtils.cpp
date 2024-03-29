@@ -1,6 +1,7 @@
 #include "Base.hh"
 #include "TestCoreUtils.h"
 
+#include "SkylichtConfig.h"
 #include "Utils/CStringImp.h"
 #include "Utils/CPath.h"
 #include "Utils/CActivator.h"

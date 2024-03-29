@@ -30,7 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace SkylichtAudio
 {
 
-	class IStreamFactory
+	class AUDIO_API IStreamFactory
 	{
 	public:
 		virtual ~IStreamFactory()

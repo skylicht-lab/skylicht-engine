@@ -34,7 +34,7 @@ using namespace SkylichtSystem;
 
 namespace SkylichtAudio
 {
-	class CAudioReader
+	class AUDIO_API CAudioReader
 	{
 	protected:
 		bool m_isError;

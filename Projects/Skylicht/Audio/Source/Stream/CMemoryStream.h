@@ -30,7 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace SkylichtAudio
 {
 
-	class CMemoryStreamCursor : public IStreamCursor
+	class AUDIO_API CMemoryStreamCursor : public IStreamCursor
 	{
 	public:
 		unsigned char *m_buffer;
@@ -49,7 +49,7 @@ namespace SkylichtAudio
 		virtual bool readyReadData(int len);
 	};
 
-	class CMemoryStream : public IStream
+	class AUDIO_API CMemoryStream : public IStream
 	{
 	protected:
 		unsigned char *m_buffer;
