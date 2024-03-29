@@ -9,6 +9,12 @@ file(GLOB_RECURSE crypto_source
 	./Source/*.h)
 setup_project_group("${crypto_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 
+if (BUILD_SHARED_LIBS)
+if (BUILD_LINUX OR BUILD_MACOS)
+add_compile_options(-fPic)
+endif()
+endif()
+
 add_library(CryptoLib STATIC ${crypto_source})
 
 set_target_properties(CryptoLib PROPERTIES VERSION ${SKYLICHT_VERSION})
