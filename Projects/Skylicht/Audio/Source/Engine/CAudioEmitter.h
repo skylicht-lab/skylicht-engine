@@ -41,7 +41,7 @@ using namespace SkylichtSystem;
 
 namespace SkylichtAudio
 {
-	class CAudioEmitter
+	class AUDIO_API CAudioEmitter
 	{
 	protected:
 		std::string m_name;

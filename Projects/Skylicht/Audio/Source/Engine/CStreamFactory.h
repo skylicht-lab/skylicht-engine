@@ -30,7 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace SkylichtAudio
 {
 
-	class CStreamFactory : public IStreamFactory
+	class AUDIO_API CStreamFactory : public IStreamFactory
 	{
 	public:
 		virtual IStream* createStreamFromMemory(unsigned char* buffer, int size, bool takeOwnership);

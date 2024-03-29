@@ -87,7 +87,7 @@ namespace SkylichtAudio
 		SVector3 LookAt;
 	};
 
-	class ISoundSource
+	class AUDIO_API ISoundSource
 	{
 	public:
 

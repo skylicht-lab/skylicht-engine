@@ -14,7 +14,7 @@ setup_project_group("${skylicht_audio_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 add_library(Audio ${ENGINE_SHARED_OR_STATIC_LIB} ${skylicht_audio_source})
 
 if (BUILD_SHARED_LIBS)
-	set_target_properties(Audio PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS true)
+	add_definitions(-DAUDIO_EXPORTS)
 endif()
 
 target_precompiled_header(Audio ./Source/stdafx.cpp ${skylicht_audio_source})

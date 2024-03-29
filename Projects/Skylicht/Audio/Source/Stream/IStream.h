@@ -25,9 +25,11 @@ https://github.com/skylicht-lab/skylicht-engine
 #ifndef _SKYLICHTAUDIO_ISTREAM_H_
 #define _SKYLICHTAUDIO_ISTREAM_H_
 
+#include "SkylichtAudioAPI.h"
+
 namespace SkylichtAudio
 {
-	class IStreamCursor
+	class AUDIO_API IStreamCursor
 	{
 	public:
 		enum EOrigin
@@ -51,7 +53,7 @@ namespace SkylichtAudio
 	};
 
 
-	class IStream
+	class AUDIO_API IStream
 	{
 	protected:
 		int	m_referenceCount;
