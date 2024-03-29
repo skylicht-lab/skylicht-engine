@@ -51,6 +51,8 @@ void main_loop()
 	}
 }
 
+void installApplication(const std::vector<std::string>& argv);
+
 int main(int argc, char *argv[])
 {
 	g_mainApp = new CApplication();
@@ -94,6 +96,10 @@ int main(int argc, char *argv[])
 	g_device->setWindowCaption(L"Skylicht Engine");
 
 	g_mainApp->initApplication(g_device);
+
+	installApplication(g_mainApp->getParams());
+
+	g_mainApp->onInit();
 
 	main_loop();
 

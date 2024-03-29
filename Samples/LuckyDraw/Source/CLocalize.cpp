@@ -33,7 +33,7 @@ const char* CDataText::getString(ELanguage lang)
 	return result;
 }
 
-IMPLEMENT_SINGLETON(CLocalize)
+IMPLEMENT_SINGLETON(CLocalize);
 
 CLocalize::CLocalize() :
 	m_language(ELanguage::EN)

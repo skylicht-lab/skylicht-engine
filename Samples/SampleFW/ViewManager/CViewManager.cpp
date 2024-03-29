@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "CViewManager.h"
 
-IMPLEMENT_SINGLETON(CViewManager)
+IMPLEMENT_SINGLETON(CViewManager);
 
 CViewManager::CViewManager()
 {

@@ -57,6 +57,8 @@ bool g_restartApplication = false;
 bool g_update = true;
 float g_displayScale = 1.0f;
 
+void installApplication(const std::vector<std::string>& argv);
+
 #if defined(CYGWIN) || defined(MINGW)
 int CALLBACK WinMain(
 	HINSTANCE   hInstance,
@@ -227,6 +229,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	// init application
 	g_application->initApplication(device);
 
+	installApplication(g_application->getParams());
+
+	g_application->onInit();
+
 #if defined(SKYLICHT_EDITOR)
 	if (maximize)
 		device->maximizeWindow();
@@ -263,6 +269,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 			g_application->initApplication(device);
 			g_restartApplication = false;
+
+			installApplication(g_application->getParams());
+
+			g_application->onInit();
 		}
 	}
 

@@ -56,6 +56,8 @@ extern "C" void main_resize(int w, int h)
 	}
 }
 
+void installApplication(const std::vector<std::string>& argv);
+
 int main(int argc, char *argv[])
 {
 	// default params
@@ -77,6 +79,10 @@ int main(int argc, char *argv[])
 		return 1;
 
 	g_mainApp->initApplication(g_device);
+
+	installApplication(g_mainApp->getParams());
+
+	g_mainApp->onInit();
 
 	g_device->setWindowCaption(L"Skylicht Engine - Demo");
 

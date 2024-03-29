@@ -29,7 +29,7 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		IMPLEMENT_SINGLETON(CEditorActivator)
+		IMPLEMENT_SINGLETON(CEditorActivator);
 
 		CEditorActivator::CEditorActivator()
 		{
