@@ -117,6 +117,47 @@ jobs:
     #    name: SkylichtDemo_Linux
     #    path: Build
 
+  Linux-Shared:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update -y -qq
+          sudo apt-get install -y libglfw3-dev libopenal-dev libx11-dev
+          sudo apt remove --purge --auto-remove cmake
+          wget -q https://github.com/Kitware/CMake/releases/download/v3.15.5/cmake-3.15.5-Linux-x86_64.tar.gz
+          tar -zxvf cmake-3.15.5-Linux-x86_64.tar.gz
+      - name: Build
+        run: |
+          export PATH="./cmake-3.15.5-Linux-x86_64/bin:$PATH"
+          cmake -S. -BPrjLinux -DBUILD_SHARED_LIBS=ON
+          cd Assets
+          python BuildAssetBundles.py
+          cd ..
+          make -C PrjLinux
+      - name: Unit Test
+        run: |
+          cd PrjLinux
+          ctest --verpose
+          cd ..
+      - name: Package
+        run: |
+          mkdir Build
+          ls -l Bin
+          version=$(cat "Version.txt")
+          file_version=${version//./_}
+          output=../Build/SkylichtDemo_${file_version}_Linux.zip
+          cd Bin
+          7z a ${output} ./*
+          cd ..
+          ls -l Build
+    #- name: Result
+    #  uses: actions/upload-artifact@v1
+    #  with:
+    #    name: SkylichtDemo_Linux_Shared
+    #    path: Build
+
   MacOS:
     runs-on: macos-latest
     steps:
