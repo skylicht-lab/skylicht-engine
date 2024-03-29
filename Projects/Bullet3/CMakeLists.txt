@@ -4,7 +4,6 @@ set (BULLET_PHYSICS_SOURCE_DIR ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Bullet3)
 
 set(INCLUDE_INSTALL_DIR ${SKYLICHT_ENGINE_SOURCE_DIR}/Install/include/Bullet3)
 
-OPTION(BUILD_SHARED_LIBS "Use shared libraries" OFF)
 
 OPTION(USE_SOFT_BODY_MULTI_BODY_DYNAMICS_WORLD "Use btSoftMultiBodyDynamicsWorld" ON)
 
@@ -47,6 +46,12 @@ endif()
 
 if (CMAKE_SYSTEM_NAME STREQUAL WindowsStore)
 SET(BUILD_BULLET3 OFF)
+endif()
+
+if (BUILD_SHARED_LIBS)
+if (BUILD_LINUX OR BUILD_MACOS)
+add_compile_options(-fPic)
+endif()
 endif()
 
 SUBDIRS(src)
