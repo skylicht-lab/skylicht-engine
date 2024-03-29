@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CGroupTransform : public CEntityGroup
+	class SKYLICHT_API CGroupTransform : public CEntityGroup
 	{
 	protected:
 		CFastArray<CWorldTransformData*> m_roots;

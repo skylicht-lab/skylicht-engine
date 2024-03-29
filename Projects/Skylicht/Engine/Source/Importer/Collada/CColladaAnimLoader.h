@@ -33,7 +33,7 @@ namespace Skylicht
 	struct SEntityAnim;
 	struct SNodeParam;
 
-	class CColladaAnimLoader : public IAnimationImporter
+	class SKYLICHT_API CColladaAnimLoader : public IAnimationImporter
 	{
 	protected:
 		bool m_zUp;

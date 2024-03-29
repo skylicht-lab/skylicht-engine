@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CArraySerializable : public CObjectSerializable
+	class SKYLICHT_API CArraySerializable : public CObjectSerializable
 	{
 	public:
 		CArraySerializable(const char* name);
@@ -73,7 +73,7 @@ namespace Skylicht
 	};
 
 	template <class T>
-	class CArrayTypeSerializable : public CArraySerializable
+	class SKYLICHT_API CArrayTypeSerializable : public CArraySerializable
 	{
 	public:
 		std::function<void(CValueProperty*)> OnCreateElement;

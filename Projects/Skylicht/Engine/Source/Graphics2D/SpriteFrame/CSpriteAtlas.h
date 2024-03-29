@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CSpriteAtlas : public CSpriteFrame
+	class SKYLICHT_API CSpriteAtlas : public CSpriteFrame
 	{
 	protected:
 		int m_width;

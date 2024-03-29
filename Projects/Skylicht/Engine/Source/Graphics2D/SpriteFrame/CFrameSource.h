@@ -32,7 +32,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CFrameSource : public CAssetResource
+	class SKYLICHT_API CFrameSource : public CAssetResource
 	{
 	public:
 		CStringProperty SpritePath;

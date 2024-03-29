@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CAssetResource : public CObjectSerializable
+	class SKYLICHT_API CAssetResource : public CObjectSerializable
 	{
 	public:
 		CStringProperty GUID;

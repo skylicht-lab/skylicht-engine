@@ -52,7 +52,7 @@ namespace Skylicht
 		Enum
 	};
 
-	class CValueProperty
+	class SKYLICHT_API CValueProperty
 	{
 	protected:
 		EPropertyDataType m_dataType;

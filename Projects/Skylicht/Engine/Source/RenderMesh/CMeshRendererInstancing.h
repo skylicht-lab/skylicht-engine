@@ -37,7 +37,7 @@ namespace Skylicht
 		CFastArray<CEntity*> Entities;
 	};
 
-	class CMeshRendererInstancing : public CMeshRenderSystem
+	class SKYLICHT_API CMeshRendererInstancing : public CMeshRenderSystem
 	{
 	protected:
 		core::array<CRenderMeshData*> m_meshs;

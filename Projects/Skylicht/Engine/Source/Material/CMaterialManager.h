@@ -30,7 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CMaterialManager
+	class SKYLICHT_API CMaterialManager
 	{
 	public:
 		DECLARE_SINGLETON(CMaterialManager)

@@ -30,7 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 
-	class CAnimation
+	class SKYLICHT_API CAnimation
 	{
 	protected:
 		std::vector<CAnimationClip*> m_clips;

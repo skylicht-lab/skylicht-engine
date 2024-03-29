@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CShaderSH : public IShaderCallback
+	class SKYLICHT_API CShaderSH : public IShaderCallback
 	{
 	public:
 		CShaderSH();

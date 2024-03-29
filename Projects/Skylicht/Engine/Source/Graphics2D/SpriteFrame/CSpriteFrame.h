@@ -65,7 +65,7 @@ namespace Skylicht
 
 	struct SFrame;
 
-	struct SModuleOffset
+	struct SKYLICHT_API SModuleOffset
 	{
 		SModuleRect* Module;
 		SFrame* Frame;
@@ -114,7 +114,7 @@ namespace Skylicht
 		}
 	};
 
-	class CSpriteFrame
+	class SKYLICHT_API CSpriteFrame
 	{
 	protected:
 		std::vector<SImage*> m_images;

@@ -31,7 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CPostProcessorRP :
+	class SKYLICHT_API CPostProcessorRP :
 		public CBaseRP,
 		public IPostProcessor
 	{

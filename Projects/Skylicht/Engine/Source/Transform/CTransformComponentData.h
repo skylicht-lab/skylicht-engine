@@ -30,7 +30,7 @@ namespace Skylicht
 {
 	class CTransform;
 
-	class CTransformComponentData : public IEntityData
+	class SKYLICHT_API CTransformComponentData : public IEntityData
 	{
 	public:
 		CTransform* TransformComponent;

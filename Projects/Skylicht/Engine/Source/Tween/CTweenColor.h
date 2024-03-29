@@ -4,7 +4,7 @@
 
 namespace Skylicht
 {
-	class CTweenColor : public CTween
+	class SKYLICHT_API CTweenColor : public CTween
 	{
 	protected:
 		SColor m_value;

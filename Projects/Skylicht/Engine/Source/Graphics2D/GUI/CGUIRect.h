@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CGUIRect : public CGUIElement
+	class SKYLICHT_API CGUIRect : public CGUIElement
 	{
 		friend class CCanvas;
 	public:

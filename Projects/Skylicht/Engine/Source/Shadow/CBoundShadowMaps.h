@@ -30,7 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CBoundShadowMaps
+	class SKYLICHT_API CBoundShadowMaps
 	{
 	protected:
 		int m_shadowMapSize;

@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CTransformEuler : public CTransform
+	class SKYLICHT_API CTransformEuler : public CTransform
 	{
 	protected:
 		core::vector3df m_position;

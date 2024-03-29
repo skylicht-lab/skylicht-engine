@@ -26,7 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CGetFileURL
+	class SKYLICHT_API CGetFileURL
 	{
 	public:
 		enum EMethod

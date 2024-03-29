@@ -31,7 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 
-	class CTouchManager
+	class SKYLICHT_API CTouchManager
 	{
 	public:
 		DECLARE_SINGLETON(CTouchManager)

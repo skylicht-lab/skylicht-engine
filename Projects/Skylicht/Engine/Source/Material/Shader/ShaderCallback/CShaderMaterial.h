@@ -30,7 +30,7 @@ namespace Skylicht
 {
 	class CMaterial;
 
-	class CShaderMaterial : public IShaderCallback
+	class SKYLICHT_API CShaderMaterial : public IShaderCallback
 	{
 	public:
 		CShaderMaterial();

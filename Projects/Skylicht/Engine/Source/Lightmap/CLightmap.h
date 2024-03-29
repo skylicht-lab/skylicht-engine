@@ -31,7 +31,7 @@ namespace Skylicht
 {
 	class CEntity;
 
-	class CLightmap : public CComponentSystem
+	class SKYLICHT_API CLightmap : public CComponentSystem
 	{
 	public:
 

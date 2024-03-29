@@ -26,7 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CRandomID
+	class SKYLICHT_API CRandomID
 	{
 	public:
 		static std::string generate(int len = 16);

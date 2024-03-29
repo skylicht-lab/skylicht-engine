@@ -31,7 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CSoftwareBlendShapeSystem : public CMeshSystem
+	class SKYLICHT_API CSoftwareBlendShapeSystem : public CMeshSystem
 	{
 	public:
 		CSoftwareBlendShapeSystem();

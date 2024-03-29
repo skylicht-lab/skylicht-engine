@@ -30,7 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CSerializableLoader
+	class SKYLICHT_API CSerializableLoader
 	{
 	public:
 		static void load(io::IXMLReader* reader, CObjectSerializable* object, const char* exitNode);

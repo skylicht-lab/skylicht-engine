@@ -32,7 +32,7 @@ namespace Skylicht
 
 #define DEPENDENT_COMPONENT(comp, dependentComp) bool comp##dependentComp##_dependent = CDependentComponent::createGetInstance()->registerDependent(#comp, #dependentComp);
 
-	class CDependentComponent
+	class SKYLICHT_API CDependentComponent
 	{
 	public:
 		DECLARE_SINGLETON(CDependentComponent)

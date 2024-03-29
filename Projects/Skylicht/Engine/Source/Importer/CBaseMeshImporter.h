@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CBaseMeshImporter : public IMeshImporter
+	class SKYLICHT_API CBaseMeshImporter : public IMeshImporter
 	{
 	protected:
 		std::vector<std::string> m_textureFolder;

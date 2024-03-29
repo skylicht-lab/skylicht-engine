@@ -33,7 +33,7 @@ namespace Skylicht
 	class IMeshExporter;
 	class IMeshImporter;
 
-	class IEntityData : public IActivatorObject
+	class SKYLICHT_API IEntityData : public IActivatorObject
 	{
 	public:
 		int EntityIndex;

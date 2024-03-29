@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {	
-	class CSkylichtMeshExporter : public IMeshExporter
+	class SKYLICHT_API CSkylichtMeshExporter : public IMeshExporter
 	{
 	public:
 		CSkylichtMeshExporter();

@@ -28,7 +28,7 @@ namespace Skylicht
 {
 	class CAnimationClip;
 
-	class IAnimationImporter
+	class SKYLICHT_API IAnimationImporter
 	{
 	public:
 		IAnimationImporter()

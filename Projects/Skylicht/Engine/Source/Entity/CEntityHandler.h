@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CEntityHandler : public CComponentSystem
+	class SKYLICHT_API CEntityHandler : public CComponentSystem
 	{
 	protected:
 		std::vector<CEntity*> m_entities;

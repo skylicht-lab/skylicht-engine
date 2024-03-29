@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CGUIRenderData : public IEntityData
+	class SKYLICHT_API CGUIRenderData : public IEntityData
 	{
 		friend class CGUILayoutSystem;
 

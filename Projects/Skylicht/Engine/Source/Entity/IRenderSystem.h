@@ -32,7 +32,7 @@ namespace Skylicht
 {
 	class CEntityManager;
 
-	class IRenderSystem : public IEntitySystem
+	class SKYLICHT_API IRenderSystem : public IEntitySystem
 	{
 	public:
 		enum ERenderPass

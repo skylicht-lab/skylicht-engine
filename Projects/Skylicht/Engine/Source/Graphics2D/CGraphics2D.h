@@ -36,7 +36,7 @@ namespace Skylicht
 	class CCamera;
 	class CCanvas;
 
-	class CGraphics2D
+	class SKYLICHT_API CGraphics2D
 	{
 	public:
 		DECLARE_SINGLETON(CGraphics2D)

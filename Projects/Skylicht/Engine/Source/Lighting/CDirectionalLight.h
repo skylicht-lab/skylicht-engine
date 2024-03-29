@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CDirectionalLight : public CLight
+	class SKYLICHT_API CDirectionalLight : public CLight
 	{
 	public:
 		CDirectionalLight();

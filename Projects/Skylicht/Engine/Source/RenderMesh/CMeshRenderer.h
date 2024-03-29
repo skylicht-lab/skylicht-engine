@@ -31,7 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CMeshRenderer : public CMeshRenderSystem
+	class SKYLICHT_API CMeshRenderer : public CMeshRenderSystem
 	{
 	protected:
 		core::array<CRenderMeshData*> m_meshs;

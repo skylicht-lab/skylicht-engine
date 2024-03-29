@@ -33,7 +33,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CScene : public IEventReceiver
+	class SKYLICHT_API CScene : public IEventReceiver
 	{
 	protected:
 

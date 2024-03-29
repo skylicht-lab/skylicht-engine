@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CWorldInverseTransformData : public IEntityData
+	class SKYLICHT_API CWorldInverseTransformData : public IEntityData
 	{
 	public:
 		core::matrix4 WorldInverse;

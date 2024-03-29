@@ -31,7 +31,7 @@ namespace Skylicht
 {
 	class CEntity;
 
-	class CIndirectLighting : public CComponentSystem
+	class SKYLICHT_API CIndirectLighting : public CComponentSystem
 	{
 	public:
 		enum EIndirectType

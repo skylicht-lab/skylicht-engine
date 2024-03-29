@@ -55,7 +55,7 @@ namespace Skylicht
 		}
 	};
 
-	class IShaderInstancing
+	class SKYLICHT_API IShaderInstancing
 	{
 	protected:
 		video::IVertexDescriptor* m_baseVtxDescriptor;

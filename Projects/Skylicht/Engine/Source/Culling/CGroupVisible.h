@@ -27,7 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CGroupVisible : public CEntityGroup
+	class SKYLICHT_API CGroupVisible : public CEntityGroup
 	{
 	public:
 		CGroupVisible();

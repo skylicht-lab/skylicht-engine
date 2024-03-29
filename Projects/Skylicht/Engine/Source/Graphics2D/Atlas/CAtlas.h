@@ -26,7 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CAtlas
+	class SKYLICHT_API CAtlas
 	{
 	protected:
 		ITexture *m_texture;

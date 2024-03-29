@@ -32,7 +32,7 @@ namespace Skylicht
 	class CPointLight;
 	class CSpotLight;
 
-	class CShaderLighting : public IShaderCallback
+	class SKYLICHT_API CShaderLighting : public IShaderCallback
 	{
 	public:
 		CShaderLighting();

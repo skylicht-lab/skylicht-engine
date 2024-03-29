@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CLight : public CComponentSystem
+	class SKYLICHT_API CLight : public CComponentSystem
 	{
 	public:
 		enum ELightType

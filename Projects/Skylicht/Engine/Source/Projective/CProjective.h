@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CProjective
+	class SKYLICHT_API CProjective
 	{
 	public:
 		static bool getScreenCoordinatesFrom3DPosition(CCamera* camera, const core::vector3df& pos3d, float& x, float& y, int viewportW, int viewportH);

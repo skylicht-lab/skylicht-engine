@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CForwardRP : public CBaseRP
+	class SKYLICHT_API CForwardRP : public CBaseRP
 	{
 	protected:
 

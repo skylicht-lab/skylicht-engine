@@ -26,7 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CMemoryStream
+	class SKYLICHT_API CMemoryStream
 	{
 	protected:
 		unsigned char* m_memory;

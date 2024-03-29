@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CSkylichtAnimLoader : public IAnimationImporter
+	class SKYLICHT_API CSkylichtAnimLoader : public IAnimationImporter
 	{
 	protected:
 

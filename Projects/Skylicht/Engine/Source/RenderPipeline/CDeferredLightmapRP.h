@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CDeferredLightmapRP : public CBaseRP
+	class SKYLICHT_API CDeferredLightmapRP : public CBaseRP
 	{
 	protected:
 		static bool s_enableRenderTestIndirect;

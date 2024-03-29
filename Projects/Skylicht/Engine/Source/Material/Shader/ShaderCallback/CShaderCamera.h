@@ -30,7 +30,7 @@ namespace Skylicht
 {
 	class CCamera;
 
-	class CShaderCamera : public IShaderCallback
+	class SKYLICHT_API CShaderCamera : public IShaderCallback
 	{
 	public:
 		CShaderCamera();

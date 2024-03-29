@@ -34,7 +34,7 @@ namespace Skylicht
 	class IShaderCallback;
 	class IShaderInstancing;
 
-	class CShaderManager
+	class SKYLICHT_API CShaderManager
 	{
 	public:
 		DECLARE_SINGLETON(CShaderManager)

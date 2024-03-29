@@ -42,7 +42,7 @@ namespace Skylicht
 		}
 	};
 
-	class CStandardSGInstancing : public IShaderInstancing
+	class SKYLICHT_API CStandardSGInstancing : public IShaderInstancing
 	{
 	public:
 		CStandardSGInstancing();
