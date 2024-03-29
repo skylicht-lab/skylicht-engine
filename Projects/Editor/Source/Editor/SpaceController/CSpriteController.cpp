@@ -32,7 +32,7 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		IMPLEMENT_SINGLETON(CSpriteController)
+		IMPLEMENT_SINGLETON(CSpriteController);
 
 		CSpriteController::CSpriteController()
 		{

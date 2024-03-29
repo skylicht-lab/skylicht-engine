@@ -27,13 +27,7 @@ target_precompiled_header(Collision ./Source/pch.cpp ${skylicht_collision})
 
 set_target_properties(Collision PROPERTIES VERSION ${SKYLICHT_VERSION})
 
-if (BUILD_EMSCRIPTEN)
 target_link_libraries(Collision Engine System)
-elseif(MSVC)
-target_link_libraries(Collision Engine System)
-elseif(CYGWIN OR MINGW)
-target_link_libraries(Collision Engine System)
-endif()
 
 if (INSTALL_LIBS)
 install(TARGETS Collision

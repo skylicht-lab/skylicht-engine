@@ -1,4 +1,4 @@
-include_directories(	
+include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Audio/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/System/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/libmpg123
@@ -14,7 +14,7 @@ setup_project_group("${skylicht_audio_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 add_library(Audio ${ENGINE_SHARED_OR_STATIC_LIB} ${skylicht_audio_source})
 
 if (BUILD_SHARED_LIBS)
-set_target_properties(Audio PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS true)
+	set_target_properties(Audio PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS true)
 endif()
 
 target_precompiled_header(Audio ./Source/stdafx.cpp ${skylicht_audio_source})
@@ -45,6 +45,9 @@ else()
 		System
 		ThirdParty
 	)
+if (MSVC OR CYGWIN OR MINGW)
+	target_link_libraries(Audio Winmm)
+endif()
 endif()
 
 if (INSTALL_LIBS)
