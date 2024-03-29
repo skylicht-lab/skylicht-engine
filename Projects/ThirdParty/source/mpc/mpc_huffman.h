@@ -83,19 +83,19 @@ void huff_init_lut(const int bits);
 
 
 // sv7 huffman tables
-mpc_lut_data mpc_HuffHdr;
-const mpc_huffman mpc_table_HuffSCFI [4];
-mpc_lut_data mpc_HuffDSCF;
-mpc_lut_data mpc_HuffQ [7] [2];
+extern mpc_lut_data mpc_HuffHdr;
+extern const mpc_huffman mpc_table_HuffSCFI [4];
+extern mpc_lut_data mpc_HuffDSCF;
+extern mpc_lut_data mpc_HuffQ [7] [2];
 
 // sv8 huffman tables
-mpc_can_data mpc_can_SCFI[2];
-mpc_can_data mpc_can_DSCF[2];
-mpc_can_data mpc_can_Bands;
-mpc_can_data mpc_can_Res[2];
-mpc_can_data mpc_can_Q1;
-mpc_can_data mpc_can_Q9up;
-mpc_can_data mpc_can_Q [6][2];
+extern mpc_can_data mpc_can_SCFI[2];
+extern mpc_can_data mpc_can_DSCF[2];
+extern mpc_can_data mpc_can_Bands;
+extern mpc_can_data mpc_can_Res[2];
+extern mpc_can_data mpc_can_Q1;
+extern mpc_can_data mpc_can_Q9up;
+extern mpc_can_data mpc_can_Q [6][2];
 
 
 
