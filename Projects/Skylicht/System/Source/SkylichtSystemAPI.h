@@ -34,10 +34,16 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #else
 
-#ifdef SYSTEM_EXPORTS
-#define SYSTEM_SHARED_API __declspec(dllexport)
+#ifdef _MSC_VER
+	// Visual studio
+	#define SYSTEM_SHARED_API
 #else
-#define SYSTEM_SHARED_API __declspec(dllimport)
+	// Cygwin & MinGW
+	#ifdef SYSTEM_EXPORTS
+	#define SYSTEM_SHARED_API __declspec(dllexport)
+	#else
+	#define SYSTEM_SHARED_API __declspec(dllimport)
+	#endif
 #endif
 
 #endif

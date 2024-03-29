@@ -27,11 +27,22 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #if defined(_WIN32) || defined(_WIN64) || defined(WIN32) || defined(WIN64)
 
-// Visual studio
 #ifdef _SKYLICHT_STATIC_LIB_
 #define COLLISION_API
 #else
-#define COLLISION_API
+
+#ifdef _MSC_VER
+	// Visual studio
+	#define COLLISION_API
+#else
+	// Cygwin & MinGW
+	#ifdef COLLISION_EXPORTS
+	#define COLLISION_API __declspec(dllexport)
+	#else
+	#define COLLISION_API __declspec(dllimport)
+	#endif
+#endif
+
 #endif
 
 #else
