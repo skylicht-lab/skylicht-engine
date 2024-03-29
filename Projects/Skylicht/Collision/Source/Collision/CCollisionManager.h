@@ -30,7 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CCollisionManager : public COctreeBuilder
+	class COLLISION_API CCollisionManager : public COctreeBuilder
 	{
 	public:
 		CCollisionManager();

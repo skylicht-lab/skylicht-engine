@@ -34,7 +34,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CDecals : public CEntityHandler
+	class COLLISION_API CDecals : public CEntityHandler
 	{
 	protected:
 		CDecalRenderData* m_renderData;

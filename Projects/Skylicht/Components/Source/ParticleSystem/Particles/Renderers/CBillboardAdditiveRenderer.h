@@ -31,7 +31,7 @@ namespace Skylicht
 {
 	namespace Particle
 	{
-		class CBillboardAdditiveRenderer : public IRenderer
+		class COMPONENT_API CBillboardAdditiveRenderer : public IRenderer
 		{
 		protected:
 			u32 m_atlasNx;

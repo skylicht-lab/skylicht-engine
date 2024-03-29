@@ -6,7 +6,7 @@
 
 namespace Skylicht
 {
-	class CGridPlaneData :
+	class COMPONENT_API CGridPlaneData :
 		public CLineDrawData,
 		public IEntityData
 	{

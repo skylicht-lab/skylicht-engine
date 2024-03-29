@@ -30,7 +30,7 @@ namespace Skylicht
 {
 	namespace Particle
 	{
-		class CParentRelativeSystem : public ISystem
+		class COMPONENT_API CParentRelativeSystem : public ISystem
 		{
 		protected:
 			bool m_syncLife;

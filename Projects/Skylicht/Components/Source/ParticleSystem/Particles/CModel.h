@@ -31,7 +31,7 @@ namespace Skylicht
 {
 	namespace Particle
 	{
-		class CModel
+		class COMPONENT_API CModel
 		{
 		protected:
 			EParticleParams m_type;

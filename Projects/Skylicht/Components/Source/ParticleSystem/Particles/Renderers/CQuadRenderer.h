@@ -46,7 +46,7 @@ namespace Skylicht
 			Solid,
 		};
 
-		class CQuadRenderer : public IRenderer
+		class COMPONENT_API CQuadRenderer : public IRenderer
 		{
 		protected:
 			u32 m_atlasNx;

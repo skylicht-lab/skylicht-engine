@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CCollisionBuilder
+	class COLLISION_API CCollisionBuilder
 	{
 	protected:
 		core::array<CCollisionNode*> m_nodes;

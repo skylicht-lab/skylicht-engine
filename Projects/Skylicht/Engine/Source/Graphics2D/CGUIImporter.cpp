@@ -28,15 +28,15 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	io::IXMLReader* CGUIImporter::s_reader = NULL;
-	std::string CGUIImporter::s_guiPath;
-	CCanvas* CGUIImporter::s_canvas = NULL;
+	io::IXMLReader* g_guiReader = NULL;
+	std::string g_guiPath;
+	CCanvas* g_canvas = NULL;
 
-	int CGUIImporter::s_loadStep = 10;
-	int CGUIImporter::s_loading = 0;
+	int g_loadGUIStep = 10;
+	int g_guiLoading = 0;
 
-	std::list<CGUIElement*> CGUIImporter::s_listObject;
-	std::list<CGUIElement*>::iterator CGUIImporter::s_current;
+	std::list<CGUIElement*> g_listGUIObject;
+	std::list<CGUIElement*>::iterator g_currentGUI;
 
 	void CGUIImporter::buildCanvas(CCanvas* canvas, io::IXMLReader* reader)
 	{
@@ -45,7 +45,7 @@ namespace Skylicht
 
 		std::stack<CGUIElement*> parents;
 
-		s_listObject.clear();
+		g_listGUIObject.clear();
 
 		CGUIElement* currentObject = NULL;
 
@@ -98,7 +98,7 @@ namespace Skylicht
 
 						if (element)
 						{
-							s_listObject.push_back(element);
+							g_listGUIObject.push_back(element);
 							currentObject = element;
 						}
 
@@ -123,27 +123,27 @@ namespace Skylicht
 			}
 		}
 
-		s_current = s_listObject.begin();
+		g_currentGUI = g_listGUIObject.begin();
 	}
 
 	bool CGUIImporter::beginImport(const char* file, CCanvas* canvas)
 	{
 		// step 1
 		// build scene object
-		s_reader = getIrrlichtDevice()->getFileSystem()->createXMLReader(file);
-		if (s_reader == NULL)
+		g_guiReader = getIrrlichtDevice()->getFileSystem()->createXMLReader(file);
+		if (g_guiReader == NULL)
 			return false;
 
-		buildCanvas(canvas, s_reader);
+		buildCanvas(canvas, g_guiReader);
 
 		// close
-		s_reader->drop();
+		g_guiReader->drop();
 
 		// re-open the scene file
-		s_reader = getIrrlichtDevice()->getFileSystem()->createXMLReader(file);
-		s_guiPath = file;
-		s_canvas = canvas;
-		s_loading = 0;
+		g_guiReader = getIrrlichtDevice()->getFileSystem()->createXMLReader(file);
+		g_guiPath = file;
+		g_canvas = canvas;
+		g_guiLoading = 0;
 
 		return true;
 	}
@@ -155,7 +155,7 @@ namespace Skylicht
 
 		int step = 0;
 
-		while (step < s_loadStep && reader->read())
+		while (step < g_loadGUIStep && reader->read())
 		{
 			switch (reader->getNodeType())
 			{
@@ -174,9 +174,9 @@ namespace Skylicht
 							attributeName == L"CGUIText" ||
 							attributeName == L"CGUILayout")
 						{
-							CGUIElement* guiObject = dynamic_cast<CGUIElement*>(*s_current);
-							++s_current;
-							++s_loading;
+							CGUIElement* guiObject = dynamic_cast<CGUIElement*>(*g_currentGUI);
+							++g_currentGUI;
+							++g_guiLoading;
 							++step;
 
 							CObjectSerializable* data = guiObject->createSerializable();
@@ -192,21 +192,21 @@ namespace Skylicht
 			}
 		}
 
-		return s_current == s_listObject.end();
+		return g_currentGUI == g_listGUIObject.end();
 	}
 
 	bool CGUIImporter::updateLoadGUI()
 	{
-		if (CGUIImporter::loadStep(s_canvas, s_reader))
+		if (CGUIImporter::loadStep(g_canvas, g_guiReader))
 		{
 			// drop
-			if (s_reader)
+			if (g_guiReader)
 			{
-				s_reader->drop();
-				s_reader = NULL;
+				g_guiReader->drop();
+				g_guiReader = NULL;
 			}
 
-			s_canvas = NULL;
+			g_canvas = NULL;
 			return true;
 		}
 
@@ -215,7 +215,7 @@ namespace Skylicht
 
 	float CGUIImporter::getLoadingPercent()
 	{
-		int size = (int)s_listObject.size();
-		return s_loading / (float)size;
+		int size = (int)g_listGUIObject.size();
+		return g_guiLoading / (float)size;
 	}
 }

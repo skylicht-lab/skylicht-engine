@@ -50,7 +50,7 @@ namespace Skylicht
 			return entry0.x == entry1.x;
 		}
 
-		class CInterpolator
+		class COMPONENT_API CInterpolator
 		{
 		protected:
 			std::set<SInterpolatorEntry> m_graph;

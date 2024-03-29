@@ -76,7 +76,7 @@ jobs:
   #         cmake -S . -B ./PrjUWP -G "Visual Studio 16 2019" -A x64 -DCMAKE_SYSTEM_NAME=WindowsStore -DCMAKE_SYSTEM_VERSION=10.0
   #         cmake --build ./PrjUWP --config "Release"
 
-  Linux:
+  Linux-Static:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -210,7 +210,7 @@ jobs:
         run: |
           dir Bin\Release
 
-  Windows-Shared-Dll:
+  Windows-Shared:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2

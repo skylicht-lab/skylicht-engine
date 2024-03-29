@@ -33,7 +33,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CPrimitiveRenderer : public CPrimitiveBaseRenderer
+	class COMPONENT_API CPrimitiveRenderer : public CPrimitiveBaseRenderer
 	{
 	protected:
 		CEntityGroup* m_group;

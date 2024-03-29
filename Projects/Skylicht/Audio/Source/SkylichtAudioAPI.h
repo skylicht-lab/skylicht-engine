@@ -25,21 +25,13 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 
-#if defined(_WIN32) || defined(_WIN64) || defined(WIN32) || defined(WIN64) || defined(CYGWIN)
+#if defined(_WIN32) || defined(_WIN64) || defined(WIN32) || defined(WIN64)
 
-// WINDOW
+// Visual studio
 #ifdef _SKYLICHT_STATIC_LIB_
-
-#define AUDIO_API
-
+	#define AUDIO_API
 #else
-
-#ifdef AUDIO_EXPORTS
-#define AUDIO_API __declspec(dllexport)
-#else
-#define AUDIO_API __declspec(dllimport)
-#endif
-
+	#define AUDIO_API
 #endif
 
 #else
@@ -47,9 +39,9 @@ https://github.com/skylicht-lab/skylicht-engine
 // GCC or OTHER
 // Force symbol export in shared libraries built with gcc.
 #if (__GNUC__ >= 4) && !defined(_SKYLICHT_STATIC_LIB_) && defined(AUDIO_EXPORTS)
-#define AUDIO_API __attribute__ ((visibility("default")))
+	#define AUDIO_API __attribute__ ((visibility("default")))
 #else
-#define AUDIO_API
+	#define AUDIO_API
 #endif
 
 #endif

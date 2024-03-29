@@ -3,11 +3,6 @@ include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source
 )
 
-# Irrlicht shared
-if (BUILD_SHARED_LIBS)
-	add_definitions(-DIRRLICHT_EXPORTS)
-endif()
-
 # SDL Include
 if(BUILD_SDL OR BUILD_EMSCRIPTEN)
 	if(MSVC)
@@ -45,6 +40,12 @@ source_group("Include" FILES "${irrlicht_include}")
 add_library(Irrlicht ${ENGINE_SHARED_OR_STATIC_LIB}
 	${irrlicht_source} 
 	${irrlicht_include})
+
+# Irrlicht shared
+if (BUILD_SHARED_LIBS)
+	set_target_properties(Irrlicht PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS true)
+	add_definitions(-DIRRLICHT_EXPORTS)
+endif()
 
 set_target_properties(Irrlicht PROPERTIES VERSION ${SKYLICHT_VERSION})
 

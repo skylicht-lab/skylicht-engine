@@ -15,7 +15,8 @@ add_library(System ${ENGINE_SHARED_OR_STATIC_LIB}
 )
 
 if (BUILD_SHARED_LIBS)
-set_target_properties(System PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS true)
+	set_target_properties(System PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS true)
+	add_definitions(-DSYSTEM_EXPORTS)
 endif()
 
 set_target_properties(System PROPERTIES VERSION ${SKYLICHT_VERSION})

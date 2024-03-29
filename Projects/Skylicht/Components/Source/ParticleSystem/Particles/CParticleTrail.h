@@ -73,7 +73,7 @@ namespace Skylicht
 			}
 		};
 
-		class CParticleTrail : public IParticleCallback
+		class COMPONENT_API CParticleTrail : public IParticleCallback
 		{
 		protected:
 			CGroup *m_group;

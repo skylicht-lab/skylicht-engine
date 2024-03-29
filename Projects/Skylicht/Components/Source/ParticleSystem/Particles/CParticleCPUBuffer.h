@@ -28,7 +28,7 @@ namespace Skylicht
 {
 	namespace Particle
 	{
-		class CParticleCPUBuffer
+		class COMPONENT_API CParticleCPUBuffer
 		{
 		protected:
 			IMeshBuffer* m_meshBuffer;

@@ -37,7 +37,7 @@ namespace Skylicht
 {
 	namespace Particle
 	{
-		class CParticleTrailRenderer : public IRenderSystem
+		class COMPONENT_API CParticleTrailRenderer : public IRenderSystem
 		{
 		protected:
 			CEntityGroup* m_group;

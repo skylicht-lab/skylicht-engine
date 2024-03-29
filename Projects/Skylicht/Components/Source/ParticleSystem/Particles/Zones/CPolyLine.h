@@ -30,7 +30,7 @@ namespace Skylicht
 {
 	namespace Particle
 	{
-		class CPolyLine : public CZone
+		class COMPONENT_API CPolyLine : public CZone
 		{
 		protected:
 			core::array<core::vector3df> m_point;

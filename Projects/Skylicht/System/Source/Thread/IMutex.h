@@ -24,9 +24,11 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "SkylichtSystemAPI.h"
+
 namespace SkylichtSystem
 {
-	class IMutex
+	class SYSTEM_SHARED_API IMutex
 	{
 	public:
 		virtual ~IMutex()

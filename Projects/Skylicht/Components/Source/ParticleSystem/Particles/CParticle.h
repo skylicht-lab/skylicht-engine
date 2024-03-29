@@ -51,7 +51,7 @@ namespace Skylicht
 			NumParams
 		};
 
-		class CParticle
+		class COMPONENT_API CParticle
 		{
 		public:
 			u32 Index;

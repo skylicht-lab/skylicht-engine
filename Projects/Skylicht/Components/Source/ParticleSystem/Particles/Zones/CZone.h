@@ -31,11 +31,11 @@ namespace Skylicht
 		class CParticle;
 		class CGroup;
 
-		int random(int from, int to);
+		COMPONENT_API int random(int from, int to);
 
-		float random(float from, float to);
+		COMPONENT_API float random(float from, float to);
 
-		void random_reset(s32 seed);
+		COMPONENT_API void random_reset(s32 seed);
 
 		enum EZone
 		{
@@ -49,7 +49,7 @@ namespace Skylicht
 			NumOfZone
 		};
 
-		class CZone
+		class COMPONENT_API CZone
 		{
 		protected:
 			core::vector3df m_position;

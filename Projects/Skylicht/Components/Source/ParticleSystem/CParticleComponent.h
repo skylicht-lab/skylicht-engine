@@ -32,7 +32,7 @@ namespace Skylicht
 {
 	namespace Particle
 	{
-		class CParticleComponent : public CComponentSystem
+		class COMPONENT_API CParticleComponent : public CComponentSystem
 		{
 		protected:
 			CParticleBufferData *m_data;
