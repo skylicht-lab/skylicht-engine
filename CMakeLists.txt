@@ -128,8 +128,7 @@ if (CMAKE_SYSTEM_NAME STREQUAL Darwin OR CMAKE_SYSTEM_NAME STREQUAL iOS)
 	add_definitions(-DANGLE_GLESV2_LIBRARY_NAME=\"libGLESv2\")
 	
 	# disable warning
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-deprecated-declarations")
+	add_compile_options(-Wno-deprecated-declarations)
 endif()
 
 # skylicht engine option
@@ -238,30 +237,26 @@ if (USE_OPENMP)
 		endif()
 	elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 		# using Visual Studio C++
-		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /openmp")
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /openmp")
+		add_compile_options(/openmp)
 		add_definitions(-DUSE_OPENMP)
 	else()
-		# using GCC & Clang++ (android)
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
-		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fopenmp")
+		# using GCC & Clang++ (android)		
+		add_compile_options(-fopenmp)
 		add_definitions(-DUSE_OPENMP)
 	endif()
 endif()
 
 # android
 if (BUILD_ANDROID)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-narrowing")
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-narrowing")
+	add_compile_options(-Wno-narrowing)
 endif()
 
 # visual studio
 if (BUILD_WINDOWS_STORE)
 	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+		
+	add_compile_options(/ZW)
 
-	set(CMAKE_C_FLAGS "/ZW ${CMAKE_C_FLAGS}")
-	set(CMAKE_CXX_FLAGS "/ZW ${CMAKE_CXX_FLAGS}")
-	
 	if (CMAKE_CL_64)
 		add_definitions(-D_WIN64)
 	endif()
@@ -286,7 +281,7 @@ elseif (MSVC)
 	
 	option(USE_MSVC_FAST_FLOATINGPOINT "Use MSVC /fp:fast option" ON)
 	if (USE_MSVC_FAST_FLOATINGPOINT)
-		  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /fp:fast")
+		  add_compile_options(/fp:fast)
 	endif()
 
 	set(CMAKE_EXE_LINKER_FLAGS	"${CMAKE_EXE_LINKER_FLAGS} /MANIFEST:NO")
