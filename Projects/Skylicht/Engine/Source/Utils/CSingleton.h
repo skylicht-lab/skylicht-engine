@@ -30,7 +30,7 @@ static className* getInstance();\
 static void releaseInstance();
 
 #define IMPLEMENT_SINGLETON(className) \
-className* className##Instance = NULL;\
+className* className##Instance;\
 className* className::createGetInstance()\
 {\
 	if (!className##Instance)\
@@ -48,4 +48,5 @@ void className::releaseInstance()\
 		delete className##Instance;\
 		className##Instance = NULL;\
 	}\
-}
+}\
+bool className##InstanceDeclare = true

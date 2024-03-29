@@ -50,9 +50,6 @@ https://github.com/skylicht-lab/skylicht-engine
 
 CBaseApp* g_app = NULL;
 
-// external function
-void installApplication(const std::vector<std::string>& argv);
-
 namespace Skylicht
 {
 	CBaseApp* getApplication()
@@ -139,16 +136,10 @@ namespace Skylicht
 		// init skylicht component
 		Skylicht::initSkylicht(m_device);
 
-		// install application
-		installApplication(m_argv);
-
 #ifdef ANDROID
 		os::Printer::log("Init file archive .apk");
 		m_fileSystem->addFileArchive(CBuildConfig::APKPath.c_str(), true, true);
 #endif
-
-		// send app init event
-		sendEventToAppReceiver(AppEventInit);
 
 		m_runGame = true;
 	}
@@ -163,6 +154,11 @@ namespace Skylicht
 
 		// release skylicht component
 		Skylicht::releaseSkylicht();
+	}
+
+	void CApplication::onInit()
+	{
+		sendEventToAppReceiver(AppEventInit);
 	}
 
 	bool CApplication::onClose()

@@ -60,7 +60,7 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		IMPLEMENT_SINGLETON(CEditor)
+		IMPLEMENT_SINGLETON(CEditor);
 
 		CEditor::CEditor() :
 			m_menuBar(NULL),

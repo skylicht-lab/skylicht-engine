@@ -32,7 +32,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	IMPLEMENT_SINGLETON(CShaderManager)
+	IMPLEMENT_SINGLETON(CShaderManager);
 
 	CShaderManager::CShaderManager() :
 		m_currentRenderID(-1),

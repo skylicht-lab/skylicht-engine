@@ -12,6 +12,8 @@ using namespace irr::io;
 CApplication *g_mainApp = NULL;
 IrrlichtDevice *g_device = NULL;
 
+void installApplication(const std::vector<std::string>& argv);
+
 SkylichtApplication::SkylichtApplication(int argc, char **argv, int width, int height)
     :AngleApplication(std::string("Skylicht Engine"), argc, argv, 3, 0, width, height)
 {
@@ -61,6 +63,9 @@ bool SkylichtApplication::initialize()
     // init application
     g_mainApp->initApplication(g_device);
     
+    installApplication(g_mainApp->getParams());
+    
+    g_mainApp->onInit();
     return true;
 }
 
