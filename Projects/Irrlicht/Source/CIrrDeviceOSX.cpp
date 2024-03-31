@@ -141,7 +141,13 @@ bool CIrrDeviceOSX::isWindowMinimized() const
 
 void CIrrDeviceOSX::closeDevice()
 {
+    // close window
     OSXClose();
+    
+    // invoke close application
+    SEvent closeEvent;
+    closeEvent.EventType = EET_GAME_EXIT;
+    postEventFromUser(closeEvent);
 }
 
 void CIrrDeviceOSX::setResizable(bool resize)

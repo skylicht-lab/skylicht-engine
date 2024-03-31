@@ -37,8 +37,15 @@ file(GLOB_RECURSE irrlicht_include ./**.h)
 source_group("Source" FILES "${irrlicht_source}")
 source_group("Include" FILES "${irrlicht_include}")
 
+if (BUILD_MACOS)
+	# Add .mm source
+	file(GLOB_RECURSE irrlicht_mac_source ./**.mm)
+	source_group("Source" FILES "${irrlicht_mac_source}")
+endif()
+
 add_library(Irrlicht ${ENGINE_SHARED_OR_STATIC_LIB}
-	${irrlicht_source} 
+	${irrlicht_source}
+	${irrlicht_mac_source}
 	${irrlicht_include})
 
 # Irrlicht shared

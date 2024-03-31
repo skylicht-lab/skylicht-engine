@@ -69,6 +69,8 @@ namespace irr
 		EET_GAME_EVENT,
 
 		EET_GAME_RESIZE,
+        
+        EET_GAME_EXIT,
 
 		//! This enum is never used, it only forces the compiler to
 		//! compile these enumeration values to 32 bit.

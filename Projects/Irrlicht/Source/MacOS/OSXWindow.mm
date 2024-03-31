@@ -6,8 +6,6 @@
 
 NSWindow* g_window = nil;
 
-void exitOSXApp();
-
 void OSXSetWindow(void* window)
 {
     g_window = (NSWindow*)window;
@@ -45,8 +43,6 @@ void OSXClose()
         [g_window release];
         g_window = nil;
     }
-    
-    exitOSXApp();
 }
 
 void OSXSetResizable(bool resize)
