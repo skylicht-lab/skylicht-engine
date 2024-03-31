@@ -68,11 +68,16 @@ namespace Skylicht
 			{
 				data->InstancingBuffer[i]->drop();
 				data->TransformBuffer[i]->drop();
+				data->IndirectLightingBuffer[i]->drop();
 			}
 
 			n = data->RenderMeshBuffers.size();
 			for (u32 i = 0; i < n; i++)
 				data->RenderMeshBuffers[i]->drop();
+
+			n = data->RenderLightMeshBuffers.size();
+			for (u32 i = 0; i < n; i++)
+				data->RenderLightMeshBuffers[i]->drop();
 
 			data->InstancingMesh->drop();
 			delete data;
@@ -257,6 +262,7 @@ namespace Skylicht
 
 				// save to render this mesh buffer
 				data->RenderMeshBuffers.push_back(renderMeshBuffer);
+				data->RenderLightMeshBuffers.push_back(lightingMeshBuffer);
 
 				// apply material
 				mesh->Materials[i]->applyMaterial(renderMeshBuffer->getMaterial());

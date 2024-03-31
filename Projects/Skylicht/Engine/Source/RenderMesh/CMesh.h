@@ -56,6 +56,7 @@ namespace Skylicht
 		core::array<IVertexBuffer*> TransformBuffer;
 		core::array<IVertexBuffer*> IndirectLightingBuffer;
 		core::array<IMeshBuffer*> RenderMeshBuffers;
+		core::array<IMeshBuffer*> RenderLightMeshBuffers;
 
 		IMesh* InstancingMesh;
 	};

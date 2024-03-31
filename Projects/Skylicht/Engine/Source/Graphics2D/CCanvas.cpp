@@ -64,6 +64,12 @@ namespace Skylicht
 
 	CCanvas::~CCanvas()
 	{
+		for (IEntitySystem* system : m_systems)
+		{
+			delete system;
+		}
+		m_systems.clear();
+
 		// remove all entity gui
 		delete m_root;
 

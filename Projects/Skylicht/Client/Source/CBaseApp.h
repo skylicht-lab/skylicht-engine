@@ -78,6 +78,8 @@ namespace Skylicht
 
 		void showDebugConsole();
 
+		static void reportLeakMemory();
+
 		inline IrrlichtDevice* getDevice()
 		{
 			return m_device;
