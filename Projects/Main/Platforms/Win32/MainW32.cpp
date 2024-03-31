@@ -281,6 +281,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	device->drop();
 
+	CApplication::reportLeakMemory();
+
 	return (int)msg.wParam;
 }
 

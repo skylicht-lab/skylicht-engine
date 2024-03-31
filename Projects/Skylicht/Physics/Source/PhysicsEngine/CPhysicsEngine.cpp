@@ -141,6 +141,8 @@ namespace Skylicht
 				// drop rigid body
 				m_dynamicsWorld->removeRigidBody(bodies[id]->BulletBody);
 
+				delete bodies[id];
+
 				// move last body to id
 				if (used >= 2)
 					bodies[id] = bodies[used - 1];

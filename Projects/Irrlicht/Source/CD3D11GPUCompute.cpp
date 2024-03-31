@@ -42,6 +42,16 @@ namespace irr
 
 		CD3D11GPUCompute::~CD3D11GPUCompute()
 		{
+			for (u32 i = 0, n = VariableArray.size(); i < n; i++)
+			{
+				delete VariableArray[i];
+			}
+
+			for (u32 i = 0, n = BufferArray.size(); i < n; i++)
+			{
+				delete BufferArray[i];
+			}
+
 			Device->Release();
 			Context->Release();
 

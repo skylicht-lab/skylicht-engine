@@ -40,11 +40,16 @@ namespace Skylicht
 	{
 		for (auto& i : m_buffers)
 		{
-			if (i.second)
+			SInstancingVertexBuffer* b = i.second;
+			if (b)
 			{
-				i.second->Instancing->drop();
-				i.second->Transform->drop();
-				delete i.second;
+				if (b->Instancing)
+					b->Instancing->drop();
+				if (b->Transform)
+					b->Transform->drop();
+				if (b->IndirectLighting)
+					b->IndirectLighting->drop();
+				delete b;
 			}
 		}
 
