@@ -96,6 +96,12 @@ namespace Skylicht
 			if (log->isEnable())
 				log->write(event.LogEvent.Text, event.LogEvent.Level);
 		}
+        
+        if (event.EventType == EET_GAME_EXIT)
+        {
+            if (OnExitApplication != nullptr)
+                OnExitApplication();
+        }
 
 		return false;
 	}
