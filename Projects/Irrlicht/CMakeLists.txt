@@ -20,12 +20,6 @@ if(BUILD_SDL OR BUILD_EMSCRIPTEN)
 	endif()
 endif()
 
-# Angle include
-if(BUILD_MACOS OR BUILD_IOS)
-	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/include)
-	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/Angle)
-endif()
-
 if(CYGWIN)
 	# DirectX11
 	add_definitions(-DIRR_COMPILE_WITH_DX11_DEV_PACK)
@@ -43,9 +37,25 @@ if (BUILD_MACOS)
 	source_group("Source" FILES "${irrlicht_mac_source}")
 endif()
 
+if(BUILD_MACOS OR BUILD_IOS)
+	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/include)
+	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/Angle)
+	
+	# Angle source
+	file(GLOB_RECURSE angle_source
+		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.h
+		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.m
+		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.mm
+		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.cpp
+		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.c)
+
+	setup_project_group_by_folder_relative("${angle_source}" "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple")
+endif()
+
 add_library(Irrlicht ${ENGINE_SHARED_OR_STATIC_LIB}
 	${irrlicht_source}
 	${irrlicht_mac_source}
+	${angle_source}
 	${irrlicht_include})
 
 # Irrlicht shared
@@ -74,6 +84,10 @@ endif()
 if (BUILD_LINUX)
 	target_link_libraries(Irrlicht GL)
 	target_link_libraries(Irrlicht X11)
+endif()
+
+if (BUILD_MACOS)
+	target_link_libraries(Irrlicht "-framework Cocoa")
 endif()
 
 # Android

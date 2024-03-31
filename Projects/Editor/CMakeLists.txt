@@ -100,24 +100,18 @@ if (BUILD_MACOS)
 		${template_path}/Platforms/MacOS/**.c 
 		${template_path}/Platforms/MacOS/**.h
 		${template_path}/Platforms/MacOS/**.m
-		${template_path}/Platforms/MacOS/**.mm
-		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.h
-		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.m
-		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.mm
-		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.cpp
-		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.c)
+		${template_path}/Platforms/MacOS/**.mm)
 
 	list (APPEND application_source ${platform_mac_source})
-
-	setup_project_group_by_folder_relative("${platform_mac_source}" "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple")
- 
-    # Generate header source path
-    set(path_content "#define PROJECT_PATH \"${SKYLICHT_ENGINE_SOURCE_DIR}/Assets\"")
-    file(WRITE ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Editor/Source/ProjectPath.h ${path_content})
-    
-    list (APPEND application_source ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Editor/Source/ProjectPath.h)
 endif()
 	
+if (BUILD_MACOS OR BUILD_LINUX)
+	# Generate header source path
+	set(path_content "#define PROJECT_PATH \"${SKYLICHT_ENGINE_SOURCE_DIR}/Assets\"")
+	file(WRITE ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Editor/Source/ProjectPath.h ${path_content})
+	list (APPEND application_source ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Editor/Source/ProjectPath.h)
+endif()
+
 if (BUILD_DEBUG_VLD)
 	if (CMAKE_CL_64)
 		set(vld_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/Vld/lib/Win64")

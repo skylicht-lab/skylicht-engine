@@ -95,16 +95,9 @@ if (BUILD_MACOS)
 		${template_path}/Platforms/MacOS/**.c 
 		${template_path}/Platforms/MacOS/**.h
 		${template_path}/Platforms/MacOS/**.m
-		${template_path}/Platforms/MacOS/**.mm
-		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.h
-		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.m
-		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.mm
-		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.cpp
-		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.c)
+		${template_path}/Platforms/MacOS/**.mm)
 
 	list (APPEND application_source ${platform_mac_source})
-
-	setup_project_group_by_folder_relative("${platform_mac_source}" "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple")
 endif()
 
 if (BUILD_IOS)
@@ -118,18 +111,11 @@ if (BUILD_IOS)
 		${template_path}/Platforms/IOS/**.c 
 		${template_path}/Platforms/IOS/**.h
 		${template_path}/Platforms/IOS/**.m
-		${template_path}/Platforms/IOS/**.mm
-		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.h
-		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.m
-		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.mm
-		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.cpp
-		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.c)
+		${template_path}/Platforms/IOS/**.mm)
 
 	file(GLOB_RECURSE platform_ios_resources ${template_path}/Platforms/IOS/**.storyboard)
 
 	list (APPEND application_source ${platform_ios_source})
-
-	setup_project_group_by_folder_relative("${platform_ios_source}" "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple")
 endif()
 
 if (BUILD_DEBUG_VLD)
