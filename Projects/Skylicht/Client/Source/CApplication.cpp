@@ -268,7 +268,7 @@ namespace Skylicht
 			m_driver->endScene();
 		}
 
-#if !defined(IOS) && !defined(MACOS)
+#if !defined(IOS)
 		long sleepTime = 0;
 		if (m_limitFPS > 0)
 		{
