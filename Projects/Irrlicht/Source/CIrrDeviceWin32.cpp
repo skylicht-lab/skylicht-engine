@@ -44,6 +44,8 @@ CIrrDeviceWin32::CIrrDeviceWin32(const SIrrlichtCreationParameters& param)
 	core::stringc winversion("Windows");
 	Operator = new COSOperator(winversion);
 
+	if (CursorControl)
+		delete CursorControl;
 	CursorControl = new CCursorControl(this, CreationParams.WindowSize, (HWND)CreationParams.WindowId, CreationParams.Fullscreen);
 
 	createDriver();

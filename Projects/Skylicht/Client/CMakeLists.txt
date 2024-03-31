@@ -12,8 +12,14 @@ include_directories(
 )
 
 if (BUILD_DEBUG_VLD)
-	set(vld_inc_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/Vld/include")
+	set(vld_inc_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdPartySDK/Vld/include")
 	include_directories(${vld_inc_path})
+
+	if (CMAKE_CL_64)
+		set(vld_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdPartySDK/Vld/lib/Win64")
+	else()
+		set(vld_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdPartySDK/Vld/lib/Win32")
+	endif()
 endif()
 
 if (BUILD_SKYLICHT_NETWORK)
@@ -45,6 +51,7 @@ endif()
 
 if (BUILD_DEBUG_VLD)
 	target_link_libraries(Client vld)
+	target_link_directories(Client PUBLIC ${vld_lib_path})
 endif()
 
 if (INSTALL_LIBS)

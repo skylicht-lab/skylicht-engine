@@ -60,7 +60,12 @@ namespace Skylicht
 
 	CBaseApp::~CBaseApp()
 	{
+	}
+
+	void CBaseApp::reportLeakMemory()
+	{
 #ifdef USE_VISUAL_LEAK_DETECTOR
+		VLDReportLeaks();
 		VLDDisable();
 #endif
 	}

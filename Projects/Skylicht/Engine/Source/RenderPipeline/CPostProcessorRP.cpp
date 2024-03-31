@@ -76,6 +76,9 @@ namespace Skylicht
 		if (m_blurFilter != NULL)
 			delete m_blurFilter;
 
+		if (m_blurUpFilter != NULL)
+			delete m_blurUpFilter;
+
 		if (m_bloomFilter != NULL)
 			delete m_bloomFilter;
 
