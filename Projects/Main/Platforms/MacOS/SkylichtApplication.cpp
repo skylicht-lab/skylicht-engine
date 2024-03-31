@@ -10,16 +10,6 @@
 #include "CWindowConfig.h"
 #endif
 
-SkylichtApplication *g_osxApp = NULL;
-
-void exitOSXApp()
-{
-    if (g_osxApp != NULL)
-    {
-        g_osxApp->exit();
-    }
-}
-
 using namespace irr::core;
 using namespace irr::scene;
 using namespace irr::video;
@@ -71,7 +61,10 @@ SkylichtApplication::SkylichtApplication(int argc, char **argv)
     
     createKeyMap();
     
-    g_osxApp = this;
+    g_mainApp->OnExitApplication = [&](){
+        // call AngleApplication::exit
+        exit();
+    };
 }
 
 SkylichtApplication::~SkylichtApplication()

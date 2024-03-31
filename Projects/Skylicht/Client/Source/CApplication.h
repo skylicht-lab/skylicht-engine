@@ -39,6 +39,8 @@ namespace Skylicht
 
 		unsigned long m_pauseTime;
 
+        std::function<void()> OnExitApplication;
+        
 	protected:
 		int m_width;
 		int m_height;
