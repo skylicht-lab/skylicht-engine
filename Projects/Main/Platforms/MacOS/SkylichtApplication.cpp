@@ -61,6 +61,7 @@ SkylichtApplication::SkylichtApplication(int argc, char **argv)
     
     createKeyMap();
     
+    g_mainApp->setLimitFPS(60);
     g_mainApp->OnExitApplication = [&](){
         // call AngleApplication::exit
         exit();
