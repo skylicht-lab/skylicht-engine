@@ -37,15 +37,7 @@ file(GLOB_RECURSE test_app_source
 	${template_path}/Platforms/MacOS/**.c
 	${template_path}/Platforms/MacOS/**.h
 	${template_path}/Platforms/MacOS/**.m
-	${template_path}/Platforms/MacOS/**.mm
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.h
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.m
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.mm
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.h
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.m
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.mm
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.cpp
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.c)
+	${template_path}/Platforms/MacOS/**.mm)
 else()
 file(GLOB_RECURSE test_app_source 
 	./**.cpp

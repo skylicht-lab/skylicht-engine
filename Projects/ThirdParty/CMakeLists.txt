@@ -148,6 +148,11 @@ set_target_properties(ThirdParty PROPERTIES VERSION ${SKYLICHT_VERSION})
 
 if (BUILD_SHARED_LIBS)
 set_target_properties(ThirdParty PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS true)
+
+if (BUILD_MACOS)
+    # arm link lib C
+    add_compile_options(-lc)
+endif()
 endif()
 
 if (BUILD_SHARED_LIBS)
