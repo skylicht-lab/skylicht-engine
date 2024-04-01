@@ -35,7 +35,7 @@ using namespace SkylichtSystem;
 
 namespace SkylichtAudio
 {
-	class AUDIO_API CDriverNull : public ISoundDriver
+	class CDriverNull : public ISoundDriver
 	{
 	protected:
 		std::vector<CSoundSource*> m_sources;
