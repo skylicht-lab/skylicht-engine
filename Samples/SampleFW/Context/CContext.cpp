@@ -208,6 +208,15 @@ void CContext::resize(int w, int h)
 
 void CContext::releaseRenderPipeline()
 {
+	if (m_beginRP != m_rendering &&
+		m_beginRP != m_forwardRP &&
+		m_beginRP != m_shadowMapRendering)
+	{
+		// delete customRP
+		delete m_beginRP;
+		m_beginRP = NULL;
+	}
+
 	if (m_rendering != NULL)
 	{
 		delete m_rendering;
