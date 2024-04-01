@@ -86,7 +86,7 @@ endif()
 if (BUILD_MACOS)
 	# Angle API
 	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/include)
-	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/Angle)
+	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Source/MacOS/Angle)
 	include_directories(${template_path}/Platforms/MacOS)
 	
 	file(GLOB_RECURSE platform_mac_source 
@@ -102,7 +102,7 @@ endif()
 if (BUILD_IOS)
 	# Angle API
 	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/include)
-	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/Angle)
+	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Source/MacOS/Angle)
 	include_directories(${template_path}/Platforms/IOS)
 	
 	file(GLOB_RECURSE platform_ios_source 
