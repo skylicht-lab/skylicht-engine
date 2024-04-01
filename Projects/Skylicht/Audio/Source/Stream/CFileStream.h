@@ -30,7 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace SkylichtAudio
 {
-	class AUDIO_API CFileStreamCursor : public IStreamCursor
+	class CFileStreamCursor : public IStreamCursor
 	{
 	protected:
 		FILE *m_file;
@@ -54,7 +54,7 @@ namespace SkylichtAudio
 		virtual bool readyReadData(int len);
 	};
 
-	class AUDIO_API CFileStream : public IStream
+	class CFileStream : public IStream
 	{
 	protected:
 		std::string	m_fileName;

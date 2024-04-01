@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace SkylichtAudio
 {
-	class AUDIO_API IStreamCursor
+	class IStreamCursor
 	{
 	public:
 		enum EOrigin
@@ -53,7 +53,7 @@ namespace SkylichtAudio
 	};
 
 
-	class AUDIO_API IStream
+	class IStream
 	{
 	protected:
 		int	m_referenceCount;

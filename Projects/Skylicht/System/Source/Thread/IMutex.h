@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace SkylichtSystem
 {
-	class SYSTEM_SHARED_API IMutex
+	class IMutex
 	{
 	public:
 		virtual ~IMutex()

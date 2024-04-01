@@ -33,7 +33,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace SkylichtSystem
 {
-	class SYSTEM_SHARED_API CPThreadMutex : public IMutex
+	class CPThreadMutex : public IMutex
 	{
 	protected:
 		pthread_mutex_t m_mutex;
