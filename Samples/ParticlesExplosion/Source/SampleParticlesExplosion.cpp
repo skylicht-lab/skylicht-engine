@@ -9,7 +9,7 @@
 
 void installApplication(const std::vector<std::string>& argv)
 {
-	SampleParticlesExplosion *app = new SampleParticlesExplosion();
+	SampleParticlesExplosion* app = new SampleParticlesExplosion();
 	getApplication()->registerAppEvent("SampleParticlesExplosion", app);
 }
 
@@ -46,22 +46,22 @@ void SampleParticlesExplosion::onInitApp()
 	app->getFileSystem()->addFileArchive(app->getBuiltInPath("Particles.zip"), false, false);
 
 	// load basic shader
-	CShaderManager *shaderMgr = CShaderManager::getInstance();
+	CShaderManager* shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
 
 	// create a Scene
 	m_scene = new CScene();
 
 	// create a Zone in Scene
-	CZone *zone = m_scene->createZone();
+	CZone* zone = m_scene->createZone();
 
 	// create 2D camera
-	CGameObject *guiCameraObject = zone->createEmptyObject();
+	CGameObject* guiCameraObject = zone->createEmptyObject();
 	m_guiCamera = guiCameraObject->addComponent<CCamera>();
 	m_guiCamera->setProjectionType(CCamera::OrthoUI);
 
 	// create 3d camera
-	CGameObject *camObj = zone->createEmptyObject();
+	CGameObject* camObj = zone->createEmptyObject();
 	camObj->addComponent<CCamera>();
 	camObj->addComponent<CEditorCamera>()->setMoveSpeed(2.0f);
 	camObj->addComponent<CFpsMoveCamera>()->setMoveSpeed(1.0f);
@@ -71,7 +71,7 @@ void SampleParticlesExplosion::onInitApp()
 	m_camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
 
 	// 3d grid
-	CGameObject *grid = zone->createEmptyObject();
+	CGameObject* grid = zone->createEmptyObject();
 	grid->addComponent<CGridPlane>();
 
 	// particles pool	
@@ -83,18 +83,18 @@ void SampleParticlesExplosion::onInitApp()
 	}
 
 	// init font
-	CGlyphFreetype *freetypeFont = CGlyphFreetype::getInstance();
+	CGlyphFreetype* freetypeFont = CGlyphFreetype::getInstance();
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
 
 	m_font = new CGlyphFont();
 	m_font->setFont("Segoe UI Light", 30);
 
 	// create 2D Canvas
-	CGameObject *canvasObject = zone->createEmptyObject();
-	CCanvas *canvas = canvasObject->addComponent<CCanvas>();
+	CGameObject* canvasObject = zone->createEmptyObject();
+	CCanvas* canvas = canvasObject->addComponent<CCanvas>();
 
 	// create UI Text in Canvas
-	CGUIText *textLarge = canvas->createText(m_font);
+	CGUIText* textLarge = canvas->createText(m_font);
 	textLarge->setPosition(core::vector3df(0.0f, -10.0f, 0.0f));
 	textLarge->setText("Press SPACE to simulate explosion");
 	textLarge->setTextAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Bottom);
@@ -144,18 +144,18 @@ bool SampleParticlesExplosion::OnEvent(const SEvent& event)
 	return false;
 }
 
-void SampleParticlesExplosion::initParticleSystem(Particle::CParticleComponent *ps)
+void SampleParticlesExplosion::initParticleSystem(Particle::CParticleComponent* ps)
 {
-	ITexture *texture = NULL;
+	ITexture* texture = NULL;
 
 	// FACTORY & EXPLOSION ZONE
-	Particle::CFactory *factory = ps->getParticleFactory();
+	Particle::CFactory* factory = ps->getParticleFactory();
 	Particle::CSphere* sphere = factory->createSphereZone(core::vector3df(), 0.6f);
 
 	// GROUP: SMOKE
-	Particle::CGroup *smokeGroup = ps->createParticleGroup();
+	Particle::CGroup* smokeGroup = ps->createParticleGroup();
 
-	Particle::CQuadRenderer *smoke = factory->createQuadRenderer();
+	Particle::CQuadRenderer* smoke = factory->createQuadRenderer();
 	smokeGroup->setRenderer(smoke);
 
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/explosion.png");
@@ -178,7 +178,7 @@ void SampleParticlesExplosion::initParticleSystem(Particle::CParticleComponent *
 	smokeGroup->Gravity.set(0.0f, 0.05f, 0.0f);
 
 	// alpha interpolator
-	Particle::CInterpolator *interpolatorSmokeAlpha = smokeGroup->createInterpolator();
+	Particle::CInterpolator* interpolatorSmokeAlpha = smokeGroup->createInterpolator();
 	interpolatorSmokeAlpha->addEntry(0.0f, 0.0f);
 	interpolatorSmokeAlpha->addEntry(0.4f, 0.6f);
 	interpolatorSmokeAlpha->addEntry(0.6f, 0.6f);
@@ -186,7 +186,7 @@ void SampleParticlesExplosion::initParticleSystem(Particle::CParticleComponent *
 	smokeGroup->createModel(Particle::ColorA)->setInterpolator(interpolatorSmokeAlpha);
 
 	// create emitter
-	Particle::CRandomEmitter *smokeEmitter = NULL;
+	Particle::CRandomEmitter* smokeEmitter = NULL;
 
 	smokeEmitter = factory->createRandomEmitter();
 	smokeEmitter->setFlow(-1.0f);
@@ -196,9 +196,9 @@ void SampleParticlesExplosion::initParticleSystem(Particle::CParticleComponent *
 	smokeGroup->addEmitter(smokeEmitter);
 
 	// GROUP: FLASH
-	Particle::CGroup *flashGroup = ps->createParticleGroup();
+	Particle::CGroup* flashGroup = ps->createParticleGroup();
 
-	Particle::CQuadRenderer *flash = factory->createQuadRenderer();
+	Particle::CQuadRenderer* flash = factory->createQuadRenderer();
 	flashGroup->setRenderer(flash);
 
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/flash.png");
@@ -211,12 +211,12 @@ void SampleParticlesExplosion::initParticleSystem(Particle::CParticleComponent *
 	flashGroup->LifeMin = 0.5f;
 	flashGroup->LifeMax = 0.5f;
 
-	Particle::CInterpolator *flashSizeInterpolator = flashGroup->createInterpolator();
+	Particle::CInterpolator* flashSizeInterpolator = flashGroup->createInterpolator();
 	flashSizeInterpolator->addEntry(0.0f, 0.25f);
 	flashSizeInterpolator->addEntry(0.1f, 1.5f);
 	flashGroup->createModel(Particle::Scale)->setInterpolator(flashSizeInterpolator);
 
-	Particle::CInterpolator *flashAlphaInterpolator = flashGroup->createInterpolator();
+	Particle::CInterpolator* flashAlphaInterpolator = flashGroup->createInterpolator();
 	flashAlphaInterpolator->addEntry(0.0f, 1.0f);
 	flashAlphaInterpolator->addEntry(0.4f, 0.0f);
 	flashGroup->createModel(Particle::ColorA)->setInterpolator(flashAlphaInterpolator);
@@ -228,10 +228,10 @@ void SampleParticlesExplosion::initParticleSystem(Particle::CParticleComponent *
 	flashGroup->addEmitter(randomEmitter);
 
 	// GROUP: FLAME
-	Particle::CGroup *flameGroup = ps->createParticleGroup();
+	Particle::CGroup* flameGroup = ps->createParticleGroup();
 
 	// Billboard render use is slower but render additive look better
-	Particle::CBillboardAdditiveRenderer *flame = factory->createBillboardAdditiveRenderer();
+	Particle::CBillboardAdditiveRenderer* flame = factory->createBillboardAdditiveRenderer();
 
 	//Particle::CQuadRenderer *flame = factory->createQuadRenderer();
 	//flame->setMaterialType(Particle::Additive, Particle::Camera);
@@ -252,28 +252,31 @@ void SampleParticlesExplosion::initParticleSystem(Particle::CParticleComponent *
 	flameGroup->LifeMin = 1.5f;
 	flameGroup->LifeMax = 2.0f;
 
-	Particle::CInterpolator *flameSizeInterpolator = flameGroup->createInterpolator();
+	Particle::CInterpolator* flameSizeInterpolator = flameGroup->createInterpolator();
 	flameSizeInterpolator->addEntry(0.0f, 0.25f);
-	flameSizeInterpolator->addEntry(0.02f, 0.8f);
+	flameSizeInterpolator->addEntry(0.1f, 0.8f);
 	flameSizeInterpolator->addEntry(1.0f, 1.4f);
 	flameGroup->createModel(Particle::Scale)->setInterpolator(flameSizeInterpolator);
 
-	Particle::CInterpolator *flameAlphaInterpolator = flameGroup->createInterpolator();
+	Particle::CInterpolator* flameAlphaInterpolator = flameGroup->createInterpolator();
+	flameAlphaInterpolator->addEntry(0.0f, 0.0f);
+	flameAlphaInterpolator->addEntry(0.15f, 1.0f);
 	flameAlphaInterpolator->addEntry(0.5f, 1.0f);
 	flameAlphaInterpolator->addEntry(1.0f, 0.0f);
 	flameGroup->createModel(Particle::ColorA)->setInterpolator(flameAlphaInterpolator);
 
-	Particle::CNormalEmitter *flameEmitter = factory->createNormalEmitter(false);
+	Particle::CNormalEmitter* flameEmitter = factory->createNormalEmitter(false);
 	flameEmitter->setFlow(-1.0f);
 	flameEmitter->setTank(15);
+	flameEmitter->setDelay(0.01f);
 	flameEmitter->setForce(0.06f, 0.1f);
 	flameEmitter->setZone(sphere);
 	flameGroup->addEmitter(flameEmitter);
 
 	// GROUP: LINE SPARK
-	Particle::CGroup *lineSparkGroup = ps->createParticleGroup();
+	Particle::CGroup* lineSparkGroup = ps->createParticleGroup();
 
-	Particle::CQuadRenderer *lineSpark = factory->createQuadRenderer();
+	Particle::CQuadRenderer* lineSpark = factory->createQuadRenderer();
 	lineSparkGroup->setRenderer(lineSpark);
 
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/spark1.png");
@@ -290,7 +293,7 @@ void SampleParticlesExplosion::initParticleSystem(Particle::CParticleComponent *
 	lineSparkGroup->LifeMax = 1.0f;
 	lineSparkGroup->Gravity.set(0.0f, -1.5f, 0.0f);
 
-	Particle::CNormalEmitter *lineSparkEmitter = factory->createNormalEmitter(false);
+	Particle::CNormalEmitter* lineSparkEmitter = factory->createNormalEmitter(false);
 	lineSparkEmitter->setFlow(-1.0f);
 	lineSparkEmitter->setTank(20);
 	lineSparkEmitter->setForce(2.0f, 3.0f);
@@ -298,9 +301,9 @@ void SampleParticlesExplosion::initParticleSystem(Particle::CParticleComponent *
 	lineSparkGroup->addEmitter(lineSparkEmitter);
 
 	// GROUP: POINT SPARK
-	Particle::CGroup *pointSparkGroup = ps->createParticleGroup();
+	Particle::CGroup* pointSparkGroup = ps->createParticleGroup();
 
-	Particle::CQuadRenderer *pointSpark = factory->createQuadRenderer();
+	Particle::CQuadRenderer* pointSpark = factory->createQuadRenderer();
 	pointSparkGroup->setRenderer(pointSpark);
 
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/point.png");
@@ -315,22 +318,22 @@ void SampleParticlesExplosion::initParticleSystem(Particle::CParticleComponent *
 	pointSparkGroup->createModel(Particle::ColorR)->setStart(1.0f);
 	pointSparkGroup->createModel(Particle::ColorG)->setStart(1.0f)->setEnd(0.3f, 0.1f);
 	pointSparkGroup->createModel(Particle::ColorB)->setStart(0.7f)->setEnd(0.3f);
-	pointSparkGroup->LifeMin = 1.0f;
-	pointSparkGroup->LifeMax = 3.0f;
+	pointSparkGroup->LifeMin = 3.0f;
+	pointSparkGroup->LifeMax = 4.0f;
 	pointSparkGroup->Gravity.set(0.0f, -0.3f, 0.0f);
-	pointSparkGroup->Friction = 0.4f;
+	pointSparkGroup->Friction = 0.3f;
 
-	Particle::CNormalEmitter *pointSparkEmitter = factory->createNormalEmitter(false);
+	Particle::CNormalEmitter* pointSparkEmitter = factory->createNormalEmitter(false);
 	pointSparkEmitter->setFlow(-1.0f);
 	pointSparkEmitter->setTank(400);
-	pointSparkEmitter->setForce(0.4f, 0.8f);
+	pointSparkEmitter->setForce(0.6f, 1.0f);
 	pointSparkEmitter->setZone(sphere);
 	pointSparkGroup->addEmitter(pointSparkEmitter);
 
 	// GROUP: WAVE
-	Particle::CGroup *waveGroup = ps->createParticleGroup();
+	Particle::CGroup* waveGroup = ps->createParticleGroup();
 
-	Particle::CQuadRenderer *wave = factory->createQuadRenderer();
+	Particle::CQuadRenderer* wave = factory->createQuadRenderer();
 	waveGroup->setRenderer(wave);
 
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/wave_alpha.png");
@@ -345,7 +348,7 @@ void SampleParticlesExplosion::initParticleSystem(Particle::CParticleComponent *
 	waveGroup->OrientationNormal.set(0.0f, 1.0f, 0.0f);
 	waveGroup->OrientationUp.set(1.0f, 0.0f, 0.0f);
 
-	Particle::CRandomEmitter *waveEmitter = factory->createRandomEmitter();
+	Particle::CRandomEmitter* waveEmitter = factory->createRandomEmitter();
 	waveEmitter->setFlow(-1.0f);
 	waveEmitter->setTank(1);
 	waveEmitter->setForce(0.0f, 0.0f);

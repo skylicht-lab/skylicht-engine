@@ -33,7 +33,7 @@ using namespace SkylichtSystem;
 
 namespace SkylichtAudio
 {
-	class AUDIO_API CSoundSource : public ISoundSource
+	class CSoundSource : public ISoundSource
 	{
 	public:
 		CSoundSource(float length);

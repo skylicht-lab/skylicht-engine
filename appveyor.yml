@@ -1,9 +1,9 @@
-version: '{build}'
+version: "{build}"
 
 # all brance build
 
 image:
-- Visual Studio 2017
+  - Visual Studio 2017
 
 environment:
   matrix:
@@ -13,15 +13,15 @@ environment:
       toolchain: Cygwin
       configuration: Release
       cmake_args: -B ./PrjCygwin -G "Unix Makefiles"
-      
+
     # Win32/x86/Release
-    - platform: Win32 x86
-      arch: x86
-      toolchain: MSVC
-      configuration: Release
-      cmake_args: -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A Win32
-      cmake_build: /verbosity:minimal /maxcpucount
-      
+    # - platform: Win32 x86
+    #   arch: x86
+    #   toolchain: MSVC
+    #   configuration: Release
+    #   cmake_args: -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A Win32
+    #   cmake_build: /verbosity:minimal /maxcpucount
+
 # clone directory
 clone_folder: C:\Projects\Skylicht_Engine
 
@@ -29,26 +29,26 @@ clone_folder: C:\Projects\Skylicht_Engine
 install:
   # clone submodules
   - git submodule update --init --recursive
-  
+
   # remove conflict sh.exe
   - set PATH=%PATH:C:\Program Files\Git\usr\bin;=%
-  
+
   # set env for python
   - set PATH=C:\Python37;%PATH%
-  
+
   # set env for cygwin
   - if "%toolchain%"=="Cygwin" set PATH=C:\cygwin64\bin;%PATH%
 
   # set env for android
   - if "%toolchain%"=="Android" set PATH=C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64\bin;%PATH%
-  
-  # test version  
-  - cmake --version  
+
+  # test version
+  - cmake --version
   - python --version
   - echo %PATH%
   - echo %platform%
   - echo %APPVEYOR_BUILD_VERSION%
-  
+
 before_build:
   - cd C:\Projects\Skylicht_Engine
   - echo %arch%
@@ -66,18 +66,17 @@ test_script:
 
 #artifacts:
 #  - path: Build\*.zip
-      
+
 for:
   # MSVC
-  -
-    matrix:
+  - matrix:
       only:
         - toolchain: MSVC
     build_script:
       - cd Assets
       - python BuildAssetBundles.py
       - cd ..
-      - cmake --build ./PrjVisualStudio --config "%configuration%" -- %cmake_build%      
+      - cmake --build ./PrjVisualStudio --config "%configuration%" -- %cmake_build%
     after_build:
       - mkdir Build
       - dir Bin
@@ -97,8 +96,7 @@ for:
       - cd ..
 
   # Cygwin
-  -
-    matrix:
+  - matrix:
       only:
         - toolchain: Cygwin
     build_script:
@@ -122,7 +120,6 @@ for:
       - cd PrjCygwin
       - ctest --verpose
       - cd ..
-      
 #deploy:
 #- provider: GitHub
 #  auth_token:

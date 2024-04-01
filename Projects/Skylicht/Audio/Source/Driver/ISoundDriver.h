@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace SkylichtAudio
 {
-	class AUDIO_API ISoundDriver
+	class ISoundDriver
 	{
 	public:
 		ISoundDriver()

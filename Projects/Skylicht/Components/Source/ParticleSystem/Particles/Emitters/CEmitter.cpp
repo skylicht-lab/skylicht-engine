@@ -42,7 +42,9 @@ namespace Skylicht
 			m_active(true),
 			m_emitFullZone(true),
 			m_type(type),
-			m_zone(NULL)
+			m_zone(NULL),
+			m_delay(0.0f),
+			m_waitDelay(0.0f)
 		{
 			m_fraction = random(0.0f, 1.0f);
 		}
@@ -54,6 +56,12 @@ namespace Skylicht
 
 		u32 CEmitter::updateNumber(float deltaTime)
 		{
+			if (m_waitDelay > 0.0f)
+			{
+				m_waitDelay = m_waitDelay - deltaTime * 0.001f;
+				return 0;
+			}
+
 			int nbBorn = 0;
 
 			if (m_flow <= 0.0f)
@@ -88,6 +96,12 @@ namespace Skylicht
 
 		u32 CEmitter::updateBornData(SBornData& data, float deltaTime)
 		{
+			if (m_waitDelay > 0.0f)
+			{
+				m_waitDelay = m_waitDelay - deltaTime;
+				return 0;
+			}
+
 			int nbBorn = 0;
 
 			if (m_flow <= 0.0f)
@@ -114,13 +128,13 @@ namespace Skylicht
 			return (u32)nbBorn;
 		}
 
-		void CEmitter::generateVelocity(CParticle& particle, CZone* zone, CGroup *group)
+		void CEmitter::generateVelocity(CParticle& particle, CZone* zone, CGroup* group)
 		{
 			float force = random(m_forceMin, m_forceMax);
 			generateVelocity(particle, force / particle.Params[Mass], zone, group);
 		}
 
-		void CEmitter::emitParticle(CParticle &particle, CZone* zone, CGroup *group)
+		void CEmitter::emitParticle(CParticle& particle, CZone* zone, CGroup* group)
 		{
 			zone->generatePosition(particle, m_emitFullZone, group);
 			generateVelocity(particle, zone, group);
