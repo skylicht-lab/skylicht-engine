@@ -4,14 +4,6 @@
 
 class SampleSkinnedMeshInstancing : public IApplicationEventReceiver
 {
-private:
-	CScene *m_scene;
-	CCamera *m_guiCamera;
-	CCamera *m_camera;
-
-	CGlyphFont *m_largeFont;
-	CForwardRP *m_forwardRP;
-
 public:
 	SampleSkinnedMeshInstancing();
 	virtual ~SampleSkinnedMeshInstancing();
@@ -27,7 +19,7 @@ public:
 	virtual void onPause();
 
 	virtual bool onBack();
-	
+
 	virtual void onResize(int w, int h);
 
 	virtual void onInitApp();

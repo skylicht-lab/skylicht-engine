@@ -1,5 +1,6 @@
 include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Samples/SkinnedMeshInstancing/Source
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Samples/SampleFW
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Main/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Include
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/System/Source
@@ -23,7 +24,9 @@ set(template_path ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Main)
 file(GLOB_RECURSE application_source 
 	./Source/**.cpp 
 	./Source/**.c 
-	./Source/**.h)
+	./Source/**.h
+	../SampleFW/**.cpp
+	../SampleFW/**.h)
 
 setup_project_group("${application_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 
