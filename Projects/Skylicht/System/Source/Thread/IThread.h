@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace SkylichtSystem
 {
-	class SYSTEM_SHARED_API IThreadCallback
+	class IThreadCallback
 	{
 	public:
 		IThreadCallback()
@@ -52,7 +52,7 @@ namespace SkylichtSystem
 	};
 
 
-	class SYSTEM_SHARED_API IThread
+	class IThread
 	{
 	protected:
 		IThreadCallback *m_callback;
