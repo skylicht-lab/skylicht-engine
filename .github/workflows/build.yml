@@ -233,7 +233,7 @@ jobs:
   Windows-Static:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v1
       - name: Build
         shell: cmd
         run: |
@@ -254,7 +254,7 @@ jobs:
   Windows-Shared:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v1
       - name: Build
         shell: cmd
         run: |
