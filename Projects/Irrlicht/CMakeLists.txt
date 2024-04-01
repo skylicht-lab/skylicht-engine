@@ -25,37 +25,40 @@ if(CYGWIN)
 	add_definitions(-DIRR_COMPILE_WITH_DX11_DEV_PACK)
 endif()
 
-file(GLOB_RECURSE irrlicht_source ./**.cpp ./**.c)
-file(GLOB_RECURSE irrlicht_include ./**.h)
+file(GLOB irrlicht_source 
+	./Source/**.cpp 
+	./Source/**.c)
+file(GLOB irrlicht_include 
+	./Include/**.h)
 
 source_group("Source" FILES "${irrlicht_source}")
 source_group("Include" FILES "${irrlicht_include}")
 
 if (BUILD_MACOS)
 	# Add .mm source
-	file(GLOB_RECURSE irrlicht_mac_source ./**.mm)
+	file(GLOB irrlicht_mac_source 
+		./Source/MacOS/**.mm)
 	source_group("Source" FILES "${irrlicht_mac_source}")
+	
+	# Add angle source
+	file(GLOB_RECURSE irrlicht_angle_source 
+		./Source/MacOS/Angle/**.mm
+		./Source/MacOS/Angle/**.m
+		./Source/MacOS/Angle/**.cpp
+		./Source/MacOS/Angle/**.h
+		./Source/MacOS/Angle/**.c)
+	setup_project_group_by_folder_relative("${irrlicht_angle_source}" "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Source/MacOS/Angle")
 endif()
 
 if(BUILD_MACOS OR BUILD_IOS)
 	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/include)
-	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/Angle)
-	
-	# Angle source
-	file(GLOB_RECURSE angle_source
-		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.h
-		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.m
-		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.mm
-		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.cpp
-		${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple/*.c)
-
-	setup_project_group_by_folder_relative("${angle_source}" "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple")
+	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Source/MacOS/Angle)
 endif()
 
 add_library(Irrlicht ${ENGINE_SHARED_OR_STATIC_LIB}
 	${irrlicht_source}
 	${irrlicht_mac_source}
-	${angle_source}
+	${irrlicht_angle_source}
 	${irrlicht_include})
 
 # Irrlicht shared
