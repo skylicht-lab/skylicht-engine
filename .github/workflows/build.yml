@@ -1,6 +1,6 @@
 name: build
 
-on: [push]
+on: [push, pull_request]
 
 # Software
 # https://help.github.com/en/actions/automating-your-workflow-with-github-actions/software-installed-on-github-hosted-runners
@@ -233,7 +233,7 @@ jobs:
   Windows-Static:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v1
       - name: Build
         shell: cmd
         run: |
@@ -254,7 +254,7 @@ jobs:
   Windows-Shared:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v1
       - name: Build
         shell: cmd
         run: |
