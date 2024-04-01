@@ -49,5 +49,10 @@ namespace Skylicht
 		{
 			return m_probeData->SH;
 		}
+
+		inline void needValidate()
+		{
+			m_probeData->NeedValidate = true;
+		}
 	};
 }

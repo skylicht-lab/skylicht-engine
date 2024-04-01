@@ -1032,7 +1032,13 @@ namespace Skylicht
 					if (uniform != NULL)
 						uniformTexture->TextureSlot = (int)uniform->Value[0];
 					else
-						uniformTexture->TextureSlot = -2;
+					{
+						uniform = m_shader->getVSUniform(uniformTexture->Name.c_str());
+						if (uniform != NULL)
+							uniformTexture->TextureSlot = (int)uniform->Value[0];
+						else
+							uniformTexture->TextureSlot = -2;
+					}
 				}
 
 				int textureSlot = uniformTexture->TextureSlot;
