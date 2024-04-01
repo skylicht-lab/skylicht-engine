@@ -34,7 +34,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace SkylichtSystem
 {
-	class SYSTEM_SHARED_API CPThread : public IThread
+	class CPThread : public IThread
 	{
 	protected:
 		pthread_t m_pthread;
