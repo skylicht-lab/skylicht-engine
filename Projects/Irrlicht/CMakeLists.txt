@@ -39,20 +39,20 @@ if (BUILD_MACOS)
 	file(GLOB irrlicht_mac_source 
 		./Source/MacOS/**.mm)
 	source_group("Source" FILES "${irrlicht_mac_source}")
+endif()
+
+if(BUILD_MACOS OR BUILD_IOS)
+	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/include)
+	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Source/MacOS/Angle)
 	
 	# Add angle source
-	file(GLOB_RECURSE irrlicht_angle_source 
+	file(GLOB_RECURSE irrlicht_angle_source
 		./Source/MacOS/Angle/**.mm
 		./Source/MacOS/Angle/**.m
 		./Source/MacOS/Angle/**.cpp
 		./Source/MacOS/Angle/**.h
 		./Source/MacOS/Angle/**.c)
 	setup_project_group_by_folder_relative("${irrlicht_angle_source}" "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Source/MacOS/Angle")
-endif()
-
-if(BUILD_MACOS OR BUILD_IOS)
-	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/include)
-	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Source/MacOS/Angle)
 endif()
 
 add_library(Irrlicht ${ENGINE_SHARED_OR_STATIC_LIB}
