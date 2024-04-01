@@ -65,6 +65,9 @@ namespace Skylicht
 			bool m_active;
 			bool m_emitFullZone;
 
+			float m_delay;
+			float m_waitDelay;
+
 			CZone* m_zone;
 
 			EEmitter m_type;
@@ -79,7 +82,7 @@ namespace Skylicht
 
 			virtual ~CEmitter();
 
-			inline CZone* setZone(CZone *z)
+			inline CZone* setZone(CZone* z)
 			{
 				m_zone = z;
 				return m_zone;
@@ -105,6 +108,8 @@ namespace Skylicht
 			inline void resetTank()
 			{
 				setTank(m_lastTank);
+
+				m_waitDelay = m_delay;
 			}
 
 			inline int getTank()
@@ -132,6 +137,12 @@ namespace Skylicht
 			inline bool isActive()
 			{
 				return m_active;
+			}
+
+			inline void setDelay(float timeSecond)
+			{
+				m_delay = timeSecond;
+				m_waitDelay = timeSecond;
 			}
 
 			inline void setForce(float min, float max)
@@ -184,11 +195,11 @@ namespace Skylicht
 
 			virtual u32 updateBornData(SBornData& data, float deltaTime);
 
-			void generateVelocity(CParticle& particle, CZone* zone, CGroup *group);
+			void generateVelocity(CParticle& particle, CZone* zone, CGroup* group);
 
-			void emitParticle(CParticle& particle, CZone* zone, CGroup *group);
+			void emitParticle(CParticle& particle, CZone* zone, CGroup* group);
 
-			virtual void generateVelocity(CParticle& particle, float speed, CZone* zone, CGroup *group) = 0;
+			virtual void generateVelocity(CParticle& particle, float speed, CZone* zone, CGroup* group) = 0;
 
 			u32 addBornData();
 

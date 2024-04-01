@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class COLLISION_API COctreeBuilder : public CCollisionBuilder
+	class COctreeBuilder : public CCollisionBuilder
 	{
 	protected:
 		COctreeNode* m_root;

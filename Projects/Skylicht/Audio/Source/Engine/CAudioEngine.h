@@ -42,13 +42,13 @@ using namespace SkylichtSystem;
 
 namespace SkylichtAudio
 {
-	AUDIO_API void initSkylichtAudio();
+	void initSkylichtAudio();
 
-	AUDIO_API void releaseSkylichtAudio();
+	void releaseSkylichtAudio();
 
-	AUDIO_API void updateSkylichtAudio();
+	void updateSkylichtAudio();
 
-	class AUDIO_API CAudioEngine : public IThreadCallback
+	class CAudioEngine : public IThreadCallback
 	{
 	protected:
 		IThread* m_thread;
