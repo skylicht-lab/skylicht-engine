@@ -297,6 +297,7 @@ namespace Skylicht
 
 		CRigidbody::EActivationState CRigidbody::getState()
 		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
 			int state = m_rigidBody->getActivationState();
 			if (state == ACTIVE_TAG)
 				return Activate;
@@ -306,12 +307,15 @@ namespace Skylicht
 				return Alway;
 			else if (state == DISABLE_SIMULATION)
 				return Disable;
-
 			return Activate;
+#else
+			return Disable;
+#endif
 		}
 
 		const char* CRigidbody::getStateName()
 		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
 			int state = m_rigidBody->getActivationState();
 			if (state == ACTIVE_TAG)
 				return "Activate";
@@ -324,6 +328,9 @@ namespace Skylicht
 			else if (state == DISABLE_SIMULATION)
 				return "Disable";
 			return "Unknown";
+#else
+			return "Disable";
+#endif
 		}
 
 		void CRigidbody::applyCenterForce(const core::vector3df& force)
