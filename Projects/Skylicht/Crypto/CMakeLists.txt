@@ -1,5 +1,5 @@
 include_directories(
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Crypto/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Crypto/Source
 )
 
 file(GLOB_RECURSE crypto_source 
@@ -26,7 +26,7 @@ install(TARGETS CryptoLib
 			LIBRARY DESTINATION lib
 			ARCHIVE DESTINATION lib)
 			
-install (DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Crypto/Source
+install (DIRECTORY ${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Crypto/Source
 	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}/Skylicht/Crypto
 	FILES_MATCHING PATTERN "*.h*")
 

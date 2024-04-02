@@ -971,15 +971,11 @@ namespace Skylicht
 		mat.BackfaceCulling = m_backfaceCulling;
 		mat.FrontfaceCulling = m_frontfaceCulling;
 
-		// apply filter
+		// apply default filter for all texture layers
 		mat.UseMipMaps = true;
 		mat.setFlag(video::EMF_BILINEAR_FILTER, false);
 		mat.setFlag(video::EMF_TRILINEAR_FILTER, false);
-
-		if (getVideoDriver()->getDriverType() == video::EDT_OPENGLES)
-			mat.setFlag(video::EMF_ANISOTROPIC_FILTER, true, 4);
-		else
-			mat.setFlag(video::EMF_ANISOTROPIC_FILTER, true, 8);
+		mat.setFlag(video::EMF_ANISOTROPIC_FILTER, true, 2);
 
 		// apply default shader material
 		for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
@@ -1032,18 +1028,34 @@ namespace Skylicht
 					if (uniform != NULL)
 						uniformTexture->TextureSlot = (int)uniform->Value[0];
 					else
-						uniformTexture->TextureSlot = -2;
+					{
+						uniform = m_shader->getVSUniform(uniformTexture->Name.c_str());
+						if (uniform != NULL)
+							uniformTexture->TextureSlot = (int)uniform->Value[0];
+						else
+							uniformTexture->TextureSlot = -2;
+					}
 				}
 
 				int textureSlot = uniformTexture->TextureSlot;
 				if (textureSlot >= 0 && textureSlot < MATERIAL_MAX_TEXTURES)
 				{
+					m_textures[textureSlot] = uniformTexture->Texture;
+
+					// set customize texture
 					mat.setTexture(textureSlot, uniformTexture->Texture);
 
+					// set unwrap
 					mat.TextureLayer[textureSlot].TextureWrapU = uniformTexture->WrapU;
 					mat.TextureLayer[textureSlot].TextureWrapV = uniformTexture->WrapV;
 
-					m_textures[textureSlot] = uniformTexture->Texture;
+					// set customize filter
+					if (textureSlot != m_shadowMapTextureSlot)
+					{
+						mat.TextureLayer[textureSlot].BilinearFilter = uniformTexture->Bilinear;
+						mat.TextureLayer[textureSlot].TrilinearFilter = uniformTexture->Trilinear;
+						mat.TextureLayer[textureSlot].AnisotropicFilter = uniformTexture->Anisotropic;
+					}
 				}
 			}
 		}

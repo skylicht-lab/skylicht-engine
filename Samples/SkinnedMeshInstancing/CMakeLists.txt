@@ -1,5 +1,5 @@
 include_directories(
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Samples/LightmappingDirectional/Source
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Samples/SkinnedMeshInstancing/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Samples/SampleFW
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Main/Source
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Include
@@ -12,6 +12,7 @@ include_directories(
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Lightmapper/Source
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Audio/Source
 	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/source/freetype2/include
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Bullet3/src
 )
 
 if (BUILD_IMGUI)
@@ -42,24 +43,24 @@ if (BUILD_ANDROID)
 endif()
 
 if (BUILD_WINDOWS_STORE)
-	file(MAKE_DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/LightmappingDirectional)
-	file(MAKE_DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/LightmappingDirectional/Assets)
+	file(MAKE_DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/SkinnedMeshInstancing)
+	file(MAKE_DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/SkinnedMeshInstancing/Assets)
 	
 	file(GLOB uwp_assets 
 		${template_path}/Platforms/UWP/Assets/**.*
 		${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/**.zip)
 	
 	foreach(asset_file ${uwp_assets})
-		file(COPY "${asset_file}" DESTINATION ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/LightmappingDirectional/Assets)
+		file(COPY "${asset_file}" DESTINATION ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/SkinnedMeshInstancing/Assets)
 	endforeach()
 
 	file(COPY ${template_path}/Platforms/UWP/Package.appxmanifest
 		DESTINATION 
-		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/LightmappingDirectional)
+		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/SkinnedMeshInstancing)
 		
 	file(COPY ${template_path}/Platforms/UWP/TemporaryKey.pfx
 		DESTINATION 
-		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/LightmappingDirectional)
+		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/SkinnedMeshInstancing)
 
 	file(GLOB_RECURSE platform_uwp_source 
 		${template_path}/Platforms/UWP/**.cpp 
@@ -67,7 +68,7 @@ if (BUILD_WINDOWS_STORE)
 		${template_path}/Platforms/UWP/**.h)
 	
 	# copy resource to generate prj folder
-	file(GLOB_RECURSE platform_uwp_asset ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/LightmappingDirectional/Assets/**.*)
+	file(GLOB_RECURSE platform_uwp_asset ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/SkinnedMeshInstancing/Assets/**.*)
 	add_source_group("${platform_uwp_asset}" "Assets")
 	
 	list (APPEND application_source ${platform_uwp_source})
@@ -147,31 +148,31 @@ if (MINGW OR CYGWIN)
 endif()
 
 if (BUILD_EMSCRIPTEN)
-	add_executable(SampleLightmappingDirectional 
+	add_executable(SampleSkinnedMeshInstancing 
 		${application_source}
 		${template_path}/Platforms/Emscripten/MainWebGL.cpp
 	)
 elseif(BUILD_SDL)
-	add_executable(SampleLightmappingDirectional 
+	add_executable(SampleSkinnedMeshInstancing 
 		${application_source}
 		${template_path}/Platforms/SDL2/MainSDL.cpp
 	)
 elseif(BUILD_LINUX)
-	add_executable(SampleLightmappingDirectional 
+	add_executable(SampleSkinnedMeshInstancing 
 		${application_source}
 		${template_path}/Platforms/Linux/MainLinux.cpp
 	)
 elseif(BUILD_ANDROID)
-	add_library(SampleLightmappingDirectional SHARED ${application_source})
+	add_library(SampleSkinnedMeshInstancing SHARED ${application_source})
 elseif (BUILD_WINDOWS_STORE)
-	add_executable(SampleLightmappingDirectional
+	add_executable(SampleSkinnedMeshInstancing
 		${application_source}
 		${platform_uwp_asset}
-		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/LightmappingDirectional/TemporaryKey.pfx
-		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/LightmappingDirectional/Package.appxmanifest
+		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/SkinnedMeshInstancing/TemporaryKey.pfx
+		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/SkinnedMeshInstancing/Package.appxmanifest
 	)
 elseif (MSVC OR CYGWIN OR MINGW)
-	add_executable(SampleLightmappingDirectional WIN32
+	add_executable(SampleSkinnedMeshInstancing WIN32
 		${application_source}
 		${template_path}/Platforms/Win32/Skylicht.rc
 	)
@@ -181,19 +182,17 @@ elseif (BUILD_MACOS)
 	set(angle_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/Angle/out/MacOS/Release/${CMAKE_OSX_ARCHITECTURES}")
 	file(GLOB dylib_files "${angle_lib_path}/*.dylib")
 
-	add_executable(SampleLightmappingDirectional 
+	add_executable(SampleSkinnedMeshInstancing 
 		${application_source} 
 		${resources_files}
 		${dylib_files}
 	)
 	
-	set_target_properties(SampleLightmappingDirectional PROPERTIES MACOSX_BUNDLE TRUE)
+	set_target_properties(SampleSkinnedMeshInstancing PROPERTIES MACOSX_BUNDLE TRUE)
 	
-	set(angle_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/Angle/out/MacOS/Release/${CMAKE_OSX_ARCHITECTURES}")
-	
-	target_link_libraries(SampleLightmappingDirectional "-framework Cocoa")
+	target_link_libraries(SampleSkinnedMeshInstancing "-framework Cocoa")
 		
-	message(STATUS "- Setup project: SampleLightmappingDirectional")
+	message(STATUS "- Setup project: SampleSkinnedMeshInstancing")
 	foreach(res_file ${resources_files})
 		file(RELATIVE_PATH res_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin" ${res_file})
 		message(STATUS "  - Add resources: ${res_path}")
@@ -207,26 +206,26 @@ elseif (BUILD_MACOS)
 		source_group("Libs" FILES "${lib_file}")
 	endforeach()
 
-	add_custom_command(TARGET SampleLightmappingDirectional 
+	add_custom_command(TARGET SampleSkinnedMeshInstancing 
 		POST_BUILD COMMAND 
 		${CMAKE_INSTALL_NAME_TOOL} -change ./libEGL.dylib @rpath/libEGL.dylib
-		$<TARGET_FILE:SampleLightmappingDirectional>)
+		$<TARGET_FILE:SampleSkinnedMeshInstancing>)
 
-	add_custom_command(TARGET SampleLightmappingDirectional 
+	add_custom_command(TARGET SampleSkinnedMeshInstancing 
 		POST_BUILD COMMAND 
 		${CMAKE_INSTALL_NAME_TOOL} -change ./libGLESv2.dylib @rpath/libGLESv2.dylib
-		$<TARGET_FILE:SampleLightmappingDirectional>)
+		$<TARGET_FILE:SampleSkinnedMeshInstancing>)
 
-	set_target_properties(SampleLightmappingDirectional PROPERTIES
+	set_target_properties(SampleSkinnedMeshInstancing PROPERTIES
 		MACOSX_RPATH ON
 		BUILD_WITH_INSTALL_RPATH 1
 		INSTALL_RPATH "@executable_path/../Frameworks"
 	)
 elseif (BUILD_IOS)
-	set(MACOSX_BUNDLE_EXECUTABLE_NAME SampleLightmappingDirectional)
+	set(MACOSX_BUNDLE_EXECUTABLE_NAME SampleSkinnedMeshInstancing)
 
-	set(APP_NAME "SampleLightmappingDirectional")
-	set(APP_BUNDLE_IDENTIFIER "com.skylicht.samplelightmappingdirectional")
+	set(APP_NAME "SampleSkinnedMeshInstancing")
+	set(APP_BUNDLE_IDENTIFIER "com.team_name.project_name")
 	set(CODE_SIGN_IDENTITY "iPhone Developer")
 
 	set(PRODUCT_NAME ${APP_NAME})
@@ -243,14 +242,14 @@ elseif (BUILD_IOS)
 	set (framework_files "")
 	list (APPEND framework_files ${angle_framework_files})
 
-	add_executable(SampleLightmappingDirectional MACOSX_BUNDLE 
+	add_executable(SampleSkinnedMeshInstancing MACOSX_BUNDLE 
 		${application_source}
 		${resources_files}
 		${platform_ios_resources}
 		${framework_files}
 	)
 	
-	message(STATUS "- Setup project: SampleLightmappingDirectional")
+	message(STATUS "- Setup project: SampleSkinnedMeshInstancing")
 	foreach(res_file ${resources_files})
 		file(RELATIVE_PATH res_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin" ${res_file})
 		source_group("Bin" FILES "${res_file}")
@@ -262,41 +261,41 @@ elseif (BUILD_IOS)
 		set_source_files_properties(${lib_file} PROPERTIES XCODE_FILE_ATTRIBUTES "CodeSignOnCopy")
 	endforeach()
 
-	set_target_properties(SampleLightmappingDirectional PROPERTIES XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER ${APP_BUNDLE_IDENTIFIER})
-	set_target_properties(SampleLightmappingDirectional PROPERTIES XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY ${CODE_SIGN_IDENTITY})
-	set_target_properties(SampleLightmappingDirectional PROPERTIES XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY ${DEVICE_FAMILY})
-	set_target_properties(SampleLightmappingDirectional PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${template_path}/Platforms/IOS/plist.in")
+	set_target_properties(SampleSkinnedMeshInstancing PROPERTIES XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER ${APP_BUNDLE_IDENTIFIER})
+	set_target_properties(SampleSkinnedMeshInstancing PROPERTIES XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY ${CODE_SIGN_IDENTITY})
+	set_target_properties(SampleSkinnedMeshInstancing PROPERTIES XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY ${DEVICE_FAMILY})
+	set_target_properties(SampleSkinnedMeshInstancing PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${template_path}/Platforms/IOS/plist.in")
 	
 	# add assets icon
-	target_sources(SampleLightmappingDirectional PRIVATE "${template_path}/Platforms/IOS/Assets.xcassets")
-
+	target_sources(SampleSkinnedMeshInstancing PRIVATE "${template_path}/Platforms/IOS/Assets.xcassets")
+	
 	list (APPEND platform_ios_resources "${template_path}/Platforms/IOS/Assets.xcassets")
-	set_target_properties(SampleLightmappingDirectional PROPERTIES RESOURCE "${resources_files} ${platform_ios_resources}")
+	set_target_properties(SampleSkinnedMeshInstancing PROPERTIES RESOURCE "${resources_files} ${platform_ios_resources}")
 
 	# link framework
-	target_link_libraries(SampleLightmappingDirectional "-framework Foundation")
-	target_link_libraries(SampleLightmappingDirectional "-framework UIKit")
-	target_link_libraries(SampleLightmappingDirectional "-framework CoreGraphics")
-	target_link_libraries(SampleLightmappingDirectional "-framework Metal")
-	target_link_libraries(SampleLightmappingDirectional "-framework MetalKit")
-	target_link_libraries(SampleLightmappingDirectional "-framework AudioToolbox")
-	target_link_libraries(SampleLightmappingDirectional "-framework AVFAudio")
+	target_link_libraries(SampleSkinnedMeshInstancing "-framework Foundation")
+	target_link_libraries(SampleSkinnedMeshInstancing "-framework UIKit")
+	target_link_libraries(SampleSkinnedMeshInstancing "-framework CoreGraphics")
+	target_link_libraries(SampleSkinnedMeshInstancing "-framework Metal")
+	target_link_libraries(SampleSkinnedMeshInstancing "-framework MetalKit")
+	target_link_libraries(SampleSkinnedMeshInstancing "-framework AudioToolbox")
+	target_link_libraries(SampleSkinnedMeshInstancing "-framework AVFAudio")
 else()
-	add_executable(SampleLightmappingDirectional ${application_source})
+	add_executable(SampleSkinnedMeshInstancing ${application_source})
 endif()
 
-target_precompiled_header(SampleLightmappingDirectional ${template_path}/Source/pch.cpp ${application_source})
+target_precompiled_header(SampleSkinnedMeshInstancing ${template_path}/Source/pch.cpp ${application_source})
 
 # Linker
 if (BUILD_ANDROID)
-	target_link_libraries(SampleLightmappingDirectional Client log)
+	target_link_libraries(SampleSkinnedMeshInstancing Client log)
 else()
-	target_link_libraries(SampleLightmappingDirectional Client)
+	target_link_libraries(SampleSkinnedMeshInstancing Client)
 endif()
 
 # Imgui
 if (BUILD_IMGUI)
-	target_link_libraries(SampleLightmappingDirectional Imgui)
+	target_link_libraries(SampleSkinnedMeshInstancing Imgui)
 endif()
 
 # Emscripten
@@ -306,18 +305,18 @@ if (BUILD_EMSCRIPTEN)
 	
 	message(STATUS "Setting compilation target to WASM")
 	set(CMAKE_EXECUTABLE_SUFFIX ".wasm.html")
-	set_target_properties(SampleLightmappingDirectional PROPERTIES LINK_FLAGS "-s USE_SDL=2 -s USE_WEBGL2=1 -s FORCE_FILESYSTEM=1 -s FETCH=1 -s ALLOW_MEMORY_GROWTH=1 -s EXPORTED_FUNCTIONS=['_main','_main_resize'] -s EXPORTED_RUNTIME_METHODS=['ccall'] --preload-file ./BuiltIn --shell-file ${template_path}/Platforms/Emscripten/Shell/shell.html --disable-shared -s WASM=1 -s BINARYEN_METHOD='native-wasm'")
+	set_target_properties(SampleSkinnedMeshInstancing PROPERTIES LINK_FLAGS "-s USE_SDL=2 -s USE_WEBGL2=1 -s FORCE_FILESYSTEM=1 -s FETCH=1 -s ALLOW_MEMORY_GROWTH=1 -s EXPORTED_FUNCTIONS=['_main','_main_resize'] -s EXPORTED_RUNTIME_METHODS=['ccall'] --preload-file ./BuiltIn --shell-file ${template_path}/Platforms/Emscripten/Shell/shell.html --disable-shared -s WASM=1 -s BINARYEN_METHOD='native-wasm'")
 	
-	set(project_name SampleLightmappingDirectional)
+	set(project_name SampleSkinnedMeshInstancing)
 	configure_file(${template_path}/Platforms/Emscripten/Index.html ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/Index.html)
-	configure_file(${template_path}/Platforms/Emscripten/Index.html ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/SampleLightmappingDirectional.html)
+	configure_file(${template_path}/Platforms/Emscripten/Index.html ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/SampleSkinnedMeshInstancing.html)
 endif()
 
 #VLD
 if (BUILD_DEBUG_VLD)
 	file(GLOB_RECURSE vld_bin_files ${vld_dll_path})
 	foreach(vld_bin ${vld_bin_files})
-		add_custom_command(TARGET SampleLightmappingDirectional POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${vld_bin} $<TARGET_FILE_DIR:SampleLightmappingDirectional>)
+		add_custom_command(TARGET SampleSkinnedMeshInstancing POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${vld_bin} $<TARGET_FILE_DIR:SampleSkinnedMeshInstancing>)
 	endforeach()
 endif()
 
@@ -325,9 +324,9 @@ endif()
 if (BUILD_SDL AND MSVC)
 	file(GLOB_RECURSE sdl_bin_files ${sdl_dll_path})
 	foreach(sdl_bin ${sdl_bin_files})
-		add_custom_command(TARGET SampleLightmappingDirectional POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${sdl_bin} $<TARGET_FILE_DIR:SampleLightmappingDirectional>)
+		add_custom_command(TARGET SampleSkinnedMeshInstancing POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${sdl_bin} $<TARGET_FILE_DIR:SampleSkinnedMeshInstancing>)
 	endforeach()
 endif()
 
-set_target_properties(SampleLightmappingDirectional PROPERTIES VERSION ${SKYLICHT_VERSION})
-set_target_properties(SampleLightmappingDirectional PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+set_target_properties(SampleSkinnedMeshInstancing PROPERTIES VERSION ${SKYLICHT_VERSION})
+set_target_properties(SampleSkinnedMeshInstancing PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")

@@ -54,6 +54,8 @@ option(USE_OPENMP "Use openmp for multithread optimize" ON)
 
 option(BUILD_EXAMPLE "Build example application" ON)
 
+set (SKYLICHT_ENGINE_PROJECT_DIR ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects)
+
 # build skylicht engine tool on Windows
 set(BUILD_ENGINE_TOOL ON)
 
@@ -111,7 +113,7 @@ if (CMAKE_SYSTEM_NAME STREQUAL Darwin OR CMAKE_SYSTEM_NAME STREQUAL iOS)
 	set(XCODE ON)
 	set(USE_OPENMP OFF)
 	
-	add_definitions(-DUSE_ANGLE_GLES)	
+	add_definitions(-DUSE_ANGLE_GLES)
 
 	# link_libraries("-lc++")
 
