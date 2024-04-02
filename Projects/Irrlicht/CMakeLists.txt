@@ -47,11 +47,11 @@ if(BUILD_MACOS OR BUILD_IOS)
 	
 	# Add angle source
 	file(GLOB_RECURSE irrlicht_angle_source
-		./Source/MacOS/Angle/**.mm
-		./Source/MacOS/Angle/**.m
-		./Source/MacOS/Angle/**.cpp
-		./Source/MacOS/Angle/**.h
-		./Source/MacOS/Angle/**.c)
+		./Source/Angle/**.mm
+		./Source/Angle/**.m
+		./Source/Angle/**.cpp
+		./Source/Angle/**.h
+		./Source/Angle/**.c)
 	setup_project_group_by_folder_relative("${irrlicht_angle_source}" "${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Source/Angle")
 endif()
 
