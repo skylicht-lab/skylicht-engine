@@ -1,12 +1,12 @@
 include_directories(
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/System/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Engine/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Include
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/curl/include
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/freetype2/include
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/kdtree
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Audio/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Engine/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Include
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/source/curl/include
+	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/source/freetype2/include
+	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/source/kdtree
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Audio/Source
 )
 
 file(GLOB_RECURSE skylicht_source 
@@ -40,7 +40,7 @@ install(TARGETS Engine
 			LIBRARY DESTINATION lib
 			ARCHIVE DESTINATION lib)
 
-install (DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Engine/Source
+install (DIRECTORY ${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Engine/Source
 	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}/Skylicht/Engine
 	FILES_MATCHING PATTERN "*.h*")
 

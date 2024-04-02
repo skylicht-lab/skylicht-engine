@@ -1,32 +1,32 @@
 include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/UnitTest/TestApp
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Main/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Include	
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/System/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Engine/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Components/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Collision/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Client/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Lightmapper/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Audio/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Physics/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Main/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Include	
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Engine/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Components/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Collision/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Client/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Lightmapper/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Audio/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Physics/Source
 )
 
 add_definitions(-DTEST_APP)
 
 if (BUILD_FREETYPE)
-	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/freetype2/include)
+	include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/source/freetype2/include)
 endif()
 
 if (BUILD_IMGUI)
-	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Imgui/Source)
+	include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/Imgui/Source)
 endif()
 
-set(template_path ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Main)
+set(template_path ${SKYLICHT_ENGINE_PROJECT_DIR}/Main)
 
 if (BUILD_MACOS)
-include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/include)
-include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Source/MacOS/Angle)
+include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/Angle/include)
+include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Source/Angle)
 include_directories(${template_path}/Platforms/MacOS)
 
 file(GLOB_RECURSE test_app_source 
@@ -55,7 +55,7 @@ endif()
 target_link_libraries(TestApp Client)
 
 if (BUILD_MACOS)
-	set(angle_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/out/MacOS/Release/${CMAKE_OSX_ARCHITECTURES}")
+	set(angle_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/Angle/out/MacOS/Release/${CMAKE_OSX_ARCHITECTURES}")
 	target_link_libraries(TestApp "-framework Cocoa")
 
 	add_custom_command(TARGET TestApp POST_BUILD COMMAND 
