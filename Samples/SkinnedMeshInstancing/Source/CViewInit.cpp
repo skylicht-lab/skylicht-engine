@@ -8,6 +8,10 @@
 #include "GridPlane/CGridPlane.h"
 #include "SkyDome/CSkyDome.h"
 
+#define TEST_CUBE
+
+#include "Primitive/CCube.h"
+
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
 	m_getFile(NULL),
@@ -36,6 +40,7 @@ void CViewInit::onInit()
 	CShaderManager* shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
 	shaderMgr->initSGForwarderShader();
+	shaderMgr->initSGDeferredShader();
 
 	CGlyphFreetype* freetypeFont = CGlyphFreetype::getInstance();
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
@@ -111,17 +116,52 @@ void CViewInit::initScene()
 	core::vector3df direction = core::vector3df(4.0f, -6.0f, -4.5f);
 	lightTransform->setOrientation(direction, Transform::Oy);
 
+#ifdef TEST_CUBE
+	// Cube
+	CGameObject* cubeObj = zone->createEmptyObject();
+	cubeObj->setName("Cube");
 
+	// Init matrix texture
+	IVideoDriver* driver = getIrrlichtDevice()->getVideoDriver();
+
+	core::matrix4 test[60];
+	for (int i = 0; i < 60; i++)
+	{
+		float r = 360.0f * i / 60.0f;
+		test[i].setRotationDegrees(core::vector3df(0.0f, r, 0.0f));
+	}
+
+	// Change to forwarder material
+	CCube* cube = cubeObj->addComponent<CCube>();
+	CMaterial* material = cube->getMaterial();
+	material->changeShader("BuiltIn/Shader/SpecularGlossiness/Forward/TestTTSGVS.xml");
+
+	CMaterial::SUniformTexture* matrix = material->getUniformTexture("uTransformTexture");
+	matrix->Texture = CTextureManager::getInstance()->createTransformTexture1D("transforms", test, 60);
+	matrix->Bilinear = false;
+	matrix->Trilinear = false;
+	matrix->Anisotropic = 0;
+
+	material->setUniform4("uColor", SColor(255, 255, 255, 255));
+
+	// query row 8 on test[60]
+	// see shader TestTTSGVS.xml
+	float p[2] = { 0.0f, 8.0f };
+	material->setUniform2("uTransformXY", p);
+
+	material->applyMaterial();
+
+	// indirect lighting
+	cubeObj->addComponent<CIndirectLighting>();
+#endif
 
 	// Rendering
 	u32 w = app->getWidth();
 	u32 h = app->getHeight();
 
 	CContext* context = CContext::getInstance();
-	CForwardRP* fwrp = new CForwardRP();
-	fwrp->initRender(w, h);
 
-	context->setCustomRP(fwrp);
+	context->initRenderPipeline(w, h);
 	context->setActiveZone(zone);
 	context->setActiveCamera(camera);
 	context->setGUICamera(guiCamera);
@@ -241,27 +281,25 @@ void CViewInit::onRender()
 		{
 			m_bakeSHLighting = false;
 
+			CZone* zone = scene->getZone(0);
+
+			// light probe
+			CGameObject* lightProbeObj = zone->createEmptyObject();
+			CLightProbe* lightProbe = lightProbeObj->addComponent<CLightProbe>();
+			lightProbeObj->getTransformEuler()->setPosition(core::vector3df(0.0f, 1.0f, 0.0f));
+
 			CGameObject* bakeCameraObj = scene->getZone(0)->createEmptyObject();
 			CCamera* bakeCamera = bakeCameraObj->addComponent<CCamera>();
 			scene->updateAddRemoveObject();
 
-			/*
-			core::vector3df pos(0.0f, 0.0f, 0.0f);
-
-			core::vector3df normal = Transform::Oy;
-			core::vector3df tangent = Transform::Ox;
-			core::vector3df binormal = normal.crossProduct(tangent);
-			binormal.normalize();
-
+			// bake light probe
 			Lightmapper::CLightmapper* lm = Lightmapper::CLightmapper::getInstance();
 			lm->initBaker(64);
-			Lightmapper::CSH9 sh = lm->bakeAtPosition(
-				bakeCamera,
-				rp,
-				scene->getEntityManager(),
-				pos,
-				normal, tangent, binormal);
-			*/
+
+			std::vector<CLightProbe*> probes;
+			probes.push_back(lightProbe);
+
+			lm->bakeProbes(probes, bakeCamera, rp, scene->getEntityManager());
 		}
 	}
 	else

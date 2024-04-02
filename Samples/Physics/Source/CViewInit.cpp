@@ -150,13 +150,17 @@ void CViewInit::initScene()
 	body->syncTransform();
 	body->OnCollision = [](Physics::CRigidbody* bodyA, Physics::CRigidbody* bodyB, Physics::SCollisionContactPoint* colliderInfo, int numContact)
 		{
-			char log[1024];
-			sprintf(log, "[%s - %s] collision [%s - %s]",
-				bodyA->getGameObject()->getNameA(),
-				bodyA->getStateName(),
-				bodyB->getGameObject()->getNameA(),
-				bodyB->getStateName());
-			os::Printer::log(log);
+			if (bodyA->getState() != Physics::CRigidbody::Sleep ||
+				bodyB->getState() != Physics::CRigidbody::Sleep)
+			{
+				char log[1024];
+				sprintf(log, "[%s - %s] collision [%s - %s]",
+					bodyA->getGameObject()->getNameA(),
+					bodyA->getStateName(),
+					bodyB->getGameObject()->getNameA(),
+					bodyB->getStateName());
+				os::Printer::log(log);
+			}
 		};
 
 	// Cube 2
@@ -178,13 +182,17 @@ void CViewInit::initScene()
 	body->syncTransform();
 	body->OnCollision = [](Physics::CRigidbody* bodyA, Physics::CRigidbody* bodyB, Physics::SCollisionContactPoint* colliderInfo, int numContact)
 		{
-			char log[1024];
-			sprintf(log, "[%s - %s] collision [%s - %s]",
-				bodyA->getGameObject()->getNameA(),
-				bodyA->getStateName(),
-				bodyB->getGameObject()->getNameA(),
-				bodyB->getStateName());
-			os::Printer::log(log);
+			if (bodyA->getState() != Physics::CRigidbody::Sleep ||
+				bodyB->getState() != Physics::CRigidbody::Sleep)
+			{
+				char log[1024];
+				sprintf(log, "[%s - %s] collision [%s - %s]",
+					bodyA->getGameObject()->getNameA(),
+					bodyA->getStateName(),
+					bodyB->getGameObject()->getNameA(),
+					bodyB->getStateName());
+				os::Printer::log(log);
+			}
 		};
 
 	// lighting

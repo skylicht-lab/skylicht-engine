@@ -35,6 +35,11 @@ namespace Skylicht
 		g_material = material;
 	}
 
+	CMaterial* CShaderMaterial::getMaterial()
+	{
+		return g_material;
+	}
+
 	CShaderMaterial::CShaderMaterial()
 	{
 
