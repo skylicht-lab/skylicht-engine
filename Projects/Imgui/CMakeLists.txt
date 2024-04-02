@@ -1,8 +1,8 @@
 include_directories(
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/System/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Include
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Engine/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Imgui/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Include
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Engine/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Imgui/Source
 )
 
 file(GLOB_RECURSE imgui_source
