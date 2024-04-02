@@ -1,24 +1,24 @@
 include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Samples/TankScene/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Samples/SampleFW
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Main/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Include
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/System/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Engine/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Components/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Collision/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Physics/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Client/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Lightmapper/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Audio/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/freetype2/include
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Main/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Include
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Engine/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Components/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Collision/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Physics/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Client/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Lightmapper/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Audio/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/source/freetype2/include
 )
 
 if (BUILD_IMGUI)
-	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Imgui/Source)
+	include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/Imgui/Source)
 endif()
 
-set(template_path ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Main)
+set(template_path ${SKYLICHT_ENGINE_PROJECT_DIR}/Main)
 
 file(GLOB_RECURSE application_source 
 	./Source/**.cpp 
@@ -88,8 +88,8 @@ endif()
 
 if (BUILD_MACOS)
 	# Angle API
-	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/include)
-	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Source/MacOS/Angle)
+	include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/Angle/include)
+	include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Source/Angle)
 	include_directories(${template_path}/Platforms/MacOS)
 	
 	file(GLOB_RECURSE platform_mac_source 
@@ -101,13 +101,13 @@ if (BUILD_MACOS)
 
 	list (APPEND application_source ${platform_mac_source})
 
-	setup_project_group_by_folder_relative("${platform_mac_source}" "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Apple")
+	setup_project_group_by_folder_relative("${platform_mac_source}" "${SKYLICHT_ENGINE_PROJECT_DIR}/Apple")
 endif()
 	
 if (BUILD_IOS)
 	# Angle API
-	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/include)
-	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Source/MacOS/Angle)
+	include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/Angle/include)
+	include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Source/Angle)
 	include_directories(${template_path}/Platforms/IOS)
 	
 	file(GLOB_RECURSE platform_ios_source 
@@ -124,19 +124,19 @@ endif()
 	
 if (BUILD_DEBUG_VLD)
 	if (CMAKE_CL_64)
-		set(vld_dll_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdPartySDK/Vld/bin/Win64/*.*")
+		set(vld_dll_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/Vld/bin/Win64/*.*")
 	else()
-		set(vld_dll_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdPartySDK/Vld/bin/Win32/*.*")
+		set(vld_dll_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/Vld/bin/Win32/*.*")
 	endif()
 endif()
 	
 if (BUILD_SDL AND MSVC)
 	if (CMAKE_CL_64)
-		set(sdl_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdPartySDK/SDL/lib/x64")
-		set(sdl_dll_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdPartySDK/SDL/lib/x64/*.dll")
+		set(sdl_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/SDL/lib/x64")
+		set(sdl_dll_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/SDL/lib/x64/*.dll")
 	else()
-		set(sdl_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdPartySDK/SDL/lib/x86")
-		set(sdl_dll_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdPartySDK/SDL/lib/x86/*.dll")
+		set(sdl_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/SDL/lib/x86")
+		set(sdl_dll_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/SDL/lib/x86/*.dll")
 	endif()	
 	link_directories(${sdl_lib_path})
 endif()
@@ -180,7 +180,7 @@ elseif (MSVC OR CYGWIN OR MINGW)
 elseif (BUILD_MACOS)
 	file(GLOB resources_files "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/*.zip")
 
-	set(angle_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/out/MacOS/Release/${CMAKE_OSX_ARCHITECTURES}")
+	set(angle_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/Angle/out/MacOS/Release/${CMAKE_OSX_ARCHITECTURES}")
 	file(GLOB dylib_files "${angle_lib_path}/*.dylib")
 
 	add_executable(SampleTankScene 
@@ -237,7 +237,7 @@ elseif (BUILD_IOS)
 
 	file(GLOB resources_files "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/*.zip")
 
-	set(angle_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/out/IOS/Release/${IOS_PLATFORM}")
+	set(angle_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/Angle/out/IOS/Release/${IOS_PLATFORM}")
 	file(GLOB angle_framework_files "${angle_lib_path}/*.framework")
 
 	set (framework_files "")
