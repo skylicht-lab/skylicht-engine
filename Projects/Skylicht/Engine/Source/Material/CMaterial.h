@@ -43,12 +43,19 @@ namespace Skylicht
 			int WrapU;
 			int WrapV;
 
+			int Anisotropic;
+			bool Trilinear;
+			bool Bilinear;
+
 			SUniformTexture()
 			{
 				Texture = NULL;
 				TextureSlot = -1;
 				WrapU = 0; // Repeat
 				WrapV = 0; // Repeat
+				Anisotropic = 2;
+				Trilinear = false;
+				Bilinear = false;
 			}
 
 			SUniformTexture* clone()
@@ -60,6 +67,9 @@ namespace Skylicht
 				c->TextureSlot = TextureSlot;
 				c->WrapU = WrapU;
 				c->WrapV = WrapV;
+				c->Anisotropic = Anisotropic;
+				c->Trilinear = Trilinear;
+				c->Bilinear = Bilinear;
 				return c;
 			}
 		};

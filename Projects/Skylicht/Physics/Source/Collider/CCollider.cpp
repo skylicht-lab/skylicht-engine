@@ -40,7 +40,9 @@ namespace Skylicht
 
 		CCollider::~CCollider()
 		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
 			dropCollisionShape();
+#endif
 		}
 
 #ifdef USE_BULLET_PHYSIC_ENGINE
