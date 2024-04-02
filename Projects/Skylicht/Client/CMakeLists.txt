@@ -1,29 +1,29 @@
 include_directories(
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/System/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Client/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Include
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Engine/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Components/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Collision/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Physics/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Lightmapper/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Audio/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/GUI/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Client/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Include
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Engine/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Components/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Collision/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Physics/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Lightmapper/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Audio/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/GUI/Source
 )
 
 if (BUILD_DEBUG_VLD)
-	set(vld_inc_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdPartySDK/Vld/include")
+	set(vld_inc_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/Vld/include")
 	include_directories(${vld_inc_path})
 
 	if (CMAKE_CL_64)
-		set(vld_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdPartySDK/Vld/lib/Win64")
+		set(vld_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/Vld/lib/Win64")
 	else()
-		set(vld_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdPartySDK/Vld/lib/Win32")
+		set(vld_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/Vld/lib/Win32")
 	endif()
 endif()
 
 if (BUILD_SKYLICHT_NETWORK)
-include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Network/Source)
+include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Network/Source)
 endif()
 
 file(GLOB_RECURSE skylicht_client_source 
@@ -61,7 +61,7 @@ install(TARGETS Client
 			LIBRARY DESTINATION lib
 			ARCHIVE DESTINATION lib)
 			
-install (DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Client/Source
+install (DIRECTORY ${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Client/Source
 	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}/Skylicht/Client
 	FILES_MATCHING PATTERN "*.h*")
 

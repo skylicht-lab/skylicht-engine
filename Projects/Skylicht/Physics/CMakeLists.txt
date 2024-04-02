@@ -1,16 +1,16 @@
 include_directories(
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Physics/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Include
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/curl/include
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/System/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Audio/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Engine/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Bullet3/src
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Physics/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Include
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/source/curl/include
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Audio/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Engine/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Bullet3/src
 )
 
 if (BUILD_BULLET_PHYSIC_LIB)
-include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Bullet3/src)
+include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/Bullet3/src)
 endif()
 
 file(GLOB_RECURSE skylicht_physics 
@@ -50,7 +50,7 @@ install(TARGETS Physics
 			LIBRARY DESTINATION lib
 			ARCHIVE DESTINATION lib)
 
-install (DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Physics/Source
+install (DIRECTORY ${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Physics/Source
 	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}/Skylicht/Physics
 	FILES_MATCHING PATTERN "*.h*")
 

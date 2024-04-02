@@ -1,12 +1,12 @@
 include_directories(
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Network/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Include
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/curl/include
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/System/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Audio/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Engine/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Crypto/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Network/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Include
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/source/curl/include
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Audio/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Engine/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Crypto/Source
 )
 
 file(GLOB_RECURSE skylicht_network 
@@ -41,7 +41,7 @@ install(TARGETS Network
 			LIBRARY DESTINATION lib
 			ARCHIVE DESTINATION lib)
 
-install (DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Skylicht/Network/Source
+install (DIRECTORY ${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Network/Source
 	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}/Skylicht/Network
 	FILES_MATCHING PATTERN "*.h*")
 
