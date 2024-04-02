@@ -378,72 +378,10 @@ bool CD3D11Texture::createTexture(u32 flags, IImage* image)
 
 	DXGI_FORMAT format = DXGI_FORMAT_R8G8B8A8_UNORM;
 
-	// Color format for DX 10 driver shall be different that for DX 9
-	// - B5G5R5A1 family is deprecated in DXGI, and doesn't exists in DX 10
-	// - Irrlicht color format follows DX 9 (alpha first), and DX 10 is alpha last
-	switch(getTextureFormatFromFlags(flags))
+	if (image->isCompressed() == true)
 	{
-		case ETCF_ALWAYS_16_BIT:
-		case ETCF_ALWAYS_32_BIT:
-		{		
-			if (image->isCompressed() == true)
-			{
-				switch(image->getColorFormat())
-				{
-					case ECF_DXT1:
-						format = DXGI_FORMAT_BC1_UNORM;
-						break;
-					case ECF_DXT2:
-						format = DXGI_FORMAT_BC2_UNORM;
-						break;
-					case ECF_DXT3:
-						format = DXGI_FORMAT_BC2_UNORM;
-						break;
-					case ECF_DXT4:
-						format = DXGI_FORMAT_BC3_UNORM;
-						break;
-					case ECF_DXT5:
-						format = DXGI_FORMAT_BC3_UNORM;
-						break;
-					default:
-						format = DXGI_FORMAT_R8G8B8A8_UNORM;
-						break;
-				}
-			}
-			else
-			{
-				format = DXGI_FORMAT_R8G8B8A8_UNORM;
-			}
-
-			break;
-		}
-		case ETCF_OPTIMIZED_FOR_QUALITY:
+		switch(image->getColorFormat())
 		{
-			switch(image->getColorFormat())
-			{
-			case ECF_R16F:
-				format = DXGI_FORMAT_R16_FLOAT;
-				break;
-
-			case ECF_R32F:
-				format = DXGI_FORMAT_R32_FLOAT;
-				break;
-
-			case ECF_G16R16F:
-				format = DXGI_FORMAT_R16G16_FLOAT;
-				break;
-
-			case ECF_G32R32F:
-				format = DXGI_FORMAT_R32G32_FLOAT;
-				break;
-
-			case ECF_A16B16G16R16F:
-				format = DXGI_FORMAT_R16G16B16A16_FLOAT;
-				break;
-
-			case ECF_A32B32G32R32F:
-				format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-				break;
 			case ECF_DXT1:
 				format = DXGI_FORMAT_BC1_UNORM;
 				break;
@@ -459,21 +397,61 @@ bool CD3D11Texture::createTexture(u32 flags, IImage* image)
 			case ECF_DXT5:
 				format = DXGI_FORMAT_BC3_UNORM;
 				break;
-			case ECF_A1R5G5B5:
-			case ECF_R5G6B5:
-			case ECF_R8G8B8:
-			case ECF_A8R8G8B8:
 			default:
-				format = DXGI_FORMAT_R8G8B8A8_UNORM; 
+				format = DXGI_FORMAT_R8G8B8A8_UNORM;
 				break;
-			}
 		}
-		break;
-		case ETCF_OPTIMIZED_FOR_SPEED:
+	}
+	else
+	{
+		switch (image->getColorFormat())
+		{
+		case ECF_R16F:
+			format = DXGI_FORMAT_R16_FLOAT;
+			break;
+
+		case ECF_R32F:
+			format = DXGI_FORMAT_R32_FLOAT;
+			break;
+
+		case ECF_G16R16F:
+			format = DXGI_FORMAT_R16G16_FLOAT;
+			break;
+
+		case ECF_G32R32F:
+			format = DXGI_FORMAT_R32G32_FLOAT;
+			break;
+
+		case ECF_A16B16G16R16F:
+			format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+			break;
+
+		case ECF_A32B32G32R32F:
+			format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+			break;
+		case ECF_DXT1:
+			format = DXGI_FORMAT_BC1_UNORM;
+			break;
+		case ECF_DXT2:
+			format = DXGI_FORMAT_BC2_UNORM;
+			break;
+		case ECF_DXT3:
+			format = DXGI_FORMAT_BC2_UNORM;
+			break;
+		case ECF_DXT4:
+			format = DXGI_FORMAT_BC3_UNORM;
+			break;
+		case ECF_DXT5:
+			format = DXGI_FORMAT_BC3_UNORM;
+			break;
+		case ECF_A1R5G5B5:
+		case ECF_R5G6B5:
+		case ECF_R8G8B8:
+		case ECF_A8R8G8B8:
+		default:
 			format = DXGI_FORMAT_R8G8B8A8_UNORM;
 			break;
-		default:
-			break;
+		}
 	}
 
 	// Check hardware support for automatic mipmap support
@@ -600,14 +578,14 @@ bool CD3D11Texture::createTexture(u32 flags, IImage* image)
 	if (IsCompressed)
 		ColorFormat = image->getColorFormat();
 
-	setPitch(format);
-
 	// Get texture description to update number of mipmaps
 	Texture->GetDesc( &desc );
 
 	NumberOfMipLevels = desc.MipLevels;
 	Size.Width = desc.Width;
 	Size.Height = desc.Height;
+
+	setPitch(format);
 
 	// delete init data
 	if (initData)
