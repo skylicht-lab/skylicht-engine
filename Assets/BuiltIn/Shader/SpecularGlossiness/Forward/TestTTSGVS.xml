@@ -1,0 +1,35 @@
+<shaderConfig name="TestTTSGVS" baseShader="SOLID">
+	<uniforms>
+		<vs>
+			<uniform name="uTransformTexture" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
+			<uniform name="uVpMatrix" type="VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+			<uniform name="uWorldMatrix" type="WORLD" value="0" float="16" matrix="true"/>
+			<uniform name="uCameraPosition" type="WORLD_CAMERA_POSITION" value="0" float="4"/>
+			<uniform name="uLightDirection" type="WORLD_LIGHT_DIRECTION" value="0" float="4"/>
+			<uniform name="uUVScale" type="MATERIAL_PARAM" valueIndex="0" value="1.0, 1.0, 0.0, 0.0" float="4"/>
+			<uniform name="uTransformTextureSize" type="TEXTURE_WIDTH_HEIGHT" valueIndex="0" value="1.0, 1.0" float="2"/>
+			<uniform name="uTransformXY" type="MATERIAL_PARAM" valueIndex="3" value="0.0, 0.0, 0.0, 1.0" float="2"/>
+		</vs>
+		<fs>
+			<uniform name="uTexReflect" type="DEFAULT_VALUE" value="3" float="1" directX="false"/>
+			<uniform name="uLightColor" type="LIGHT_COLOR" value="1.0,1.0,1.0,1.0" float="4"/>
+			<uniform name="uColor" type="MATERIAL_PARAM" valueIndex="1" value="1.0, 1.0, 1.0, 1.0" float="4"/>
+			<uniform name="uSpecGloss" type="MATERIAL_PARAM" valueIndex="2" value="0.4, 0.3, 0.0, 1.0" float="2"/>
+			<uniform name="uSHConst" type="SH_CONST" value="0" float="4" array="4"/>
+		</fs>
+	</uniforms>
+	<resources>
+		<resource name="uTexReflect" type="ReflectionProbe"/>
+	</resources>
+	<customUI>
+		<ui control="UIGroup" name="Texture">
+		</ui>
+		<ui control="UIGroup" name="Customize">
+			<ui control="UIColor" name="uColor"/>
+			<ui control="UIFloat2" name="uSpecGloss" elementName="Specular;Glossiness" min="0" max="1"/>
+			<ui control="UIFloat4" name="uUVScale" elementName="UV ScaleX;UV ScaleY;UV OffsetX;UV OffsetY"/>
+		</ui>
+	</customUI>
+	<shader type="GLSL" vs="GLSL/TestTTSGVS.glsl" fs="GLSL/SGNoTextureFS.glsl" vs_source="GLSL/TestTTSGVS.d.glsl" fs_source="GLSL/SGLitFS.d.glsl" define="NO_TEXTURE"/>
+	<shader type="HLSL" vs="HLSL/TestTTSGVS.hlsl" fs="HLSL/SGNoTextureFS.hlsl" vs_source="HLSL/TestTTSGVS.d.hlsl" fs_source="HLSL/SGLitFS.d.hlsl" define="NO_TEXTURE"/>
+</shaderConfig>

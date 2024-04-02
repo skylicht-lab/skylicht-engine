@@ -140,6 +140,7 @@ namespace Skylicht
 			"BPCEM_MAX",
 			"BPCEM_POS",
 			"TEXTURE_MIPMAP_COUNT",
+			"TEXTURE_WIDTH_HEIGHT",
 			"FOG_PARAMS",
 			"SSAO_KERNEL",
 			"DEFERRED_VIEW",
@@ -1112,6 +1113,27 @@ namespace Skylicht
 				else
 					matRender->setShaderVariable(uniform.UniformShaderID, &count, uniform.SizeOfUniform, video::EST_PIXEL_SHADER);
 			}
+		}
+		break;
+		case TEXTURE_WIDTH_HEIGHT:
+		{
+			SMaterial* material = shaderManager->getCurrentMaterial();
+			int textureID = (int)uniform.ValueIndex;
+			ITexture* texture = material->TextureLayer[textureID].Texture;
+
+			float widthHeight[4] = { 1.0f, 1.0f, 0.0f, 0.0f };
+
+			if (texture != NULL)
+			{
+				const core::dimension2du& size = texture->getSize();
+				widthHeight[0] = (float)size.Width;
+				widthHeight[1] = (float)size.Height;
+			}
+
+			if (vertexShader == true)
+				matRender->setShaderVariable(uniform.UniformShaderID, widthHeight, uniform.SizeOfUniform, video::EST_VERTEX_SHADER);
+			else
+				matRender->setShaderVariable(uniform.UniformShaderID, widthHeight, uniform.SizeOfUniform, video::EST_PIXEL_SHADER);
 		}
 		break;
 		case LIGHTMAP_INDEX:

@@ -50,7 +50,6 @@ namespace Skylicht
 
 	public:
 
-		// todo
 		// use to save uniform for current draw command
 		core::vector2df	ShaderVec2[10];
 		core::vector3df	ShaderVec3[10];

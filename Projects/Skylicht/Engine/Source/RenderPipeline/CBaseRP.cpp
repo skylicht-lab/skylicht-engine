@@ -208,6 +208,10 @@ namespace Skylicht
 
 		video::SMaterial& irrMaterial = mb->getMaterial();
 
+		CShaderManager* shaderMgr = CShaderManager::getInstance();
+		shaderMgr->setCurrentMaterial(irrMaterial);
+		shaderMgr->setCurrentMeshBuffer(mb);
+
 		// set irrlicht material
 		driver->setMaterial(irrMaterial);
 
@@ -222,6 +226,10 @@ namespace Skylicht
 
 		video::SMaterial& irrMaterial = mb->getMaterial();
 		irrMaterial.MaterialType = materialRenderID;
+
+		CShaderManager* shaderMgr = CShaderManager::getInstance();
+		shaderMgr->setCurrentMaterial(irrMaterial);
+		shaderMgr->setCurrentMeshBuffer(mb);
 
 		driver->setMaterial(irrMaterial);
 		driver->drawMeshBuffer(mb);

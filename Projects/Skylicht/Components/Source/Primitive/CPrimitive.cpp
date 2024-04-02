@@ -53,7 +53,7 @@ namespace Skylicht
 	CPrimitive::~CPrimitive()
 	{
 		if (m_material)
-			delete m_material;
+			m_material->drop();
 	}
 
 	void CPrimitive::initComponent()

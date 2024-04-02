@@ -574,4 +574,42 @@ namespace Skylicht
 
 		return texture;
 	}
+
+	ITexture* CTextureManager::createTransformTexture1D(const char* name, core::matrix4* transforms, int num)
+	{
+		IVideoDriver* driver = getVideoDriver();
+		IrrlichtDevice* device = getIrrlichtDevice();
+
+		int imageSizeW = 4; // 4 pixels type A32B32G32R32F
+		int imageSizeH = core::max_(num, 4);
+
+		float* color = new float[4 * imageSizeW * imageSizeH];
+		memset(color, 0, sizeof(float) * 4 * imageSizeW * imageSizeH);
+
+		float* c = color;
+
+		for (int i = 0; i < num; i++)
+		{
+			core::matrix4& m = transforms[i];
+
+			memcpy(c, m.pointer(), sizeof(float) * 16);
+			c += 16;
+		}
+
+		core::dimension2d<u32> size(imageSizeW, imageSizeH);
+		IImage* img = driver->createImageFromData(ECF_A32B32G32R32F, size, color);
+
+		bool configCreateMipmap = driver->getTextureCreationFlag(ETCF_CREATE_MIP_MAPS);
+		driver->setTextureCreationFlag(ETCF_CREATE_MIP_MAPS, false);
+		ITexture* transformTexture = driver->addTexture(name, img);
+		driver->setTextureCreationFlag(ETCF_CREATE_MIP_MAPS, configCreateMipmap);
+
+		img->drop();
+		delete[]color;
+
+		if (transformTexture)
+			registerTexture(transformTexture);
+
+		return transformTexture;
+	}
 }

@@ -29,6 +29,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Transform/CWorldTransformData.h"
 #include "Material/Shader/ShaderCallback/CShaderMaterial.h"
 
+#include "Material/Shader/ShaderCallback/CShaderSH.h"
+#include "Material/Shader/ShaderCallback/CShaderLighting.h"
+
 namespace Skylicht
 {
 	CPrimitiveRenderer::CPrimitiveRenderer() :
@@ -185,7 +188,6 @@ namespace Skylicht
 			if (mat != data->Material)
 			{
 				mat = data->Material;
-				CShaderMaterial::setMaterial(data->Material);
 
 				for (u32 i = 0, n = mesh->MeshBuffers.size(); i < n; i++)
 				{
@@ -196,8 +198,25 @@ namespace Skylicht
 
 			driver->setTransform(video::ETS_WORLD, transform->World);
 
+			CShaderMaterial::setMaterial(mat);
+
+			CIndirectLightingData* lightingData = GET_ENTITY_DATA(allEntities[data->EntityIndex], CIndirectLightingData);
+			if (lightingData != NULL)
+			{
+				if (lightingData->Type == CIndirectLightingData::SH9)
+					CShaderSH::setSH9(lightingData->SH);
+				else if (lightingData->Type == CIndirectLightingData::AmbientColor)
+					CShaderLighting::setLightAmbient(lightingData->Color);
+			}
+
 			for (u32 i = 0, n = mesh->MeshBuffers.size(); i < n; i++)
+			{
+				mesh->Materials[i] = mat;
+
 				rp->drawMeshBuffer(mesh, i, entityManager, data->EntityIndex, false);
+
+				mesh->Materials[i] = NULL;
+			}
 		}
 	}
 }

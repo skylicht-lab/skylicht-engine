@@ -37,10 +37,11 @@ namespace Skylicht
 
 		virtual ~CShaderMaterial();
 
-		virtual void OnSetConstants(CShader *shader, SUniform *uniform, IMaterialRenderer* matRender, bool vertexShader);
+		virtual void OnSetConstants(CShader* shader, SUniform* uniform, IMaterialRenderer* matRender, bool vertexShader);
 
 	public:
-		static void setMaterial(CMaterial *material);
+		static void setMaterial(CMaterial* material);
 
+		static CMaterial* getMaterial();
 	};
 }
