@@ -1,15 +1,15 @@
 include_directories(
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/zlib
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/curl/include
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/curl/src
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/freetype2/include
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/libmpg123
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source/kdtree
+	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/source/zlib
+	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/source/curl/include
+	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/source/curl/src
+	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/source/freetype2/include
+	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/source/libmpg123
+	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/source/kdtree
 )
 
 if (BUILD_OPENSSL)
-include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdPartySDK/boringssl/include)
+include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/include)
 endif()
 
 #aesGladman
@@ -163,11 +163,11 @@ if (BUILD_SHARED_LIBS)
 	if (BUILD_OPENSSL AND MSVC)	
 		target_link_libraries(ThirdParty PRIVATE crypto.lib decrepit.lib ssl.lib Crypt32.lib)
 		if (CMAKE_CL_64)
-			set(openssl_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdPartySDK/boringssl/x64")
-			set(openssl_dll_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdPartySDK/boringssl/x64/*.dll")
+			set(openssl_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/x64")
+			set(openssl_dll_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/x64/*.dll")
 		else()
-			set(openssl_lib_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdPartySDK/boringssl/x86")
-			set(openssl_dll_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdPartySDK/boringssl/x86/*.dll")
+			set(openssl_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/x86")
+			set(openssl_dll_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/x86/*.dll")
 		endif()
 		target_link_directories(ThirdParty PRIVATE ${openssl_lib_path})
 	endif()
@@ -180,12 +180,12 @@ install(TARGETS ThirdParty
 			LIBRARY DESTINATION lib
 			ARCHIVE DESTINATION lib)
 
-install (DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source
+install (DIRECTORY ${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/source
 	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}/ThirdParty
 	FILES_MATCHING PATTERN "*.h*")
 
 if (BUILD_OPENSSL)
-install (DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdPartySDK/boringssl/include
+install (DIRECTORY ${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/include
 	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}/ThirdParty/source/boringssl
 	FILES_MATCHING PATTERN "*.h*")
 endif()

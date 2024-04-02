@@ -1,12 +1,12 @@
 include_directories(
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Include
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdParty/source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Include
+	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/source
 )
 
 # SDL Include
 if(BUILD_SDL OR BUILD_EMSCRIPTEN)
 	if(MSVC)
-		include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/ThirdPartySDK/SDL/include)
+		include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/SDL/include)
 	endif()
 
 	if (BUILD_EMSCRIPTEN)
@@ -42,17 +42,17 @@ if (BUILD_MACOS)
 endif()
 
 if(BUILD_MACOS OR BUILD_IOS)
-	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Angle/include)
-	include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Source/MacOS/Angle)
+	include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/Angle/include)
+	include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Source/Angle)
 	
 	# Add angle source
 	file(GLOB_RECURSE irrlicht_angle_source
-		./Source/MacOS/Angle/**.mm
-		./Source/MacOS/Angle/**.m
-		./Source/MacOS/Angle/**.cpp
-		./Source/MacOS/Angle/**.h
-		./Source/MacOS/Angle/**.c)
-	setup_project_group_by_folder_relative("${irrlicht_angle_source}" "${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Source/MacOS/Angle")
+		./Source/Angle/**.mm
+		./Source/Angle/**.m
+		./Source/Angle/**.cpp
+		./Source/Angle/**.h
+		./Source/Angle/**.c)
+	setup_project_group_by_folder_relative("${irrlicht_angle_source}" "${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Source/Angle")
 endif()
 
 add_library(Irrlicht ${ENGINE_SHARED_OR_STATIC_LIB}
@@ -118,7 +118,7 @@ install(TARGETS Irrlicht
 			LIBRARY DESTINATION lib
 			ARCHIVE DESTINATION lib)
 
-install (DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects/Irrlicht/Include
+install (DIRECTORY ${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Include
 	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}/Irrlicht
 	FILES_MATCHING PATTERN "*.h*")
 
