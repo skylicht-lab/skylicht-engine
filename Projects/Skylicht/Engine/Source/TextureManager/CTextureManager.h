@@ -103,6 +103,8 @@ namespace Skylicht
 		{
 			return m_nullTexture;
 		}
+
+		ITexture* createTransformTexture1D(const char* name, core::matrix4* transforms, int num);
 	};
 
 }
