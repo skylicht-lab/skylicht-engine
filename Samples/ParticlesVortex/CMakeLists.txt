@@ -44,7 +44,7 @@ if (BUILD_WINDOWS_STORE)
 	
 	file(GLOB uwp_assets 
 		${template_path}/Platforms/UWP/Assets/**.*
-		${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/**.zip)
+		${SKYLICHT_ENGINE_BIN_DIR}/**.zip)
 	
 	foreach(asset_file ${uwp_assets})
 		file(COPY "${asset_file}" DESTINATION ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/ParticlesVortex/Assets)
@@ -173,7 +173,7 @@ elseif (MSVC OR CYGWIN OR MINGW)
 		${template_path}/Platforms/Win32/Skylicht.rc
 	)
 elseif (BUILD_MACOS)
-	file(GLOB resources_files "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/*.zip")
+	file(GLOB resources_files "${SKYLICHT_ENGINE_BIN_DIR}/*.zip")
 
 	set(angle_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/Angle/out/MacOS/Release/${CMAKE_OSX_ARCHITECTURES}")
 	file(GLOB dylib_files "${angle_lib_path}/*.dylib")
@@ -190,7 +190,7 @@ elseif (BUILD_MACOS)
 		
 	message(STATUS "- Setup project: SampleParticlesVortex")
 	foreach(res_file ${resources_files})
-		file(RELATIVE_PATH res_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin" ${res_file})
+		file(RELATIVE_PATH res_path "${SKYLICHT_ENGINE_BIN_DIR}" ${res_file})
 		message(STATUS "  - Add resources: ${res_path}")
 		set_property(SOURCE ${res_file} PROPERTY MACOSX_PACKAGE_LOCATION "Resources")
 		source_group("Bin" FILES "${res_file}")
@@ -230,7 +230,7 @@ elseif (BUILD_IOS)
 	set(MACOSX_BUNDLE_BUNDLE_NAME ${APP_BUNDLE_IDENTIFIER})
 	set(MACOSX_BUNDLE_GUI_IDENTIFIER ${APP_BUNDLE_IDENTIFIER})
 
-	file(GLOB resources_files "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/*.zip")
+	file(GLOB resources_files "${SKYLICHT_ENGINE_BIN_DIR}/*.zip")
 
 	set(angle_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/Angle/out/IOS/Release/${IOS_PLATFORM}")
 	file(GLOB angle_framework_files "${angle_lib_path}/*.framework")
@@ -247,7 +247,7 @@ elseif (BUILD_IOS)
 	
 	message(STATUS "- Setup project: SampleParticlesVortex")
 	foreach(res_file ${resources_files})
-		file(RELATIVE_PATH res_path "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin" ${res_file})
+		file(RELATIVE_PATH res_path "${SKYLICHT_ENGINE_BIN_DIR}" ${res_file})
 		source_group("Bin" FILES "${res_file}")
 	endforeach()
 
@@ -297,15 +297,15 @@ endif()
 # Emscripten
 if (BUILD_EMSCRIPTEN)
 	message(STATUS "Setting build in data: ${CMAKE_CURRENT_BINARY_DIR}")
-	file(COPY "${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/BuiltIn" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
+	file(COPY "${SKYLICHT_ENGINE_BIN_DIR}/BuiltIn" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 	
 	message(STATUS "Setting compilation target to WASM")
 	set(CMAKE_EXECUTABLE_SUFFIX ".wasm.html")
 	set_target_properties(SampleParticlesVortex PROPERTIES LINK_FLAGS "-s USE_SDL=2 -s USE_WEBGL2=1 -s FORCE_FILESYSTEM=1 -s FETCH=1 -s ALLOW_MEMORY_GROWTH=1 -s EXPORTED_FUNCTIONS=['_main','_main_resize'] -s EXPORTED_RUNTIME_METHODS=['ccall'] --preload-file ./BuiltIn --shell-file ${template_path}/Platforms/Emscripten/Shell/shell.html --disable-shared -s WASM=1 -s BINARYEN_METHOD='native-wasm'")
 	
 	set(project_name SampleParticlesVortex)
-	configure_file(${template_path}/Platforms/Emscripten/Index.html ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/Index.html)
-	configure_file(${template_path}/Platforms/Emscripten/Index.html ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/SampleParticlesVortex.html)
+	configure_file(${template_path}/Platforms/Emscripten/Index.html ${SKYLICHT_ENGINE_BIN_DIR}/Index.html)
+	configure_file(${template_path}/Platforms/Emscripten/Index.html ${SKYLICHT_ENGINE_BIN_DIR}/SampleParticlesVortex.html)
 endif()
 
 #VLD
