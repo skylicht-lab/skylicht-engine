@@ -15,19 +15,23 @@ project(SKYLICHT_ENGINE)
 file(STRINGS "Version.txt" SKYLICHT_VERSION)
 message(STATUS "- Skylicht Engine version ${SKYLICHT_VERSION}")
 
+# setup folder
+set(SKYLICHT_ENGINE_BIN_DIR ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin)
+set(SKYLICHT_ENGINE_PROJECT_DIR ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects)
+
 # output
 if (CMAKE_SYSTEM_NAME STREQUAL Android)
-	set(LIBRARY_OUTPUT_PATH ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/${CMAKE_SYSTEM_NAME}/Libs/${ANDROID_ABI} CACHE PATH "Single output directory for building all libraries.")
+	set(LIBRARY_OUTPUT_PATH ${SKYLICHT_ENGINE_BIN_DIR}/${CMAKE_SYSTEM_NAME}/Libs/${ANDROID_ABI} CACHE PATH "Single output directory for building all libraries.")
 elseif (CMAKE_SYSTEM_NAME STREQUAL iOS)
-	set(LIBRARY_OUTPUT_PATH ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/${CMAKE_SYSTEM_NAME}/Libs/${PLATFORM} CACHE PATH "Single output directory for building all libraries.")
+	set(LIBRARY_OUTPUT_PATH ${SKYLICHT_ENGINE_BIN_DIR}/${CMAKE_SYSTEM_NAME}/Libs/${PLATFORM} CACHE PATH "Single output directory for building all libraries.")
 else()
-	set(LIBRARY_OUTPUT_PATH ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/${CMAKE_SYSTEM_NAME}/Libs CACHE PATH "Single output directory for building all libraries.")
+	set(LIBRARY_OUTPUT_PATH ${SKYLICHT_ENGINE_BIN_DIR}/${CMAKE_SYSTEM_NAME}/Libs CACHE PATH "Single output directory for building all libraries.")
 endif()
 
 if (CMAKE_SYSTEM_NAME STREQUAL iOS)
-	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/${PLATFORM} CACHE PATH "Single output directory for building executables.")
+	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${SKYLICHT_ENGINE_BIN_DIR}/${PLATFORM} CACHE PATH "Single output directory for building executables.")
 else()
-	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin CACHE PATH "Single output directory for building executables.")
+	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${SKYLICHT_ENGINE_BIN_DIR} CACHE PATH "Single output directory for building executables.")
 endif()
 
 # debug/release
@@ -53,8 +57,6 @@ option(USE_MSVC_RUNTIME_LIBRARY_DLL "Use MSVC Runtime Library DLL (/MD or /MDd)"
 option(USE_OPENMP "Use openmp for multithread optimize" ON)
 
 option(BUILD_EXAMPLE "Build example application" ON)
-
-set (SKYLICHT_ENGINE_PROJECT_DIR ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects)
 
 # build skylicht engine tool on Windows
 set(BUILD_ENGINE_TOOL ON)
@@ -291,7 +293,7 @@ elseif (MSVC)
 endif()
 
 # install output
-set(CMAKE_INSTALL_PREFIX ${SKYLICHT_ENGINE_SOURCE_DIR}/Install)
+set(CMAKE_INSTALL_PREFIX ${SKYLICHT_ENGINE_SOURCE_DIR}/InstallLibs)
 set(SKYLICHT_LIBRARY_INSTALL_DIR ${CMAKE_INSTALL_PREFIX})
 set(SKYLICHT_INCLUDE_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/include)
 

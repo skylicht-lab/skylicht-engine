@@ -197,6 +197,7 @@ namespace Skylicht
 
 	void CSkeleton::updateActivateEntities()
 	{
+		// Activate entities is the Joint (Bone) that have weight > 0 and not disable
 		if (m_needUpdateActivateEntities)
 		{
 			m_needUpdateActivateEntities = false;
