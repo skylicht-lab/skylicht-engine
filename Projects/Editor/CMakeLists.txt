@@ -50,7 +50,7 @@ if (BUILD_WINDOWS_STORE)
 	
 	file(GLOB uwp_assets 
 		${template_path}/Platforms/UWP/Assets/**.*
-		${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/**.zip)
+		${SKYLICHT_ENGINE_BIN_DIR}/**.zip)
 	
 	foreach(asset_file ${uwp_assets})
 		file(COPY "${asset_file}" DESTINATION ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Projects/Editor/Assets)
@@ -263,8 +263,8 @@ if (BUILD_EMSCRIPTEN)
 	set_target_properties(SkylichtEditor PROPERTIES LINK_FLAGS "-s USE_SDL=2 -s USE_WEBGL2=1 -s FORCE_FILESYSTEM=1 -s FETCH=1 -s ALLOW_MEMORY_GROWTH=1 -s EXPORTED_FUNCTIONS=['_main','_main_resize'] -s EXTRA_EXPORTED_RUNTIME_METHODS=['ccall'] --preload-file ../../../Bin/BuiltIn --shell-file shell.html --memory-init-file 1 --disable-shared -s WASM=1 -s BINARYEN_METHOD='native-wasm'")
 	
 	set(project_name SkylichtEditor)
-	configure_file(${template_path}/Platforms/Emscripten/Index.html ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/Index.html)
-	configure_file(${template_path}/Platforms/Emscripten/Index.html ${SKYLICHT_ENGINE_SOURCE_DIR}/Bin/SkylichtEditor.html)
+	configure_file(${template_path}/Platforms/Emscripten/Index.html ${SKYLICHT_ENGINE_BIN_DIR}/Index.html)
+	configure_file(${template_path}/Platforms/Emscripten/Index.html ${SKYLICHT_ENGINE_BIN_DIR}/SkylichtEditor.html)
 endif()
 
 #VLD
