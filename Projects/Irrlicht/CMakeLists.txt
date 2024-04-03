@@ -75,10 +75,10 @@ target_link_libraries(Irrlicht ThirdParty)
 # Window DirectX11 && OpenGL
 if (MSVC OR CYGWIN OR MINGW)
 	# OpenGL
-	target_link_libraries(Irrlicht opengl32 Winmm)
+	target_link_libraries(Irrlicht opengl32 Winmm Gdi32)
 
 	# DirectX11 (No DX11 on MINGW)
-	if (NOT MINGW)	
+	if (NOT MINGW)
 	target_link_libraries(Irrlicht d3d11 d3dcompiler dxguid dxgi)
 	endif()
 endif()
@@ -119,6 +119,10 @@ install(TARGETS Irrlicht
 			ARCHIVE DESTINATION lib)
 
 install (DIRECTORY ${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Include
+	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}/Irrlicht
+	FILES_MATCHING PATTERN "*.h*")
+
+install (DIRECTORY ${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Source/Angle
 	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}/Irrlicht
 	FILES_MATCHING PATTERN "*.h*")
 
