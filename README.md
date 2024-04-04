@@ -224,6 +224,24 @@ Open iOS XCode Project on folder **skylicht-engine/PrjIOS/SKYLICHT_ENGINE.xcodep
 
 *Note: iOS Simulator is not yet support compressed texture and hardware skinning.*
 
+# Build static or shared library
+You can build this engine to library by cmake install
+
+## Shared library
+```Shell
+C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 17 2022" -A x64 -DINSTALL_LIBS=ON -DBUILD_SHARED_LIBS=ON
+C:\skylicht-engine>cmake --build ./PrjVisualStudio --target install --config Debug
+```
+<img src="Documents/Media/dll-library.jpg"/>
+
+## Static library
+```Shell
+C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 17 2022" -A x64 -DINSTALL_LIBS=ON
+C:\skylicht-engine>cmake --build ./PrjVisualStudio --target install --config Debug
+```
+## How to integrate
+And, copy the result InstallLibs to another project. See example: https://github.com/skylicht-lab/hello-skylicht
+
 # Roadmap
 - [Skylight Engine Core](https://github.com/skylicht-lab/skylicht-engine/issues/5) (In progress)
 - [Engine Editor](https://github.com/skylicht-lab/skylicht-engine/issues/6) (In progress)
