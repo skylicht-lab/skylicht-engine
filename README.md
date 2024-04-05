@@ -225,7 +225,7 @@ Open iOS XCode Project on folder **skylicht-engine/PrjIOS/SKYLICHT_ENGINE.xcodep
 *Note: iOS Simulator is not yet support compressed texture and hardware skinning.*
 
 # Build static or shared library
-You can build this engine to library by cmake install
+Skylicht Engine can be compiled into a standalone library to simplify integration into other projects.
 
 ## Shared library
 ```Shell
@@ -240,7 +240,8 @@ C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 17 2022" -A
 C:\skylicht-engine>cmake --build ./PrjVisualStudio --target install --config Debug
 ```
 ## How to integrate
-And, copy the result InstallLibs to another project. See example: https://github.com/skylicht-lab/hello-skylicht
+And then copy the resulting InstallLibs folder to another project.
+See the project example: https://github.com/skylicht-lab/hello-skylicht
 
 # Roadmap
 - [Skylight Engine Core](https://github.com/skylicht-lab/skylicht-engine/issues/5) (In progress)
@@ -297,7 +298,7 @@ This demo code, that renders Sphere 3D, loads textures (Diffuse, Normal, Specula
 <img src="Documents/Media/Samples/sample_material.jpg"/>
 
 ### Samples\SampleShader
-This demo code, How to bind shader on Material.
+This demo code, How to binds shader to Material.
 <img src="Documents/Media/Samples/sample_shader.jpg"/>
 
 ### Samples\LuckyDraw
