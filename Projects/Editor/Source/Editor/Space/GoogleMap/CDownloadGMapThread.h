@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "DownloadMap.h"
 
-#ifdef HAVE_SKYLICHT_NETWORK
+#ifdef USE_SKYLICHT_NETWORK
 #include "HttpRequest/CHttpRequest.h"
 #endif
 
