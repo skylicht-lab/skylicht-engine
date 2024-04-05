@@ -59,7 +59,7 @@ namespace Skylicht
 		return true;
 	}
 
-	bool CWorldTransformData::deserializable(CMemoryStream* stream)
+	bool CWorldTransformData::deserializable(CMemoryStream* stream, int version)
 	{
 		Name = stream->readString();
 		ParentIndex = stream->readInt();

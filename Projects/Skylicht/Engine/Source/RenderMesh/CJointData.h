@@ -34,9 +34,11 @@ namespace Skylicht
 		bool BoneRoot;
 
 		int RootIndex;
-
+		
 		std::string SID;
 		std::string BoneName;
+		
+		int BoneID;
 
 		// absolute joint transform at (0,0,0)
 		core::matrix4 AnimationMatrix;
@@ -48,7 +50,7 @@ namespace Skylicht
 
 		virtual bool serializable(CMemoryStream* stream);
 
-		virtual bool deserializable(CMemoryStream* stream);
+		virtual bool deserializable(CMemoryStream* stream, int version);
 
 		DECLARE_GETTYPENAME(CJointData)
 	};

@@ -80,7 +80,7 @@ namespace Skylicht
 		}
 
 		if (assetHeader.AssetVersion == 1)
-			loadVersion1(&stream, output, normalMap, texcoord2, batching);
+			loadVersion(&stream, output, assetHeader.AssetVersion, normalMap, texcoord2, batching);
 		else
 		{
 			delete[] data;
@@ -91,7 +91,7 @@ namespace Skylicht
 		return true;
 	}
 
-	void CSkylichtMeshLoader::loadVersion1(CMemoryStream* stream, CEntityPrefab* output, bool normalMap, bool texcoord2, bool batching)
+	void CSkylichtMeshLoader::loadVersion(CMemoryStream* stream, CEntityPrefab* output, int version, bool normalMap, bool texcoord2, bool batching)
 	{
 		std::map<int, int> entityID;
 		int depthChange = 0;
@@ -116,7 +116,7 @@ namespace Skylicht
 				IEntityData* data = entity->addDataByActivator(entityDataName.c_str());
 				if (data != NULL)
 				{
-					data->deserializable(stream);
+					data->deserializable(stream, version);
 
 					// hardcode to fix transform
 					if (entityDataName == "CWorldTransformData")

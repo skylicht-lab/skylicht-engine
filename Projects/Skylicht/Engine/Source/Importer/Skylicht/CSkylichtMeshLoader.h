@@ -44,6 +44,6 @@ namespace Skylicht
 
 	protected:
 
-		void loadVersion1(CMemoryStream* stream, CEntityPrefab* output, bool normalMap, bool texcoord2, bool batching);
+		void loadVersion(CMemoryStream* stream, CEntityPrefab* output, int version, bool normalMap, bool texcoord2, bool batching);
 	};
 }

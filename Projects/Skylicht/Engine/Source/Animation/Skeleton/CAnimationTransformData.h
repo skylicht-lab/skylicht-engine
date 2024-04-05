@@ -28,6 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Animation/CAnimationTrack.h"
 #include "Transform/CWorldTransformData.h"
+#include "RenderMesh/CJointData.h"
 
 namespace Skylicht
 {
@@ -39,6 +40,8 @@ namespace Skylicht
 		int ID;
 		int ParentID;
 		int Depth;
+
+		int BoneID;
 
 		// use to cancel animation
 		bool DisableAnimation;
