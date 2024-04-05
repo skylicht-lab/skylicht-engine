@@ -64,6 +64,7 @@ namespace Skylicht
 		{
 			CEntity* worldEntity = worldEntities[i];
 			CWorldTransformData* worldTransform = GET_ENTITY_DATA(worldEntity, CWorldTransformData);
+			CJointData* jointData = GET_ENTITY_DATA(worldEntity, CJointData);
 
 			CEntity* newEntity = m_entities.createEntity();
 
@@ -78,6 +79,10 @@ namespace Skylicht
 
 			// handle real world transform
 			animationData->WorldTransform = worldTransform;
+
+			// handle bone index for texture transform
+			if (jointData)
+				animationData->BoneID = jointData->BoneID;
 
 			// save root nodes
 			if (m_root == NULL)
@@ -220,6 +225,50 @@ namespace Skylicht
 			updateTrackKeyFrame();
 		else
 			updateBlending();
+	}
+
+	int CSkeleton::simulateTransform(float timeSecond, core::matrix4 origin, core::matrix4* transforms, int numTransform)
+	{
+		if (m_animationType == KeyFrame)
+		{
+			m_timeline.Frame = timeSecond;
+
+			if (m_timeline.Frame < m_timeline.From)
+				m_timeline.Frame = m_timeline.From;
+
+			if (m_timeline.Frame > m_timeline.To)
+				m_timeline.Frame = m_timeline.To;
+
+			updateTrackKeyFrame();
+
+			applyTransform();
+
+			u32 numEntities = (u32)m_entitiesData.size();
+
+			core::matrix4* worldTemp = new core::matrix4[numEntities];
+			int ret = 0;
+
+			for (u32 i = 0; i < numEntities; i++)
+			{
+				CAnimationTransformData* entity = m_entitiesData[i];
+
+				if (entity->ParentID == -1)
+					worldTemp[i] = origin * entity->WorldTransform->Relative;
+				else
+					worldTemp[i] = worldTemp[entity->ParentID] * entity->WorldTransform->Relative;
+
+				if (entity->BoneID > 0 && entity->BoneID < numTransform)
+				{
+					transforms[entity->BoneID] = worldTemp[i];
+					ret++;
+				}
+			}
+
+			delete[]worldTemp;
+			return ret;
+		}
+
+		return 0;
 	}
 
 	void CSkeleton::applyTransform()

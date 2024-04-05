@@ -42,7 +42,7 @@ namespace Skylicht
 
 	protected:
 
-		void loadVersion1(CMemoryStream* stream, CAnimationClip* output);
+		void loadVersion(CMemoryStream* stream, CAnimationClip* output, int version);
 
 	};
 }

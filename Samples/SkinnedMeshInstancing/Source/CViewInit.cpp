@@ -8,7 +8,8 @@
 #include "GridPlane/CGridPlane.h"
 #include "SkyDome/CSkyDome.h"
 
-#define TEST_CUBE
+// #define TEST_CUBE
+#define TEST_SINGLE_ANIM
 
 #include "Primitive/CCube.h"
 
@@ -153,6 +154,48 @@ void CViewInit::initScene()
 
 	// indirect lighting
 	cubeObj->addComponent<CIndirectLighting>();
+#endif
+
+#ifdef TEST_SINGLE_ANIM
+	CAnimationManager* animManager = CAnimationManager::getInstance();
+	CAnimationClip* clip1 = animManager->loadAnimation("SampleModels/MixamoCharacter/Hip_Hop_Dancing.dae");
+	CAnimationClip* clip2 = animManager->loadAnimation("SampleModels/MixamoCharacter/Samba_Dancing.dae");
+
+	// skinned mesh
+	CEntityPrefab* prefab = CMeshManager::getInstance()->loadModel("SampleModels/MixamoCharacter/Ch17_nonPBR.dae", "SampleModels/MixamoCharacter/textures");
+	if (prefab != NULL)
+	{
+		ArrayMaterial material = CMaterialManager::getInstance()->initDefaultMaterial(prefab);
+		if (material.size() == 2)
+		{
+			// body
+			material[1]->changeShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGSkin.xml");
+			material[1]->autoDetectLoadTexture();
+
+			// hair
+			material[0]->changeShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGSkinAlpha.xml");
+			material[0]->autoDetectLoadTexture();
+		}
+
+		// create character
+		CGameObject* character = zone->createEmptyObject();
+
+		// load skinned mesh character 01
+		CRenderMesh* renderMesh = character->addComponent<CRenderMesh>();
+		renderMesh->initFromPrefab(prefab);
+		renderMesh->initMaterial(material);
+
+		// apply animation to character 01
+		CAnimationController* animController1 = character->addComponent<CAnimationController>();
+		CSkeleton* skeleton = animController1->createSkeleton();
+		skeleton->setAnimation(clip1, true);
+
+		// indirect lighting
+		character->addComponent<CIndirectLighting>();
+
+		core::matrix4 transforms[GPU_BONES_COUNT];
+		skeleton->simulateTransform(0.0f, core::IdentityMatrix, transforms, GPU_BONES_COUNT);
+	}
 #endif
 
 	// Rendering

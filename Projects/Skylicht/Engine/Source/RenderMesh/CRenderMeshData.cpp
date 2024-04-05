@@ -372,7 +372,7 @@ namespace Skylicht
 		return true;
 	}
 
-	bool CRenderMeshData::deserializable(CMemoryStream* stream)
+	bool CRenderMeshData::deserializable(CMemoryStream* stream, int version)
 	{
 		CShaderManager* shaderMgr = CShaderManager::getInstance();
 

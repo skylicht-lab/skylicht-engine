@@ -50,7 +50,7 @@ namespace Skylicht
 		return true;
 	}
 
-	bool CCullingData::deserializable(CMemoryStream* stream)
+	bool CCullingData::deserializable(CMemoryStream* stream, int version)
 	{
 		Type = (ECulling)stream->readChar();
 		return true;
