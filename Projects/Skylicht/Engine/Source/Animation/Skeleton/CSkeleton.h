@@ -89,6 +89,8 @@ namespace Skylicht
 
 		void updateActivateEntities();
 
+		int simulateTransform(float timeSecond, core::matrix4 origin, core::matrix4* transforms, int numTransform);
+
 		void applyTransform();
 
 		void syncAnimationByTimeScale();

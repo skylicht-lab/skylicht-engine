@@ -55,7 +55,7 @@ namespace Skylicht
 			return false;
 		}
 
-		virtual bool deserializable(CMemoryStream* stream)
+		virtual bool deserializable(CMemoryStream* stream, int version)
 		{
 			return false;
 		}

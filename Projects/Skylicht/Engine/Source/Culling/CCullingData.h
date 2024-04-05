@@ -56,7 +56,7 @@ namespace Skylicht
 
 		virtual bool serializable(CMemoryStream* stream);
 
-		virtual bool deserializable(CMemoryStream* stream);
+		virtual bool deserializable(CMemoryStream* stream, int version);
 
 		DECLARE_GETTYPENAME(CCullingData);
 	};

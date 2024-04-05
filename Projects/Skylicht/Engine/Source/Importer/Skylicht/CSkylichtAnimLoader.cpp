@@ -76,7 +76,7 @@ namespace Skylicht
 		}
 
 		if (assetHeader.AssetVersion == 1)
-			loadVersion1(&stream, output);
+			loadVersion(&stream, output, assetHeader.AssetVersion);
 		else
 		{
 			delete[] data;
@@ -87,7 +87,7 @@ namespace Skylicht
 		return true;
 	}
 
-	void CSkylichtAnimLoader::loadVersion1(CMemoryStream* stream, CAnimationClip* output)
+	void CSkylichtAnimLoader::loadVersion(CMemoryStream* stream, CAnimationClip* output, int version)
 	{
 		output->AnimName = stream->readString();
 		output->Duration = stream->readFloat();

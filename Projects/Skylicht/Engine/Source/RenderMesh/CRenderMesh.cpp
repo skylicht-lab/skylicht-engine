@@ -291,6 +291,8 @@ namespace Skylicht
 		// for handler on Editor UI
 		setEntities(entities, numEntities);
 
+		int boneIndex = 0;
+
 		// re-map joint with new entity in CEntityManager
 		for (CRenderMeshData*& r : m_renderers)
 		{
@@ -299,15 +301,21 @@ namespace Skylicht
 				CSkinnedMesh* skinMesh = dynamic_cast<CSkinnedMesh*>(r->getMesh());
 				if (skinMesh != NULL)
 				{
+					u32 numJoints = (u32)skinMesh->Joints.size();
+
 					// alloc animation matrix (Max: 64 bone)
 					skinMesh->SkinningMatrix = new f32[16 * GPU_BONES_COUNT];
 
-					for (u32 i = 0, n = skinMesh->Joints.size(); i < n; i++)
+					for (u32 i = 0; i < numJoints; i++)
 					{
 						// map entity data to joint
 						CSkinnedMesh::SJoint& joint = skinMesh->Joints[i];
 						joint.EntityIndex = entityIndex[joint.EntityIndex];
 						joint.JointData = GET_ENTITY_DATA(entityManager->getEntity(joint.EntityIndex), CJointData);
+
+						// setup bone index for Texture Transform animations
+						if (joint.JointData->BoneID == -1)
+							joint.JointData->BoneID = boneIndex++;
 
 						// pointer to skin mesh animation matrix
 						joint.SkinningMatrix = skinMesh->SkinningMatrix + i * 16;

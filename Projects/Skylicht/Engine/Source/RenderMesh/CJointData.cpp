@@ -33,7 +33,8 @@ namespace Skylicht
 
 	CJointData::CJointData() :
 		BoneRoot(false),
-		RootIndex(-1)
+		RootIndex(-1),
+		BoneID(-1)
 	{
 
 	}
@@ -51,7 +52,7 @@ namespace Skylicht
 		return true;
 	}
 
-	bool CJointData::deserializable(CMemoryStream* stream)
+	bool CJointData::deserializable(CMemoryStream* stream, int version)
 	{
 		BoneRoot = stream->readChar() == 1 ? true : false;
 		SID = stream->readString();
