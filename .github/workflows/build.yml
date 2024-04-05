@@ -16,9 +16,7 @@ jobs:
           call emsdk.bat activate latest-upstream
           cd ..
       - name: Download SDL2
-        uses: wei/wget@v1
-        with:
-          args: -O SDL2-version_22.zip -q https://github.com/emscripten-ports/SDL2/archive/version_22.zip
+        run: C:\msys64\usr\bin\wget.exe -O SDL2-version_22.zip -q https://github.com/emscripten-ports/SDL2/archive/version_22.zip
       - name: Install SDL2
         run: |
           mkdir InstallLibs
