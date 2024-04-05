@@ -11,7 +11,7 @@ if(BUILD_SDL OR BUILD_EMSCRIPTEN)
 
 	if (BUILD_EMSCRIPTEN)
 		# See Github Action CI for more details
-		include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/InstallLibs)
+		include_directories(${SKYLICHT_ENGINE_SOURCE_DIR}/InstallLibs/include)
 	endif()
 
 	if(CYGWIN OR MINGW)
