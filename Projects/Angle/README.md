@@ -2,7 +2,7 @@
 
 Currently, Skylicht Engine use [Angle](https://github.com/google/angle) to simulation OpenGLES on MacOS and IOS.
 
-## Step 1: GET DEPOT TOOLS
+## Step 1: Get depot tools
 
 ```console
   git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
@@ -15,13 +15,13 @@ Example: **'depot_tools'** at /Users/Skylicht/Documents/projects/depot_tools
   export PATH=/Users/Skylicht/Documents/projects/depot_tools:$PATH
 ```
 
-## Step 2: GET ANGLE PROJECT
+## Step 2: Get angle project
 
 ```console
   git clone https://chromium.googlesource.com/angle/angle
 ```
 
-## Step 3: BUILD ANGLE PROJECT
+## Step 3: Build angle project
 
 ### Setup project
 ```console
@@ -92,7 +92,7 @@ is_debug = true
 Press ESC and type :wq to quit vi
 
 ```console
-autoninja -C out/Release libEGL libGLESv2
+autoninja -C out/Debug libEGL libGLESv2
 ```
 ### RESULT
 
