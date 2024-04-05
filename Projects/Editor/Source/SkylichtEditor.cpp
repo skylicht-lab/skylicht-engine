@@ -15,7 +15,7 @@
 #include "LightProbes/CLightProbeRender.h"
 #include "ReflectionProbe/CReflectionProbeRender.h"
 
-#if defined(HAVE_SKYLICHT_NETWORK)
+#if defined(USE_SKYLICHT_NETWORK)
 #include "HttpRequest/CHttpRequest.h"
 #endif
 
@@ -38,7 +38,7 @@ SkylichtEditor::SkylichtEditor() :
     getIrrlichtDevice()->getFileSystem()->changeWorkingDirectoryTo(PROJECT_PATH);
 #endif
     
-#if defined(HAVE_SKYLICHT_NETWORK)
+#if defined(USE_SKYLICHT_NETWORK)
 	CHttpRequest::globalInit();
 #endif
 
@@ -56,7 +56,7 @@ SkylichtEditor::SkylichtEditor() :
 
 SkylichtEditor::~SkylichtEditor()
 {
-#if defined(HAVE_SKYLICHT_NETWORK)
+#if defined(USE_SKYLICHT_NETWORK)
 	CHttpRequest::globalFree();
 #endif
 
