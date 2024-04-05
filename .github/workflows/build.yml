@@ -2,9 +2,6 @@ name: build
 
 on: [push]
 
-# Software
-# https://help.github.com/en/actions/automating-your-workflow-with-github-actions/software-installed-on-github-hosted-runners
-
 jobs:
   Emscripten:
     runs-on: windows-latest
@@ -18,17 +15,17 @@ jobs:
           call emsdk.bat install latest-upstream
           call emsdk.bat activate latest-upstream
           cd ..
-          echo Choco install
-          dir C:\ProgramData\Chocolatey\bin
-          echo Install WGET
-          choco install wget -y
-          echo Install SDL2LIB
-          wget -O SDL2-version_22.zip -q https://github.com/emscripten-ports/SDL2/archive/version_22.zip
+      - name: Download SDL2
+        uses: wei/wget@v1
+        with:
+          args: -O SDL2-version_22.zip -q https://github.com/emscripten-ports/SDL2/archive/version_22.zip
+      - name: Install SDL2
+        run: |
           mkdir InstallLibs
-          mkdir InstallLibs\SDL2
+          mkdir InstallLibs\include
+          mkdir InstallLibs\include\SDL2
           7z x SDL2-version_22.zip -oInstallLibs
-          copy InstallLibs\SDL2-version_22\include\*.* InstallLibs\SDL2
-          echo Install success
+          copy InstallLibs\SDL2-version_22\include\*.* InstallLibs\include\SDL2
       - name: Build
         shell: cmd
         run: |
@@ -230,6 +227,7 @@ jobs:
     #  with:
     #    name: SkylichtDemo_IOS
     #    path: Build
+
   Windows-Static:
     runs-on: windows-latest
     steps:
