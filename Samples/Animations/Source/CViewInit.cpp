@@ -140,9 +140,12 @@ void CViewInit::initScene()
 	CAnimationManager* animManager = CAnimationManager::getInstance();
 
 	// skinned mesh
-	CEntityPrefab* prefab = CMeshManager::getInstance()->loadModel("SampleAnimations/HeroArtwork/Hero.dae", "SampleAnimations/HeroArtwork/Textures");
+	CEntityPrefab* prefab = CMeshManager::getInstance()->loadModel("SampleAnimations/HeroArtwork/Hero.smesh", "SampleAnimations/HeroArtwork/Textures");
 	if (prefab != NULL)
 	{
+		// Test export dae to smesh
+		// CMeshManager::getInstance()->exportModel(prefab->getEntities(), prefab->getNumEntities(), "Hero.smesh");
+
 		std::vector<std::string> textureFolders;
 		ArrayMaterial material = CMaterialManager::getInstance()->loadMaterial("SampleAnimations/HeroArtwork/Hero.mat", true, textureFolders);
 
