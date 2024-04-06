@@ -8,8 +8,6 @@
 
 #include "common/PackedEnums.h"
 
-#include "common/utilities.h"
-
 namespace gl
 {
 
@@ -622,52 +620,3 @@ MessageType ErrorCodeToMessageType(EGLint errorCode)
 }
 }  // namespace egl
 
-namespace egl_gl
-{
-
-gl::TextureTarget EGLCubeMapTargetToCubeMapTarget(EGLenum eglTarget)
-{
-    ASSERT(egl::IsCubeMapTextureTarget(eglTarget));
-    return gl::CubeFaceIndexToTextureTarget(egl::CubeMapTextureTargetToLayerIndex(eglTarget));
-}
-
-gl::TextureTarget EGLImageTargetToTextureTarget(EGLenum eglTarget)
-{
-    switch (eglTarget)
-    {
-        case EGL_GL_TEXTURE_2D_KHR:
-            return gl::TextureTarget::_2D;
-
-        case EGL_GL_TEXTURE_CUBE_MAP_POSITIVE_X_KHR:
-        case EGL_GL_TEXTURE_CUBE_MAP_NEGATIVE_X_KHR:
-        case EGL_GL_TEXTURE_CUBE_MAP_POSITIVE_Y_KHR:
-        case EGL_GL_TEXTURE_CUBE_MAP_NEGATIVE_Y_KHR:
-        case EGL_GL_TEXTURE_CUBE_MAP_POSITIVE_Z_KHR:
-        case EGL_GL_TEXTURE_CUBE_MAP_NEGATIVE_Z_KHR:
-            return EGLCubeMapTargetToCubeMapTarget(eglTarget);
-
-        case EGL_GL_TEXTURE_3D_KHR:
-            return gl::TextureTarget::_3D;
-
-        default:
-            UNREACHABLE();
-            return gl::TextureTarget::InvalidEnum;
-    }
-}
-
-gl::TextureType EGLTextureTargetToTextureType(EGLenum eglTarget)
-{
-    switch (eglTarget)
-    {
-        case EGL_TEXTURE_2D:
-            return gl::TextureType::_2D;
-
-        case EGL_TEXTURE_RECTANGLE_ANGLE:
-            return gl::TextureType::Rectangle;
-
-        default:
-            UNREACHABLE();
-            return gl::TextureType::InvalidEnum;
-    }
-}
-}  // namespace egl_gl
