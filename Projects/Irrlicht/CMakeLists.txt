@@ -52,7 +52,7 @@ if(BUILD_MACOS OR BUILD_IOS)
 		./Source/Angle/**.cpp
 		./Source/Angle/**.h
 		./Source/Angle/**.c)
-	setup_project_group_by_folder_relative("${irrlicht_angle_source}" "${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Source/Angle")
+	setup_project_group_by_folder_relative("${irrlicht_angle_source}" "${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/./Source")
 endif()
 
 add_library(Irrlicht ${ENGINE_SHARED_OR_STATIC_LIB}

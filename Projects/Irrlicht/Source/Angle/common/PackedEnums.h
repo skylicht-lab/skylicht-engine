@@ -12,13 +12,13 @@
 #include "common/PackedEGLEnums_autogen.h"
 #include "common/PackedGLEnums_autogen.h"
 
+#include "common/debug.h"
+
 #include <array>
 #include <bitset>
 #include <cstddef>
 
 #include <EGL/egl.h>
-
-#include "common/bitset_utils.h"
 
 namespace angle
 {
@@ -163,11 +163,6 @@ class PackedEnumMap
     Storage mPrivateData;
 };
 
-// PackedEnumBitSetE> is like an std::bitset<E::EnumCount> but is indexed with enum values. It
-// implements the std::bitset interface except with enum values instead of indices.
-template <typename E, typename DataT = uint32_t>
-using PackedEnumBitSet = BitSetT<EnumSize<E>(), DataT, E>;
-
 }  // namespace angle
 
 #define ANGLE_DEFINE_ID_TYPE(Type)          \
@@ -225,9 +220,6 @@ constexpr size_t kGraphicsShaderCount = static_cast<size_t>(ShaderType::EnumCoun
 constexpr std::array<ShaderType, kGraphicsShaderCount> kAllGraphicsShaderTypes = {
     ShaderType::Vertex, ShaderType::TessControl, ShaderType::TessEvaluation, ShaderType::Geometry,
     ShaderType::Fragment};
-
-using ShaderBitSet = angle::PackedEnumBitSet<ShaderType, uint8_t>;
-static_assert(sizeof(ShaderBitSet) == sizeof(uint8_t), "Unexpected size");
 
 template <typename T>
 using ShaderMap = angle::PackedEnumMap<ShaderType, T>;
@@ -374,8 +366,6 @@ enum class BlendEquationType
     InvalidEnum = 23,
     EnumCount   = InvalidEnum
 };
-
-using BlendEquationBitSet = angle::PackedEnumBitSet<gl::BlendEquationType>;
 
 template <>
 constexpr BlendEquationType FromGLenum<BlendEquationType>(GLenum from)
@@ -869,13 +859,6 @@ operator<(const T &lhs, const T &rhs)
 }  // namespace egl
 
 #undef ANGLE_DEFINE_ID_TYPE
-
-namespace egl_gl
-{
-gl::TextureTarget EGLCubeMapTargetToCubeMapTarget(EGLenum eglTarget);
-gl::TextureTarget EGLImageTargetToTextureTarget(EGLenum eglTarget);
-gl::TextureType EGLTextureTargetToTextureType(EGLenum eglTarget);
-}  // namespace egl_gl
 
 namespace gl
 {
