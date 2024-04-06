@@ -28,13 +28,7 @@ target_precompiled_header(Components ./Source/pch.cpp ${skylicht_components})
 
 set_target_properties(Components PROPERTIES VERSION ${SKYLICHT_VERSION})
 
-if (BUILD_EMSCRIPTEN)
 target_link_libraries(Components Engine System)
-elseif(MSVC)
-target_link_libraries(Components Engine System)
-elseif(CYGWIN OR MINGW)
-target_link_libraries(Components Engine System)
-endif()
 
 if (INSTALL_LIBS)
 install(TARGETS Components
