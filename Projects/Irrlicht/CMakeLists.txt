@@ -90,6 +90,7 @@ if (BUILD_LINUX)
 endif()
 
 if (BUILD_MACOS)
+	target_link_libraries(Irrlicht "-framework CoreServices")
 	target_link_libraries(Irrlicht "-framework Cocoa")
 endif()
 
