@@ -2,8 +2,8 @@
 	<uniforms>
 		<vs>
 			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
-			<uniform name="uOrientationUp" type="PARTICLE_ORIENTATION_UP" value="0" float="3"/>
-			<uniform name="uOrientationNormal" type="PARTICLE_ORIENTATION_NORMAL" value="0" float="3"/>
+			<uniform name="uOrientationUp" type="PARTICLE_ORIENTATION_UP" value="0" float="4"/>
+			<uniform name="uOrientationNormal" type="PARTICLE_ORIENTATION_NORMAL" value="0" float="4"/>
 		</vs>
 		<fs>
 			<uniform name="uTexture" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>

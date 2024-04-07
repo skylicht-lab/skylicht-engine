@@ -3,7 +3,7 @@
 		<vs>
 			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
 			<uniform name="uWorld" type="WORLD" value="0" float="16" matrix="true"/>
-			<uniform name="uNoiseParam" type="MATERIAL_PARAM" valueIndex="0" value="1.0, 0.1, 3.0" float="3"/>
+			<uniform name="uNoiseParam" type="MATERIAL_PARAM" valueIndex="0" value="1.0, 0.1, 3.0, 0.0" float="4"/>
 		</vs>
 		<fs>
 			<uniform name="uTexture" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
