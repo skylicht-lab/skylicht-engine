@@ -41,7 +41,8 @@ AngleApplication::AngleApplication(std::string name,
       mOSWindow(nullptr),
       mDriverType(angle::GLESDriverType::AngleEGL)
 {
-    mPlatformParams.renderer = EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE;
+    // mPlatformParams.renderer = EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE; // Maybe OpenGL backend
+    mPlatformParams.renderer = EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE; // Metal backend
     mPlatformParams.deviceType = EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE;
         
     mOSWindow = OSWindow::New();

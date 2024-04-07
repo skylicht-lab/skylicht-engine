@@ -5,7 +5,7 @@ in vec2 inTexCoord0;
 
 uniform mat4 uMvpMatrix;
 uniform mat4 uWorld;
-uniform vec3 uNoiseParam;
+uniform vec4 uNoiseParam;
 
 out vec2 varTexCoord0;
 out vec4 varColor;

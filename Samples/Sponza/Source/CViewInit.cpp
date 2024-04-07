@@ -415,10 +415,11 @@ void CViewInit::initFireParticle(Particle::CParticleComponent* ps)
 
 	smokeGroup->addEmitter(smokeEmitter);
 
+#ifndef USE_ANGLE_GLES // need test on angle
 	// GROUP: POINT SPARK
 	Particle::CGroup* pointSparkGroup = ps->createParticleGroup();
 
-	Particle::CQuadRenderer* pointSpark = factory->createQuadRenderer();
+    Particle::CQuadRenderer* pointSpark = factory->createQuadRenderer();
 	pointSparkGroup->setRenderer(pointSpark);
 
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/point.png");
@@ -449,7 +450,7 @@ void CViewInit::initFireParticle(Particle::CParticleComponent* ps)
 	pointSparkEmitter->setForce(1.5f, 2.0f);
 	pointSparkEmitter->setZone(factory->createSphereZone(core::vector3df(0.0f, -0.5f, 0.0f), 0.5f));
 	pointSparkGroup->addEmitter(pointSparkEmitter);
-
+#endif
 }
 
 void CViewInit::onDestroy()
