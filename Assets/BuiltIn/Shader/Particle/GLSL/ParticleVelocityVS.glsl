@@ -12,8 +12,8 @@ layout(location = 9) in vec3 inParticleRotation;
 layout(location = 10) in vec3 inParticleVelocity;
 
 uniform mat4 uMvpMatrix;
-uniform vec3 uViewUp;
-uniform vec3 uViewLook;
+uniform vec4 uViewUp;
+uniform vec4 uViewLook;
 
 out vec2 varTexCoord0;
 out vec4 varColor;
@@ -46,7 +46,7 @@ void main(void)
 	vec3 up = vec3(upX, upY, upZ);
 	up = normalize(up);
 
-	vec3 side = cross(up, uViewLook);
+	vec3 side = cross(up, uViewLook.xyz);
 	side = normalize(side);
 
 	side = side * 0.5 * inParticleSize.x;
