@@ -271,6 +271,22 @@ namespace Skylicht
 		return 0;
 	}
 
+	void CSkeleton::getBoneIdMap(std::map<std::string, int>& bones)
+	{
+		bones.clear();
+
+		u32 numEntities = (u32)m_entitiesData.size();
+
+		for (u32 i = 0; i < numEntities; i++)
+		{
+			CAnimationTransformData* entity = m_entitiesData[i];
+			if (entity->BoneID != -1)
+			{
+				bones[entity->Name] = entity->BoneID;
+			}
+		}
+	}
+
 	void CSkeleton::applyTransform()
 	{
 		for (CAnimationTransformData*& entity : m_entitiesData)

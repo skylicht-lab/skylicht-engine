@@ -97,6 +97,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "RenderMesh/CSkinnedMesh.h"
 #include "Culling/CCullingData.h"
 
+#include "SkinnedInstancing/CRenderSkinnedInstancing.h"
+
 // 3D Animation
 #include "Animation/CAnimationManager.h"
 #include "Animation/CAnimationController.h"

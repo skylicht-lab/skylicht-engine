@@ -46,6 +46,7 @@ namespace Skylicht
 		IsSoftwareBlendShape(false),
 		IsSkinnedMesh(false),
 		IsInstancing(false),
+		IsSkinnedInstancing(false),
 		InstancingData(NULL)
 	{
 
@@ -82,6 +83,11 @@ namespace Skylicht
 			InstancingData = NULL;
 
 		IsInstancing = b;
+	}
+
+	void CRenderMeshData::setSkinnedInstancing(bool b)
+	{
+		IsSkinnedInstancing = b;
 	}
 
 	void CRenderMeshData::setMaterial(CMaterial* material)

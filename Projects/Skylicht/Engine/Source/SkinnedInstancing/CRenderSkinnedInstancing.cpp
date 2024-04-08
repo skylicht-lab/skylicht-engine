@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2024 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -23,27 +23,17 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CRenderMesh.h"
-#include "GameObject/CGameObject.h"
-#include "Entity/CEntityManager.h"
-
-#include "Transform/CWorldTransformData.h"
-#include "Transform/CWorldInverseTransformSystem.h"
-#include "RenderMesh/CRenderMeshData.h"
-#include "RenderMesh/CJointData.h"
-#include "Culling/CCullingData.h"
-
+#include "CRenderSkinnedInstancing.h"
+#include "CTransformTextureData.h"
 #include "MeshManager/CMeshManager.h"
+#include "Entity/CEntityManager.h"
+#include "Culling/CCullingData.h"
+#include "TextureManager/CTextureManager.h"
 
 namespace Skylicht
 {
-	ACTIVATOR_REGISTER(CRenderMesh);
-
-	CATEGORY_COMPONENT(CRenderMesh, "Render Mesh", "Renderer");
-
-	CRenderMesh::CRenderMesh() :
+	CRenderSkinnedInstancing::CRenderSkinnedInstancing() :
 		m_root(NULL),
-		m_optimizeForRender(false),
 		m_loadTexcoord2(false),
 		m_loadNormal(true),
 		m_fixInverseNormal(true)
@@ -51,13 +41,13 @@ namespace Skylicht
 
 	}
 
-	CRenderMesh::~CRenderMesh()
+	CRenderSkinnedInstancing::~CRenderSkinnedInstancing()
 	{
 		releaseMaterial();
 		releaseEntities();
 	}
 
-	void CRenderMesh::releaseMaterial()
+	void CRenderSkinnedInstancing::releaseMaterial()
 	{
 		for (CMaterial* m : m_materials)
 		{
@@ -71,7 +61,7 @@ namespace Skylicht
 		m_materials.clear();
 	}
 
-	void CRenderMesh::releaseEntities()
+	void CRenderSkinnedInstancing::releaseEntities()
 	{
 		removeAllEntities();
 
@@ -80,25 +70,23 @@ namespace Skylicht
 		m_entities.clear();
 	}
 
-	void CRenderMesh::initComponent()
+	void CRenderSkinnedInstancing::initComponent()
 	{
 
 	}
 
-	void CRenderMesh::updateComponent()
+	void CRenderSkinnedInstancing::updateComponent()
 	{
 
 	}
 
-	CObjectSerializable* CRenderMesh::createSerializable()
+	CObjectSerializable* CRenderSkinnedInstancing::createSerializable()
 	{
 		CObjectSerializable* object = CComponentSystem::createSerializable();
 
 		object->autoRelease(new CBoolProperty(object, "load normal", m_loadNormal));
 		object->autoRelease(new CBoolProperty(object, "inserse normal", m_fixInverseNormal));
 		object->autoRelease(new CBoolProperty(object, "load texcoord2", m_loadTexcoord2));
-		object->autoRelease(new CBoolProperty(object, "optimize", m_optimizeForRender));
-		object->autoRelease(new CBoolProperty(object, "instancing", m_enableInstancing));
 
 		std::vector<std::string> meshExts = { "dae","obj","smesh" };
 		std::vector<std::string> materialExts = { "xml","mat" };
@@ -108,7 +96,7 @@ namespace Skylicht
 		return object;
 	}
 
-	void CRenderMesh::loadSerializable(CObjectSerializable* object)
+	void CRenderSkinnedInstancing::loadSerializable(CObjectSerializable* object)
 	{
 		CComponentSystem::loadSerializable(object);
 
@@ -116,16 +104,12 @@ namespace Skylicht
 		m_fixInverseNormal = object->get<bool>("inserse normal", true);
 		m_loadTexcoord2 = object->get<bool>("load texcoord2", false);
 
-		bool optimize = object->get<bool>("optimize", false);
-		bool instancing = object->get<bool>("instancing", false);
-
 		std::string meshFile = object->get<std::string>("mesh", "");
 		std::string materialFile = object->get<std::string>("material", "");
 
-		if (meshFile != m_meshFile || optimize != m_optimizeForRender)
+		if (meshFile != m_meshFile)
 		{
 			m_meshFile = meshFile;
-			m_optimizeForRender = optimize;
 
 			CEntityPrefab* prefab = CMeshManager::getInstance()->loadModel(
 				meshFile.c_str(),
@@ -153,13 +137,42 @@ namespace Skylicht
 			if (materials.size() > 0)
 				initMaterial(materials);
 		}
-
-		// enable instancing
-		if (instancing)
-			enableInstancing(true);
 	}
 
-	void CRenderMesh::refreshModelAndMaterial()
+	void CRenderSkinnedInstancing::initTextureTransform(core::matrix4* transforms, int count, std::map<std::string, int> bones)
+	{
+		CTextureManager* textureMgr = CTextureManager::getInstance();
+		CEntityManager* entityMgr = m_gameObject->getEntityManager();
+
+		for (CRenderMeshData* renderer : m_renderers)
+		{
+			CSkinnedMesh* skinnedMesh = dynamic_cast<CSkinnedMesh*>(renderer->getMesh());
+
+			u32 jointCount = skinnedMesh->Joints.size();
+
+			core::matrix4* boneMatrix = new core::matrix4[jointCount];
+
+			for (u32 i = 0, n = jointCount; i < n; i++)
+			{
+				CSkinnedMesh::SJoint& joint = skinnedMesh->Joints[i];
+
+				const std::string& boneName = joint.Name;
+				int id = bones[boneName];
+
+				// calc skinned matrix, that like CSkinnedMeshSystem::update
+				boneMatrix[i] = transforms[id] * joint.BindPoseMatrix;
+			}
+
+			CEntity* entity = entityMgr->getEntity(renderer->EntityIndex);
+
+			CTransformTextureData* data = entity->addData<CTransformTextureData>();
+			data->TransformTexture = textureMgr->createTransformTexture1D("CrowdBoneTransform", boneMatrix, jointCount);
+
+			delete[]boneMatrix;
+		}
+	}
+
+	void CRenderSkinnedInstancing::refreshModelAndMaterial()
 	{
 		CEntityPrefab* prefab = CMeshManager::getInstance()->loadModel(
 			m_meshFile.c_str(),
@@ -186,154 +199,7 @@ namespace Skylicht
 		}
 	}
 
-	void CRenderMesh::initFromPrefab(CEntityPrefab* prefab)
-	{
-		releaseEntities();
-
-		if (m_optimizeForRender)
-			initOptimizeFromPrefab(prefab);
-		else
-			initNoOptimizeFromPrefab(prefab);
-	}
-
-	void CRenderMesh::initNoOptimizeFromPrefab(CEntityPrefab* prefab)
-	{
-		CEntityManager* entityManager = m_gameObject->getEntityManager();
-
-		// root entity of object
-		m_root = m_gameObject->getEntity();
-		CWorldTransformData* rootTransform = GET_ENTITY_DATA(m_root, CWorldTransformData);
-
-		// spawn childs entity
-		int numEntities = prefab->getNumEntities();
-		CEntity** entities = entityManager->createEntity(numEntities, m_allEntities);
-
-		// map new entity index from src prefab
-		std::map<int, int> entityIndex;
-
-		// copy entity data
-		for (int i = 0; i < numEntities; i++)
-		{
-			CEntity* spawnEntity = entities[i];
-			CEntity* srcEntity = prefab->getEntity(i);
-
-			// map index
-			entityIndex[srcEntity->getIndex()] = spawnEntity->getIndex();
-
-			// copy transform data
-			CWorldTransformData* srcTransform = srcEntity->getData<CWorldTransformData>();
-			if (srcTransform != NULL)
-			{
-				CWorldTransformData* spawnTransform = spawnEntity->addData<CWorldTransformData>();
-				spawnTransform->Name = srcTransform->Name;
-				spawnTransform->Relative = srcTransform->Relative;
-				spawnTransform->HasChanged = true;
-				spawnTransform->Depth = rootTransform->Depth + 1 + srcTransform->Depth;
-
-				if (srcTransform->ParentIndex == -1 || entityIndex.find(srcTransform->ParentIndex) == entityIndex.end())
-					spawnTransform->ParentIndex = m_root->getIndex();
-				else
-					spawnTransform->ParentIndex = entityIndex[srcTransform->ParentIndex];
-
-				m_transforms.push_back(spawnTransform);
-			}
-
-			// copy render data
-			CRenderMeshData* srcRender = srcEntity->getData<CRenderMeshData>();
-			if (srcRender != NULL)
-			{
-				CRenderMeshData* spawnRender = spawnEntity->addData<CRenderMeshData>();
-				spawnRender->setMesh(srcRender->getMesh());
-				spawnRender->setSkinnedMesh(srcRender->isSkinnedMesh());
-				spawnRender->setSoftwareSkinning(srcRender->isSoftwareSkinning());
-
-				// init software blendshape
-				if (srcRender->getMesh()->BlendShape.size() > 0)
-					spawnRender->initSoftwareBlendShape();
-
-				// init software skinning
-				if (spawnRender->isSkinnedMesh() && spawnRender->isSoftwareSkinning() == true)
-					spawnRender->initSoftwareSkinning();
-
-				// add to list renderer
-				m_renderers.push_back(spawnRender);
-
-				// also add transform
-				m_renderTransforms.push_back(GET_ENTITY_DATA(spawnEntity, CWorldTransformData));
-
-				// add world inv transform for culling system (disable to optimize)
-				// spawnEntity->addData<CWorldInverseTransformData>();
-			}
-
-			// copy culling data
-			CCullingData* srcCulling = srcEntity->getData<CCullingData>();
-			if (srcCulling != NULL)
-			{
-				CCullingData* spawnCulling = spawnEntity->addData<CCullingData>();
-				spawnCulling->Type = srcCulling->Type;
-				spawnCulling->Visible = srcCulling->Visible;
-			}
-
-			// copy joint data
-			CJointData* srcJointData = (CJointData*)srcEntity->getData<CJointData>();
-			if (srcJointData != NULL)
-			{
-				CJointData* spawnJoint = spawnEntity->addData<CJointData>();
-				spawnJoint->BoneRoot = srcJointData->BoneRoot;
-				spawnJoint->SID = srcJointData->SID;
-				spawnJoint->BoneName = srcJointData->BoneName;
-				spawnJoint->AnimationMatrix = srcJointData->AnimationMatrix;
-				spawnJoint->RootIndex = m_root->getIndex();
-			}
-		}
-
-		bool addInvData = false;
-
-		// for handler on Editor UI
-		setEntities(entities, numEntities);
-
-		int boneId = 0;
-
-		// re-map joint with new entity in CEntityManager
-		for (CRenderMeshData*& r : m_renderers)
-		{
-			if (r->isSkinnedMesh() == true)
-			{
-				CSkinnedMesh* skinMesh = dynamic_cast<CSkinnedMesh*>(r->getMesh());
-				if (skinMesh != NULL)
-				{
-					u32 numJoints = (u32)skinMesh->Joints.size();
-
-					// alloc animation matrix (Max: 64 bone)
-					skinMesh->SkinningMatrix = new f32[16 * GPU_BONES_COUNT];
-
-					for (u32 i = 0; i < numJoints; i++)
-					{
-						// map entity data to joint
-						CSkinnedMesh::SJoint& joint = skinMesh->Joints[i];
-						joint.EntityIndex = entityIndex[joint.EntityIndex];
-						joint.JointData = GET_ENTITY_DATA(entityManager->getEntity(joint.EntityIndex), CJointData);
-
-						// setup bone index for Texture Transform animations
-						if (joint.JointData->BoneID == -1)
-							joint.JointData->BoneID = boneId++;
-
-						// pointer to skin mesh animation matrix
-						joint.SkinningMatrix = skinMesh->SkinningMatrix + i * 16;
-					}
-				}
-
-				if (addInvData == false)
-				{
-					if (GET_ENTITY_DATA(m_root, CWorldInverseTransformData) == NULL)
-						m_root->addData<CWorldInverseTransformData>();
-					addInvData = true;
-				}
-			}
-		}
-	}
-
-	void CRenderMesh::initOptimizeFromPrefab(CEntityPrefab* prefab)
+	void CRenderSkinnedInstancing::initFromPrefab(CEntityPrefab* prefab)
 	{
 		CEntityManager* entityManager = m_gameObject->getEntityManager();
 
@@ -353,9 +219,9 @@ namespace Skylicht
 			CRenderMeshData* srcRender = srcEntity->getData<CRenderMeshData>();
 			if (srcRender != NULL)
 			{
-				if (!srcRender->isSkinnedMesh())
+				if (srcRender->isSkinnedMesh())
 				{
-					// just add static mesh
+					// just add skinned mesh
 					renderEntities.push_back(srcEntity);
 				}
 			}
@@ -404,10 +270,7 @@ namespace Skylicht
 			{
 				CRenderMeshData* spawnRender = spawnEntity->addData<CRenderMeshData>();
 				spawnRender->setMesh(srcRender->getMesh());
-
-				// init software blendshape
-				if (srcRender->getMesh()->BlendShape.size() > 0)
-					spawnRender->initSoftwareBlendShape();
+				spawnRender->setSkinnedInstancing(true);
 
 				// add to list renderer
 				m_renderers.push_back(spawnRender);
@@ -433,19 +296,19 @@ namespace Skylicht
 		setEntities(entities, numEntities);
 	}
 
-	void CRenderMesh::initFromMeshFile(const char* path)
+	void CRenderSkinnedInstancing::initFromMeshFile(const char* path)
 	{
 		m_meshFile = path;
 		refreshModelAndMaterial();
 	}
 
-	void CRenderMesh::initMaterialFromFile(const char* material)
+	void CRenderSkinnedInstancing::initMaterialFromFile(const char* material)
 	{
 		m_materialFile = material;
 		refreshModelAndMaterial();
 	}
 
-	void CRenderMesh::initMaterial(ArrayMaterial& materials, bool cloneMaterial)
+	void CRenderSkinnedInstancing::initMaterial(ArrayMaterial& materials, bool cloneMaterial)
 	{
 		releaseMaterial();
 
@@ -468,15 +331,5 @@ namespace Skylicht
 
 		for (CMaterial* m : m_materials)
 			m->applyMaterial();
-	}
-
-	void CRenderMesh::enableInstancing(bool b)
-	{
-		m_enable = b;
-		for (CRenderMeshData*& renderer : m_renderers)
-		{
-			if (!renderer->isSkinnedMesh())
-				renderer->setInstancing(b);
-		}
 	}
 }
