@@ -60,6 +60,7 @@ namespace Skylicht
 		m_softwareSkinnedMesh.reset();
 		m_hardwareSkinnedMesh.reset();
 		m_instancingMesh.reset();
+		m_skinnedInstancingMesh.reset();
 
 		for (int i = 0; i < numEntity; i++)
 		{
@@ -83,6 +84,10 @@ namespace Skylicht
 					m_softwareSkinnedMesh.push(entity);
 				else
 					m_hardwareSkinnedMesh.push(entity);
+			}
+			else if (meshData->isSkinnedInstancing())
+			{
+				m_skinnedInstancingMesh.push(entity);
 			}
 			else
 			{

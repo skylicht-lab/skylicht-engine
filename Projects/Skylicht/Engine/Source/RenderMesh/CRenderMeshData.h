@@ -45,6 +45,7 @@ namespace Skylicht
 		bool IsSoftwareSkinning;
 		bool IsSoftwareBlendShape;
 		bool IsInstancing;
+		bool IsSkinnedInstancing;
 
 		SMeshInstancingData* InstancingData;
 
@@ -90,6 +91,11 @@ namespace Skylicht
 			return IsInstancing;
 		}
 
+		inline bool isSkinnedInstancing()
+		{
+			return IsSkinnedInstancing;
+		}
+
 		void setSoftwareSkinning(bool b)
 		{
 			IsSoftwareSkinning = b;
@@ -111,6 +117,8 @@ namespace Skylicht
 		}
 
 		void setInstancing(bool b);
+
+		void setSkinnedInstancing(bool b);
 
 		void setMaterial(CMaterial* material);
 
