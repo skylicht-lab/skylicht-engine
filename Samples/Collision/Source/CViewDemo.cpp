@@ -43,7 +43,7 @@ void CViewDemo::onInit()
 	CGameObject* obj = zone->createEmptyObject();
 	m_decals = obj->addComponent<CDecals>();
 
-	ITexture* texture = CTextureManager::getInstance()->getTexture("BuiltIn/Textures/Flag.png");
+	ITexture* texture = CTextureManager::getInstance()->getTexture("BuiltIn/Textures/Skylicht.png");
 	m_decals->setTexture(texture);
 }
 
