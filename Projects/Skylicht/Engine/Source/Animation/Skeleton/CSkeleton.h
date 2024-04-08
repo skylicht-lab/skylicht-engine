@@ -91,6 +91,8 @@ namespace Skylicht
 
 		int simulateTransform(float timeSecond, core::matrix4 origin, core::matrix4* transforms, int numTransform);
 
+		void getBoneIdMap(std::map<std::string, int>& bones);
+
 		void applyTransform();
 
 		void syncAnimationByTimeScale();

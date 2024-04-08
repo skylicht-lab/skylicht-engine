@@ -36,6 +36,7 @@ namespace Skylicht
 		CFastArray<CEntity*> m_softwareSkinnedMesh;
 		CFastArray<CEntity*> m_hardwareSkinnedMesh;
 		CFastArray<CEntity*> m_instancingMesh;
+		CFastArray<CEntity*> m_skinnedInstancingMesh;
 
 	public:
 		CGroupMesh(CEntityGroup* parent);
@@ -72,6 +73,11 @@ namespace Skylicht
 			return m_instancingMesh.count();
 		}
 
+		inline int getNumSkinnedInstancingMesh()
+		{
+			return m_skinnedInstancingMesh.count();
+		}
+
 		inline CEntity** getStaticMeshes()
 		{
 			return m_staticMesh.pointer();
@@ -100,6 +106,11 @@ namespace Skylicht
 		inline CEntity** getInstancingMeshes()
 		{
 			return m_instancingMesh.pointer();
+		}
+
+		inline CEntity** getSkinnedInstancingMeshes()
+		{
+			return m_skinnedInstancingMesh.pointer();
 		}
 
 		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity);
