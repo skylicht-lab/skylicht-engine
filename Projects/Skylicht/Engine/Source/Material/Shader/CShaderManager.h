@@ -43,8 +43,6 @@ namespace Skylicht
 		IMeshBuffer* m_currentMeshBuffer;
 		SMaterial* m_currentMatRendering;
 
-		int m_currentRenderID;
-
 		std::vector<CShader*> m_listShader;
 		std::map<std::string, int> m_listShaderID;
 
@@ -83,16 +81,6 @@ namespace Skylicht
 		inline SMaterial* getCurrentMaterial()
 		{
 			return m_currentMatRendering;
-		}
-
-		inline int getCurrentRenderID()
-		{
-			return m_currentRenderID;
-		}
-
-		inline void setCurrentRenderID(int id)
-		{
-			m_currentRenderID = id;
 		}
 
 		void initGUIShader();

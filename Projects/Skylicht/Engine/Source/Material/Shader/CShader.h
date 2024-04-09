@@ -162,6 +162,7 @@ namespace Skylicht
 			CubeTexture,
 			ReflectionProbe,
 			ShadowMap,
+			TransformTexture,
 			ResourceCount
 		};
 

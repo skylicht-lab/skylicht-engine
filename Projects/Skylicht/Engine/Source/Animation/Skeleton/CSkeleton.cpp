@@ -91,16 +91,18 @@ namespace Skylicht
 			// save this id
 			animationData->ID = (int)m_entitiesData.size() - 1;
 
-			// find parent
 			if (entityIDMap.find(worldTransform->ParentIndex) != entityIDMap.end())
 			{
+				// parent local id
 				animationData->ParentID = entityIDMap[worldTransform->ParentIndex];
 
+				// local depth
 				CAnimationTransformData* parentTransform = GET_ENTITY_DATA(m_entities.getEntity(animationData->ParentID), CAnimationTransformData);
 				animationData->Depth = parentTransform->Depth + 1;
 			}
 			else
 			{
+				// no parent (root)
 				animationData->ParentID = -1;
 				animationData->Depth = 0;
 			}
@@ -239,6 +241,8 @@ namespace Skylicht
 			if (m_timeline.Frame > m_timeline.To)
 				m_timeline.Frame = m_timeline.To;
 
+			updateActivateEntities();
+
 			updateTrackKeyFrame();
 
 			applyTransform();
@@ -252,15 +256,26 @@ namespace Skylicht
 			{
 				CAnimationTransformData* entity = m_entitiesData[i];
 
-				if (entity->ParentID == -1)
-					worldTemp[i] = origin * entity->WorldTransform->Relative;
-				else
-					worldTemp[i] = worldTemp[entity->ParentID] * entity->WorldTransform->Relative;
+				core::matrix4& relative = entity->WorldTransform->Relative;
 
-				if (entity->BoneID > 0 && entity->BoneID < numTransform)
+				if (entity->ParentID == -1)
+					worldTemp[i].setbyproduct_nocheck(origin, relative);
+				else
+					worldTemp[i].setbyproduct_nocheck(worldTemp[entity->ParentID], relative);
+
+				if (entity->BoneID >= 0)
 				{
-					transforms[entity->BoneID] = worldTemp[i];
-					ret++;
+					if (entity->BoneID >= numTransform)
+					{
+						char log[1024];
+						sprintf(log, "[CSkeleton] simulateTransform %s out of range: %d", entity->Name.c_str(), entity->BoneID);
+						os::Printer::log(log);
+					}
+					else
+					{
+						transforms[entity->BoneID] = worldTemp[i];
+						ret++;
+					}
 				}
 			}
 

@@ -6,6 +6,8 @@ import xml.etree.ElementTree as ET
 # https://pypi.org/project/pcpp
 from pcpp import Preprocessor
 
+from BuildAsset import compress
+
 shaderExt = [".xml"]
 
 
@@ -99,7 +101,10 @@ def main():
             continue
         else:
             continue
-
+    # Create Bin folder
+    if (os.path.exists("../Bin/") is False):
+        os.mkdir("../Bin/")
+    compress("BuiltIn")
 
 if __name__ == '__main__':
     main()
