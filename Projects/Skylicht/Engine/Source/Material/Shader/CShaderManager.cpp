@@ -35,7 +35,6 @@ namespace Skylicht
 	IMPLEMENT_SINGLETON(CShaderManager);
 
 	CShaderManager::CShaderManager() :
-		m_currentRenderID(-1),
 		m_currentMeshBuffer(NULL),
 		m_currentMatRendering(NULL),
 		BoneMatrix(NULL),

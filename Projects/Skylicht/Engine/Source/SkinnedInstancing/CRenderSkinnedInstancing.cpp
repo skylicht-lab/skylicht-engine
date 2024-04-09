@@ -144,10 +144,12 @@ namespace Skylicht
 		CTextureManager* textureMgr = CTextureManager::getInstance();
 		CEntityManager* entityMgr = m_gameObject->getEntityManager();
 
+		int id = 0;
+
 		for (CRenderMeshData* renderer : m_renderers)
 		{
+			// get skinned mesh & number of bones
 			CSkinnedMesh* skinnedMesh = dynamic_cast<CSkinnedMesh*>(renderer->getMesh());
-
 			u32 jointCount = skinnedMesh->Joints.size();
 
 			core::matrix4* boneMatrix = new core::matrix4[jointCount];
@@ -156,17 +158,26 @@ namespace Skylicht
 			{
 				CSkinnedMesh::SJoint& joint = skinnedMesh->Joints[i];
 
-				const std::string& boneName = joint.Name;
-				int id = bones[boneName];
+				// convert to transform index
+				int id = bones[joint.Name];
 
-				// calc skinned matrix, that like CSkinnedMeshSystem::update
-				boneMatrix[i] = transforms[id] * joint.BindPoseMatrix;
+				if (id >= count)
+				{
+					char log[1024];
+					sprintf(log, "[CRenderSkinnedInstancing] initTextureTransform %s out of range: %d", joint.Name.c_str(), id);
+					os::Printer::log(log);
+				}
+				else
+				{
+					// calc skinned matrix, that like CSkinnedMeshSystem::update
+					boneMatrix[i].setbyproduct_nocheck(transforms[id], joint.BindPoseMatrix);
+				}
 			}
 
 			CEntity* entity = entityMgr->getEntity(renderer->EntityIndex);
 
 			CTransformTextureData* data = entity->addData<CTransformTextureData>();
-			data->TransformTexture = textureMgr->createTransformTexture1D("CrowdBoneTransform", boneMatrix, jointCount);
+			data->TransformTexture = textureMgr->createTransformTexture1D("BoneTransformTexture", boneMatrix, jointCount);
 
 			delete[]boneMatrix;
 		}
@@ -277,18 +288,6 @@ namespace Skylicht
 
 				// also add transform
 				m_renderTransforms.push_back(GET_ENTITY_DATA(spawnEntity, CWorldTransformData));
-
-				// add world inv transform for culling system (disable to optimize)
-				// spawnEntity->addData<CWorldInverseTransformData>();
-			}
-
-			// copy culling data
-			CCullingData* srcCulling = srcEntity->getData<CCullingData>();
-			if (srcCulling != NULL)
-			{
-				CCullingData* spawnCulling = spawnEntity->addData<CCullingData>();
-				spawnCulling->Type = srcCulling->Type;
-				spawnCulling->Visible = srcCulling->Visible;
 			}
 		}
 
