@@ -166,16 +166,6 @@ void CViewInit::initScene()
 	if (prefab != NULL)
 	{
 		ArrayMaterial material = CMaterialManager::getInstance()->initDefaultMaterial(prefab);
-		if (material.size() == 2)
-		{
-			// body
-			material[1]->changeShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGSkin.xml");
-			material[1]->autoDetectLoadTexture();
-
-			// hair
-			material[0]->changeShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGSkinAlpha.xml");
-			material[0]->autoDetectLoadTexture();
-		}
 
 		// create character
 		CGameObject* character = zone->createEmptyObject();
@@ -194,8 +184,8 @@ void CViewInit::initScene()
 		std::map<std::string, int> boneMap;
 		skeleton->getBoneIdMap(boneMap);
 
-		core::matrix4 transforms[GPU_BONES_COUNT];
-		skeleton->simulateTransform(0.0f, core::IdentityMatrix, transforms, GPU_BONES_COUNT);
+		core::matrix4 transforms[128];
+		skeleton->simulateTransform(0.0f, core::IdentityMatrix, transforms, 128);
 
 		// remove current charracter
 		character->remove();
@@ -204,17 +194,20 @@ void CViewInit::initScene()
 		character = zone->createEmptyObject();
 		CRenderSkinnedInstancing* crowdSkinnedMesh = character->addComponent<CRenderSkinnedInstancing>();
 		crowdSkinnedMesh->initFromPrefab(prefab);
-		crowdSkinnedMesh->initTextureTransform(transforms, GPU_BONES_COUNT, boneMap);
+		crowdSkinnedMesh->initTextureTransform(transforms, 128, boneMap);
 
 		// body
-		material[1]->changeShader("BuiltIn/Shader/SpecularGlossiness/Forward/SG.xml");
+		material[1]->changeShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGSkinInstaning.xml");
 		material[1]->autoDetectLoadTexture();
 
 		// hair
-		material[0]->changeShader("BuiltIn/Shader/SpecularGlossiness/Forward/SG.xml");
+		material[0]->changeShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGSkinInstaning.xml");
 		material[0]->autoDetectLoadTexture();
 
 		crowdSkinnedMesh->initMaterial(material);
+
+		// indirect lighting
+		character->addComponent<CIndirectLighting>();
 	}
 #endif
 

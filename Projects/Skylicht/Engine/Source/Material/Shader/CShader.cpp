@@ -34,6 +34,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "ShaderCallback/CShaderSH.h"
 #include "ShaderCallback/CShaderParticle.h"
 #include "ShaderCallback/CShaderDeferred.h"
+#include "ShaderCallback/CShaderTransformTexture.h"
 
 namespace Skylicht
 {
@@ -56,6 +57,7 @@ namespace Skylicht
 		addCallback<CShaderSH>();
 		addCallback<CShaderParticle>();
 		addCallback<CShaderDeferred>();
+		addCallback<CShaderTransformTexture>();
 	}
 
 	CShader::~CShader()
@@ -317,7 +319,8 @@ namespace Skylicht
 						"Texture",
 						"CubeTexture",
 						"ReflectionProbe",
-						"ShadowMap"
+						"ShadowMap",
+						"TransformTexture"
 					};
 
 					for (u32 i = 0, n = ResourceCount; i < n; i++)
@@ -1118,6 +1121,7 @@ namespace Skylicht
 		case TEXTURE_WIDTH_HEIGHT:
 		{
 			SMaterial* material = shaderManager->getCurrentMaterial();
+
 			int textureID = (int)uniform.ValueIndex;
 			ITexture* texture = material->TextureLayer[textureID].Texture;
 
