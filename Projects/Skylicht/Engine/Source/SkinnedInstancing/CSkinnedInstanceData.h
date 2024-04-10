@@ -38,6 +38,8 @@ namespace Skylicht
 		int FrameTo;
 
 		core::array<CRenderMeshData*> RenderData;
+		core::array<ITexture*> TransformTextures;
+		core::array<CMaterial*> Materials;
 	public:
 		CSkinnedInstanceData();
 

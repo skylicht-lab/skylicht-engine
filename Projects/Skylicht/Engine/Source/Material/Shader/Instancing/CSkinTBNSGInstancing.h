@@ -1,8 +1,10 @@
 /*
+/*
+/*
 !@
 MIT License
 
-Copyright (c) 2024 Skylicht Technology CO., LTD
+Copyright (c) 2019 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,40 +26,25 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CSkinnedInstanceData.h"
-#include "CTransformTextureData.h"
-
-#include "Instancing/SMeshInstancingGroup.h"
-
-#include "Entity/IRenderSystem.h"
-#include "Entity/CEntityGroup.h"
-
-#include "Material/Shader/Instancing/CSkinTBNSGInstancing.h"
+#include "IShaderInstancing.h"
+#include "CStandardSGInstancing.h"
 
 namespace Skylicht
 {
-	typedef core::array<CSkinnedInstanceData*> ArraySkinnedMesh;
-
-	class SKYLICHT_API CSkinnedMeshRendererInstancing : public IRenderSystem
+	class SKYLICHT_API CSkinTBNSGInstancing : public IShaderInstancing
 	{
-	protected:
-		CEntityGroup* m_group;
-
-		std::map<SMeshInstancing*, SMeshInstancingGroup*> m_groups;
-
 	public:
-		CSkinnedMeshRendererInstancing();
+		CSkinTBNSGInstancing();
 
-		virtual ~CSkinnedMeshRendererInstancing();
+		virtual ~CSkinTBNSGInstancing();
 
-		virtual void beginQuery(CEntityManager* entityManager);
+		virtual IVertexBuffer* createInstancingMeshBuffer();
 
-		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity);
+		virtual IMeshBuffer* createMeshBuffer(video::E_INDEX_TYPE type);
 
-		virtual void init(CEntityManager* entityManager);
-
-		virtual void update(CEntityManager* entityManager);
-
-		virtual void render(CEntityManager* entityManager);
+		virtual void batchIntancing(IVertexBuffer* vtxBuffer, IVertexBuffer* tBuffer, IVertexBuffer* lBuffer,
+			CMaterial** materials,
+			CEntity** entities,
+			int count);
 	};
 }

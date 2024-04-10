@@ -37,5 +37,14 @@ namespace Skylicht
 	{
 		CFastArray<CMaterial*> Materials;
 		CFastArray<CEntity*> Entities;
+
+		ITexture* TransformTexture;
+		CRenderMeshData* RenderMesh;
+
+		SMeshInstancingGroup()
+		{
+			TransformTexture = NULL;
+			RenderMesh = NULL;
+		}
 	};
 }

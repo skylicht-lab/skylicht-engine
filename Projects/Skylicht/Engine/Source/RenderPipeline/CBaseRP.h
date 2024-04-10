@@ -78,6 +78,8 @@ namespace Skylicht
 
 		void updateTextureResource(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID, bool skinnedMesh);
 
+		void updateShaderResource(CShader* shader, CEntityManager* entity, int entityID, video::SMaterial& irrMaterial);
+
 		void beginRender2D(float w, float h);
 
 		void renderBufferToTarget(float sx, float sy, float sw, float sh, SMaterial& material, bool flipY = true, bool flipX = false);

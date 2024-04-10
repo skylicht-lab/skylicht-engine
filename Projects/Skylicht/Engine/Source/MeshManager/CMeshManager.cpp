@@ -177,6 +177,19 @@ namespace Skylicht
 		return createInstancingData(mesh);
 	}
 
+	SMeshInstancing* CMeshManager::createGetInstancingMesh(CMesh* mesh, IShaderInstancing* shaderInstancing)
+	{
+		for (SMeshInstancing* instancingData : m_instancingData)
+		{
+			if (compareMeshBuffer(mesh, instancingData))
+			{
+				return instancingData;
+			}
+		}
+
+		return createInstancingData(mesh, shaderInstancing);
+	}
+
 	SMeshInstancing* CMeshManager::createInstancingData(CMesh* mesh)
 	{
 		SMeshInstancing* data = new SMeshInstancing();
@@ -228,7 +241,7 @@ namespace Skylicht
 			IVertexBuffer* lightingBuffer = shaderInstancing->createIndirectLightingMeshBuffer();
 			lightingBuffer->setHardwareMappingHint(EHM_STREAM);
 
-			data->Instancing.push_back(shaderInstancing);
+			data->InstancingShader.push_back(shaderInstancing);
 			data->InstancingBuffer.push_back(instancingBuffer);
 			data->TransformBuffer.push_back(transformBuffer);
 			data->IndirectLightingBuffer.push_back(lightingBuffer);
@@ -284,6 +297,7 @@ namespace Skylicht
 		instancingMesh->UseInstancing = true;
 		instancingMesh->removeAllMeshBuffer();
 		data->InstancingMesh = instancingMesh;
+		data->HandleShader = shaderInstancing;
 
 		// create instancing mesh, that render the indirect lighting
 		CMesh* instancingLightingMesh = instancingMesh->clone();
@@ -294,12 +308,6 @@ namespace Skylicht
 		for (u32 i = 0; i < mbCount; i++)
 		{
 			CMaterial* material = mesh->Materials[i];
-			if (material == NULL)
-				continue;
-
-			if (material->getShader() == NULL)
-				continue;
-
 			IMeshBuffer* mb = mesh->getMeshBuffer(i);
 
 			data->MeshBuffers.push_back(mb);
@@ -316,7 +324,7 @@ namespace Skylicht
 			IVertexBuffer* lightingBuffer = shaderInstancing->createIndirectLightingMeshBuffer();
 			lightingBuffer->setHardwareMappingHint(EHM_STREAM);
 
-			data->Instancing.push_back(shaderInstancing);
+			data->InstancingShader.push_back(shaderInstancing);
 			data->InstancingBuffer.push_back(instancingBuffer);
 			data->TransformBuffer.push_back(transformBuffer);
 			data->IndirectLightingBuffer.push_back(lightingBuffer);
@@ -351,9 +359,6 @@ namespace Skylicht
 				// save to render this mesh buffer
 				data->RenderMeshBuffers.push_back(renderMeshBuffer);
 				data->RenderLightMeshBuffers.push_back(lightingMeshBuffer);
-
-				// apply material
-				mesh->Materials[i]->applyMaterial(renderMeshBuffer->getMaterial());
 			}
 		}
 
@@ -396,24 +401,11 @@ namespace Skylicht
 			if (mbID >= data->MeshBuffers.size())
 				return false;
 
-			CMaterial* material = mesh->Materials[i];
-			if (material == NULL)
-				continue;
-
-			if (material->getShader() == NULL)
-				continue;
-
-			if (material->getShader()->getInstancing() == NULL)
-				continue;
-
-			if (material->getShader()->getInstancingShader() == NULL)
-				continue;
-
 			IMeshBuffer* mb = mesh->getMeshBuffer(i);
 			if (data->MeshBuffers[mbID] != mb)
 				return false;
 
-			if (data->Materials[mbID] != material)
+			if (data->Materials[mbID] != mesh->Materials[i])
 				return false;
 
 			mbID++;

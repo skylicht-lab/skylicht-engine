@@ -23,16 +23,16 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CStandardSGInstancing.h"
+#include "CSkinTBNSGInstancing.h"
 #include "Material/CMaterial.h"
 
 namespace Skylicht
 {
-	CStandardSGInstancing::CStandardSGInstancing()
+	CSkinTBNSGInstancing::CSkinTBNSGInstancing()
 	{
-		m_baseVtxDescriptor = getVideoDriver()->getVertexDescriptor(EVT_STANDARD);
+		m_baseVtxDescriptor = getVideoDriver()->getVertexDescriptor(EVT_SKIN_TANGENTS);
 
-		core::stringc name = "standard_sg_instance";
+		core::stringc name = "skintbn_sg_instance";
 		m_vtxDescriptor = getVideoDriver()->getVertexDescriptor(name);
 
 		if (m_vtxDescriptor == NULL)
@@ -65,7 +65,7 @@ namespace Skylicht
 			m_vtxDescriptor->setInstanceDataStepRate(video::EIDSR_PER_INSTANCE, 2);
 		}
 
-		name = "standard_indirect_instance";
+		name = "skintbn_indirect_instance";
 		m_vtxDescriptorForRenderLighting = getVideoDriver()->getVertexDescriptor(name);
 		if (m_vtxDescriptorForRenderLighting == NULL)
 		{
@@ -99,22 +99,22 @@ namespace Skylicht
 		}
 	}
 
-	CStandardSGInstancing::~CStandardSGInstancing()
+	CSkinTBNSGInstancing::~CSkinTBNSGInstancing()
 	{
 
 	}
 
-	IVertexBuffer* CStandardSGInstancing::createInstancingMeshBuffer()
+	IVertexBuffer* CSkinTBNSGInstancing::createInstancingMeshBuffer()
 	{
 		return new CVertexBuffer<SVtxSGInstancing>();
 	}
 
-	IMeshBuffer* CStandardSGInstancing::createMeshBuffer(video::E_INDEX_TYPE type)
+	IMeshBuffer* CSkinTBNSGInstancing::createMeshBuffer(video::E_INDEX_TYPE type)
 	{
-		return new CMeshBuffer<S3DVertex>(m_baseVtxDescriptor, type);
+		return new CMeshBuffer<S3DVertexSkinTangents>(m_baseVtxDescriptor, type);
 	}
 
-	void CStandardSGInstancing::batchIntancing(
+	void CSkinTBNSGInstancing::batchIntancing(
 		IVertexBuffer* vtxBuffer,
 		IVertexBuffer* tBuffer,
 		IVertexBuffer* lBuffer,

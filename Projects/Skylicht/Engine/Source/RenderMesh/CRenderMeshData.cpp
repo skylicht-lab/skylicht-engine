@@ -24,7 +24,10 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CRenderMeshData.h"
+
 #include "Material/Shader/CShaderManager.h"
+#include "Material/Shader/Instancing/CSkinTBNSGInstancing.h"
+
 #include "TextureManager/CTextureManager.h"
 #include "MeshManager/CMeshManager.h"
 #include "Utils/CPath.h"
@@ -87,6 +90,11 @@ namespace Skylicht
 
 	void CRenderMeshData::setSkinnedInstancing(bool b)
 	{
+		if (b)
+			MeshInstancing = CMeshManager::getInstance()->createGetInstancingMesh(RenderMesh, new CSkinTBNSGInstancing());
+		else
+			MeshInstancing = NULL;
+
 		IsSkinnedInstancing = b;
 	}
 
