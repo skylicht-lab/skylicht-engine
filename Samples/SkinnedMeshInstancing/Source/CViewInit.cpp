@@ -8,11 +8,6 @@
 #include "GridPlane/CGridPlane.h"
 #include "SkyDome/CSkyDome.h"
 
-// #define TEST_CUBE
-#define TEST_SINGLE_ANIM
-
-#include "Primitive/CCube.h"
-
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
 	m_getFile(NULL),
@@ -117,46 +112,6 @@ void CViewInit::initScene()
 	core::vector3df direction = core::vector3df(4.0f, -6.0f, -4.5f);
 	lightTransform->setOrientation(direction, Transform::Oy);
 
-#ifdef TEST_CUBE
-	// Cube
-	CGameObject* cubeObj = zone->createEmptyObject();
-	cubeObj->setName("Cube");
-
-	// Init matrix texture
-	IVideoDriver* driver = getIrrlichtDevice()->getVideoDriver();
-
-	core::matrix4 test[60];
-	for (int i = 0; i < 60; i++)
-	{
-		float r = 360.0f * i / 60.0f;
-		test[i].setRotationDegrees(core::vector3df(0.0f, r, 0.0f));
-	}
-
-	// Change to forwarder material
-	CCube* cube = cubeObj->addComponent<CCube>();
-	CMaterial* material = cube->getMaterial();
-	material->changeShader("BuiltIn/Shader/SpecularGlossiness/Forward/TestTTSGVS.xml");
-
-	CMaterial::SUniformTexture* matrix = material->getUniformTexture("uTransformTexture");
-	matrix->Texture = CTextureManager::getInstance()->createTransformTexture1D("transforms", test, 60);
-	matrix->Bilinear = false;
-	matrix->Trilinear = false;
-	matrix->Anisotropic = 0;
-
-	material->setUniform4("uColor", SColor(255, 255, 255, 255));
-
-	// query row 8 on test[60]
-	// see shader TestTTSGVS.xml
-	float p[2] = { 0.0f, 8.0f };
-	material->setUniform2("uTransformXY", p);
-
-	material->applyMaterial();
-
-	// indirect lighting
-	cubeObj->addComponent<CIndirectLighting>();
-#endif
-
-#ifdef TEST_SINGLE_ANIM
 	CAnimationManager* animManager = CAnimationManager::getInstance();
 	CAnimationClip* clip1 = animManager->loadAnimation("SampleModels/MixamoCharacter/Hip_Hop_Dancing.dae");
 	CAnimationClip* clip2 = animManager->loadAnimation("SampleModels/MixamoCharacter/Samba_Dancing.dae");
@@ -184,8 +139,35 @@ void CViewInit::initScene()
 		std::map<std::string, int> boneMap;
 		skeleton->getBoneIdMap(boneMap);
 
-		core::matrix4 transforms[128];
-		skeleton->simulateTransform(0.0f, core::IdentityMatrix, transforms, 128);
+		int totalFrames = (int)(clip1->Duration * 60.0f); // 60fps
+		int numBones = (int)boneMap.size();
+
+		core::matrix4* transforms = new core::matrix4[numBones];
+		core::matrix4* animationData = new core::matrix4[totalFrames * numBones];
+
+		// build the matrix animations
+		// 
+		//  [anim1]   frame0    frame1    frame2    ...
+		//  bone1
+		//  bone2
+		//  bone3
+		//  ...
+		//  [anim2]   frame0    frame1    frame2    ...
+		//  bone1
+		//  bone2
+		//  bone3
+		//  ...
+
+		for (int i = 0; i < totalFrames; i++)
+		{
+			float t = i / (float)totalFrames;
+			skeleton->simulateTransform(t * clip1->Duration, core::IdentityMatrix, transforms, numBones);
+
+			for (int j = 0; j < numBones; j++)
+			{
+				animationData[j * totalFrames + i] = transforms[j];
+			}
+		}
 
 		// remove current charracter
 		character->remove();
@@ -194,7 +176,7 @@ void CViewInit::initScene()
 		character = zone->createEmptyObject();
 		CRenderSkinnedInstancing* crowdSkinnedMesh = character->addComponent<CRenderSkinnedInstancing>();
 		crowdSkinnedMesh->initFromPrefab(prefab);
-		crowdSkinnedMesh->initTextureTransform(transforms, 128, boneMap);
+		crowdSkinnedMesh->initTextureTransform(animationData, totalFrames, numBones, boneMap);
 
 		// body
 		material[1]->changeShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGSkinInstaning.xml");
@@ -208,8 +190,11 @@ void CViewInit::initScene()
 
 		// indirect lighting
 		character->addComponent<CIndirectLighting>();
+
+		// free data
+		delete[]animationData;
+		delete[]transforms;
 	}
-#endif
 
 	// Rendering
 	u32 w = app->getWidth();
@@ -281,7 +266,7 @@ void CViewInit::onUpdate()
 				// retry download
 				delete m_getFile;
 				m_getFile = NULL;
-			}
+				}
 		}
 #else
 

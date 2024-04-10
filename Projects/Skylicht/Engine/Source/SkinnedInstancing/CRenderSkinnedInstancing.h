@@ -67,7 +67,7 @@ namespace Skylicht
 
 	public:
 
-		void initTextureTransform(core::matrix4* transforms, int count, std::map<std::string, int> bones);
+		void initTextureTransform(core::matrix4* transforms, u32 w, u32 h, std::map<std::string, int>& bones);
 
 		void refreshModelAndMaterial();
 

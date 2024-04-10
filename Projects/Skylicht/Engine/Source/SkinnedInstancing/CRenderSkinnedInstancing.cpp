@@ -139,12 +139,12 @@ namespace Skylicht
 		}
 	}
 
-	void CRenderSkinnedInstancing::initTextureTransform(core::matrix4* transforms, int count, std::map<std::string, int> bones)
+	void CRenderSkinnedInstancing::initTextureTransform(core::matrix4* transforms, u32 w, u32 h, std::map<std::string, int>& bones)
 	{
+		// w: num frames
+		// h: num bones (all)
 		CTextureManager* textureMgr = CTextureManager::getInstance();
 		CEntityManager* entityMgr = m_gameObject->getEntityManager();
-
-		int id = 0;
 
 		for (CRenderMeshData* renderer : m_renderers)
 		{
@@ -152,16 +152,16 @@ namespace Skylicht
 			CSkinnedMesh* skinnedMesh = dynamic_cast<CSkinnedMesh*>(renderer->getMesh());
 			u32 jointCount = skinnedMesh->Joints.size();
 
-			core::matrix4* boneMatrix = new core::matrix4[jointCount];
+			core::matrix4* boneMatrix = new core::matrix4[jointCount * w];
 
 			for (u32 i = 0, n = jointCount; i < n; i++)
 			{
 				CSkinnedMesh::SJoint& joint = skinnedMesh->Joints[i];
 
 				// convert to transform index
-				int id = bones[joint.Name];
+				u32 id = bones[joint.Name];
 
-				if (id >= count)
+				if (id >= h)
 				{
 					char log[1024];
 					sprintf(log, "[CRenderSkinnedInstancing] initTextureTransform %s out of range: %d", joint.Name.c_str(), id);
@@ -169,15 +169,18 @@ namespace Skylicht
 				}
 				else
 				{
-					// calc skinned matrix, that like CSkinnedMeshSystem::update
-					boneMatrix[i].setbyproduct_nocheck(transforms[id], joint.BindPoseMatrix);
+					for (u32 j = 0; j < w; j++)
+					{
+						// calc skinned matrix, that like CSkinnedMeshSystem::update
+						boneMatrix[i * w + j].setbyproduct_nocheck(transforms[id * w + j], joint.BindPoseMatrix);
+					}
 				}
 			}
 
 			CEntity* entity = entityMgr->getEntity(renderer->EntityIndex);
 
 			CTransformTextureData* data = entity->addData<CTransformTextureData>();
-			data->TransformTexture = textureMgr->createTransformTexture1D("BoneTransformTexture", boneMatrix, jointCount);
+			data->TransformTexture = textureMgr->createTransformTexture2D("BoneTransformTexture", boneMatrix, w, jointCount);
 
 			delete[]boneMatrix;
 		}
