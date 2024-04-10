@@ -85,6 +85,7 @@ namespace Skylicht
 
 		m_baseEntities.clear();
 		m_renderers.clear();
+		m_textures.clear();
 		m_entities.clear();
 	}
 
@@ -313,6 +314,8 @@ namespace Skylicht
 		CTextureManager* textureMgr = CTextureManager::getInstance();
 		CEntityManager* entityMgr = m_gameObject->getEntityManager();
 
+		m_textures.clear();
+
 		for (CRenderMeshData* renderer : m_renderers)
 		{
 			// get skinned mesh & number of bones
@@ -349,6 +352,9 @@ namespace Skylicht
 			// save the texture
 			CTransformTextureData* data = entity->addData<CTransformTextureData>();
 			data->TransformTexture = textureMgr->createTransformTexture2D("BoneTransformTexture", boneMatrix, w, jointCount);
+
+			// add textures
+			m_textures.push_back(data);
 
 			delete[]boneMatrix;
 		}
@@ -389,6 +395,12 @@ namespace Skylicht
 
 			// add renderer
 			skinnedInstance->RenderData.push_back(renderer);
+		}
+
+		// add textures
+		for (CTransformTextureData*& t : m_textures)
+		{
+			skinnedInstance->TransformTextures.push_back(t->TransformTexture);
 		}
 
 		return entity;

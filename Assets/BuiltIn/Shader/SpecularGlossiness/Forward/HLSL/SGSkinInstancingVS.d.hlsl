@@ -12,6 +12,10 @@ struct VS_INPUT
 	float2 data : DATA;
 	float4 blendIndex : BLENDINDICES;
 	float4 blendWeight : BLENDWEIGHT;
+	float4 uvScale: TEXCOORD1;
+	float4 uColor: TEXCOORD2;
+	float2 uSpecGloss: TEXCOORD3;
+	float4x4 worldMatrix: TEXCOORD4;
 };
 
 struct VS_OUTPUT
@@ -31,7 +35,6 @@ struct VS_OUTPUT
 cbuffer cbPerObject
 {
 	float4x4 uMvpMatrix;
-	float4x4 uWorldMatrix;
 	float4 uCameraPosition;
 	float4 uLightDirection;
 	float4 uUVScale;
@@ -77,11 +80,11 @@ VS_OUTPUT main(VS_INPUT input)
 	output.tex0 = input.tex0 * uUVScale.xy + uUVScale.zw;
 	output.tangentw = input.data.x;
 
-	float4 worldPos = mul(skinPosition, uWorldMatrix);
+	float4 worldPos = mul(skinPosition, input.worldMatrix);
 	float4 worldViewDir = normalize(uCameraPosition - worldPos);
 
-	float4 worldNormal = mul(float4(skinNormal.xyz, 0.0), uWorldMatrix);
-	float4 worldTangent = mul(float4(skinTangent.xyz, 0.0), uWorldMatrix);
+	float4 worldNormal = mul(float4(skinNormal.xyz, 0.0), input.worldMatrix);
+	float4 worldTangent = mul(float4(skinTangent.xyz, 0.0), input.worldMatrix);
 
 	output.worldPosition = worldPos.xyz;
 

@@ -131,7 +131,7 @@ namespace Skylicht
 					group->Materials.push(data->Materials[i]);
 
 				// batching transform & material data to buffer
-				data->Instancing[i]->batchIntancing(
+				data->InstancingShader[i]->batchIntancing(
 					data->InstancingBuffer[i],
 					data->TransformBuffer[i],
 					data->IndirectLightingBuffer[i],
@@ -162,6 +162,9 @@ namespace Skylicht
 			u32 numMeshBuffer = data->RenderMeshBuffers.size();
 			for (u32 i = 0; i < numMeshBuffer; i++)
 			{
+				if (data->Materials[i] == NULL)
+					continue;
+
 				CShader* shader = data->Materials[i]->getShader();
 
 				if (!rp->canRenderShader(shader))
