@@ -191,10 +191,12 @@ namespace Skylicht
 		primitiveData->Instancing = m_instancing;
 		primitiveData->NormalMap = m_useNormalMap;
 
+		// Lighting
+		entity->addData<CIndirectLightingData>();
+
 		// Culling
 		entity->addData<CWorldInverseTransformData>();
 		entity->addData<CCullingData>();
-		entity->addData<CIndirectLightingData>();
 
 		CCullingBBoxData* cullingBBox = entity->addData<CCullingBBoxData>();
 

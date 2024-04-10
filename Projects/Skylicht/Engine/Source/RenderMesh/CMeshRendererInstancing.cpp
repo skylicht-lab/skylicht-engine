@@ -100,7 +100,7 @@ namespace Skylicht
 		// update instancing
 		for (u32 i = 0; i < numEntity; i++)
 		{
-			SMeshInstancingData* data = renderData[i]->getInstancingData();
+			SMeshInstancing* data = renderData[i]->getMeshInstancing();
 
 			SMeshInstancingGroup* group = m_groups[data];
 			if (group == NULL)
@@ -116,7 +116,7 @@ namespace Skylicht
 		// bake instancing in group
 		for (auto it : m_groups)
 		{
-			SMeshInstancingData* data = it.first;
+			SMeshInstancing* data = it.first;
 			SMeshInstancingGroup* group = it.second;
 
 			u32 count = group->Entities.count();
@@ -152,7 +152,7 @@ namespace Skylicht
 
 		for (auto& it : m_groups)
 		{
-			SMeshInstancingData* data = it.first;
+			SMeshInstancing* data = it.first;
 			SMeshInstancingGroup* group = it.second;
 
 			int count = group->Entities.count();

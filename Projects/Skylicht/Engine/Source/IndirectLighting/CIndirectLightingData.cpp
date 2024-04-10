@@ -46,8 +46,11 @@ namespace Skylicht
 	{
 		if (ReleaseSH)
 		{
-			delete[]SH;
-			delete AutoSH;
+			if (SH)
+				delete[]SH;
+
+			if (AutoSH)
+				delete AutoSH;
 		}
 	}
 }
