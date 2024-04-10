@@ -188,8 +188,13 @@ void CViewInit::initScene()
 
 		crowdSkinnedMesh->initMaterial(material);
 
-		// indirect lighting
-		character->addComponent<CIndirectLighting>();
+		// spawn instancing
+		for (int i = 0; i < 10; i++)
+		{
+			CEntity* entity = crowdSkinnedMesh->spawn();
+			CWorldTransformData* t = GET_ENTITY_DATA(entity, CWorldTransformData);
+			t->Relative.setTranslation(core::vector3df(i * 1.0f, 0.0f, 0.0f));
+		}
 
 		// free data
 		delete[]animationData;
@@ -266,8 +271,8 @@ void CViewInit::onUpdate()
 				// retry download
 				delete m_getFile;
 				m_getFile = NULL;
-				}
-		}
+			}
+	}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -306,7 +311,7 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-	}
+}
 }
 
 void CViewInit::onRender()

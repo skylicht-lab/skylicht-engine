@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2024 Skylicht Technology CO., LTD
+Copyright (c) 2019 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -22,23 +22,29 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CTransformTextureData.h"
+#pragma once
+
+#include "Entity/IEntityData.h"
+#include "RenderMesh/CRenderMeshData.h"
 
 namespace Skylicht
 {
-	ACTIVATOR_REGISTER(CTransformTextureData);
-
-	IMPLEMENT_DATA_TYPE_INDEX(CTransformTextureData);
-
-	CTransformTextureData::CTransformTextureData() :
-		TransformTexture(NULL)
+	class SKYLICHT_API CSkinnedInstanceData : public IEntityData
 	{
+	public:
+		int Frame;
+		int ClipId;
+		int FrameFrom;
+		int FrameTo;
 
-	}
+		core::array<CRenderMeshData*> RenderData;
+	public:
+		CSkinnedInstanceData();
 
-	CTransformTextureData::~CTransformTextureData()
-	{
+		virtual ~CSkinnedInstanceData();
 
-	}
+		DECLARE_GETTYPENAME(CSkinnedInstanceData)
+	};
+
+	DECLARE_PUBLIC_DATA_TYPE_INDEX(CSkinnedInstanceData);
 }

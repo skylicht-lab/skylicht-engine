@@ -22,23 +22,22 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CTransformTextureData.h"
+#pragma once
+
+#include "irrlicht.h"
+using namespace irr;
+using namespace irr::scene;
+using namespace irr::video;
+
+#include "Material/Shader/CShader.h"
+#include "RenderMesh/CMesh.h"
 
 namespace Skylicht
 {
-	ACTIVATOR_REGISTER(CTransformTextureData);
-
-	IMPLEMENT_DATA_TYPE_INDEX(CTransformTextureData);
-
-	CTransformTextureData::CTransformTextureData() :
-		TransformTexture(NULL)
+	struct SInstancingVertexBuffer
 	{
-
-	}
-
-	CTransformTextureData::~CTransformTextureData()
-	{
-
-	}
+		IVertexBuffer* Instancing;
+		IVertexBuffer* Transform;
+		IVertexBuffer* IndirectLighting;
+	};
 }

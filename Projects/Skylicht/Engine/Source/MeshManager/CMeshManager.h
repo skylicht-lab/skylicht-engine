@@ -3,6 +3,7 @@
 #include "RenderMesh/CMesh.h"
 #include "Entity/CEntityPrefab.h"
 #include "Utils/CSingleton.h"
+#include "Instancing/SMeshInstancing.h"
 
 namespace Skylicht
 {
@@ -14,7 +15,7 @@ namespace Skylicht
 	protected:
 		std::map<std::string, CEntityPrefab*> m_meshPrefabs;
 
-		std::vector<SMeshInstancingData*> m_instancingData;
+		std::vector<SMeshInstancing*> m_instancingData;
 
 	public:
 		CMeshManager();
@@ -31,14 +32,16 @@ namespace Skylicht
 
 		void releaseAllInstancingMesh();
 
-		SMeshInstancingData* createGetInstancingMesh(CMesh* mesh);
+		SMeshInstancing* createGetInstancingMesh(CMesh* mesh);
 
 	protected:
 
 		bool canCreateInstancingMesh(CMesh* mesh);
 
-		bool compareMeshBuffer(CMesh* mesh, SMeshInstancingData* data);
+		bool compareMeshBuffer(CMesh* mesh, SMeshInstancing* data);
 
-		SMeshInstancingData* createInstancingData(CMesh* mesh);
+		SMeshInstancing* createInstancingData(CMesh* mesh);
+
+		SMeshInstancing* createInstancingData(CMesh* mesh, IShaderInstancing* shaderInstancing);
 	};
 }
