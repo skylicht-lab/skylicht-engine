@@ -30,6 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Material/CMaterialManager.h"
 #include "RenderMesh/CRenderMeshData.h"
 #include "Transform/CWorldTransformData.h"
+#include "CTransformTextureData.h"
 
 namespace Skylicht
 {
@@ -41,7 +42,9 @@ namespace Skylicht
 
 		std::vector<CWorldTransformData*> m_renderTransforms;
 		std::vector<CWorldTransformData*> m_transforms;
+
 		std::vector<CRenderMeshData*> m_renderers;
+		std::vector<CTransformTextureData*> m_textures;
 
 		ArrayMaterial m_materials;
 
