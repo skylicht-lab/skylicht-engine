@@ -29,20 +29,17 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Transform/CWorldTransformData.h"
 #include "IndirectLighting/CIndirectLightingData.h"
 
+#include "Instancing/SMeshInstancing.h"
+#include "Instancing/SMeshInstancingGroup.h"
+
 namespace Skylicht
 {
-	struct SMeshInstancingGroup
-	{
-		CFastArray<CMaterial*> Materials;
-		CFastArray<CEntity*> Entities;
-	};
-
 	class SKYLICHT_API CMeshRendererInstancing : public CMeshRenderSystem
 	{
 	protected:
 		core::array<CRenderMeshData*> m_meshs;
 
-		std::map<SMeshInstancingData*, SMeshInstancingGroup*> m_groups;
+		std::map<SMeshInstancing*, SMeshInstancingGroup*> m_groups;
 
 	public:
 		CMeshRendererInstancing();

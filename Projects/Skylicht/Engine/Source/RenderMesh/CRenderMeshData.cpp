@@ -47,7 +47,7 @@ namespace Skylicht
 		IsSkinnedMesh(false),
 		IsInstancing(false),
 		IsSkinnedInstancing(false),
-		InstancingData(NULL)
+		MeshInstancing(NULL)
 	{
 
 	}
@@ -78,9 +78,9 @@ namespace Skylicht
 	void CRenderMeshData::setInstancing(bool b)
 	{
 		if (b)
-			InstancingData = CMeshManager::getInstance()->createGetInstancingMesh(RenderMesh);
+			MeshInstancing = CMeshManager::getInstance()->createGetInstancingMesh(RenderMesh);
 		else
-			InstancingData = NULL;
+			MeshInstancing = NULL;
 
 		IsInstancing = b;
 	}

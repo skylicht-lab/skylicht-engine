@@ -57,7 +57,7 @@ namespace Skylicht
 
 	void CMeshManager::releaseAllInstancingMesh()
 	{
-		for (SMeshInstancingData* data : m_instancingData)
+		for (SMeshInstancing* data : m_instancingData)
 		{
 			u32 n = data->MeshBuffers.size();
 			for (u32 i = 0; i < n; i++)
@@ -161,12 +161,12 @@ namespace Skylicht
 		return false;
 	}
 
-	SMeshInstancingData* CMeshManager::createGetInstancingMesh(CMesh* mesh)
+	SMeshInstancing* CMeshManager::createGetInstancingMesh(CMesh* mesh)
 	{
 		if (!canCreateInstancingMesh(mesh))
 			return NULL;
 
-		for (SMeshInstancingData* instancingData : m_instancingData)
+		for (SMeshInstancing* instancingData : m_instancingData)
 		{
 			if (compareMeshBuffer(mesh, instancingData))
 			{
@@ -177,9 +177,9 @@ namespace Skylicht
 		return createInstancingData(mesh);
 	}
 
-	SMeshInstancingData* CMeshManager::createInstancingData(CMesh* mesh)
+	SMeshInstancing* CMeshManager::createInstancingData(CMesh* mesh)
 	{
-		SMeshInstancingData* data = new SMeshInstancingData();
+		SMeshInstancing* data = new SMeshInstancing();
 
 		u32 mbCount = mesh->getMeshBufferCount();
 
@@ -217,24 +217,24 @@ namespace Skylicht
 
 			mb->grab();
 
-			IShaderInstancing* instancing = material->getShader()->getInstancing();
+			IShaderInstancing* shaderInstancing = material->getShader()->getInstancing();
 
-			IVertexBuffer* instancingBuffer = instancing->createInstancingMeshBuffer();
+			IVertexBuffer* instancingBuffer = shaderInstancing->createInstancingMeshBuffer();
 			instancingBuffer->setHardwareMappingHint(EHM_STREAM);
 
-			IVertexBuffer* transformBuffer = instancing->createTransformMeshBuffer();
+			IVertexBuffer* transformBuffer = shaderInstancing->createTransformMeshBuffer();
 			transformBuffer->setHardwareMappingHint(EHM_STREAM);
 
-			IVertexBuffer* lightingBuffer = instancing->createIndirectLightingMeshBuffer();
+			IVertexBuffer* lightingBuffer = shaderInstancing->createIndirectLightingMeshBuffer();
 			lightingBuffer->setHardwareMappingHint(EHM_STREAM);
 
-			data->Instancing.push_back(instancing);
+			data->Instancing.push_back(shaderInstancing);
 			data->InstancingBuffer.push_back(instancingBuffer);
 			data->TransformBuffer.push_back(transformBuffer);
 			data->IndirectLightingBuffer.push_back(lightingBuffer);
 
-			IMeshBuffer* renderMeshBuffer = instancing->createLinkMeshBuffer(mb);
-			IMeshBuffer* lightingMeshBuffer = instancing->createLinkMeshBuffer(mb);
+			IMeshBuffer* renderMeshBuffer = shaderInstancing->createLinkMeshBuffer(mb);
+			IMeshBuffer* lightingMeshBuffer = shaderInstancing->createLinkMeshBuffer(mb);
 
 			if (renderMeshBuffer && lightingMeshBuffer)
 			{
@@ -247,7 +247,7 @@ namespace Skylicht
 					NULL
 				);
 
-				instancing->applyInstancingForRenderLighting(lightingMeshBuffer, lightingBuffer, transformBuffer);
+				shaderInstancing->applyInstancingForRenderLighting(lightingMeshBuffer, lightingBuffer, transformBuffer);
 
 				// INSTANCING MESH
 				renderMeshBuffer->setHardwareMappingHint(EHM_STATIC);
@@ -258,7 +258,95 @@ namespace Skylicht
 					mesh->Materials[i]
 				);
 
-				instancing->applyInstancing(renderMeshBuffer, instancingBuffer, transformBuffer);
+				shaderInstancing->applyInstancing(renderMeshBuffer, instancingBuffer, transformBuffer);
+
+				// save to render this mesh buffer
+				data->RenderMeshBuffers.push_back(renderMeshBuffer);
+				data->RenderLightMeshBuffers.push_back(lightingMeshBuffer);
+
+				// apply material
+				mesh->Materials[i]->applyMaterial(renderMeshBuffer->getMaterial());
+			}
+		}
+
+		m_instancingData.push_back(data);
+		return data;
+	}
+
+	SMeshInstancing* CMeshManager::createInstancingData(CMesh* mesh, IShaderInstancing* shaderInstancing)
+	{
+		SMeshInstancing* data = new SMeshInstancing();
+
+		u32 mbCount = mesh->getMeshBufferCount();
+
+		// create instancing mesh render the texture albedo, normal
+		CMesh* instancingMesh = mesh->clone();
+		instancingMesh->UseInstancing = true;
+		instancingMesh->removeAllMeshBuffer();
+		data->InstancingMesh = instancingMesh;
+
+		// create instancing mesh, that render the indirect lighting
+		CMesh* instancingLightingMesh = instancingMesh->clone();
+		instancingLightingMesh->UseInstancing = true;
+		instancingLightingMesh->removeAllMeshBuffer();
+		instancingMesh->IndirectLightingMesh = instancingLightingMesh;
+
+		for (u32 i = 0; i < mbCount; i++)
+		{
+			CMaterial* material = mesh->Materials[i];
+			if (material == NULL)
+				continue;
+
+			if (material->getShader() == NULL)
+				continue;
+
+			IMeshBuffer* mb = mesh->getMeshBuffer(i);
+
+			data->MeshBuffers.push_back(mb);
+			data->Materials.push_back(material);
+
+			mb->grab();
+
+			IVertexBuffer* instancingBuffer = shaderInstancing->createInstancingMeshBuffer();
+			instancingBuffer->setHardwareMappingHint(EHM_STREAM);
+
+			IVertexBuffer* transformBuffer = shaderInstancing->createTransformMeshBuffer();
+			transformBuffer->setHardwareMappingHint(EHM_STREAM);
+
+			IVertexBuffer* lightingBuffer = shaderInstancing->createIndirectLightingMeshBuffer();
+			lightingBuffer->setHardwareMappingHint(EHM_STREAM);
+
+			data->Instancing.push_back(shaderInstancing);
+			data->InstancingBuffer.push_back(instancingBuffer);
+			data->TransformBuffer.push_back(transformBuffer);
+			data->IndirectLightingBuffer.push_back(lightingBuffer);
+
+			IMeshBuffer* renderMeshBuffer = shaderInstancing->createLinkMeshBuffer(mb);
+			IMeshBuffer* lightingMeshBuffer = shaderInstancing->createLinkMeshBuffer(mb);
+
+			if (renderMeshBuffer && lightingMeshBuffer)
+			{
+				// INDIRECT LIGHTING MESH				
+				lightingMeshBuffer->setHardwareMappingHint(EHM_STATIC);
+
+				instancingLightingMesh->addMeshBuffer(
+					lightingMeshBuffer,
+					mesh->MaterialName[i].c_str(),
+					NULL
+				);
+
+				shaderInstancing->applyInstancingForRenderLighting(lightingMeshBuffer, lightingBuffer, transformBuffer);
+
+				// INSTANCING MESH
+				renderMeshBuffer->setHardwareMappingHint(EHM_STATIC);
+
+				instancingMesh->addMeshBuffer(
+					renderMeshBuffer,
+					mesh->MaterialName[i].c_str(),
+					mesh->Materials[i]
+				);
+
+				shaderInstancing->applyInstancing(renderMeshBuffer, instancingBuffer, transformBuffer);
 
 				// save to render this mesh buffer
 				data->RenderMeshBuffers.push_back(renderMeshBuffer);
@@ -298,7 +386,7 @@ namespace Skylicht
 		return false;
 	}
 
-	bool CMeshManager::compareMeshBuffer(CMesh* mesh, SMeshInstancingData* data)
+	bool CMeshManager::compareMeshBuffer(CMesh* mesh, SMeshInstancing* data)
 	{
 		u32 mbCount = mesh->getMeshBufferCount();
 		u32 mbID = 0;

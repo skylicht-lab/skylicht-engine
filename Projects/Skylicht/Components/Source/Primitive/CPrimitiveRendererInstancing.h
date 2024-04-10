@@ -34,61 +34,12 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CPrimitiveBaseRenderer.h"
 #include "IndirectLighting/CIndirectLightingData.h"
 
+#include "Instancing/SShaderMesh.h"
+#include "Instancing/SInstancingVertexBuffer.h"
+
 namespace Skylicht
 {
-	struct SShaderMesh
-	{
-		CShader* Shader;
-		CMesh* Mesh;
-		ITexture* Textures[MATERIAL_MAX_TEXTURES];
-		ITexture* IndirectLM;
-		ITexture* DirectLM;
-
-		SShaderMesh()
-		{
-			Shader = NULL;
-			Mesh = NULL;
-			IndirectLM = NULL;
-			for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
-				Textures[i] = NULL;
-		}
-
-		bool operator<(const SShaderMesh& other) const
-		{
-			if (Shader == other.Shader)
-			{
-				if (Mesh == other.Mesh)
-				{
-					if (IndirectLM == other.IndirectLM)
-					{
-						if (DirectLM == other.DirectLM)
-						{
-							for (int i = 0; i < _IRR_MATERIAL_MAX_TEXTURES_; i++)
-							{
-								if (Textures[i] != other.Textures[i])
-									return Textures[i] < other.Textures[i];
-							}
-							// all same
-							return false;
-						}
-						return DirectLM < other.DirectLM;
-					}
-					return IndirectLM < other.IndirectLM;
-				}
-				return Mesh < other.Mesh;
-			}
-			return Shader < other.Shader;
-		}
-	};
-
 	typedef core::array<CPrimiviteData*> ArrayPrimitives;
-
-	struct SInstancingVertexBuffer
-	{
-		IVertexBuffer* Instancing;
-		IVertexBuffer* Transform;
-		IVertexBuffer* IndirectLighting;
-	};
 
 	class COMPONENT_API CPrimitiveRendererInstancing : public CPrimitiveBaseRenderer
 	{

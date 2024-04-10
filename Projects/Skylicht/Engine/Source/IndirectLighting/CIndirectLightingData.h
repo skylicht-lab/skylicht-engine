@@ -41,8 +41,8 @@ namespace Skylicht
 
 		EType Type;
 
+		// may be that a pointer m_autoSH, m_sh from CIndirectLighting
 		bool* AutoSH;
-
 		core::vector3df* SH;
 
 		SColor Color;

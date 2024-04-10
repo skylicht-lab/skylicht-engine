@@ -37,7 +37,7 @@ namespace Skylicht
 	{
 	protected:
 		CEntity* m_root;
-		core::array<CEntity*> m_allEntities;
+		core::array<CEntity*> m_baseEntities;
 
 		std::vector<CWorldTransformData*> m_renderTransforms;
 		std::vector<CWorldTransformData*> m_transforms;
@@ -65,6 +65,8 @@ namespace Skylicht
 
 		virtual void loadSerializable(CObjectSerializable* object);
 
+		virtual CEntity* spawn();
+
 	public:
 
 		void initTextureTransform(core::matrix4* transforms, u32 w, u32 h, std::map<std::string, int>& bones);
@@ -91,7 +93,7 @@ namespace Skylicht
 
 		core::array<CEntity*>& getEntities()
 		{
-			return m_allEntities;
+			return m_baseEntities;
 		}
 
 		std::vector<CRenderMeshData*>& getRenderers()
@@ -116,5 +118,7 @@ namespace Skylicht
 		void releaseMaterial();
 
 		void releaseEntities();
+
+		void releaseBaseEntities();
 	};
 }
