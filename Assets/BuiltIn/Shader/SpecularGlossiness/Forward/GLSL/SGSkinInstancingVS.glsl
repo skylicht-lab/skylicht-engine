@@ -8,12 +8,12 @@ layout(location = 5) in vec3 inBinormal;
 layout(location = 6) in vec2 inData;
 layout(location = 7) in vec4 inBlendIndex;
 layout(location = 8) in vec4 inBlendWeight;
-layout(location = 9) in vec4 uUVScale;
+layout(location = 9) in vec4 uvScale;
 layout(location = 10) in vec4 uColor;
 layout(location = 11) in vec2 uSpecGloss;
 layout(location = 12) in mat4 uWorldMatrix;
 uniform sampler2D uTransformTexture;
-uniform mat4 uMvpMatrix;
+uniform mat4 uVpMatrix;
 uniform vec4 uCameraPosition;
 uniform vec4 uLightDirection;
 uniform vec4 uUVScale;
@@ -65,7 +65,7 @@ void main(void)
 	skinPosition = skinMatrix * inPosition;
 	skinNormal = (skinMatrix * vec4(inNormal, 0.0)).xyz;
 	skinTangent = (skinMatrix * vec4(inTangent, 0.0)).xyz;
-	vTexCoord0 = inTexCoord0 * uUVScale.xy + uUVScale.zw;
+	vTexCoord0 = inTexCoord0 * uvScale.xy + uvScale.zw;
 	vTangentW = inData.x;
 	vec4 worldPos = uWorldMatrix * skinPosition;
 	vec4 worldViewDir = normalize(uCameraPosition - worldPos);
@@ -77,6 +77,6 @@ void main(void)
 	vWorldBinormal = normalize(cross(worldNormal.xyz, worldTangent.xyz));
 	vWorldViewDir = worldViewDir.xyz;
 	vWorldLightDir = normalize(uLightDirection.xyz);
-	vViewPosition = uMvpMatrix * skinPosition;
+	vViewPosition = uVpMatrix * worldPos;
 	gl_Position = vViewPosition;
 }

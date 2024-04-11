@@ -1181,14 +1181,17 @@ namespace Skylicht
 		}
 		else
 		{
-			if (ui->ControlType == CShader::UIColor)
+			if (ui->UniformInfo)
 			{
-				// add color uniform
-				newUniform(ui->Name.c_str(), ui->UniformInfo->FloatSize);
-			}
+				if (ui->ControlType == CShader::UIColor)
+				{
+					// add color uniform
+					newUniform(ui->Name.c_str(), ui->UniformInfo->FloatSize);
+				}
 
-			// apply default shader value
-			setUniform4(ui->Name.c_str(), ui->UniformInfo->Value);
+				// apply default shader value
+				setUniform4(ui->Name.c_str(), ui->UniformInfo->Value);
+			}
 		}
 	}
 
