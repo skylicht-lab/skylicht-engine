@@ -174,14 +174,17 @@ namespace Skylicht
 
 			if (res->Type == CShader::ReflectionProbe)
 			{
-				SUniform* uniform = shader->getFSUniform(res->Name.c_str());
-				if (uniform != NULL)
+				if (entityId >= 0)
 				{
-					CIndirectLightingData* lightData = GET_ENTITY_DATA(entity->getEntity(entityId), CIndirectLightingData);
-					u32 textureID = (u32)uniform->Value[0];
+					SUniform* uniform = shader->getFSUniform(res->Name.c_str());
+					if (uniform != NULL)
+					{
+						CIndirectLightingData* lightData = GET_ENTITY_DATA(entity->getEntity(entityId), CIndirectLightingData);
+						u32 textureID = (u32)uniform->Value[0];
 
-					if (lightData != NULL && lightData->ReflectionTexture != NULL && textureID < MATERIAL_MAX_TEXTURES)
-						irrMaterial.setTexture(textureID, lightData->ReflectionTexture);
+						if (lightData != NULL && lightData->ReflectionTexture != NULL && textureID < MATERIAL_MAX_TEXTURES)
+							irrMaterial.setTexture(textureID, lightData->ReflectionTexture);
+					}
 				}
 			}
 			else if (res->Type == CShader::ShadowMap)
@@ -225,7 +228,6 @@ namespace Skylicht
 
 	void CBaseRP::drawMeshBuffer(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID, bool skinnedMesh)
 	{
-		// update texture resource
 		updateTextureResource(mesh, bufferID, entity, entityID, skinnedMesh);
 
 		IMeshBuffer* mb = mesh->getMeshBuffer(bufferID);
@@ -246,6 +248,8 @@ namespace Skylicht
 
 	void CBaseRP::drawInstancingMeshBuffer(CMesh* mesh, int bufferID, int materialRenderID, CEntityManager* entity, bool skinnedMesh)
 	{
+		updateTextureResource(mesh, bufferID, entity, -1, skinnedMesh);
+
 		IMeshBuffer* mb = mesh->getMeshBuffer(bufferID);
 		IVideoDriver* driver = getVideoDriver();
 

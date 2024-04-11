@@ -56,6 +56,13 @@ namespace Skylicht
 			const u32 skinnedInstance[] = GET_LIST_ENTITY_DATA(CSkinnedInstanceData);
 			m_group = entityManager->createGroupFromVisible(skinnedInstance, 1);
 		}
+
+		for (auto it : m_groups)
+		{
+			SMeshInstancingGroup* group = it.second;
+			group->Materials.reset();
+			group->Entities.reset();
+		}
 	}
 
 	void CSkinnedMeshRendererInstancing::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
@@ -177,56 +184,14 @@ namespace Skylicht
 
 				int materialType = shader->getMaterialRenderID();
 
-				/*
 				rp->drawInstancingMeshBuffer(
 					(CMesh*)data->InstancingMesh,
 					i,
 					materialType,
 					entityManager,
-					false
+					true
 				);
-				*/
 			}
 		}
-
-		/*
-		IVideoDriver* driver = getVideoDriver();
-		IRenderPipeline* rp = entityManager->getRenderPipeline();
-
-		driver->setTransform(video::ETS_WORLD, core::IdentityMatrix);
-
-		CEntity** allEntities = entityManager->getEntities();
-
-		u32 numEntity = m_meshs.size();
-		CRenderMeshData** meshDatas = m_meshs.pointer();
-		CTransformTextureData** textureDatas = m_textures.pointer();
-
-		for (u32 i = 0, n = m_meshs.size(); i < n; i++)
-		{
-			CRenderMeshData* meshData = meshDatas[i];
-			CTransformTextureData* textureData = textureDatas[i];
-
-			CEntity* entity = allEntities[meshData->EntityIndex];
-
-			CMesh* mesh = meshData->getMesh();
-
-			CIndirectLightingData* lightingData = GET_ENTITY_DATA(entity, CIndirectLightingData);
-			if (lightingData != NULL)
-			{
-				if (lightingData->Type == CIndirectLightingData::SH9)
-					CShaderSH::setSH9(lightingData->SH);
-				else if (lightingData->Type == CIndirectLightingData::AmbientColor)
-					CShaderLighting::setLightAmbient(lightingData->Color);
-			}
-
-			CShaderTransformTexture::setTexture(textureData->TransformTexture);
-
-			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
-			driver->setTransform(video::ETS_WORLD, transform->World);
-
-			for (u32 j = 0, m = mesh->getMeshBufferCount(); j < m; j++)
-				rp->drawMeshBuffer(mesh, j, entityManager, meshData->EntityIndex, false);
-		}
-		*/
 	}
 }
