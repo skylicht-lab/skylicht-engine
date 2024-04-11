@@ -124,6 +124,26 @@ namespace Skylicht
 
 			bufferID++;
 		}
+
+		if (MeshInstancing != NULL)
+		{
+			// apply material for instancing mesh
+			CMesh* instancingMesh = dynamic_cast<CMesh*>(MeshInstancing->InstancingMesh);
+			if (instancingMesh)
+			{
+				for (int i = 0, n = (int)instancingMesh->Materials.size(); i < n; i++)
+				{
+					if (mesh->Materials[i])
+					{
+						if (instancingMesh->Materials[i])
+							instancingMesh->Materials[i]->drop();
+
+						instancingMesh->Materials[i] = mesh->Materials[i];
+						instancingMesh->Materials[i]->grab();
+					}
+				}
+			}
+		}
 	}
 
 	void CRenderMeshData::unusedMaterial(CMaterial* material)

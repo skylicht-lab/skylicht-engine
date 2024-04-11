@@ -34,7 +34,7 @@ struct VS_OUTPUT
 
 cbuffer cbPerObject
 {
-	float4x4 uMvpMatrix;
+	float4x4 uVpMatrix;
 	float4 uCameraPosition;
 	float4 uLightDirection;
 	float4 uUVScale;
@@ -46,6 +46,8 @@ cbuffer cbPerObject
 VS_OUTPUT main(VS_INPUT input)
 {
 	VS_OUTPUT output;
+
+	float4x4 uWorldMatrix = transpose(input.worldMatrix);
 
 	float4x4 skinMatrix;
 	float4 skinPosition;
@@ -75,16 +77,14 @@ VS_OUTPUT main(VS_INPUT input)
 	skinNormal = mul(float4(input.norm, 0.0), skinMatrix);
 	skinTangent = mul(float4(input.tangent, 0.0), skinMatrix);
 
-	output.pos = mul(skinPosition, uMvpMatrix);
-
-	output.tex0 = input.tex0 * uUVScale.xy + uUVScale.zw;
+	output.tex0 = input.tex0 * input.uvScale.xy + input.uvScale.zw;
 	output.tangentw = input.data.x;
 
-	float4 worldPos = mul(skinPosition, input.worldMatrix);
+	float4 worldPos = mul(skinPosition, uWorldMatrix);
 	float4 worldViewDir = normalize(uCameraPosition - worldPos);
 
-	float4 worldNormal = mul(float4(skinNormal.xyz, 0.0), input.worldMatrix);
-	float4 worldTangent = mul(float4(skinTangent.xyz, 0.0), input.worldMatrix);
+	float4 worldNormal = mul(float4(skinNormal.xyz, 0.0), uWorldMatrix);
+	float4 worldTangent = mul(float4(skinTangent.xyz, 0.0), uWorldMatrix);
 
 	output.worldPosition = worldPos.xyz;
 
@@ -94,6 +94,8 @@ VS_OUTPUT main(VS_INPUT input)
 
 	output.worldViewDir = worldViewDir.xyz;
 	output.worldLightDir = normalize(uLightDirection.xyz);
+	
+	output.pos = mul(worldPos, uVpMatrix);
 	output.viewPosition = output.pos;
 
 	return output;
