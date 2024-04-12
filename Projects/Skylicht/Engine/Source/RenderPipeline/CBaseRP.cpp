@@ -246,9 +246,9 @@ namespace Skylicht
 		driver->drawMeshBuffer(mb);
 	}
 
-	void CBaseRP::drawInstancingMeshBuffer(CMesh* mesh, int bufferID, int materialRenderID, CEntityManager* entity, bool skinnedMesh)
+	void CBaseRP::drawInstancingMeshBuffer(CMesh* mesh, int bufferID, int materialRenderID, CEntityManager* entity, int entityID, bool skinnedMesh)
 	{
-		updateTextureResource(mesh, bufferID, entity, -1, skinnedMesh);
+		updateTextureResource(mesh, bufferID, entity, entityID, skinnedMesh);
 
 		IMeshBuffer* mb = mesh->getMeshBuffer(bufferID);
 		IVideoDriver* driver = getVideoDriver();

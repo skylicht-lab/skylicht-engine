@@ -33,7 +33,8 @@ namespace Skylicht
 		Type(CPrimiviteData::Unknown),
 		Material(NULL),
 		Instancing(false),
-		NormalMap(false)
+		NormalMap(false),
+		RootEntity(-1)
 	{
 
 	}

@@ -154,7 +154,7 @@ namespace Skylicht
 		driver->drawMeshBuffer(m_renderSubmesh[m_currentTarget]);
 	}
 
-	void CPointLightBakeRP::drawInstancingMeshBuffer(CMesh* mesh, int bufferID, int materialRenderID, CEntityManager* entityMgr, bool skinnedMesh)
+	void CPointLightBakeRP::drawInstancingMeshBuffer(CMesh* mesh, int bufferID, int materialRenderID, CEntityManager* entityMgr, int entityID, bool skinnedMesh)
 	{
 		// no render instancing mesh
 	}
