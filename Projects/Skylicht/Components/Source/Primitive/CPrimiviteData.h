@@ -53,6 +53,8 @@ namespace Skylicht
 		bool Instancing;
 
 		bool NormalMap;
+
+		int RootEntity;
 	};
 
 	DECLARE_COMPONENT_DATA_TYPE_INDEX(CPrimiviteData);
