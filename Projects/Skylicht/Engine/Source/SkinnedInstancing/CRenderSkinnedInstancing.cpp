@@ -266,6 +266,9 @@ namespace Skylicht
 
 				// also add transform
 				m_renderTransforms.push_back(GET_ENTITY_DATA(spawnEntity, CWorldTransformData));
+
+				// also check add indirect lighting to hold ReflectionTexture for intacing
+				spawnEntity->addData<CIndirectLightingData>();
 			}
 		}
 	}
@@ -377,6 +380,8 @@ namespace Skylicht
 		CCullingBBoxData* cullingBBox = entity->addData<CCullingBBoxData>();
 
 		CSkinnedInstanceData* skinnedInstance = entity->addData<CSkinnedInstanceData>();
+
+		CEntityManager* entityMgr = m_gameObject->getEntityManager();
 
 		bool firstBox = true;
 		for (CRenderMeshData*& renderer : m_renderers)

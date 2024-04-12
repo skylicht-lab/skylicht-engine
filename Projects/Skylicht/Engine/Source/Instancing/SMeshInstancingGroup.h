@@ -40,11 +40,13 @@ namespace Skylicht
 
 		ITexture* TransformTexture;
 		CRenderMeshData* RenderMesh;
+		int RootEntityIndex;
 
 		SMeshInstancingGroup()
 		{
 			TransformTexture = NULL;
 			RenderMesh = NULL;
+			RootEntityIndex = -1;
 		}
 	};
 }

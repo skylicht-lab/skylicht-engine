@@ -152,7 +152,7 @@ namespace Skylicht
 		driver->drawMeshBuffer(m_renderSubmesh[m_currentTarget]);
 	}
 
-	void CDirectionalLightBakeRP::drawInstancingMeshBuffer(CMesh* mesh, int bufferID, int materialRenderID, CEntityManager* entityMgr, bool skinnedMesh)
+	void CDirectionalLightBakeRP::drawInstancingMeshBuffer(CMesh* mesh, int bufferID, int materialRenderID, CEntityManager* entityMgr, int entityID, bool skinnedMesh)
 	{
 		// no render instancing mesh
 	}

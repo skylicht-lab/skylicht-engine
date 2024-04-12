@@ -99,6 +99,7 @@ namespace Skylicht
 						group = new SMeshInstancingGroup();
 						group->TransformTexture = skinnedIntance->TransformTextures[j];
 						group->RenderMesh = meshData;
+						group->RootEntityIndex = meshData->EntityIndex;
 
 						m_groups[data] = group;
 					}
@@ -152,6 +153,9 @@ namespace Skylicht
 		IVideoDriver* driver = getVideoDriver();
 		IRenderPipeline* rp = entityManager->getRenderPipeline();
 
+		if (rp->getType() == IRenderPipeline::ShadowMap)
+			return;
+
 		driver->setTransform(video::ETS_WORLD, core::IdentityMatrix);
 
 		CEntity** allEntities = entityManager->getEntities();
@@ -189,6 +193,7 @@ namespace Skylicht
 					i,
 					materialType,
 					entityManager,
+					group->RootEntityIndex,
 					true
 				);
 			}

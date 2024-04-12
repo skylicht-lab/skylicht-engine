@@ -106,6 +106,8 @@ namespace Skylicht
 			if (group == NULL)
 			{
 				group = new SMeshInstancingGroup();
+				group->RootEntityIndex = renderData[i]->EntityIndex;
+
 				m_groups[data] = group;
 			}
 
@@ -179,6 +181,7 @@ namespace Skylicht
 					i,
 					materialType,
 					entityManager,
+					group->RootEntityIndex,
 					false
 				);
 			}
