@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CSkinnedInstanceData.h"
+#include "CGroupSkinnedInstancing.h"
 #include "CTransformTextureData.h"
 
 #include "Instancing/SMeshInstancingGroup.h"
@@ -41,7 +42,7 @@ namespace Skylicht
 	class SKYLICHT_API CSkinnedMeshRendererInstancing : public IRenderSystem
 	{
 	protected:
-		CEntityGroup* m_group;
+		CGroupSkinnedInstancing* m_group;
 
 		std::map<SMeshInstancing*, SMeshInstancingGroup*> m_groups;
 

@@ -24,6 +24,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+
+
 #include "Entity/CEntityPrefab.h"
 #include "Entity/CEntityHandler.h"
 #include "Material/CMaterial.h"
@@ -31,6 +33,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "RenderMesh/CRenderMeshData.h"
 #include "Transform/CWorldTransformData.h"
 #include "CTransformTextureData.h"
+#include "Animation/CAnimationClip.h"
 
 namespace Skylicht
 {
@@ -69,6 +72,10 @@ namespace Skylicht
 		virtual void loadSerializable(CObjectSerializable* object);
 
 		virtual CEntity* spawn();
+
+		static bool setAnimation(CEntity* entity, int animTextureIndex, CAnimationClip* clipInfo, float currentTime = 0.0f, int bakeFps = 60, bool loop = true, bool pause = false);
+
+		static bool setAnimation(CEntity* entity, int animTextureIndex, CAnimationClip* clipInfo, float clipBegin, float clipDuration, float currentTime = 0.0f, int bakeFps = 60, bool loop = true, bool pause = false);
 
 	public:
 

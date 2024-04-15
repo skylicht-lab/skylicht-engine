@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CSkinnedMeshRendererInstancing.h"
 #include "SkinnedInstancing/CSkinnedInstanceData.h"
 
+#include "Culling/CVisibleData.h"
 #include "Culling/CCullingData.h"
 #include "Entity/CEntityManager.h"
 
@@ -53,8 +54,16 @@ namespace Skylicht
 	{
 		if (m_group == NULL)
 		{
-			const u32 skinnedInstance[] = GET_LIST_ENTITY_DATA(CSkinnedInstanceData);
-			m_group = entityManager->createGroupFromVisible(skinnedInstance, 1);
+			const u32 type[] = GET_LIST_ENTITY_DATA(CSkinnedInstanceData);
+			m_group = (CGroupSkinnedInstancing*)entityManager->findGroup(type, 1);
+
+			if (m_group == NULL)
+			{
+				const u32 visibleGroupType[] = GET_LIST_ENTITY_DATA(CVisibleData);
+				CEntityGroup* visibleGroup = entityManager->findGroup(visibleGroupType, 1);
+
+				m_group = (CGroupSkinnedInstancing*)entityManager->addCustomGroup(new CGroupSkinnedInstancing(visibleGroup));
+			}
 		}
 
 		for (auto it : m_groups)
