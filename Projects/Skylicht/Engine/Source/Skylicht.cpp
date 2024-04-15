@@ -159,6 +159,7 @@ namespace Skylicht
 
 	float getTimeStep()
 	{
+		// return the current time step (milisecond)
 		return g_timestep;
 	}
 

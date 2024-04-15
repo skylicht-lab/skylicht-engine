@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2024 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -23,29 +23,37 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
+#include "CGroupSkinnedInstancing.h"
 #include "CSkinnedInstanceData.h"
 
 namespace Skylicht
 {
-	ACTIVATOR_REGISTER(CSkinnedInstanceData);
+	CGroupSkinnedInstancing::CGroupSkinnedInstancing(CEntityGroup* parent) :
+		CEntityGroup(NULL, 0)
+	{
+		m_parentGroup = parent;
+		m_dataTypes.push_back(DATA_TYPE_INDEX(CSkinnedInstanceData));
+	}
 
-	IMPLEMENT_DATA_TYPE_INDEX(CSkinnedInstanceData);
-
-	CSkinnedInstanceData::CSkinnedInstanceData() :
-		ClipId(0),
-		Time(0.0f),
-		TimeFrom(0.0f),
-		TimeTo(0.0f),
-		FPS(60),
-		Frame(0),
-		Pause(false),
-		Loop(true)
+	CGroupSkinnedInstancing::~CGroupSkinnedInstancing()
 	{
 
 	}
 
-	CSkinnedInstanceData::~CSkinnedInstanceData()
+	void CGroupSkinnedInstancing::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
+		m_entities.reset();
 
+		for (int i = 0; i < numEntity; i++)
+		{
+			CEntity* entity = entities[i];
+
+			CSkinnedInstanceData* data = GET_ENTITY_DATA(entity, CSkinnedInstanceData);
+
+			if (data == NULL)
+				continue;
+
+			m_entities.push(entity);
+		}
 	}
 }

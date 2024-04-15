@@ -410,4 +410,66 @@ namespace Skylicht
 
 		return entity;
 	}
+
+	bool CRenderSkinnedInstancing::setAnimation(CEntity* entity, int animTextureIndex, CAnimationClip* clipInfo, float currentTime, int bakeFps, bool loop, bool pause)
+	{
+		CSkinnedInstanceData* data = GET_ENTITY_DATA(entity, CSkinnedInstanceData);
+		if (data == NULL)
+			return false;
+
+		// tps to fix last frame is not baked
+		float tps = 1.0f / bakeFps;
+
+		data->ClipId = animTextureIndex;
+		data->FPS = bakeFps;
+
+		data->Time = currentTime;
+		data->TimeFrom = 0.0f;
+		data->TimeTo = clipInfo->Duration - tps;
+
+		data->Frame = (int)(data->Time * bakeFps);
+
+		data->Loop = loop;
+		data->Pause = pause;
+
+		// clamp
+		data->Time = core::clamp(data->Time, data->TimeFrom, data->TimeTo);
+
+		return true;
+	}
+
+	bool CRenderSkinnedInstancing::setAnimation(CEntity* entity, int animTextureIndex, CAnimationClip* clipInfo, float clipBegin, float clipDuration, float currentTime, int bakeFps, bool loop, bool pause)
+	{
+		CSkinnedInstanceData* data = GET_ENTITY_DATA(entity, CSkinnedInstanceData);
+		if (data == NULL)
+			return false;
+
+		if (clipBegin >= clipInfo->Duration)
+			clipBegin = 0.0f;
+
+		// tps to fix last frame is not baked
+		float tps = 1.0f / bakeFps;
+
+		float clipEnd = clipBegin + clipDuration;
+		float theEndTime = clipInfo->Duration - tps;
+		if (clipEnd >= theEndTime)
+			clipEnd = theEndTime;
+
+		data->ClipId = animTextureIndex;
+		data->FPS = bakeFps;
+
+		data->Time = currentTime;
+		data->TimeFrom = clipBegin;
+		data->TimeTo = clipEnd;
+
+		data->Frame = (int)(data->Time * bakeFps);
+
+		data->Loop = loop;
+		data->Pause = pause;
+
+		// clamp
+		data->Time = core::clamp(data->Time, data->TimeFrom, data->TimeTo);
+
+		return true;
+	}
 }
