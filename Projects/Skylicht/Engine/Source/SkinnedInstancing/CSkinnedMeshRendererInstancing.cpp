@@ -66,7 +66,7 @@ namespace Skylicht
 			}
 		}
 
-		for (auto it : m_groups)
+		for (auto it : m_instancingGroups)
 		{
 			SMeshInstancingGroup* group = it.second;
 			group->Materials.reset();
@@ -102,7 +102,7 @@ namespace Skylicht
 				SMeshInstancing* data = meshData->getMeshInstancing();
 				if (data)
 				{
-					SMeshInstancingGroup* group = m_groups[data];
+					SMeshInstancingGroup* group = m_instancingGroups[data];
 					if (group == NULL)
 					{
 						group = new SMeshInstancingGroup();
@@ -110,7 +110,7 @@ namespace Skylicht
 						group->RenderMesh = meshData;
 						group->RootEntityIndex = meshData->EntityIndex;
 
-						m_groups[data] = group;
+						m_instancingGroups[data] = group;
 					}
 
 					group->Entities.push(entity);
@@ -126,7 +126,7 @@ namespace Skylicht
 
 	void CSkinnedMeshRendererInstancing::update(CEntityManager* entityManager)
 	{
-		for (auto it : m_groups)
+		for (auto it : m_instancingGroups)
 		{
 			SMeshInstancing* data = it.first;
 			SMeshInstancingGroup* group = it.second;
@@ -135,14 +135,42 @@ namespace Skylicht
 			if (count == 0)
 				continue;
 
+			CEntity** entities = group->Entities.pointer();
+
 			CMesh* mesh = group->RenderMesh->getMesh();
 
 			for (u32 i = 0, n = data->RenderMeshBuffers.size(); i < n; i++)
 			{
+				CEntity* entity = entities[i];
+
 				group->Materials.reset();
 
 				for (u32 j = 0; j < count; j++)
-					group->Materials.push(mesh->Materials[i]);
+				{
+					// update animation to material
+					CSkinnedInstanceData* skinnedIntance = GET_ENTITY_DATA(entity, CSkinnedInstanceData);
+
+					// clone the material for instance
+					/*
+					CMaterial* m = NULL;
+
+					if (i >= skinnedIntance->Materials.size())
+					{
+						m = mesh->Materials[i]->clone();
+
+						// save this material and destroy it in destructor of CSkinnedInstanceData
+						skinnedIntance->Materials.push_back(m);
+					}
+					else
+					{
+						m = skinnedIntance->Materials[i];
+					}
+					group->Materials.push(m);
+					*/
+
+					for (u32 j = 0; j < count; j++)
+						group->Materials.push(mesh->Materials[i]);
+				}
 
 				// batching transform & material data to buffer
 				data->InstancingShader[i]->batchIntancing(
@@ -169,7 +197,7 @@ namespace Skylicht
 
 		CEntity** allEntities = entityManager->getEntities();
 
-		for (auto& it : m_groups)
+		for (auto& it : m_instancingGroups)
 		{
 			SMeshInstancing* data = it.first;
 			SMeshInstancingGroup* group = it.second;
