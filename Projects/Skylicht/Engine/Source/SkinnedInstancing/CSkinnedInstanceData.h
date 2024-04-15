@@ -32,10 +32,19 @@ namespace Skylicht
 	class SKYLICHT_API CSkinnedInstanceData : public IEntityData
 	{
 	public:
-		int Frame;
 		int ClipId;
-		int FrameFrom;
-		int FrameTo;
+
+		bool Loop;
+
+		float Time;
+		float TimeFrom;
+		float TimeTo;
+
+		int FPS;
+
+		int Frame;
+
+		bool Pause;
 
 		core::array<CRenderMeshData*> RenderData;
 		core::array<ITexture*> TransformTextures;
