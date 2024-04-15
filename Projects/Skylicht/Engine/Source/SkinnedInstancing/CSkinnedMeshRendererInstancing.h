@@ -44,7 +44,7 @@ namespace Skylicht
 	protected:
 		CGroupSkinnedInstancing* m_group;
 
-		std::map<SMeshInstancing*, SMeshInstancingGroup*> m_groups;
+		std::map<SMeshInstancing*, SMeshInstancingGroup*> m_instancingGroups;
 
 	public:
 		CSkinnedMeshRendererInstancing();
