@@ -106,7 +106,7 @@ namespace Skylicht
 
 	IVertexBuffer* CSkinTBNSGInstancing::createInstancingMeshBuffer()
 	{
-		return new CVertexBuffer<SVtxSGInstancing>();
+		return new CVertexBuffer<SVtxSkinFWSGInstancing>();
 	}
 
 	IMeshBuffer* CSkinTBNSGInstancing::createMeshBuffer(video::E_INDEX_TYPE type)
@@ -122,24 +122,25 @@ namespace Skylicht
 		CEntity** entities,
 		int count)
 	{
-		CVertexBuffer<SVtxSGInstancing>* instanceBuffer = dynamic_cast<CVertexBuffer<SVtxSGInstancing>*>(vtxBuffer);
+		CVertexBuffer<SVtxSkinFWSGInstancing>* instanceBuffer = dynamic_cast<CVertexBuffer<SVtxSkinFWSGInstancing>*>(vtxBuffer);
 		if (instanceBuffer == NULL)
 			return;
 
 		instanceBuffer->set_used(count);
 
+		float invColor = 1.111f / 255.0f;
 		CMaterial* material = NULL;
+
 		for (int i = 0; i < count; i++)
 		{
 			material = materials[i];
 			if (material)
 			{
-				SVtxSGInstancing& vtx = instanceBuffer->getVertex(i);
+				SVtxSkinFWSGInstancing& vtx = instanceBuffer->getVertex(i);
 				CShaderParams& params = material->getShaderParams();
 
 				// convert material data from BuiltIn/Shader/SpecularGlossiness/Forward/SGSkinInstaning.xml
-				// uvScale is the uBoneLocation, that because we use the same vertex with another shader
-				vtx.UVScale = params.getParam(0);
+				vtx.BoneLocation = params.getParam(0);
 				vtx.Color = params.getParam(1);
 				vtx.SpecGloss = params.getParam(2);
 			}

@@ -55,5 +55,8 @@ namespace Skylicht
 
 			m_entities.push(entity);
 		}
+
+		m_needQuery = false;
+		m_needValidate = true;
 	}
 }

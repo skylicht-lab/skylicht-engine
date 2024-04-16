@@ -14,7 +14,7 @@ struct VS_INPUT
 	float4 blendWeight : BLENDWEIGHT;
 	float4 uBoneLocation: TEXCOORD1;
 	float4 uColor: TEXCOORD2;
-	float2 uSpecGloss: TEXCOORD3;
+	float4 uSpecGloss: TEXCOORD3;
 	float4x4 worldMatrix: TEXCOORD4;
 };
 struct VS_OUTPUT

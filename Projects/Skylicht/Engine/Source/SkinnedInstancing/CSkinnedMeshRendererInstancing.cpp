@@ -85,9 +85,16 @@ namespace Skylicht
 		{
 			CEntity* entity = entities[i];
 
-			CSkinnedInstanceData* skinnedIntance = GET_ENTITY_DATA(entity, CSkinnedInstanceData);
+			// get culling result from CCullingSystem
+			CCullingData* cullingData = GET_ENTITY_DATA(entity, CCullingData);
+			if (cullingData != NULL)
+			{
+				if (!cullingData->Visible)
+					continue;
+			}
 
 			// skip no transform textures
+			CSkinnedInstanceData* skinnedIntance = GET_ENTITY_DATA(entity, CSkinnedInstanceData);
 			if (skinnedIntance->TransformTextures.size() == 0)
 				continue;
 
@@ -112,7 +119,6 @@ namespace Skylicht
 
 						m_instancingGroups[data] = group;
 					}
-
 					group->Entities.push(entity);
 				}
 			}
@@ -138,9 +144,8 @@ namespace Skylicht
 			CEntity** entities = group->Entities.pointer();
 
 			CMesh* mesh = group->RenderMesh->getMesh();
-
 			CMaterial* m = NULL;
-			int materialId = 0;
+			u32 materialId = 0;
 
 			for (u32 i = 0, n = data->RenderMeshBuffers.size(); i < n; i++)
 			{

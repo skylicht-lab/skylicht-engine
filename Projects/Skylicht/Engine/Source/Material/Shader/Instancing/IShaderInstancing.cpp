@@ -288,4 +288,27 @@ namespace Skylicht
 		tBuffer->setDirty();
 		lBuffer->setDirty();
 	}
+
+	void IShaderInstancing::batchTransform(
+		IVertexBuffer* tBuffer,
+		CEntity** entities,
+		int count)
+	{
+		CVertexBuffer<SVtxTransform>* transformBuffer = dynamic_cast<CVertexBuffer<SVtxTransform>*>(tBuffer);
+		if (transformBuffer == NULL)
+			return;
+
+		transformBuffer->set_used(count);
+
+		for (int i = 0; i < count; i++)
+		{
+			SVtxTransform& transform = transformBuffer->getVertex(i);
+
+			// world transform
+			CWorldTransformData* world = GET_ENTITY_DATA(entities[i], CWorldTransformData);
+			transform.World = world->World;
+		}
+
+		tBuffer->setDirty();
+	}
 }
