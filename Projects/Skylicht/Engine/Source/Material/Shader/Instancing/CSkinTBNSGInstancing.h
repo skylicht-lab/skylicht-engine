@@ -31,6 +31,18 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	struct SVtxSkinFWSGInstancing
+	{
+		SVec4 BoneLocation;
+		SVec4 Color;
+		SVec4 SpecGloss;
+
+		bool operator==(const SVtxSkinFWSGInstancing& other) const
+		{
+			return false;
+		}
+	};
+
 	class SKYLICHT_API CSkinTBNSGInstancing : public IShaderInstancing
 	{
 	public:
