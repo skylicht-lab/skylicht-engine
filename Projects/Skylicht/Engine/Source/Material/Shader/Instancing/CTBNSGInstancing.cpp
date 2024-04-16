@@ -125,16 +125,20 @@ namespace Skylicht
 
 		instanceBuffer->set_used(count);
 
+		CMaterial* material = NULL;
 		for (int i = 0; i < count; i++)
 		{
-			SVtxSGInstancing& vtx = instanceBuffer->getVertex(i);
+			material = materials[i];
+			if (material)
+			{
+				SVtxSGInstancing& vtx = instanceBuffer->getVertex(i);
+				CShaderParams& params = material->getShaderParams();
 
-			CShaderParams& params = materials[i]->getShaderParams();
-
-			// convert material data from BuiltIn/Shader/SpecularGlossiness/Deferred/DiffuseNormal.xml
-			vtx.UVScale = params.getParam(0);
-			vtx.Color = params.getParam(1);
-			vtx.SpecGloss = params.getParam(2);
+				// convert material data from BuiltIn/Shader/SpecularGlossiness/Deferred/DiffuseNormal.xml
+				vtx.UVScale = params.getParam(0);
+				vtx.Color = params.getParam(1);
+				vtx.SpecGloss = params.getParam(2);
+			}
 		}
 
 		vtxBuffer->setDirty();

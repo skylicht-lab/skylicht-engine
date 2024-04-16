@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2023 Skylicht Technology CO., LTD
+Copyright (c) 2019 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,48 +24,38 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "RenderPipeline/CBaseRP.h"
-#include "Shadow/CBoundShadowMaps.h"
+#include "Entity/IEntityData.h"
+#include "RenderMesh/CRenderMeshData.h"
 
 namespace Skylicht
 {
-	class CDirectionalLightBakeRP : public CBaseRP
+	class SKYLICHT_API CSkinnedInstanceData : public IEntityData
 	{
-	protected:
-		IMeshBuffer* m_renderMesh;
-
-		IMeshBuffer** m_renderSubmesh;
-		ITexture** m_renderTarget;
-		int m_numTarget;
-		int m_currentTarget;
-
-		int m_bakeDirectionMaterialID;
 	public:
-		CDirectionalLightBakeRP();
+		int ClipId;
 
-		virtual ~CDirectionalLightBakeRP();
+		bool Loop;
 
-		inline void setRenderMesh(IMeshBuffer* mb, IMeshBuffer** submesh, ITexture** targets, int numTarget)
-		{
-			m_renderMesh = mb;
-			m_renderSubmesh = submesh;
-			m_renderTarget = targets;
-			m_numTarget = numTarget;
-		}
+		float Time;
+		float TimeFrom;
+		float TimeTo;
 
-		virtual void initRender(int w, int h);
+		int FPS;
 
-		virtual void resize(int w, int h);
+		int Frame;
 
-		virtual void render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport);
+		bool Pause;
 
-		virtual void drawMeshBuffer(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID, bool skinnedMesh);
+		core::array<CRenderMeshData*> RenderData;
+		core::array<ITexture*> TransformTextures;
+		core::array<CMaterial*> Materials;
+	public:
+		CSkinnedInstanceData();
 
-		virtual void drawInstancingMeshBuffer(CMesh* mesh, int bufferID, int materialRenderID, CEntityManager* entityMgr, int entityID, bool skinnedMesh);
+		virtual ~CSkinnedInstanceData();
 
-		virtual bool canRenderMaterial(CMaterial* material);
-
-		virtual bool canRenderShader(CShader* shader);
-
+		DECLARE_GETTYPENAME(CSkinnedInstanceData)
 	};
+
+	DECLARE_PUBLIC_DATA_TYPE_INDEX(CSkinnedInstanceData);
 }

@@ -24,24 +24,27 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "RenderMesh/CRenderMeshData.h"
-#include "RenderMesh/CMeshRenderSystem.h"
-#include "RenderMesh/CMeshRendererInstancing.h"
-
-#include "Transform/CWorldTransformData.h"
-#include "IndirectLighting/CIndirectLightingData.h"
-
+#include "CSkinnedInstanceData.h"
+#include "CGroupSkinnedInstancing.h"
 #include "CTransformTextureData.h"
+
+#include "Instancing/SMeshInstancingGroup.h"
+
+#include "Entity/IRenderSystem.h"
+#include "Entity/CEntityGroup.h"
+
+#include "Material/Shader/Instancing/CSkinTBNSGInstancing.h"
 
 namespace Skylicht
 {
-	class SKYLICHT_API CSkinnedMeshRendererInstancing : public CMeshRenderSystem
+	typedef core::array<CSkinnedInstanceData*> ArraySkinnedMesh;
+
+	class SKYLICHT_API CSkinnedMeshRendererInstancing : public IRenderSystem
 	{
 	protected:
-		core::array<CRenderMeshData*> m_meshs;
-		core::array<CTransformTextureData*> m_textures;
+		CGroupSkinnedInstancing* m_group;
 
-		std::map<SMeshInstancingData*, SMeshInstancingGroup*> m_groups;
+		std::map<SMeshInstancing*, SMeshInstancingGroup*> m_instancingGroups;
 
 	public:
 		CSkinnedMeshRendererInstancing();

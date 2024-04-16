@@ -155,7 +155,7 @@ namespace Skylicht
 		driver->drawMeshBuffer(mb);
 	}
 
-	void CShadowMapRP::drawInstancingMeshBuffer(CMesh* mesh, int bufferID, int materialRenderID, CEntityManager* entityMgr, bool skinnedMesh)
+	void CShadowMapRP::drawInstancingMeshBuffer(CMesh* mesh, int bufferID, int materialRenderID, CEntityManager* entityMgr, int entityID, bool skinnedMesh)
 	{
 		if (m_saveDebug == true)
 			return;

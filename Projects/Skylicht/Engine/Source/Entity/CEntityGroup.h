@@ -38,8 +38,10 @@ namespace Skylicht
 
 		CEntityGroup* m_parentGroup;
 
+		// needQuery tell this group will query again at next frame
 		bool m_needQuery;
 
+		// needValidate tell children system update the query
 		bool m_needValidate;
 
 		CFastArray<CEntity*> m_entities;

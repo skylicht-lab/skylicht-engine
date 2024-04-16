@@ -23,12 +23,18 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
+
 #include "CRenderSkinnedInstancing.h"
 #include "CTransformTextureData.h"
+#include "CSkinnedInstanceData.h"
+
 #include "MeshManager/CMeshManager.h"
 #include "Entity/CEntityManager.h"
 #include "Culling/CCullingData.h"
 #include "TextureManager/CTextureManager.h"
+
+#include "Transform/CWorldInverseTransformData.h"
+#include "Culling/CCullingBBoxData.h"
 
 namespace Skylicht
 {
@@ -45,6 +51,17 @@ namespace Skylicht
 	{
 		releaseMaterial();
 		releaseEntities();
+	}
+
+	void CRenderSkinnedInstancing::releaseBaseEntities()
+	{
+		CEntityManager* entityManager = m_gameObject->getEntityManager();
+		if (entityManager == NULL)
+			return;
+
+		for (int i = (int)m_baseEntities.size() - 1; i >= 0; i--)
+			entityManager->removeEntity(m_baseEntities[i]);
+		m_baseEntities.clear();
 	}
 
 	void CRenderSkinnedInstancing::releaseMaterial()
@@ -64,9 +81,11 @@ namespace Skylicht
 	void CRenderSkinnedInstancing::releaseEntities()
 	{
 		removeAllEntities();
+		releaseBaseEntities();
 
-		m_allEntities.clear();
+		m_baseEntities.clear();
 		m_renderers.clear();
+		m_textures.clear();
 		m_entities.clear();
 	}
 
@@ -139,53 +158,6 @@ namespace Skylicht
 		}
 	}
 
-	void CRenderSkinnedInstancing::initTextureTransform(core::matrix4* transforms, u32 w, u32 h, std::map<std::string, int>& bones)
-	{
-		// w: num frames
-		// h: num bones (all)
-		CTextureManager* textureMgr = CTextureManager::getInstance();
-		CEntityManager* entityMgr = m_gameObject->getEntityManager();
-
-		for (CRenderMeshData* renderer : m_renderers)
-		{
-			// get skinned mesh & number of bones
-			CSkinnedMesh* skinnedMesh = dynamic_cast<CSkinnedMesh*>(renderer->getMesh());
-			u32 jointCount = skinnedMesh->Joints.size();
-
-			core::matrix4* boneMatrix = new core::matrix4[jointCount * w];
-
-			for (u32 i = 0, n = jointCount; i < n; i++)
-			{
-				CSkinnedMesh::SJoint& joint = skinnedMesh->Joints[i];
-
-				// convert to transform index
-				u32 id = bones[joint.Name];
-
-				if (id >= h)
-				{
-					char log[1024];
-					sprintf(log, "[CRenderSkinnedInstancing] initTextureTransform %s out of range: %d", joint.Name.c_str(), id);
-					os::Printer::log(log);
-				}
-				else
-				{
-					for (u32 j = 0; j < w; j++)
-					{
-						// calc skinned matrix, that like CSkinnedMeshSystem::update
-						boneMatrix[i * w + j].setbyproduct_nocheck(transforms[id * w + j], joint.BindPoseMatrix);
-					}
-				}
-			}
-
-			CEntity* entity = entityMgr->getEntity(renderer->EntityIndex);
-
-			CTransformTextureData* data = entity->addData<CTransformTextureData>();
-			data->TransformTexture = textureMgr->createTransformTexture2D("BoneTransformTexture", boneMatrix, w, jointCount);
-
-			delete[]boneMatrix;
-		}
-	}
-
 	void CRenderSkinnedInstancing::refreshModelAndMaterial()
 	{
 		CEntityPrefab* prefab = CMeshManager::getInstance()->loadModel(
@@ -215,6 +187,9 @@ namespace Skylicht
 
 	void CRenderSkinnedInstancing::initFromPrefab(CEntityPrefab* prefab)
 	{
+		// clear old entity
+		releaseEntities();
+
 		CEntityManager* entityManager = m_gameObject->getEntityManager();
 
 		// root entity of object
@@ -243,7 +218,7 @@ namespace Skylicht
 
 		numEntities = renderEntities.size();
 
-		CEntity** entities = entityManager->createEntity(numEntities, m_allEntities);
+		CEntity** entities = entityManager->createEntity(numEntities, m_baseEntities);
 
 		// copy entity data
 		for (int i = 0; i < numEntities; i++)
@@ -291,11 +266,11 @@ namespace Skylicht
 
 				// also add transform
 				m_renderTransforms.push_back(GET_ENTITY_DATA(spawnEntity, CWorldTransformData));
+
+				// also check add indirect lighting to hold ReflectionTexture for intacing
+				spawnEntity->addData<CIndirectLightingData>();
 			}
 		}
-
-		// for handler on Editor UI
-		setEntities(entities, numEntities);
 	}
 
 	void CRenderSkinnedInstancing::initFromMeshFile(const char* path)
@@ -333,5 +308,168 @@ namespace Skylicht
 
 		for (CMaterial* m : m_materials)
 			m->applyMaterial();
+	}
+
+	void CRenderSkinnedInstancing::initTextureTransform(core::matrix4* transforms, u32 w, u32 h, std::map<std::string, int>& bones)
+	{
+		// w: num frames
+		// h: num bones (all)
+		CTextureManager* textureMgr = CTextureManager::getInstance();
+		CEntityManager* entityMgr = m_gameObject->getEntityManager();
+
+		m_textures.clear();
+
+		for (CRenderMeshData* renderer : m_renderers)
+		{
+			// get skinned mesh & number of bones
+			CSkinnedMesh* skinnedMesh = dynamic_cast<CSkinnedMesh*>(renderer->getMesh());
+			u32 jointCount = skinnedMesh->Joints.size();
+
+			core::matrix4* boneMatrix = new core::matrix4[jointCount * w];
+
+			for (u32 i = 0, n = jointCount; i < n; i++)
+			{
+				CSkinnedMesh::SJoint& joint = skinnedMesh->Joints[i];
+
+				// convert to transform index
+				u32 id = bones[joint.Name];
+
+				if (id >= h)
+				{
+					char log[1024];
+					sprintf(log, "[CRenderSkinnedInstancing] initTextureTransform %s out of range: %d", joint.Name.c_str(), id);
+					os::Printer::log(log);
+				}
+				else
+				{
+					for (u32 j = 0; j < w; j++)
+					{
+						// calc skinned matrix, that like CSkinnedMeshSystem::update
+						boneMatrix[i * w + j].setbyproduct_nocheck(transforms[id * w + j], joint.BindPoseMatrix);
+					}
+				}
+			}
+
+			CEntity* entity = entityMgr->getEntity(renderer->EntityIndex);
+
+			// save the texture
+			CTransformTextureData* data = entity->addData<CTransformTextureData>();
+			data->TransformTexture = textureMgr->createTransformTexture2D("BoneTransformTexture", boneMatrix, w, jointCount);
+
+			// add textures
+			m_textures.push_back(data);
+
+			delete[]boneMatrix;
+		}
+	}
+
+	CEntity* CRenderSkinnedInstancing::spawn()
+	{
+		CEntity* entity = createEntity();
+
+		CIndirectLightingData* indirect = entity->addData<CIndirectLightingData>();
+		indirect->Type = CIndirectLightingData::SH9;
+		indirect->AutoSH = new bool();
+		indirect->SH = new core::vector3df[9];
+		indirect->ReleaseSH = true;
+		*indirect->AutoSH = true;
+
+		entity->addData<CWorldInverseTransformData>();
+		entity->addData<CCullingData>();
+
+		CCullingBBoxData* cullingBBox = entity->addData<CCullingBBoxData>();
+
+		CSkinnedInstanceData* skinnedInstance = entity->addData<CSkinnedInstanceData>();
+
+		CEntityManager* entityMgr = m_gameObject->getEntityManager();
+
+		bool firstBox = true;
+		for (CRenderMeshData*& renderer : m_renderers)
+		{
+			// set bbox
+			CMesh* mesh = renderer->getMesh();
+			if (firstBox)
+			{
+				firstBox = false;
+				cullingBBox->BBox = mesh->getBoundingBox();
+			}
+			else
+			{
+				cullingBBox->BBox.addInternalBox(mesh->getBoundingBox());
+			}
+
+			// add renderer
+			skinnedInstance->RenderData.push_back(renderer);
+		}
+
+		// add textures
+		for (CTransformTextureData*& t : m_textures)
+		{
+			skinnedInstance->TransformTextures.push_back(t->TransformTexture);
+		}
+
+		return entity;
+	}
+
+	bool CRenderSkinnedInstancing::setAnimation(CEntity* entity, int animTextureIndex, CAnimationClip* clipInfo, float currentTime, int bakeFps, bool loop, bool pause)
+	{
+		CSkinnedInstanceData* data = GET_ENTITY_DATA(entity, CSkinnedInstanceData);
+		if (data == NULL)
+			return false;
+
+		// tps to fix last frame is not baked
+		float tps = 1.0f / bakeFps;
+
+		data->ClipId = animTextureIndex;
+		data->FPS = bakeFps;
+
+		data->Time = currentTime;
+		data->TimeFrom = 0.0f;
+		data->TimeTo = clipInfo->Duration - tps;
+
+		data->Frame = (int)(data->Time * bakeFps);
+
+		data->Loop = loop;
+		data->Pause = pause;
+
+		// clamp
+		data->Time = core::clamp(data->Time, data->TimeFrom, data->TimeTo);
+
+		return true;
+	}
+
+	bool CRenderSkinnedInstancing::setAnimation(CEntity* entity, int animTextureIndex, CAnimationClip* clipInfo, float clipBegin, float clipDuration, float currentTime, int bakeFps, bool loop, bool pause)
+	{
+		CSkinnedInstanceData* data = GET_ENTITY_DATA(entity, CSkinnedInstanceData);
+		if (data == NULL)
+			return false;
+
+		if (clipBegin >= clipInfo->Duration)
+			clipBegin = 0.0f;
+
+		// tps to fix last frame is not baked
+		float tps = 1.0f / bakeFps;
+
+		float clipEnd = clipBegin + clipDuration;
+		float theEndTime = clipInfo->Duration - tps;
+		if (clipEnd >= theEndTime)
+			clipEnd = theEndTime;
+
+		data->ClipId = animTextureIndex;
+		data->FPS = bakeFps;
+
+		data->Time = currentTime;
+		data->TimeFrom = clipBegin;
+		data->TimeTo = clipEnd;
+
+		data->Frame = (int)(data->Time * bakeFps);
+
+		data->Loop = loop;
+		data->Pause = pause;
+
+		// clamp
+		data->Time = core::clamp(data->Time, data->TimeFrom, data->TimeTo);
+
+		return true;
 	}
 }

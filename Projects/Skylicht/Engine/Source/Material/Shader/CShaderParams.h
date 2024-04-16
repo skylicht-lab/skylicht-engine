@@ -38,17 +38,17 @@ namespace Skylicht
 
 		virtual ~CShaderParams();
 
-		SVec4& getParam(int i)
+		inline SVec4& getParam(int i)
 		{
 			return m_shaderParam[i];
 		}
 
-		float* getParamData(int i)
+		inline float* getParamData(int i)
 		{
 			return &m_shaderParam[i].X;
 		}
 
-		void setValue(int i, SVec4& value)
+		inline void setValue(int i, SVec4& value)
 		{
 			m_shaderParam[i] = value;
 		}
