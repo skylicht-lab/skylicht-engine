@@ -24,12 +24,16 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+
+
 #include "Entity/CEntityPrefab.h"
 #include "Entity/CEntityHandler.h"
 #include "Material/CMaterial.h"
 #include "Material/CMaterialManager.h"
 #include "RenderMesh/CRenderMeshData.h"
 #include "Transform/CWorldTransformData.h"
+#include "CTransformTextureData.h"
+#include "Animation/CAnimationClip.h"
 
 namespace Skylicht
 {
@@ -37,11 +41,13 @@ namespace Skylicht
 	{
 	protected:
 		CEntity* m_root;
-		core::array<CEntity*> m_allEntities;
+		core::array<CEntity*> m_baseEntities;
 
 		std::vector<CWorldTransformData*> m_renderTransforms;
 		std::vector<CWorldTransformData*> m_transforms;
+
 		std::vector<CRenderMeshData*> m_renderers;
+		std::vector<CTransformTextureData*> m_textures;
 
 		ArrayMaterial m_materials;
 
@@ -64,6 +70,12 @@ namespace Skylicht
 		virtual CObjectSerializable* createSerializable();
 
 		virtual void loadSerializable(CObjectSerializable* object);
+
+		virtual CEntity* spawn();
+
+		static bool setAnimation(CEntity* entity, int animTextureIndex, CAnimationClip* clipInfo, float currentTime = 0.0f, int bakeFps = 60, bool loop = true, bool pause = false);
+
+		static bool setAnimation(CEntity* entity, int animTextureIndex, CAnimationClip* clipInfo, float clipBegin, float clipDuration, float currentTime = 0.0f, int bakeFps = 60, bool loop = true, bool pause = false);
 
 	public:
 
@@ -91,7 +103,7 @@ namespace Skylicht
 
 		core::array<CEntity*>& getEntities()
 		{
-			return m_allEntities;
+			return m_baseEntities;
 		}
 
 		std::vector<CRenderMeshData*>& getRenderers()
@@ -116,5 +128,7 @@ namespace Skylicht
 		void releaseMaterial();
 
 		void releaseEntities();
+
+		void releaseBaseEntities();
 	};
 }

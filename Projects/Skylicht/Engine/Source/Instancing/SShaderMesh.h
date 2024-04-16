@@ -22,23 +22,55 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CTransformTextureData.h"
+#pragma once
+
+#include "irrlicht.h"
+using namespace irr::scene;
 
 namespace Skylicht
 {
-	ACTIVATOR_REGISTER(CTransformTextureData);
-
-	IMPLEMENT_DATA_TYPE_INDEX(CTransformTextureData);
-
-	CTransformTextureData::CTransformTextureData() :
-		TransformTexture(NULL)
+	struct SShaderMesh
 	{
+		CShader* Shader;
+		CMesh* Mesh;
+		ITexture* Textures[MATERIAL_MAX_TEXTURES];
+		ITexture* IndirectLM;
+		ITexture* DirectLM;
 
-	}
+		SShaderMesh()
+		{
+			Shader = NULL;
+			Mesh = NULL;
+			IndirectLM = NULL;
+			for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
+				Textures[i] = NULL;
+		}
 
-	CTransformTextureData::~CTransformTextureData()
-	{
-
-	}
+		bool operator<(const SShaderMesh& other) const
+		{
+			if (Shader == other.Shader)
+			{
+				if (Mesh == other.Mesh)
+				{
+					if (IndirectLM == other.IndirectLM)
+					{
+						if (DirectLM == other.DirectLM)
+						{
+							for (int i = 0; i < _IRR_MATERIAL_MAX_TEXTURES_; i++)
+							{
+								if (Textures[i] != other.Textures[i])
+									return Textures[i] < other.Textures[i];
+							}
+							// all same
+							return false;
+						}
+						return DirectLM < other.DirectLM;
+					}
+					return IndirectLM < other.IndirectLM;
+				}
+				return Mesh < other.Mesh;
+			}
+			return Shader < other.Shader;
+		}
+	};
 }

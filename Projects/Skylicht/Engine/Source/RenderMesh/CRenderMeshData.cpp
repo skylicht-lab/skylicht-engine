@@ -24,7 +24,10 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CRenderMeshData.h"
+
 #include "Material/Shader/CShaderManager.h"
+#include "Material/Shader/Instancing/CSkinTBNSGInstancing.h"
+
 #include "TextureManager/CTextureManager.h"
 #include "MeshManager/CMeshManager.h"
 #include "Utils/CPath.h"
@@ -47,7 +50,7 @@ namespace Skylicht
 		IsSkinnedMesh(false),
 		IsInstancing(false),
 		IsSkinnedInstancing(false),
-		InstancingData(NULL)
+		MeshInstancing(NULL)
 	{
 
 	}
@@ -78,15 +81,20 @@ namespace Skylicht
 	void CRenderMeshData::setInstancing(bool b)
 	{
 		if (b)
-			InstancingData = CMeshManager::getInstance()->createGetInstancingMesh(RenderMesh);
+			MeshInstancing = CMeshManager::getInstance()->createGetInstancingMesh(RenderMesh);
 		else
-			InstancingData = NULL;
+			MeshInstancing = NULL;
 
 		IsInstancing = b;
 	}
 
 	void CRenderMeshData::setSkinnedInstancing(bool b)
 	{
+		if (b)
+			MeshInstancing = CMeshManager::getInstance()->createGetInstancingMesh(RenderMesh, new CSkinTBNSGInstancing());
+		else
+			MeshInstancing = NULL;
+
 		IsSkinnedInstancing = b;
 	}
 
@@ -115,6 +123,26 @@ namespace Skylicht
 			}
 
 			bufferID++;
+		}
+
+		if (MeshInstancing != NULL)
+		{
+			// apply material for instancing mesh
+			CMesh* instancingMesh = dynamic_cast<CMesh*>(MeshInstancing->InstancingMesh);
+			if (instancingMesh)
+			{
+				for (int i = 0, n = (int)instancingMesh->Materials.size(); i < n; i++)
+				{
+					if (mesh->Materials[i])
+					{
+						if (instancingMesh->Materials[i])
+							instancingMesh->Materials[i]->drop();
+
+						instancingMesh->Materials[i] = mesh->Materials[i];
+						instancingMesh->Materials[i]->grab();
+					}
+				}
+			}
 		}
 	}
 

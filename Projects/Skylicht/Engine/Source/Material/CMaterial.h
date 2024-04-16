@@ -277,7 +277,7 @@ namespace Skylicht
 
 		SUniformTexture* getExtraUniformTexture(SExtraParams* e, const char* name);
 
-		CShaderParams& getShaderParams()
+		inline CShaderParams& getShaderParams()
 		{
 			return m_shaderParams;
 		}

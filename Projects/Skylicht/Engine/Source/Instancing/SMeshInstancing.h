@@ -22,23 +22,41 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CTransformTextureData.h"
+#pragma once
+
+#include "irrlicht.h"
+using namespace irr::scene;
+
+#include "Material/CMaterial.h"
+#include "Material/Shader/Instancing/IShaderInstancing.h"
 
 namespace Skylicht
 {
-	ACTIVATOR_REGISTER(CTransformTextureData);
-
-	IMPLEMENT_DATA_TYPE_INDEX(CTransformTextureData);
-
-	CTransformTextureData::CTransformTextureData() :
-		TransformTexture(NULL)
+	struct SMeshInstancing
 	{
+		core::array<IMeshBuffer*> MeshBuffers;
+		core::array<CMaterial*> Materials;
 
-	}
+		core::array<IShaderInstancing*> InstancingShader;
+		core::array<IVertexBuffer*> InstancingBuffer;
+		core::array<IVertexBuffer*> TransformBuffer;
+		core::array<IVertexBuffer*> IndirectLightingBuffer;
+		core::array<IMeshBuffer*> RenderMeshBuffers;
+		core::array<IMeshBuffer*> RenderLightMeshBuffers;
 
-	CTransformTextureData::~CTransformTextureData()
-	{
+		IShaderInstancing* HandleShader;
+		IMesh* InstancingMesh;
 
-	}
+		SMeshInstancing()
+		{
+			HandleShader = NULL;
+			InstancingMesh = NULL;
+		}
+
+		~SMeshInstancing()
+		{
+			if (HandleShader)
+				delete HandleShader;
+		}
+	};
 }

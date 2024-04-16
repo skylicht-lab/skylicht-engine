@@ -11,6 +11,7 @@ struct VS_INPUT
 	float2 particleUVOffset: TEXCOORD4;
 	float3 particleSize: TEXCOORD5;
 	float3 particleRotation: TEXCOORD6;
+	float3 particleVelocity: TEXCOORD7;
 };
 
 struct VS_OUTPUT

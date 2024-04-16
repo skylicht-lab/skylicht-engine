@@ -44,22 +44,7 @@ namespace Skylicht
 		{
 			Weight = 1.0f;
 		}
-	};
-
-	struct SMeshInstancingData
-	{
-		core::array<IMeshBuffer*> MeshBuffers;
-		core::array<CMaterial*> Materials;
-
-		core::array<IShaderInstancing*> Instancing;
-		core::array<IVertexBuffer*> InstancingBuffer;
-		core::array<IVertexBuffer*> TransformBuffer;
-		core::array<IVertexBuffer*> IndirectLightingBuffer;
-		core::array<IMeshBuffer*> RenderMeshBuffers;
-		core::array<IMeshBuffer*> RenderLightMeshBuffers;
-
-		IMesh* InstancingMesh;
-	};
+	};	
 
 	class SKYLICHT_API CMesh : public IMesh
 	{

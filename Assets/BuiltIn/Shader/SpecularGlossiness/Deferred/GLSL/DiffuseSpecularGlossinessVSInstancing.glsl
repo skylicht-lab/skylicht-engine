@@ -5,7 +5,7 @@ layout(location = 2) in vec4 inColor;
 layout(location = 3) in vec2 inTexCoord0;
 layout(location = 4) in vec4 uUVScale;
 layout(location = 5) in vec4 uColor;
-layout(location = 6) in vec2 uSpecGloss;
+layout(location = 6) in vec4 uSpecGloss;
 layout(location = 7) in mat4 uWorldMatrix;
 uniform mat4 uVPMatrix;
 uniform mat4 uView;
@@ -17,7 +17,7 @@ out vec2 vSpecGloss;
 void main(void)
 {
 	vColor = uColor;
-	vSpecGloss = uSpecGloss;
+	vSpecGloss = uSpecGloss.xy;
 	mat4 uMvpMatrix = uVPMatrix * uWorldMatrix;
 	vWorldPosition = uWorldMatrix * inPosition;
 	vec4 sampleFragPos = uView * vWorldPosition;

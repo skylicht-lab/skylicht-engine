@@ -1,11 +1,10 @@
 <shaderConfig name="SGSkinInstaning" baseShader="SOLID">
 	<uniforms>
 		<vs>
-			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
-			<uniform name="uWorldMatrix" type="WORLD" value="0" float="16" matrix="true"/>
+			<uniform name="uVpMatrix" type="VIEW_PROJECTION" value="0" float="16" matrix="true"/>
 			<uniform name="uCameraPosition" type="WORLD_CAMERA_POSITION" value="0" float="4"/>
 			<uniform name="uLightDirection" type="WORLD_LIGHT_DIRECTION" value="0" float="4"/>
-			<uniform name="uUVScale" type="MATERIAL_PARAM" valueIndex="0" value="1.0, 1.0, 0.0, 0.0" float="4"/>
+			<uniform name="uAnimation" type="MATERIAL_PARAM" valueIndex="0" value="1.0, 1.0, 0.0, 0.0" float="4"/>
 			<uniform name="uTransformTexture" type="DEFAULT_VALUE" value="4" float="1" directX="false"/>
 			<uniform name="uTransformTextureSize" type="TEXTURE_WIDTH_HEIGHT" valueIndex="4" value="1.0, 1.0" float="2"/>
 		</vs>
@@ -32,7 +31,6 @@
 		</ui>
 		<ui control="UIGroup" name="Customize">
 			<ui control="UIColor" name="uColor"/>
-			<ui control="UIFloat4" name="uUVScale" elementName="UV ScaleX;UV ScaleY;UV OffsetX;UV OffsetY"/>
 		</ui>
 	</customUI>
 	<shader type="GLSL" vs="GLSL/SGSkinInstancingVS.glsl" fs="GLSL/SGLitFS.glsl" vs_source="GLSL/SGSkinInstancingVS.d.glsl"/>

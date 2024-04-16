@@ -127,7 +127,7 @@ namespace Skylicht
 			m_next->render(target, camera, entity, viewport);
 	}
 
-	void CBaseRP::updateTextureResource(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID, bool skinnedMesh)
+	void CBaseRP::updateTextureResource(CMesh* mesh, int bufferID, CEntityManager* entity, int entityId, bool skinnedMesh)
 	{
 		IMeshBuffer* mb = mesh->getMeshBuffer(bufferID);
 		video::SMaterial& irrMaterial = mb->getMaterial();
@@ -159,68 +159,75 @@ namespace Skylicht
 					}
 				}
 
-				for (int i = 0, n = shader->getNumResource(); i < n; i++)
-				{
-					CShader::SResource* res = shader->getResouceInfo(i);
-
-					if (res->Type == CShader::ReflectionProbe)
-					{
-						SUniform* uniform = shader->getFSUniform(res->Name.c_str());
-						if (uniform != NULL)
-						{
-							CIndirectLightingData* lightData = GET_ENTITY_DATA(entity->getEntity(entityID), CIndirectLightingData);
-							u32 textureID = (u32)uniform->Value[0];
-
-							if (lightData != NULL && lightData->ReflectionTexture != NULL && textureID < MATERIAL_MAX_TEXTURES)
-								irrMaterial.setTexture(textureID, lightData->ReflectionTexture);
-						}
-					}
-					else if (res->Type == CShader::ShadowMap)
-					{
-						CShadowMapRP* shadowRP = CShaderShadow::getShadowMapRP();
-						if (shadowRP != NULL)
-						{
-							SUniform* uniform = shader->getFSUniform(res->Name.c_str());
-							if (uniform != NULL)
-							{
-								u32 textureID = (u32)uniform->Value[0];
-								irrMaterial.setTexture(textureID, shadowRP->getDepthTexture());
-							}
-						}
-					}
-					else if (res->Type == CShader::TransformTexture)
-					{
-						ITexture* ttexture = CShaderTransformTexture::getTexture();
-
-						SUniform* uniform = shader->getVSUniform(res->Name.c_str());
-						if (uniform != NULL)
-						{
-							u32 textureID = (u32)uniform->Value[0];
-							irrMaterial.setTexture(textureID, ttexture);
-
-							// disable mipmap
-							irrMaterial.TextureLayer[textureID].BilinearFilter = false;
-							irrMaterial.TextureLayer[textureID].TrilinearFilter = false;
-							irrMaterial.TextureLayer[textureID].AnisotropicFilter = 0;
-						}
-					}
-				}
-
-				// transparent (disable zwrite)
-				if (shader->isOpaque() == false)
-				{
-					irrMaterial.ZWriteEnable = false;
-					irrMaterial.BackfaceCulling = false;
-				}
+				updateShaderResource(shader, entity, entityId, irrMaterial);
 			}
 
 			CShaderMaterial::setMaterial(material);
 		}
 	}
 
+	void CBaseRP::updateShaderResource(CShader* shader, CEntityManager* entity, int entityId, video::SMaterial& irrMaterial)
+	{
+		for (int i = 0, n = shader->getNumResource(); i < n; i++)
+		{
+			CShader::SResource* res = shader->getResouceInfo(i);
+
+			if (res->Type == CShader::ReflectionProbe)
+			{
+				if (entityId >= 0)
+				{
+					SUniform* uniform = shader->getFSUniform(res->Name.c_str());
+					if (uniform != NULL)
+					{
+						CIndirectLightingData* lightData = GET_ENTITY_DATA(entity->getEntity(entityId), CIndirectLightingData);
+						u32 textureID = (u32)uniform->Value[0];
+
+						if (lightData != NULL && lightData->ReflectionTexture != NULL && textureID < MATERIAL_MAX_TEXTURES)
+							irrMaterial.setTexture(textureID, lightData->ReflectionTexture);
+					}
+				}
+			}
+			else if (res->Type == CShader::ShadowMap)
+			{
+				CShadowMapRP* shadowRP = CShaderShadow::getShadowMapRP();
+				if (shadowRP != NULL)
+				{
+					SUniform* uniform = shader->getFSUniform(res->Name.c_str());
+					if (uniform != NULL)
+					{
+						u32 textureID = (u32)uniform->Value[0];
+						irrMaterial.setTexture(textureID, shadowRP->getDepthTexture());
+					}
+				}
+			}
+			else if (res->Type == CShader::TransformTexture)
+			{
+				ITexture* ttexture = CShaderTransformTexture::getTexture();
+
+				SUniform* uniform = shader->getVSUniform(res->Name.c_str());
+				if (uniform != NULL)
+				{
+					u32 textureID = (u32)uniform->Value[0];
+					irrMaterial.setTexture(textureID, ttexture);
+
+					// disable mipmap
+					irrMaterial.TextureLayer[textureID].BilinearFilter = false;
+					irrMaterial.TextureLayer[textureID].TrilinearFilter = false;
+					irrMaterial.TextureLayer[textureID].AnisotropicFilter = 0;
+				}
+			}
+		}
+
+		// transparent (disable zwrite)
+		if (shader->isOpaque() == false)
+		{
+			irrMaterial.ZWriteEnable = false;
+			irrMaterial.BackfaceCulling = false;
+		}
+	}
+
 	void CBaseRP::drawMeshBuffer(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID, bool skinnedMesh)
 	{
-		// update texture resource
 		updateTextureResource(mesh, bufferID, entity, entityID, skinnedMesh);
 
 		IMeshBuffer* mb = mesh->getMeshBuffer(bufferID);
@@ -239,8 +246,10 @@ namespace Skylicht
 		driver->drawMeshBuffer(mb);
 	}
 
-	void CBaseRP::drawInstancingMeshBuffer(CMesh* mesh, int bufferID, int materialRenderID, CEntityManager* entity, bool skinnedMesh)
+	void CBaseRP::drawInstancingMeshBuffer(CMesh* mesh, int bufferID, int materialRenderID, CEntityManager* entity, int entityID, bool skinnedMesh)
 	{
+		updateTextureResource(mesh, bufferID, entity, entityID, skinnedMesh);
+
 		IMeshBuffer* mb = mesh->getMeshBuffer(bufferID);
 		IVideoDriver* driver = getVideoDriver();
 

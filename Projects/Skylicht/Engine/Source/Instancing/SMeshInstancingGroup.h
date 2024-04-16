@@ -22,23 +22,31 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CTransformTextureData.h"
+#pragma once
+
+#include "irrlicht.h"
+using namespace irr::scene;
+
+#include "Material/CMaterial.h"
+#include "Entity/CEntity.h"
+#include "Entity/CArrayUtils.h"
 
 namespace Skylicht
 {
-	ACTIVATOR_REGISTER(CTransformTextureData);
-
-	IMPLEMENT_DATA_TYPE_INDEX(CTransformTextureData);
-
-	CTransformTextureData::CTransformTextureData() :
-		TransformTexture(NULL)
+	struct SMeshInstancingGroup
 	{
+		CFastArray<CMaterial*> Materials;
+		CFastArray<CEntity*> Entities;
 
-	}
+		ITexture* TransformTexture;
+		CRenderMeshData* RenderMesh;
+		int RootEntityIndex;
 
-	CTransformTextureData::~CTransformTextureData()
-	{
-
-	}
+		SMeshInstancingGroup()
+		{
+			TransformTexture = NULL;
+			RenderMesh = NULL;
+			RootEntityIndex = -1;
+		}
+	};
 }

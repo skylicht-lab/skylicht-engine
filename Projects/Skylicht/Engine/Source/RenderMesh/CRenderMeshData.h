@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Entity/IEntityData.h"
 #include "Material/CMaterial.h"
+#include "Instancing/SMeshInstancing.h"
 #include "CMesh.h"
 #include "CSkinnedMesh.h"
 
@@ -47,7 +48,7 @@ namespace Skylicht
 		bool IsInstancing;
 		bool IsSkinnedInstancing;
 
-		SMeshInstancingData* InstancingData;
+		SMeshInstancing* MeshInstancing;
 
 	public:
 
@@ -70,9 +71,9 @@ namespace Skylicht
 			return SoftwareBlendShapeMesh;
 		}
 
-		inline SMeshInstancingData* getInstancingData()
+		inline SMeshInstancing* getMeshInstancing()
 		{
-			return InstancingData;
+			return MeshInstancing;
 		}
 
 		void setMesh(CMesh* mesh);

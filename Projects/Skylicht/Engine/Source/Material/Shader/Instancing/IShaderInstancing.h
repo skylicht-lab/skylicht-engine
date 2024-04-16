@@ -104,6 +104,11 @@ namespace Skylicht
 			CEntity** entities,
 			int count);
 
+		virtual void batchTransform(
+			IVertexBuffer* tBuffer,
+			CEntity** entities,
+			int count);
+
 		video::IVertexDescriptor* getBaseVertexDescriptor()
 		{
 			return m_baseVtxDescriptor;

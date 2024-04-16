@@ -100,12 +100,14 @@ namespace Skylicht
 		// update instancing
 		for (u32 i = 0; i < numEntity; i++)
 		{
-			SMeshInstancingData* data = renderData[i]->getInstancingData();
+			SMeshInstancing* data = renderData[i]->getMeshInstancing();
 
 			SMeshInstancingGroup* group = m_groups[data];
 			if (group == NULL)
 			{
 				group = new SMeshInstancingGroup();
+				group->RootEntityIndex = renderData[i]->EntityIndex;
+
 				m_groups[data] = group;
 			}
 
@@ -116,7 +118,7 @@ namespace Skylicht
 		// bake instancing in group
 		for (auto it : m_groups)
 		{
-			SMeshInstancingData* data = it.first;
+			SMeshInstancing* data = it.first;
 			SMeshInstancingGroup* group = it.second;
 
 			u32 count = group->Entities.count();
@@ -131,7 +133,7 @@ namespace Skylicht
 					group->Materials.push(data->Materials[i]);
 
 				// batching transform & material data to buffer
-				data->Instancing[i]->batchIntancing(
+				data->InstancingShader[i]->batchIntancing(
 					data->InstancingBuffer[i],
 					data->TransformBuffer[i],
 					data->IndirectLightingBuffer[i],
@@ -152,7 +154,7 @@ namespace Skylicht
 
 		for (auto& it : m_groups)
 		{
-			SMeshInstancingData* data = it.first;
+			SMeshInstancing* data = it.first;
 			SMeshInstancingGroup* group = it.second;
 
 			int count = group->Entities.count();
@@ -162,6 +164,9 @@ namespace Skylicht
 			u32 numMeshBuffer = data->RenderMeshBuffers.size();
 			for (u32 i = 0; i < numMeshBuffer; i++)
 			{
+				if (data->Materials[i] == NULL)
+					continue;
+
 				CShader* shader = data->Materials[i]->getShader();
 
 				if (!rp->canRenderShader(shader))
@@ -176,6 +181,7 @@ namespace Skylicht
 					i,
 					materialType,
 					entityManager,
+					group->RootEntityIndex,
 					false
 				);
 			}

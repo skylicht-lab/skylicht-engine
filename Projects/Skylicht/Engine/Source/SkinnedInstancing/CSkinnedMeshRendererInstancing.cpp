@@ -24,9 +24,13 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CSkinnedMeshRendererInstancing.h"
+#include "SkinnedInstancing/CSkinnedInstanceData.h"
 
+#include "Culling/CVisibleData.h"
 #include "Culling/CCullingData.h"
 #include "Entity/CEntityManager.h"
+
+#include "MeshManager/CMeshManager.h"
 
 #include "Material/Shader/ShaderCallback/CShaderSH.h"
 #include "Material/Shader/ShaderCallback/CShaderLighting.h"
@@ -35,49 +39,88 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CSkinnedMeshRendererInstancing::CSkinnedMeshRendererInstancing()
+	CSkinnedMeshRendererInstancing::CSkinnedMeshRendererInstancing() :
+		m_group(NULL)
 	{
 		m_pipelineType = IRenderPipeline::Forwarder;
 	}
 
 	CSkinnedMeshRendererInstancing::~CSkinnedMeshRendererInstancing()
 	{
-		for (auto it : m_groups)
-		{
-			delete it.second;
-		}
+
 	}
 
 	void CSkinnedMeshRendererInstancing::beginQuery(CEntityManager* entityManager)
 	{
-		m_meshs.set_used(0);
+		if (m_group == NULL)
+		{
+			const u32 type[] = GET_LIST_ENTITY_DATA(CSkinnedInstanceData);
+			m_group = (CGroupSkinnedInstancing*)entityManager->findGroup(type, 1);
 
-		for (auto it : m_groups)
+			if (m_group == NULL)
+			{
+				const u32 visibleGroupType[] = GET_LIST_ENTITY_DATA(CVisibleData);
+				CEntityGroup* visibleGroup = entityManager->findGroup(visibleGroupType, 1);
+
+				m_group = (CGroupSkinnedInstancing*)entityManager->addCustomGroup(new CGroupSkinnedInstancing(visibleGroup));
+			}
+		}
+
+		for (auto it : m_instancingGroups)
 		{
 			SMeshInstancingGroup* group = it.second;
 			group->Materials.reset();
 			group->Entities.reset();
 		}
-
-		CMeshRenderSystem::beginQuery(entityManager);
 	}
 
 	void CSkinnedMeshRendererInstancing::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
-		numEntity = m_groupMesh->getNumSkinnedInstancingMesh();
-		entities = m_groupMesh->getSkinnedInstancingMeshes();
+		entities = m_group->getEntities();
+		numEntity = m_group->getEntityCount();
+
+		CMeshManager* meshManager = CMeshManager::getInstance();
 
 		for (int i = 0; i < numEntity; i++)
 		{
 			CEntity* entity = entities[i];
 
-			CRenderMeshData* meshData = GET_ENTITY_DATA(entity, CRenderMeshData);
-			CTransformTextureData* textureData = GET_ENTITY_DATA(entity, CTransformTextureData);
-
-			if (textureData != NULL && textureData->TransformTexture != NULL)
+			// get culling result from CCullingSystem
+			CCullingData* cullingData = GET_ENTITY_DATA(entity, CCullingData);
+			if (cullingData != NULL)
 			{
-				m_meshs.push_back(meshData);
-				m_textures.push_back(textureData);
+				if (!cullingData->Visible)
+					continue;
+			}
+
+			// skip no transform textures
+			CSkinnedInstanceData* skinnedIntance = GET_ENTITY_DATA(entity, CSkinnedInstanceData);
+			if (skinnedIntance->TransformTextures.size() == 0)
+				continue;
+
+			for (u32 j = 0, n = skinnedIntance->RenderData.size(); j < n; j++)
+			{
+				CRenderMeshData* meshData = skinnedIntance->RenderData[j];
+
+				// skip transform texture, that null
+				if (skinnedIntance->TransformTextures[j] == NULL)
+					continue;
+
+				SMeshInstancing* data = meshData->getMeshInstancing();
+				if (data)
+				{
+					SMeshInstancingGroup* group = m_instancingGroups[data];
+					if (group == NULL)
+					{
+						group = new SMeshInstancingGroup();
+						group->TransformTexture = skinnedIntance->TransformTextures[j];
+						group->RenderMesh = meshData;
+						group->RootEntityIndex = meshData->EntityIndex;
+
+						m_instancingGroups[data] = group;
+					}
+					group->Entities.push(entity);
+				}
 			}
 		}
 	}
@@ -89,47 +132,56 @@ namespace Skylicht
 
 	void CSkinnedMeshRendererInstancing::update(CEntityManager* entityManager)
 	{
-		u32 numEntity = m_meshs.size();
-		CRenderMeshData** renderData = m_meshs.pointer();
-
-		CEntity** allEntities = entityManager->getEntities();
-
-		/*
-		// update instancing
-		for (u32 i = 0; i < numEntity; i++)
+		for (auto it : m_instancingGroups)
 		{
-			SMeshInstancingData* data = renderData[i]->getInstancingData();
-
-			SMeshInstancingGroup* group = m_groups[data];
-			if (group == NULL)
-			{
-				group = new SMeshInstancingGroup();
-				m_groups[data] = group;
-			}
-
-			CEntity* entity = allEntities[renderData[i]->EntityIndex];
-			group->Entities.push(entity);
-		}
-
-		// bake instancing in group
-		for (auto it : m_groups)
-		{
-			SMeshInstancingData* data = it.first;
+			SMeshInstancing* data = it.first;
 			SMeshInstancingGroup* group = it.second;
 
 			u32 count = group->Entities.count();
 			if (count == 0)
 				continue;
 
+			CEntity** entities = group->Entities.pointer();
+
+			CMesh* mesh = group->RenderMesh->getMesh();
+			CMaterial* m = NULL;
+			u32 materialId = 0;
+
 			for (u32 i = 0, n = data->RenderMeshBuffers.size(); i < n; i++)
 			{
 				group->Materials.reset();
 
 				for (u32 j = 0; j < count; j++)
-					group->Materials.push(data->Materials[i]);
+				{
+					// update animation to material
+					CSkinnedInstanceData* skinnedIntance = GET_ENTITY_DATA(entities[j], CSkinnedInstanceData);
+
+					// clone the material for instance
+					if (materialId >= skinnedIntance->Materials.size())
+					{
+						m = mesh->Materials[i]->clone();
+
+						// save this material and destroy it in destructor of CSkinnedInstanceData
+						skinnedIntance->Materials.push_back(m);
+					}
+					else
+					{
+						m = skinnedIntance->Materials[materialId];
+					}
+
+					// set animation to shader params
+					CShaderParams& params = m->getShaderParams();
+					SVec4& p = params.getParam(0);
+					p.X = (float)skinnedIntance->Frame;
+					p.Y = (float)skinnedIntance->ClipId;
+
+					group->Materials.push(m);
+
+					materialId++;
+				}
 
 				// batching transform & material data to buffer
-				data->Instancing[i]->batchIntancing(
+				data->InstancingShader[i]->batchIntancing(
 					data->InstancingBuffer[i],
 					data->TransformBuffer[i],
 					data->IndirectLightingBuffer[i],
@@ -139,7 +191,6 @@ namespace Skylicht
 				);
 			}
 		}
-		*/
 	}
 
 	void CSkinnedMeshRendererInstancing::render(CEntityManager* entityManager)
@@ -147,72 +198,50 @@ namespace Skylicht
 		IVideoDriver* driver = getVideoDriver();
 		IRenderPipeline* rp = entityManager->getRenderPipeline();
 
+		if (rp->getType() == IRenderPipeline::ShadowMap)
+			return;
+
 		driver->setTransform(video::ETS_WORLD, core::IdentityMatrix);
 
 		CEntity** allEntities = entityManager->getEntities();
 
-		u32 numEntity = m_meshs.size();
-		CRenderMeshData** meshDatas = m_meshs.pointer();
-		CTransformTextureData** textureDatas = m_textures.pointer();
-
-		for (u32 i = 0, n = m_meshs.size(); i < n; i++)
+		for (auto& it : m_instancingGroups)
 		{
-			CRenderMeshData* meshData = meshDatas[i];
-			CTransformTextureData* textureData = textureDatas[i];
-
-			CEntity* entity = allEntities[meshData->EntityIndex];
-
-			CMesh* mesh = meshData->getMesh();
-
-			CIndirectLightingData* lightingData = GET_ENTITY_DATA(entity, CIndirectLightingData);
-			if (lightingData != NULL)
-			{
-				if (lightingData->Type == CIndirectLightingData::SH9)
-					CShaderSH::setSH9(lightingData->SH);
-				else if (lightingData->Type == CIndirectLightingData::AmbientColor)
-					CShaderLighting::setLightAmbient(lightingData->Color);
-			}
-
-			CShaderTransformTexture::setTexture(textureData->TransformTexture);
-
-			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
-			driver->setTransform(video::ETS_WORLD, transform->World);
-
-			for (u32 j = 0, m = mesh->getMeshBufferCount(); j < m; j++)
-				rp->drawMeshBuffer(mesh, j, entityManager, meshData->EntityIndex, false);
-		}
-
-		/*
-		for (auto& it : m_groups)
-		{
-			SMeshInstancingData* data = it.first;
+			SMeshInstancing* data = it.first;
 			SMeshInstancingGroup* group = it.second;
 
 			int count = group->Entities.count();
 			if (count == 0)
 				continue;
 
+			CMaterial** materials = group->Materials.pointer();
+
+			CShaderTransformTexture::setTexture(group->TransformTexture);
+
 			u32 numMeshBuffer = data->RenderMeshBuffers.size();
 			for (u32 i = 0; i < numMeshBuffer; i++)
 			{
-				CShader* shader = data->Materials[i]->getShader();
+				if (materials[i] == NULL)
+					continue;
 
+				CShader* shader = materials[i]->getShader();
 				if (!rp->canRenderShader(shader))
 					continue;
 
-				CShaderMaterial::setMaterial(NULL);
+				// apply material
+				CShaderMaterial::setMaterial(materials[i]);
 
-				int materialType = shader->getInstancingShader()->getMaterialRenderID();
+				int materialType = shader->getMaterialRenderID();
 
 				rp->drawInstancingMeshBuffer(
 					(CMesh*)data->InstancingMesh,
 					i,
 					materialType,
 					entityManager,
-					false
+					group->RootEntityIndex,
+					true
 				);
 			}
 		}
-		*/
 	}
 }
