@@ -46,10 +46,10 @@ namespace Skylicht
 
 	CSkinnedInstanceData::~CSkinnedInstanceData()
 	{
+		// delete materials that created from CSkinnedMeshRendererInstancing
 		u32 numMaterial = Materials.size();
 		for (u32 i = 0; i < numMaterial; i++)
 		{
-			// delete materil that init from CSkinnedMeshRendererInstancing
 			Materials[i]->drop();
 		}
 		Materials.clear();

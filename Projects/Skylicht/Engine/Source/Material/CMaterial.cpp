@@ -85,9 +85,13 @@ namespace Skylicht
 	{
 		mat->deleteAllParams();
 
+		mat->m_shader = m_shader;
 		mat->m_materialName = m_materialName;
 		mat->m_shaderPath = m_shaderPath;
 		mat->m_materialPath = m_materialPath;
+
+		for (int i = 0; i < MAX_SHADERPARAMS; i++)
+			mat->m_shaderParams.setValue(i, m_shaderParams.getParam(i));
 
 		for (SUniformValue*& u : m_uniformParams)
 		{
@@ -122,8 +126,6 @@ namespace Skylicht
 		mat->m_castShadow = m_castShadow;
 		mat->m_manualInitMaterial = m_manualInitMaterial;
 		mat->m_shadowMapTextureSlot = m_shadowMapTextureSlot;
-
-		mat->m_shader = m_shader;
 	}
 
 	void CMaterial::deleteAllParams()

@@ -139,22 +139,20 @@ namespace Skylicht
 
 			CMesh* mesh = group->RenderMesh->getMesh();
 
+			CMaterial* m = NULL;
+			int materialId = 0;
+
 			for (u32 i = 0, n = data->RenderMeshBuffers.size(); i < n; i++)
 			{
-				CEntity* entity = entities[i];
-
 				group->Materials.reset();
 
 				for (u32 j = 0; j < count; j++)
 				{
 					// update animation to material
-					CSkinnedInstanceData* skinnedIntance = GET_ENTITY_DATA(entity, CSkinnedInstanceData);
+					CSkinnedInstanceData* skinnedIntance = GET_ENTITY_DATA(entities[j], CSkinnedInstanceData);
 
 					// clone the material for instance
-					/*
-					CMaterial* m = NULL;
-
-					if (i >= skinnedIntance->Materials.size())
+					if (materialId >= skinnedIntance->Materials.size())
 					{
 						m = mesh->Materials[i]->clone();
 
@@ -163,13 +161,18 @@ namespace Skylicht
 					}
 					else
 					{
-						m = skinnedIntance->Materials[i];
+						m = skinnedIntance->Materials[materialId];
 					}
-					group->Materials.push(m);
-					*/
 
-					for (u32 j = 0; j < count; j++)
-						group->Materials.push(mesh->Materials[i]);
+					// set animation to shader params
+					CShaderParams& params = m->getShaderParams();
+					SVec4& p = params.getParam(0);
+					p.X = (float)skinnedIntance->Frame;
+					p.Y = (float)skinnedIntance->ClipId;
+
+					group->Materials.push(m);
+
+					materialId++;
 				}
 
 				// batching transform & material data to buffer
