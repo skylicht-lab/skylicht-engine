@@ -10,7 +10,7 @@ layout(location = 8) in vec4 inBlendWeight;
 
 layout(location = 9) in vec4 uBoneLocation;
 layout(location = 10) in vec4 uColor;
-layout(location = 11) in vec2 uSpecGloss;
+layout(location = 11) in vec4 uSpecGloss;
 
 layout(location = 12) in mat4 uWorldMatrix;
 

@@ -6,7 +6,7 @@ layout(location = 3) in vec2 inTexCoord0;
 
 layout(location = 4) in vec4 uUVScale;
 layout(location = 5) in vec4 uColor;
-layout(location = 6) in vec2 uSpecGloss;
+layout(location = 6) in vec4 uSpecGloss;
 
 layout(location = 7) in mat4 uWorldMatrix;
 
@@ -40,7 +40,7 @@ void main(void)
 {
 #ifdef INSTANCING
 	vColor = uColor;
-	vSpecGloss = uSpecGloss;
+	vSpecGloss = uSpecGloss.xy;
 
 	mat4 uMvpMatrix = uVPMatrix * uWorldMatrix;
 #endif
