@@ -51,7 +51,7 @@ namespace Skylicht
 			}
 
 			// add color & uv scale
-			m_vtxDescriptor->addAttribute("uUVScale", 4, video::EVAS_TEXCOORD1, video::EVAT_FLOAT, 1);
+			m_vtxDescriptor->addAttribute("uBoneLocation", 4, video::EVAS_TEXCOORD1, video::EVAT_FLOAT, 1);
 			m_vtxDescriptor->addAttribute("uColor", 4, video::EVAS_TEXCOORD2, video::EVAT_FLOAT, 1);
 			m_vtxDescriptor->addAttribute("uSpecGloss", 4, video::EVAS_TEXCOORD3, video::EVAT_FLOAT, 1);
 
@@ -137,7 +137,8 @@ namespace Skylicht
 				SVtxSGInstancing& vtx = instanceBuffer->getVertex(i);
 				CShaderParams& params = material->getShaderParams();
 
-				// convert material data from BuiltIn/Shader/SpecularGlossiness/Deferred/ColorInstancing.xml
+				// convert material data from BuiltIn/Shader/SpecularGlossiness/Forward/SGSkinInstaning.xml
+				// uvScale is the uBoneLocation, that because we use the same vertex with another shader
 				vtx.UVScale = params.getParam(0);
 				vtx.Color = params.getParam(1);
 				vtx.SpecGloss = params.getParam(2);

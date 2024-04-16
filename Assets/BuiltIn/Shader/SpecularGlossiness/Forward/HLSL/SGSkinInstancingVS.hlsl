@@ -12,7 +12,7 @@ struct VS_INPUT
 	float2 data : DATA;
 	float4 blendIndex : BLENDINDICES;
 	float4 blendWeight : BLENDWEIGHT;
-	float4 uvScale: TEXCOORD1;
+	float4 uBoneLocation: TEXCOORD1;
 	float4 uColor: TEXCOORD2;
 	float2 uSpecGloss: TEXCOORD3;
 	float4x4 worldMatrix: TEXCOORD4;
@@ -35,7 +35,7 @@ cbuffer cbPerObject
 	float4x4 uVpMatrix;
 	float4 uCameraPosition;
 	float4 uLightDirection;
-	float4 uUVScale;
+	float4 uAnimation;
 	float2 uTransformTextureSize;
 };
 float4x4 getTransformFromTexture(float2 p)
@@ -66,7 +66,7 @@ VS_OUTPUT main(VS_INPUT input)
 	float4 skinPosition;
 	float4 skinNormal;
 	float4 skinTangent;
-	float2 boneLocation = float2(0.0, 0.0);
+	float2 boneLocation = input.uBoneLocation.xy;
 	boneLocation.y = input.blendIndex[0];
 	skinMatrix = input.blendWeight[0] * getTransformFromTexture(boneLocation);
 	boneLocation.y = input.blendIndex[1];
@@ -78,7 +78,7 @@ VS_OUTPUT main(VS_INPUT input)
 	skinPosition = mul(input.pos, skinMatrix);
 	skinNormal = mul(float4(input.norm, 0.0), skinMatrix);
 	skinTangent = mul(float4(input.tangent, 0.0), skinMatrix);
-	output.tex0 = input.tex0 * input.uvScale.xy + input.uvScale.zw;
+	output.tex0 = input.tex0;
 	output.tangentw = input.data.x;
 	float4 worldPos = mul(skinPosition, uWorldMatrix);
 	float4 worldViewDir = normalize(uCameraPosition - worldPos);
