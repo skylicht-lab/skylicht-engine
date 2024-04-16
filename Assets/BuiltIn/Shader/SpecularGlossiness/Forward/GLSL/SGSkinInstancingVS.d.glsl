@@ -8,7 +8,7 @@ layout(location = 6) in vec2 inData;
 layout(location = 7) in vec4 inBlendIndex;
 layout(location = 8) in vec4 inBlendWeight;
 
-layout(location = 9) in vec4 uvScale;
+layout(location = 9) in vec4 uBoneLocation;
 layout(location = 10) in vec4 uColor;
 layout(location = 11) in vec2 uSpecGloss;
 
@@ -19,7 +19,7 @@ uniform sampler2D uTransformTexture;
 uniform mat4 uVpMatrix;
 uniform vec4 uCameraPosition;
 uniform vec4 uLightDirection;
-uniform vec4 uUVScale;
+uniform vec4 uAnimation;
 uniform vec2 uTransformTextureSize;
 
 out vec2 vTexCoord0;
@@ -41,7 +41,7 @@ void main(void)
 	vec3 skinNormal = vec3(0.0);
 	vec3 skinTangent = vec3(0.0);
 
-	vec2 boneLocation = vec2(0.0);
+	vec2 boneLocation = uBoneLocation.xy;
 
 	boneLocation.y = inBlendIndex[0];
 	skinMatrix = inBlendWeight[0] * getTransformFromTexture(boneLocation);
@@ -59,7 +59,7 @@ void main(void)
 	skinNormal = (skinMatrix * vec4(inNormal, 0.0)).xyz;
 	skinTangent = (skinMatrix * vec4(inTangent, 0.0)).xyz;
 
-	vTexCoord0 = inTexCoord0 * uvScale.xy + uvScale.zw;
+	vTexCoord0 = inTexCoord0;
 	vTangentW = inData.x;
 
 	vec4 worldPos = uWorldMatrix * skinPosition;
