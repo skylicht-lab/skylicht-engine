@@ -232,7 +232,7 @@ namespace Skylicht
 				for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
 					irrMat.setTexture(i, textures[i]);
 
-				rp->drawInstancingMeshBuffer(mesh, i, materialType, entityManager, false);
+				rp->drawInstancingMeshBuffer(mesh, i, materialType, entityManager, -1, false);
 			}
 		}
 	}

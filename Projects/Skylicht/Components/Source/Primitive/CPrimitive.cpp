@@ -190,11 +190,14 @@ namespace Skylicht
 		primitiveData->Material = m_useCustomMaterial && m_customMaterial ? m_customMaterial : m_material;
 		primitiveData->Instancing = m_instancing;
 		primitiveData->NormalMap = m_useNormalMap;
+		primitiveData->RootEntity = m_gameObject->getEntity()->getIndex();
+
+		// Lighting
+		entity->addData<CIndirectLightingData>();
 
 		// Culling
 		entity->addData<CWorldInverseTransformData>();
 		entity->addData<CCullingData>();
-		entity->addData<CIndirectLightingData>();
 
 		CCullingBBoxData* cullingBBox = entity->addData<CCullingBBoxData>();
 

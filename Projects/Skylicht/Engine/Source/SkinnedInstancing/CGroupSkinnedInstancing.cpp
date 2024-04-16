@@ -23,22 +23,40 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CTransformTextureData.h"
+#include "CGroupSkinnedInstancing.h"
+#include "CSkinnedInstanceData.h"
 
 namespace Skylicht
 {
-	ACTIVATOR_REGISTER(CTransformTextureData);
+	CGroupSkinnedInstancing::CGroupSkinnedInstancing(CEntityGroup* parent) :
+		CEntityGroup(NULL, 0)
+	{
+		m_parentGroup = parent;
+		m_dataTypes.push_back(DATA_TYPE_INDEX(CSkinnedInstanceData));
+	}
 
-	IMPLEMENT_DATA_TYPE_INDEX(CTransformTextureData);
-
-	CTransformTextureData::CTransformTextureData() :
-		TransformTexture(NULL)
+	CGroupSkinnedInstancing::~CGroupSkinnedInstancing()
 	{
 
 	}
 
-	CTransformTextureData::~CTransformTextureData()
+	void CGroupSkinnedInstancing::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
+		m_entities.reset();
 
+		for (int i = 0; i < numEntity; i++)
+		{
+			CEntity* entity = entities[i];
+
+			CSkinnedInstanceData* data = GET_ENTITY_DATA(entity, CSkinnedInstanceData);
+
+			if (data == NULL)
+				continue;
+
+			m_entities.push(entity);
+		}
+
+		m_needQuery = false;
+		m_needValidate = true;
 	}
 }

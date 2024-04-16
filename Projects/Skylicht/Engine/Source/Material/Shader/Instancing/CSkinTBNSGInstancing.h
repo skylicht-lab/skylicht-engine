@@ -1,4 +1,6 @@
 /*
+/*
+/*
 !@
 MIT License
 
@@ -24,63 +26,37 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Camera/CCamera.h"
+#include "IShaderInstancing.h"
+#include "CStandardSGInstancing.h"
 
 namespace Skylicht
 {
-	class CMesh;
-	class CMaterial;
-	class CShader;
-	class CEntityManager;
+	struct SVtxSkinFWSGInstancing
+	{
+		SVec4 BoneLocation;
+		SVec4 Color;
+		SVec4 SpecGloss;
 
-	class SKYLICHT_API IRenderPipeline
+		bool operator==(const SVtxSkinFWSGInstancing& other) const
+		{
+			return false;
+		}
+	};
+
+	class SKYLICHT_API CSkinTBNSGInstancing : public IShaderInstancing
 	{
 	public:
-		enum ERenderPipelineType
-		{
-			Forwarder,
-			Deferred,
-			ShadowMap,
-			Mix,
-		};
+		CSkinTBNSGInstancing();
 
-	protected:
-		ERenderPipelineType m_type;
+		virtual ~CSkinTBNSGInstancing();
 
-	public:
-		IRenderPipeline() :
-			m_type(Forwarder)
-		{
-		}
+		virtual IVertexBuffer* createInstancingMeshBuffer();
 
-		virtual ~IRenderPipeline()
-		{
+		virtual IMeshBuffer* createMeshBuffer(video::E_INDEX_TYPE type);
 
-		}
-
-		virtual ERenderPipelineType getType()
-		{
-			return m_type;
-		}
-
-		virtual bool canRenderMaterial(CMaterial* m) = 0;
-
-		virtual bool canRenderShader(CShader* s) = 0;
-
-		virtual void initRender(int w, int h) = 0;
-
-		virtual void resize(int w, int h) = 0;
-
-		virtual void render(ITexture* target, CCamera* camera, CEntityManager* entity, const core::recti& viewport) = 0;
-
-		virtual void setCamera(CCamera* camera) = 0;
-
-		virtual void setNextPipeLine(IRenderPipeline* next) = 0;
-
-		virtual void onNext(ITexture* target, CCamera* camera, CEntityManager* entity, const core::recti& viewport) = 0;
-
-		virtual void drawMeshBuffer(CMesh* mesh, int bufferID, CEntityManager* entityMgr, int entityID, bool skinnedMesh) = 0;
-
-		virtual void drawInstancingMeshBuffer(CMesh* mesh, int bufferID, int materialRenderID, CEntityManager* entityMgr, int entityID, bool skinnedMesh) = 0;
+		virtual void batchIntancing(IVertexBuffer* vtxBuffer, IVertexBuffer* tBuffer, IVertexBuffer* lBuffer,
+			CMaterial** materials,
+			CEntity** entities,
+			int count);
 	};
 }

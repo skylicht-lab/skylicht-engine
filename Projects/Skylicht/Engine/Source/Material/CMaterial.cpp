@@ -75,37 +75,8 @@ namespace Skylicht
 	CMaterial* CMaterial::clone()
 	{
 		CMaterial* mat = new CMaterial(m_materialName.c_str(), m_shaderPath.c_str());
-		mat->deleteAllParams();
 
-		for (SUniformValue*& u : m_uniformParams)
-		{
-			SUniformValue* v = u->clone();
-			mat->m_uniformParams.push_back(v);
-		}
-
-		for (SUniformTexture*& u : m_uniformTextures)
-		{
-			SUniformTexture* t = u->clone();
-			mat->m_uniformTextures.push_back(t);
-		}
-
-		for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
-		{
-			mat->m_resourceTexture[i] = m_resourceTexture[i];
-
-			if (mat->m_resourceTexture[i] != NULL)
-				mat->m_resourceTexture[i]->grab();
-
-			mat->m_textures[i] = m_textures[i];
-		}
-
-		mat->m_zBuffer = m_zBuffer;
-		mat->m_zWriteEnable = m_zWriteEnable;
-		mat->m_backfaceCulling = m_backfaceCulling;
-		mat->m_frontfaceCulling = m_frontfaceCulling;
-		mat->m_doubleSided = m_doubleSided;
-
-		mat->m_materialPath = m_materialPath;
+		copyTo(mat);
 
 		return mat;
 	}
@@ -114,6 +85,14 @@ namespace Skylicht
 	{
 		mat->deleteAllParams();
 
+		mat->m_shader = m_shader;
+		mat->m_materialName = m_materialName;
+		mat->m_shaderPath = m_shaderPath;
+		mat->m_materialPath = m_materialPath;
+
+		for (int i = 0; i < MAX_SHADERPARAMS; i++)
+			mat->m_shaderParams.setValue(i, m_shaderParams.getParam(i));
+
 		for (SUniformValue*& u : m_uniformParams)
 		{
 			SUniformValue* v = u->clone();
@@ -142,7 +121,11 @@ namespace Skylicht
 		mat->m_frontfaceCulling = m_frontfaceCulling;
 		mat->m_doubleSided = m_doubleSided;
 
-		mat->m_materialPath = m_materialPath;
+		mat->m_deferred = m_deferred;
+
+		mat->m_castShadow = m_castShadow;
+		mat->m_manualInitMaterial = m_manualInitMaterial;
+		mat->m_shadowMapTextureSlot = m_shadowMapTextureSlot;
 	}
 
 	void CMaterial::deleteAllParams()
@@ -1181,14 +1164,17 @@ namespace Skylicht
 		}
 		else
 		{
-			if (ui->ControlType == CShader::UIColor)
+			if (ui->UniformInfo)
 			{
-				// add color uniform
-				newUniform(ui->Name.c_str(), ui->UniformInfo->FloatSize);
-			}
+				if (ui->ControlType == CShader::UIColor)
+				{
+					// add color uniform
+					newUniform(ui->Name.c_str(), ui->UniformInfo->FloatSize);
+				}
 
-			// apply default shader value
-			setUniform4(ui->Name.c_str(), ui->UniformInfo->Value);
+				// apply default shader value
+				setUniform4(ui->Name.c_str(), ui->UniformInfo->Value);
+			}
 		}
 	}
 

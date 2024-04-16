@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2023 Skylicht Technology CO., LTD
+Copyright (c) 2024 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,48 +24,33 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "RenderPipeline/CBaseRP.h"
-#include "Shadow/CBoundShadowMaps.h"
+#include "Entity/IEntitySystem.h"
+#include "CSkinnedInstanceData.h"
+#include "CGroupSkinnedInstancing.h"
 
 namespace Skylicht
 {
-	class CDirectionalLightBakeRP : public CBaseRP
+
+	class SKYLICHT_API CSkinnedInstanceAnimationSystem : public IEntitySystem
 	{
 	protected:
-		IMeshBuffer* m_renderMesh;
+		CGroupSkinnedInstancing* m_group;
 
-		IMeshBuffer** m_renderSubmesh;
-		ITexture** m_renderTarget;
-		int m_numTarget;
-		int m_currentTarget;
+		CFastArray<CSkinnedInstanceData*> m_skinnedEntities;
 
-		int m_bakeDirectionMaterialID;
 	public:
-		CDirectionalLightBakeRP();
 
-		virtual ~CDirectionalLightBakeRP();
+		CSkinnedInstanceAnimationSystem();
 
-		inline void setRenderMesh(IMeshBuffer* mb, IMeshBuffer** submesh, ITexture** targets, int numTarget)
-		{
-			m_renderMesh = mb;
-			m_renderSubmesh = submesh;
-			m_renderTarget = targets;
-			m_numTarget = numTarget;
-		}
+		virtual ~CSkinnedInstanceAnimationSystem();
 
-		virtual void initRender(int w, int h);
+		virtual void beginQuery(CEntityManager* entityManager);
 
-		virtual void resize(int w, int h);
+		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int count);
 
-		virtual void render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport);
+		virtual void init(CEntityManager* entityManager);
 
-		virtual void drawMeshBuffer(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID, bool skinnedMesh);
-
-		virtual void drawInstancingMeshBuffer(CMesh* mesh, int bufferID, int materialRenderID, CEntityManager* entityMgr, int entityID, bool skinnedMesh);
-
-		virtual bool canRenderMaterial(CMaterial* material);
-
-		virtual bool canRenderShader(CShader* shader);
-
+		virtual void update(CEntityManager* entityManager);
 	};
+
 }

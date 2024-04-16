@@ -23,16 +23,16 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CStandardSGInstancing.h"
+#include "CSkinTBNSGInstancing.h"
 #include "Material/CMaterial.h"
 
 namespace Skylicht
 {
-	CStandardSGInstancing::CStandardSGInstancing()
+	CSkinTBNSGInstancing::CSkinTBNSGInstancing()
 	{
-		m_baseVtxDescriptor = getVideoDriver()->getVertexDescriptor(EVT_STANDARD);
+		m_baseVtxDescriptor = getVideoDriver()->getVertexDescriptor(EVT_SKIN_TANGENTS);
 
-		core::stringc name = "standard_sg_instance";
+		core::stringc name = "skintbn_sg_instance";
 		m_vtxDescriptor = getVideoDriver()->getVertexDescriptor(name);
 
 		if (m_vtxDescriptor == NULL)
@@ -51,7 +51,7 @@ namespace Skylicht
 			}
 
 			// add color & uv scale
-			m_vtxDescriptor->addAttribute("uUVScale", 4, video::EVAS_TEXCOORD1, video::EVAT_FLOAT, 1);
+			m_vtxDescriptor->addAttribute("uBoneLocation", 4, video::EVAS_TEXCOORD1, video::EVAT_FLOAT, 1);
 			m_vtxDescriptor->addAttribute("uColor", 4, video::EVAS_TEXCOORD2, video::EVAT_FLOAT, 1);
 			m_vtxDescriptor->addAttribute("uSpecGloss", 4, video::EVAS_TEXCOORD3, video::EVAT_FLOAT, 1);
 
@@ -65,7 +65,7 @@ namespace Skylicht
 			m_vtxDescriptor->setInstanceDataStepRate(video::EIDSR_PER_INSTANCE, 2);
 		}
 
-		name = "standard_indirect_instance";
+		name = "skintbn_indirect_instance";
 		m_vtxDescriptorForRenderLighting = getVideoDriver()->getVertexDescriptor(name);
 		if (m_vtxDescriptorForRenderLighting == NULL)
 		{
@@ -99,22 +99,22 @@ namespace Skylicht
 		}
 	}
 
-	CStandardSGInstancing::~CStandardSGInstancing()
+	CSkinTBNSGInstancing::~CSkinTBNSGInstancing()
 	{
 
 	}
 
-	IVertexBuffer* CStandardSGInstancing::createInstancingMeshBuffer()
+	IVertexBuffer* CSkinTBNSGInstancing::createInstancingMeshBuffer()
 	{
-		return new CVertexBuffer<SVtxSGInstancing>();
+		return new CVertexBuffer<SVtxSkinFWSGInstancing>();
 	}
 
-	IMeshBuffer* CStandardSGInstancing::createMeshBuffer(video::E_INDEX_TYPE type)
+	IMeshBuffer* CSkinTBNSGInstancing::createMeshBuffer(video::E_INDEX_TYPE type)
 	{
-		return new CMeshBuffer<S3DVertex>(m_baseVtxDescriptor, type);
+		return new CMeshBuffer<S3DVertexSkinTangents>(m_baseVtxDescriptor, type);
 	}
 
-	void CStandardSGInstancing::batchIntancing(
+	void CSkinTBNSGInstancing::batchIntancing(
 		IVertexBuffer* vtxBuffer,
 		IVertexBuffer* tBuffer,
 		IVertexBuffer* lBuffer,
@@ -122,23 +122,25 @@ namespace Skylicht
 		CEntity** entities,
 		int count)
 	{
-		CVertexBuffer<SVtxSGInstancing>* instanceBuffer = dynamic_cast<CVertexBuffer<SVtxSGInstancing>*>(vtxBuffer);
+		CVertexBuffer<SVtxSkinFWSGInstancing>* instanceBuffer = dynamic_cast<CVertexBuffer<SVtxSkinFWSGInstancing>*>(vtxBuffer);
 		if (instanceBuffer == NULL)
 			return;
 
 		instanceBuffer->set_used(count);
 
+		float invColor = 1.111f / 255.0f;
 		CMaterial* material = NULL;
+
 		for (int i = 0; i < count; i++)
 		{
 			material = materials[i];
 			if (material)
 			{
-				SVtxSGInstancing& vtx = instanceBuffer->getVertex(i);
+				SVtxSkinFWSGInstancing& vtx = instanceBuffer->getVertex(i);
 				CShaderParams& params = material->getShaderParams();
 
-				// convert material data from BuiltIn/Shader/SpecularGlossiness/Deferred/ColorInstancing.xml
-				vtx.UVScale = params.getParam(0);
+				// convert material data from BuiltIn/Shader/SpecularGlossiness/Forward/SGSkinInstaning.xml
+				vtx.BoneLocation = params.getParam(0);
 				vtx.Color = params.getParam(1);
 				vtx.SpecGloss = params.getParam(2);
 			}

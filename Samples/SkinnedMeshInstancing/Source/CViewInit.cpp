@@ -188,8 +188,20 @@ void CViewInit::initScene()
 
 		crowdSkinnedMesh->initMaterial(material);
 
-		// indirect lighting
-		character->addComponent<CIndirectLighting>();
+		// spawn instancing
+		for (int i = -10; i < 10; i++)
+		{
+			for (int j = -5; j < 5; j++)
+			{
+				CEntity* entity = crowdSkinnedMesh->spawn();
+
+				float time = os::Randomizer::frand() * clip1->Duration;
+				crowdSkinnedMesh->setAnimation(entity, 0, clip1, time, 60);
+
+				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+				transform->Relative.setTranslation(core::vector3df(i * 2.0f, 0.0f, j * 2.0f));
+			}
+		}
 
 		// free data
 		delete[]animationData;
@@ -266,7 +278,7 @@ void CViewInit::onUpdate()
 				// retry download
 				delete m_getFile;
 				m_getFile = NULL;
-				}
+			}
 		}
 #else
 
