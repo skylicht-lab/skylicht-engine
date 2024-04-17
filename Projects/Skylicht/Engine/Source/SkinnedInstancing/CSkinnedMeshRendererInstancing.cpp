@@ -218,6 +218,14 @@ namespace Skylicht
 
 			CShaderTransformTexture::setTexture(group->TransformTexture);
 
+			CEntity* rootEntity = allEntities[group->RootEntityIndex];
+			CIndirectLightingData* indirectLighting = GET_ENTITY_DATA(rootEntity, CIndirectLightingData);
+			if (indirectLighting != NULL && indirectLighting->SH != NULL)
+			{
+				// apply sh
+				CShaderSH::setSH9(indirectLighting->SH);
+			}
+
 			u32 numMeshBuffer = data->RenderMeshBuffers.size();
 			for (u32 i = 0; i < numMeshBuffer; i++)
 			{

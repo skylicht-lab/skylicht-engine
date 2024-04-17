@@ -31,13 +31,13 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	struct SVtxSkinFWSGInstancing
+	struct SVtxSkinSGInstancing
 	{
 		SVec4 BoneLocation;
 		SVec4 Color;
 		SVec4 SpecGloss;
 
-		bool operator==(const SVtxSkinFWSGInstancing& other) const
+		bool operator==(const SVtxSkinSGInstancing& other) const
 		{
 			return false;
 		}

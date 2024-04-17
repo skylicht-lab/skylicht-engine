@@ -106,7 +106,7 @@ namespace Skylicht
 
 	IVertexBuffer* CSkinTBNSGInstancing::createInstancingMeshBuffer()
 	{
-		return new CVertexBuffer<SVtxSkinFWSGInstancing>();
+		return new CVertexBuffer<SVtxSkinSGInstancing>();
 	}
 
 	IMeshBuffer* CSkinTBNSGInstancing::createMeshBuffer(video::E_INDEX_TYPE type)
@@ -122,7 +122,7 @@ namespace Skylicht
 		CEntity** entities,
 		int count)
 	{
-		CVertexBuffer<SVtxSkinFWSGInstancing>* instanceBuffer = dynamic_cast<CVertexBuffer<SVtxSkinFWSGInstancing>*>(vtxBuffer);
+		CVertexBuffer<SVtxSkinSGInstancing>* instanceBuffer = dynamic_cast<CVertexBuffer<SVtxSkinSGInstancing>*>(vtxBuffer);
 		if (instanceBuffer == NULL)
 			return;
 
@@ -136,7 +136,7 @@ namespace Skylicht
 			material = materials[i];
 			if (material)
 			{
-				SVtxSkinFWSGInstancing& vtx = instanceBuffer->getVertex(i);
+				SVtxSkinSGInstancing& vtx = instanceBuffer->getVertex(i);
 				CShaderParams& params = material->getShaderParams();
 
 				// convert material data from BuiltIn/Shader/SpecularGlossiness/Forward/SGSkinInstaning.xml
