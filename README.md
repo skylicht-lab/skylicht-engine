@@ -232,11 +232,13 @@ Skylicht Engine can be compiled into a standalone library to simplify integratio
 C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 17 2022" -A x64 -DINSTALL_LIBS=ON -DBUILD_SHARED_LIBS=ON
 C:\skylicht-engine>cmake --build ./PrjVisualStudio --target install --config Debug
 ```
+*Note: Use the "-DBUILD_SHARED_LIBS=ON" with cmake command*
+
 <img src="Documents/Media/dll-library.jpg"/>
 
 ## Static library
 ```Shell
-C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 17 2022" -A x64 -DINSTALL_LIBS=OFF
+C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 17 2022" -A x64 -DINSTALL_LIBS=ON
 C:\skylicht-engine>cmake --build ./PrjVisualStudio --target install --config Debug
 ```
 ## How to integrate
@@ -260,7 +262,10 @@ CZone* zone = scene->createZone();
 CGameObject *camObj = zone->createEmptyObject();
 CCamera* camera = camObj->addComponent<CCamera>();
 camera->setPosition(core::vector3df(0.0f, 1.5f, 4.0f));
-camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
+camera->lookAt(
+   core::vector3df(0.0f, 0.0f, 0.0f),  // look at target position
+   core::vector3df(0.0f, 1.0f, 0.0f)   // head up vector
+);
 
 // load model
 CMeshManager* meshManager = CMeshManager::getInstance();
@@ -278,6 +283,7 @@ ArrayMaterial& catMaterials = materialMgr->loadMaterial("SampleModels/BlendShape
 // create 3d object
 CGameObject* cat = zone->createEmptyObject();
 cat->setName("Cat");
+cat->getTransformEuler()->setPosition(core::vector3df(0.0f, 1.0f, 0.0f));
 
 // add render mesh component & init material
 CRenderMesh* meshRenderer = cat->addComponent<CRenderMesh>();
