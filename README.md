@@ -236,7 +236,7 @@ C:\skylicht-engine>cmake --build ./PrjVisualStudio --target install --config Deb
 
 ## Static library
 ```Shell
-C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 17 2022" -A x64 -DINSTALL_LIBS=ON
+C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 17 2022" -A x64 -DINSTALL_LIBS=OFF
 C:\skylicht-engine>cmake --build ./PrjVisualStudio --target install --config Debug
 ```
 ## How to integrate
@@ -251,9 +251,16 @@ See the project example: https://github.com/skylicht-lab/hello-skylicht
 # Code example
 
 ```C++
+// INIT SCENE FUNCTION
 // init scene/zone
-CScene* scene = CContext::getInstance()->getScene();
+CScene* scene = new CScene();
 CZone* zone = scene->createZone();
+
+// camera
+CGameObject *camObj = zone->createEmptyObject();
+CCamera* camera = camObj->addComponent<CCamera>();
+camera->setPosition(core::vector3df(0.0f, 1.5f, 4.0f));
+camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
 
 // load model
 CMeshManager* meshManager = CMeshManager::getInstance();
@@ -276,6 +283,22 @@ cat->setName("Cat");
 CRenderMesh* meshRenderer = cat->addComponent<CRenderMesh>();
 meshRenderer->initFromPrefab(meshPrefab);
 meshRenderer->initMaterial(catMaterials);
+
+// render scene to screen
+CForwardRP* renderPipeline = new CForwardRP();
+
+CBaseApp* app = getApplication();
+u32 w = app->getWidth();
+u32 h = app->getHeight();
+renderPipeline->initRender(w, h);
+
+// RENDER TO SCREEN FUNCTION
+renderPipeline->render(
+    NULL, // render target is screen
+    camera, // the camera
+    scene->getEntityManager(), // all entities of scene
+    core::recti() // the viewport is fullscreen
+);
 ```
 
 # Sample Projects
