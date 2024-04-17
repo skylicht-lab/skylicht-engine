@@ -109,6 +109,7 @@ namespace Skylicht
 		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWCubeStandardInstancing.xml");
 		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWTBNInstancing.xml");
 		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWCubeTBNInstancing.xml");
+		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWSkinInstancing.xml");
 
 		loadShader("BuiltIn/Shader/Basic/TextureSRGB.xml");
 		loadShader("BuiltIn/Shader/Basic/TextureLinearRGB.xml");

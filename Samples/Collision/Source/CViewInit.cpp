@@ -109,7 +109,6 @@ void CViewInit::initScene()
 	CEntityPrefab* prefab = NULL;
 
 	std::vector<std::string> textureFolders;
-	textureFolders.push_back("Sponza/Textures");
 
 	// Load model from TankScene.smesh
 	// How to export "TankScene.smesh" see SampleLightmappingVertex
