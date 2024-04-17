@@ -232,7 +232,7 @@ Skylicht Engine can be compiled into a standalone library to simplify integratio
 C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 17 2022" -A x64 -DINSTALL_LIBS=ON -DBUILD_SHARED_LIBS=ON
 C:\skylicht-engine>cmake --build ./PrjVisualStudio --target install --config Debug
 ```
-*Note: Use the "-DBUILD_SHARED_LIBS=ON" with cmake command*
+*Note: Use the parameters "-DINSTALL_LIBS=ON -DBUILD_SHARED_LIBS=ON" with cmake command*
 
 <img src="Documents/Media/dll-library.jpg"/>
 
