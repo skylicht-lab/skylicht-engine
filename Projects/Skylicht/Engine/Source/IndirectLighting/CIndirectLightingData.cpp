@@ -53,4 +53,13 @@ namespace Skylicht
 				delete AutoSH;
 		}
 	}
+
+	void CIndirectLightingData::initSH()
+	{
+		Type = CIndirectLightingData::SH9;
+		AutoSH = new bool();
+		SH = new core::vector3df[9];
+		ReleaseSH = true;
+		*AutoSH = true;
+	}
 }
