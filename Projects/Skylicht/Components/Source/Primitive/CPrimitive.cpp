@@ -220,12 +220,7 @@ namespace Skylicht
 
 		// Indirect lighting
 		CIndirectLightingData* indirect = GET_ENTITY_DATA(entity, CIndirectLightingData);
-		indirect->Type = CIndirectLightingData::SH9;
-		indirect->AutoSH = new bool();
-		indirect->SH = new core::vector3df[9];
-		indirect->ReleaseSH = true;
-
-		*indirect->AutoSH = true;
+		indirect->initSH();
 		return entity;
 	}
 

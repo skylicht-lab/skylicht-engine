@@ -268,7 +268,8 @@ namespace Skylicht
 				m_renderTransforms.push_back(GET_ENTITY_DATA(spawnEntity, CWorldTransformData));
 
 				// also check add indirect lighting to hold ReflectionTexture for intacing
-				spawnEntity->addData<CIndirectLightingData>();
+				CIndirectLightingData* indirectLighting = spawnEntity->addData<CIndirectLightingData>();
+				indirectLighting->initSH();
 			}
 		}
 	}
@@ -368,11 +369,7 @@ namespace Skylicht
 		CEntity* entity = createEntity();
 
 		CIndirectLightingData* indirect = entity->addData<CIndirectLightingData>();
-		indirect->Type = CIndirectLightingData::SH9;
-		indirect->AutoSH = new bool();
-		indirect->SH = new core::vector3df[9];
-		indirect->ReleaseSH = true;
-		*indirect->AutoSH = true;
+		indirect->initSH();
 
 		entity->addData<CWorldInverseTransformData>();
 		entity->addData<CCullingData>();
