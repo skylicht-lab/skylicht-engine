@@ -46,6 +46,8 @@ namespace Skylicht
 
 		int m_shadowMapSize;
 		int m_numCascade;
+		int m_screenWidth;
+		int m_screenHeight;
 
 		SMaterial m_writeDepthMaterial;
 		core::vector3df m_lightDirection;
@@ -73,6 +75,10 @@ namespace Skylicht
 		CShadowMapRP();
 
 		virtual ~CShadowMapRP();
+
+		void release();
+
+		void setShadowCascade(int numCascade, int shadowMapSize = 2048);
 
 		virtual void initRender(int w, int h);
 

@@ -45,7 +45,9 @@ namespace Skylicht
 		m_shadowMapSize(2048),
 		m_numCascade(3),
 		m_currentCSM(0),
-		m_saveDebug(false)
+		m_saveDebug(false),
+		m_screenWidth(0),
+		m_screenHeight(0)
 	{
 		m_type = ShadowMap;
 		m_lightDirection.set(-1.0f, -1.0f, -1.0f);
@@ -78,15 +80,38 @@ namespace Skylicht
 	{
 		// CEventManager::getInstance()->unRegisterEvent(this);
 
+		release();
+	}
+
+	void CShadowMapRP::release()
+	{
 		if (m_depthTexture != NULL)
 			getVideoDriver()->removeTexture(m_depthTexture);
 
 		if (m_csm != NULL)
 			delete m_csm;
+
+		m_depthTexture = NULL;
+		m_csm = NULL;
+	}
+
+	void CShadowMapRP::setShadowCascade(int numCascade, int shadowMapSize)
+	{
+		m_numCascade = numCascade;
+		m_shadowMapSize = shadowMapSize;
+
+		if (m_screenWidth > 0 && m_screenHeight > 0)
+		{
+			release();
+			initRender(m_screenWidth, m_screenHeight);
+		}
 	}
 
 	void CShadowMapRP::initRender(int w, int h)
 	{
+		m_screenWidth = w;
+		m_screenHeight = h;
+
 		m_csm = new CCascadedShadowMaps();
 		m_csm->init(m_numCascade, m_shadowMapSize, 300.0f, w, h);
 
@@ -96,7 +121,16 @@ namespace Skylicht
 
 	void CShadowMapRP::resize(int w, int h)
 	{
+		m_screenWidth = w;
+		m_screenHeight = h;
 
+		if (m_csm != NULL)
+		{
+			delete m_csm;
+
+			m_csm = new CCascadedShadowMaps();
+			m_csm->init(m_numCascade, m_shadowMapSize, 300.0f, w, h);
+		}
 	}
 
 	bool CShadowMapRP::canRenderMaterial(CMaterial* m)
