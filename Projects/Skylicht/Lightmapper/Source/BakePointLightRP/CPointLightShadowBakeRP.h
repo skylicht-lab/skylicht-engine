@@ -43,7 +43,7 @@ namespace Skylicht
 
 		virtual void initRender(int w, int h);
 
-		virtual void render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport);
+		virtual void render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport, IRenderPipeline* lastRP = NULL);
 
 		inline void setCurrentLight(CLight* light)
 		{
