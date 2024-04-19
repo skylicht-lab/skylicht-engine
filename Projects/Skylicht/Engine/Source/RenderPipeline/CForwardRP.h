@@ -35,12 +35,12 @@ namespace Skylicht
 
 		bool m_useLinearRGB;
 
-		ITexture *m_target;
-		ITexture *m_emission;
+		ITexture* m_target;
+		ITexture* m_emission;
 
 		core::dimension2du m_size;
 
-		IPostProcessor *m_postProcessor;
+		IPostProcessor* m_postProcessor;
 
 		SMaterial m_finalPass;
 
@@ -53,9 +53,9 @@ namespace Skylicht
 
 		virtual void resize(int w, int h);
 
-		virtual void render(ITexture *target, CCamera *camera, CEntityManager *entityManager, const core::recti& viewport);
+		virtual void render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport, IRenderPipeline* lastRP);
 
-		inline void setPostProcessor(IPostProcessor *pp)
+		inline void setPostProcessor(IPostProcessor* pp)
 		{
 			m_postProcessor = pp;
 		}

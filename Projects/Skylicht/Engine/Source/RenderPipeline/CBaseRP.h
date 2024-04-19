@@ -62,7 +62,7 @@ namespace Skylicht
 
 		virtual bool canRenderShader(CShader* s);
 
-		virtual void render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& vp) = 0;
+		virtual void render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& vp, IRenderPipeline* lastRP = NULL) = 0;
 
 		virtual void setCamera(CCamera* camera);
 

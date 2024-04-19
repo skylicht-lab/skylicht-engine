@@ -176,20 +176,29 @@ namespace Skylicht
 
 		if (skinnedMesh)
 		{
-			// skinned instancing
-			m_writeDepthMaterial.MaterialType = m_depthWriteSkinnedInstancing;
+			switch (m_renderShadowState)
+			{
+			case DirectionLight:
+			{
+				// skinned instancing
+				m_writeDepthMaterial.MaterialType = m_depthWriteSkinnedInstancing;
 
-			// animation texture
-			// Shader: Assets/BuiltIn/Shader/ShadowDepthWrite/SDWSkinInstancing.xml
-			int textureIndex = 4;
-			m_writeDepthMaterial.setTexture(textureIndex, CShaderTransformTexture::getTexture());
+				// animation texture
+				// Shader: Assets/BuiltIn/Shader/ShadowDepthWrite/SDWSkinInstancing.xml
+				int textureIndex = 4;
+				m_writeDepthMaterial.setTexture(textureIndex, CShaderTransformTexture::getTexture());
 
-			// disable mipmap
-			m_writeDepthMaterial.TextureLayer[textureIndex].BilinearFilter = false;
-			m_writeDepthMaterial.TextureLayer[textureIndex].TrilinearFilter = false;
-			m_writeDepthMaterial.TextureLayer[textureIndex].AnisotropicFilter = 0;
+				// disable mipmap
+				m_writeDepthMaterial.TextureLayer[textureIndex].BilinearFilter = false;
+				m_writeDepthMaterial.TextureLayer[textureIndex].TrilinearFilter = false;
+				m_writeDepthMaterial.TextureLayer[textureIndex].AnisotropicFilter = 0;
 
-			setMaterial = true;
+				setMaterial = true;
+				break;
+			}
+			default:
+				break;
+			}
 		}
 		else
 		{
@@ -258,7 +267,7 @@ namespace Skylicht
 		return m_csm->getShadowMatrices();
 	}
 
-	void CShadowMapRP::render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport)
+	void CShadowMapRP::render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport, IRenderPipeline* lastRP)
 	{
 		if (camera == NULL)
 			return;

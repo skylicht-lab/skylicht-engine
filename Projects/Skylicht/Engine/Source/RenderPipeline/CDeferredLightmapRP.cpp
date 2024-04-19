@@ -369,7 +369,7 @@ namespace Skylicht
 		}
 	}
 
-	void CDeferredLightmapRP::render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport)
+	void CDeferredLightmapRP::render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport, IRenderPipeline* lastRP)
 	{
 		if (camera == NULL)
 			return;

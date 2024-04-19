@@ -124,7 +124,7 @@ namespace Skylicht
 	void CBaseRP::onNext(ITexture* target, CCamera* camera, CEntityManager* entity, const core::recti& viewport)
 	{
 		if (m_next != NULL)
-			m_next->render(target, camera, entity, viewport);
+			m_next->render(target, camera, entity, viewport, this);
 	}
 
 	void CBaseRP::updateTextureResource(CMesh* mesh, int bufferID, CEntityManager* entity, int entityId, bool skinnedMesh)
