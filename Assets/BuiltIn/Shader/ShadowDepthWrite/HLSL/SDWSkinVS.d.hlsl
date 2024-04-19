@@ -1,5 +1,5 @@
-Texture2D uTransformTexture : register(t0);
-SamplerState uTransformTextureSampler : register(s);
+Texture2D uTransformTexture : register(t4);
+SamplerState uTransformTextureSampler : register(s4);
 
 struct VS_INPUT
 {
