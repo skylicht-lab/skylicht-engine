@@ -128,7 +128,6 @@ namespace Skylicht
 
 		instanceBuffer->set_used(count);
 
-		float invColor = 1.111f / 255.0f;
 		CMaterial* material = NULL;
 
 		for (int i = 0; i < count; i++)

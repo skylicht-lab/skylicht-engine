@@ -58,8 +58,6 @@ namespace Skylicht
 	protected:
 		CFastArray<SBBoxAndMaterial> m_bboxAndMaterials;
 
-		static bool s_useCacheCulling;
-
 		CEntityGroup* m_group;
 
 	public:
@@ -79,14 +77,8 @@ namespace Skylicht
 
 		virtual void postRender(CEntityManager* entityManager);
 
-		static void useCacheCulling(bool b)
-		{
-			s_useCacheCulling = b;
-		}
-		
-		static bool useCacheCulling()
-		{
-			return s_useCacheCulling;
-		}
+		static void useCacheCulling(bool b);
+
+		static bool useCacheCulling();
 	};
 }

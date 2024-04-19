@@ -32,6 +32,8 @@ using namespace irr::scene;
 
 namespace Skylicht
 {
+	struct SMeshInstancingGroup;
+
 	struct SMeshInstancing
 	{
 		core::array<IMeshBuffer*> MeshBuffers;
@@ -47,10 +49,13 @@ namespace Skylicht
 		IShaderInstancing* HandleShader;
 		IMesh* InstancingMesh;
 
+		SMeshInstancingGroup* Group;
+
 		SMeshInstancing()
 		{
 			HandleShader = NULL;
 			InstancingMesh = NULL;
+			Group = NULL;
 		}
 
 		~SMeshInstancing()

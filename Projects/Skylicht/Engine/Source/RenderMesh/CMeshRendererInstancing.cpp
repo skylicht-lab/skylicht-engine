@@ -45,6 +45,7 @@ namespace Skylicht
 		{
 			delete it.second;
 		}
+		m_groups.clear();
 	}
 
 	void CMeshRendererInstancing::beginQuery(CEntityManager* entityManager)
@@ -102,13 +103,15 @@ namespace Skylicht
 		{
 			SMeshInstancing* data = renderData[i]->getMeshInstancing();
 
-			SMeshInstancingGroup* group = m_groups[data];
+			SMeshInstancingGroup* group = data->Group;
 			if (group == NULL)
 			{
 				group = new SMeshInstancingGroup();
 				group->RootEntityIndex = renderData[i]->EntityIndex;
 
 				m_groups[data] = group;
+
+				data->Group = group;
 			}
 
 			CEntity* entity = allEntities[renderData[i]->EntityIndex];
