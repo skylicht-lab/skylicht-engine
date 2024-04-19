@@ -84,6 +84,7 @@ namespace Skylicht
 		numEntity = m_group->getEntityCount();
 
 		CMeshManager* meshManager = CMeshManager::getInstance();
+		IRenderPipeline* rp = entityManager->getRenderPipeline();
 
 		for (int i = 0; i < numEntity; i++)
 		{
@@ -108,6 +109,15 @@ namespace Skylicht
 
 				// skip transform texture, that null
 				if (skinnedIntance->TransformTextures[j] == NULL)
+					continue;
+
+				// skip if the shader is incompatible 
+				CMesh* mesh = meshData->getMesh();
+				if (mesh->Materials[0] == NULL)
+					continue;
+
+				CShader* shader = mesh->Materials[0]->getShader();
+				if (!shader || !rp->canRenderShader(shader))
 					continue;
 
 				SMeshInstancing* data = meshData->getMeshInstancing();

@@ -222,6 +222,8 @@ void CViewInit::initScene()
 	context->setActiveCamera(camera);
 	context->setGUICamera(guiCamera);
 	context->setDirectionalLight(directionalLight);
+
+	context->getShadowMapRenderPipeline()->setShadowCascade(2);
 }
 
 void CViewInit::onDestroy()
