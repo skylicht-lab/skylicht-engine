@@ -33,7 +33,17 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	bool CCullingSystem::s_useCacheCulling = false;
+	bool g_useCacheCulling = false;
+
+	void CCullingSystem::useCacheCulling(bool b)
+	{
+		g_useCacheCulling = b;
+	}
+
+	bool CCullingSystem::useCacheCulling()
+	{
+		return g_useCacheCulling;
+	}
 
 	CCullingSystem::CCullingSystem() :
 		m_group(NULL)
@@ -54,13 +64,13 @@ namespace Skylicht
 			m_group = entityManager->createGroup(type, 1);
 		}
 
-		if (s_useCacheCulling)
+		if (g_useCacheCulling)
 			return;
 	}
 
 	void CCullingSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
-		if (s_useCacheCulling)
+		if (g_useCacheCulling)
 			return;
 
 		entities = m_group->getEntities();
@@ -138,7 +148,7 @@ namespace Skylicht
 			CEntity* entity = bbBoxMat->Entity;
 			CCullingData* culling = bbBoxMat->Culling;
 
-			if (s_useCacheCulling)
+			if (g_useCacheCulling)
 			{
 				// if we have the last test result
 				if (culling->CameraCulled == true)
@@ -179,7 +189,7 @@ namespace Skylicht
 			if (culling->Visible == false)
 				continue;
 
-			if (s_useCacheCulling)
+			if (g_useCacheCulling)
 				continue;
 
 			// transform world bbox

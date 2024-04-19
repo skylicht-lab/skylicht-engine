@@ -47,7 +47,11 @@ namespace Skylicht
 
 	CSkinnedMeshRendererInstancing::~CSkinnedMeshRendererInstancing()
 	{
-
+		for (auto it : m_instancingGroups)
+		{
+			delete it.second;
+		}
+		m_instancingGroups.clear();
 	}
 
 	void CSkinnedMeshRendererInstancing::beginQuery(CEntityManager* entityManager)
@@ -109,13 +113,15 @@ namespace Skylicht
 				SMeshInstancing* data = meshData->getMeshInstancing();
 				if (data)
 				{
-					SMeshInstancingGroup* group = m_instancingGroups[data];
+					SMeshInstancingGroup* group = data->Group;
 					if (group == NULL)
 					{
 						group = new SMeshInstancingGroup();
 						group->TransformTexture = skinnedIntance->TransformTextures[j];
 						group->RenderMesh = meshData;
 						group->RootEntityIndex = meshData->EntityIndex;
+
+						data->Group = group;
 
 						m_instancingGroups[data] = group;
 					}
