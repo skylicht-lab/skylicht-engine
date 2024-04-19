@@ -120,15 +120,7 @@ namespace Skylicht
 		}
 		else
 		{
-			if (lastRP != NULL && lastRP->getType() == IRenderPipeline::Deferred)
-			{
-				// that mean: We use the culling, update from deferred rp
-				entityManager->render();
-			}
-			else
-			{
-				entityManager->cullingAndRender();
-			}
+			entityManager->cullingAndRender();
 		}
 
 		// render emission
