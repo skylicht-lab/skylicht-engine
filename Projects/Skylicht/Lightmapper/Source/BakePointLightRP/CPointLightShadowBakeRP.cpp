@@ -53,7 +53,7 @@ namespace Skylicht
 
 	}
 
-	void CPointLightShadowBakeRP::render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport)
+	void CPointLightShadowBakeRP::render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport, IRenderPipeline* lastRP)
 	{
 		if (camera == NULL || m_currentLight == NULL)
 			return;

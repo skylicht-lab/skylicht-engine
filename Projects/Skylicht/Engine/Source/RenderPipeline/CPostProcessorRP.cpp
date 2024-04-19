@@ -180,7 +180,7 @@ namespace Skylicht
 		initMainRTT(w, h);
 	}
 
-	void CPostProcessorRP::render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport)
+	void CPostProcessorRP::render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport, IRenderPipeline* lastRP)
 	{
 		if (camera == NULL)
 			return;

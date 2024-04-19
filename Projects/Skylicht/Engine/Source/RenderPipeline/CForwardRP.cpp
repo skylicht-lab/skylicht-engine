@@ -77,7 +77,7 @@ namespace Skylicht
 		initRTT(w, h);
 	}
 
-	void CForwardRP::render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport)
+	void CForwardRP::render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport, IRenderPipeline* lastRP)
 	{
 		if (camera == NULL)
 			return;
@@ -120,7 +120,15 @@ namespace Skylicht
 		}
 		else
 		{
-			entityManager->cullingAndRender();
+			if (lastRP != NULL && lastRP->getType() == IRenderPipeline::Deferred)
+			{
+				// that mean: We use the culling, update from deferred rp
+				entityManager->render();
+			}
+			else
+			{
+				entityManager->cullingAndRender();
+			}
 		}
 
 		// render emission
