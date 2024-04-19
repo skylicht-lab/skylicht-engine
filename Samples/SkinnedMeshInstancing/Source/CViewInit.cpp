@@ -5,7 +5,7 @@
 #include "ViewManager/CViewManager.h"
 #include "Context/CContext.h"
 
-#include "GridPlane/CGridPlane.h"
+#include "Primitive/CPlane.h"
 #include "SkyDome/CSkyDome.h"
 
 CViewInit::CViewInit() :
@@ -100,7 +100,10 @@ void CViewInit::initScene()
 
 	// 3D grid
 	CGameObject* grid = zone->createEmptyObject();
-	grid->addComponent<CGridPlane>();
+	CPlane* plane = grid->addComponent<CPlane>();
+	plane->getMaterial()->changeShader("BuiltIn/Shader/SpecularGlossiness/Deferred/MetersGrid.xml");
+	grid->getTransformEuler()->setScale(core::vector3df(50.0f, 1.0f, 50.0f));
+
 
 	// lighting
 	CGameObject* lightObj = zone->createEmptyObject();
@@ -189,7 +192,7 @@ void CViewInit::initScene()
 		crowdSkinnedMesh->initMaterial(material);
 
 		// spawn instancing
-		for (int i = -10; i < 10; i++)
+		for (int i = -5; i < 5; i++)
 		{
 			for (int j = -5; j < 5; j++)
 			{

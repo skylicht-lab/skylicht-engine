@@ -3,7 +3,7 @@
 		<vs>
 			<uniform name="uVPMatrix" type="VIEW_PROJECTION" value="0" float="16" matrix="true"/>
 			<uniform name="uAnimation" type="MATERIAL_PARAM" valueIndex="0" value="1.0, 1.0, 0.0, 0.0" float="4"/>
-			<uniform name="uTransformTexture" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
+			<uniform name="uTransformTexture" type="DEFAULT_VALUE" value="4" float="1" directX="false"/>
 			<uniform name="uTransformTextureSize" type="TEXTURE_WIDTH_HEIGHT" valueIndex="4" value="1.0, 1.0" float="2"/>
 		</vs>
 	</uniforms>

@@ -28,6 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Material/Shader/ShaderCallback/CShaderMaterial.h"
 #include "Material/Shader/ShaderCallback/CShaderShadow.h"
 #include "Material/Shader/ShaderCallback/CShaderLighting.h"
+#include "Material/Shader/ShaderCallback/CShaderTransformTexture.h"
 #include "Material/Shader/CShaderManager.h"
 #include "Lighting/CLightCullingSystem.h"
 #include "Lighting/CPointLight.h"
@@ -64,6 +65,8 @@ namespace Skylicht
 		m_cubeDepthWriteStandardSGInstancing = shaderMgr->getShaderIDByName("SDWCubeStandardInstancing");
 		m_depthWriteTBNSGInstancing = shaderMgr->getShaderIDByName("SDWTBNInstancing");
 		m_cubeDepthWriteTBNSGInstancing = shaderMgr->getShaderIDByName("SDWCubeTBNInstancing");
+
+		m_depthWriteSkinnedInstancing = shaderMgr->getShaderIDByName("SDWSkinInstancing");
 
 		m_writeDepthMaterial.BackfaceCulling = false;
 		m_writeDepthMaterial.FrontfaceCulling = false;
@@ -118,6 +121,8 @@ namespace Skylicht
 		IMeshBuffer* mb = mesh->getMeshBuffer(bufferID);
 		IVideoDriver* driver = getVideoDriver();
 
+		CShaderManager* shaderMgr = CShaderManager::getInstance();
+
 		// override write depth material
 		if (m_saveDebug == true)
 		{
@@ -129,6 +134,7 @@ namespace Skylicht
 				m.MaterialType = m_texColorShader;
 
 			driver->setMaterial(m);
+			shaderMgr->setCurrentMaterial(m);
 		}
 		else
 		{
@@ -149,6 +155,7 @@ namespace Skylicht
 			}
 
 			driver->setMaterial(m_writeDepthMaterial);
+			shaderMgr->setCurrentMaterial(m_writeDepthMaterial);
 		}
 
 		// draw mesh buffer
@@ -167,36 +174,58 @@ namespace Skylicht
 
 		bool setMaterial = false;
 
-		switch (m_renderShadowState)
+		if (skinnedMesh)
 		{
-		case DirectionLight:
-			if (vertexSize == sizeof(S3DVertex))
+			// skinned instancing
+			m_writeDepthMaterial.MaterialType = m_depthWriteSkinnedInstancing;
+
+			// animation texture
+			// Shader: Assets/BuiltIn/Shader/ShadowDepthWrite/SDWSkinInstancing.xml
+			int textureIndex = 4;
+			m_writeDepthMaterial.setTexture(textureIndex, CShaderTransformTexture::getTexture());
+
+			// disable mipmap
+			m_writeDepthMaterial.TextureLayer[textureIndex].BilinearFilter = false;
+			m_writeDepthMaterial.TextureLayer[textureIndex].TrilinearFilter = false;
+			m_writeDepthMaterial.TextureLayer[textureIndex].AnisotropicFilter = 0;
+
+			setMaterial = true;
+		}
+		else
+		{
+			switch (m_renderShadowState)
 			{
-				m_writeDepthMaterial.MaterialType = m_depthWriteStandardSGInstancing;
-				setMaterial = true;
+			case DirectionLight:
+				if (vertexSize == sizeof(S3DVertex))
+				{
+					m_writeDepthMaterial.MaterialType = m_depthWriteStandardSGInstancing;
+					setMaterial = true;
+				}
+				else if (vertexSize == sizeof(S3DVertexTangents))
+				{
+					m_writeDepthMaterial.MaterialType = m_depthWriteTBNSGInstancing;
+					setMaterial = true;
+				}
+				break;
+			case PointLight:
+				if (vertexSize == sizeof(S3DVertex))
+				{
+					m_writeDepthMaterial.MaterialType = m_cubeDepthWriteStandardSGInstancing;
+					setMaterial = true;
+				}
+				else if (vertexSize == sizeof(S3DVertexTangents))
+				{
+					m_writeDepthMaterial.MaterialType = m_cubeDepthWriteTBNSGInstancing;
+					setMaterial = true;
+				}
+				break;
 			}
-			else if (vertexSize == sizeof(S3DVertexTangents))
-			{
-				m_writeDepthMaterial.MaterialType = m_depthWriteTBNSGInstancing;
-				setMaterial = true;
-			}
-			break;
-		case PointLight:
-			if (vertexSize == sizeof(S3DVertex))
-			{
-				m_writeDepthMaterial.MaterialType = m_cubeDepthWriteStandardSGInstancing;
-				setMaterial = true;
-			}
-			else if (vertexSize == sizeof(S3DVertexTangents))
-			{
-				m_writeDepthMaterial.MaterialType = m_cubeDepthWriteTBNSGInstancing;
-				setMaterial = true;
-			}
-			break;
 		}
 
 		if (setMaterial)
 		{
+			CShaderManager::getInstance()->setCurrentMaterial(m_writeDepthMaterial);
+
 			driver->setMaterial(m_writeDepthMaterial);
 			driver->drawMeshBuffer(mb);
 		}

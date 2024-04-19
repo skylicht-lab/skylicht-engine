@@ -66,6 +66,8 @@ namespace Skylicht
 		int m_depthWriteTBNSGInstancing;
 		int m_cubeDepthWriteTBNSGInstancing;
 
+		int m_depthWriteSkinnedInstancing;
+
 		bool m_saveDebug;
 	public:
 		CShadowMapRP();

@@ -42,7 +42,7 @@ namespace Skylicht
 	CSkinnedMeshRendererInstancing::CSkinnedMeshRendererInstancing() :
 		m_group(NULL)
 	{
-		m_pipelineType = IRenderPipeline::Forwarder;
+		m_pipelineType = IRenderPipeline::Mix;
 	}
 
 	CSkinnedMeshRendererInstancing::~CSkinnedMeshRendererInstancing()
@@ -197,9 +197,6 @@ namespace Skylicht
 	{
 		IVideoDriver* driver = getVideoDriver();
 		IRenderPipeline* rp = entityManager->getRenderPipeline();
-
-		if (rp->getType() == IRenderPipeline::ShadowMap)
-			return;
 
 		driver->setTransform(video::ETS_WORLD, core::IdentityMatrix);
 
