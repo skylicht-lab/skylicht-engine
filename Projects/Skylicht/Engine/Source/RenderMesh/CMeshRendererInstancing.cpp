@@ -142,14 +142,14 @@ namespace Skylicht
 					group->Entities.pointer(),
 					count
 				);
-
-				data->InstancingShader[i]->batchTransformAndLighting(
-					data->TransformBuffer,
-					data->IndirectLightingBuffer,
-					group->Entities.pointer(),
-					count
-				);
 			}
+
+			IShaderInstancing::batchTransformAndLighting(
+				data->TransformBuffer,
+				data->IndirectLightingBuffer,
+				group->Entities.pointer(),
+				count
+			);
 		}
 	}
 
