@@ -116,8 +116,17 @@ void CViewInit::initScene()
 	lightTransform->setOrientation(direction, Transform::Oy);
 
 	CAnimationManager* animManager = CAnimationManager::getInstance();
-	CAnimationClip* clip1 = animManager->loadAnimation("SampleModels/MixamoCharacter/Hip_Hop_Dancing.dae");
-	CAnimationClip* clip2 = animManager->loadAnimation("SampleModels/MixamoCharacter/Samba_Dancing.dae");
+
+	std::vector<CAnimationClip*> clips;
+	clips.push_back(animManager->loadAnimation("SampleModels/MixamoCharacter/Hip_Hop_Dancing.dae"));
+	clips.push_back(animManager->loadAnimation("SampleModels/MixamoCharacter/Samba_Dancing.dae"));
+
+	float maxDuration = 0.0f;
+	for (CAnimationClip* clip : clips)
+	{
+		if (clip->Duration > maxDuration)
+			maxDuration = clip->Duration;
+	}
 
 	// skinned mesh
 	CEntityPrefab* prefab = CMeshManager::getInstance()->loadModel("SampleModels/MixamoCharacter/Ch17_nonPBR.dae", "SampleModels/MixamoCharacter/textures");
@@ -136,17 +145,17 @@ void CViewInit::initScene()
 		// apply animation to character
 		CAnimationController* animController = character->addComponent<CAnimationController>();
 		CSkeleton* skeleton = animController->createSkeleton();
-		skeleton->setAnimation(clip1, true);
 
 		// get bone map transform
 		std::map<std::string, int> boneMap;
 		skeleton->getBoneIdMap(boneMap);
-
-		int totalFrames = (int)(clip1->Duration * 60.0f); // 60fps
 		int numBones = (int)boneMap.size();
 
-		core::matrix4* transforms = new core::matrix4[numBones];
-		core::matrix4* animationData = new core::matrix4[totalFrames * numBones];
+		int fps = 60;
+		int clipId = 0;
+
+		int totalFrames = (int)(maxDuration * fps);
+		int numClip = (int)clips.size();
 
 		// build the matrix animations
 		// 
@@ -160,16 +169,29 @@ void CViewInit::initScene()
 		//  bone2
 		//  bone3
 		//  ...
+		core::matrix4* animationData = new core::matrix4[totalFrames * numBones * numClip];
+		core::matrix4* transforms = new core::matrix4[numBones];
 
-		for (int i = 0; i < totalFrames; i++)
+		for (CAnimationClip* clip : clips)
 		{
-			float t = i / (float)totalFrames;
-			skeleton->simulateTransform(t * clip1->Duration, core::IdentityMatrix, transforms, numBones);
+			skeleton->setAnimation(clip, true);
 
-			for (int j = 0; j < numBones; j++)
+			int clipFrames = (int)(clip->Duration * fps);
+
+			int clipOffset = clipId * numBones * totalFrames;
+
+			for (int i = 0; i < clipFrames; i++)
 			{
-				animationData[j * totalFrames + i] = transforms[j];
+				float t = i / (float)clipFrames;
+				skeleton->simulateTransform(t * clip->Duration, core::IdentityMatrix, transforms, numBones);
+
+				for (int j = 0; j < numBones; j++)
+				{
+					animationData[clipOffset + j * totalFrames + i] = transforms[j];
+				}
 			}
+
+			clipId++;
 		}
 
 		// remove current charracter
@@ -179,7 +201,7 @@ void CViewInit::initScene()
 		character = zone->createEmptyObject();
 		CRenderSkinnedInstancing* crowdSkinnedMesh = character->addComponent<CRenderSkinnedInstancing>();
 		crowdSkinnedMesh->initFromPrefab(prefab);
-		crowdSkinnedMesh->initTextureTransform(animationData, totalFrames, numBones, boneMap);
+		crowdSkinnedMesh->initTextureTransform(animationData, totalFrames, numBones * numClip, boneMap);
 
 		// body
 		material[1]->changeShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGSkinInstaning.xml");
@@ -198,8 +220,10 @@ void CViewInit::initScene()
 			{
 				CEntity* entity = crowdSkinnedMesh->spawn();
 
-				float time = os::Randomizer::frand() * clip1->Duration;
-				crowdSkinnedMesh->setAnimation(entity, 0, clip1, time, 60);
+				int id = 0;
+
+				float time = os::Randomizer::frand() * clips[id]->Duration;
+				crowdSkinnedMesh->setAnimation(entity, id, clips[id], time, fps);
 
 				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 				transform->Relative.setTranslation(core::vector3df(i * 2.0f, 0.0f, j * 2.0f));

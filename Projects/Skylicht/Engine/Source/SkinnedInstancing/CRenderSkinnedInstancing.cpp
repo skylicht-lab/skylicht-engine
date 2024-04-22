@@ -322,33 +322,42 @@ namespace Skylicht
 
 		m_textures.clear();
 
+		int clipJointCount = (int)bones.size();
+		int numClip = h / clipJointCount;
+
 		for (CRenderMeshData* renderer : m_renderers)
 		{
 			// get skinned mesh & number of bones
 			CSkinnedMesh* skinnedMesh = dynamic_cast<CSkinnedMesh*>(renderer->getMesh());
 			u32 jointCount = skinnedMesh->Joints.size();
 
-			core::matrix4* boneMatrix = new core::matrix4[jointCount * w];
+			core::matrix4* boneMatrix = new core::matrix4[w * jointCount * numClip];
 
-			for (u32 i = 0, n = jointCount; i < n; i++)
+			for (int clipId = 0; clipId < numClip; clipId++)
 			{
-				CSkinnedMesh::SJoint& joint = skinnedMesh->Joints[i];
-
-				// convert to transform index
-				u32 id = bones[joint.Name];
-
-				if (id >= h)
+				for (u32 i = 0, n = jointCount; i < n; i++)
 				{
-					char log[1024];
-					sprintf(log, "[CRenderSkinnedInstancing] initTextureTransform %s out of range: %d", joint.Name.c_str(), id);
-					os::Printer::log(log);
-				}
-				else
-				{
-					for (u32 j = 0; j < w; j++)
+					CSkinnedMesh::SJoint& joint = skinnedMesh->Joints[i];
+
+					// convert to transform index
+					u32 id = bones[joint.Name];
+
+					if (id >= h)
 					{
-						// calc skinned matrix, that like CSkinnedMeshSystem::update
-						boneMatrix[i * w + j].setbyproduct_nocheck(transforms[id * w + j], joint.BindPoseMatrix);
+						char log[1024];
+						sprintf(log, "[CRenderSkinnedInstancing] initTextureTransform %s out of range: %d", joint.Name.c_str(), id);
+						os::Printer::log(log);
+					}
+					else
+					{
+						int clipOffset1 = clipId * jointCount * w;
+						int clipOffset2 = clipId * clipJointCount * w;
+
+						for (u32 j = 0; j < w; j++)
+						{
+							// calc skinned matrix, that like CSkinnedMeshSystem::update
+							boneMatrix[clipOffset1 + i * w + j].setbyproduct_nocheck(transforms[clipOffset2 + id * w + j], joint.BindPoseMatrix);
+						}
 					}
 				}
 			}
@@ -357,7 +366,8 @@ namespace Skylicht
 
 			// save the texture
 			CTransformTextureData* data = entity->addData<CTransformTextureData>();
-			data->TransformTexture = textureMgr->createTransformTexture2D("BoneTransformTexture", boneMatrix, w, jointCount);
+			data->TransformTexture = textureMgr->createTransformTexture2D("BoneTransformTexture", boneMatrix, w, jointCount * numClip);
+			data->JointCount = jointCount;
 
 			// add textures
 			m_textures.push_back(data);

@@ -162,6 +162,9 @@ namespace Skylicht
 			CMaterial* m = NULL;
 			u32 materialId = 0;
 
+			CSkinnedMesh* skinnedMesh = dynamic_cast<CSkinnedMesh*>(mesh);
+			u32 jointCount = skinnedMesh->Joints.size();
+
 			for (u32 i = 0, n = data->RenderMeshBuffers.size(); i < n; i++)
 			{
 				group->Materials.reset();
@@ -185,10 +188,9 @@ namespace Skylicht
 					}
 
 					// set animation to shader params
-					CShaderParams& params = m->getShaderParams();
-					SVec4& p = params.getParam(0);
-					p.X = (float)skinnedIntance->Frame;
-					p.Y = (float)skinnedIntance->ClipId;
+					SVec4& p = m->getShaderParams().getParam(0);
+					p.X = (float)(skinnedIntance->Frame);
+					p.Y = (float)(skinnedIntance->ClipId * jointCount);
 
 					group->Materials.push(m);
 
@@ -202,14 +204,14 @@ namespace Skylicht
 					group->Entities.pointer(),
 					count
 				);
-
-				data->InstancingShader[i]->batchTransformAndLighting(
-					data->TransformBuffer,
-					data->IndirectLightingBuffer,
-					group->Entities.pointer(),
-					count
-				);
 			}
+
+			IShaderInstancing::batchTransformAndLighting(
+				data->TransformBuffer,
+				data->IndirectLightingBuffer,
+				group->Entities.pointer(),
+				count
+			);
 		}
 	}
 

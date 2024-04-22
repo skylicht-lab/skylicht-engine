@@ -32,6 +32,7 @@ namespace Skylicht
 	{
 	public:
 		ITexture* TransformTexture;
+		int JointCount;
 
 	public:
 		CTransformTextureData();

@@ -98,13 +98,13 @@ namespace Skylicht
 			CEntity** entities,
 			int count) = 0;
 
-		virtual void batchTransformAndLighting(
+		static void batchTransformAndLighting(
 			IVertexBuffer* tBuffer,
 			IVertexBuffer* lBuffer,
 			CEntity** entities,
 			int count);
 
-		virtual void batchTransform(
+		static void batchTransform(
 			IVertexBuffer* tBuffer,
 			CEntity** entities,
 			int count);
