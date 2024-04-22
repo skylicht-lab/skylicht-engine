@@ -107,7 +107,6 @@ namespace Skylicht
 			{
 				CRenderMeshData* meshData = skinnedIntance->RenderData[j];
 
-				// skip transform texture, that null
 				if (skinnedIntance->TransformTextures[j] == NULL)
 					continue;
 
@@ -123,7 +122,7 @@ namespace Skylicht
 				SMeshInstancing* data = meshData->getMeshInstancing();
 				if (data)
 				{
-					SMeshInstancingGroup* group = data->Group;
+					SMeshInstancingGroup* group = data->InstancingGroup;
 					if (group == NULL)
 					{
 						group = new SMeshInstancingGroup();
@@ -131,10 +130,10 @@ namespace Skylicht
 						group->RenderMesh = meshData;
 						group->RootEntityIndex = meshData->EntityIndex;
 
-						data->Group = group;
-
+						data->InstancingGroup = group;
 						m_instancingGroups[data] = group;
 					}
+
 					group->Entities.push(entity);
 				}
 			}
@@ -199,9 +198,14 @@ namespace Skylicht
 				// batching transform & material data to buffer
 				data->InstancingShader[i]->batchIntancing(
 					data->InstancingBuffer[i],
-					data->TransformBuffer[i],
-					data->IndirectLightingBuffer[i],
 					group->Materials.pointer(),
+					group->Entities.pointer(),
+					count
+				);
+
+				data->InstancingShader[i]->batchTransformAndLighting(
+					data->TransformBuffer,
+					data->IndirectLightingBuffer,
 					group->Entities.pointer(),
 					count
 				);

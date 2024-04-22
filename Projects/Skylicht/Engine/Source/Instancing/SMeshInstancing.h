@@ -40,22 +40,24 @@ namespace Skylicht
 		core::array<CMaterial*> Materials;
 
 		core::array<IShaderInstancing*> InstancingShader;
+
 		core::array<IVertexBuffer*> InstancingBuffer;
-		core::array<IVertexBuffer*> TransformBuffer;
-		core::array<IVertexBuffer*> IndirectLightingBuffer;
+
+		IVertexBuffer* TransformBuffer;
+		IVertexBuffer* IndirectLightingBuffer;
+
 		core::array<IMeshBuffer*> RenderMeshBuffers;
 		core::array<IMeshBuffer*> RenderLightMeshBuffers;
 
 		IShaderInstancing* HandleShader;
 		IMesh* InstancingMesh;
-
-		SMeshInstancingGroup* Group;
+		SMeshInstancingGroup* InstancingGroup;
 
 		SMeshInstancing()
 		{
 			HandleShader = NULL;
 			InstancingMesh = NULL;
-			Group = NULL;
+			InstancingGroup = NULL;
 		}
 
 		~SMeshInstancing()

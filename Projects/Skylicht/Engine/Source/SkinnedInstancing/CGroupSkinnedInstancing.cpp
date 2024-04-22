@@ -23,6 +23,7 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
+#include "Entity/CEntityManager.h"
 #include "CGroupSkinnedInstancing.h"
 #include "CSkinnedInstanceData.h"
 
@@ -43,6 +44,12 @@ namespace Skylicht
 	void CGroupSkinnedInstancing::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
 		m_entities.reset();
+
+		if (m_parentGroup)
+		{
+			numEntity = m_parentGroup->getEntityCount();
+			entities = m_parentGroup->getEntities();
+		}
 
 		for (int i = 0; i < numEntity; i++)
 		{

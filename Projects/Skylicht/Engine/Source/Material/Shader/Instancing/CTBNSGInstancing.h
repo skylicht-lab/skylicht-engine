@@ -44,8 +44,6 @@ namespace Skylicht
 
 		virtual void batchIntancing(
 			IVertexBuffer* vtxBuffer,
-			IVertexBuffer* tBuffer,
-			IVertexBuffer* lBuffer,
 			CMaterial** materials,
 			CEntity** entities,
 			int count);

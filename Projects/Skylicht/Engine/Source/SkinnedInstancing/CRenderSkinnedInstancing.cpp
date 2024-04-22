@@ -257,6 +257,8 @@ namespace Skylicht
 			CRenderMeshData* srcRender = srcEntity->getData<CRenderMeshData>();
 			if (srcRender != NULL)
 			{
+				CWorldTransformData* transform = GET_ENTITY_DATA(spawnEntity, CWorldTransformData);
+
 				CRenderMeshData* spawnRender = spawnEntity->addData<CRenderMeshData>();
 				spawnRender->setMesh(srcRender->getMesh());
 				spawnRender->setSkinnedInstancing(true);
@@ -265,7 +267,7 @@ namespace Skylicht
 				m_renderers.push_back(spawnRender);
 
 				// also add transform
-				m_renderTransforms.push_back(GET_ENTITY_DATA(spawnEntity, CWorldTransformData));
+				m_renderTransforms.push_back(transform);
 
 				// also check add indirect lighting to hold ReflectionTexture for intacing
 				CIndirectLightingData* indirectLighting = spawnEntity->addData<CIndirectLightingData>();
