@@ -118,10 +118,10 @@ namespace Skylicht
 						buffer->Instancing = instancing->createInstancingMeshBuffer();
 						buffer->Instancing->setHardwareMappingHint(EHM_STREAM);
 
-						buffer->Transform = instancing->createTransformMeshBuffer();
+						buffer->Transform = IShaderInstancing::createTransformMeshBuffer();
 						buffer->Transform->setHardwareMappingHint(EHM_STREAM);
 
-						buffer->IndirectLighting = instancing->createIndirectLightingMeshBuffer();
+						buffer->IndirectLighting = IShaderInstancing::createIndirectLightingMeshBuffer();
 						buffer->IndirectLighting->setHardwareMappingHint(EHM_STREAM);
 
 						instancing->applyInstancing(
@@ -193,9 +193,13 @@ namespace Skylicht
 			// batching transform & material data to buffer
 			instancing->batchIntancing(
 				buffer->Instancing,
+				m_materials.pointer(),
+				m_entities.pointer(),
+				m_entities.count());
+
+			instancing->batchTransformAndLighting(
 				buffer->Transform,
 				buffer->IndirectLighting,
-				m_materials.pointer(),
 				m_entities.pointer(),
 				m_entities.count());
 		}

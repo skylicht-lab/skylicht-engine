@@ -75,11 +75,11 @@ namespace Skylicht
 
 		virtual IVertexBuffer* createInstancingMeshBuffer() = 0;
 
-		virtual IVertexBuffer* createTransformMeshBuffer();
-
-		virtual IVertexBuffer* createIndirectLightingMeshBuffer();
-
 		virtual IMeshBuffer* createMeshBuffer(video::E_INDEX_TYPE type) = 0;
+
+		static IVertexBuffer* createTransformMeshBuffer();
+
+		static IVertexBuffer* createIndirectLightingMeshBuffer();
 
 		virtual bool applyInstancing(IMeshBuffer* meshbuffer, IVertexBuffer* instancingBuffer, IVertexBuffer* transformBuffer);
 
@@ -93,7 +93,7 @@ namespace Skylicht
 
 		virtual bool removeInstancing(IMesh* mesh);
 
-		virtual void batchIntancing(IVertexBuffer* vtxBuffer, IVertexBuffer* tBuffer, IVertexBuffer* lBuffer,
+		virtual void batchIntancing(IVertexBuffer* vtxBuffer,
 			CMaterial** materials,
 			CEntity** entities,
 			int count) = 0;

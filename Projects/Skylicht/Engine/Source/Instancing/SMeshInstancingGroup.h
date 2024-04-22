@@ -30,6 +30,7 @@ using namespace irr::scene;
 #include "Material/CMaterial.h"
 #include "Entity/CEntity.h"
 #include "Entity/CArrayUtils.h"
+#include "Entity/CEntityPrefab.h"
 
 namespace Skylicht
 {
@@ -38,9 +39,14 @@ namespace Skylicht
 		CFastArray<CMaterial*> Materials;
 		CFastArray<CEntity*> Entities;
 
-		ITexture* TransformTexture;
-		CRenderMeshData* RenderMesh;
+		// the instancing root object
 		int RootEntityIndex;
+
+		// skinned transform texture
+		ITexture* TransformTexture;
+
+		// render mesh
+		CRenderMeshData* RenderMesh;
 
 		SMeshInstancingGroup()
 		{

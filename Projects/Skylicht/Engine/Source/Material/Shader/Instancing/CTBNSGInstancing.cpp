@@ -114,7 +114,7 @@ namespace Skylicht
 		return new CMeshBuffer<S3DVertexTangents>(m_baseVtxDescriptor, type);
 	}
 
-	void CTBNSGInstancing::batchIntancing(IVertexBuffer* vtxBuffer, IVertexBuffer* tBuffer, IVertexBuffer* lBuffer,
+	void CTBNSGInstancing::batchIntancing(IVertexBuffer* vtxBuffer,
 		CMaterial** materials,
 		CEntity** entities,
 		int count)
@@ -142,7 +142,5 @@ namespace Skylicht
 		}
 
 		vtxBuffer->setDirty();
-
-		batchTransformAndLighting(tBuffer, lBuffer, entities, count);
 	}
 }
