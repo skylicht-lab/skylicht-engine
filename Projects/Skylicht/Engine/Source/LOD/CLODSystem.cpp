@@ -46,7 +46,7 @@ namespace Skylicht
 	void CLODSystem::beginQuery(CEntityManager* entityManager)
 	{
 		if (m_group == NULL)
-		{			
+		{
 			const u32 type[] = GET_LIST_ENTITY_DATA(CLODData);
 			m_group = entityManager->createGroupFromVisible(type, 1);
 		}

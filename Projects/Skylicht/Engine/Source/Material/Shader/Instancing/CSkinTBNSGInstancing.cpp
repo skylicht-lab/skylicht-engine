@@ -116,8 +116,6 @@ namespace Skylicht
 
 	void CSkinTBNSGInstancing::batchIntancing(
 		IVertexBuffer* vtxBuffer,
-		IVertexBuffer* tBuffer,
-		IVertexBuffer* lBuffer,
 		CMaterial** materials,
 		CEntity** entities,
 		int count)
@@ -146,7 +144,5 @@ namespace Skylicht
 		}
 
 		vtxBuffer->setDirty();
-
-		batchTransformAndLighting(tBuffer, lBuffer, entities, count);
 	}
 }

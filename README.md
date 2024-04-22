@@ -110,7 +110,7 @@ C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A
 # Android
 ## Prerequisites
 - Install [Android Studio and SDK](https://developer.android.com/studio)
-- Install [mingw-w64](http://mingw-w64.org/doku.php/download/mingw-builds) for Windows
+- Install [mingw-w64](https://www.mingw-w64.org) for Windows
 - Install [Android NDK](https://developer.android.com/ndk/downloads)
 
 ## How to build

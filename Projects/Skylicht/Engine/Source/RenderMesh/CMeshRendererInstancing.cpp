@@ -103,7 +103,7 @@ namespace Skylicht
 		{
 			SMeshInstancing* data = renderData[i]->getMeshInstancing();
 
-			SMeshInstancingGroup* group = data->Group;
+			SMeshInstancingGroup* group = data->InstancingGroup;
 			if (group == NULL)
 			{
 				group = new SMeshInstancingGroup();
@@ -111,7 +111,7 @@ namespace Skylicht
 
 				m_groups[data] = group;
 
-				data->Group = group;
+				data->InstancingGroup = group;
 			}
 
 			CEntity* entity = allEntities[renderData[i]->EntityIndex];
@@ -138,9 +138,14 @@ namespace Skylicht
 				// batching transform & material data to buffer
 				data->InstancingShader[i]->batchIntancing(
 					data->InstancingBuffer[i],
-					data->TransformBuffer[i],
-					data->IndirectLightingBuffer[i],
 					group->Materials.pointer(),
+					group->Entities.pointer(),
+					count
+				);
+
+				data->InstancingShader[i]->batchTransformAndLighting(
+					data->TransformBuffer,
+					data->IndirectLightingBuffer,
 					group->Entities.pointer(),
 					count
 				);

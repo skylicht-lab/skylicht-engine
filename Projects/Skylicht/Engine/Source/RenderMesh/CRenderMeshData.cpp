@@ -39,7 +39,12 @@ namespace Skylicht
 
 	IMPLEMENT_DATA_TYPE_INDEX(CRenderMeshData);
 
-	std::vector<std::string> CRenderMeshData::ImportTextureFolder;
+	std::vector<std::string> g_importTextureFolder;
+
+	void CRenderMeshData::setImportTextureFolder(std::vector<std::string>& folders)
+	{
+		g_importTextureFolder = folders;
+	}
 
 	CRenderMeshData::CRenderMeshData() :
 		RenderMesh(NULL),
@@ -532,7 +537,7 @@ namespace Skylicht
 				{
 					if (textures[t].empty() == false)
 					{
-						ITexture* texture = CTextureManager::getInstance()->getTexture(textures[t].c_str(), ImportTextureFolder);
+						ITexture* texture = CTextureManager::getInstance()->getTexture(textures[t].c_str(), g_importTextureFolder);
 						if (texture != NULL)
 							irrMaterial.setTexture(t, texture);
 

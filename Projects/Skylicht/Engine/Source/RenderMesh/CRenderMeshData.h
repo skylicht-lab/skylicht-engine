@@ -32,10 +32,12 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	class CEntityPrefab;
+
 	class SKYLICHT_API CRenderMeshData : public IEntityData
 	{
 	public:
-		static std::vector<std::string> ImportTextureFolder;
+		static void setImportTextureFolder(std::vector<std::string>& folders);
 
 	protected:
 		CMesh* RenderMesh;

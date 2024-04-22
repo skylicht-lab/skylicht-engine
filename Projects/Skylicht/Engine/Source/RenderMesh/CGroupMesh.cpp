@@ -45,8 +45,6 @@ namespace Skylicht
 
 	void CGroupMesh::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
-		CEntity** allEntities = entityManager->getEntities();
-
 		if (m_parentGroup)
 		{
 			numEntity = m_parentGroup->getEntityCount();
