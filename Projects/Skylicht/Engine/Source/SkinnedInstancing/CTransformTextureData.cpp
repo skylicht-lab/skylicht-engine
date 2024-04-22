@@ -32,7 +32,8 @@ namespace Skylicht
 	IMPLEMENT_DATA_TYPE_INDEX(CTransformTextureData);
 
 	CTransformTextureData::CTransformTextureData() :
-		TransformTexture(NULL)
+		TransformTexture(NULL),
+		JointCount(0)
 	{
 
 	}

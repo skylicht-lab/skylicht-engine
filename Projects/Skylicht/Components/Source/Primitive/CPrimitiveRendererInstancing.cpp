@@ -197,7 +197,7 @@ namespace Skylicht
 				m_entities.pointer(),
 				m_entities.count());
 
-			instancing->batchTransformAndLighting(
+			IShaderInstancing::batchTransformAndLighting(
 				buffer->Transform,
 				buffer->IndirectLighting,
 				m_entities.pointer(),
