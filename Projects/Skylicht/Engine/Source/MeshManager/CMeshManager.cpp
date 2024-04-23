@@ -208,10 +208,10 @@ namespace Skylicht
 		instancingMesh->IndirectLightingMesh = instancingLightingMesh;
 
 		// create transform & light buffer
-		IVertexBuffer* transformBuffer = IShaderInstancing::createTransformMeshBuffer();
+		IVertexBuffer* transformBuffer = IShaderInstancing::createTransformVertexBuffer();
 		transformBuffer->setHardwareMappingHint(EHM_STREAM);
 
-		IVertexBuffer* lightingBuffer = IShaderInstancing::createIndirectLightingMeshBuffer();
+		IVertexBuffer* lightingBuffer = IShaderInstancing::createIndirectLightingVertexBuffer();
 		lightingBuffer->setHardwareMappingHint(EHM_STREAM);
 
 		data->TransformBuffer = transformBuffer;
@@ -241,7 +241,7 @@ namespace Skylicht
 
 			IShaderInstancing* shaderInstancing = material->getShader()->getInstancing();
 
-			IVertexBuffer* instancingBuffer = shaderInstancing->createInstancingMeshBuffer();
+			IVertexBuffer* instancingBuffer = shaderInstancing->createInstancingVertexBuffer();
 			instancingBuffer->setHardwareMappingHint(EHM_STREAM);
 
 			data->InstancingShader.push_back(shaderInstancing);
@@ -307,10 +307,10 @@ namespace Skylicht
 		instancingMesh->IndirectLightingMesh = instancingLightingMesh;
 
 		// create transform & light buffer
-		IVertexBuffer* transformBuffer = IShaderInstancing::createTransformMeshBuffer();
+		IVertexBuffer* transformBuffer = IShaderInstancing::createTransformVertexBuffer();
 		transformBuffer->setHardwareMappingHint(EHM_STREAM);
 
-		IVertexBuffer* lightingBuffer = IShaderInstancing::createIndirectLightingMeshBuffer();
+		IVertexBuffer* lightingBuffer = IShaderInstancing::createIndirectLightingVertexBuffer();
 		lightingBuffer->setHardwareMappingHint(EHM_STREAM);
 
 		data->TransformBuffer = transformBuffer;
@@ -326,7 +326,7 @@ namespace Skylicht
 
 			mb->grab();
 
-			IVertexBuffer* instancingBuffer = shaderInstancing->createInstancingMeshBuffer();
+			IVertexBuffer* instancingBuffer = shaderInstancing->createInstancingVertexBuffer();
 			instancingBuffer->setHardwareMappingHint(EHM_STREAM);
 
 			data->InstancingShader.push_back(shaderInstancing);
@@ -337,7 +337,7 @@ namespace Skylicht
 
 			if (renderMeshBuffer && lightingMeshBuffer)
 			{
-				// INDIRECT LIGHTING MESH				
+				// INDIRECT LIGHTING MESH
 				lightingMeshBuffer->setHardwareMappingHint(EHM_STATIC);
 
 				instancingLightingMesh->addMeshBuffer(
@@ -415,5 +415,39 @@ namespace Skylicht
 		}
 
 		return true;
+	}
+
+	void CMeshManager::changeMeshInstancingBuffer(SMeshInstancing* data, IVertexBuffer* transform, IVertexBuffer* lighting)
+	{
+		data->UseShareVertexBuffer = true;
+
+		// drop old transform
+		data->TransformBuffer->drop();
+		data->IndirectLightingBuffer->drop();
+
+		// grab new transform
+		data->TransformBuffer = transform;
+		data->TransformBuffer->grab();
+
+		// grab new lighting
+		data->IndirectLightingBuffer = lighting;
+		data->IndirectLightingBuffer->grab();
+
+		u32 numMeshBuffers = data->MeshBuffers.size();
+		for (u32 i = 0; i < numMeshBuffers; i++)
+		{
+			// shader instancing
+			IShaderInstancing* shaderInstancing = data->InstancingShader[i];
+
+			// get instancing mesh buffer
+			IMeshBuffer* renderMeshBuffer = data->RenderMeshBuffers[i];
+			IMeshBuffer* lightingMeshBuffer = data->RenderLightMeshBuffers[i];
+
+			IVertexBuffer* instancingBuffer = data->InstancingBuffer[i];
+
+			// bind instancing vb to mesh buffer
+			shaderInstancing->applyInstancing(renderMeshBuffer, instancingBuffer, transform);
+			shaderInstancing->applyInstancingForRenderLighting(lightingMeshBuffer, lighting, transform);
+		}
 	}
 }

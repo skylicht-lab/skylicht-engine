@@ -36,13 +36,18 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Transform/CWorldInverseTransformData.h"
 #include "Culling/CCullingBBoxData.h"
 
+#include "Material/Shader/Instancing/IShaderInstancing.h"
+
 namespace Skylicht
 {
 	CRenderSkinnedInstancing::CRenderSkinnedInstancing() :
 		m_root(NULL),
 		m_loadTexcoord2(false),
 		m_loadNormal(true),
-		m_fixInverseNormal(true)
+		m_fixInverseNormal(true),
+		m_instancingTransform(NULL),
+		m_instancingLighting(NULL),
+		m_shareData(0)
 	{
 
 	}
@@ -51,6 +56,12 @@ namespace Skylicht
 	{
 		releaseMaterial();
 		releaseEntities();
+
+		if (m_instancingTransform)
+			m_instancingTransform->drop();
+
+		if (m_instancingLighting)
+			m_instancingLighting->drop();
 	}
 
 	void CRenderSkinnedInstancing::releaseBaseEntities()
@@ -487,5 +498,32 @@ namespace Skylicht
 		data->Time = core::clamp(data->Time, data->TimeFrom, data->TimeTo);
 
 		return true;
+	}
+
+	void CRenderSkinnedInstancing::applyShareInstancingBuffer()
+	{
+		if (!m_instancingTransform)
+		{
+			m_instancingTransform = IShaderInstancing::createTransformVertexBuffer();
+			m_instancingTransform->setHardwareMappingHint(EHM_STREAM);
+		}
+
+		if (!m_instancingLighting)
+		{
+			m_instancingLighting = IShaderInstancing::createIndirectLightingVertexBuffer();
+			m_instancingLighting->setHardwareMappingHint(EHM_STREAM);
+		}
+
+		CMeshManager* meshMgr = CMeshManager::getInstance();
+
+		for (CRenderMeshData*& renderer : m_renderers)
+		{
+			SMeshInstancing* data = renderer->getMeshInstancing();
+			if (data != NULL)
+			{
+				meshMgr->changeMeshInstancingBuffer(data, m_instancingTransform, m_instancingLighting);
+				data->ShareData = &m_shareData;
+			}
+		}
 	}
 }

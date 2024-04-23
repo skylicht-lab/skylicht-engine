@@ -38,8 +38,8 @@ namespace Skylicht
 		TimeTo(0.0f),
 		FPS(60),
 		Frame(0),
-		Pause(false),
-		Loop(true)
+		Loop(true),
+		Pause(false)
 	{
 
 	}

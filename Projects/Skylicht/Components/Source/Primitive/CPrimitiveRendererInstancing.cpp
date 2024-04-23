@@ -115,13 +115,13 @@ namespace Skylicht
 
 						SInstancingVertexBuffer* buffer = new SInstancingVertexBuffer();
 
-						buffer->Instancing = instancing->createInstancingMeshBuffer();
+						buffer->Instancing = instancing->createInstancingVertexBuffer();
 						buffer->Instancing->setHardwareMappingHint(EHM_STREAM);
 
-						buffer->Transform = IShaderInstancing::createTransformMeshBuffer();
+						buffer->Transform = IShaderInstancing::createTransformVertexBuffer();
 						buffer->Transform->setHardwareMappingHint(EHM_STREAM);
 
-						buffer->IndirectLighting = IShaderInstancing::createIndirectLightingMeshBuffer();
+						buffer->IndirectLighting = IShaderInstancing::createIndirectLightingVertexBuffer();
 						buffer->IndirectLighting->setHardwareMappingHint(EHM_STREAM);
 
 						instancing->applyInstancing(

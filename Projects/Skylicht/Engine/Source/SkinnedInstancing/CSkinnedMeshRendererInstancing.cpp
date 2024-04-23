@@ -122,6 +122,10 @@ namespace Skylicht
 				SMeshInstancing* data = meshData->getMeshInstancing();
 				if (data)
 				{
+					// reset share batch state
+					if (data->ShareData)
+						*data->ShareData = 0;
+
 					SMeshInstancingGroup* group = data->InstancingGroup;
 					if (group == NULL)
 					{
@@ -210,12 +214,30 @@ namespace Skylicht
 				);
 			}
 
-			IShaderInstancing::batchTransformAndLighting(
-				data->TransformBuffer,
-				data->IndirectLightingBuffer,
-				group->Entities.pointer(),
-				count
-			);
+			bool batchTransform = true;
+			if (data->UseShareVertexBuffer)
+			{
+				if (*data->ShareData == 0)
+				{
+					// batch only 1 time in first group, it will reset 0 on onQuery
+					*data->ShareData = 1;
+				}
+				else
+				{
+					// optimized, that mean we use the share vb that batched
+					batchTransform = false;
+				}
+			}
+
+			if (batchTransform)
+			{
+				IShaderInstancing::batchTransformAndLighting(
+					data->TransformBuffer,
+					data->IndirectLightingBuffer,
+					group->Entities.pointer(),
+					count
+				);
+			}
 		}
 	}
 
