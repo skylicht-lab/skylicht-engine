@@ -434,6 +434,10 @@ This is demo setup render many mesh instancing to optimize draw call and render 
 
 Live demo: [Emscripten](http://34.149.122.230/SampleInstancing.html)
 
+### Samples\SkinnedMeshInstancing
+This is a demo of drawing many characters and animations, that use GPU Instancing technique.
+<img src="Documents/Media/Samples/sample_skinned_instancing.jpg"/>
+
 ### Samples\Particles
 Skylicht Particle Component is a cleanup version of [SPARK](https://github.com/Synxis/SPARK). We have optimized by GPU Billboard Instancing.
 
