@@ -27,12 +27,12 @@ out vec3 vWorldBinormal;
 out float vTangentW;
 out vec4 vViewPosition;
 out vec3 vWorldPosition;
-float centerX = 0.5 / uTransformTextureSize.x;
-float centerY = 0.5 / uTransformTextureSize.y;
-float nextPixelX = 1.0 / uTransformTextureSize.x;
-float nextPixelY = 1.0 / uTransformTextureSize.y;
 mat4 getTransformFromTexture(vec2 p)
 {
+	float centerX = 0.5 / uTransformTextureSize.x;
+	float centerY = 0.5 / uTransformTextureSize.y;
+	float nextPixelX = 1.0 / uTransformTextureSize.x;
+	float nextPixelY = 1.0 / uTransformTextureSize.y;
 	vec2 uv = vec2(
 		p.x * nextPixelX * 4.0 + centerX,
 		p.y * nextPixelY + centerY

@@ -50,7 +50,8 @@ namespace Skylicht
 		u32 numMaterial = Materials.size();
 		for (u32 i = 0; i < numMaterial; i++)
 		{
-			Materials[i]->drop();
+			if (Materials[i])
+				Materials[i]->drop();
 		}
 		Materials.clear();
 	}

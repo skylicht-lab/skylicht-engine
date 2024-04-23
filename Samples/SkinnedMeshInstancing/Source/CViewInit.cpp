@@ -208,7 +208,7 @@ void CViewInit::initScene()
 		material[1]->autoDetectLoadTexture();
 
 		// hair
-		material[0]->changeShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGSkinInstaning.xml");
+		material[0]->changeShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGSkinInstaningAlpha.xml");
 		material[0]->autoDetectLoadTexture();
 
 		crowdSkinnedMesh->initMaterial(material);
@@ -221,7 +221,7 @@ void CViewInit::initScene()
 				CEntity* entity = crowdSkinnedMesh->spawn();
 
 				// random animation
-				int id = os::Randomizer::rand() % 2;
+				int id = os::Randomizer::rand() % numClip;
 
 				// random time
 				float time = os::Randomizer::frand() * clips[id]->Duration;
@@ -312,8 +312,8 @@ void CViewInit::onUpdate()
 				// retry download
 				delete m_getFile;
 				m_getFile = NULL;
-	}
-	}
+			}
+		}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -326,7 +326,7 @@ void CViewInit::onUpdate()
 #else
 			fileSystem->addFileArchive(r, false, false);
 #endif
-}
+		}
 
 		m_initState = CViewInit::InitScene;
 #endif
