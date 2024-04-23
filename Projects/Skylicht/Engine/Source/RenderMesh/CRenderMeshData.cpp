@@ -145,6 +145,8 @@ namespace Skylicht
 
 						instancingMesh->Materials[i] = mesh->Materials[i];
 						instancingMesh->Materials[i]->grab();
+
+						MeshInstancing->Materials[i] = mesh->Materials[i];
 					}
 				}
 			}

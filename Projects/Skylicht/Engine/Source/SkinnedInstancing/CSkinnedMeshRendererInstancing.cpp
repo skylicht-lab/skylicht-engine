@@ -129,6 +129,7 @@ namespace Skylicht
 						group->TransformTexture = skinnedIntance->TransformTextures[j];
 						group->RenderMesh = meshData;
 						group->RootEntityIndex = meshData->EntityIndex;
+						group->MeshIndex = j;
 
 						data->InstancingGroup = group;
 						m_instancingGroups[data] = group;
@@ -160,10 +161,10 @@ namespace Skylicht
 
 			CMesh* mesh = group->RenderMesh->getMesh();
 			CMaterial* m = NULL;
-			u32 materialId = 0;
 
 			CSkinnedMesh* skinnedMesh = dynamic_cast<CSkinnedMesh*>(mesh);
 			u32 jointCount = skinnedMesh->Joints.size();
+			u32 meshIndex = group->MeshIndex;
 
 			for (u32 i = 0, n = data->RenderMeshBuffers.size(); i < n; i++)
 			{
@@ -174,17 +175,22 @@ namespace Skylicht
 					// update animation to material
 					CSkinnedInstanceData* skinnedIntance = GET_ENTITY_DATA(entities[j], CSkinnedInstanceData);
 
-					// clone the material for instance
-					if (materialId >= skinnedIntance->Materials.size())
+					// clone the material for many instance
+					// that will have bugs if the mesh have more than 1 material
+					if (meshIndex >= (int)skinnedIntance->Materials.size() || skinnedIntance->Materials[meshIndex] == NULL)
 					{
 						m = mesh->Materials[i]->clone();
 
+						// init null materials array
+						for (u32 t = skinnedIntance->Materials.size(); t <= meshIndex; t++)
+							skinnedIntance->Materials.push_back(NULL);
+
 						// save this material and destroy it in destructor of CSkinnedInstanceData
-						skinnedIntance->Materials.push_back(m);
+						skinnedIntance->Materials[meshIndex] = m;
 					}
 					else
 					{
-						m = skinnedIntance->Materials[materialId];
+						m = skinnedIntance->Materials[meshIndex];
 					}
 
 					// set animation to shader params
@@ -193,8 +199,6 @@ namespace Skylicht
 					p.Y = (float)(skinnedIntance->ClipId * jointCount);
 
 					group->Materials.push(m);
-
-					materialId++;
 				}
 
 				// batching transform & material data to buffer
@@ -216,6 +220,16 @@ namespace Skylicht
 	}
 
 	void CSkinnedMeshRendererInstancing::render(CEntityManager* entityManager)
+	{
+		renderInstancing(entityManager, false);
+	}
+
+	void CSkinnedMeshRendererInstancing::renderTransparent(CEntityManager* entityManager)
+	{
+		renderInstancing(entityManager, true);
+	}
+
+	void CSkinnedMeshRendererInstancing::renderInstancing(CEntityManager* entityManager, bool isRenderTransparent)
 	{
 		IVideoDriver* driver = getVideoDriver();
 		IRenderPipeline* rp = entityManager->getRenderPipeline();
@@ -252,6 +266,13 @@ namespace Skylicht
 					continue;
 
 				CShader* shader = materials[i]->getShader();
+
+				if (shader->isOpaque() == isRenderTransparent)
+				{
+					// check this state render transparent is not
+					continue;
+				}
+
 				if (!rp->canRenderShader(shader))
 					continue;
 

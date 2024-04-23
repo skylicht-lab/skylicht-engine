@@ -48,11 +48,15 @@ namespace Skylicht
 		// render mesh
 		CRenderMeshData* RenderMesh;
 
+		// the render mesh index in object
+		int MeshIndex;
+
 		SMeshInstancingGroup()
 		{
 			TransformTexture = NULL;
 			RenderMesh = NULL;
 			RootEntityIndex = -1;
+			MeshIndex = 0;
 		}
 	};
 }
