@@ -3,13 +3,13 @@ layout(location = 1) in vec3 inNormal;
 layout(location = 2) in vec4 inColor;
 layout(location = 3) in vec2 inTexCoord0;
 
-layout(location = 4) in vec3 inParticlePosition;
+layout(location = 4) in vec4 inParticlePosition;
 layout(location = 5) in vec4 inParticleColor;
 layout(location = 6) in vec2 inParticleUVScale;
 layout(location = 7) in vec2 inParticleUVOffset;
-layout(location = 8) in vec3 inParticleSize;
-layout(location = 9) in vec3 inParticleRotation;
-layout(location = 10) in vec3 inParticleVelocity;
+layout(location = 8) in vec4 inParticleSize;
+layout(location = 9) in vec4 inParticleRotation;
+layout(location = 10) in vec4 inParticleVelocity;
 
 uniform mat4 uMvpMatrix;
 uniform vec4 uViewUp;
@@ -23,7 +23,7 @@ void main(void)
 	varTexCoord0 = inTexCoord0 * inParticleUVScale + inParticleUVOffset;
 	varColor = inParticleColor / 255.0;
 
-	vec3 velUp = normalize(inParticleVelocity);
+	vec3 velUp = normalize(inParticleVelocity.xyz);
 
 	// rotate
 	float cosA = cos(inParticleRotation.z);
@@ -52,7 +52,7 @@ void main(void)
 	side = side * 0.5 * inParticleSize.x;
 	up = up * 0.5 * inParticleSize.y;
 
-	vec3 position = inParticlePosition + inPosition.x * side + inPosition.y * up;
+	vec3 position = inParticlePosition.xyz + inPosition.x * side + inPosition.y * up;
 
 	gl_Position = uMvpMatrix * vec4(position, 1.0);
 }
