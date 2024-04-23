@@ -302,7 +302,7 @@ renderPipeline->initRender(w, h);
 renderPipeline->render(
     NULL, // render target is screen
     camera, // the camera
-    scene->getEntityManager(), // all entities of scene
+    scene->getEntityManager(), // all entities in scene
     core::recti() // the viewport is fullscreen
 );
 ```

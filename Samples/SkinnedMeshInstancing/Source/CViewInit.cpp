@@ -220,11 +220,16 @@ void CViewInit::initScene()
 			{
 				CEntity* entity = crowdSkinnedMesh->spawn();
 
-				int id = 0;
+				// random animation
+				int id = os::Randomizer::rand() % 2;
 
+				// random time
 				float time = os::Randomizer::frand() * clips[id]->Duration;
+
+				// set animation
 				crowdSkinnedMesh->setAnimation(entity, id, clips[id], time, fps);
 
+				// set position
 				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 				transform->Relative.setTranslation(core::vector3df(i * 2.0f, 0.0f, j * 2.0f));
 			}
@@ -307,8 +312,8 @@ void CViewInit::onUpdate()
 				// retry download
 				delete m_getFile;
 				m_getFile = NULL;
-			}
-		}
+	}
+	}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -321,7 +326,7 @@ void CViewInit::onUpdate()
 #else
 			fileSystem->addFileArchive(r, false, false);
 #endif
-		}
+}
 
 		m_initState = CViewInit::InitScene;
 #endif

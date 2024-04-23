@@ -27,12 +27,12 @@ out vec3 vWorldBinormal;
 out float vTangentW;
 out vec4 vViewPosition;
 out vec3 vWorldPosition;
+float centerX = 0.5 / uTransformTextureSize.x;
+float centerY = 0.5 / uTransformTextureSize.y;
+float nextPixelX = 1.0 / uTransformTextureSize.x;
+float nextPixelY = 1.0 / uTransformTextureSize.y;
 mat4 getTransformFromTexture(vec2 p)
 {
-	float centerX = 0.5 / uTransformTextureSize.x;
-	float centerY = 0.5 / uTransformTextureSize.y;
-	float nextPixelX = 1.0 / uTransformTextureSize.x;
-	float nextPixelY = 1.0 / uTransformTextureSize.y;
 	vec2 uv = vec2(
 		p.x * nextPixelX * 4.0 + centerX,
 		p.y * nextPixelY + centerY
@@ -54,13 +54,14 @@ void main(void)
 	vec3 skinNormal = vec3(0.0);
 	vec3 skinTangent = vec3(0.0);
 	vec2 boneLocation = uBoneLocation.xy;
-	boneLocation.y = inBlendIndex[0];
+	float boneLocationY = uBoneLocation.y;
+	boneLocation.y = boneLocationY + inBlendIndex[0];
 	skinMatrix = inBlendWeight[0] * getTransformFromTexture(boneLocation);
-	boneLocation.y = inBlendIndex[1];
+	boneLocation.y = boneLocationY + inBlendIndex[1];
 	skinMatrix += inBlendWeight[1] * getTransformFromTexture(boneLocation);
-	boneLocation.y = inBlendIndex[2];
+	boneLocation.y = boneLocationY + inBlendIndex[2];
 	skinMatrix += inBlendWeight[2] * getTransformFromTexture(boneLocation);
-	boneLocation.y = inBlendIndex[3];
+	boneLocation.y = boneLocationY + inBlendIndex[3];
 	skinMatrix += inBlendWeight[3] * getTransformFromTexture(boneLocation);
 	skinPosition = skinMatrix * inPosition;
 	skinNormal = (skinMatrix * vec4(inNormal, 0.0)).xyz;
