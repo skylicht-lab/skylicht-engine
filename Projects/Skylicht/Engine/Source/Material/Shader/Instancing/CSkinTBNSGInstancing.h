@@ -50,7 +50,7 @@ namespace Skylicht
 
 		virtual ~CSkinTBNSGInstancing();
 
-		virtual IVertexBuffer* createInstancingMeshBuffer();
+		virtual IVertexBuffer* createInstancingVertexBuffer();
 
 		virtual IMeshBuffer* createMeshBuffer(video::E_INDEX_TYPE type);
 

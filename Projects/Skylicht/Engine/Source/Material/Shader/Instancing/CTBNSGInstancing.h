@@ -38,7 +38,7 @@ namespace Skylicht
 
 		virtual ~CTBNSGInstancing();
 
-		virtual IVertexBuffer* createInstancingMeshBuffer();
+		virtual IVertexBuffer* createInstancingVertexBuffer();
 
 		virtual IMeshBuffer* createMeshBuffer(video::E_INDEX_TYPE type);
 
