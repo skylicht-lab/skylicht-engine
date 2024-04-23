@@ -5,13 +5,13 @@ struct VS_INPUT
 	float4 color: COLOR;
 	float2 tex0: TEXCOORD0;
 	
-	float3 particlePos: TEXCOORD1;
+	float4 particlePos: TEXCOORD1;
 	float4 particleColor: TEXCOORD2;
 	float2 particleUVScale: TEXCOORD3;
 	float2 particleUVOffset: TEXCOORD4;
-	float3 particleSize: TEXCOORD5;
-	float3 particleRotation: TEXCOORD6;
-	float3 particleVelocity: TEXCOORD7;
+	float4 particleSize: TEXCOORD5;
+	float4 particleRotation: TEXCOORD6;
+	float4 particleVelocity: TEXCOORD7;
 };
 
 struct VS_OUTPUT
@@ -37,7 +37,7 @@ VS_OUTPUT main(VS_INPUT input)
 	float sinA = sin(input.particleRotation.z);
 	float oneMinusCosA = 1.0 - cosA;
 	
-	float3 velUp = normalize(input.particleVelocity);
+	float3 velUp = normalize(input.particleVelocity.xyz);
 	
 	float upX = (uViewLook.x * uViewLook.x + (1.0f - uViewLook.x * uViewLook.x) * cosA) * velUp.x
 		+ (uViewLook.x * uViewLook.y * oneMinusCosA - uViewLook.z * sinA) * velUp.y
@@ -61,9 +61,9 @@ VS_OUTPUT main(VS_INPUT input)
 	side = side * 0.5 * input.particleSize.x;
 	up = up * 0.5 * input.particleSize.y;
 	
-	float3 position = input.particlePos + input.pos.x * side + input.pos.y * up;
+	float3 position = input.particlePos.xyz + input.pos.x * side + input.pos.y * up;
 	
-	output.pos = mul(float4(position, 1.0), uMvpMatrix);	
+	output.pos = mul(float4(position, 1.0), uMvpMatrix);
 	output.color = input.particleColor;
 	output.tex0 = input.tex0 * input.particleUVScale + input.particleUVOffset;
 	

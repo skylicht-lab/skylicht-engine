@@ -53,13 +53,13 @@ namespace Skylicht
 					);
 				}
 
-				vertexDescriptor->addAttribute("inParticlePosition", 3, video::EVAS_TEXCOORD1, video::EVAT_FLOAT, 1);
+				vertexDescriptor->addAttribute("inParticlePosition", 4, video::EVAS_TEXCOORD1, video::EVAT_FLOAT, 1);
 				vertexDescriptor->addAttribute("inParticleColor", 4, video::EVAS_TEXCOORD2, EVAT_UBYTE, 1);
 				vertexDescriptor->addAttribute("inParticleUVScale", 2, video::EVAS_TEXCOORD3, video::EVAT_FLOAT, 1);
 				vertexDescriptor->addAttribute("inParticleUVOffset", 2, video::EVAS_TEXCOORD4, video::EVAT_FLOAT, 1);
-				vertexDescriptor->addAttribute("inParticleSize", 3, video::EVAS_TEXCOORD5, video::EVAT_FLOAT, 1);
-				vertexDescriptor->addAttribute("inParticleRotation", 3, video::EVAS_TEXCOORD6, video::EVAT_FLOAT, 1);
-				vertexDescriptor->addAttribute("inParticleVelocity", 3, video::EVAS_TEXCOORD7, video::EVAT_FLOAT, 1);
+				vertexDescriptor->addAttribute("inParticleSize", 4, video::EVAS_TEXCOORD5, video::EVAT_FLOAT, 1);
+				vertexDescriptor->addAttribute("inParticleRotation", 4, video::EVAS_TEXCOORD6, video::EVAT_FLOAT, 1);
+				vertexDescriptor->addAttribute("inParticleVelocity", 4, video::EVAS_TEXCOORD7, video::EVAT_FLOAT, 1);
 
 				vertexDescriptor->setInstanceDataStepRate(video::EIDSR_PER_INSTANCE, 1);
 			}
