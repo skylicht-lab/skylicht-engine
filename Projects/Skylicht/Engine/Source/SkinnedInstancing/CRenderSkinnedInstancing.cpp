@@ -325,13 +325,20 @@ namespace Skylicht
 		int clipJointCount = (int)bones.size();
 		int numClip = h / clipJointCount;
 
+		// fix: OpenGL texture size
+		u32 tw = 0;
+		while (tw < w)
+		{
+			tw = tw + 64;
+		}
+
 		for (CRenderMeshData* renderer : m_renderers)
 		{
 			// get skinned mesh & number of bones
 			CSkinnedMesh* skinnedMesh = dynamic_cast<CSkinnedMesh*>(renderer->getMesh());
 			u32 jointCount = skinnedMesh->Joints.size();
 
-			core::matrix4* boneMatrix = new core::matrix4[w * jointCount * numClip];
+			core::matrix4* boneMatrix = new core::matrix4[tw * jointCount * numClip];
 
 			for (int clipId = 0; clipId < numClip; clipId++)
 			{
@@ -350,13 +357,13 @@ namespace Skylicht
 					}
 					else
 					{
-						int clipOffset1 = clipId * jointCount * w;
+						int clipOffset1 = clipId * jointCount * tw;
 						int clipOffset2 = clipId * clipJointCount * w;
 
 						for (u32 j = 0; j < w; j++)
 						{
 							// calc skinned matrix, that like CSkinnedMeshSystem::update
-							boneMatrix[clipOffset1 + i * w + j].setbyproduct_nocheck(transforms[clipOffset2 + id * w + j], joint.BindPoseMatrix);
+							boneMatrix[clipOffset1 + i * tw + j].setbyproduct_nocheck(transforms[clipOffset2 + id * w + j], joint.BindPoseMatrix);
 						}
 					}
 				}
@@ -366,7 +373,7 @@ namespace Skylicht
 
 			// save the texture
 			CTransformTextureData* data = entity->addData<CTransformTextureData>();
-			data->TransformTexture = textureMgr->createTransformTexture2D("BoneTransformTexture", boneMatrix, w, jointCount * numClip);
+			data->TransformTexture = textureMgr->createTransformTexture2D("BoneTransformTexture", boneMatrix, tw, jointCount * numClip);
 			data->JointCount = jointCount;
 
 			// add textures

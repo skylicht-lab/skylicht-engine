@@ -57,21 +57,22 @@ VS_OUTPUT main(VS_INPUT input)
 	float4 skinTangent;
 
 	float2 boneLocation = input.uBoneLocation.xy;
+	float boneLocationY = input.uBoneLocation.y;
 
 	// bone 0
-	boneLocation.y = input.blendIndex[0];
+	boneLocation.y = boneLocationY + input.blendIndex[0];
 	skinMatrix = input.blendWeight[0] * getTransformFromTexture(boneLocation);
 
 	// bone 1
-	boneLocation.y = input.blendIndex[1];
+	boneLocation.y = boneLocationY + input.blendIndex[1];
 	skinMatrix += input.blendWeight[1] * getTransformFromTexture(boneLocation);
 
 	// bone 2
-	boneLocation.y = input.blendIndex[2];
+	boneLocation.y = boneLocationY + input.blendIndex[2];
 	skinMatrix += input.blendWeight[2] * getTransformFromTexture(boneLocation);
 
 	// bone 3
-	boneLocation.y = input.blendIndex[3];
+	boneLocation.y = boneLocationY + input.blendIndex[3];
 	skinMatrix += input.blendWeight[3] * getTransformFromTexture(boneLocation);
 
 	// skin result
