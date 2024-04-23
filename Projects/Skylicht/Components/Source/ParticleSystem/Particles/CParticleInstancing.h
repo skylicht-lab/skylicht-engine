@@ -30,13 +30,13 @@ namespace Skylicht
 	{
 		struct SParticleInstance
 		{
-			core::vector3df Pos;
+			video::SVec4 Pos;
 			SColor Color;
 			core::vector2df UVScale;
 			core::vector2df UVOffset;
-			core::vector3df Size;
-			core::vector3df Rotation;
-			core::vector3df Velocity;
+			video::SVec4 Size;
+			video::SVec4 Rotation;
+			video::SVec4 Velocity;
 
 			bool operator==(const SParticleInstance& other) const
 			{
@@ -54,7 +54,7 @@ namespace Skylicht
 		{
 		protected:
 			IMeshBuffer* m_meshBuffer;
-			CVertexBuffer<SParticleInstance> *m_instanceBuffer;
+			CVertexBuffer<SParticleInstance>* m_instanceBuffer;
 
 		public:
 			CParticleInstancing();

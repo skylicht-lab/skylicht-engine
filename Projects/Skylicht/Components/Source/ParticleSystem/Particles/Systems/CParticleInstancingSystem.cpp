@@ -44,7 +44,7 @@ namespace Skylicht
 
 		}
 
-		void CParticleInstancingSystem::update(CParticle *particles, int num, CGroup *group, float dt)
+		void CParticleInstancingSystem::update(CParticle* particles, int num, CGroup* group, float dt)
 		{
 			CVertexBuffer<SParticleInstance>* buffer = group->getIntancing()->getInstanceBuffer();
 
@@ -53,16 +53,16 @@ namespace Skylicht
 			if (num == 0)
 				return;
 
-			SParticleInstance *vtx = (SParticleInstance*)buffer->getVertices();
+			SParticleInstance* vtx = (SParticleInstance*)buffer->getVertices();
 
-			CParticle *p;
-			float *params;
-			SParticleInstance *data;
+			CParticle* p;
+			float* params;
+			SParticleInstance* data;
 
 			u32 frameX = 1;
 			u32 frameY = 1;
 
-			IRenderer *renderer = group->getRenderer();
+			IRenderer* renderer = group->getRenderer();
 			float sx = 1.0f;
 			float sy = 1.0f;
 			float sz = 1.0f;
@@ -75,7 +75,7 @@ namespace Skylicht
 
 				if (renderer->getType() == Particle::Quad)
 				{
-					CQuadRenderer *quadRenderer = (CQuadRenderer*)renderer;
+					CQuadRenderer* quadRenderer = (CQuadRenderer*)renderer;
 					frameX = quadRenderer->getAtlasX();
 					frameY = quadRenderer->getAtlasY();
 				}
@@ -93,7 +93,9 @@ namespace Skylicht
 				params = p->Params;
 				data = vtx + i;
 
-				data->Pos = p->Position;
+				data->Pos.X = p->Position.X;
+				data->Pos.Y = p->Position.Y;
+				data->Pos.Z = p->Position.Z;
 
 				data->Color.set(
 					(u32)(params[ColorA] * 255.0f),
@@ -102,13 +104,17 @@ namespace Skylicht
 					(u32)(params[ColorB] * 255.0f)
 				);
 
-				data->Size.set(
-					sx * params[ScaleX],
-					sy * params[ScaleY],
-					sz * params[ScaleZ]
-				);
-				data->Rotation = p->Rotation;
-				data->Velocity = p->Velocity;
+				data->Size.X = sx * params[ScaleX];
+				data->Size.Y = sy * params[ScaleY];
+				data->Size.Z = sz * params[ScaleZ];
+
+				data->Rotation.X = p->Rotation.X;
+				data->Rotation.Y = p->Rotation.Y;
+				data->Rotation.Z = p->Rotation.Z;
+
+				data->Velocity.X = p->Velocity.X;
+				data->Velocity.Y = p->Velocity.Y;
+				data->Velocity.Z = p->Velocity.Z;
 
 				frame = (u32)params[FrameIndex];
 				frame = frame < 0 ? 0 : frame;
