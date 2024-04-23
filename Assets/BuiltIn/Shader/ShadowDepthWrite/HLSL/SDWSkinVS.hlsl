@@ -28,12 +28,12 @@ cbuffer cbPerObject
 	float4 uAnimation;
 	float2 uTransformTextureSize;
 };
-static const float centerX = 0.5 / uTransformTextureSize.x;
-static const float centerY = 0.5 / uTransformTextureSize.y;
-static const float nextPixelX = 1.0 / uTransformTextureSize.x;
-static const float nextPixelY = 1.0 / uTransformTextureSize.y;
 float4x4 getTransformFromTexture(float2 p)
 {
+	float centerX = 0.5 / uTransformTextureSize.x;
+	float centerY = 0.5 / uTransformTextureSize.y;
+	float nextPixelX = 1.0 / uTransformTextureSize.x;
+	float nextPixelY = 1.0 / uTransformTextureSize.y;
 	float2 uv = float2(
 		p.x * nextPixelX * 4.0 + centerX,
 		p.y * nextPixelY + centerY

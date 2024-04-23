@@ -60,5 +60,9 @@ namespace Skylicht
 		virtual void update(CEntityManager* entityManager);
 
 		virtual void render(CEntityManager* entityManager);
+
+		virtual void renderTransparent(CEntityManager* entityManager);
+
+		void renderInstancing(CEntityManager* entityManager, bool isRenderTransparent);
 	};
 }
