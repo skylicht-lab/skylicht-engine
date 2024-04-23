@@ -104,7 +104,7 @@ namespace Skylicht
 
 	}
 
-	IVertexBuffer* CSkinTBNSGInstancing::createInstancingMeshBuffer()
+	IVertexBuffer* CSkinTBNSGInstancing::createInstancingVertexBuffer()
 	{
 		return new CVertexBuffer<SVtxSkinSGInstancing>();
 	}

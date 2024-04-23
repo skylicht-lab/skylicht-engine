@@ -104,7 +104,7 @@ namespace Skylicht
 
 	}
 
-	IVertexBuffer* CTBNSGInstancing::createInstancingMeshBuffer()
+	IVertexBuffer* CTBNSGInstancing::createInstancingVertexBuffer()
 	{
 		return new CVertexBuffer<SVtxSGInstancing>();
 	}

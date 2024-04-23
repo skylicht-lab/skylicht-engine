@@ -72,12 +72,12 @@ namespace Skylicht
 		return true;
 	}
 
-	IVertexBuffer* IShaderInstancing::createTransformMeshBuffer()
+	IVertexBuffer* IShaderInstancing::createTransformVertexBuffer()
 	{
 		return new CVertexBuffer<SVtxTransform>();
 	}
 
-	IVertexBuffer* IShaderInstancing::createIndirectLightingMeshBuffer()
+	IVertexBuffer* IShaderInstancing::createIndirectLightingVertexBuffer()
 	{
 		return new CVertexBuffer<SVtxIndirectLighting>();
 	}

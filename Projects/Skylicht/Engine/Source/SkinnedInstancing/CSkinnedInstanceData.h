@@ -33,17 +33,12 @@ namespace Skylicht
 	{
 	public:
 		int ClipId;
-
-		bool Loop;
-
 		float Time;
 		float TimeFrom;
 		float TimeTo;
-
 		int FPS;
-
 		int Frame;
-
+		bool Loop;
 		bool Pause;
 
 		core::array<CRenderMeshData*> RenderData;

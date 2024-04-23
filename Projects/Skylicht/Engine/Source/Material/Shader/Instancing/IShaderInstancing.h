@@ -73,13 +73,13 @@ namespace Skylicht
 
 		virtual IMeshBuffer* createLinkMeshBuffer(IMeshBuffer* mb);
 
-		virtual IVertexBuffer* createInstancingMeshBuffer() = 0;
+		virtual IVertexBuffer* createInstancingVertexBuffer() = 0;
 
 		virtual IMeshBuffer* createMeshBuffer(video::E_INDEX_TYPE type) = 0;
 
-		static IVertexBuffer* createTransformMeshBuffer();
+		static IVertexBuffer* createTransformVertexBuffer();
 
-		static IVertexBuffer* createIndirectLightingMeshBuffer();
+		static IVertexBuffer* createIndirectLightingVertexBuffer();
 
 		virtual bool applyInstancing(IMeshBuffer* meshbuffer, IVertexBuffer* instancingBuffer, IVertexBuffer* transformBuffer);
 
