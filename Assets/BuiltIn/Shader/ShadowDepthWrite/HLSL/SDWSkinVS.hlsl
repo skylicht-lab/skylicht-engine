@@ -28,12 +28,12 @@ cbuffer cbPerObject
 	float4 uAnimation;
 	float2 uTransformTextureSize;
 };
+static const float centerX = 0.5 / uTransformTextureSize.x;
+static const float centerY = 0.5 / uTransformTextureSize.y;
+static const float nextPixelX = 1.0 / uTransformTextureSize.x;
+static const float nextPixelY = 1.0 / uTransformTextureSize.y;
 float4x4 getTransformFromTexture(float2 p)
 {
-	float centerX = 0.5 / uTransformTextureSize.x;
-	float centerY = 0.5 / uTransformTextureSize.y;
-	float nextPixelX = 1.0 / uTransformTextureSize.x;
-	float nextPixelY = 1.0 / uTransformTextureSize.y;
 	float2 uv = float2(
 		p.x * nextPixelX * 4.0 + centerX,
 		p.y * nextPixelY + centerY
@@ -56,13 +56,14 @@ VS_OUTPUT main(VS_INPUT input)
 	float4x4 skinMatrix;
 	float4 skinPosition;
 	float2 boneLocation = input.uBoneLocation.xy;
-	boneLocation.y = input.blendIndex[0];
+	float boneLocationY = input.uBoneLocation.y;
+	boneLocation.y = boneLocationY + input.blendIndex[0];
 	skinMatrix = input.blendWeight[0] * getTransformFromTexture(boneLocation);
-	boneLocation.y = input.blendIndex[1];
+	boneLocation.y = boneLocationY + input.blendIndex[1];
 	skinMatrix += input.blendWeight[1] * getTransformFromTexture(boneLocation);
-	boneLocation.y = input.blendIndex[2];
+	boneLocation.y = boneLocationY + input.blendIndex[2];
 	skinMatrix += input.blendWeight[2] * getTransformFromTexture(boneLocation);
-	boneLocation.y = input.blendIndex[3];
+	boneLocation.y = boneLocationY + input.blendIndex[3];
 	skinMatrix += input.blendWeight[3] * getTransformFromTexture(boneLocation);
 	skinPosition = mul(input.pos, skinMatrix);
 	output.pos = mul(skinPosition, uMvpMatrix);

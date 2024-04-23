@@ -42,17 +42,18 @@ void main(void)
 	vec3 skinTangent = vec3(0.0);
 
 	vec2 boneLocation = uBoneLocation.xy;
+	float boneLocationY = uBoneLocation.y;
 
-	boneLocation.y = inBlendIndex[0];
+	boneLocation.y = boneLocationY + inBlendIndex[0];
 	skinMatrix = inBlendWeight[0] * getTransformFromTexture(boneLocation);
 
-	boneLocation.y = inBlendIndex[1];
+	boneLocation.y = boneLocationY + inBlendIndex[1];
 	skinMatrix += inBlendWeight[1] * getTransformFromTexture(boneLocation);
 
-	boneLocation.y = inBlendIndex[2];
+	boneLocation.y = boneLocationY + inBlendIndex[2];
 	skinMatrix += inBlendWeight[2] * getTransformFromTexture(boneLocation);
 
-	boneLocation.y = inBlendIndex[3];
+	boneLocation.y = boneLocationY + inBlendIndex[3];
 	skinMatrix += inBlendWeight[3] * getTransformFromTexture(boneLocation);
 
 	skinPosition = skinMatrix * inPosition;
