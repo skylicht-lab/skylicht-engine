@@ -116,7 +116,7 @@ namespace Skylicht
 		if (m_updateEntity == true)
 		{
 			entityManager->update();
-			entityManager->render();
+			entityManager->cullingAndRender();
 		}
 		else
 		{

@@ -177,7 +177,6 @@ void CViewInit::initScene()
 			skeleton->setAnimation(clip, true);
 
 			int clipFrames = (int)(clip->Duration * fps);
-
 			int clipOffset = clipId * numBones * totalFrames;
 
 			for (int i = 0; i < clipFrames; i++)
