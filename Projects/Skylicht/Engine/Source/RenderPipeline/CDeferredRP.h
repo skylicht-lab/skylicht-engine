@@ -32,10 +32,6 @@ namespace Skylicht
 	class SKYLICHT_API CDeferredRP : public CBaseRP
 	{
 	protected:
-		static bool s_enableRenderIndirect;
-		static bool s_enableRenderTestIndirect;
-
-	protected:
 		ITexture* m_target;
 
 		ITexture* m_albedo;
