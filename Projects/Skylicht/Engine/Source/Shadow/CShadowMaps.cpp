@@ -189,6 +189,13 @@ namespace Skylicht
 
 		core::matrix4 mvp = m_projMatrices * m_viewMatrices;
 		core::matrix4 shadowMatrix = m_bias * mvp;
-		memcpy(m_shadowMatrices, shadowMatrix.pointer(), 16 * sizeof(float));
+
+		// we clone to 4 matrices to fit with cascaded shadow shader
+		float* p = m_shadowMatrices;
+		for (int i = 0; i < 4; i++)
+		{
+			memcpy(p, shadowMatrix.pointer(), 16 * sizeof(float));
+			p += 16;
+		}
 	}
 }
