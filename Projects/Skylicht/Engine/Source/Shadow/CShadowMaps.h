@@ -46,7 +46,7 @@ namespace Skylicht
 		core::aabbox3df m_frustumBox;
 
 		float m_farBounds[4];
-		float m_shadowMatrices[16];
+		float m_shadowMatrices[16 * 4];
 
 		float m_farValue;
 
