@@ -99,10 +99,10 @@ void CViewInit::initScene()
 	reflection->loadStaticTexture("Common/Textures/Sky/PaperMill");
 
 	// 3D grid
-	CGameObject* grid = zone->createEmptyObject();
-	CPlane* plane = grid->addComponent<CPlane>();
+	m_plane = zone->createEmptyObject();
+	CPlane* plane = m_plane->addComponent<CPlane>();
 	plane->getMaterial()->changeShader("BuiltIn/Shader/SpecularGlossiness/Deferred/MetersGrid.xml");
-	grid->getTransformEuler()->setScale(core::vector3df(50.0f, 1.0f, 50.0f));
+	m_plane->getTransformEuler()->setScale(core::vector3df(50.0f, 1.0f, 50.0f));
 
 
 	// lighting
@@ -198,8 +198,8 @@ void CViewInit::initScene()
 		character->remove();
 
 		// create gpu anim character
-		character = zone->createEmptyObject();
-		CRenderSkinnedInstancing* crowdSkinnedMesh = character->addComponent<CRenderSkinnedInstancing>();
+		m_crowd = zone->createEmptyObject();
+		CRenderSkinnedInstancing* crowdSkinnedMesh = m_crowd->addComponent<CRenderSkinnedInstancing>();
 		crowdSkinnedMesh->initFromPrefab(prefab);
 		crowdSkinnedMesh->initTextureTransform(animationData, totalFrames, numBones * numClip, boneMap);
 
@@ -382,6 +382,11 @@ void CViewInit::onRender()
 			CCamera* bakeCamera = bakeCameraObj->addComponent<CCamera>();
 			scene->updateAddRemoveObject();
 
+			// hide objects
+			// that fix the probes ambient is brigther because plane color affect on it
+			m_crowd->setVisible(false);
+			m_plane->setVisible(false);
+
 			// bake light probe
 			Lightmapper::CLightmapper* lm = Lightmapper::CLightmapper::getInstance();
 			lm->initBaker(64);
@@ -390,6 +395,10 @@ void CViewInit::onRender()
 			probes.push_back(lightProbe);
 
 			lm->bakeProbes(probes, bakeCamera, rp, scene->getEntityManager());
+
+			// show objects again
+			m_crowd->setVisible(true);
+			m_plane->setVisible(true);
 		}
 	}
 	else
