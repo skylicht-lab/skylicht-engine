@@ -23,13 +23,13 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CBoundShadowMaps.h"
+#include "CShadowMaps.h"
 #include "Transform/CTransform.h"
 #include "GameObject/CGameObject.h"
 
 namespace Skylicht
 {
-	CBoundShadowMaps::CBoundShadowMaps() :
+	CShadowMaps::CShadowMaps() :
 		m_shadowMapSize(2048),
 		m_farValue(500.0f),
 		m_nearOffset(300.0f)
@@ -37,15 +37,19 @@ namespace Skylicht
 
 	}
 
-	CBoundShadowMaps::~CBoundShadowMaps()
+	CShadowMaps::~CShadowMaps()
 	{
 
 	}
 
-	void CBoundShadowMaps::init(int shadowMapSize, float farValue, int screenWidth, int screenHeight)
+	void CShadowMaps::init(int shadowMapSize, float farValue, int screenWidth, int screenHeight)
 	{
 		m_shadowMapSize = shadowMapSize;
 		m_farValue = farValue;
+
+		m_frustum.Ratio = 1.0f;
+		if (screenHeight > 0)
+			m_frustum.Ratio = screenWidth / (float)screenHeight;
 
 		if (getVideoDriver()->getDriverType() == EDT_DIRECT3D11)
 		{
@@ -69,10 +73,17 @@ namespace Skylicht
 		}
 	}
 
-	void CBoundShadowMaps::update(CCamera* camera, const core::vector3df& lightDir, const core::aabbox3df& bound)
+	void CShadowMaps::update(CCamera* camera, const core::vector3df& lightDir)
 	{
 		m_lightDirection = lightDir;
 		m_lightDirection.normalize();
+
+		m_frustum.Fov = camera->getFOV() * core::DEGTORAD + 0.2f;
+		m_frustum.NearPlane = camera->getNearValue();
+		m_frustum.FarPlane = m_farValue;
+
+		for (int i = 0; i < 4; i++)
+			m_farBounds[i] = m_farValue;
 
 		CTransform* cameraTransform = camera->getGameObject()->getTransform();
 
@@ -80,19 +91,70 @@ namespace Skylicht
 		const core::matrix4& mat = cameraTransform->getRelativeTransform();
 		core::vector3df cameraPosition = mat.getTranslation();
 
+		// camera forward
+		core::vector3df cameraForward(0.0f, 0.0f, 1.0f);
+		mat.rotateVect(cameraForward);
+		cameraForward.normalize();
+
 		// calc shadow volume
-		updateMatrix(cameraPosition, bound);
+		updateFrustumCorners(cameraPosition, cameraForward);
+		updateMatrix(cameraPosition);
 	}
 
-	void CBoundShadowMaps::updateMatrix(core::vector3df& camPos, const core::aabbox3df& bound)
+	void CShadowMaps::updateFrustumCorners(const core::vector3df& camPos, const core::vector3df& camForward)
 	{
-		// Calculate bounding sphere radius
-		core::vector3df center = bound.getCenter();
+		core::vector3df center = camPos;
+		core::vector3df viewDir = camForward;
 
+		core::vector3df right = viewDir.crossProduct(Transform::Oy);
+		right.normalize();
+
+		SFrustumSplit& frustum = m_frustum;
+
+		core::vector3df fc = center + viewDir * frustum.FarPlane;
+		core::vector3df nc = center + viewDir * frustum.NearPlane;
+
+		core::vector3df up = right.crossProduct(viewDir);
+		up.normalize();
+
+		// these heights and widths are half the heights and widths of
+		// the near and far plane rectangles
+		float near_height = tan(frustum.Fov / 2.0f) * frustum.NearPlane;
+		float near_width = near_height * frustum.Ratio;
+		float far_height = tan(frustum.Fov / 2.0f) * frustum.FarPlane;
+		float far_width = far_height * frustum.Ratio;
+
+		frustum.Corners[0] = nc - up * near_height - right * near_width; // near-bottom-left
+		frustum.Corners[1] = nc + up * near_height - right * near_width; // near-top-left
+		frustum.Corners[2] = nc + up * near_height + right * near_width; // near-top-right
+		frustum.Corners[3] = nc - up * near_height + right * near_width; // near-bottom-right
+
+		frustum.Corners[4] = fc - up * far_height - right * far_width; // far-bottom-left
+		frustum.Corners[5] = fc + up * far_height - right * far_width; // far-top-left
+		frustum.Corners[6] = fc + up * far_height + right * far_width; // far-top-right
+		frustum.Corners[7] = fc - up * far_height + right * far_width; // far-bottom-right
+	}
+
+	void CShadowMaps::updateMatrix(core::vector3df& camPos)
+	{
+		SFrustumSplit& frustum = m_frustum;
+
+		// Calculate frustum split center
+		frustum.Center = core::vector3df(0.0f, 0.0f, 0.0f);
+
+		for (int j = 0; j < 8; j++)
+			frustum.Center += frustum.Corners[j];
+
+		frustum.Center /= 8.0f;
+
+		// Calculate bounding sphere radius
 		float radius = 0.0f;
 
-		float length = (bound.MinEdge - center).getLength();
-		radius = core::max_(radius, length);
+		for (int j = 0; j < 8; j++)
+		{
+			float length = (frustum.Corners[j] - frustum.Center).getLength();
+			radius = core::max_(radius, length);
+		}
 
 		radius = ceil(radius * 16.0f) / 16.0f;
 
@@ -105,14 +167,14 @@ namespace Skylicht
 		core::vector3df cascadeExtents = max - min;
 
 		// Push the light position back along the light direction by the near offset.
-		core::vector3df shadowCameraPos = center - m_lightDirection * m_nearOffset;
+		core::vector3df shadowCameraPos = frustum.Center - m_lightDirection * m_nearOffset;
 
 		// Compute bounding box for culling
-		m_frustumBox.MinEdge = center - radius3;
-		m_frustumBox.MaxEdge = center + radius3;
+		m_frustumBox.MinEdge = frustum.Center - radius3;
+		m_frustumBox.MaxEdge = frustum.Center + radius3;
 
 		// Fix: object shadow culling above camera
-		core::vector3df highCameraPos = center - m_lightDirection * radius * 2.0f;
+		core::vector3df highCameraPos = frustum.Center - m_lightDirection * radius * 2.0f;
 		m_frustumBox.addInternalPoint(highCameraPos);
 
 		// Add the near offset to the Z value of the cascade extents to make sure the orthographic frustum captures the entire frustum split (else it will exhibit cut-off issues).
@@ -120,7 +182,7 @@ namespace Skylicht
 		ortho.buildProjectionMatrixOrthoLH(max.X - min.X, max.Y - min.Y, -m_nearOffset, m_nearOffset + cascadeExtents.Z + m_farValue);
 
 		core::matrix4 view;
-		view.buildCameraLookAtMatrixLH(shadowCameraPos, center, Transform::Oy);
+		view.buildCameraLookAtMatrixLH(shadowCameraPos, frustum.Center, Transform::Oy);
 
 		m_projMatrices = ortho;
 		m_viewMatrices = view;

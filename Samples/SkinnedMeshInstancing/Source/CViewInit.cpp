@@ -254,7 +254,12 @@ void CViewInit::initScene()
 	context->setGUICamera(guiCamera);
 	context->setDirectionalLight(directionalLight);
 
-	context->getShadowMapRenderPipeline()->setShadowCascade(2);
+
+	// Test use 2 cascade shadow
+	// context->getShadowMapRenderPipeline()->setShadowCascade(2);
+
+	// Test no shadow cascade (30m far shadow)
+	context->getShadowMapRenderPipeline()->setNoShadowCascade(2048, 30.0f);
 }
 
 void CViewInit::onDestroy()
