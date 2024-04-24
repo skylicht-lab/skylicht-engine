@@ -27,61 +27,51 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "SFrustumSplit.h"
 #include "Camera/CCamera.h"
 
-#define MAX_FRUSTUM_SPLITS 8
-
 namespace Skylicht
 {
-	class SKYLICHT_API CCascadedShadowMaps
+	class SKYLICHT_API CShadowMaps
 	{
 	protected:
-		float m_lambda;
-		float m_nearOffset;
-		int m_splitCount;
 		int m_shadowMapSize;
-
-		SFrustumSplit m_splits[MAX_FRUSTUM_SPLITS];
-		float m_farBounds[MAX_FRUSTUM_SPLITS];
+		float m_nearOffset;
 
 		core::vector3df m_lightDirection;
 
 		core::matrix4 m_bias;
-		core::matrix4 m_viewMatrices[MAX_FRUSTUM_SPLITS];
-		core::matrix4 m_projMatrices[MAX_FRUSTUM_SPLITS];
-		core::matrix4 m_textureMatrices[MAX_FRUSTUM_SPLITS];
+		core::matrix4 m_viewMatrices;
+		core::matrix4 m_projMatrices;
+		core::matrix4 m_textureMatrices;
 
-		core::aabbox3df m_frustumBox[MAX_FRUSTUM_SPLITS];
+		SFrustumSplit m_frustum;
+		core::aabbox3df m_frustumBox;
 
-		float m_shadowMatrices[16 * MAX_FRUSTUM_SPLITS];
+		float m_farBounds[4];
+		float m_shadowMatrices[16];
 
 		float m_farValue;
 
 	public:
-		CCascadedShadowMaps();
+		CShadowMaps();
 
-		virtual ~CCascadedShadowMaps();
+		virtual ~CShadowMaps();
 
-		void init(int splitCount, int shadowMapSize, float farValue, int screenWidth, int screenHeight);
+		void init(int shadowMapSize, float farValue, int screenWidth, int screenHeight);
 
-		void update(CCamera *camera, const core::vector3df& lightDir);
+		void update(CCamera* camera, const core::vector3df& lightDir);
 
-		const core::aabbox3df& getFrustumBox(int cascaded)
+		const core::aabbox3df& getFrustumBox()
 		{
-			return m_frustumBox[cascaded];
+			return m_frustumBox;
 		}
 
-		int getSplitCount()
+		const core::matrix4& getViewMatrices()
 		{
-			return m_splitCount;
+			return m_viewMatrices;
 		}
 
-		const core::matrix4& getViewMatrices(int i)
+		const core::matrix4& getProjectionMatrices()
 		{
-			return m_viewMatrices[i];
-		}
-
-		const core::matrix4& getProjectionMatrices(int i)
-		{
-			return m_projMatrices[i];
+			return m_projMatrices;
 		}
 
 		float* getShadowDistance()
@@ -95,8 +85,6 @@ namespace Skylicht
 		}
 
 	protected:
-
-		void updateSplits(CCamera *camera);
 
 		void updateFrustumCorners(const core::vector3df& camPos, const core::vector3df& camForward);
 

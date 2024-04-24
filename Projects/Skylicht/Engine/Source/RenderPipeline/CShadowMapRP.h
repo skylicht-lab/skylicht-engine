@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CBaseRP.h"
 #include "Shadow/CCascadedShadowMaps.h"
+#include "Shadow/CShadowMaps.h"
 
 namespace Skylicht
 {
@@ -33,6 +34,13 @@ namespace Skylicht
 		public CBaseRP,
 		public IEventReceiver
 	{
+	public:
+		enum EShadowMapType
+		{
+			CascadedShadow = 0,
+			ShadowMapping
+		};
+
 	protected:
 		enum ERenderShadowState
 		{
@@ -40,18 +48,24 @@ namespace Skylicht
 			PointLight,
 		};
 
+		EShadowMapType m_shadowMapType;
+
 		ERenderShadowState m_renderShadowState;
 
 		ITexture* m_depthTexture;
 
+		float m_shadowFar;
 		int m_shadowMapSize;
+
 		int m_numCascade;
+
 		int m_screenWidth;
 		int m_screenHeight;
 
 		SMaterial m_writeDepthMaterial;
 		core::vector3df m_lightDirection;
 
+		CShadowMaps* m_sm;
 		CCascadedShadowMaps* m_csm;
 		int m_currentCSM;
 
@@ -78,7 +92,11 @@ namespace Skylicht
 
 		void release();
 
-		void setShadowCascade(int numCascade, int shadowMapSize = 2048);
+		void setShadowCascade(int numCascade, int shadowMapSize = 2048, float farValue = 300.0f);
+
+		void setNoShadowCascade(int shadowMapSize = 2048, float farValue = 50.0f);
+
+		void setShadowMapping(EShadowMapType type);
 
 		virtual void initRender(int w, int h);
 

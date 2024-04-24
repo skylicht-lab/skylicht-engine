@@ -42,6 +42,9 @@ namespace Skylicht
 	CShadowMapRP::CShadowMapRP() :
 		m_depthTexture(NULL),
 		m_csm(NULL),
+		m_sm(NULL),
+		m_shadowMapType(CascadedShadow),
+		m_shadowFar(300.0f),
 		m_shadowMapSize(2048),
 		m_numCascade(3),
 		m_currentCSM(0),
@@ -91,14 +94,51 @@ namespace Skylicht
 		if (m_csm != NULL)
 			delete m_csm;
 
+		if (m_sm != NULL)
+			delete m_sm;
+
 		m_depthTexture = NULL;
 		m_csm = NULL;
+		m_sm = NULL;
 	}
 
-	void CShadowMapRP::setShadowCascade(int numCascade, int shadowMapSize)
+	void CShadowMapRP::setShadowMapping(EShadowMapType type)
+	{
+		if (m_shadowMapType != type)
+		{
+			if (type == CShadowMapRP::CascadedShadow)
+			{
+				setShadowCascade(m_numCascade, m_shadowMapSize);
+			}
+			else
+			{
+				setNoShadowCascade(m_shadowMapSize);
+			}
+		}
+
+		m_shadowMapType = type;
+	}
+
+	void CShadowMapRP::setShadowCascade(int numCascade, int shadowMapSize, float farValue)
 	{
 		m_numCascade = numCascade;
 		m_shadowMapSize = shadowMapSize;
+		m_shadowFar = farValue;
+		m_shadowMapType = CShadowMapRP::CascadedShadow;
+
+		if (m_screenWidth > 0 && m_screenHeight > 0)
+		{
+			release();
+			initRender(m_screenWidth, m_screenHeight);
+		}
+	}
+
+	void CShadowMapRP::setNoShadowCascade(int shadowMapSize, float farValue)
+	{
+		m_shadowMapSize = shadowMapSize;
+		m_shadowFar = farValue;
+		m_numCascade = 1;
+		m_shadowMapType = CShadowMapRP::ShadowMapping;
 
 		if (m_screenWidth > 0 && m_screenHeight > 0)
 		{
@@ -112,11 +152,22 @@ namespace Skylicht
 		m_screenWidth = w;
 		m_screenHeight = h;
 
-		m_csm = new CCascadedShadowMaps();
-		m_csm->init(m_numCascade, m_shadowMapSize, 300.0f, w, h);
+		if (m_shadowMapType == CShadowMapRP::CascadedShadow)
+		{
+			m_csm = new CCascadedShadowMaps();
+			m_csm->init(m_numCascade, m_shadowMapSize, m_shadowFar, w, h);
 
-		core::dimension2du size = core::dimension2du((u32)m_shadowMapSize, (u32)m_shadowMapSize);
-		m_depthTexture = getVideoDriver()->addRenderTargetTextureArray(size, m_numCascade, "shadow_depth", ECF_R32F);
+			core::dimension2du size = core::dimension2du((u32)m_shadowMapSize, (u32)m_shadowMapSize);
+			m_depthTexture = getVideoDriver()->addRenderTargetTextureArray(size, m_numCascade, "shadow_depth", ECF_R32F);
+		}
+		else
+		{
+			m_sm = new CShadowMaps();
+			m_sm->init(m_shadowMapSize, m_shadowFar, w, h);
+
+			core::dimension2du size = core::dimension2du((u32)m_shadowMapSize, (u32)m_shadowMapSize);
+			m_depthTexture = getVideoDriver()->addRenderTargetTextureArray(size, 1, "shadow_depth", ECF_R32F);
+		}
 	}
 
 	void CShadowMapRP::resize(int w, int h)
@@ -124,12 +175,25 @@ namespace Skylicht
 		m_screenWidth = w;
 		m_screenHeight = h;
 
-		if (m_csm != NULL)
+		if (m_shadowMapType == CShadowMapRP::CascadedShadow)
 		{
-			delete m_csm;
+			if (m_csm != NULL)
+			{
+				delete m_csm;
 
-			m_csm = new CCascadedShadowMaps();
-			m_csm->init(m_numCascade, m_shadowMapSize, 300.0f, w, h);
+				m_csm = new CCascadedShadowMaps();
+				m_csm->init(m_numCascade, m_shadowMapSize, m_shadowFar, w, h);
+			}
+		}
+		else
+		{
+			if (m_sm != NULL)
+			{
+				delete m_sm;
+
+				m_sm = new CShadowMaps();
+				m_sm->init(m_shadowMapSize, m_shadowFar, w, h);
+			}
 		}
 	}
 
@@ -288,17 +352,26 @@ namespace Skylicht
 
 	const core::aabbox3df& CShadowMapRP::getFrustumBox()
 	{
-		return m_csm->getFrustumBox(m_currentCSM);
+		if (m_shadowMapType == CShadowMapRP::CascadedShadow)
+			return m_csm->getFrustumBox(m_currentCSM);
+
+		return m_sm->getFrustumBox();
 	}
 
 	float* CShadowMapRP::getShadowDistance()
 	{
-		return m_csm->getShadowDistance();
+		if (m_shadowMapType == CShadowMapRP::CascadedShadow)
+			return m_csm->getShadowDistance();
+
+		return m_sm->getShadowDistance();
 	}
 
 	float* CShadowMapRP::getShadowMatrices()
 	{
-		return m_csm->getShadowMatrices();
+		if (m_shadowMapType == CShadowMapRP::CascadedShadow)
+			return m_csm->getShadowMatrices();
+
+		return m_sm->getShadowMatrices();
 	}
 
 	void CShadowMapRP::render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport, IRenderPipeline* lastRP)
@@ -320,7 +393,10 @@ namespace Skylicht
 		if (s_bakeMode == false && light->getLightType() == CLight::Baked)
 			castShadow = false;
 
-		m_csm->update(camera, m_lightDirection);
+		if (m_shadowMapType == CShadowMapRP::CascadedShadow)
+			m_csm->update(camera, m_lightDirection);
+		else
+			m_sm->update(camera, m_lightDirection);
 
 		setCamera(camera);
 
@@ -336,21 +412,39 @@ namespace Skylicht
 		m_renderShadowState = CShadowMapRP::DirectionLight;
 
 		IVideoDriver* driver = getVideoDriver();
-		for (int i = m_numCascade - 1; i >= 0; i--)
+
+		if (m_shadowMapType == CShadowMapRP::CascadedShadow)
+		{
+			for (int i = m_numCascade - 1; i >= 0; i--)
+			{
+				// note: clear while 0xFFFFFFFF for max depth value
+				driver->setRenderTargetArray(m_depthTexture, i, true, true, SColor(255, 255, 255, 255));
+				driver->setTransform(video::ETS_PROJECTION, m_csm->getProjectionMatrices(i));
+				driver->setTransform(video::ETS_VIEW, m_csm->getViewMatrices(i));
+
+				m_currentCSM = i;
+
+				if (castShadow)
+				{
+					if (i == m_numCascade - 1)
+						entityManager->cullingAndRender();
+					else
+						entityManager->render();
+				}
+			}
+		}
+		else
 		{
 			// note: clear while 0xFFFFFFFF for max depth value
-			driver->setRenderTargetArray(m_depthTexture, i, true, true, SColor(255, 255, 255, 255));
-			driver->setTransform(video::ETS_PROJECTION, m_csm->getProjectionMatrices(i));
-			driver->setTransform(video::ETS_VIEW, m_csm->getViewMatrices(i));
+			driver->setRenderTargetArray(m_depthTexture, 0, true, true, SColor(255, 255, 255, 255));
+			driver->setTransform(video::ETS_PROJECTION, m_sm->getProjectionMatrices());
+			driver->setTransform(video::ETS_VIEW, m_sm->getViewMatrices());
 
-			m_currentCSM = i;
+			m_currentCSM = 0;
 
 			if (castShadow)
 			{
-				if (i == m_numCascade - 1)
-					entityManager->cullingAndRender();
-				else
-					entityManager->render();
+				entityManager->cullingAndRender();
 			}
 		}
 
@@ -361,21 +455,40 @@ namespace Skylicht
 			core::dimension2du size = core::dimension2du((u32)m_shadowMapSize, (u32)m_shadowMapSize);
 			ITexture* rtt = getVideoDriver()->addRenderTargetTexture(size, "rt", video::ECF_A8R8G8B8);
 
-			for (int i = 0; i < m_numCascade; i++)
+			if (m_shadowMapType == CShadowMapRP::CascadedShadow)
+			{
+				for (int i = 0; i < m_numCascade; i++)
+				{
+					driver->setRenderTarget(rtt, true, true);
+					driver->setTransform(video::ETS_PROJECTION, m_csm->getProjectionMatrices(i));
+					driver->setTransform(video::ETS_VIEW, m_csm->getViewMatrices(i));
+
+					m_currentCSM = i;
+
+					entityManager->cullingAndRender();
+
+					driver->setRenderTarget(NULL, false, false);
+
+					char filename[32];
+					sprintf(filename, "shadow_%d.png", i);
+					CBaseRP::saveFBOToFile(rtt, filename);
+					os::Printer::log(filename);
+				}
+			}
+			else
 			{
 				driver->setRenderTarget(rtt, true, true);
-				driver->setTransform(video::ETS_PROJECTION, m_csm->getProjectionMatrices(i));
-				driver->setTransform(video::ETS_VIEW, m_csm->getViewMatrices(i));
+				driver->setTransform(video::ETS_PROJECTION, m_sm->getProjectionMatrices());
+				driver->setTransform(video::ETS_VIEW, m_sm->getViewMatrices());
 
-				m_currentCSM = i;
+				m_currentCSM = 0;
 
 				entityManager->cullingAndRender();
 
 				driver->setRenderTarget(NULL, false, false);
 
 				char filename[32];
-				sprintf(filename, "shadow_%d.png", i);
-				CBaseRP::saveFBOToFile(rtt, filename);
+				CBaseRP::saveFBOToFile(rtt, "shadow.png");
 				os::Printer::log(filename);
 			}
 
