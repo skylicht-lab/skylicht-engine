@@ -327,8 +327,12 @@ namespace Skylicht
 
 		for (IEntitySystem*& s : m_systems)
 		{
-			s->onQuery(this, entities, numEntity);
-			s->update(this);
+			// note: Render system will be updated in cullingAndRender function
+			if (!s->isRenderSystem())
+			{
+				s->onQuery(this, entities, numEntity);
+				s->update(this);
+			}
 		}
 	}
 

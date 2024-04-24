@@ -61,24 +61,29 @@ namespace Skylicht
 		{
 		}
 
+		virtual bool isRenderSystem()
+		{
+			return true;
+		}
+
 		IRenderPipeline::ERenderPipelineType getPipelineType()
 		{
 			return m_pipelineType;
 		}
 
-		virtual void render(CEntityManager *entityManager) = 0;
+		virtual void render(CEntityManager* entityManager) = 0;
 
-		virtual void renderTransparent(CEntityManager *entityManager)
+		virtual void renderTransparent(CEntityManager* entityManager)
 		{
 
 		}
 
-		virtual void renderEmission(CEntityManager *entityManager)
+		virtual void renderEmission(CEntityManager* entityManager)
 		{
 
 		}
 
-		virtual void postRender(CEntityManager *entityManager)
+		virtual void postRender(CEntityManager* entityManager)
 		{
 
 		}
