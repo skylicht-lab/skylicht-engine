@@ -42,6 +42,11 @@ namespace Skylicht
 
 		}
 
+		virtual bool isRenderSystem()
+		{
+			return false;
+		}
+
 		virtual void beginQuery(CEntityManager* entityManager) = 0;
 
 		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int count) = 0;
