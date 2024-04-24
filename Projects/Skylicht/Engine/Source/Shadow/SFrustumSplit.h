@@ -24,60 +24,17 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Camera/CCamera.h"
+#include "pch.h"
 
 namespace Skylicht
 {
-	class SKYLICHT_API CBoundShadowMaps
+	struct SFrustumSplit
 	{
-	protected:
-		int m_shadowMapSize;
-		float m_nearOffset;
-
-		core::vector3df m_lightDirection;
-
-		core::matrix4 m_bias;
-		core::matrix4 m_viewMatrices;
-		core::matrix4 m_projMatrices;
-		core::matrix4 m_textureMatrices;
-
-		core::aabbox3df m_frustumBox;
-
-		float m_shadowMatrices[16];
-
-		float m_farValue;
-
-	public:
-		CBoundShadowMaps();
-
-		virtual ~CBoundShadowMaps();
-
-		void init(int shadowMapSize, float farValue, int screenWidth, int screenHeight);
-
-		void update(CCamera* camera, const core::vector3df& lightDir, const core::aabbox3df& bound);
-
-		const core::aabbox3df& getFrustumBox()
-		{
-			return m_frustumBox;
-		}
-
-		const core::matrix4& getViewMatrices()
-		{
-			return m_viewMatrices;
-		}
-
-		const core::matrix4& getProjectionMatrices()
-		{
-			return m_projMatrices;
-		}
-
-		float* getShadowMatrices()
-		{
-			return m_shadowMatrices;
-		}
-
-	protected:
-
-		void updateMatrix(core::vector3df& camPos, const core::aabbox3df& bound);
+		float NearPlane;
+		float FarPlane;
+		float Ratio;
+		float Fov;
+		core::vector3df Center;
+		core::vector3df Corners[8];
 	};
 }

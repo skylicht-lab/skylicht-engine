@@ -178,8 +178,6 @@ namespace Skylicht
 
 	void CCascadedShadowMaps::updateMatrix(core::vector3df& camPos)
 	{
-		core::matrix4 projection;
-
 		for (int i = 0; i < m_splitCount; i++)
 		{
 			SFrustumSplit& frustum = m_splits[i];
