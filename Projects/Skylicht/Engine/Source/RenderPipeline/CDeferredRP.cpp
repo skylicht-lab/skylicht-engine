@@ -43,8 +43,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	bool CDeferredRP::s_enableRenderIndirect = true;
-	bool CDeferredRP::s_enableRenderTestIndirect = false;
+	bool g_enableRenderIndirect = true;
+	bool g_enableRenderTestIndirect = false;
 
 	CDeferredRP::CDeferredRP() :
 		m_albedo(NULL),
@@ -257,17 +257,17 @@ namespace Skylicht
 
 	void CDeferredRP::enableTestIndirect(bool b)
 	{
-		s_enableRenderTestIndirect = b;
+		g_enableRenderTestIndirect = b;
 	}
 
 	void CDeferredRP::enableRenderIndirect(bool b)
 	{
-		s_enableRenderIndirect = b;
+		g_enableRenderIndirect = b;
 	}
 
 	bool CDeferredRP::isEnableRenderIndirect()
 	{
-		return s_enableRenderIndirect;
+		return g_enableRenderIndirect;
 	}
 
 	bool CDeferredRP::canRenderMaterial(CMaterial* material)
@@ -472,17 +472,10 @@ namespace Skylicht
 			driver->setViewPort(customViewport);
 
 		if (m_updateEntity == true)
-		{
 			entityManager->update();
 
-			if (s_enableRenderIndirect == true)
-				entityManager->render();
-		}
-		else
-		{
-			if (s_enableRenderIndirect == true)
-				entityManager->cullingAndRender();
-		}
+		if (g_enableRenderIndirect == true)
+			entityManager->cullingAndRender();
 
 		m_isIndirectPass = false;
 
@@ -493,7 +486,7 @@ namespace Skylicht
 			driver->setViewPort(customViewport);
 
 		// draw entity to buffer
-		if (s_enableRenderIndirect == true)
+		if (g_enableRenderIndirect == true)
 			entityManager->render();
 		else
 			entityManager->cullingAndRender();
@@ -640,6 +633,7 @@ namespace Skylicht
 
 		renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_directionalLightPass);
 
+		// Cache culling: true will tell CCullingSystem keep the last test results, just cull the material
 		CCullingSystem::useCacheCulling(true);
 
 		// STEP 05
@@ -673,7 +667,7 @@ namespace Skylicht
 		}
 
 		// test
-		if (s_enableRenderTestIndirect == true)
+		if (g_enableRenderTestIndirect == true)
 		{
 			m_indirect->regenerateMipMapLevels();
 			SMaterial t = m_finalPass;
