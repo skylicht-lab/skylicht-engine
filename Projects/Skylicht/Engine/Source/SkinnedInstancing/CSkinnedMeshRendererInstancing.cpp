@@ -49,6 +49,7 @@ namespace Skylicht
 	{
 		for (auto it : m_instancingGroups)
 		{
+			it.first->InstancingGroup = NULL;
 			delete it.second;
 		}
 		m_instancingGroups.clear();
