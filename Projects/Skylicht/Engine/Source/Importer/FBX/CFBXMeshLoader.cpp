@@ -82,6 +82,7 @@ namespace Skylicht
 		opts.ignore_embedded = true;
 		opts.ignore_animation = true;
 		opts.evaluate_skinning = true;
+		opts.generate_missing_normals = true;
 
 		opts.target_axes.right = UFBX_COORDINATE_AXIS_NEGATIVE_X;
 		opts.target_axes.up = UFBX_COORDINATE_AXIS_POSITIVE_Y;

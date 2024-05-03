@@ -110,7 +110,11 @@ namespace Skylicht
 
 			// default value
 			core::matrix4 mat;
-			nodeAnim->Data.Rotations.Default = core::quaternion(relativeTransform);
+			nodeAnim->Data.Rotations.Default = core::quaternion(
+				(f32)node->euler_rotation.x,
+				(f32)node->euler_rotation.y,
+				(f32)node->euler_rotation.z
+			);
 			nodeAnim->Data.Positions.Default = relativeTransform.getTranslation();
 			nodeAnim->Data.Scales.Default = relativeTransform.getScale();
 
@@ -125,7 +129,7 @@ namespace Skylicht
 			output->Duration = (float)stack->time_end - (float)stack->time_begin;
 			output->AnimName = CPath::getFileNameNoExt(modelName);
 
-			int targetFPS = 60;
+			float targetFPS = 30.0f;
 			int totalFrame = (int)(output->Duration * targetFPS);
 
 			for (auto i : m_nodeAnim)
@@ -169,9 +173,38 @@ namespace Skylicht
 						(f32)transform.rotation.z,
 						(f32)transform.rotation.w);
 
-					entityAnim->Data.Positions.Data.push_back(pos);
-					entityAnim->Data.Scales.Data.push_back(scale);
-					entityAnim->Data.Rotations.Data.push_back(rot);
+					bool addFrame = true;
+
+					if (i > 0)
+					{
+						const CRotationKey& lastFrameRot = entityAnim->Data.Rotations.Data.getLast();
+						const CPositionKey& lastFramePos = entityAnim->Data.Positions.Data.getLast();
+						const CScaleKey& lastFrameScale = entityAnim->Data.Scales.Data.getLast();
+
+						// Negated quaternions are equivalent, but interpolating between ones of different
+						// polarity takes a the longer path, so flip the quaternion if necessary.
+						float dot = lastFrameRot.Value.dotProduct(rot.Value);
+						if (dot < 0.0f)
+						{
+							rot.Value *= -1.0f;
+						}
+
+						if (lastFrameRot.Value == rot.Value &&
+							lastFramePos.Value == pos.Value &&
+							lastFrameScale.Value == scale.Value &&
+							i != totalFrame - 1)
+						{
+							// still use old frame time
+							addFrame = false;
+						}
+					}
+
+					if (addFrame)
+					{
+						entityAnim->Data.Positions.Data.push_back(pos);
+						entityAnim->Data.Scales.Data.push_back(scale);
+						entityAnim->Data.Rotations.Data.push_back(rot);
+					}
 				}
 			}
 		}
