@@ -114,6 +114,22 @@ void CViewInit::initScene()
 	core::vector3df direction = core::vector3df(4.0f, -6.0f, -4.5f);
 	lightTransform->setOrientation(direction, Transform::Oy);
 
+	CMeshManager* meshManager = CMeshManager::getInstance();
+
+	CEntityPrefab* modelPrefab = meshManager->loadModel("SampleBoids/RifleMan/RifleMan.fbx", NULL, true);
+	if (modelPrefab != NULL)
+	{
+		// create cat
+		CGameObject* rifle = zone->createEmptyObject();
+		rifle->setName("Rifle");
+
+		// render mesh & init material
+		CRenderMesh* rifleRenderer = rifle->addComponent<CRenderMesh>();
+		rifleRenderer->initFromPrefab(modelPrefab);
+
+		ArrayMaterial materials = CMaterialManager::getInstance()->initDefaultMaterial(modelPrefab);
+		rifleRenderer->initMaterial(materials);
+	}
 
 	// Rendering
 	u32 w = app->getWidth();
@@ -153,8 +169,8 @@ void CViewInit::onUpdate()
 
 		std::vector<std::string> listBundles;
 		listBundles.push_back("Common.zip");
-		listBundles.push_back("SampleModelsResource.zip");
-		listBundles.push_back(getApplication()->getTexturePackageName("SampleModels").c_str());
+		listBundles.push_back("SampleBoids.zip");
+		listBundles.push_back("SampleBoidsResource.zip");
 
 #ifdef __EMSCRIPTEN__
 		const char* filename = listBundles[m_downloaded].c_str();
@@ -193,7 +209,7 @@ void CViewInit::onUpdate()
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-		}
+				}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -210,7 +226,7 @@ void CViewInit::onUpdate()
 
 		m_initState = CViewInit::InitScene;
 #endif
-	}
+			}
 	break;
 	case CViewInit::InitScene:
 	{
@@ -233,7 +249,7 @@ void CViewInit::onUpdate()
 	}
 	break;
 	}
-}
+	}
 
 void CViewInit::onRender()
 {
