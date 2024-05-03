@@ -79,7 +79,6 @@ namespace Skylicht
 		memset(&opts, 0, sizeof(ufbx_load_opts));
 
 		opts.load_external_files = false;
-		opts.allow_null_material = true;
 		opts.ignore_embedded = true;
 		opts.ignore_animation = true;
 		opts.evaluate_skinning = true;
@@ -156,10 +155,10 @@ namespace Skylicht
 		{
 			ufbx_mesh* mesh = scene->meshes[i];
 
-			bool haveTangent = mesh->vertex_tangent.num_values > 0;
-			bool haveBitangent = mesh->vertex_bitangent.num_values > 0;
-			bool haveUV = mesh->vertex_uv.num_values > 0;
-			bool haveColor = mesh->vertex_color.num_values > 0;
+			bool haveTangent = mesh->vertex_tangent.values.count > 0;
+			bool haveBitangent = mesh->vertex_bitangent.values.count > 0;
+			bool haveUV = mesh->vertex_uv.values.count > 0;
+			bool haveColor = mesh->vertex_color.values.count > 0;
 
 			std::string meshName = mesh->name.data;
 
@@ -223,14 +222,15 @@ namespace Skylicht
 			// init mesh
 			for (int j = 0; j < mesh->materials.count; j++)
 			{
-				ufbx_mesh_material* mesh_mat = &mesh->materials.data[j];
-				if (mesh_mat->num_triangles == 0)
+				ufbx_mesh_part* mesh_part = &mesh->material_parts.data[j];
+				ufbx_material* mesh_mat = mesh->materials.data[j];
+				if (mesh_part->num_triangles == 0)
 					continue;
 
 				IMeshBuffer* mb = NULL;
 				video::E_INDEX_TYPE indexType = video::EIT_16BIT;
 
-				size_t numVertex = mesh_mat->num_triangles * 3;
+				size_t numVertex = mesh_part->num_triangles * 3;
 				if (numVertex >= USHRT_MAX - 1)
 					indexType = video::EIT_32BIT;
 
@@ -267,11 +267,9 @@ namespace Skylicht
 
 				// add mesh buffer
 				char materialName[512];
-				if (mesh_mat->material &&
-					mesh_mat->material->name.data &&
-					CStringImp::length(mesh_mat->material->name.data))
+				if (mesh_mat->name.data && CStringImp::length(mesh_mat->name.data))
 				{
-					CStringImp::copy(materialName, mesh_mat->material->name.data);
+					CStringImp::copy(materialName, mesh_mat->name.data);
 				}
 				else
 				{
@@ -286,9 +284,9 @@ namespace Skylicht
 
 				core::map<uint32_t, u32> vertMap;
 
-				for (size_t fi = 0; fi < mesh_mat->num_faces; fi++)
+				for (size_t fi = 0; fi < mesh_part->num_faces; fi++)
 				{
-					int32_t faceID = mesh_mat->face_indices[fi];
+					int32_t faceID = mesh_part->face_indices[fi];
 					ufbx_face face = mesh->faces[faceID];
 
 					size_t num_tris = ufbx_triangulate_face(tri_indices, num_tri_indices, mesh, face);
@@ -393,10 +391,10 @@ namespace Skylicht
 				}
 
 				// need load texture
-				if (mesh_mat->material)
+				if (mesh_mat)
 				{
 					SMaterial& mat = mb->getMaterial();
-					if (mesh_mat->material->textures.count == 0)
+					if (mesh_mat->textures.count == 0)
 					{
 						// no texture
 						if (isSkinnedMesh)
@@ -408,9 +406,9 @@ namespace Skylicht
 					{
 						bool foundTexture = false;
 
-						if (mesh_mat->material->textures.count > 0)
+						if (mesh_mat->textures.count > 0)
 						{
-							ufbx_material_texture* materialTexture = &mesh_mat->material->textures.data[0];
+							ufbx_material_texture* materialTexture = &mesh_mat->textures.data[0];
 							if (materialTexture->texture)
 							{
 								std::string fileName = CPath::getFileName(std::string(materialTexture->texture->filename.data));
