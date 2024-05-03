@@ -70,7 +70,6 @@ namespace Skylicht
 		memset(&opts, 0, sizeof(ufbx_load_opts));
 
 		opts.load_external_files = false;
-		opts.allow_null_material = true;
 		opts.ignore_embedded = true;
 		opts.ignore_geometry = true;
 		opts.ignore_animation = false;
@@ -146,7 +145,7 @@ namespace Skylicht
 				{
 					double time = stack->time_begin + (double)i / (double)targetFPS;
 
-					ufbx_transform transform = ufbx_evaluate_transform(&stack->anim, node, time);
+					ufbx_transform transform = ufbx_evaluate_transform(stack->anim, node, time);
 
 					CPositionKey pos;
 					CScaleKey scale;
