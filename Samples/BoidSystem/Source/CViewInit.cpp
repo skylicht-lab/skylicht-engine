@@ -118,6 +118,21 @@ void CViewInit::initScene()
 	CAnimationManager* animManager = CAnimationManager::getInstance();
 
 	CAnimationClip* animIdle = animManager->loadAnimation("SampleBoids/RifleMan/A_RifleMan_Idle.fbx");
+	CAnimationClip* animWalk = animManager->loadAnimation("SampleBoids/RifleMan/A_RifleMan_Walk.fbx");
+	CAnimationClip* animRun = animManager->loadAnimation("SampleBoids/RifleMan/A_RifleMan_Running.fbx");
+
+	std::vector<CAnimationClip*> clips;
+	clips.push_back(animIdle);
+	clips.push_back(animWalk);
+	clips.push_back(animRun);
+
+	float maxDuration = 0.0f;
+	for (CAnimationClip* clip : clips)
+	{
+		if (clip->Duration > maxDuration)
+			maxDuration = clip->Duration;
+	}
+
 	CEntityPrefab* modelPrefab = meshManager->loadModel("SampleBoids/RifleMan/RifleMan.fbx", NULL, true);
 
 	if (modelPrefab != NULL)
@@ -137,7 +152,97 @@ void CViewInit::initScene()
 		// init animation
 		CAnimationController* animController = rifle->addComponent<CAnimationController>();
 		CSkeleton* skeleton = animController->createSkeleton();
-		skeleton->setAnimation(animIdle, true);
+
+		// get bone map transform
+		std::map<std::string, int> boneMap;
+		skeleton->getBoneIdMap(boneMap);
+		int numBones = (int)boneMap.size();
+
+		int fps = 60;
+		int clipId = 0;
+
+		int totalFrames = (int)(maxDuration * fps);
+		int numClip = (int)clips.size();
+
+		// build the matrix animations
+		// 
+		//  [anim1]   frame0    frame1    frame2    ...
+		//  bone1
+		//  bone2
+		//  bone3
+		//  ...
+		//  [anim2]   frame0    frame1    frame2    ...
+		//  bone1
+		//  bone2
+		//  bone3
+		//  ...
+		core::matrix4* animationData = new core::matrix4[totalFrames * numBones * numClip];
+		core::matrix4* transforms = new core::matrix4[numBones];
+
+		for (CAnimationClip* clip : clips)
+		{
+			skeleton->setAnimation(clip, true);
+
+			int clipFrames = (int)(clip->Duration * fps);
+			int clipOffset = clipId * numBones * totalFrames;
+
+			for (int i = 0; i < clipFrames; i++)
+			{
+				float t = i / (float)clipFrames;
+				skeleton->simulateTransform(t * clip->Duration, core::IdentityMatrix, transforms, numBones);
+
+				for (int j = 0; j < numBones; j++)
+				{
+					animationData[clipOffset + j * totalFrames + i] = transforms[j];
+				}
+			}
+
+			clipId++;
+		}
+
+		rifle->remove();
+
+		// create gpu anim character
+		m_crowd = zone->createEmptyObject();
+		CRenderSkinnedInstancing* crowdSkinnedMesh = m_crowd->addComponent<CRenderSkinnedInstancing>();
+		crowdSkinnedMesh->initFromPrefab(modelPrefab);
+		crowdSkinnedMesh->initTextureTransform(animationData, totalFrames, numBones * numClip, boneMap);
+
+		// applyShareInstancingBuffer: It may be more optimal memory, but it hasn't been thoroughly tested in many cases
+		crowdSkinnedMesh->applyShareInstancingBuffer();
+
+		// body
+		ArrayMaterial material = CMaterialManager::getInstance()->initDefaultMaterial(modelPrefab);
+		material[0]->changeShader("BuiltIn/Shader/Toon/SkinToonInstancing.xml");
+		material[0]->setUniformTexture("uTexRamp", CTextureManager::getInstance()->getTexture("BuiltIn/Textures/TCP2Ramp.png"));
+		material[0]->autoDetectLoadTexture();
+
+		crowdSkinnedMesh->initMaterial(material);
+
+		for (int i = -5; i < 5; i++)
+		{
+			for (int j = -5; j < 5; j++)
+			{
+				CEntity* entity = crowdSkinnedMesh->spawn();
+
+				// random animation
+				int id = 0;
+
+				// random time
+				float time = os::Randomizer::frand() * clips[id]->Duration;
+
+				// set animation
+				crowdSkinnedMesh->setAnimation(entity, id, clips[id], time, fps);
+
+				// set position
+				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+				transform->Relative.setTranslation(core::vector3df(i * 2.0f, 0.0f, j * 2.0f));
+			}
+		}
+
+		// free data
+		delete[]animationData;
+		delete[]transforms;
 	}
 
 	// Rendering
@@ -218,7 +323,7 @@ void CViewInit::onUpdate()
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-		}
+	}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -257,7 +362,7 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-	}
+}
 }
 
 void CViewInit::onRender()
@@ -286,8 +391,8 @@ void CViewInit::onRender()
 
 			// hide objects
 			// that fix the probes ambient is brigther because plane color affect on it
-			// m_crowd->setVisible(false);
-			// m_plane->setVisible(false);
+			m_crowd->setVisible(false);
+			m_plane->setVisible(false);
 
 			// bake light probe
 			Lightmapper::CLightmapper* lm = Lightmapper::CLightmapper::getInstance();
@@ -299,8 +404,8 @@ void CViewInit::onRender()
 			lm->bakeProbes(probes, bakeCamera, rp, scene->getEntityManager());
 
 			// show objects again
-			// m_crowd->setVisible(true);
-			// m_plane->setVisible(true);
+			m_crowd->setVisible(true);
+			m_plane->setVisible(true);
 		}
 	}
 	else
