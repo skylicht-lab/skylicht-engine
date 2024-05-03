@@ -115,8 +115,11 @@ void CViewInit::initScene()
 	lightTransform->setOrientation(direction, Transform::Oy);
 
 	CMeshManager* meshManager = CMeshManager::getInstance();
+	CAnimationManager* animManager = CAnimationManager::getInstance();
 
+	CAnimationClip* animIdle = animManager->loadAnimation("SampleBoids/RifleMan/A_RifleMan_Idle.fbx");
 	CEntityPrefab* modelPrefab = meshManager->loadModel("SampleBoids/RifleMan/RifleMan.fbx", NULL, true);
+
 	if (modelPrefab != NULL)
 	{
 		// create cat
@@ -127,8 +130,14 @@ void CViewInit::initScene()
 		CRenderMesh* rifleRenderer = rifle->addComponent<CRenderMesh>();
 		rifleRenderer->initFromPrefab(modelPrefab);
 
-		ArrayMaterial materials = CMaterialManager::getInstance()->initDefaultMaterial(modelPrefab);
+		std::vector<std::string> folders;
+		ArrayMaterial materials = CMaterialManager::getInstance()->loadMaterial("SampleBoids/RifleMan/RifleMan.mat", true, folders);
 		rifleRenderer->initMaterial(materials);
+
+		// init animation
+		CAnimationController* animController = rifle->addComponent<CAnimationController>();
+		CSkeleton* skeleton = animController->createSkeleton();
+		skeleton->setAnimation(animIdle, true);
 	}
 
 	// Rendering
@@ -148,7 +157,7 @@ void CViewInit::initScene()
 	// context->getShadowMapRenderPipeline()->setShadowCascade(2);
 
 	// Test no shadow cascade (30m far shadow)
-	context->getShadowMapRenderPipeline()->setNoShadowCascade(2048, 30.0f);
+	context->getShadowMapRenderPipeline()->setNoShadowCascade(2048, 10.0f);
 }
 
 void CViewInit::onDestroy()
@@ -209,7 +218,7 @@ void CViewInit::onUpdate()
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-				}
+		}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -226,7 +235,7 @@ void CViewInit::onUpdate()
 
 		m_initState = CViewInit::InitScene;
 #endif
-			}
+	}
 	break;
 	case CViewInit::InitScene:
 	{
@@ -249,7 +258,7 @@ void CViewInit::onUpdate()
 	}
 	break;
 	}
-	}
+}
 
 void CViewInit::onRender()
 {

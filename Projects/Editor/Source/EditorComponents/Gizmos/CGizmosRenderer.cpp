@@ -87,6 +87,9 @@ namespace Skylicht
 			if (m_enable == false)
 				return;
 
+			if (entityManager->getRenderPipeline()->getType() == IRenderPipeline::ShadowMap)
+				return;
+
 			irr::core::matrix4 invView;
 			{
 				irr::core::matrix4 view(getVideoDriver()->getTransform(video::ETS_VIEW));
