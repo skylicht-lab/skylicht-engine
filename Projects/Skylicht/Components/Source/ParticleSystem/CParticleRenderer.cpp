@@ -208,18 +208,30 @@ namespace Skylicht
 			IRenderer* renderer = group->getRenderer();
 
 			if (renderer->useInstancing() == true)
-				buffer = group->getIntancing()->getMeshBuffer();
+            {
+                CParticleInstancing* instancing = group->getIntancing();
+                if (instancing->getInstanceBuffer() &&
+                    instancing->getInstanceBuffer()->getVertexCount() > 1)
+                {
+                    buffer = group->getIntancing()->getMeshBuffer();
+                }
+            }
 			else
-				buffer = group->getParticleBuffer()->getMeshBuffer();
-
-			CShaderParticle::setOrientationUp(group->OrientationUp);
-			CShaderParticle::setOrientationNormal(group->OrientationNormal);
-
-			if (renderer != NULL)
-				CShaderMaterial::setMaterial(renderer->getMaterial());
-
-			driver->setMaterial(buffer->getMaterial());
-			driver->drawMeshBuffer(buffer);
+            {
+                buffer = group->getParticleBuffer()->getMeshBuffer();
+            }
+            
+            if (buffer)
+            {
+                CShaderParticle::setOrientationUp(group->OrientationUp);
+                CShaderParticle::setOrientationNormal(group->OrientationNormal);
+                
+                if (renderer != NULL)
+                    CShaderMaterial::setMaterial(renderer->getMaterial());
+                
+                driver->setMaterial(buffer->getMaterial());
+                driver->drawMeshBuffer(buffer);
+            }
 		}
 	}
 }

@@ -197,8 +197,8 @@ void CViewInit::initScene()
 #endif
 		}
 	}
-
-	// init particle 
+    
+	// init particle
 	for (int i = 0; i < 4; i++)
 	{
 		CGameObject* fire = zone->createEmptyObject();
@@ -283,7 +283,7 @@ void CViewInit::initFireParticle(Particle::CParticleComponent* ps)
 {
 	ITexture* texture = NULL;
 	Particle::CFactory* factory = ps->getParticleFactory();
-
+    
 	// GROUP: FIRE
 	Particle::CGroup* fireGroup = ps->createParticleGroup();
 
@@ -414,8 +414,7 @@ void CViewInit::initFireParticle(Particle::CParticleComponent* ps)
 	smokeEmitter->setForce(0.5f, 1.0f);
 
 	smokeGroup->addEmitter(smokeEmitter);
-
-#ifndef USE_ANGLE_GLES // need test on angle
+    
 	// GROUP: POINT SPARK
 	Particle::CGroup* pointSparkGroup = ps->createParticleGroup();
 
@@ -450,7 +449,6 @@ void CViewInit::initFireParticle(Particle::CParticleComponent* ps)
 	pointSparkEmitter->setForce(1.5f, 2.0f);
 	pointSparkEmitter->setZone(factory->createSphereZone(core::vector3df(0.0f, -0.5f, 0.0f), 0.5f));
 	pointSparkGroup->addEmitter(pointSparkEmitter);
-#endif
 }
 
 void CViewInit::onDestroy()
