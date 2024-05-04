@@ -130,6 +130,7 @@ set NDK=C:\SDK\android-ndk-r21e
 ### **Step 2: Copy native library to Gradle Project**
 ```Shell
 # Make folder jniLibs on Android Project
+C:\skylicht-engine>mkdir Projects\Android\app\src\main\jniLibs
 C:\skylicht-engine>mkdir Projects\Android\app\src\main\jniLibs\armeabi-v7a
 C:\skylicht-engine>mkdir Projects\Android\app\src\main\jniLibs\arm64-v8a
 
