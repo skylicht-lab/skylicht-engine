@@ -12,11 +12,13 @@ struct VS_OUTPUT
 {
 	float4 pos : SV_POSITION;
 	float4 vPos: POSITION;
+	float4 worldPos: WORLD_POSITION;
 };
 
 cbuffer cbPerObject
 {
 	float4x4 uMvpMatrix;
+	float4x4 uWorldMatrix;
 	float4x4 uBoneMatrix[64];
 };
 
@@ -49,5 +51,7 @@ VS_OUTPUT main(VS_INPUT input)
 
 	output.pos = mul(skinPosition, uMvpMatrix);
 	output.vPos = output.pos;
+	output.worldPos = mul(skinPosition, uWorldMatrix);
+	
 	return output;
 }

@@ -6,9 +6,11 @@ in vec4 inBlendIndex;
 in vec4 inBlendWeight;
 
 uniform mat4 uMvpMatrix;
+uniform mat4 uWorldMatrix;
 uniform mat4 uBoneMatrix[64];
 
 out vec4 varPos;
+out vec4 varWorldPos;
 
 void main(void)
 {
@@ -31,4 +33,5 @@ void main(void)
 	
 	gl_Position = uMvpMatrix * skinPosition;
 	varPos = gl_Position;
+	varWorldPos = uWorldMatrix * skinPosition;
 }

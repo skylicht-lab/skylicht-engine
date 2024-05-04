@@ -12,6 +12,7 @@ layout(location = 7) in mat4 uWorldMatrix;
 uniform mat4 uVPMatrix;
 
 out vec4 varPos;
+out vec4 varWorldPos;
 
 void main(void)
 {
@@ -19,4 +20,5 @@ void main(void)
 	
 	gl_Position = uMvpMatrix * inPosition;
 	varPos = gl_Position;
+	varWorldPos = uWorldMatrix * inPosition;
 }

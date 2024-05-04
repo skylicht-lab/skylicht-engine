@@ -1,6 +1,8 @@
 precision highp float;
 
 in vec4 varPos;
+in vec4 varWorldPos;
+
 out vec4 FragColor;
 
 void main(void)
