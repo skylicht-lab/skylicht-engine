@@ -107,6 +107,8 @@ void CViewInit::initScene()
 	// lighting
 	CGameObject* lightObj = zone->createEmptyObject();
 	CDirectionalLight* directionalLight = lightObj->addComponent<CDirectionalLight>();
+	SColor c(255, 255, 244, 214);
+	directionalLight->setColor(SColorf(c));
 
 	CTransformEuler* lightTransform = lightObj->getTransformEuler();
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));

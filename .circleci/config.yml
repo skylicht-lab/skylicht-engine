@@ -39,7 +39,9 @@ commands:
 
             cd Projects/Android
 
-            ./gradlew assembleDebug
+            sudo chmod +x ./gradlew
+
+            sudo ./gradlew assembleDebug
           name: Build Android APK
 jobs:
   build-android:

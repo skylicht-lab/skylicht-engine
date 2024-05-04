@@ -4,6 +4,6 @@
 			<uniform name="uVPMatrix" type="VIEW_PROJECTION" value="0" float="16" matrix="true"/>
 		</vs>
 	</uniforms>
-	<shader type="GLSL" vs="GLSL/SDWTBNVS.glsl" fs="GLSL/ShadowDepthWriteFS.glsl"/>
-	<shader type="HLSL" vs="HLSL/SDWTBNVS.hlsl" fs="HLSL/ShadowDepthWriteFS.hlsl"/>
+	<shader type="GLSL" vs="GLSL/SDWTBNInstancingVS.glsl" fs="GLSL/ShadowDepthWriteFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/SDWTBNInstancingVS.hlsl" fs="HLSL/ShadowDepthWriteFS.hlsl"/>
 </shaderConfig>
