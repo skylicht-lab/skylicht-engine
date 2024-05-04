@@ -48,6 +48,13 @@ struct FeaturesGL : FeatureSetBase
         &members,
     };
 
+    FeatureInfo clearsWithGapsNeedFlush = {
+        "clearsWithGapsNeedFlush",
+        FeatureCategory::OpenGLWorkarounds,
+        "Clearing an FBO with multiple attachments may need a flush to avoid race conditions",
+        &members,
+    };
+
     FeatureInfo doesSRGBClearsOnLinearFramebufferAttachments = {
         "doesSRGBClearsOnLinearFramebufferAttachments",
         FeatureCategory::OpenGLWorkarounds,
@@ -252,6 +259,14 @@ struct FeaturesGL : FeatureSetBase
         "Limit webgl max texture size to 4096 to avoid frequent "
         "out-of-memory errors",
         &members, "http://crbug.com/927470"
+    };
+
+    FeatureInfo limitWebglMaxTextureSizeTo8192 = {
+        "limitWebglMaxTextureSizeTo8192",
+        FeatureCategory::OpenGLWorkarounds,
+        "Limit webgl max texture size to 8192 to avoid frequent "
+        "out-of-memory errors",
+        &members, "http://anglebug.com/8611"
     };
 
     FeatureInfo limitMaxMSAASamplesTo4 = {
