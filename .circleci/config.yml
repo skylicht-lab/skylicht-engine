@@ -5,19 +5,35 @@ commands:
     steps:
       - run:
           command: >
-            export ABI=arm64-v8a
-
-            cmake -S. -BPrjAndroid-$ABI -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake -DANDROID_ABI=$ABI -DANDROID_ARM_NEON=ON -DANDROID_NATIVE_API_LEVEL=26
-
+            cmake -S. -BPrjAndroid-$ABI -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake -DANDROID_ABI=$ABI -DANDROID_ARM_NEON=ON -DANDROID_NATIVE_API_LEVEL=24
             make -C PrjAndroid-$ABI
           name: Build Skylicht Engine Native SDK
+  build-android-apk:
+    steps:
+      - run:
+          command: >
+            mkdir Projects/Android/app/src/main/jniLibs/$ABI
+            copy Bin/Android/Libs/$ABI/libSampleSkinnedMesh.so Projects/Android/app/src/main/jniLibs/$ABI
+            cd Assets
+            python BuildAssetBundles.py
+            cd ..
+            mkdir Projects/Android/app/src/main/assets
+            copy Bin/BuiltIn.zip Projects/Android/app/src/main/assets
+            copy Bin/Common.zip Projects/Android/app/src/main/assets
+            copy Bin/SampleModelsResource.zip Projects/Android/app/src/main/assets
+            cd Projects/Android
+            ./gradlew assembleDebug
+          name: Build Android APK
 jobs:
   build-android:
     docker:
       - image: cimg/android:2024.04.1-ndk
+    environment:
+      ABI: arm64-v8a
     steps:
       - checkout
       - build-engine-native
+      - build-android-apk
 workflows:
   version: 2
   build_all:
