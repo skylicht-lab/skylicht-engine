@@ -8,7 +8,7 @@ commands:
             cmake -S. -BPrjAndroid-$ABI -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake -DANDROID_ABI=$ABI -DANDROID_ARM_NEON=ON -DANDROID_NATIVE_API_LEVEL=26
 
             make -C PrjAndroid-$ABI
-          name: Build Skylicht Engine Native SDK
+          name: Build Skylicht Engine NDK
   build-android-apk:
     steps:
       - run:
@@ -16,6 +16,8 @@ commands:
             export ANDROID_ASSET_PATH=Projects/Android/app/src/main/assets
 
             export ANDROID_JNILIBS_PATH=Projects/Android/app/src/main/jniLibs
+
+            mkdir $ANDROID_JNILIBS_PATH
 
             mkdir $ANDROID_JNILIBS_PATH/$ABI
 
