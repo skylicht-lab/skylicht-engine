@@ -10,11 +10,13 @@ struct VS_OUTPUT
 {
 	float4 pos : SV_POSITION;
 	float4 vPos: POSITION;
+	float4 worldPos: WORLD_POSITION;
 };
 
 cbuffer cbPerObject
 {
 	float4x4 uMvpMatrix;
+	float4x4 uWorldMatrix;
 };
 
 VS_OUTPUT main(VS_INPUT input)
@@ -23,6 +25,7 @@ VS_OUTPUT main(VS_INPUT input)
 
 	output.pos = mul(input.pos, uMvpMatrix);
 	output.vPos = output.pos;
-
+	output.worldPos = mul(input.pos, uWorldMatrix);
+	
 	return output;
 }

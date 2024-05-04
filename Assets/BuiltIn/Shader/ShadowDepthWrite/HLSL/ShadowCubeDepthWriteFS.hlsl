@@ -1,7 +1,8 @@
 struct PS_INPUT
 {
 	float4 pos : SV_POSITION;
-	float4 worldPos: POSITION;
+	float4 vPos: POSITION;
+	float4 worldPos: WORLD_POSITION;
 };
 
 cbuffer cbPerFrame

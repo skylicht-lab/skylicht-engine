@@ -7,6 +7,6 @@
 			<uniform name="uLightPosition" type="POINT_LIGHT_POSITION" value="0" float="4"/>
 		</fs>
 	</uniforms>
-	<shader type="GLSL" vs="GLSL/SDWCubeStandardVS.glsl" fs="GLSL/ShadowCubeDepthWriteFS.glsl"/>
-	<shader type="HLSL" vs="HLSL/SDWCubeStandardVS.hlsl" fs="HLSL/ShadowCubeDepthWriteFS.hlsl"/>
+	<shader type="GLSL" vs="GLSL/SDWStandardInstancingVS.glsl" fs="GLSL/ShadowCubeDepthWriteFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/SDWStandardInstancingVS.hlsl" fs="HLSL/ShadowCubeDepthWriteFS.hlsl"/>
 </shaderConfig>
