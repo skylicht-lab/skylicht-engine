@@ -50,6 +50,9 @@ jobs:
     environment:
       ABI: arm64-v8a
       APP_NAME: libSampleSkinnedMesh.so
+      ANDROID_HOME: /home/circleci/android-sdk
+      ANDROID_SDK_ROOT: /home/circleci/android-sdk
+      ANDROID_NDK_ROOT: /home/circleci/android-sdk/ndk/26.3.11579264
     steps:
       - checkout
       - build-engine-native
