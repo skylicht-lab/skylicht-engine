@@ -5,7 +5,7 @@ plugins {
 android {
     compileSdkVersion 34
     buildToolsVersion "34.0.0"
-    namespace "com.yourteam.appname"
+    namespace "com.skylicht.engine3d"
     defaultConfig {
         applicationId "com.yourteam.appname"
         minSdkVersion 26
