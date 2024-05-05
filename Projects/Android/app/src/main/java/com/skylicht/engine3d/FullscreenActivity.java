@@ -96,7 +96,7 @@ public class FullscreenActivity extends AppCompatActivity {
         NativeInterface.getInstance().setApkPath(applicationInfo.sourceDir);
 
         // set the package name
-        NativeInterface.getInstance().setBundleID(getPackageName());
+        NativeInterface.getInstance().setAppID(getPackageName());
 
         // create save folder
         createSaveFolder();
