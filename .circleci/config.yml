@@ -41,9 +41,9 @@ commands:
 
             ls -l $ANDROID_HOME
 
-            sudo chmod +x ./gradlew
+            chmod +x ./gradlew
 
-            sudo ./gradlew assembleDebug
+            ./gradlew assembleDebug
           name: Build Android APK
 jobs:
   build-android:
