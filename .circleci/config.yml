@@ -9,6 +9,20 @@ commands:
 
             make -C PrjAndroid-$ABI
           name: Build Skylicht Engine (NDK)
+  build-asset-bundles:
+    steps:
+      - run:
+          command:  > 
+            cd Assets
+
+            chmod +x ../Tools/PVRTexTool/linux/PVRTexToolCLI
+
+            python BuildTextureCompressETC.py
+
+            python BuildAssetBundles.py
+
+            cd ..
+          name: Build Assets, ETC Textures
   build-android-apk:
     steps:
       - run:
@@ -23,12 +37,6 @@ commands:
 
             cp Bin/Android/Libs/$ABI/$APP_NAME $ANDROID_JNILIBS_PATH/$ABI
 
-            cd Assets
-
-            python BuildAssetBundles.py
-
-            cd ..
-
             mkdir $ANDROID_ASSET_PATH
 
             cp Bin/BuiltIn.zip $ANDROID_ASSET_PATH
@@ -36,6 +44,8 @@ commands:
             cp Bin/Common.zip $ANDROID_ASSET_PATH
 
             cp Bin/SampleModelsResource.zip $ANDROID_ASSET_PATH
+
+            cp Bin/SampleModelsETC.zip $ANDROID_ASSET_PATH
 
             cd Projects/Android
 
@@ -55,6 +65,7 @@ jobs:
     steps:
       - checkout
       - build-engine-native
+      - build-asset-bundles
       - build-android-apk
 workflows:
   version: 2
