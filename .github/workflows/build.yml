@@ -194,6 +194,8 @@ jobs:
         run: |
           cd Assets
           chmod +x ../Tools/PVRTexTool/darwin/PVRTexToolCLI
+          pip install tinydb
+          pip install Pillow
           python BuildTextureCompressETC.py
           python BuildAssetBundles.py
           cd ..
