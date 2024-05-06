@@ -17,13 +17,17 @@ commands:
 
             chmod +x ../Tools/PVRTexTool/linux/PVRTexToolCLI
             
-            pip install tinydb
+            apt install python3
+
+            apt install python3-pip
+
+            pip3 install tinydb
           
-            pip install Pillow
+            pip3 install Pillow
 
-            python BuildTextureCompressETC.py
+            python3 BuildTextureCompressETC.py
 
-            python BuildAssetBundles.py
+            python3 BuildAssetBundles.py
 
             cd ..
           name: Build Assets, ETC Textures
