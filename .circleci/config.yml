@@ -17,6 +17,8 @@ commands:
 
             chmod +x ../Tools/PVRTexTool/linux/PVRTexToolCLI
 
+            sudo apt install python-pip
+
             python -m pip install tinydb
           
             python -m pip install Pillow
