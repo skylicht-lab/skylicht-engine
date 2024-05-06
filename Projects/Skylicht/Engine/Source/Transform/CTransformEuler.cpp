@@ -103,7 +103,7 @@ namespace Skylicht
 	void CTransformEuler::lookAt(const core::vector3df& position)
 	{
 		float angle = (float)(core::vector2df(position.X - m_position.X, position.Z - m_position.Z).getAngleTrig());
-		m_rotation.set(0.0f, 90 - angle, 0.0f);
+		m_rotation.set(0.0f, 90.0f - angle, 0.0f);
 		m_hasChanged = true;
 		m_matrixChanged = true;
 	}

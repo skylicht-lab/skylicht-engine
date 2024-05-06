@@ -8,6 +8,8 @@
 #include "Primitive/CPlane.h"
 #include "SkyDome/CSkyDome.h"
 
+#include "Bolds/CBoldSystem.h"
+
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
 	m_getFile(NULL),
@@ -238,7 +240,13 @@ void CViewInit::initScene()
 
 				// set position
 				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
-				transform->Relative.setTranslation(core::vector3df(i * 2.0f, 0.0f, j * 2.0f));
+				core::vector3df position(i * 2.0f, 0.0f, j * 2.0f);
+
+				transform->Relative.setTranslation(position);
+
+				// add bold data
+				CBoldData* bold = entity->addData<CBoldData>();
+				bold->Location = position;
 			}
 		}
 
@@ -246,6 +254,9 @@ void CViewInit::initScene()
 		delete[]animationData;
 		delete[]transforms;
 	}
+
+	// Add bold system
+	scene->getEntityManager()->addSystem<CBoldSystem>();
 
 	// Rendering
 	u32 w = app->getWidth();
@@ -258,7 +269,6 @@ void CViewInit::initScene()
 	context->setActiveCamera(camera);
 	context->setGUICamera(guiCamera);
 	context->setDirectionalLight(directionalLight);
-
 
 	// Test use 2 cascade shadow
 	// context->getShadowMapRenderPipeline()->setShadowCascade(2);
@@ -324,7 +334,7 @@ void CViewInit::onUpdate()
 				// retry download
 				delete m_getFile;
 				m_getFile = NULL;
-			}
+	}
 	}
 #else
 
@@ -338,7 +348,7 @@ void CViewInit::onUpdate()
 #else
 			fileSystem->addFileArchive(r, false, false);
 #endif
-		}
+}
 
 		m_initState = CViewInit::InitScene;
 #endif

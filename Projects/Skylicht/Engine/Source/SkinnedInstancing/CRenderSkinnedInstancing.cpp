@@ -35,6 +35,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Transform/CWorldInverseTransformData.h"
 #include "Culling/CCullingBBoxData.h"
+#include "Culling/CVisibleData.h"
 
 #include "Material/Shader/Instancing/IShaderInstancing.h"
 
@@ -403,6 +404,7 @@ namespace Skylicht
 
 		entity->addData<CWorldInverseTransformData>();
 		entity->addData<CCullingData>();
+		entity->addData<CVisibleData>();
 
 		CCullingBBoxData* cullingBBox = entity->addData<CCullingBBoxData>();
 
