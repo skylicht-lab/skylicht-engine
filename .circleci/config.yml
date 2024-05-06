@@ -16,6 +16,10 @@ commands:
             cd Assets
 
             chmod +x ../Tools/PVRTexTool/linux/PVRTexToolCLI
+            
+            pip install tinydb
+          
+            pip install Pillow
 
             python BuildTextureCompressETC.py
 
