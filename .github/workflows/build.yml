@@ -193,6 +193,8 @@ jobs:
       - name: Build
         run: |
           cd Assets
+          chmod +x ../Tools/PVRTexTool/darwin/PVRTexToolCLI
+          python BuildTextureCompressETC.py
           python BuildAssetBundles.py
           cd ..
           cmake -S . -B ./PrjIOS -G Xcode -DCMAKE_TOOLCHAIN_FILE=./ios.cmake -DPLATFORM=${PLATFORM}
