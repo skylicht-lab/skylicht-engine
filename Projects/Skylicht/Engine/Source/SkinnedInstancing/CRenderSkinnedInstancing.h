@@ -77,9 +77,11 @@ namespace Skylicht
 
 		virtual CEntity* spawn();
 
-		static bool setAnimation(CEntity* entity, int animTextureIndex, CAnimationClip* clipInfo, float currentTime = 0.0f, int bakeFps = 60, bool loop = true, bool pause = false);
+		static bool setAnimation(CEntity* entity, int animTextureIndex, CAnimationClip* clipInfo, float currentTime = 0.0f, int bakeFps = 60, int skeletonId = 0, bool loop = true, bool pause = false);
 
-		static bool setAnimation(CEntity* entity, int animTextureIndex, CAnimationClip* clipInfo, float clipBegin, float clipDuration, float currentTime = 0.0f, int bakeFps = 60, bool loop = true, bool pause = false);
+		static bool setAnimation(CEntity* entity, int animTextureIndex, CAnimationClip* clipInfo, float clipBegin, float clipDuration, float currentTime = 0.0f, int bakeFps = 60, int skeletonId = 0, bool loop = true, bool pause = false);
+
+		static void setAnimationWeight(CEntity* entity, int skeletonId, float weight);
 
 	public:
 

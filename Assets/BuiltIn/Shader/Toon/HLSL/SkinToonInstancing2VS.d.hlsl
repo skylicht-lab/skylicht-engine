@@ -99,10 +99,10 @@ VS_OUTPUT main(VS_INPUT input)
 	// skin result 2
 	skinPosition2 = mul(input.pos, skinMatrix);
 	skinNormal2 = mul(float4(input.norm, 0.0), skinMatrix);
-
+	
 	// blend animations
 	float4 skinPosition = lerp(skinPosition1, skinPosition2, input.uBlendAnimation.x);
-	float4 skinNormal= lerp(skinNormal1, skinNormal2, input.uBlendAnimation.x);
+	float4 skinNormal = lerp(skinNormal1, skinNormal2, input.uBlendAnimation.x);
 
 	float4 worldPos = mul(skinPosition, uWorldMatrix);
 	float4 worldNormal = mul(float4(skinNormal.xyz, 0.0), uWorldMatrix);

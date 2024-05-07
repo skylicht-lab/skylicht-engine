@@ -440,11 +440,13 @@ namespace Skylicht
 		return entity;
 	}
 
-	bool CRenderSkinnedInstancing::setAnimation(CEntity* entity, int animTextureIndex, CAnimationClip* clipInfo, float currentTime, int bakeFps, bool loop, bool pause)
+	bool CRenderSkinnedInstancing::setAnimation(CEntity* entity, int animTextureIndex, CAnimationClip* clipInfo, float currentTime, int bakeFps, int skeletonId, bool loop, bool pause)
 	{
-		CSkinnedInstanceData* data = GET_ENTITY_DATA(entity, CSkinnedInstanceData);
-		if (data == NULL)
+		CSkinnedInstanceData* skinnedData = GET_ENTITY_DATA(entity, CSkinnedInstanceData);
+		if (skinnedData == NULL)
 			return false;
+
+		SSkeletonAnimation* data = &skinnedData->Skeletons[skeletonId];
 
 		// tps to fix last frame is not baked
 		float tps = 1.0f / bakeFps;
@@ -467,11 +469,13 @@ namespace Skylicht
 		return true;
 	}
 
-	bool CRenderSkinnedInstancing::setAnimation(CEntity* entity, int animTextureIndex, CAnimationClip* clipInfo, float clipBegin, float clipDuration, float currentTime, int bakeFps, bool loop, bool pause)
+	bool CRenderSkinnedInstancing::setAnimation(CEntity* entity, int animTextureIndex, CAnimationClip* clipInfo, float clipBegin, float clipDuration, float currentTime, int bakeFps, int skeletonId, bool loop, bool pause)
 	{
-		CSkinnedInstanceData* data = GET_ENTITY_DATA(entity, CSkinnedInstanceData);
-		if (data == NULL)
+		CSkinnedInstanceData* skinnedData = GET_ENTITY_DATA(entity, CSkinnedInstanceData);
+		if (skinnedData == NULL)
 			return false;
+
+		SSkeletonAnimation* data = &skinnedData->Skeletons[skeletonId];
 
 		if (clipBegin >= clipInfo->Duration)
 			clipBegin = 0.0f;
@@ -500,6 +504,15 @@ namespace Skylicht
 		data->Time = core::clamp(data->Time, data->TimeFrom, data->TimeTo);
 
 		return true;
+	}
+
+	void CRenderSkinnedInstancing::setAnimationWeight(CEntity* entity, int skeletonId, float weight)
+	{
+		CSkinnedInstanceData* skinnedData = GET_ENTITY_DATA(entity, CSkinnedInstanceData);
+		if (skinnedData == NULL)
+			return;
+
+		skinnedData->Skeletons[skeletonId].Weight = weight;
 	}
 
 	void CRenderSkinnedInstancing::applyShareInstancingBuffer()
