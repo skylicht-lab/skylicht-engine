@@ -17,7 +17,9 @@ void CBoldSystem::beginQuery(CEntityManager* entityManager)
 	if (m_group == NULL)
 	{
 		const u32 boldType[] = GET_LIST_ENTITY_DATA(CBoldData);
-		m_group = entityManager->createGroupFromVisible(boldType, 1);
+		m_group = entityManager->findGroup(boldType, 1);
+		if (m_group == NULL)
+			m_group = entityManager->createGroupFromVisible(boldType, 1);
 	}
 }
 
@@ -79,6 +81,9 @@ void CBoldSystem::separation(CBoldData** bolds, CWorldTransformData** transforms
 
 		for (int j = 0; j < numEntity; j++)
 		{
+			if (i == j)
+				continue;
+
 			CBoldData* boldJ = bolds[j];
 
 			diff = boldI->Location - boldJ->Location;
@@ -135,6 +140,9 @@ void CBoldSystem::alignment(CBoldData** bolds, CWorldTransformData** transforms,
 
 		for (int j = 0; j < numEntity; j++)
 		{
+			if (i == j)
+				continue;
+
 			CBoldData* boldJ = bolds[j];
 
 			diff = boldI->Location - boldJ->Location;
@@ -189,6 +197,9 @@ void CBoldSystem::cohesion(CBoldData** bolds, CWorldTransformData** transforms, 
 
 		for (int j = 0; j < numEntity; j++)
 		{
+			if (i == j)
+				continue;
+
 			CBoldData* boldJ = bolds[j];
 
 			diff = boldI->Location - boldJ->Location;

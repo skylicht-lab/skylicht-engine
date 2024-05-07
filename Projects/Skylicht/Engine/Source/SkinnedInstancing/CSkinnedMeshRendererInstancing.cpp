@@ -198,14 +198,18 @@ namespace Skylicht
 						m = skinnedIntance->Materials[meshIndex];
 					}
 
+					SSkeletonAnimation* skeletons = skinnedIntance->Skeletons;
+
 					// set animation to shader params
 					SVec4& p = m->getShaderParams().getParam(0);
-					p.X = (float)(skinnedIntance->Frame);
-					p.Y = (float)(skinnedIntance->ClipId * jointCount);
+					p.X = (float)(skeletons[0].Frame);
+					p.Y = (float)(skeletons[0].ClipId * jointCount);
+					p.Z = (float)(skeletons[1].Frame);
+					p.W = (float)(skeletons[1].ClipId * jointCount);
 
 					// set blending to shader params
 					SVec4& b = m->getShaderParams().getParam(5);
-					b.X = skinnedIntance->Anim2Weight;
+					b.X = skeletons[1].Weight;
 
 					group->Materials.push(m);
 				}
