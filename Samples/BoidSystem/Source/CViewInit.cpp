@@ -255,7 +255,7 @@ void CViewInit::initScene()
 		delete[]transforms;
 	}
 
-	// Add bold system
+	// add bold system (that will update moving for CBoldData)
 	scene->getEntityManager()->addSystem<CBoldSystem>();
 
 	// Rendering

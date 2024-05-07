@@ -246,7 +246,7 @@ namespace Skylicht
 		driver->drawMeshBuffer(mb);
 	}
 
-	void CBaseRP::drawInstancingMeshBuffer(CMesh* mesh, int bufferID, int materialRenderID, CEntityManager* entity, int entityID, bool skinnedMesh)
+	void CBaseRP::drawInstancingMeshBuffer(CMesh* mesh, int bufferID, CShader* instancingShader, CEntityManager* entity, int entityID, bool skinnedMesh)
 	{
 		updateTextureResource(mesh, bufferID, entity, entityID, skinnedMesh);
 
@@ -254,7 +254,7 @@ namespace Skylicht
 		IVideoDriver* driver = getVideoDriver();
 
 		video::SMaterial& irrMaterial = mb->getMaterial();
-		irrMaterial.MaterialType = materialRenderID;
+		irrMaterial.MaterialType = instancingShader->getMaterialRenderID();
 
 		CShaderManager* shaderMgr = CShaderManager::getInstance();
 		shaderMgr->setCurrentMaterial(irrMaterial);
