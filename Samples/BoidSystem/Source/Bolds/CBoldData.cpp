@@ -9,7 +9,7 @@ CBoldData::CBoldData() :
 	Alive(true)
 {
 	MaxSpeed = 2.5f;
-	MaxForce = 0.25f;
+	MaxForce = 0.02f;
 
 	float rx = os::Randomizer::frand() * 2.0f - 1.0f;
 	float rz = os::Randomizer::frand() * 2.0f - 1.0f;

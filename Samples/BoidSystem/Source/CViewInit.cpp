@@ -223,9 +223,9 @@ void CViewInit::initScene()
 
 		crowdSkinnedMesh->initMaterial(material);
 
-		for (int i = -5; i < 5; i++)
+		for (int i = -10; i < 10; i++)
 		{
-			for (int j = -5; j < 5; j++)
+			for (int j = -10; j < 10; j++)
 			{
 				CEntity* entity = crowdSkinnedMesh->spawn();
 
@@ -334,8 +334,8 @@ void CViewInit::onUpdate()
 				// retry download
 				delete m_getFile;
 				m_getFile = NULL;
-	}
-	}
+			}
+		}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -348,7 +348,7 @@ void CViewInit::onUpdate()
 #else
 			fileSystem->addFileArchive(r, false, false);
 #endif
-}
+		}
 
 		m_initState = CViewInit::InitScene;
 #endif
@@ -374,7 +374,7 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-}
+	}
 }
 
 void CViewInit::onRender()

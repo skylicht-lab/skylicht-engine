@@ -82,9 +82,6 @@ namespace Skylicht
 		CEntityHandleData* handleData = entity->addData<CEntityHandleData>();
 		handleData->Handler = this;
 
-		// add visible data
-		entity->addData<CVisibleData>();
-
 		m_entities.push_back(entity);
 		return entity;
 	}
