@@ -53,24 +53,28 @@ void CBoldSystem::update(CEntityManager* entityManager)
 	CWorldTransformData** transforms = m_transforms.pointer();
 	int numEntity = m_bolds.count();
 
+	separation(bolds, transforms, numEntity);
+	alignment(bolds, transforms, numEntity);
+	cohesion(bolds, transforms, numEntity);
 	borders(bolds, transforms, numEntity);
-	// separation(bolds, transforms, numEntity);
 	updateTransform(bolds, transforms, numEntity);
 }
 
 void CBoldSystem::separation(CBoldData** bolds, CWorldTransformData** transforms, int numEntity)
 {
 	// Distance of field of vision for separation between boids
-	float desiredSeparation = 20.0f * 20.0f;
+	float desiredSeparation = 0.4f;
 
-	core::vector3df steer;
+	core::vector3df target, steer;
 	int count = 0;
+	float timestepSec = getTimeStep() * 0.001f;
+	float weight = 2.5f;
 
 	for (int i = 0; i < numEntity; i++)
 	{
 		CBoldData* boldI = bolds[i];
 
-		steer.set(0.0f, 0.0f, 0.0f);
+		target.set(0.0f, 0.0f, 0.0f);
 		count = 0;
 
 		for (int j = 0; j < numEntity; j++)
@@ -84,23 +88,135 @@ void CBoldSystem::separation(CBoldData** bolds, CWorldTransformData** transforms
 			{
 				diff.normalize();
 				diff /= d; // Weight by distance
-				steer += diff;
+				target += diff;
 				count++;
 			}
 		}
 
 		if (count > 0)
-			steer /= (float)count;
+			target /= (float)count;
 
-		if (steer.getLengthSQ() > 0.0f) {
-			steer.normalize();
-			steer *= boldI->MaxSpeed;
-			steer -= boldI->Velocity;
+		if (target.getLengthSQ() > 0.0f) {
+			target.normalize();
+			target *= boldI->MaxSpeed;
 
-			if (steer.getLengthSQ() > boldI->MaxForce * boldI->MaxForce)
+			// Steering = target - velocity
+			steer = target - boldI->Velocity;
+
+			float force = boldI->MaxForce * timestepSec;
+			if (steer.getLengthSQ() > force * force)
 			{
 				steer.normalize();
-				steer *= boldI->MaxForce;
+				steer *= force;
+			}
+
+			boldI->Acceleration += steer * weight;
+		}
+	}
+}
+
+void CBoldSystem::alignment(CBoldData** bolds, CWorldTransformData** transforms, int numEntity)
+{
+	// Distance of field of vision for separation between boids
+	float desiredSeparation = 5.0f;
+	float desiredSeparationSQ = desiredSeparation * desiredSeparation;
+
+	core::vector3df target, steer;
+	int count = 0;
+	float timestepSec = getTimeStep() * 0.001f;
+	float weight = 0.5f;
+
+	for (int i = 0; i < numEntity; i++)
+	{
+		CBoldData* boldI = bolds[i];
+
+		target.set(0.0f, 0.0f, 0.0f);
+		count = 0;
+
+		for (int j = 0; j < numEntity; j++)
+		{
+			CBoldData* boldJ = bolds[j];
+
+			core::vector3df diff = boldI->Location - boldJ->Location;
+
+			float d = diff.getLengthSQ();
+			if ((d > 0) && (d < desiredSeparationSQ))
+			{
+				target += boldJ->Velocity;
+				count++;
+			}
+		}
+
+		if (count > 0)
+			target /= (float)count;
+
+		if (target.getLengthSQ() > 0.0f) {
+			target.normalize();
+			target *= boldI->MaxSpeed;
+
+			// Steering = target - velocity
+			steer = target - boldI->Velocity;
+
+			float force = boldI->MaxForce * timestepSec * weight;
+			if (steer.getLengthSQ() > force * force)
+			{
+				steer.normalize();
+				steer *= force;
+			}
+
+			boldI->Acceleration += steer;
+		}
+	}
+}
+
+void CBoldSystem::cohesion(CBoldData** bolds, CWorldTransformData** transforms, int numEntity)
+{
+	// Distance of field of vision for separation between boids
+	float desiredSeparation = 10.0f;
+	float desiredSeparationSQ = desiredSeparation * desiredSeparation;
+
+	core::vector3df target, steer;
+	int count = 0;
+	float timestepSec = getTimeStep() * 0.001f;
+	float weight = 0.2f;
+
+	for (int i = 0; i < numEntity; i++)
+	{
+		CBoldData* boldI = bolds[i];
+
+		target.set(0.0f, 0.0f, 0.0f);
+		count = 0;
+
+		for (int j = 0; j < numEntity; j++)
+		{
+			CBoldData* boldJ = bolds[j];
+
+			core::vector3df diff = boldI->Location - boldJ->Location;
+
+			float d = diff.getLengthSQ();
+			if ((d > 0) && (d < desiredSeparationSQ))
+			{
+				target += boldJ->Location;
+				count++;
+			}
+		}
+
+		if (count > 0)
+			target /= (float)count;
+
+		if (target.getLengthSQ() > 0.0f) {
+			target *= -1.0f;
+			target.normalize();
+			target *= boldI->MaxSpeed;
+
+			// Steering = target - velocity
+			steer = target - boldI->Velocity;
+
+			float force = boldI->MaxForce * timestepSec * weight;
+			if (steer.getLengthSQ() > force * force)
+			{
+				steer.normalize();
+				steer *= force;
 			}
 
 			boldI->Acceleration += steer;
@@ -128,7 +244,7 @@ void CBoldSystem::borders(CBoldData** bolds, CWorldTransformData** transforms, i
 		{
 			steer = center - bold->Location;
 			steer.normalize();
-			steer *= 0.0001f;
+			steer *= 0.0003f;
 
 			bold->Acceleration += steer;
 		}
