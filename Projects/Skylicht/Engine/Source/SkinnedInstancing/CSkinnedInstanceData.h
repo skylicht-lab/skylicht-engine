@@ -38,6 +38,7 @@ namespace Skylicht
 		float TimeTo;
 		int FPS;
 		int Frame;
+		float Anim2Weight;
 		bool Loop;
 		bool Pause;
 

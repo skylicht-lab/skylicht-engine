@@ -18,26 +18,22 @@ uniform sampler2D uTransformTexture;
 
 uniform mat4 uVpMatrix;
 uniform vec4 uCameraPosition;
-uniform vec4 uLightDirection;
 uniform vec4 uAnimation;
 uniform vec2 uTransformTextureSize;
 
 out vec2 vTexCoord0;
 out vec3 vWorldNormal;
 out vec3 vWorldViewDir;
-out vec3 vWorldLightDir;
-out vec3 vWorldTangent;
-out vec3 vWorldBinormal;
-out float vTangentW;
-out vec4 vViewPosition;
 out vec3 vWorldPosition;
+out vec3 vDepth;
 
-#include "../../../TransformTexture/GLSL/LibTransformTexture.glsl"
+#include "../../TransformTexture/GLSL/LibTransformTexture.glsl"
 
 void main(void)
 {
 	mat4 skinMatrix = mat4(0.0);
-
+	
+	// ANIMATION 1
 	vec2 boneLocation = uBoneLocation.xy;
 	float boneLocationY = uBoneLocation.y;
 
@@ -53,29 +49,42 @@ void main(void)
 	boneLocation.y = boneLocationY + inBlendIndex[3];
 	skinMatrix += inBlendWeight[3] * getTransformFromTexture(boneLocation);
 
-	vec4 skinPosition = skinMatrix * inPosition;
-	vec3 skinNormal = (skinMatrix * vec4(inNormal, 0.0)).xyz;
-	vec3 skinTangent = (skinMatrix * vec4(inTangent, 0.0)).xyz;
-
-	vTexCoord0 = inTexCoord0;
-	vTangentW = inData.x;
-
-	vec4 worldPos = uWorldMatrix * skinPosition;
-	vec4 worldViewDir = normalize(uCameraPosition - worldPos);
-
-	vec4 worldNormal = uWorldMatrix * vec4(skinNormal.xyz, 0.0);
-	vec4 worldTangent = uWorldMatrix * vec4(skinTangent.xyz, 0.0);
-
-	vWorldPosition = worldPos.xyz;
-
-	vWorldNormal = normalize(worldNormal.xyz);
-	vWorldTangent = normalize(worldTangent.xyz);
-	vWorldBinormal = normalize(cross(worldNormal.xyz, worldTangent.xyz));
-
-	vWorldViewDir = worldViewDir.xyz;
-	vWorldLightDir = normalize(uLightDirection.xyz);
+	vec4 skinPosition1 = skinMatrix * inPosition;
+	vec3 skinNormal1 = (skinMatrix * vec4(inNormal, 0.0)).xyz;
 	
-	vViewPosition = uVpMatrix * worldPos;
+	// ANIMATION 2
+	boneLocation = uBoneLocation.zw;
+	boneLocationY = uBoneLocation.w;
 
-	gl_Position = vViewPosition;
+	boneLocation.y = boneLocationY + inBlendIndex[0];
+	skinMatrix = inBlendWeight[0] * getTransformFromTexture(boneLocation);
+
+	boneLocation.y = boneLocationY + inBlendIndex[1];
+	skinMatrix += inBlendWeight[1] * getTransformFromTexture(boneLocation);
+
+	boneLocation.y = boneLocationY + inBlendIndex[2];
+	skinMatrix += inBlendWeight[2] * getTransformFromTexture(boneLocation);
+
+	boneLocation.y = boneLocationY + inBlendIndex[3];
+	skinMatrix += inBlendWeight[3] * getTransformFromTexture(boneLocation);
+
+	vec4 skinPosition2 = skinMatrix * inPosition;
+	vec3 skinNormal2 = (skinMatrix * vec4(inNormal, 0.0)).xyz;
+	
+	// blend animations
+	vec4 skinPosition = mix(skinPosition1, skinPosition2, uBlendAnimation.x);
+	vec3 skinNormal = mix(skinNormal1, skinNormal2, uBlendAnimation.x);
+	
+	vTexCoord0 = inTexCoord0;
+	
+	vec4 worldPos = uWorldMatrix * skinPosition;
+	vec4 worldNormal = uWorldMatrix * vec4(skinNormal, 0.0);
+	
+	vWorldPosition = worldPos.xyz;
+	vDepth = uCameraPosition.xyz - vWorldPosition;
+	
+	vWorldNormal = normalize(worldNormal.xyz);
+	vWorldViewDir = normalize(vDepth);
+	
+	gl_Position = uVpMatrix * worldPos;
 }

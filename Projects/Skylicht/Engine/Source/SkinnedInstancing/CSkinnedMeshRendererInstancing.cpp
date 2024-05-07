@@ -203,6 +203,10 @@ namespace Skylicht
 					p.X = (float)(skinnedIntance->Frame);
 					p.Y = (float)(skinnedIntance->ClipId * jointCount);
 
+					// set blending to shader params
+					SVec4& b = m->getShaderParams().getParam(5);
+					b.X = skinnedIntance->Anim2Weight;
+
 					group->Materials.push(m);
 				}
 

@@ -217,7 +217,7 @@ void CViewInit::initScene()
 
 		// body
 		ArrayMaterial material = CMaterialManager::getInstance()->initDefaultMaterial(modelPrefab);
-		material[0]->changeShader("BuiltIn/Shader/Toon/SkinToonInstancing.xml");
+		material[0]->changeShader("BuiltIn/Shader/Toon/SkinToonInstancing2.xml");
 		material[0]->setUniformTexture("uTexRamp", CTextureManager::getInstance()->getTexture("BuiltIn/Textures/TCP2Ramp.png"));
 		material[0]->autoDetectLoadTexture();
 

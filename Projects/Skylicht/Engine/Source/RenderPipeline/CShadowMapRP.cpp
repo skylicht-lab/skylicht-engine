@@ -63,13 +63,15 @@ namespace Skylicht
 
 		m_depthWriteShader = shaderMgr->getShaderIDByName("ShadowDepthWrite");
 		m_depthWriteSkinMeshShader = shaderMgr->getShaderIDByName("ShadowDepthWriteSkinMesh");
-		m_cubeDepthWriteShader = shaderMgr->getShaderIDByName("ShadowCubeDepthWrite");
-		m_cubeDepthWriteSkinMeshShader = shaderMgr->getShaderIDByName("ShadowCubeDepthWriteSkinMesh");
+
+		m_distanceWriteShader = shaderMgr->getShaderIDByName("LightDistanceDepthWrite");
+		m_distanceWriteSkinMeshShader = shaderMgr->getShaderIDByName("LightDistanceDepthWriteSkinMesh");
 
 		m_depthWriteStandardSGInstancing = shaderMgr->getShaderIDByName("SDWStandardInstancing");
-		m_cubeDepthWriteStandardSGInstancing = shaderMgr->getShaderIDByName("SDWCubeStandardInstancing");
 		m_depthWriteTBNSGInstancing = shaderMgr->getShaderIDByName("SDWTBNInstancing");
-		m_cubeDepthWriteTBNSGInstancing = shaderMgr->getShaderIDByName("SDWCubeTBNInstancing");
+
+		m_distanceWriteStandardSGInstancing = shaderMgr->getShaderIDByName("SDWLightDistanceStandardInstancing");
+		m_distanceWriteTBNSGInstancing = shaderMgr->getShaderIDByName("SDWLightDistanceTBNInstancing");
 
 		m_depthWriteSkinnedInstancing = shaderMgr->getShaderIDByName("SDWSkinInstancing");
 
@@ -246,9 +248,9 @@ namespace Skylicht
 				break;
 			case PointLight:
 				if (skinnedMesh)
-					m_writeDepthMaterial.MaterialType = m_cubeDepthWriteSkinMeshShader;
+					m_writeDepthMaterial.MaterialType = m_distanceWriteSkinMeshShader;
 				else
-					m_writeDepthMaterial.MaterialType = m_cubeDepthWriteShader;
+					m_writeDepthMaterial.MaterialType = m_distanceWriteShader;
 				break;
 			}
 
@@ -317,12 +319,12 @@ namespace Skylicht
 			case PointLight:
 				if (vertexSize == sizeof(S3DVertex))
 				{
-					m_writeDepthMaterial.MaterialType = m_cubeDepthWriteStandardSGInstancing;
+					m_writeDepthMaterial.MaterialType = m_distanceWriteStandardSGInstancing;
 					setMaterial = true;
 				}
 				else if (vertexSize == sizeof(S3DVertexTangents))
 				{
-					m_writeDepthMaterial.MaterialType = m_cubeDepthWriteTBNSGInstancing;
+					m_writeDepthMaterial.MaterialType = m_distanceWriteTBNSGInstancing;
 					setMaterial = true;
 				}
 				break;
