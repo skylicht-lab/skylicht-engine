@@ -87,17 +87,62 @@ namespace Skylicht
 		for (int i = 0; i < numEntity; i++)
 		{
 			CSkinnedInstanceData* entity = entities[i];
-			if (!entity->Pause)
+
+			int mainSkeleton = 0;
+			float maxWeight = 0.0f;
+			float frameRatio = 0.0f;
+
+			for (int skeletonId = 0; skeletonId < 2; skeletonId++)
 			{
-				entity->Time = entity->Time + t;
-				if (entity->Time >= entity->TimeTo)
+				SSkeletonAnimation* skeleton = &entity->Skeletons[skeletonId];
+
+				// find the main skeleton
+				if (maxWeight < skeleton->Weight)
 				{
-					if (entity->Loop)
-						entity->Time = entity->TimeFrom;
-					else
-						entity->Time = entity->TimeTo;
+					maxWeight = skeleton->Weight;
+					mainSkeleton = skeletonId;
 				}
-				entity->Frame = (int)(entity->Time * (float)entity->FPS);
+
+				// update time/frame
+				if (!skeleton->Pause && skeleton->Weight > 0.0f)
+				{
+					skeleton->Time = skeleton->Time + t;
+					if (skeleton->Time >= skeleton->TimeTo)
+					{
+						if (skeleton->Loop)
+							skeleton->Time = skeleton->TimeFrom;
+						else
+							skeleton->Time = skeleton->TimeTo;
+					}
+
+					skeleton->Frame = (int)(skeleton->Time * (float)skeleton->FPS);
+
+					if (skeletonId == mainSkeleton)
+					{
+						float duration = skeleton->TimeTo - skeleton->TimeFrom;
+						float currentTime = skeleton->Time - skeleton->TimeFrom;
+						if (duration > 0.0f)
+							frameRatio = currentTime / duration;
+						else
+							frameRatio = 0.0f;
+					}
+				}
+			}
+
+			// sync by time scale
+			// like the function CSkeleton::syncAnimationByTimeScale
+			for (int skeletonId = 0; skeletonId < 2; skeletonId++)
+			{
+				SSkeletonAnimation* skeleton = &entity->Skeletons[skeletonId];
+
+				if (skeletonId != mainSkeleton && !skeleton->Pause && skeleton->Weight > 0.0f)
+				{
+					float duration = skeleton->TimeTo - skeleton->TimeFrom;
+
+					// calc time/frame by main ratio
+					skeleton->Time = skeleton->TimeFrom + frameRatio * duration;
+					skeleton->Frame = (int)(skeleton->Time * (float)skeleton->FPS);
+				}
 			}
 		}
 	}

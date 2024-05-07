@@ -29,18 +29,23 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class SKYLICHT_API CSkinnedInstanceData : public IEntityData
+	struct SSkeletonAnimation
 	{
-	public:
 		int ClipId;
 		float Time;
 		float TimeFrom;
 		float TimeTo;
 		int FPS;
 		int Frame;
-		float Anim2Weight;
 		bool Loop;
 		bool Pause;
+		float Weight;
+	};
+
+	class SKYLICHT_API CSkinnedInstanceData : public IEntityData
+	{
+	public:
+		SSkeletonAnimation Skeletons[2];
 
 		core::array<CRenderMeshData*> RenderData;
 		core::array<ITexture*> TransformTextures;

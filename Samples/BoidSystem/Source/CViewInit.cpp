@@ -9,6 +9,7 @@
 #include "SkyDome/CSkyDome.h"
 
 #include "Bolds/CBoldSystem.h"
+#include "Bolds/CBoldAnimationSystem.h"
 
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
@@ -229,14 +230,15 @@ void CViewInit::initScene()
 			{
 				CEntity* entity = crowdSkinnedMesh->spawn();
 
-				// random animation
-				int id = 0;
-
 				// random time
-				float time = os::Randomizer::frand() * clips[id]->Duration;
+				float time = os::Randomizer::frand();
 
 				// set animation
-				crowdSkinnedMesh->setAnimation(entity, id, clips[id], time, fps);
+				crowdSkinnedMesh->setAnimation(entity, 0, animIdle, time * animIdle->Duration, fps, 0);
+				crowdSkinnedMesh->setAnimation(entity, 1, animWalk, time * animWalk->Duration, fps, 1);
+
+				crowdSkinnedMesh->setAnimationWeight(entity, 0, 1.0f);
+				crowdSkinnedMesh->setAnimationWeight(entity, 1, 0.0f);
 
 				// set position
 				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
@@ -253,10 +255,16 @@ void CViewInit::initScene()
 		// free data
 		delete[]animationData;
 		delete[]transforms;
-	}
 
-	// add bold system (that will update moving for CBoldData)
-	scene->getEntityManager()->addSystem<CBoldSystem>();
+		// add bold system (that will update moving for CBoldData)
+		scene->getEntityManager()->addSystem<CBoldSystem>();
+
+		// add bold system (that will update animation)
+		CBoldAnimationSystem* animSystem = scene->getEntityManager()->addSystem<CBoldAnimationSystem>();
+		animSystem->addClip(animIdle, 0, fps, 0.0f);
+		animSystem->addClip(animWalk, 1, fps, 0.01f);
+		animSystem->addClip(animRun, 2, fps, 0.03f);
+	}
 
 	// Rendering
 	u32 w = app->getWidth();

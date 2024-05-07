@@ -31,18 +31,23 @@ namespace Skylicht
 
 	IMPLEMENT_DATA_TYPE_INDEX(CSkinnedInstanceData);
 
-	CSkinnedInstanceData::CSkinnedInstanceData() :
-		ClipId(0),
-		Time(0.0f),
-		TimeFrom(0.0f),
-		TimeTo(0.0f),
-		FPS(60),
-		Frame(0),
-		Anim2Weight(0.0f),
-		Loop(true),
-		Pause(false)
+	CSkinnedInstanceData::CSkinnedInstanceData()
 	{
-
+		for (int i = 0; i < 2; i++)
+		{
+			Skeletons[i].ClipId = 0;
+			Skeletons[i].Time = 0.0f;
+			Skeletons[i].TimeFrom = 0.0f;
+			Skeletons[i].TimeTo = 0.0f;
+			Skeletons[i].FPS = 60;
+			Skeletons[i].Frame = 0;
+			if (i == 0)
+				Skeletons[i].Weight = 1.0f;
+			else
+				Skeletons[i].Weight = 0.0f;
+			Skeletons[i].Loop = true;
+			Skeletons[i].Pause = false;
+		}
 	}
 
 	CSkinnedInstanceData::~CSkinnedInstanceData()
