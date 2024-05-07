@@ -389,7 +389,7 @@ namespace Skylicht
 		}
 	}
 
-	void CDeferredRP::drawInstancingMeshBuffer(CMesh* mesh, int bufferID, int materialRenderID, CEntityManager* entityMgr, int entityID, bool skinnedMesh)
+	void CDeferredRP::drawInstancingMeshBuffer(CMesh* mesh, int bufferID, CShader* instancingShader, CEntityManager* entityMgr, int entityID, bool skinnedMesh)
 	{
 		if (m_isIndirectPass == true)
 		{
@@ -420,7 +420,7 @@ namespace Skylicht
 				IVideoDriver* driver = getVideoDriver();
 
 				video::SMaterial irrMaterial = mb->getMaterial();
-				irrMaterial.MaterialType = materialRenderID;
+				irrMaterial.MaterialType = instancingShader->getMaterialRenderID();
 				irrMaterial.BackfaceCulling = false;
 
 				driver->setMaterial(irrMaterial);
@@ -428,7 +428,7 @@ namespace Skylicht
 			}
 			else
 			{
-				CBaseRP::drawInstancingMeshBuffer(mesh, bufferID, materialRenderID, entityMgr, entityID, skinnedMesh);
+				CBaseRP::drawInstancingMeshBuffer(mesh, bufferID, instancingShader, entityMgr, entityID, skinnedMesh);
 			}
 		}
 	}
