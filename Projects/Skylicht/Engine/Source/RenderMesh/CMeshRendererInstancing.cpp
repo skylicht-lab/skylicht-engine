@@ -182,12 +182,10 @@ namespace Skylicht
 
 				CShaderMaterial::setMaterial(NULL);
 
-				int materialType = shader->getInstancingShader()->getMaterialRenderID();
-
 				rp->drawInstancingMeshBuffer(
 					(CMesh*)data->InstancingMesh,
 					i,
-					materialType,
+					shader->getInstancingShader(),
 					entityManager,
 					group->RootEntityIndex,
 					false

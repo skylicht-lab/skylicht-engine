@@ -1,0 +1,12 @@
+<shaderConfig name="SDWLightDistanceStandardInstancing" baseShader="SOLID">
+	<uniforms>
+		<vs>
+			<uniform name="uVPMatrix" type="VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+		</vs>
+		<fs>
+			<uniform name="uLightPosition" type="POINT_LIGHT_POSITION" value="0" float="4"/>
+		</fs>
+	</uniforms>
+	<shader type="GLSL" vs="GLSL/SDWStandardInstancingVS.glsl" fs="GLSL/ShadowLightDistanceWriteFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/SDWStandardInstancingVS.hlsl" fs="HLSL/ShadowLightDistanceWriteFS.hlsl"/>
+</shaderConfig>

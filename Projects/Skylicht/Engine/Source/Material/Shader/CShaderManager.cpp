@@ -102,14 +102,15 @@ namespace Skylicht
 
 		loadShader("BuiltIn/Shader/ShadowDepthWrite/ShadowDepthWrite.xml");
 		loadShader("BuiltIn/Shader/ShadowDepthWrite/ShadowDepthWriteSkinMesh.xml");
-		loadShader("BuiltIn/Shader/ShadowDepthWrite/ShadowCubeDepthWrite.xml");
-		loadShader("BuiltIn/Shader/ShadowDepthWrite/ShadowCubeDepthWriteSkinMesh.xml");
+		loadShader("BuiltIn/Shader/ShadowDepthWrite/ShadowLightDistanceWrite.xml");
+		loadShader("BuiltIn/Shader/ShadowDepthWrite/ShadowLightDistanceWriteSkinMesh.xml");
 
 		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWStandardInstancing.xml");
-		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWCubeStandardInstancing.xml");
 		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWTBNInstancing.xml");
-		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWCubeTBNInstancing.xml");
 		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWSkinInstancing.xml");
+
+		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWLightDistanceStandardInstancing.xml");
+		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWLightDistanceTBNInstancing.xml");
 
 		loadShader("BuiltIn/Shader/Basic/TextureSRGB.xml");
 		loadShader("BuiltIn/Shader/Basic/TextureLinearRGB.xml");

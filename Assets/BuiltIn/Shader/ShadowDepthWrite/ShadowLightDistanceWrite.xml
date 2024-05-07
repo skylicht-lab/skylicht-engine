@@ -1,4 +1,4 @@
-<shaderConfig name="ShadowCubeDepthWrite" baseShader="SOLID">
+<shaderConfig name="ShadowLightDistanceWrite" baseShader="SOLID">
 	<uniforms>
 		<vs>
 			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
@@ -8,6 +8,6 @@
 			<uniform name="uLightPosition" type="POINT_LIGHT_POSITION" value="0" float="4"/>
 		</fs>
 	</uniforms>
-	<shader type="GLSL" vs="GLSL/ShadowDepthWriteVS.glsl" fs="GLSL/ShadowCubeDepthWriteFS.glsl"/>
-	<shader type="HLSL" vs="HLSL/ShadowDepthWriteVS.hlsl" fs="HLSL/ShadowCubeDepthWriteFS.hlsl"/>
+	<shader type="GLSL" vs="GLSL/ShadowDepthWriteVS.glsl" fs="GLSL/ShadowLightDistanceWriteFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/ShadowDepthWriteVS.hlsl" fs="HLSL/ShadowLightDistanceWriteFS.hlsl"/>
 </shaderConfig>

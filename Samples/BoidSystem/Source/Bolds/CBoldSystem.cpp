@@ -65,7 +65,7 @@ void CBoldSystem::separation(CBoldData** bolds, CWorldTransformData** transforms
 	// Distance of field of vision for separation between boids
 	float desiredSeparation = 0.4f;
 
-	core::vector3df target, steer;
+	core::vector3df target, steer, diff;
 	int count = 0;
 	float timestepSec = getTimeStep() * 0.001f;
 	float weight = 2.5f;
@@ -81,7 +81,7 @@ void CBoldSystem::separation(CBoldData** bolds, CWorldTransformData** transforms
 		{
 			CBoldData* boldJ = bolds[j];
 
-			core::vector3df diff = boldI->Location - boldJ->Location;
+			diff = boldI->Location - boldJ->Location;
 
 			float d = diff.getLength();
 			if ((d > 0) && (d < desiredSeparation))
@@ -121,7 +121,7 @@ void CBoldSystem::alignment(CBoldData** bolds, CWorldTransformData** transforms,
 	float desiredSeparation = 5.0f;
 	float desiredSeparationSQ = desiredSeparation * desiredSeparation;
 
-	core::vector3df target, steer;
+	core::vector3df target, steer, diff;
 	int count = 0;
 	float timestepSec = getTimeStep() * 0.001f;
 	float weight = 0.5f;
@@ -137,7 +137,7 @@ void CBoldSystem::alignment(CBoldData** bolds, CWorldTransformData** transforms,
 		{
 			CBoldData* boldJ = bolds[j];
 
-			core::vector3df diff = boldI->Location - boldJ->Location;
+			diff = boldI->Location - boldJ->Location;
 
 			float d = diff.getLengthSQ();
 			if ((d > 0) && (d < desiredSeparationSQ))
@@ -175,7 +175,7 @@ void CBoldSystem::cohesion(CBoldData** bolds, CWorldTransformData** transforms, 
 	float desiredSeparation = 10.0f;
 	float desiredSeparationSQ = desiredSeparation * desiredSeparation;
 
-	core::vector3df target, steer;
+	core::vector3df target, steer, diff;
 	int count = 0;
 	float timestepSec = getTimeStep() * 0.001f;
 	float weight = 0.2f;
@@ -191,7 +191,7 @@ void CBoldSystem::cohesion(CBoldData** bolds, CWorldTransformData** transforms, 
 		{
 			CBoldData* boldJ = bolds[j];
 
-			core::vector3df diff = boldI->Location - boldJ->Location;
+			diff = boldI->Location - boldJ->Location;
 
 			float d = diff.getLengthSQ();
 			if ((d > 0) && (d < desiredSeparationSQ))
@@ -254,6 +254,9 @@ void CBoldSystem::borders(CBoldData** bolds, CWorldTransformData** transforms, i
 void CBoldSystem::updateTransform(CBoldData** bolds, CWorldTransformData** transforms, int numEntity)
 {
 	core::vector3df up(0.0f, 1.0f, 0.0f);
+	core::vector3df right;
+
+	float timestepSec = getTimeStep() * 0.001f;
 
 	for (int i = 0; i < numEntity; i++)
 	{
@@ -268,21 +271,18 @@ void CBoldSystem::updateTransform(CBoldData** bolds, CWorldTransformData** trans
 			bold->Front.normalize();
 		}
 
-		core::vector3df right = up.crossProduct(bold->Front);
+		right = up.crossProduct(bold->Front);
 		right.normalize();
 
-		float speed = bold->MaxSpeed * getTimeStep() * 0.001f;
+		float speed = bold->MaxSpeed * timestepSec;
 		if (bold->Velocity.getLengthSQ() > speed * speed)
-		{
 			bold->Velocity = bold->Front * speed;
-		}
 
 		bold->Location += bold->Velocity;
 
 		bold->Acceleration.set(0.0f, 0.0f, 0.0f);
 
 		// apply to transform
-		transform->HasChanged = true;
 		f32* matData = transform->Relative.pointer();
 		matData[0] = right.X;
 		matData[1] = right.Y;
@@ -303,5 +303,8 @@ void CBoldSystem::updateTransform(CBoldData** bolds, CWorldTransformData** trans
 		matData[13] = bold->Location.Y;
 		matData[14] = bold->Location.Z;
 		matData[15] = 1.0f;
+
+		// notify changed for CGroupTransform and CWorldTransformSystem
+		transform->HasChanged = true;
 	}
 }
