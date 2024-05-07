@@ -33,5 +33,9 @@ private:
 
 	void separation(CBoldData** bolds, CWorldTransformData** transforms, int numEntity);
 
+	void alignment(CBoldData** bolds, CWorldTransformData** transforms, int numEntity);
+
+	void cohesion(CBoldData** bolds, CWorldTransformData** transforms, int numEntity);
+
 	void updateTransform(CBoldData** bolds, CWorldTransformData** transforms, int numEntity);
 };
