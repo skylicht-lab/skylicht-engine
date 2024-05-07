@@ -35,7 +35,7 @@ namespace Skylicht
 	{
 		SVec4 BoneLocation;
 		SVec4 Color;
-		SVec4 SpecGloss;
+		core::vector2df BlendAnimation;
 
 		bool operator==(const SVtxSkinSGInstancing& other) const
 		{

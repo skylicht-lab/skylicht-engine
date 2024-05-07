@@ -38,6 +38,7 @@ namespace Skylicht
 		TimeTo(0.0f),
 		FPS(60),
 		Frame(0),
+		Anim2Weight(0.0f),
 		Loop(true),
 		Pause(false)
 	{

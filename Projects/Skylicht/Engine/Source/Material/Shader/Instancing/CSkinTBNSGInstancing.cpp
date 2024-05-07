@@ -53,7 +53,7 @@ namespace Skylicht
 			// add color & uv scale
 			m_vtxDescriptor->addAttribute("uBoneLocation", 4, video::EVAS_TEXCOORD1, video::EVAT_FLOAT, 1);
 			m_vtxDescriptor->addAttribute("uColor", 4, video::EVAS_TEXCOORD2, video::EVAT_FLOAT, 1);
-			m_vtxDescriptor->addAttribute("uSpecGloss", 4, video::EVAS_TEXCOORD3, video::EVAT_FLOAT, 1);
+			m_vtxDescriptor->addAttribute("uBlendAnimation", 2, video::EVAS_TEXCOORD3, video::EVAT_FLOAT, 1);
 
 			// add instance matrix
 			m_vtxDescriptor->addAttribute("inWorldMatrix1", 4, video::EVAS_TEXCOORD4, video::EVAT_FLOAT, 2);
@@ -139,7 +139,10 @@ namespace Skylicht
 				// convert material data from BuiltIn/Shader/SpecularGlossiness/Forward/SGSkinInstaning.xml
 				vtx.BoneLocation = params.getParam(0);
 				vtx.Color = params.getParam(1);
-				vtx.SpecGloss = params.getParam(2);
+
+				SVec4& v = params.getParam(5);
+				vtx.BlendAnimation.X = v.X;
+				vtx.BlendAnimation.Y = v.Y;
 			}
 		}
 

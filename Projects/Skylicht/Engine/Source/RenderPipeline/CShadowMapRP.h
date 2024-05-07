@@ -74,13 +74,14 @@ namespace Skylicht
 
 		int m_depthWriteShader;
 		int m_depthWriteSkinMeshShader;
-		int m_cubeDepthWriteShader;
-		int m_cubeDepthWriteSkinMeshShader;
+		int m_distanceWriteShader;
+		int m_distanceWriteSkinMeshShader;
 
 		int m_depthWriteStandardSGInstancing;
-		int m_cubeDepthWriteStandardSGInstancing;
 		int m_depthWriteTBNSGInstancing;
-		int m_cubeDepthWriteTBNSGInstancing;
+
+		int m_distanceWriteStandardSGInstancing;
+		int m_distanceWriteTBNSGInstancing;
 
 		int m_depthWriteSkinnedInstancing;
 
