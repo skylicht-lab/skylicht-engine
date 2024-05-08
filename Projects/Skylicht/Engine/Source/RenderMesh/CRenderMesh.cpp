@@ -46,7 +46,8 @@ namespace Skylicht
 		m_optimizeForRender(false),
 		m_loadTexcoord2(false),
 		m_loadNormal(true),
-		m_fixInverseNormal(true)
+		m_fixInverseNormal(true),
+		m_enableInstancing(false)
 	{
 
 	}

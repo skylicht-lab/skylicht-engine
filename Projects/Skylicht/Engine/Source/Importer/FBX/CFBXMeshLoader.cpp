@@ -221,10 +221,10 @@ namespace Skylicht
 			}
 
 			// init mesh
-			for (int j = 0; j < mesh->materials.count; j++)
+			for (int j = 0; j < mesh->material_parts.count; j++)
 			{
 				ufbx_mesh_part* mesh_part = &mesh->material_parts.data[j];
-				ufbx_material* mesh_mat = mesh->materials.data[j];
+
 				if (mesh_part->num_triangles == 0)
 					continue;
 
@@ -268,7 +268,12 @@ namespace Skylicht
 
 				// add mesh buffer
 				char materialName[512];
-				if (mesh_mat->name.data && CStringImp::length(mesh_mat->name.data))
+
+				ufbx_material* mesh_mat = NULL;
+				if (j < mesh->materials.count)
+					mesh_mat = mesh->materials.data[j];
+
+				if (mesh_mat && mesh_mat->name.data && CStringImp::length(mesh_mat->name.data))
 				{
 					CStringImp::copy(materialName, mesh_mat->name.data);
 				}
@@ -444,6 +449,15 @@ namespace Skylicht
 								mat.MaterialType = shaderMgr->getShaderIDByName("VertexColor");
 						}
 					}
+				}
+				else
+				{
+					// default vertex color if model dont have material
+					SMaterial& mat = mb->getMaterial();
+					if (isSkinnedMesh)
+						mat.MaterialType = shaderMgr->getShaderIDByName("SkinVertexColor");
+					else
+						mat.MaterialType = shaderMgr->getShaderIDByName("VertexColor");
 				}
 
 				// need calculate tangent & binormal
