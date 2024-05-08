@@ -28,7 +28,8 @@ protected:
 	CGlyphFont* m_font;
 
 	CGameObject* m_plane;
-	CGameObject* m_crowd;
+	CGameObject* m_crowd1;
+	CGameObject* m_crowd2;
 
 protected:
 	io::path getBuiltInPath(const char* name);
@@ -49,4 +50,6 @@ public:
 protected:
 
 	void initScene();
+
+	void initCrowd(CGameObject* crowd, CEntityPrefab* meshPrefab, core::matrix4* transforms, u32 w, u32 h, std::map<std::string, int>& bones);
 };
