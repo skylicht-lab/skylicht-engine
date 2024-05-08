@@ -2,7 +2,7 @@
 <Materials>
     <Material name='Char' shader='BuiltIn/Shader/Toon/SkinToon.xml'>
         <Textures>
-            <Texture name='uTexDiffuse' path='../Texture/CharacterAtlas.png' wrapU='0' wrapV='0'/>
+            <Texture name='uTexDiffuse' path='../Textures/CharacterAtlas.png' wrapU='0' wrapV='0'/>
             <Texture name='uTexRamp' path='BuiltIn/Textures/TCP2Ramp.png' wrapU='0' wrapV='0'/>
         </Textures>
         <Params>
@@ -23,7 +23,7 @@
             </Extra>
             <Extra name='BuiltIn/Shader/Toon/Toon.xml'/>
                 <Textures>
-                    <Texture name='uTexDiffuse' path='../Texture/CharacterAtlas.png' wrapU='0' wrapV='0'/>
+                    <Texture name='uTexDiffuse' path='../Textures/CharacterAtlas.png' wrapU='0' wrapV='0'/>
                     <Texture name='uTexRamp' path='BuiltIn/Textures/TCP2Ramp.png' wrapU='0' wrapV='0'/>
                 </Textures>
                 <Params>

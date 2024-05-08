@@ -72,6 +72,8 @@ namespace Skylicht
 			CEntity* entity = entities[i];
 
 			CRenderMeshData* meshData = GET_ENTITY_DATA(entity, CRenderMeshData);
+			if (meshData->getMeshInstancing() == NULL)
+				continue;
 
 			bool cullingVisible = true;
 
