@@ -2,7 +2,11 @@
 #include "CBoldSystem.h"
 
 CBoldSystem::CBoldSystem() :
-	m_group(NULL)
+	m_group(NULL),
+	m_minX(-25.0f),
+	m_maxX(25.0f),
+	m_minZ(-25.0f),
+	m_maxZ(25.0f)
 {
 
 }
@@ -241,10 +245,6 @@ void CBoldSystem::cohesion(CBoldData** bolds, CWorldTransformData** transforms, 
 void CBoldSystem::borders(CBoldData** bolds, CWorldTransformData** transforms, int numEntity)
 {
 	// That will turn when near the border
-	float min = -25.0f;
-	float max = 25.0f;
-	float margin = 3.0f;
-
 	core::vector3df center, steer;
 
 	for (int i = 0; i < numEntity; i++)
@@ -252,10 +252,10 @@ void CBoldSystem::borders(CBoldData** bolds, CWorldTransformData** transforms, i
 		CBoldData* bold = bolds[i];
 		steer.set(0.0f, 0.0f, 0.0f);
 
-		if (bold->Location.X < min + margin ||
-			bold->Location.X > max - margin ||
-			bold->Location.Z < min + margin ||
-			bold->Location.Z > max - margin)
+		if (bold->Location.X < m_minX + m_margin ||
+			bold->Location.X > m_maxX - m_margin ||
+			bold->Location.Z < m_minZ + m_margin ||
+			bold->Location.Z > m_maxZ - m_margin)
 		{
 			steer = center - bold->Location;
 			steer.normalize();
@@ -270,6 +270,7 @@ void CBoldSystem::updateTransform(CBoldData** bolds, CWorldTransformData** trans
 {
 	core::vector3df up(0.0f, 1.0f, 0.0f);
 	core::vector3df right;
+	core::vector3df lastPostion;
 
 	float timestepSec = getTimeStep() * 0.001f;
 
@@ -278,6 +279,7 @@ void CBoldSystem::updateTransform(CBoldData** bolds, CWorldTransformData** trans
 		CBoldData* bold = bolds[i];
 		CWorldTransformData* transform = transforms[i];
 
+		// update velocity
 		bold->Velocity += bold->Acceleration;
 
 		if (bold->Velocity.getLengthSQ() > 0.0f)
@@ -293,8 +295,18 @@ void CBoldSystem::updateTransform(CBoldData** bolds, CWorldTransformData** trans
 		if (bold->Velocity.getLengthSQ() > speed * speed)
 			bold->Velocity = bold->Front * speed;
 
+		lastPostion = bold->Location;
+
 		bold->Location += bold->Velocity;
 
+		// clamp bound
+		bold->Location.X = core::clamp(bold->Location.X, m_minX, m_maxX);
+		bold->Location.Z = core::clamp(bold->Location.Z, m_minZ, m_maxZ);
+
+		// update velocity after clamp
+		bold->Velocity = bold->Location - lastPostion;
+
+		// reset the acceleration
 		bold->Acceleration.set(0.0f, 0.0f, 0.0f);
 
 		// apply to transform

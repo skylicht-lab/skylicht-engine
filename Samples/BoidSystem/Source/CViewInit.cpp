@@ -6,7 +6,7 @@
 #include "Context/CContext.h"
 
 #include "Primitive/CPlane.h"
-#include "SkyDome/CSkyDome.h"
+#include "SkySun/CSkySun.h"
 
 #include "Bolds/CBoldSystem.h"
 #include "Bolds/CBoldAnimationSystem.h"
@@ -89,23 +89,12 @@ void CViewInit::initScene()
 	guiCamera->setProjectionType(CCamera::OrthoUI);
 
 	// sky
-	ITexture* skyDomeTexture = CTextureManager::getInstance()->getTexture("Common/Textures/Sky/PaperMill.png");
-	if (skyDomeTexture != NULL)
-	{
-		CSkyDome* skyDome = zone->createEmptyObject()->addComponent<CSkyDome>();
-		skyDome->setData(skyDomeTexture, SColor(255, 255, 255, 255));
-	}
+	CSkySun* skySun = zone->createEmptyObject()->addComponent<CSkySun>();
 
 	// reflection probe
 	CGameObject* reflectionProbeObj = zone->createEmptyObject();
 	CReflectionProbe* reflection = reflectionProbeObj->addComponent<CReflectionProbe>();
 	reflection->loadStaticTexture("Common/Textures/Sky/PaperMill");
-
-	// 3D grid
-	m_plane = zone->createEmptyObject();
-	CPlane* plane = m_plane->addComponent<CPlane>();
-	plane->getMaterial()->changeShader("BuiltIn/Shader/SpecularGlossiness/Deferred/MetersGrid.xml");
-	m_plane->getTransformEuler()->setScale(core::vector3df(50.0f, 1.0f, 50.0f));
 
 	// lighting
 	CGameObject* lightObj = zone->createEmptyObject();
@@ -119,7 +108,25 @@ void CViewInit::initScene()
 	core::vector3df direction = core::vector3df(4.0f, -6.0f, -4.5f);
 	lightTransform->setOrientation(direction, Transform::Oy);
 
+	std::vector<std::string> searchTextureFolders;
+
+	CMaterialManager* materialManager = CMaterialManager::getInstance();
 	CMeshManager* meshManager = CMeshManager::getInstance();
+
+	// ground grid
+	m_plane = zone->createEmptyObject();
+
+	ArrayMaterial envMaterials = materialManager->loadMaterial("SampleBoids/Environment/Environment.mat", true, searchTextureFolders);
+
+	CEntityPrefab* groundPrefab = meshManager->loadModel("SampleBoids/Environment/1_Ground_1.fbx", NULL, true);
+	if (groundPrefab)
+	{
+		CRenderInstancingMesh* groundInstancing = m_plane->addComponent<CRenderInstancingMesh>();
+		groundInstancing->initFromPrefab(groundPrefab);
+		groundInstancing->initMaterial(envMaterials);
+	}
+
+	// bake clip animation
 	CAnimationManager* animManager = CAnimationManager::getInstance();
 
 	CAnimationClip* animIdle = animManager->loadAnimation("SampleBoids/RifleMan/A_RifleMan_Idle.fbx");
@@ -151,8 +158,7 @@ void CViewInit::initScene()
 		CRenderMesh* rifleRenderer = rifle->addComponent<CRenderMesh>();
 		rifleRenderer->initFromPrefab(modelPrefab1);
 
-		std::vector<std::string> folders;
-		ArrayMaterial materials = CMaterialManager::getInstance()->loadMaterial("SampleBoids/RifleMan/RifleMan.mat", true, folders);
+		ArrayMaterial materials = materialManager->loadMaterial("SampleBoids/RifleMan/RifleMan.mat", true, searchTextureFolders);
 		rifleRenderer->initMaterial(materials);
 
 		// init animation
@@ -286,7 +292,8 @@ void CViewInit::initScene()
 		delete[]transforms;
 
 		// add bold system (that will update moving for CBoldData)
-		scene->getEntityManager()->addSystem<CBoldSystem>();
+		CBoldSystem* boldSystem = scene->getEntityManager()->addSystem<CBoldSystem>();
+		boldSystem->setBounds(-25.0f, 25.0f, -25.0f, 25.0f, 2.5f);
 
 		// add bold system (that will update animation clip)
 		CBoldAnimationSystem* animSystem = scene->getEntityManager()->addSystem<CBoldAnimationSystem>();
@@ -295,13 +302,14 @@ void CViewInit::initScene()
 		animSystem->addClip(animRun, 2, fps, 0.03f);
 	}
 
+
 	// Rendering
 	u32 w = app->getWidth();
 	u32 h = app->getHeight();
 
 	CContext* context = CContext::getInstance();
 
-	context->initRenderPipeline(w, h);
+	context->initShadowForwarderPipeline(w, h);
 	context->setActiveZone(zone);
 	context->setActiveCamera(camera);
 	context->setGUICamera(guiCamera);
@@ -312,6 +320,7 @@ void CViewInit::initScene()
 
 	// Test no shadow cascade (30m far shadow)
 	context->getShadowMapRenderPipeline()->setNoShadowCascade(2048, 30.0f);
+	context->getPostProcessorPipeline()->enableAutoExposure(false);
 }
 
 void CViewInit::initCrowd(CGameObject* crowd, CEntityPrefab* modelPrefab, core::matrix4* animationData, u32 w, u32 h, std::map<std::string, int>& bones)
@@ -327,7 +336,7 @@ void CViewInit::initCrowd(CGameObject* crowd, CEntityPrefab* modelPrefab, core::
 	// body
 	ArrayMaterial material = CMaterialManager::getInstance()->initDefaultMaterial(modelPrefab);
 	material[0]->changeShader("BuiltIn/Shader/Toon/SkinToonInstancing2.xml");
-	material[0]->setUniformTexture("uTexDiffuse", CTextureManager::getInstance()->getTexture("SampleBoids/Texture/CharacterAtlas.png"));
+	material[0]->setUniformTexture("uTexDiffuse", CTextureManager::getInstance()->getTexture("SampleBoids/Textures/CharacterAtlas.png"));
 	material[0]->setUniformTexture("uTexRamp", CTextureManager::getInstance()->getTexture("BuiltIn/Textures/TCP2Ramp.png"));
 	material[0]->autoDetectLoadTexture();
 
@@ -392,7 +401,7 @@ void CViewInit::onUpdate()
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-	}
+		}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -431,7 +440,7 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-}
+	}
 }
 
 void CViewInit::onRender()

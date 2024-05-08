@@ -95,6 +95,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "RenderMesh/CRenderMesh.h"
 #include "RenderMesh/CMesh.h"
 #include "RenderMesh/CSkinnedMesh.h"
+#include "RenderMesh/CRenderInstancingMesh.h"
 #include "Culling/CCullingData.h"
 
 #include "SkinnedInstancing/CRenderSkinnedInstancing.h"

@@ -41,14 +41,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CRenderSkinnedInstancing::CRenderSkinnedInstancing() :
-		m_root(NULL),
-		m_loadTexcoord2(false),
-		m_loadNormal(true),
-		m_fixInverseNormal(true),
-		m_instancingTransform(NULL),
-		m_instancingLighting(NULL),
-		m_shareData(0)
+	CRenderSkinnedInstancing::CRenderSkinnedInstancing()
 	{
 
 	}
@@ -65,136 +58,10 @@ namespace Skylicht
 			m_instancingLighting->drop();
 	}
 
-	void CRenderSkinnedInstancing::releaseBaseEntities()
-	{
-		CEntityManager* entityManager = m_gameObject->getEntityManager();
-		if (entityManager == NULL)
-			return;
-
-		for (int i = (int)m_baseEntities.size() - 1; i >= 0; i--)
-			entityManager->removeEntity(m_baseEntities[i]);
-		m_baseEntities.clear();
-	}
-
-	void CRenderSkinnedInstancing::releaseMaterial()
-	{
-		for (CMaterial* m : m_materials)
-		{
-			for (CRenderMeshData*& renderer : m_renderers)
-			{
-				renderer->unusedMaterial(m);
-			}
-
-			m->drop();
-		}
-		m_materials.clear();
-	}
-
 	void CRenderSkinnedInstancing::releaseEntities()
 	{
-		removeAllEntities();
-		releaseBaseEntities();
-
-		m_baseEntities.clear();
-		m_renderers.clear();
 		m_textures.clear();
-		m_entities.clear();
-	}
-
-	void CRenderSkinnedInstancing::initComponent()
-	{
-
-	}
-
-	void CRenderSkinnedInstancing::updateComponent()
-	{
-
-	}
-
-	CObjectSerializable* CRenderSkinnedInstancing::createSerializable()
-	{
-		CObjectSerializable* object = CComponentSystem::createSerializable();
-
-		object->autoRelease(new CBoolProperty(object, "load normal", m_loadNormal));
-		object->autoRelease(new CBoolProperty(object, "inserse normal", m_fixInverseNormal));
-		object->autoRelease(new CBoolProperty(object, "load texcoord2", m_loadTexcoord2));
-
-		std::vector<std::string> meshExts = { "dae","obj","smesh" };
-		std::vector<std::string> materialExts = { "xml","mat" };
-
-		object->autoRelease(new CFilePathProperty(object, "mesh", m_meshFile.c_str(), meshExts));
-		object->autoRelease(new CFilePathProperty(object, "material", m_materialFile.c_str(), materialExts));
-		return object;
-	}
-
-	void CRenderSkinnedInstancing::loadSerializable(CObjectSerializable* object)
-	{
-		CComponentSystem::loadSerializable(object);
-
-		m_loadNormal = object->get<bool>("load normal", true);
-		m_fixInverseNormal = object->get<bool>("inserse normal", true);
-		m_loadTexcoord2 = object->get<bool>("load texcoord2", false);
-
-		std::string meshFile = object->get<std::string>("mesh", "");
-		std::string materialFile = object->get<std::string>("material", "");
-
-		if (meshFile != m_meshFile)
-		{
-			m_meshFile = meshFile;
-
-			CEntityPrefab* prefab = CMeshManager::getInstance()->loadModel(
-				meshFile.c_str(),
-				"",
-				m_loadNormal,
-				m_fixInverseNormal,
-				m_loadTexcoord2,
-				false);
-
-			if (prefab != NULL)
-				initFromPrefab(prefab);
-		}
-
-		if (!materialFile.empty())
-		{
-			m_materialFile = materialFile;
-
-			std::vector<std::string> textureFolders;
-			ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial(
-				m_materialFile.c_str(),
-				true,
-				textureFolders
-			);
-
-			if (materials.size() > 0)
-				initMaterial(materials);
-		}
-	}
-
-	void CRenderSkinnedInstancing::refreshModelAndMaterial()
-	{
-		CEntityPrefab* prefab = CMeshManager::getInstance()->loadModel(
-			m_meshFile.c_str(),
-			"",
-			m_loadNormal,
-			m_fixInverseNormal,
-			m_loadTexcoord2,
-			false);
-
-		if (prefab != NULL)
-			initFromPrefab(prefab);
-
-		if (!m_materialFile.empty())
-		{
-			std::vector<std::string> textureFolders;
-			ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial(
-				m_materialFile.c_str(),
-				true,
-				textureFolders
-			);
-
-			if (materials.size() > 0)
-				initMaterial(materials);
-		}
+		CRenderInstancingMesh::releaseEntities();
 	}
 
 	void CRenderSkinnedInstancing::initFromPrefab(CEntityPrefab* prefab)
@@ -286,43 +153,6 @@ namespace Skylicht
 				indirectLighting->initSH();
 			}
 		}
-	}
-
-	void CRenderSkinnedInstancing::initFromMeshFile(const char* path)
-	{
-		m_meshFile = path;
-		refreshModelAndMaterial();
-	}
-
-	void CRenderSkinnedInstancing::initMaterialFromFile(const char* material)
-	{
-		m_materialFile = material;
-		refreshModelAndMaterial();
-	}
-
-	void CRenderSkinnedInstancing::initMaterial(ArrayMaterial& materials, bool cloneMaterial)
-	{
-		releaseMaterial();
-
-		for (CMaterial* m : materials)
-		{
-			CMaterial* mat = m;
-
-			if (cloneMaterial)
-				mat = m->clone();
-			else
-				mat->grab();
-
-			for (CRenderMeshData*& renderer : m_renderers)
-			{
-				renderer->setMaterial(mat);
-			}
-
-			m_materials.push_back(mat);
-		}
-
-		for (CMaterial* m : m_materials)
-			m->applyMaterial();
 	}
 
 	void CRenderSkinnedInstancing::initTextureTransform(core::matrix4* transforms, u32 w, u32 h, std::map<std::string, int>& bones)
@@ -513,32 +343,5 @@ namespace Skylicht
 			return;
 
 		skinnedData->Skeletons[skeletonId].Weight = weight;
-	}
-
-	void CRenderSkinnedInstancing::applyShareInstancingBuffer()
-	{
-		if (!m_instancingTransform)
-		{
-			m_instancingTransform = IShaderInstancing::createTransformVertexBuffer();
-			m_instancingTransform->setHardwareMappingHint(EHM_STREAM);
-		}
-
-		if (!m_instancingLighting)
-		{
-			m_instancingLighting = IShaderInstancing::createIndirectLightingVertexBuffer();
-			m_instancingLighting->setHardwareMappingHint(EHM_STREAM);
-		}
-
-		CMeshManager* meshMgr = CMeshManager::getInstance();
-
-		for (CRenderMeshData*& renderer : m_renderers)
-		{
-			SMeshInstancing* data = renderer->getMeshInstancing();
-			if (data != NULL)
-			{
-				meshMgr->changeMeshInstancingBuffer(data, m_instancingTransform, m_instancingLighting);
-				data->ShareData = &m_shareData;
-			}
-		}
 	}
 }
