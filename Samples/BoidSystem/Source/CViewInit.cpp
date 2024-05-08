@@ -138,9 +138,10 @@ void CViewInit::initScene()
 			maxDuration = clip->Duration;
 	}
 
-	CEntityPrefab* modelPrefab = meshManager->loadModel("SampleBoids/RifleMan/RifleMan.fbx", NULL, true);
+	CEntityPrefab* modelPrefab1 = meshManager->loadModel("SampleBoids/RifleMan/RifleMan.fbx", NULL, true);
+	CEntityPrefab* modelPrefab2 = meshManager->loadModel("SampleBoids/RifleMan/RifleMan_ELITE.fbx", NULL, true);
 
-	if (modelPrefab != NULL)
+	if (modelPrefab1 != NULL && modelPrefab2 != NULL)
 	{
 		// create cat
 		CGameObject* rifle = zone->createEmptyObject();
@@ -148,7 +149,7 @@ void CViewInit::initScene()
 
 		// render mesh & init material
 		CRenderMesh* rifleRenderer = rifle->addComponent<CRenderMesh>();
-		rifleRenderer->initFromPrefab(modelPrefab);
+		rifleRenderer->initFromPrefab(modelPrefab1);
 
 		std::vector<std::string> folders;
 		ArrayMaterial materials = CMaterialManager::getInstance()->loadMaterial("SampleBoids/RifleMan/RifleMan.mat", true, folders);
@@ -208,46 +209,74 @@ void CViewInit::initScene()
 		rifle->remove();
 
 		// create gpu anim character
-		m_crowd = zone->createEmptyObject();
-		CRenderSkinnedInstancing* crowdSkinnedMesh = m_crowd->addComponent<CRenderSkinnedInstancing>();
-		crowdSkinnedMesh->initFromPrefab(modelPrefab);
-		crowdSkinnedMesh->initTextureTransform(animationData, totalFrames, numBones * numClip, boneMap);
+		m_crowd1 = zone->createEmptyObject();
+		m_crowd2 = zone->createEmptyObject();
 
-		// applyShareInstancingBuffer: It may be more optimal memory, but it hasn't been thoroughly tested in many cases
-		crowdSkinnedMesh->applyShareInstancingBuffer();
+		initCrowd(m_crowd1, modelPrefab1, animationData, totalFrames, numBones * numClip, boneMap);
+		initCrowd(m_crowd2, modelPrefab2, animationData, totalFrames, numBones * numClip, boneMap);
 
-		// body
-		ArrayMaterial material = CMaterialManager::getInstance()->initDefaultMaterial(modelPrefab);
-		material[0]->changeShader("BuiltIn/Shader/Toon/SkinToonInstancing2.xml");
-		material[0]->setUniformTexture("uTexRamp", CTextureManager::getInstance()->getTexture("BuiltIn/Textures/TCP2Ramp.png"));
-		material[0]->autoDetectLoadTexture();
+		CRenderSkinnedInstancing* crowdSkinnedMesh1 = m_crowd1->getComponent<CRenderSkinnedInstancing>();
+		CRenderSkinnedInstancing* crowdSkinnedMesh2 = m_crowd2->getComponent<CRenderSkinnedInstancing>();
 
-		crowdSkinnedMesh->initMaterial(material);
+		// spawn bold to test
+		CEntity* entity;
+		float space = 2.0f;
+		float offset = space * 0.5f;
+		float time = 0.0f;
 
-		for (int i = -10; i < 10; i++)
+		CBoldData* bold;
+		CWorldTransformData* transform;
+		core::vector3df position;
+
+		for (int i = -6; i < 6; i++)
 		{
-			for (int j = -10; j < 10; j++)
+			for (int j = -6; j < 6; j++)
 			{
-				CEntity* entity = crowdSkinnedMesh->spawn();
+				// MODEL 1
+				entity = crowdSkinnedMesh1->spawn();
 
 				// random time
-				float time = os::Randomizer::frand();
+				time = os::Randomizer::frand();
 
 				// set animation
-				crowdSkinnedMesh->setAnimation(entity, 0, animIdle, time * animIdle->Duration, fps, 0);
-				crowdSkinnedMesh->setAnimation(entity, 1, animWalk, time * animWalk->Duration, fps, 1);
+				crowdSkinnedMesh1->setAnimation(entity, 0, animIdle, time * animIdle->Duration, fps, 0);
+				crowdSkinnedMesh1->setAnimation(entity, 1, animWalk, time * animWalk->Duration, fps, 1);
 
-				crowdSkinnedMesh->setAnimationWeight(entity, 0, 1.0f);
-				crowdSkinnedMesh->setAnimationWeight(entity, 1, 0.0f);
+				crowdSkinnedMesh1->setAnimationWeight(entity, 0, 1.0f);
+				crowdSkinnedMesh1->setAnimationWeight(entity, 1, 0.0f);
 
 				// set position
-				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
-				core::vector3df position(i * 2.0f, 0.0f, j * 2.0f);
+				transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+				position.set(i * space, 0.0f, j * space);
 
 				transform->Relative.setTranslation(position);
 
 				// add bold data
-				CBoldData* bold = entity->addData<CBoldData>();
+				bold = entity->addData<CBoldData>();
+				bold->Location = position;
+
+
+				// MODEL 2
+				entity = crowdSkinnedMesh2->spawn();
+
+				// random time
+				time = os::Randomizer::frand();
+
+				// set animation
+				crowdSkinnedMesh2->setAnimation(entity, 0, animIdle, time * animIdle->Duration, fps, 0);
+				crowdSkinnedMesh2->setAnimation(entity, 1, animWalk, time * animWalk->Duration, fps, 1);
+
+				crowdSkinnedMesh2->setAnimationWeight(entity, 0, 1.0f);
+				crowdSkinnedMesh2->setAnimationWeight(entity, 1, 0.0f);
+
+				// set position
+				transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+				position.set(i * space + offset, 0.0f, j * space + offset);
+
+				transform->Relative.setTranslation(position);
+
+				// add bold data
+				bold = entity->addData<CBoldData>();
 				bold->Location = position;
 			}
 		}
@@ -259,7 +288,7 @@ void CViewInit::initScene()
 		// add bold system (that will update moving for CBoldData)
 		scene->getEntityManager()->addSystem<CBoldSystem>();
 
-		// add bold system (that will update animation)
+		// add bold system (that will update animation clip)
 		CBoldAnimationSystem* animSystem = scene->getEntityManager()->addSystem<CBoldAnimationSystem>();
 		animSystem->addClip(animIdle, 0, fps, 0.0f);
 		animSystem->addClip(animWalk, 1, fps, 0.01f);
@@ -282,7 +311,27 @@ void CViewInit::initScene()
 	// context->getShadowMapRenderPipeline()->setShadowCascade(2);
 
 	// Test no shadow cascade (30m far shadow)
-	context->getShadowMapRenderPipeline()->setNoShadowCascade(2048, 10.0f);
+	context->getShadowMapRenderPipeline()->setNoShadowCascade(2048, 30.0f);
+}
+
+void CViewInit::initCrowd(CGameObject* crowd, CEntityPrefab* modelPrefab, core::matrix4* animationData, u32 w, u32 h, std::map<std::string, int>& bones)
+{
+	CRenderSkinnedInstancing* crowdSkinnedMesh;
+	crowdSkinnedMesh = crowd->addComponent<CRenderSkinnedInstancing>();
+	crowdSkinnedMesh->initFromPrefab(modelPrefab);
+	crowdSkinnedMesh->initTextureTransform(animationData, w, h, bones);
+
+	// applyShareInstancingBuffer: It may be more optimal memory, but it hasn't been thoroughly tested in many cases
+	crowdSkinnedMesh->applyShareInstancingBuffer();
+
+	// body
+	ArrayMaterial material = CMaterialManager::getInstance()->initDefaultMaterial(modelPrefab);
+	material[0]->changeShader("BuiltIn/Shader/Toon/SkinToonInstancing2.xml");
+	material[0]->setUniformTexture("uTexDiffuse", CTextureManager::getInstance()->getTexture("SampleBoids/Texture/CharacterAtlas.png"));
+	material[0]->setUniformTexture("uTexRamp", CTextureManager::getInstance()->getTexture("BuiltIn/Textures/TCP2Ramp.png"));
+	material[0]->autoDetectLoadTexture();
+
+	crowdSkinnedMesh->initMaterial(material);
 }
 
 void CViewInit::onDestroy()
@@ -343,7 +392,7 @@ void CViewInit::onUpdate()
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-		}
+	}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -382,7 +431,7 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-	}
+}
 }
 
 void CViewInit::onRender()
@@ -411,7 +460,8 @@ void CViewInit::onRender()
 
 			// hide objects
 			// that fix the probes ambient is brigther because plane color affect on it
-			m_crowd->setVisible(false);
+			m_crowd1->setVisible(false);
+			m_crowd2->setVisible(false);
 			m_plane->setVisible(false);
 
 			// bake light probe
@@ -424,7 +474,8 @@ void CViewInit::onRender()
 			lm->bakeProbes(probes, bakeCamera, rp, scene->getEntityManager());
 
 			// show objects again
-			m_crowd->setVisible(true);
+			m_crowd1->setVisible(true);
+			m_crowd2->setVisible(true);
 			m_plane->setVisible(true);
 		}
 	}

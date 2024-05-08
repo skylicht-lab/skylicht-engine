@@ -64,6 +64,7 @@ void CBoldSystem::update(CEntityManager* entityManager)
 
 void CBoldSystem::separation(CBoldData** bolds, CWorldTransformData** transforms, int numEntity)
 {
+	// That will fix the collision each bold
 	// Distance of field of vision for separation between boids
 	float desiredSeparation = 0.4f;
 
@@ -122,6 +123,7 @@ void CBoldSystem::separation(CBoldData** bolds, CWorldTransformData** transforms
 
 void CBoldSystem::alignment(CBoldData** bolds, CWorldTransformData** transforms, int numEntity)
 {
+	// That will follow the moving at 5m
 	// Distance of field of vision for separation between boids
 	float desiredSeparation = 5.0f;
 	float desiredSeparationSQ = desiredSeparation * desiredSeparation;
@@ -129,7 +131,7 @@ void CBoldSystem::alignment(CBoldData** bolds, CWorldTransformData** transforms,
 	core::vector3df target, steer, diff;
 	int count = 0;
 	float timestepSec = getTimeStep() * 0.001f;
-	float weight = 0.5f;
+	float weight = 0.2f;
 
 	for (int i = 0; i < numEntity; i++)
 	{
@@ -179,8 +181,9 @@ void CBoldSystem::alignment(CBoldData** bolds, CWorldTransformData** transforms,
 
 void CBoldSystem::cohesion(CBoldData** bolds, CWorldTransformData** transforms, int numEntity)
 {
+	// That will group the small team 0.5m
 	// Distance of field of vision for separation between boids
-	float desiredSeparation = 10.0f;
+	float desiredSeparation = 0.5f;
 	float desiredSeparationSQ = desiredSeparation * desiredSeparation;
 
 	core::vector3df target, steer, diff;
@@ -237,9 +240,10 @@ void CBoldSystem::cohesion(CBoldData** bolds, CWorldTransformData** transforms, 
 
 void CBoldSystem::borders(CBoldData** bolds, CWorldTransformData** transforms, int numEntity)
 {
+	// That will turn when near the border
 	float min = -25.0f;
 	float max = 25.0f;
-	float margin = 2.0f;
+	float margin = 3.0f;
 
 	core::vector3df center, steer;
 
