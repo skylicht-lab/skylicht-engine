@@ -14,6 +14,12 @@ protected:
 	CFastArray<CBoldData*> m_bolds;
 	CFastArray<CWorldTransformData*> m_transforms;
 
+	float m_minX;
+	float m_maxX;
+	float m_minZ;
+	float m_maxZ;
+	float m_margin;
+
 public:
 	CBoldSystem();
 
@@ -26,6 +32,15 @@ public:
 	virtual void init(CEntityManager* entityManager);
 
 	virtual void update(CEntityManager* entityManager);
+
+	inline void setBounds(float minX, float maxX, float minZ, float maxZ, float margin)
+	{
+		m_minX = minX;
+		m_maxX = maxX;
+		m_minZ = minZ;
+		m_maxZ = maxZ;
+		m_margin = margin;
+	}
 
 private:
 
