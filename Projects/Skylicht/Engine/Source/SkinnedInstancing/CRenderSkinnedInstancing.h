@@ -24,56 +24,21 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-
-
-#include "Entity/CEntityPrefab.h"
-#include "Entity/CEntityHandler.h"
-#include "Material/CMaterial.h"
-#include "Material/CMaterialManager.h"
-#include "RenderMesh/CRenderMeshData.h"
-#include "Transform/CWorldTransformData.h"
+#include "RenderMesh/CRenderInstancingMesh.h"
 #include "CTransformTextureData.h"
 #include "Animation/CAnimationClip.h"
 
 namespace Skylicht
 {
-	class SKYLICHT_API CRenderSkinnedInstancing : public CEntityHandler
+	class SKYLICHT_API CRenderSkinnedInstancing : public CRenderInstancingMesh
 	{
 	protected:
-		CEntity* m_root;
-		core::array<CEntity*> m_baseEntities;
-
-		std::vector<CWorldTransformData*> m_renderTransforms;
-		std::vector<CWorldTransformData*> m_transforms;
-
-		std::vector<CRenderMeshData*> m_renderers;
 		std::vector<CTransformTextureData*> m_textures;
-
-		ArrayMaterial m_materials;
-
-		std::string m_meshFile;
-		std::string m_materialFile;
-
-		bool m_loadTexcoord2;
-		bool m_loadNormal;
-		bool m_fixInverseNormal;
-
-		IVertexBuffer* m_instancingTransform;
-		IVertexBuffer* m_instancingLighting;
-		int m_shareData;
 
 	public:
 		CRenderSkinnedInstancing();
 
 		virtual ~CRenderSkinnedInstancing();
-
-		virtual void initComponent();
-
-		virtual void updateComponent();
-
-		virtual CObjectSerializable* createSerializable();
-
-		virtual void loadSerializable(CObjectSerializable* object);
 
 		virtual CEntity* spawn();
 
@@ -85,58 +50,14 @@ namespace Skylicht
 
 	public:
 
+		virtual void initFromPrefab(CEntityPrefab* prefab);
+
 		void initTextureTransform(core::matrix4* transforms, u32 w, u32 h, std::map<std::string, int>& bones);
-
-		void refreshModelAndMaterial();
-
-		void initFromPrefab(CEntityPrefab* prefab);
-
-		void initFromMeshFile(const char* path);
-
-		void initMaterialFromFile(const char* material);
-
-		void initMaterial(ArrayMaterial& materials, bool cloneMaterial = false);
-
-		void applyShareInstancingBuffer();
-
-		inline int getMaterialCount()
-		{
-			return (int)m_materials.size();
-		}
-
-		CMaterial* getMaterial(int i)
-		{
-			return m_materials[i];
-		}
-
-		core::array<CEntity*>& getEntities()
-		{
-			return m_baseEntities;
-		}
-
-		std::vector<CRenderMeshData*>& getRenderers()
-		{
-			return m_renderers;
-		}
-
-		std::vector<CWorldTransformData*>& getRenderTransforms()
-		{
-			return m_renderTransforms;
-		}
-
-		std::vector<CWorldTransformData*>& getAllTransforms()
-		{
-			return m_transforms;
-		}
 
 		DECLARE_GETTYPENAME(CRenderSkinnedInstancing);
 
 	protected:
 
-		void releaseMaterial();
-
-		void releaseEntities();
-
-		void releaseBaseEntities();
+		virtual void releaseEntities();
 	};
 }
