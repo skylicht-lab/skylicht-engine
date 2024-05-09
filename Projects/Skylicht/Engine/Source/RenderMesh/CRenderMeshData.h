@@ -80,6 +80,8 @@ namespace Skylicht
 
 		void setMesh(CMesh* mesh);
 
+		void setShareMesh(CMesh* mesh);
+
 		void initSoftwareBlendShape();
 
 		void initSoftwareSkinning();

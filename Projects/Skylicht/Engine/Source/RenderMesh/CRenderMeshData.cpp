@@ -83,6 +83,20 @@ namespace Skylicht
 		RenderMesh = mesh->clone();
 	}
 
+	void CRenderMeshData::setShareMesh(CMesh* mesh)
+	{
+		// share mesh just use on Static Mesh
+		// CSkinnedMesh have Joints, SkinningMatrix. So it will have the bugs.
+		if (RenderMesh)
+		{
+			RenderMesh->drop();
+			RenderMesh = NULL;
+		}
+
+		RenderMesh = mesh;
+		RenderMesh->grab();
+	}
+
 	void CRenderMeshData::setInstancing(bool b)
 	{
 		if (b)

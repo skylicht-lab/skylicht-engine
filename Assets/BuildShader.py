@@ -30,6 +30,7 @@ def buildShader(shaderXml, root):
         listDefine = None
 
         if define != None:
+            define = define.replace(';',',')
             listDefine = define.split(',')
         else:
             define = "_"
@@ -43,6 +44,7 @@ def buildShader(shaderXml, root):
             p.line_directive = None
             if listDefine != None:
                 for d in listDefine:
+                    print("    + Add fs define:" + d)
                     p.define(d.strip())
             with open(inputFile, 'rt') as finput:
                 p.parse(finput.read(), inputFile)
@@ -61,6 +63,7 @@ def buildShader(shaderXml, root):
             p.line_directive = None
             if listDefine != None:
                 for d in listDefine:
+                    print("    + Add vs define:" + d)
                     p.define(d.strip())
             with open(inputFile, 'rt') as finput:
                 p.parse(finput.read(), inputFile)

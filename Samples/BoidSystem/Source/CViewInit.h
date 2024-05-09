@@ -27,10 +27,6 @@ protected:
 	CGUIText* m_textInfo;
 	CGlyphFont* m_font;
 
-	CGameObject* m_plane;
-	CGameObject* m_crowd1;
-	CGameObject* m_crowd2;
-
 protected:
 	io::path getBuiltInPath(const char* name);
 

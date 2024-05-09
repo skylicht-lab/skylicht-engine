@@ -55,10 +55,8 @@ VS_OUTPUT main(VS_INPUT input)
 	output.specGloss = input.uSpecGloss.xy;
 	float4x4 uWorldMatrix = transpose(input.worldMatrix);
 	float4 uUVScale = input.uvScale;
-	float4x4 uMvpMatrix = mul(uWorldMatrix, uVPMatrix);
-#endif	
-	
-	output.pos = mul(input.pos, uMvpMatrix);
+#endif
+
 	output.tex0 = input.tex0 * uUVScale.xy + uUVScale.zw;
 	output.tangentw = input.data.x;
 
@@ -66,10 +64,15 @@ VS_OUTPUT main(VS_INPUT input)
 	float4 worldNormal = mul(float4(input.norm, 0.0), uWorldMatrix);
 	float4 worldTangent = mul(float4(input.tangent, 0.0), uWorldMatrix);
 
-	float4 sampleFragPos = mul(worldPos, uView);
-	float sampleDepth = sampleFragPos.z;
+#ifdef INSTANCING
+	output.pos = mul(worldPos, uVPMatrix);
+#else
+	output.pos = mul(input.pos, uMvpMatrix);
+#endif
 
-	output.worldPosition = float4(worldPos.xyz, sampleDepth);
+	float4 sampleFragPos = mul(worldPos, uView);
+
+	output.worldPosition = float4(worldPos.xyz, sampleFragPos.z);
 	output.worldNormal = normalize(worldNormal.xyz);
 	output.worldTangent = normalize(worldTangent.xyz);
 	output.worldBinormal = normalize(cross(worldNormal.xyz, worldTangent.xyz));

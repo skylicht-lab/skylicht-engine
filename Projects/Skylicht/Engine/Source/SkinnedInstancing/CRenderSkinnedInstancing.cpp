@@ -61,7 +61,7 @@ namespace Skylicht
 	void CRenderSkinnedInstancing::releaseEntities()
 	{
 		m_textures.clear();
-		CRenderInstancingMesh::releaseEntities();
+		CRenderMeshInstancing::releaseEntities();
 	}
 
 	void CRenderSkinnedInstancing::initFromPrefab(CEntityPrefab* prefab)
@@ -232,7 +232,7 @@ namespace Skylicht
 		CIndirectLightingData* indirect = entity->addData<CIndirectLightingData>();
 		indirect->initSH();
 
-		entity->addData<CWorldInverseTransformData>();
+		// entity->addData<CWorldInverseTransformData>();
 		entity->addData<CCullingData>();
 		entity->addData<CVisibleData>();
 
@@ -276,25 +276,7 @@ namespace Skylicht
 		if (skinnedData == NULL)
 			return false;
 
-		SSkeletonAnimation* data = &skinnedData->Skeletons[skeletonId];
-
-		// tps to fix last frame is not baked
-		float tps = 1.0f / bakeFps;
-
-		data->ClipId = animTextureIndex;
-		data->FPS = bakeFps;
-
-		data->Time = currentTime;
-		data->TimeFrom = 0.0f;
-		data->TimeTo = clipInfo->Duration - tps;
-
-		data->Frame = (int)(data->Time * bakeFps);
-
-		data->Loop = loop;
-		data->Pause = pause;
-
-		// clamp
-		data->Time = core::clamp(data->Time, data->TimeFrom, data->TimeTo);
+		skinnedData->setAnimation(animTextureIndex, clipInfo, currentTime, bakeFps, skeletonId, loop, pause);
 
 		return true;
 	}
@@ -305,33 +287,7 @@ namespace Skylicht
 		if (skinnedData == NULL)
 			return false;
 
-		SSkeletonAnimation* data = &skinnedData->Skeletons[skeletonId];
-
-		if (clipBegin >= clipInfo->Duration)
-			clipBegin = 0.0f;
-
-		// tps to fix last frame is not baked
-		float tps = 1.0f / bakeFps;
-
-		float clipEnd = clipBegin + clipDuration;
-		float theEndTime = clipInfo->Duration - tps;
-		if (clipEnd >= theEndTime)
-			clipEnd = theEndTime;
-
-		data->ClipId = animTextureIndex;
-		data->FPS = bakeFps;
-
-		data->Time = currentTime;
-		data->TimeFrom = clipBegin;
-		data->TimeTo = clipEnd;
-
-		data->Frame = (int)(data->Time * bakeFps);
-
-		data->Loop = loop;
-		data->Pause = pause;
-
-		// clamp
-		data->Time = core::clamp(data->Time, data->TimeFrom, data->TimeTo);
+		skinnedData->setAnimation(animTextureIndex, clipInfo, clipBegin, clipDuration, currentTime, bakeFps, skeletonId, loop, pause);
 
 		return true;
 	}
@@ -342,6 +298,6 @@ namespace Skylicht
 		if (skinnedData == NULL)
 			return;
 
-		skinnedData->Skeletons[skeletonId].Weight = weight;
+		skinnedData->setAnimationWeight(skeletonId, weight);
 	}
 }

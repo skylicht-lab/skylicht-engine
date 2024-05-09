@@ -92,10 +92,10 @@ https://github.com/skylicht-lab/skylicht-engine
 
 // 3D Model
 #include "MeshManager/CMeshManager.h"
-#include "RenderMesh/CRenderMesh.h"
 #include "RenderMesh/CMesh.h"
 #include "RenderMesh/CSkinnedMesh.h"
-#include "RenderMesh/CRenderInstancingMesh.h"
+#include "RenderMesh/CRenderMesh.h"
+#include "RenderMesh/CRenderMeshInstancing.h"
 #include "Culling/CCullingData.h"
 
 #include "SkinnedInstancing/CRenderSkinnedInstancing.h"
