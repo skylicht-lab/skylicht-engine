@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Entity/IEntityData.h"
+#include "Animation/CAnimationClip.h"
 #include "RenderMesh/CRenderMeshData.h"
 
 namespace Skylicht
@@ -54,6 +55,12 @@ namespace Skylicht
 		CSkinnedInstanceData();
 
 		virtual ~CSkinnedInstanceData();
+
+		void setAnimation(int animTextureIndex, CAnimationClip* clipInfo, float currentTime = 0.0f, int bakeFps = 60, int skeletonId = 0, bool loop = true, bool pause = false);
+
+		void setAnimation(int animTextureIndex, CAnimationClip* clipInfo, float clipBegin, float clipDuration, float currentTime = 0.0f, int bakeFps = 60, int skeletonId = 0, bool loop = true, bool pause = false);
+
+		void setAnimationWeight(int skeletonId, float weight);
 
 		DECLARE_GETTYPENAME(CSkinnedInstanceData)
 	};

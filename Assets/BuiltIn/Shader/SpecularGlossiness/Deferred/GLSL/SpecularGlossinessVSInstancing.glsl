@@ -24,10 +24,9 @@ void main(void)
 {
 	vColor = uColor;
 	vSpecGloss = uSpecGloss.xy;
-	mat4 uMvpMatrix = uVPMatrix * uWorldMatrix;
-	vWorldPosition = uWorldMatrix*inPosition;
-	vec4 sampleFragPos = uView * vWorldPosition;
-	vWorldPosition.w = sampleFragPos.z;
+	vec4 worldPosition = uWorldMatrix*inPosition;
+	vec4 sampleFragPos = uView * worldPosition;
+	vWorldPosition = vec4(worldPosition.xyz, sampleFragPos.z);
 	vec4 worldNormal = uWorldMatrix * vec4(inNormal, 0.0);
 	vec4 worldTangent = uWorldMatrix * vec4(inTangent, 0.0);
 	vWorldNormal = normalize(worldNormal.xyz);
@@ -35,5 +34,5 @@ void main(void)
 	vWorldBinormal = normalize(cross(vWorldNormal.xyz, vWorldTangent.xyz));
 	vTexCoord0 = inTexCoord0 * uUVScale.xy + uUVScale.zw;
 	vTangentW = inData.x;
-	gl_Position = uMvpMatrix * inPosition;
+	gl_Position = uVPMatrix * worldPosition;
 }

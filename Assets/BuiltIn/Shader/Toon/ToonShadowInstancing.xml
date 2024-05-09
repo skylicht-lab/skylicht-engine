@@ -1,10 +1,8 @@
-<shaderConfig name="ToonShadow" baseShader="SOLID" instancing="ToonShadowInstancing">
+<shaderConfig name="ToonShadowInstancing" baseShader="SOLID">
 	<uniforms>
 		<vs>
-			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
-			<uniform name="uWorldMatrix" type="WORLD" value="0" float="16" matrix="true"/>
+			<uniform name="uVPMatrix" type="VIEW_PROJECTION" value="0" float="16" matrix="true"/>
 			<uniform name="uCameraPosition" type="WORLD_CAMERA_POSITION" value="0" float="4"/>
-			<uniform name="uUVScale" type="MATERIAL_PARAM" valueIndex="0" value="1.0, 1.0, 0.0, 0.0" float="4"/>
 		</vs>
 		<fs>
 			<uniform name="uTexDiffuse" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
@@ -12,7 +10,6 @@
 			<uniform name="uShadowMap" type="DEFAULT_VALUE" value="2" float="1" directX="false"/>
 			<uniform name="uLightDirection" type="WORLD_LIGHT_DIRECTION" value="0" float="4"/>
 			<uniform name="uLightColor" type="LIGHT_COLOR" value="1.0, 1.0, 1.0, 1.0" float="4"/>
-			<uniform name="uColor" type="MATERIAL_PARAM" valueIndex="1" value="1.0, 1.0, 1.0, 1.0" float="4"/>
 			<uniform name="uShadowColor" type="MATERIAL_PARAM" valueIndex="2" value="0.5, 0.5, 0.5, 0.5" float="4"/>
 			<uniform name="uWrapFactor" type="MATERIAL_PARAM" valueIndex="3" value="1.0, 0.0" float="2"/>
 			<uniform name="uSpecular" type="MATERIAL_PARAM" valueIndex="4" value="0.5, 0.5; 0.3" float="3"/>
@@ -36,6 +33,6 @@
 			<ui control="UIFloat3" name="uSpecular" elementName="Glossiness;Specular;SpecSmooth" min="0.0" max="10.0"/>
 		</ui>
 	</customUI>
-	<shader type="GLSL" vs="GLSL/ToonVS.glsl" fs="GLSL/ToonShadowFS.glsl" fs_source="GLSL/ToonFS.d.glsl" define="SHADOW"/>
-	<shader type="HLSL" vs="HLSL/ToonVS.hlsl" fs="HLSL/ToonShadowFS.hlsl" fs_source="HLSL/ToonFS.d.hlsl" define="SHADOW"/>
+	<shader type="GLSL" vs="GLSL/ToonInstancingVS.glsl" fs="GLSL/ToonShadowInstancingFS.glsl" fs_source="GLSL/ToonFS.d.glsl" define="SHADOW;INSTANCING"/>
+	<shader type="HLSL" vs="HLSL/ToonInstancingVS.hlsl" fs="HLSL/ToonShadowInstancingFS.hlsl" fs_source="HLSL/ToonFS.d.hlsl" define="SHADOW;INSTANCING"/>
 </shaderConfig>

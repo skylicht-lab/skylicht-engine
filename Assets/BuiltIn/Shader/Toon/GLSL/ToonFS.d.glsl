@@ -10,7 +10,9 @@ uniform sampler2DArray uShadowMap;
 
 uniform vec4 uLightDirection;
 uniform vec4 uLightColor;
+#ifndef INSTANCING
 uniform vec4 uColor;
+#endif
 uniform vec4 uShadowColor;
 uniform vec2 uWrapFactor;
 uniform vec3 uSpecular;
@@ -24,6 +26,9 @@ in vec3 vWorldNormal;
 in vec3 vWorldViewDir;
 in vec3 vWorldPosition;
 in vec3 vDepth;
+#ifdef INSTANCING
+in vec4 vColor;
+#endif
 
 out vec4 FragColor;
 
@@ -41,8 +46,15 @@ void main(void)
 	NdotL = max(NdotL, 0.0);
 	
 	vec3 rampMap = texture(uTexRamp, vec2(NdotL, NdotL)).rgb;
-	
+
+#ifdef INSTANCING
+	vec3 color = sRGB(vColor.rgb);
+	float shadowIntensity = vColor.a;
+#else
 	vec3 color = sRGB(uColor.rgb);
+	float shadowIntensity = uColor.a;
+#endif
+
 	vec3 shadowColor = sRGB(uShadowColor.rgb);
 	vec3 lightColor = sRGB(uLightColor.rgb);
 	
@@ -65,7 +77,7 @@ void main(void)
 #endif
 	
 	// Shadows intensity through alpha
-	vec3 ramp = mix(color, shadowColor, uColor.a * (1.0 - visibility));
+	vec3 ramp = mix(color, shadowColor, shadowIntensity * (1.0 - visibility));
 	ramp = mix(ramp, color, rampMap);
 	
 	// Specular

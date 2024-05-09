@@ -33,7 +33,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class SKYLICHT_API CRenderInstancingMesh : public CEntityHandler
+	class SKYLICHT_API CRenderMeshInstancing : public CEntityHandler
 	{
 	protected:
 		CEntity* m_root;
@@ -57,9 +57,9 @@ namespace Skylicht
 		int m_shareData;
 
 	public:
-		CRenderInstancingMesh();
+		CRenderMeshInstancing();
 
-		virtual ~CRenderInstancingMesh();
+		virtual ~CRenderMeshInstancing();
 
 		virtual void initComponent();
 
@@ -123,6 +123,7 @@ namespace Skylicht
 
 		virtual void releaseBaseEntities();
 
+		void addRendererInstancing(CEntity* entity, CRenderMeshData* baseRenderMesh, CWorldTransformData* baseTransform);
 	};
 
 }

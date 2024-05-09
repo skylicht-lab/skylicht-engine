@@ -35,12 +35,13 @@ float4 main(PS_INPUT input) : SV_TARGET
 {
 	float3 diffuseMap = sRGB(uTexDiffuse.Sample(uTexDiffuseSampler, input.tex0).rgb);
 	float3 color = sRGB(uColor.rgb);
+	float shadowIntensity = uColor.a;
 	float3 shadowColor = sRGB(uShadowColor.rgb);
 	float3 lightColor = sRGB(uLightColor.rgb);
 	float visibility = 1.0;
 	float NdotL = max((dot(input.worldNormal, uLightDirection.xyz) + uWrapFactor.x) / (1.0 + uWrapFactor.x), 0.0);
 	float3 rampMap = uTexRamp.Sample(uTexRampSampler, float2(NdotL, NdotL)).rgb;
-	float3 ramp = lerp(color, shadowColor, uColor.a * (1.0 - visibility));
+	float3 ramp = lerp(color, shadowColor, shadowIntensity * (1.0 - visibility));
 	ramp = lerp(ramp, color, rampMap);
 	float3 h = normalize(uLightDirection.xyz + input.worldViewDir);
 	float NdotH = max(0, dot(input.worldNormal, h));

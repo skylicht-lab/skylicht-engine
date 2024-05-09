@@ -18,12 +18,11 @@ void main(void)
 {
 	vColor = uColor;
 	vSpecGloss = uSpecGloss.xy;
-	mat4 uMvpMatrix = uVPMatrix * uWorldMatrix;
-	vWorldPosition = uWorldMatrix * inPosition;
-	vec4 sampleFragPos = uView * vWorldPosition;
-	vWorldPosition.w = sampleFragPos.z;
+	vec4 worldPosition = uWorldMatrix*inPosition;
+	vec4 sampleFragPos = uView * worldPosition;
+	vWorldPosition = vec4(worldPosition.xyz, sampleFragPos.z);
 	vec4 worldNormal = uWorldMatrix * vec4(inNormal, 0.0);
 	vWorldNormal = normalize(worldNormal.xyz);
 	vTexCoord0 = inTexCoord0 * uUVScale.xy + uUVScale.zw;
-	gl_Position = uMvpMatrix * inPosition;
+	gl_Position = uVPMatrix * worldPosition;
 }

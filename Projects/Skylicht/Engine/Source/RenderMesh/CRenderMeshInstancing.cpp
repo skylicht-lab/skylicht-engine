@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "CRenderInstancingMesh.h"
+#include "CRenderMeshInstancing.h"
 
 #include "MeshManager/CMeshManager.h"
 #include "Entity/CEntityManager.h"
@@ -14,7 +14,7 @@
 
 namespace Skylicht
 {
-	CRenderInstancingMesh::CRenderInstancingMesh() :
+	CRenderMeshInstancing::CRenderMeshInstancing() :
 		m_root(NULL),
 		m_loadTexcoord2(false),
 		m_loadNormal(true),
@@ -26,12 +26,12 @@ namespace Skylicht
 
 	}
 
-	CRenderInstancingMesh::~CRenderInstancingMesh()
+	CRenderMeshInstancing::~CRenderMeshInstancing()
 	{
 
 	}
 
-	void CRenderInstancingMesh::releaseBaseEntities()
+	void CRenderMeshInstancing::releaseBaseEntities()
 	{
 		CEntityManager* entityManager = m_gameObject->getEntityManager();
 		if (entityManager == NULL)
@@ -42,7 +42,7 @@ namespace Skylicht
 		m_baseEntities.clear();
 	}
 
-	void CRenderInstancingMesh::releaseMaterial()
+	void CRenderMeshInstancing::releaseMaterial()
 	{
 		for (CMaterial* m : m_materials)
 		{
@@ -56,7 +56,7 @@ namespace Skylicht
 		m_materials.clear();
 	}
 
-	void CRenderInstancingMesh::releaseEntities()
+	void CRenderMeshInstancing::releaseEntities()
 	{
 		removeAllEntities();
 		releaseBaseEntities();
@@ -66,17 +66,17 @@ namespace Skylicht
 		m_entities.clear();
 	}
 
-	void CRenderInstancingMesh::initComponent()
+	void CRenderMeshInstancing::initComponent()
 	{
 
 	}
 
-	void CRenderInstancingMesh::updateComponent()
+	void CRenderMeshInstancing::updateComponent()
 	{
 
 	}
 
-	void CRenderInstancingMesh::initFromPrefab(CEntityPrefab* prefab)
+	void CRenderMeshInstancing::initFromPrefab(CEntityPrefab* prefab)
 	{
 		// clear old entity
 		releaseEntities();
@@ -152,7 +152,6 @@ namespace Skylicht
 
 				CRenderMeshData* spawnRender = spawnEntity->addData<CRenderMeshData>();
 				spawnRender->setMesh(srcRender->getMesh());
-				// spawnRender->setInstancing(true);
 
 				// add to list renderer
 				m_renderers.push_back(spawnRender);
@@ -166,12 +165,11 @@ namespace Skylicht
 			}
 
 			// hide this entity
-			// CVisibleData* visible = spawnEntity->getData<CVisibleData>();
-			// visible->SelfVisible = false;
+			spawnEntity->setVisible(false);
 		}
 	}
 
-	CObjectSerializable* CRenderInstancingMesh::createSerializable()
+	CObjectSerializable* CRenderMeshInstancing::createSerializable()
 	{
 		CObjectSerializable* object = CComponentSystem::createSerializable();
 
@@ -187,7 +185,7 @@ namespace Skylicht
 		return object;
 	}
 
-	void CRenderInstancingMesh::loadSerializable(CObjectSerializable* object)
+	void CRenderMeshInstancing::loadSerializable(CObjectSerializable* object)
 	{
 		CComponentSystem::loadSerializable(object);
 
@@ -230,7 +228,7 @@ namespace Skylicht
 		}
 	}
 
-	void CRenderInstancingMesh::refreshModelAndMaterial()
+	void CRenderMeshInstancing::refreshModelAndMaterial()
 	{
 		CEntityPrefab* prefab = CMeshManager::getInstance()->loadModel(
 			m_meshFile.c_str(),
@@ -257,19 +255,19 @@ namespace Skylicht
 		}
 	}
 
-	void CRenderInstancingMesh::initFromMeshFile(const char* path)
+	void CRenderMeshInstancing::initFromMeshFile(const char* path)
 	{
 		m_meshFile = path;
 		refreshModelAndMaterial();
 	}
 
-	void CRenderInstancingMesh::initMaterialFromFile(const char* material)
+	void CRenderMeshInstancing::initMaterialFromFile(const char* material)
 	{
 		m_materialFile = material;
 		refreshModelAndMaterial();
 	}
 
-	void CRenderInstancingMesh::initMaterial(ArrayMaterial& materials, bool cloneMaterial)
+	void CRenderMeshInstancing::initMaterial(ArrayMaterial& materials, bool cloneMaterial)
 	{
 		releaseMaterial();
 
@@ -294,7 +292,7 @@ namespace Skylicht
 			m->applyMaterial();
 	}
 
-	void CRenderInstancingMesh::applyShareInstancingBuffer()
+	void CRenderMeshInstancing::applyShareInstancingBuffer()
 	{
 		if (!m_instancingTransform)
 		{
@@ -321,8 +319,41 @@ namespace Skylicht
 		}
 	}
 
-	CEntity* CRenderInstancingMesh::spawn()
+	CEntity* CRenderMeshInstancing::spawn()
 	{
-		return NULL;
+		CEntity* entity = createEntity();
+
+		for (CRenderMeshData*& renderer : m_renderers)
+		{
+			addRendererInstancing(createEntity(entity), m_renderers[0], m_renderTransforms[0]);
+		}
+
+		return entity;
+	}
+
+	void CRenderMeshInstancing::addRendererInstancing(CEntity* entity, CRenderMeshData* baseRenderMesh, CWorldTransformData* baseTransform)
+	{
+		CIndirectLightingData* indirect = entity->addData<CIndirectLightingData>();
+		indirect->initSH();
+
+		// entity->addData<CWorldInverseTransformData>();
+		entity->addData<CCullingData>();
+		entity->addData<CVisibleData>();
+
+		// set bbox
+		CMesh* mesh = baseRenderMesh->getMesh();
+
+		CCullingBBoxData* cullingBBox = entity->addData<CCullingBBoxData>();
+		cullingBBox->BBox = mesh->getBoundingBox();
+
+		// add render mesh
+		CRenderMeshData* renderMesh = entity->addData<CRenderMeshData>();
+		renderMesh->setShareMesh(mesh);
+		renderMesh->setInstancing(true);
+
+		// apply transform
+		CWorldTransformData* transform = entity->getData<CWorldTransformData>();
+		transform->Relative = baseTransform->Relative;
+		transform->HasChanged = true;
 	}
 }

@@ -50,14 +50,12 @@ void main(void)
 #ifdef INSTANCING
 	vColor = uColor;
 	vSpecGloss = uSpecGloss.xy;
-
-	mat4 uMvpMatrix = uVPMatrix * uWorldMatrix;
 #endif
 
-	vWorldPosition = uWorldMatrix*inPosition;
+	vec4 worldPosition = uWorldMatrix*inPosition;
 
-	vec4 sampleFragPos = uView * vWorldPosition;
-	vWorldPosition.w = sampleFragPos.z;
+	vec4 sampleFragPos = uView * worldPosition;
+	vWorldPosition = vec4(worldPosition.xyz, sampleFragPos.z);
 
 	vec4 worldNormal = uWorldMatrix * vec4(inNormal, 0.0);
 	vec4 worldTangent = uWorldMatrix * vec4(inTangent, 0.0);
@@ -69,5 +67,9 @@ void main(void)
 	vTexCoord0 = inTexCoord0 * uUVScale.xy + uUVScale.zw;
 	vTangentW = inData.x;
 
+#ifdef INSTANCING
+	gl_Position = uVPMatrix * worldPosition;
+#else
 	gl_Position = uMvpMatrix * inPosition;
+#endif
 }

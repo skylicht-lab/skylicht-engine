@@ -49,14 +49,18 @@ VS_OUTPUT main(VS_INPUT input)
 	output.specGloss = input.uSpecGloss.xy;
 	float4x4 uWorldMatrix = transpose(input.worldMatrix);
 	float4 uUVScale = input.uvScale;
-	float4x4 uMvpMatrix = mul(uWorldMatrix, uVPMatrix);
 #endif
 
-	output.pos = mul(input.pos, uMvpMatrix);
 	output.tex0 = input.tex0 * uUVScale.xy + uUVScale.zw;
 
 	float4 worldPos = mul(input.pos, uWorldMatrix);
 	float4 worldNormal = mul(float4(input.norm, 0.0), uWorldMatrix);
+
+#ifdef INSTANCING
+	output.pos = mul(worldPos, uVPMatrix);
+#else
+	output.pos = mul(input.pos, uMvpMatrix);
+#endif
 
 	float4 sampleFragPos = mul(worldPos, uView);
 	float sampleDepth = sampleFragPos.z;
