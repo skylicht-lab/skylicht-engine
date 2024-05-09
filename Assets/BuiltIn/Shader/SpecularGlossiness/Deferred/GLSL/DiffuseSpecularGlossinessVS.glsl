@@ -9,7 +9,6 @@ layout(location = 5) in vec4 uColor;
 layout(location = 6) in vec4 uSpecGloss;
 
 layout(location = 7) in mat4 uWorldMatrix;
-
 #else
 in vec4 inPosition;
 in vec3 inNormal;
@@ -41,19 +40,21 @@ void main(void)
 #ifdef INSTANCING
 	vColor = uColor;
 	vSpecGloss = uSpecGloss.xy;
-
-	mat4 uMvpMatrix = uVPMatrix * uWorldMatrix;
 #endif
 
-	vWorldPosition = uWorldMatrix * inPosition;
+	vec4 worldPosition = uWorldMatrix*inPosition;
 
-	vec4 sampleFragPos = uView * vWorldPosition;
-	vWorldPosition.w = sampleFragPos.z;
+	vec4 sampleFragPos = uView * worldPosition;
+	vWorldPosition = vec4(worldPosition.xyz, sampleFragPos.z);
 
 	vec4 worldNormal = uWorldMatrix * vec4(inNormal, 0.0);
 	vWorldNormal = normalize(worldNormal.xyz);
 
 	vTexCoord0 = inTexCoord0 * uUVScale.xy + uUVScale.zw;
 
+#ifdef INSTANCING
+	gl_Position = uVPMatrix * worldPosition;
+#else
 	gl_Position = uMvpMatrix * inPosition;
+#endif
 }

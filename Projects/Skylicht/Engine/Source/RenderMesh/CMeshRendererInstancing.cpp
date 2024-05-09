@@ -182,7 +182,7 @@ namespace Skylicht
 				if (!rp->canRenderShader(shader))
 					continue;
 
-				CShaderMaterial::setMaterial(NULL);
+				CShaderMaterial::setMaterial(data->Materials[i]);
 
 				rp->drawInstancingMeshBuffer(
 					(CMesh*)data->InstancingMesh,

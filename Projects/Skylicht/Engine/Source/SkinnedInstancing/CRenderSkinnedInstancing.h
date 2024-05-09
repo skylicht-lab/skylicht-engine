@@ -24,13 +24,13 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "RenderMesh/CRenderInstancingMesh.h"
+#include "RenderMesh/CRenderMeshInstancing.h"
 #include "CTransformTextureData.h"
 #include "Animation/CAnimationClip.h"
 
 namespace Skylicht
 {
-	class SKYLICHT_API CRenderSkinnedInstancing : public CRenderInstancingMesh
+	class SKYLICHT_API CRenderSkinnedInstancing : public CRenderMeshInstancing
 	{
 	protected:
 		std::vector<CTransformTextureData*> m_textures;

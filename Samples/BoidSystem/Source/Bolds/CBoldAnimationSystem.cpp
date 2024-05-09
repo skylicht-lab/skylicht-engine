@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "CBoldAnimationSystem.h"
-#include "SkinnedInstancing/CRenderSkinnedInstancing.h"
 
 CBoldAnimationSystem::CBoldAnimationSystem() :
 	m_group(NULL)
@@ -29,7 +28,6 @@ void CBoldAnimationSystem::onQuery(CEntityManager* entityManager, CEntity** enti
 	entities = m_group->getEntities();
 	count = m_group->getEntityCount();
 
-	m_entities.reset();
 	m_bolds.reset();
 	m_skinnedInstances.reset();
 
@@ -43,7 +41,6 @@ void CBoldAnimationSystem::onQuery(CEntityManager* entityManager, CEntity** enti
 			CSkinnedInstanceData* skinnedInstance = GET_ENTITY_DATA(entity, CSkinnedInstanceData);
 			if (skinnedInstance)
 			{
-				m_entities.push(entity);
 				m_bolds.push(bold);
 				m_skinnedInstances.push(skinnedInstance);
 			}
@@ -72,7 +69,6 @@ void CBoldAnimationSystem::update(CEntityManager* entityManager)
 	SMovingAnimation* clips = m_clips.pointer();
 	int numClip = (int)m_clips.size();
 
-	CEntity** entities = m_entities.pointer();
 	CBoldData** bolds = m_bolds.pointer();
 	CSkinnedInstanceData** skinnedIntances = m_skinnedInstances.pointer();
 
@@ -124,16 +120,14 @@ void CBoldAnimationSystem::update(CEntityManager* entityManager)
 				// Update animation blending
 				if (clip1.ClipId != instance->Skeletons[0].ClipId)
 				{
-					CRenderSkinnedInstancing::setAnimation(
-						entities[i],
+					instance->setAnimation(
 						clip1.ClipId,
 						clip1.Clip,
 						frameRatio * clip1.Clip->Duration,
 						clip1.FPS,
 						0);
 
-					CRenderSkinnedInstancing::setAnimation(
-						entities[i],
+					instance->setAnimation(
 						clip2.ClipId,
 						clip2.Clip,
 						frameRatio * clip2.Clip->Duration,
@@ -153,8 +147,8 @@ void CBoldAnimationSystem::update(CEntityManager* entityManager)
 					weight1 = 1.0f - weight2;
 				}
 
-				CRenderSkinnedInstancing::setAnimationWeight(entities[i], 0, weight1);
-				CRenderSkinnedInstancing::setAnimationWeight(entities[i], 1, weight2);
+				instance->setAnimationWeight(0, weight1);
+				instance->setAnimationWeight(1, weight2);
 
 				break;
 			}

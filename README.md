@@ -439,6 +439,9 @@ Live demo: [Emscripten](http://34.149.122.230/SampleInstancing.html)
 This is a demo of drawing many characters and animations, that use GPU Instancing technique.
 <img src="Documents/Media/Samples/sample_skinned_instancing.jpg"/>
 
+### Samples\BoidSystem
+<img src="Documents/Media/Samples/sample_bolds.jpg"/>
+
 ### Samples\Particles
 Skylicht Particle Component is a cleanup version of [SPARK](https://github.com/Synxis/SPARK). We have optimized by GPU Billboard Instancing.
 

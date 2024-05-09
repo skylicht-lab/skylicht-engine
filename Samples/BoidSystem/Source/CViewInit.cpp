@@ -5,11 +5,13 @@
 #include "ViewManager/CViewManager.h"
 #include "Context/CContext.h"
 
-#include "Primitive/CPlane.h"
+#include "Primitive/CCube.h"
 #include "SkySun/CSkySun.h"
 
 #include "Bolds/CBoldSystem.h"
 #include "Bolds/CBoldAnimationSystem.h"
+
+#include "Material/Shader/Instancing/CTBNSGInstancing.h"
 
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
@@ -113,18 +115,150 @@ void CViewInit::initScene()
 	CMaterialManager* materialManager = CMaterialManager::getInstance();
 	CMeshManager* meshManager = CMeshManager::getInstance();
 
-	// ground grid
-	m_plane = zone->createEmptyObject();
+	// load toon instancing shader
+	CShaderManager* shaderManager = CShaderManager::getInstance();
+	shaderManager->loadShader("BuiltIn/Shader/Toon/ToonShadowInstancing.xml");
+	shaderManager->loadShader("BuiltIn/Shader/Toon/ToonShadow.xml", new CTBNSGInstancing());
 
 	ArrayMaterial envMaterials = materialManager->loadMaterial("SampleBoids/Environment/Environment.mat", true, searchTextureFolders);
 
-	CEntityPrefab* groundPrefab = meshManager->loadModel("SampleBoids/Environment/1_Ground_1.fbx", NULL, true);
-	if (groundPrefab)
+	float envMin = -25.0f;
+	float envMax = 25.0f;
+
+	// init environment
 	{
-		CRenderInstancingMesh* groundInstancing = m_plane->addComponent<CRenderInstancingMesh>();
-		groundInstancing->initFromPrefab(groundPrefab);
-		groundInstancing->initMaterial(envMaterials);
+		int minBound = -2;
+		int maxBound = 2;
+
+		float space = 8.0f;
+		float halfSpace = space * 0.5f;
+
+		float scale = 0.16f;
+		core::vector3df scaleVector(scale, scale, scale);
+
+		envMin = minBound * space - halfSpace;
+		envMax = maxBound * space + halfSpace;
+
+		CGameObject* plane = zone->createEmptyObject();
+		CEntityPrefab* groundPrefab = meshManager->loadModel("SampleBoids/Environment/1_Ground_1.fbx", NULL, true);
+		if (groundPrefab)
+		{
+			CRenderMeshInstancing* meshInstancing = plane->addComponent<CRenderMeshInstancing>();
+			meshInstancing->initFromPrefab(groundPrefab);
+			meshInstancing->initMaterial(envMaterials);
+
+			for (int i = minBound; i <= maxBound; i++)
+			{
+				for (int j = minBound; j <= maxBound; j++)
+				{
+					CEntity* entity = meshInstancing->spawn();
+
+					CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+					transform->Relative.setTranslation(core::vector3df(i * space, 0.0f, j * space));
+					transform->Relative.setScale(scaleVector);
+				}
+			}
+		}
+
+		std::vector<std::string> randomWallMesh;
+		randomWallMesh.push_back("SampleBoids/Environment/1_Border_1.fbx");
+		randomWallMesh.push_back("SampleBoids/Environment/1_Border_2.fbx");
+		randomWallMesh.push_back("SampleBoids/Environment/1_Border_3.fbx");
+		randomWallMesh.push_back("SampleBoids/Environment/1_Border_4.fbx");
+
+		std::vector<CRenderMeshInstancing*> meshInstancings;
+
+		for (std::string& s : randomWallMesh)
+		{
+			CEntityPrefab* prefab = meshManager->loadModel(s.c_str(), NULL, true);
+			if (prefab)
+			{
+				CGameObject* border = zone->createEmptyObject();
+				CRenderMeshInstancing* meshInstancing = border->addComponent<CRenderMeshInstancing>();
+				meshInstancing->initFromPrefab(prefab);
+				meshInstancing->initMaterial(envMaterials);
+				meshInstancings.push_back(meshInstancing);
+			}
+		}
+
+		core::matrix4 rot180, rot90, rot270, scaleMat;
+		rot90.setRotationDegrees(core::vector3df(0.0f, 90.0f, 0.0f));
+		rot180.setRotationDegrees(core::vector3df(0.0f, 180.0f, 0.0f));
+		rot270.setRotationDegrees(core::vector3df(0.0f, 270, 0.0f));
+		scaleMat.setScale(scaleVector);
+
+		{
+			CEntity* entity;
+			CWorldTransformData* transform;
+
+			int random = 0;
+			int count = (int)meshInstancings.size();
+			if (count > 0)
+			{
+				for (int i = minBound; i <= maxBound; i++)
+				{
+					random = os::Randomizer::rand() % count;
+					entity = meshInstancings[random]->spawn();
+					transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+					transform->Relative.setTranslation(core::vector3df(i * space, 0.0f, -maxBound * space - halfSpace));
+					transform->Relative.setScale(scaleVector);
+
+					random = os::Randomizer::rand() % count;
+					entity = meshInstancings[random]->spawn();
+					transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+					transform->Relative = rot180 * scaleMat;
+					transform->Relative.setTranslation(core::vector3df(i * space, 0.0f, maxBound * space + halfSpace));
+
+					random = os::Randomizer::rand() % count;
+					entity = meshInstancings[random]->spawn();
+					transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+					transform->Relative = rot90 * scaleMat;
+					transform->Relative.setTranslation(core::vector3df(-maxBound * space - halfSpace, 0.0f, i * space));
+
+					random = os::Randomizer::rand() % count;
+					entity = meshInstancings[random]->spawn();
+					transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+					transform->Relative = rot270 * scaleMat;
+					transform->Relative.setTranslation(core::vector3df(maxBound * space + halfSpace, 0.0f, i * space));
+				}
+			}
+		}
+
+		{
+			CEntityPrefab* prefab = meshManager->loadModel("SampleBoids/Environment/1_Border_Corner.fbx", NULL, true);
+			if (prefab)
+			{
+				CGameObject* corner = zone->createEmptyObject();
+				CRenderMeshInstancing* meshInstancing = corner->addComponent<CRenderMeshInstancing>();
+				meshInstancing->initFromPrefab(prefab);
+				meshInstancing->initMaterial(envMaterials);
+
+				CEntity* entity;
+				CWorldTransformData* transform;
+
+				entity = meshInstancing->spawn();
+				transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+				transform->Relative.setTranslation(core::vector3df(-maxBound * space - halfSpace, 0.0f, -maxBound * space - halfSpace));
+				transform->Relative.setScale(scaleVector);
+
+				entity = meshInstancing->spawn();
+				transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+				transform->Relative = rot90 * scaleMat;
+				transform->Relative.setTranslation(core::vector3df(-maxBound * space - halfSpace, 0.0f, maxBound * space + halfSpace));
+
+				entity = meshInstancing->spawn();
+				transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+				transform->Relative = rot180 * scaleMat;
+				transform->Relative.setTranslation(core::vector3df(maxBound * space + halfSpace, 0.0f, maxBound * space + halfSpace));
+
+				entity = meshInstancing->spawn();
+				transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+				transform->Relative = rot270 * scaleMat;
+				transform->Relative.setTranslation(core::vector3df(maxBound * space + halfSpace, 0.0f, -maxBound * space - halfSpace));
+			}
+		}
 	}
+	// end init enviroment
 
 	// bake clip animation
 	CAnimationManager* animManager = CAnimationManager::getInstance();
@@ -215,14 +349,14 @@ void CViewInit::initScene()
 		rifle->remove();
 
 		// create gpu anim character
-		m_crowd1 = zone->createEmptyObject();
-		m_crowd2 = zone->createEmptyObject();
+		CGameObject* crowd1 = zone->createEmptyObject();
+		CGameObject* crowd2 = zone->createEmptyObject();
 
-		initCrowd(m_crowd1, modelPrefab1, animationData, totalFrames, numBones * numClip, boneMap);
-		initCrowd(m_crowd2, modelPrefab2, animationData, totalFrames, numBones * numClip, boneMap);
+		initCrowd(crowd1, modelPrefab1, animationData, totalFrames, numBones * numClip, boneMap);
+		initCrowd(crowd2, modelPrefab2, animationData, totalFrames, numBones * numClip, boneMap);
 
-		CRenderSkinnedInstancing* crowdSkinnedMesh1 = m_crowd1->getComponent<CRenderSkinnedInstancing>();
-		CRenderSkinnedInstancing* crowdSkinnedMesh2 = m_crowd2->getComponent<CRenderSkinnedInstancing>();
+		CRenderSkinnedInstancing* crowdSkinnedMesh1 = crowd1->getComponent<CRenderSkinnedInstancing>();
+		CRenderSkinnedInstancing* crowdSkinnedMesh2 = crowd2->getComponent<CRenderSkinnedInstancing>();
 
 		// spawn bold to test
 		CEntity* entity;
@@ -234,9 +368,9 @@ void CViewInit::initScene()
 		CWorldTransformData* transform;
 		core::vector3df position;
 
-		for (int i = -6; i < 6; i++)
+		for (int i = -7; i < 7; i++)
 		{
-			for (int j = -6; j < 6; j++)
+			for (int j = -7; j < 7; j++)
 			{
 				// MODEL 1
 				entity = crowdSkinnedMesh1->spawn();
@@ -292,8 +426,15 @@ void CViewInit::initScene()
 		delete[]transforms;
 
 		// add bold system (that will update moving for CBoldData)
+		float wallDepth = 0.5f;
 		CBoldSystem* boldSystem = scene->getEntityManager()->addSystem<CBoldSystem>();
-		boldSystem->setBounds(-25.0f, 25.0f, -25.0f, 25.0f, 2.5f);
+		boldSystem->setBounds(
+			envMin + wallDepth, // min x
+			envMax - wallDepth, // max x
+			envMin + wallDepth, // min z
+			envMax - wallDepth, // max z
+			2.5f // distance near wall, that bold will begin turn
+		);
 
 		// add bold system (that will update animation clip)
 		CBoldAnimationSystem* animSystem = scene->getEntityManager()->addSystem<CBoldAnimationSystem>();
@@ -318,8 +459,8 @@ void CViewInit::initScene()
 	// Test use 2 cascade shadow
 	// context->getShadowMapRenderPipeline()->setShadowCascade(2);
 
-	// Test no shadow cascade (30m far shadow)
-	context->getShadowMapRenderPipeline()->setNoShadowCascade(2048, 30.0f);
+	// Test no shadow cascade
+	context->getShadowMapRenderPipeline()->setNoShadowCascade(2048, 60.0f);
 	context->getPostProcessorPipeline()->enableAutoExposure(false);
 }
 
@@ -467,12 +608,6 @@ void CViewInit::onRender()
 			CCamera* bakeCamera = bakeCameraObj->addComponent<CCamera>();
 			scene->updateAddRemoveObject();
 
-			// hide objects
-			// that fix the probes ambient is brigther because plane color affect on it
-			m_crowd1->setVisible(false);
-			m_crowd2->setVisible(false);
-			m_plane->setVisible(false);
-
 			// bake light probe
 			Lightmapper::CLightmapper* lm = Lightmapper::CLightmapper::getInstance();
 			lm->initBaker(64);
@@ -481,11 +616,6 @@ void CViewInit::onRender()
 			probes.push_back(lightProbe);
 
 			lm->bakeProbes(probes, bakeCamera, rp, scene->getEntityManager());
-
-			// show objects again
-			m_crowd1->setVisible(true);
-			m_crowd2->setVisible(true);
-			m_plane->setVisible(true);
 		}
 	}
 	else

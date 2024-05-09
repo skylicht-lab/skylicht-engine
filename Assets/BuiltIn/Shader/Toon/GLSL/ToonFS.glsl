@@ -33,10 +33,11 @@ void main(void)
 	NdotL = max(NdotL, 0.0);
 	vec3 rampMap = texture(uTexRamp, vec2(NdotL, NdotL)).rgb;
 	vec3 color = sRGB(uColor.rgb);
+	float shadowIntensity = uColor.a;
 	vec3 shadowColor = sRGB(uShadowColor.rgb);
 	vec3 lightColor = sRGB(uLightColor.rgb);
 	float visibility = 1.0;
-	vec3 ramp = mix(color, shadowColor, uColor.a * (1.0 - visibility));
+	vec3 ramp = mix(color, shadowColor, shadowIntensity * (1.0 - visibility));
 	ramp = mix(ramp, color, rampMap);
 	vec3 h = normalize(uLightDirection.xyz + vWorldViewDir);
 	float NdotH = dot(vWorldNormal, h);
