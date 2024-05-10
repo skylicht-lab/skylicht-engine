@@ -41,7 +41,6 @@ VS_OUTPUT main(VS_INPUT input)
 	VS_OUTPUT output;
 
 	float4x4 uWorldMatrix = transpose(input.worldMatrix);
-	float4x4 uMvpMatrix = mul(uWorldMatrix, uVPMatrix);
 
 	float4x4 skinMatrix;
 	float4 skinPosition;
@@ -68,9 +67,9 @@ VS_OUTPUT main(VS_INPUT input)
 	// skin result
 	skinPosition = mul(input.pos, skinMatrix);
 
-	output.pos = mul(skinPosition, uMvpMatrix);
-	output.vPos = output.pos;
 	output.worldPos = mul(skinPosition, uWorldMatrix);
+	output.pos = mul(output.worldPos, uVPMatrix);
+	output.vPos = output.pos;
 	
 	return output;
 }

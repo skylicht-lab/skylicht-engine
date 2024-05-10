@@ -117,6 +117,8 @@ void CViewInit::initScene()
 
 	// load toon instancing shader
 	CShaderManager* shaderManager = CShaderManager::getInstance();
+
+	shaderManager->loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWSkinInstancing2.xml");
 	shaderManager->loadShader("BuiltIn/Shader/Toon/ToonShadowInstancing.xml");
 	shaderManager->loadShader("BuiltIn/Shader/Toon/ToonShadow.xml", new CTBNSGInstancing());
 
@@ -456,12 +458,23 @@ void CViewInit::initScene()
 	context->setGUICamera(guiCamera);
 	context->setDirectionalLight(directionalLight);
 
-	// Test use 2 cascade shadow
-	// context->getShadowMapRenderPipeline()->setShadowCascade(2);
+	bool use2Cascade = false;
+	bool noCascade = false;
 
-	// Test no shadow cascade
-	context->getShadowMapRenderPipeline()->setNoShadowCascade(2048, 60.0f);
-	context->getPostProcessorPipeline()->enableAutoExposure(false);
+	if (use2Cascade)
+	{
+		// Test use 2 cascade shadow
+		context->getShadowMapRenderPipeline()->setShadowCascade(2);
+	}
+	else if (noCascade)
+	{
+		// Test no shadow cascade (60m)
+		context->getShadowMapRenderPipeline()->setNoShadowCascade(2048, 60.0f);
+	}
+
+	CPostProcessorRP* postProcess = context->getPostProcessorPipeline();
+	postProcess->enableAutoExposure(false);
+	postProcess->enableBloomEffect(false);
 }
 
 void CViewInit::initCrowd(CGameObject* crowd, CEntityPrefab* modelPrefab, core::matrix4* animationData, u32 w, u32 h, std::map<std::string, int>& bones)
@@ -542,7 +555,7 @@ void CViewInit::onUpdate()
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-		}
+	}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -581,7 +594,7 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-	}
+}
 }
 
 void CViewInit::onRender()
