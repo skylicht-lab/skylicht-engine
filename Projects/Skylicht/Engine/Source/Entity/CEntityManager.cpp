@@ -303,9 +303,34 @@ namespace Skylicht
 		m_needSortEntities = false;
 	}
 
+	void CEntityManager::sortSystem()
+	{
+		m_sortUpdate = m_systems;
+
+		struct {
+			bool operator()(IEntitySystem* a, IEntitySystem* b) const
+			{
+				int priorityA = (int)a->getSystemOrder();
+				int priorityB = (int)b->getSystemOrder();
+
+				if (priorityA == priorityB)
+					return a->getSystemOrder() < b->getSystemOrder();
+
+				return priorityA < priorityB;
+			}
+		} customLess;
+
+		std::sort(m_sortUpdate.begin(), m_sortUpdate.end(), customLess);
+	}
+
 	void CEntityManager::update()
 	{
-		for (IEntitySystem*& s : m_systems)
+		if (m_systemChanged == true)
+		{
+			sortSystem();
+		}
+
+		for (IEntitySystem*& s : m_sortUpdate)
 		{
 			s->beginQuery(this);
 		}
@@ -325,7 +350,7 @@ namespace Skylicht
 				g->onQuery(this, entities, numEntity);
 		}
 
-		for (IEntitySystem*& s : m_systems)
+		for (IEntitySystem*& s : m_sortUpdate)
 		{
 			// note: Render system will be updated in cullingAndRender function
 			if (!s->isRenderSystem())
@@ -336,7 +361,7 @@ namespace Skylicht
 		}
 	}
 
-	void CEntityManager::updateSortRenderer()
+	void CEntityManager::sortRenderer()
 	{
 		m_sortRender = m_renders;
 
@@ -360,7 +385,7 @@ namespace Skylicht
 	{
 		if (m_systemChanged == true)
 		{
-			updateSortRenderer();
+			sortRenderer();
 			m_systemChanged = false;
 		}
 
@@ -403,7 +428,7 @@ namespace Skylicht
 
 		if (m_systemChanged == true)
 		{
-			updateSortRenderer();
+			sortRenderer();
 			m_systemChanged = false;
 		}
 

@@ -4,6 +4,7 @@
 
 #include "ViewManager/CViewManager.h"
 #include "Context/CContext.h"
+#include "Transform/CWorldTransformSystem.h"
 
 #include "Primitive/CCube.h"
 #include "SkySun/CSkySun.h"
@@ -427,9 +428,11 @@ void CViewInit::initScene()
 		delete[]animationData;
 		delete[]transforms;
 
+		CEntityManager* entityManager = scene->getEntityManager();
+
 		// add bold system (that will update moving for CBoldData)
 		float wallDepth = 0.5f;
-		CBoldSystem* boldSystem = scene->getEntityManager()->addSystem<CBoldSystem>();
+		CBoldSystem* boldSystem = entityManager->addSystem<CBoldSystem>();
 		boldSystem->setBounds(
 			envMin + wallDepth, // min x
 			envMax - wallDepth, // max x
@@ -438,8 +441,13 @@ void CViewInit::initScene()
 			2.5f // distance near wall, that bold will begin turn
 		);
 
+		// that let CBoldSystem will update before CWorldTransformSystem
+		int worldTransformOrder = entityManager->getSystem<CWorldTransformSystem>()->getSystemOrder();
+		boldSystem->setSystemOrder(worldTransformOrder - 1);
+		entityManager->notifyChangedSystemOrder();
+
 		// add bold system (that will update animation clip)
-		CBoldAnimationSystem* animSystem = scene->getEntityManager()->addSystem<CBoldAnimationSystem>();
+		CBoldAnimationSystem* animSystem = entityManager->addSystem<CBoldAnimationSystem>();
 		animSystem->addClip(animIdle, 0, fps, 0.0f);
 		animSystem->addClip(animWalk, 1, fps, 0.01f);
 		animSystem->addClip(animRun, 2, fps, 0.03f);
@@ -555,7 +563,7 @@ void CViewInit::onUpdate()
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-	}
+		}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -594,7 +602,7 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-}
+	}
 }
 
 void CViewInit::onRender()

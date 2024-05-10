@@ -24,49 +24,32 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CEntity.h"
+#include "Utils/CActivator.h"
+#include "Components/CComponentSystem.h"
 
 namespace Skylicht
 {
-	class CEntityManager;
-
-	class SKYLICHT_API IEntitySystem
+	class SKYLICHT_API C3rdCamera :
+		public CComponentSystem,
+		public IEventReceiver
 	{
+	public:
+
 	protected:
-		int m_systemOrder;
 
 	public:
-		IEntitySystem() :
-			m_systemOrder(0)
-		{
-		}
+		C3rdCamera();
 
-		virtual ~IEntitySystem()
-		{
+		virtual ~C3rdCamera();
 
-		}
+		virtual void initComponent();
 
-		virtual bool isRenderSystem()
-		{
-			return false;
-		}
+		virtual void updateComponent();
 
-		virtual void beginQuery(CEntityManager* entityManager) = 0;
+		virtual void endUpdate();
 
-		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int count) = 0;
+		virtual bool OnEvent(const SEvent& event);
 
-		virtual void init(CEntityManager* entityManager) = 0;
-
-		virtual void update(CEntityManager* entityManager) = 0;
-
-		inline void setSystemOrder(int order)
-		{
-			m_systemOrder = order;
-		}
-
-		inline int getSystemOrder()
-		{
-			return m_systemOrder;
-		}
+		DECLARE_GETTYPENAME(C3rdCamera)
 	};
 }

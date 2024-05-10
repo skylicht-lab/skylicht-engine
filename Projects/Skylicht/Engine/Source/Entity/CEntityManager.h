@@ -50,7 +50,9 @@ namespace Skylicht
 		std::vector<IEntitySystem*> m_systems;
 		std::vector<IRenderSystem*> m_renders;
 
+		std::vector<IEntitySystem*> m_sortUpdate;
 		std::vector<IRenderSystem*> m_sortRender;
+
 		bool m_systemChanged;
 		bool m_needSortEntities;
 
@@ -161,12 +163,18 @@ namespace Skylicht
 
 		void notifyUpdateGroup(u32 dataType);
 
+		inline void notifyChangedSystemOrder()
+		{
+			m_systemChanged = true;
+		}
+
 	protected:
 
 		void initDefaultData(CEntity* entity);
 
-		void updateSortRenderer();
+		void sortRenderer();
 
+		void sortSystem();
 	};
 
 	template<class T>
@@ -188,7 +196,10 @@ namespace Skylicht
 
 		m_systemChanged = true;
 
+		int order = (int)m_systems.size();
 		m_systems.push_back(system);
+		newSystem->setSystemOrder(order);
+
 		return newSystem;
 	}
 
@@ -215,8 +226,12 @@ namespace Skylicht
 
 		render->init(this);
 
+		int order = (int)m_systems.size();
+
 		m_systems.push_back(render);
 		m_renders.push_back(render);
+
+		newSystem->setSystemOrder(order);
 
 		m_systemChanged = true;
 

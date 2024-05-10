@@ -25,7 +25,7 @@ namespace Skylicht
 
 	void CEditorCamera::initComponent()
 	{
-		getGameObject()->getScene()->registerEvent("CEditorCamera", this);
+		getGameObject()->getScene()->registerEvent(getTypeName(), this);
 		getGameObject()->setEnableEndUpdate(true);
 	}
 

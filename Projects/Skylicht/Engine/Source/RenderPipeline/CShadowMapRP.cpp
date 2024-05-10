@@ -125,6 +125,11 @@ namespace Skylicht
 	void CShadowMapRP::setShadowCascade(int numCascade, int shadowMapSize, float farValue)
 	{
 		m_numCascade = numCascade;
+		if (m_numCascade > 3)
+			m_numCascade = 3;
+		if (m_numCascade < 2)
+			m_numCascade = 2;
+
 		m_shadowMapSize = shadowMapSize;
 		m_shadowFar = farValue;
 		m_shadowMapType = CShadowMapRP::CascadedShadow;
