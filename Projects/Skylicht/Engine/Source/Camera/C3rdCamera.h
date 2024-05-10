@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2024 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,18 +24,51 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "CCamera.h"
+
 #include "Utils/CActivator.h"
+
 #include "Components/CComponentSystem.h"
+#include "Components/ILateUpdate.h"
+
+#include "GameObject/CGameObject.h"
+#include "Entity/CEntity.h"
+#include "Transform/CWorldTransformData.h"
 
 namespace Skylicht
 {
 	class SKYLICHT_API C3rdCamera :
 		public CComponentSystem,
-		public IEventReceiver
+		public IEventReceiver,
+		public ILateUpdate
 	{
 	public:
 
 	protected:
+		CCamera* m_camera;
+
+		CEntity* m_followEntity;
+		core::vector3df m_followPosition;
+
+		bool m_isFollowPosition;
+
+		// camPan = 0 places camera behind Model
+		// camPan range 0 - 360
+		float m_camPan;
+
+		// camTilt inputs should be between -89 and +89 (top/down)
+		float m_camTilt;
+
+		float m_targetDistance;
+
+		gui::ICursorControl* m_cursorControl;
+
+		core::position2df m_centerCursor;
+		core::position2df m_cursorPos;
+
+		bool m_leftMousePress;
+
+		float m_rotateSpeed;
 
 	public:
 		C3rdCamera();
@@ -46,10 +79,66 @@ namespace Skylicht
 
 		virtual void updateComponent();
 
-		virtual void endUpdate();
+		virtual void lateUpdate();
 
 		virtual bool OnEvent(const SEvent& event);
 
+		inline void setFollowPosition(const core::vector3df& pos)
+		{
+			m_followPosition = pos;
+			m_isFollowPosition = true;
+		}
+
+		inline void setFollowTarget(CGameObject* object)
+		{
+			m_followEntity = object->getEntity();
+			m_isFollowPosition = false;
+		}
+
+		inline void setFollowTarget(CEntity* entity)
+		{
+			m_followEntity = entity;
+			m_isFollowPosition = false;
+		}
+
+		inline void setOrientation(float pan, float tilt, float distance)
+		{
+			m_camPan = pan;
+			m_camTilt = tilt;
+			m_targetDistance = distance;
+		}
+
+		inline void setOrientation(float pan, float tilt)
+		{
+			m_camPan = pan;
+			m_camTilt = tilt;
+		}
+
+		inline void setTargetDistance(float d)
+		{
+			m_targetDistance = d;
+		}
+
+		inline float getCameraPan()
+		{
+			return m_camPan;
+		}
+
+		inline float getCameraTilt()
+		{
+			return m_camTilt;
+		}
+
+		inline float getTargetDistance()
+		{
+			return m_targetDistance;
+		}
+
 		DECLARE_GETTYPENAME(C3rdCamera)
+
+	protected:
+
+		void updateInputRotate(float timeDiff);
+
 	};
 }

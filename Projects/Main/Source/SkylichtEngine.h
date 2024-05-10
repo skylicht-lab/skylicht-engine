@@ -65,12 +65,17 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Camera/CCamera.h"
 #include "Camera/CEditorCamera.h"
 #include "Camera/CFpsMoveCamera.h"
+#include "Camera/C3rdCamera.h"
+
 #include "GameObject/CGameObject.h"
 #include "GameObject/CZone.h"
+
 #include "Lighting/CDirectionalLight.h"
 #include "Lighting/CPointLight.h"
 #include "IndirectLighting/CIndirectLighting.h"
+
 #include "ReflectionProbe/CReflectionProbe.h"
+#include "LightProbes/CLightProbe.h"
 
 // Graphics2D, Canvas 2D
 #include "Projective/CProjective.h"
@@ -90,13 +95,15 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Entity/CEntityManager.h"
 #include "Entity/CEntityPrefab.h"
 
+// Culling
+#include "Culling/CCullingData.h"
+
 // 3D Model
 #include "MeshManager/CMeshManager.h"
 #include "RenderMesh/CMesh.h"
 #include "RenderMesh/CSkinnedMesh.h"
 #include "RenderMesh/CRenderMesh.h"
 #include "RenderMesh/CRenderMeshInstancing.h"
-#include "Culling/CCullingData.h"
 
 #include "SkinnedInstancing/CRenderSkinnedInstancing.h"
 
@@ -125,3 +132,12 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Utils/CMemoryStream.h"
 #include "Utils/XMLSpreadsheet/CXMLSpreadsheet.h"
 #include "Utils/XMLSpreadsheet/CXMLTableData.h"
+
+// Tween
+#include "Tween/CTweenManager.h"
+#include "Tween/CTweenColor.h"
+#include "Tween/CTweenFloat.h"
+#include "Tween/CTweenMatrix4.h"
+#include "Tween/CTweenQuaternion.h"
+#include "Tween/CTweenVector3df.h"
+#include "Tween/CTweenVector2df.h"

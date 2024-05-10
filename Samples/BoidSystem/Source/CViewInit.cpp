@@ -76,16 +76,6 @@ void CViewInit::initScene()
 	CScene* scene = CContext::getInstance()->getScene();
 	CZone* zone = scene->getZone(0);
 
-	// camera
-	CGameObject* camObj = zone->createEmptyObject();
-	camObj->addComponent<CCamera>();
-	camObj->addComponent<CEditorCamera>()->setMoveSpeed(2.0f);
-	camObj->addComponent<CFpsMoveCamera>()->setMoveSpeed(1.0f);
-
-	CCamera* camera = camObj->getComponent<CCamera>();
-	camera->setPosition(core::vector3df(0.0f, 1.8f, 3.0f));
-	camera->lookAt(core::vector3df(0.0f, 1.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
-
 	// gui camera
 	CGameObject* guiCameraObject = zone->createEmptyObject();
 	CCamera* guiCamera = guiCameraObject->addComponent<CCamera>();
@@ -353,7 +343,10 @@ void CViewInit::initScene()
 
 		// create gpu anim character
 		CGameObject* crowd1 = zone->createEmptyObject();
+		crowd1->setName("Crowd1");
+
 		CGameObject* crowd2 = zone->createEmptyObject();
+		crowd2->setName("Crowd2");
 
 		initCrowd(crowd1, modelPrefab1, animationData, totalFrames, numBones * numClip, boneMap);
 		initCrowd(crowd2, modelPrefab2, animationData, totalFrames, numBones * numClip, boneMap);
@@ -453,7 +446,6 @@ void CViewInit::initScene()
 		animSystem->addClip(animRun, 2, fps, 0.03f);
 	}
 
-
 	// Rendering
 	u32 w = app->getWidth();
 	u32 h = app->getHeight();
@@ -462,7 +454,6 @@ void CViewInit::initScene()
 
 	context->initShadowForwarderPipeline(w, h);
 	context->setActiveZone(zone);
-	context->setActiveCamera(camera);
 	context->setGUICamera(guiCamera);
 	context->setDirectionalLight(directionalLight);
 
@@ -562,8 +553,8 @@ void CViewInit::onUpdate()
 				// retry download
 				delete m_getFile;
 				m_getFile = NULL;
-			}
-		}
+	}
+	}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -576,7 +567,7 @@ void CViewInit::onUpdate()
 #else
 			fileSystem->addFileArchive(r, false, false);
 #endif
-		}
+}
 
 		m_initState = CViewInit::InitScene;
 #endif
@@ -612,7 +603,6 @@ void CViewInit::onRender()
 		CContext* context = CContext::getInstance();
 		CScene* scene = CContext::getInstance()->getScene();
 		CBaseRP* rp = CContext::getInstance()->getRenderPipeline();
-		CCamera* camera = context->getActiveCamera();
 
 		if (m_bakeSHLighting == true)
 		{

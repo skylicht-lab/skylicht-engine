@@ -93,7 +93,7 @@ namespace Skylicht
 			return m_materials[i];
 		}
 
-		core::array<CEntity*>& getEntities()
+		core::array<CEntity*>& getBaseEntities()
 		{
 			return m_baseEntities;
 		}
