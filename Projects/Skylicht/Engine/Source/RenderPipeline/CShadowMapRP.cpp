@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CShadowMapRP.h"
 #include "RenderMesh/CMesh.h"
+#include "Material/CMaterial.h"
 #include "Material/Shader/ShaderCallback/CShaderMaterial.h"
 #include "Material/Shader/ShaderCallback/CShaderShadow.h"
 #include "Material/Shader/ShaderCallback/CShaderLighting.h"
@@ -212,10 +213,15 @@ namespace Skylicht
 
 	void CShadowMapRP::drawMeshBuffer(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID, bool skinnedMesh)
 	{
+		CShader* shader = NULL;
+
 		if (mesh->Materials.size() > (u32)bufferID)
 		{
 			// set shader material
-			CShaderMaterial::setMaterial(mesh->Materials[bufferID]);
+			CMaterial* material = mesh->Materials[bufferID];
+			shader = material->getShader();
+
+			CShaderMaterial::setMaterial(material);
 		}
 
 		IMeshBuffer* mb = mesh->getMeshBuffer(bufferID);
@@ -241,17 +247,35 @@ namespace Skylicht
 			switch (m_renderShadowState)
 			{
 			case DirectionLight:
-				if (skinnedMesh)
-					m_writeDepthMaterial.MaterialType = m_depthWriteSkinMeshShader;
+			{
+				if (shader && shader->getShadowDepthWriteShader())
+				{
+					// have custom write depth
+					m_writeDepthMaterial.MaterialType = shader->getShadowDepthWriteShader()->getMaterialRenderID();
+				}
 				else
-					m_writeDepthMaterial.MaterialType = m_depthWriteShader;
+				{
+					if (skinnedMesh)
+						m_writeDepthMaterial.MaterialType = m_depthWriteSkinMeshShader;
+					else
+						m_writeDepthMaterial.MaterialType = m_depthWriteShader;
+				}
 				break;
+			}
 			case PointLight:
-				if (skinnedMesh)
-					m_writeDepthMaterial.MaterialType = m_distanceWriteSkinMeshShader;
+				if (shader && shader->getShadowDistanceWriteShader())
+				{
+					// have custom write depth
+					m_writeDepthMaterial.MaterialType = shader->getShadowDistanceWriteShader()->getMaterialRenderID();
+				}
 				else
-					m_writeDepthMaterial.MaterialType = m_distanceWriteShader;
-				break;
+				{
+					if (skinnedMesh)
+						m_writeDepthMaterial.MaterialType = m_distanceWriteSkinMeshShader;
+					else
+						m_writeDepthMaterial.MaterialType = m_distanceWriteShader;
+					break;
+				}
 			}
 
 			driver->setMaterial(m_writeDepthMaterial);
@@ -280,8 +304,15 @@ namespace Skylicht
 			{
 			case DirectionLight:
 			{
-				// skinned instancing
-				m_writeDepthMaterial.MaterialType = m_depthWriteSkinnedInstancing;
+				if (instancingShader && instancingShader->getShadowDepthWriteShader())
+				{
+					m_writeDepthMaterial.MaterialType = instancingShader->getShadowDepthWriteShader()->getMaterialRenderID();
+				}
+				else
+				{
+					// skinned instancing
+					m_writeDepthMaterial.MaterialType = m_depthWriteSkinnedInstancing;
+				}
 
 				// animation texture
 				// Shader: Assets/BuiltIn/Shader/ShadowDepthWrite/SDWSkinInstancing.xml
@@ -305,27 +336,45 @@ namespace Skylicht
 			switch (m_renderShadowState)
 			{
 			case DirectionLight:
-				if (vertexSize == sizeof(S3DVertex))
+			{
+				if (instancingShader && instancingShader->getShadowDepthWriteShader())
 				{
-					m_writeDepthMaterial.MaterialType = m_depthWriteStandardSGInstancing;
+					m_writeDepthMaterial.MaterialType = instancingShader->getShadowDepthWriteShader()->getMaterialRenderID();
 					setMaterial = true;
 				}
-				else if (vertexSize == sizeof(S3DVertexTangents))
+				else
 				{
-					m_writeDepthMaterial.MaterialType = m_depthWriteTBNSGInstancing;
-					setMaterial = true;
+					if (vertexSize == sizeof(S3DVertex))
+					{
+						m_writeDepthMaterial.MaterialType = m_depthWriteStandardSGInstancing;
+						setMaterial = true;
+					}
+					else if (vertexSize == sizeof(S3DVertexTangents))
+					{
+						m_writeDepthMaterial.MaterialType = m_depthWriteTBNSGInstancing;
+						setMaterial = true;
+					}
 				}
 				break;
+			}
 			case PointLight:
-				if (vertexSize == sizeof(S3DVertex))
+				if (instancingShader && instancingShader->getShadowDistanceWriteShader())
 				{
-					m_writeDepthMaterial.MaterialType = m_distanceWriteStandardSGInstancing;
+					m_writeDepthMaterial.MaterialType = instancingShader->getShadowDistanceWriteShader()->getMaterialRenderID();
 					setMaterial = true;
 				}
-				else if (vertexSize == sizeof(S3DVertexTangents))
+				else
 				{
-					m_writeDepthMaterial.MaterialType = m_distanceWriteTBNSGInstancing;
-					setMaterial = true;
+					if (vertexSize == sizeof(S3DVertex))
+					{
+						m_writeDepthMaterial.MaterialType = m_distanceWriteStandardSGInstancing;
+						setMaterial = true;
+					}
+					else if (vertexSize == sizeof(S3DVertexTangents))
+					{
+						m_writeDepthMaterial.MaterialType = m_distanceWriteTBNSGInstancing;
+						setMaterial = true;
+					}
 				}
 				break;
 			}

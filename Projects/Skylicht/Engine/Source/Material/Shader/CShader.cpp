@@ -47,7 +47,9 @@ namespace Skylicht
 		m_instancing(NULL),
 		m_instancingShader(NULL),
 		m_softwareSkinningShader(NULL),
-		m_skinning(false)
+		m_skinning(false),
+		m_shadowDepthShader(NULL),
+		m_shadowDistanceShader(NULL)
 	{
 		// builtin callback
 		addCallback<CShaderLighting>();
@@ -522,13 +524,7 @@ namespace Skylicht
 					CStringImp::convertUnicodeToUTF8(wtext, text);
 					m_baseShader = getBaseShaderByName(text);
 
-					wtext = xmlReader->getAttributeValue(L"writeDepthMaterial");
-					if (wtext != NULL)
-					{
-						CStringImp::convertUnicodeToUTF8(wtext, text);
-						m_writeDepth = text;
-					}
-
+					// shader for deferred pass
 					wtext = xmlReader->getAttributeValue(L"deferred");
 					if (wtext != NULL)
 					{
@@ -537,6 +533,7 @@ namespace Skylicht
 							m_deferred = true;
 					}
 
+					// shader for instancing
 					wtext = xmlReader->getAttributeValue(L"instancing");
 					if (wtext != NULL)
 					{
@@ -552,6 +549,7 @@ namespace Skylicht
 						}
 					}
 
+					// shader for fallback to software skinning
 					wtext = xmlReader->getAttributeValue(L"softwareSkinning");
 					if (wtext != NULL)
 					{
@@ -568,9 +566,44 @@ namespace Skylicht
 							os::Printer::log(log);
 						}
 					}
+
+					// shader for draw shadow depth pass
+					wtext = xmlReader->getAttributeValue(L"shadowDepth");
+					if (wtext != NULL)
+					{
+						CStringImp::convertUnicodeToUTF8(wtext, text);
+
+						CShaderManager* shaderManager = CShaderManager::getInstance();
+						m_shadowDepthShader = shaderManager->getShaderByName(text);
+						if (m_shadowDepthShader == NULL)
+						{
+							char log[512];
+							sprintf(log, "Warning: Need load shader shadow write depth: %s first", text);
+							os::Printer::log(log);
+						}
+					}
+
+					// shader for draw shadow distance pass (point light)
+					wtext = xmlReader->getAttributeValue(L"shadowDistance");
+					if (wtext != NULL)
+					{
+						CStringImp::convertUnicodeToUTF8(wtext, text);
+
+						CShaderManager* shaderManager = CShaderManager::getInstance();
+						m_shadowDistanceShader = shaderManager->getShaderByName(text);
+						if (m_shadowDistanceShader == NULL)
+						{
+							char log[512];
+							sprintf(log, "Warning: Need load shader shadow write distance: %s first", text);
+							os::Printer::log(log);
+						}
+					}
 				}
 				else if (nodeName == L"uniforms")
 				{
+					// in DirectX11
+					// the uniform <vs> must be like const cbPerObject in shader
+					// the uniform <fs> must be like const cbPerFrame in shader
 					parseUniform(xmlReader);
 				}
 				else if (nodeName == L"customUI")
@@ -579,6 +612,7 @@ namespace Skylicht
 				}
 				else if (nodeName == L"resources")
 				{
+					// resources, that will auto set some builtIn Textures to material
 					parseResources(xmlReader);
 				}
 				else if (nodeName == L"shader")
@@ -608,6 +642,7 @@ namespace Skylicht
 				}
 				else if (nodeName == L"map")
 				{
+					// That will map the UI interface on Skylicht Editor to uniform
 					SAttributeMapping m;
 
 					wtext = xmlReader->getAttributeValue(L"uniformName");

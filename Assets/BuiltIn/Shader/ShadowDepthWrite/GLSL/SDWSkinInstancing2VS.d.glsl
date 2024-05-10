@@ -28,8 +28,8 @@ out vec4 varWorldPos;
 void main(void)
 {
 	mat4 skinMatrix = mat4(0.0);
-	vec4 skinPosition = vec4(0.0);
 	
+	// ANIMATION 1
 	vec2 boneLocation = uBoneLocation.xy;
 	float boneLocationY = uBoneLocation.y;
 
@@ -45,7 +45,28 @@ void main(void)
 	boneLocation.y = boneLocationY + inBlendIndex[3];
 	skinMatrix += inBlendWeight[3] * getTransformFromTexture(boneLocation);
 
-	skinPosition = skinMatrix * inPosition;
+	vec4 skinPosition1 = skinMatrix * inPosition;
+	
+	// ANIMATION 2
+	boneLocation = uBoneLocation.zw;
+	boneLocationY = uBoneLocation.w;
+
+	boneLocation.y = boneLocationY + inBlendIndex[0];
+	skinMatrix = inBlendWeight[0] * getTransformFromTexture(boneLocation);
+
+	boneLocation.y = boneLocationY + inBlendIndex[1];
+	skinMatrix += inBlendWeight[1] * getTransformFromTexture(boneLocation);
+
+	boneLocation.y = boneLocationY + inBlendIndex[2];
+	skinMatrix += inBlendWeight[2] * getTransformFromTexture(boneLocation);
+
+	boneLocation.y = boneLocationY + inBlendIndex[3];
+	skinMatrix += inBlendWeight[3] * getTransformFromTexture(boneLocation);
+
+	vec4 skinPosition2 = skinMatrix * inPosition;
+	
+	// Blending
+	vec4 skinPosition = mix(skinPosition1, skinPosition2, uBlendAnimation.x);
 	
 	varWorldPos = uWorldMatrix * skinPosition;
 	gl_Position = uVPMatrix * varWorldPos;
