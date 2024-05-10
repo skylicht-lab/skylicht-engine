@@ -222,7 +222,6 @@ namespace Skylicht
 	protected:
 		std::string	m_name;
 		std::string	m_shaderPath;
-		std::string	m_writeDepth;
 
 		core::array<SUniform> m_vsUniforms;
 		core::array<SUniform> m_fsUniforms;
@@ -253,6 +252,8 @@ namespace Skylicht
 
 		IShaderInstancing* m_instancing;
 		CShader* m_instancingShader;
+		CShader* m_shadowDepthShader;
+		CShader* m_shadowDistanceShader;
 
 	public:
 
@@ -278,11 +279,6 @@ namespace Skylicht
 		const std::string& getShaderPath()
 		{
 			return m_shaderPath;
-		}
-
-		const std::string& getWriteDepthMaterial()
-		{
-			return m_writeDepth;
 		}
 
 		const std::string& getSoftwareSkinning()
@@ -433,6 +429,16 @@ namespace Skylicht
 		inline CShader* getInstancingShader()
 		{
 			return m_instancingShader;
+		}
+
+		inline CShader* getShadowDepthWriteShader()
+		{
+			return m_shadowDepthShader;
+		}
+
+		inline CShader* getShadowDistanceWriteShader()
+		{
+			return m_shadowDistanceShader;
 		}
 
 	protected:
