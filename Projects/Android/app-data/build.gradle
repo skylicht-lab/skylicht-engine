@@ -1,0 +1,10 @@
+plugins {
+    id 'com.android.asset-pack'
+}
+
+assetPack {
+    packName = "app-data"
+    dynamicDelivery {
+        deliveryType = "[ install-time | fast-follow | on-demand ]"
+    }
+}
