@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "CCamera.h"
 #include "Utils/CActivator.h"
 #include "Components/CComponentSystem.h"
 
@@ -50,6 +51,8 @@ namespace Skylicht
 		};
 
 	protected:
+		CCamera* m_camera;
+
 		std::vector<SKeyMap> m_keyMap;
 
 		bool m_input[DirectionCount];

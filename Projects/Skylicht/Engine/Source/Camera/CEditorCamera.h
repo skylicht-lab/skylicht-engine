@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Utils/CActivator.h"
+#include "CCamera.h"
 #include "Components/CComponentSystem.h"
 
 namespace Skylicht
@@ -34,6 +35,8 @@ namespace Skylicht
 		public IEventReceiver
 	{
 	protected:
+		CCamera* m_camera;
+
 		f32 m_moveSpeed;
 		f32 m_rotateSpeed;
 		gui::ICursorControl* m_cursorControl;

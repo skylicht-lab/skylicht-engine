@@ -7,6 +7,7 @@
 namespace Skylicht
 {
 	CEditorCamera::CEditorCamera() :
+		m_camera(NULL),
 		m_moveSpeed(1.0f),
 		m_rotateSpeed(16.0f),
 		m_leftMousePress(false),
@@ -31,18 +32,20 @@ namespace Skylicht
 
 	void CEditorCamera::updateComponent()
 	{
-
+		if (m_camera == NULL)
+		{
+			m_camera = m_gameObject->getComponent<CCamera>();
+		}
 	}
 
 	void CEditorCamera::endUpdate()
 	{
 		CTransformEuler* transform = m_gameObject->getTransformEuler();
-		CCamera* camera = m_gameObject->getComponent<CCamera>();
 
-		if (camera == NULL || transform == NULL)
+		if (m_camera == NULL || transform == NULL)
 			return;
 
-		if (!camera->isInputReceiverEnabled())
+		if (!m_camera->isInputReceiverEnabled())
 			return;
 
 		f32 timeDiff = getTimeStep();
@@ -114,7 +117,7 @@ namespace Skylicht
 		up.normalize();
 
 		// write right target
-		camera->lookAt(pos, pos + target, up);
+		m_camera->lookAt(pos, pos + target, up);
 	}
 
 	void CEditorCamera::updateInputRotate(core::vector3df& relativeRotation, f32 timeDiff)

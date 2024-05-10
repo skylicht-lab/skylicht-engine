@@ -7,6 +7,7 @@
 namespace Skylicht
 {
 	CFpsMoveCamera::CFpsMoveCamera() :
+		m_camera(NULL),
 		m_moveSpeed(1.0f)
 	{
 		m_keyMap.push_back(SKeyMap{ MoveForward , irr::KEY_UP });
@@ -42,12 +43,12 @@ namespace Skylicht
 	void CFpsMoveCamera::endUpdate()
 	{
 		CTransformEuler* transform = m_gameObject->getTransformEuler();
-		CCamera* camera = m_gameObject->getComponent<CCamera>();
+		m_camera = m_gameObject->getComponent<CCamera>();
 
-		if (camera == NULL || transform == NULL)
+		if (m_camera == NULL || transform == NULL)
 			return;
 
-		if (!camera->isInputReceiverEnabled())
+		if (!m_camera->isInputReceiverEnabled())
 			return;
 
 		f32 timeDiff = getTimeStep();
@@ -72,7 +73,7 @@ namespace Skylicht
 			pos -= movedir * timeDiff * m_moveSpeed;
 
 		core::vector3df strafevect = movedir;
-		strafevect = strafevect.crossProduct(camera->getUpVector());
+		strafevect = strafevect.crossProduct(m_camera->getUpVector());
 
 		if (m_input[StrafeLeft])
 			pos += strafevect * timeDiff * m_moveSpeed;
@@ -80,7 +81,7 @@ namespace Skylicht
 		if (m_input[StrafeRight])
 			pos -= strafevect * timeDiff * m_moveSpeed;
 
-		camera->setPosition(pos);
+		m_camera->setPosition(pos);
 	}
 
 	bool CFpsMoveCamera::OnEvent(const SEvent& evt)
