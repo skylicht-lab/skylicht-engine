@@ -1,0 +1,2 @@
+This is test integrate
+https://developer.android.com/guide/playcore/asset-delivery/integrate-java#groovy
