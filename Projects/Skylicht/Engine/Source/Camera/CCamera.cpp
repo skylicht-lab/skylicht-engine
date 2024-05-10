@@ -28,6 +28,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	ACTIVATOR_REGISTER(CCamera);
+
 	CCamera::CCamera() :
 		m_projectionType(CCamera::Perspective),
 		m_inputReceiver(true),
@@ -40,7 +42,8 @@ namespace Skylicht
 		m_orthoScale(10.0f),
 		m_customOrthoSize(false),
 		m_orthoUIH(0.0f),
-		m_orthoUIW(0.0f)
+		m_orthoUIW(0.0f),
+		m_viewportAspect(1.0f)
 	{
 	}
 

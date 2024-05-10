@@ -30,7 +30,7 @@ namespace Skylicht
 
 	void CFpsMoveCamera::initComponent()
 	{
-		getGameObject()->getScene()->registerEvent("CFpsMoveCamera", this);
+		getGameObject()->getScene()->registerEvent(getTypeName(), this);
 		getGameObject()->setEnableEndUpdate(true);
 	}
 
@@ -41,8 +41,8 @@ namespace Skylicht
 
 	void CFpsMoveCamera::endUpdate()
 	{
-		CTransformEuler *transform = m_gameObject->getTransformEuler();
-		CCamera *camera = m_gameObject->getComponent<CCamera>();
+		CTransformEuler* transform = m_gameObject->getTransformEuler();
+		CCamera* camera = m_gameObject->getComponent<CCamera>();
 
 		if (camera == NULL || transform == NULL)
 			return;
