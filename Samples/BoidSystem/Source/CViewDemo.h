@@ -1,10 +1,12 @@
 #pragma once
 
 #include "ViewManager/CView.h"
+#include "SkinnedInstancing/CRenderSkinnedInstancing.h"
 
 class CViewDemo : public CView
 {
 protected:
+	std::vector<CRenderSkinnedInstancing*> m_instancings;
 
 public:
 	CViewDemo();
@@ -20,4 +22,6 @@ public:
 	virtual void onRender();
 
 	virtual void onPostRender();
+
+	void followRandomEntity();
 };

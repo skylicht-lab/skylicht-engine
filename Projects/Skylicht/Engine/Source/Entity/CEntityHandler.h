@@ -61,6 +61,11 @@ namespace Skylicht
 			return m_entities;
 		}
 
+		inline int getEntityCount()
+		{
+			return (int)m_entities.size();
+		}
+
 	protected:
 
 		void setEntities(CEntity** entities, int count);
