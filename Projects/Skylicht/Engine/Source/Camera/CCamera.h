@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "Utils/CActivator.h"
 #include "Components/CComponentSystem.h"
 #include "Transform/CTransform.h"
 
@@ -204,5 +205,7 @@ namespace Skylicht
 		{
 			return m_inputReceiver;
 		}
+
+		DECLARE_GETTYPENAME(CCamera)
 	};
 }

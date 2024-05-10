@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "Utils/CActivator.h"
 #include "Components/CComponentSystem.h"
 
 namespace Skylicht
@@ -67,6 +68,8 @@ namespace Skylicht
 		virtual void endUpdate();
 
 		virtual bool OnEvent(const SEvent& event);
+
+		DECLARE_GETTYPENAME(CFpsMoveCamera)
 
 	public:
 
