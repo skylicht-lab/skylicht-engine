@@ -103,6 +103,8 @@ namespace Skylicht
 
 		CEditor::~CEditor()
 		{
+			getSubjectTransformGizmos().removeAllObserver();
+
 			CSceneController::getInstance()->deleteScene();
 
 			CEditorActivator::releaseInstance();

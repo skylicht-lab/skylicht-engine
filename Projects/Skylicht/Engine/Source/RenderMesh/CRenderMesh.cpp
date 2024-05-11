@@ -54,7 +54,6 @@ namespace Skylicht
 
 	CRenderMesh::~CRenderMesh()
 	{
-		releaseMaterial();
 		releaseEntities();
 	}
 
@@ -74,6 +73,7 @@ namespace Skylicht
 
 	void CRenderMesh::releaseEntities()
 	{
+		releaseMaterial();
 		removeAllEntities();
 
 		m_allEntities.clear();

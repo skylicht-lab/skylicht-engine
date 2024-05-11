@@ -310,6 +310,9 @@ namespace Skylicht
 			delete m_groupTransform;
 			delete m_groupCameraView;
 
+			delete m_snapSettingController;
+			delete m_cameraSettingController;
+
 			getSubjectTransformGizmos().removeObserver(this);
 
 			CSceneController* sceneController = CSceneController::getInstance();

@@ -63,6 +63,9 @@ void CViewDemo::followRandomEntity()
 			totalEntity += instancing->getEntityCount();
 	}
 
+	if (totalEntity == 0)
+		return;
+
 	int begin = 0;
 	int end = 0;
 

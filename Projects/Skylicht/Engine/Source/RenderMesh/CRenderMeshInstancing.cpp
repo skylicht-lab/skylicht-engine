@@ -28,7 +28,7 @@ namespace Skylicht
 
 	CRenderMeshInstancing::~CRenderMeshInstancing()
 	{
-
+		releaseEntities();
 	}
 
 	void CRenderMeshInstancing::releaseBaseEntities()
@@ -58,6 +58,7 @@ namespace Skylicht
 
 	void CRenderMeshInstancing::releaseEntities()
 	{
+		releaseMaterial();
 		removeAllEntities();
 		releaseBaseEntities();
 
