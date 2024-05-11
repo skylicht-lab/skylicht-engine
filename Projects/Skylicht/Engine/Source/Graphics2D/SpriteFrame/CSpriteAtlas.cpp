@@ -35,12 +35,14 @@ namespace Skylicht
 		m_height(height),
 		m_fmt(format)
 	{
+		m_deleteAtlas = true;
+
 		addEmptyAtlas();
 	}
 
 	CSpriteAtlas::~CSpriteAtlas()
 	{
-
+		// see destructor CSpriteFrame
 	}
 
 	SImage* CSpriteAtlas::createAtlasRect(int w, int h, core::recti& outRegion)

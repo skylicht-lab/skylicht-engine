@@ -207,6 +207,7 @@ namespace Skylicht
 			}
 
 			g_canvas = NULL;
+			g_listGUIObject.clear();
 			return true;
 		}
 

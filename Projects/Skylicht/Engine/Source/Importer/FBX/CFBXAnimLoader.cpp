@@ -140,7 +140,10 @@ namespace Skylicht
 				// check animation data in this node
 				ufbx_anim_prop_list listAnim = ufbx_find_anim_props(stack->layers.data[0], &node->element);
 				if (listAnim.count == 0)
+				{
+					delete entityAnim;
 					continue;
+				}
 
 				// add this node animation
 				output->addAnim(entityAnim);
