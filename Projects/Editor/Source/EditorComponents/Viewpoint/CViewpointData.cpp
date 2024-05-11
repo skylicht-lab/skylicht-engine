@@ -88,7 +88,7 @@ namespace Skylicht
 
 		CViewpointData::~CViewpointData()
 		{
-
+			Buffer->drop();
 		}
 
 		void CViewpointData::updateBillboard(const core::vector3df& look, const core::vector3df& up, const core::vector3df& campos)

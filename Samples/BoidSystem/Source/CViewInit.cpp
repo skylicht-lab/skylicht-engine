@@ -140,8 +140,10 @@ void CViewInit::initScene()
 			meshInstancing->initFromPrefab(groundPrefab);
 			meshInstancing->initMaterial(envMaterials);
 
+			int i = 0;
 			for (int i = minBound; i <= maxBound; i++)
 			{
+				int j = 0;
 				for (int j = minBound; j <= maxBound; j++)
 				{
 					CEntity* entity = meshInstancing->spawn();
@@ -253,6 +255,7 @@ void CViewInit::initScene()
 	}
 	// end init enviroment
 
+
 	// bake clip animation
 	CAnimationManager* animManager = CAnimationManager::getInstance();
 
@@ -304,7 +307,7 @@ void CViewInit::initScene()
 		int numClip = (int)clips.size();
 
 		// build the matrix animations
-		// 
+		//
 		//  [anim1]   frame0    frame1    frame2    ...
 		//  bone1
 		//  bone2
@@ -340,6 +343,7 @@ void CViewInit::initScene()
 		}
 
 		rifle->remove();
+
 
 		// create gpu anim character
 		CGameObject* crowd1 = zone->createEmptyObject();
@@ -553,8 +557,8 @@ void CViewInit::onUpdate()
 				// retry download
 				delete m_getFile;
 				m_getFile = NULL;
-	}
-	}
+			}
+		}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -567,11 +571,11 @@ void CViewInit::onUpdate()
 #else
 			fileSystem->addFileArchive(r, false, false);
 #endif
-}
+		}
 
 		m_initState = CViewInit::InitScene;
 #endif
-	}
+		}
 	break;
 	case CViewInit::InitScene:
 	{
@@ -594,7 +598,7 @@ void CViewInit::onUpdate()
 	}
 	break;
 	}
-}
+	}
 
 void CViewInit::onRender()
 {
