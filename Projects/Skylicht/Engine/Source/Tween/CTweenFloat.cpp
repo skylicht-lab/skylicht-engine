@@ -29,4 +29,9 @@ namespace Skylicht
 	{
 		return getValueByIndex(0);
 	}
+
+	void CTweenFloat::updateValue()
+	{
+		// do nothing
+	}
 }

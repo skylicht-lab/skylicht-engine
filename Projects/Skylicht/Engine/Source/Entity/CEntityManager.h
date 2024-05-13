@@ -163,7 +163,7 @@ namespace Skylicht
 
 		void notifyUpdateGroup(u32 dataType);
 
-		inline void notifyChangedSystemOrder()
+		inline void notifySystemOrderChanged()
 		{
 			m_systemChanged = true;
 		}

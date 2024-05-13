@@ -3,12 +3,13 @@
 
 #include "Context/CContext.h"
 #include "ViewManager/CViewManager.h"
+#include "CImguiManager.h"
 
 #include "CViewInit.h"
 
 void installApplication(const std::vector<std::string>& argv)
 {
-	SampleBoidSystem *app = new SampleBoidSystem();
+	SampleBoidSystem* app = new SampleBoidSystem();
 	getApplication()->registerAppEvent("SampleBoidSystem", app);
 }
 
@@ -17,6 +18,7 @@ SampleBoidSystem::SampleBoidSystem()
 	CContext::createGetInstance();
 	CViewManager::createGetInstance()->initViewLayer(1);
 	CLightmapper::createGetInstance();
+	CImguiManager::createGetInstance();
 }
 
 SampleBoidSystem::~SampleBoidSystem()
@@ -24,6 +26,7 @@ SampleBoidSystem::~SampleBoidSystem()
 	CViewManager::releaseInstance();
 	CContext::releaseInstance();
 	CLightmapper::releaseInstance();
+	CImguiManager::releaseInstance();
 }
 
 void SampleBoidSystem::onInitApp()

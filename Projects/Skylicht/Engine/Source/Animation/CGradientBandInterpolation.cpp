@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CGradientBandInterpolation.h"
+#include "Utils/CVector.h"
 
 namespace Skylicht
 {
@@ -35,32 +36,6 @@ namespace Skylicht
 	CGradientBandInterpolation::~CGradientBandInterpolation()
 	{
 		clear();
-	}
-
-	float CGradientBandInterpolation::getAngle(const core::vector3df& a, const core::vector3df& b)
-	{
-		// https://github.com/Unity-Technologies/UnityCsReference/blob/master/Runtime/Export/Math/Vector3.cs
-		float denominator = (float)sqrtf(a.getLengthSQ() * b.getLengthSQ());
-		if (denominator < FLT_EPSILON)
-			return 0.0f;
-
-		float dot = a.dotProduct(b) / denominator;
-		return ((float)acosf(dot));
-	}
-
-	core::vector3df CGradientBandInterpolation::project(const core::vector3df& vector, const core::vector3df& onNormal)
-	{
-		// https://github.com/Unity-Technologies/UnityCsReference/blob/master/Runtime/Export/Math/Vector3.cs
-		float sqrMag = onNormal.dotProduct(onNormal);
-		if (sqrMag < FLT_EPSILON)
-			return core::vector3df();
-		else
-		{
-			float dot = vector.dotProduct(onNormal);
-			return core::vector3df(onNormal.X * dot / sqrMag,
-				onNormal.Y * dot / sqrMag,
-				onNormal.Z * dot / sqrMag);
-		}
 	}
 
 	CGradientBandInterpolation::SSample* CGradientBandInterpolation::addSample(int id, const core::vector3df& vector)
@@ -113,21 +88,21 @@ namespace Skylicht
 
 				if (sampleI.getLength() == 0.0f)
 				{
-					iAngle = getAngle(vector, sampleJ);
+					iAngle = CVector::angle(vector, sampleJ);
 					oAngle = 0;
 					outputProj = vector;
 					angleMultiplier = 1.0f;
 				}
 				else if (sampleJ.getLength() == 0.0f)
 				{
-					iAngle = getAngle(vector, sampleI);
+					iAngle = CVector::angle(vector, sampleI);
 					oAngle = iAngle;
 					outputProj = vector;
 					angleMultiplier = 1.0f;
 				}
 				else
 				{
-					iAngle = getAngle(sampleI, sampleJ);
+					iAngle = CVector::angle(sampleI, sampleJ);
 					if (iAngle > 0)
 					{
 						if (vector.getLength() == 0.0f)
@@ -140,9 +115,9 @@ namespace Skylicht
 							core::vector3df axis = sampleI.crossProduct(sampleJ);
 							axis.normalize();
 
-							outputProj = vector - project(vector, axis); // ProjectOntoPlane
+							outputProj = vector - CVector::project(vector, axis); // ProjectOntoPlane
 
-							oAngle = getAngle(sampleI, outputProj);
+							oAngle = CVector::angle(sampleI, outputProj);
 							if (iAngle < core::PI * 0.99f)
 							{
 								core::vector3df cross = sampleI.crossProduct(outputProj);

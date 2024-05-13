@@ -24,22 +24,70 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "CCamera.h"
+#include "Components/CComponentSystem.h"
+#include "Components/ILateUpdate.h"
+
 namespace Skylicht
 {
-	class SKYLICHT_API CIKSolver
+	class SKYLICHT_API CCameraBrain :
+		public CComponentSystem,
+		public ILateUpdate
 	{
+	protected:
+		CCamera* m_camera;
+		CCamera* m_targetCamera;
+		float m_blend;
+
+		core::vector3df m_position;
+		core::vector3df m_lookAt;
+		core::vector3df m_upVector;
+
+		core::vector3df m_lastPosition;
+		core::vector3df m_lastLookAt;
+		core::vector3df m_lastUpVector;
+
 	public:
-		CIKSolver();
+		CCameraBrain();
 
-		virtual ~CIKSolver();
+		virtual ~CCameraBrain();
 
-		void solveIK(const core::vector3df& startJointPos,
-			const core::vector3df& midJointPos,
-			const core::vector3df& endJointPos,
-			const core::vector3df& targetPos,
-			const core::vector3df& poleVector,
-			float twistValue,
-			core::quaternion& qStart,
-			core::quaternion& qMid);
+		virtual void initComponent();
+
+		virtual void updateComponent();
+
+		virtual void lateUpdate();
+
+		void setTargetCamera(CCamera* cam, float blendTarget = 1.0f);
+
+		inline CCamera* getTargetCamera()
+		{
+			return m_targetCamera;
+		}
+
+		inline void setBlendValue(float value)
+		{
+			m_blend = value;
+		}
+
+		inline float getBlendValue()
+		{
+			return m_blend;
+		}
+
+		inline const core::vector3df& getPosition()
+		{
+			return m_position;
+		}
+
+		inline const core::vector3df& getLookAt()
+		{
+			return m_lookAt;
+		}
+
+		inline const core::vector3df& getUp()
+		{
+			return m_upVector;
+		}
 	};
 }
