@@ -24,11 +24,11 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CIKSolver.h"
+#include "Utils/CVector.h"
 
 #define kPi 3.14159265358979323846264338327950
 #define kEpsilon 1.0e-5f
 #define absoluteValue(x) ((x) < 0 ? (-(x)) : (x))
-#define equivalent(x, y, fudge) ((x > y) ? (x - y <= fudge) : (y - x <= fudge))
 
 namespace Skylicht
 {
@@ -76,7 +76,7 @@ namespace Skylicht
 		//////////////////////////////////////////////////////////////////
 
 		// angle between vector1 and vector2
-		float vectorAngle12 = getAngle2Vector(vector1, vector2);
+		float vectorAngle12 = CVector::angle(vector1, vector2);
 
 		// vector orthogonal to vector1 and 2
 		core::vector3df vectorCross12 = vector1.crossProduct(vector2);
@@ -117,7 +117,7 @@ namespace Skylicht
 		// vector1 with quaternion qEH applied
 		vector1 = qEH * vector1;
 
-		if (isVectorParallel(vector1, vectorH))
+		if (CVector::isParallel(vector1, vectorH))
 		{
 			// singular case, use orthogonal component instead
 			vector1 = qEH * vectorO;
@@ -129,7 +129,7 @@ namespace Skylicht
 		core::vector3df vectorHNormal = vectorH;
 		vectorHNormal.normalize();
 
-		if (!isVectorParallel(poleVector, vectorH) && (lengthHsquared != 0))
+		if (!CVector::isParallel(poleVector, vectorH) && (lengthHsquared != 0))
 		{
 			// component of vector1 orthogonal to vectorH
 			core::vector3df vectorN = vector1 - vectorH * ((vector1.dotProduct(vectorH)) / lengthHsquared);
@@ -164,28 +164,5 @@ namespace Skylicht
 
 		// concatenate the quaternions for the start joint
 		qStart = qEH * qNP * qTwist;
-	}
-
-	float CIKSolver::getAngle2Vector(const core::vector3df& a, const core::vector3df& b)
-	{
-		float denominator = (float)sqrtf(a.getLengthSQ() * b.getLengthSQ());
-		if (denominator < FLT_EPSILON)
-			return 0.0f;
-
-		float dot = a.dotProduct(b) / denominator;
-		return ((float)acosf(dot));
-	}
-
-	bool CIKSolver::isVectorParallel(const core::vector3df& v1, const core::vector3df& v2)
-	{
-		core::vector3df a, b;
-		a = v1;
-		a.normalize();
-
-		b = v2;
-		b.normalize();
-
-		float dotPrd = fabs(a.dotProduct(b));
-		return equivalent(dotPrd, 1.0f, kEpsilon);
 	}
 }

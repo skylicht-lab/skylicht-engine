@@ -140,14 +140,24 @@ namespace Skylicht
 			t->setPosition(position);
 	}
 
+	core::vector3df CCamera::getPosition()
+	{
+		CTransformEuler* t = m_gameObject->getTransformEuler();
+		if (t)
+			return t->getPosition();
+
+		return core::vector3df();
+	}
+
 	void CCamera::lookAt(const core::vector3df& position, const core::vector3df& target, const core::vector3df& up)
 	{
 		CTransformEuler* t = m_gameObject->getTransformEuler();
 		if (t != NULL)
 		{
+			t->setPosition(position);
+
 			core::vector3df front = target - position;
 			t->setOrientation(front, up);
-			t->setPosition(position);
 
 			setUpVector(up);
 		}

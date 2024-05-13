@@ -22,24 +22,24 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
 namespace Skylicht
 {
-	class SKYLICHT_API CIKSolver
+	class SKYLICHT_API CVector
 	{
 	public:
-		CIKSolver();
 
-		virtual ~CIKSolver();
+		static core::vector3df lerp(const core::vector3df& a, const core::vector3df& b, float t);
 
-		void solveIK(const core::vector3df& startJointPos,
-			const core::vector3df& midJointPos,
-			const core::vector3df& endJointPos,
-			const core::vector3df& targetPos,
-			const core::vector3df& poleVector,
-			float twistValue,
-			core::quaternion& qStart,
-			core::quaternion& qMid);
+		static core::vector3df slerp(const core::vector3df& a, const core::vector3df& b, float t);
+
+		static core::vector3df reflect(const core::vector3df& inDirection, const core::vector3df& normal);
+
+		static float angle(const core::vector3df& a, const core::vector3df& b);
+
+		static core::vector3df project(const core::vector3df& vector, const core::vector3df& onNormal);
+
+		static core::vector3df projectOnPlane(const core::vector3df& vector, const core::vector3df& planeNormal);
+
+		static bool isParallel(const core::vector3df& a, const core::vector3df& b);
 	};
 }
