@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Entity/IEntityData.h"
+#include "Entity/CArrayUtils.h"
 
 class CBoldData : public Skylicht::IEntityData
 {
@@ -13,6 +14,8 @@ public:
 	float MaxSpeed;
 	float MaxForce;
 	bool Alive;
+
+	CFastArray<CBoldData*> Neighbor;
 
 	CBoldData();
 	~CBoldData();

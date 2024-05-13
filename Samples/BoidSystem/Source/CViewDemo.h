@@ -16,6 +16,9 @@ protected:
 	CCameraBrain* m_cameraBrain;
 
 	CTweenFloat* m_cameraBlendTween;
+	CEntity* m_followEntity;
+
+	bool m_debugNeighbor;
 
 public:
 	CViewDemo();

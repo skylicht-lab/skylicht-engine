@@ -5,11 +5,16 @@
 #include "imgui.h"
 #include "CImguiManager.h"
 
+#include "Bolds/CBoldData.h"
+#include "Debug/CSceneDebug.h"
+
 CViewDemo::CViewDemo() :
+	m_followEntity(NULL),
 	m_followRotateCam(NULL),
 	m_followTopCam(NULL),
 	m_cameraBrain(NULL),
-	m_cameraBlendTween(NULL)
+	m_cameraBlendTween(NULL),
+	m_debugNeighbor(false)
 {
 
 }
@@ -111,13 +116,14 @@ void CViewDemo::followRandomEntity()
 		if (r < end)
 		{
 			int randomId = r - begin;
-			CEntity* entity = instancing->getEntities()[randomId];
+
+			m_followEntity = instancing->getEntities()[randomId];
 
 			if (m_followRotateCam)
-				m_followRotateCam->setFollowTarget(entity);
+				m_followRotateCam->setFollowTarget(m_followEntity);
 
 			if (m_followTopCam)
-				m_followTopCam->setFollowTarget(entity);
+				m_followTopCam->setFollowTarget(m_followEntity);
 
 			m_cameraBrain->lateUpdate();
 			break;
@@ -148,6 +154,29 @@ void CViewDemo::onRender()
 	CCamera* guiCamera = context->getGUICamera();
 
 	CScene* scene = context->getScene();
+
+	if (m_debugNeighbor)
+	{
+		CBoldData* bold = GET_ENTITY_DATA(m_followEntity, CBoldData);
+
+		float radius = 0.25f;
+
+		// draw green circle in follow entity
+		CSceneDebug* noZDebug = CSceneDebug::getInstance()->getNoZDebug();
+		noZDebug->addCircle(bold->Location, radius, Transform::Oy, SColor(255, 0, 255, 0));
+
+		// draw red circle in neighbor
+		CBoldData** neighbor = bold->Neighbor.pointer();
+		int numNeighbor = bold->Neighbor.count();
+		for (int i = 0; i < numNeighbor; i++)
+		{
+			CBoldData* b = neighbor[i];
+			if (b != bold)
+			{
+				noZDebug->addCircle(b->Location, radius, Transform::Oy, SColor(255, 255, 0, 0));
+			}
+		}
+	}
 
 	// render scene
 	if (camera != NULL && scene != NULL)
@@ -280,6 +309,10 @@ void CViewDemo::onGUI()
 			ImGui::Text("Drag Right Mouse to rotate camera");
 			ImGui::Text("Scroll Middle Mouse to go near/far");
 		}
+
+		ImGui::Spacing();
+
+		ImGui::Checkbox("Show debug neighbor", &m_debugNeighbor);
 
 		ImGui::End();
 	}
