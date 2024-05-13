@@ -90,5 +90,18 @@ namespace Skylicht
 
 			return &(m_ptr[m_count++]);
 		}
+
+		void alloc(int count)
+		{
+			int allocCount = (m_count + 1) * 2;
+			while (allocCount < count)
+			{
+				allocCount *= 2;
+			}
+
+			m_alloc = allocCount;
+			m_array.set_used(m_alloc);
+			m_ptr = m_array.pointer();
+		}
 	};
 }

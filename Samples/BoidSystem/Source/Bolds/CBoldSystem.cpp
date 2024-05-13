@@ -46,6 +46,8 @@ void CBoldSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int
 			m_transforms.push(GET_ENTITY_DATA(entity, CWorldTransformData));
 		}
 	}
+
+	m_neighbor.clear();
 }
 
 void CBoldSystem::init(CEntityManager* entityManager)
@@ -59,11 +61,26 @@ void CBoldSystem::update(CEntityManager* entityManager)
 	CWorldTransformData** transforms = m_transforms.pointer();
 	int numEntity = m_bolds.count();
 
+	neighbor(bolds, transforms, numEntity);
 	separation(bolds, transforms, numEntity);
 	alignment(bolds, transforms, numEntity);
 	cohesion(bolds, transforms, numEntity);
 	borders(bolds, transforms, numEntity);
 	updateTransform(bolds, transforms, numEntity);
+}
+
+void CBoldSystem::neighbor(CBoldData** bolds, CWorldTransformData** transforms, int numEntity)
+{
+	m_neighbor.add(bolds, numEntity);
+
+	CBoldData* bold;
+	for (int i = 0; i < numEntity; i++)
+	{
+		bold = bolds[i];
+		bold->Neighbor.reset();
+
+		m_neighbor.queryNeighbor(bold->Location, bold->Neighbor);
+	}
 }
 
 void CBoldSystem::separation(CBoldData** bolds, CWorldTransformData** transforms, int numEntity)
@@ -77,19 +94,26 @@ void CBoldSystem::separation(CBoldData** bolds, CWorldTransformData** transforms
 	float timestepSec = getTimeStep() * 0.001f;
 	float weight = 2.5f;
 
+	CBoldData** neighbor;
+	CBoldData* boldI;
+	CBoldData* boldJ;
+	int numNeighbor;
+
 	for (int i = 0; i < numEntity; i++)
 	{
-		CBoldData* boldI = bolds[i];
+		boldI = bolds[i];
 
 		target.set(0.0f, 0.0f, 0.0f);
 		count = 0;
 
-		for (int j = 0; j < numEntity; j++)
-		{
-			if (i == j)
-				continue;
+		neighbor = boldI->Neighbor.pointer();
+		numNeighbor = boldI->Neighbor.count();
 
-			CBoldData* boldJ = bolds[j];
+		for (int j = 0; j < numNeighbor; j++)
+		{
+			boldJ = neighbor[j];
+			if (boldI == boldJ)
+				continue;
 
 			diff = boldI->Location - boldJ->Location;
 
@@ -135,21 +159,28 @@ void CBoldSystem::alignment(CBoldData** bolds, CWorldTransformData** transforms,
 	core::vector3df target, steer, diff;
 	int count = 0;
 	float timestepSec = getTimeStep() * 0.001f;
-	float weight = 0.2f;
+	float weight = 0.3f;
+
+	CBoldData** neighbor;
+	CBoldData* boldI;
+	CBoldData* boldJ;
+	int numNeighbor;
 
 	for (int i = 0; i < numEntity; i++)
 	{
-		CBoldData* boldI = bolds[i];
+		boldI = bolds[i];
 
 		target.set(0.0f, 0.0f, 0.0f);
 		count = 0;
 
-		for (int j = 0; j < numEntity; j++)
-		{
-			if (i == j)
-				continue;
+		neighbor = boldI->Neighbor.pointer();
+		numNeighbor = boldI->Neighbor.count();
 
-			CBoldData* boldJ = bolds[j];
+		for (int j = 0; j < numNeighbor; j++)
+		{
+			boldJ = neighbor[j];
+			if (boldI == boldJ)
+				continue;
 
 			diff = boldI->Location - boldJ->Location;
 
@@ -195,19 +226,26 @@ void CBoldSystem::cohesion(CBoldData** bolds, CWorldTransformData** transforms, 
 	float timestepSec = getTimeStep() * 0.001f;
 	float weight = 0.2f;
 
+	CBoldData** neighbor;
+	CBoldData* boldI;
+	CBoldData* boldJ;
+	int numNeighbor;
+
 	for (int i = 0; i < numEntity; i++)
 	{
-		CBoldData* boldI = bolds[i];
+		boldI = bolds[i];
 
 		target.set(0.0f, 0.0f, 0.0f);
 		count = 0;
 
-		for (int j = 0; j < numEntity; j++)
-		{
-			if (i == j)
-				continue;
+		neighbor = boldI->Neighbor.pointer();
+		numNeighbor = boldI->Neighbor.count();
 
-			CBoldData* boldJ = bolds[j];
+		for (int j = 0; j < numNeighbor; j++)
+		{
+			boldJ = neighbor[j];
+			if (boldI == boldJ)
+				continue;
 
 			diff = boldI->Location - boldJ->Location;
 
@@ -246,10 +284,11 @@ void CBoldSystem::borders(CBoldData** bolds, CWorldTransformData** transforms, i
 {
 	// That will turn when near the border
 	core::vector3df center, steer;
+	CBoldData* bold;
 
 	for (int i = 0; i < numEntity; i++)
 	{
-		CBoldData* bold = bolds[i];
+		bold = bolds[i];
 		steer.set(0.0f, 0.0f, 0.0f);
 
 		if (bold->Location.X < m_minX + m_margin ||
@@ -274,10 +313,15 @@ void CBoldSystem::updateTransform(CBoldData** bolds, CWorldTransformData** trans
 
 	float timestepSec = getTimeStep() * 0.001f;
 
+	float speed;
+	CBoldData* bold;
+	CWorldTransformData* transform;
+	f32* matData;
+
 	for (int i = 0; i < numEntity; i++)
 	{
-		CBoldData* bold = bolds[i];
-		CWorldTransformData* transform = transforms[i];
+		bold = bolds[i];
+		transform = transforms[i];
 
 		// update velocity
 		bold->Velocity += bold->Acceleration;
@@ -291,7 +335,7 @@ void CBoldSystem::updateTransform(CBoldData** bolds, CWorldTransformData** trans
 		right = up.crossProduct(bold->Front);
 		right.normalize();
 
-		float speed = bold->MaxSpeed * timestepSec;
+		speed = bold->MaxSpeed * timestepSec;
 		if (bold->Velocity.getLengthSQ() > speed * speed)
 			bold->Velocity = bold->Front * speed;
 
@@ -310,7 +354,7 @@ void CBoldSystem::updateTransform(CBoldData** bolds, CWorldTransformData** trans
 		bold->Acceleration.set(0.0f, 0.0f, 0.0f);
 
 		// apply to transform
-		f32* matData = transform->Relative.pointer();
+		matData = transform->Relative.pointer();
 		matData[0] = right.X;
 		matData[1] = right.Y;
 		matData[2] = right.Z;
