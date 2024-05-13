@@ -4,21 +4,22 @@
 #include "Transform/CWorldTransformSystem.h"
 #include "GameObject/CGameObject.h"
 #include "Scene/CScene.h"
+#include "Control/CTouchManager.h"
 
 namespace Skylicht
 {
 	C3rdCamera::C3rdCamera() :
+		m_touchId(-1),
 		m_camera(NULL),
 		m_rotateSpeed(16.0f),
 		m_followEntity(NULL),
 		m_isFollowPosition(true),
-		m_camPan(0.001f),
+		m_camPan(0.1f),
 		m_camTilt(-20.0f),
 		m_targetDistance(3.0f),
 		m_leftMousePress(false)
 	{
 		m_followPosition.set(0.0f, 1.8f, 0.0f);
-		m_cursorControl = getIrrlichtDevice()->getCursorControl();
 	}
 
 	C3rdCamera::~C3rdCamera()
@@ -45,8 +46,7 @@ namespace Skylicht
 
 	void C3rdCamera::lateUpdate()
 	{
-		CTransformEuler* transform = m_gameObject->getTransformEuler();
-		if (m_camera == NULL || transform == NULL)
+		if (m_camera == NULL)
 			return;
 
 		f32 timeDiff = getTimeStep();
@@ -78,13 +78,14 @@ namespace Skylicht
 			target = world->World.getTranslation();
 		}
 
+		target += m_targetOffset;
+
 		core::vector3df camLocation;
 		camLocation.X = target.X + posVector.X * m_targetDistance;
 		camLocation.Y = target.Y + posVector.Y * m_targetDistance;
 		camLocation.Z = target.Z + posVector.Z * m_targetDistance;
 
 		// need call recalculateViewMatrix because we update camera in LateUpdate
-		transform->setPosition(camLocation);
 		m_camera->lookAt(camLocation, target, Transform::Oy);
 		m_camera->recalculateViewMatrix();
 	}
@@ -108,8 +109,7 @@ namespace Skylicht
 
 		m_camTilt = core::clamp(m_camTilt, -MaxVerticalAngle, MaxVerticalAngle);
 
-		m_centerCursor = m_cursorControl->getRelativePosition();
-		m_cursorPos = m_centerCursor;
+		m_centerCursor = m_cursorPos;
 	}
 
 	bool C3rdCamera::OnEvent(const SEvent& evt)
@@ -120,11 +120,37 @@ namespace Skylicht
 			break;
 
 		case EET_MOUSE_INPUT_EVENT:
+		{
+			if (m_touchId != -1 && m_touchId != evt.MouseInput.ID)
+			{
+				// if this is the touch id (multitouch), we skip
+				return false;
+			}
+
+			// if this touch is touch on control
+			if (CTouchManager::getInstance()->getTouchIdentify(evt.MouseInput.ID) != CTouchIdentify::Nothing)
+			{
+				// need release the touch
+				if (m_touchId == evt.MouseInput.ID)
+				{
+					m_leftMousePress = false;
+					m_touchId = -1;
+				}
+				return false;
+			}
+
+			core::dimension2du screenSize = getVideoDriver()->getScreenSize();
+			int screenW = screenSize.Width;
+			int screenH = screenSize.Height;
+
+			float x = (float)evt.MouseInput.X / (float)screenW;
+			float y = (float)evt.MouseInput.Y / (float)screenH;
+
 			if (evt.MouseInput.Event == EMIE_LMOUSE_PRESSED_DOWN)
 			{
 				m_leftMousePress = true;
 
-				m_centerCursor = m_cursorControl->getRelativePosition();
+				m_centerCursor = core::position2df(x, y);
 				m_cursorPos = m_centerCursor;
 			}
 			else if (evt.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
@@ -135,7 +161,7 @@ namespace Skylicht
 			{
 				if (m_leftMousePress)
 				{
-					m_cursorPos = m_cursorControl->getRelativePosition();
+					m_cursorPos = core::position2df(x, y);
 					return true;
 				}
 			}
@@ -144,7 +170,7 @@ namespace Skylicht
 
 			}
 			break;
-
+		}
 		default:
 			break;
 		}

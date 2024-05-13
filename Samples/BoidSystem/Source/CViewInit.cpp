@@ -280,19 +280,18 @@ void CViewInit::initScene()
 
 	if (modelPrefab1 != NULL && modelPrefab2 != NULL)
 	{
-		// create cat
-		CGameObject* rifle = zone->createEmptyObject();
-		rifle->setName("Rifle");
+		CGameObject* character = zone->createEmptyObject();
+		character->setName("Rifle");
 
 		// render mesh & init material
-		CRenderMesh* rifleRenderer = rifle->addComponent<CRenderMesh>();
-		rifleRenderer->initFromPrefab(modelPrefab1);
+		CRenderMesh* characterRenderer = character->addComponent<CRenderMesh>();
+		characterRenderer->initFromPrefab(modelPrefab1);
 
 		ArrayMaterial materials = materialManager->loadMaterial("SampleBoids/RifleMan/RifleMan.mat", true, searchTextureFolders);
-		rifleRenderer->initMaterial(materials);
+		characterRenderer->initMaterial(materials);
 
 		// init animation
-		CAnimationController* animController = rifle->addComponent<CAnimationController>();
+		CAnimationController* animController = character->addComponent<CAnimationController>();
 		CSkeleton* skeleton = animController->createSkeleton();
 
 		// get bone map transform
@@ -342,7 +341,7 @@ void CViewInit::initScene()
 			clipId++;
 		}
 
-		rifle->remove();
+		character->remove();
 
 
 		// create gpu anim character
@@ -441,7 +440,7 @@ void CViewInit::initScene()
 		// that let CBoldSystem will update before CWorldTransformSystem
 		int worldTransformOrder = entityManager->getSystem<CWorldTransformSystem>()->getSystemOrder();
 		boldSystem->setSystemOrder(worldTransformOrder - 1);
-		entityManager->notifyChangedSystemOrder();
+		entityManager->notifySystemOrderChanged();
 
 		// add bold system (that will update animation clip)
 		CBoldAnimationSystem* animSystem = entityManager->addSystem<CBoldAnimationSystem>();
@@ -575,7 +574,7 @@ void CViewInit::onUpdate()
 
 		m_initState = CViewInit::InitScene;
 #endif
-		}
+	}
 	break;
 	case CViewInit::InitScene:
 	{
@@ -598,7 +597,7 @@ void CViewInit::onUpdate()
 	}
 	break;
 	}
-	}
+}
 
 void CViewInit::onRender()
 {
