@@ -179,6 +179,7 @@ namespace Skylicht
 			// set bone matrix to shader callback
 			CSkinnedMesh* mesh = (CSkinnedMesh*)renderMeshData->getMesh();
 			shaderManager->BoneMatrix = mesh->SkinningMatrix;
+			shaderManager->BoneCount = mesh->Joints.size();
 
 			// software blendshape
 			if (renderMeshData->isSoftwareBlendShape())
@@ -241,6 +242,7 @@ namespace Skylicht
 			// set bone matrix to shader callback
 			CSkinnedMesh* mesh = (CSkinnedMesh*)renderMeshData->getMesh();
 			shaderManager->BoneMatrix = mesh->SkinningMatrix;
+			shaderManager->BoneCount = mesh->Joints.size();
 
 			// set transform
 			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);

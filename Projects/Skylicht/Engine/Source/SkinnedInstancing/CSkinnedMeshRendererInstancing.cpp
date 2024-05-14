@@ -124,8 +124,11 @@ namespace Skylicht
 				if (data)
 				{
 					// reset share batch state
-					if (data->ShareData)
-						*data->ShareData = 0;
+					if (data->ShareDataTransform)
+						*data->ShareDataTransform = 0;
+
+					if (data->ShareDataMaterials)
+						*data->ShareDataMaterials = 0;
 
 					SMeshInstancingGroup* group = data->InstancingGroup;
 					if (group == NULL)
@@ -165,15 +168,28 @@ namespace Skylicht
 			CEntity** entities = group->Entities.pointer();
 
 			CMesh* mesh = group->RenderMesh->getMesh();
-			CMaterial* m = NULL;
-
-			CSkinnedMesh* skinnedMesh = dynamic_cast<CSkinnedMesh*>(mesh);
-			u32 jointCount = skinnedMesh->Joints.size();
 			u32 meshIndex = group->MeshIndex;
+
+			CMaterial* m = NULL;
 
 			for (u32 i = 0, n = data->RenderMeshBuffers.size(); i < n; i++)
 			{
 				group->Materials.reset();
+
+				bool batchMaterial = true;
+				if (data->UseShareMaterialsBuffer)
+				{
+					if (*data->ShareDataMaterials == 0)
+						*data->ShareDataMaterials = 1;
+					else
+					{
+						batchMaterial = false;
+
+						// just get 1 material for group
+						// no need full batch material
+						count = 1;
+					}
+				}
 
 				for (u32 j = 0; j < count; j++)
 				{
@@ -182,7 +198,8 @@ namespace Skylicht
 
 					// clone the material for many instance
 					// that will have bugs if the mesh have more than 1 material
-					if (meshIndex >= (int)skinnedIntance->Materials.size() || skinnedIntance->Materials[meshIndex] == NULL)
+					if (skinnedIntance->Materials.size() <= meshIndex ||
+						skinnedIntance->Materials[meshIndex] == NULL)
 					{
 						m = mesh->Materials[i]->clone();
 
@@ -203,9 +220,9 @@ namespace Skylicht
 					// set animation to shader params
 					SVec4& p = m->getShaderParams().getParam(0);
 					p.X = (float)(skeletons[0].Frame);
-					p.Y = (float)(skeletons[0].ClipId * jointCount);
+					p.Y = (float)(skeletons[0].ClipId);
 					p.Z = (float)(skeletons[1].Frame);
-					p.W = (float)(skeletons[1].ClipId * jointCount);
+					p.W = (float)(skeletons[1].ClipId);
 
 					// set blending to shader params
 					SVec4& b = m->getShaderParams().getParam(5);
@@ -214,28 +231,28 @@ namespace Skylicht
 					group->Materials.push(m);
 				}
 
-				// batching transform & material data to buffer
-				data->InstancingShader[i]->batchIntancing(
-					data->InstancingBuffer[i],
-					group->Materials.pointer(),
-					group->Entities.pointer(),
-					count
-				);
+				if (batchMaterial)
+				{
+					// see function CRenderMeshInstancing::applyShareMaterialBuffer
+					// batching transform & material data to buffer
+					data->InstancingShader[i]->batchIntancing(
+						data->MaterialBuffer[i],
+						group->Materials.pointer(),
+						group->Entities.pointer(),
+						count
+					);
+				}
 			}
 
 			bool batchTransform = true;
-			if (data->UseShareVertexBuffer)
+			if (data->UseShareTransformBuffer)
 			{
-				if (*data->ShareData == 0)
-				{
-					// batch only 1 time in first group, it will reset 0 on onQuery
-					*data->ShareData = 1;
-				}
+				// see function CRenderMeshInstancing::applyShareTransformBuffer
+				// batch only 1 time in first group, it will reset 0 on onQuery
+				if (*data->ShareDataTransform == 0)
+					*data->ShareDataTransform = 1;
 				else
-				{
-					// optimized, that mean we use the share vb that batched
 					batchTransform = false;
-				}
 			}
 
 			if (batchTransform)
@@ -268,6 +285,7 @@ namespace Skylicht
 		driver->setTransform(video::ETS_WORLD, core::IdentityMatrix);
 
 		CEntity** allEntities = entityManager->getEntities();
+		CShaderManager* shaderMgr = CShaderManager::getInstance();
 
 		for (auto& it : m_instancingGroups)
 		{
@@ -278,8 +296,12 @@ namespace Skylicht
 			if (count == 0)
 				continue;
 
-			CMaterial** materials = group->Materials.pointer();
+			// apply bone count
+			CMesh* mesh = group->RenderMesh->getMesh();
+			CSkinnedMesh* skinnedMesh = dynamic_cast<CSkinnedMesh*>(mesh);
+			shaderMgr->BoneCount = skinnedMesh->Joints.size();
 
+			// apply bone transform texture
 			CShaderTransformTexture::setTexture(group->TransformTexture);
 
 			CEntity* rootEntity = allEntities[group->RootEntityIndex];
@@ -290,13 +312,16 @@ namespace Skylicht
 				CShaderSH::setSH9(indirectLighting->SH);
 			}
 
+			int materialCount = group->Materials.count();
+			CMaterial** materials = group->Materials.pointer();
+
 			u32 numMeshBuffer = data->RenderMeshBuffers.size();
 			for (u32 i = 0; i < numMeshBuffer; i++)
 			{
-				if (materials[i] == NULL)
+				if (materialCount == 0 || materials[0] == NULL)
 					continue;
 
-				CShader* shader = materials[i]->getShader();
+				CShader* shader = materials[0]->getShader();
 
 				if (shader->isOpaque() == isRenderTransparent)
 				{
@@ -308,7 +333,7 @@ namespace Skylicht
 					continue;
 
 				// apply material
-				CShaderMaterial::setMaterial(materials[i]);
+				CShaderMaterial::setMaterial(materials[0]);
 
 				rp->drawInstancingMeshBuffer(
 					(CMesh*)data->InstancingMesh,

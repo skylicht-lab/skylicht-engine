@@ -151,6 +151,9 @@ void CViewInit::initScene()
 					transform->Relative.setScale(scaleVector);
 				}
 			}
+
+			meshInstancing->applyShareTransformBuffer();
+			meshInstancing->applyShareMaterialBuffer();
 		}
 
 		std::vector<std::string> randomWallMesh;
@@ -170,6 +173,7 @@ void CViewInit::initScene()
 				CRenderMeshInstancing* meshInstancing = border->addComponent<CRenderMeshInstancing>();
 				meshInstancing->initFromPrefab(prefab);
 				meshInstancing->initMaterial(envMaterials);
+
 				meshInstancings.push_back(meshInstancing);
 			}
 		}
@@ -253,6 +257,7 @@ void CViewInit::initScene()
 	}
 	// end init enviroment
 
+
 	// bake clip animation
 	CAnimationManager* animManager = CAnimationManager::getInstance();
 
@@ -277,19 +282,18 @@ void CViewInit::initScene()
 
 	if (modelPrefab1 != NULL && modelPrefab2 != NULL)
 	{
-		// create cat
-		CGameObject* rifle = zone->createEmptyObject();
-		rifle->setName("Rifle");
+		CGameObject* character = zone->createEmptyObject();
+		character->setName("Rifle");
 
 		// render mesh & init material
-		CRenderMesh* rifleRenderer = rifle->addComponent<CRenderMesh>();
-		rifleRenderer->initFromPrefab(modelPrefab1);
+		CRenderMesh* characterRenderer = character->addComponent<CRenderMesh>();
+		characterRenderer->initFromPrefab(modelPrefab1);
 
 		ArrayMaterial materials = materialManager->loadMaterial("SampleBoids/RifleMan/RifleMan.mat", true, searchTextureFolders);
-		rifleRenderer->initMaterial(materials);
+		characterRenderer->initMaterial(materials);
 
 		// init animation
-		CAnimationController* animController = rifle->addComponent<CAnimationController>();
+		CAnimationController* animController = character->addComponent<CAnimationController>();
 		CSkeleton* skeleton = animController->createSkeleton();
 
 		// get bone map transform
@@ -304,7 +308,7 @@ void CViewInit::initScene()
 		int numClip = (int)clips.size();
 
 		// build the matrix animations
-		// 
+		//
 		//  [anim1]   frame0    frame1    frame2    ...
 		//  bone1
 		//  bone2
@@ -339,7 +343,8 @@ void CViewInit::initScene()
 			clipId++;
 		}
 
-		rifle->remove();
+		character->remove();
+
 
 		// create gpu anim character
 		CGameObject* crowd1 = zone->createEmptyObject();
@@ -437,7 +442,7 @@ void CViewInit::initScene()
 		// that let CBoldSystem will update before CWorldTransformSystem
 		int worldTransformOrder = entityManager->getSystem<CWorldTransformSystem>()->getSystemOrder();
 		boldSystem->setSystemOrder(worldTransformOrder - 1);
-		entityManager->notifyChangedSystemOrder();
+		entityManager->notifySystemOrderChanged();
 
 		// add bold system (that will update animation clip)
 		CBoldAnimationSystem* animSystem = entityManager->addSystem<CBoldAnimationSystem>();
@@ -483,8 +488,9 @@ void CViewInit::initCrowd(CGameObject* crowd, CEntityPrefab* modelPrefab, core::
 	crowdSkinnedMesh->initFromPrefab(modelPrefab);
 	crowdSkinnedMesh->initTextureTransform(animationData, w, h, bones);
 
-	// applyShareInstancingBuffer: It may be more optimal memory, but it hasn't been thoroughly tested in many cases
-	crowdSkinnedMesh->applyShareInstancingBuffer();
+	// It may be more optimal memory, but it hasn't been thoroughly tested in many cases
+	crowdSkinnedMesh->applyShareTransformBuffer();
+	crowdSkinnedMesh->applyShareMaterialBuffer();
 
 	// body
 	ArrayMaterial material = CMaterialManager::getInstance()->initDefaultMaterial(modelPrefab);
@@ -513,7 +519,6 @@ void CViewInit::onUpdate()
 		io::IFileSystem* fileSystem = getApplication()->getFileSystem();
 
 		std::vector<std::string> listBundles;
-		listBundles.push_back("Common.zip");
 		listBundles.push_back("SampleBoids.zip");
 		listBundles.push_back("SampleBoidsResource.zip");
 
@@ -553,8 +558,8 @@ void CViewInit::onUpdate()
 				// retry download
 				delete m_getFile;
 				m_getFile = NULL;
-	}
-	}
+			}
+		}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -567,7 +572,7 @@ void CViewInit::onUpdate()
 #else
 			fileSystem->addFileArchive(r, false, false);
 #endif
-}
+		}
 
 		m_initState = CViewInit::InitScene;
 #endif

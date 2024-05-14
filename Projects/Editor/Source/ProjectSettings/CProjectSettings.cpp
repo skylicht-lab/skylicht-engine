@@ -41,7 +41,7 @@ namespace Skylicht
 
 		CProjectSettings::~CProjectSettings()
 		{
-
+			delete m_objectLayer;
 		}
 
 		void CProjectSettings::load()

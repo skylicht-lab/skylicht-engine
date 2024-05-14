@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2024 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -22,29 +22,24 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "IShaderInstancing.h"
-#include "CTBNSGInstancing.h"
-#include "CStandardSGInstancing.h"
-
 namespace Skylicht
 {
-	class SKYLICHT_API CTBNSGInstancing : public IShaderInstancing
+	class SKYLICHT_API CVector
 	{
 	public:
-		CTBNSGInstancing();
 
-		virtual ~CTBNSGInstancing();
+		static core::vector3df lerp(const core::vector3df& a, const core::vector3df& b, float t);
 
-		virtual IVertexBuffer* createInstancingVertexBuffer();
+		static core::vector3df slerp(const core::vector3df& a, const core::vector3df& b, float t);
 
-		virtual IMeshBuffer* createMeshBuffer(video::E_INDEX_TYPE type);
+		static core::vector3df reflect(const core::vector3df& inDirection, const core::vector3df& normal);
 
-		virtual void batchIntancing(
-			IVertexBuffer* vtxBuffer,
-			CMaterial** materials,
-			CEntity** entities,
-			int count);
+		static float angle(const core::vector3df& a, const core::vector3df& b);
+
+		static core::vector3df project(const core::vector3df& vector, const core::vector3df& onNormal);
+
+		static core::vector3df projectOnPlane(const core::vector3df& vector, const core::vector3df& planeNormal);
+
+		static bool isParallel(const core::vector3df& a, const core::vector3df& b);
 	};
 }

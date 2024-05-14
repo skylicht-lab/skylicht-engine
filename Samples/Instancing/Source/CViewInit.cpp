@@ -21,7 +21,8 @@ CViewInit::CViewInit() :
 
 CViewInit::~CViewInit()
 {
-
+	m_guiObject->remove();
+	delete m_font;
 }
 
 io::path CViewInit::getBuiltInPath(const char* name)
@@ -41,14 +42,34 @@ void CViewInit::onInit()
 
 	CGlyphFreetype* freetypeFont = CGlyphFreetype::getInstance();
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
+
+	// init basic gui
+	CZone* zone = CContext::getInstance()->initScene()->createZone();
+	m_guiObject = zone->createEmptyObject();
+	CCanvas* canvas = m_guiObject->addComponent<CCanvas>();
+
+	// load font
+	m_font = new CGlyphFont();
+	m_font->setFont("Segoe UI Light", 25);
+
+	// create text
+	m_textInfo = canvas->createText(m_font);
+	m_textInfo->setTextAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
+	m_textInfo->setText(L"Init assets");
+
+	// create gui camera
+	CGameObject* guiCameraObject = zone->createEmptyObject();
+	CCamera* guiCamera = guiCameraObject->addComponent<CCamera>();
+	guiCamera->setProjectionType(CCamera::OrthoUI);
+	CContext::getInstance()->setGUICamera(guiCamera);
 }
 
 void CViewInit::initScene()
 {
 	CBaseApp* app = getApplication();
 
-	CScene* scene = CContext::getInstance()->initScene();
-	CZone* zone = scene->createZone();
+	CScene* scene = CContext::getInstance()->getScene();
+	CZone* zone = scene->getZone(0);
 
 	// camera
 	CGameObject* camObj = zone->createEmptyObject();
@@ -59,12 +80,6 @@ void CViewInit::initScene()
 	CCamera* camera = camObj->getComponent<CCamera>();
 	camera->setPosition(core::vector3df(10.0f, 5.0f, 10.0f));
 	camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
-
-	// gui camera
-	CGameObject* guiCameraObj = zone->createEmptyObject();
-	guiCameraObj->addComponent<CCamera>();
-	CCamera* guiCamera = guiCameraObj->getComponent<CCamera>();
-	guiCamera->setProjectionType(CCamera::OrthoUI);
 
 	// sky
 	ITexture* skyDomeTexture = CTextureManager::getInstance()->getTexture("Common/Textures/Sky/MonValley.png");
@@ -186,8 +201,7 @@ void CViewInit::initScene()
 	context->getPostProcessorPipeline()->enableAutoExposure(false);
 	context->getPostProcessorPipeline()->setManualExposure(1.0f);
 	context->setActiveZone(zone);
-	context->setActiveCamera(camera);
-	context->setGUICamera(guiCamera);
+	context->setActiveCamera(camera);	
 	context->setDirectionalLight(directionalLight);
 }
 
@@ -226,6 +240,10 @@ void CViewInit::onUpdate()
 		}
 		else
 		{
+			char log[512];
+			sprintf(log, "Download asset: %s - %d%%", filename, m_getFile->getPercent());
+			m_textInfo->setText(log);
+
 			if (m_getFile->getState() == CGetFileURL::Finish)
 			{
 				// [bundles].zip
@@ -289,5 +307,9 @@ void CViewInit::onUpdate()
 
 void CViewInit::onRender()
 {
-
+	if (m_initState != Finished)
+	{
+		CCamera* guiCamera = CContext::getInstance()->getGUICamera();
+		CGraphics2D::getInstance()->render(guiCamera);
+	}
 }

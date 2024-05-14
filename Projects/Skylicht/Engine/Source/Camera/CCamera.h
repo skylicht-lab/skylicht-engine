@@ -94,6 +94,8 @@ namespace Skylicht
 
 		void setPosition(const core::vector3df& position);
 
+		core::vector3df getPosition();
+
 		void lookAt(const core::vector3df& position, const core::vector3df& target, const core::vector3df& up);
 
 		void lookAt(const core::vector3df& target, const core::vector3df& up);

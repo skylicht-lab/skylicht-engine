@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace SkylichtSystem
 {
-	CSTDThread::CSTDThread(IThreadCallback *callback) :
+	CSTDThread::CSTDThread(IThreadCallback* callback) :
 		IThread(callback),
 		m_run(false)
 	{
@@ -39,6 +39,8 @@ namespace SkylichtSystem
 	CSTDThread::~CSTDThread()
 	{
 		stop();
+
+		delete m_thread;
 	}
 
 	void CSTDThread::update()
@@ -81,13 +83,13 @@ namespace SkylichtSystem
 			m_loopMutex.lock();
 			m_run = false;
 			m_loopMutex.unlock();
-			
+
 			m_thread->join();
 			printf("CSTDThread::stop Thread is stop!\n");
 		}
 	}
 
-	void* CSTDThread::run(void *param)
+	void* CSTDThread::run(void* param)
 	{
 		CSTDThread* p = reinterpret_cast<CSTDThread*>(param);
 		p->update();

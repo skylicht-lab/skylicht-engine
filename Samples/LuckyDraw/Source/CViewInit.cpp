@@ -94,7 +94,7 @@ void CViewInit::loadConfig()
 
 	if (xlsText.open("Luckydraw/text.xml") == true)
 	{
-		CLocalize::createGetInstance()->init(&xlsText);
+		CLocalize::getInstance()->init(&xlsText);
 		CLocalize::getInstance()->setLanguage(ELanguage::EN);
 	}
 }
