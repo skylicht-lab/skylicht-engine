@@ -519,7 +519,6 @@ void CViewInit::onUpdate()
 		io::IFileSystem* fileSystem = getApplication()->getFileSystem();
 
 		std::vector<std::string> listBundles;
-		listBundles.push_back("Common.zip");
 		listBundles.push_back("SampleBoids.zip");
 		listBundles.push_back("SampleBoidsResource.zip");
 

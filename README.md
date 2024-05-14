@@ -91,6 +91,23 @@ C:\skylicht-engine\Assets>python BuildShader.py
 C:\skylicht-engine\Assets>cd ..
 ```
 
+- You can optimize shader for rendering on IOS, Android by recompiling the shader with HARD_SHADOW.
+
+```C++
+// Assets\BuiltIn\Shader\Shadow\GLSL\LibShadow.glsl
+
+#define HARD_SHADOW
+// #define PCF_NOISE
+```
+
+And re-build the shaders
+```Shell
+# Build shader script
+C:\skylicht-engine>cd Assets
+C:\skylicht-engine\Assets>python BuildShader.py
+C:\skylicht-engine\Assets>cd ..
+```
+
 # Add your code to Project
 
 ## Add source code
