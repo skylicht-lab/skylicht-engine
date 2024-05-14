@@ -34,7 +34,7 @@ cbuffer cbPerObject
 {
 	float4x4 uVpMatrix;
 	float4 uCameraPosition;
-	float4 uAnimation;
+	float2 uBoneCount;
 	float2 uTransformTextureSize;
 };
 
@@ -51,7 +51,7 @@ VS_OUTPUT main(VS_INPUT input)
 	float4 skinNormal;
 
 	float2 boneLocation = input.uBoneLocation.xy;
-	float boneLocationY = input.uBoneLocation.y;
+	float boneLocationY = input.uBoneLocation.y * uBoneCount.x;
 
 	// bone 0
 	boneLocation.y = boneLocationY + input.blendIndex[0];

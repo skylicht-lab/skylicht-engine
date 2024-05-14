@@ -208,11 +208,9 @@ namespace Skylicht
 	IMeshBuffer* IShaderInstancing::createLinkMeshBuffer(IMeshBuffer* smb)
 	{
 		video::E_INDEX_TYPE vtt = smb->getIndexBuffer()->getType();
-
-		// remove buffer
 		IMeshBuffer* dmb = createMeshBuffer(vtt);
 
-		// link the buffer
+		// link vertex & index buffer
 		dmb->setVertexBuffer(smb->getVertexBuffer(0));
 		dmb->setIndexBuffer(smb->getIndexBuffer());
 

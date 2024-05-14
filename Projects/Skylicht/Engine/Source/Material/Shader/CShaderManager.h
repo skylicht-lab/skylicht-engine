@@ -54,6 +54,7 @@ namespace Skylicht
 		video::SVec4 ShaderVec4[10];
 
 		f32* BoneMatrix;
+		u32 BoneCount;
 		float LightmapIndex;
 
 	public:

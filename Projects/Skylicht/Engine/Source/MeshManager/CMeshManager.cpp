@@ -63,9 +63,9 @@ namespace Skylicht
 			for (u32 i = 0; i < n; i++)
 				data->MeshBuffers[i]->drop();
 
-			n = data->InstancingBuffer.size();
+			n = data->MaterialBuffer.size();
 			for (u32 i = 0; i < n; i++)
-				data->InstancingBuffer[i]->drop();
+				data->MaterialBuffer[i]->drop();
 
 			data->TransformBuffer->drop();
 			data->IndirectLightingBuffer->drop();
@@ -241,11 +241,11 @@ namespace Skylicht
 
 			IShaderInstancing* shaderInstancing = material->getShader()->getInstancing();
 
-			IVertexBuffer* instancingBuffer = shaderInstancing->createInstancingVertexBuffer();
-			instancingBuffer->setHardwareMappingHint(EHM_STREAM);
+			IVertexBuffer* materialBuffer = shaderInstancing->createInstancingVertexBuffer();
+			materialBuffer->setHardwareMappingHint(EHM_STREAM);
 
 			data->InstancingShader.push_back(shaderInstancing);
-			data->InstancingBuffer.push_back(instancingBuffer);
+			data->MaterialBuffer.push_back(materialBuffer);
 
 			IMeshBuffer* renderMeshBuffer = shaderInstancing->createLinkMeshBuffer(mb);
 			IMeshBuffer* lightingMeshBuffer = shaderInstancing->createLinkMeshBuffer(mb);
@@ -272,7 +272,7 @@ namespace Skylicht
 					mesh->Materials[i]
 				);
 
-				shaderInstancing->applyInstancing(renderMeshBuffer, instancingBuffer, transformBuffer);
+				shaderInstancing->applyInstancing(renderMeshBuffer, materialBuffer, transformBuffer);
 
 				// save to render this mesh buffer
 				data->RenderMeshBuffers.push_back(renderMeshBuffer);
@@ -326,11 +326,11 @@ namespace Skylicht
 
 			mb->grab();
 
-			IVertexBuffer* instancingBuffer = shaderInstancing->createInstancingVertexBuffer();
-			instancingBuffer->setHardwareMappingHint(EHM_STREAM);
+			IVertexBuffer* materialBuffer = shaderInstancing->createInstancingVertexBuffer();
+			materialBuffer->setHardwareMappingHint(EHM_STREAM);
 
 			data->InstancingShader.push_back(shaderInstancing);
-			data->InstancingBuffer.push_back(instancingBuffer);
+			data->MaterialBuffer.push_back(materialBuffer);
 
 			IMeshBuffer* renderMeshBuffer = shaderInstancing->createLinkMeshBuffer(mb);
 			IMeshBuffer* lightingMeshBuffer = shaderInstancing->createLinkMeshBuffer(mb);
@@ -357,7 +357,7 @@ namespace Skylicht
 					mesh->Materials[i]
 				);
 
-				shaderInstancing->applyInstancing(renderMeshBuffer, instancingBuffer, transformBuffer);
+				shaderInstancing->applyInstancing(renderMeshBuffer, materialBuffer, transformBuffer);
 
 				// save to render this mesh buffer
 				data->RenderMeshBuffers.push_back(renderMeshBuffer);
@@ -417,9 +417,9 @@ namespace Skylicht
 		return true;
 	}
 
-	void CMeshManager::changeMeshInstancingBuffer(SMeshInstancing* data, IVertexBuffer* transform, IVertexBuffer* lighting)
+	void CMeshManager::changeInstancingTransformBuffer(SMeshInstancing* data, IVertexBuffer* transform, IVertexBuffer* lighting)
 	{
-		data->UseShareVertexBuffer = true;
+		data->UseShareTransformBuffer = true;
 
 		// drop old transform
 		data->TransformBuffer->drop();
@@ -443,11 +443,34 @@ namespace Skylicht
 			IMeshBuffer* renderMeshBuffer = data->RenderMeshBuffers[i];
 			IMeshBuffer* lightingMeshBuffer = data->RenderLightMeshBuffers[i];
 
-			IVertexBuffer* instancingBuffer = data->InstancingBuffer[i];
+			IVertexBuffer* instancingBuffer = data->MaterialBuffer[i];
 
 			// bind instancing vb to mesh buffer
 			shaderInstancing->applyInstancing(renderMeshBuffer, instancingBuffer, transform);
 			shaderInstancing->applyInstancingForRenderLighting(lightingMeshBuffer, lighting, transform);
+		}
+	}
+
+	void CMeshManager::changeInstancingMaterialBuffer(SMeshInstancing* data, IVertexBuffer* materials)
+	{
+		data->UseShareMaterialsBuffer = true;
+
+		u32 numMeshBuffers = data->MeshBuffers.size();
+		for (u32 i = 0; i < numMeshBuffers; i++)
+		{
+			// shader instancing
+			IShaderInstancing* shaderInstancing = data->InstancingShader[i];
+
+			// drop old material
+			if (data->MaterialBuffer[i])
+			{
+				data->MaterialBuffer[i]->drop();
+				data->MaterialBuffer[i] = materials;
+				data->MaterialBuffer[i]->grab();
+			}
+
+			// bind instancing vb to mesh buffer
+			shaderInstancing->applyInstancing(data->RenderMeshBuffers[i], materials, data->TransformBuffer);
 		}
 	}
 }

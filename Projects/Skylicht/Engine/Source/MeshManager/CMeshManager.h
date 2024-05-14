@@ -36,7 +36,9 @@ namespace Skylicht
 
 		SMeshInstancing* createGetInstancingMesh(CMesh* mesh, IShaderInstancing* shaderInstancing);
 
-		void changeMeshInstancingBuffer(SMeshInstancing* mesh, IVertexBuffer* transform, IVertexBuffer* lighting);
+		void changeInstancingTransformBuffer(SMeshInstancing* mesh, IVertexBuffer* transform, IVertexBuffer* lighting);
+
+		void changeInstancingMaterialBuffer(SMeshInstancing* mesh, IVertexBuffer* materials);
 
 	protected:
 
