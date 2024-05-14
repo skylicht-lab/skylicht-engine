@@ -233,6 +233,7 @@ namespace Skylicht
 
 				if (batchMaterial)
 				{
+					// see function CRenderMeshInstancing::applyShareMaterialBuffer
 					// batching transform & material data to buffer
 					data->InstancingShader[i]->batchIntancing(
 						data->MaterialBuffer[i],
@@ -246,6 +247,7 @@ namespace Skylicht
 			bool batchTransform = true;
 			if (data->UseShareTransformBuffer)
 			{
+				// see function CRenderMeshInstancing::applyShareTransformBuffer
 				// batch only 1 time in first group, it will reset 0 on onQuery
 				if (*data->ShareDataTransform == 0)
 					*data->ShareDataTransform = 1;

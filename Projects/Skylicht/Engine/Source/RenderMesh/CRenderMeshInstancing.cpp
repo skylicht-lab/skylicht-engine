@@ -348,6 +348,12 @@ namespace Skylicht
 				meshMgr->changeInstancingTransformBuffer(data, m_instancingTransform, m_instancingLighting);
 				data->ShareDataTransform = &m_shareDataTransform;
 			}
+			else
+			{
+				char logError[1024];
+				sprintf(logError, "[CRenderMeshInstancing::applyShareTransformBuffer] renderer not yet init Instancing");
+				os::Printer::log(logError);
+			}
 		}
 	}
 
@@ -375,6 +381,14 @@ namespace Skylicht
 					}
 				}
 			}
+		}
+
+		if (baseInstancing == NULL)
+		{
+			char logError[1024];
+			sprintf(logError, "[CRenderMeshInstancing::applyShareMaterialBuffer] renderer not yet init Instancing");
+			os::Printer::log(logError);
+			return;
 		}
 
 		if (!m_instancingMaterials)
@@ -416,9 +430,13 @@ namespace Skylicht
 		entity->addData<CCullingData>();
 		entity->addData<CVisibleData>();
 
-		// set bbox
+		// apply instancing at base
+		if (!baseRenderMesh->isInstancing())
+			baseRenderMesh->setInstancing(true);
+
 		CMesh* mesh = baseRenderMesh->getMesh();
 
+		// set bbox
 		CCullingBBoxData* cullingBBox = entity->addData<CCullingBBoxData>();
 		cullingBBox->BBox = mesh->getBoundingBox();
 
