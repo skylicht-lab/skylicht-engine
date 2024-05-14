@@ -217,9 +217,9 @@ void CViewInit::initScene()
 		crowdSkinnedMesh->initMaterial(material);
 
 		// spawn instancing
-		for (int i = -5; i < 5; i++)
+		for (int i = -4; i < 4; i++)
 		{
-			for (int j = -5; j < 5; j++)
+			for (int j = -4; j < 4; j++)
 			{
 				CEntity* entity = crowdSkinnedMesh->spawn();
 
