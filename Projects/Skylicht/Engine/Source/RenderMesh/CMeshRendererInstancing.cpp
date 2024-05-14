@@ -139,7 +139,7 @@ namespace Skylicht
 
 				// batching transform & material data to buffer
 				data->InstancingShader[i]->batchIntancing(
-					data->InstancingBuffer[i],
+					data->MaterialBuffer[i],
 					group->Materials.pointer(),
 					group->Entities.pointer(),
 					count

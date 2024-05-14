@@ -14,7 +14,7 @@ layout(location = 11) in vec2 uBlendAnimation;
 layout(location = 12) in mat4 uWorldMatrix;
 uniform sampler2D uTransformTexture;
 uniform mat4 uVPMatrix;
-uniform vec4 uAnimation;
+uniform vec2 uBoneCount;
 uniform vec2 uTransformTextureSize;
 out vec4 varPos;
 out vec4 varWorldPos;
@@ -42,7 +42,7 @@ void main(void)
 {
 	mat4 skinMatrix = mat4(0.0);
 	vec2 boneLocation = uBoneLocation.xy;
-	float boneLocationY = uBoneLocation.y;
+	float boneLocationY = uBoneLocation.y * uBoneCount.x;
 	boneLocation.y = boneLocationY + inBlendIndex[0];
 	skinMatrix = inBlendWeight[0] * getTransformFromTexture(boneLocation);
 	boneLocation.y = boneLocationY + inBlendIndex[1];
@@ -53,7 +53,7 @@ void main(void)
 	skinMatrix += inBlendWeight[3] * getTransformFromTexture(boneLocation);
 	vec4 skinPosition1 = skinMatrix * inPosition;
 	boneLocation = uBoneLocation.zw;
-	boneLocationY = uBoneLocation.w;
+	boneLocationY = uBoneLocation.w * uBoneCount.x;
 	boneLocation.y = boneLocationY + inBlendIndex[0];
 	skinMatrix = inBlendWeight[0] * getTransformFromTexture(boneLocation);
 	boneLocation.y = boneLocationY + inBlendIndex[1];

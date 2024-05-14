@@ -140,10 +140,8 @@ void CViewInit::initScene()
 			meshInstancing->initFromPrefab(groundPrefab);
 			meshInstancing->initMaterial(envMaterials);
 
-			int i = 0;
 			for (int i = minBound; i <= maxBound; i++)
 			{
-				int j = 0;
 				for (int j = minBound; j <= maxBound; j++)
 				{
 					CEntity* entity = meshInstancing->spawn();
@@ -486,8 +484,9 @@ void CViewInit::initCrowd(CGameObject* crowd, CEntityPrefab* modelPrefab, core::
 	crowdSkinnedMesh->initFromPrefab(modelPrefab);
 	crowdSkinnedMesh->initTextureTransform(animationData, w, h, bones);
 
-	// applyShareInstancingBuffer: It may be more optimal memory, but it hasn't been thoroughly tested in many cases
-	crowdSkinnedMesh->applyShareInstancingBuffer();
+	// It may be more optimal memory, but it hasn't been thoroughly tested in many cases
+	crowdSkinnedMesh->applyShareTransformBuffer();
+	crowdSkinnedMesh->applyShareMaterialBuffer();
 
 	// body
 	ArrayMaterial material = CMaterialManager::getInstance()->initDefaultMaterial(modelPrefab);
