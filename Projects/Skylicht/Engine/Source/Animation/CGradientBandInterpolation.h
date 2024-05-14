@@ -55,10 +55,6 @@ namespace Skylicht
 
 		virtual ~CGradientBandInterpolation();
 
-		float getAngle(const core::vector3df& a, const core::vector3df& b);
-
-		core::vector3df project(const core::vector3df& vector, const core::vector3df& onNormal);
-
 		inline core::array<SSample*>& getSamples()
 		{
 			return m_samples;

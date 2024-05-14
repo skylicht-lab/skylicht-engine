@@ -38,6 +38,7 @@ namespace Skylicht
 		m_currentMeshBuffer(NULL),
 		m_currentMatRendering(NULL),
 		BoneMatrix(NULL),
+		BoneCount(0),
 		LightmapIndex(0)
 	{
 	}

@@ -224,7 +224,8 @@ namespace Skylicht
 		{
 			// set shader material
 			CMaterial* material = mesh->Materials[bufferID];
-			shader = material->getShader();
+			if (material)
+				shader = material->getShader();
 
 			CShaderMaterial::setMaterial(material);
 		}

@@ -26,7 +26,7 @@ struct VS_OUTPUT
 cbuffer cbPerObject
 {
 	float4x4 uVPMatrix;
-	float4 uAnimation;
+	float2 uBoneCount;
 	float2 uTransformTextureSize;
 };
 float4x4 getTransformFromTexture(float2 p)
@@ -57,7 +57,7 @@ VS_OUTPUT main(VS_INPUT input)
 	float4 skinPosition1;
 	float4 skinPosition2;
 	float2 boneLocation = input.uBoneLocation.xy;
-	float boneLocationY = input.uBoneLocation.y;
+	float boneLocationY = input.uBoneLocation.y * uBoneCount.x;
 	boneLocation.y = boneLocationY + input.blendIndex[0];
 	skinMatrix = input.blendWeight[0] * getTransformFromTexture(boneLocation);
 	boneLocation.y = boneLocationY + input.blendIndex[1];
@@ -68,7 +68,7 @@ VS_OUTPUT main(VS_INPUT input)
 	skinMatrix += input.blendWeight[3] * getTransformFromTexture(boneLocation);
 	skinPosition1 = mul(input.pos, skinMatrix);
 	boneLocation = input.uBoneLocation.zw;
-	boneLocationY = input.uBoneLocation.w;
+	boneLocationY = input.uBoneLocation.w * uBoneCount.x;
 	boneLocation.y = boneLocationY + input.blendIndex[0];
 	skinMatrix = input.blendWeight[0] * getTransformFromTexture(boneLocation);
 	boneLocation.y = boneLocationY + input.blendIndex[1];

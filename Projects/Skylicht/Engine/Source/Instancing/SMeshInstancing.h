@@ -49,7 +49,7 @@ namespace Skylicht
 		IShaderInstancing* HandleShader;
 
 		// vertex buffer, that batch materials
-		core::array<IVertexBuffer*> InstancingBuffer;
+		core::array<IVertexBuffer*> MaterialBuffer;
 
 		// vertex buffer, that batch transform
 		IVertexBuffer* TransformBuffer;
@@ -70,9 +70,11 @@ namespace Skylicht
 		SMeshInstancingGroup* InstancingGroup;
 
 		// That tell us that, transform and lighting buffer is shared with another Mesh
-		bool UseShareVertexBuffer;
+		bool UseShareTransformBuffer;
+		bool UseShareMaterialsBuffer;
 
-		int* ShareData;
+		int* ShareDataTransform;
+		int* ShareDataMaterials;
 
 		SMeshInstancing()
 		{
@@ -81,8 +83,10 @@ namespace Skylicht
 			TransformBuffer = NULL;
 			IndirectLightingBuffer = NULL;
 			InstancingGroup = NULL;
-			UseShareVertexBuffer = false;
-			ShareData = NULL;
+			UseShareTransformBuffer = false;
+			UseShareMaterialsBuffer = false;
+			ShareDataTransform = NULL;
+			ShareDataMaterials = NULL;
 		}
 
 		~SMeshInstancing()

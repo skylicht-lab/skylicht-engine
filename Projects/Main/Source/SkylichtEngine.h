@@ -66,6 +66,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Camera/CEditorCamera.h"
 #include "Camera/CFpsMoveCamera.h"
 #include "Camera/C3rdCamera.h"
+#include "Camera/CCameraBrain.h"
 
 #include "GameObject/CGameObject.h"
 #include "GameObject/CZone.h"

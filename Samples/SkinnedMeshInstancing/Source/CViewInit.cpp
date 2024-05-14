@@ -202,8 +202,9 @@ void CViewInit::initScene()
 		crowdSkinnedMesh->initFromPrefab(prefab);
 		crowdSkinnedMesh->initTextureTransform(animationData, totalFrames, numBones * numClip, boneMap);
 
-		// applyShareInstancingBuffer: It may be more optimal memory, but it hasn't been thoroughly tested in many cases
-		crowdSkinnedMesh->applyShareInstancingBuffer();
+		// It may be more optimal memory, but it hasn't been thoroughly tested in many cases
+		crowdSkinnedMesh->applyShareTransformBuffer();
+		crowdSkinnedMesh->applyShareMaterialBuffer();
 
 		// body
 		material[1]->changeShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGSkinInstaning.xml");
@@ -216,9 +217,9 @@ void CViewInit::initScene()
 		crowdSkinnedMesh->initMaterial(material);
 
 		// spawn instancing
-		for (int i = -5; i < 5; i++)
+		for (int i = -4; i < 4; i++)
 		{
-			for (int j = -5; j < 5; j++)
+			for (int j = -4; j < 4; j++)
 			{
 				CEntity* entity = crowdSkinnedMesh->spawn();
 

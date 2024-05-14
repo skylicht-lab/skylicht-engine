@@ -15,6 +15,8 @@ namespace Skylicht
 
 		void setEnd(float end);
 
+		virtual void updateValue();
+
 		float getValue();
 	};
 }
