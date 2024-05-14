@@ -52,9 +52,11 @@ namespace Skylicht
 		bool m_loadNormal;
 		bool m_fixInverseNormal;
 
+		IVertexBuffer* m_instancingMaterials;
 		IVertexBuffer* m_instancingTransform;
 		IVertexBuffer* m_instancingLighting;
-		int m_shareData;
+		int m_shareDataTransform;
+		int m_shareDataMaterials;
 
 	public:
 		CRenderMeshInstancing();
@@ -81,7 +83,9 @@ namespace Skylicht
 
 		void initMaterial(ArrayMaterial& materials, bool cloneMaterial = false);
 
-		void applyShareInstancingBuffer();
+		void applyShareTransformBuffer();
+
+		void applyShareMaterialBuffer();
 
 		inline int getMaterialCount()
 		{
