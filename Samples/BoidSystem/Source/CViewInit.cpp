@@ -151,6 +151,9 @@ void CViewInit::initScene()
 					transform->Relative.setScale(scaleVector);
 				}
 			}
+
+			meshInstancing->applyShareTransformBuffer();
+			meshInstancing->applyShareMaterialBuffer();
 		}
 
 		std::vector<std::string> randomWallMesh;
@@ -170,6 +173,7 @@ void CViewInit::initScene()
 				CRenderMeshInstancing* meshInstancing = border->addComponent<CRenderMeshInstancing>();
 				meshInstancing->initFromPrefab(prefab);
 				meshInstancing->initMaterial(envMaterials);
+
 				meshInstancings.push_back(meshInstancing);
 			}
 		}
