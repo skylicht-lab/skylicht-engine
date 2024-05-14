@@ -46,6 +46,14 @@ public:
 		m_neighbor.init(minX, maxX, minZ, maxZ, 2.0f, 30);
 	}
 
+	inline void getBounds(float& minX, float& maxX, float& minZ, float& maxZ)
+	{
+		minX = m_minX;
+		maxX = m_maxX;
+		minZ = m_minZ;
+		maxZ = m_maxZ;
+	}
+
 private:
 
 	void neighbor(CBoldData** bolds, CWorldTransformData** transforms, int numEntity);

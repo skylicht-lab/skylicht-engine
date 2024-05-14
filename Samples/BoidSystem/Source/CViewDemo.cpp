@@ -6,6 +6,11 @@
 #include "CImguiManager.h"
 
 #include "Bolds/CBoldData.h"
+#include "Bolds/CBoldSystem.h"
+#include "Bolds/CBoldAnimationSystem.h"
+
+#include "SkinnedInstancing/CSkinnedInstanceData.h"
+
 #include "Debug/CSceneDebug.h"
 
 CViewDemo::CViewDemo() :
@@ -131,6 +136,101 @@ void CViewDemo::followRandomEntity()
 	}
 }
 
+void CViewDemo::testSpawnEntity(int count)
+{
+	// remove all entity
+	if (m_followRotateCam)
+		m_followRotateCam->setFollowTarget((CEntity*)NULL);
+
+	if (m_followTopCam)
+		m_followTopCam->setFollowTarget((CEntity*)NULL);
+
+	for (CRenderSkinnedInstancing* instancing : m_instancings)
+	{
+		if (instancing)
+			instancing->removeAllEntities();
+	}
+
+	// get bound random
+	CContext* context = CContext::getInstance();
+	CScene* scene = context->getScene();
+	CBoldSystem* boldSystem = scene->getEntityManager()->getSystem<CBoldSystem>();
+	CBoldAnimationSystem* boldAnimationSystem = scene->getEntityManager()->getSystem<CBoldAnimationSystem>();
+
+	// spawn new entity (count)
+	CEntity* entity;
+	CBoldData* bold;
+	CWorldTransformData* transform;
+	CSkinnedInstanceData* skinnedInstance;
+	core::vector3df position;
+	float x, z, time;
+
+	if (boldSystem && boldAnimationSystem)
+	{
+		float minX, maxX, minZ, maxZ;
+		boldSystem->getBounds(minX, maxX, minZ, maxZ);
+
+		float dx = maxX - minX;
+		float dz = maxZ - minZ;
+
+		core::array<SMovingAnimation>& clips = boldAnimationSystem->getClips();
+
+		for (int i = 0; i < count / 2; i++)
+		{
+			// ENTITY MODEL 0
+			x = minX + os::Randomizer::frand() * dx;
+			z = minZ + os::Randomizer::frand() * dz;
+
+			entity = m_instancings[0]->spawn();
+
+			// set animation (random time)
+			skinnedInstance = GET_ENTITY_DATA(entity, CSkinnedInstanceData);
+			time = os::Randomizer::frand();
+			skinnedInstance->setAnimation(0, clips[0].Clip, time * clips[0].Clip->Duration, clips[0].FPS, 0);
+			skinnedInstance->setAnimation(1, clips[1].Clip, time * clips[1].Clip->Duration, clips[1].FPS, 1);
+			skinnedInstance->setAnimationWeight(0, 1.0f);
+			skinnedInstance->setAnimationWeight(1, 0.0f);
+
+			// set position
+			transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+			position.set(x, 0.0f, z);
+
+			transform->Relative.setTranslation(position);
+
+			// add bold data
+			bold = entity->addData<CBoldData>();
+			bold->Location = position;
+
+
+			// ENTITY MODEL 1
+			x = minX + os::Randomizer::frand() * dx;
+			z = minZ + os::Randomizer::frand() * dz;
+
+			entity = m_instancings[1]->spawn();
+
+			// set animation (random time)
+			skinnedInstance = GET_ENTITY_DATA(entity, CSkinnedInstanceData);
+			time = os::Randomizer::frand();
+			skinnedInstance->setAnimation(0, clips[0].Clip, time * clips[0].Clip->Duration, clips[0].FPS, 0);
+			skinnedInstance->setAnimation(1, clips[1].Clip, time * clips[1].Clip->Duration, clips[1].FPS, 1);
+			skinnedInstance->setAnimationWeight(0, 1.0f);
+			skinnedInstance->setAnimationWeight(1, 0.0f);
+
+			// set position
+			transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+			position.set(x, 0.0f, z);
+
+			transform->Relative.setTranslation(position);
+
+			// add bold data
+			bold = entity->addData<CBoldData>();
+			bold->Location = position;
+		}
+	}
+
+	followRandomEntity();
+}
+
 void CViewDemo::onDestroy()
 {
 
@@ -227,7 +327,7 @@ void CViewDemo::onGUI()
 
 	// We specify a default position/size in case there's no data in the .ini file. Typically this isn't required! We only do it to make the Demo applications a little more welcoming.
 	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(300, 150), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(350, 150), ImGuiCond_FirstUseEver);
 
 	if (!ImGui::Begin("Camera", &open, window_flags))
 	{
@@ -238,81 +338,105 @@ void CViewDemo::onGUI()
 
 	// BEGIN WINDOW
 	{
-		const char* items[] = { "Follow", "Top View", "Editor" };
-		static int cameraType = 0;
-		static int currentCameraType = cameraType;
-		ImGui::Combo("Camera", &cameraType, items, IM_ARRAYSIZE(items));
-		if (currentCameraType != cameraType)
-		{
-			m_followRotateCam->getCamera()->setInputReceiver(false);
-			m_followTopCam->getCamera()->setInputReceiver(false);
-			m_editorCam->getCamera()->setInputReceiver(false);
+		// Show FPS
+		int fps = getIrrlichtDevice()->getVideoDriver()->getFPS();
+		ImGui::Text("FPS: %d", fps);
 
-			currentCameraType = cameraType;
-			float blendDuration = 500.0f;
+		if (ImGui::CollapsingHeader("Camera Type", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			const char* items[] = { "Follow Entity", "Top View", "Editor" };
+			static int cameraType = 0;
+			static int currentCameraType = cameraType;
+			ImGui::Combo("Camera", &cameraType, items, IM_ARRAYSIZE(items));
+			if (currentCameraType != cameraType)
+			{
+				m_followRotateCam->getCamera()->setInputReceiver(false);
+				m_followTopCam->getCamera()->setInputReceiver(false);
+				m_editorCam->getCamera()->setInputReceiver(false);
+
+				currentCameraType = cameraType;
+				float blendDuration = 500.0f;
+
+				if (currentCameraType == 0)
+				{
+					setTargetCamera(m_followRotateCam->getCamera(), blendDuration);
+				}
+				else if (currentCameraType == 1)
+				{
+					setTargetCamera(m_followTopCam->getCamera(), blendDuration);
+				}
+				else
+				{
+					CCamera* cam = m_editorCam->getCamera();
+
+					core::vector3df pos = m_cameraBrain->getPosition();
+					const core::vector3df& lookAt = m_cameraBrain->getLookAt();
+					const core::vector3df& up = m_cameraBrain->getUp();
+
+					pos = pos - lookAt * 10.0f;
+
+					cam->setPosition(pos);
+					cam->lookAt(pos + lookAt, up);
+
+					setTargetCamera(m_editorCam->getCamera(), blendDuration);
+				}
+			}
+
+			ImGui::Spacing();
+
+			float minDistance = 0.5f;
+			float farDistance = 20.0f;
 
 			if (currentCameraType == 0)
 			{
-				setTargetCamera(m_followRotateCam->getCamera(), blendDuration);
+				float distance = m_followRotateCam->getTargetDistance();
+				ImGui::SliderFloat("Target distance", &distance, minDistance, farDistance, "%.3f");
+				m_followRotateCam->setTargetDistance(distance);
 			}
 			else if (currentCameraType == 1)
 			{
-				setTargetCamera(m_followTopCam->getCamera(), blendDuration);
+				float distance = m_followTopCam->getTargetDistance();
+				ImGui::SliderFloat("Target distance", &distance, minDistance, farDistance, "%.3f");
+				m_followTopCam->setTargetDistance(distance);
 			}
 			else
 			{
-				CCamera* cam = m_editorCam->getCamera();
+				ImGui::Text("Press ASDW to move camera");
+				ImGui::Text("Drag Right Mouse to rotate camera");
+				ImGui::Text("Scroll Middle Mouse to go near/far");
+			}
 
-				core::vector3df pos = m_cameraBrain->getPosition();
-				const core::vector3df& lookAt = m_cameraBrain->getLookAt();
-				const core::vector3df& up = m_cameraBrain->getUp();
-
-				pos = pos - lookAt * 10.0f;
-
-				cam->setPosition(pos);
-				cam->lookAt(pos + lookAt, up);
-
-				setTargetCamera(m_editorCam->getCamera(), blendDuration);
+			if (currentCameraType == 0 || currentCameraType == 1)
+			{
+				if (ImGui::Button("Change another entity"))
+				{
+					followRandomEntity();
+				}
 			}
 		}
 
 		ImGui::Spacing();
 
-		float minDistance = 0.5f;
-		float farDistance = 20.0f;
-
-		if (currentCameraType == 0)
+		if (ImGui::CollapsingHeader("Debug", ImGuiTreeNodeFlags_DefaultOpen))
 		{
-			float distance = m_followRotateCam->getTargetDistance();
-			ImGui::SliderFloat("Target distance", &distance, minDistance, farDistance, "%.3f");
-			m_followRotateCam->setTargetDistance(distance);
+			ImGui::Checkbox("Show neighbor", &m_debugNeighbor);
+		}
 
-			if (ImGui::Button("Random next entity"))
+		if (ImGui::CollapsingHeader("Entites", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			static int entityCount = 20;
+			int minEntity = 10;
+			int maxEntity = 1000;
+			ImGui::SliderInt("Num entity", &entityCount, minEntity, maxEntity);
+
+			char buttonLabel[512];
+			sprintf(buttonLabel, "Test spawn %d entity", entityCount);
+
+			if (ImGui::Button(buttonLabel))
 			{
-				followRandomEntity();
+				testSpawnEntity(entityCount);
 			}
 		}
-		else if (currentCameraType == 1)
-		{
-			float distance = m_followTopCam->getTargetDistance();
-			ImGui::SliderFloat("Target distance", &distance, minDistance, farDistance, "%.3f");
-			m_followTopCam->setTargetDistance(distance);
-
-			if (ImGui::Button("Random next entity"))
-			{
-				followRandomEntity();
-			}
-		}
-		else
-		{
-			ImGui::Text("Press ASDW to move camera");
-			ImGui::Text("Drag Right Mouse to rotate camera");
-			ImGui::Text("Scroll Middle Mouse to go near/far");
-		}
-
-		ImGui::Spacing();
-
-		ImGui::Checkbox("Show debug neighbor", &m_debugNeighbor);
 
 		ImGui::End();
 	}

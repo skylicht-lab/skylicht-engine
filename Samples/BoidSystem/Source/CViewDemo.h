@@ -40,4 +40,6 @@ public:
 	void setTargetCamera(CCamera* cam, float blendDuration);
 
 	void followRandomEntity();
+
+	void testSpawnEntity(int count);
 };
