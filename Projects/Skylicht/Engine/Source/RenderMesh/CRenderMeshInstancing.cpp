@@ -19,16 +19,18 @@ namespace Skylicht
 		m_loadTexcoord2(false),
 		m_loadNormal(true),
 		m_fixInverseNormal(true),
+		m_instancingMaterials(NULL),
 		m_instancingTransform(NULL),
 		m_instancingLighting(NULL),
-		m_shareData(0)
+		m_shareDataTransform(0),
+		m_shareDataMaterials(0)
 	{
 
 	}
 
 	CRenderMeshInstancing::~CRenderMeshInstancing()
 	{
-
+		releaseEntities();
 	}
 
 	void CRenderMeshInstancing::releaseBaseEntities()
@@ -58,12 +60,43 @@ namespace Skylicht
 
 	void CRenderMeshInstancing::releaseEntities()
 	{
+		for (CRenderMeshData*& renderer : m_renderers)
+		{
+			SMeshInstancing* data = renderer->getMeshInstancing();
+			if (data != NULL)
+			{
+				data->ShareDataTransform = NULL;
+				data->ShareDataMaterials = NULL;
+				data->UseShareMaterialsBuffer = false;
+				data->UseShareTransformBuffer = false;
+			}
+		}
+
+		releaseMaterial();
 		removeAllEntities();
 		releaseBaseEntities();
 
 		m_baseEntities.clear();
 		m_renderers.clear();
 		m_entities.clear();
+
+		if (m_instancingMaterials)
+		{
+			m_instancingMaterials->drop();
+			m_instancingMaterials = NULL;
+		}
+
+		if (m_instancingTransform)
+		{
+			m_instancingTransform->drop();
+			m_instancingTransform = NULL;
+		}
+
+		if (m_instancingLighting)
+		{
+			m_instancingLighting->drop();
+			m_instancingLighting = NULL;
+		}
 	}
 
 	void CRenderMeshInstancing::initComponent()
@@ -292,7 +325,7 @@ namespace Skylicht
 			m->applyMaterial();
 	}
 
-	void CRenderMeshInstancing::applyShareInstancingBuffer()
+	void CRenderMeshInstancing::applyShareTransformBuffer()
 	{
 		if (!m_instancingTransform)
 		{
@@ -307,14 +340,71 @@ namespace Skylicht
 		}
 
 		CMeshManager* meshMgr = CMeshManager::getInstance();
+		for (CRenderMeshData*& renderer : m_renderers)
+		{
+			SMeshInstancing* data = renderer->getMeshInstancing();
+			if (data != NULL)
+			{
+				meshMgr->changeInstancingTransformBuffer(data, m_instancingTransform, m_instancingLighting);
+				data->ShareDataTransform = &m_shareDataTransform;
+			}
+			else
+			{
+				char logError[1024];
+				sprintf(logError, "[CRenderMeshInstancing::applyShareTransformBuffer] renderer not yet init Instancing");
+				os::Printer::log(logError);
+			}
+		}
+	}
+
+	void CRenderMeshInstancing::applyShareMaterialBuffer()
+	{
+		IShaderInstancing* baseInstancing = NULL;
 
 		for (CRenderMeshData*& renderer : m_renderers)
 		{
 			SMeshInstancing* data = renderer->getMeshInstancing();
 			if (data != NULL)
 			{
-				meshMgr->changeMeshInstancingBuffer(data, m_instancingTransform, m_instancingLighting);
-				data->ShareData = &m_shareData;
+				int numMaterials = data->InstancingShader.size();
+				for (int i = 0; i < numMaterials; i++)
+				{
+					if (baseInstancing == NULL)
+						baseInstancing = data->InstancingShader[i];
+					else
+					{
+						if (baseInstancing->getBaseVertexDescriptor() != data->InstancingShader[i]->getBaseVertexDescriptor())
+						{
+							// can not create shared material
+							return;
+						}
+					}
+				}
+			}
+		}
+
+		if (baseInstancing == NULL)
+		{
+			char logError[1024];
+			sprintf(logError, "[CRenderMeshInstancing::applyShareMaterialBuffer] renderer not yet init Instancing");
+			os::Printer::log(logError);
+			return;
+		}
+
+		if (!m_instancingMaterials)
+		{
+			m_instancingMaterials = baseInstancing->createInstancingVertexBuffer();
+			m_instancingMaterials->setHardwareMappingHint(EHM_STREAM);
+		}
+
+		CMeshManager* meshMgr = CMeshManager::getInstance();
+		for (CRenderMeshData*& renderer : m_renderers)
+		{
+			SMeshInstancing* data = renderer->getMeshInstancing();
+			if (data != NULL)
+			{
+				meshMgr->changeInstancingMaterialBuffer(data, m_instancingMaterials);
+				data->ShareDataMaterials = &m_shareDataMaterials;
 			}
 		}
 	}
@@ -340,9 +430,13 @@ namespace Skylicht
 		entity->addData<CCullingData>();
 		entity->addData<CVisibleData>();
 
-		// set bbox
+		// apply instancing at base
+		if (!baseRenderMesh->isInstancing())
+			baseRenderMesh->setInstancing(true);
+
 		CMesh* mesh = baseRenderMesh->getMesh();
 
+		// set bbox
 		CCullingBBoxData* cullingBBox = entity->addData<CCullingBBoxData>();
 		cullingBBox->BBox = mesh->getBoundingBox();
 

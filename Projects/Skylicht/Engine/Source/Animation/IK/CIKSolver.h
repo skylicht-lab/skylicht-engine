@@ -41,11 +41,5 @@ namespace Skylicht
 			float twistValue,
 			core::quaternion& qStart,
 			core::quaternion& qMid);
-
-	protected:
-
-		float getAngle2Vector(const core::vector3df& v1, const core::vector3df& v2);
-
-		bool isVectorParallel(const core::vector3df& v1, const core::vector3df& v2);
 	};
 }

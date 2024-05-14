@@ -35,7 +35,7 @@ cbuffer cbPerObject
 	float4x4 uVpMatrix;
 	float4 uCameraPosition;
 	float4 uLightDirection;
-	float4 uAnimation;
+	float2 uBoneCount;
 	float2 uTransformTextureSize;
 };
 float4x4 getTransformFromTexture(float2 p)
@@ -67,7 +67,7 @@ VS_OUTPUT main(VS_INPUT input)
 	float4 skinNormal;
 	float4 skinTangent;
 	float2 boneLocation = input.uBoneLocation.xy;
-	float boneLocationY = input.uBoneLocation.y;
+	float boneLocationY = input.uBoneLocation.y * uBoneCount.x;
 	boneLocation.y = boneLocationY + input.blendIndex[0];
 	skinMatrix = input.blendWeight[0] * getTransformFromTexture(boneLocation);
 	boneLocation.y = boneLocationY + input.blendIndex[1];

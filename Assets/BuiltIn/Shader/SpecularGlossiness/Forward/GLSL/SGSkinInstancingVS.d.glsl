@@ -19,7 +19,7 @@ uniform sampler2D uTransformTexture;
 uniform mat4 uVpMatrix;
 uniform vec4 uCameraPosition;
 uniform vec4 uLightDirection;
-uniform vec4 uAnimation;
+uniform vec2 uBoneCount;
 uniform vec2 uTransformTextureSize;
 
 out vec2 vTexCoord0;
@@ -39,7 +39,7 @@ void main(void)
 	mat4 skinMatrix = mat4(0.0);
 
 	vec2 boneLocation = uBoneLocation.xy;
-	float boneLocationY = uBoneLocation.y;
+	float boneLocationY = uBoneLocation.y * uBoneCount.x;
 
 	boneLocation.y = boneLocationY + inBlendIndex[0];
 	skinMatrix = inBlendWeight[0] * getTransformFromTexture(boneLocation);

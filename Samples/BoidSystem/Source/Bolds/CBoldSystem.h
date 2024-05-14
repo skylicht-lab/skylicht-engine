@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CBoldData.h"
+#include "CNeighbor.h"
 #include "Entity/IEntitySystem.h"
 #include "Entity/CEntityGroup.h"
 #include "Entity/CEntityManager.h"
@@ -19,6 +20,8 @@ protected:
 	float m_minZ;
 	float m_maxZ;
 	float m_margin;
+
+	CNeighbor m_neighbor;
 
 public:
 	CBoldSystem();
@@ -40,17 +43,28 @@ public:
 		m_minZ = minZ;
 		m_maxZ = maxZ;
 		m_margin = margin;
+		m_neighbor.init(minX, maxX, minZ, maxZ, 2.0f, 30);
+	}
+
+	inline void getBounds(float& minX, float& maxX, float& minZ, float& maxZ)
+	{
+		minX = m_minX;
+		maxX = m_maxX;
+		minZ = m_minZ;
+		maxZ = m_maxZ;
 	}
 
 private:
 
-	void borders(CBoldData** bolds, CWorldTransformData** transforms, int numEntity);
+	void neighbor(CBoldData** bolds, CWorldTransformData** transforms, int numEntity);
 
 	void separation(CBoldData** bolds, CWorldTransformData** transforms, int numEntity);
 
 	void alignment(CBoldData** bolds, CWorldTransformData** transforms, int numEntity);
 
 	void cohesion(CBoldData** bolds, CWorldTransformData** transforms, int numEntity);
+
+	void borders(CBoldData** bolds, CWorldTransformData** transforms, int numEntity);
 
 	void updateTransform(CBoldData** bolds, CWorldTransformData** transforms, int numEntity);
 };

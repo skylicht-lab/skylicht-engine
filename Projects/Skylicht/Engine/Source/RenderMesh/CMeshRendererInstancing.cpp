@@ -72,7 +72,9 @@ namespace Skylicht
 			CEntity* entity = entities[i];
 
 			CRenderMeshData* meshData = GET_ENTITY_DATA(entity, CRenderMeshData);
-			if (meshData->getMeshInstancing() == NULL)
+
+			SMeshInstancing* data = meshData->getMeshInstancing();
+			if (data == NULL)
 				continue;
 
 			bool cullingVisible = true;
@@ -84,7 +86,16 @@ namespace Skylicht
 
 			// only render visible culling mesh
 			if (cullingVisible == true)
+			{
 				m_meshs.push_back(meshData);
+
+				// reset share batch state
+				if (data->ShareDataTransform)
+					*data->ShareDataTransform = 0;
+
+				if (data->ShareDataMaterials)
+					*data->ShareDataMaterials = 0;
+			}
 		}
 	}
 
@@ -134,24 +145,51 @@ namespace Skylicht
 			{
 				group->Materials.reset();
 
-				for (u32 j = 0; j < count; j++)
-					group->Materials.push(data->Materials[i]);
+				bool batchMaterial = true;
+				if (data->UseShareMaterialsBuffer)
+				{
+					// see function CRenderMeshInstancing::applyShareMaterialBuffer
+					if (*data->ShareDataMaterials == 0)
+						*data->ShareDataMaterials = 1;
+					else
+						batchMaterial = false;
+				}
 
-				// batching transform & material data to buffer
-				data->InstancingShader[i]->batchIntancing(
-					data->InstancingBuffer[i],
-					group->Materials.pointer(),
+				if (batchMaterial)
+				{
+					for (u32 j = 0; j < count; j++)
+						group->Materials.push(data->Materials[i]);
+
+					// batching transform & material data to buffer
+					data->InstancingShader[i]->batchIntancing(
+						data->MaterialBuffer[i],
+						group->Materials.pointer(),
+						group->Entities.pointer(),
+						count
+					);
+				}
+			}
+
+			bool batchTransform = true;
+			if (data->UseShareTransformBuffer)
+			{
+				// see function CRenderMeshInstancing::applyShareTransformBuffer
+				// batch only 1 time in first group, it will reset 0 on onQuery
+				if (*data->ShareDataTransform == 0)
+					*data->ShareDataTransform = 1;
+				else
+					batchTransform = false;
+			}
+
+			if (batchTransform)
+			{
+				IShaderInstancing::batchTransformAndLighting(
+					data->TransformBuffer,
+					data->IndirectLightingBuffer,
 					group->Entities.pointer(),
 					count
 				);
 			}
-
-			IShaderInstancing::batchTransformAndLighting(
-				data->TransformBuffer,
-				data->IndirectLightingBuffer,
-				group->Entities.pointer(),
-				count
-			);
 		}
 	}
 

@@ -118,6 +118,7 @@ namespace Skylicht
 			"WORLD_INVERSE_TRANSPOSE",
 			"WORLD_TRANSPOSE",
 			"BONE_MATRIX",
+			"BONE_COUNT",
 			"SHADOW_MAP_MATRIX",
 			"SHADOW_MAP_DISTANCE",
 			"CAMERA_POSITION",
@@ -1068,6 +1069,17 @@ namespace Skylicht
 		{
 			if (vertexShader == true && shaderManager->BoneMatrix != NULL)
 				matRender->setShaderVariable(uniform.UniformShaderID, shaderManager->BoneMatrix, uniform.SizeOfUniform, video::EST_VERTEX_SHADER);
+		}
+		break;
+		case BONE_COUNT:
+		{
+			if (vertexShader == true)
+			{
+				float v[4] = { 0 };
+				v[0] = (float)shaderManager->BoneCount;
+				matRender->setShaderVariable(uniform.UniformShaderID, v, uniform.SizeOfUniform, video::EST_VERTEX_SHADER);
+			}
+			break;
 		}
 		break;
 		case SHADER_VEC2:

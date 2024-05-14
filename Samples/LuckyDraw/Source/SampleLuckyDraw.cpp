@@ -5,6 +5,7 @@
 #include "ViewManager/CViewManager.h"
 
 #include "CViewInit.h"
+#include "CLocalize.h"
 
 void installApplication(const std::vector<std::string>& argv)
 {
@@ -15,6 +16,7 @@ void installApplication(const std::vector<std::string>& argv)
 SampleLuckyDraw::SampleLuckyDraw()
 {
 	CContext::createGetInstance();
+	CLocalize::createGetInstance();
 	CViewManager::createGetInstance()->initViewLayer(1);
 	CLightmapper::createGetInstance();
 }
@@ -22,6 +24,7 @@ SampleLuckyDraw::SampleLuckyDraw()
 SampleLuckyDraw::~SampleLuckyDraw()
 {
 	CViewManager::releaseInstance();
+	CLocalize::releaseInstance();
 	CContext::releaseInstance();
 	CLightmapper::releaseInstance();
 }

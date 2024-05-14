@@ -48,7 +48,9 @@ namespace Skylicht
 		CCamera* m_camera;
 
 		CEntity* m_followEntity;
+
 		core::vector3df m_followPosition;
+		core::vector3df m_targetOffset;
 
 		bool m_isFollowPosition;
 
@@ -61,7 +63,8 @@ namespace Skylicht
 
 		float m_targetDistance;
 
-		gui::ICursorControl* m_cursorControl;
+		// for multitouch on phone device
+		int m_touchId;
 
 		core::position2df m_centerCursor;
 		core::position2df m_cursorPos;
@@ -82,6 +85,11 @@ namespace Skylicht
 		virtual void lateUpdate();
 
 		virtual bool OnEvent(const SEvent& event);
+
+		inline CCamera* getCamera()
+		{
+			return m_camera;
+		}
 
 		inline void setFollowPosition(const core::vector3df& pos)
 		{
@@ -132,6 +140,11 @@ namespace Skylicht
 		inline float getTargetDistance()
 		{
 			return m_targetDistance;
+		}
+
+		inline void setTargetOffset(const core::vector3df& offset)
+		{
+			m_targetOffset = offset;
 		}
 
 		DECLARE_GETTYPENAME(C3rdCamera)
