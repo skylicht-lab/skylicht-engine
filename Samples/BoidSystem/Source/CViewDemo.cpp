@@ -327,7 +327,7 @@ void CViewDemo::onGUI()
 
 	// We specify a default position/size in case there's no data in the .ini file. Typically this isn't required! We only do it to make the Demo applications a little more welcoming.
 	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(350, 150), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(350, 290), ImGuiCond_FirstUseEver);
 
 	if (!ImGui::Begin("Camera", &open, window_flags))
 	{
