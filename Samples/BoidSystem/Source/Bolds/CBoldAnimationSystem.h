@@ -42,6 +42,11 @@ public:
 
 	void addClip(CAnimationClip* clip, int clipId, int fps, float runSpeed);
 
+	inline core::array<SMovingAnimation>& getClips()
+	{
+		return m_clips;
+	}
+
 private:
 
 };
