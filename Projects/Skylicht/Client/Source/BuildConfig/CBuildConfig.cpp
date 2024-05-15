@@ -27,24 +27,35 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	IMPLEMENT_SINGLETON(CBuildConfig);
 
-	std::string	CBuildConfig::SaveFolder = "";
-	std::string	CBuildConfig::ProfileFolder = "";
-	std::string	CBuildConfig::DataFolder = "";
+	CBuildConfig::CBuildConfig() :
+		IsAndroidAPK(false)
+	{
+		SaveFolder = "";
+		DataFolder = "";
 
-	std::string CBuildConfig::AppID = "";
-	std::string CBuildConfig::DeviceID = "";
+		SyncCloudFolder = "";
+
+		AppID = "";
+		DeviceID = "";
 
 #ifdef WIN32
-	std::string CBuildConfig::OSVersion = "WINDOWS PC";
-	std::string CBuildConfig::Factory = "DESKTOP PC";
-	std::string CBuildConfig::Model = "DESKTOP PC";
+		OSVersion = "WINDOWS PC";
+		Factory = "DESKTOP PC";
+		Model = "DESKTOP PC";
 #else
-	std::string CBuildConfig::OSVersion = "";
-	std::string CBuildConfig::Factory = "";
-	std::string CBuildConfig::Model = "";
+		OSVersion = "";
+		Factory = "";
+		Model = "";
 #endif
 
-	std::string CBuildConfig::APKPath = "";
-	std::string	CBuildConfig::Version = "";
+		APKPath = "";
+		Version = "";
+	}
+
+	CBuildConfig::~CBuildConfig()
+	{
+
+	}
 }

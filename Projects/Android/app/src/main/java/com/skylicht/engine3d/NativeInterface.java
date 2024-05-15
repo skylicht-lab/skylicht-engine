@@ -35,6 +35,10 @@ public class NativeInterface {
 
     public native void setApkPath(String path);
 
+    public native void setDataPath(String path);
+
+    public native void setIsAndroidAPK(boolean b);
+
     public native void setAppID(String id);
 
     public native void setSaveFolder(String path);
