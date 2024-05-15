@@ -218,9 +218,9 @@ extern "C" {
 		CBuildConfig::getInstance()->APKPath = apkPath;
 	}
 
-	void applicationSetIsAndroidAPK(bool isApk)
+	void applicationSetIsAndroidAPK(int isApk)
 	{
-		CBuildConfig::getInstance()->IsAndroidAPK = isApk;
+		CBuildConfig::getInstance()->IsAndroidAPK = (bool)isApk;
 	}
 
 	void applicationSetDataFolder(const char *dataPath)

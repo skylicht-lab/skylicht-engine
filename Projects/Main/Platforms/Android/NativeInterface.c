@@ -41,7 +41,7 @@ void applicationTouchUp(int touchID, int x, int y);
 void applicationUpdateAccelerometer(float x, float y, float z);
 void applicationSetAccelerometer(int b);
 void applicationSetAPK(const char *path);
-void applicationSetIsAndroidAPK(bool isApk);
+void applicationSetIsAndroidAPK(int isApk);
 void applicationSetDataFolder(const char *path);
 void applicationSetAppID(const char *id);
 void applicationSetSaveFolder(const char *path);
@@ -204,7 +204,7 @@ JNIEXPORT void JNICALL JNI_FUNCTION(NativeInterface_setApkPath)(JNIEnv* env, job
 // native member function setIsAndroidAPK
 JNIEXPORT void JNICALL JNI_FUNCTION(NativeInterface_setIsAndroidAPK)(JNIEnv* env, jobject thiz, jboolean b)
 {
-	bool isAndroidAPK = (b == JNI_TRUE);
+	int isAndroidAPK = (int)(b == JNI_TRUE);
 	
 	__android_log_print(ANDROID_LOG_INFO, JNI_APPNAME, "Set is Android APK: %d", (int)isAndroidAPK);
 	applicationSetIsAndroidAPK(isAndroidAPK);
