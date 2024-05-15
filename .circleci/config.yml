@@ -61,7 +61,7 @@ commands:
 
             ./gradlew assembleDebug
 
-            ls app/build/outputs/apk/debug
+            ls -l app/build/outputs/apk/debug
 
             cd ../..
           name: Build Android APK
@@ -89,7 +89,7 @@ commands:
 
               ./gradlew bundleDebug
 
-              ls app/build/outputs/bundle/debug
+              ls -l app/build/outputs/bundle/debug
 
               cd ../..
             name: Build Android AAB
