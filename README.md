@@ -137,8 +137,8 @@ C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A
 ```Shell
 # BuildAndroidNDK.cmd
 # Set your pc folder, example
-set MINGW=C:\mingw-w64\x86_64-8.1.0-posix-seh-rt_v6-rev0\mingw64\bin
-set NDK=C:\SDK\android-ndk-r21e
+set MINGW=C:\MinGW\bin
+set NDK=C:\Android\android-ndk-r26d
 ...
 ```
 
@@ -162,20 +162,27 @@ C:\skylicht-engine>copy Bin\Android\Libs\armeabi-v7a\libSampleSkinnedMesh.so Pro
 C:\skylicht-engine\Assets>python BuildTextureCompressETC.py
 C:\skylicht-engine\Assets>python BuildAssetBundles.py
 C:\skylicht-engine\Assets>cd..
-
-# Create assets folder in Gradle Project
-C:\skylicht-engine>mkdir Projects\Android\app\src\main\assets
-
+```
+**Android APK:**
+```
+C:\skylicht-engine>SET ASSET_PATH=Projects\Android\app\src\main\assets
+```
+**Android AAB:** Assets will be copied to assetPack: **appdata**
+```
+C:\skylicht-engine>SET ASSET_PATH=Projects\Android\appdata\src\main\assets
+```
+And copy command
+```
 # Copy built-in asset
-C:\skylicht-engine>copy Bin\BuiltIn.zip Projects\Android\app\src\main\assets
+C:\skylicht-engine>copy Bin\BuiltIn.zip %ASSET_PATH%
 
 # Copy project asset
 # Project SampleSkinnedMesh
-C:\skylicht-engine>copy Bin\Common.zip Projects\Android\app\src\main\assets
-C:\skylicht-engine>copy Bin\SampleModelsResource.zip Projects\Android\app\src\main\assets
+C:\skylicht-engine>copy Bin\Common.zip %ASSET_PATH%
+C:\skylicht-engine>copy Bin\SampleModelsResource.zip %ASSET_PATH%
 
 # Dont forget copy ETC texture
-C:\skylicht-engine>copy Bin\SampleModelsETC.zip Projects\Android\app\src\main\assets
+C:\skylicht-engine>copy Bin\SampleModelsETC.zip %ASSET_PATH%
 ```
 
 ### **Step 4: Build APK by Android Studio or Gradle**
