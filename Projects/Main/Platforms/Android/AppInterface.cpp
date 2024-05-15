@@ -215,28 +215,32 @@ extern "C" {
 
 	void applicationSetAPK(const char *apkPath)
 	{
-		CBuildConfig::APKPath = apkPath;
+		CBuildConfig::getInstance()->APKPath = apkPath;
+	}
+
+	void applicationSetIsAndroidAPK(bool isApk)
+	{
+		CBuildConfig::getInstance()->IsAndroidAPK = isApk;
 	}
 
 	void applicationSetDataFolder(const char *dataPath)
 	{
-		CBuildConfig::DataFolder = dataPath;
+		CBuildConfig::getInstance()->DataFolder = dataPath;
 	}
 
 	void applicationSetSaveFolder(const char *savePath)
 	{
-		CBuildConfig::SaveFolder = savePath;
-		CBuildConfig::ProfileFolder = savePath;
+		CBuildConfig::getInstance()->SaveFolder = savePath;
 	}
 
 	void applicationSetDownloadFolder(const char *downloadPath)
 	{
-		CBuildConfig::SaveFolder = downloadPath;
+		CBuildConfig::getInstance()->SaveFolder = downloadPath;
 	}
 
 	void applicationSetAppID(const char *id)
 	{
-		CBuildConfig::AppID = id;
+		CBuildConfig::getInstance()->AppID = id;
 	}
 
 	void applicationSetDeviceID(const char *id)
@@ -249,14 +253,14 @@ extern "C" {
 				mac[i] = '_';
 		}
 
-		CBuildConfig::DeviceID = mac;
+		CBuildConfig::getInstance()->DeviceID = mac;
 	}
 
 	void applicationSetAndroidDeviceInfo(const char *manu, const char *model, const char *os)
 	{
-		CBuildConfig::Factory = manu;
-		CBuildConfig::Model = model;
-		CBuildConfig::OSVersion = os;
+		CBuildConfig::getInstance()->Factory = manu;
+		CBuildConfig::getInstance()->Model = model;
+		CBuildConfig::getInstance()->OSVersion = os;
 	}	
 }
 #endif

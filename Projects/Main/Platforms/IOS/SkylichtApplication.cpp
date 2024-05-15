@@ -124,12 +124,12 @@ void SkylichtApplication::onTouchUp(int touchID, int x, int y)
 
 void SkylichtApplication::setSaveFolder(const char *folder)
 {
-    CBuildConfig::SaveFolder = folder;
+    CBuildConfig::getInstance()->SaveFolder = folder;
 }
 
 void SkylichtApplication::setBundleId(const char *bundleId)
 {
-    CBuildConfig::AppID = bundleId;
+    CBuildConfig::getInstance()->AppID = bundleId;
 }
 
 void SkylichtApplication::onPause()
