@@ -177,6 +177,8 @@ endif()
 # android
 if (BUILD_ANDROID)
 	add_compile_options(-Wno-narrowing)
+	add_compile_options(-fvisibility=hidden)
+	add_compile_options(-O3)
 endif()
 
 # visual studio

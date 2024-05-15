@@ -71,9 +71,9 @@ commands:
             command: >
               export ANDROID_BUNDLE_PATH=Projects/Android/appdata/src/main/assets
 
-              rm ANDROID_ASSET_PATH/*.zip
-
               export ANDROID_ASSET_PATH=Projects/Android/app/src/main/assets
+
+              rm $ANDROID_ASSET_PATH/*.zip
 
               cp Bin/BuiltIn.zip $ANDROID_BUNDLE_PATH
 
