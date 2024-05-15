@@ -1,0 +1,10 @@
+plugins {
+  id 'com.android.asset-pack'
+}
+
+assetPack {
+    packName = "appdata"
+    dynamicDelivery {
+        deliveryType = "install-time"
+    }
+}
