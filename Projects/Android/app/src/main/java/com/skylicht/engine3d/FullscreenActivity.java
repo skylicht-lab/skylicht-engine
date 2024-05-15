@@ -361,6 +361,9 @@ public class FullscreenActivity extends AppCompatActivity {
             GameInstance.HaveReadWritePermission = false;
             showPermissionRationaleDialog();
         }
+        else {
+            GameInstance.HaveReadWritePermission = true;
+        }
     }
 
     private void showPermissionRationaleDialog() {
@@ -390,7 +393,7 @@ public class FullscreenActivity extends AppCompatActivity {
                     GameInstance.Activity.finish();
                     return;
                 }
-                gotoSettings();
+                runOnUiThread(() -> gotoSettings());
             };
 
             AlertDialog dialog = new AlertDialog.Builder(this)
@@ -406,14 +409,13 @@ public class FullscreenActivity extends AppCompatActivity {
         }
     }
 
+    ActivityResultLauncher<Intent> launcher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> checkReadWritePermission());
+
     private void gotoSettings() {
         final Intent intent;
         intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", getPackageName(), null));
-
-        ActivityResultLauncher<Intent> launcher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> checkReadWritePermission());
-
         launcher.launch(intent);
     }
 
