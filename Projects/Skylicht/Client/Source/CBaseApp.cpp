@@ -155,8 +155,21 @@ namespace Skylicht
 		std::string assetPath = std::string("Assets\\") + std::string(name);
 		return io::path(assetPath.c_str());
 #elif defined(MACOS)
-		std::string assetPath = CBuildConfig::DataFolder + std::string("//") + std::string(name);
+		std::string assetPath = CBuildConfig::getInstance()->DataFolder + std::string("//") + std::string(name);
 		return io::path(assetPath.c_str());
+#elif defined(ANDROID)
+		// see the file FullscreenActivity.java in Android Project
+		if (CBuildConfig::getInstance()->IsAndroidAPK)
+		{
+			// in apk assets
+			return io::path(name);
+		}
+		else
+		{
+			// in aab assets
+			std::string assetPath = CBuildConfig::getInstance()->DataFolder + std::string("//") + std::string(name);
+			return io::path(assetPath.c_str());
+		}
 #else
 		return io::path(name);
 #endif
@@ -180,11 +193,11 @@ namespace Skylicht
 #elif defined(ANDROID)
 		result += "ETC.zip";
 #elif defined(IOS)
-	#if defined(USE_ETC_TEXTURE)
+#if defined(USE_ETC_TEXTURE)
 		result += "ETC.zip";
-	#else
+#else
 		result += "PVR.zip";
-	#endif
+#endif
 #else
 		result += "DDS.zip";
 #endif

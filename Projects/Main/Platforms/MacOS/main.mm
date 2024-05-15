@@ -15,7 +15,7 @@
 int main(int argc, const char * argv[]) {
     NSBundle *main = [NSBundle mainBundle];
     const char *resourcePath = [[main resourcePath] UTF8String];
-    CBuildConfig::DataFolder = resourcePath;
+    CBuildConfig::getInstance()->DataFolder = resourcePath;
     
     SkylichtApplication app(argc, (char**)argv);
     return app.run();
