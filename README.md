@@ -162,10 +162,10 @@ C:\skylicht-engine>copy Bin\Android\Libs\armeabi-v7a\libSampleSkinnedMesh.so Pro
 C:\skylicht-engine\Assets>python BuildTextureCompressETC.py
 C:\skylicht-engine\Assets>python BuildAssetBundles.py
 C:\skylicht-engine\Assets>cd..
+```
 
-# Create assets folder in Gradle Project
-C:\skylicht-engine>mkdir Projects\Android\app\src\main\assets
-
+Android APK:
+```
 # Copy built-in asset
 C:\skylicht-engine>copy Bin\BuiltIn.zip Projects\Android\app\src\main\assets
 
@@ -176,6 +176,20 @@ C:\skylicht-engine>copy Bin\SampleModelsResource.zip Projects\Android\app\src\ma
 
 # Dont forget copy ETC texture
 C:\skylicht-engine>copy Bin\SampleModelsETC.zip Projects\Android\app\src\main\assets
+```
+
+Android AAB: copy the assets to assetPack: *appdata*
+```
+# Copy built-in asset
+C:\skylicht-engine>copy Bin\BuiltIn.zip Projects\Android\appdata\src\main\assets
+
+# Copy project asset
+# Project SampleSkinnedMesh
+C:\skylicht-engine>copy Bin\Common.zip Projects\Android\appdata\src\main\assets
+C:\skylicht-engine>copy Bin\SampleModelsResource.zip Projects\Android\appdata\src\main\assets
+
+# Dont forget copy ETC texture
+C:\skylicht-engine>copy Bin\SampleModelsETC.zip Projects\Android\appdata\src\main\assets
 ```
 
 ### **Step 4: Build APK by Android Studio or Gradle**
