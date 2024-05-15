@@ -218,6 +218,11 @@ extern "C" {
 		CBuildConfig::APKPath = apkPath;
 	}
 
+	void applicationSetDataFolder(const char *dataPath)
+	{
+		CBuildConfig::DataFolder = dataPath;
+	}
+
 	void applicationSetSaveFolder(const char *savePath)
 	{
 		CBuildConfig::SaveFolder = savePath;

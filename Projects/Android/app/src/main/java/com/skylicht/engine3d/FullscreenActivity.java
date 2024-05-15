@@ -3,10 +3,18 @@ package com.skylicht.engine3d;
 import android.Manifest;
 import android.annotation.SuppressLint;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+
+import com.google.android.play.core.assetpacks.AssetPackLocation;
+import com.google.android.play.core.assetpacks.AssetPackManager;
+import com.google.android.play.core.assetpacks.AssetPackManagerFactory;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -73,6 +81,8 @@ public class FullscreenActivity extends AppCompatActivity {
 
     boolean mVisible;
 
+    AssetPackManager mAssetPackManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -84,6 +94,14 @@ public class FullscreenActivity extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        // asset pack manager
+        mAssetPackManager = AssetPackManagerFactory.getInstance(getApplicationContext());
+        AssetPackLocation assetPackPath = mAssetPackManager.getPackLocation("appdata");
+        if (assetPackPath != null) {
+            String assetsFolderPath = assetPackPath.assetsPath();
+            NativeInterface.getInstance().setDataPath(assetsFolderPath);
+        }
 
         // permission detect
         checkReadWritePermission();
@@ -326,7 +344,6 @@ public class FullscreenActivity extends AppCompatActivity {
      */
 
     private static final int PERM_REQUEST_READWRITE = 1;
-    private static final int REQUEST_SETTINGS = 1;
 
     private void checkReadWritePermission() {
         // https://github.com/copolii/runtime_permissions/blob/master/app/src/main/java/ca/mahram/android/runtimepermissions
@@ -384,18 +401,12 @@ public class FullscreenActivity extends AppCompatActivity {
     private void gotoSettings() {
         final Intent intent;
         intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", getPackageName(), null));
-        startActivityForResult(intent, REQUEST_SETTINGS);
-    }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // todo base implement
-        super.onActivityResult(requestCode, resultCode, data);
+        ActivityResultLauncher<Intent> launcher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> checkReadWritePermission());
 
-        // todo check permission
-        if (requestCode == REQUEST_SETTINGS) {
-            checkReadWritePermission();
-        }
+        launcher.launch(intent);
     }
 
     @Override

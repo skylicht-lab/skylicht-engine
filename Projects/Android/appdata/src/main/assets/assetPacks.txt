@@ -1,2 +1,2 @@
-This is test integrate
+This is test integrate assetPacks
 https://developer.android.com/guide/playcore/asset-delivery/integrate-java#groovy
