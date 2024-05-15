@@ -329,21 +329,21 @@ public class FullscreenActivity extends AppCompatActivity {
     }
 
     protected void createSaveFolder() {
-        String dataBuildinFolder = Environment.getDataDirectory().getAbsolutePath();
-        Log.w("Skylicht", "getDataDirectory: " + dataBuildinFolder);
-
-        // Android/data/{application_domain}
-        String dataFolder = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android/data/";
-        dataFolder += getPackageName();
-
+        // https://developer.android.com/training/data-storage
+        String dataFolder = getApplicationContext().getExternalFilesDir("data").getAbsolutePath();
         if (createFolder(dataFolder)) {
-            // Do something on success
-            Log.w("Skylicht", "getDataDirectory (ExternalStorage): " + dataFolder);
-            NativeInterface.getInstance().setDownloadFolder(dataFolder);
             NativeInterface.getInstance().setSaveFolder(dataFolder);
         } else {
             // Do something else on failure
             Log.w("Skylicht", "Can not create data folder: " + dataFolder);
+        }
+
+        String downloadFolder = getApplicationContext().getExternalFilesDir("download").getAbsolutePath();
+        if (createFolder(downloadFolder)) {
+            NativeInterface.getInstance().setDownloadFolder(downloadFolder);
+        }
+        else {
+            Log.w("Skylicht", "Can not create data folder: " + downloadFolder);
         }
     }
 
@@ -357,6 +357,8 @@ public class FullscreenActivity extends AppCompatActivity {
         // https://github.com/copolii/runtime_permissions/blob/master/app/src/main/java/ca/mahram/android/runtimepermissions
 
         // todo check permission
+        // enable this code if you need a permission to write STORAGE
+        /*
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
             GameInstance.HaveReadWritePermission = false;
             showPermissionRationaleDialog();
@@ -364,6 +366,10 @@ public class FullscreenActivity extends AppCompatActivity {
         else {
             GameInstance.HaveReadWritePermission = true;
         }
+        */
+
+        // In Android 4.4 (API level 19) or higher, we do not need request Write for getExternalFilesDir() folder
+        GameInstance.HaveReadWritePermission = true;
     }
 
     private void showPermissionRationaleDialog() {
