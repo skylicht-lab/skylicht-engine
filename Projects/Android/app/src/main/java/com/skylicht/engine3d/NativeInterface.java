@@ -37,7 +37,7 @@ public class NativeInterface {
 
     public native void setDataPath(String path);
 
-    public native void setIsAndroidAPK(boolean b);
+    public native void setIsAndroidAPK(int b);
 
     public native void setAppID(String id);
 
@@ -68,6 +68,6 @@ public class NativeInterface {
     }
 
     static {
-        System.loadLibrary("SampleSkinnedMesh");
+        System.loadLibrary("SampleBoidSystem");
     }
 }
