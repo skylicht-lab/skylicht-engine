@@ -209,6 +209,7 @@ void CViewInit::onUpdate()
 		{
 			const char* r = bundle.c_str();
 			fileSystem->addFileArchive(getBuiltInPath(r), false, false);
+		}
 	}
 	break;
 	case CViewInit::InitScene:
