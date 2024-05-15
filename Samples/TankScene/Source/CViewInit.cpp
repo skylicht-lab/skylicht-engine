@@ -204,12 +204,12 @@ void CViewInit::onUpdate()
 			}
 		}
 #else
-
 		for (std::string& bundle : listBundles)
 		{
 			const char* r = bundle.c_str();
 			fileSystem->addFileArchive(getBuiltInPath(r), false, false);
 		}
+#endif
 	}
 	break;
 	case CViewInit::InitScene:
