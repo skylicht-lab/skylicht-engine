@@ -47,8 +47,6 @@ commands:
 
             cp Bin/Android/Libs/$ABI/$APP_NAME $ANDROID_JNILIBS_PATH/$ABI
 
-            mkdir $ANDROID_ASSET_PATH
-
             cp Bin/BuiltIn.zip $ANDROID_ASSET_PATH
 
             cp Bin/Common.zip $ANDROID_ASSET_PATH
@@ -59,12 +57,42 @@ commands:
 
             cd Projects/Android
 
-            ls -l $ANDROID_HOME
-
             chmod +x ./gradlew
 
             ./gradlew assembleDebug
+
+            ls app/build/outputs/apk/debug
+
+            cd ../..
           name: Build Android APK
+  build-android-aab:
+    steps:
+        - run:
+            command: >
+              export ANDROID_BUNDLE_PATH=Projects/Android/appdata/src/main/assets
+
+              rm ANDROID_ASSET_PATH/*.zip
+
+              export ANDROID_ASSET_PATH=Projects/Android/app/src/main/assets
+
+              cp Bin/BuiltIn.zip $ANDROID_BUNDLE_PATH
+
+              cp Bin/Common.zip $ANDROID_BUNDLE_PATH
+
+              cp Bin/SampleModelsResource.zip $ANDROID_BUNDLE_PATH
+
+              cp Bin/SampleModelsETC.zip $ANDROID_BUNDLE_PATH
+
+              cd Projects/Android
+
+              chmod +x ./gradlew
+
+              ./gradlew bundleDebug
+
+              ls app/build/outputs/bundle/debug
+
+              cd ../..
+            name: Build Android AAB
 jobs:
   build-android:
     docker:
@@ -77,6 +105,7 @@ jobs:
       - build-engine-native
       - build-asset-bundles
       - build-android-apk
+      - build-android-aab
 workflows:
   version: 2
   build_all:
