@@ -202,11 +202,9 @@ JNIEXPORT void JNICALL JNI_FUNCTION(NativeInterface_setApkPath)(JNIEnv* env, job
 }
 
 // native member function setIsAndroidAPK
-JNIEXPORT void JNICALL JNI_FUNCTION(NativeInterface_setIsAndroidAPK)(JNIEnv* env, jobject thiz, jboolean b)
+JNIEXPORT void JNICALL JNI_FUNCTION(NativeInterface_setIsAndroidAPK)(JNIEnv* env, jobject thiz, int isAndroidAPK)
 {
-	int isAndroidAPK = (int)(b == JNI_TRUE);
-	
-	__android_log_print(ANDROID_LOG_INFO, JNI_APPNAME, "Set is Android APK: %d", (int)isAndroidAPK);
+	__android_log_print(ANDROID_LOG_INFO, JNI_APPNAME, "Set is Android APK: %d", isAndroidAPK);
 	applicationSetIsAndroidAPK(isAndroidAPK);
 }
 
