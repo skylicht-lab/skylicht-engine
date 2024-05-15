@@ -49,6 +49,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Graphics2D/CGraphics2D.h"
 
 CBaseApp* g_app = NULL;
+Skylicht::CBuildConfig* g_config = Skylicht::CBuildConfig::createGetInstance();
 
 namespace Skylicht
 {

@@ -102,10 +102,10 @@ public class FullscreenActivity extends AppCompatActivity {
             // use aab
             String assetsFolderPath = assetPackPath.assetsPath();
             NativeInterface.getInstance().setDataPath(assetsFolderPath);
-            NativeInterface.getInstance().setIsAndroidAPK(false);
+            NativeInterface.getInstance().setIsAndroidAPK(0);
         } else {
             // use apk
-            NativeInterface.getInstance().setIsAndroidAPK(true);
+            NativeInterface.getInstance().setIsAndroidAPK(1);
         }
 
         // permission detect
@@ -329,13 +329,16 @@ public class FullscreenActivity extends AppCompatActivity {
     }
 
     protected void createSaveFolder() {
+        String dataBuildinFolder = Environment.getDataDirectory().getAbsolutePath();
+        Log.w("Skylicht", "getDataDirectory: " + dataBuildinFolder);
+
         // Android/data/{application_domain}
         String dataFolder = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android/data/";
         dataFolder += getPackageName();
 
         if (createFolder(dataFolder)) {
             // Do something on success
-            Log.w("Skylicht", "Data folder: " + dataFolder);
+            Log.w("Skylicht", "getDataDirectory (ExternalStorage): " + dataFolder);
             NativeInterface.getInstance().setDownloadFolder(dataFolder);
             NativeInterface.getInstance().setSaveFolder(dataFolder);
         } else {
