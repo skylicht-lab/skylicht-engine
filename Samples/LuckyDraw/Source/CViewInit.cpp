@@ -156,13 +156,7 @@ void CViewInit::onUpdate()
 		for (std::string& bundle : listBundles)
 		{
 			const char* r = bundle.c_str();
-#if defined(WINDOWS_STORE)
 			fileSystem->addFileArchive(getBuiltInPath(r), false, false);
-#elif defined(MACOS)
-			fileSystem->addFileArchive(getBuiltInPath(r), false, false);
-#else
-			fileSystem->addFileArchive(r, false, false);
-#endif
 		}
 
 		m_initState = CViewInit::InitScene;

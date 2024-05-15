@@ -25,26 +25,35 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "pch.h"
+#include "Utils/CSingleton.h"
 
 namespace Skylicht
 {
-
 	class CBuildConfig
 	{
 	public:
-		static std::string SaveFolder;
-		static std::string ProfileFolder;
-		static std::string DataFolder;
+		DECLARE_SINGLETON(CBuildConfig)
 
-		static std::string AppID;
+		CBuildConfig();
 
-		static std::string DeviceID;
-		static std::string OSVersion;
-		static std::string Factory;
-		static std::string Model;
+		~CBuildConfig();
 
-		static std::string APKPath;
-		static std::string Version;
+		std::string SaveFolder;
+		std::string DataFolder;
+
+		std::string SyncCloudFolder;
+
+		bool IsAndroidAPK;
+
+		std::string AppID;
+
+		std::string DeviceID;
+		std::string OSVersion;
+		std::string Factory;
+		std::string Model;
+
+		std::string APKPath;
+		std::string Version;
 	};
 
 }
