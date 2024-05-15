@@ -99,8 +99,13 @@ public class FullscreenActivity extends AppCompatActivity {
         mAssetPackManager = AssetPackManagerFactory.getInstance(getApplicationContext());
         AssetPackLocation assetPackPath = mAssetPackManager.getPackLocation("appdata");
         if (assetPackPath != null) {
+            // use aab
             String assetsFolderPath = assetPackPath.assetsPath();
             NativeInterface.getInstance().setDataPath(assetsFolderPath);
+            NativeInterface.getInstance().setIsAndroidAPK(false);
+        } else {
+            // use apk
+            NativeInterface.getInstance().setIsAndroidAPK(true);
         }
 
         // permission detect

@@ -96,12 +96,12 @@ namespace Skylicht
 			if (log->isEnable())
 				log->write(event.LogEvent.Text, event.LogEvent.Level);
 		}
-        
-        if (event.EventType == EET_GAME_EXIT)
-        {
-            if (OnExitApplication != nullptr)
-                OnExitApplication();
-        }
+
+		if (event.EventType == EET_GAME_EXIT)
+		{
+			if (OnExitApplication != nullptr)
+				OnExitApplication();
+		}
 
 		return false;
 	}
@@ -143,8 +143,15 @@ namespace Skylicht
 		Skylicht::initSkylicht(m_device);
 
 #ifdef ANDROID
-		os::Printer::log("Init file archive .apk");
-		m_fileSystem->addFileArchive(CBuildConfig::APKPath.c_str(), true, true);
+		if (CBuildConfig::getInstance()->IsAndroidAPK)
+		{
+			os::Printer::log("Init file archive .apk");
+			m_fileSystem->addFileArchive(CBuildConfig::getInstance()->APKPath.c_str(), true, true);
+		}
+		else
+		{
+
+		}
 #endif
 
 		m_runGame = true;
@@ -461,7 +468,7 @@ namespace Skylicht
 		sprintf(logString, "DeviceID: %s", mac);
 		os::Printer::log(logString);
 
-		CBuildConfig::DeviceID = mac;
+		CBuildConfig::getInstance()->DeviceID = mac;
 	}
 
 	void CApplication::setDeviceID(const char* string)
@@ -487,7 +494,7 @@ namespace Skylicht
 		sprintf(logString, "DeviceID: %s", mac);
 		os::Printer::log(logString);
 
-		CBuildConfig::DeviceID = mac;
+		CBuildConfig::getInstance()->DeviceID = mac;
 	}
 
 	void CApplication::enableWriteLog(bool b)
