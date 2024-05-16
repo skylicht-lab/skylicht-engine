@@ -14,6 +14,8 @@
 
 #include "Material/Shader/Instancing/CTBNSGInstancing.h"
 
+#define USE_VERTEX_ANIMTION_TEXTURE
+
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
 	m_getFile(NULL),
@@ -128,7 +130,12 @@ void CViewInit::initScene()
 
 	// init crowd
 	int fps = 60;
+
+#if defined(USE_VERTEX_ANIMTION_TEXTURE)
+	initCrowdByVertexTexture(zone, envMin, envMax, clips, fps);
+#else
 	initCrowdByAnimTexture(zone, envMin, envMax, clips, fps);
+#endif
 
 	// init bold system
 	CEntityManager* entityManager = scene->getEntityManager();
@@ -328,6 +335,81 @@ void CViewInit::initEnviroment(CZone* zone, float& envMin, float& envMax)
 	}
 }
 
+void CViewInit::initCrowdByVertexTexture(CZone* zone, float envMin, float envMax, std::vector<CAnimationClip*>& clips, int fps)
+{
+	// bake clip animation	
+	float maxDuration = 0.0f;
+	for (CAnimationClip* clip : clips)
+	{
+		if (clip->Duration > maxDuration)
+			maxDuration = clip->Duration;
+	}
+
+	std::vector<std::string> searchTextureFolders;
+
+	CMaterialManager* materialManager = CMaterialManager::getInstance();
+	CMeshManager* meshManager = CMeshManager::getInstance();
+
+	CEntityPrefab* modelPrefab1 = meshManager->loadModel("SampleBoids/RifleMan/RifleMan.fbx", NULL, true);
+	CEntityPrefab* modelPrefab2 = meshManager->loadModel("SampleBoids/RifleMan/RifleMan_ELITE.fbx", NULL, true);
+
+	if (modelPrefab1 != NULL && modelPrefab2 != NULL)
+	{
+		// create gpu anim character
+		CGameObject* crowd1 = zone->createEmptyObject();
+		crowd1->setName("Crowd1");
+
+		initVATCrowd(crowd1, modelPrefab1, clips, fps);
+	}
+}
+
+void CViewInit::initVATCrowd(CGameObject* crowd, CEntityPrefab* modelPrefab, std::vector<CAnimationClip*>& clips, int fps)
+{
+	CRenderMeshInstancingVAT* crowdMesh = crowd->addComponent<CRenderMeshInstancingVAT>();
+	crowdMesh->initFromPrefab(modelPrefab);
+
+	CAnimationController* animController = crowd->addComponent<CAnimationController>();
+	animController->setEnable(false);
+
+	CSkeleton* skeleton = animController->createSkeleton();
+
+	float maxDuration = 0.0f;
+	for (CAnimationClip* clip : clips)
+	{
+		if (clip->Duration > maxDuration)
+			maxDuration = clip->Duration;
+	}
+
+	int clipId = 0;
+	int totalFrames = (int)(maxDuration * fps);
+	int numClip = (int)clips.size();
+
+	std::map<std::string, int> boneMap;
+	skeleton->getBoneIdMap(boneMap);
+	int numBones = (int)boneMap.size();
+
+	core::matrix4* transforms = new core::matrix4[numBones];
+
+	CAnimationClip* clip = clips[0];
+	// for (CAnimationClip* clip : clips)
+	{
+		skeleton->setAnimation(clip, true);
+
+		int clipFrames = 0;// (int)(clip->Duration * fps);
+		int clipOffset = clipId * numBones * totalFrames;
+
+		for (int i = 0; i < clipFrames; i++)
+		{
+			float t = i / (float)clipFrames;
+			skeleton->simulateTransform(t * clip->Duration, core::IdentityMatrix, transforms, numBones);
+		}
+
+		clipId++;
+	}
+
+	delete[]transforms;
+}
+
 void CViewInit::initCrowdByAnimTexture(CZone* zone, float envMin, float envMax, std::vector<CAnimationClip*>& clips, int fps)
 {
 	// bake clip animation	
@@ -417,8 +499,8 @@ void CViewInit::initCrowdByAnimTexture(CZone* zone, float envMin, float envMax, 
 		CGameObject* crowd2 = zone->createEmptyObject();
 		crowd2->setName("Crowd2");
 
-		initCrowd(crowd1, modelPrefab1, animationData, totalFrames, numBones * numClip, boneMap);
-		initCrowd(crowd2, modelPrefab2, animationData, totalFrames, numBones * numClip, boneMap);
+		initSkinnedCrowd(crowd1, modelPrefab1, animationData, totalFrames, numBones * numClip, boneMap);
+		initSkinnedCrowd(crowd2, modelPrefab2, animationData, totalFrames, numBones * numClip, boneMap);
 
 		CRenderSkinnedInstancing* crowdSkinnedMesh1 = crowd1->getComponent<CRenderSkinnedInstancing>();
 		CRenderSkinnedInstancing* crowdSkinnedMesh2 = crowd2->getComponent<CRenderSkinnedInstancing>();
@@ -492,7 +574,7 @@ void CViewInit::initCrowdByAnimTexture(CZone* zone, float envMin, float envMax, 
 	}
 }
 
-void CViewInit::initCrowd(CGameObject* crowd, CEntityPrefab* modelPrefab, core::matrix4* animationData, u32 w, u32 h, std::map<std::string, int>& bones)
+void CViewInit::initSkinnedCrowd(CGameObject* crowd, CEntityPrefab* modelPrefab, core::matrix4* animationData, u32 w, u32 h, std::map<std::string, int>& bones)
 {
 	CRenderSkinnedInstancing* crowdSkinnedMesh;
 	crowdSkinnedMesh = crowd->addComponent<CRenderSkinnedInstancing>();
@@ -570,7 +652,7 @@ void CViewInit::onUpdate()
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-		}
+}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -581,7 +663,7 @@ void CViewInit::onUpdate()
 
 		m_initState = CViewInit::InitScene;
 #endif
-	}
+}
 	break;
 	case CViewInit::InitScene:
 	{
