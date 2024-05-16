@@ -45,10 +45,5 @@ namespace Skylicht
 		virtual void init(CEntityManager* entityManager);
 
 		virtual void update(CEntityManager* entityManager);
-
-	protected:
-
-		void blendShape(CMesh* blendShape, CMesh* originalMesh);
-
 	};
 }
