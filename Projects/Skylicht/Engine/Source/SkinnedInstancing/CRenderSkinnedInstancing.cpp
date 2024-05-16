@@ -48,14 +48,7 @@ namespace Skylicht
 
 	CRenderSkinnedInstancing::~CRenderSkinnedInstancing()
 	{
-		releaseMaterial();
-		releaseEntities();
 
-		if (m_instancingTransform)
-			m_instancingTransform->drop();
-
-		if (m_instancingLighting)
-			m_instancingLighting->drop();
 	}
 
 	void CRenderSkinnedInstancing::releaseEntities()
@@ -152,6 +145,9 @@ namespace Skylicht
 				CIndirectLightingData* indirectLighting = spawnEntity->addData<CIndirectLightingData>();
 				indirectLighting->initSH();
 			}
+
+			// hide base entity
+			spawnEntity->setVisible(false);
 		}
 	}
 
@@ -234,7 +230,6 @@ namespace Skylicht
 
 		// entity->addData<CWorldInverseTransformData>();
 		entity->addData<CCullingData>();
-		entity->addData<CVisibleData>();
 
 		CCullingBBoxData* cullingBBox = entity->addData<CCullingBBoxData>();
 

@@ -41,6 +41,6 @@ namespace Skylicht
 
 		static CDirectionalLight* getCurrentDirectionLight();
 
-		DECLARE_GETTYPENAME(CDirectionalLight);
+		DECLARE_GETTYPENAME(CDirectionalLight)
 	};
 }

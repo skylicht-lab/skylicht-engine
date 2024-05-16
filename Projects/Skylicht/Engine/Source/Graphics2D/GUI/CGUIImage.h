@@ -80,6 +80,6 @@ namespace Skylicht
 
 		virtual void loadSerializable(CObjectSerializable* object);
 
-		DECLARE_GETTYPENAME(CGUIImage);
+		DECLARE_GETTYPENAME(CGUIImage)
 	};
 }

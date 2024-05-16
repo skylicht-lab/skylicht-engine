@@ -87,7 +87,7 @@ namespace Skylicht
 
 		virtual ~CGUIAlignData();
 
-		DECLARE_GETTYPENAME(CGUIAlignData);
+		DECLARE_GETTYPENAME(CGUIAlignData)
 	};
 
 	DECLARE_PUBLIC_DATA_TYPE_INDEX(CGUIAlignData);

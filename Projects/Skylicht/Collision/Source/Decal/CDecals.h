@@ -64,7 +64,7 @@ namespace Skylicht
 
 		void bake(CCollisionBuilder* collisionMgr);
 
-		DECLARE_GETTYPENAME(CDecals);
+		DECLARE_GETTYPENAME(CDecals)
 
 	protected:
 

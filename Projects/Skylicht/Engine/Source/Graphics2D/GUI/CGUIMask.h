@@ -47,6 +47,6 @@ namespace Skylicht
 
 		void endMaskTest();
 
-		DECLARE_GETTYPENAME(CGUIMask);
+		DECLARE_GETTYPENAME(CGUIMask)
 	};
 }

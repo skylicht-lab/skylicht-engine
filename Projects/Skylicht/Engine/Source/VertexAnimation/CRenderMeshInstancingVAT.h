@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2024 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,41 +24,26 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CLight.h"
-#include "CLightCullingData.h"
+#include "RenderMesh/CRenderMesh.h"
+#include "RenderMesh/CRenderMeshInstancing.h"
 
 namespace Skylicht
 {
-	class SKYLICHT_API CSpotLight : public CLight
+	class SKYLICHT_API CRenderMeshInstancingVAT : public CRenderMeshInstancing
 	{
-	protected:
-		CLightCullingData* m_cullingData;
-
-		bool m_needRenderShadowDepth;
-
 	public:
-		CSpotLight();
+		CRenderMeshInstancingVAT();
 
-		virtual ~CSpotLight();
+		virtual ~CRenderMeshInstancingVAT();
 
-		virtual void initComponent();
+		virtual void initFromPrefab(CEntityPrefab* prefab);
 
-		virtual void updateComponent();
+		virtual CEntity* spawn();
 
-		virtual CObjectSerializable* createSerializable();
-
-		virtual void loadSerializable(CObjectSerializable* object);
-
-		DECLARE_GETTYPENAME(CSpotLight)
+		DECLARE_GETTYPENAME(CRenderMeshInstancingVAT)
 
 	public:
 
-		bool needRenderShadowDepth();
-
-		void beginRenderShadowDepth();
-
-		void endRenderShadowDepth();
-
-		core::vector3df getPosition();
+		void updateSkinnedMesh();
 	};
 }

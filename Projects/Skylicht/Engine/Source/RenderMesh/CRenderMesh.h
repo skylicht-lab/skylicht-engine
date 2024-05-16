@@ -116,7 +116,7 @@ namespace Skylicht
 			return m_transforms;
 		}
 
-		DECLARE_GETTYPENAME(CRenderMesh);
+		DECLARE_GETTYPENAME(CRenderMesh)
 
 	protected:
 
