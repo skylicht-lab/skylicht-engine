@@ -43,7 +43,7 @@ namespace Skylicht
 	void CJointAnimationSystem::beginQuery(CEntityManager* entityManager)
 	{
 		if (m_group == NULL)
-		{			
+		{
 			const u32 type[] = GET_LIST_ENTITY_DATA(CJointData);
 			m_group = entityManager->createGroupFromVisible(type, 1);
 		}
@@ -78,7 +78,13 @@ namespace Skylicht
 
 				if (rootInvTransform != NULL)
 				{
+					// move bone transform to Zero location
 					joint->AnimationMatrix.setbyproduct_nocheck(rootInvTransform->WorldInverse, transform->World);
+				}
+				else
+				{
+					// if will have bugs if the SkinnedMesh isnot stand at Zero location
+					joint->AnimationMatrix = transform->World;
 				}
 			}
 		}
