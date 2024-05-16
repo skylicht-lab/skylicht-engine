@@ -273,7 +273,12 @@ namespace Skylicht
 					}
 					else
 					{
+						// write output result
 						transforms[entity->BoneID] = worldTemp[i];
+
+						// also update joint world
+						entity->WorldTransform->World = worldTemp[i];
+
 						ret++;
 					}
 				}

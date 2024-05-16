@@ -38,6 +38,12 @@ namespace Skylicht
 
 		virtual void initFromPrefab(CEntityPrefab* prefab);
 
-		DECLARE_GETTYPENAME(CRenderMeshInstancingVAT);
+		virtual CEntity* spawn();
+
+		DECLARE_GETTYPENAME(CRenderMeshInstancingVAT)
+
+	public:
+
+		void updateSkinnedMesh();
 	};
 }

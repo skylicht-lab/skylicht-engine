@@ -117,7 +117,7 @@ namespace Skylicht
 			return m_transforms;
 		}
 
-		DECLARE_GETTYPENAME(CRenderSkinnedInstancing);
+		DECLARE_GETTYPENAME(CRenderSkinnedInstancing)
 
 	protected:
 

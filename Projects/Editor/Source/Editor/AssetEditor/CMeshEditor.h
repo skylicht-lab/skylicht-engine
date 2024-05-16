@@ -55,7 +55,7 @@ namespace Skylicht
 		public:
 			CDaeMeshEditor();
 
-			DECLARE_GETTYPENAME(CDaeMeshEditor);
+			DECLARE_GETTYPENAME(CDaeMeshEditor)
 		};
 
 		class CObjMeshEditor : public CMeshEditor
@@ -63,7 +63,7 @@ namespace Skylicht
 		public:
 			CObjMeshEditor();
 
-			DECLARE_GETTYPENAME(CObjMeshEditor);
+			DECLARE_GETTYPENAME(CObjMeshEditor)
 		};
 
 		class CFbxMeshEditor : public CMeshEditor
@@ -71,7 +71,7 @@ namespace Skylicht
 		public:
 			CFbxMeshEditor();
 
-			DECLARE_GETTYPENAME(CFbxMeshEditor);
+			DECLARE_GETTYPENAME(CFbxMeshEditor)
 		};
 	}
 }

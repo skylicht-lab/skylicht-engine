@@ -40,7 +40,7 @@ namespace Skylicht
 
 		virtual ~CLODData();
 
-		DECLARE_GETTYPENAME(CLODData);
+		DECLARE_GETTYPENAME(CLODData)
 	};
 
 	DECLARE_PUBLIC_DATA_TYPE_INDEX(CLODData);

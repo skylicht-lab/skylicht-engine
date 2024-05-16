@@ -53,7 +53,7 @@ namespace Skylicht
 
 		virtual bool deserializable(CMemoryStream* stream, int version);
 
-		DECLARE_GETTYPENAME(CWorldTransformData);
+		DECLARE_GETTYPENAME(CWorldTransformData)
 	};
 
 	DECLARE_PUBLIC_DATA_TYPE_INDEX(CWorldTransformData);

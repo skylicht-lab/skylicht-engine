@@ -42,6 +42,6 @@ namespace Skylicht
 
 		virtual void render(CCamera *camera);
 
-		DECLARE_GETTYPENAME(CGUIRect);
+		DECLARE_GETTYPENAME(CGUIRect)
 	};
 }

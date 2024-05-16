@@ -49,7 +49,7 @@ namespace Skylicht
 
 		virtual void loadSerializable(CObjectSerializable* object);
 
-		DECLARE_GETTYPENAME(CSpotLight);
+		DECLARE_GETTYPENAME(CSpotLight)
 
 	public:
 

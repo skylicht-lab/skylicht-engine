@@ -76,6 +76,6 @@ namespace Skylicht
 
 		virtual void loadSerializable(CObjectSerializable* object);
 
-		DECLARE_GETTYPENAME(CGUIFitSprite);
+		DECLARE_GETTYPENAME(CGUIFitSprite)
 	};
 }
