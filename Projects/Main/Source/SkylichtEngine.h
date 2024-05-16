@@ -107,6 +107,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "RenderMesh/CRenderMeshInstancing.h"
 
 #include "SkinnedInstancing/CRenderSkinnedInstancing.h"
+#include "VertexAnimation/CRenderMeshInstancingVAT.h"
 
 // 3D Animation
 #include "Animation/CAnimationManager.h"

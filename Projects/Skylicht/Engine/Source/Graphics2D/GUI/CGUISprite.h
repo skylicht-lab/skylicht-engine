@@ -79,6 +79,6 @@ namespace Skylicht
 
 		virtual void loadSerializable(CObjectSerializable* object);
 
-		DECLARE_GETTYPENAME(CGUISprite);
+		DECLARE_GETTYPENAME(CGUISprite)
 	};
 }

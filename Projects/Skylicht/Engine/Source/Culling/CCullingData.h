@@ -58,7 +58,7 @@ namespace Skylicht
 
 		virtual bool deserializable(CMemoryStream* stream, int version);
 
-		DECLARE_GETTYPENAME(CCullingData);
+		DECLARE_GETTYPENAME(CCullingData)
 	};
 
 	DECLARE_PUBLIC_DATA_TYPE_INDEX(CCullingData);

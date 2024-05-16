@@ -45,7 +45,7 @@ namespace Skylicht
 
 		virtual ~CGUIRenderData();
 
-		DECLARE_GETTYPENAME(CGUIRenderData);
+		DECLARE_GETTYPENAME(CGUIRenderData)
 	};
 
 	DECLARE_PUBLIC_DATA_TYPE_INDEX(CGUIRenderData);

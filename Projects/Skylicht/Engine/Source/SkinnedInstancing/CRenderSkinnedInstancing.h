@@ -54,7 +54,7 @@ namespace Skylicht
 
 		void initTextureTransform(core::matrix4* transforms, u32 w, u32 h, std::map<std::string, int>& bones);
 
-		DECLARE_GETTYPENAME(CRenderSkinnedInstancing);
+		DECLARE_GETTYPENAME(CRenderSkinnedInstancing)
 
 	protected:
 
