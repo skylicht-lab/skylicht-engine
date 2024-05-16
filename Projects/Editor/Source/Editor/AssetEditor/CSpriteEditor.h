@@ -53,7 +53,7 @@ namespace Skylicht
 
 			void findAllPNG(const char* path, std::vector<std::string>& pngs);
 
-			DECLARE_GETTYPENAME(CSpriteEditor);
+			DECLARE_GETTYPENAME(CSpriteEditor)
 		};
 	}
 }
