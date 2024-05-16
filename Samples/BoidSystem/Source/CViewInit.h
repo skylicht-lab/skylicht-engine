@@ -45,6 +45,10 @@ public:
 
 protected:
 
+	void initEnviroment(CZone* zone, float& envMin, float& envMax);
+
+	void initCrowdByAnimTexture(CZone* zone, float envMin, float envMax, std::vector<CAnimationClip*>& clips, int fps);
+
 	void initScene();
 
 	void initCrowd(CGameObject* crowd, CEntityPrefab* meshPrefab, core::matrix4* transforms, u32 w, u32 h, std::map<std::string, int>& bones);
