@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2024 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,26 +24,24 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Entity/IEntitySystem.h"
-#include "CRenderMeshData.h"
-#include "CGroupMesh.h"
-#include "CMeshSystem.h"
+#include "RenderMesh/CRenderMesh.h"
+#include "Animation/Skeleton/CSkeleton.h"
 
 namespace Skylicht
 {
-	class SKYLICHT_API CSoftwareSkinningSystem : public CMeshSystem
+	class SKYLICHT_API CSoftwareSkinningUtils
 	{
 	public:
-		CSoftwareSkinningSystem();
+		static CMesh* initSoftwareSkinning(CMesh* originalMesh);
 
-		virtual ~CSoftwareSkinningSystem();
+		static void softwareSkinning(CMesh* renderMesh, CSkinnedMesh* originalMesh, CSkinnedMesh* blendShapeMesh);
 
-		virtual void beginQuery(CEntityManager* entityManager);
+		static void softwareSkinningTangent(CMesh* renderMesh, CSkinnedMesh* originalMesh, CSkinnedMesh* blendShapeMesh);
 
-		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity);
+		static void skinVertex(CSkinnedMesh::SJoint* arrayJoint, core::vector3df& vertex, core::vector3df& normal, video::S3DVertexSkinTangents* src, int boneIndex);
 
-		virtual void init(CEntityManager* entityManager);
+		static void skinVertex(CSkinnedMesh::SJoint* arrayJoint, core::vector3df& vertex, core::vector3df& normal, video::S3DVertexSkin* src, int boneIndex);
 
-		virtual void update(CEntityManager* entityManager);
+		static void softwareBlendShape(CMesh* blendShape, CMesh* originalMesh);
 	};
 }
