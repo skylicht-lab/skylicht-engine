@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CSoftwareSkinningUtils.h"
 #include "Entity/CEntityManager.h"
 #include "Culling/CCullingData.h"
+#include "Culling/CCullingBBoxData.h"
 #include "Transform/CWorldInverseTransformData.h"
 
 namespace Skylicht
@@ -130,10 +131,10 @@ namespace Skylicht
 			}
 
 			// hide this
-			// spawnEntity->setVisible(false);
+			spawnEntity->setVisible(false);
 		}
 
-		bool addInvData = true;
+		bool addInvData = false;
 		int boneId = 0;
 
 		// re-map joint with new entity in CEntityManager
@@ -173,5 +174,131 @@ namespace Skylicht
 				}
 			}
 		}
+	}
+
+	void CRenderMeshInstancingVAT::updateSkinnedMesh()
+	{
+		CEntityManager* entityManager = m_gameObject->getEntityManager();
+
+		// root entity of object
+		m_root = m_gameObject->getEntity();
+		CWorldInverseTransformData* rootInvTransform = GET_ENTITY_DATA(m_root, CWorldInverseTransformData);
+
+		CEntity** entities = m_baseEntities.pointer();
+		u32 numEntity = m_baseEntities.size();
+
+		// step 1
+		// like CJointAnimationSystem
+		for (u32 i = 0; i < numEntity; i++)
+		{
+			CEntity* entity = entities[i];
+
+			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+			CJointData* joint = GET_ENTITY_DATA(entity, CJointData);
+
+			if (joint)
+			{
+				if (rootInvTransform != NULL)
+				{
+					// move bone transform to Zero location
+					joint->AnimationMatrix.setbyproduct_nocheck(rootInvTransform->WorldInverse, transform->World);
+				}
+				else
+				{
+					// if will have bugs if the SkinnedMesh isnot stand at Zero location
+					joint->AnimationMatrix = transform->World;
+				}
+			}
+		}
+
+		// step 2
+		// like CSkinnedMeshSystem
+		for (CRenderMeshData* renderer : m_renderers)
+		{
+			CSkinnedMesh* skinnedMesh = (CSkinnedMesh*)renderer->getMesh();
+
+			for (u32 j = 0, numJoint = skinnedMesh->Joints.size(); j < numJoint; j++)
+			{
+				CSkinnedMesh::SJoint& joint = skinnedMesh->Joints[j];
+
+				f32* M = joint.SkinningMatrix;
+
+				const f32* m1 = joint.JointData->AnimationMatrix.pointer();
+				const f32* m2 = joint.BindPoseMatrix.pointer();
+
+				// inline mul matrix
+				M[0] = m1[0] * m2[0] + m1[4] * m2[1] + m1[8] * m2[2] + m1[12] * m2[3];
+				M[1] = m1[1] * m2[0] + m1[5] * m2[1] + m1[9] * m2[2] + m1[13] * m2[3];
+				M[2] = m1[2] * m2[0] + m1[6] * m2[1] + m1[10] * m2[2] + m1[14] * m2[3];
+				M[3] = m1[3] * m2[0] + m1[7] * m2[1] + m1[11] * m2[2] + m1[15] * m2[3];
+
+				M[4] = m1[0] * m2[4] + m1[4] * m2[5] + m1[8] * m2[6] + m1[12] * m2[7];
+				M[5] = m1[1] * m2[4] + m1[5] * m2[5] + m1[9] * m2[6] + m1[13] * m2[7];
+				M[6] = m1[2] * m2[4] + m1[6] * m2[5] + m1[10] * m2[6] + m1[14] * m2[7];
+				M[7] = m1[3] * m2[4] + m1[7] * m2[5] + m1[11] * m2[6] + m1[15] * m2[7];
+
+				M[8] = m1[0] * m2[8] + m1[4] * m2[9] + m1[8] * m2[10] + m1[12] * m2[11];
+				M[9] = m1[1] * m2[8] + m1[5] * m2[9] + m1[9] * m2[10] + m1[13] * m2[11];
+				M[10] = m1[2] * m2[8] + m1[6] * m2[9] + m1[10] * m2[10] + m1[14] * m2[11];
+				M[11] = m1[3] * m2[8] + m1[7] * m2[9] + m1[11] * m2[10] + m1[15] * m2[11];
+
+				M[12] = m1[0] * m2[12] + m1[4] * m2[13] + m1[8] * m2[14] + m1[12] * m2[15];
+				M[13] = m1[1] * m2[12] + m1[5] * m2[13] + m1[9] * m2[14] + m1[13] * m2[15];
+				M[14] = m1[2] * m2[12] + m1[6] * m2[13] + m1[10] * m2[14] + m1[14] * m2[15];
+				M[15] = m1[3] * m2[12] + m1[7] * m2[13] + m1[11] * m2[14] + m1[15] * m2[15];
+			}
+		}
+
+		// step 3
+		// like CSoftwareSkinningSystem
+		for (CRenderMeshData* renderer : m_renderers)
+		{
+			CSkinnedMesh* renderMesh = dynamic_cast<CSkinnedMesh*>(renderer->getMesh());
+			CMesh* skinnedMesh = renderer->getSoftwareSkinnedMesh();
+
+			if (renderMesh->getMeshBuffer(0)->getVertexDescriptor()->getID() == video::EVT_SKIN_TANGENTS)
+				CSoftwareSkinningUtils::softwareSkinningTangent(skinnedMesh, renderMesh, NULL);
+			else
+				CSoftwareSkinningUtils::softwareSkinning(skinnedMesh, renderMesh, NULL);
+		}
+	}
+
+	CEntity* CRenderMeshInstancingVAT::spawn()
+	{
+		CEntity* entity = createEntity();
+
+		CIndirectLightingData* indirect = entity->addData<CIndirectLightingData>();
+		indirect->initSH();
+
+		// entity->addData<CWorldInverseTransformData>();
+		entity->addData<CCullingData>();
+
+		CCullingBBoxData* cullingBBox = entity->addData<CCullingBBoxData>();
+
+		CEntityManager* entityMgr = m_gameObject->getEntityManager();
+
+		bool firstBox = true;
+
+		for (CRenderMeshData*& renderer : m_renderers)
+		{
+			// set bbox
+			CMesh* mesh = renderer->getSoftwareSkinnedMesh();
+			if (firstBox)
+			{
+				firstBox = false;
+				cullingBBox->BBox = mesh->getBoundingBox();
+			}
+			else
+			{
+				cullingBBox->BBox.addInternalBox(mesh->getBoundingBox());
+			}
+
+			// add renderer
+			CRenderMeshData* renderMesh = entity->addData<CRenderMeshData>();
+			renderMesh->setMesh(mesh);
+			break;
+		}
+
+		return entity;
 	}
 }

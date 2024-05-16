@@ -56,7 +56,7 @@ namespace Skylicht
 
 			void renderString(const wchar_t* text, float& px, float& py, float x, float w);
 
-			DECLARE_GETTYPENAME(CFontEditor);
+			DECLARE_GETTYPENAME(CFontEditor)
 		};
 	}
 }

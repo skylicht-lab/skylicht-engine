@@ -109,7 +109,7 @@ namespace Skylicht
 			Rect = r;
 		}
 
-		DECLARE_GETTYPENAME(CGUITransformData);
+		DECLARE_GETTYPENAME(CGUITransformData)
 	};
 
 	DECLARE_PUBLIC_DATA_TYPE_INDEX(CGUITransformData);

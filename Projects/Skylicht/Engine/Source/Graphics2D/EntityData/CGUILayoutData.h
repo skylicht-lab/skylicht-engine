@@ -58,7 +58,7 @@ namespace Skylicht
 
 		virtual ~CGUILayoutData();
 
-		DECLARE_GETTYPENAME(CGUILayoutData);
+		DECLARE_GETTYPENAME(CGUILayoutData)
 	};
 
 	DECLARE_PUBLIC_DATA_TYPE_INDEX(CGUILayoutData);
@@ -77,7 +77,7 @@ namespace Skylicht
 
 		virtual ~CGUIChildLayoutData();
 
-		DECLARE_GETTYPENAME(CGUIChildLayoutData);
+		DECLARE_GETTYPENAME(CGUIChildLayoutData)
 	};
 
 	DECLARE_PUBLIC_DATA_TYPE_INDEX(CGUIChildLayoutData);

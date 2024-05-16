@@ -69,7 +69,7 @@ namespace Skylicht
 			return m_layoutData->FitChildrenSize;
 		}
 
-		DECLARE_GETTYPENAME(CGUILayout);
+		DECLARE_GETTYPENAME(CGUILayout)
 
 		virtual CObjectSerializable* createSerializable();
 

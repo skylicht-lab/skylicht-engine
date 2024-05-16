@@ -5,9 +5,9 @@
 #include "imgui.h"
 #include "CImguiManager.h"
 
-#include "Boids/CBoldData.h"
-#include "Boids/CBoldSystem.h"
-#include "Boids/CBoldAnimationSystem.h"
+#include "CBoldData.h"
+#include "CBoldSystem.h"
+#include "CBoldAnimationSystem.h"
 
 #include "SkinnedInstancing/CSkinnedInstanceData.h"
 
