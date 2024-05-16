@@ -149,10 +149,6 @@ namespace Skylicht
 			os::Printer::log("Init file archive .apk");
 			m_fileSystem->addFileArchive(CBuildConfig::getInstance()->APKPath.c_str(), true, true);
 		}
-		else
-		{
-
-		}
 #endif
 
 		m_runGame = true;
