@@ -172,7 +172,7 @@ namespace Skylicht
 
 		void setFontSource(const char* fontSource);
 
-		DECLARE_GETTYPENAME(CGUIText);
+		DECLARE_GETTYPENAME(CGUIText)
 
 		virtual CObjectSerializable* createSerializable();
 

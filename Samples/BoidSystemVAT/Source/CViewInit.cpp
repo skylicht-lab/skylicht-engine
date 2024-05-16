@@ -9,8 +9,8 @@
 #include "Primitive/CCube.h"
 #include "SkySun/CSkySun.h"
 
-#include "Boids/CBoldSystem.h"
-#include "Boids/CBoldAnimationSystem.h"
+#include "CBoldSystem.h"
+#include "CBoldAnimationSystem.h"
 
 #include "Material/Shader/Instancing/CTBNSGInstancing.h"
 
@@ -128,7 +128,7 @@ void CViewInit::initScene()
 
 	// init crowd
 	int fps = 60;
-	initCrowdByAnimTexture(zone, envMin, envMax, clips, fps);
+	initCrowdByVertexTexture(zone, envMin, envMax, clips, fps);
 
 	// init bold system
 	CEntityManager* entityManager = scene->getEntityManager();
@@ -328,7 +328,7 @@ void CViewInit::initEnviroment(CZone* zone, float& envMin, float& envMax)
 	}
 }
 
-void CViewInit::initCrowdByAnimTexture(CZone* zone, float envMin, float envMax, std::vector<CAnimationClip*>& clips, int fps)
+void CViewInit::initCrowdByVertexTexture(CZone* zone, float envMin, float envMax, std::vector<CAnimationClip*>& clips, int fps)
 {
 	// bake clip animation	
 	float maxDuration = 0.0f;
@@ -348,169 +348,62 @@ void CViewInit::initCrowdByAnimTexture(CZone* zone, float envMin, float envMax, 
 
 	if (modelPrefab1 != NULL && modelPrefab2 != NULL)
 	{
-		CGameObject* character = zone->createEmptyObject();
-		character->setName("Rifle");
-
-		// render mesh & init material
-		CRenderMesh* characterRenderer = character->addComponent<CRenderMesh>();
-		characterRenderer->initFromPrefab(modelPrefab1);
-
-		ArrayMaterial materials = materialManager->loadMaterial("SampleBoids/RifleMan/RifleMan.mat", true, searchTextureFolders);
-		characterRenderer->initMaterial(materials);
-
-		// init animation
-		CAnimationController* animController = character->addComponent<CAnimationController>();
-		CSkeleton* skeleton = animController->createSkeleton();
-
-		// get bone map transform
-		std::map<std::string, int> boneMap;
-		skeleton->getBoneIdMap(boneMap);
-		int numBones = (int)boneMap.size();
-
-		int clipId = 0;
-		int totalFrames = (int)(maxDuration * fps);
-		int numClip = (int)clips.size();
-
-		// build the matrix animations
-		//
-		//  [anim1]   frame0    frame1    frame2    ...
-		//  bone1
-		//  bone2
-		//  bone3
-		//  ...
-		//  [anim2]   frame0    frame1    frame2    ...
-		//  bone1
-		//  bone2
-		//  bone3
-		//  ...
-		core::matrix4* animationData = new core::matrix4[totalFrames * numBones * numClip];
-		core::matrix4* transforms = new core::matrix4[numBones];
-
-		for (CAnimationClip* clip : clips)
-		{
-			skeleton->setAnimation(clip, true);
-
-			int clipFrames = (int)(clip->Duration * fps);
-			int clipOffset = clipId * numBones * totalFrames;
-
-			for (int i = 0; i < clipFrames; i++)
-			{
-				float t = i / (float)clipFrames;
-				skeleton->simulateTransform(t * clip->Duration, core::IdentityMatrix, transforms, numBones);
-
-				for (int j = 0; j < numBones; j++)
-				{
-					animationData[clipOffset + j * totalFrames + i] = transforms[j];
-				}
-			}
-
-			clipId++;
-		}
-
-		character->remove();
-
-
 		// create gpu anim character
 		CGameObject* crowd1 = zone->createEmptyObject();
 		crowd1->setName("Crowd1");
 
-		CGameObject* crowd2 = zone->createEmptyObject();
-		crowd2->setName("Crowd2");
-
-		initSkinnedCrowd(crowd1, modelPrefab1, animationData, totalFrames, numBones * numClip, boneMap);
-		initSkinnedCrowd(crowd2, modelPrefab2, animationData, totalFrames, numBones * numClip, boneMap);
-
-		CRenderSkinnedInstancing* crowdSkinnedMesh1 = crowd1->getComponent<CRenderSkinnedInstancing>();
-		CRenderSkinnedInstancing* crowdSkinnedMesh2 = crowd2->getComponent<CRenderSkinnedInstancing>();
-
-		// spawn bold to test
-		CEntity* entity;
-		float space = 2.0f;
-		float offset = space * 0.5f;
-		float time = 0.0f;
-
-		CBoldData* bold;
-		CWorldTransformData* transform;
-		core::vector3df position;
-
-		for (int i = -7; i < 7; i++)
-		{
-			for (int j = -7; j < 7; j++)
-			{
-				// MODEL 1
-				entity = crowdSkinnedMesh1->spawn();
-
-				// random time
-				time = os::Randomizer::frand();
-
-				// set animation
-				crowdSkinnedMesh1->setAnimation(entity, 0, clips[0], time * clips[0]->Duration, fps, 0);
-				crowdSkinnedMesh1->setAnimation(entity, 1, clips[1], time * clips[1]->Duration, fps, 1);
-
-				crowdSkinnedMesh1->setAnimationWeight(entity, 0, 1.0f);
-				crowdSkinnedMesh1->setAnimationWeight(entity, 1, 0.0f);
-
-				// set position
-				transform = GET_ENTITY_DATA(entity, CWorldTransformData);
-				position.set(i * space, 0.0f, j * space);
-
-				transform->Relative.setTranslation(position);
-
-				// add bold data
-				bold = entity->addData<CBoldData>();
-				bold->Location = position;
-
-
-				// MODEL 2
-				entity = crowdSkinnedMesh2->spawn();
-
-				// random time
-				time = os::Randomizer::frand();
-
-				// set animation
-				crowdSkinnedMesh2->setAnimation(entity, 0, clips[0], time * clips[0]->Duration, fps, 0);
-				crowdSkinnedMesh2->setAnimation(entity, 1, clips[1], time * clips[1]->Duration, fps, 1);
-
-				crowdSkinnedMesh2->setAnimationWeight(entity, 0, 1.0f);
-				crowdSkinnedMesh2->setAnimationWeight(entity, 1, 0.0f);
-
-				// set position
-				transform = GET_ENTITY_DATA(entity, CWorldTransformData);
-				position.set(i * space + offset, 0.0f, j * space + offset);
-
-				transform->Relative.setTranslation(position);
-
-				// add bold data
-				bold = entity->addData<CBoldData>();
-				bold->Location = position;
-			}
-		}
-
-		// free data
-		delete[]animationData;
-		delete[]transforms;
+		initVATCrowd(crowd1, modelPrefab1, clips, fps);
 	}
 }
 
-void CViewInit::initSkinnedCrowd(CGameObject* crowd, CEntityPrefab* modelPrefab, core::matrix4* animationData, u32 w, u32 h, std::map<std::string, int>& bones)
+void CViewInit::initVATCrowd(CGameObject* crowd, CEntityPrefab* modelPrefab, std::vector<CAnimationClip*>& clips, int fps)
 {
-	CRenderSkinnedInstancing* crowdSkinnedMesh;
-	crowdSkinnedMesh = crowd->addComponent<CRenderSkinnedInstancing>();
-	crowdSkinnedMesh->initFromPrefab(modelPrefab);
-	crowdSkinnedMesh->initTextureTransform(animationData, w, h, bones);
+	CRenderMeshInstancingVAT* crowdMesh = crowd->addComponent<CRenderMeshInstancingVAT>();
+	crowdMesh->initFromPrefab(modelPrefab);
 
-	// It may be more optimal memory, but it hasn't been thoroughly tested in many cases
-	crowdSkinnedMesh->applyShareTransformBuffer();
-	crowdSkinnedMesh->applyShareMaterialBuffer();
+	CAnimationController* animController = crowd->addComponent<CAnimationController>();
+	animController->setEnable(false);
 
-	// body
-	ArrayMaterial material = CMaterialManager::getInstance()->initDefaultMaterial(modelPrefab);
-	material[0]->changeShader("BuiltIn/Shader/Toon/SkinToonInstancing2.xml");
-	material[0]->setUniformTexture("uTexDiffuse", CTextureManager::getInstance()->getTexture("SampleBoids/Textures/CharacterAtlas.png"));
-	material[0]->setUniformTexture("uTexRamp", CTextureManager::getInstance()->getTexture("BuiltIn/Textures/TCP2Ramp.png"));
-	material[0]->autoDetectLoadTexture();
+	CSkeleton* skeleton = animController->createSkeleton();
 
-	crowdSkinnedMesh->initMaterial(material);
+	float maxDuration = 0.0f;
+	for (CAnimationClip* clip : clips)
+	{
+		if (clip->Duration > maxDuration)
+			maxDuration = clip->Duration;
+	}
+
+	int clipId = 0;
+	int totalFrames = (int)(maxDuration * fps);
+	int numClip = (int)clips.size();
+
+	std::map<std::string, int> boneMap;
+	skeleton->getBoneIdMap(boneMap);
+	int numBones = (int)boneMap.size();
+
+	core::matrix4* transforms = new core::matrix4[numBones];
+
+	for (CAnimationClip* clip : clips)
+	{
+		skeleton->setAnimation(clip, true);
+
+		int clipFrames = (int)(clip->Duration * fps);
+		int clipOffset = clipId * numBones * totalFrames;
+
+		for (int i = 0; i < clipFrames; i++)
+		{
+			float t = i / (float)clipFrames;
+			skeleton->simulateTransform(t * clip->Duration, core::IdentityMatrix, transforms, numBones);
+			crowdMesh->updateSkinnedMesh();
+		}
+
+		clipId++;
+	}
+
+	delete[]transforms;
+
+	// test spawn 1 entity
+	crowdMesh->spawn();
 }
 
 void CViewInit::onDestroy()

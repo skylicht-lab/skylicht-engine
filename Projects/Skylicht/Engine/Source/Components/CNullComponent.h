@@ -59,6 +59,6 @@ namespace Skylicht
 
 		virtual void loadSerializable(CObjectSerializable* object);
 
-		DECLARE_GETTYPENAME(CNullComponent);
+		DECLARE_GETTYPENAME(CNullComponent)
 	};
 }

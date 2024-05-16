@@ -37,6 +37,9 @@
 /PrjMinGW/
 /PrjCygwin/
 /PrjEmscripten/
+/PrjAndroid-arm64-v8a/
+/PrjAndroid-armeabi-v7a/
+/PrjAndroid-x86/
 /InstallLibs/
 /Maps/
 node_modules/

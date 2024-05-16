@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CAnimationController.h"
 
 #include "RenderMesh/CRenderMesh.h"
+#include "VertexAnimation/CRenderMeshInstancingVAT.h"
 
 namespace Skylicht
 {
@@ -48,19 +49,19 @@ namespace Skylicht
 
 	void CAnimationController::updateComponent()
 	{
-		for (CSkeleton *&skeleton : m_skeletons)
+		for (CSkeleton*& skeleton : m_skeletons)
 		{
 			if (skeleton->isEnable() == true && skeleton->getAnimationType() == CSkeleton::KeyFrame)
 				skeleton->getTimeline().update();
 		}
 
-		for (CSkeleton *&skeleton : m_skeletons)
+		for (CSkeleton*& skeleton : m_skeletons)
 		{
 			if (skeleton->isEnable() == true && skeleton->getAnimationType() == CSkeleton::Blending)
 				skeleton->syncAnimationByTimeScale();
 		}
 
-		for (CSkeleton *&skeleton : m_skeletons)
+		for (CSkeleton*& skeleton : m_skeletons)
 		{
 			if (skeleton->isEnable() == true)
 			{
@@ -78,9 +79,15 @@ namespace Skylicht
 
 		CSkeleton* skeleton = new CSkeleton(id);
 
-		CRenderMesh *renderMesh = m_gameObject->getComponent<CRenderMesh>();
-		if (renderMesh != NULL)
+		CRenderMesh* renderMesh = m_gameObject->getComponent<CRenderMesh>();
+		if (renderMesh)
 			skeleton->initSkeleton(renderMesh->getEntities());
+		else
+		{
+			CRenderMeshInstancingVAT* renderMeshVAT = m_gameObject->getComponent<CRenderMeshInstancingVAT>();
+			if (renderMeshVAT)
+				skeleton->initSkeleton(renderMeshVAT->getBaseEntities());
+		}
 
 		m_skeletons.push_back(skeleton);
 
@@ -92,7 +99,7 @@ namespace Skylicht
 
 	void CAnimationController::releaseAllSkeleton()
 	{
-		for (CSkeleton *&skeleton : m_skeletons)
+		for (CSkeleton*& skeleton : m_skeletons)
 		{
 			delete skeleton;
 		}
