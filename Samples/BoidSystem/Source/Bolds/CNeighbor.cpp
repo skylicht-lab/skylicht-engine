@@ -63,21 +63,24 @@ void CNeighbor::add(CBoldData** bolds, int count)
 {
 	if (m_cellSize > 0)
 	{
+		CBoldData* bold;
+		float x, z;
+		int cx, cz, id;
+
 		for (int i = 0; i < count; i++)
 		{
-			CBoldData* bold = bolds[i];
+			bold = bolds[i];
 
-			const core::vector3df& p = bold->Location;
+			x = bold->Location.X - m_minX;
+			z = bold->Location.Z - m_minZ;
 
-			float x = p.X - m_minX;
-			float z = p.Z - m_minZ;
+			cx = (int)floorf(x / m_cellSize);
+			cz = (int)floorf(z / m_cellSize);
 
-			if (x >= 0 && z >= 0)
+			if (cx >= 0 && cx < m_bucketSizeX &&
+				cz >= 0 && cz < m_bucketSizeZ)
 			{
-				int cx = (int)floorf(x / m_cellSize);
-				int cz = (int)floorf(z / m_cellSize);
-
-				int id = cz * m_bucketSizeX + cx;
+				id = cz * m_bucketSizeX + cx;
 
 				if (m_buckets[id].count() < m_poolSize)
 				{
@@ -98,11 +101,13 @@ void CNeighbor::queryNeighbor(const core::vector3df& position, CFastArray<CBoldD
 		int cx = (int)floorf(px / m_cellSize);
 		int cz = (int)floorf(pz / m_cellSize);
 
-		int x, z, id;
+		CFastArray<CBoldData*>* bucket;
+		CBoldData** src;
+		int x, z, id, n, i, j;
 
-		for (int i = -1; i <= 1; i++)
+		for (i = -1; i <= 1; i++)
 		{
-			for (int j = -1; j <= 1; j++)
+			for (j = -1; j <= 1; j++)
 			{
 				x = cx + i;
 				z = cz + j;
@@ -111,20 +116,18 @@ void CNeighbor::queryNeighbor(const core::vector3df& position, CFastArray<CBoldD
 					z >= 0 && z < m_bucketSizeZ)
 				{
 					id = z * m_bucketSizeX + x;
-					addTo(m_buckets[id], result);
+					bucket = &m_buckets[id];
+
+					// add entity from cell bucket: id to result
+					src = bucket->pointer();
+					n = bucket->count() - 1;
+					while (n >= 0)
+					{
+						result.push(src[n]);
+						--n;
+					}
 				}
 			}
 		}
-	}
-}
-
-void CNeighbor::addTo(CFastArray<CBoldData*>& bucket, CFastArray<CBoldData*>& result)
-{
-	CBoldData** src = bucket.pointer();
-	int i = bucket.count() - 1;
-	while (i >= 0)
-	{
-		result.push(src[i]);
-		--i;
 	}
 }

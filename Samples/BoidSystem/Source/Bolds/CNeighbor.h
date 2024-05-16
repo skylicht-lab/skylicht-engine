@@ -1,4 +1,5 @@
 #pragma once
+#pragma once
 
 #include "CBoldData.h"
 #include "Entity/CArrayUtils.h"
@@ -29,8 +30,4 @@ public:
 	void add(CBoldData** bolds, int count);
 
 	void queryNeighbor(const core::vector3df& position, CFastArray<CBoldData*>& result);
-
-protected:
-
-	void addTo(CFastArray<CBoldData*>& bucket, CFastArray<CBoldData*>& result);
 };
