@@ -48,6 +48,7 @@ namespace Skylicht
 		m_instancingShader(NULL),
 		m_softwareSkinningShader(NULL),
 		m_skinning(false),
+		m_shadow(true),
 		m_shadowDepthShader(NULL),
 		m_shadowDistanceShader(NULL)
 	{
@@ -323,7 +324,9 @@ namespace Skylicht
 						"CubeTexture",
 						"ReflectionProbe",
 						"ShadowMap",
-						"TransformTexture"
+						"TransformTexture",
+						"VertexPositionTexture",
+						"VertexNormalTexture"
 					};
 
 					for (u32 i = 0, n = ResourceCount; i < n; i++)
@@ -566,6 +569,17 @@ namespace Skylicht
 							sprintf(log, "Warning: Need load shader fallback: %s first", text);
 							os::Printer::log(log);
 						}
+					}
+
+					// shader for fallback to software skinning
+					wtext = xmlReader->getAttributeValue(L"shadow");
+					if (wtext != NULL)
+					{
+						CStringImp::convertUnicodeToUTF8(wtext, text);
+						if (CStringImp::comp<const char>(text, "true") == 0)
+							m_shadow = true;
+						else
+							m_shadow = false;
 					}
 
 					// shader for draw shadow depth pass

@@ -86,6 +86,8 @@ namespace Skylicht
 
 		void initSoftwareSkinning();
 
+		void releaseSoftwareSkinning();
+
 		inline bool isSoftwareSkinning()
 		{
 			return IsSoftwareSkinning;

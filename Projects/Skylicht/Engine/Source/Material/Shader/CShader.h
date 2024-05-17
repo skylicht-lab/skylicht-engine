@@ -164,6 +164,8 @@ namespace Skylicht
 			ReflectionProbe,
 			ShadowMap,
 			TransformTexture,
+			VertexPositionTexture,
+			VertexNormalTexture,
 			ResourceCount
 		};
 
@@ -246,6 +248,8 @@ namespace Skylicht
 		bool m_deferred;
 
 		bool m_skinning;
+
+		bool m_shadow;
 
 		// fallback for hardware skinning
 		std::string m_softwareSkinning;
@@ -430,6 +434,11 @@ namespace Skylicht
 		inline CShader* getInstancingShader()
 		{
 			return m_instancingShader;
+		}
+
+		inline bool isDrawDepthShadow()
+		{
+			return m_shadow;
 		}
 
 		inline CShader* getShadowDepthWriteShader()

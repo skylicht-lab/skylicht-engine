@@ -32,7 +32,8 @@ namespace Skylicht
 	IMPLEMENT_DATA_TYPE_INDEX(CSkinnedInstanceData);
 
 	CSkinnedInstanceData::CSkinnedInstanceData() :
-		IsVertexAnimationTexture(false)
+		IsVertexAnimationTexture(false),
+		ClipOffset(NULL)
 	{
 		for (int i = 0; i < 2; i++)
 		{
@@ -70,7 +71,11 @@ namespace Skylicht
 		// tps to fix last frame is not baked
 		float tps = 1.0f / bakeFps;
 
-		data->ClipId = animTextureIndex;
+		if (IsVertexAnimationTexture)
+			data->ClipId = ClipOffset[animTextureIndex];
+		else
+			data->ClipId = animTextureIndex;
+
 		data->FPS = bakeFps;
 
 		data->Time = currentTime;
@@ -101,7 +106,11 @@ namespace Skylicht
 		if (clipEnd >= theEndTime)
 			clipEnd = theEndTime;
 
-		data->ClipId = animTextureIndex;
+		if (IsVertexAnimationTexture)
+			data->ClipId = ClipOffset[animTextureIndex];
+		else
+			data->ClipId = animTextureIndex;
+
 		data->FPS = bakeFps;
 
 		data->Time = currentTime;

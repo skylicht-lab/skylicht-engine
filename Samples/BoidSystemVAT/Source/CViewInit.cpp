@@ -344,7 +344,77 @@ void CViewInit::initCrowdByVertexTexture(CZone* zone, float envMin, float envMax
 		CGameObject* crowd1 = zone->createEmptyObject();
 		crowd1->setName("Crowd1");
 
+		CGameObject* crowd2 = zone->createEmptyObject();
+		crowd2->setName("Crowd2");
+
 		initVATCrowd(crowd1, modelPrefab1, clips, fps);
+		initVATCrowd(crowd2, modelPrefab2, clips, fps);
+
+		CRenderMeshInstancingVAT* crowdSkinnedMesh1 = crowd1->getComponent<CRenderMeshInstancingVAT>();
+		CRenderMeshInstancingVAT* crowdSkinnedMesh2 = crowd2->getComponent<CRenderMeshInstancingVAT>();
+
+		// spawn bold to test
+		CEntity* entity;
+		float space = 2.0f;
+		float offset = space * 0.5f;
+		float time = 0.0f;
+
+		CBoldData* bold;
+		CWorldTransformData* transform;
+		core::vector3df position;
+
+		for (int i = -7; i < 7; i++)
+		{
+			for (int j = -7; j < 7; j++)
+			{
+				// MODEL 1
+				entity = crowdSkinnedMesh1->spawn();
+
+				// random time
+				time = os::Randomizer::frand();
+
+				// set animation
+				crowdSkinnedMesh1->setAnimation(entity, 0, clips[0], time * clips[0]->Duration, fps, 0);
+				crowdSkinnedMesh1->setAnimation(entity, 1, clips[1], time * clips[1]->Duration, fps, 1);
+
+				crowdSkinnedMesh1->setAnimationWeight(entity, 0, 1.0f);
+				crowdSkinnedMesh1->setAnimationWeight(entity, 1, 0.0f);
+
+				// set position
+				transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+				position.set(i * space, 0.0f, j * space);
+
+				transform->Relative.setTranslation(position);
+
+				// add bold data
+				bold = entity->addData<CBoldData>();
+				bold->Location = position;
+
+
+				// MODEL 2
+				entity = crowdSkinnedMesh2->spawn();
+
+				// random time
+				time = os::Randomizer::frand();
+
+				// set animation
+				crowdSkinnedMesh2->setAnimation(entity, 0, clips[0], time * clips[0]->Duration, fps, 0);
+				crowdSkinnedMesh2->setAnimation(entity, 1, clips[1], time * clips[1]->Duration, fps, 1);
+
+				crowdSkinnedMesh2->setAnimationWeight(entity, 0, 1.0f);
+				crowdSkinnedMesh2->setAnimationWeight(entity, 1, 0.0f);
+
+				// set position
+				transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+				position.set(i * space + offset, 0.0f, j * space + offset);
+
+				transform->Relative.setTranslation(position);
+
+				// add bold data
+				bold = entity->addData<CBoldData>();
+				bold->Location = position;
+			}
+		}
 	}
 }
 
@@ -386,6 +456,9 @@ void CViewInit::initVATCrowd(CGameObject* crowd, CEntityPrefab* modelPrefab, std
 
 		int clipFrames = (int)(clip->Duration * fps);
 
+		// save clip frame offset
+		crowdMesh->setClipFrameOffset((u32)clipId, (u32)frameId);
+
 		for (int i = 0; i < clipFrames; i++)
 		{
 			// simulate animation
@@ -396,9 +469,6 @@ void CViewInit::initVATCrowd(CGameObject* crowd, CEntityPrefab* modelPrefab, std
 			crowdMesh->bakeSkinnedMesh(frameId++);
 		}
 
-		// save clip frame
-		crowdMesh->setClipFrame((u32)clipId, (u32)clipFrames);
-
 		clipId++;
 	}
 
@@ -407,8 +477,18 @@ void CViewInit::initVATCrowd(CGameObject* crowd, CEntityPrefab* modelPrefab, std
 	// finish bake
 	crowdMesh->endBake();
 
-	// test spawn 1 entity
-	crowdMesh->spawn();
+	// It may be more optimal memory, but it hasn't been thoroughly tested in many cases
+	crowdMesh->applyShareTransformBuffer();
+	crowdMesh->applyShareMaterialBuffer();
+
+	// body
+	ArrayMaterial material = CMaterialManager::getInstance()->initDefaultMaterial(modelPrefab);
+	material[0]->changeShader("BuiltIn/Shader/Toon/SkinToonVATInstancing2.xml");
+	material[0]->setUniformTexture("uTexDiffuse", CTextureManager::getInstance()->getTexture("SampleBoids/Textures/CharacterAtlas.png"));
+	material[0]->setUniformTexture("uTexRamp", CTextureManager::getInstance()->getTexture("BuiltIn/Textures/TCP2Ramp.png"));
+	material[0]->autoDetectLoadTexture();
+
+	crowdMesh->initMaterial(material);
 }
 
 void CViewInit::onDestroy()

@@ -113,6 +113,33 @@ namespace Skylicht
 		return mesh;
 	}
 
+	void CSoftwareSkinningUtils::resetVertexID(CMesh* mesh)
+	{
+		for (int i = 0, n = mesh->getMeshBufferCount(); i < n; i++)
+		{
+			IMeshBuffer* meshBuffer = mesh->getMeshBuffer(i);
+
+			if (meshBuffer->getVertexType() == video::EVT_TANGENTS)
+			{
+				CVertexBuffer<video::S3DVertexTangents>* vertexBuffer = dynamic_cast<CVertexBuffer<video::S3DVertexTangents>*>(meshBuffer->getVertexBuffer());
+				u32 vtxCount = vertexBuffer->getVertexCount();
+				for (u32 i = 0; i < vtxCount; i++)
+				{
+					vertexBuffer->getVertex(i).VertexData.Y = (float)i;
+				}
+			}
+			else if (meshBuffer->getVertexType() == video::EVT_SKIN_TANGENTS)
+			{
+				CVertexBuffer<video::S3DVertexSkinTangents>* vertexBuffer = dynamic_cast<CVertexBuffer<video::S3DVertexSkinTangents>*>(meshBuffer->getVertexBuffer());
+				u32 vtxCount = vertexBuffer->getVertexCount();
+				for (u32 i = 0; i < vtxCount; i++)
+				{
+					vertexBuffer->getVertex(i).VertexData.Y = (float)i;
+				}
+			}
+		}
+	}
+
 	void CSoftwareSkinningUtils::softwareSkinning(CMesh* skinnedMesh, CSkinnedMesh* originalMesh, CSkinnedMesh* blendShapeMesh)
 	{
 		CSkinnedMesh::SJoint* arrayJoint = originalMesh->Joints.pointer();

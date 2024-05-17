@@ -200,9 +200,18 @@ namespace Skylicht
 					}
 				}
 			}
-			else if (res->Type == CShader::TransformTexture)
+			else if (res->Type == CShader::TransformTexture ||
+				res->Type == CShader::VertexPositionTexture ||
+				res->Type == CShader::VertexNormalTexture)
 			{
-				ITexture* ttexture = CShaderTransformTexture::getTexture();
+				ITexture* ttexture = NULL;
+
+				if (res->Type == CShader::TransformTexture)
+					ttexture = CShaderTransformTexture::getTexture();
+				else if (res->Type == CShader::VertexPositionTexture)
+					ttexture = CShaderTransformTexture::getPositionTexture();
+				else if (res->Type == CShader::VertexNormalTexture)
+					ttexture = CShaderTransformTexture::getNormalTexture();
 
 				SUniform* uniform = shader->getVSUniform(res->Name.c_str());
 				if (uniform != NULL)

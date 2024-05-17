@@ -79,11 +79,11 @@ void CViewDemo::onInit()
 
 	CGameObject* crowd1 = zone->searchObjectInChild(L"Crowd1");
 	if (crowd1)
-		m_instancings.push_back(crowd1->getComponent<CRenderSkinnedInstancing>());
+		m_instancings.push_back(crowd1->getComponent<CRenderMeshInstancingVAT>());
 
 	CGameObject* crowd2 = zone->searchObjectInChild(L"Crowd2");
 	if (crowd2)
-		m_instancings.push_back(crowd2->getComponent<CRenderSkinnedInstancing>());
+		m_instancings.push_back(crowd2->getComponent<CRenderMeshInstancingVAT>());
 
 	followRandomEntity();
 }
@@ -97,7 +97,7 @@ void CViewDemo::followRandomEntity()
 		return;
 
 	int totalEntity = 0;
-	for (CRenderSkinnedInstancing* instancing : m_instancings)
+	for (CRenderMeshInstancingVAT* instancing : m_instancings)
 	{
 		if (instancing)
 			totalEntity += instancing->getEntityCount();
@@ -110,7 +110,7 @@ void CViewDemo::followRandomEntity()
 	int end = 0;
 
 	int r = os::Randomizer::rand() % totalEntity;
-	for (CRenderSkinnedInstancing* instancing : m_instancings)
+	for (CRenderMeshInstancingVAT* instancing : m_instancings)
 	{
 		if (instancing)
 		{
@@ -145,7 +145,7 @@ void CViewDemo::testSpawnEntity(int count)
 	if (m_followTopCam)
 		m_followTopCam->setFollowTarget((CEntity*)NULL);
 
-	for (CRenderSkinnedInstancing* instancing : m_instancings)
+	for (CRenderMeshInstancingVAT* instancing : m_instancings)
 	{
 		if (instancing)
 			instancing->removeAllEntities();
