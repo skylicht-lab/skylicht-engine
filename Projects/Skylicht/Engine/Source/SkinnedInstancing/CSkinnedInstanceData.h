@@ -50,7 +50,12 @@ namespace Skylicht
 
 		core::array<CRenderMeshData*> RenderData;
 		core::array<ITexture*> TransformTextures;
+		core::array<ITexture*> PositionTextures;
+		core::array<ITexture*> NormalTextures;
 		core::array<CMaterial*> Materials;
+
+		bool IsVertexAnimationTexture;
+
 	public:
 		CSkinnedInstanceData();
 

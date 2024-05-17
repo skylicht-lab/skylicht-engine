@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2022 Skylicht Technology CO., LTD
+Copyright (c) 2024 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,25 +24,36 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include <typeindex>
-#include <unordered_map>
+#include "Entity/IEntityData.h"
+#include "RenderMesh/CMesh.h"
 
 namespace Skylicht
 {
-#define IMPLEMENT_DATA_TYPE_INDEX(type) \
-	u32 type##_DataTypeIndex = CEntityDataTypeManager::getDataIndex(typeid(type))
-
-#define DECLARE_PUBLIC_DATA_TYPE_INDEX(type) SKYLICHT_EXPORT extern u32 type##_DataTypeIndex
-
-#define DECLARE_PRIVATE_DATA_TYPE_INDEX(type) extern u32 type##_DataTypeIndex
-
-#define DATA_TYPE_INDEX(type) type##_DataTypeIndex
-
-	class SKYLICHT_API CEntityDataTypeManager
+	class SKYLICHT_API CVertexAnimTextureData : public IEntityData
 	{
 	public:
+		ITexture* PositionTexture;
+		ITexture* NormalTexture;
+		u32 FrameCount;
+		u32 VertexCount;
+		core::vector3df* PositionData;
+		core::vector3df* NormalData;
 
-		static u32 getDataIndex(const std::type_index& ti);
+	public:
+		CVertexAnimTextureData();
 
+		virtual ~CVertexAnimTextureData();
+
+		void allocFrames(u32 numVertex, u32 frames);
+
+		void freeTextureData();
+
+		void addFrame(u32 frame, CMesh* mesh);
+
+		void buildTexture();
+
+		DECLARE_GETTYPENAME(CVertexAnimTextureData)
 	};
+
+	DECLARE_PUBLIC_DATA_TYPE_INDEX(CVertexAnimTextureData);
 }

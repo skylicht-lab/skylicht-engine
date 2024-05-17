@@ -59,6 +59,11 @@ namespace Skylicht
 		int numEntity = m_groupMesh->getNumSkinnedMesh();
 		CEntity** entities = m_groupMesh->getSkinnedMeshes();
 
+		updateSkinnedMesh(entityManager, entities, numEntity);
+	}
+
+	void CSkinnedMeshSystem::updateSkinnedMesh(CEntityManager* entityManager, CEntity** entities, int numEntity)
+	{
 		for (int i = 0; i < numEntity; i++)
 		{
 			CEntity* entity = entities[i];

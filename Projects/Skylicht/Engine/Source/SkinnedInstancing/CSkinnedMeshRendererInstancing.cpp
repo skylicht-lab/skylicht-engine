@@ -101,14 +101,20 @@ namespace Skylicht
 
 			// skip no transform textures
 			CSkinnedInstanceData* skinnedIntance = GET_ENTITY_DATA(entity, CSkinnedInstanceData);
-			if (skinnedIntance->TransformTextures.size() == 0)
+			if (!skinnedIntance->IsVertexAnimationTexture && skinnedIntance->TransformTextures.size() == 0)
+				continue;
+
+			if (skinnedIntance->IsVertexAnimationTexture && skinnedIntance->PositionTextures.size() == 0)
 				continue;
 
 			for (u32 j = 0, n = skinnedIntance->RenderData.size(); j < n; j++)
 			{
 				CRenderMeshData* meshData = skinnedIntance->RenderData[j];
 
-				if (skinnedIntance->TransformTextures[j] == NULL)
+				if (!skinnedIntance->IsVertexAnimationTexture && skinnedIntance->TransformTextures[j] == NULL)
+					continue;
+
+				if (skinnedIntance->IsVertexAnimationTexture && skinnedIntance->PositionTextures[j] == NULL)
 					continue;
 
 				// skip if the shader is incompatible 
@@ -134,7 +140,18 @@ namespace Skylicht
 					if (group == NULL)
 					{
 						group = new SMeshInstancingGroup();
-						group->TransformTexture = skinnedIntance->TransformTextures[j];
+						group->IsVertexAnimationTexture = skinnedIntance->IsVertexAnimationTexture;
+
+						if (group->IsVertexAnimationTexture)
+						{
+							group->PositionTexture = skinnedIntance->PositionTextures[j];
+							group->NormalTexture = skinnedIntance->NormalTextures[j];
+						}
+						else
+						{
+							group->TransformTexture = skinnedIntance->TransformTextures[j];
+						}
+
 						group->RenderMesh = meshData;
 						group->RootEntityIndex = meshData->EntityIndex;
 						group->MeshIndex = j;
@@ -298,11 +315,21 @@ namespace Skylicht
 
 			// apply bone count
 			CMesh* mesh = group->RenderMesh->getMesh();
-			CSkinnedMesh* skinnedMesh = dynamic_cast<CSkinnedMesh*>(mesh);
-			shaderMgr->BoneCount = skinnedMesh->Joints.size();
 
-			// apply bone transform texture
-			CShaderTransformTexture::setTexture(group->TransformTexture);
+			if (group->IsVertexAnimationTexture)
+			{
+				// apply vertex positon, normal texture
+				CShaderTransformTexture::setPositionTexture(group->PositionTexture);
+				CShaderTransformTexture::setNormalTexture(group->NormalTexture);
+			}
+			else
+			{
+				CSkinnedMesh* skinnedMesh = dynamic_cast<CSkinnedMesh*>(mesh);
+				shaderMgr->BoneCount = skinnedMesh->Joints.size();
+
+				// apply bone transform texture
+				CShaderTransformTexture::setTexture(group->TransformTexture);
+			}
 
 			CEntity* rootEntity = allEntities[group->RootEntityIndex];
 			CIndirectLightingData* indirectLighting = GET_ENTITY_DATA(rootEntity, CIndirectLightingData);

@@ -45,6 +45,11 @@ namespace Skylicht
 		// skinned transform texture
 		ITexture* TransformTexture;
 
+		// vertex animation texture
+		bool IsVertexAnimationTexture;
+		ITexture* PositionTexture;
+		ITexture* NormalTexture;
+
 		// render mesh
 		CRenderMeshData* RenderMesh;
 
@@ -53,7 +58,10 @@ namespace Skylicht
 
 		SMeshInstancingGroup()
 		{
+			IsVertexAnimationTexture = false;
 			TransformTexture = NULL;
+			PositionTexture = NULL;
+			NormalTexture = NULL;
 			RenderMesh = NULL;
 			RootEntityIndex = -1;
 			MeshIndex = 0;
