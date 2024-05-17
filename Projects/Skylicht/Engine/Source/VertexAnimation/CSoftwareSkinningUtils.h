@@ -34,6 +34,8 @@ namespace Skylicht
 	public:
 		static CMesh* initSoftwareSkinning(CMesh* originalMesh);
 
+		static void resetVertexID(CMesh* mesh);
+
 		static void softwareSkinning(CMesh* renderMesh, CSkinnedMesh* originalMesh, CSkinnedMesh* blendShapeMesh);
 
 		static void softwareSkinningTangent(CMesh* renderMesh, CSkinnedMesh* originalMesh, CSkinnedMesh* blendShapeMesh);

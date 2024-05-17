@@ -726,6 +726,8 @@ namespace Skylicht
 			for (SUniformTexture* texture : m_uniformTextures)
 			{
 				CShader::SUniformUI* ui = m_shader->getUniformUIByName(texture->Name.c_str());
+				if (ui == NULL)
+					continue;
 
 				if (texture->Texture != NULL)
 				{

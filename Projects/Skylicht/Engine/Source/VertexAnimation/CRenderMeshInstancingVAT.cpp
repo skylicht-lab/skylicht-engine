@@ -33,6 +33,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Culling/CCullingBBoxData.h"
 #include "Transform/CWorldInverseTransformData.h"
 #include "SkinnedInstancing/CSkinnedInstanceData.h"
+#include "SkinnedInstancing/CRenderSkinnedInstancing.h"
 
 #include "RenderMesh/CJointAnimationSystem.h"
 #include "RenderMesh/CSkinnedMeshSystem.h"
@@ -41,7 +42,8 @@ namespace Skylicht
 {
 	CRenderMeshInstancingVAT::CRenderMeshInstancingVAT()
 	{
-
+		for (int i = 0; i < 10; i++)
+			m_clipOffset[i] = 0;
 	}
 
 	CRenderMeshInstancingVAT::~CRenderMeshInstancingVAT()
@@ -101,10 +103,17 @@ namespace Skylicht
 				srcRender->isSkinnedMesh())
 			{
 				CRenderMeshData* spawnRender = spawnEntity->addData<CRenderMeshData>();
-				spawnRender->setMesh(srcRender->getMesh());
-				spawnRender->setSkinnedMesh(true);
 
-				// enable software skinned
+				// set vertex index
+				CMesh* mesh = srcRender->getMesh();
+				CSoftwareSkinningUtils::resetVertexID(mesh);
+
+				// the mesh, that will render instancing to screen
+				spawnRender->setMesh(mesh);
+				spawnRender->setSkinnedMesh(true);
+				spawnRender->setSkinnedInstancing(true);
+
+				// the mesh, that will bake to VAT
 				spawnRender->setSoftwareSkinning(true);
 				spawnRender->initSoftwareSkinning();
 
@@ -261,12 +270,13 @@ namespace Skylicht
 
 	void CRenderMeshInstancingVAT::beginBake()
 	{
-		m_clipFrames.clear();
+		for (int i = 0; i < 10; i++)
+			m_clipOffset[i] = 0;
 	}
 
-	void CRenderMeshInstancingVAT::setClipFrame(u32 id, u32 frames)
+	void CRenderMeshInstancingVAT::setClipFrameOffset(u32 id, u32 frames)
 	{
-		m_clipFrames[id] = frames;
+		m_clipOffset[id] = frames;
 	}
 
 	void CRenderMeshInstancingVAT::endBake()
@@ -279,6 +289,8 @@ namespace Skylicht
 
 			CVertexAnimTextureData* vertexAnimData = GET_ENTITY_DATA(entity, CVertexAnimTextureData);
 			vertexAnimData->buildTexture();
+
+			renderer->releaseSoftwareSkinning();
 		}
 	}
 
@@ -306,20 +318,19 @@ namespace Skylicht
 
 		CSkinnedInstanceData* skinnedInstance = entity->addData<CSkinnedInstanceData>();
 		skinnedInstance->IsVertexAnimationTexture = true;
+		skinnedInstance->ClipOffset = m_clipOffset;
 
 		// entity->addData<CWorldInverseTransformData>();
 		entity->addData<CCullingData>();
 
 		CCullingBBoxData* cullingBBox = entity->addData<CCullingBBoxData>();
 
-		CEntityManager* entityMgr = m_gameObject->getEntityManager();
-
 		bool firstBox = true;
 
 		for (CRenderMeshData*& renderer : m_renderers)
 		{
 			// set bbox
-			CMesh* mesh = renderer->getSoftwareSkinnedMesh();
+			CMesh* mesh = renderer->getMesh();
 			if (firstBox)
 			{
 				firstBox = false;
@@ -341,5 +352,20 @@ namespace Skylicht
 		}
 
 		return entity;
+	}
+
+	bool CRenderMeshInstancingVAT::setAnimation(CEntity* entity, int clipId, CAnimationClip* clipInfo, float currentTime, int bakeFps, int skeletonId, bool loop, bool pause)
+	{
+		return CRenderSkinnedInstancing::setAnimation(entity, clipId, clipInfo, currentTime, bakeFps, skeletonId, loop, pause);
+	}
+
+	bool CRenderMeshInstancingVAT::setAnimation(CEntity* entity, int clipId, CAnimationClip* clipInfo, float clipBegin, float clipDuration, float currentTime, int bakeFps, int skeletonId, bool loop, bool pause)
+	{
+		return CRenderSkinnedInstancing::setAnimation(entity, clipId, clipInfo, clipBegin, clipDuration, currentTime, bakeFps, skeletonId, loop, pause);
+	}
+
+	void CRenderMeshInstancingVAT::setAnimationWeight(CEntity* entity, int skeletonId, float weight)
+	{
+		CRenderSkinnedInstancing::setAnimationWeight(entity, skeletonId, weight);
 	}
 }

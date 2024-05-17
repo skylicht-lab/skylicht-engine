@@ -230,6 +230,9 @@ namespace Skylicht
 			CShaderMaterial::setMaterial(material);
 		}
 
+		if (shader && !shader->isDrawDepthShadow())
+			return;
+
 		IMeshBuffer* mb = mesh->getMeshBuffer(bufferID);
 		IVideoDriver* driver = getVideoDriver();
 
@@ -295,6 +298,9 @@ namespace Skylicht
 	void CShadowMapRP::drawInstancingMeshBuffer(CMesh* mesh, int bufferID, CShader* instancingShader, CEntityManager* entityMgr, int entityID, bool skinnedMesh)
 	{
 		if (m_saveDebug == true)
+			return;
+
+		if (instancingShader && !instancingShader->isDrawDepthShadow())
 			return;
 
 		IMeshBuffer* mb = mesh->getMeshBuffer(bufferID);

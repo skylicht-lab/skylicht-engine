@@ -1,14 +1,14 @@
 #pragma once
 
 #include "ViewManager/CView.h"
-#include "SkinnedInstancing/CRenderSkinnedInstancing.h"
+#include "VertexAnimation/CRenderMeshInstancingVAT.h"
 
 #include "Tween/CTweenManager.h"
 
 class CViewDemo : public CView
 {
 protected:
-	std::vector<CRenderSkinnedInstancing*> m_instancings;
+	std::vector<CRenderMeshInstancingVAT*> m_instancings;
 
 	CEditorCamera* m_editorCam;
 	C3rdCamera* m_followRotateCam;
