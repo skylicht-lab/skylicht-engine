@@ -4,7 +4,7 @@
 
 bool g_passEntityDataDestructor = false;
 
-IMPLEMENT_DATA_TYPE_INDEX(CTestEntityData)
+IMPLEMENT_DATA_TYPE_INDEX(CTestEntityData);
 
 CTestEntityData::CTestEntityData()
 	:TestMesh(NULL)
