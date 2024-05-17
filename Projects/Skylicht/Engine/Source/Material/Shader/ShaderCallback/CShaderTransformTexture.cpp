@@ -43,6 +43,8 @@ namespace Skylicht
 	}
 
 	ITexture* g_transformTexture = NULL;
+	ITexture* g_positionTexture = NULL;
+	ITexture* g_normalTexture = NULL;
 
 	void CShaderTransformTexture::setTexture(ITexture* texture)
 	{
@@ -52,5 +54,27 @@ namespace Skylicht
 	ITexture* CShaderTransformTexture::getTexture()
 	{
 		return g_transformTexture;
+	}
+
+
+	void CShaderTransformTexture::setPositionTexture(ITexture* texture)
+	{
+		g_positionTexture = texture;
+	}
+
+	ITexture* CShaderTransformTexture::getPositionTexture()
+	{
+		return g_positionTexture;
+	}
+
+
+	void CShaderTransformTexture::setNormalTexture(ITexture* texture)
+	{
+		g_normalTexture = texture;
+	}
+
+	ITexture* CShaderTransformTexture::getNormalTexture()
+	{
+		return g_normalTexture;
 	}
 }

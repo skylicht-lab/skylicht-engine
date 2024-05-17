@@ -45,7 +45,7 @@ namespace Skylicht
 			CVertexBuffer<video::S3DVertex>* vertexBuffer = dynamic_cast<CVertexBuffer<video::S3DVertex>*>(meshBuffer->getVertexBuffer(0));
 			CIndexBuffer* indexBuffer = dynamic_cast<CIndexBuffer*>(meshBuffer->getIndexBuffer());
 
-			if (originalMeshBuffer->getVertexDescriptor()->getID() == video::EVT_SKIN_TANGENTS)
+			if (originalMeshBuffer->getVertexType() == video::EVT_SKIN_TANGENTS)
 			{
 				// SKIN TANGENT
 				CVertexBuffer<video::S3DVertexSkinTangents>* originalTangentVertexBuffer = (CVertexBuffer<video::S3DVertexSkinTangents>*)originalMeshBuffer->getVertexBuffer(0);

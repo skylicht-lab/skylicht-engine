@@ -64,6 +64,11 @@ namespace Skylicht
 		CEntity** entities = m_group->getEntities();
 		int numEntity = m_group->getEntityCount();
 
+		updateAnimationMatrix(entityManager, entities, numEntity);
+	}
+
+	void CJointAnimationSystem::updateAnimationMatrix(CEntityManager* entityManager, CEntity** entities, int numEntity)
+	{
 		CEntity** allEntities = entityManager->getEntities();
 
 		for (int i = 0; i < numEntity; i++)

@@ -23,12 +23,19 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
+
 #include "CRenderMeshInstancingVAT.h"
 #include "CSoftwareSkinningUtils.h"
+#include "CVertexAnimTextureData.h"
+
 #include "Entity/CEntityManager.h"
 #include "Culling/CCullingData.h"
 #include "Culling/CCullingBBoxData.h"
 #include "Transform/CWorldInverseTransformData.h"
+#include "SkinnedInstancing/CSkinnedInstanceData.h"
+
+#include "RenderMesh/CJointAnimationSystem.h"
+#include "RenderMesh/CSkinnedMeshSystem.h"
 
 namespace Skylicht
 {
@@ -89,11 +96,13 @@ namespace Skylicht
 
 			// copy render data
 			CRenderMeshData* srcRender = srcEntity->getData<CRenderMeshData>();
-			if (srcRender != NULL)
+			if (srcRender != NULL &&
+				srcRender->getMesh() &&
+				srcRender->isSkinnedMesh())
 			{
 				CRenderMeshData* spawnRender = spawnEntity->addData<CRenderMeshData>();
 				spawnRender->setMesh(srcRender->getMesh());
-				spawnRender->setSkinnedMesh(srcRender->isSkinnedMesh());
+				spawnRender->setSkinnedMesh(true);
 
 				// enable software skinned
 				spawnRender->setSoftwareSkinning(true);
@@ -107,6 +116,8 @@ namespace Skylicht
 
 				// add world inv transform for culling system (disable to optimize)
 				// spawnEntity->addData<CWorldInverseTransformData>();
+
+				spawnEntity->addData<CVertexAnimTextureData>();
 			}
 
 			// copy culling data
@@ -176,99 +187,125 @@ namespace Skylicht
 		}
 	}
 
-	void CRenderMeshInstancingVAT::updateSkinnedMesh()
+	void CRenderMeshInstancingVAT::allocFrames(u32 numFrames)
+	{
+		CEntityManager* entityManager = m_gameObject->getEntityManager();
+		CEntity** entities = entityManager->getEntities();
+
+		for (CRenderMeshData*& renderer : m_renderers)
+		{
+			CEntity* entity = entities[renderer->EntityIndex];
+
+			// get vertex count
+			IMeshBuffer* mb = renderer->getMesh()->getMeshBuffer(0);
+			u32 vtxCount = mb->getVertexBuffer()->getVertexCount();
+
+			// alloc frames data
+			CVertexAnimTextureData* vertexAnimData = GET_ENTITY_DATA(entity, CVertexAnimTextureData);
+			vertexAnimData->allocFrames(vtxCount, numFrames);
+		}
+	}
+
+	void CRenderMeshInstancingVAT::bakeSkinnedMesh(u32 frame)
 	{
 		CEntityManager* entityManager = m_gameObject->getEntityManager();
 
 		// root entity of object
-		m_root = m_gameObject->getEntity();
-		CWorldInverseTransformData* rootInvTransform = GET_ENTITY_DATA(m_root, CWorldInverseTransformData);
-
 		CEntity** entities = m_baseEntities.pointer();
 		u32 numEntity = m_baseEntities.size();
 
-		// step 1
-		// like CJointAnimationSystem
+		core::array<CEntity*> joints;
+		core::array<CEntity*> renderers;
+
 		for (u32 i = 0; i < numEntity; i++)
 		{
 			CEntity* entity = entities[i];
-
-			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
-			CJointData* joint = GET_ENTITY_DATA(entity, CJointData);
-
-			if (joint)
-			{
-				if (rootInvTransform != NULL)
-				{
-					// move bone transform to Zero location
-					joint->AnimationMatrix.setbyproduct_nocheck(rootInvTransform->WorldInverse, transform->World);
-				}
-				else
-				{
-					// if will have bugs if the SkinnedMesh isnot stand at Zero location
-					joint->AnimationMatrix = transform->World;
-				}
-			}
+			if (GET_ENTITY_DATA(entity, CJointData))
+				joints.push_back(entity);
+			if (GET_ENTITY_DATA(entity, CRenderMeshData))
+				renderers.push_back(entity);
 		}
+
+		// step 1
+		// like CJointAnimationSystem
+		CJointAnimationSystem::updateAnimationMatrix(entityManager, joints.pointer(), (int)joints.size());
 
 		// step 2
 		// like CSkinnedMeshSystem
-		for (CRenderMeshData* renderer : m_renderers)
-		{
-			CSkinnedMesh* skinnedMesh = (CSkinnedMesh*)renderer->getMesh();
+		CSkinnedMeshSystem::updateSkinnedMesh(entityManager, renderers.pointer(), (int)renderers.size());
 
-			for (u32 j = 0, numJoint = skinnedMesh->Joints.size(); j < numJoint; j++)
-			{
-				CSkinnedMesh::SJoint& joint = skinnedMesh->Joints[j];
-
-				f32* M = joint.SkinningMatrix;
-
-				const f32* m1 = joint.JointData->AnimationMatrix.pointer();
-				const f32* m2 = joint.BindPoseMatrix.pointer();
-
-				// inline mul matrix
-				M[0] = m1[0] * m2[0] + m1[4] * m2[1] + m1[8] * m2[2] + m1[12] * m2[3];
-				M[1] = m1[1] * m2[0] + m1[5] * m2[1] + m1[9] * m2[2] + m1[13] * m2[3];
-				M[2] = m1[2] * m2[0] + m1[6] * m2[1] + m1[10] * m2[2] + m1[14] * m2[3];
-				M[3] = m1[3] * m2[0] + m1[7] * m2[1] + m1[11] * m2[2] + m1[15] * m2[3];
-
-				M[4] = m1[0] * m2[4] + m1[4] * m2[5] + m1[8] * m2[6] + m1[12] * m2[7];
-				M[5] = m1[1] * m2[4] + m1[5] * m2[5] + m1[9] * m2[6] + m1[13] * m2[7];
-				M[6] = m1[2] * m2[4] + m1[6] * m2[5] + m1[10] * m2[6] + m1[14] * m2[7];
-				M[7] = m1[3] * m2[4] + m1[7] * m2[5] + m1[11] * m2[6] + m1[15] * m2[7];
-
-				M[8] = m1[0] * m2[8] + m1[4] * m2[9] + m1[8] * m2[10] + m1[12] * m2[11];
-				M[9] = m1[1] * m2[8] + m1[5] * m2[9] + m1[9] * m2[10] + m1[13] * m2[11];
-				M[10] = m1[2] * m2[8] + m1[6] * m2[9] + m1[10] * m2[10] + m1[14] * m2[11];
-				M[11] = m1[3] * m2[8] + m1[7] * m2[9] + m1[11] * m2[10] + m1[15] * m2[11];
-
-				M[12] = m1[0] * m2[12] + m1[4] * m2[13] + m1[8] * m2[14] + m1[12] * m2[15];
-				M[13] = m1[1] * m2[12] + m1[5] * m2[13] + m1[9] * m2[14] + m1[13] * m2[15];
-				M[14] = m1[2] * m2[12] + m1[6] * m2[13] + m1[10] * m2[14] + m1[14] * m2[15];
-				M[15] = m1[3] * m2[12] + m1[7] * m2[13] + m1[11] * m2[14] + m1[15] * m2[15];
-			}
-		}
+		// all entities
+		entities = entityManager->getEntities();
 
 		// step 3
 		// like CSoftwareSkinningSystem
 		for (CRenderMeshData* renderer : m_renderers)
 		{
+			// use software skinning
 			CSkinnedMesh* renderMesh = dynamic_cast<CSkinnedMesh*>(renderer->getMesh());
 			CMesh* skinnedMesh = renderer->getSoftwareSkinnedMesh();
 
-			if (renderMesh->getMeshBuffer(0)->getVertexDescriptor()->getID() == video::EVT_SKIN_TANGENTS)
+			if (renderMesh->getMeshBuffer(0)->getVertexType() == video::EVT_SKIN_TANGENTS)
 				CSoftwareSkinningUtils::softwareSkinningTangent(skinnedMesh, renderMesh, NULL);
 			else
 				CSoftwareSkinningUtils::softwareSkinning(skinnedMesh, renderMesh, NULL);
+
+			// get vertex animation data and bake the vertex infomation
+			CEntity* entity = entities[renderer->EntityIndex];
+
+			// add skinned mesh to texture data
+			CVertexAnimTextureData* vertexAnimData = GET_ENTITY_DATA(entity, CVertexAnimTextureData);
+			vertexAnimData->addFrame(frame, skinnedMesh);
+		}
+	}
+
+	void CRenderMeshInstancingVAT::beginBake()
+	{
+		m_clipFrames.clear();
+	}
+
+	void CRenderMeshInstancingVAT::setClipFrame(u32 id, u32 frames)
+	{
+		m_clipFrames[id] = frames;
+	}
+
+	void CRenderMeshInstancingVAT::endBake()
+	{
+		CEntityManager* entityManager = m_gameObject->getEntityManager();
+
+		for (CRenderMeshData*& renderer : m_renderers)
+		{
+			CEntity* entity = entityManager->getEntity(renderer->EntityIndex);
+
+			CVertexAnimTextureData* vertexAnimData = GET_ENTITY_DATA(entity, CVertexAnimTextureData);
+			vertexAnimData->buildTexture();
 		}
 	}
 
 	CEntity* CRenderMeshInstancingVAT::spawn()
 	{
+		CEntityManager* entityManager = m_gameObject->getEntityManager();
+
+		for (CRenderMeshData*& renderer : m_renderers)
+		{
+			CEntity* entity = entityManager->getEntity(renderer->EntityIndex);
+			CVertexAnimTextureData* vertexAnimData = GET_ENTITY_DATA(entity, CVertexAnimTextureData);
+			if (vertexAnimData->PositionTexture == NULL)
+			{
+				char log[512];
+				sprintf(log, "[CRenderMeshInstancingVAT] spawn fail, you forgot endBake()");
+				os::Printer::log(log);
+				return NULL;
+			}
+		}
+
 		CEntity* entity = createEntity();
 
 		CIndirectLightingData* indirect = entity->addData<CIndirectLightingData>();
 		indirect->initSH();
+
+		CSkinnedInstanceData* skinnedInstance = entity->addData<CSkinnedInstanceData>();
+		skinnedInstance->IsVertexAnimationTexture = true;
 
 		// entity->addData<CWorldInverseTransformData>();
 		entity->addData<CCullingData>();
@@ -294,9 +331,13 @@ namespace Skylicht
 			}
 
 			// add renderer
-			CRenderMeshData* renderMesh = entity->addData<CRenderMeshData>();
-			renderMesh->setMesh(mesh);
-			break;
+			skinnedInstance->RenderData.push_back(renderer);
+
+			// add vertex texture
+			CEntity* entity = entityManager->getEntity(renderer->EntityIndex);
+			CVertexAnimTextureData* vertexAnimData = GET_ENTITY_DATA(entity, CVertexAnimTextureData);
+			skinnedInstance->PositionTextures.push_back(vertexAnimData->PositionTexture);
+			skinnedInstance->NormalTextures.push_back(vertexAnimData->NormalTexture);
 		}
 
 		return entity;

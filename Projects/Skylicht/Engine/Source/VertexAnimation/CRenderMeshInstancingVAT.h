@@ -31,6 +31,9 @@ namespace Skylicht
 {
 	class SKYLICHT_API CRenderMeshInstancingVAT : public CRenderMeshInstancing
 	{
+	protected:
+		std::map<u32, u32> m_clipFrames;
+
 	public:
 		CRenderMeshInstancingVAT();
 
@@ -44,6 +47,14 @@ namespace Skylicht
 
 	public:
 
-		void updateSkinnedMesh();
+		void allocFrames(u32 numFrames);
+
+		void bakeSkinnedMesh(u32 frame);
+
+		void beginBake();
+
+		void setClipFrame(u32 id, u32 frames);
+
+		void endBake();
 	};
 }

@@ -44,5 +44,7 @@ namespace Skylicht
 		virtual void init(CEntityManager* entityManager);
 
 		virtual void update(CEntityManager* entityManager);
+
+		static void updateSkinnedMesh(CEntityManager* entityManager, CEntity** entities, int numEntity);
 	};
 }

@@ -330,14 +330,6 @@ void CViewInit::initEnviroment(CZone* zone, float& envMin, float& envMax)
 
 void CViewInit::initCrowdByVertexTexture(CZone* zone, float envMin, float envMax, std::vector<CAnimationClip*>& clips, int fps)
 {
-	// bake clip animation	
-	float maxDuration = 0.0f;
-	for (CAnimationClip* clip : clips)
-	{
-		if (clip->Duration > maxDuration)
-			maxDuration = clip->Duration;
-	}
-
 	std::vector<std::string> searchTextureFolders;
 
 	CMaterialManager* materialManager = CMaterialManager::getInstance();
@@ -366,41 +358,54 @@ void CViewInit::initVATCrowd(CGameObject* crowd, CEntityPrefab* modelPrefab, std
 
 	CSkeleton* skeleton = animController->createSkeleton();
 
+	int totalFrames = 0;
 	float maxDuration = 0.0f;
+
 	for (CAnimationClip* clip : clips)
 	{
-		if (clip->Duration > maxDuration)
-			maxDuration = clip->Duration;
+		totalFrames += (int)(clip->Duration * fps);
 	}
 
+	crowdMesh->allocFrames(totalFrames);
+
 	int clipId = 0;
-	int totalFrames = (int)(maxDuration * fps);
 	int numClip = (int)clips.size();
 
 	std::map<std::string, int> boneMap;
 	skeleton->getBoneIdMap(boneMap);
 	int numBones = (int)boneMap.size();
+	u32 frameId = 0;
 
 	core::matrix4* transforms = new core::matrix4[numBones];
+
+	crowdMesh->beginBake();
 
 	for (CAnimationClip* clip : clips)
 	{
 		skeleton->setAnimation(clip, true);
 
 		int clipFrames = (int)(clip->Duration * fps);
-		int clipOffset = clipId * numBones * totalFrames;
 
 		for (int i = 0; i < clipFrames; i++)
 		{
+			// simulate animation
 			float t = i / (float)clipFrames;
 			skeleton->simulateTransform(t * clip->Duration, core::IdentityMatrix, transforms, numBones);
-			crowdMesh->updateSkinnedMesh();
+
+			// bake mesh to animation texture
+			crowdMesh->bakeSkinnedMesh(frameId++);
 		}
+
+		// save clip frame
+		crowdMesh->setClipFrame((u32)clipId, (u32)clipFrames);
 
 		clipId++;
 	}
 
 	delete[]transforms;
+
+	// finish bake
+	crowdMesh->endBake();
 
 	// test spawn 1 entity
 	crowdMesh->spawn();

@@ -49,5 +49,7 @@ namespace Skylicht
 		virtual void init(CEntityManager* entityManager);
 
 		virtual void update(CEntityManager* entityManager);
+
+		static void updateAnimationMatrix(CEntityManager* entityManager, CEntity** entities, int numEntity);
 	};
 }
