@@ -575,24 +575,24 @@ namespace Skylicht
 		return texture;
 	}
 
-	ITexture* CTextureManager::createTransformTexture1D(const char* name, core::matrix4* transforms, int num)
+	ITexture* CTextureManager::createTransformTexture2D(const char* name, core::matrix4* transforms, int w, int h)
 	{
 		IVideoDriver* driver = getVideoDriver();
 		IrrlichtDevice* device = getIrrlichtDevice();
 
-		int imageSizeW = 4; // 4 pixels type A32B32G32R32F
-		int imageSizeH = core::max_(num, 4);
+		int imageSizeW = 4 * w; // 4 pixels type A32B32G32R32F
+		int imageSizeH = core::max_(h, 4);
 
 		float* color = new float[4 * imageSizeW * imageSizeH];
 		memset(color, 0, sizeof(float) * 4 * imageSizeW * imageSizeH);
 
 		float* c = color;
+		core::matrix4* m = transforms;
 
-		for (int i = 0; i < num; i++)
+		for (int i = 0, n = w * h; i < n; i++)
 		{
-			core::matrix4& m = transforms[i];
-
-			memcpy(c, m.pointer(), sizeof(float) * 16);
+			memcpy(c, m->pointer(), sizeof(float) * 16);
+			m++;
 			c += 16;
 		}
 
@@ -613,25 +613,29 @@ namespace Skylicht
 		return transformTexture;
 	}
 
-	ITexture* CTextureManager::createTransformTexture2D(const char* name, core::matrix4* transforms, int w, int h)
+	ITexture* CTextureManager::createVectorTexture2D(const char* name, core::vector3df* vectors, int w, int h)
 	{
 		IVideoDriver* driver = getVideoDriver();
 		IrrlichtDevice* device = getIrrlichtDevice();
 
-		int imageSizeW = 4 * w; // 4 pixels type A32B32G32R32F
+		int imageSizeW = core::max_(w, 4);
 		int imageSizeH = core::max_(h, 4);
 
 		float* color = new float[4 * imageSizeW * imageSizeH];
 		memset(color, 0, sizeof(float) * 4 * imageSizeW * imageSizeH);
 
 		float* c = color;
-		core::matrix4* m = transforms;
+		core::vector3df* p = vectors;
 
 		for (int i = 0, n = w * h; i < n; i++)
 		{
-			memcpy(c, m->pointer(), sizeof(float) * 16);
-			m++;
-			c += 16;
+			c[0] = p->X;
+			c[1] = p->Y;
+			c[2] = p->Z;
+			c[3] = 0.0f;
+
+			p++;
+			c += 4;
 		}
 
 		core::dimension2d<u32> size(imageSizeW, imageSizeH);

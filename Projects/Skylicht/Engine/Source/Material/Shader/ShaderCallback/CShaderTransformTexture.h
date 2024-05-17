@@ -43,5 +43,13 @@ namespace Skylicht
 		static void setTexture(ITexture* texture);
 
 		static ITexture* getTexture();
+
+		static void setPositionTexture(ITexture* texture);
+
+		static ITexture* getPositionTexture();
+
+		static void setNormalTexture(ITexture* texture);
+
+		static ITexture* getNormalTexture();
 	};
 }

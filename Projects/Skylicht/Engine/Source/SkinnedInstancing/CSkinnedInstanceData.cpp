@@ -31,7 +31,8 @@ namespace Skylicht
 
 	IMPLEMENT_DATA_TYPE_INDEX(CSkinnedInstanceData);
 
-	CSkinnedInstanceData::CSkinnedInstanceData()
+	CSkinnedInstanceData::CSkinnedInstanceData() :
+		IsVertexAnimationTexture(false)
 	{
 		for (int i = 0; i < 2; i++)
 		{

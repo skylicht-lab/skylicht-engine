@@ -73,7 +73,7 @@ namespace Skylicht
 			CSkinnedMesh* blendShapeMesh = dynamic_cast<CSkinnedMesh*>(renderer->getSoftwareBlendShapeMesh());
 			CMesh* skinnedMesh = renderer->getSoftwareSkinnedMesh();
 
-			if (renderMesh->getMeshBuffer(0)->getVertexDescriptor()->getID() == video::EVT_SKIN_TANGENTS)
+			if (renderMesh->getMeshBuffer(0)->getVertexType() == video::EVT_SKIN_TANGENTS)
 				CSoftwareSkinningUtils::softwareSkinningTangent(skinnedMesh, renderMesh, blendShapeMesh);
 			else
 				CSoftwareSkinningUtils::softwareSkinning(skinnedMesh, renderMesh, blendShapeMesh);

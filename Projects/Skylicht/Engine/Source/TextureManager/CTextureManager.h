@@ -104,9 +104,9 @@ namespace Skylicht
 			return m_nullTexture;
 		}
 
-		ITexture* createTransformTexture1D(const char* name, core::matrix4* transforms, int num);
-
 		ITexture* createTransformTexture2D(const char* name, core::matrix4* transforms, int w, int h);
+
+		ITexture* createVectorTexture2D(const char* name, core::vector3df* vectors, int w, int h);
 	};
 
 }
