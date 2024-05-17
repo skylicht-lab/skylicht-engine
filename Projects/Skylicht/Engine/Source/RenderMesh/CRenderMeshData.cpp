@@ -171,6 +171,11 @@ namespace Skylicht
 	void CRenderMeshData::unusedMaterial(CMaterial* material)
 	{
 		CMesh* mesh = RenderMesh;
+		if (SoftwareBlendShapeMesh)
+			mesh = SoftwareBlendShapeMesh;
+		if (SoftwareSkinnedMesh)
+			mesh = SoftwareSkinnedMesh;
+
 		const char* name = material->getName();
 
 		int bufferID = 0;
@@ -188,6 +193,22 @@ namespace Skylicht
 			}
 
 			bufferID++;
+		}
+
+		if (MeshInstancing != NULL)
+		{
+			CMesh* instancingMesh = dynamic_cast<CMesh*>(MeshInstancing->InstancingMesh);
+			if (instancingMesh)
+			{
+				for (int i = 0, n = (int)instancingMesh->Materials.size(); i < n; i++)
+				{
+					if (instancingMesh->Materials[i])
+					{
+						instancingMesh->Materials[i]->drop();
+						instancingMesh->Materials[i] = NULL;
+					}
+				}
+			}
 		}
 	}
 
@@ -250,6 +271,17 @@ namespace Skylicht
 		// swap default render mesh to dynamic stream mesh
 		// see CSoftwareSkinningSystem todo next
 		SoftwareSkinnedMesh = mesh;
+	}
+
+	void CRenderMeshData::releaseSoftwareSkinning()
+	{
+		if (SoftwareSkinnedMesh != NULL)
+		{
+			SoftwareSkinnedMesh->drop();
+			SoftwareSkinnedMesh = NULL;
+		}
+
+		IsSkinnedInstancing = false;
 	}
 
 	bool CRenderMeshData::serializable(CMemoryStream* stream)

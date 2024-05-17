@@ -55,6 +55,7 @@ namespace Skylicht
 		core::array<CMaterial*> Materials;
 
 		bool IsVertexAnimationTexture;
+		int* ClipOffset;
 
 	public:
 		CSkinnedInstanceData();

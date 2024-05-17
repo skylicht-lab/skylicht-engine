@@ -272,7 +272,6 @@ namespace Skylicht
 			return false;
 
 		skinnedData->setAnimation(animTextureIndex, clipInfo, currentTime, bakeFps, skeletonId, loop, pause);
-
 		return true;
 	}
 
@@ -283,7 +282,6 @@ namespace Skylicht
 			return false;
 
 		skinnedData->setAnimation(animTextureIndex, clipInfo, clipBegin, clipDuration, currentTime, bakeFps, skeletonId, loop, pause);
-
 		return true;
 	}
 

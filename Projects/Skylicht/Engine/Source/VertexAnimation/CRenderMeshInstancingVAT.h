@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "Animation/CAnimationClip.h"
 #include "RenderMesh/CRenderMesh.h"
 #include "RenderMesh/CRenderMeshInstancing.h"
 
@@ -32,7 +33,7 @@ namespace Skylicht
 	class SKYLICHT_API CRenderMeshInstancingVAT : public CRenderMeshInstancing
 	{
 	protected:
-		std::map<u32, u32> m_clipFrames;
+		int m_clipOffset[10];
 
 	public:
 		CRenderMeshInstancingVAT();
@@ -43,9 +44,20 @@ namespace Skylicht
 
 		virtual CEntity* spawn();
 
+		static bool setAnimation(CEntity* entity, int clipId, CAnimationClip* clipInfo, float currentTime = 0.0f, int bakeFps = 60, int skeletonId = 0, bool loop = true, bool pause = false);
+
+		static bool setAnimation(CEntity* entity, int clipId, CAnimationClip* clipInfo, float clipBegin, float clipDuration, float currentTime = 0.0f, int bakeFps = 60, int skeletonId = 0, bool loop = true, bool pause = false);
+
+		static void setAnimationWeight(CEntity* entity, int skeletonId, float weight);
+
 		DECLARE_GETTYPENAME(CRenderMeshInstancingVAT)
 
 	public:
+
+		inline int getClipFrameOffset(int clipId)
+		{
+			return m_clipOffset[clipId];
+		}
 
 		void allocFrames(u32 numFrames);
 
@@ -53,7 +65,7 @@ namespace Skylicht
 
 		void beginBake();
 
-		void setClipFrame(u32 id, u32 frames);
+		void setClipFrameOffset(u32 id, u32 frames);
 
 		void endBake();
 	};
