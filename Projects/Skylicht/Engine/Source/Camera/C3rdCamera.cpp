@@ -56,6 +56,17 @@ namespace Skylicht
 		if (timeDiff > delta)
 			timeDiff = delta;
 
+		// if this touch is touch on control
+		if (m_touchId >= 0)
+		{
+			if (CTouchManager::getInstance()->getTouchIdentify(m_touchId) != CTouchIdentify::Nothing)
+			{
+				// Skip touch because imgui
+				m_leftMousePress = false;
+				m_touchId = -1;
+			}
+		}
+
 		if (m_camera->isInputReceiverEnabled())
 		{
 			if (m_leftMousePress)
@@ -114,6 +125,9 @@ namespace Skylicht
 
 	bool C3rdCamera::OnEvent(const SEvent& evt)
 	{
+		if (m_camera && !m_camera->isInputReceiverEnabled())
+			return false;
+
 		switch (evt.EventType)
 		{
 		case EET_KEY_INPUT_EVENT:
@@ -148,6 +162,7 @@ namespace Skylicht
 
 			if (evt.MouseInput.Event == EMIE_LMOUSE_PRESSED_DOWN)
 			{
+				m_touchId = evt.MouseInput.ID;
 				m_leftMousePress = true;
 
 				m_centerCursor = core::position2df(x, y);
@@ -155,6 +170,7 @@ namespace Skylicht
 			}
 			else if (evt.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
 			{
+				m_touchId = -1;
 				m_leftMousePress = false;
 			}
 			else if (evt.MouseInput.Event == EMIE_MOUSE_MOVED)
