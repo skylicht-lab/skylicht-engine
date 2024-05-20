@@ -39,8 +39,8 @@ using namespace video;
 using namespace io;
 using namespace gui;
 
-CApplication *g_mainApp = NULL;
-irr::IrrlichtDevice *g_device = NULL;
+CApplication* g_mainApp = NULL;
+irr::IrrlichtDevice* g_device = NULL;
 
 void main_loop()
 {
@@ -53,7 +53,7 @@ void main_loop()
 
 void installApplication(const std::vector<std::string>& argv);
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
 	g_mainApp = new CApplication();
 
@@ -96,6 +96,8 @@ int main(int argc, char *argv[])
 	g_device->setWindowCaption(L"Skylicht Engine");
 
 	g_mainApp->initApplication(g_device);
+
+	g_mainApp->setLimitFPS(60);
 
 	installApplication(g_mainApp->getParams());
 

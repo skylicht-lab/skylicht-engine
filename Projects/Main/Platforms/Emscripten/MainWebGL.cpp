@@ -80,6 +80,8 @@ int main(int argc, char *argv[])
 
 	g_mainApp->initApplication(g_device);
 
+	g_mainApp->setLimitFPS(60);
+
 	installApplication(g_mainApp->getParams());
 
 	g_mainApp->onInit();
