@@ -140,8 +140,8 @@ namespace Skylicht
 
 	void CTouchManager::updateEvent()
 	{
-		irr::SEvent		event;
-		IrrlichtDevice *device = getIrrlichtDevice();
+		irr::SEvent event;
+		IrrlichtDevice* device = getIrrlichtDevice();
 
 		// notify event to irrlicht device
 		for (int i = 0; i < MAX_MULTITOUCH; i++)
@@ -194,5 +194,4 @@ namespace Skylicht
 			}
 		}
 	}
-
 }
