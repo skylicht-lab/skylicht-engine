@@ -72,6 +72,9 @@ namespace Skylicht
 			if (meshData->getMesh() == NULL)
 				continue;
 
+			if (!meshData->isVisible())
+				continue;
+
 			m_entities.push(entity);
 
 			if (meshData->isSkinnedMesh())

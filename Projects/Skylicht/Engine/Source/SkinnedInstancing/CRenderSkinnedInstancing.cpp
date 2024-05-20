@@ -134,6 +134,7 @@ namespace Skylicht
 				CRenderMeshData* spawnRender = spawnEntity->addData<CRenderMeshData>();
 				spawnRender->setMesh(srcRender->getMesh());
 				spawnRender->setSkinnedInstancing(true);
+				spawnRender->setVisible(false);
 
 				// add to list renderer
 				m_renderers.push_back(spawnRender);
@@ -145,9 +146,6 @@ namespace Skylicht
 				CIndirectLightingData* indirectLighting = spawnEntity->addData<CIndirectLightingData>();
 				indirectLighting->initSH();
 			}
-
-			// hide base entity
-			spawnEntity->setVisible(false);
 		}
 	}
 

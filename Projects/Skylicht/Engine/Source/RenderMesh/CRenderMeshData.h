@@ -52,6 +52,8 @@ namespace Skylicht
 
 		SMeshInstancing* MeshInstancing;
 
+		bool Visible;
+
 	public:
 
 		CRenderMeshData();
@@ -121,6 +123,16 @@ namespace Skylicht
 		inline void setSkinnedMesh(bool b)
 		{
 			IsSkinnedMesh = b;
+		}
+
+		inline void setVisible(bool b)
+		{
+			Visible = b;
+		}
+
+		inline bool isVisible()
+		{
+			return Visible;
 		}
 
 		void setInstancing(bool b);
