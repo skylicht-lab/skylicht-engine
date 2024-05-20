@@ -1,6 +1,6 @@
 cd ..
 set ANDROID_MAIN=Projects\Android\app\src\main
-set LIBRARY=libSampleBoidSystem.so
+set LIBRARY=libSampleBoidSystemVAT.so
 
 if not exist "%ANDROID_MAIN%/jniLibs" (
 	mkdir "%ANDROID_MAIN%/jniLibs"
