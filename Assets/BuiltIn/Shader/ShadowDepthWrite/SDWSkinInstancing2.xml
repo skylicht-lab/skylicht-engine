@@ -7,6 +7,9 @@
 			<uniform name="uTransformTextureSize" type="TEXTURE_WIDTH_HEIGHT" valueIndex="4" value="1.0, 1.0" float="2"/>
 		</vs>
 	</uniforms>
+	<resources>
+		<resource name="uTransformTexture" type="TransformTexture"/>
+	</resources>
 	<shader type="GLSL" vs="GLSL/SDWSkinInstancing2VS.glsl" fs="GLSL/ShadowDepthWriteFS.glsl" vs_source="GLSL/SDWSkinInstancing2VS.d.glsl"/>
 	<shader type="HLSL" vs="HLSL/SDWSkinInstancing2VS.hlsl" fs="HLSL/ShadowDepthWriteFS.hlsl" vs_source="HLSL/SDWSkinInstancing2VS.d.hlsl"/>
 </shaderConfig>

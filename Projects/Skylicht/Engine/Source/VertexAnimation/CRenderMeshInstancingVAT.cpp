@@ -112,16 +112,17 @@ namespace Skylicht
 				spawnRender->setMesh(mesh);
 				spawnRender->setSkinnedMesh(true);
 				spawnRender->setSkinnedInstancing(true);
-
-				// the mesh, that will bake to VAT
-				spawnRender->setSoftwareSkinning(true);
-				spawnRender->initSoftwareSkinning();
+				spawnRender->setVisible(false);
 
 				// add to list renderer
 				m_renderers.push_back(spawnRender);
 
 				// also add transform
 				m_renderTransforms.push_back(GET_ENTITY_DATA(spawnEntity, CWorldTransformData));
+
+				// also check add indirect lighting to hold ReflectionTexture for intacing
+				CIndirectLightingData* indirectLighting = spawnEntity->addData<CIndirectLightingData>();
+				indirectLighting->initSH();
 
 				// add world inv transform for culling system (disable to optimize)
 				// spawnEntity->addData<CWorldInverseTransformData>();
@@ -149,9 +150,6 @@ namespace Skylicht
 				spawnJoint->AnimationMatrix = srcJointData->AnimationMatrix;
 				spawnJoint->RootIndex = m_root->getIndex();
 			}
-
-			// hide this
-			spawnEntity->setVisible(false);
 		}
 
 		bool addInvData = false;
@@ -272,6 +270,13 @@ namespace Skylicht
 	{
 		for (int i = 0; i < 10; i++)
 			m_clipOffset[i] = 0;
+
+		for (CRenderMeshData* renderer : m_renderers)
+		{
+			// the mesh, that will bake to VAT
+			renderer->setSoftwareSkinning(true);
+			renderer->initSoftwareSkinning();
+		}
 	}
 
 	void CRenderMeshInstancingVAT::setClipFrameOffset(u32 id, u32 frames)

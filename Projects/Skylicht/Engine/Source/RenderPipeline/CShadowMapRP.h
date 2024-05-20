@@ -117,6 +117,8 @@ namespace Skylicht
 
 	public:
 
+		virtual void updateShaderResource(CShader* shader, CEntityManager* entity, int entityID, video::SMaterial& irrMaterial);
+
 		virtual const core::aabbox3df& getFrustumBox();
 
 		inline ITexture* getDepthTexture()

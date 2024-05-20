@@ -315,6 +315,9 @@ CRenderMesh* meshRenderer = cat->addComponent<CRenderMesh>();
 meshRenderer->initFromPrefab(meshPrefab);
 meshRenderer->initMaterial(catMaterials);
 
+// update scene (1 frame)
+scene->update();
+
 // render scene to screen
 CForwardRP* renderPipeline = new CForwardRP();
 
