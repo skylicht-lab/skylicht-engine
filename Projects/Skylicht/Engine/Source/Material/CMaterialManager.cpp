@@ -633,6 +633,12 @@ namespace Skylicht
 
 									m_listGenerateMaterials.push_back(materialObj);
 								}
+								else
+								{
+									char log[512];
+									sprintf(log, "[CMaterialManager] initDefaultMaterial, %s missing shader %d", materialName, material.MaterialType);
+									os::Printer::log(log);
+								}
 							}
 						}
 					}

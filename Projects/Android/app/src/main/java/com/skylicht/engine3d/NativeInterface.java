@@ -68,6 +68,6 @@ public class NativeInterface {
     }
 
     static {
-        System.loadLibrary("SampleBoidSystem");
+        System.loadLibrary("SampleSkinnedMesh");
     }
 }
