@@ -229,6 +229,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	// init application
 	g_application->initApplication(device);
 
+	g_application->setLimitFPS(60);
+
 	installApplication(g_application->getParams());
 
 	g_application->onInit();
