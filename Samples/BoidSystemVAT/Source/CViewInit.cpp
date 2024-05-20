@@ -106,7 +106,9 @@ void CViewInit::initScene()
 	CShaderManager* shaderManager = CShaderManager::getInstance();
 	shaderManager->loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWSkinVATInstancing2.xml");
 	shaderManager->loadShader("BuiltIn/Shader/Toon/ToonShadowInstancing.xml");
+	shaderManager->loadShader("BuiltIn/Shader/Toon/ToonInstancing.xml");
 	shaderManager->loadShader("BuiltIn/Shader/Toon/ToonShadow.xml", new CTBNSGInstancing());
+	shaderManager->loadShader("BuiltIn/Shader/Toon/Toon.xml", new CTBNSGInstancing());
 
 	float envMin = -25.0f;
 	float envMax = 25.0f;
