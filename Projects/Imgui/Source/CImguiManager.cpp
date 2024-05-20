@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CImguiManager.h"
 #include "Graphics2D/CGraphics2D.h"
 #include "EventManager/CEventManager.h"
+#include "Control/CTouchManager.h"
 #include "imgui_impl_skylicht.h"
 
 namespace Skylicht
@@ -81,8 +82,6 @@ namespace Skylicht
 		if (event.EventType == EET_MOUSE_INPUT_EVENT)
 		{
 			ImGuiIO& io = ImGui::GetIO();
-			if (io.WantCaptureMouse == true)
-				skipAllEvent = true;
 
 			int x = event.MouseInput.X;
 			int y = event.MouseInput.Y;
@@ -90,9 +89,7 @@ namespace Skylicht
 			if (event.MouseInput.Event == EMIE_MOUSE_MOVED)
 				ImGui_Impl_Skylicht_MouseMoveFunc(x, y);
 			else if (event.MouseInput.Event == EMIE_MOUSE_WHEEL)
-			{
 				ImGui_Impl_Skylicht_MouseWheelFunc((int)-event.MouseInput.Wheel, x, y);
-			}
 			else
 			{
 				int button[EMIE_COUNT] = { 0 };
@@ -119,12 +116,16 @@ namespace Skylicht
 				int eventID = (int)event.MouseInput.Event;
 				ImGui_Impl_Skylicht_MouseButtonFunc(button[eventID], state[eventID], x, y);
 			}
+
+			if (io.WantCaptureMouse == true)
+			{
+				skipAllEvent = true;
+				CTouchManager::getInstance()->setTouchIdentify(event.MouseInput.ID, CTouchIdentify::TouchOnControl);
+			}
 		}
 		else if (event.EventType == irr::EET_KEY_INPUT_EVENT)
 		{
 			ImGuiIO& io = ImGui::GetIO();
-			if (io.WantCaptureKeyboard == true)
-				skipAllEvent = true;
 
 			unsigned int keyChar = (unsigned int)event.KeyInput.Char;
 			bool control = event.KeyInput.Control;
@@ -137,6 +138,9 @@ namespace Skylicht
 				ImGui_Impl_Skylicht_KeyPressedFunc((int)event.KeyInput.Key, control, shift, false);
 			else
 				ImGui_Impl_Skylicht_KeyReleasedFunc((int)event.KeyInput.Key, control, shift, false);
+
+			if (io.WantCaptureKeyboard == true)
+				skipAllEvent = true;
 		}
 
 		return !skipAllEvent;
