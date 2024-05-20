@@ -1,0 +1,14 @@
+<shaderConfig name="SDWSkinVATInstancing2" baseShader="SOLID">
+	<uniforms>
+		<vs>
+			<uniform name="uVPMatrix" type="VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+			<uniform name="uVertexPositionTexture" type="DEFAULT_VALUE" value="4" float="1" directX="false"/>
+			<uniform name="uTextureSize" type="TEXTURE_WIDTH_HEIGHT" valueIndex="4" value="1.0, 1.0" float="2"/>
+		</vs>
+	</uniforms>
+	<resources>
+		<resource name="uVertexPositionTexture" type="VertexPositionTexture"/>
+	</resources>
+	<shader type="GLSL" vs="GLSL/SDWSkinVATInstancing2VS.glsl" fs="GLSL/ShadowDepthWriteFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/SDWSkinVATInstancing2VS.hlsl" fs="HLSL/ShadowDepthWriteFS.hlsl"/>
+</shaderConfig>

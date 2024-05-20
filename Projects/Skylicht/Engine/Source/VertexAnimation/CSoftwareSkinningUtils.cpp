@@ -137,6 +137,8 @@ namespace Skylicht
 					vertexBuffer->getVertex(i).VertexData.Y = (float)i;
 				}
 			}
+
+			meshBuffer->setDirty(EBT_VERTEX);
 		}
 	}
 

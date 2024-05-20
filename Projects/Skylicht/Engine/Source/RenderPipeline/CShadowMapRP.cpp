@@ -295,6 +295,40 @@ namespace Skylicht
 		driver->drawMeshBuffer(mb);
 	}
 
+	void CShadowMapRP::updateShaderResource(CShader* shader, CEntityManager* entity, int entityID, video::SMaterial& irrMaterial)
+	{
+		for (int i = 0, n = shader->getNumResource(); i < n; i++)
+		{
+			CShader::SResource* res = shader->getResouceInfo(i);
+
+			if (res->Type == CShader::TransformTexture ||
+				res->Type == CShader::VertexPositionTexture ||
+				res->Type == CShader::VertexNormalTexture)
+			{
+				ITexture* ttexture = NULL;
+
+				if (res->Type == CShader::TransformTexture)
+					ttexture = CShaderTransformTexture::getTexture();
+				else if (res->Type == CShader::VertexPositionTexture)
+					ttexture = CShaderTransformTexture::getPositionTexture();
+				else if (res->Type == CShader::VertexNormalTexture)
+					ttexture = CShaderTransformTexture::getNormalTexture();
+
+				SUniform* uniform = shader->getVSUniform(res->Name.c_str());
+				if (uniform != NULL)
+				{
+					u32 textureID = (u32)uniform->Value[0];
+					irrMaterial.setTexture(textureID, ttexture);
+
+					// disable mipmap
+					irrMaterial.TextureLayer[textureID].BilinearFilter = false;
+					irrMaterial.TextureLayer[textureID].TrilinearFilter = false;
+					irrMaterial.TextureLayer[textureID].AnisotropicFilter = 0;
+				}
+			}
+		}
+	}
+
 	void CShadowMapRP::drawInstancingMeshBuffer(CMesh* mesh, int bufferID, CShader* instancingShader, CEntityManager* entityMgr, int entityID, bool skinnedMesh)
 	{
 		if (m_saveDebug == true)
@@ -310,8 +344,16 @@ namespace Skylicht
 
 		bool setMaterial = false;
 
+		CShader* shader = instancingShader->getShadowDepthWriteShader();
+		if (shader == NULL)
+			shader = instancingShader;
+
+		if (shader)
+			updateShaderResource(shader, entityMgr, entityID, m_writeDepthMaterial);
+
 		if (skinnedMesh)
 		{
+			// skinned instancing
 			switch (m_renderShadowState)
 			{
 			case DirectionLight:
@@ -322,20 +364,8 @@ namespace Skylicht
 				}
 				else
 				{
-					// skinned instancing
 					m_writeDepthMaterial.MaterialType = m_depthWriteSkinnedInstancing;
 				}
-
-				// animation texture
-				// Shader: Assets/BuiltIn/Shader/ShadowDepthWrite/SDWSkinInstancing.xml
-				int textureIndex = 4;
-				m_writeDepthMaterial.setTexture(textureIndex, CShaderTransformTexture::getTexture());
-
-				// disable mipmap
-				m_writeDepthMaterial.TextureLayer[textureIndex].BilinearFilter = false;
-				m_writeDepthMaterial.TextureLayer[textureIndex].TrilinearFilter = false;
-				m_writeDepthMaterial.TextureLayer[textureIndex].AnisotropicFilter = 0;
-
 				setMaterial = true;
 				break;
 			}
@@ -345,6 +375,7 @@ namespace Skylicht
 		}
 		else
 		{
+			// static instancing
 			switch (m_renderShadowState)
 			{
 			case DirectionLight:

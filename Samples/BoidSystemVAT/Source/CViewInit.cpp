@@ -104,8 +104,7 @@ void CViewInit::initScene()
 
 	// load toon instancing shader
 	CShaderManager* shaderManager = CShaderManager::getInstance();
-
-	shaderManager->loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWSkinInstancing2.xml");
+	shaderManager->loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWSkinVATInstancing2.xml");
 	shaderManager->loadShader("BuiltIn/Shader/Toon/ToonShadowInstancing.xml");
 	shaderManager->loadShader("BuiltIn/Shader/Toon/ToonShadow.xml", new CTBNSGInstancing());
 
@@ -548,7 +547,7 @@ void CViewInit::onUpdate()
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-		}
+	}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -581,7 +580,7 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-	}
+}
 }
 
 void CViewInit::onRender()
