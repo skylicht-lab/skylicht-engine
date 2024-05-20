@@ -129,7 +129,7 @@ namespace os
 #if defined(_IRR_WINDOW_UNIVERSAL_PLATFORM_)
 		return 0;
 #else
-		return GetTickCount();
+		return GetTickCount64();
 #endif
 	}
 
