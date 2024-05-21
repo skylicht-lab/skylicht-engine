@@ -197,6 +197,15 @@ namespace Skylicht
 					{
 						u32 textureID = (u32)uniform->Value[0];
 						irrMaterial.setTexture(textureID, shadowRP->getDepthTexture());
+
+						// disable mipmap
+						irrMaterial.TextureLayer[textureID].BilinearFilter = false;
+						irrMaterial.TextureLayer[textureID].TrilinearFilter = false;
+						irrMaterial.TextureLayer[textureID].AnisotropicFilter = 0;
+
+						irrMaterial.TextureLayer[textureID].TextureWrapU = video::ETC_CLAMP_TO_BORDER;
+						irrMaterial.TextureLayer[textureID].TextureWrapV = video::ETC_CLAMP_TO_BORDER;
+						irrMaterial.TextureLayer[textureID].BorderColor.set(0.0f, 0.0f, 0.0f, 0.0f);
 					}
 				}
 			}

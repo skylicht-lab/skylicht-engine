@@ -140,7 +140,6 @@ namespace Skylicht
 		bool m_deferred;
 		bool m_castShadow;
 		bool m_manualInitMaterial;
-		int m_shadowMapTextureSlot;
 
 		CShader* m_shader;
 

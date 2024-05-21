@@ -39,7 +39,6 @@ namespace Skylicht
 		m_doubleSided(false),
 		m_manualInitMaterial(false),
 		m_deferred(false),
-		m_shadowMapTextureSlot(-1),
 		m_shaderPath(shaderPath),
 		m_materialName(name),
 		m_shader(NULL)
@@ -125,7 +124,6 @@ namespace Skylicht
 
 		mat->m_castShadow = m_castShadow;
 		mat->m_manualInitMaterial = m_manualInitMaterial;
-		mat->m_shadowMapTextureSlot = m_shadowMapTextureSlot;
 	}
 
 	void CMaterial::deleteAllParams()
@@ -968,27 +966,10 @@ namespace Skylicht
 			if (m_resourceTexture[i] != NULL)
 			{
 				mat.setTexture(i, m_resourceTexture[i]);
-
-				// todo
-				// we clamp border, that dont make shadow map uv repeat
-				if (i == m_shadowMapTextureSlot)
-				{
-					// turn off mipmap
-					if (getVideoDriver()->getDriverType() == EDT_OPENGLES)
-					{
-						mat.TextureLayer[i].BilinearFilter = false;
-						mat.TextureLayer[i].TrilinearFilter = false;
-						mat.TextureLayer[i].AnisotropicFilter = 0;
-					}
-
-					mat.TextureLayer[i].TextureWrapU = video::ETC_CLAMP_TO_BORDER;
-					mat.TextureLayer[i].TextureWrapV = video::ETC_CLAMP_TO_BORDER;
-					mat.TextureLayer[i].BorderColor.set(0.0f, 0.0f, 0.0f, 0.0f);
-				}
 			}
 		}
 
-		// apply config material		
+		// apply config material
 		if (m_shader != NULL)
 		{
 			mat.MaterialType = m_shader->getMaterialRenderID();
@@ -1035,12 +1016,9 @@ namespace Skylicht
 					mat.TextureLayer[textureSlot].TextureWrapV = uniformTexture->WrapV;
 
 					// set customize filter
-					if (textureSlot != m_shadowMapTextureSlot)
-					{
-						mat.TextureLayer[textureSlot].BilinearFilter = uniformTexture->Bilinear;
-						mat.TextureLayer[textureSlot].TrilinearFilter = uniformTexture->Trilinear;
-						mat.TextureLayer[textureSlot].AnisotropicFilter = uniformTexture->Anisotropic;
-					}
+					mat.TextureLayer[textureSlot].BilinearFilter = uniformTexture->Bilinear;
+					mat.TextureLayer[textureSlot].TrilinearFilter = uniformTexture->Trilinear;
+					mat.TextureLayer[textureSlot].AnisotropicFilter = uniformTexture->Anisotropic;
 				}
 			}
 		}
