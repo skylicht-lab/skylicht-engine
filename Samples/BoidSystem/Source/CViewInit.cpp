@@ -433,57 +433,65 @@ void CViewInit::initCrowdByAnimTexture(CZone* zone, float envMin, float envMax, 
 		CWorldTransformData* transform;
 		core::vector3df position;
 
-		for (int i = -7; i < 7; i++)
+		float x, z;
+		float dx = envMax - envMin;
+		float dz = envMax - envMin;
+		int count = 100;
+
+		for (int i = 0; i < count / 2; i++)
 		{
-			for (int j = -7; j < 7; j++)
-			{
-				// MODEL 1
-				entity = crowdSkinnedMesh1->spawn();
+			// MODEL 1
+			entity = crowdSkinnedMesh1->spawn();
 
-				// random time
-				time = os::Randomizer::frand();
+			// random time
+			time = os::Randomizer::frand();
 
-				// set animation
-				crowdSkinnedMesh1->setAnimation(entity, 0, clips[0], time * clips[0]->Duration, fps, 0);
-				crowdSkinnedMesh1->setAnimation(entity, 1, clips[1], time * clips[1]->Duration, fps, 1);
+			// set animation
+			crowdSkinnedMesh1->setAnimation(entity, 0, clips[0], time * clips[0]->Duration, fps, 0);
+			crowdSkinnedMesh1->setAnimation(entity, 1, clips[1], time * clips[1]->Duration, fps, 1);
 
-				crowdSkinnedMesh1->setAnimationWeight(entity, 0, 1.0f);
-				crowdSkinnedMesh1->setAnimationWeight(entity, 1, 0.0f);
+			crowdSkinnedMesh1->setAnimationWeight(entity, 0, 1.0f);
+			crowdSkinnedMesh1->setAnimationWeight(entity, 1, 0.0f);
 
-				// set position
-				transform = GET_ENTITY_DATA(entity, CWorldTransformData);
-				position.set(i * space, 0.0f, j * space);
+			// set position
+			x = envMin + os::Randomizer::frand() * dx;
+			z = envMin + os::Randomizer::frand() * dz;
 
-				transform->Relative.setTranslation(position);
+			transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+			position.set(x, 0.0f, z);
 
-				// add bold data
-				bold = entity->addData<CBoldData>();
-				bold->Location = position;
+			transform->Relative.setTranslation(position);
+
+			// add bold data
+			bold = entity->addData<CBoldData>();
+			bold->Location = position;
 
 
-				// MODEL 2
-				entity = crowdSkinnedMesh2->spawn();
+			// MODEL 2
+			entity = crowdSkinnedMesh2->spawn();
 
-				// random time
-				time = os::Randomizer::frand();
+			// random time
+			time = os::Randomizer::frand();
 
-				// set animation
-				crowdSkinnedMesh2->setAnimation(entity, 0, clips[0], time * clips[0]->Duration, fps, 0);
-				crowdSkinnedMesh2->setAnimation(entity, 1, clips[1], time * clips[1]->Duration, fps, 1);
+			// set animation
+			crowdSkinnedMesh2->setAnimation(entity, 0, clips[0], time * clips[0]->Duration, fps, 0);
+			crowdSkinnedMesh2->setAnimation(entity, 1, clips[1], time * clips[1]->Duration, fps, 1);
 
-				crowdSkinnedMesh2->setAnimationWeight(entity, 0, 1.0f);
-				crowdSkinnedMesh2->setAnimationWeight(entity, 1, 0.0f);
+			crowdSkinnedMesh2->setAnimationWeight(entity, 0, 1.0f);
+			crowdSkinnedMesh2->setAnimationWeight(entity, 1, 0.0f);
 
-				// set position
-				transform = GET_ENTITY_DATA(entity, CWorldTransformData);
-				position.set(i * space + offset, 0.0f, j * space + offset);
+			// set position
+			x = envMin + os::Randomizer::frand() * dx;
+			z = envMin + os::Randomizer::frand() * dz;
 
-				transform->Relative.setTranslation(position);
+			transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+			position.set(x, 0.0f, z);
 
-				// add bold data
-				bold = entity->addData<CBoldData>();
-				bold->Location = position;
-			}
+			transform->Relative.setTranslation(position);
+
+			// add bold data
+			bold = entity->addData<CBoldData>();
+			bold->Location = position;
 		}
 
 		// free data
@@ -569,8 +577,8 @@ void CViewInit::onUpdate()
 				// retry download
 				delete m_getFile;
 				m_getFile = NULL;
-			}
-		}
+	}
+	}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -581,7 +589,7 @@ void CViewInit::onUpdate()
 
 		m_initState = CViewInit::InitScene;
 #endif
-	}
+}
 	break;
 	case CViewInit::InitScene:
 	{

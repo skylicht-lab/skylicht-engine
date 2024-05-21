@@ -424,7 +424,7 @@ void CViewDemo::onGUI()
 
 		if (ImGui::CollapsingHeader("Entites", ImGuiTreeNodeFlags_DefaultOpen))
 		{
-			static int entityCount = 20;
+			static int entityCount = 100;
 			int minEntity = 10;
 			int maxEntity = 1000;
 			ImGui::SliderInt("Num entity", &entityCount, minEntity, maxEntity);
