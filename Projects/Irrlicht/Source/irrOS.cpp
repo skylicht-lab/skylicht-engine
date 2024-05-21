@@ -128,6 +128,8 @@ namespace os
 		}
 #if defined(_IRR_WINDOW_UNIVERSAL_PLATFORM_)
 		return 0;
+#elif defined(CYGWIN) || defined(MINGW)
+		return GetTickCount();
 #else
 		return GetTickCount64();
 #endif
