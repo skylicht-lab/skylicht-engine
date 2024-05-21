@@ -1,4 +1,8 @@
+#if defined(SHADOW)
+precision highp float;
+#else
 precision mediump float;
+#endif
 precision highp sampler2D;
 precision highp sampler2DArray;
 
