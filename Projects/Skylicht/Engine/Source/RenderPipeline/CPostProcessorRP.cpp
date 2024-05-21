@@ -84,7 +84,7 @@ namespace Skylicht
 
 		if (m_fxaaFilter != NULL)
 			delete m_fxaaFilter;
-	}
+}
 
 	void CPostProcessorRP::initMainRTT(int w, int h)
 	{

@@ -45,15 +45,15 @@ float shadow(const vec4 shadowCoord[3], const float shadowDistance[3], const flo
 	const vec2 kRandom1 = vec2(12.9898,78.233);
 	const float kRandom2 = 43758.5453;
 	const float kRandom3 = 0.00047;
-	{off = vec2(-1, -1) * size;rand = uv + off;rand += (vec2(fract(sin(dot(rand.xy, kRandom1)) * kRandom2), fract(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, texture(uShadowMap, vec3(rand, id)).r));}
-	{off = vec2(0, -1) * size;rand = uv + off;rand += (vec2(fract(sin(dot(rand.xy, kRandom1)) * kRandom2), fract(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, texture(uShadowMap, vec3(rand, id)).r));}
-	{off = vec2(1, -1) * size;rand = uv + off;rand += (vec2(fract(sin(dot(rand.xy, kRandom1)) * kRandom2), fract(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, texture(uShadowMap, vec3(rand, id)).r));}
-	{off = vec2(-1, 0) * size;rand = uv + off;rand += (vec2(fract(sin(dot(rand.xy, kRandom1)) * kRandom2), fract(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, texture(uShadowMap, vec3(rand, id)).r));}
-	{off = vec2(0, 0) * size;rand = uv + off;rand += (vec2(fract(sin(dot(rand.xy, kRandom1)) * kRandom2), fract(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, texture(uShadowMap, vec3(rand, id)).r));}
-	{off = vec2(1, 0) * size;rand = uv + off;rand += (vec2(fract(sin(dot(rand.xy, kRandom1)) * kRandom2), fract(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, texture(uShadowMap, vec3(rand, id)).r));}
-	{off = vec2(-1, 1) * size;rand = uv + off;rand += (vec2(fract(sin(dot(rand.xy, kRandom1)) * kRandom2), fract(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, texture(uShadowMap, vec3(rand, id)).r));}
-	{off = vec2(0, 1) * size;rand = uv + off;rand += (vec2(fract(sin(dot(rand.xy, kRandom1)) * kRandom2), fract(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, texture(uShadowMap, vec3(rand, id)).r));}
-	{off = vec2(1, 1) * size;rand = uv + off;rand += (vec2(fract(sin(dot(rand.xy, kRandom1)) * kRandom2), fract(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, texture(uShadowMap, vec3(rand, id)).r));}
+	{off = vec2(-1, -1) * size;rand = uv + off;rand += (vec2(fract(sin(dot(rand.xy, kRandom1)) * kRandom2), fract(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, textureLod(uShadowMap, vec3(rand, id), 0.0).r));}
+	{off = vec2(0, -1) * size;rand = uv + off;rand += (vec2(fract(sin(dot(rand.xy, kRandom1)) * kRandom2), fract(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, textureLod(uShadowMap, vec3(rand, id), 0.0).r));}
+	{off = vec2(1, -1) * size;rand = uv + off;rand += (vec2(fract(sin(dot(rand.xy, kRandom1)) * kRandom2), fract(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, textureLod(uShadowMap, vec3(rand, id), 0.0).r));}
+	{off = vec2(-1, 0) * size;rand = uv + off;rand += (vec2(fract(sin(dot(rand.xy, kRandom1)) * kRandom2), fract(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, textureLod(uShadowMap, vec3(rand, id), 0.0).r));}
+	{off = vec2(0, 0) * size;rand = uv + off;rand += (vec2(fract(sin(dot(rand.xy, kRandom1)) * kRandom2), fract(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, textureLod(uShadowMap, vec3(rand, id), 0.0).r));}
+	{off = vec2(1, 0) * size;rand = uv + off;rand += (vec2(fract(sin(dot(rand.xy, kRandom1)) * kRandom2), fract(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, textureLod(uShadowMap, vec3(rand, id), 0.0).r));}
+	{off = vec2(-1, 1) * size;rand = uv + off;rand += (vec2(fract(sin(dot(rand.xy, kRandom1)) * kRandom2), fract(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, textureLod(uShadowMap, vec3(rand, id), 0.0).r));}
+	{off = vec2(0, 1) * size;rand = uv + off;rand += (vec2(fract(sin(dot(rand.xy, kRandom1)) * kRandom2), fract(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, textureLod(uShadowMap, vec3(rand, id), 0.0).r));}
+	{off = vec2(1, 1) * size;rand = uv + off;rand += (vec2(fract(sin(dot(rand.xy, kRandom1)) * kRandom2), fract(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, textureLod(uShadowMap, vec3(rand, id), 0.0).r));}
 	return result / 9.0;
 }
 const float PI = 3.1415926;

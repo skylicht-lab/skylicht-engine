@@ -1,6 +1,6 @@
 // thanks savegame (https://github.com/skylicht-lab/skylicht-engine/issues/130)
 #define RAND(co) (vec2(fract(sin(dot(co.xy, kRandom1)) * kRandom2), fract(sin(dot(co.yx, kRandom1)) * kRandom2)) * kRandom3)
-#define COMPARE(uv, compare) (step(compare, texture(uShadowMap, uv).r))
+#define COMPARE(uv, compare) (step(compare, textureLod(uShadowMap, uv, 0.0).r))
 
 // #define HARD_SHADOW
 #define PCF_NOISE

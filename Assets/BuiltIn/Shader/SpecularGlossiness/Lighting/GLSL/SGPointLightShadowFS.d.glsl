@@ -20,7 +20,7 @@ out vec4 FragColor;
 
 #define SHADOW_SAMPLE(x, y, z) {\
 fragToLight = -lightDir + vec3(x, y, z);\
-shadow += step(texture(uShadowMap, fragToLight).r, d);\
+shadow += step(textureLod(uShadowMap, fragToLight, 0.0).r, d);\
 }
 
 void main(void)

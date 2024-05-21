@@ -65,8 +65,8 @@ namespace Skylicht
 		m_depthWriteShader = shaderMgr->getShaderIDByName("ShadowDepthWrite");
 		m_depthWriteSkinMeshShader = shaderMgr->getShaderIDByName("ShadowDepthWriteSkinMesh");
 
-		m_distanceWriteShader = shaderMgr->getShaderIDByName("LightDistanceDepthWrite");
-		m_distanceWriteSkinMeshShader = shaderMgr->getShaderIDByName("LightDistanceDepthWriteSkinMesh");
+		m_distanceWriteShader = shaderMgr->getShaderIDByName("ShadowLightDistanceWrite");
+		m_distanceWriteSkinMeshShader = shaderMgr->getShaderIDByName("ShadowLightDistanceWriteSkinMesh");
 
 		m_depthWriteStandardSGInstancing = shaderMgr->getShaderIDByName("SDWStandardInstancing");
 		m_depthWriteTBNSGInstancing = shaderMgr->getShaderIDByName("SDWTBNInstancing");
@@ -649,13 +649,7 @@ namespace Skylicht
 		}
 
 		if (listDepthTexture.size() > 0)
-		{
 			driver->setRenderTarget(target, false, false);
-
-			// Generate all depth texture
-			for (ITexture* d : listDepthTexture)
-				d->regenerateMipMapLevels();
-		}
 
 		onNext(target, camera, entityManager, viewport);
 	}
