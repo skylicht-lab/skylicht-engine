@@ -19,15 +19,15 @@ float shadowSimple(const vec4 shadowCoord)
 	depth -= bias;
 	vec2 uv = shadowUV.xy;
 	float size = 1.0/2048.0;
-	result += (step(depth, texture(uShadowMap, vec2(uv + vec2(-1, -1) * size)).r));
-	result += (step(depth, texture(uShadowMap, vec2(uv + vec2(0, -1) * size)).r));
-	result += (step(depth, texture(uShadowMap, vec2(uv + vec2(1, -1) * size)).r));
-	result += (step(depth, texture(uShadowMap, vec2(uv + vec2(-1, 0) * size)).r));
-	result += (step(depth, texture(uShadowMap, vec2(uv + vec2(0, 0) * size)).r));
-	result += (step(depth, texture(uShadowMap, vec2(uv + vec2(1, 0) * size)).r));
-	result += (step(depth, texture(uShadowMap, vec2(uv + vec2(-1, 1) * size)).r));
-	result += (step(depth, texture(uShadowMap, vec2(uv + vec2(0, 1) * size)).r));
-	result += (step(depth, texture(uShadowMap, vec2(uv + vec2(1, 1) * size)).r));
+	result += (step(depth, textureLod(uShadowMap, vec2(uv + vec2(-1, -1) * size), 0.0).r));
+	result += (step(depth, textureLod(uShadowMap, vec2(uv + vec2(0, -1) * size), 0.0).r));
+	result += (step(depth, textureLod(uShadowMap, vec2(uv + vec2(1, -1) * size), 0.0).r));
+	result += (step(depth, textureLod(uShadowMap, vec2(uv + vec2(-1, 0) * size), 0.0).r));
+	result += (step(depth, textureLod(uShadowMap, vec2(uv + vec2(0, 0) * size), 0.0).r));
+	result += (step(depth, textureLod(uShadowMap, vec2(uv + vec2(1, 0) * size), 0.0).r));
+	result += (step(depth, textureLod(uShadowMap, vec2(uv + vec2(-1, 1) * size), 0.0).r));
+	result += (step(depth, textureLod(uShadowMap, vec2(uv + vec2(0, 1) * size), 0.0).r));
+	result += (step(depth, textureLod(uShadowMap, vec2(uv + vec2(1, 1) * size), 0.0).r));
 	return result / 9.0;
 }
 void main(void)
