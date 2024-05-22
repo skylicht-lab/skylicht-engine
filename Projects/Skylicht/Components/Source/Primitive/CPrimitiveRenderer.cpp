@@ -191,8 +191,7 @@ namespace Skylicht
 
 				for (u32 i = 0, n = mesh->MeshBuffers.size(); i < n; i++)
 				{
-					IMeshBuffer* mb = mesh->MeshBuffers[i];
-					mat->applyMaterial(mb->getMaterial());
+					mat->updateTexture(mesh->MeshBuffers[i]->getMaterial());
 				}
 			}
 

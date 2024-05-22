@@ -45,10 +45,10 @@ namespace Skylicht
 
 		CQuadRenderer::~CQuadRenderer()
 		{
-			delete m_material;
+			m_material->drop();
 		}
 
-		void CQuadRenderer::setTexture(int slot, ITexture *texture)
+		void CQuadRenderer::setTexture(int slot, ITexture* texture)
 		{
 			m_material->setTexture(slot, texture);
 			m_material->setManualInitTexture(true);
@@ -101,10 +101,10 @@ namespace Skylicht
 			m_baseShaderType = shader;
 		}
 
-		void CQuadRenderer::getParticleBuffer(IMeshBuffer *buffer)
+		void CQuadRenderer::getParticleBuffer(IMeshBuffer* buffer)
 		{
-			IVertexBuffer *vtx = buffer->getVertexBuffer();
-			IIndexBuffer *idx = buffer->getIndexBuffer();
+			IVertexBuffer* vtx = buffer->getVertexBuffer();
+			IIndexBuffer* idx = buffer->getIndexBuffer();
 
 			vtx->set_used(NB_VERTICES_PER_QUAD);
 			idx->set_used(NB_INDICES_PER_QUAD);
@@ -170,7 +170,6 @@ namespace Skylicht
 				0.0f);
 			vertices[3].Color = white;
 
-			m_material->addAffectMesh(buffer);
 			m_material->applyMaterial();
 		}
 	}

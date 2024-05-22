@@ -44,33 +44,33 @@ namespace Skylicht
 
 		CBillboardAdditiveRenderer::~CBillboardAdditiveRenderer()
 		{
-			delete m_material;
+			m_material->drop();
 		}
 
-		void CBillboardAdditiveRenderer::setTexture(int slot, ITexture *texture)
+		void CBillboardAdditiveRenderer::setTexture(int slot, ITexture* texture)
 		{
 			m_material->setTexture(slot, texture);
 			m_material->setManualInitTexture(true);
 		}
 
-		void CBillboardAdditiveRenderer::getParticleBuffer(IMeshBuffer *buffer)
+		void CBillboardAdditiveRenderer::getParticleBuffer(IMeshBuffer* buffer)
 		{
-			m_material->addAffectMesh(buffer);
+			// no need update buffer, just update material
 			m_material->applyMaterial();
 		}
 
-		void CBillboardAdditiveRenderer::updateParticleBuffer(IMeshBuffer *buffer, CParticle *particles, int num)
+		void CBillboardAdditiveRenderer::updateParticleBuffer(IMeshBuffer* buffer, CParticle* particles, int num)
 		{
-			IVertexBuffer *vtx = buffer->getVertexBuffer();
-			IIndexBuffer *idx = buffer->getIndexBuffer();
+			IVertexBuffer* vtx = buffer->getVertexBuffer();
+			IIndexBuffer* idx = buffer->getIndexBuffer();
 
 			vtx->set_used(NB_VERTICES_PER_QUAD * num);
 			idx->set_used(NB_INDICES_PER_QUAD * num);
 
-			video::S3DVertex *vertices = (video::S3DVertex*)vtx->getVertices();
+			video::S3DVertex* vertices = (video::S3DVertex*)vtx->getVertices();
 
-			CParticle *p;
-			float *params;
+			CParticle* p;
+			float* params;
 			u32 frame, row, col;
 
 			u32 totalFrames = m_atlasNx * m_atlasNy;

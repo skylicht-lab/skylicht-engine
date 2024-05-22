@@ -74,7 +74,7 @@ namespace Skylicht
 				return m_type;
 			}
 
-			CMaterial* getMaterial()
+			inline CMaterial* getMaterial()
 			{
 				return m_material;
 			}

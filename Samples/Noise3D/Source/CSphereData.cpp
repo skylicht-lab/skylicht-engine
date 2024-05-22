@@ -31,9 +31,6 @@ void CSphereData::initSphere(float radius, CMaterial *material)
 	// convert tangent for normal map
 	CMeshUtils::convertToTangentVertices(SphereMeshBuffer);
 
-	// assign mesh buffer material
-	material->addAffectMesh(SphereMeshBuffer);
-
 	// recalc bbox
 	SphereMeshBuffer->recalculateBoundingBox();
 

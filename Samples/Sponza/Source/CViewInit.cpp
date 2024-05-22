@@ -197,7 +197,7 @@ void CViewInit::initScene()
 #endif
 		}
 	}
-    
+
 	// init particle
 	for (int i = 0; i < 4; i++)
 	{
@@ -283,7 +283,7 @@ void CViewInit::initFireParticle(Particle::CParticleComponent* ps)
 {
 	ITexture* texture = NULL;
 	Particle::CFactory* factory = ps->getParticleFactory();
-    
+
 	// GROUP: FIRE
 	Particle::CGroup* fireGroup = ps->createParticleGroup();
 
@@ -414,11 +414,11 @@ void CViewInit::initFireParticle(Particle::CParticleComponent* ps)
 	smokeEmitter->setForce(0.5f, 1.0f);
 
 	smokeGroup->addEmitter(smokeEmitter);
-    
+
 	// GROUP: POINT SPARK
 	Particle::CGroup* pointSparkGroup = ps->createParticleGroup();
 
-    Particle::CQuadRenderer* pointSpark = factory->createQuadRenderer();
+	Particle::CQuadRenderer* pointSpark = factory->createQuadRenderer();
 	pointSparkGroup->setRenderer(pointSpark);
 
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/point.png");
