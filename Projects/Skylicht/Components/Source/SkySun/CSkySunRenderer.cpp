@@ -86,7 +86,12 @@ namespace Skylicht
 
 			IMeshBuffer* buffer = sky->Buffer;
 
-			CShaderMaterial::setMaterial(sky->SkySunMaterial);
+			SMaterial& mat = buffer->getMaterial();
+			CMaterial* material = sky->SkySunMaterial;
+
+			material->updateTexture(mat);
+
+			CShaderMaterial::setMaterial(material);
 
 			world.makeIdentity();
 			world.setTranslation(cameraPosition);
@@ -94,7 +99,7 @@ namespace Skylicht
 
 			driver->setTransform(video::ETS_WORLD, world);
 
-			driver->setMaterial(buffer->getMaterial());
+			driver->setMaterial(mat);
 			driver->drawMeshBuffer(buffer);
 		}
 	}

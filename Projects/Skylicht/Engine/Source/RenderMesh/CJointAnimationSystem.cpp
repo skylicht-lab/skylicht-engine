@@ -76,9 +76,10 @@ namespace Skylicht
 			CEntity* entity = entities[i];
 
 			CJointData* joint = GET_ENTITY_DATA(entity, CJointData);
-			if (joint->RootIndex != 0)
+			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+
+			if (transform->NeedValidate && joint->RootIndex != 0)
 			{
-				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 				CWorldInverseTransformData* rootInvTransform = GET_ENTITY_DATA(allEntities[joint->RootIndex], CWorldInverseTransformData);
 
 				if (rootInvTransform != NULL)
