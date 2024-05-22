@@ -94,7 +94,6 @@ namespace Skylicht
 
 			Material[i] = new CMaterial("Skybox", "BuiltIn/Shader/Basic/TextureSRGB.xml");
 			Material[i]->setZWrite(false);
-			Material[i]->addAffectMesh(MeshBuffer[i]);
 			Material[i]->applyMaterial();
 
 			SMaterial& mat = MeshBuffer[i]->getMaterial();

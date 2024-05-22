@@ -134,8 +134,6 @@ namespace Skylicht
 		{
 			if (materialName == name)
 			{
-				material->addAffectMesh(mesh->getMeshBuffer(bufferID));
-
 				if (mesh->Materials[bufferID])
 					mesh->Materials[bufferID]->drop();
 
@@ -184,8 +182,6 @@ namespace Skylicht
 		{
 			if (materialName == name)
 			{
-				material->removeAffectMesh(mesh->getMeshBuffer(bufferID));
-
 				if (mesh->Materials[bufferID])
 				{
 					mesh->Materials[bufferID]->drop();

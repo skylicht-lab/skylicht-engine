@@ -39,7 +39,6 @@ namespace Skylicht
 		Buffer = new CMeshBuffer<video::S3DVertex>(getVideoDriver()->getVertexDescriptor(EVT_STANDARD));
 
 		SkySunMaterial = new CMaterial("Skydome", "BuiltIn/Shader/SkySun/SkySun.xml");
-		SkySunMaterial->addAffectMesh(Buffer);
 		SkySunMaterial->applyMaterial();
 
 		SMaterial& mat = Buffer->getMaterial();

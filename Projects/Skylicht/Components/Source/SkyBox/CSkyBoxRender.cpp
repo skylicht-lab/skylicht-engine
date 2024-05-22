@@ -96,9 +96,14 @@ namespace Skylicht
 
 			for (int j = 0; j < 6; j++)
 			{
-				CShaderMaterial::setMaterial(skybox->Material[j]);
+				CMaterial* material = skybox->Material[j];
+				SMaterial& mat = skybox->MeshBuffer[j]->getMaterial();
 
-				driver->setMaterial(skybox->MeshBuffer[j]->getMaterial());
+				material->updateTexture(mat);
+
+				CShaderMaterial::setMaterial(material);
+
+				driver->setMaterial(mat);
 				driver->drawMeshBuffer(skybox->MeshBuffer[j]);
 			}
 		}

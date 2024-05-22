@@ -68,7 +68,6 @@ namespace Skylicht
 
 		deleteAllParams();
 		deleteExtramParams();
-		clearAllAffectMesh();
 	}
 
 	CMaterial* CMaterial::clone()
@@ -468,18 +467,6 @@ namespace Skylicht
 		return m_textures[slot];
 	}
 
-	void CMaterial::buildDoubleSidedMesh()
-	{
-		if (m_doubleSided == true)
-		{
-			for (int i = 0, n = (int)m_meshBuffers.size(); i < n; i++)
-			{
-				IMeshBuffer* buffer = m_meshBuffers[i];
-				CMesh::applyDoubleSided(buffer);
-			}
-		}
-	}
-
 	void CMaterial::loadUniformTexture()
 	{
 		if (m_shader == NULL)
@@ -548,9 +535,11 @@ namespace Skylicht
 						{
 							// texture = textureManager->getCubeTexture( ... );
 						}
-						else if (r->Type == CShader::ReflectionProbe)
+						else
 						{
-							// realtime reflection probe
+							// see function CBaseRP::updateShaderResource
+							// auto attach some realtime texture resource like
+							// ShadowMap, Reflection...
 						}
 					}
 
@@ -560,45 +549,6 @@ namespace Skylicht
 				}
 			}
 		}
-	}
-
-	void CMaterial::addAffectMesh(IMeshBuffer* mesh)
-	{
-		if (mesh == NULL)
-			return;
-
-		for (int i = 0, n = (int)m_meshBuffers.size(); i < n; i++)
-		{
-			if (m_meshBuffers[i] == mesh)
-				return;
-		}
-
-		m_meshBuffers.push_back(mesh);
-		mesh->grab();
-
-		mesh->getMaterial().MaterialInfo = this;
-	}
-
-	void CMaterial::removeAffectMesh(IMeshBuffer* mesh)
-	{
-		for (int i = 0, n = (int)m_meshBuffers.size(); i < n; i++)
-		{
-			if (m_meshBuffers[i] == mesh)
-			{
-				m_meshBuffers[i]->drop();
-				m_meshBuffers.erase(m_meshBuffers.begin() + i);
-				return;
-			}
-		}
-	}
-
-	void CMaterial::clearAllAffectMesh()
-	{
-		for (int i = 0, n = (int)m_meshBuffers.size(); i < n; i++)
-		{
-			m_meshBuffers[i]->drop();
-		}
-		m_meshBuffers.clear();
 	}
 
 	void CMaterial::initMaterial()
@@ -659,15 +609,6 @@ namespace Skylicht
 		initDefaultValue();
 
 		updateShaderParams();
-
-		for (int i = 0, n = (int)m_meshBuffers.size(); i < n; i++)
-		{
-			IMeshBuffer* meshBuffer = m_meshBuffers[i];
-			video::SMaterial& material = meshBuffer->getMaterial();
-
-			// apply texture
-			updateTexture(material);
-		}
 	}
 
 	void CMaterial::changeShader(CShader* shader)
@@ -871,15 +812,6 @@ namespace Skylicht
 						SUniformValue* v = getUniform(u->Name.c_str());
 						setDefaultValue(v, u);
 					}
-					/*
-					else
-					{
-						// revert default value
-						SUniformValue* v = getUniform(u->Name.c_str());
-						if (v->ShaderDefaultValue == true)
-							setDefaultValue(v, u);
-					}
-					*/
 				}
 			}
 
