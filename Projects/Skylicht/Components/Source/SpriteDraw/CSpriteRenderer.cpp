@@ -246,12 +246,15 @@ namespace Skylicht
 			// if change texture or last sprite
 			if (i == n - 1 || currentTexture != sprites[i + 1]->Frame->Image->Texture)
 			{
-				// flush render
-				m_meshBuffer->getMaterial().setTexture(0, currentTexture);
 				m_meshBuffer->setDirty();
 
+				// flush render
+				SMaterial& mat = m_meshBuffer->getMaterial();
+				mat.setTexture(0, currentTexture);
+
 				driver->setTransform(video::ETS_WORLD, core::IdentityMatrix);
-				driver->setMaterial(m_meshBuffer->getMaterial());
+
+				driver->setMaterial(mat);
 				driver->drawMeshBuffer(m_meshBuffer);
 
 				// clean
