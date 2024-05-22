@@ -124,8 +124,6 @@ namespace Skylicht
 		std::vector<SUniformValue*> m_uniformParams;
 		std::vector<SUniformTexture*> m_uniformTextures;
 
-		std::vector<IMeshBuffer*> m_meshBuffers;
-
 		std::vector<SExtraParams*> m_extras;
 
 		ITexture* m_resourceTexture[MATERIAL_MAX_TEXTURES];
@@ -298,14 +296,6 @@ namespace Skylicht
 		void loadDefaultTexture();
 
 		void loadUniformTexture();
-
-		void buildDoubleSidedMesh();
-
-		void addAffectMesh(IMeshBuffer* mesh);
-
-		void removeAffectMesh(IMeshBuffer* mesh);
-
-		void clearAllAffectMesh();
 
 		void setOverrideResource(ITexture* texture, CShader::EResourceType type)
 		{

@@ -40,7 +40,6 @@ namespace Skylicht
 		Buffer = new CMeshBuffer<video::S3DVertex>(getVideoDriver()->getVertexDescriptor(EVT_STANDARD));
 
 		SkyDomeMaterial = new CMaterial("Skydome", "BuiltIn/Shader/Basic/TextureSRGB.xml");
-		SkyDomeMaterial->addAffectMesh(Buffer);
 		SkyDomeMaterial->setZWrite(false);
 		SkyDomeMaterial->applyMaterial();
 

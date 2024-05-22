@@ -14,7 +14,7 @@ CSphereData::~CSphereData()
 		SphereMeshBuffer->drop();
 }
 
-void CSphereData::initSphere(float radius, CMaterial *material)
+void CSphereData::initSphere(float radius, CMaterial* material)
 {
 	if (SphereMeshBuffer != NULL)
 		SphereMeshBuffer->drop();
@@ -24,15 +24,12 @@ void CSphereData::initSphere(float radius, CMaterial *material)
 
 	RenderMesh = new CMesh();
 
-	IMesh *mesh = getIrrlichtDevice()->getSceneManager()->getGeometryCreator()->createSphereMesh(radius, 32, 32);
+	IMesh* mesh = getIrrlichtDevice()->getSceneManager()->getGeometryCreator()->createSphereMesh(radius, 32, 32);
 
 	SphereMeshBuffer = mesh->getMeshBuffer(0);
 
 	// convert tangent for normal map
 	CMeshUtils::convertToTangentVertices(SphereMeshBuffer);
-
-	// assign mesh buffer material
-	material->addAffectMesh(SphereMeshBuffer);
 
 	// recalc bbox
 	SphereMeshBuffer->recalculateBoundingBox();

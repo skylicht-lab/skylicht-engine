@@ -85,8 +85,6 @@ namespace Skylicht
 		{
 			CSkyDomeData* skydome = GET_ENTITY_DATA(entities[i], CSkyDomeData);
 
-			CShaderMaterial::setMaterial(skydome->SkyDomeMaterial);
-
 			world.makeIdentity();
 			world.setTranslation(cameraPosition);
 			world.setScale(cameraFar * 0.9f);
@@ -95,7 +93,14 @@ namespace Skylicht
 
 			IMeshBuffer* buffer = skydome->Buffer;
 
-			driver->setMaterial(buffer->getMaterial());
+			CMaterial* material = skydome->SkyDomeMaterial;
+			SMaterial& mat = buffer->getMaterial();
+
+			material->updateTexture(mat);
+
+			CShaderMaterial::setMaterial(material);
+
+			driver->setMaterial(mat);
 			driver->drawMeshBuffer(buffer);
 		}
 	}
