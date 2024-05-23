@@ -29,10 +29,13 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	COcclusionQuerySceneNode::COcclusionQuerySceneNode(ISceneNode* parent, ISceneManager* smgr, COcclusionQueryData* data) :
-		ISceneNode(NULL, smgr),
-		QueryData(data)
+		ISceneNode(parent, smgr),
+		m_queryData(data)
 	{
-
+		// the cube in COcclusionQueryRenderer
+		float scale = 0.5;
+		m_bbox.MinEdge.set(-scale, -scale, -scale);
+		m_bbox.MaxEdge.set(scale, scale, scale);
 	}
 
 	COcclusionQuerySceneNode::~COcclusionQuerySceneNode()
@@ -42,7 +45,7 @@ namespace Skylicht
 
 	void COcclusionQuerySceneNode::updateTransform(const core::matrix4& world)
 	{
-		AbsoluteTransformation = world * QueryData->getLocalTransform();
+		AbsoluteTransformation = world * m_queryData->getLocalTransform();
 	}
 
 	void COcclusionQuerySceneNode::render()
@@ -52,6 +55,6 @@ namespace Skylicht
 
 	const core::aabbox3d<f32>& COcclusionQuerySceneNode::getBoundingBox() const
 	{
-		return BBox;
+		return m_bbox;
 	}
 }
