@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2022 Skylicht Technology CO., LTD
+Copyright (c) 2024 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -22,46 +22,36 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "Entity/IRenderSystem.h"
-#include "Entity/CEntityGroup.h"
-#include "RenderMesh/CMesh.h"
-#include "Material/CMaterial.h"
-#include "CPrimiviteData.h"
-#include "CPrimitiveBaseRenderer.h"
+#include "pch.h"
+#include "COcclusionQueryData.h"
+#include "COcclusionQuerySceneNode.h"
 
 namespace Skylicht
 {
-	class COMPONENT_API CPrimitiveRenderer : public CPrimitiveBaseRenderer
+	COcclusionQuerySceneNode::COcclusionQuerySceneNode(ISceneNode* parent, ISceneManager* smgr, COcclusionQueryData* data) :
+		ISceneNode(NULL, smgr),
+		QueryData(data)
 	{
-	protected:
-		CEntityGroup* m_group;
 
-		CFastArray<CPrimiviteData*> m_primitives[CPrimiviteData::Count];
-		CFastArray<CPrimiviteData*> m_primitivesTangent[CPrimiviteData::Count];
+	}
 
-	public:
-		CPrimitiveRenderer();
+	COcclusionQuerySceneNode::~COcclusionQuerySceneNode()
+	{
 
-		virtual ~CPrimitiveRenderer();
+	}
 
-		virtual void beginQuery(CEntityManager* entityManager);
+	void COcclusionQuerySceneNode::updateTransform(const core::matrix4& world)
+	{
+		AbsoluteTransformation = world * QueryData->getLocalTransform();
+	}
 
-		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity);
+	void COcclusionQuerySceneNode::render()
+	{
 
-		virtual void init(CEntityManager* entityManager);
+	}
 
-		virtual void update(CEntityManager* entityManager);
-
-		virtual void render(CEntityManager* entityManager);
-
-		CMesh* getMesh(CPrimiviteData::EPrimitive type);
-
-		void renderPrimitive(CEntityManager* entityManager,
-			CPrimiviteData** primitives,
-			CMesh* mesh,
-			int numEntity
-		);
-	};
+	const core::aabbox3d<f32>& COcclusionQuerySceneNode::getBoundingBox() const
+	{
+		return BBox;
+	}
 }

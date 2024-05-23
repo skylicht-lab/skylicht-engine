@@ -109,6 +109,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "SkinnedInstancing/CRenderSkinnedInstancing.h"
 #include "VertexAnimation/CRenderMeshInstancingVAT.h"
 
+// OcclusionQuery
+#include "OcclusionQuery/COcclusionQuery.h"
+
 // 3D Animation
 #include "Animation/CAnimationManager.h"
 #include "Animation/CAnimationController.h"

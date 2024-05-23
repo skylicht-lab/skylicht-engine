@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2022 Skylicht Technology CO., LTD
+Copyright (c) 2020 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,44 +24,38 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Entity/IRenderSystem.h"
-#include "Entity/CEntityGroup.h"
-#include "RenderMesh/CMesh.h"
-#include "Material/CMaterial.h"
-#include "CPrimiviteData.h"
-#include "CPrimitiveBaseRenderer.h"
+#include "Components/CComponentSystem.h"
+#include "COcclusionQueryData.h"
 
 namespace Skylicht
 {
-	class COMPONENT_API CPrimitiveRenderer : public CPrimitiveBaseRenderer
+	class SKYLICHT_API COcclusionQuery : public CComponentSystem
 	{
 	protected:
-		CEntityGroup* m_group;
-
-		CFastArray<CPrimiviteData*> m_primitives[CPrimiviteData::Count];
-		CFastArray<CPrimiviteData*> m_primitivesTangent[CPrimiviteData::Count];
+		COcclusionQueryData* m_queryData;
 
 	public:
-		CPrimitiveRenderer();
+		COcclusionQuery();
 
-		virtual ~CPrimitiveRenderer();
+		virtual ~COcclusionQuery();
 
-		virtual void beginQuery(CEntityManager* entityManager);
+		virtual void initComponent();
 
-		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity);
+		virtual void updateComponent();
 
-		virtual void init(CEntityManager* entityManager);
+		inline void setAABBox(const core::aabbox3df& box)
+		{
+			m_queryData->setAABBox(box);
+		}
 
-		virtual void update(CEntityManager* entityManager);
+		inline u32 getResult()
+		{
+			return m_queryData->QueryResult;
+		}
 
-		virtual void render(CEntityManager* entityManager);
-
-		CMesh* getMesh(CPrimiviteData::EPrimitive type);
-
-		void renderPrimitive(CEntityManager* entityManager,
-			CPrimiviteData** primitives,
-			CMesh* mesh,
-			int numEntity
-		);
+		inline bool getVisible()
+		{
+			return m_queryData->QueryVisible;
+		}
 	};
 }

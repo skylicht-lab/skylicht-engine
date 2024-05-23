@@ -611,24 +611,23 @@ namespace irr
 					return;
 
 				bool available = block;
-				GUID tmp;
-				u32 size = sizeof(DWORD);
-				u32 r = 0;
+				UINT64 tmp;
+				u32 size = sizeof(UINT64);
 
 				if (!block)
-					available = (reinterpret_cast<ID3D11Query*>(OcclusionQueries[index].PID)->GetPrivateData(tmp, &size, &r) == S_OK);
+					available = Context->GetData(reinterpret_cast<ID3D11Query*>(OcclusionQueries[index].PID), &tmp, size, 0) == S_OK;
 				else
 				{
 					do
 					{
-						HRESULT hr = reinterpret_cast<ID3D11Query*>(OcclusionQueries[index].PID)->GetPrivateData(tmp, &size, &r);
+						HRESULT hr = Context->GetData(reinterpret_cast<ID3D11Query*>(OcclusionQueries[index].PID), &tmp, size, 0);
 						available = (hr == S_OK);
 						if (hr != S_FALSE)
 							break;
 					} while (!available);
 				}
 				if (available)
-					OcclusionQueries[index].Result = r;
+					OcclusionQueries[index].Result = (u32)tmp;
 			}
 		}
 

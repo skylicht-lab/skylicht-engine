@@ -233,6 +233,17 @@ namespace Skylicht
 		return m_material;
 	}
 
+	CMesh* CPrimitive::getMesh()
+	{
+		CEntityManager* entityMgr = m_gameObject->getEntityManager();
+
+		CPrimitiveRenderer* renderer = entityMgr->getSystem<CPrimitiveRenderer>();
+		if (renderer)
+			return renderer->getMesh(m_type);
+
+		return NULL;
+	}
+
 	void CPrimitive::setCustomMaterial(CMaterial* material)
 	{
 		if (material)
@@ -243,6 +254,17 @@ namespace Skylicht
 		else
 		{
 			m_useCustomMaterial = false;
+		}
+	}
+
+	void CPrimitive::setInstancing(bool b)
+	{
+		m_instancing = b;
+		for (CEntity* entity : m_entities)
+		{
+			CPrimiviteData* data = GET_ENTITY_DATA(entity, CPrimiviteData);
+			if (data)
+				data->Instancing = b;
 		}
 	}
 }

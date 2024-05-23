@@ -37,6 +37,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "RenderMesh/CSoftwareSkinningSystem.h"
 #include "SkinnedInstancing/CSkinnedMeshRendererInstancing.h"
 #include "SkinnedInstancing/CSkinnedInstanceAnimationSystem.h"
+#include "OcclusionQuery/COcclusionQueryRenderer.h"
 #include "Culling/CVisibleSystem.h"
 #include "Culling/CCullingSystem.h"
 #include "LOD/CLODSystem.h"
@@ -76,6 +77,7 @@ namespace Skylicht
 		addRenderSystem<CSkinnedMeshRenderer>();
 		addRenderSystem<CMeshRendererInstancing>();
 		addRenderSystem<CSkinnedMeshRendererInstancing>();
+		addRenderSystem<COcclusionQueryRenderer>();
 		addRenderSystem<CDebugRenderer>();
 	}
 

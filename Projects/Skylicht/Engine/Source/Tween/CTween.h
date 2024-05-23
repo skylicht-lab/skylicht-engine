@@ -12,6 +12,7 @@ namespace Skylicht
 	protected:
 		float m_time;
 		float m_delay;
+		float m_endDelay;
 		float m_duration;
 
 		float m_percentTime;
@@ -31,8 +32,9 @@ namespace Skylicht
 		std::function<void(CTween*)> OnUpdate;
 		std::function<void(CTween*)> OnFinish;
 		std::function<void(CTween*)> OnStart;
-		std::function<void(CTween*)> OnStop;		
+		std::function<void(CTween*)> OnStop;
 		std::function<void(CTween*)> OnDelay;
+		std::function<void(CTween*)> OnEndDelay;
 
 	public:
 		CTween();
@@ -80,6 +82,16 @@ namespace Skylicht
 		inline float getDelay()
 		{
 			return m_delay;
+		}
+
+		inline void setEndDelay(float delay)
+		{
+			m_endDelay = delay;
+		}
+
+		inline float getEndDelay()
+		{
+			return m_endDelay;
 		}
 
 		inline void setTime(float time)

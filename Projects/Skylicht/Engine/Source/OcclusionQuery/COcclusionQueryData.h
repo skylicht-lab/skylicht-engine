@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2022 Skylicht Technology CO., LTD
+Copyright (c) 2024 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,44 +24,59 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Entity/IRenderSystem.h"
-#include "Entity/CEntityGroup.h"
+#include "Entity/IEntityData.h"
 #include "RenderMesh/CMesh.h"
-#include "Material/CMaterial.h"
-#include "CPrimiviteData.h"
-#include "CPrimitiveBaseRenderer.h"
+#include "COcclusionQuerySceneNode.h"
 
 namespace Skylicht
 {
-	class COMPONENT_API CPrimitiveRenderer : public CPrimitiveBaseRenderer
+	class SKYLICHT_API COcclusionQueryData : public IEntityData
 	{
 	protected:
-		CEntityGroup* m_group;
+		core::aabbox3df m_box;
 
-		CFastArray<CPrimiviteData*> m_primitives[CPrimiviteData::Count];
-		CFastArray<CPrimiviteData*> m_primitivesTangent[CPrimiviteData::Count];
+		core::matrix4 m_localTransform;
+
+		COcclusionQuerySceneNode* m_node;
+
+		bool m_registerQuery;
 
 	public:
-		CPrimitiveRenderer();
 
-		virtual ~CPrimitiveRenderer();
+		bool NeedValidate;
 
-		virtual void beginQuery(CEntityManager* entityManager);
+		u32 QueryResult;
 
-		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity);
+		bool QueryVisible;
 
-		virtual void init(CEntityManager* entityManager);
+	public:
+		COcclusionQueryData();
 
-		virtual void update(CEntityManager* entityManager);
+		virtual ~COcclusionQueryData();
 
-		virtual void render(CEntityManager* entityManager);
+		void setAABBox(const core::aabbox3df& box);
 
-		CMesh* getMesh(CPrimiviteData::EPrimitive type);
+		void updateLocalTransform();
 
-		void renderPrimitive(CEntityManager* entityManager,
-			CPrimiviteData** primitives,
-			CMesh* mesh,
-			int numEntity
-		);
+		inline const core::matrix4& getLocalTransform()
+		{
+			return m_localTransform;
+		}
+
+		inline COcclusionQuerySceneNode* getSceneNode()
+		{
+			return m_node;
+		}
+
+		inline bool isRegisterQuery()
+		{
+			return m_registerQuery;
+		}
+
+		void registerQuery(CMesh* mesh);
+
+		DECLARE_GETTYPENAME(COcclusionQueryData)
 	};
+
+	DECLARE_PUBLIC_DATA_TYPE_INDEX(COcclusionQueryData);
 }

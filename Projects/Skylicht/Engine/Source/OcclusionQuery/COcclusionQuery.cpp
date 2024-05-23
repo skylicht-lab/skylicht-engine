@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2022 Skylicht Technology CO., LTD
+Copyright (c) 2020 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -22,46 +22,33 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
+#include "pch.h"
+#include "COcclusionQuery.h"
 
-#include "Entity/IRenderSystem.h"
-#include "Entity/CEntityGroup.h"
-#include "RenderMesh/CMesh.h"
-#include "Material/CMaterial.h"
-#include "CPrimiviteData.h"
-#include "CPrimitiveBaseRenderer.h"
+#include "GameObject/CGameObject.h"
+#include "Entity/CEntity.h"
 
 namespace Skylicht
 {
-	class COMPONENT_API CPrimitiveRenderer : public CPrimitiveBaseRenderer
+	COcclusionQuery::COcclusionQuery() :
+		m_queryData(NULL)
 	{
-	protected:
-		CEntityGroup* m_group;
 
-		CFastArray<CPrimiviteData*> m_primitives[CPrimiviteData::Count];
-		CFastArray<CPrimiviteData*> m_primitivesTangent[CPrimiviteData::Count];
+	}
 
-	public:
-		CPrimitiveRenderer();
+	COcclusionQuery::~COcclusionQuery()
+	{
+		if (m_gameObject)
+			m_gameObject->getEntity()->removeData<COcclusionQueryData>();
+	}
 
-		virtual ~CPrimitiveRenderer();
+	void COcclusionQuery::initComponent()
+	{
+		m_queryData = m_gameObject->getEntity()->addData<COcclusionQueryData>();
+	}
 
-		virtual void beginQuery(CEntityManager* entityManager);
+	void COcclusionQuery::updateComponent()
+	{
 
-		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity);
-
-		virtual void init(CEntityManager* entityManager);
-
-		virtual void update(CEntityManager* entityManager);
-
-		virtual void render(CEntityManager* entityManager);
-
-		CMesh* getMesh(CPrimiviteData::EPrimitive type);
-
-		void renderPrimitive(CEntityManager* entityManager,
-			CPrimiviteData** primitives,
-			CMesh* mesh,
-			int numEntity
-		);
-	};
+	}
 }
