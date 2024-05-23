@@ -43,6 +43,10 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	ACTIVATOR_REGISTER(CRenderMeshInstancingVAT);
+
+	CATEGORY_COMPONENT(CRenderMeshInstancingVAT, "Skinned Mesh VAT", "Renderer/Instancing");
+
 	CRenderMeshInstancingVAT::CRenderMeshInstancingVAT()
 	{
 		for (int i = 0; i < 10; i++)

@@ -30,6 +30,10 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	ACTIVATOR_REGISTER(COcclusionQuery);
+
+	CATEGORY_COMPONENT(COcclusionQuery, "Occlusion Query", "Renderer");
+
 	COcclusionQuery::COcclusionQuery() :
 		m_queryData(NULL)
 	{

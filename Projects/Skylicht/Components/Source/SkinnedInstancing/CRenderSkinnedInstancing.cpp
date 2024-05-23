@@ -44,6 +44,10 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	ACTIVATOR_REGISTER(CRenderSkinnedInstancing);
+
+	CATEGORY_COMPONENT(CRenderSkinnedInstancing, "Skinned Mesh", "Renderer/Instancing");
+
 	CRenderSkinnedInstancing::CRenderSkinnedInstancing()
 	{
 
