@@ -27,7 +27,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CAnimationController.h"
 
 #include "RenderMesh/CRenderMesh.h"
-#include "VertexAnimation/CRenderMeshInstancingVAT.h"
 
 namespace Skylicht
 {
@@ -83,11 +82,22 @@ namespace Skylicht
 		if (renderMesh)
 			skeleton->initSkeleton(renderMesh->getEntities());
 		else
-		{
-			CRenderMeshInstancingVAT* renderMeshVAT = m_gameObject->getComponent<CRenderMeshInstancingVAT>();
-			if (renderMeshVAT)
-				skeleton->initSkeleton(renderMeshVAT->getBaseEntities());
-		}
+			os::Printer::log("[CAnimationController] createSkeleton with no RenderMesh");
+
+		m_skeletons.push_back(skeleton);
+
+		if (m_output == NULL)
+			m_output = skeleton;
+
+		return skeleton;
+	}
+
+	CSkeleton* CAnimationController::createSkeleton(core::array<CEntity*>& entities)
+	{
+		int id = (int)m_skeletons.size();
+
+		CSkeleton* skeleton = new CSkeleton(id);
+		skeleton->initSkeleton(entities);
 
 		m_skeletons.push_back(skeleton);
 

@@ -7,6 +7,7 @@
 
 #include "Primitive/CPlane.h"
 #include "SkyDome/CSkyDome.h"
+#include "SkinnedInstancing/CRenderSkinnedInstancing.h"
 
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),

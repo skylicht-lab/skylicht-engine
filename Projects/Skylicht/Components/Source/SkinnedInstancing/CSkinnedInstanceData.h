@@ -43,7 +43,7 @@ namespace Skylicht
 		float Weight;
 	};
 
-	class SKYLICHT_API CSkinnedInstanceData : public IEntityData
+	class COMPONENT_API CSkinnedInstanceData : public IEntityData
 	{
 	public:
 		SSkeletonAnimation Skeletons[2];

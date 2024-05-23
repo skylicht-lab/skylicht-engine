@@ -180,6 +180,12 @@ namespace Skylicht
 	template<class T>
 	T* CEntityManager::addSystem()
 	{
+		T* existSystem = getSystem<T>();
+		if (existSystem != NULL)
+		{
+			return existSystem;
+		}
+
 		T* newSystem = new T();
 
 		IEntitySystem* system = dynamic_cast<IEntitySystem*>(newSystem);

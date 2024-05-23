@@ -24,36 +24,42 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Entity/IEntityData.h"
-#include "RenderMesh/CMesh.h"
+#include "RenderMesh/CRenderMeshInstancing.h"
+#include "CTransformTextureData.h"
+#include "Animation/CAnimationClip.h"
 
 namespace Skylicht
 {
-	class SKYLICHT_API CVertexAnimTextureData : public IEntityData
+	class COMPONENT_API CRenderSkinnedInstancing : public CRenderMeshInstancing
 	{
-	public:
-		ITexture* PositionTexture;
-		ITexture* NormalTexture;
-		u32 FrameCount;
-		u32 VertexCount;
-		core::vector3df* PositionData;
-		core::vector3df* NormalData;
+	protected:
+		std::vector<CTransformTextureData*> m_textures;
 
 	public:
-		CVertexAnimTextureData();
+		CRenderSkinnedInstancing();
 
-		virtual ~CVertexAnimTextureData();
+		virtual ~CRenderSkinnedInstancing();
 
-		void allocFrames(u32 numVertex, u32 frames);
+		virtual void initComponent();
 
-		void freeTextureData();
+		virtual CEntity* spawn();
 
-		void addFrame(u32 frame, CMesh* mesh);
+		static bool setAnimation(CEntity* entity, int animTextureIndex, CAnimationClip* clipInfo, float currentTime = 0.0f, int bakeFps = 60, int skeletonId = 0, bool loop = true, bool pause = false);
 
-		void buildTexture();
+		static bool setAnimation(CEntity* entity, int animTextureIndex, CAnimationClip* clipInfo, float clipBegin, float clipDuration, float currentTime = 0.0f, int bakeFps = 60, int skeletonId = 0, bool loop = true, bool pause = false);
 
-		DECLARE_GETTYPENAME(CVertexAnimTextureData)
+		static void setAnimationWeight(CEntity* entity, int skeletonId, float weight);
+
+	public:
+
+		virtual void initFromPrefab(CEntityPrefab* prefab);
+
+		void initTextureTransform(core::matrix4* transforms, u32 w, u32 h, std::map<std::string, int>& bones);
+
+		DECLARE_GETTYPENAME(CRenderSkinnedInstancing)
+
+	protected:
+
+		virtual void releaseEntities();
 	};
-
-	DECLARE_PUBLIC_DATA_TYPE_INDEX(CVertexAnimTextureData);
 }

@@ -106,9 +106,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "RenderMesh/CRenderMesh.h"
 #include "RenderMesh/CRenderMeshInstancing.h"
 
-#include "SkinnedInstancing/CRenderSkinnedInstancing.h"
-#include "VertexAnimation/CRenderMeshInstancingVAT.h"
-
 // OcclusionQuery
 #include "OcclusionQuery/COcclusionQuery.h"
 
