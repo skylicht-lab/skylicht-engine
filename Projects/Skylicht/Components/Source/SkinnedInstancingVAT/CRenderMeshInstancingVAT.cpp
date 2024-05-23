@@ -25,18 +25,21 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 
 #include "CRenderMeshInstancingVAT.h"
-#include "CSoftwareSkinningUtils.h"
 #include "CVertexAnimTextureData.h"
 
+#include "VertexAnimation/CSoftwareSkinningUtils.h"
 #include "Entity/CEntityManager.h"
 #include "Culling/CCullingData.h"
 #include "Culling/CCullingBBoxData.h"
 #include "Transform/CWorldInverseTransformData.h"
 #include "SkinnedInstancing/CSkinnedInstanceData.h"
 #include "SkinnedInstancing/CRenderSkinnedInstancing.h"
+#include "SkinnedInstancing/CSkinnedInstanceAnimationSystem.h"
+#include "SkinnedInstancing/CSkinnedMeshRendererInstancing.h"
 
 #include "RenderMesh/CJointAnimationSystem.h"
 #include "RenderMesh/CSkinnedMeshSystem.h"
+
 
 namespace Skylicht
 {
@@ -49,6 +52,15 @@ namespace Skylicht
 	CRenderMeshInstancingVAT::~CRenderMeshInstancingVAT()
 	{
 
+	}
+
+	void CRenderMeshInstancingVAT::initComponent()
+	{
+		CEntityManager* entityMgr = m_gameObject->getEntityManager();
+		entityMgr->addSystem<CSkinnedInstanceAnimationSystem>();
+		entityMgr->addRenderSystem<CSkinnedMeshRendererInstancing>();
+
+		CRenderMeshInstancing::initComponent();
 	}
 
 	void CRenderMeshInstancingVAT::initFromPrefab(CEntityPrefab* prefab)

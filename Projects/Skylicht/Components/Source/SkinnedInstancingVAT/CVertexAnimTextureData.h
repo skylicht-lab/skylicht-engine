@@ -24,45 +24,37 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CSkinnedInstanceData.h"
-#include "CGroupSkinnedInstancing.h"
-#include "CTransformTextureData.h"
-
-#include "Instancing/SMeshInstancingGroup.h"
-
-#include "Entity/IRenderSystem.h"
-#include "Entity/CEntityGroup.h"
-
-#include "Material/Shader/Instancing/CSkinTBNSGInstancing.h"
+#include "Entity/IEntityData.h"
+#include "RenderMesh/CMesh.h"
+#include "DataTypeIndex.h"
 
 namespace Skylicht
 {
-	typedef core::array<CSkinnedInstanceData*> ArraySkinnedMesh;
-
-	class SKYLICHT_API CSkinnedMeshRendererInstancing : public IRenderSystem
+	class COMPONENT_API CVertexAnimTextureData : public IEntityData
 	{
-	protected:
-		CGroupSkinnedInstancing* m_group;
-
-		std::map<SMeshInstancing*, SMeshInstancingGroup*> m_instancingGroups;
+	public:
+		ITexture* PositionTexture;
+		ITexture* NormalTexture;
+		u32 FrameCount;
+		u32 VertexCount;
+		core::vector3df* PositionData;
+		core::vector3df* NormalData;
 
 	public:
-		CSkinnedMeshRendererInstancing();
+		CVertexAnimTextureData();
 
-		virtual ~CSkinnedMeshRendererInstancing();
+		virtual ~CVertexAnimTextureData();
 
-		virtual void beginQuery(CEntityManager* entityManager);
+		void allocFrames(u32 numVertex, u32 frames);
 
-		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity);
+		void freeTextureData();
 
-		virtual void init(CEntityManager* entityManager);
+		void addFrame(u32 frame, CMesh* mesh);
 
-		virtual void update(CEntityManager* entityManager);
+		void buildTexture();
 
-		virtual void render(CEntityManager* entityManager);
-
-		virtual void renderTransparent(CEntityManager* entityManager);
-
-		void renderInstancing(CEntityManager* entityManager, bool isRenderTransparent);
+		DECLARE_GETTYPENAME(CVertexAnimTextureData)
 	};
+
+	DECLARE_COMPONENT_DATA_TYPE_INDEX(CVertexAnimTextureData);
 }

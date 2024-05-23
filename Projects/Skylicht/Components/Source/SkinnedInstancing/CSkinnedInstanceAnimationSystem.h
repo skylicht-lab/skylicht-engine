@@ -24,40 +24,33 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "RenderMesh/CRenderMeshInstancing.h"
-#include "CTransformTextureData.h"
-#include "Animation/CAnimationClip.h"
+#include "Entity/IEntitySystem.h"
+#include "CSkinnedInstanceData.h"
+#include "CGroupSkinnedInstancing.h"
 
 namespace Skylicht
 {
-	class SKYLICHT_API CRenderSkinnedInstancing : public CRenderMeshInstancing
+
+	class COMPONENT_API CSkinnedInstanceAnimationSystem : public IEntitySystem
 	{
 	protected:
-		std::vector<CTransformTextureData*> m_textures;
+		CGroupSkinnedInstancing* m_group;
 
-	public:
-		CRenderSkinnedInstancing();
-
-		virtual ~CRenderSkinnedInstancing();
-
-		virtual CEntity* spawn();
-
-		static bool setAnimation(CEntity* entity, int animTextureIndex, CAnimationClip* clipInfo, float currentTime = 0.0f, int bakeFps = 60, int skeletonId = 0, bool loop = true, bool pause = false);
-
-		static bool setAnimation(CEntity* entity, int animTextureIndex, CAnimationClip* clipInfo, float clipBegin, float clipDuration, float currentTime = 0.0f, int bakeFps = 60, int skeletonId = 0, bool loop = true, bool pause = false);
-
-		static void setAnimationWeight(CEntity* entity, int skeletonId, float weight);
+		CFastArray<CSkinnedInstanceData*> m_skinnedEntities;
 
 	public:
 
-		virtual void initFromPrefab(CEntityPrefab* prefab);
+		CSkinnedInstanceAnimationSystem();
 
-		void initTextureTransform(core::matrix4* transforms, u32 w, u32 h, std::map<std::string, int>& bones);
+		virtual ~CSkinnedInstanceAnimationSystem();
 
-		DECLARE_GETTYPENAME(CRenderSkinnedInstancing)
+		virtual void beginQuery(CEntityManager* entityManager);
 
-	protected:
+		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int count);
 
-		virtual void releaseEntities();
+		virtual void init(CEntityManager* entityManager);
+
+		virtual void update(CEntityManager* entityManager);
 	};
+
 }

@@ -49,6 +49,8 @@ namespace Skylicht
 
 		CSkeleton* createSkeleton();
 
+		CSkeleton* createSkeleton(core::array<CEntity*>& entities);
+
 		int getNumSkeleton()
 		{
 			return (int)m_skeletons.size();

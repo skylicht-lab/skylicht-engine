@@ -30,7 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class SKYLICHT_API CRenderMeshInstancingVAT : public CRenderMeshInstancing
+	class COMPONENT_API CRenderMeshInstancingVAT : public CRenderMeshInstancing
 	{
 	protected:
 		int m_clipOffset[10];
@@ -39,6 +39,8 @@ namespace Skylicht
 		CRenderMeshInstancingVAT();
 
 		virtual ~CRenderMeshInstancingVAT();
+
+		virtual void initComponent();
 
 		virtual void initFromPrefab(CEntityPrefab* prefab);
 
