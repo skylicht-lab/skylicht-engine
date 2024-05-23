@@ -57,5 +57,7 @@ namespace Skylicht
 		{
 			return m_queryData->QueryVisible;
 		}
+
+		DECLARE_GETTYPENAME(COcclusionQuery)
 	};
 }

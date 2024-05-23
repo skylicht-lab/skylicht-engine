@@ -14,6 +14,10 @@
 
 namespace Skylicht
 {
+	ACTIVATOR_REGISTER(CRenderMeshInstancing);
+
+	CATEGORY_COMPONENT(CRenderMeshInstancing, "Mesh", "Renderer/Instancing");
+
 	CRenderMeshInstancing::CRenderMeshInstancing() :
 		m_root(NULL),
 		m_loadTexcoord2(false),
@@ -35,6 +39,9 @@ namespace Skylicht
 
 	void CRenderMeshInstancing::releaseBaseEntities()
 	{
+		if (m_gameObject == NULL)
+			return;
+
 		CEntityManager* entityManager = m_gameObject->getEntityManager();
 		if (entityManager == NULL)
 			return;
