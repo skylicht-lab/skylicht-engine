@@ -65,8 +65,6 @@ namespace Skylicht
 
 	void COcclusionQueryData::updateLocalTransform()
 	{
-		m_node->BBox = m_box;
-
 		m_localTransform.makeIdentity();
 		m_localTransform.setScale(m_box.getExtent());
 		m_localTransform.setTranslation(m_box.getCenter());

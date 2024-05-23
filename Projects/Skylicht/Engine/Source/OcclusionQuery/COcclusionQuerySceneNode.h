@@ -30,10 +30,10 @@ namespace Skylicht
 
 	class COcclusionQuerySceneNode : public ISceneNode
 	{
-	public:
-		core::aabbox3df BBox;
+	private:
+		core::aabbox3df m_bbox;
 
-		COcclusionQueryData* QueryData;
+		COcclusionQueryData* m_queryData;
 
 	public:
 		COcclusionQuerySceneNode(ISceneNode* parent, ISceneManager* smgr, COcclusionQueryData* data);
