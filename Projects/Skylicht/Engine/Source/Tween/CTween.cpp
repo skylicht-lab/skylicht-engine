@@ -7,6 +7,7 @@ namespace Skylicht
 	CTween::CTween() :
 		m_time(0.0f),
 		m_delay(0.0f),
+		m_endDelay(0.0f),
 		m_duration(0.0f),
 		m_ease(EaseInCubic),
 		m_numValue(1),
@@ -66,9 +67,18 @@ namespace Skylicht
 
 			if (f >= 1.0f)
 			{
-				if (OnFinish != nullptr)
-					OnFinish(this);
-				CTweenManager::getInstance()->removeTween(this);
+				float finishTime = t - m_duration;
+				if (finishTime >= m_endDelay)
+				{
+					if (OnFinish != nullptr)
+						OnFinish(this);
+					CTweenManager::getInstance()->removeTween(this);
+				}
+				else
+				{
+					if (OnEndDelay != nullptr)
+						OnEndDelay(this);
+				}
 			}
 		}
 		else

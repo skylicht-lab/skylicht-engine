@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CPrimiviteData.h"
 #include "Entity/CEntityHandler.h"
+#include "RenderMesh/CMesh.h"
 
 namespace Skylicht
 {
@@ -68,12 +69,11 @@ namespace Skylicht
 
 		CMaterial* getMaterial();
 
+		CMesh* getMesh();
+
 		void setCustomMaterial(CMaterial* material);
 
-		inline void setInstancing(bool b)
-		{
-			m_instancing = b;
-		}
+		void setInstancing(bool b);
 
 		inline bool isInstancing()
 		{

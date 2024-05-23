@@ -165,6 +165,11 @@ namespace Skylicht
 		}
 	}
 
+	CMesh* CPrimitiveRenderer::getMesh(CPrimiviteData::EPrimitive type)
+	{
+		return m_meshTangent[type];
+	}
+
 	void CPrimitiveRenderer::renderPrimitive(CEntityManager* entityManager,
 		CPrimiviteData** primitives,
 		CMesh* mesh,
