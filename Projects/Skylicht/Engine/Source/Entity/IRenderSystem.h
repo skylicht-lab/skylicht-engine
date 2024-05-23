@@ -39,6 +39,7 @@ namespace Skylicht
 		{
 			Sky = 0,
 			Opaque,
+			OcclusionQuery,
 			Transparent,
 			Effect,
 		};

@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2022 Skylicht Technology CO., LTD
+Copyright (c) 2024 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,44 +24,26 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Entity/IRenderSystem.h"
-#include "Entity/CEntityGroup.h"
-#include "RenderMesh/CMesh.h"
-#include "Material/CMaterial.h"
-#include "CPrimiviteData.h"
-#include "CPrimitiveBaseRenderer.h"
-
 namespace Skylicht
 {
-	class COMPONENT_API CPrimitiveRenderer : public CPrimitiveBaseRenderer
-	{
-	protected:
-		CEntityGroup* m_group;
+	class COcclusionQueryData;
 
-		CFastArray<CPrimiviteData*> m_primitives[CPrimiviteData::Count];
-		CFastArray<CPrimiviteData*> m_primitivesTangent[CPrimiviteData::Count];
+	class COcclusionQuerySceneNode : public ISceneNode
+	{
+	public:
+		core::aabbox3df BBox;
+
+		COcclusionQueryData* QueryData;
 
 	public:
-		CPrimitiveRenderer();
+		COcclusionQuerySceneNode(ISceneNode* parent, ISceneManager* smgr, COcclusionQueryData* data);
 
-		virtual ~CPrimitiveRenderer();
+		virtual ~COcclusionQuerySceneNode();
 
-		virtual void beginQuery(CEntityManager* entityManager);
+		virtual void render();
 
-		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity);
+		void updateTransform(const core::matrix4& world);
 
-		virtual void init(CEntityManager* entityManager);
-
-		virtual void update(CEntityManager* entityManager);
-
-		virtual void render(CEntityManager* entityManager);
-
-		CMesh* getMesh(CPrimiviteData::EPrimitive type);
-
-		void renderPrimitive(CEntityManager* entityManager,
-			CPrimiviteData** primitives,
-			CMesh* mesh,
-			int numEntity
-		);
+		virtual const core::aabbox3d<f32>& getBoundingBox() const;
 	};
 }
