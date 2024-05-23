@@ -8,6 +8,7 @@
 
 #include "Primitive/CCube.h"
 #include "SkySun/CSkySun.h"
+#include "SkinnedInstancingVAT/CRenderMeshInstancingVAT.h"
 
 #include "CBoldSystem.h"
 #include "CBoldAnimationSystem.h"
@@ -426,7 +427,7 @@ void CViewInit::initVATCrowd(CGameObject* crowd, CEntityPrefab* modelPrefab, std
 	CAnimationController* animController = crowd->addComponent<CAnimationController>();
 	animController->setEnable(false);
 
-	CSkeleton* skeleton = animController->createSkeleton();
+	CSkeleton* skeleton = animController->createSkeleton(crowdMesh->getBaseEntities());
 
 	int totalFrames = 0;
 	float maxDuration = 0.0f;

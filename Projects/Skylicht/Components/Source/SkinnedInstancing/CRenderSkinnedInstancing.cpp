@@ -39,6 +39,9 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Material/Shader/Instancing/IShaderInstancing.h"
 
+#include "CSkinnedInstanceAnimationSystem.h"
+#include "CSkinnedMeshRendererInstancing.h"
+
 namespace Skylicht
 {
 	CRenderSkinnedInstancing::CRenderSkinnedInstancing()
@@ -49,6 +52,15 @@ namespace Skylicht
 	CRenderSkinnedInstancing::~CRenderSkinnedInstancing()
 	{
 
+	}
+
+	void CRenderSkinnedInstancing::initComponent()
+	{
+		CEntityManager* entityMgr = m_gameObject->getEntityManager();
+		entityMgr->addSystem<CSkinnedInstanceAnimationSystem>();
+		entityMgr->addRenderSystem<CSkinnedMeshRendererInstancing>();
+
+		CRenderMeshInstancing::initComponent();
 	}
 
 	void CRenderSkinnedInstancing::releaseEntities()

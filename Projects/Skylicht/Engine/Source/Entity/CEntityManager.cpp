@@ -35,8 +35,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "RenderMesh/CSkinnedMeshSystem.h"
 #include "RenderMesh/CSoftwareBlendShapeSystem.h"
 #include "RenderMesh/CSoftwareSkinningSystem.h"
-#include "SkinnedInstancing/CSkinnedMeshRendererInstancing.h"
-#include "SkinnedInstancing/CSkinnedInstanceAnimationSystem.h"
 #include "OcclusionQuery/COcclusionQueryRenderer.h"
 #include "Culling/CVisibleSystem.h"
 #include "Culling/CCullingSystem.h"
@@ -61,7 +59,6 @@ namespace Skylicht
 		addSystem<CWorldInverseTransformSystem>();
 		addSystem<CJointAnimationSystem>();
 		addSystem<CSkinnedMeshSystem>();
-		addSystem<CSkinnedInstanceAnimationSystem>();
 		addSystem<CSoftwareBlendShapeSystem>();
 		addSystem<CSoftwareSkinningSystem>();
 		addSystem<CReflectionProbeSystem>();
@@ -76,7 +73,6 @@ namespace Skylicht
 		addRenderSystem<CMeshRenderer>();
 		addRenderSystem<CSkinnedMeshRenderer>();
 		addRenderSystem<CMeshRendererInstancing>();
-		addRenderSystem<CSkinnedMeshRendererInstancing>();
 		addRenderSystem<COcclusionQueryRenderer>();
 		addRenderSystem<CDebugRenderer>();
 	}

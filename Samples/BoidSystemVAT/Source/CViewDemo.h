@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ViewManager/CView.h"
-#include "VertexAnimation/CRenderMeshInstancingVAT.h"
+#include "SkinnedInstancingVAT/CRenderMeshInstancingVAT.h"
 
 #include "Tween/CTweenManager.h"
 

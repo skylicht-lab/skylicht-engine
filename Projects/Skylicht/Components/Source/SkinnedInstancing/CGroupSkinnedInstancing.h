@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class SKYLICHT_API CGroupSkinnedInstancing : public CEntityGroup
+	class COMPONENT_API CGroupSkinnedInstancing : public CEntityGroup
 	{
 	protected:
 

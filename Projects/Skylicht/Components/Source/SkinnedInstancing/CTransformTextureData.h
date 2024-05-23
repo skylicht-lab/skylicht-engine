@@ -24,33 +24,24 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Entity/IEntitySystem.h"
-#include "CSkinnedInstanceData.h"
-#include "CGroupSkinnedInstancing.h"
+#include "Entity/IEntityData.h"
+#include "DataTypeIndex.h"
 
 namespace Skylicht
 {
-
-	class SKYLICHT_API CSkinnedInstanceAnimationSystem : public IEntitySystem
+	class COMPONENT_API CTransformTextureData : public IEntityData
 	{
-	protected:
-		CGroupSkinnedInstancing* m_group;
-
-		CFastArray<CSkinnedInstanceData*> m_skinnedEntities;
+	public:
+		ITexture* TransformTexture;
+		int JointCount;
 
 	public:
+		CTransformTextureData();
 
-		CSkinnedInstanceAnimationSystem();
+		virtual ~CTransformTextureData();
 
-		virtual ~CSkinnedInstanceAnimationSystem();
-
-		virtual void beginQuery(CEntityManager* entityManager);
-
-		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int count);
-
-		virtual void init(CEntityManager* entityManager);
-
-		virtual void update(CEntityManager* entityManager);
+		DECLARE_GETTYPENAME(CTransformTextureData)
 	};
 
+	DECLARE_COMPONENT_DATA_TYPE_INDEX(CTransformTextureData);
 }

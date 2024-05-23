@@ -24,23 +24,45 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Entity/IEntityData.h"
+#include "CSkinnedInstanceData.h"
+#include "CGroupSkinnedInstancing.h"
+#include "CTransformTextureData.h"
+
+#include "Instancing/SMeshInstancingGroup.h"
+
+#include "Entity/IRenderSystem.h"
+#include "Entity/CEntityGroup.h"
+
+#include "Material/Shader/Instancing/CSkinTBNSGInstancing.h"
 
 namespace Skylicht
 {
-	class SKYLICHT_API CTransformTextureData : public IEntityData
+	typedef core::array<CSkinnedInstanceData*> ArraySkinnedMesh;
+
+	class COMPONENT_API CSkinnedMeshRendererInstancing : public IRenderSystem
 	{
-	public:
-		ITexture* TransformTexture;
-		int JointCount;
+	protected:
+		CGroupSkinnedInstancing* m_group;
+
+		std::map<SMeshInstancing*, SMeshInstancingGroup*> m_instancingGroups;
 
 	public:
-		CTransformTextureData();
+		CSkinnedMeshRendererInstancing();
 
-		virtual ~CTransformTextureData();
+		virtual ~CSkinnedMeshRendererInstancing();
 
-		DECLARE_GETTYPENAME(CTransformTextureData)
+		virtual void beginQuery(CEntityManager* entityManager);
+
+		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity);
+
+		virtual void init(CEntityManager* entityManager);
+
+		virtual void update(CEntityManager* entityManager);
+
+		virtual void render(CEntityManager* entityManager);
+
+		virtual void renderTransparent(CEntityManager* entityManager);
+
+		void renderInstancing(CEntityManager* entityManager, bool isRenderTransparent);
 	};
-
-	DECLARE_PUBLIC_DATA_TYPE_INDEX(CTransformTextureData);
 }
