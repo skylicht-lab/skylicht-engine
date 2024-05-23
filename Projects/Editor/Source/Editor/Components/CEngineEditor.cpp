@@ -29,6 +29,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Lighting/CSpotLight.h"
 
 #include "RenderMesh/CRenderMesh.h"
+#include "RenderMesh/CRenderMeshInstancing.h"
+#include "OcclusionQuery/COcclusionQuery.h"
 #include "IndirectLighting/CIndirectLighting.h"
 #include "LightProbes/CLightProbes.h"
 
@@ -81,6 +83,8 @@ namespace Skylicht
 		USE_COMPONENT(CSpotLight);
 
 		USE_COMPONENT(CRenderMesh);
+		USE_COMPONENT(CRenderMeshInstancing);
+		USE_COMPONENT(COcclusionQuery);
 
 		USE_COMPONENT(CSkyDome);
 		USE_COMPONENT(CSkyBox);

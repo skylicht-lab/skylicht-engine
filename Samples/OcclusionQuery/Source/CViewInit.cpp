@@ -110,9 +110,6 @@ void CViewInit::initScene()
 	core::vector3df direction = core::vector3df(4.0f, -6.0f, -4.5f);
 	lightTransform->setOrientation(direction, Transform::Oy);
 
-	// load toon instancing shader
-	CShaderManager* shaderManager = CShaderManager::getInstance();
-
 	// plane
 	CGameObject* grid = zone->createEmptyObject();
 	grid->setName("Plane");
@@ -126,7 +123,6 @@ void CViewInit::initScene()
 	cubeObj->setName("Cube");
 
 	CCube* cube = cubeObj->addComponent<CCube>();
-
 	CMaterial* material = cube->getMaterial();
 	material->changeShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");
 
