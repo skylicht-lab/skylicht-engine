@@ -9,11 +9,6 @@
 #include "Primitive/CCube.h"
 #include "SkyDome/CSkyDome.h"
 
-#include "PhysicsEngine/CPhysicsEngine.h"
-#include "Collider/CStaticPlaneCollider.h"
-#include "Collider/CBoxCollider.h"
-#include "RigidBody/CRigidbody.h"
-
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
 	m_getFile(NULL),
@@ -75,9 +70,6 @@ void CViewInit::initScene()
 	CScene* scene = CContext::getInstance()->getScene();
 	CZone* zone = scene->getZone(0);
 
-	// init physics engine
-	Physics::CPhysicsEngine::getInstance()->initPhysics();
-
 	// camera
 	CGameObject* camObj = zone->createEmptyObject();
 	camObj->addComponent<CCamera>();
@@ -116,84 +108,28 @@ void CViewInit::initScene()
 	// indirect lighting
 	grid->addComponent<CIndirectLighting>();
 
-	grid->addComponent<Physics::CStaticPlaneCollider>();
-	Physics::CRigidbody* body = grid->addComponent<Physics::CRigidbody>();
-	body->setDynamic(false); // kinematic
-	body->initRigidbody();
-
 	// scale plane for render
 	core::matrix4 m;
 	m.setScale(core::vector3df(100.0, 1.0f, 100.0f));
 	grid->getTransform()->setRelativeTransform(m);
 
-	// that will disable replace transform in next update
-	body->notifyUpdateTransform(false);
+	// Robot
+	CGameObject* robotObj = zone->createEmptyObject();
+	robotObj->setName("robot");
 
-	// cube 1
-	CGameObject* cubeObj = zone->createEmptyObject();
-	cubeObj->setName("Cube 1");
+	// render mesh & init material
+	std::vector<std::string> searchTextureFolders;
+	CEntityPrefab* modelPrefab = CMeshManager::getInstance()->loadModel("SampleModels/Robot/robot_01.fbx", NULL, true);
 
-	// cube & material
-	CCube* cube = cubeObj->addComponent<CCube>();
-	CMaterial* material = cube->getMaterial();
-	material->changeShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");
+	CRenderMesh* characterRenderer = robotObj->addComponent<CRenderMesh>();
+	characterRenderer->initFromPrefab(modelPrefab);
 
-	// indirect lighting
-	cubeObj->addComponent<CIndirectLighting>();
-
-	// Init physics
-	cubeObj->addComponent<Physics::CBoxCollider>();
-	body = cubeObj->addComponent<Physics::CRigidbody>();
-	body->initRigidbody();
-	body->setPosition(core::vector3df(0.0f, 5.0f, 0.0f));
-	body->setRotation(core::vector3df(45.0f, 45.0f, 0.0f));
-	body->syncTransform();
-	body->OnCollision = [](Physics::CRigidbody* bodyA, Physics::CRigidbody* bodyB, Physics::SCollisionContactPoint* colliderInfo, int numContact)
-		{
-			if (bodyA->getState() != Physics::CRigidbody::Sleep ||
-				bodyB->getState() != Physics::CRigidbody::Sleep)
-			{
-				char log[1024];
-				sprintf(log, "[%s - %s] collision [%s - %s]",
-					bodyA->getGameObject()->getNameA(),
-					bodyA->getStateName(),
-					bodyB->getGameObject()->getNameA(),
-					bodyB->getStateName());
-				os::Printer::log(log);
-			}
-		};
-
-	// Cube 2
-	cubeObj = zone->createEmptyObject();
-	cubeObj->setName("Cube 2");
-
-	// cube & material
-	cube = cubeObj->addComponent<CCube>();
-	material = cube->getMaterial();
-	material->changeShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");
+	ArrayMaterial materials = CMaterialManager::getInstance()->initDefaultMaterial(modelPrefab);
+	materials[0]->changeShader("BuiltIn/Shader/Basic/SkinVertexColor.xml");
+	characterRenderer->initMaterial(materials);
 
 	// indirect lighting
-	cubeObj->addComponent<CIndirectLighting>();
-
-	cubeObj->addComponent<Physics::CBoxCollider>();
-	body = cubeObj->addComponent<Physics::CRigidbody>();
-	body->initRigidbody();
-	body->setPosition(core::vector3df(0.0f, 10.0f, 0.0f));
-	body->syncTransform();
-	body->OnCollision = [](Physics::CRigidbody* bodyA, Physics::CRigidbody* bodyB, Physics::SCollisionContactPoint* colliderInfo, int numContact)
-		{
-			if (bodyA->getState() != Physics::CRigidbody::Sleep ||
-				bodyB->getState() != Physics::CRigidbody::Sleep)
-			{
-				char log[1024];
-				sprintf(log, "[%s - %s] collision [%s - %s]",
-					bodyA->getGameObject()->getNameA(),
-					bodyA->getStateName(),
-					bodyB->getGameObject()->getNameA(),
-					bodyB->getStateName());
-				os::Printer::log(log);
-			}
-		};
+	robotObj->addComponent<CIndirectLighting>();
 
 	// lighting
 	CGameObject* lightObj = zone->createEmptyObject();
@@ -236,6 +172,8 @@ void CViewInit::onUpdate()
 
 		std::vector<std::string> listBundles;
 		listBundles.push_back("Common.zip");
+		listBundles.push_back("SampleModelsResource.zip");
+		listBundles.push_back(getApplication()->getTexturePackageName("SampleModels").c_str());
 
 #ifdef __EMSCRIPTEN__
 		const char* filename = listBundles[m_downloaded].c_str();
