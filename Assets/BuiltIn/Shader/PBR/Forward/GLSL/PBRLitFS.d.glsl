@@ -9,6 +9,10 @@ uniform sampler2D uTexRMA;
 uniform samplerCube uTexReflect;
 uniform sampler2D uTexBRDF;
 
+#ifdef EMISSIVE
+uniform sampler2D uTexEmissive;
+#endif
+
 uniform vec4 uLightColor;
 uniform vec4 uColor;
 #ifdef NO_TEXTURE
@@ -101,6 +105,10 @@ void main(void)
 	vec3 rmaMap = texture(uTexRMA, vTexCoord0.xy).xyz;
 #endif
 
+#ifdef EMISSIVE
+	vec3 emissiveMap = texture(uTexEmissive, vTexCoord0.xy).rgb;
+#endif
+
 #if defined(NO_NORMAL_MAP) || defined(NO_TEXTURE)
 	vec3 n = vWorldNormal;
 #else
@@ -156,6 +164,10 @@ void main(void)
 	vec3 indirectSpecular = prefilteredColor * F;
 
 	vec3 indirectLight = (kd * indirectDiffuse + indirectSpecular) * rmaMap.b;
+
+#ifdef EMISSIVE
+	lightContribution += sRGB(emissiveMap);
+#endif
 
 	FragColor = vec4(lightContribution + indirectLight, albedoMap.a);
 }

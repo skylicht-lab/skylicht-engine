@@ -193,6 +193,11 @@ namespace Skylicht
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGSkinAlpha.xml");
 	}
 
+	void CShaderManager::initPBRForwarderShader()
+	{
+		loadShader("BuiltIn/Shader/PBR/Forward/PBR.xml");
+	}
+
 	void CShaderManager::initSkylichtEngineShader()
 	{
 		initSGDeferredShader();
