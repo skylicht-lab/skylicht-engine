@@ -37,6 +37,7 @@ void CViewInit::onInit()
 	CShaderManager* shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
 	shaderMgr->initSGDeferredShader();
+	shaderMgr->initPBRForwarderShader();
 
 	CGlyphFreetype* freetypeFont = CGlyphFreetype::getInstance();
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
@@ -98,22 +99,33 @@ void CViewInit::initScene()
 	CReflectionProbe* reflection = reflectionProbeObj->addComponent<CReflectionProbe>();
 	reflection->loadStaticTexture("Common/Textures/Sky/PaperMill");
 
-	// Cube 1
-	CGameObject* helmet = zone->createEmptyObject();
-	helmet->setName("helmet");
+	// helmet
+	m_helmet = zone->createEmptyObject();
+	m_helmet->setName("helmet");
 
 	// render mesh & init material
 	std::vector<std::string> searchTextureFolders;
-	CEntityPrefab* modelPrefab = CMeshManager::getInstance()->loadModel("SampleModels/DamagedHelmet/DamagedHelmet.dae", NULL, true);
+	CEntityPrefab* modelPrefab = CMeshManager::getInstance()->loadModel("SampleModels/DamagedHelmet/DamagedHelmet.dae", NULL, true, false);
 
-	CRenderMesh* characterRenderer = helmet->addComponent<CRenderMesh>();
+	CRenderMesh* characterRenderer = m_helmet->addComponent<CRenderMesh>();
 	characterRenderer->initFromPrefab(modelPrefab);
 
 	ArrayMaterial materials = CMaterialManager::getInstance()->initDefaultMaterial(modelPrefab);
+	materials[0]->changeShader("BuiltIn/Shader/PBR/Forward/PBR.xml");
+
+	CTextureManager* textureManager = CTextureManager::getInstance();
+	ITexture* albedoMap = textureManager->getTexture("SampleModels/DamagedHelmet/Default_albedo.jpg");
+	ITexture* normalMap = textureManager->getTexture("SampleModels/DamagedHelmet/Default_normal.jpg");
+	ITexture* rmaMap = textureManager->getTexture("SampleModels/DamagedHelmet/Default_metalRoughness.jpg");
+	ITexture* emissiveMap = textureManager->getTexture("SampleModels/DamagedHelmet/Default_emissive.jpg");
+	materials[0]->setUniformTexture("uTexAlbedo", albedoMap);
+	materials[0]->setUniformTexture("uTexNormal", normalMap);
+	materials[0]->setUniformTexture("uTexRMA", rmaMap);
+	materials[0]->setUniformTexture("uTexEmissive", emissiveMap);
 	characterRenderer->initMaterial(materials);
 
 	// indirect lighting
-	helmet->addComponent<CIndirectLighting>();
+	m_helmet->addComponent<CIndirectLighting>();
 
 	// lighting
 	CGameObject* lightObj = zone->createEmptyObject();
@@ -156,6 +168,7 @@ void CViewInit::onUpdate()
 
 		std::vector<std::string> listBundles;
 		listBundles.push_back("Common.zip");
+		listBundles.push_back("SampleModels.zip");
 		listBundles.push_back("SampleModelsResource.zip");
 		listBundles.push_back(getApplication()->getTexturePackageName("SampleModels").c_str());
 
@@ -195,8 +208,8 @@ void CViewInit::onUpdate()
 				// retry download
 				delete m_getFile;
 				m_getFile = NULL;
-			}
-		}
+	}
+	}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -207,7 +220,7 @@ void CViewInit::onUpdate()
 
 		m_initState = CViewInit::InitScene;
 #endif
-	}
+}
 	break;
 	case CViewInit::InitScene:
 	{
@@ -240,12 +253,13 @@ void CViewInit::onRender()
 		CScene* scene = CContext::getInstance()->getScene();
 		CBaseRP* rp = CContext::getInstance()->getRenderPipeline();
 		CCamera* camera = context->getActiveCamera();
+		CZone* zone = scene->getZone(0);
 
 		if (m_bakeSHLighting == true)
 		{
 			m_bakeSHLighting = false;
 
-			CZone* zone = scene->getZone(0);
+			m_helmet->setVisible(false);
 
 			// light probe
 			CGameObject* lightProbeObj = zone->createEmptyObject();
@@ -264,6 +278,8 @@ void CViewInit::onRender()
 			probes.push_back(lightProbe);
 
 			lm->bakeProbes(probes, bakeCamera, rp, scene->getEntityManager());
+
+			m_helmet->setVisible(true);
 		}
 	}
 	else
