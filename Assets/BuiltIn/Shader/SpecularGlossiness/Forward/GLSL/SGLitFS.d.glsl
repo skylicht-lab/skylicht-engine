@@ -116,7 +116,7 @@ void main(void)
 
 	// IBL reflection
 	vec3 reflection = -normalize(reflect(vWorldViewDir, n));
-	color += textureLod(uTexReflect, reflection, roughness * 8.0).xyz * specularColor * metallic;
+	color += sRGB(textureLod(uTexReflect, reflection, roughness * 8.0).xyz) * specularColor * metallic;
 
 	FragColor = vec4(color, diffuseMap.a);
 }

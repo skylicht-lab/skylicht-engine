@@ -8,7 +8,7 @@
 			<uniform name="uUVScale" type="MATERIAL_PARAM" valueIndex="0" value="1.0, 1.0, 0.0, 0.0" float="4"/>
 		</vs>
 		<fs>
-			<uniform name="uTexDiffuse" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
+			<uniform name="uTexAlbedo" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
 			<uniform name="uTexNormal" type="DEFAULT_VALUE" value="1" float="1" directX="false"/>
 			<uniform name="uTexRMA" type="DEFAULT_VALUE" value="2" float="1" directX="false"/>
 			<uniform name="uTexReflect" type="DEFAULT_VALUE" value="3" float="1" directX="false"/>
@@ -19,20 +19,21 @@
 		</fs>
 	</uniforms>
 	<resources>
+		<resource name="uTexReflect" type="ReflectionProbe"/>
 		<!-- https://github.com/KhronosGroup/glTF-Sample-Viewer/issues/64 -->
-		<resource name="uTexReflect" type="Texture" path="BuiltIn/Textures/BRDF.png"/>
+		<resource name="uTexBRDF" type="Texture" path="BuiltIn/Textures/BRDF.png"/>
 	</resources>
 	<customUI>
 		<ui control="UIGroup" name="Texture">
-			<ui control="UITexture" name="uTexDiffuse" autoReplace="_diff.;_Diffuse.;_D."/>
+			<ui control="UITexture" name="uTexAlbedo" autoReplace="albedo.;_Albedo.;_A."/>
 			<ui control="UITexture" name="uTexNormal" autoReplace="_norm.;_Normal.;_N."/>
-			<ui control="UITexture" name="uTexSpecular" autoReplace="_spec.;_Specular.;_S."/>
+			<ui control="UITexture" name="uTexRMA" autoReplace="_rma.;_RMA."/>
 		</ui>
 		<ui control="UIGroup" name="Customize">
 			<ui control="UIColor" name="uColor"/>
 			<ui control="UIFloat4" name="uUVScale" elementName="UV ScaleX;UV ScaleY;UV OffsetX;UV OffsetY"/>
 		</ui>
 	</customUI>
-	<shader type="GLSL" vs="GLSL/PBRVS.glsl" fs="GLSL/PBRLitFS.glsl" fs_source="GLSL/PBRLitFS.d.glsl"/>
-	<shader type="HLSL" vs="HLSL/PBRVS.hlsl" fs="HLSL/PBRLitFS.hlsl" fs_source="HLSL/PBRLitFS.d.hlsl"/>
+	<shader type="GLSL" vs="GLSL/PBRVS.glsl" fs="GLSL/PBRLitFS.glsl" vs_source="GLSL/PBRVS.d.glsl" fs_source="GLSL/PBRLitFS.d.glsl"/>
+	<shader type="HLSL" vs="HLSL/PBRVS.hlsl" fs="HLSL/PBRLitFS.hlsl" vs_source="HLSL/PBRVS.d.hlsl" fs_source="HLSL/PBRLitFS.d.hlsl"/>
 </shaderConfig>
