@@ -9,11 +9,6 @@
 #include "Primitive/CCube.h"
 #include "SkyDome/CSkyDome.h"
 
-#include "PhysicsEngine/CPhysicsEngine.h"
-#include "Collider/CStaticPlaneCollider.h"
-#include "Collider/CBoxCollider.h"
-#include "RigidBody/CRigidbody.h"
-
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
 	m_getFile(NULL),
@@ -42,6 +37,7 @@ void CViewInit::onInit()
 	CShaderManager* shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
 	shaderMgr->initSGDeferredShader();
+	shaderMgr->initPBRForwarderShader();
 
 	CGlyphFreetype* freetypeFont = CGlyphFreetype::getInstance();
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
@@ -75,9 +71,6 @@ void CViewInit::initScene()
 	CScene* scene = CContext::getInstance()->getScene();
 	CZone* zone = scene->getZone(0);
 
-	// init physics engine
-	Physics::CPhysicsEngine::getInstance()->initPhysics();
-
 	// camera
 	CGameObject* camObj = zone->createEmptyObject();
 	camObj->addComponent<CCamera>();
@@ -85,8 +78,8 @@ void CViewInit::initScene()
 	camObj->addComponent<CFpsMoveCamera>()->setMoveSpeed(1.0f);
 
 	CCamera* camera = camObj->getComponent<CCamera>();
-	camera->setPosition(core::vector3df(0.0f, 5.0f, 10.0f));
-	camera->lookAt(core::vector3df(0.0f, 1.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
+	camera->setPosition(core::vector3df(0.0f, 3.0f, 3.0f));
+	camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
 
 	// gui camera
 	CGameObject* guiCameraObject = zone->createEmptyObject();
@@ -106,94 +99,33 @@ void CViewInit::initScene()
 	CReflectionProbe* reflection = reflectionProbeObj->addComponent<CReflectionProbe>();
 	reflection->loadStaticTexture("Common/Textures/Sky/PaperMill");
 
-	// plane
-	CGameObject* grid = zone->createEmptyObject();
-	grid->setName("Plane");
+	// helmet
+	m_helmet = zone->createEmptyObject();
+	m_helmet->setName("helmet");
 
-	CPlane* plane = grid->addComponent<CPlane>();
-	plane->getMaterial()->changeShader("BuiltIn/Shader/SpecularGlossiness/Deferred/MetersGrid.xml");
+	// render mesh & init material
+	std::vector<std::string> searchTextureFolders;
+	CEntityPrefab* modelPrefab = CMeshManager::getInstance()->loadModel("SampleModels/DamagedHelmet/DamagedHelmet.dae", NULL, true, false);
 
-	// indirect lighting
-	grid->addComponent<CIndirectLighting>();
+	CRenderMesh* characterRenderer = m_helmet->addComponent<CRenderMesh>();
+	characterRenderer->initFromPrefab(modelPrefab);
 
-	grid->addComponent<Physics::CStaticPlaneCollider>();
-	Physics::CRigidbody* body = grid->addComponent<Physics::CRigidbody>();
-	body->setDynamic(false); // kinematic
-	body->initRigidbody();
+	ArrayMaterial materials = CMaterialManager::getInstance()->initDefaultMaterial(modelPrefab);
+	materials[0]->changeShader("BuiltIn/Shader/PBR/Forward/PBR.xml");
 
-	// scale plane for render
-	core::matrix4 m;
-	m.setScale(core::vector3df(100.0, 1.0f, 100.0f));
-	grid->getTransform()->setRelativeTransform(m);
-
-	// that will disable replace transform in next update
-	body->notifyUpdateTransform(false);
-
-	// cube 1
-	CGameObject* cubeObj = zone->createEmptyObject();
-	cubeObj->setName("Cube 1");
-
-	// cube & material
-	CCube* cube = cubeObj->addComponent<CCube>();
-	CMaterial* material = cube->getMaterial();
-	material->changeShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");
+	CTextureManager* textureManager = CTextureManager::getInstance();
+	ITexture* albedoMap = textureManager->getTexture("SampleModels/DamagedHelmet/Default_albedo.jpg");
+	ITexture* normalMap = textureManager->getTexture("SampleModels/DamagedHelmet/Default_normal.jpg");
+	ITexture* rmaMap = textureManager->getTexture("SampleModels/DamagedHelmet/Default_metalRoughness.jpg");
+	ITexture* emissiveMap = textureManager->getTexture("SampleModels/DamagedHelmet/Default_emissive.jpg");
+	materials[0]->setUniformTexture("uTexAlbedo", albedoMap);
+	materials[0]->setUniformTexture("uTexNormal", normalMap);
+	materials[0]->setUniformTexture("uTexRMA", rmaMap);
+	materials[0]->setUniformTexture("uTexEmissive", emissiveMap);
+	characterRenderer->initMaterial(materials);
 
 	// indirect lighting
-	cubeObj->addComponent<CIndirectLighting>();
-
-	// Init physics
-	cubeObj->addComponent<Physics::CBoxCollider>();
-	body = cubeObj->addComponent<Physics::CRigidbody>();
-	body->initRigidbody();
-	body->setPosition(core::vector3df(0.0f, 5.0f, 0.0f));
-	body->setRotation(core::vector3df(45.0f, 45.0f, 0.0f));
-	body->syncTransform();
-	body->OnCollision = [](Physics::CRigidbody* bodyA, Physics::CRigidbody* bodyB, Physics::SCollisionContactPoint* colliderInfo, int numContact)
-		{
-			if (bodyA->getState() != Physics::CRigidbody::Sleep ||
-				bodyB->getState() != Physics::CRigidbody::Sleep)
-			{
-				char log[1024];
-				sprintf(log, "[%s - %s] collision [%s - %s]",
-					bodyA->getGameObject()->getNameA(),
-					bodyA->getStateName(),
-					bodyB->getGameObject()->getNameA(),
-					bodyB->getStateName());
-				os::Printer::log(log);
-			}
-		};
-
-	// Cube 2
-	cubeObj = zone->createEmptyObject();
-	cubeObj->setName("Cube 2");
-
-	// cube & material
-	cube = cubeObj->addComponent<CCube>();
-	material = cube->getMaterial();
-	material->changeShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");
-
-	// indirect lighting
-	cubeObj->addComponent<CIndirectLighting>();
-
-	cubeObj->addComponent<Physics::CBoxCollider>();
-	body = cubeObj->addComponent<Physics::CRigidbody>();
-	body->initRigidbody();
-	body->setPosition(core::vector3df(0.0f, 10.0f, 0.0f));
-	body->syncTransform();
-	body->OnCollision = [](Physics::CRigidbody* bodyA, Physics::CRigidbody* bodyB, Physics::SCollisionContactPoint* colliderInfo, int numContact)
-		{
-			if (bodyA->getState() != Physics::CRigidbody::Sleep ||
-				bodyB->getState() != Physics::CRigidbody::Sleep)
-			{
-				char log[1024];
-				sprintf(log, "[%s - %s] collision [%s - %s]",
-					bodyA->getGameObject()->getNameA(),
-					bodyA->getStateName(),
-					bodyB->getGameObject()->getNameA(),
-					bodyB->getStateName());
-				os::Printer::log(log);
-			}
-		};
+	m_helmet->addComponent<CIndirectLighting>();
 
 	// lighting
 	CGameObject* lightObj = zone->createEmptyObject();
@@ -236,6 +168,9 @@ void CViewInit::onUpdate()
 
 		std::vector<std::string> listBundles;
 		listBundles.push_back("Common.zip");
+		listBundles.push_back("SampleModels.zip");
+		listBundles.push_back("SampleModelsResource.zip");
+		listBundles.push_back(getApplication()->getTexturePackageName("SampleModels").c_str());
 
 #ifdef __EMSCRIPTEN__
 		const char* filename = listBundles[m_downloaded].c_str();
@@ -273,8 +208,8 @@ void CViewInit::onUpdate()
 				// retry download
 				delete m_getFile;
 				m_getFile = NULL;
-			}
-		}
+	}
+	}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -285,7 +220,7 @@ void CViewInit::onUpdate()
 
 		m_initState = CViewInit::InitScene;
 #endif
-	}
+}
 	break;
 	case CViewInit::InitScene:
 	{
@@ -318,12 +253,13 @@ void CViewInit::onRender()
 		CScene* scene = CContext::getInstance()->getScene();
 		CBaseRP* rp = CContext::getInstance()->getRenderPipeline();
 		CCamera* camera = context->getActiveCamera();
+		CZone* zone = scene->getZone(0);
 
 		if (m_bakeSHLighting == true)
 		{
 			m_bakeSHLighting = false;
 
-			CZone* zone = scene->getZone(0);
+			m_helmet->setVisible(false);
 
 			// light probe
 			CGameObject* lightProbeObj = zone->createEmptyObject();
@@ -342,6 +278,8 @@ void CViewInit::onRender()
 			probes.push_back(lightProbe);
 
 			lm->bakeProbes(probes, bakeCamera, rp, scene->getEntityManager());
+
+			m_helmet->setVisible(true);
 		}
 	}
 	else

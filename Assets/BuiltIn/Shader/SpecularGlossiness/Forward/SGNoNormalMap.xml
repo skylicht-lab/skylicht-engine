@@ -31,6 +31,6 @@
 			<ui control="UIFloat4" name="uUVScale" elementName="UV ScaleX;UV ScaleY;UV OffsetX;UV OffsetY"/>
 		</ui>
 	</customUI>
-	<shader type="GLSL" vs="GLSL/SGNoNormalMapVS.glsl" fs="GLSL/SGNoNormalMapFS.glsl" fs_source="GLSL/SGLitFS.d.glsl" define="NO_NORMAL_MAP"/>
-	<shader type="HLSL" vs="HLSL/SGNoNormalMapVS.hlsl" fs="HLSL/SGNoNormalMapFS.hlsl" fs_source="HLSL/SGLitFS.d.hlsl" define="NO_NORMAL_MAP"/>
+	<shader type="GLSL" vs="GLSL/SGNoNormalMapVS.glsl" fs="GLSL/SGNoNormalMapFS.glsl" vs_source="GLSL/SGVS.d.glsl" fs_source="GLSL/SGLitFS.d.glsl" define="NO_NORMAL_MAP"/>
+	<shader type="HLSL" vs="HLSL/SGNoNormalMapVS.hlsl" fs="HLSL/SGNoNormalMapFS.hlsl" vs_source="HLSL/SGVS.d.hlsl" fs_source="HLSL/SGLitFS.d.hlsl" define="NO_NORMAL_MAP"/>
 </shaderConfig>
