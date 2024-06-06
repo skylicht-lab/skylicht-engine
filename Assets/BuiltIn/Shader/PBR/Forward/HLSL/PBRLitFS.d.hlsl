@@ -15,6 +15,11 @@ SamplerState uTexReflectSampler : register(s3);
 Texture2D uTexBRDF : register(t4);
 SamplerState uTexBRDFSampler : register(s4);
 
+#ifdef EMISSIVE
+Texture2D uTexEmissive : register(t5);
+SamplerState uTexEmissiveSampler : register(s5);
+#endif
+
 #if defined(NO_NORMAL_MAP) || defined(NO_TEXTURE)
 struct PS_INPUT
 {
@@ -115,6 +120,10 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 rmaMap = uTexRMA.Sample(uTexRMASampler, input.tex0).xyz;
 #endif
 
+#ifdef EMISSIVE
+	float3 emissiveMap = uTexEmissive.Sample(uTexEmissiveSampler, input.tex0).rgb;
+#endif
+
 #if defined(NO_NORMAL_MAP) || defined(NO_TEXTURE)
 	float3 n = input.worldNormal;
 #else
@@ -170,6 +179,10 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 indirectSpecular = prefilteredColor * F;
 
 	float3 indirectLight = (kd * indirectDiffuse + indirectSpecular) * rmaMap.b;
+
+#ifdef EMISSIVE
+	lightContribution += sRGB(emissiveMap);
+#endif
 
 	return float4(lightContribution + indirectLight, albedoMap.a);
 }

@@ -354,6 +354,10 @@ This demo is to draw Cube 3D, set up, transform and use components.
 This demo code, that renders Sphere 3D, loads textures (Diffuse, Normal, Specular), and binds SpecGloss shader to Material.
 <img src="Documents/Media/Samples/sample_material.jpg"/>
 
+### Samples\PBR
+This demo code, that renders Sci-fi Helmet, loads textures (Albedo, Roughness, Metal, AO, Emissive), and binds Physically Based Rendering shader (PBR) to Material.
+<img src="Documents/Media/Samples/sample_pbr.jpg"/>
+
 ### Samples\SampleShader
 This demo code, How to binds shader to Material.
 <img src="Documents/Media/Samples/sample_shader.jpg"/>
