@@ -123,9 +123,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	//core::dimension2du winSize(960, 540);
 	//core::dimension2du winSize(960, 720);
-	core::dimension2du winSize(960, 640);
+	//core::dimension2du winSize(960, 640);
 	//core::dimension2du winSize(800, 600);
-	//core::dimension2du winSize(1280, 800);
+	core::dimension2du winSize(1280, 800);
 	//core::dimension2du winSize(1600, 850);
 	//core::dimension2du winSize(854, 480);
 	//core::dimension2du winSize(800, 480);

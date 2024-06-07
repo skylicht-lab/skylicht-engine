@@ -28,7 +28,7 @@ cbuffer cbPerFrame
 
 static const float3 lightColor = float3(0.3, 0.3, 0.307843);
 static const float3 darkColor = float3(0.156863, 0.156863, 0.160784);
-static const float3 borderColor = float3(1.0, 1.0, 1.0);
+static const float3 borderColor = float3(0.8, 0.8, 0.8);
 
 static const float gridSize = 4.0;
 static float h = gridSize / 2.0;

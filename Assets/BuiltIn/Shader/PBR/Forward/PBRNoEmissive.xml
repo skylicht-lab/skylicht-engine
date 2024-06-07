@@ -1,0 +1,40 @@
+<shaderConfig name="PBRNoEmissive" baseShader="SOLID">
+	<uniforms>
+		<vs>
+			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+			<uniform name="uWorldMatrix" type="WORLD" value="0" float="16" matrix="true"/>
+			<uniform name="uCameraPosition" type="WORLD_CAMERA_POSITION" value="0" float="4"/>
+			<uniform name="uLightDirection" type="WORLD_LIGHT_DIRECTION" value="0" float="4"/>
+			<uniform name="uUVScale" type="MATERIAL_PARAM" valueIndex="0" value="1.0, 1.0, 0.0, 0.0" float="4"/>
+		</vs>
+		<fs>
+			<uniform name="uTexAlbedo" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
+			<uniform name="uTexNormal" type="DEFAULT_VALUE" value="1" float="1" directX="false"/>
+			<uniform name="uTexRMA" type="DEFAULT_VALUE" value="2" float="1" directX="false"/>
+			<uniform name="uTexReflect" type="DEFAULT_VALUE" value="3" float="1" directX="false"/>
+			<uniform name="uTexBRDF" type="DEFAULT_VALUE" value="4" float="1" directX="false"/>
+			<uniform name="uLightColor" type="LIGHT_COLOR" value="1.0,1.0,1.0,1.0" float="4"/>
+			<uniform name="uColor" type="MATERIAL_PARAM" valueIndex="1" value="1.0, 1.0, 1.0, 1.0" float="4"/>
+			<uniform name="uSHConst" type="SH_CONST" value="0" float="4" array="4"/>
+		</fs>
+	</uniforms>
+	<resources>
+		<resource name="uTexReflect" type="ReflectionProbe"/>
+		<!-- https://github.com/KhronosGroup/glTF-Sample-Viewer/issues/64 -->
+		<resource name="uTexBRDF" type="Texture" path="BuiltIn/Textures/BRDF.png"/>
+	</resources>
+	<customUI>
+		<ui control="UIGroup" name="Texture">
+			<ui control="UITexture" name="uTexAlbedo" autoReplace="albedo.;_Albedo.;_A."/>
+			<ui control="UITexture" name="uTexNormal" autoReplace="_norm.;_Normal.;_N."/>
+			<ui control="UITexture" name="uTexRMA" autoReplace="_rma.;_RMA."/>
+			<ui control="UITexture" name="uTexEmissive" autoReplace="_emissive.;_E."/>
+		</ui>
+		<ui control="UIGroup" name="Customize">
+			<ui control="UIColor" name="uColor"/>
+			<ui control="UIFloat4" name="uUVScale" elementName="UV ScaleX;UV ScaleY;UV OffsetX;UV OffsetY"/>
+		</ui>
+	</customUI>
+	<shader type="GLSL" vs="GLSL/PBRVS.glsl" fs="GLSL/PBRNoEmissiveFS.glsl" vs_source="GLSL/PBRVS.d.glsl" fs_source="GLSL/PBRLitFS.d.glsl"/>
+	<shader type="HLSL" vs="HLSL/PBRVS.hlsl" fs="HLSL/PBRNoEmissiveFS.hlsl" vs_source="HLSL/PBRVS.d.hlsl" fs_source="HLSL/PBRLitFS.d.hlsl"/>
+</shaderConfig>

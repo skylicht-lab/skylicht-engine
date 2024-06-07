@@ -45,14 +45,28 @@ namespace Skylicht
 
 		CLightmapper::~CLightmapper()
 		{
+			release();
+		}
+
+		void CLightmapper::release()
+		{
 			if (m_singleBaker != NULL)
+			{
 				delete m_singleBaker;
+				m_singleBaker = NULL;
+			}
 
 			if (m_multiBaker != NULL)
+			{
 				delete m_multiBaker;
+				m_multiBaker = NULL;
+			}
 
 			if (m_gpuBaker != NULL)
+			{
 				delete m_gpuBaker;
+				m_gpuBaker = NULL;
+			}
 		}
 
 		void CLightmapper::initBaker(u32 hemisphereBakeSize)
@@ -188,7 +202,7 @@ namespace Skylicht
 			for (u32 i = 0, n = (u32)probes.size(); i < n; i++)
 			{
 				out[i].copyTo(probes[i]->getSH9());
-				
+
 				probes[i]->needValidate();
 			}
 		}

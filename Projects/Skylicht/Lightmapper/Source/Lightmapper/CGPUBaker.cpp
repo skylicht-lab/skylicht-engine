@@ -34,7 +34,7 @@ namespace Skylicht
 	{
 		CGPUBaker::CGPUBaker()
 		{
-			IVideoDriver *driver = getVideoDriver();
+			IVideoDriver* driver = getVideoDriver();
 
 			// load compute shader
 			if (driver->getDriverType() == video::EDT_DIRECT3D11)
@@ -136,7 +136,7 @@ namespace Skylicht
 			}
 
 			// get result buffer data
-			video::SVec4 *data = (video::SVec4*)m_shBuffer->lock(true);
+			video::SVec4* data = (video::SVec4*)m_shBuffer->lock(true);
 
 			// copy SH value compute from GPU to data
 			for (int tid = 0; tid < count; tid++)
@@ -146,24 +146,20 @@ namespace Skylicht
 				// sum sh each face
 				for (int fid = 0; fid < numFace; fid++)
 				{
-					video::SVec4 *computeResult = &data[(tid * NUM_FACES + fid) * 9];
+					video::SVec4* computeResult = &data[(tid * NUM_FACES + fid) * 9];
 
 					for (int i = 0; i < 9; i++)
 					{
-						core::vector3df computeSH;
-
-						computeSH.X = computeResult[i].X;
-						computeSH.Y = computeResult[i].Y;
-						computeSH.Z = computeResult[i].Z;
-
-						shResult[i] += computeSH;
+						shResult[i].X += computeResult[i].X;
+						shResult[i].Y += computeResult[i].Y;
+						shResult[i].Z += computeResult[i].Z;
 					}
 				}
 
 				core::vector3df* shValue = m_sh[tid].getValue();
 
 				for (int i = 0; i < 9; i++)
-					shValue[i] += shResult[i];
+					shValue[i] = shResult[i];
 			}
 
 			m_shBuffer->unlock();
