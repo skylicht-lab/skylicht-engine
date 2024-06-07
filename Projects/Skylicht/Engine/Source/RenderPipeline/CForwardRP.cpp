@@ -77,7 +77,7 @@ namespace Skylicht
 		initRTT(w, h);
 	}
 
-	void CForwardRP::render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport, IRenderPipeline* lastRP)
+	void CForwardRP::render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport, int cubeFaceId, IRenderPipeline* lastRP)
 	{
 		if (camera == NULL)
 			return;
@@ -100,7 +100,7 @@ namespace Skylicht
 		}
 		else
 		{
-			driver->setRenderTarget(target, false, false);
+			setTarget(target, cubeFaceId);
 
 			currentTarget = target;
 
@@ -128,18 +128,19 @@ namespace Skylicht
 		{
 			driver->setRenderTarget(m_emission, true, false);
 			entityManager->renderEmission();
-			driver->setRenderTarget(currentTarget, false, false);
+
+			setTarget(currentTarget, cubeFaceId);
 		}
 
-		onNext(currentTarget, camera, entityManager, viewport);
+		onNext(currentTarget, camera, entityManager, viewport, cubeFaceId);
 
 		if (m_postProcessor != NULL && s_bakeMode == false)
 		{
-			m_postProcessor->postProcessing(target, m_target, m_emission, NULL, NULL, viewport);
+			m_postProcessor->postProcessing(target, m_target, m_emission, NULL, NULL, viewport, cubeFaceId);
 		}
 		else if (m_useLinearRGB && m_target != NULL)
 		{
-			driver->setRenderTarget(target, false, false);
+			setTarget(target, cubeFaceId);
 
 			float renderW = (float)m_size.Width;
 			float renderH = (float)m_size.Height;

@@ -681,6 +681,7 @@ namespace Skylicht
 					m_rendering->setNextPipeLine(m_forwardRP);
 
 					// post processor
+					/*
 					m_postProcessor = new CPostProcessorRP();
 					m_postProcessor->enableAutoExposure(false);
 					m_postProcessor->enableBloomEffect(false);
@@ -690,6 +691,7 @@ namespace Skylicht
 
 					// apply post processor
 					m_rendering->setPostProcessor(m_postProcessor);
+					*/
 
 					m_renderRP = m_shadowMapRendering;
 				}

@@ -153,7 +153,7 @@ void main(void)
 	vec3 F = fresnelSchlick(vWorldViewDir, n, F0);
 	vec3 kd = mix(vec3(1.0) - F, vec3(0.0), metalness);
 
-	vec3 indirectDiffuse = ambientLighting * albedo;
+	vec3 indirectDiffuse = ambientLighting * lambert;
 
 	// IBL reflection
 	vec3 reflection = -normalize(reflect(vWorldViewDir, n));

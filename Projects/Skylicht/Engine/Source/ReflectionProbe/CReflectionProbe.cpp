@@ -195,7 +195,7 @@ namespace Skylicht
 		CBaseRP* baseRP = dynamic_cast<CBaseRP*>(rp);
 		if (baseRP != NULL)
 		{
-			baseRP->renderCubeEnvironment(camera, entityMgr, position, m_bakedTexture, NULL, 0);
+			baseRP->renderCubeEnvironment(camera, entityMgr, position, m_bakedTexture, NULL, 0, true);
 			m_bakedTexture->regenerateMipMapLevels();
 			m_probeData->ReflectionTexture = m_bakedTexture;
 			m_type = EReflectionType::Baked;

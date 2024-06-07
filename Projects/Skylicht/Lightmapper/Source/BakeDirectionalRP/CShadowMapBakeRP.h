@@ -42,7 +42,7 @@ namespace Skylicht
 
 		virtual void initRender(int w, int h);
 
-		virtual void render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport, IRenderPipeline* lastRP = NULL);
+		virtual void render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport, int cubeFaceId = -1, IRenderPipeline* lastRP = NULL);
 
 		void setBound(const core::aabbox3df& bound)
 		{

@@ -440,7 +440,7 @@ namespace Skylicht
 		}
 	}
 
-	void CDeferredRP::render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport, IRenderPipeline* lastRP)
+	void CDeferredRP::render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport, int cubeFaceId, IRenderPipeline* lastRP)
 	{
 		if (camera == NULL)
 			return;
@@ -465,6 +465,9 @@ namespace Skylicht
 		entityManager->setCamera(camera);
 		entityManager->setRenderPipeline(this);
 
+		float renderW = (float)m_size.Width;
+		float renderH = (float)m_size.Height;
+
 		// save projection/view for advance shader SSR
 		CShaderDeferred::setProjection(driver->getTransform(video::ETS_PROJECTION));
 
@@ -473,126 +476,127 @@ namespace Skylicht
 
 		// STEP 01:
 		// draw baked indirect & direction lighting
-		m_isIndirectPass = true;
-		driver->setRenderTarget(m_indirect, true, true, SColor(255, 0, 0, 0));
-		if (useCustomViewport)
-			driver->setViewPort(customViewport);
+		{
+			m_isIndirectPass = true;
+			driver->setRenderTarget(m_indirect, true, true, SColor(255, 0, 0, 0));
+			if (useCustomViewport)
+				driver->setViewPort(customViewport);
 
-		if (m_updateEntity == true)
-			entityManager->update();
+			if (m_updateEntity == true)
+				entityManager->update();
 
-		if (g_enableRenderIndirect == true)
-			entityManager->cullingAndRender();
-
-		m_isIndirectPass = false;
+			if (g_enableRenderIndirect == true)
+				entityManager->cullingAndRender();
+			m_isIndirectPass = false;
+		}
 
 		// STEP 02:
-		// Render multi target to: albedo, position, normal, data		
-		driver->setRenderTarget(m_multiRenderTarget);
-		if (useCustomViewport)
-			driver->setViewPort(customViewport);
-
-		// draw entity to buffer
-		if (g_enableRenderIndirect == true)
-			entityManager->render();
-		else
-			entityManager->cullingAndRender();
-
-		// Apply uniform: uLightMultiplier
-		if (CBaseRP::s_bakeMode == true && CBaseRP::s_bakeLMMode)
+		// Render multi target to: albedo, position, normal, data (also clear Depth)
 		{
-			// default light setting
-			CShaderManager::getInstance()->ShaderVec3[0] = core::vector3df(1.0f, 1.0f, 1.0f);
-		}
-		else
-		{
-			CShaderManager::getInstance()->ShaderVec3[0] = core::vector3df(m_directMultipler, m_indirectMultipler, m_lightMultipler);
+			driver->setRenderTarget(m_multiRenderTarget);
+			if (useCustomViewport)
+				driver->setViewPort(customViewport);
+
+			// draw entity to buffer
+			if (g_enableRenderIndirect == true)
+				entityManager->render();
+			else
+				entityManager->cullingAndRender();
+
+			// Apply uniform: uLightMultiplier
+			if (CBaseRP::s_bakeMode == true && CBaseRP::s_bakeLMMode)
+			{
+				// default light setting
+				CShaderManager::getInstance()->ShaderVec3[0] = core::vector3df(1.0f, 1.0f, 1.0f);
+			}
+			else
+			{
+				CShaderManager::getInstance()->ShaderVec3[0] = core::vector3df(m_directMultipler, m_indirectMultipler, m_lightMultipler);
+			}
 		}
 
 		// STEP 03:
 		// draw point lighting & spot lighting
-		// save camera transform
-		m_projectionMatrix = driver->getTransform(video::ETS_PROJECTION);
-		m_viewMatrix = driver->getTransform(video::ETS_VIEW);
-
-		float renderW = (float)m_size.Width;
-		float renderH = (float)m_size.Height;
-
-		if (useCustomViewport)
 		{
-			renderW = (float)viewport.getWidth();
-			renderH = (float)viewport.getHeight();
-		}
+			m_projectionMatrix = driver->getTransform(video::ETS_PROJECTION);
+			m_viewMatrix = driver->getTransform(video::ETS_VIEW);
 
-		// render light pass, clear black color
-		driver->setRenderTarget(m_lightBuffer, true, false);
-
-		// custom viewport
-		if (useCustomViewport)
-			driver->setViewPort(customViewport);
-
-		u32 totalBounce = 1;
-		if (CDirectionalLight::getCurrentDirectionLight() != NULL)
-			totalBounce = CDirectionalLight::getCurrentDirectionLight()->getBounce();
-
-		CLightCullingSystem* lightCullingSystem = entityManager->getSystem<CLightCullingSystem>();
-		if (lightCullingSystem != NULL)
-		{
-			CShadowRTTManager* shadowRTT = CShadowRTTManager::getInstance();
-
-			core::array<CLightCullingData*>& listLight = lightCullingSystem->getLightVisible();
-			for (u32 i = 0, n = (u32)listLight.size(); i < n && i < s_maxLight; i++)
+			if (useCustomViewport)
 			{
-				CLight* light = listLight[i]->Light;
+				renderW = (float)viewport.getWidth();
+				renderH = (float)viewport.getHeight();
+			}
 
-				bool renderLight = true;
+			// render light pass, clear black color
+			driver->setRenderTarget(m_lightBuffer, true, false);
 
-				if (s_bakeMode == true && s_bakeLMMode == true)
+			// custom viewport
+			if (useCustomViewport)
+				driver->setViewPort(customViewport);
+
+			u32 totalBounce = 1;
+			if (CDirectionalLight::getCurrentDirectionLight() != NULL)
+				totalBounce = CDirectionalLight::getCurrentDirectionLight()->getBounce();
+
+			CLightCullingSystem* lightCullingSystem = entityManager->getSystem<CLightCullingSystem>();
+			if (lightCullingSystem != NULL)
+			{
+				CShadowRTTManager* shadowRTT = CShadowRTTManager::getInstance();
+
+				core::array<CLightCullingData*>& listLight = lightCullingSystem->getLightVisible();
+				for (u32 i = 0, n = (u32)listLight.size(); i < n && i < s_maxLight; i++)
 				{
-					u32 lightBounce = light->getBounce();
-					if (s_bakeBounce < totalBounce - lightBounce)
-						renderLight = false;
-				}
+					CLight* light = listLight[i]->Light;
 
-				// no render shadow on bake light
-				if (s_bakeMode == false && light->getLightType() == CLight::Baked)
-					renderLight = false;
+					bool renderLight = true;
 
-				if (renderLight == true)
-				{
-					CPointLight* pointLight = dynamic_cast<CPointLight*>(light);
-					if (pointLight)
+					if (s_bakeMode == true && s_bakeLMMode == true)
 					{
-						CShaderLighting::setPointLight(pointLight);
+						u32 lightBounce = light->getBounce();
+						if (s_bakeBounce < totalBounce - lightBounce)
+							renderLight = false;
+					}
 
-						if (pointLight->isCastShadow() == true)
+					// no render shadow on bake light
+					if (s_bakeMode == false && light->getLightType() == CLight::Baked)
+						renderLight = false;
+
+					if (renderLight == true)
+					{
+						CPointLight* pointLight = dynamic_cast<CPointLight*>(light);
+						if (pointLight)
 						{
-							ITexture* depthTexture = shadowRTT->createGetPointLightDepth(pointLight);
+							CShaderLighting::setPointLight(pointLight);
 
-							m_pointLightPass.MaterialType = m_pointLightShadowShader;
-							m_pointLightPass.setTexture(3, depthTexture);
+							if (pointLight->isCastShadow() == true)
+							{
+								ITexture* depthTexture = shadowRTT->createGetPointLightDepth(pointLight);
+
+								m_pointLightPass.MaterialType = m_pointLightShadowShader;
+								m_pointLightPass.setTexture(3, depthTexture);
+							}
+							else
+							{
+								m_pointLightPass.MaterialType = m_pointLightShader;
+								m_pointLightPass.setTexture(3, NULL);
+							}
+
+							beginRender2D(renderW, renderH);
+							renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_pointLightPass);
 						}
 						else
 						{
-							m_pointLightPass.MaterialType = m_pointLightShader;
-							m_pointLightPass.setTexture(3, NULL);
-						}
+							CSpotLight* spotLight = dynamic_cast<CSpotLight*>(light);
+							if (spotLight)
+							{
+								CShaderLighting::setSpotLight(spotLight);
 
-						beginRender2D(renderW, renderH);
-						renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_pointLightPass);
-					}
-					else
-					{
-						CSpotLight* spotLight = dynamic_cast<CSpotLight*>(light);
-						if (spotLight)
-						{
-							CShaderLighting::setSpotLight(spotLight);
+								m_spotLightPass.MaterialType = m_spotLightShader;
+								m_spotLightPass.setTexture(3, NULL);
 
-							m_spotLightPass.MaterialType = m_spotLightShader;
-							m_spotLightPass.setTexture(3, NULL);
-
-							beginRender2D(renderW, renderH);
-							renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_spotLightPass);
+								beginRender2D(renderW, renderH);
+								renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_spotLightPass);
+							}
 						}
 					}
 				}
@@ -601,54 +605,58 @@ namespace Skylicht
 
 		// STEP 04
 		// Render final direction lighting to screen
-		driver->setRenderTarget(m_target, false, false);
-
-		// custom viewport
-		if (useCustomViewport)
-			driver->setViewPort(customViewport);
-
-		// shadow
-		CShadowMapRP* shadowRP = CShaderShadow::getShadowMapRP();
-		if (shadowRP != NULL)
-			m_directionalLightPass.TextureLayer[6].Texture = shadowRP->getDepthTexture();
-
-		// ssr (last frame)
-		bool enableSSR = false;
-
-		if (m_postProcessor != NULL &&
-			m_postProcessor->getLastFrameBuffer() &&
-			m_postProcessor->isEnableScreenSpaceReflection())
 		{
-			enableSSR = true;
-			m_directionalLightPass.TextureLayer[7].Texture = m_postProcessor->getLastFrameBuffer();
-			m_directionalLightPass.TextureLayer[7].TextureWrapU = ETC_CLAMP_TO_BORDER;
-			m_directionalLightPass.TextureLayer[7].TextureWrapV = ETC_CLAMP_TO_BORDER;
-		}
+			driver->setRenderTarget(m_target, false, false);
 
-		beginRender2D(renderW, renderH);
+			// custom viewport
+			if (useCustomViewport)
+				driver->setViewPort(customViewport);
 
-		// enable backface shader if bake lightmap mode
-		if (s_bakeMode == true)
-			m_directionalLightPass.MaterialType = m_lightDirectionBake;
-		else
-		{
-			if (enableSSR)
-				m_directionalLightPass.MaterialType = m_lightDirectionSSR;
+			// shadow
+			CShadowMapRP* shadowRP = CShaderShadow::getShadowMapRP();
+			if (shadowRP != NULL)
+				m_directionalLightPass.TextureLayer[6].Texture = shadowRP->getDepthTexture();
+
+			// ssr (last frame)
+			bool enableSSR = false;
+
+			if (m_postProcessor != NULL &&
+				m_postProcessor->getLastFrameBuffer() &&
+				m_postProcessor->isEnableScreenSpaceReflection())
+			{
+				enableSSR = true;
+				m_directionalLightPass.TextureLayer[7].Texture = m_postProcessor->getLastFrameBuffer();
+				m_directionalLightPass.TextureLayer[7].TextureWrapU = ETC_CLAMP_TO_BORDER;
+				m_directionalLightPass.TextureLayer[7].TextureWrapV = ETC_CLAMP_TO_BORDER;
+			}
+
+			beginRender2D(renderW, renderH);
+
+			// enable backface shader if bake lightmap mode
+			if (s_bakeMode == true)
+				m_directionalLightPass.MaterialType = m_lightDirectionBake;
 			else
-				m_directionalLightPass.MaterialType = m_lightDirection;
+			{
+				if (enableSSR)
+					m_directionalLightPass.MaterialType = m_lightDirectionSSR;
+				else
+					m_directionalLightPass.MaterialType = m_lightDirection;
+			}
+
+			renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_directionalLightPass);
 		}
-
-		renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_directionalLightPass);
-
-		// Cache culling: true will tell CCullingSystem keep the last test results, just cull the material
-		CCullingSystem::useCacheCulling(true);
 
 		// STEP 05
 		// call forwarder rp?
-		core::recti fwvp(0, 0, (int)renderW, (int)renderH);
-		onNext(m_target, camera, entityManager, fwvp);
+		{
+			// Cache culling: true will tell CCullingSystem keep the last test results, just cull the material
+			CCullingSystem::useCacheCulling(true);
 
-		CCullingSystem::useCacheCulling(false);
+			core::recti fwvp(0, 0, (int)renderW, (int)renderH);
+			onNext(m_target, camera, entityManager, fwvp, -1);
+
+			CCullingSystem::useCacheCulling(false);
+		}
 
 		// STEP 06
 		// final pass to screen
@@ -658,11 +666,11 @@ namespace Skylicht
 			if (m_next->getType() == IRenderPipeline::Forwarder)
 				emission = ((CForwardRP*)m_next)->getEmissionTexture();
 
-			m_postProcessor->postProcessing(target, m_target, emission, m_normal, m_position, viewport);
+			m_postProcessor->postProcessing(target, m_target, emission, m_normal, m_position, viewport, cubeFaceId);
 		}
 		else
 		{
-			driver->setRenderTarget(target, false, false);
+			setTarget(target, cubeFaceId);
 
 			if (useCustomViewport)
 				driver->setViewPort(viewport);

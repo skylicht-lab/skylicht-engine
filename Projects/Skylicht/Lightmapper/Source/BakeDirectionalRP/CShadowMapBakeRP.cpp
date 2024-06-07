@@ -78,7 +78,7 @@ namespace Skylicht
 		return m_sm->getShadowMatrices();
 	}
 
-	void CShadowMapBakeRP::render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport, IRenderPipeline* lastRP)
+	void CShadowMapBakeRP::render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport, int cubeFaceId, IRenderPipeline* lastRP)
 	{
 		if (camera == NULL)
 			return;
@@ -150,6 +150,6 @@ namespace Skylicht
 		}
 		
 		// todo on next render pipeline
-		onNext(target, camera, entityManager, viewport);
+		onNext(target, camera, entityManager, viewport, cubeFaceId);
 	}
 }

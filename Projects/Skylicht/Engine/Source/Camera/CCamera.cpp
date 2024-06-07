@@ -69,6 +69,9 @@ namespace Skylicht
 
 	void CCamera::endUpdate()
 	{
+		if (m_projectionType == CCamera::Custom)
+			return;
+
 		// Update projection matrix
 		const core::dimension2du& screenSize = getVideoDriver()->getCurrentRenderTargetSize();
 		if (m_screenSize != screenSize)
@@ -121,7 +124,7 @@ namespace Skylicht
 
 	void CCamera::setViewMatrix(const core::matrix4& view, const core::vector3df& position)
 	{
-		m_viewArea.getTransform(video::ETS_VIEW) = view;
+		m_viewArea.setTransform(video::ETS_VIEW, view);
 
 		// update view area
 		m_viewArea.cameraPosition = position;
@@ -131,6 +134,12 @@ namespace Skylicht
 			m_viewArea.getTransform(video::ETS_PROJECTION),
 			m_viewArea.getTransform(video::ETS_VIEW));
 		m_viewArea.setFrom(m);
+	}
+
+	void CCamera::setProjectionMatrix(const core::matrix4& prj)
+	{
+		m_projectionType = CCamera::Custom;
+		m_viewArea.setTransform(video::ETS_PROJECTION, prj);
 	}
 
 	void CCamera::setPosition(const core::vector3df& position)

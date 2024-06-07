@@ -8,6 +8,10 @@
 #include "Primitive/CPlane.h"
 #include "Primitive/CCube.h"
 #include "SkyDome/CSkyDome.h"
+#include "SkySun/CSkySun.h"
+
+// #include "LightProbes/CLightProbeRender.h"
+// #include "ReflectionProbe/CReflectionProbeRender.h"
 
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
@@ -15,7 +19,8 @@ CViewInit::CViewInit() :
 	m_downloaded(0),
 	m_bakeSHLighting(true)
 {
-
+	// CLightProbeRender::showProbe(true);
+	// CReflectionProbeRender::showProbe(true);
 }
 
 CViewInit::~CViewInit()
@@ -37,6 +42,7 @@ void CViewInit::onInit()
 	CShaderManager* shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
 	shaderMgr->initSGDeferredShader();
+	shaderMgr->initPBRForwarderShader();
 
 	CGlyphFreetype* freetypeFont = CGlyphFreetype::getInstance();
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
@@ -86,50 +92,54 @@ void CViewInit::initScene()
 	guiCamera->setProjectionType(CCamera::OrthoUI);
 
 	// sky
-	ITexture* skyDomeTexture = CTextureManager::getInstance()->getTexture("Common/Textures/Sky/PaperMill.png");
-	if (skyDomeTexture != NULL)
-	{
-		CSkyDome* skyDome = zone->createEmptyObject()->addComponent<CSkyDome>();
-		skyDome->setData(skyDomeTexture, SColor(255, 255, 255, 255));
-	}
+	CSkySun* skySun = zone->createEmptyObject()->addComponent<CSkySun>();
 
 	// reflection probe
 	CGameObject* reflectionProbeObj = zone->createEmptyObject();
-	CReflectionProbe* reflection = reflectionProbeObj->addComponent<CReflectionProbe>();
-	reflection->loadStaticTexture("Common/Textures/Sky/PaperMill");
+	reflectionProbeObj->getTransformEuler()->setPosition(core::vector3df(0.0f, 2.0f, 0.0f));
+	m_reflectionProbe = reflectionProbeObj->addComponent<CReflectionProbe>();
+	// m_reflectionProbe->loadStaticTexture("Common/Textures/Sky/PaperMill");
 
-	// plane
-	CGameObject* grid = zone->createEmptyObject();
-	grid->setName("Plane");
+	// Plane
+	m_plane = zone->createEmptyObject();
+	m_plane->setName("Plane");
 
-	CPlane* plane = grid->addComponent<CPlane>();
+	CPlane* plane = m_plane->addComponent<CPlane>();
 	plane->getMaterial()->changeShader("BuiltIn/Shader/SpecularGlossiness/Deferred/MetersGrid.xml");
 
 	// indirect lighting
-	grid->addComponent<CIndirectLighting>();
+	m_plane->addComponent<CIndirectLighting>();
 
 	// scale plane for render
 	core::matrix4 m;
 	m.setScale(core::vector3df(100.0, 1.0f, 100.0f));
-	grid->getTransform()->setRelativeTransform(m);
+	m_plane->getTransform()->setRelativeTransform(m);
 
 	// Robot
-	CGameObject* robotObj = zone->createEmptyObject();
-	robotObj->setName("robot");
+	m_robot = zone->createEmptyObject();
+	m_robot->setName("robot");
 
 	// render mesh & init material
 	std::vector<std::string> searchTextureFolders;
 	CEntityPrefab* modelPrefab = CMeshManager::getInstance()->loadModel("SampleModels/Robot/robot_01.fbx", NULL, true);
 
-	CRenderMesh* characterRenderer = robotObj->addComponent<CRenderMesh>();
+	CRenderMesh* characterRenderer = m_robot->addComponent<CRenderMesh>();
 	characterRenderer->initFromPrefab(modelPrefab);
 
+	CTextureManager* textureManager = CTextureManager::getInstance();
+
 	ArrayMaterial materials = CMaterialManager::getInstance()->initDefaultMaterial(modelPrefab);
-	materials[0]->changeShader("BuiltIn/Shader/Basic/SkinVertexColor.xml");
+	materials[0]->changeShader("BuiltIn/Shader/PBR/Forward/PBRSkin.xml");
+	ITexture* albedoMap = textureManager->getTexture("SampleModels/Robot/robot_01_a.png");
+	ITexture* normalMap = textureManager->getTexture("BuiltIn/Textures/NullNormalMap.png");
+	ITexture* rmaMap = textureManager->getTexture("SampleModels/Robot/robot_01_rma.png");
+	materials[0]->setUniformTexture("uTexAlbedo", albedoMap);
+	materials[0]->setUniformTexture("uTexNormal", normalMap);
+	materials[0]->setUniformTexture("uTexRMA", rmaMap);
 	characterRenderer->initMaterial(materials);
 
 	// indirect lighting
-	robotObj->addComponent<CIndirectLighting>();
+	m_robot->addComponent<CIndirectLighting>();
 
 	// lighting
 	CGameObject* lightObj = zone->createEmptyObject();
@@ -152,6 +162,9 @@ void CViewInit::initScene()
 	context->setActiveCamera(camera);
 	context->setGUICamera(guiCamera);
 	context->setDirectionalLight(directionalLight);
+
+	// context->getPostProcessorPipeline()->enableAutoExposure(false);
+	// context->getPostProcessorPipeline()->setManualExposure(1.0f);
 }
 
 void CViewInit::onDestroy()
@@ -172,6 +185,7 @@ void CViewInit::onUpdate()
 
 		std::vector<std::string> listBundles;
 		listBundles.push_back("Common.zip");
+		listBundles.push_back("SampleModels.zip");
 		listBundles.push_back("SampleModelsResource.zip");
 		listBundles.push_back(getApplication()->getTexturePackageName("SampleModels").c_str());
 
@@ -263,14 +277,18 @@ void CViewInit::onRender()
 
 			CZone* zone = scene->getZone(0);
 
+			m_plane->setVisible(false);
+			m_robot->setVisible(false);
+
 			// light probe
 			CGameObject* lightProbeObj = zone->createEmptyObject();
 			CLightProbe* lightProbe = lightProbeObj->addComponent<CLightProbe>();
-			lightProbeObj->getTransformEuler()->setPosition(core::vector3df(0.0f, 1.0f, 0.0f));
+			lightProbeObj->getTransformEuler()->setPosition(core::vector3df(0.0f, 5.0f, 0.0f));
 
 			CGameObject* bakeCameraObj = scene->getZone(0)->createEmptyObject();
 			CCamera* bakeCamera = bakeCameraObj->addComponent<CCamera>();
 			scene->updateAddRemoveObject();
+			scene->update();
 
 			// bake light probe
 			Lightmapper::CLightmapper* lm = Lightmapper::CLightmapper::getInstance();
@@ -280,6 +298,12 @@ void CViewInit::onRender()
 			probes.push_back(lightProbe);
 
 			lm->bakeProbes(probes, bakeCamera, rp, scene->getEntityManager());
+
+			// bake environment
+			m_reflectionProbe->bakeProbe(bakeCamera, rp, scene->getEntityManager());
+
+			m_plane->setVisible(true);
+			m_robot->setVisible(true);
 		}
 	}
 	else

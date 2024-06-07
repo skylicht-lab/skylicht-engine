@@ -8,6 +8,6 @@
 			<uniform name="uTexReflect" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
 		</fs>
 	</uniforms>
-	<shader type="GLSL" vs="GLSL/SHVS.glsl" fs="GLSL/ReflectionProbeFS.glsl"/>
-	<shader type="HLSL" vs="HLSL/SHVS.hlsl" fs="HLSL/ReflectionProbeFS.hlsl"/>
+	<shader type="GLSL" vs="GLSL/SHVS.glsl" fs="GLSL/ReflectionProbeFS.glsl" fs_source="GLSL/ReflectionProbeFS.d.glsl"/>
+	<shader type="HLSL" vs="HLSL/SHVS.hlsl" fs="HLSL/ReflectionProbeFS.hlsl" fs_source="HLSL/ReflectionProbeFS.d.hlsl"/>
 </shaderConfig>

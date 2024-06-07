@@ -96,7 +96,7 @@ void main(void)
 	vec3 lightContribution = computeLightContribution(n, vWorldLightDir, vWorldViewDir, F0, lambert, sRGB(uLightColor.rgb), VdotN, roughness, metalness);
 	vec3 F = fresnelSchlick(vWorldViewDir, n, F0);
 	vec3 kd = mix(vec3(1.0) - F, vec3(0.0), metalness);
-	vec3 indirectDiffuse = ambientLighting * albedo;
+	vec3 indirectDiffuse = ambientLighting * lambert;
 	vec3 reflection = -normalize(reflect(vWorldViewDir, n));
 	vec3 prefilteredColor = sRGB(textureLod(uTexReflect, reflection, roughness * 8.0).xyz);
 	vec2 envBRDF = texture(uTexBRDF, vec2(VdotN, roughness)).rg;

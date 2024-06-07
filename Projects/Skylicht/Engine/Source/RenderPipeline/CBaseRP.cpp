@@ -121,10 +121,10 @@ namespace Skylicht
 		m_next = next;
 	}
 
-	void CBaseRP::onNext(ITexture* target, CCamera* camera, CEntityManager* entity, const core::recti& viewport)
+	void CBaseRP::onNext(ITexture* target, CCamera* camera, CEntityManager* entity, const core::recti& viewport, int cubeFaceId)
 	{
 		if (m_next != NULL)
-			m_next->render(target, camera, entity, viewport, this);
+			m_next->render(target, camera, entity, viewport, cubeFaceId, this);
 	}
 
 	void CBaseRP::updateTextureResource(CMesh* mesh, int bufferID, CEntityManager* entity, int entityId, bool skinnedMesh)
@@ -555,13 +555,14 @@ namespace Skylicht
 
 				view.makeIdentity();
 				view.buildCameraLookAtMatrixLH(position, position + target[faceID] * 100.0f, up[faceID]);
-				driver->setTransform(video::ETS_PROJECTION, projection);
-				driver->setTransform(video::ETS_VIEW, view);
+
+				camera->setProjectionMatrix(projection);
+				camera->setViewMatrix(view, position);
 
 				if (tempFBO)
 				{
 					// todo: Dont flip TOP & BOTTOM
-					drawSceneToTexture(tempFBO, entityMgr);
+					drawSceneToTexture(tempFBO, camera, entityMgr, true);
 
 					driver->setRenderTarget(texture[i], true, true);
 					beginRender2D(sizeW, sizeH);
@@ -569,7 +570,7 @@ namespace Skylicht
 				}
 				else
 				{
-					drawSceneToTexture(texture[i], entityMgr);
+					drawSceneToTexture(texture[i], camera, entityMgr, true);
 				}
 			}
 		}
@@ -585,13 +586,14 @@ namespace Skylicht
 
 				view.makeIdentity();
 				view.buildCameraLookAtMatrixLH(position, position + target[i] * 100.0f, up[i]);
-				driver->setTransform(video::ETS_PROJECTION, projection);
-				driver->setTransform(video::ETS_VIEW, view);
+
+				camera->setProjectionMatrix(projection);
+				camera->setViewMatrix(view, position);
 
 				if (tempFBO)
 				{
 					// todo: Dont flip TOP & BOTTOM
-					drawSceneToTexture(tempFBO, entityMgr);
+					drawSceneToTexture(tempFBO, camera, entityMgr, true);
 
 					driver->setRenderTarget(texture[i], true, true);
 					beginRender2D(sizeW, sizeH);
@@ -599,7 +601,7 @@ namespace Skylicht
 				}
 				else
 				{
-					drawSceneToTexture(texture[i], entityMgr);
+					drawSceneToTexture(texture[i], camera, entityMgr, true);
 				}
 			}
 		}
@@ -611,7 +613,7 @@ namespace Skylicht
 		}
 	}
 
-	void CBaseRP::renderCubeEnvironment(CCamera* camera, CEntityManager* entityMgr, const core::vector3df& position, ITexture* texture, int* face, int numFace)
+	void CBaseRP::renderCubeEnvironment(CCamera* camera, CEntityManager* entityMgr, const core::vector3df& position, ITexture* texture, int* face, int numFace, bool allPipeline)
 	{
 		if (texture == NULL)
 			return;
@@ -691,13 +693,24 @@ namespace Skylicht
 
 				view.makeIdentity();
 				view.buildCameraLookAtMatrixLH(position, position + target[faceID] * 100.0f, up[faceID]);
-				driver->setTransform(video::ETS_PROJECTION, projection);
-				driver->setTransform(video::ETS_VIEW, view);
+
+				if (allPipeline)
+				{
+					// Set transform to camera and pass it for all IRenderPipeline
+					camera->setProjectionMatrix(projection);
+					camera->setViewMatrix(view, position);
+				}
+				else
+				{
+					// Just need quick render in this RP
+					driver->setTransform(video::ETS_PROJECTION, projection);
+					driver->setTransform(video::ETS_VIEW, view);
+				}
 
 				if (tempFBO)
 				{
 					// todo: Dont flip TOP & BOTTOM
-					drawSceneToTexture(tempFBO, entityMgr);
+					drawSceneToTexture(tempFBO, camera, entityMgr, allPipeline);
 
 					driver->setRenderTargetCube(texture, cubemapFace, true, true);
 					beginRender2D(sizeW, sizeH);
@@ -705,7 +718,7 @@ namespace Skylicht
 				}
 				else
 				{
-					drawSceneToCubeTexture(texture, cubemapFace, entityMgr);
+					drawSceneToCubeTexture(texture, camera, cubemapFace, entityMgr, allPipeline);
 				}
 			}
 		}
@@ -717,13 +730,24 @@ namespace Skylicht
 
 				view.makeIdentity();
 				view.buildCameraLookAtMatrixLH(position, position + target[i] * 100.0f, up[i]);
-				driver->setTransform(video::ETS_PROJECTION, projection);
-				driver->setTransform(video::ETS_VIEW, view);
+
+				if (allPipeline)
+				{
+					// Set transform to camera and pass it for all IRenderPipeline
+					camera->setProjectionMatrix(projection);
+					camera->setViewMatrix(view, position);
+				}
+				else
+				{
+					// Just quick render in this RP
+					driver->setTransform(video::ETS_PROJECTION, projection);
+					driver->setTransform(video::ETS_VIEW, view);
+				}
 
 				if (tempFBO)
 				{
 					// todo: Dont flip TOP & BOTTOM
-					drawSceneToTexture(tempFBO, entityMgr);
+					drawSceneToTexture(tempFBO, camera, entityMgr, allPipeline);
 
 					driver->setRenderTargetCube(texture, cubemapFace, true, true);
 					beginRender2D(sizeW, sizeH);
@@ -731,7 +755,7 @@ namespace Skylicht
 				}
 				else
 				{
-					drawSceneToCubeTexture(texture, cubemapFace, entityMgr);
+					drawSceneToCubeTexture(texture, camera, cubemapFace, entityMgr, allPipeline);
 				}
 			}
 		}
@@ -786,15 +810,36 @@ namespace Skylicht
 		s_clearColor = c;
 	}
 
-	void CBaseRP::drawSceneToTexture(ITexture* target, CEntityManager* entityMgr)
+	void CBaseRP::setTarget(ITexture* target, int faceId)
+	{
+		IVideoDriver* driver = getVideoDriver();
+
+		if (target == NULL)
+			driver->setRenderTarget(NULL, false, false);
+		else if (target->getTextureType() == video::ETT_TEXTURE_2D)
+			driver->setRenderTarget(target, false, false);
+		else if (target->getTextureType() == video::ETT_TEXTURE_CUBE)
+		{
+			if (faceId == -1)
+				os::Printer::log("[CBaseRP] CBaseRP::setTarget failed!");
+			else
+				driver->setRenderTargetCube(target, (video::E_CUBEMAP_FACE)faceId, true, true);
+		}
+	}
+
+	void CBaseRP::drawSceneToTexture(ITexture* target, CCamera* camera, CEntityManager* entityMgr, bool allPipeline)
 	{
 		SColor whiteColor(255, 255, 255, 255);
 		IVideoDriver* driver = getVideoDriver();
 		driver->setRenderTarget(target, true, true, whiteColor);
-		entityMgr->render();
+
+		if (allPipeline)
+			render(target, camera, entityMgr, core::recti());
+		else
+			entityMgr->render();
 	}
 
-	void CBaseRP::drawSceneToCubeTexture(ITexture* target, video::E_CUBEMAP_FACE faceID, CEntityManager* entityMgr)
+	void CBaseRP::drawSceneToCubeTexture(ITexture* target, CCamera* camera, video::E_CUBEMAP_FACE faceID, CEntityManager* entityMgr, bool allPipeline)
 	{
 		SColor clear(255, 0, 0, 0);
 		if (target->getColorFormat() == ECF_R32F ||
@@ -807,6 +852,10 @@ namespace Skylicht
 
 		IVideoDriver* driver = getVideoDriver();
 		driver->setRenderTargetCube(target, faceID, true, true, clear);
-		entityMgr->render();
+
+		if (allPipeline)
+			render(target, camera, entityMgr, core::recti(), (int)faceID);
+		else
+			entityMgr->render();
 	}
 }

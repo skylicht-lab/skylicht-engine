@@ -39,6 +39,7 @@ namespace Skylicht
 			Frustum,
 			Perspective,
 			OrthoUI,
+			Custom,
 		};
 
 	protected:
@@ -91,6 +92,8 @@ namespace Skylicht
 		const core::matrix4& getViewMatrix() const;
 
 		void setViewMatrix(const core::matrix4& view, const core::vector3df& position);
+
+		void setProjectionMatrix(const core::matrix4& prj);
 
 		void setPosition(const core::vector3df& position);
 

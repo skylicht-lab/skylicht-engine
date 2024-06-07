@@ -16,7 +16,7 @@ public:
 	};
 
 protected:
-	CGetFileURL *m_getFile;
+	CGetFileURL* m_getFile;
 
 	bool m_bakeSHLighting;
 
@@ -27,8 +27,13 @@ protected:
 	CGUIText* m_textInfo;
 	CGlyphFont* m_font;
 
+	CGameObject* m_plane;
+	CGameObject* m_robot;
+
+	CReflectionProbe* m_reflectionProbe;
+
 protected:
-	io::path getBuiltInPath(const char *name);
+	io::path getBuiltInPath(const char* name);
 
 public:
 	CViewInit();
