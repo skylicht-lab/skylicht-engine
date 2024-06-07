@@ -38,6 +38,7 @@ namespace Skylicht
 	CATEGORY_COMPONENT(CSkySun, "Sky Sun", "Renderer");
 
 	CSkySun::CSkySun() :
+		m_skySunData(NULL),
 		m_skyIntensity(1.1f),
 		m_sunSize(800.0f),
 		m_atmosphericColor(255, 255, 204, 178),

@@ -87,7 +87,7 @@ vec3 computeLightContribution(vec3 N, vec3 L, vec3 V, vec3 F0, vec3 lambert, vec
 	
 	float LdotN = max(dot(N, L), 0.0);
 	
-	vec3 specularBRDF   = (D * F * G) / (4.0 * VdotN * LdotN + 0.001);
+	vec3 specularBRDF = (D * F * G) / (4.0 * VdotN * LdotN + 0.001);
 	
 	vec3 kd = mix(vec3(1.0, 1.0, 1.0) - F, vec3(0.0, 0.0, 0.0), metalness);
 	
@@ -123,6 +123,7 @@ void main(void)
 	// Solver metallic
 	float roughness = rmaMap.r;
 	float metalness = rmaMap.g;
+	float ao = rmaMap.b;
 
 	// SH Ambient
 	vec3 ambientLighting = uSHConst[0].xyz +
@@ -163,11 +164,11 @@ void main(void)
 	F = F0 * envBRDF.x + envBRDF.y;
 	vec3 indirectSpecular = prefilteredColor * F;
 
-	vec3 indirectLight = (kd * indirectDiffuse + indirectSpecular) * rmaMap.b;
+	vec3 indirectLight = (kd * indirectDiffuse + indirectSpecular);
 
 #ifdef EMISSIVE
 	lightContribution += sRGB(emissiveMap);
 #endif
 
-	FragColor = vec4(lightContribution + indirectLight, albedoMap.a);
+	FragColor = vec4((lightContribution + indirectLight) * ao, albedoMap.a);
 }

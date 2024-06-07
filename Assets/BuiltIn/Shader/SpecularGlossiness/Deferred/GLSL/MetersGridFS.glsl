@@ -20,7 +20,7 @@ layout(location = 3) out vec4 SG;
 
 const vec3 lightColor = vec3(0.3, 0.3, 0.307843);
 const vec3 darkColor = vec3(0.156863, 0.156863, 0.160784);
-const vec3 borderColor = vec3(1.0, 1.0, 1.0);
+const vec3 borderColor = vec3(0.8, 0.8, 0.8);
 
 const float gridSize = 4.0;
 float h = gridSize / 2.0;

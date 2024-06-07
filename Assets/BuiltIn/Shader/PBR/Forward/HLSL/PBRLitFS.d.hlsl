@@ -102,7 +102,7 @@ float3 computeLightContribution(float3 N, float3 L, float3 V, float3 F0, float3 
 	
 	float LdotN = max(dot(N, L), 0.0);
 	
-	float3 specularBRDF   = (D * F * G) / (4.0 * VdotN * LdotN + 0.001);
+	float3 specularBRDF = (D * F * G) / (4.0 * VdotN * LdotN + 0.001);
 	
 	float3 kd = lerp(float3(1.0, 1.0, 1.0) - F, float3(0.0, 0.0, 0.0), metalness);
 	
@@ -138,6 +138,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 	// Solver metallic
 	float roughness = rmaMap.r;
 	float metalness = rmaMap.g;
+	float ao = rmaMap.b;
 
 	// SH4 Ambient
 	float3 ambientLighting = uSHConst[0].xyz +
@@ -178,11 +179,11 @@ float4 main(PS_INPUT input) : SV_TARGET
 	F = F0 * envBRDF.x + envBRDF.y;
 	float3 indirectSpecular = prefilteredColor * F;
 
-	float3 indirectLight = (kd * indirectDiffuse + indirectSpecular) * rmaMap.b;
+	float3 indirectLight = (kd * indirectDiffuse + indirectSpecular);
 
 #ifdef EMISSIVE
 	lightContribution += sRGB(emissiveMap);
 #endif
 
-	return float4(lightContribution + indirectLight, albedoMap.a);
+	return float4((lightContribution + indirectLight) * ao, albedoMap.a);
 }

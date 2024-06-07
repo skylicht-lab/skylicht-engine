@@ -61,7 +61,7 @@ void main(
 	uint3 dispatchThreadID : SV_DispatchThreadID,
 	uint groupIndex : SV_GroupIndex)
 {
-	// begin run thread
+	// begin run thread (see dispatch function)
 	uint threadID = groupID.x;
 	uint faceID = groupID.y;
 
@@ -102,7 +102,7 @@ void main(
 	// Gather RGB from the texels
 	float3 radiance = uRadianceMap.Load(location).xyz;
 
-	// Calculate the location in [-1, 1] texture space	
+	// Calculate the location in [-1, 1] texture space
 	float u = (pixelLocation.x / float(uFaceSize.x)) * 2.0f - 1.0f;
 	float v = -((pixelLocation.y / float(uFaceSize.y)) * 2.0f - 1.0f);
 
@@ -112,8 +112,9 @@ void main(
 	radiance *= weight;
 
 	// Extract direction from texel u,v
-	float3 dirVS = normalize(float3(u, v, 1.0f));
+	float3 dirVS = float3(u, v, 1.0f);
 	float3 dirTS = mul(dirVS, (float3x3)uToTangentSpace[threadID * NUM_FACE + faceID]);
+	dirTS = normalize(dirTS);
 
 	// Project onto SH
 	float3 sh[9];
@@ -135,11 +136,24 @@ void main(
 	GroupMemoryBarrierWithGroupSync();
 
 	// Sum total SH[RT_SIZE * RT_SIZE] by GPU MT store at [0]
+	// ref: https://developer.nvidia.com/gpugems/gpugems3/part-vi-gpu-computing/chapter-39-parallel-prefix-sum-scan-cuda
 	uint totalSize = RT_SIZE * RT_SIZE;
-
-	for (uint s = totalSize / 2; s > 0; s >>= 1)
+	// Example: totalSize = 8
+	//      [0] [1] [2] [3] [4] [5] [6] [7]
+	//       .  .    .  .    .  .    .  .
+	//       . .     . .     . .     . .
+	// s=1  [0]     [2]     [4]     [6]
+	//       .     .         .     .
+	//       .   .           .   .
+	// s=2  [0]             [4]
+	//       .            .
+	//       .         .
+	//       .      .
+	//       .   .
+	// s=4  [0]
+	for (uint s = 1; s < totalSize; s *= 2)
 	{
-		if (pixel < s)
+		if (pixel % (s * 2) == 0)
 		{
 			ResultSH[pixel][0] += ResultSH[pixel + s][0];
 			ResultSH[pixel][1] += ResultSH[pixel + s][1];
@@ -151,10 +165,9 @@ void main(
 			ResultSH[pixel][7] += ResultSH[pixel + s][7];
 			ResultSH[pixel][8] += ResultSH[pixel + s][8];
 		}
-
 		GroupMemoryBarrierWithGroupSync();
 	}
-
+	
 	// Write result on first group thread
 	if (pixel == 0)
 	{

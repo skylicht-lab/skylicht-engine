@@ -53,6 +53,8 @@ namespace Skylicht
 
 			void initBaker(u32 hemisphereBakeSize = 128);
 
+			void release();
+
 			const CSH9& bakeAtPosition(
 				CCamera* camera, IRenderPipeline* rp, CEntityManager* entityMgr,
 				const core::vector3df& position,

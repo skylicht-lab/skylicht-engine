@@ -13,7 +13,7 @@ namespace Skylicht
 		CMTBaker::CMTBaker() :
 			m_weightSum(0.0f)
 		{
-			IVideoDriver *driver = getVideoDriver();
+			IVideoDriver* driver = getVideoDriver();
 
 			u32 rtSize = CLightmapper::getHemisphereBakeSize();
 			core::dimension2du s(rtSize * NUM_FACES, rtSize * MAX_NUM_THREAD);
@@ -36,12 +36,12 @@ namespace Skylicht
 
 		CMTBaker::~CMTBaker()
 		{
-			IVideoDriver *driver = getVideoDriver();
+			IVideoDriver* driver = getVideoDriver();
 			driver->removeTexture(m_radiance);
 			m_radiance = NULL;
 		}
 
-		void CMTBaker::bake(CCamera *camera,
+		void CMTBaker::bake(CCamera* camera,
 			IRenderPipeline* rp,
 			CEntityManager* entityMgr,
 			const core::vector3df* position,
@@ -51,7 +51,7 @@ namespace Skylicht
 			int count,
 			int numFace)
 		{
-			IVideoDriver *driver = getVideoDriver();
+			IVideoDriver* driver = getVideoDriver();
 
 			// render radiance
 			// apply projection
@@ -112,7 +112,7 @@ namespace Skylicht
 			u32 rtSize = CLightmapper::getHemisphereBakeSize();
 
 			// Cubemap to SH
-			u8 *imageData = (u8*)m_radiance->lock(video::ETLM_READ_ONLY);
+			u8* imageData = (u8*)m_radiance->lock(video::ETLM_READ_ONLY);
 			u32 bpp = 4;
 			u32 rowSize = rtSize * NUM_FACES * bpp;
 			float c = 1.0f / 255.0f;
@@ -133,61 +133,62 @@ namespace Skylicht
 			int height = rtSize * count;
 			int width = rtSize * numFace;
 
-			u8 *faceData = NULL;
-			u8 *data = NULL;
-			int x, y, face, tid;
+			u8* faceData = NULL;
+			u8* data = NULL;
+			int x, face;
 			float u, v, temp, weight;
 
 			// Compute SH by radiance (use OpenMP)
-#pragma omp parallel for private(dirTS, color, data, x, y, face, tid, u, v, temp, weight)
-			for (int imgy = 0; imgy < height; imgy++)
+#pragma omp parallel for private(dirTS, color, data, x, face, u, v, temp, weight)
+			for (int tid = 0; tid < count; tid++)
 			{
-				for (int imgx = 0; imgx < width; imgx++)
+				for (int y = 0; y < rtSize; y++)
 				{
-					// calc face & tid
-					face = imgx / rtSize;
-					tid = imgy / rtSize;
-
-					y = imgy - tid * rtSize;
-					x = imgx - face * rtSize;
-
-					// face data
-					faceData = imageData + rtSize * face * bpp;
-
-					// offset to tid and row y
-					data = faceData + (rtSize * tid + y) * rowSize;
-
-					// offset to pixel x 
-					data += x * bpp;
-
-					// Calculate the location in [-1, 1] texture space
-					u = ((x / float(rtSize)) * 2.0f - 1.0f);
-					v = -((y / float(rtSize)) * 2.0f - 1.0f);
-
-					temp = 1.0f + u * u + v * v;
-					weight = 4.0f / (sqrt(temp) * temp);
-
-					if (isBGR == true)
+					for (int imgx = 0; imgx < width; imgx++)
 					{
-						color.X = data[2] * c * weight; // b
-						color.Y = data[1] * c * weight; // g
-						color.Z = data[0] * c * weight; // r
+						// calc face & tid
+						face = imgx / rtSize;
+
+						x = imgx - face * rtSize;
+
+						// face data
+						faceData = imageData + rtSize * face * bpp;
+
+						// offset to tid and row y
+						data = faceData + (rtSize * tid + y) * rowSize;
+
+						// offset to pixel x
+						data += x * bpp;
+
+						// Calculate the location in [-1, 1] texture space
+						u = ((x / float(rtSize)) * 2.0f - 1.0f);
+						v = -((y / float(rtSize)) * 2.0f - 1.0f);
+
+						temp = 1.0f + u * u + v * v;
+						weight = 4.0f / (sqrt(temp) * temp);
+
+						if (isBGR == true)
+						{
+							color.X = data[2] * c * weight; // b
+							color.Y = data[1] * c * weight; // g
+							color.Z = data[0] * c * weight; // r
+						}
+						else
+						{
+							color.X = data[0] * c * weight; // r
+							color.Y = data[1] * c * weight; // g
+							color.Z = data[2] * c * weight; // b
+						}
+
+						dirTS.X = u;
+						dirTS.Y = v;
+						dirTS.Z = 1.0f;
+
+						m_toTangentSpace[tid * NUM_FACES + face].rotateVect(dirTS);
+						dirTS.normalize();
+
+						m_sh[tid].projectAddOntoSH(dirTS, color);
 					}
-					else
-					{
-						color.X = data[0] * c * weight; // r
-						color.Y = data[1] * c * weight; // g
-						color.Z = data[2] * c * weight; // b
-					}
-
-					dirTS.X = u;
-					dirTS.Y = v;
-					dirTS.Z = 1.0f;
-
-					m_toTangentSpace[tid * NUM_FACES + face].rotateVect(dirTS);
-					dirTS.normalize();
-
-					m_sh[tid].projectAddOntoSH(dirTS, color);
 				}
 			}
 
