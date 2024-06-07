@@ -19,6 +19,6 @@ float3 linearRGB(float3 color)
 }
 float4 main(PS_INPUT input) : SV_TARGET
 {
-	float4 texColor = uTexDiffuse.Sample(uTexDiffuseSampler, input.tex0);
+	float4 texColor = uTexDiffuse.SampleLevel(uTexDiffuseSampler, input.tex0, 0);
 	return float4(input.color.rgb * linearRGB(texColor.rgb), texColor.a * input.color.a);
 }

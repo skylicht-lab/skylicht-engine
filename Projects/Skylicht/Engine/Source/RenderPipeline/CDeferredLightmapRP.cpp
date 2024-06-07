@@ -369,7 +369,7 @@ namespace Skylicht
 		}
 	}
 
-	void CDeferredLightmapRP::render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport, IRenderPipeline* lastRP)
+	void CDeferredLightmapRP::render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport, int cubeFaceId, IRenderPipeline* lastRP)
 	{
 		if (camera == NULL)
 			return;
@@ -494,7 +494,7 @@ namespace Skylicht
 		// STEP 05
 		// call forwarder rp?
 		core::recti fwvp(0, 0, (int)renderW, (int)renderH);
-		onNext(m_target, camera, entityManager, fwvp);
+		onNext(m_target, camera, entityManager, fwvp, cubeFaceId);
 
 		CCullingSystem::useCacheCulling(false);
 
@@ -506,11 +506,11 @@ namespace Skylicht
 			if (m_next->getType() == IRenderPipeline::Forwarder)
 				emission = ((CForwardRP*)m_next)->getEmissionTexture();
 
-			m_postProcessor->postProcessing(target, m_target, emission, m_normal, m_position, viewport);
+			m_postProcessor->postProcessing(target, m_target, emission, m_normal, m_position, viewport, cubeFaceId);
 		}
 		else
 		{
-			driver->setRenderTarget(target, false, false);
+			setTarget(target, cubeFaceId);
 
 			if (useCustomViewport)
 				driver->setViewPort(viewport);

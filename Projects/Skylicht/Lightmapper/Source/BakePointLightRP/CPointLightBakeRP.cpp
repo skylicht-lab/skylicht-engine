@@ -68,7 +68,7 @@ namespace Skylicht
 
 	}
 
-	void CPointLightBakeRP::render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport, IRenderPipeline* lastRP)
+	void CPointLightBakeRP::render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport, int cubeFaceId, IRenderPipeline* lastRP)
 	{
 		if (camera == NULL)
 			return;
@@ -114,7 +114,7 @@ namespace Skylicht
 			driver->setViewPort(customViewport);
 
 		// next
-		onNext(target, camera, entityManager, viewport);
+		onNext(target, camera, entityManager, viewport, cubeFaceId);
 	}
 
 	void CPointLightBakeRP::drawMeshBuffer(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID, bool skinnedMesh)

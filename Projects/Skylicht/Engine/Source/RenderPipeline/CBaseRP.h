@@ -62,13 +62,13 @@ namespace Skylicht
 
 		virtual bool canRenderShader(CShader* s);
 
-		virtual void render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& vp, IRenderPipeline* lastRP = NULL) = 0;
+		virtual void render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& vp, int cubeFaceId = -1, IRenderPipeline* lastRP = NULL) = 0;
 
 		virtual void setCamera(CCamera* camera);
 
 		virtual void setNextPipeLine(IRenderPipeline* next);
 
-		virtual void onNext(ITexture* target, CCamera* camera, CEntityManager* entity, const core::recti& vp);
+		virtual void onNext(ITexture* target, CCamera* camera, CEntityManager* entity, const core::recti& vp, int cubeFaceId);
 
 		virtual void drawMeshBuffer(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID, bool skinnedMesh);
 
@@ -88,7 +88,7 @@ namespace Skylicht
 
 		void renderEnvironment(CCamera* camera, CEntityManager* entityMgr, const core::vector3df& position, ITexture* texture[], int* face, int numFace);
 
-		void renderCubeEnvironment(CCamera* camera, CEntityManager* entityMgr, const core::vector3df& position, ITexture* texture, int* face, int numFace);
+		void renderCubeEnvironment(CCamera* camera, CEntityManager* entityMgr, const core::vector3df& position, ITexture* texture, int* face, int numFace, bool allPipeline);
 
 		static void saveFBOToFile(ITexture* texture, const char* output);
 
@@ -109,8 +109,10 @@ namespace Skylicht
 
 	protected:
 
-		void drawSceneToTexture(ITexture* target, CEntityManager* entityMgr);
+		void setTarget(ITexture* target, int faceId);
 
-		void drawSceneToCubeTexture(ITexture* target, video::E_CUBEMAP_FACE faceID, CEntityManager* entityMgr);
+		void drawSceneToTexture(ITexture* target, CCamera* camera, CEntityManager* entityMgr, bool allPipeline);
+
+		void drawSceneToCubeTexture(ITexture* target, CCamera* camera, video::E_CUBEMAP_FACE faceID, CEntityManager* entityMgr, bool allPipeline);
 	};
 }

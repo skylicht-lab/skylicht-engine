@@ -238,6 +238,7 @@ jobs:
         run: |
           cd PrjVisualStudio
           ctest -C Release --verpose
+          cat Testing/Temporary/LastTest.log
           cd ..
       - name: Package
         run: |
@@ -259,6 +260,7 @@ jobs:
         run: |
           cd PrjVisualStudio
           ctest -C Release --verpose
+          cat Testing/Temporary/LastTest.log
           cd ..
       - name: Package
         run: |

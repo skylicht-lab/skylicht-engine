@@ -84,7 +84,7 @@ namespace Skylicht
 
 		if (m_fxaaFilter != NULL)
 			delete m_fxaaFilter;
-}
+	}
 
 	void CPostProcessorRP::initMainRTT(int w, int h)
 	{
@@ -144,7 +144,7 @@ namespace Skylicht
 		IVideoDriver* driver = getVideoDriver();
 		CShaderManager* shaderMgr = CShaderManager::getInstance();
 
-		// init size of framebuffer		
+		// init size of framebuffer
 		m_lumSize = core::dimension2du(1024, 1024);
 
 		if (m_autoExposure == true)
@@ -180,12 +180,12 @@ namespace Skylicht
 		initMainRTT(w, h);
 	}
 
-	void CPostProcessorRP::render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport, IRenderPipeline* lastRP)
+	void CPostProcessorRP::render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport, int cubeFaceId, IRenderPipeline* lastRP)
 	{
 		if (camera == NULL)
 			return;
 
-		onNext(target, camera, entityManager, viewport);
+		onNext(target, camera, entityManager, viewport, cubeFaceId);
 	}
 
 	void CPostProcessorRP::luminanceMapGeneration(ITexture* color)
@@ -251,7 +251,7 @@ namespace Skylicht
 		renderEffect(from, to, m_blurUpFilter);
 	}
 
-	void CPostProcessorRP::postProcessing(ITexture* finalTarget, ITexture* color, ITexture* emission, ITexture* normal, ITexture* position, const core::recti& viewport)
+	void CPostProcessorRP::postProcessing(ITexture* finalTarget, ITexture* color, ITexture* emission, ITexture* normal, ITexture* position, const core::recti& viewport, int cubeFaceId)
 	{
 		IVideoDriver* driver = getVideoDriver();
 
@@ -308,7 +308,8 @@ namespace Skylicht
 			beginRender2D(renderW, renderH);
 			renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_linearPass);
 
-			driver->setRenderTarget(finalTarget, false, false);
+			setTarget(finalTarget, cubeFaceId);
+
 			if (viewport.getWidth() > 0 && viewport.getHeight() > 0)
 				driver->setViewPort(viewport);
 
@@ -334,7 +335,8 @@ namespace Skylicht
 		}
 		else
 		{
-			driver->setRenderTarget(finalTarget, false, false);
+			setTarget(finalTarget, cubeFaceId);
+
 			if (viewport.getWidth() > 0 && viewport.getHeight() > 0)
 				driver->setViewPort(viewport);
 		}
@@ -375,7 +377,8 @@ namespace Skylicht
 
 			CShaderMaterial::setMaterial(m_fxaaFilter);
 
-			driver->setRenderTarget(finalTarget, false, false);
+			setTarget(finalTarget, cubeFaceId);
+
 			if (viewport.getWidth() > 0 && viewport.getHeight() > 0)
 				driver->setViewPort(viewport);
 

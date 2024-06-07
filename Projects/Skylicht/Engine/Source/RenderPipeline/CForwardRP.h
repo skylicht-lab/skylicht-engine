@@ -53,7 +53,7 @@ namespace Skylicht
 
 		virtual void resize(int w, int h);
 
-		virtual void render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport, IRenderPipeline* lastRP = NULL);
+		virtual void render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport, int cubeFaceId = -1, IRenderPipeline* lastRP = NULL);
 
 		inline void setPostProcessor(IPostProcessor* pp)
 		{

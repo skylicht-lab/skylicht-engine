@@ -106,7 +106,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 lightContribution = computeLightContribution(n, input.worldLightDir, input.worldViewDir, F0, lambert, sRGB(uLightColor.rgb), VdotN, roughness, metalness);
 	float3 F = fresnelSchlick(input.worldViewDir, n, F0);
 	float3 kd = lerp(float3(1.0, 1.0, 1.0) - F, float3(0.0, 0.0, 0.0), metalness);
-	float3 indirectDiffuse = ambientLighting * albedo;
+	float3 indirectDiffuse = ambientLighting * lambert;
 	float3 reflection = -normalize(reflect(input.worldViewDir, n));
 	float3 prefilteredColor = sRGB(uTexReflect.SampleLevel(uTexReflectSampler, reflection, roughness * 8).xyz);
 	float2 envBRDF = uTexBRDF.Sample(uTexBRDFSampler, float2(VdotN, roughness)).rg;

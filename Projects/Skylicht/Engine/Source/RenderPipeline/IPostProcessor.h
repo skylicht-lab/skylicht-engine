@@ -40,7 +40,7 @@ namespace Skylicht
 
 		}
 
-		virtual void postProcessing(ITexture* finalTarget, ITexture* color, ITexture* emission, ITexture* normal, ITexture* position, const core::recti& viewport) = 0;
+		virtual void postProcessing(ITexture* finalTarget, ITexture* color, ITexture* emission, ITexture* normal, ITexture* position, const core::recti& viewport, int cubeFaceId) = 0;
 
 		virtual ITexture* getLastFrameBuffer() = 0;
 

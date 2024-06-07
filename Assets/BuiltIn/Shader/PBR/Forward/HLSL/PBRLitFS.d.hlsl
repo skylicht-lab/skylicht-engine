@@ -168,7 +168,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 F = fresnelSchlick(input.worldViewDir, n, F0);
 	float3 kd = lerp(float3(1.0, 1.0, 1.0) - F, float3(0.0, 0.0, 0.0), metalness);
 
-	float3 indirectDiffuse = ambientLighting * albedo;
+	float3 indirectDiffuse = ambientLighting * lambert;
 
 	// IBL reflection
 	float3 reflection = -normalize(reflect(input.worldViewDir, n));

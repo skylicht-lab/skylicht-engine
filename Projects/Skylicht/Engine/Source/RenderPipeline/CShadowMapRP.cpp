@@ -468,7 +468,7 @@ namespace Skylicht
 		return m_sm->getShadowMatrices();
 	}
 
-	void CShadowMapRP::render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport, IRenderPipeline* lastRP)
+	void CShadowMapRP::render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport, int cubeFaceId, IRenderPipeline* lastRP)
 	{
 		if (camera == NULL)
 			return;
@@ -624,7 +624,7 @@ namespace Skylicht
 					ITexture* depth = shadowRTT->createGetPointLightDepth(pointLight);
 					if (depth != NULL)
 					{
-						renderCubeEnvironment(camera, entityManager, lightPosition, depth, NULL, 0);
+						renderCubeEnvironment(camera, entityManager, lightPosition, depth, NULL, 0, false);
 						listDepthTexture.push_back(depth);
 					}
 
@@ -649,8 +649,10 @@ namespace Skylicht
 		}
 
 		if (listDepthTexture.size() > 0)
-			driver->setRenderTarget(target, false, false);
+		{
+			setTarget(target, cubeFaceId);
+		}
 
-		onNext(target, camera, entityManager, viewport);
+		onNext(target, camera, entityManager, viewport, cubeFaceId);
 	}
 }

@@ -53,7 +53,7 @@ namespace Skylicht
 
 	}
 
-	void CPointLightShadowBakeRP::render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport, IRenderPipeline* lastRP)
+	void CPointLightShadowBakeRP::render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport, int cubeFaceId, IRenderPipeline* lastRP)
 	{
 		if (camera == NULL || m_currentLight == NULL)
 			return;
@@ -92,7 +92,7 @@ namespace Skylicht
 
 			m_depthTexture = shadowRTT->createGetPointLightDepth(pointLight);
 			if (m_depthTexture != NULL)
-				renderCubeEnvironment(camera, entityManager, lightPosition, m_depthTexture, NULL, 0);
+				renderCubeEnvironment(camera, entityManager, lightPosition, m_depthTexture, NULL, 0, false);
 
 			pointLight->endRenderShadowDepth();
 		}
@@ -111,7 +111,7 @@ namespace Skylicht
 		}
 
 		// todo on next render pipeline
-		onNext(target, camera, entityManager, viewport);
+		onNext(target, camera, entityManager, viewport, cubeFaceId);
 	}
 
 	const core::aabbox3df& CPointLightShadowBakeRP::getFrustumBox()

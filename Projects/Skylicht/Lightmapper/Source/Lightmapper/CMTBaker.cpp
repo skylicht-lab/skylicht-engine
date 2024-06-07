@@ -142,7 +142,7 @@ namespace Skylicht
 #pragma omp parallel for private(dirTS, color, data, x, face, u, v, temp, weight)
 			for (int tid = 0; tid < count; tid++)
 			{
-				for (int y = 0; y < rtSize; y++)
+				for (u32 y = 0; y < rtSize; y++)
 				{
 					for (int imgx = 0; imgx < width; imgx++)
 					{
