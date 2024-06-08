@@ -15,12 +15,12 @@ vec3 GetSkyColor(
 	
 	// SUN
 	float sunAmount = max(dot(sunDirection, viewDir), 0.0);
-	skyColor += atmosphericColor.rgb * sunAmount * sunAmount * atmosphericColor.a;
-	skyColor += sunColor.rgb * pow(sunAmount, sunRadius) * sunColor.a;
+	skyColor += sRGB(atmosphericColor.rgb) * sunAmount * sunAmount * atmosphericColor.a;
+	skyColor += sRGB(sunColor.rgb) * pow(sunAmount, sunRadius) * sunColor.a;
 	
 	// GLARE
-	skyColor += glowColor1.rgb * pow(sunAmount, 8.0) * glowColor1.a;
-	skyColor += glowColor2.rgb * pow(sunAmount, 3.0) * glowColor2.a;
+	skyColor += sRGB(glowColor1.rgb) * pow(sunAmount, 8.0) * glowColor1.a;
+	skyColor += sRGB(glowColor2.rgb) * pow(sunAmount, 3.0) * glowColor2.a;
 	
 	return skyColor;
 }

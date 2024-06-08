@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "SkylichtSystemAPI.h"
+#include "stdafx.h"
 
 namespace SkylichtSystem
 {
