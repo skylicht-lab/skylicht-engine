@@ -25,7 +25,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "IMutex.h"
-#include "SkylichtSystemConfig.h"
 
 #ifdef USE_PTHREAD
 

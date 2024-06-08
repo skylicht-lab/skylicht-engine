@@ -26,7 +26,6 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "IMutex.h"
 #include "IThread.h"
-#include "SkylichtSystemConfig.h"
 
 #ifdef USE_STDTHREAD
 
