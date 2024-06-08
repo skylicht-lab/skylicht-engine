@@ -24,7 +24,6 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "stdafx.h"
 #include "IThread.h"
-#include "SkylichtSystemConfig.h"
 
 #if defined(USE_PTHREAD)
 #include "CPThread.h"

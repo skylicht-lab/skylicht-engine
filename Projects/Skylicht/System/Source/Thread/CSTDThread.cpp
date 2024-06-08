@@ -33,6 +33,7 @@ namespace SkylichtSystem
 		IThread(callback),
 		m_run(false)
 	{
+		printf("[CSTDThread] created\n");
 		m_thread = new std::thread(CSTDThread::run, this);
 	}
 
@@ -46,7 +47,12 @@ namespace SkylichtSystem
 	void CSTDThread::update()
 	{
 		if (m_callback == NULL)
+		{
+			printf("[CSTDThread] quit - no Callback\n");
 			return;
+		}
+
+		printf("[CSTDThread] run update\n");
 
 		// run thread
 		m_run = m_callback->enableThreadLoop();
@@ -73,6 +79,8 @@ namespace SkylichtSystem
 			m_loopMutex.unlock();
 		}
 
+		printf("[CSTDThread] end update\n");
+
 		// IThread::sleep(1);
 	}
 
@@ -85,7 +93,7 @@ namespace SkylichtSystem
 			m_loopMutex.unlock();
 
 			m_thread->join();
-			printf("CSTDThread::stop Thread is stop!\n");
+			printf("[CSTDThread] stop!\n");
 		}
 	}
 
