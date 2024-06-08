@@ -25,10 +25,11 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "IMutex.h"
-#include <mutex>
 #include "SkylichtSystemConfig.h"
 
 #ifdef USE_STDTHREAD
+
+#include <mutex>
 
 namespace SkylichtSystem
 {
