@@ -64,7 +64,7 @@ namespace SkylichtSystem
 		clock_gettime(CLOCK_MONOTONIC, &systemtime);
 		return (float)((systemtime.tv_sec * 1000UL) + (systemtime.tv_nsec / 1000000UL));
 #else
-		struct timeval	tp;
+		struct timeval tp;
 		double sec, usec;
 		gettimeofday(&tp, 0);
 		sec = tp.tv_sec;
@@ -74,7 +74,6 @@ namespace SkylichtSystem
 #endif
 	}
 
-	// sleep
 	void IThread::sleep(unsigned int time)
 	{
 #ifdef _WIN32
@@ -96,15 +95,16 @@ namespace SkylichtSystem
 #endif
 	}
 
-	// createThread
-	// create new thread
 	IThread* IThread::createThread(IThreadCallback* callback)
 	{
 #if defined(USE_PTHREAD)
+  printf("[IThread] Create pthread\n");
 		return new CPThread(callback);
 #elif defined(USE_STDTHREAD)
+  printf("[IThread] Create std::thread\n");
 		return new CSTDThread(callback);
 #else
+  printf("[IThread] Warning: create null thread\n");
 		return NULL;
 #endif		
 	}
