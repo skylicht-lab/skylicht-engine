@@ -34,14 +34,14 @@ namespace SkylichtSystem
 		m_run(false)
 	{
 		printf("[CSTDThread] created\n");
-		m_thread = new std::thread(CSTDThread::run, this);
+		//m_thread = new std::thread(CSTDThread::run, this);
 	}
 
 	CSTDThread::~CSTDThread()
 	{
 		stop();
 
-		delete m_thread;
+		//delete m_thread;
 	}
 
 	void CSTDThread::update()
