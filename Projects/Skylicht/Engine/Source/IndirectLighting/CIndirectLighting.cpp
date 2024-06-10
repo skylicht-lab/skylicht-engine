@@ -66,8 +66,7 @@ namespace Skylicht
 			for (CRenderMeshData* render : renderData)
 			{
 				// get entity that have render mesh data
-				CEntity* entity = entityMgr->getEntity(render->EntityIndex);
-				addLightingData(entity);
+				addLightingData(render->Entity);
 			}
 		}
 		else

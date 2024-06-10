@@ -106,8 +106,7 @@ void CViewBakeLightmap::onInit()
 				if (r->isSkinnedMesh() == false)
 				{
 					core::matrix4 transform;
-					CEntity* entity = entityMgr->getEntity(r->EntityIndex);
-					CWorldTransformData* worldTransform = entity->getData<CWorldTransformData>();
+					CWorldTransformData* worldTransform = GET_ENTITY_DATA(r->Entity, CWorldTransformData);
 					if (worldTransform != NULL)
 						transform = worldTransform->World;
 

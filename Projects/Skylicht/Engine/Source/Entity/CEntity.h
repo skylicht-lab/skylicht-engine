@@ -148,6 +148,7 @@ namespace Skylicht
 
 		// also save this entity index
 		data->EntityIndex = m_index;
+		data->Entity = this;
 
 		if (Data[index])
 			delete Data[index];
@@ -177,6 +178,7 @@ namespace Skylicht
 
 		// also save this entity index
 		data->EntityIndex = m_index;
+		data->Entity = this;
 
 		if (Data[index])
 			delete Data[index];

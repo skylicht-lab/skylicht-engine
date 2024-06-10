@@ -217,14 +217,12 @@ namespace Skylicht
 
 		for (CRenderMeshData*& renderer : m_renderers)
 		{
-			CEntity* entity = entities[renderer->EntityIndex];
-
 			// get vertex count
 			IMeshBuffer* mb = renderer->getMesh()->getMeshBuffer(0);
 			u32 vtxCount = mb->getVertexBuffer()->getVertexCount();
 
 			// alloc frames data
-			CVertexAnimTextureData* vertexAnimData = GET_ENTITY_DATA(entity, CVertexAnimTextureData);
+			CVertexAnimTextureData* vertexAnimData = GET_ENTITY_DATA(renderer->Entity, CVertexAnimTextureData);
 			vertexAnimData->allocFrames(vtxCount, numFrames);
 		}
 	}
@@ -274,10 +272,7 @@ namespace Skylicht
 				CSoftwareSkinningUtils::softwareSkinning(skinnedMesh, renderMesh, NULL);
 
 			// get vertex animation data and bake the vertex infomation
-			CEntity* entity = entities[renderer->EntityIndex];
-
-			// add skinned mesh to texture data
-			CVertexAnimTextureData* vertexAnimData = GET_ENTITY_DATA(entity, CVertexAnimTextureData);
+			CVertexAnimTextureData* vertexAnimData = GET_ENTITY_DATA(renderer->Entity, CVertexAnimTextureData);
 			vertexAnimData->addFrame(frame, skinnedMesh);
 		}
 	}
@@ -306,9 +301,7 @@ namespace Skylicht
 
 		for (CRenderMeshData*& renderer : m_renderers)
 		{
-			CEntity* entity = entityManager->getEntity(renderer->EntityIndex);
-
-			CVertexAnimTextureData* vertexAnimData = GET_ENTITY_DATA(entity, CVertexAnimTextureData);
+			CVertexAnimTextureData* vertexAnimData = GET_ENTITY_DATA(renderer->Entity, CVertexAnimTextureData);
 			vertexAnimData->buildTexture();
 
 			renderer->releaseSoftwareSkinning();
@@ -321,8 +314,7 @@ namespace Skylicht
 
 		for (CRenderMeshData*& renderer : m_renderers)
 		{
-			CEntity* entity = entityManager->getEntity(renderer->EntityIndex);
-			CVertexAnimTextureData* vertexAnimData = GET_ENTITY_DATA(entity, CVertexAnimTextureData);
+			CVertexAnimTextureData* vertexAnimData = GET_ENTITY_DATA(renderer->Entity, CVertexAnimTextureData);
 			if (vertexAnimData->PositionTexture == NULL)
 			{
 				char log[512];
@@ -366,8 +358,7 @@ namespace Skylicht
 			skinnedInstance->RenderData.push_back(renderer);
 
 			// add vertex texture
-			CEntity* entity = entityManager->getEntity(renderer->EntityIndex);
-			CVertexAnimTextureData* vertexAnimData = GET_ENTITY_DATA(entity, CVertexAnimTextureData);
+			CVertexAnimTextureData* vertexAnimData = GET_ENTITY_DATA(renderer->Entity, CVertexAnimTextureData);
 			skinnedInstance->PositionTextures.push_back(vertexAnimData->PositionTexture);
 			skinnedInstance->NormalTextures.push_back(vertexAnimData->NormalTexture);
 		}

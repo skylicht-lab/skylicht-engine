@@ -221,7 +221,7 @@ namespace Skylicht
 				}
 			}
 
-			CEntity* entity = entityMgr->getEntity(renderer->EntityIndex);
+			CEntity* entity = renderer->Entity;
 
 			// save the texture
 			CTransformTextureData* data = entity->addData<CTransformTextureData>();

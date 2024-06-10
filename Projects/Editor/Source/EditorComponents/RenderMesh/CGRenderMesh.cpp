@@ -70,7 +70,7 @@ namespace Skylicht
 			std::vector<CRenderMeshData*>& renderers = m_renderMesh->getRenderers();
 			for (size_t i = 0, n = renderers.size(); i < n; i++)
 			{
-				CEntity* entity = entityMgr->getEntity(renderers[i]->EntityIndex);
+				CEntity* entity = renderers[i]->Entity;
 				CSelectObjectData* selectObjectData = GET_ENTITY_DATA(entity, CSelectObjectData);
 				if (selectObjectData == NULL)
 					selectObjectData = entity->addData<CSelectObjectData>();
