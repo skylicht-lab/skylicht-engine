@@ -29,19 +29,20 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CPThread.h"
 #elif defined(USE_STDTHREAD)
 #include "CSTDThread.h"
+#elif defined(USE_WINTHREAD)
+#include "CWinThread.h"
 #endif
 
 
-
 #if defined(_WIN32)
-	#include <Windows.h>
-	#ifdef WINDOWS_STORE
-	#include <thread>
-	#endif
+#include <Windows.h>
+#ifdef WINDOWS_STORE
+#include <thread>
+#endif
 #elif defined(EMSCRIPTEN)
-	#include <sys/time.h>
+#include <sys/time.h>
 #else		
-	#include <sys/time.h>
+#include <sys/time.h>
 #endif
 
 namespace SkylichtSystem
@@ -98,13 +99,16 @@ namespace SkylichtSystem
 	IThread* IThread::createThread(IThreadCallback* callback)
 	{
 #if defined(USE_PTHREAD)
-  printf("[IThread] Create pthread\n");
+		printf("[IThread] Create pthread\n");
 		return new CPThread(callback);
 #elif defined(USE_STDTHREAD)
-  printf("[IThread] Create std::thread\n");
+		printf("[IThread] Create std::thread\n");
 		return new CSTDThread(callback);
+#elif defined(USE_WINTHREAD)
+		printf("[IThread] Create winthread\n");
+		return new CWinThread(callback);
 #else
-  printf("[IThread] Warning: create null thread\n");
+		printf("[IThread] Warning: create null thread\n");
 		return NULL;
 #endif		
 	}

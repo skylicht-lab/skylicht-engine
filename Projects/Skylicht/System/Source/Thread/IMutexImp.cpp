@@ -29,6 +29,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CPThreadMutex.h"
 #elif defined(USE_STDTHREAD)
 #include "CSTDThreadMutex.h"
+#elif defined(USE_WINTHREAD)
+#include "CWinMutex.h"
 #endif
 #include "CNullMutex.h"
 
@@ -40,6 +42,8 @@ namespace SkylichtSystem
 		return new CPThreadMutex();
 #elif defined(USE_STDTHREAD)
 		return new CSTDThreadMutex();
+#elif defined(USE_WINTHREAD)
+		return new CWinMutex();
 #else
 		return new CNullMutex();
 #endif

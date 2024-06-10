@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2024 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -22,21 +22,36 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
+#include "stdafx.h"
+#include "CWinMutex.h"
 
-#if defined(ANDROID)
-	#define USE_PTHREAD
-#elif defined(EMSCRIPTEN)
-	// no thread support on webgl
-#elif defined(IOS)
-	#define USE_PTHREAD
-#elif defined(MACOS)
-    #define USE_PTHREAD
-#elif defined(CYGWIN) || defined(MINGW)
-	#define USE_PTHREAD
-#elif defined(_WIN32)
-	#include <Windows.h>
-	#define USE_WINTHREAD
-#elif defined(LINUX)
-	#define USE_PTHREAD
+#ifdef USE_WINTHREAD
+
+namespace SkylichtSystem
+{
+	CWinMutex::CWinMutex()
+	{
+		m_mutex = CreateMutex(NULL, FALSE, NULL);
+		if (m_mutex == NULL)
+		{
+			printf("[CWinMutex] Warning: init error: %d\n", GetLastError());
+		}
+	}
+
+	CWinMutex::~CWinMutex()
+	{
+		CloseHandle(m_mutex);
+	}
+
+	void CWinMutex::lock()
+	{
+		WaitForSingleObject(m_mutex, INFINITE);
+	}
+
+	void CWinMutex::unlock()
+	{
+		ReleaseMutex(m_mutex);
+	}
+}
+
 #endif
