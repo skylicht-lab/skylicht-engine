@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2024 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,19 +24,32 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#if defined(ANDROID)
-	#define USE_PTHREAD
-#elif defined(EMSCRIPTEN)
-	// no thread support on webgl
-#elif defined(IOS)
-	#define USE_PTHREAD
-#elif defined(MACOS)
-    #define USE_PTHREAD
-#elif defined(CYGWIN) || defined(MINGW)
-	#define USE_PTHREAD
-#elif defined(_WIN32)
-	#include <Windows.h>
-	#define USE_WINTHREAD
-#elif defined(LINUX)
-	#define USE_PTHREAD
+#include "IMutex.h"
+#include "IThread.h"
+
+#ifdef USE_WINTHREAD
+
+#include <Windows.h>
+
+namespace SkylichtSystem
+{
+	class CWinThread : public IThread
+	{
+	protected:
+		HANDLE m_thread;
+		HANDLE m_loopMutex;
+		bool m_run;
+
+	public:
+		CWinThread(IThreadCallback* callback);
+		virtual ~CWinThread();
+
+		virtual void update();
+
+		virtual void stop();
+
+		static void* run(void* param);
+	};
+}
+
 #endif
