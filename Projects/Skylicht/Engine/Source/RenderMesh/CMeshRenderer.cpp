@@ -179,12 +179,11 @@ namespace Skylicht
 		IVideoDriver* driver = getVideoDriver();
 		IRenderPipeline* rp = entityManager->getRenderPipeline();
 		CRenderMeshData** meshs = m_meshs.pointer();
-		CEntity** allEntities = entityManager->getEntities();
 
 		for (u32 i = 0, n = m_meshs.size(); i < n; i++)
 		{
 			CRenderMeshData* meshData = m_meshs[i];
-			CEntity* entity = allEntities[meshData->EntityIndex];
+			CEntity* entity = meshData->Entity;
 
 			CMesh* mesh = meshData->getMesh();
 			if (meshData->isSoftwareBlendShape())

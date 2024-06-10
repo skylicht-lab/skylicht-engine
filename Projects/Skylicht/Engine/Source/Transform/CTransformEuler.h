@@ -96,6 +96,11 @@ namespace Skylicht
 			m_matrixChanged = true;
 		}
 
+		inline float getYaw()
+		{
+			return m_rotation.Y;
+		}
+
 		inline void setYaw(float deg)
 		{
 			m_rotation.Y = deg;
@@ -103,11 +108,21 @@ namespace Skylicht
 			m_matrixChanged = true;
 		}
 
+		inline float getPitch()
+		{
+			return m_rotation.X;
+		}
+
 		inline void setPitch(float deg)
 		{
 			m_rotation.X = deg;
 			m_hasChanged = true;
 			m_matrixChanged = true;
+		}
+
+		inline float getRoll()
+		{
+			return m_rotation.Z;
 		}
 
 		inline void setRoll(float deg)

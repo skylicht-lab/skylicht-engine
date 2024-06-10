@@ -179,13 +179,12 @@ namespace Skylicht
 		IRenderPipeline* rp = entityManager->getRenderPipeline();
 
 		CMaterial* mat = NULL;
-		CEntity** allEntities = entityManager->getEntities();
 
 		for (int i = 0; i < numEntity; i++)
 		{
 			CPrimiviteData* data = primitives[i];
 
-			CWorldTransformData* transform = GET_ENTITY_DATA(allEntities[data->EntityIndex], CWorldTransformData);
+			CWorldTransformData* transform = GET_ENTITY_DATA(data->Entity, CWorldTransformData);
 
 			if (data->Material == NULL || !rp->canRenderMaterial(data->Material))
 				continue;
@@ -204,7 +203,7 @@ namespace Skylicht
 
 			CShaderMaterial::setMaterial(mat);
 
-			CIndirectLightingData* lightingData = GET_ENTITY_DATA(allEntities[data->EntityIndex], CIndirectLightingData);
+			CIndirectLightingData* lightingData = GET_ENTITY_DATA(data->Entity, CIndirectLightingData);
 			if (lightingData != NULL)
 			{
 				if (lightingData->Type == CIndirectLightingData::SH9)

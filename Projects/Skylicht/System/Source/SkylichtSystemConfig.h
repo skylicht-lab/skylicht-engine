@@ -35,7 +35,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #elif defined(CYGWIN) || defined(MINGW)
 	#define USE_PTHREAD
 #elif defined(_WIN32)
-	#include <Windows.h>
 	#define USE_WINTHREAD
 #elif defined(LINUX)
 	#define USE_PTHREAD

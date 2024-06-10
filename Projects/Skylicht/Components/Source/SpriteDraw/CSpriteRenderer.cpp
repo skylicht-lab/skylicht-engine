@@ -176,7 +176,7 @@ namespace Skylicht
 			SFrame* frame = sprite->Frame;
 
 			// position
-			CWorldTransformData* transformData = GET_ENTITY_DATA(allEntities[sprite->EntityIndex], CWorldTransformData);
+			CWorldTransformData* transformData = GET_ENTITY_DATA(sprite->Entity, CWorldTransformData);
 			core::vector3df pos = transformData->World.getTranslation();
 
 			// scale

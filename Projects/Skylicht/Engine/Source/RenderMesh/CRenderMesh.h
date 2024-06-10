@@ -116,6 +116,14 @@ namespace Skylicht
 			return m_transforms;
 		}
 
+		void printEntites();
+
+		CWorldTransformData* getChildTransform(const char* name);
+
+		int getChildTransforms(const char* name, std::vector<CWorldTransformData*>& childs);
+
+		int getChildTransforms(CWorldTransformData* transform, std::vector<CWorldTransformData*>& childs, size_t from = 0);
+
 		DECLARE_GETTYPENAME(CRenderMesh)
 
 	protected:

@@ -160,12 +160,11 @@ namespace Skylicht
 		CRenderMeshData** meshs = m_meshs.pointer();
 		CShaderManager* shaderManager = CShaderManager::getInstance();
 		IRenderPipeline* rp = entityManager->getRenderPipeline();
-		CEntity** allEntities = entityManager->getEntities();
 
 		for (u32 i = 0, n = m_meshs.size(); i < n; i++)
 		{
 			CRenderMeshData* renderMeshData = m_meshs[i];
-			CEntity* entity = allEntities[renderMeshData->EntityIndex];
+			CEntity* entity = renderMeshData->Entity;
 
 			CIndirectLightingData* lightingData = GET_ENTITY_DATA(entity, CIndirectLightingData);
 			if (lightingData != NULL)
@@ -237,7 +236,7 @@ namespace Skylicht
 			u32 meshID = m_transparents[i];
 
 			CRenderMeshData* renderMeshData = m_meshs[meshID];
-			CEntity* entity = allEntities[renderMeshData->EntityIndex];
+			CEntity* entity = renderMeshData->Entity;
 
 			// set bone matrix to shader callback
 			CSkinnedMesh* mesh = (CSkinnedMesh*)renderMeshData->getMesh();

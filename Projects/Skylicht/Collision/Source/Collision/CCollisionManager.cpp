@@ -53,7 +53,7 @@ namespace Skylicht
 		std::vector<CRenderMeshData*>& renderers = renderMesh->getRenderers();
 		for (CRenderMeshData* renderMesh : renderers)
 		{
-			CEntity* entity = entityMgr->getEntity(renderMesh->EntityIndex);
+			CEntity* entity = renderMesh->Entity;
 			m_nodes.push_back(
 				new CCollisionNode(gameObject, entity, new CMeshTriangleSelector(entity))
 			);
@@ -73,7 +73,7 @@ namespace Skylicht
 		std::vector<CRenderMeshData*>& renderers = renderMesh->getRenderers();
 		for (CRenderMeshData* renderMesh : renderers)
 		{
-			CEntity* entity = entityMgr->getEntity(renderMesh->EntityIndex);
+			CEntity* entity = renderMesh->Entity;
 			m_nodes.push_back(
 				new CCollisionNode(gameObject, entity, new CBBTriangleSelector(entity))
 			);

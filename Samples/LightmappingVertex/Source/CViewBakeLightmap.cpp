@@ -35,37 +35,36 @@ CViewBakeLightmap::~CViewBakeLightmap()
 
 void CViewBakeLightmap::onInit()
 {
-	CContext *context = CContext::getInstance();
-	CZone *zone = context->getActiveZone();
-	CEntityManager *entityMgr = zone->getEntityManager();
+	CContext* context = CContext::getInstance();
+	CZone* zone = context->getActiveZone();
+	CEntityManager* entityMgr = zone->getEntityManager();
 
 	// set 32px for optimize speed
 	CLightmapper::getInstance()->initBaker(32);
 
 	// get all render mesh in zone
 	m_renderMesh = zone->getComponentsInChild<CRenderMesh>(false);
-	for (CRenderMesh *renderMesh : m_renderMesh)
+	for (CRenderMesh* renderMesh : m_renderMesh)
 	{
 		if (renderMesh->getGameObject()->isStatic() == true)
 		{
 			// just list static object
 			std::vector<CRenderMeshData*>& renderers = renderMesh->getRenderers();
-			for (CRenderMeshData *r : renderers)
+			for (CRenderMeshData* r : renderers)
 			{
 				if (r->isSkinnedMesh() == false)
 				{
 					core::matrix4 transform;
-					CEntity *entity = entityMgr->getEntity(r->EntityIndex);
-					CWorldTransformData *worldTransform = entity->getData<CWorldTransformData>();
+					CWorldTransformData* worldTransform = GET_ENTITY_DATA(r->Entity, CWorldTransformData);
 					if (worldTransform != NULL)
 						transform = worldTransform->World;
 
 					// just list static mesh
-					CMesh *mesh = r->getMesh();
+					CMesh* mesh = r->getMesh();
 					u32 bufferCount = mesh->getMeshBufferCount();
 					for (u32 i = 0; i < bufferCount; i++)
 					{
-						IMeshBuffer *mb = mesh->getMeshBuffer(i);
+						IMeshBuffer* mb = mesh->getMeshBuffer(i);
 						if (mb->getVertexBufferCount() > 0)
 						{
 							// add mesh buffer, that will bake lighting
@@ -75,7 +74,7 @@ void CViewBakeLightmap::onInit()
 							int vtxCount = mb->getVertexBuffer(0)->getVertexCount();
 
 							// alloc color buffer, that is result of indirect lighting baked
-							SColorBuffer *cb = new SColorBuffer();
+							SColorBuffer* cb = new SColorBuffer();
 							cb->Color.set_used(vtxCount);
 							cb->SH.set_used(vtxCount);
 
@@ -99,7 +98,7 @@ void CViewBakeLightmap::onInit()
 
 	// create gui object
 	m_guiObject = zone->createEmptyObject();
-	CCanvas *canvas = m_guiObject->addComponent<CCanvas>();
+	CCanvas* canvas = m_guiObject->addComponent<CCanvas>();
 
 	m_font = new CGlyphFont();
 	m_font->setFont("Segoe UI Light", 25);
@@ -118,10 +117,10 @@ void CViewBakeLightmap::onDestroy()
 
 void CViewBakeLightmap::onUpdate()
 {
-	CContext *context = CContext::getInstance();
+	CContext* context = CContext::getInstance();
 
 	// update scene
-	CScene *scene = context->getScene();
+	CScene* scene = context->getScene();
 	if (scene != NULL)
 		scene->update();
 
@@ -142,8 +141,8 @@ void CViewBakeLightmap::onUpdate()
 		CBaseRP::setBakeLightingMapBounce(m_lightBounce);
 		CBaseRP::setBakeLightmapMode(true);
 
-		IMeshBuffer *mb = m_neshBuffers[m_currentMeshBuffer];
-		SColorBuffer *cb = m_colorBuffers[m_currentMeshBuffer];
+		IMeshBuffer* mb = m_neshBuffers[m_currentMeshBuffer];
+		SColorBuffer* cb = m_colorBuffers[m_currentMeshBuffer];
 		const core::matrix4& transform = m_meshTransforms[m_currentMeshBuffer];
 
 		u32 numVtx = mb->getVertexBuffer(0)->getVertexCount();
@@ -166,7 +165,7 @@ void CViewBakeLightmap::onUpdate()
 		m_textInfo->setText(status);
 
 		// lightmaper bake meshbuffer
-		CCamera *camera = m_bakeCameraObject->getComponent<CCamera>();
+		CCamera* camera = m_bakeCameraObject->getComponent<CCamera>();
 
 		// bake light to color & sh
 		int bakeCount = CLightmapper::getInstance()->bakeMeshBuffer(
@@ -220,13 +219,13 @@ void CViewBakeLightmap::copyColorBufferToMeshBuffer()
 	// copy baked color buffer to mesh buffer
 	for (u32 i = 0, n = (u32)m_neshBuffers.size(); i < n; i++)
 	{
-		IMeshBuffer *mb = m_neshBuffers[i];
-		SColorBuffer *cb = m_colorBuffers[i];
+		IMeshBuffer* mb = m_neshBuffers[i];
+		SColorBuffer* cb = m_colorBuffers[i];
 
 		if (mb->getVertexType() != EVT_TANGENTS || mb->getVertexBufferCount() == 0)
 			continue;
 
-		IVertexBuffer *vb = mb->getVertexBuffer(0);
+		IVertexBuffer* vb = mb->getVertexBuffer(0);
 		u32 vtxCount = vb->getVertexCount();
 
 		// alloc new vtx buffer (because current vtx buffer is on GPU Memory, that can't change)
@@ -236,7 +235,7 @@ void CViewBakeLightmap::copyColorBufferToMeshBuffer()
 		CMeshUtils::copyVertices(vb, vertexBuffer);
 
 		// copy baked color
-		video::S3DVertexTangents *vtx = (video::S3DVertexTangents*)vertexBuffer->getVertices();
+		video::S3DVertexTangents* vtx = (video::S3DVertexTangents*)vertexBuffer->getVertices();
 		for (u32 i = 0; i < vtxCount; i++)
 			vtx[i].Color = cb->Color[i];
 
@@ -254,8 +253,8 @@ void CViewBakeLightmap::copyColorBufferToMeshBuffer()
 
 void CViewBakeLightmap::onRender()
 {
-	CContext *context = CContext::getInstance();
-	CCamera *guiCamera = context->getGUICamera();
+	CContext* context = CContext::getInstance();
+	CCamera* guiCamera = context->getGUICamera();
 
 	// render GUI
 	if (guiCamera != NULL)

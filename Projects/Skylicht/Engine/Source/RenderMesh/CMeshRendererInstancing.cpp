@@ -127,8 +127,7 @@ namespace Skylicht
 				data->InstancingGroup = group;
 			}
 
-			CEntity* entity = allEntities[renderData[i]->EntityIndex];
-			group->Entities.push(entity);
+			group->Entities.push(renderData[i]->Entity);
 		}
 
 		// bake instancing in group

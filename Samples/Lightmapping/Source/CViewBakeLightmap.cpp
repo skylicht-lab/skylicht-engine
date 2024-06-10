@@ -48,7 +48,7 @@ CViewBakeLightmap::~CViewBakeLightmap()
 	}
 }
 
-Lightmapper::CRasterisation *CViewBakeLightmap::createGetLightmapRasterisation(int index)
+Lightmapper::CRasterisation* CViewBakeLightmap::createGetLightmapRasterisation(int index)
 {
 	if (m_lmRasterize[index] != NULL)
 		return m_lmRasterize[index];
@@ -61,7 +61,7 @@ Lightmapper::CRasterisation *CViewBakeLightmap::createGetLightmapRasterisation(i
 	return m_lmRasterize[index];
 }
 
-int CViewBakeLightmap::getRasterisationIndex(Lightmapper::CRasterisation *raster)
+int CViewBakeLightmap::getRasterisationIndex(Lightmapper::CRasterisation* raster)
 {
 	for (int i = 0; i < m_numberRasterize; i++)
 	{
@@ -77,9 +77,9 @@ void CViewBakeLightmap::onInit()
 	// gotoDemoView();
 	// return;
 
-	CContext *context = CContext::getInstance();
-	CZone *zone = context->getActiveZone();
-	CEntityManager *entityMgr = zone->getEntityManager();
+	CContext* context = CContext::getInstance();
+	CZone* zone = context->getActiveZone();
+	CEntityManager* entityMgr = zone->getEntityManager();
 
 	// set default 128px for quality
 	CLightmapper::getInstance()->initBaker(128);
@@ -96,30 +96,29 @@ void CViewBakeLightmap::onInit()
 
 	// get all render mesh in zone
 	m_renderMesh = zone->getComponentsInChild<CRenderMesh>(false);
-	for (CRenderMesh *renderMesh : m_renderMesh)
+	for (CRenderMesh* renderMesh : m_renderMesh)
 	{
 		if (renderMesh->getGameObject()->isStatic() == true)
 		{
 			// just list static object
 			std::vector<CRenderMeshData*>& renderers = renderMesh->getRenderers();
-			for (CRenderMeshData *r : renderers)
+			for (CRenderMeshData* r : renderers)
 			{
 				m_numRenderers++;
 
 				if (r->isSkinnedMesh() == false)
 				{
 					core::matrix4 transform;
-					CEntity *entity = entityMgr->getEntity(r->EntityIndex);
-					CWorldTransformData *worldTransform = entity->getData<CWorldTransformData>();
+					CWorldTransformData* worldTransform = GET_ENTITY_DATA(r->Entity, CWorldTransformData);
 					if (worldTransform != NULL)
 						transform = worldTransform->World;
 
 					// just list static mesh
-					CMesh *mesh = r->getMesh();
+					CMesh* mesh = r->getMesh();
 					u32 bufferCount = mesh->getMeshBufferCount();
 					for (u32 i = 0; i < bufferCount; i++)
 					{
-						IMeshBuffer *mb = mesh->getMeshBuffer(i);
+						IMeshBuffer* mb = mesh->getMeshBuffer(i);
 						if (mb->getVertexBufferCount() > 0)
 						{
 							// add mesh buffer, that will bake lighting
@@ -142,7 +141,7 @@ void CViewBakeLightmap::onInit()
 
 	// create gui object
 	m_guiObject = zone->createEmptyObject();
-	CCanvas *canvas = m_guiObject->addComponent<CCanvas>();
+	CCanvas* canvas = m_guiObject->addComponent<CCanvas>();
 
 	m_font = new CGlyphFont();
 	m_font->setFont("Segoe UI Light", 25);
@@ -186,10 +185,10 @@ void CViewBakeLightmap::onUpdate()
 	{
 		if (m_currentMB < m_meshBuffers.size())
 		{
-			IMeshBuffer *mb = m_meshBuffers[m_currentMB];
+			IMeshBuffer* mb = m_meshBuffers[m_currentMB];
 			const core::matrix4& transform = m_meshTransforms[m_currentMB];
 
-			IIndexBuffer *idx = mb->getIndexBuffer();
+			IIndexBuffer* idx = mb->getIndexBuffer();
 			u32 numTris = idx->getIndexCount() / 3;
 
 			int secs = deltaTime / 1000;
@@ -231,9 +230,9 @@ void CViewBakeLightmap::onUpdate()
 					v3 = (u32)indexbuffer[m_currentTris * 3 + 2];
 				}
 
-				IVertexBuffer *vtx = mb->getVertexBuffer();
+				IVertexBuffer* vtx = mb->getVertexBuffer();
 
-				S3DVertex2TCoordsTangents *vertices = (S3DVertex2TCoordsTangents*)vtx->getVertices();
+				S3DVertex2TCoordsTangents* vertices = (S3DVertex2TCoordsTangents*)vtx->getVertices();
 
 				core::vector3df positions[] = {
 					vertices[v1].Pos,
@@ -327,8 +326,8 @@ void CViewBakeLightmap::onUpdate()
 					m_bakeBinormals[i] = listPixels[i].Binormal;
 				}
 
-				CContext *context = CContext::getInstance();
-				CScene *scene = context->getScene();
+				CContext* context = CContext::getInstance();
+				CScene* scene = context->getScene();
 
 				// bake lighting color
 				CLightmapper::getInstance()->bakeAtPosition(
@@ -361,7 +360,7 @@ void CViewBakeLightmap::onUpdate()
 			{
 				m_lightBounce++;
 
-				IVideoDriver *driver = getVideoDriver();
+				IVideoDriver* driver = getVideoDriver();
 				core::array<IImage*> lightmapImages;
 
 				core::dimension2du size(m_lightmapSize, m_lightmapSize);
@@ -372,10 +371,10 @@ void CViewBakeLightmap::onUpdate()
 					m_lmRasterize[i]->imageDilate();
 
 					// lighting data
-					unsigned char *data = m_lmRasterize[i]->getLightmapData();
+					unsigned char* data = m_lmRasterize[i]->getLightmapData();
 
 					// create lightmap image					
-					IImage *img = driver->createImageFromData(video::ECF_R8G8B8, size, data);
+					IImage* img = driver->createImageFromData(video::ECF_R8G8B8, size, data);
 					lightmapImages.push_back(img);
 				}
 
@@ -384,11 +383,11 @@ void CViewBakeLightmap::onUpdate()
 				if (lightmapTexture != NULL)
 				{
 					// bind lightmap texture as indirect lighting
-					for (CRenderMesh *renderMesh : m_renderMesh)
+					for (CRenderMesh* renderMesh : m_renderMesh)
 					{
 						if (renderMesh->getGameObject()->isStatic() == true)
 						{
-							CIndirectLighting *indirect = renderMesh->getGameObject()->getComponent<CIndirectLighting>();
+							CIndirectLighting* indirect = renderMesh->getGameObject()->getComponent<CIndirectLighting>();
 							if (indirect == NULL)
 								indirect = renderMesh->getGameObject()->addComponent<CIndirectLighting>();
 
@@ -422,8 +421,8 @@ void CViewBakeLightmap::onUpdate()
 					for (int i = 0; i < m_numberRasterize; i++)
 					{
 						// debug data
-						unsigned char *data = m_lmRasterize[i]->getTestBakeImage();
-						IImage *img = driver->createImageFromData(video::ECF_R8G8B8, size, data);
+						unsigned char* data = m_lmRasterize[i]->getTestBakeImage();
+						IImage* img = driver->createImageFromData(video::ECF_R8G8B8, size, data);
 
 						char outFileName[512];
 						sprintf(outFileName, "LightMapRasterize_debug_bounce_%d_%d.png", m_lightBounce, i);
@@ -458,8 +457,8 @@ void CViewBakeLightmap::onUpdate()
 
 void CViewBakeLightmap::onRender()
 {
-	CContext *context = CContext::getInstance();
-	CCamera *guiCamera = context->getGUICamera();
+	CContext* context = CContext::getInstance();
+	CCamera* guiCamera = context->getGUICamera();
 
 	// render GUI
 	if (guiCamera != NULL)
@@ -479,7 +478,7 @@ void CViewBakeLightmap::saveProgress()
 	u32 deltaTime = (os::Timer::getRealTime() - m_timeBeginBake) + m_timeSpentFromLastSave;
 
 	// init 10mb (auto grow later)
-	CMemoryStream *stream = new CMemoryStream(10 * 1024 * 1024);
+	CMemoryStream* stream = new CMemoryStream(10 * 1024 * 1024);
 
 	stream->writeUInt((u32)getVideoDriver()->getDriverType());
 
@@ -502,7 +501,7 @@ void CViewBakeLightmap::saveProgress()
 
 	stream->writeInt(getRasterisationIndex(m_currentRasterisation));
 
-	io::IWriteFile *file = getIrrlichtDevice()->getFileSystem()->createAndWriteFile("LightmapProgress.dat");
+	io::IWriteFile* file = getIrrlichtDevice()->getFileSystem()->createAndWriteFile("LightmapProgress.dat");
 	file->write(stream->getData(), stream->getSize());
 	file->drop();
 
@@ -511,13 +510,13 @@ void CViewBakeLightmap::saveProgress()
 		// write current output to review
 		core::dimension2du size(m_lightmapSize, m_lightmapSize);
 		char outFileName[512];
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 
 		for (int i = 0; i < m_numberRasterize; i++)
 		{
-			unsigned char *data = m_lmRasterize[i]->getLightmapData();
+			unsigned char* data = m_lmRasterize[i]->getLightmapData();
 
-			IImage *img = driver->createImageFromData(video::ECF_R8G8B8, size, data);
+			IImage* img = driver->createImageFromData(video::ECF_R8G8B8, size, data);
 			sprintf(outFileName, "LightMapRasterize_review_%d.png", i);
 			driver->writeImageToFile(img, outFileName);
 			img->drop();
@@ -527,14 +526,14 @@ void CViewBakeLightmap::saveProgress()
 
 void CViewBakeLightmap::loadProgress()
 {
-	io::IReadFile *file = getIrrlichtDevice()->getFileSystem()->createAndOpenFile("LightmapProgress.dat");
+	io::IReadFile* file = getIrrlichtDevice()->getFileSystem()->createAndOpenFile("LightmapProgress.dat");
 	if (file != NULL)
 	{
 		u32 fileSize = file->getSize();
-		unsigned char *data = new unsigned char[fileSize];
+		unsigned char* data = new unsigned char[fileSize];
 		file->read(data, fileSize);
 
-		CMemoryStream *stream = new CMemoryStream(data, fileSize);
+		CMemoryStream* stream = new CMemoryStream(data, fileSize);
 
 		u32 driverType = (u32)getVideoDriver()->getDriverType();
 
@@ -567,7 +566,7 @@ void CViewBakeLightmap::loadProgress()
 		int m_numberRasterize = stream->readInt();
 		for (int i = 0; i < m_numberRasterize; i++)
 		{
-			Lightmapper::CRasterisation *raster = createGetLightmapRasterisation(i);
+			Lightmapper::CRasterisation* raster = createGetLightmapRasterisation(i);
 			raster->load(stream);
 		}
 
@@ -593,15 +592,15 @@ void CViewBakeLightmap::loadProgress()
 				listTextures.push_back(lightmapName);
 			}
 
-			ITexture *lightmapTexture = CTextureManager::getInstance()->getTextureArray(listTextures);
+			ITexture* lightmapTexture = CTextureManager::getInstance()->getTextureArray(listTextures);
 			if (lightmapTexture != NULL)
 			{
 				// bind lightmap texture as indirect lighting
-				for (CRenderMesh *renderMesh : m_renderMesh)
+				for (CRenderMesh* renderMesh : m_renderMesh)
 				{
 					if (renderMesh->getGameObject()->isStatic() == true)
 					{
-						CIndirectLighting *indirect = renderMesh->getGameObject()->getComponent<CIndirectLighting>();
+						CIndirectLighting* indirect = renderMesh->getGameObject()->getComponent<CIndirectLighting>();
 						if (indirect == NULL)
 							indirect = renderMesh->getGameObject()->addComponent<CIndirectLighting>();
 

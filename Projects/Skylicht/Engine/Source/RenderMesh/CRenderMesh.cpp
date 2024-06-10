@@ -480,4 +480,75 @@ namespace Skylicht
 				renderer->setInstancing(b);
 		}
 	}
+
+	void CRenderMesh::printEntites()
+	{
+		std::string log;
+		os::Printer::log("[CRenderMesh] printEntites");
+
+		CWorldTransformData* rootTransform = GET_ENTITY_DATA(m_root, CWorldTransformData);
+
+		std::vector<CWorldTransformData*> childs;
+		getChildTransforms(rootTransform, childs);
+
+		for (CWorldTransformData* entity : childs)
+		{
+			log.clear();
+			int d = entity->Depth - rootTransform->Depth;
+			for (int i = 0; i < d; i++)
+				log += "    ";
+			log += entity->Name;
+			os::Printer::log(log.c_str());
+		}
+	}
+
+	CWorldTransformData* CRenderMesh::getChildTransform(const char* name)
+	{
+		for (CWorldTransformData* entity : m_transforms)
+		{
+			if (entity->Name == name)
+			{
+				return entity;
+			}
+		}
+		return NULL;
+	}
+
+	int CRenderMesh::getChildTransforms(const char* name, std::vector<CWorldTransformData*>& childs)
+	{
+		CWorldTransformData* findEntity = NULL;
+
+		for (CWorldTransformData* entity : m_transforms)
+		{
+			if (entity->Name == name)
+			{
+				findEntity = entity;
+				childs.push_back(entity);
+				break;
+			}
+		}
+
+		if (findEntity)
+		{
+			getChildTransforms(findEntity, childs);
+		}
+
+		return (int)childs.size();
+	}
+
+	int CRenderMesh::getChildTransforms(CWorldTransformData* transform, std::vector<CWorldTransformData*>& childs, size_t from)
+	{
+		size_t size = m_transforms.size();
+
+		for (size_t i = from; i < size; i++)
+		{
+			CWorldTransformData* entity = m_transforms[i];
+			if (entity->ParentIndex == transform->EntityIndex)
+			{
+				childs.push_back(entity);
+				getChildTransforms(entity, childs, i + 1);
+			}
+		}
+		return (int)childs.size();
+	}
 }

@@ -5,13 +5,16 @@
 #include "ViewManager/CViewManager.h"
 #include "Context/CContext.h"
 
+#include "LegController/CLegController.h"
+#include "CPlayerController.h"
+
 #include "Primitive/CPlane.h"
 #include "Primitive/CCube.h"
 #include "SkyDome/CSkyDome.h"
 #include "SkySun/CSkySun.h"
 
-// #include "LightProbes/CLightProbeRender.h"
-// #include "ReflectionProbe/CReflectionProbeRender.h"
+#include "LightProbes/CLightProbeRender.h"
+#include "ReflectionProbe/CReflectionProbeRender.h"
 
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
@@ -79,8 +82,7 @@ void CViewInit::initScene()
 	// camera
 	CGameObject* camObj = zone->createEmptyObject();
 	camObj->addComponent<CCamera>();
-	camObj->addComponent<CEditorCamera>()->setMoveSpeed(2.0f);
-	camObj->addComponent<CFpsMoveCamera>()->setMoveSpeed(1.0f);
+	C3rdCamera* thirdCamera = camObj->addComponent<C3rdCamera>();
 
 	CCamera* camera = camObj->getComponent<CCamera>();
 	camera->setPosition(core::vector3df(0.0f, 5.0f, 10.0f));
@@ -93,6 +95,14 @@ void CViewInit::initScene()
 
 	// sky
 	CSkySun* skySun = zone->createEmptyObject()->addComponent<CSkySun>();
+	/*
+	ITexture* skyDomeTexture = CTextureManager::getInstance()->getTexture("Common/Textures/Sky/PaperMill.png");
+	if (skyDomeTexture != NULL)
+	{
+		CSkyDome* skyDome = zone->createEmptyObject()->addComponent<CSkyDome>();
+		skyDome->setData(skyDomeTexture, SColor(255, 255, 255, 255));
+	}
+	*/
 
 	// reflection probe
 	CGameObject* reflectionProbeObj = zone->createEmptyObject();
@@ -137,13 +147,42 @@ void CViewInit::initScene()
 	materials[0]->setUniformTexture("uTexNormal", normalMap);
 	materials[0]->setUniformTexture("uTexRMA", rmaMap);
 	characterRenderer->initMaterial(materials);
+	characterRenderer->printEntites();
 
 	// indirect lighting
 	m_robot->addComponent<CIndirectLighting>();
 
+	// leg controller
+	CLegController* leg = m_robot->addComponent<CLegController>();
+	CWorldTransformData* legTransform = NULL;
+
+	// need update a frame to calc all transform
+	scene->getEntityManager()->update();
+
+	legTransform = characterRenderer->getChildTransform("leg_A_01");
+	if (legTransform)
+		leg->addLeg(legTransform);
+	legTransform = characterRenderer->getChildTransform("leg_B_01");
+	if (legTransform)
+		leg->addLeg(legTransform);
+	legTransform = characterRenderer->getChildTransform("leg_C_01");
+	if (legTransform)
+		leg->addLeg(legTransform);
+	legTransform = characterRenderer->getChildTransform("leg_D_01");
+	if (legTransform)
+		leg->addLeg(legTransform);
+
+	// player input controller
+	m_robot->addComponent<CPlayerController>();
+
+	thirdCamera->setFollowTarget(m_robot);
+	thirdCamera->setTargetDistance(8.0f);
+	thirdCamera->setOrientation(-135.0f, -45.0f);
+
 	// lighting
 	CGameObject* lightObj = zone->createEmptyObject();
 	CDirectionalLight* directionalLight = lightObj->addComponent<CDirectionalLight>();
+	directionalLight->setIntensity(1.2f);
 
 	CTransformEuler* lightTransform = lightObj->getTransformEuler();
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
@@ -163,8 +202,7 @@ void CViewInit::initScene()
 	context->setGUICamera(guiCamera);
 	context->setDirectionalLight(directionalLight);
 
-	// context->getPostProcessorPipeline()->enableAutoExposure(false);
-	// context->getPostProcessorPipeline()->setManualExposure(1.0f);
+	context->getPostProcessorPipeline()->enableAutoExposure(false);
 }
 
 void CViewInit::onDestroy()

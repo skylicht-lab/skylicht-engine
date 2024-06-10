@@ -184,8 +184,7 @@ namespace Skylicht
 				m_materials.push(primitive->Material);
 
 				// add transform
-				CEntity* entity = entityManager->getEntity(primitive->EntityIndex);
-				m_entities.push(entity);
+				m_entities.push(primitive->Entity);
 			}
 
 			SInstancingVertexBuffer* buffer = m_buffers[it.first];
