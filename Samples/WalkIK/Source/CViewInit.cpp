@@ -83,6 +83,7 @@ void CViewInit::initScene()
 	CGameObject* camObj = zone->createEmptyObject();
 	camObj->addComponent<CCamera>();
 	C3rdCamera* thirdCamera = camObj->addComponent<C3rdCamera>();
+	// camObj->addComponent<CEditorCamera>();
 
 	CCamera* camera = camObj->getComponent<CCamera>();
 	camera->setPosition(core::vector3df(0.0f, 5.0f, 10.0f));
@@ -153,30 +154,42 @@ void CViewInit::initScene()
 	m_robot->addComponent<CIndirectLighting>();
 
 	// leg controller
-	CLegController* leg = m_robot->addComponent<CLegController>();
+	CLegController* legController = m_robot->addComponent<CLegController>();
 	CWorldTransformData* legTransform = NULL;
 
-	// need update a frame to calc all transform
+	// need update a frame
 	scene->getEntityManager()->update();
 
+	CWorldTransformData* root = characterRenderer->getChildTransform("robot_01.fbx");
+
+	CLeg* legs[4];
+
+	// add leg
 	legTransform = characterRenderer->getChildTransform("leg_A_01");
 	if (legTransform)
-		leg->addLeg(legTransform);
+		legs[0] = legController->addLeg(root, legTransform);
 	legTransform = characterRenderer->getChildTransform("leg_B_01");
 	if (legTransform)
-		leg->addLeg(legTransform);
+		legs[1] = legController->addLeg(root, legTransform);
 	legTransform = characterRenderer->getChildTransform("leg_C_01");
 	if (legTransform)
-		leg->addLeg(legTransform);
+		legs[2] = legController->addLeg(root, legTransform);
 	legTransform = characterRenderer->getChildTransform("leg_D_01");
 	if (legTransform)
-		leg->addLeg(legTransform);
+		legs[3] = legController->addLeg(root, legTransform);
+
+	// link near legs to fix for nice walk cycle
+	legs[0]->addLink(legs[3]);
+	legs[1]->addLink(legs[2]);
+	legs[0]->addLink(legs[1]);
+	legs[2]->addLink(legs[3]);
 
 	// player input controller
 	m_robot->addComponent<CPlayerController>();
 
+	// setting camera following robot
 	thirdCamera->setFollowTarget(m_robot);
-	thirdCamera->setTargetDistance(8.0f);
+	thirdCamera->setTargetDistance(6.0f);
 	thirdCamera->setOrientation(-135.0f, -45.0f);
 
 	// lighting
@@ -203,6 +216,7 @@ void CViewInit::initScene()
 	context->setDirectionalLight(directionalLight);
 
 	context->getPostProcessorPipeline()->enableAutoExposure(false);
+	context->getPostProcessorPipeline()->enableBloomEffect(false);
 }
 
 void CViewInit::onDestroy()

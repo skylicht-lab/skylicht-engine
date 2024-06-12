@@ -2,13 +2,13 @@
 
 #include "ViewManager/CView.h"
 
+#include "LegController/CLegController.h"
+
 class CViewDemo :
 	public CView,
 	public IEventReceiver
 {
 protected:
-	int m_mouseX;
-	int m_mouseY;
 
 public:
 	CViewDemo();
@@ -26,4 +26,6 @@ public:
 	virtual void onPostRender();
 
 	virtual bool OnEvent(const SEvent& event);
+
+	void onGUI();
 };

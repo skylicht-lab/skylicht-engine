@@ -3,6 +3,9 @@
 
 #include "Context/CContext.h"
 
+#include "imgui.h"
+#include "CImguiManager.h"
+
 CViewDemo::CViewDemo()
 {
 
@@ -35,6 +38,8 @@ void CViewDemo::onUpdate()
 		// update scene
 		scene->update();
 	}
+
+	CImguiManager::getInstance()->onNewFrame();
 }
 
 void CViewDemo::onRender()
@@ -57,6 +62,38 @@ void CViewDemo::onRender()
 	{
 		CGraphics2D::getInstance()->render(guiCamera);
 	}
+
+	// imgui render
+	onGUI();
+	CImguiManager::getInstance()->onRender();
+}
+
+void CViewDemo::onGUI()
+{
+	bool open = true;
+
+	ImGuiWindowFlags window_flags = 0;
+
+	// We specify a default position/size in case there's no data in the .ini file. Typically this isn't required! We only do it to make the Demo applications a little more welcoming.
+	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(300, 80), ImGuiCond_FirstUseEver);
+
+	if (!ImGui::Begin("Walk IK Demo", &open, window_flags))
+	{
+		// Early out if the window is collapsed, as an optimization.
+		ImGui::End();
+		return;
+	}
+
+	// BEGIN WINDOW
+	{
+		// Show FPS
+		int fps = getIrrlichtDevice()->getVideoDriver()->getFPS();
+		ImGui::Text("FPS: %d", fps);
+		ImGui::Text("Press ASDW or Up,Down,Left,Right to walk");
+
+		ImGui::End();
+	}
 }
 
 void CViewDemo::onPostRender()
@@ -66,25 +103,5 @@ void CViewDemo::onPostRender()
 
 bool CViewDemo::OnEvent(const SEvent& event)
 {
-	if (event.EventType == EET_MOUSE_INPUT_EVENT)
-	{
-		if (event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
-		{
-			CContext* context = CContext::getInstance();
-
-			m_mouseX = event.MouseInput.X;
-			m_mouseY = event.MouseInput.Y;
-
-			// get view ray
-			const core::recti& vp = getVideoDriver()->getViewPort();
-			core::line3df ray = CProjective::getViewRay(
-				context->getActiveCamera(),
-				(float)m_mouseX,
-				(float)m_mouseY,
-				vp.getWidth(), vp.getHeight()
-			);
-		}
-	}
-
 	return false;
 }

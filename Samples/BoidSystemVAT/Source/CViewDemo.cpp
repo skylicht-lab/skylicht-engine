@@ -329,7 +329,7 @@ void CViewDemo::onGUI()
 	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize(ImVec2(350, 290), ImGuiCond_FirstUseEver);
 
-	if (!ImGui::Begin("Camera", &open, window_flags))
+	if (!ImGui::Begin("Boid Camera", &open, window_flags))
 	{
 		// Early out if the window is collapsed, as an optimization.
 		ImGui::End();
