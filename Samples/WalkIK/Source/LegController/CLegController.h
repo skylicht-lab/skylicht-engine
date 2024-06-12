@@ -1,4 +1,5 @@
 #pragma once
+#pragma once
 
 #include "LegController/CLeg.h"
 #include "RenderMesh/CRenderMesh.h"
@@ -15,11 +16,17 @@ protected:
 	CRenderMesh* m_renderMesh;
 
 	float m_targetDistance;
+
 	float m_footStepLength;
+
+	float m_stepHeight;
+	float m_stepTime;
 
 	std::vector<CLeg*> m_legs;
 
 	bool m_drawDebug;
+
+	core::vector3df m_lastPosition;
 
 public:
 	CLegController();
@@ -30,7 +37,7 @@ public:
 
 	virtual void updateComponent();
 
-	void addLeg(CWorldTransformData* leg);
+	CLeg* addLeg(CWorldTransformData* root, CWorldTransformData* leg);
 
 	virtual void lateUpdate();
 };
