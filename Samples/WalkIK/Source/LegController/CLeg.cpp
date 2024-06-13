@@ -78,6 +78,8 @@ void CLeg::initLinkLength()
 
 	if (m_lengths.size() > 0)
 		m_lengths.push_back(0.0f);
+
+	m_scale = m_root->Relative.getScale();
 }
 
 void CLeg::lateUpdate()
@@ -106,8 +108,7 @@ void CLeg::lateUpdate()
 	if (m_lengths.size() == 0)
 		initLinkLength();
 
-	for (int i = 0; i < 3; i++)
-		fabricIK(m_footPosition);
+	fabricIK(m_footPosition);
 
 	// output transform
 	if (m_drawDebug)
@@ -175,8 +176,6 @@ void CLeg::fabricIK(const core::vector3df& target)
 
 void CLeg::setTransform(core::matrix4& mat, const core::vector3df& pos, core::vector3df& front, core::vector3df up)
 {
-	core::vector3df scale = m_root->Relative.getScale();
-
 	core::vector3df right = up.crossProduct(front);
 	right.normalize();
 
@@ -185,19 +184,19 @@ void CLeg::setTransform(core::matrix4& mat, const core::vector3df& pos, core::ve
 
 	// note: X is front
 	f32* matData = mat.pointer();
-	matData[0] = -front.X * scale.X;
-	matData[1] = -front.Y * scale.X;
-	matData[2] = -front.Z * scale.X;
+	matData[0] = -front.X * m_scale.X;
+	matData[1] = -front.Y * m_scale.X;
+	matData[2] = -front.Z * m_scale.X;
 	matData[3] = 0.0f;
 
-	matData[4] = up.X * scale.Y;
-	matData[5] = up.Y * scale.Y;
-	matData[6] = up.Z * scale.Y;
+	matData[4] = up.X * m_scale.Y;
+	matData[5] = up.Y * m_scale.Y;
+	matData[6] = up.Z * m_scale.Y;
 	matData[7] = 0.0f;
 
-	matData[8] = right.X * scale.Z;
-	matData[9] = right.Y * scale.Z;
-	matData[10] = right.Z * scale.Z;
+	matData[8] = right.X * m_scale.Z;
+	matData[9] = right.Y * m_scale.Z;
+	matData[10] = right.Z * m_scale.Z;
 	matData[11] = 0.0f;
 
 	matData[12] = pos.X;

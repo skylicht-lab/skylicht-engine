@@ -15,6 +15,7 @@ protected:
 
 	std::vector<core::matrix4> m_worlds;
 	std::vector<core::vector3df> m_upVector;
+	core::vector3df m_scale;
 
 	std::vector<float> m_lengths;
 
