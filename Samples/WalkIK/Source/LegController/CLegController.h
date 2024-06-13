@@ -15,18 +15,23 @@ class CLegController :
 protected:
 	CRenderMesh* m_renderMesh;
 
+	bool m_drawDebug;
+
 	float m_targetDistance;
-
+	float m_moveStepDistance;
 	float m_footStepLength;
-
 	float m_stepHeight;
 	float m_stepTime;
 
+	float m_rotDirection;
+	float m_rotTime;
+	float m_moveTime;
+	float m_standTime;
+
 	std::vector<CLeg*> m_legs;
 
-	bool m_drawDebug;
-
 	core::vector3df m_lastPosition;
+	core::vector3df m_lastRotation;
 
 public:
 	CLegController();

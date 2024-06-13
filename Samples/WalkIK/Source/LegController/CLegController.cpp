@@ -11,9 +11,14 @@ CLegController::CLegController() :
 	m_drawDebug(false),
 	m_renderMesh(NULL),
 	m_targetDistance(3.3f),
+	m_moveStepDistance(0.1f),
 	m_footStepLength(0.3f),
 	m_stepHeight(0.2f),
-	m_stepTime(0.25f)
+	m_stepTime(0.25f),
+	m_moveTime(0.0f),
+	m_standTime(0.0f),
+	m_rotTime(0.0f),
+	m_rotDirection(0.0f)
 {
 
 }
@@ -50,14 +55,16 @@ CLeg* CLegController::addLeg(CWorldTransformData* root, CWorldTransformData* leg
 		joints.push_back(leg);
 		m_renderMesh->getChildTransforms(leg, joints);
 
-		if (joints.size() >= 3)
+		if (joints.size() >= 2)
 		{
 			core::vector3df objectPosition = m_gameObject->getPosition();
 
 			core::vector3df legPosition = joints[0]->World.getTranslation();
-			core::vector3df targetVector = legPosition - objectPosition;
 
+			core::vector3df targetVector = legPosition - objectPosition;
 			core::vector3df targetPosition = objectPosition + targetVector * m_targetDistance;
+
+			// project target on ground
 			targetPosition.Y = 0.0f;
 
 			CLeg* leg = new CLeg(root, joints, targetVector, targetPosition, m_footStepLength, m_stepHeight, m_stepTime);
@@ -74,15 +81,49 @@ void CLegController::lateUpdate()
 	if (m_gameObject->isVisible() == false)
 		return;
 
-	core::vector3df legPosition, targetPosition, currentFootPosition, footTarget;
+	core::vector3df legPosition, targetPosition, footTarget;
 	core::vector3df objectPosition = m_gameObject->getPosition();
+	core::vector3df objectRotation = m_gameObject->getTransformEuler()->getRotation();
 
 	CWorldTransformData* worldTransform = GET_ENTITY_DATA(m_gameObject->getEntity(), CWorldTransformData);
 
 	core::vector3df up = Transform::Oy;
-	core::vector3df front = Transform::Oz;
 	worldTransform->World.rotateVect(up);
-	worldTransform->World.rotateVect(front);
+
+	float timestepSec = getTimeStep() / 1000.0f;
+	float balanceStandingStep2 = 0.1f * 0.1f;
+	float footStep2 = m_footStepLength * m_footStepLength;
+
+	core::vector3df moveVector = objectPosition - m_lastPosition;
+	if (moveVector.getLengthSQ() > 0)
+	{
+		// walk
+		moveVector.normalize();
+		m_moveTime = m_moveTime + timestepSec;
+		m_standTime = 0.0f;
+		m_rotTime = 0.0f;
+		m_rotDirection = 0.0f;
+	}
+	else
+	{
+		m_moveTime = m_moveTime - timestepSec;
+		if (objectRotation != m_lastRotation)
+		{
+			// stand & rotate
+			m_standTime = 0;
+			m_rotTime = m_rotTime + timestepSec;
+		}
+		else
+		{
+			// stand
+			m_rotTime = 0.0f;
+			m_rotDirection = 0.0f;
+			m_standTime = m_standTime + timestepSec;
+		}
+	}
+
+	m_moveTime = core::clamp(m_moveTime, 0.0f, 0.1f);
+	m_rotTime = core::clamp(m_rotTime, 0.0f, 0.1f);
 
 	for (CLeg* leg : m_legs)
 	{
@@ -94,47 +135,62 @@ void CLegController::lateUpdate()
 				allowStep = false;
 		}
 
-		core::vector3df targetVector = leg->getTargetVector();
-		worldTransform->World.rotateVect(targetVector);
-
-		CVector::projectOnPlane(targetVector, up);
-
-		targetPosition = objectPosition + targetVector * m_targetDistance;
-
-		if (m_drawDebug)
-			CSceneDebug::getInstance()->addPosition(targetPosition, 0.1f, SColor(255, 255, 0, 255));
-
-		// project target to ground
-		targetPosition.Y = 0.0f;
-
-		core::vector3df moveVector = objectPosition - m_lastPosition;
-
-		if (moveVector.getLengthSQ() > 0)
-			moveVector.normalize();
-
-		// change next step
-		currentFootPosition = leg->getFootTargetPosition();
-		if (currentFootPosition.getDistanceFromSQ(targetPosition) >= m_footStepLength * m_footStepLength && allowStep)
+		if (allowStep)
 		{
-			if (moveVector.getLengthSQ() == 0)
+			// find the target foot step
+			const core::vector3df& footTarget = leg->getFootTargetPosition();
+
+			core::vector3df targetVector = leg->getTargetVector();
+			worldTransform->World.rotateVect(targetVector);
+
+			CVector::projectOnPlane(targetVector, up);
+
+			targetPosition = objectPosition + targetVector * m_targetDistance;
+			targetPosition += moveVector * (m_moveTime / 0.1f) * m_moveStepDistance;
+			
+			if (m_drawDebug)
 			{
-				core::vector3df test = targetPosition - currentFootPosition;
-				core::vector3df cross = targetVector.crossProduct(up);
+				CSceneDebug* debug = CSceneDebug::getInstance()->getNoZDebug();
+				debug->addPosition(targetPosition, 0.1f, SColor(255, 255, 0, 255));
+				debug->addPosition(footTarget, 0.1f, SColor(255, 0, 255, 0));
 
-				float f = test.dotProduct(cross);
-				if (f < 0.0f)
-					cross *= -1.0f;
-
-				moveVector = cross;
-				moveVector.normalize();
+				if (leg->getAnimTime() > m_stepTime)
+					debug->addLine(footTarget, footTarget + moveVector * m_footStepLength * 2.0f, SColor(255, 255, 0, 0));
 			}
 
-			// next step position (* 0.98f to fix bug foot target is blink)
-			leg->setFootTargetPosition(targetPosition + moveVector * m_footStepLength * 0.98f);
+			// project target on ground
+			targetPosition.Y = 0.0f;
+
+			float stepDistance = footTarget.getDistanceFromSQ(targetPosition);
+			if (stepDistance >= footStep2)
+			{
+				if (m_rotTime > 0)
+				{
+					// just rotate
+					core::vector3df test = targetPosition - footTarget;
+					core::vector3df cross = targetVector.crossProduct(up);
+
+					m_rotDirection = test.dotProduct(cross);
+					if (m_rotDirection < 0.0f)
+						cross *= -1.0f;
+
+					moveVector = cross;
+					moveVector.normalize();
+				}
+
+				// next step position (* 0.98f to fix bug foot target is blink)
+				leg->setFootTargetPosition(targetPosition + moveVector * m_footStepLength * 0.98f);
+			}
+			else if (m_standTime > 0.5f && stepDistance >= balanceStandingStep2)
+			{
+				// balanced standing
+				leg->setFootTargetPosition(targetPosition);
+			}
 		}
 
 		leg->lateUpdate();
 	}
 
 	m_lastPosition = objectPosition;
+	m_lastRotation = objectRotation;
 }
