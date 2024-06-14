@@ -51,4 +51,10 @@ public:
 protected:
 
 	void initScene();
+
+	void initRobot();
+
+	CRenderMesh* initRobotRenderer(CGameObject* obj);
+
+	void initReplayRobot();
 };

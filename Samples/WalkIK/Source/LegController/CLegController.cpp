@@ -57,9 +57,9 @@ void CLegController::updateComponent()
 	if (m_legs.size() > 0)
 		avgY = avgY / (float)m_legs.size();
 
-	// move up the body when he is walking
+	// root hip animation when he is walking
 	if (m_root)
-		m_root->Relative.setTranslation(core::vector3df(0.0f, avgY, 0.0f));
+		m_root->Relative.setTranslation(core::vector3df(0.0f, avgY * 0.8f, 0.0f));
 }
 
 CLeg* CLegController::addLeg(CWorldTransformData* root, CWorldTransformData* leg)

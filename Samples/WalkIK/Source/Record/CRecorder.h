@@ -7,8 +7,9 @@ struct SRecordFrame
 {
 	float Time; // Second
 	std::vector<core::vector3df> FootPosition;
-	core::vector3df HipPosition;
+	core::vector3df HipRelativePosition;
 	core::vector3df ObjectPosition;
+	core::quaternion ObjectRotation;
 };
 
 class CRecorder
@@ -16,6 +17,7 @@ class CRecorder
 protected:
 	float m_time; // Second
 	float m_lastTime;
+	size_t m_hint;
 
 	std::vector<SRecordFrame*> m_frames;
 
@@ -23,6 +25,10 @@ public:
 	CRecorder();
 
 	virtual ~CRecorder();
+
+	float getDuration();
+
+	SRecordFrame getFrameData(float frame);
 
 	void addFrame(CLegController* legController);
 
