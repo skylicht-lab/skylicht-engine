@@ -174,7 +174,7 @@ namespace Skylicht
 
 		core::vector3df getFront();
 
-		inline const core::matrix4& getWorldTransform();
+		const core::matrix4& getWorldTransform();
 
 		core::matrix4 calcWorldTransform();
 
