@@ -62,7 +62,7 @@ void CLegController::updateComponent()
 	{
 		// move up the body when he is walking
 		if (m_root)
-			m_root->Relative.setTranslation(core::vector3df(0.0f, offsetY * 0.2f, 0.0f));
+			m_root->Relative.setTranslation(core::vector3df(0.0f, minY + offsetY * 0.2f, 0.0f));
 	}
 }
 
@@ -149,7 +149,8 @@ void CLegController::lateUpdate()
 		std::vector<CLeg*>& link = leg->getLink();
 		for (CLeg* l : link)
 		{
-			if (l->getAnimTime() < m_stepTime * 0.8f)
+			// wait near leg finish 80% cycle
+			if (l->getAnimTime() < m_stepTime * 0.8)
 				allowStep = false;
 		}
 
