@@ -97,7 +97,7 @@ namespace Skylicht
 			CWorldTransformData* transformData = GET_ENTITY_DATA(entity, CWorldTransformData);
 			CIndirectLightingData* lightData = GET_ENTITY_DATA(entity, CIndirectLightingData);
 
-			if (transformData->NeedValidate || lightData->Init || m_probeChange)
+			if (transformData->NeedValidate || lightData->InvalidateReflection || m_probeChange)
 			{
 				m_entities.push(lightData);
 				m_entitiesPositions.push(transformData);
@@ -150,7 +150,7 @@ namespace Skylicht
 						// get indirectData
 						CIndirectLightingData* indirectData = lightings[i];
 						indirectData->ReflectionTexture = probe->ReflectionTexture;
-						indirectData->Init = false;
+						indirectData->InvalidateReflection = false;
 					}
 
 					// kd_res_next(res);

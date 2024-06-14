@@ -51,7 +51,8 @@ namespace Skylicht
 		ITexture* LightTexture;
 		ITexture* ReflectionTexture;
 
-		bool Init;
+		bool InvalidateProbe;
+		bool InvalidateReflection;
 
 		bool ReleaseSH;
 

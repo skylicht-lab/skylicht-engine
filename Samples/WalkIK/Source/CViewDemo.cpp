@@ -7,9 +7,13 @@
 #include "CImguiManager.h"
 
 CViewDemo::CViewDemo() :
-	m_isRecording(false),
+	m_state(StateController),
+	m_robot(NULL),
+	m_robotReplay(NULL),
 	m_legController(NULL),
-	m_recorder(NULL)
+	m_legReplayer(NULL),
+	m_recorder(NULL),
+	m_3rdCamera(NULL)
 {
 	m_recorder = new CRecorder();
 }
@@ -21,17 +25,23 @@ CViewDemo::~CViewDemo()
 
 void CViewDemo::onInit()
 {
+	CEventManager::getInstance()->registerEvent("ViewDemo", this);
+
 	CContext* context = CContext::getInstance();
 	CCamera* camera = context->getActiveCamera();
 
-	CEventManager::getInstance()->registerEvent("ViewDemo", this);
+	m_3rdCamera = camera->getGameObject()->getComponent<C3rdCamera>();
 
 	CZone* zone = context->getActiveZone();
 	zone->updateIndexSearchObject();
 
-	CGameObject* robot = zone->searchObject(L"robot");
-	if (robot)
-		m_legController = robot->getComponent<CLegController>();
+	m_robot = zone->searchObject(L"robot");
+	if (m_robot)
+		m_legController = m_robot->getComponent<CLegController>();
+
+	m_robotReplay = zone->searchObject(L"robot-replay");
+	if (m_robotReplay)
+		m_legReplayer = m_robotReplay->getComponent<CLegReplayer>();
 }
 
 void CViewDemo::onDestroy()
@@ -52,8 +62,15 @@ void CViewDemo::onUpdate()
 	CImguiManager::getInstance()->onNewFrame();
 
 	// record frame
-	if (m_legController && m_isRecording)
-		m_recorder->addFrame(m_legController);
+	switch (m_state)
+	{
+	case StateRecording:
+		if (m_legController)
+			m_recorder->addFrame(m_legController);
+		break;
+	default:
+		break;
+	}
 
 	// draw record frame
 	if (m_recorder->getFrameCount())
@@ -108,25 +125,68 @@ void CViewDemo::onGUI()
 		// Show FPS
 		int fps = getIrrlichtDevice()->getVideoDriver()->getFPS();
 		ImGui::Text("FPS: %d", fps);
-		ImGui::Text("Press ASDW or Up,Down,Left,Right to walk");
+
+		if (m_state != StateEdit)
+			ImGui::Text("Press ASDW or Up,Down,Left,Right to walk");
+		else
+			ImGui::Text("Editing the recorded animation");
+
 		ImGui::Spacing();
 
-		if (m_legController && m_legController->getLegs().size() > 0)
+		if (m_legController &&
+			m_legController->getLegs().size() > 0 &&
+			m_legReplayer &&
+			m_legReplayer->getLegs().size() > 0)
 		{
-			if (m_isRecording)
+			switch (m_state)
 			{
-				if (ImGui::Button("Stop recording"))
-				{
-					m_isRecording = false;
-				}
-			}
-			else
-			{
+			case StateController:
 				if (ImGui::Button("Record animation"))
 				{
-					m_isRecording = true;
+					m_state = StateRecording;
 					m_recorder->start();
 				}
+
+				if (m_recorder->getFrameCount() > 0)
+				{
+					if (ImGui::Button("Replay animation"))
+					{
+						m_state = StateEdit;
+						m_robotReplay->setVisible(true);
+						m_robot->setVisible(false);
+
+						m_legReplayer->setRecorder(m_recorder);
+
+						if (m_3rdCamera)
+							m_3rdCamera->setFollowTarget(m_robotReplay);
+					}
+				}
+				break;
+			case StateRecording:
+				if (ImGui::Button("Stop recording"))
+				{
+					m_state = StateController;
+				}
+				break;
+			case StateEdit:
+			{
+				bool b = m_legReplayer->isRootMotion();
+				if (ImGui::Checkbox("Root motion", &b))
+					m_legReplayer->setRootMotion(b);
+
+				if (ImGui::Button("Exit"))
+				{
+					m_state = StateController;
+					m_robotReplay->setVisible(false);
+					m_robot->setVisible(true);
+
+					if (m_3rdCamera)
+						m_3rdCamera->setFollowTarget(m_robot);
+				}
+			}
+			break;
+			default:
+				break;
 			}
 		}
 

@@ -133,7 +133,7 @@ namespace Skylicht
 		for (u32 i = 0; i < n; i++)
 		{
 			if (!worlds[i]->NeedValidate &&
-				!data[i]->Init &&
+				!data[i]->InvalidateProbe &&
 				!m_probeChange)
 			{
 				continue;
@@ -164,7 +164,7 @@ namespace Skylicht
 							indirectData->SH[j].set(probe->SH[j]);
 						}
 
-						indirectData->Init = false;
+						indirectData->InvalidateProbe = false;
 					}
 
 					// kd_res_next(res);

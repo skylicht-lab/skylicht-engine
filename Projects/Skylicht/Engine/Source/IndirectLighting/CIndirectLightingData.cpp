@@ -36,7 +36,8 @@ namespace Skylicht
 		ReflectionTexture(NULL),
 		SH(NULL),
 		AutoSH(NULL),
-		Init(true),
+		InvalidateProbe(true),
+		InvalidateReflection(true),
 		ReleaseSH(false)
 	{
 

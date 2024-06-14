@@ -202,7 +202,6 @@ namespace Skylicht
 			for (u32 i = 0, n = (u32)probes.size(); i < n; i++)
 			{
 				out[i].copyTo(probes[i]->getSH9());
-
 				probes[i]->needValidate();
 			}
 		}

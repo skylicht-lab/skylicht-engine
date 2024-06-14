@@ -6,6 +6,8 @@
 #include "Context/CContext.h"
 
 #include "LegController/CLegController.h"
+#include "Record/CLegReplayer.h"
+
 #include "CPlayerController.h"
 
 #include "Primitive/CPlane.h"
@@ -116,66 +118,11 @@ void CViewInit::initScene()
 	m.setScale(core::vector3df(100.0, 1.0f, 100.0f));
 	m_plane->getTransform()->setRelativeTransform(m);
 
-	// Robot
-	m_robot = zone->createEmptyObject();
-	m_robot->setName("robot");
+	// robot, that player control by keyboard
+	initRobot();
 
-	// render mesh & init material
-	std::vector<std::string> searchTextureFolders;
-	CEntityPrefab* modelPrefab = CMeshManager::getInstance()->loadModel("SampleModels/Robot/robot_01.fbx", NULL, true);
-
-	CRenderMesh* characterRenderer = m_robot->addComponent<CRenderMesh>();
-	characterRenderer->initFromPrefab(modelPrefab);
-
-	CTextureManager* textureManager = CTextureManager::getInstance();
-
-	ArrayMaterial materials = CMaterialManager::getInstance()->initDefaultMaterial(modelPrefab);
-	materials[0]->changeShader("BuiltIn/Shader/PBR/Forward/PBRSkin.xml");
-	ITexture* albedoMap = textureManager->getTexture("SampleModels/Robot/robot_01_a.png");
-	ITexture* normalMap = textureManager->getTexture("BuiltIn/Textures/NullNormalMap.png");
-	ITexture* rmaMap = textureManager->getTexture("SampleModels/Robot/robot_01_rma.png");
-	materials[0]->setUniformTexture("uTexAlbedo", albedoMap);
-	materials[0]->setUniformTexture("uTexNormal", normalMap);
-	materials[0]->setUniformTexture("uTexRMA", rmaMap);
-	characterRenderer->initMaterial(materials);
-	characterRenderer->printEntites();
-
-	// indirect lighting
-	m_robot->addComponent<CIndirectLighting>();
-
-	// leg controller
-	CLegController* legController = m_robot->addComponent<CLegController>();
-	CWorldTransformData* legTransform = NULL;
-
-	// need update a frame
-	scene->getEntityManager()->update();
-
-	CWorldTransformData* root = characterRenderer->getChildTransform("robot_01.fbx");
-
-	CLeg* legs[4];
-
-	// add leg
-	legTransform = characterRenderer->getChildTransform("leg_A_01");
-	if (legTransform)
-		legs[0] = legController->addLeg(root, legTransform);
-	legTransform = characterRenderer->getChildTransform("leg_B_01");
-	if (legTransform)
-		legs[1] = legController->addLeg(root, legTransform);
-	legTransform = characterRenderer->getChildTransform("leg_C_01");
-	if (legTransform)
-		legs[2] = legController->addLeg(root, legTransform);
-	legTransform = characterRenderer->getChildTransform("leg_D_01");
-	if (legTransform)
-		legs[3] = legController->addLeg(root, legTransform);
-
-	// link near legs to fix for nice walk cycle
-	legs[0]->addLink(legs[3]);
-	legs[1]->addLink(legs[2]);
-	legs[0]->addLink(legs[1]);
-	legs[2]->addLink(legs[3]);
-
-	// player input controller
-	m_robot->addComponent<CPlayerController>();
+	// robot, that replay the animation
+	initReplayRobot();
 
 	// setting camera following robot
 	thirdCamera->setFollowTarget(m_robot);
@@ -207,6 +154,118 @@ void CViewInit::initScene()
 
 	context->getPostProcessorPipeline()->enableAutoExposure(false);
 	context->getPostProcessorPipeline()->enableBloomEffect(false);
+}
+
+void CViewInit::initRobot()
+{
+	CScene* scene = CContext::getInstance()->getScene();
+	CZone* zone = scene->getZone(0);
+
+	m_robot = zone->createEmptyObject();
+	m_robot->setName("robot");
+
+	CRenderMesh* renderMesh = initRobotRenderer(m_robot);
+
+	// leg controller
+	CLegController* legController = m_robot->addComponent<CLegController>();
+	CWorldTransformData* legTransform = NULL;
+
+	// need update a frame
+	scene->getEntityManager()->update();
+
+	CWorldTransformData* root = renderMesh->getChildTransform("robot_01.fbx");
+
+	CLeg* legs[4];
+
+	// add leg
+	legTransform = renderMesh->getChildTransform("leg_A_01");
+	if (legTransform)
+		legs[0] = legController->addLeg(root, legTransform);
+	legTransform = renderMesh->getChildTransform("leg_B_01");
+	if (legTransform)
+		legs[1] = legController->addLeg(root, legTransform);
+	legTransform = renderMesh->getChildTransform("leg_C_01");
+	if (legTransform)
+		legs[2] = legController->addLeg(root, legTransform);
+	legTransform = renderMesh->getChildTransform("leg_D_01");
+	if (legTransform)
+		legs[3] = legController->addLeg(root, legTransform);
+
+	// link near legs to fix for nice walk cycle
+	legs[0]->addLink(legs[3]);
+	legs[1]->addLink(legs[2]);
+	legs[0]->addLink(legs[1]);
+	legs[2]->addLink(legs[3]);
+
+	// player input controller
+	m_robot->addComponent<CPlayerController>();
+}
+
+CRenderMesh* CViewInit::initRobotRenderer(CGameObject* obj)
+{
+	// render mesh & init material
+	std::vector<std::string> searchTextureFolders;
+	CEntityPrefab* modelPrefab = CMeshManager::getInstance()->loadModel("SampleModels/Robot/robot_01.fbx", NULL, true);
+
+	CRenderMesh* renderer = obj->addComponent<CRenderMesh>();
+	renderer->initFromPrefab(modelPrefab);
+
+	CTextureManager* textureManager = CTextureManager::getInstance();
+
+	ArrayMaterial materials = CMaterialManager::getInstance()->initDefaultMaterial(modelPrefab);
+	materials[0]->changeShader("BuiltIn/Shader/PBR/Forward/PBRSkin.xml");
+	ITexture* albedoMap = textureManager->getTexture("SampleModels/Robot/robot_01_a.png");
+	ITexture* normalMap = textureManager->getTexture("BuiltIn/Textures/NullNormalMap.png");
+	ITexture* rmaMap = textureManager->getTexture("SampleModels/Robot/robot_01_rma.png");
+	materials[0]->setUniformTexture("uTexAlbedo", albedoMap);
+	materials[0]->setUniformTexture("uTexNormal", normalMap);
+	materials[0]->setUniformTexture("uTexRMA", rmaMap);
+
+	renderer->initMaterial(materials);
+	renderer->printEntites();
+
+	// indirect lighting
+	obj->addComponent<CIndirectLighting>();
+
+	return renderer;
+}
+
+void CViewInit::initReplayRobot()
+{
+	CScene* scene = CContext::getInstance()->getScene();
+	CZone* zone = scene->getZone(0);
+
+	CGameObject* robot = zone->createEmptyObject();
+	robot->setName("robot-replay");
+
+	CRenderMesh* renderMesh = initRobotRenderer(robot);
+
+	// leg replayer
+	CLegReplayer* legReplayer = robot->addComponent<CLegReplayer>();
+	CWorldTransformData* legTransform = NULL;
+
+	// need update a frame
+	scene->getEntityManager()->update();
+
+	CWorldTransformData* root = renderMesh->getChildTransform("robot_01.fbx");
+	CLegIK* legs[4];
+
+	// add leg
+	legTransform = renderMesh->getChildTransform("leg_A_01");
+	if (legTransform)
+		legs[0] = legReplayer->addLeg(root, legTransform);
+	legTransform = renderMesh->getChildTransform("leg_B_01");
+	if (legTransform)
+		legs[1] = legReplayer->addLeg(root, legTransform);
+	legTransform = renderMesh->getChildTransform("leg_C_01");
+	if (legTransform)
+		legs[2] = legReplayer->addLeg(root, legTransform);
+	legTransform = renderMesh->getChildTransform("leg_D_01");
+	if (legTransform)
+		legs[3] = legReplayer->addLeg(root, legTransform);
+
+	// hide this robot
+	robot->setVisible(false);
 }
 
 void CViewInit::onDestroy()
@@ -325,7 +384,7 @@ void CViewInit::onRender()
 			// light probe
 			CGameObject* lightProbeObj = zone->createEmptyObject();
 			CLightProbe* lightProbe = lightProbeObj->addComponent<CLightProbe>();
-			lightProbeObj->getTransformEuler()->setPosition(core::vector3df(0.0f, 5.0f, 0.0f));
+			lightProbeObj->getTransformEuler()->setPosition(core::vector3df(0.0f, 1.0f, 0.0f));
 
 			CGameObject* bakeCameraObj = scene->getZone(0)->createEmptyObject();
 			CCamera* bakeCamera = bakeCameraObj->addComponent<CCamera>();

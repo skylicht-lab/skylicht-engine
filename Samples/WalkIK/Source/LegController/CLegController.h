@@ -54,5 +54,15 @@ public:
 		return m_legs;
 	}
 
+	inline void setTargetDistance(float distance)
+	{
+		m_targetDistance = distance;
+	}
+
+	inline float getTargetDistance()
+	{
+		return m_targetDistance;
+	}
+
 	virtual void lateUpdate();
 };

@@ -4,16 +4,32 @@
 
 #include "LegController/CLegController.h"
 #include "Record/CRecorder.h"
+#include "Record/CLegReplayer.h"
+
+#include "Camera/C3rdCamera.h"
 
 class CViewDemo :
 	public CView,
 	public IEventReceiver
 {
 protected:
-	CLegController* m_legController;
+	enum EState
+	{
+		StateController,
+		StateRecording,
+		StateEdit
+	};
 
-	bool m_isRecording;
+	CLegController* m_legController;
+	CLegReplayer* m_legReplayer;
+
+	EState m_state;
+
 	CRecorder* m_recorder;
+
+	C3rdCamera* m_3rdCamera;
+	CGameObject* m_robot;
+	CGameObject* m_robotReplay;
 
 public:
 	CViewDemo();
