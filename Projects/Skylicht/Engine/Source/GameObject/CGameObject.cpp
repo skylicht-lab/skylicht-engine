@@ -218,6 +218,30 @@ namespace Skylicht
 		return core::quaternion(matrix);
 	}
 
+	core::matrix4 CGameObject::calcWorldTransform()
+	{
+		return getTransform()->calcWorldTransform();
+	}
+
+	const core::matrix4& CGameObject::getWorldTransform()
+	{
+		return GET_ENTITY_DATA(m_entity, CWorldTransformData)->World;
+	}
+
+	core::vector3df CGameObject::getUp()
+	{
+		core::vector3df up = Transform::Oy;
+		getWorldTransform().rotateVect(up);
+		return up;
+	}
+
+	core::vector3df CGameObject::getFront()
+	{
+		core::vector3df front = Transform::Oz;
+		getWorldTransform().rotateVect(front);
+		return front;
+	}
+
 	void CGameObject::releaseAllComponent()
 	{
 		for (CComponentSystem*& comp : m_components)

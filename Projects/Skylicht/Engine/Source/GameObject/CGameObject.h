@@ -170,6 +170,14 @@ namespace Skylicht
 
 		core::quaternion getRotation();
 
+		core::vector3df getUp();
+
+		core::vector3df getFront();
+
+		inline const core::matrix4& getWorldTransform();
+
+		core::matrix4 calcWorldTransform();
+
 		inline bool isEnable()
 		{
 			return m_enable;

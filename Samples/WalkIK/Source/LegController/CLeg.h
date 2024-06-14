@@ -50,14 +50,16 @@ public:
 		return m_targetVector;
 	}
 
-	core::vector3df getPosition();
-	core::vector3df getFootPosition();
-
 	inline void setFootTargetPosition(const core::vector3df& pos)
 	{
 		m_lastFootPosition = m_footTargetPosition;
 		m_footTargetPosition = pos;
 		m_animTime = 0.0f;
+	}
+
+	inline core::vector3df& getFootPosition()
+	{
+		return m_footPosition;
 	}
 
 	inline const core::vector3df& getFootTargetPosition()
