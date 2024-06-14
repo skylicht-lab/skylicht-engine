@@ -28,10 +28,11 @@ protected:
 	float m_moveTime;
 	float m_standTime;
 
+	CWorldTransformData* m_root;
 	std::vector<CLeg*> m_legs;
 
 	core::vector3df m_lastPosition;
-	core::vector3df m_lastRotation;
+	core::quaternion m_lastRotation;
 
 public:
 	CLegController();

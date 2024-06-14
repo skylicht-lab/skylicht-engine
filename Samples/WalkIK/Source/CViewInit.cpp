@@ -83,7 +83,6 @@ void CViewInit::initScene()
 	CGameObject* camObj = zone->createEmptyObject();
 	camObj->addComponent<CCamera>();
 	C3rdCamera* thirdCamera = camObj->addComponent<C3rdCamera>();
-	// camObj->addComponent<CEditorCamera>();
 
 	CCamera* camera = camObj->getComponent<CCamera>();
 	camera->setPosition(core::vector3df(0.0f, 5.0f, 10.0f));
@@ -96,20 +95,11 @@ void CViewInit::initScene()
 
 	// sky
 	CSkySun* skySun = zone->createEmptyObject()->addComponent<CSkySun>();
-	/*
-	ITexture* skyDomeTexture = CTextureManager::getInstance()->getTexture("Common/Textures/Sky/PaperMill.png");
-	if (skyDomeTexture != NULL)
-	{
-		CSkyDome* skyDome = zone->createEmptyObject()->addComponent<CSkyDome>();
-		skyDome->setData(skyDomeTexture, SColor(255, 255, 255, 255));
-	}
-	*/
 
 	// reflection probe
 	CGameObject* reflectionProbeObj = zone->createEmptyObject();
 	reflectionProbeObj->getTransformEuler()->setPosition(core::vector3df(0.0f, 2.0f, 0.0f));
 	m_reflectionProbe = reflectionProbeObj->addComponent<CReflectionProbe>();
-	// m_reflectionProbe->loadStaticTexture("Common/Textures/Sky/PaperMill");
 
 	// Plane
 	m_plane = zone->createEmptyObject();

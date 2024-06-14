@@ -10,11 +10,12 @@
 CLegController::CLegController() :
 	m_drawDebug(false),
 	m_renderMesh(NULL),
+	m_root(NULL),
 	m_targetDistance(3.3f),
 	m_moveStepDistance(0.1f),
 	m_footStepLength(0.3f),
 	m_stepHeight(0.2f),
-	m_stepTime(0.25f),
+	m_stepTime(0.3f),
 	m_moveTime(0.0f),
 	m_standTime(0.0f),
 	m_rotTime(0.0f),
@@ -43,14 +44,34 @@ void CLegController::initComponent()
 
 void CLegController::updateComponent()
 {
+	float minY = FLT_MAX, maxY = FLT_MIN;
+
 	for (CLeg* leg : m_legs)
+	{
 		leg->update();
+
+		const core::vector3df& footPosition = leg->getFootPosition();
+		if (footPosition.Y < minY)
+			minY = footPosition.Y;
+		if (footPosition.Y > maxY)
+			maxY = footPosition.Y;
+	}
+
+	float offsetY = maxY - minY;
+	if (offsetY < m_footStepLength)
+	{
+		// move up the body when he is walking
+		if (m_root)
+			m_root->Relative.setTranslation(core::vector3df(0.0f, offsetY * 0.2f, 0.0f));
+	}
 }
 
 CLeg* CLegController::addLeg(CWorldTransformData* root, CWorldTransformData* leg)
 {
 	if (m_renderMesh && leg)
 	{
+		m_root = root;
+
 		std::vector<CWorldTransformData*> joints;
 		joints.push_back(leg);
 		m_renderMesh->getChildTransforms(leg, joints);
@@ -58,8 +79,7 @@ CLeg* CLegController::addLeg(CWorldTransformData* root, CWorldTransformData* leg
 		if (joints.size() >= 2)
 		{
 			core::vector3df objectPosition = m_gameObject->getPosition();
-
-			core::vector3df legPosition = joints[0]->World.getTranslation();
+			core::vector3df legPosition = leg->World.getTranslation();
 
 			core::vector3df targetVector = legPosition - objectPosition;
 			core::vector3df targetPosition = objectPosition + targetVector * m_targetDistance;
@@ -83,12 +103,10 @@ void CLegController::lateUpdate()
 
 	core::vector3df legPosition, targetPosition, footTarget;
 	core::vector3df objectPosition = m_gameObject->getPosition();
-	core::vector3df objectRotation = m_gameObject->getTransformEuler()->getRotation();
+	core::quaternion objectRotation = m_gameObject->getRotation();
+	core::vector3df up = m_gameObject->getUp();
 
-	CWorldTransformData* worldTransform = GET_ENTITY_DATA(m_gameObject->getEntity(), CWorldTransformData);
-
-	core::vector3df up = Transform::Oy;
-	worldTransform->World.rotateVect(up);
+	const core::matrix4& worldTransform = m_gameObject->getWorldTransform();
 
 	float timestepSec = getTimeStep() / 1000.0f;
 	float balanceStandingStep2 = 0.1f * 0.1f;
@@ -141,13 +159,13 @@ void CLegController::lateUpdate()
 			const core::vector3df& footTarget = leg->getFootTargetPosition();
 
 			core::vector3df targetVector = leg->getTargetVector();
-			worldTransform->World.rotateVect(targetVector);
+			worldTransform.rotateVect(targetVector);
 
 			CVector::projectOnPlane(targetVector, up);
 
 			targetPosition = objectPosition + targetVector * m_targetDistance;
 			targetPosition += moveVector * (m_moveTime / 0.1f) * m_moveStepDistance;
-			
+
 			if (m_drawDebug)
 			{
 				CSceneDebug* debug = CSceneDebug::getInstance()->getNoZDebug();

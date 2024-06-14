@@ -46,16 +46,6 @@ void CLeg::addLink(CLeg* leg)
 		leg->m_link.push_back(this);
 }
 
-core::vector3df CLeg::getPosition()
-{
-	return m_joints[0]->World.getTranslation();
-}
-
-core::vector3df CLeg::getFootPosition()
-{
-	return m_joints[m_joints.size() - 1]->World.getTranslation();
-}
-
 void CLeg::update()
 {
 	m_animTime = m_animTime + getTimeStep() / 1000.0f;
