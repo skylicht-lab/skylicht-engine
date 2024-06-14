@@ -30,7 +30,7 @@ namespace Skylicht
 	class SKYLICHT_API CKeyFrameData
 	{
 	public:
-		f32 Frame;
+		f32 Frame; // Second
 		T Value;
 	};
 

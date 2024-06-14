@@ -12,12 +12,11 @@ protected:
 	bool m_drawDebug;
 
 	std::vector<CWorldTransformData*> m_joints;
-
 	std::vector<core::matrix4> m_worlds;
 	std::vector<core::vector3df> m_upVector;
-	core::vector3df m_scale;
-
 	std::vector<float> m_lengths;
+
+	core::vector3df m_scale;
 
 	core::vector3df m_footPosition;
 	core::vector3df m_lastFootPosition;

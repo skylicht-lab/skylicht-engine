@@ -3,12 +3,17 @@
 #include "ViewManager/CView.h"
 
 #include "LegController/CLegController.h"
+#include "Record/CRecorder.h"
 
 class CViewDemo :
 	public CView,
 	public IEventReceiver
 {
 protected:
+	CLegController* m_legController;
+
+	bool m_isRecording;
+	CRecorder* m_recorder;
 
 public:
 	CViewDemo();

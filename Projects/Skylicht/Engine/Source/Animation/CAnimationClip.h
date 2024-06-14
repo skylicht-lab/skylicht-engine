@@ -39,7 +39,7 @@ namespace Skylicht
 	{
 	public:
 		std::string AnimName;
-		float Duration;
+		float Duration; // Second
 		bool Loop;
 
 		std::vector<SEntityAnim*> AnimInfo;
