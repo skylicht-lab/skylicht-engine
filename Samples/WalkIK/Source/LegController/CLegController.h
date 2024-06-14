@@ -1,5 +1,4 @@
 #pragma once
-#pragma once
 
 #include "LegController/CLeg.h"
 #include "RenderMesh/CRenderMesh.h"
@@ -44,6 +43,16 @@ public:
 	virtual void updateComponent();
 
 	CLeg* addLeg(CWorldTransformData* root, CWorldTransformData* leg);
+
+	inline CWorldTransformData* getRoot()
+	{
+		return m_root;
+	}
+
+	inline std::vector<CLeg*>& getLegs()
+	{
+		return m_legs;
+	}
 
 	virtual void lateUpdate();
 };

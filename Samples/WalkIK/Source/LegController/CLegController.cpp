@@ -44,26 +44,22 @@ void CLegController::initComponent()
 
 void CLegController::updateComponent()
 {
-	float minY = FLT_MAX, maxY = FLT_MIN;
+	float avgY = 0.0f;
 
 	for (CLeg* leg : m_legs)
 	{
 		leg->update();
 
 		const core::vector3df& footPosition = leg->getFootPosition();
-		if (footPosition.Y < minY)
-			minY = footPosition.Y;
-		if (footPosition.Y > maxY)
-			maxY = footPosition.Y;
+		avgY = avgY + footPosition.Y;
 	}
 
-	float offsetY = maxY - minY;
-	if (offsetY < m_footStepLength)
-	{
-		// move up the body when he is walking
-		if (m_root)
-			m_root->Relative.setTranslation(core::vector3df(0.0f, minY + offsetY * 0.2f, 0.0f));
-	}
+	if (m_legs.size() > 0)
+		avgY = avgY / (float)m_legs.size();
+
+	// move up the body when he is walking
+	if (m_root)
+		m_root->Relative.setTranslation(core::vector3df(0.0f, avgY, 0.0f));
 }
 
 CLeg* CLegController::addLeg(CWorldTransformData* root, CWorldTransformData* leg)
@@ -115,7 +111,7 @@ void CLegController::lateUpdate()
 	core::vector3df moveVector = objectPosition - m_lastPosition;
 	if (moveVector.getLengthSQ() > 0)
 	{
-		// walk
+		// walking
 		moveVector.normalize();
 		m_moveTime = m_moveTime + timestepSec;
 		m_standTime = 0.0f;
@@ -127,13 +123,13 @@ void CLegController::lateUpdate()
 		m_moveTime = m_moveTime - timestepSec;
 		if (objectRotation != m_lastRotation)
 		{
-			// stand & rotate
+			// standing & rotate
 			m_standTime = 0;
 			m_rotTime = m_rotTime + timestepSec;
 		}
 		else
 		{
-			// stand
+			// standing
 			m_rotTime = 0.0f;
 			m_rotDirection = 0.0f;
 			m_standTime = m_standTime + timestepSec;
