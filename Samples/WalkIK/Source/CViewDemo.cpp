@@ -4,6 +4,7 @@
 #include "Context/CContext.h"
 
 #include "imgui.h"
+#include "imgui_internal.h"
 #include "CImguiManager.h"
 
 CViewDemo::CViewDemo() :
@@ -16,6 +17,8 @@ CViewDemo::CViewDemo() :
 	m_3rdCamera(NULL)
 {
 	m_recorder = new CRecorder();
+	m_messageBox = "";
+	strcpy(m_fileName, "walk.sanim");
 }
 
 CViewDemo::~CViewDemo()
@@ -141,15 +144,18 @@ void CViewDemo::onGUI()
 			switch (m_state)
 			{
 			case StateController:
-				if (ImGui::Button("Record animation"))
+				if (ImGui::Button("Reset transform"))
 				{
-					m_state = StateRecording;
-					m_recorder->start();
+					CTransformEuler* euler = m_robot->getTransformEuler();
+					euler->setPosition(core::vector3df());
+					euler->setRotation(core::vector3df());
 				}
+
+				ImGui::Separator();
 
 				if (m_recorder->getFrameCount() > 0)
 				{
-					if (ImGui::Button("Edit/Replay animation"))
+					if (ImGui::Button("Edit/Export"))
 					{
 						m_state = StateEdit;
 						m_robotReplay->setVisible(true);
@@ -161,9 +167,16 @@ void CViewDemo::onGUI()
 							m_3rdCamera->setFollowTarget(m_robotReplay);
 					}
 				}
+
+				if (ImGui::Button("Record"))
+				{
+					m_state = StateRecording;
+					m_recorder->start();
+				}
+
 				break;
 			case StateRecording:
-				if (ImGui::Button("Stop recording"))
+				if (ImGui::Button("Stop"))
 				{
 					m_state = StateController;
 				}
@@ -175,6 +188,37 @@ void CViewDemo::onGUI()
 					m_legReplayer->setRootMotion(b);
 
 				ImGui::SliderFloat2("Clip", m_recorder->getClip(), 0.0f, 1.0f);
+
+				ImGui::InputText("Anim name", m_fileName, 100);
+
+				size_t len = strlen(m_fileName);
+				bool disable = len == 0;
+				ImGui::PushItemFlag(ImGuiItemFlags_Disabled, disable);
+				if (ImGui::Button("Export"))
+				{
+					if (m_legReplayer->exportAnim(m_fileName, CContext::getInstance()->getScene()) == true)
+					{
+						m_messageBox = "Export animation success at Bin folder!";
+						ImGui::OpenPopup("Message box");
+					}
+					else
+					{
+						m_messageBox = "Export animation failed!";
+						ImGui::OpenPopup("Message box");
+					}
+				}
+				ImGui::PopItemFlag();
+
+				if (ImGui::BeginPopupModal("Message box", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+				{
+					ImGui::Text(m_messageBox);
+					ImGui::Separator();
+					ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+					if (ImGui::Button("Close"))
+						ImGui::CloseCurrentPopup();
+					ImGui::PopStyleVar();
+					ImGui::EndPopup();
+				}
 
 				if (ImGui::Button("Exit"))
 				{

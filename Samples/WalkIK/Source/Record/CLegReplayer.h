@@ -5,6 +5,7 @@
 #include "RenderMesh/CRenderMesh.h"
 #include "Components/CComponentSystem.h"
 #include "Components/ILateUpdate.h"
+#include "Scene/CScene.h"
 
 using namespace Skylicht;
 
@@ -39,6 +40,8 @@ public:
 
 	CLegIK* addLeg(CWorldTransformData* root, CWorldTransformData* leg);
 
+	bool exportAnim(const char* anim, CScene* scene);
+
 	inline CWorldTransformData* getRoot()
 	{
 		return m_root;
@@ -60,4 +63,6 @@ public:
 	}
 
 	virtual void lateUpdate();
+
+	void getAnimationTransform(const core::matrix4& mat, core::vector3df& position, core::quaternion& rotation);
 };

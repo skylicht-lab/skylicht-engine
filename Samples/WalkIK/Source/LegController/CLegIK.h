@@ -28,6 +28,10 @@ public:
 
 	virtual void lateUpdate();
 
+	std::vector<CWorldTransformData*>& getJoints()
+	{
+		return m_joints;
+	}
 
 	inline void setFootPosition(const core::vector3df& pos)
 	{

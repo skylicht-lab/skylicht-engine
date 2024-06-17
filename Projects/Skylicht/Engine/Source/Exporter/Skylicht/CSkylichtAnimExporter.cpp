@@ -127,6 +127,6 @@ namespace Skylicht
 		}
 
 		writeFile->drop();
-		return false;
+		return true;
 	}
 }
