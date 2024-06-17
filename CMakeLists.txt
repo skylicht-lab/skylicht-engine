@@ -55,7 +55,7 @@ option(INSTALL_LIBS "Install library" OFF)
 option(USE_MSVC_RUNTIME_LIBRARY_DLL "Use MSVC Runtime Library DLL (/MD or /MDd)" ON)
 
 # build skylicht engine tool on Windows
-set(BUILD_ENGINE_TOOL ON)
+option(BUILD_ENGINE_TOOL "Build with scene editor" ON)
 
 # skylicht engine option
 option(BUILD_DEBUG_VLD "Build with debug visual leak detector" OFF)
@@ -253,8 +253,8 @@ subdirs (Projects/Skylicht/Lightmapper)
 endif()
 
 # skylicht physics library
-if (BUILD_SKYLICHT_PHYSICS)
-add_definitions(-DBUILD_SKYLICHT_PHYSICS)
+if (BUILD_SKYLICHT_PHYSIC)
+add_definitions(-DBUILD_SKYLICHT_PHYSIC)
 if (BUILD_BULLET_PHYSIC_LIB)
 subdirs (Projects/Bullet3)
 endif()
