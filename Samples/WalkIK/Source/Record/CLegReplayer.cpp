@@ -54,6 +54,12 @@ void CLegReplayer::updateComponent()
 	if (!m_recoder || m_recoder->getFrameCount() == 0)
 		return;
 
+	float* clips = m_recoder->getClip();
+	m_frameFrom = m_duration * clips[0];
+	m_frameTo = m_duration * clips[1];
+	if (m_frameFrom > m_frameTo)
+		m_frameFrom = m_frameTo;
+
 	if (!m_pause)
 	{
 		m_frame = m_frame + getTimeStep() * 0.001f;

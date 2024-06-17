@@ -8,7 +8,16 @@ CRecorder::CRecorder() :
 	m_lastTime(0.0f),
 	m_hint(0)
 {
+	m_clip[0] = 0.0f;
+	m_clip[1] = 1.0f;
 
+	for (int i = 0; i < 10; i++)
+	{
+		u32 r = (u32)(os::Randomizer::frand() * 200.0f + 20.0f);
+		u32 g = (u32)(os::Randomizer::frand() * 200.0f + 20.0f);
+		u32 b = (u32)(os::Randomizer::frand() * 200.0f + 20.0f);
+		m_randomColor[i].set(255, r, g, b);
+	}
 }
 
 CRecorder::~CRecorder()
@@ -39,7 +48,11 @@ SRecordFrame CRecorder::getFrameData(float frame)
 		SRecordFrame* f0 = m_frames[i];
 		SRecordFrame* f1 = m_frames[i + 1];
 
-		if (f0->Time <= frame && frame <= f1->Time)
+		if (i == 0 && frame < f0->Time)
+		{
+			return *f0;
+		}
+		else if (f0->Time <= frame && frame <= f1->Time)
 		{
 			SRecordFrame ret;
 			float frameTime = f1->Time - f0->Time;
@@ -110,16 +123,38 @@ void CRecorder::clear()
 
 void CRecorder::draw()
 {
+	float duration = getDuration();
+
+	float clipFrom = duration * m_clip[0];
+	float clipTo = duration * m_clip[1];
+	if (clipFrom >= clipTo)
+		clipFrom = clipTo;
+
+	float time = clipFrom;
+
+	SColor blue(255, 0, 0, 255);
+
 	CSceneDebug* debug = CSceneDebug::getInstance();
-	for (size_t i = 1, n = m_frames.size(); i < n; i++)
+
+	float fps = 30.0f;
+	float deltaTime = 1.0f / fps;
+
+	SRecordFrame f0, f1;
+
+	while (time < clipTo)
 	{
-		SRecordFrame* f0 = m_frames[i - 1];
-		SRecordFrame* f1 = m_frames[i];
+		f0 = getFrameData(time);
 
-		size_t nLeg = f0->FootPosition.size();
+		time = time + deltaTime;
+		if (time > clipTo)
+			time = clipTo;
+
+		f1 = getFrameData(time);
+
+		size_t nLeg = f0.FootPosition.size();
 		for (int j = 0; j < nLeg; j++)
-			debug->addLine(f0->FootPosition[j], f1->FootPosition[j], SColor(255, 255, 0, 0));
+			debug->addLine(f0.FootPosition[j], f1.FootPosition[j], m_randomColor[j % 10]);
 
-		debug->addLine(f0->HipRelativePosition, f1->HipRelativePosition, SColor(255, 0, 0, 255));
+		debug->addLine(f0.ObjectPosition + f0.HipRelativePosition, f1.ObjectPosition + f1.HipRelativePosition, blue);
 	}
 }

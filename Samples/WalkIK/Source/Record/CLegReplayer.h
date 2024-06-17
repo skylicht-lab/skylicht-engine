@@ -1,7 +1,7 @@
 #pragma once
 
-#include "CLegIK.h"
 #include "CRecorder.h"
+#include "LegController/CLegIK.h"
 #include "RenderMesh/CRenderMesh.h"
 #include "Components/CComponentSystem.h"
 #include "Components/ILateUpdate.h"

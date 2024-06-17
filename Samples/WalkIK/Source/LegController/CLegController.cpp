@@ -59,7 +59,7 @@ void CLegController::updateComponent()
 
 	// root hip animation when he is walking
 	if (m_root)
-		m_root->Relative.setTranslation(core::vector3df(0.0f, avgY * 0.8f, 0.0f));
+		m_root->Relative.setTranslation(core::vector3df(0.0f, avgY, 0.0f));
 }
 
 CLeg* CLegController::addLeg(CWorldTransformData* root, CWorldTransformData* leg)
