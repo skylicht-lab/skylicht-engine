@@ -79,7 +79,7 @@ file(GLOB_RECURSE zlib_source
 setup_project_group("${zlib_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 
 #freetype2
-if (BUILD_FT2_LIB)
+if (BUILD_FREETYPE)
 set(freetype_source
 	./source/freetype2/src/autofit/autofit.c
 	./source/freetype2/src/base/basepic.c

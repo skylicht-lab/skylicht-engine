@@ -26,7 +26,6 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "IFont.h"
 
-#include "Graphics2D/Glyph/CGlyphFreetype.h"
 #include "Graphics2D/Atlas/CAtlas.h"
 #include "CSpriteFrame.h"
 
