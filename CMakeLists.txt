@@ -54,8 +54,6 @@ option(INSTALL_LIBS "Install library" OFF)
 
 option(USE_MSVC_RUNTIME_LIBRARY_DLL "Use MSVC Runtime Library DLL (/MD or /MDd)" ON)
 
-option(BUILD_EXAMPLE "Build example application" ON)
-
 # build skylicht engine tool on Windows
 set(BUILD_ENGINE_TOOL ON)
 
@@ -64,11 +62,9 @@ option(BUILD_DEBUG_VLD "Build with debug visual leak detector" OFF)
 
 option(BUILD_SDL "Build with Simple DirectMedia Layer is a cross-platform development library" OFF)
 
-option(BUILD_IMGUI "Build Ocornut Imgui" ON)
-
-option(BUILD_SKYLICHT_NETWORK "Build Http, Socket module" ON)
-
 option(USE_OPENMP "Use openmp for multithread optimize" ON)
+
+include(SkylichtConfig.cmake)
 
 include(PlatformConfig.cmake)
 
@@ -110,8 +106,9 @@ if (USE_OPENMP)
 	endif()
 endif()
 
+# network
 if (BUILD_SKYLICHT_NETWORK)
-	add_definitions(-DUSE_SKYLICHT_NETWORK)
+	add_definitions(-DBUILD_SKYLICHT_NETWORK)
 	# enable curl
 	set(BUILD_CURL ON)
 	add_definitions(-DHAVE_CURL)
@@ -128,7 +125,9 @@ else()
 endif()
 
 # freetype font library
+if (BUILD_FREETYPE)
 add_definitions(-DFT2_BUILD_LIBRARY)
+endif()
 
 # engine static library
 if (NOT BUILD_SHARED_LIBS)
@@ -146,17 +145,8 @@ if (BUILD_SDL)
 endif()
 
 # bullet engine
-option(BUILD_BULLET_PHYSIC_LIB "Build bullet physic" ON)
-
 if (BUILD_BULLET_PHYSIC_LIB)
 	add_definitions(-DUSE_BULLET_PHYSIC_ENGINE)
-endif()
-
-# skylicht recast navigation
-option(BUILD_RECAST_NAVIGATION_LIB "Build Recast Navigation" ON)
-
-if (BUILD_RECAST_NAVIGATION_LIB)
-	add_definitions(-DUSE_RECAST_NAVIGATION_ENGINE)
 endif()
 
 # unicode library
@@ -240,21 +230,56 @@ if (BUILD_IMGUI)
 subdirs (Projects/Imgui)
 endif()
 
-if (BUILD_BULLET_PHYSIC_LIB)
-subdirs (Projects/Bullet3)
-endif()
-
 # skylicht engine
 subdirs (Projects/Skylicht/System)
 subdirs (Projects/Skylicht/Engine)
-subdirs (Projects/Skylicht/Components)
-subdirs (Projects/Skylicht/Collision)
-subdirs (Projects/Skylicht/Physics)
-subdirs (Projects/Skylicht/Lightmapper)
-subdirs (Projects/Skylicht/Audio)
-subdirs (Projects/Skylicht/Crypto)
-subdirs (Projects/Skylicht/UserInterface)
 
+# skylicht components
+if (BUILD_SKYLICHT_COMPONENTS)
+add_definitions(-DBUILD_SKYLICHT_COMPONENTS)
+subdirs (Projects/Skylicht/Components)
+endif()
+
+# skylicht collision
+if (BUILD_SKYLICHT_COLLISION)
+add_definitions(-DBUILD_SKYLICHT_COLLISION)
+subdirs (Projects/Skylicht/Collision)
+endif()
+
+# skylicht lightmapper
+if (BUILD_SKYLICHT_LIGHMAPPER)
+add_definitions(-DBUILD_SKYLICHT_LIGHMAPPER)
+subdirs (Projects/Skylicht/Lightmapper)
+endif()
+
+# skylicht physics library
+if (BUILD_SKYLICHT_PHYSICS)
+add_definitions(-DBUILD_SKYLICHT_PHYSICS)
+if (BUILD_BULLET_PHYSIC_LIB)
+subdirs (Projects/Bullet3)
+endif()
+subdirs (Projects/Skylicht/Physics)
+endif()
+
+# skylicht audio
+if (BUILD_SKYLICHT_AUDIO)
+add_definitions(-DBUILD_SKYLICHT_AUDIO)
+subdirs (Projects/Skylicht/Audio)
+endif()
+
+# skylicht ui
+if (BUILD_SKYLICHT_UI)
+add_definitions(-DBUILD_SKYLICHT_UI)
+subdirs (Projects/Skylicht/UserInterface)
+endif()
+
+# skylicht crypto
+if (BUILD_SKYLICHT_CRYPTO)
+add_definitions(-DBUILD_SKYLICHT_CRYPTO)
+subdirs (Projects/Skylicht/Crypto)
+endif()
+
+# skylicht network
 if (BUILD_SKYLICHT_NETWORK)
 subdirs (Projects/Skylicht/Network)
 endif()

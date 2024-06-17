@@ -28,6 +28,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CAnimation.h"
 #include "CAnimationClip.h"
 
+#include "Importer/IAnimationImporter.h"
+#include "Exporter/IAnimationExporter.h"
+
 namespace Skylicht
 {
 	class SKYLICHT_API CAnimationManager
@@ -53,7 +56,11 @@ namespace Skylicht
 
 		CAnimationClip* loadAnimation(const char* resource);
 
+		CAnimationClip* loadAnimation(const char* resource, IAnimationImporter* importer);
+
 		bool exportAnimation(CAnimationClip* clip, const char* output);
+
+		bool exportAnimation(CAnimationClip* clip, const char* output, IAnimationExporter* exporter);
 
 		void releaseAllClips();
 

@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #if defined(_WIN32) || defined(_WIN64) || defined(WIN32) || defined(WIN64)
 
-#ifdef USE_SKYLICHT_NETWORK
+#ifdef BUILD_SKYLICHT_NETWORK
 #include <Ws2tcpip.h>
 #include <Winsock2.h>
 #endif
@@ -40,7 +40,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include <memory.h>
 #include <unistd.h>
 
-#ifdef USE_SKYLICHT_NETWORK
+#ifdef BUILD_SKYLICHT_NETWORK
 #include <netinet/in.h>
 #include <net/if.h>
 #include <arpa/inet.h>

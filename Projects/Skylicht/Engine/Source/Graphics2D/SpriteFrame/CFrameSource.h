@@ -26,7 +26,6 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Serializable/CAssetResource.h"
 
-#include "Graphics2D/Glyph/CGlyphFreetype.h"
 #include "Graphics2D/SpriteFrame/CSpriteFont.h"
 #include "Graphics2D/SpriteFrame/CGlyphFont.h"
 

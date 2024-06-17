@@ -37,13 +37,6 @@ namespace Skylicht
 
 	CAnimationClip* CAnimationManager::loadAnimation(const char* resource)
 	{
-		// find in cached
-		std::map<std::string, CAnimationClip*>::iterator findCache = m_clips.find(resource);
-		if (findCache != m_clips.end())
-		{
-			return (*findCache).second;
-		}
-
 		IAnimationImporter* importer = NULL;
 		CAnimationClip* output = NULL;
 
@@ -55,6 +48,26 @@ namespace Skylicht
 			importer = new CFBXAnimLoader();
 		else if (ext == "sanim")
 			importer = new CSkylichtAnimLoader();
+
+		if (importer != NULL)
+		{
+			output = loadAnimation(resource, importer);
+			delete importer;
+		}
+
+		return output;
+	}
+
+	CAnimationClip* CAnimationManager::loadAnimation(const char* resource, IAnimationImporter* importer)
+	{
+		// find in cached
+		std::map<std::string, CAnimationClip*>::iterator findCache = m_clips.find(resource);
+		if (findCache != m_clips.end())
+		{
+			return (*findCache).second;
+		}
+
+		CAnimationClip* output = NULL;
 
 		if (importer != NULL)
 		{
@@ -80,8 +93,6 @@ namespace Skylicht
 				delete output;
 				output = NULL;
 			}
-
-			delete importer;
 		}
 
 		return output;
@@ -99,9 +110,16 @@ namespace Skylicht
 		{
 			bool result = exporter->exportAnim(clip, output);
 			delete exporter;
-			return true;
+			return result;
 		}
 
+		return false;
+	}
+
+	bool CAnimationManager::exportAnimation(CAnimationClip* clip, const char* output, IAnimationExporter* exporter)
+	{
+		if (exporter != NULL)
+			return exporter->exportAnim(clip, output);
 		return false;
 	}
 

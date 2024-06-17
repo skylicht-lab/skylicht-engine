@@ -36,6 +36,14 @@ file(GLOB_RECURSE curl_source
 	./source/curl/**.c 
 	./source/curl/**.h)
 setup_project_group("${curl_source}" ${CMAKE_CURRENT_SOURCE_DIR})
+
+#json
+file(GLOB_RECURSE json_source 
+	./source/json/**.cpp 
+	./source/json/**.hpp 
+	./source/json/**.c 
+	./source/json/**.h)
+setup_project_group("${json_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 endif()
 
 #jpeglib
@@ -54,14 +62,6 @@ file(GLOB_RECURSE libpng_source
 	./source/libpng/**.h)
 setup_project_group("${libpng_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 
-#json
-file(GLOB_RECURSE json_source 
-	./source/json/**.cpp 
-	./source/json/**.hpp 
-	./source/json/**.c 
-	./source/json/**.h)
-setup_project_group("${json_source}" ${CMAKE_CURRENT_SOURCE_DIR})
-
 #lzma
 file(GLOB_RECURSE lzma_source 
 	./source/lzma/**.cpp 
@@ -69,14 +69,6 @@ file(GLOB_RECURSE lzma_source
 	./source/lzma/**.c 
 	./source/lzma/**.h)
 setup_project_group("${lzma_source}" ${CMAKE_CURRENT_SOURCE_DIR})
-
-#mpc
-file(GLOB_RECURSE mpc_source 
-	./source/mpc/**.cpp 
-	./source/mpc/**.hpp 
-	./source/mpc/**.c 
-	./source/mpc/**.h)
-setup_project_group("${mpc_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 
 #zlib
 file(GLOB_RECURSE zlib_source 
@@ -87,6 +79,7 @@ file(GLOB_RECURSE zlib_source
 setup_project_group("${zlib_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 
 #freetype2
+if (BUILD_FT2_LIB)
 set(freetype_source
 	./source/freetype2/src/autofit/autofit.c
 	./source/freetype2/src/base/basepic.c
@@ -111,6 +104,16 @@ set(freetype_source
 	./source/freetype2/src/smooth/smooth.c
 	./source/freetype2/src/truetype/truetype.c)
 add_source_group("${freetype_source}" "source\\freetype2")
+endif()
+
+if (BUILD_SKYLICHT_AUDIO)
+#mpc
+#file(GLOB_RECURSE mpc_source 
+#	./source/mpc/**.cpp 
+#	./source/mpc/**.hpp 
+#	./source/mpc/**.c 
+#	./source/mpc/**.h)
+#setup_project_group("${mpc_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 
 #libmpg123
 file(GLOB_RECURSE libmpg123_source 
@@ -120,6 +123,7 @@ file(GLOB_RECURSE libmpg123_source
 	./source/libmpg123/**.h
 	./source/libmpg123/**.S)
 setup_project_group("${libmpg123_source}" ${CMAKE_CURRENT_SOURCE_DIR})
+endif()
 
 #kdtree
 file(GLOB_RECURSE kdtree_source 

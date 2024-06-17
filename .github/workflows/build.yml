@@ -265,3 +265,25 @@ jobs:
       - name: Package
         run: |
           dir Bin\Release
+
+  Windows-Shared-Smallest:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Build
+        shell: cmd
+        run: |
+          cd Assets
+          python BuildAssetBundles.py
+          cd ..
+          cmake -S . -B ./PrjVisualStudio -G "Visual Studio 17 2022" -A x64 -DBUILD_SHARED_LIBS=ON -DBUILD_IMGUI=OFF -DBUILD_FREETYPE=OFF -DBUILD_SKYLICHT_AUDIO=OFF -DBUILD_SKYLICHT_COMPONENTS=OFF -DBUILD_SKYLICHT_LIGHMAPPER=OFF -DBUILD_SKYLICHT_COLLISION=OFF -DBUILD_SKYLICHT_UI=OFF -DBUILD_SKYLICHT_CRYPTO=OFF -DBUILD_SKYLICHT_NETWORK=OFF -DBUILD_SKYLICHT_PHYSICS=OFF -DBUILD_EXAMPLES=OFF
+          cmake --build ./PrjVisualStudio --config "Release"
+      - name: Unit Test
+        run: |
+          cd PrjVisualStudio
+          ctest -C Release --verpose
+          cat Testing/Temporary/LastTest.log
+          cd ..
+      - name: Package
+        run: |
+          dir Bin\Release

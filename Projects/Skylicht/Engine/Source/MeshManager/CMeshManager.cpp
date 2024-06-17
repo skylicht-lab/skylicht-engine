@@ -86,15 +86,7 @@ namespace Skylicht
 
 	CEntityPrefab* CMeshManager::loadModel(const char* resource, const char* texturePath, bool loadNormalMap, bool flipNormalMap, bool loadTexcoord2, bool createBatching)
 	{
-		// find in cached
-		std::map<std::string, CEntityPrefab*>::iterator findCache = m_meshPrefabs.find(resource);
-		if (findCache != m_meshPrefabs.end())
-		{
-			return (*findCache).second;
-		}
-
 		IMeshImporter* importer = NULL;
-		CEntityPrefab* output = NULL;
 
 		// load from file
 		std::string ext = CPath::getFileNameExt(resource);
@@ -106,6 +98,25 @@ namespace Skylicht
 			importer = new CSkylichtMeshLoader();
 		else if (ext == "fbx")
 			importer = new CFBXMeshLoader();
+
+		CEntityPrefab* output = loadModel(resource, texturePath, importer, loadNormalMap, flipNormalMap, loadTexcoord2, createBatching);
+
+		if (importer)
+			delete importer;
+
+		return output;
+	}
+
+	CEntityPrefab* CMeshManager::loadModel(const char* resource, const char* texturePath, IMeshImporter* importer, bool loadNormalMap, bool flipNormalMap, bool loadTexcoord2, bool createBatching)
+	{
+		// find in cached
+		std::map<std::string, CEntityPrefab*>::iterator findCache = m_meshPrefabs.find(resource);
+		if (findCache != m_meshPrefabs.end())
+		{
+			return (*findCache).second;
+		}
+
+		CEntityPrefab* output = NULL;
 
 		if (importer != NULL)
 		{
@@ -134,9 +145,6 @@ namespace Skylicht
 				delete output;
 				output = NULL;
 			}
-
-			// clear cache load model
-			delete importer;
 		}
 
 		return output;
@@ -154,9 +162,16 @@ namespace Skylicht
 		{
 			bool result = exporter->exportModel(entities, count, output);
 			delete exporter;
-			return true;
+			return result;
 		}
 
+		return false;
+	}
+
+	bool CMeshManager::exportModel(CEntity** entities, u32 count, const char* output, IMeshExporter* exporter)
+	{
+		if (exporter != NULL)
+			return exporter->exportModel(entities, count, output);
 		return false;
 	}
 

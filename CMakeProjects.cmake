@@ -1,4 +1,4 @@
-if (BUILD_EXAMPLE)
+if (BUILD_EXAMPLES)
 	subdirs (Samples/Audio)
 	subdirs (Samples/Animations)
 	subdirs (Samples/BlendShape)
