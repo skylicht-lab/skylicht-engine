@@ -67,11 +67,13 @@ namespace Skylicht
 		m_width(1024),
 		m_height(1024)
 	{
+#ifdef FT2_BUILD_LIBRARY
 		int error = FT_Init_FreeType(&m_lib);
 		if (error)
 			os::Printer::log("FreeType provider: can't init FreeType!  error = %d\n", ELL_ERROR);
 
 		addEmptyAtlas(ECF_A8R8G8B8, m_width, m_height);
+#endif
 	}
 
 	CGlyphFreetype::~CGlyphFreetype()
@@ -84,16 +86,20 @@ namespace Skylicht
 		{
 			if (i->second != NULL)
 			{
+#ifdef FT2_BUILD_LIBRARY
 				delete[]i->second->m_data;
+#endif
 				delete i->second;
 			}
 		}
 		m_faceEntity.clear();
 
+#ifdef FT2_BUILD_LIBRARY
 		int error = FT_Done_FreeType(m_lib);
 		if (error)
 			os::Printer::log("FreeType provider: can't close FreeType!  error = %d\n", ELL_ERROR);
 		m_lib = NULL;
+#endif
 	}
 
 	bool CGlyphFreetype::initFont(const char* name, const char* path)
@@ -101,6 +107,7 @@ namespace Skylicht
 		if (m_faceEntity.find(name) != m_faceEntity.end())
 			return true;
 
+#ifdef FT2_BUILD_LIBRARY
 		io::IFileSystem* fs = getIrrlichtDevice()->getFileSystem();
 		io::IReadFile* readFile = fs->createAndOpenFile(path);
 		if (readFile != NULL)
@@ -132,7 +139,7 @@ namespace Skylicht
 			sprintf(log, "[CGlyphFreetype] initFont '%s' failed: file not found!", name);
 			os::Printer::log(log);
 		}
-
+#endif
 		return false;
 	}
 
@@ -164,6 +171,7 @@ namespace Skylicht
 		float* advance,
 		float* uvX, float* uvY, float* uvW, float* uvH, float* offsetX, float* offsetY)
 	{
+#ifdef FT2_BUILD_LIBRARY
 		SFaceEntity* fe = m_faceEntity[name];
 		if (fe == NULL)
 			return NULL;
@@ -226,6 +234,16 @@ namespace Skylicht
 			*offsetY = 0;
 			return NULL;
 		}
+#else
+		* uvX = 0;
+		*uvY = 0;
+		*uvW = 0;
+		*uvH = 0;
+		*advance = 0;
+		*offsetX = 0;
+		*offsetY = 0;
+		return NULL;
+#endif
 	}
 
 	CAtlas* CGlyphFreetype::getCharImage(
@@ -240,6 +258,7 @@ namespace Skylicht
 		float* uvH,
 		float* offsetX, float* offsetY)
 	{
+#ifdef FT2_BUILD_LIBRARY
 		SFaceEntity* fe = m_faceEntity[name];
 		if (fe == NULL)
 			return NULL;
@@ -302,8 +321,19 @@ namespace Skylicht
 			*offsetY = 0;
 			return NULL;
 		}
+#else
+		* uvX = 0;
+		*uvY = 0;
+		*uvW = 0;
+		*uvH = 0;
+		*advance = 0;
+		*offsetX = 0;
+		*offsetY = 0;
+		return NULL;
+#endif
 	}
 
+#ifdef FT2_BUILD_LIBRARY
 	int CGlyphFreetype::putGlyphToTexture(const FT_GlyphSlot& glyph, float* uvX, float* uvY, float* uvW, float* uvH)
 	{
 		int glyphW = glyph->bitmap.width;
@@ -425,6 +455,7 @@ namespace Skylicht
 
 		return atlas;
 	}
+#endif
 
 	CAtlas* CGlyphFreetype::addEmptyAtlas(ECOLOR_FORMAT color, int w, int h)
 	{

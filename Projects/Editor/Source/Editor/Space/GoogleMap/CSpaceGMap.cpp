@@ -698,7 +698,7 @@ namespace Skylicht
 				x = -m_viewX % m_gridSize;
 			}
 
-#ifndef USE_SKYLICHT_NETWORK
+#ifndef BUILD_SKYLICHT_NETWORK
 			wchar_t* warningString = L"BUILD_SKYLICHT_NETWORK is Disable! Please Enable this feature on CMakeLists.txt";
 			core::dimension2df size = pGraphics->measureText(m_fontNormal, warningString);
 			float centerX = m_view->width() / 2 - size.Width / 2;

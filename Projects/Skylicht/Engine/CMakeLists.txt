@@ -27,11 +27,11 @@ target_precompiled_header(Engine ./Source/pch.cpp ${skylicht_source})
 
 set_target_properties(Engine PROPERTIES VERSION ${SKYLICHT_VERSION})
 
-target_link_libraries(Engine
-	Irrlicht
-	System
-	Audio
-)
+target_link_libraries(Engine Irrlicht System)
+
+if (BUILD_SKYLICHT_AUDIO)
+target_link_libraries(Engine Audio)
+endif()
 
 if (INSTALL_LIBS)
 install(TARGETS Engine

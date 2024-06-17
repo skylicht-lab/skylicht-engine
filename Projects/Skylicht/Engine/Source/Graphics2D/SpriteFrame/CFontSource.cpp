@@ -108,6 +108,21 @@ namespace Skylicht
 				// no changed
 				return m_font;
 			}
+
+			if (m_font)
+				delete m_font;
+
+			CSpriteFont* spriteFont = new CSpriteFont();
+			if (spriteFont->loadFont(fontPath.c_str()))
+				m_font = spriteFont;
+			else
+			{
+				delete spriteFont;
+				m_font = NULL;
+			}
+
+			m_source = fontPath;
+			m_sizePt = 0.0f;
 		}
 
 		return m_font;

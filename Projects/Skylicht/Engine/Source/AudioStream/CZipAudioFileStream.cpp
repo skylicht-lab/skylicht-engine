@@ -1,14 +1,11 @@
 #include "pch.h"
+
+#ifdef BUILD_SKYLICHT_AUDIO
 #include "CZipAudioFileStream.h"
 
 namespace Skylicht
 {
-
-	//////////////////////////////////////////////////
-	// CZipAudioFileStream
-	//////////////////////////////////////////////////
-
-	CZipAudioFileStream::CZipAudioFileStream(const char *fileName)
+	CZipAudioFileStream::CZipAudioFileStream(const char* fileName)
 	{
 		m_fileName = fileName;
 		m_file = getIrrlichtDevice()->getFileSystem()->createAndOpenFile(fileName);
@@ -39,12 +36,7 @@ namespace Skylicht
 	}
 
 
-
-	//////////////////////////////////////////////////
-	// CZipAudioFileStreamCursor
-	//////////////////////////////////////////////////
-
-	CZipAudioFileStreamCursor::CZipAudioFileStreamCursor(io::IReadFile *file)
+	CZipAudioFileStreamCursor::CZipAudioFileStreamCursor(io::IReadFile* file)
 	{
 		m_file = file;
 
@@ -196,7 +188,6 @@ namespace Skylicht
 	{
 		return m_size;
 	}
-
-
-
 }
+
+#endif

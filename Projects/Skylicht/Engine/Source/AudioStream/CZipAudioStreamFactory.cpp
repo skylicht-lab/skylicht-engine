@@ -1,4 +1,6 @@
 #include "pch.h"
+
+#ifdef BUILD_SKYLICHT_AUDIO
 #include "CZipAudioStreamFactory.h"
 #include "CZipAudioFileStream.h"
 
@@ -17,6 +19,5 @@ namespace Skylicht
 
 		return file;
 	}
-
-
 }
+#endif

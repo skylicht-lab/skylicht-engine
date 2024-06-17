@@ -1,8 +1,9 @@
 // Copyright (C) 2012 Pham Hong Duc
 // This file is part of the "Skylicht Technologies".
 
-#ifndef _SKYLICHTAUDIO_ARCHIVE_FILESTREAM_H_
-#define _SKYLICHTAUDIO_ARCHIVE_FILESTREAM_H_
+#pragma once
+
+#ifdef BUILD_SKYLICHT_AUDIO
 
 #include "pch.h"
 #include "Stream/IStream.h"
@@ -12,7 +13,7 @@ namespace Skylicht
 	class SKYLICHT_API CZipAudioFileStreamCursor : public SkylichtAudio::IStreamCursor
 	{
 	protected:
-		io::IReadFile *m_file;
+		io::IReadFile* m_file;
 		int m_size;
 		int	m_pos;
 
@@ -22,7 +23,7 @@ namespace Skylicht
 		int m_bufferPos;
 		int m_bufferOffset;
 	public:
-		CZipAudioFileStreamCursor(io::IReadFile *file);
+		CZipAudioFileStreamCursor(io::IReadFile* file);
 		virtual ~CZipAudioFileStreamCursor();
 
 		virtual int seek(int pos, EOrigin origin);
@@ -39,12 +40,12 @@ namespace Skylicht
 	class SKYLICHT_API CZipAudioFileStream : public SkylichtAudio::IStream
 	{
 	protected:
-		std::string		m_fileName;
-		io::IReadFile	*m_file;
-		int				m_size;
+		std::string m_fileName;
+		io::IReadFile* m_file;
+		int m_size;
 
 	public:
-		CZipAudioFileStream(const char *fileName);
+		CZipAudioFileStream(const char* fileName);
 		virtual ~CZipAudioFileStream();
 
 		bool isError();

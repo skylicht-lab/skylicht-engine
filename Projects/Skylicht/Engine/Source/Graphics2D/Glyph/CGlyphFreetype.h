@@ -24,8 +24,10 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#ifdef FT2_BUILD_LIBRARY
 #include <ft2build.h>
 #include FT_GLYPH_H
+#endif
 
 #include "Utils/CSingleton.h"
 #include "Graphics2D/Atlas/CAtlas.h"
@@ -47,11 +49,14 @@ namespace Skylicht
 
 	struct SFaceEntity
 	{
+#ifdef FT2_BUILD_LIBRARY
 		FT_Face m_face;
 		FT_Byte* m_data;
+#endif
 
 		std::map<u32, SGlyphEntity*> m_ge;
 
+#ifdef FT2_BUILD_LIBRARY
 		SFaceEntity(FT_Face face, FT_Byte* data) :
 			m_face(face),
 			m_data(data)
@@ -64,6 +69,7 @@ namespace Skylicht
 
 			cleanGlyphEntity();
 		}
+#endif
 
 		void cleanGlyphEntity()
 		{
@@ -79,8 +85,10 @@ namespace Skylicht
 		DECLARE_SINGLETON(CGlyphFreetype)
 
 	protected:
-		FT_Library m_lib;
 
+#ifdef FT2_BUILD_LIBRARY
+		FT_Library m_lib;
+#endif
 		std::map<std::string, SFaceEntity*> m_faceEntity;
 
 		u32 m_width;
@@ -124,12 +132,12 @@ namespace Skylicht
 			float* offsetX, float* offsetY);
 
 	protected:
-
 		CAtlas* addEmptyAtlas(ECOLOR_FORMAT color, int w, int h);
 
+#ifdef FT2_BUILD_LIBRARY
 		int putGlyphToTexture(const FT_GlyphSlot& glyph, float* uvx, float* uvy, float* uvW, float* uvH);
 
 		CAtlas* putGlyphToTexture(CSpriteAtlas* external, const FT_GlyphSlot& glyph, float* uvx, float* uvy, float* uvW, float* uvH);
-
+#endif
 	};
 }
