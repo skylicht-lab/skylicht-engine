@@ -30,7 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Utils/CActivator.h"
 
 #include "Culling/CVisibleData.h"
-#include "IndirectLighting/CIndirectLightingData.h"
+#include "Transform/CWorldTransformData.h"
 
 namespace Skylicht
 {
@@ -129,12 +129,9 @@ namespace Skylicht
 			notifyUpdateGroup(DATA_TYPE_INDEX(CVisibleData));
 
 			// see: CIndirectLightingSystem, CReflectionProbeSystem
-			CIndirectLightingData* lightData = GET_ENTITY_DATA(this, CIndirectLightingData);
-			if (lightData)
-			{
-				lightData->InvalidateProbe = true;
-				lightData->InvalidateReflection = true;
-			}
+			CWorldTransformData* transformData = GET_ENTITY_DATA(this, CWorldTransformData);
+			transformData->HasChanged = true;
+			transformData->NeedValidate = true;
 
 			m_visible = b;
 		}

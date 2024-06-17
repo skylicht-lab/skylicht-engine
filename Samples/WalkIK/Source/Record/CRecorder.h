@@ -21,6 +21,9 @@ protected:
 
 	std::vector<SRecordFrame*> m_frames;
 
+	float m_clip[2];
+
+	SColor m_randomColor[10];
 public:
 	CRecorder();
 
@@ -35,6 +38,17 @@ public:
 	void start();
 
 	void clear();
+
+	inline float* getClip()
+	{
+		return m_clip;
+	}
+
+	inline void setClip(const float* clip)
+	{
+		m_clip[0] = core::clamp(clip[0], 0.0f, 1.0f);
+		m_clip[1] = core::clamp(clip[1], 0.0f, 1.0f);
+	}
 
 	inline int getFrameCount()
 	{

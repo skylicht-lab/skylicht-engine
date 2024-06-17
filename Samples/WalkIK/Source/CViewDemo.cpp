@@ -149,7 +149,7 @@ void CViewDemo::onGUI()
 
 				if (m_recorder->getFrameCount() > 0)
 				{
-					if (ImGui::Button("Replay animation"))
+					if (ImGui::Button("Edit/Replay animation"))
 					{
 						m_state = StateEdit;
 						m_robotReplay->setVisible(true);
@@ -173,6 +173,8 @@ void CViewDemo::onGUI()
 				bool b = m_legReplayer->isRootMotion();
 				if (ImGui::Checkbox("Root motion", &b))
 					m_legReplayer->setRootMotion(b);
+
+				ImGui::SliderFloat2("Clip", m_recorder->getClip(), 0.0f, 1.0f);
 
 				if (ImGui::Button("Exit"))
 				{

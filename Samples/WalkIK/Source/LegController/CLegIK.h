@@ -24,7 +24,7 @@ public:
 
 	virtual ~CLegIK();
 
-	void update();
+	virtual void update();
 
 	virtual void lateUpdate();
 
