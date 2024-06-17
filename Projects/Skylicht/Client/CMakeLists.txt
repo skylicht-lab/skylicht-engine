@@ -53,7 +53,7 @@ if (BUILD_SKYLICHT_COLLISION)
 	target_link_libraries(Client Collision)
 endif()
 
-if (BUILD_SKYLICHT_PHYSICS)
+if (BUILD_SKYLICHT_PHYSIC)
 	target_link_libraries(Client Physics)
 endif()
 

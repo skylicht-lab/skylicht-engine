@@ -31,6 +31,9 @@ protected:
 	CGameObject* m_robot;
 	CGameObject* m_robotReplay;
 
+	char m_fileName[100];
+	const char* m_messageBox;
+
 public:
 	CViewDemo();
 
