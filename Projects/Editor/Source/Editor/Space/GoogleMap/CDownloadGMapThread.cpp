@@ -34,8 +34,11 @@ namespace Skylicht
 			for (int i = 0; i < NUM_HTTPREQUEST; i++)
 			{
 				m_imgDownloading[i] = NULL;
+
+#ifdef BUILD_SKYLICHT_NETWORK
 				m_httpStream[i] = new CHttpStream();
 				m_httpRequest[i] = new CHttpRequest(m_httpStream[i]);
+#endif
 			}
 
 			m_lock = IMutex::createMutex();
@@ -57,10 +60,12 @@ namespace Skylicht
 			for (int i = 0; i < NUM_HTTPREQUEST; i++)
 			{
 				m_imgDownloading[i] = NULL;
-				m_httpStream[i] = NULL;
 
+#ifdef BUILD_SKYLICHT_NETWORK
+				m_httpStream[i] = NULL;
 				delete m_httpRequest[i];
 				m_httpRequest[i] = NULL;
+#endif
 			}
 		}
 
@@ -76,10 +81,10 @@ namespace Skylicht
 					std::list<SImageDownload>::iterator i = m_queueDownload.begin();
 					SImageDownload& img = (*i);
 
-					SImageMapElement* pImg = &img.Image;
-
+#ifdef BUILD_SKYLICHT_NETWORK
 					m_httpRequest[r]->setURL(img.Url.c_str());
 					m_httpRequest[r]->sendRequestByGet();
+#endif
 
 					// push queue to downloading
 					m_downloading.push_back((*i));
@@ -87,6 +92,7 @@ namespace Skylicht
 
 					m_queueDownload.pop_front();
 				}
+#ifdef BUILD_SKYLICHT_NETWORK
 				else
 				{
 					// update request download
@@ -163,6 +169,7 @@ namespace Skylicht
 						m_httpRequest[r] = new CHttpRequest(m_httpStream[r]);
 					}
 				}
+#endif
 			}
 			m_lock->unlock();
 
@@ -261,6 +268,7 @@ namespace Skylicht
 			m_queueDownload.clear();
 			m_notfound.clear();
 
+#ifdef BUILD_SKYLICHT_NETWORK
 			for (int i = 0; i < NUM_HTTPREQUEST; i++)
 			{
 				if (m_httpRequest[i]->isSendRequest())
@@ -272,6 +280,7 @@ namespace Skylicht
 					m_httpRequest[i] = new CHttpRequest(m_httpStream[i]);
 				}
 			}
+#endif
 			m_lock->unlock();
 		}
 	}

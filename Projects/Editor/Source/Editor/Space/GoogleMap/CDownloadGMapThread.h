@@ -51,8 +51,11 @@ namespace Skylicht
 			std::list<SImageDownload> m_notfound;
 
 			SImageDownload* m_imgDownloading[NUM_HTTPREQUEST];
+
+#ifdef BUILD_SKYLICHT_NETWORK
 			CHttpRequest* m_httpRequest[NUM_HTTPREQUEST];
 			CHttpStream* m_httpStream[NUM_HTTPREQUEST];
+#endif
 
 		public:
 			CDownloadGMapThread();
