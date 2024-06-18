@@ -4,6 +4,8 @@
 #include "Thread/IThread.h"
 #include "Thread/IMutex.h"
 
+using namespace Skylicht;
+
 class TestThreadCallback: public SkylichtSystem::IThreadCallback
 {
 protected:

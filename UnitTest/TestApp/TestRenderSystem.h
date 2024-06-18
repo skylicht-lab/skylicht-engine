@@ -5,6 +5,8 @@
 #include "Entity/CEntityManager.h"
 #include "Transform/CWorldTransformData.h"
 
+using namespace Skylicht;
+
 class CTestEntityData : public Skylicht::IEntityData
 {
 public:
