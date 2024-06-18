@@ -32,7 +32,7 @@ protected:
 	CGameObject* m_robotReplay;
 
 	char m_fileName[100];
-	const char* m_messageBox;
+	const char* m_messageString;
 
 public:
 	CViewDemo();

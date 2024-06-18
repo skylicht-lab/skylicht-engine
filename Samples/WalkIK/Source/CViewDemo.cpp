@@ -17,7 +17,7 @@ CViewDemo::CViewDemo() :
 	m_3rdCamera(NULL)
 {
 	m_recorder = new CRecorder();
-	m_messageBox = "";
+	m_messageString = "";
 	strcpy(m_fileName, "walk.sanim");
 }
 
@@ -198,12 +198,12 @@ void CViewDemo::onGUI()
 				{
 					if (m_legReplayer->exportAnim(m_fileName, CContext::getInstance()->getScene()) == true)
 					{
-						m_messageBox = "Export animation success at Bin folder!";
+						m_messageString = "Export animation success at Bin folder!";
 						ImGui::OpenPopup("Message box");
 					}
 					else
 					{
-						m_messageBox = "Export animation failed!";
+						m_messageString = "Export animation failed!";
 						ImGui::OpenPopup("Message box");
 					}
 				}
@@ -211,7 +211,7 @@ void CViewDemo::onGUI()
 
 				if (ImGui::BeginPopupModal("Message box", NULL, ImGuiWindowFlags_AlwaysAutoResize))
 				{
-					ImGui::Text(m_messageBox);
+					ImGui::Text("%s", m_messageString);
 					ImGui::Separator();
 					ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
 					if (ImGui::Button("Close"))
