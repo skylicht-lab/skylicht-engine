@@ -226,13 +226,14 @@ endif()
 subdirs (Projects/ThirdParty)
 subdirs (Projects/Irrlicht)
 
-if (BUILD_IMGUI)
-subdirs (Projects/Imgui)
-endif()
-
 # skylicht engine
 subdirs (Projects/Skylicht/System)
 subdirs (Projects/Skylicht/Engine)
+
+if (BUILD_IMGUI)
+add_definitions(-DBUILD_IMGUI)
+subdirs (Projects/Imgui)
+endif()
 
 # skylicht components
 if (BUILD_SKYLICHT_COMPONENTS)

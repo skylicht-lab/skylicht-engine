@@ -3,13 +3,17 @@
 #include "SkylichtEngine.h"
 
 #include "LightProbes/CLightProbe.h"
-#include "Lightmapper/CLightmapper.h"
 
+#ifdef BUILD_SKYLICHT_COLLISION
 #include "Collision/CCollisionManager.h"
+#endif
 
 #include "RenderPipeline/CDeferredLightmapRP.h"
 
+#ifdef BUILD_SKYLICHT_LIGHMAPPER
+#include "Lightmapper/CLightmapper.h"
 using namespace Lightmapper;
+#endif
 
 class CContext
 {
@@ -22,7 +26,10 @@ protected:
 	CZone* m_zone;
 	CCamera* m_camera;
 	CCamera* m_guiCamera;
+
+#ifdef BUILD_SKYLICHT_COLLISION
 	CCollisionManager* m_collisionMgr;
+#endif
 
 	CDirectionalLight* m_directionalLight;
 	std::vector<CPointLight*> m_pointLights;
@@ -50,10 +57,12 @@ public:
 
 	void resize(int w, int h);
 
+#ifdef BUILD_SKYLICHT_COLLISION
 	CCollisionManager* getCollisionManager()
 	{
 		return m_collisionMgr;
 	}
+#endif
 
 	inline CScene* getScene()
 	{

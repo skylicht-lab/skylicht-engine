@@ -107,14 +107,6 @@ add_source_group("${freetype_source}" "source\\freetype2")
 endif()
 
 if (BUILD_SKYLICHT_AUDIO)
-#mpc
-#file(GLOB_RECURSE mpc_source 
-#	./source/mpc/**.cpp 
-#	./source/mpc/**.hpp 
-#	./source/mpc/**.c 
-#	./source/mpc/**.h)
-#setup_project_group("${mpc_source}" ${CMAKE_CURRENT_SOURCE_DIR})
-
 #libmpg123
 file(GLOB_RECURSE libmpg123_source 
 	./source/libmpg123/**.cpp 
