@@ -48,6 +48,11 @@ https://github.com/skylicht-lab/skylicht-engine
 // Graphics
 #include "Graphics2D/CGraphics2D.h"
 
+// Audio
+#ifdef BUILD_SKYLICHT_AUDIO
+#include "SkylichtAudio.h"
+#endif
+
 CBaseApp* g_app = NULL;
 Skylicht::CBuildConfig* g_config = Skylicht::CBuildConfig::createGetInstance();
 
