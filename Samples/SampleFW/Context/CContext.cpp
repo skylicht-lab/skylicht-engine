@@ -14,8 +14,10 @@ CContext::CContext() :
 	m_zone(NULL),
 	m_directionalLight(NULL),
 	m_camera(NULL),
-	m_guiCamera(NULL),
-	m_collisionMgr(NULL)
+	m_guiCamera(NULL)
+#ifdef BUILD_SKYLICHT_COLLISION
+	, m_collisionMgr(NULL)
+#endif
 {
 
 }
@@ -29,7 +31,9 @@ CContext::~CContext()
 CScene* CContext::initScene()
 {
 	m_scene = new CScene();
+#ifdef BUILD_SKYLICHT_COLLISION
 	m_collisionMgr = new CCollisionManager();
+#endif
 	return m_scene;
 }
 
@@ -41,9 +45,10 @@ void CContext::releaseScene()
 		m_scene = NULL;
 		m_zone = NULL;
 		m_camera = NULL;
-
+#ifdef BUILD_SKYLICHT_COLLISION
 		delete m_collisionMgr;
 		m_collisionMgr = NULL;
+#endif
 	}
 }
 

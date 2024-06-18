@@ -25,12 +25,20 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 // Config
-#include "SkylichtAudioAPI.h"
-#include "SkylichtSystemAPI.h"
-#include "CollisionConfig.h"
 #include "SkylichtConfig.h"
+#include "SkylichtSystemAPI.h"
+
+#ifdef BUILD_SKYLICHT_AUDIO
+#include "SkylichtAudioAPI.h"
+#endif
+
+#ifdef BUILD_SKYLICHT_COLLISION
 #include "CollisionConfig.h"
+#endif
+
+#ifdef BUILD_SKYLICHT_COMPONENTS
 #include "ComponentsConfig.h"
+#endif
 
 #include "CApplication.h"
 

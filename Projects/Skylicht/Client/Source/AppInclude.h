@@ -35,17 +35,27 @@ using namespace irr::scene;
 using namespace irr::video;
 
 // SKYLICHT ENGINE
-#include "SkylichtAudioAPI.h"
 #include "SkylichtSystemAPI.h"
-#include "CollisionConfig.h"
+
 #include "SkylichtConfig.h"
-#include "CollisionConfig.h"
-#include "ComponentsConfig.h"
-
 #include "Skylicht.h"
+
+#ifdef BUILD_SKYLICHT_COMPONENTS
+#include "CollisionConfig.h"
+#endif
+
+#ifdef BUILD_SKYLICHT_COLLISION
+#include "CollisionConfig.h"
+#endif
+
+#ifdef BUILD_SKYLICHT_COMPONENTS
+#include "ComponentsConfig.h"
+#endif
+
+#ifdef BUILD_SKYLICHT_AUDIO
+#include "SkylichtAudioAPI.h"
 #include "SkylichtAudio.h"
-
-
+#endif
 
 using namespace Skylicht;
 
