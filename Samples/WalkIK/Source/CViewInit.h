@@ -57,4 +57,6 @@ protected:
 	CRenderMesh* initRobotRenderer(CGameObject* obj);
 
 	void initReplayRobot();
+
+	void initAnimRobot();
 };
