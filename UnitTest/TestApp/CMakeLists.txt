@@ -1,22 +1,19 @@
 include_directories(
-	${SKYLICHT_ENGINE_SOURCE_DIR}/UnitTest/TestApp
+	${HELLO_SKYLICHT_SOURCE_DIR}/UnitTest/TestApp
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Main/Source
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Include	
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System/Source
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Engine/Source
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Components/Source
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Collision/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Physics/Source
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Client/Source
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Lightmapper/Source
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Audio/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Physics/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/source/freetype2/include
 )
 
 add_definitions(-DTEST_APP)
-
-if (BUILD_FREETYPE)
-	include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/source/freetype2/include)
-endif()
 
 if (BUILD_IMGUI)
 	include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/Imgui/Source)
@@ -52,7 +49,7 @@ else()
 endif()
 
 # Linker
-target_link_libraries(TestApp Client)
+target_link_libraries(TestApp Skylicht::Client)
 
 if (BUILD_MACOS)
 	set(angle_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/Angle/out/MacOS/Release/${CMAKE_OSX_ARCHITECTURES}")

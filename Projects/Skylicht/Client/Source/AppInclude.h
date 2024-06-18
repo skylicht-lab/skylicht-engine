@@ -54,7 +54,6 @@ using namespace irr::video;
 
 #ifdef BUILD_SKYLICHT_AUDIO
 #include "SkylichtAudioAPI.h"
-#include "SkylichtAudio.h"
 #endif
 
 using namespace Skylicht;

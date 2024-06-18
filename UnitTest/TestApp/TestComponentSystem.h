@@ -3,6 +3,8 @@
 #include "GameObject/CGameObject.h"
 #include "Components/CComponentSystem.h"
 
+using namespace Skylicht;
+
 class TestComponent : public Skylicht::CComponentSystem
 {
 public:

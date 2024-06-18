@@ -1,7 +1,6 @@
+#include "pch.h"
 #include "Base.hh"
 #include "TestSystemThread.h"
-
-#include "pch.h"
 
 bool g_threadRunPass = false;
 bool g_threadPass = false;
