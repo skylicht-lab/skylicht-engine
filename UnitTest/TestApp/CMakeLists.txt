@@ -49,7 +49,7 @@ else()
 endif()
 
 # Linker
-target_link_libraries(TestApp Skylicht::Client)
+target_link_libraries(TestApp Client)
 
 if (BUILD_MACOS)
 	set(angle_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/Angle/out/MacOS/Release/${CMAKE_OSX_ARCHITECTURES}")
