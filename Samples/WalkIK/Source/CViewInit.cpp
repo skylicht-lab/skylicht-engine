@@ -124,6 +124,9 @@ void CViewInit::initScene()
 	// robot, that replay the animation
 	initReplayRobot();
 
+	// robot, that play .sanim that exported from recorded
+	// initAnimRobot();
+
 	// setting camera following robot
 	thirdCamera->setFollowTarget(m_robot);
 	thirdCamera->setTargetDistance(6.0f);
@@ -266,6 +269,25 @@ void CViewInit::initReplayRobot()
 
 	// hide this robot
 	robot->setVisible(false);
+}
+
+void CViewInit::initAnimRobot()
+{
+	CScene* scene = CContext::getInstance()->getScene();
+	CZone* zone = scene->getZone(0);
+
+	CGameObject* robot = zone->createEmptyObject();
+	robot->setName("robot-anim");
+
+	CRenderMesh* renderMesh = initRobotRenderer(robot);
+
+	CAnimationController* animController = robot->addComponent<CAnimationController>();
+	CSkeleton* skeleton = animController->createSkeleton();
+
+	CAnimationClip* clip = CAnimationManager::getInstance()->loadAnimation("walk.sanim");
+	skeleton->setAnimation(clip, true);
+
+	robot->getTransformEuler()->setPosition(core::vector3df(2.0f, 0.0f, 2.0f));
 }
 
 void CViewInit::onDestroy()

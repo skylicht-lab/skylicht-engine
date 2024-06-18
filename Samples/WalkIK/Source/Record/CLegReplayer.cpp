@@ -142,7 +142,6 @@ bool CLegReplayer::exportAnim(const char* anim, CScene* scene)
 
 	SEntityAnim* rootAnim = new SEntityAnim();
 	rootAnim->Name = m_root->Name;
-	rootAnim->Data.Scales.Default.set(1.0f, 1.0f, 1.0f);
 	clip->addAnim(rootAnim);
 
 	anims.push_back(rootAnim);
@@ -156,7 +155,6 @@ bool CLegReplayer::exportAnim(const char* anim, CScene* scene)
 		{
 			SEntityAnim* jointAnim = new SEntityAnim();
 			jointAnim->Name = j->Name;
-			jointAnim->Data.Scales.Default.set(1.0f, 1.0f, 1.0f);
 			clip->addAnim(jointAnim);
 
 			anims.push_back(jointAnim);
@@ -209,15 +207,17 @@ bool CLegReplayer::exportAnim(const char* anim, CScene* scene)
 		// get animation key value
 		for (size_t j = 0; j < numNodes; j++)
 		{
-			if (transforms[j]->Parent)
+			CWorldTransformData* transform = transforms[j];
+
+			if (transform->Parent)
 			{
-				parentWorldInv = transforms[j]->Parent->World;
+				parentWorldInv = transform->Parent->World;
 				parentWorldInv.makeInverse();
-				relative = transforms[j]->World * parentWorldInv;
+				relative = parentWorldInv * transform->World;
 			}
 			else
 			{
-				relative = transforms[j]->World;
+				relative = transform->World;
 			}
 
 			getAnimationTransform(relative, keyPos.Value, keyRot.Value);
@@ -226,7 +226,11 @@ bool CLegReplayer::exportAnim(const char* anim, CScene* scene)
 			CAnimationData& animData = anims[j]->Data;
 			if (animData.Rotations.size() == 0)
 			{
+				// default key
+				animData.Scales.Default = relative.getScale();
+				animData.Positions.Default = keyPos.Value;
 				animData.Rotations.Default = keyRot.Value;
+
 				animData.Rotations.Data.push_back(keyRot);
 			}
 			else
@@ -238,7 +242,6 @@ bool CLegReplayer::exportAnim(const char* anim, CScene* scene)
 			// add position key
 			if (animData.Positions.size() == 0)
 			{
-				animData.Positions.Default = keyPos.Value;
 				animData.Positions.Data.push_back(keyPos);
 			}
 			else
