@@ -42,7 +42,23 @@ public:
 
 	virtual void updateComponent();
 
+	virtual void projectOnGround(core::vector3df& position);
+
+	void resetFootPosition();
+
 	CLeg* addLeg(CWorldTransformData* root, CWorldTransformData* leg);
+
+	inline void setFootStepLength(float length)
+	{
+		m_footStepLength = length;
+	}
+
+	void setStepHeight(float height);
+
+	inline void setMoveStepDistance(float length)
+	{
+		m_moveStepDistance = length;
+	}
 
 	inline CWorldTransformData* getRoot()
 	{

@@ -27,9 +27,11 @@ protected:
 
 	bool m_input[DirectionCount];
 
+	f32 m_speed;
+	f32 m_turnSpeed;
 	f32 m_moveSpeed;
 	f32 m_rotSpeed;
-
+	
 public:
 	CPlayerController();
 

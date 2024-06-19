@@ -18,6 +18,8 @@
 #include "LightProbes/CLightProbeRender.h"
 #include "ReflectionProbe/CReflectionProbeRender.h"
 
+#define USE_SCORPION_MODEL
+
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
 	m_getFile(NULL),
@@ -129,7 +131,11 @@ void CViewInit::initScene()
 
 	// setting camera following robot
 	thirdCamera->setFollowTarget(m_robot);
+#ifdef USE_SCORPION_MODEL
+	thirdCamera->setTargetDistance(8.0f);
+#else
 	thirdCamera->setTargetDistance(6.0f);
+#endif
 	thirdCamera->setOrientation(-135.0f, -45.0f);
 
 	// lighting
@@ -176,29 +182,79 @@ void CViewInit::initRobot()
 	// need update a frame
 	scene->getEntityManager()->update();
 
+	std::vector<std::string> leftLegs;
+	std::vector<std::string> rightLegs;
+	std::vector<CLeg*> llegs;
+	std::vector<CLeg*> rlegs;
+
+#ifdef USE_SCORPION_MODEL
+	// custom for scorpion
+	legController->setTargetDistance(3.0f);
+	legController->setFootStepLength(0.4f);
+	legController->setStepHeight(0.3f);
+	legController->setMoveStepDistance(0.15f);
+
+	CWorldTransformData* root = renderMesh->getChildTransform("boss_robot_01.fbx");
+	leftLegs.push_back("L_leg_A_01");
+	leftLegs.push_back("L_leg_B_01");
+	leftLegs.push_back("L_leg_C_01");
+	leftLegs.push_back("L_leg_D_01");
+
+	rightLegs.push_back("R_leg_A_01");
+	rightLegs.push_back("R_leg_B_01");
+	rightLegs.push_back("R_leg_C_01");
+	rightLegs.push_back("R_leg_D_01");
+#else
 	CWorldTransformData* root = renderMesh->getChildTransform("robot_01.fbx");
+	leftLegs.push_back("leg_A_01");
+	leftLegs.push_back("leg_B_01");
+	rightLegs.push_back("leg_D_01");
+	rightLegs.push_back("leg_C_01");
+#endif
 
-	CLeg* legs[4];
+	int nLeg = (int)leftLegs.size();
+	for (int i = 0; i < nLeg; i++)
+	{
+		legTransform = renderMesh->getChildTransform(leftLegs[i].c_str());
+		if (legTransform)
+			llegs.push_back(legController->addLeg(root, legTransform));
 
-	// add leg
-	legTransform = renderMesh->getChildTransform("leg_A_01");
-	if (legTransform)
-		legs[0] = legController->addLeg(root, legTransform);
-	legTransform = renderMesh->getChildTransform("leg_B_01");
-	if (legTransform)
-		legs[1] = legController->addLeg(root, legTransform);
-	legTransform = renderMesh->getChildTransform("leg_C_01");
-	if (legTransform)
-		legs[2] = legController->addLeg(root, legTransform);
-	legTransform = renderMesh->getChildTransform("leg_D_01");
-	if (legTransform)
-		legs[3] = legController->addLeg(root, legTransform);
+		legTransform = renderMesh->getChildTransform(rightLegs[i].c_str());
+		if (legTransform)
+			rlegs.push_back(legController->addLeg(root, legTransform));
 
-	// link near legs to fix for nice walk cycle
-	legs[0]->addLink(legs[3]);
-	legs[1]->addLink(legs[2]);
-	legs[0]->addLink(legs[1]);
-	legs[2]->addLink(legs[3]);
+#ifdef USE_SCORPION_MODEL
+		// custom targetVector for scorpion
+		core::vector3df targetVec;
+		targetVec = llegs[i]->getTargetVector();
+		targetVec.Z = targetVec.Z * 0.7f;
+		llegs[i]->setTargetVector(targetVec);
+
+		targetVec = rlegs[i]->getTargetVector();
+		targetVec.Z = targetVec.Z * 0.7f;
+		rlegs[i]->setTargetVector(targetVec);
+#endif
+
+		// link near legs to fix for nice walk cycle
+		llegs[i]->addLink(rlegs[i]);
+		if (i >= 1)
+		{
+			llegs[i]->addLink(llegs[i - 1]);
+			rlegs[i]->addLink(rlegs[i - 1]);
+		}
+		if (i >= 2)
+		{
+			llegs[i]->addLink(llegs[i - 2]);
+			rlegs[i]->addLink(rlegs[i - 2]);
+		}
+	}
+
+	legController->resetFootPosition();
+
+#ifdef USE_SCORPION_MODEL
+	for (CLeg* leg : rlegs)
+		leg->setFlip(true);
+#endif
 
 	// player input controller
 	m_robot->addComponent<CPlayerController>();
@@ -208,7 +264,14 @@ CRenderMesh* CViewInit::initRobotRenderer(CGameObject* obj)
 {
 	// render mesh & init material
 	std::vector<std::string> searchTextureFolders;
-	CEntityPrefab* modelPrefab = CMeshManager::getInstance()->loadModel("SampleModels/Robot/robot_01.fbx", NULL, true);
+
+#ifdef USE_SCORPION_MODEL
+	const char* model = "SampleModels/Robot/boss_robot_01.fbx";
+#else
+	const char* model = "SampleModels/Robot/robot_01.fbx";
+#endif
+
+	CEntityPrefab* modelPrefab = CMeshManager::getInstance()->loadModel(model, NULL, true);
 
 	CRenderMesh* renderer = obj->addComponent<CRenderMesh>();
 	renderer->initFromPrefab(modelPrefab);
@@ -217,9 +280,17 @@ CRenderMesh* CViewInit::initRobotRenderer(CGameObject* obj)
 
 	ArrayMaterial materials = CMaterialManager::getInstance()->initDefaultMaterial(modelPrefab);
 	materials[0]->changeShader("BuiltIn/Shader/PBR/Forward/PBRSkin.xml");
+
+#ifdef USE_SCORPION_MODEL
+	ITexture* albedoMap = textureManager->getTexture("SampleModels/Robot/scorpion_a.png");
+	ITexture* normalMap = textureManager->getTexture("BuiltIn/Textures/NullNormalMap.png");
+	ITexture* rmaMap = textureManager->getTexture("SampleModels/Robot/scorpion_rma.png");
+#else
 	ITexture* albedoMap = textureManager->getTexture("SampleModels/Robot/robot_01_a.png");
 	ITexture* normalMap = textureManager->getTexture("BuiltIn/Textures/NullNormalMap.png");
 	ITexture* rmaMap = textureManager->getTexture("SampleModels/Robot/robot_01_rma.png");
+#endif
+
 	materials[0]->setUniformTexture("uTexAlbedo", albedoMap);
 	materials[0]->setUniformTexture("uTexNormal", normalMap);
 	materials[0]->setUniformTexture("uTexRMA", rmaMap);
@@ -250,22 +321,47 @@ void CViewInit::initReplayRobot()
 	// need update a frame
 	scene->getEntityManager()->update();
 
-	CWorldTransformData* root = renderMesh->getChildTransform("robot_01.fbx");
-	CLegIK* legs[4];
+	std::vector<std::string> leftLegs;
+	std::vector<std::string> rightLegs;
+	std::vector<CLegIK*> llegs;
+	std::vector<CLegIK*> rlegs;
 
-	// add leg
-	legTransform = renderMesh->getChildTransform("leg_A_01");
-	if (legTransform)
-		legs[0] = legReplayer->addLeg(root, legTransform);
-	legTransform = renderMesh->getChildTransform("leg_B_01");
-	if (legTransform)
-		legs[1] = legReplayer->addLeg(root, legTransform);
-	legTransform = renderMesh->getChildTransform("leg_C_01");
-	if (legTransform)
-		legs[2] = legReplayer->addLeg(root, legTransform);
-	legTransform = renderMesh->getChildTransform("leg_D_01");
-	if (legTransform)
-		legs[3] = legReplayer->addLeg(root, legTransform);
+#ifdef USE_SCORPION_MODEL
+	CWorldTransformData* root = renderMesh->getChildTransform("boss_robot_01.fbx");
+	leftLegs.push_back("L_leg_A_01");
+	leftLegs.push_back("L_leg_B_01");
+	leftLegs.push_back("L_leg_C_01");
+	leftLegs.push_back("L_leg_D_01");
+
+	rightLegs.push_back("R_leg_A_01");
+	rightLegs.push_back("R_leg_B_01");
+	rightLegs.push_back("R_leg_C_01");
+	rightLegs.push_back("R_leg_D_01");
+#else
+	CWorldTransformData* root = renderMesh->getChildTransform("robot_01.fbx");
+	leftLegs.push_back("leg_A_01");
+	leftLegs.push_back("leg_B_01");
+
+	rightLegs.push_back("leg_C_01");
+	rightLegs.push_back("leg_D_01");
+#endif
+
+	int nLeg = (int)leftLegs.size();
+	for (int i = 0; i < nLeg; i++)
+	{
+		legTransform = renderMesh->getChildTransform(leftLegs[i].c_str());
+		if (legTransform)
+			llegs.push_back(legReplayer->addLeg(root, legTransform));
+
+		legTransform = renderMesh->getChildTransform(rightLegs[i].c_str());
+		if (legTransform)
+			rlegs.push_back(legReplayer->addLeg(root, legTransform));
+	}
+
+#ifdef USE_SCORPION_MODEL
+	for (CLegIK* leg : rlegs)
+		leg->setFlip(true);
+#endif
 
 	// hide this robot
 	robot->setVisible(false);

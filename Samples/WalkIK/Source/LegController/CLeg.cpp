@@ -16,11 +16,12 @@ CLeg::CLeg(
 	CLegIK(root, joints),
 	m_targetVector(targetVector),
 	m_footTargetPosition(footPos),
-	m_footStepLength(footStepLength),
 	m_stepHeight(stepHeight),
 	m_stepTime(stepTime),
 	m_animTime(stepTime),
-	m_link(NULL)
+	m_link(NULL),
+	m_waiting(false),
+	m_waitingTime(0.0f)
 {
 	m_footPosition = m_footTargetPosition;
 	m_lastFootPosition = m_footTargetPosition;
@@ -40,11 +41,14 @@ void CLeg::addLink(CLeg* leg)
 
 void CLeg::update()
 {
-	m_animTime = m_animTime + getTimeStep() / 1000.0f;
-	if (m_animTime > m_stepTime)
-		m_animTime = m_stepTime;
+	float dt = getTimeStep() / 1000.0f;
+	m_animTime = m_animTime + dt;
 
-	float t = m_animTime / m_stepTime;
+	if (m_waiting)
+		m_waitingTime = m_waitingTime + dt;
+
+	float animTime = core::clamp(m_animTime, 0.0f, m_stepTime);
+	float t = animTime / m_stepTime;
 	m_footPosition = CVector::lerp(m_lastFootPosition, m_footTargetPosition, t);
 	m_footPosition += Transform::Oy * sinf(t * core::PI) * m_stepHeight;
 
