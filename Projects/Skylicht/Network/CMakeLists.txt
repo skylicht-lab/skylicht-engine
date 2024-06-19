@@ -4,7 +4,6 @@ include_directories(
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Source
 	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/source/curl/include
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Audio/Source
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Engine/Source
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Crypto/Source
 )

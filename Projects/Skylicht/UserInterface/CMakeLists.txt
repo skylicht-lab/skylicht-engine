@@ -2,7 +2,6 @@ include_directories(
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/UserInterface/Source
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Include
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/source/curl/include
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Engine/Source
 )
 

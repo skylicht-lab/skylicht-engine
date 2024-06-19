@@ -3,7 +3,6 @@ include_directories(
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Lightmapper/Source
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Include	
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Engine/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Components/Source
 )
 
 file(GLOB_RECURSE skylicht_lightmapper_source 
@@ -21,7 +20,7 @@ endif()
 
 set_target_properties(Lightmapper PROPERTIES VERSION ${SKYLICHT_VERSION})
 
-target_link_libraries(Lightmapper Engine Components)
+target_link_libraries(Lightmapper Engine)
 
 if (INSTALL_LIBS)
 install(TARGETS Lightmapper
