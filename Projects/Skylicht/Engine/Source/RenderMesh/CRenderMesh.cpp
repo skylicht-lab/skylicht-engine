@@ -305,8 +305,12 @@ namespace Skylicht
 				{
 					u32 numJoints = (u32)skinMesh->Joints.size();
 
-					// alloc animation matrix (Max: 64 bone)
-					skinMesh->SkinningMatrix = new f32[16 * GPU_BONES_COUNT];
+					u32 maxJoints = numJoints;
+					if (maxJoints < GPU_BONES_COUNT)
+						maxJoints = GPU_BONES_COUNT;
+
+					// alloc animation matrix
+					skinMesh->SkinningMatrix = new f32[16 * maxJoints];
 
 					for (u32 i = 0; i < numJoints; i++)
 					{
