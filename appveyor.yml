@@ -12,14 +12,14 @@ environment:
       arch: x64
       toolchain: Cygwin
       configuration: Release
-      cmake_args: -B ./PrjCygwin -G "Unix Makefiles" -DBUILD_BULLET_PHYSIC_LIB=OFF -DBUILD_SHARED_LIBS=ON
+      cmake_args: -B ./PrjCygwin -G "Unix Makefiles" -DBUILD_SKYLICHT_PHYSIC=OFF -DBUILD_SHARED_LIBS=ON
 
     # Win32/x86/Release
     # - platform: Win32 x86
     #   arch: x86
     #   toolchain: MSVC
     #   configuration: Release
-    #   cmake_args: -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A Win32 -DBUILD_BULLET_PHYSIC_LIB=OFF -DBUILD_SHARED_LIBS=ON
+    #   cmake_args: -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A Win32 -DBUILD_SKYLICHT_PHYSIC=OFF -DBUILD_SHARED_LIBS=ON
     #   cmake_build: /verbosity:minimal /maxcpucount
 
 # clone directory
