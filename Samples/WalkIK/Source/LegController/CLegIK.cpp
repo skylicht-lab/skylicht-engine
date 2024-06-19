@@ -10,13 +10,17 @@ CLegIK::CLegIK(
 	std::vector<CWorldTransformData*>& joints) :
 	m_root(root),
 	m_joints(joints),
-	m_drawDebug(false)
+	m_drawDebug(false),
+	m_flip(1.0f)
 {
 	for (CWorldTransformData* t : joints)
 	{
 		m_worlds.push_back(t->World);
 		m_upVector.push_back(Transform::Oy);
 	}
+
+	if (joints.size() > 0)
+		m_name = joints[0]->Name;
 }
 
 CLegIK::~CLegIK()
@@ -146,9 +150,9 @@ void CLegIK::setTransform(core::matrix4& mat, const core::vector3df& pos, core::
 
 	// note: X is front
 	f32* matData = mat.pointer();
-	matData[0] = -front.X * m_scale.X;
-	matData[1] = -front.Y * m_scale.X;
-	matData[2] = -front.Z * m_scale.X;
+	matData[0] = -front.X * m_scale.X * m_flip;
+	matData[1] = -front.Y * m_scale.X * m_flip;
+	matData[2] = -front.Z * m_scale.X * m_flip;
 	matData[3] = 0.0f;
 
 	matData[4] = up.X * m_scale.Y;
@@ -156,9 +160,9 @@ void CLegIK::setTransform(core::matrix4& mat, const core::vector3df& pos, core::
 	matData[6] = up.Z * m_scale.Y;
 	matData[7] = 0.0f;
 
-	matData[8] = right.X * m_scale.Z;
-	matData[9] = right.Y * m_scale.Z;
-	matData[10] = right.Z * m_scale.Z;
+	matData[8] = right.X * m_scale.Z * m_flip;
+	matData[9] = right.Y * m_scale.Z * m_flip;
+	matData[10] = right.Z * m_scale.Z * m_flip;
 	matData[11] = 0.0f;
 
 	matData[12] = pos.X;

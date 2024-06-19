@@ -149,6 +149,7 @@ void CViewDemo::onGUI()
 					CTransformEuler* euler = m_robot->getTransformEuler();
 					euler->setPosition(core::vector3df());
 					euler->setRotation(core::vector3df());
+					m_legController->resetFootPosition();
 				}
 
 				ImGui::Separator();

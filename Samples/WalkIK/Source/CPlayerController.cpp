@@ -5,6 +5,8 @@
 
 CPlayerController::CPlayerController() :
 	m_moveSpeed(1.0f),
+	m_turnSpeed(0.7f),
+	m_speed(0.4f),
 	m_rotSpeed(50.0f)
 {
 	m_keyMap.push_back(SKeyMap{ MoveForward , irr::KEY_UP });
@@ -53,17 +55,35 @@ void CPlayerController::updateComponent()
 	core::vector3df movedir = transform->getFront();
 	movedir.normalize();
 
-	if (m_input[MoveForward])
-		pos += movedir * timeDiff * m_moveSpeed;
-
-	if (m_input[MoveBackward])
-		pos -= movedir * timeDiff * m_moveSpeed;
+	bool turn = false;
+	bool move = false;
 
 	if (m_input[TurnLeft])
+	{
 		yaw = yaw - timeDiff * m_rotSpeed;
+		turn = true;
+	}
 
 	if (m_input[TurnRight])
+	{
 		yaw = yaw + timeDiff * m_rotSpeed;
+		turn = true;
+	}
+
+	if (m_input[MoveForward])
+	{
+		pos += movedir * timeDiff * m_speed;
+		move = true;
+	}
+
+	if (m_input[MoveBackward])
+	{
+		pos -= movedir * timeDiff * m_speed;
+		move = true;
+	}
+
+	f32 speed = (turn || !move) ? m_turnSpeed : m_moveSpeed;
+	m_speed = m_speed + (speed - m_speed) * getTimeStep() * 0.005f;
 
 	transform->setPosition(pos);
 	transform->setYaw(yaw);

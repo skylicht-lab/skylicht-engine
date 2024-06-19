@@ -9,6 +9,8 @@ class CLegIK
 protected:
 	CWorldTransformData* m_root;
 
+	std::string m_name;
+
 	std::vector<CWorldTransformData*> m_joints;
 	std::vector<core::matrix4> m_worlds;
 	std::vector<core::vector3df> m_upVector;
@@ -18,6 +20,8 @@ protected:
 
 	core::vector3df m_scale;
 	core::vector3df m_footPosition;
+
+	float m_flip;
 
 public:
 	CLegIK(CWorldTransformData* root, std::vector<CWorldTransformData*>& joints);
@@ -41,6 +45,11 @@ public:
 	inline core::vector3df& getFootPosition()
 	{
 		return m_footPosition;
+	}
+
+	inline void setFlip(bool b)
+	{
+		m_flip = b ? -1.0f : 1.0f;
 	}
 
 private:
