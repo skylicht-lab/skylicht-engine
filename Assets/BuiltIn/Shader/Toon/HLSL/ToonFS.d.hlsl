@@ -46,7 +46,9 @@ cbuffer cbPerFrame
 
 float4 main(PS_INPUT input) : SV_TARGET
 {
-	float3 diffuseMap = sRGB(uTexDiffuse.Sample(uTexDiffuseSampler, input.tex0).rgb);
+	float4 diffuse = uTexDiffuse.Sample(uTexDiffuseSampler, input.tex0);
+	float3 diffuseMap = sRGB(diffuse.rgb);
+	
 #ifdef INSTANCING
 	float3 color = sRGB(input.color.rgb);
 	float shadowIntensity = input.color.a;
@@ -54,6 +56,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 color = sRGB(uColor.rgb);
 	float shadowIntensity = uColor.a;
 #endif
+
 	float3 shadowColor = sRGB(uShadowColor.rgb);
 	float3 lightColor = sRGB(uLightColor.rgb);
 	
@@ -89,5 +92,5 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float spec = pow(NdotH, uSpecular.x*128.0) * uSpecular.y;
 	spec = smoothstep(0.5-uSpecular.z*0.5, 0.5+uSpecular.z*0.5, spec);
 	
-	return float4(diffuseMap * lightColor * ramp * (0.5 + visibility * 0.5) + lightColor * spec * visibility, 1.0);
+	return float4(diffuseMap * lightColor * ramp * (0.5 + visibility * 0.5) + lightColor * spec * visibility, diffuse.a);
 }

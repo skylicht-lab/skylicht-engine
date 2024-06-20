@@ -73,7 +73,8 @@ float shadow(const float4 shadowCoord[3], const float shadowDistance[3], const f
 }
 float4 main(PS_INPUT input) : SV_TARGET
 {
-	float3 diffuseMap = sRGB(uTexDiffuse.Sample(uTexDiffuseSampler, input.tex0).rgb);
+	float4 diffuse = uTexDiffuse.Sample(uTexDiffuseSampler, input.tex0);
+	float3 diffuseMap = sRGB(diffuse.rgb);
 	float3 color = sRGB(uColor.rgb);
 	float shadowIntensity = uColor.a;
 	float3 shadowColor = sRGB(uShadowColor.rgb);
@@ -97,5 +98,5 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float NdotH = max(0, dot(input.worldNormal, h));
 	float spec = pow(NdotH, uSpecular.x*128.0) * uSpecular.y;
 	spec = smoothstep(0.5-uSpecular.z*0.5, 0.5+uSpecular.z*0.5, spec);
-	return float4(diffuseMap * lightColor * ramp * (0.5 + visibility * 0.5) + lightColor * spec * visibility, 1.0);
+	return float4(diffuseMap * lightColor * ramp * (0.5 + visibility * 0.5) + lightColor * spec * visibility, diffuse.a);
 }

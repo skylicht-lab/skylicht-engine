@@ -46,6 +46,7 @@ namespace Skylicht
 	void CMeshRenderer::beginQuery(CEntityManager* entityManager)
 	{
 		m_meshs.set_used(0);
+		m_transparents.set_used(0);
 
 		CMeshRenderSystem::beginQuery(entityManager);
 	}
@@ -203,8 +204,75 @@ namespace Skylicht
 			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 			driver->setTransform(video::ETS_WORLD, transform->World);
 
+			bool haveTransparent = false;
+
 			for (u32 j = 0, m = mesh->getMeshBufferCount(); j < m; j++)
-				rp->drawMeshBuffer(mesh, j, entityManager, meshData->EntityIndex, false);
+			{
+				CMaterial* material = mesh->Materials[j];
+				if (material == NULL)
+				{
+					// draw opaque mesh because unknown material
+					rp->drawMeshBuffer(mesh, j, entityManager, meshData->EntityIndex, false);
+				}
+				else if (material->getShader() != NULL && material->getShader()->isOpaque() == false)
+				{
+					haveTransparent = true;
+				}
+				else
+				{
+					rp->drawMeshBuffer(mesh, j, entityManager, meshData->EntityIndex, false);
+				}
+			}
+
+			if (haveTransparent == true)
+			{
+				// this will render in transparent pass
+				m_transparents.push_back(i);
+			}
+		}
+	}
+
+	void CMeshRenderer::renderTransparent(CEntityManager* entityManager)
+	{
+		u32 numTransparent = m_transparents.size();
+		if (numTransparent == 0)
+			return;
+
+		IVideoDriver* driver = getVideoDriver();
+		CShaderManager* shaderManager = CShaderManager::getInstance();
+		IRenderPipeline* rp = entityManager->getRenderPipeline();
+		CRenderMeshData** meshs = m_meshs.pointer();
+		CEntity** allEntities = entityManager->getEntities();
+
+		for (u32 i = 0; i < numTransparent; i++)
+		{
+			u32 meshID = m_transparents[i];
+
+			CRenderMeshData* meshData = m_meshs[meshID];
+			CEntity* entity = meshData->Entity;
+
+			// set transform
+			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+			driver->setTransform(video::ETS_WORLD, transform->World);
+
+			CMesh* mesh = meshData->getMesh();
+			if (meshData->isSoftwareBlendShape())
+				mesh = meshData->getSoftwareBlendShapeMesh();
+			if (meshData->isSoftwareSkinning())
+				mesh = meshData->getSoftwareSkinnedMesh();
+
+			// render mesh
+			for (u32 j = 0, m = mesh->getMeshBufferCount(); j < m; j++)
+			{
+				CMaterial* material = mesh->Materials[j];
+
+				if (material != NULL &&
+					material->getShader() != NULL &&
+					material->getShader()->isOpaque() == false)
+				{
+					rp->drawMeshBuffer(mesh, j, entityManager, meshData->EntityIndex, false);
+				}
+			}
 		}
 	}
 }
