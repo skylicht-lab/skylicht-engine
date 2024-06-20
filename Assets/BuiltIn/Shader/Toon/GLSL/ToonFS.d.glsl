@@ -44,7 +44,8 @@ out vec4 FragColor;
 
 void main(void)
 {
-	vec3 diffuseMap = sRGB(texture(uTexDiffuse, vTexCoord0.xy).rgb);
+	vec4 diffuse = texture(uTexDiffuse, vTexCoord0.xy);
+	vec3 diffuseMap = sRGB(diffuse.rgb);
 	
 	float NdotL = (dot(vWorldNormal, uLightDirection.xyz) + uWrapFactor.x) / (1.0 + uWrapFactor.x);
 	NdotL = max(NdotL, 0.0);
@@ -93,5 +94,5 @@ void main(void)
 	float spec = pow(NdotH, uSpecular.x*128.0) * uSpecular.y;
 	spec = smoothstep(0.5-uSpecular.z*0.5, 0.5+uSpecular.z*0.5, spec);
 	
-	FragColor = vec4(diffuseMap * lightColor * ramp * (0.5 + visibility * 0.5) + lightColor * spec * visibility, 1.0);
+	FragColor = vec4(diffuseMap * lightColor * ramp * (0.5 + visibility * 0.5) + lightColor * spec * visibility, diffuse.a);
 }

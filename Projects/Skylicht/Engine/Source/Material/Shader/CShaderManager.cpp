@@ -299,14 +299,17 @@ namespace Skylicht
 			shader = NULL;
 		}
 
-		std::vector<std::string>& deps = shader->getDependents();
-		for (std::string& p : deps)
+		if (shader)
 		{
-			if (loadShader(p.c_str()) == NULL)
+			std::vector<std::string>& deps = shader->getDependents();
+			for (std::string& p : deps)
 			{
-				char log[512];
-				sprintf(log, "!!! Warning: Name '%s' fail dependent:'%s'", shaderName.c_str(), p.c_str());
-				os::Printer::log(log);
+				if (loadShader(p.c_str()) == NULL)
+				{
+					char log[512];
+					sprintf(log, "!!! Warning: Name '%s' fail dependent:'%s'", shaderName.c_str(), p.c_str());
+					os::Printer::log(log);
+				}
 			}
 		}
 

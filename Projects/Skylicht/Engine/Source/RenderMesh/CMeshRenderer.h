@@ -35,7 +35,7 @@ namespace Skylicht
 	{
 	protected:
 		core::array<CRenderMeshData*> m_meshs;
-
+		core::array<u32> m_transparents;
 	public:
 		CMeshRenderer();
 
@@ -52,5 +52,7 @@ namespace Skylicht
 		virtual void update(CEntityManager* entityManager);
 
 		virtual void render(CEntityManager* entityManager);
+
+		virtual void renderTransparent(CEntityManager* entityManager);
 	};
 }
