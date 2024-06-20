@@ -20,6 +20,7 @@ endif()
 
 if (CMAKE_SYSTEM_NAME STREQUAL Linux)
 	set(BUILD_LINUX ON)
+	set(CMAKE_SKIP_RPATH TRUE)
 	add_definitions(-DLINUX)
 endif()
 

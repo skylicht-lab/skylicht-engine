@@ -125,7 +125,7 @@ void CViewBakeLightmap::onInit()
 							m_meshBuffers.push_back(mb);
 							m_meshTransforms.push_back(transform);
 
-							// compute for verify load/save progress							
+							// compute for verify load/save progress
 							m_numIndices += mb->getIndexBuffer()->getIndexCount();
 							m_numVertices += mb->getVertexBuffer()->getVertexCount();
 						}
