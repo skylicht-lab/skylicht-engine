@@ -1,0 +1,39 @@
+<shaderConfig name="SkinToonAlpha" baseShader="TRANSPARENT_ALPHA_CHANNEL" softwareSkinning="ToonAlpha">
+	<dependent shader="ToonAlpha.xml"/>
+	<uniforms>
+		<vs>
+			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+			<uniform name="uWorldMatrix" type="WORLD" value="0" float="16" matrix="true"/>
+			<uniform name="uCameraPosition" type="WORLD_CAMERA_POSITION" value="0" float="4"/>
+			<uniform name="uUVScale" type="MATERIAL_PARAM" valueIndex="0" value="1.0, 1.0, 0.0, 0.0" float="4"/>
+			<uniform name="uBoneMatrix" type="BONE_MATRIX" value="0" float="16" array="64" matrix="true"/>
+		</vs>
+		<fs>
+			<uniform name="uTexDiffuse" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
+			<uniform name="uTexRamp" type="DEFAULT_VALUE" value="1" float="1" directX="false"/>
+			<uniform name="uLightDirection" type="WORLD_LIGHT_DIRECTION" value="0" float="4"/>
+			<uniform name="uLightColor" type="LIGHT_COLOR" value="1.0, 1.0, 1.0, 1.0" float="4"/>
+			<uniform name="uColor" type="MATERIAL_PARAM" valueIndex="1" value="1.0, 1.0, 1.0, 1.0" float="4"/>
+			<uniform name="uShadowColor" type="MATERIAL_PARAM" valueIndex="2" value="0.5, 0.5, 0.5, 0.5" float="4"/>
+			<uniform name="uWrapFactor" type="MATERIAL_PARAM" valueIndex="3" value="1.0, 0.0" float="2"/>
+			<uniform name="uSpecular" type="MATERIAL_PARAM" valueIndex="4" value="0.5, 0.5; 0.3" float="3"/>
+		</fs>
+	</uniforms>
+	<resources>
+	</resources>
+	<customUI>
+		<ui control="UIGroup" name="Texture">
+			<ui control="UITexture" name="uTexDiffuse" autoReplace="_diff.;_Diffuse.;_D."/>
+			<ui control="UITexture" name="uTexRamp" autoReplace=""/>
+		</ui>
+		<ui control="UIGroup" name="Customize">
+			<ui control="UIFloat4" name="uUVScale" elementName="UV ScaleX;UV ScaleY;UV OffsetX;UV OffsetY"/>
+			<ui control="UIColor" name="uColor"/>
+			<ui control="UIColor" name="uShadowColor"/>
+			<ui control="UIFloat2" name="uWrapFactor" elementName="Wrap Factor" min="0.0" max="10.0"/>
+			<ui control="UIFloat3" name="uSpecular" elementName="Glossiness;Specular;SpecSmooth" min="0.0" max="10.0"/>
+		</ui>
+	</customUI>
+	<shader type="GLSL" vs="GLSL/SkinToonVS.glsl" fs="GLSL/ToonFS.glsl" fs_source="GLSL/ToonFS.d.glsl"/>
+	<shader type="HLSL" vs="HLSL/SkinToonVS.hlsl" fs="HLSL/ToonFS.hlsl" fs_source="HLSL/ToonFS.d.hlsl"/>
+</shaderConfig>
