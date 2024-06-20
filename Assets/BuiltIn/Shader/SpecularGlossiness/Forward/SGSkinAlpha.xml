@@ -1,4 +1,5 @@
 <shaderConfig name="SGSkinAlpha" baseShader="TRANSPARENT_ALPHA_CHANNEL" softwareSkinning="SGNoNormalMap">
+	<dependent shader="SGNoNormalMap.xml"/>
 	<uniforms>
 		<vs>
 			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>

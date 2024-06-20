@@ -1,4 +1,5 @@
 <shaderConfig name="SkinToonVATInstancing2" baseShader="SOLID" shadowDepth="SDWSkinVATInstancing2">
+	<dependent shader="../ShadowDepthWrite/SDWSkinVATInstancing2.xml"/>
 	<uniforms>
 		<vs>
 			<uniform name="uVpMatrix" type="VIEW_PROJECTION" value="0" float="16" matrix="true"/>

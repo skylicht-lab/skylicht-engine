@@ -235,6 +235,8 @@ namespace Skylicht
 
 		std::vector<IShaderCallback*> m_callbacks;
 
+		std::vector<std::string> m_dependents;
+
 		SUniform* m_listVSUniforms;
 		SUniform* m_listFSUniforms;
 		int m_numVSUniform;
@@ -246,16 +248,21 @@ namespace Skylicht
 		E_MATERIAL_TYPE	m_baseShader;
 
 		bool m_deferred;
-
 		bool m_skinning;
-
 		bool m_shadow;
 
 		// fallback for hardware skinning
-		std::string m_softwareSkinning;
+		std::string m_softwareSkinningShaderName;
 		CShader* m_softwareSkinningShader;
 
 		IShaderInstancing* m_instancing;
+
+		video::E_VERTEX_TYPE m_vertexType;
+
+		std::string m_instancingShaderName;
+		std::string m_shadowDepthShaderName;
+		std::string m_shadowDistanceShaderName;
+
 		CShader* m_instancingShader;
 		CShader* m_shadowDepthShader;
 		CShader* m_shadowDistanceShader;
@@ -276,19 +283,19 @@ namespace Skylicht
 
 		void parseUI(io::IXMLReader* xmlReader, SUniformUI* parent);
 
-		const std::string& getName()
+		inline const std::string& getName()
 		{
 			return m_name;
 		}
 
-		const std::string& getShaderPath()
+		inline const std::string& getShaderPath()
 		{
 			return m_shaderPath;
 		}
 
-		const std::string& getSoftwareSkinning()
+		inline const std::string& getSoftwareSkinningName()
 		{
-			return m_softwareSkinning;
+			return m_softwareSkinningShaderName;
 		}
 
 		inline bool isSkinning()
@@ -296,61 +303,92 @@ namespace Skylicht
 			return m_skinning;
 		}
 
+		inline bool isSupportInstancing()
+		{
+			return !m_instancingShaderName.empty();
+		}
+
+		inline bool isCustomShadowDepthWrite()
+		{
+			return !m_shadowDepthShaderName.empty();
+		}
+
+		inline bool isCustomShadowDistanceWrite()
+		{
+			return !m_shadowDistanceShaderName.empty();
+		}
+
 		CShader* getSoftwareSkinningShader();
 
-		int getAttributeMappingCount()
+		CShader* getInstancingShader();
+
+		CShader* getShadowDepthWriteShader();
+
+		CShader* getShadowDistanceWriteShader();
+
+		inline video::E_VERTEX_TYPE getVertexType()
+		{
+			return m_vertexType;
+		}
+
+		inline int getAttributeMappingCount()
 		{
 			return (int)m_attributeMapping.size();
 		}
 
-		SAttributeMapping& getAttributeMapping(int id)
+		inline SAttributeMapping& getAttributeMapping(int id)
 		{
 			return m_attributeMapping[id];
 		}
 
-		void setShaderPath(const char* path)
+		inline void setShaderPath(const char* path)
 		{
 			m_shaderPath = path;
 		}
 
-		int getNumResource()
+		inline int getNumResource()
 		{
 			return (int)m_resources.size();
 		}
 
-		int getNumVS()
+		inline int getNumVS()
 		{
 			return (int)m_vsUniforms.size();
 		}
 
-		int getNumFS()
+		inline int getNumFS()
 		{
 			return (int)m_fsUniforms.size();
 		}
 
-		SResource* getResouceInfo(int id)
+		inline SResource* getResouceInfo(int id)
 		{
 			return m_resources[id];
 		}
 
-		SUniform* getVSUniformID(int id)
+		inline SUniform* getVSUniformID(int id)
 		{
 			return &m_listVSUniforms[id];
 		}
 
-		SUniform* getFSUniformID(int id)
+		inline SUniform* getFSUniformID(int id)
 		{
 			return &m_listFSUniforms[id];
 		}
 
-		int getNumUI()
+		inline int getNumUI()
 		{
 			return (int)m_ui.size();
 		}
 
-		SUniformUI* getUniformUI(int id)
+		inline SUniformUI* getUniformUI(int id)
 		{
 			return m_ui[id];
+		}
+
+		inline std::vector<std::string>& getDependents()
+		{
+			return m_dependents;
 		}
 
 		SUniformUI* getUniformUIByName(const char* name);
@@ -361,17 +399,17 @@ namespace Skylicht
 
 		SUniform* getFSUniform(const char* name);
 
-		bool isDeferred()
+		inline bool isDeferred()
 		{
 			return m_deferred;
 		}
 
-		bool isOpaque()
+		inline bool isOpaque()
 		{
 			return m_baseShader == EMT_SOLID;
 		}
 
-		E_MATERIAL_TYPE getBaseMaterial()
+		inline E_MATERIAL_TYPE getBaseMaterial()
 		{
 			return m_baseShader;
 		}
@@ -431,24 +469,9 @@ namespace Skylicht
 			return m_instancing;
 		}
 
-		inline CShader* getInstancingShader()
-		{
-			return m_instancingShader;
-		}
-
 		inline bool isDrawDepthShadow()
 		{
 			return m_shadow;
-		}
-
-		inline CShader* getShadowDepthWriteShader()
-		{
-			return m_shadowDepthShader;
-		}
-
-		inline CShader* getShadowDistanceWriteShader()
-		{
-			return m_shadowDistanceShader;
 		}
 
 	protected:

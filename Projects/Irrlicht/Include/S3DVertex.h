@@ -33,6 +33,8 @@ enum E_VERTEX_TYPE
 	EVT_SKIN_TANGENTS,	
 	EVT_2TCOORDS_TANGENTS,
 	EVT_SKIN_2TCOORDS_TANGENTS,
+	//! Null
+	EVT_UNKNOWN
 };
 
 //! Array holding the built in vertex type names

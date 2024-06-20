@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CShader.h"
 
 #include "Utils/CStringImp.h"
+#include "Utils/CPath.h"
 
 #include "ShaderCallback/CShaderLighting.h"
 #include "ShaderCallback/CShaderCamera.h"
@@ -50,7 +51,8 @@ namespace Skylicht
 		m_skinning(false),
 		m_shadow(true),
 		m_shadowDepthShader(NULL),
-		m_shadowDistanceShader(NULL)
+		m_shadowDistanceShader(NULL),
+		m_vertexType(video::EVT_UNKNOWN)
 	{
 		// builtin callback
 		addCallback<CShaderLighting>();
@@ -90,12 +92,42 @@ namespace Skylicht
 
 	CShader* CShader::getSoftwareSkinningShader()
 	{
-		if (m_softwareSkinningShader == NULL)
+		if (m_softwareSkinningShader == NULL && !m_softwareSkinningShaderName.empty())
 		{
 			CShaderManager* shaderManager = CShaderManager::getInstance();
-			m_softwareSkinningShader = shaderManager->getShaderByName(m_softwareSkinning.c_str());
+			m_softwareSkinningShader = shaderManager->getShaderByName(m_softwareSkinningShaderName.c_str());
 		}
 		return m_softwareSkinningShader;
+	}
+
+	CShader* CShader::getInstancingShader()
+	{
+		if (m_instancingShader == NULL && !m_instancingShaderName.empty())
+		{
+			CShaderManager* shaderManager = CShaderManager::getInstance();
+			m_softwareSkinningShader = shaderManager->getShaderByName(m_instancingShaderName.c_str());
+		}
+		return m_instancingShader;
+	}
+
+	CShader* CShader::getShadowDepthWriteShader()
+	{
+		if (m_shadowDepthShader == NULL && !m_shadowDepthShaderName.empty())
+		{
+			CShaderManager* shaderManager = CShaderManager::getInstance();
+			m_shadowDepthShader = shaderManager->getShaderByName(m_shadowDepthShaderName.c_str());
+		}
+		return m_shadowDepthShader;
+	}
+
+	CShader* CShader::getShadowDistanceWriteShader()
+	{
+		if (m_shadowDistanceShader == NULL && !m_shadowDistanceShaderName.empty())
+		{
+			CShaderManager* shaderManager = CShaderManager::getInstance();
+			m_shadowDistanceShader = shaderManager->getShaderByName(m_shadowDistanceShaderName.c_str());
+		}
+		return m_shadowDistanceShader;
 	}
 
 	void CShader::deleteAllResource()
@@ -511,6 +543,8 @@ namespace Skylicht
 		const wchar_t* wtext;
 		char text[1024];
 
+		CShaderManager* shaderManager = CShaderManager::getInstance();
+
 		while (xmlReader->read())
 		{
 			switch (xmlReader->getNodeType())
@@ -543,14 +577,8 @@ namespace Skylicht
 					{
 						CStringImp::convertUnicodeToUTF8(wtext, text);
 
-						CShaderManager* shaderManager = CShaderManager::getInstance();
+						m_instancingShaderName = text;
 						m_instancingShader = shaderManager->getShaderByName(text);
-						if (m_instancingShader == NULL)
-						{
-							char log[512];
-							sprintf(log, "Warning: Need load shader instancing: %s first", text);
-							os::Printer::log(log);
-						}
 					}
 
 					// shader for fallback to software skinning
@@ -558,20 +586,13 @@ namespace Skylicht
 					if (wtext != NULL)
 					{
 						CStringImp::convertUnicodeToUTF8(wtext, text);
-						m_softwareSkinning = text;
 						m_skinning = true;
 
-						CShaderManager* shaderManager = CShaderManager::getInstance();
+						m_softwareSkinningShaderName = text;
 						m_softwareSkinningShader = shaderManager->getShaderByName(text);
-						if (m_softwareSkinningShader == NULL)
-						{
-							char log[512];
-							sprintf(log, "Warning: Need load shader fallback: %s first", text);
-							os::Printer::log(log);
-						}
 					}
 
-					// shader for fallback to software skinning
+					// shader will cast shadow or not?
 					wtext = xmlReader->getAttributeValue(L"shadow");
 					if (wtext != NULL)
 					{
@@ -589,13 +610,9 @@ namespace Skylicht
 						CStringImp::convertUnicodeToUTF8(wtext, text);
 
 						CShaderManager* shaderManager = CShaderManager::getInstance();
+
+						m_shadowDepthShaderName = text;
 						m_shadowDepthShader = shaderManager->getShaderByName(text);
-						if (m_shadowDepthShader == NULL)
-						{
-							char log[512];
-							sprintf(log, "Warning: Need load shader shadow write depth: %s first", text);
-							os::Printer::log(log);
-						}
 					}
 
 					// shader for draw shadow distance pass (point light)
@@ -604,14 +621,41 @@ namespace Skylicht
 					{
 						CStringImp::convertUnicodeToUTF8(wtext, text);
 
-						CShaderManager* shaderManager = CShaderManager::getInstance();
+						m_shadowDistanceShaderName = text;
 						m_shadowDistanceShader = shaderManager->getShaderByName(text);
-						if (m_shadowDistanceShader == NULL)
+					}
+
+					// vertex type for instancing batch
+					wtext = xmlReader->getAttributeValue(L"vertexType");
+					if (wtext != NULL)
+					{
+						CStringImp::convertUnicodeToUTF8(wtext, text);
+						std::string vertexType = text;
+
+						int i = 0;
+						while (video::sBuiltInVertexTypeNames[i] != 0)
 						{
-							char log[512];
-							sprintf(log, "Warning: Need load shader shadow write distance: %s first", text);
-							os::Printer::log(log);
+							if (vertexType == video::sBuiltInVertexTypeNames[i])
+							{
+								m_vertexType = (E_VERTEX_TYPE)i;
+								break;
+							}
+							i++;
 						}
+					}
+				}
+				if (nodeName == L"dependent")
+				{
+					wtext = xmlReader->getAttributeValue(L"shader");
+					if (wtext != NULL)
+					{
+						CStringImp::convertUnicodeToUTF8(wtext, text);
+
+						std::string path = shaderFolder;
+						path += text;
+						path = CPath::normalizePath(path);
+
+						m_dependents.push_back(path);
 					}
 				}
 				else if (nodeName == L"uniforms")

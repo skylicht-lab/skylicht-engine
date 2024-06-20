@@ -163,14 +163,14 @@ namespace Skylicht
 		loadShader("BuiltIn/Shader/Lightmap/LMStandardSGInstancing.xml");
 		loadShader("BuiltIn/Shader/Lightmap/LMTBNSGInstancing.xml");
 
-		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml", new CStandardSGInstancing());
-		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/DiffuseNormal.xml", new CTBNSGInstancing());
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/DiffuseNormal.xml");
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml");
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Diffuse.xml");
-		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossiness.xml", new CTBNSGInstancing());
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossiness.xml");
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossinessMask.xml");
 
-		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/MetallicRoughness.xml", new CTBNSGInstancing());
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/MetallicRoughness.xml");
 
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/MetersGrid.xml");
 
@@ -214,7 +214,7 @@ namespace Skylicht
 		initSkylichtEngineShader();
 	}
 
-	CShader* CShaderManager::loadShader(const char* shaderConfig, IShaderInstancing* instancing)
+	CShader* CShaderManager::loadShader(const char* shaderConfig)
 	{
 		std::string shaderFolder = CPath::getFolderPath(std::string(shaderConfig));
 		shaderFolder += "/";
@@ -226,10 +226,6 @@ namespace Skylicht
 		{
 			sprintf(log, "Load shader: %s - File not found", shaderConfig);
 			os::Printer::log(log);
-
-			if (instancing)
-				delete instancing;
-
 			return NULL;
 		}
 
@@ -239,12 +235,31 @@ namespace Skylicht
 		// init shader
 		CShader* shader = new CShader();
 		shader->initShader(xmlReader, shaderFolder.c_str());
+
+		// init instancing batching
+		IShaderInstancing* instancing = NULL;
+		video::E_VERTEX_TYPE vertexType = shader->getVertexType();
+		if (vertexType != video::EVT_UNKNOWN)
+		{
+			if (vertexType == video::EVT_STANDARD)
+				instancing = new CStandardSGInstancing();
+			else if (vertexType == video::EVT_TANGENTS)
+				instancing = new CTBNSGInstancing();
+		}
 		shader->setInstancing(instancing);
 
 		// close xml file reader
 		xmlReader->drop();
 
 		const std::string& shaderName = shader->getName();
+
+		// warning if it not yet support instancing
+		if (shader->isSupportInstancing() && instancing == NULL)
+		{
+			char log[512];
+			sprintf(log, "!!! Warning: Name '%s' have support instancing, but xml file missing 'vertexType'", shaderName.c_str());
+			os::Printer::log(log);
+		}
 
 		// if this name it loaded
 		if (m_listShaderID.find(shaderName) != m_listShaderID.end())
@@ -253,10 +268,12 @@ namespace Skylicht
 			sprintf(log, "!!! Warning: Name '%s' is loaded <-- SKIP", shaderName.c_str());
 			os::Printer::log(log);
 
+			CShader* ret = getShaderByName(shaderName.c_str());
+
 			delete shader;
 			shader = NULL;
 
-			return NULL;
+			return ret;
 		}
 
 		// build shader
@@ -280,6 +297,17 @@ namespace Skylicht
 
 			delete shader;
 			shader = NULL;
+		}
+
+		std::vector<std::string>& deps = shader->getDependents();
+		for (std::string& p : deps)
+		{
+			if (loadShader(p.c_str()) == NULL)
+			{
+				char log[512];
+				sprintf(log, "!!! Warning: Name '%s' fail dependent:'%s'", shaderName.c_str(), p.c_str());
+				os::Printer::log(log);
+			}
 		}
 
 		return shader;

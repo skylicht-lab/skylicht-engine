@@ -104,10 +104,8 @@ void CViewInit::initScene()
 
 	// load toon instancing shader
 	CShaderManager* shaderManager = CShaderManager::getInstance();
-
-	shaderManager->loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWSkinInstancing2.xml");
 	shaderManager->loadShader("BuiltIn/Shader/Toon/ToonShadowInstancing.xml");
-	shaderManager->loadShader("BuiltIn/Shader/Toon/ToonShadow.xml", new CTBNSGInstancing());
+	shaderManager->loadShader("BuiltIn/Shader/Toon/ToonShadow.xml");
 
 	float envMin = -25.0f;
 	float envMax = 25.0f;
@@ -577,8 +575,8 @@ void CViewInit::onUpdate()
 				// retry download
 				delete m_getFile;
 				m_getFile = NULL;
-	}
-	}
+			}
+		}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -589,7 +587,7 @@ void CViewInit::onUpdate()
 
 		m_initState = CViewInit::InitScene;
 #endif
-}
+	}
 	break;
 	case CViewInit::InitScene:
 	{
