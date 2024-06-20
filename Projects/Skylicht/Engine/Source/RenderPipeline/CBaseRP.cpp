@@ -154,7 +154,7 @@ namespace Skylicht
 					else
 					{
 						char log[512];
-						sprintf(log, "[CBaseRP] Shader for software skinning is not loaded: %s\n", shader->getSoftwareSkinning().c_str());
+						sprintf(log, "[CBaseRP] Shader for software skinning is not loaded: %s", shader->getSoftwareSkinningName().c_str());
 						os::Printer::log(log);
 					}
 				}

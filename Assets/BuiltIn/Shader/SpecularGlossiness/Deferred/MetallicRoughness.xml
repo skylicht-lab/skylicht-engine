@@ -1,4 +1,5 @@
-<shaderConfig name="MetallicRoughness" baseShader="SOLID" deferred="true" instancing="MetallicRoughnessInstancing">
+<shaderConfig name="MetallicRoughness" baseShader="SOLID" deferred="true" instancing="MetallicRoughnessInstancing" vertexType="tangents">
+	<dependent shader="MetallicRoughnessInstancing.xml"/>
 	<uniforms>
 		<vs>
 			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
