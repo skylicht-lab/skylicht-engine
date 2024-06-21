@@ -19,6 +19,7 @@ in vec3 vWorldNormal;
 in vec3 vWorldViewDir;
 in vec3 vWorldPosition;
 in vec3 vDepth;
+in vec4 vColor;
 out vec4 FragColor;
 const float gamma = 2.2;
 const float invGamma = 1.0 / 2.2;
@@ -74,7 +75,7 @@ void main(void)
 	float NdotL = (dot(vWorldNormal, uLightDirection.xyz) + uWrapFactor.x) / (1.0 + uWrapFactor.x);
 	NdotL = max(NdotL, 0.0);
 	vec3 rampMap = texture(uTexRamp, vec2(NdotL, NdotL)).rgb;
-	vec3 color = sRGB(uColor.rgb);
+	vec3 color = sRGB(vColor.rgb * uColor.rgb);
 	float shadowIntensity = uColor.a;
 	vec3 shadowColor = sRGB(uShadowColor.rgb);
 	vec3 lightColor = sRGB(uLightColor.rgb);

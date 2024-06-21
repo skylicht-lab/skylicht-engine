@@ -25,6 +25,7 @@ struct VS_OUTPUT
 	float3 worldViewDir: WORLDVIEWDIR;
 	float3 worldPos: WORLDPOSITION;
 	float3 depth: DEPTH;
+	float4 color: COLOR;
 };
 cbuffer cbPerObject
 {
@@ -96,5 +97,6 @@ VS_OUTPUT main(VS_INPUT input)
 	output.pos = mul(worldPos, uVpMatrix);
 	output.tex0 = input.tex0;
 	output.worldNormal = normalize(worldNormal.xyz);
+	output.color = input.color * input.uColor;
 	return output;
 }

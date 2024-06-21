@@ -17,18 +17,14 @@ struct PS_INPUT
 	float3 worldViewDir: WORLDVIEWDIR;
 	float3 worldPos: WORLDPOSITION;
 	float3 depth: DEPTH;
-#if defined(INSTANCING)
 	float4 color: COLOR;
-#endif
 };
 
 cbuffer cbPerFrame
 {
 	float4 uLightDirection;
 	float4 uLightColor;
-#if !defined(INSTANCING)
 	float4 uColor;
-#endif
 	float4 uShadowColor;
 	float2 uWrapFactor;
 	float3 uSpecular;
@@ -56,7 +52,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 color = sRGB(input.color.rgb);
 	float shadowIntensity = input.color.a;
 #else
-	float3 color = sRGB(uColor.rgb);
+	float3 color = sRGB(uColor.rgb * input.color.rgb);
 	float shadowIntensity = uColor.a;
 #endif
 

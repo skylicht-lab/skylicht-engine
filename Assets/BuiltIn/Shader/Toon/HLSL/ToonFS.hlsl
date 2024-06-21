@@ -11,6 +11,7 @@ struct PS_INPUT
 	float3 worldViewDir: WORLDVIEWDIR;
 	float3 worldPos: WORLDPOSITION;
 	float3 depth: DEPTH;
+	float4 color: COLOR;
 };
 cbuffer cbPerFrame
 {
@@ -37,7 +38,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 {
 	float4 diffuse = uTexDiffuse.Sample(uTexDiffuseSampler, input.tex0);
 	float3 diffuseMap = sRGB(diffuse.rgb);
-	float3 color = sRGB(uColor.rgb);
+	float3 color = sRGB(uColor.rgb * input.color.rgb);
 	float shadowIntensity = uColor.a;
 	float3 shadowColor = sRGB(uShadowColor.rgb);
 	float3 lightColor = sRGB(uLightColor.rgb);

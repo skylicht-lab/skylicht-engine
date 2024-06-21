@@ -557,7 +557,7 @@ namespace Skylicht
 						blendShape->NormalOffset.set_used(offsetCount);
 
 						for (u32 i = 0; i < vtxCount; i++)
-							blendShape->VtxId[i] = offsetCount;
+							blendShape->VtxId[i] = offsetCount - 1;
 
 						for (u32 i = 0; i < offsetCount; i++)
 						{

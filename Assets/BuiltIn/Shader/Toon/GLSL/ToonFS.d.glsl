@@ -32,9 +32,7 @@ in vec3 vWorldNormal;
 in vec3 vWorldViewDir;
 in vec3 vWorldPosition;
 in vec3 vDepth;
-#ifdef INSTANCING
 in vec4 vColor;
-#endif
 
 out vec4 FragColor;
 
@@ -60,7 +58,7 @@ void main(void)
 	vec3 color = sRGB(vColor.rgb);
 	float shadowIntensity = vColor.a;
 #else
-	vec3 color = sRGB(uColor.rgb);
+	vec3 color = sRGB(vColor.rgb * uColor.rgb);
 	float shadowIntensity = uColor.a;
 #endif
 

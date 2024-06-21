@@ -19,6 +19,7 @@ cbuffer cbPerFrame
 {
 	float4 uLightDirection;
 	float4 uLightColor;
+	float4 uColor;
 	float4 uShadowColor;
 	float2 uWrapFactor;
 	float3 uSpecular;

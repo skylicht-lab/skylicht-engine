@@ -26,6 +26,7 @@ out vec3 vWorldNormal;
 out vec3 vWorldViewDir;
 out vec3 vWorldPosition;
 out vec3 vDepth;
+out vec4 vColor;
 
 #include "../../TransformTexture/GLSL/LibTransformTexture.glsl"
 
@@ -61,6 +62,8 @@ void main(void)
 	
 	vWorldNormal = normalize(worldNormal.xyz);
 	vWorldViewDir = normalize(vDepth);
+	
+	vColor = uColor * inColor / 255.0;
 	
 	gl_Position = uVpMatrix * worldPos;
 }

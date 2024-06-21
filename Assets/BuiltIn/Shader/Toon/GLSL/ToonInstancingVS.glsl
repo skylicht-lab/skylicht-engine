@@ -34,7 +34,7 @@ void main(void)
 	
 	vWorldNormal = normalize(worldNormal.xyz);
 	vWorldViewDir = normalize(vDepth);
-	vColor = uColor;
+	vColor = uColor * inColor / 255;
 	
 	gl_Position = uVPMatrix * worldPos;
 }
