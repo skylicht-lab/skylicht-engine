@@ -34,15 +34,22 @@ namespace Skylicht
 	public:
 		static CMesh* initSoftwareSkinning(CMesh* originalMesh);
 
+		static CMesh* initSoftwareBlendShape(CMesh* originalMesh);
+
 		static void resetVertexID(CMesh* mesh);
 
 		static void softwareSkinning(CMesh* renderMesh, CSkinnedMesh* originalMesh, CSkinnedMesh* blendShapeMesh);
 
 		static void softwareSkinningTangent(CMesh* renderMesh, CSkinnedMesh* originalMesh, CSkinnedMesh* blendShapeMesh);
 
-		static void skinVertex(CSkinnedMesh::SJoint* arrayJoint, core::vector3df& vertex, core::vector3df& normal, video::S3DVertexSkinTangents* src, int boneIndex);
-
-		static void skinVertex(CSkinnedMesh::SJoint* arrayJoint, core::vector3df& vertex, core::vector3df& normal, video::S3DVertexSkin* src, int boneIndex);
+		static void skinVertex(CSkinnedMesh::SJoint* arrayJoint,
+			core::vector3df& vertex,
+			core::vector3df& normal,
+			const core::vector3df& srcPos,
+			const core::vector3df& srcNormal,
+			const float* boneID,
+			const float* boneWeight,
+			int boneIndex);
 
 		static void softwareBlendShape(CMesh* blendShape, CMesh* originalMesh);
 	};
