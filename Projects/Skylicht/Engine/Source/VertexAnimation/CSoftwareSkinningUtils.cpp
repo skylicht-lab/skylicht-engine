@@ -25,6 +25,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CSoftwareSkinningUtils.h"
 
+// #define VERTEX_NORMALIZE
+
 namespace Skylicht
 {
 	CMesh* CSoftwareSkinningUtils::initSoftwareSkinning(CMesh* originalMesh)
@@ -147,9 +149,7 @@ namespace Skylicht
 
 			// copy bbox (that fixed unitScale for culling)
 			meshBuffer->getBoundingBox() = originalMeshBuffer->getBoundingBox();
-
 			mesh->replaceMeshBuffer(i, meshBuffer);
-
 			meshBuffer->drop();
 		}
 
@@ -203,6 +203,9 @@ namespace Skylicht
 			CVertexBuffer<video::S3DVertex>* vertexbuffer = (CVertexBuffer<video::S3DVertex>*)skinnedMeshBuffer->getVertexBuffer(0);
 			video::S3DVertex* resultVertex = (video::S3DVertex*)vertexbuffer->getVertices();
 
+#ifdef VERTEX_NORMALIZE
+			float length, invLength;
+#endif
 			// skinning
 			for (int i = 0; i < numVertex; i++)
 			{
@@ -216,57 +219,59 @@ namespace Skylicht
 
 				// bone 0
 				if (vertex->BoneWeight.X > 0.0f)
-					skinVertex(arrayJoint,
+				{
+					skinVertex(arrayJoint[(int)vertex->BoneIndex.X].SkinningMatrix,
 						resultVertex->Pos,
 						resultVertex->Normal,
 						vertex->Pos,
 						vertex->Normal,
-						&vertex->BoneIndex.X,
-						&vertex->BoneWeight.X,
-						0);
+						vertex->BoneWeight.X);
+				}
 
 				// bone 1
 				if (vertex->BoneWeight.Y > 0.0f)
-					skinVertex(arrayJoint,
+				{
+					skinVertex(arrayJoint[(int)vertex->BoneIndex.Y].SkinningMatrix,
 						resultVertex->Pos,
 						resultVertex->Normal,
 						vertex->Pos,
 						vertex->Normal,
-						&vertex->BoneIndex.X,
-						&vertex->BoneWeight.X,
-						1);
+						vertex->BoneWeight.Y);
+				}
 
 				// bone 2
 				if (vertex->BoneWeight.Z > 0.0f)
-					skinVertex(arrayJoint,
+				{
+					skinVertex(arrayJoint[(int)vertex->BoneIndex.Z].SkinningMatrix,
 						resultVertex->Pos,
 						resultVertex->Normal,
 						vertex->Pos,
 						vertex->Normal,
-						&vertex->BoneIndex.X,
-						&vertex->BoneWeight.X,
-						2);
+						vertex->BoneWeight.Z);
+				}
 
 				// bone 3
 				if (vertex->BoneWeight.W > 0.0f)
-					skinVertex(arrayJoint,
+				{
+					skinVertex(arrayJoint[(int)vertex->BoneIndex.W].SkinningMatrix,
 						resultVertex->Pos,
 						resultVertex->Normal,
 						vertex->Pos,
 						vertex->Normal,
-						&vertex->BoneIndex.X,
-						&vertex->BoneWeight.X,
-						3);
+						vertex->BoneWeight.W);
+				}
 
 				// apply skin normal
-				float length = resultVertex->Normal.X * resultVertex->Normal.X +
+#ifdef VERTEX_NORMALIZE
+				length = resultVertex->Normal.X * resultVertex->Normal.X +
 					resultVertex->Normal.Y * resultVertex->Normal.Y +
 					resultVertex->Normal.Z * resultVertex->Normal.Z;
 
-				float invLength = 1.0f / sqrtf(length);
+				invLength = 1.0f / sqrtf(length);
 				resultVertex->Normal.X = resultVertex->Normal.X * invLength;
 				resultVertex->Normal.Y = resultVertex->Normal.Y * invLength;
 				resultVertex->Normal.Z = resultVertex->Normal.Z * invLength;
+#endif
 
 				++resultVertex;
 				++vertex;
@@ -294,6 +299,10 @@ namespace Skylicht
 			CVertexBuffer<video::S3DVertex>* vertexbuffer = (CVertexBuffer<video::S3DVertex>*)skinnedMeshBuffer->getVertexBuffer(0);
 			video::S3DVertex* resultVertex = (video::S3DVertex*)vertexbuffer->getVertices();
 
+#ifdef VERTEX_NORMALIZE
+			float length, invLength;
+#endif
+
 			// skinning
 			for (int i = 0; i < numVertex; i++)
 			{
@@ -307,57 +316,59 @@ namespace Skylicht
 
 				// bone 0
 				if (vertex->BoneWeight.X > 0.0f)
-					skinVertex(arrayJoint,
+				{
+					skinVertex(arrayJoint[(int)vertex->BoneIndex.X].SkinningMatrix,
 						resultVertex->Pos,
 						resultVertex->Normal,
 						vertex->Pos,
 						vertex->Normal,
-						&vertex->BoneIndex.X,
-						&vertex->BoneWeight.X,
-						0);
+						vertex->BoneWeight.X);
+				}
 
 				// bone 1
 				if (vertex->BoneWeight.Y > 0.0f)
-					skinVertex(arrayJoint,
+				{
+					skinVertex(arrayJoint[(int)vertex->BoneIndex.Y].SkinningMatrix,
 						resultVertex->Pos,
 						resultVertex->Normal,
 						vertex->Pos,
 						vertex->Normal,
-						&vertex->BoneIndex.X,
-						&vertex->BoneWeight.X,
-						1);
+						vertex->BoneWeight.Y);
+				}
 
 				// bone 2
 				if (vertex->BoneWeight.Z > 0.0f)
-					skinVertex(arrayJoint,
+				{
+					skinVertex(arrayJoint[(int)vertex->BoneIndex.Z].SkinningMatrix,
 						resultVertex->Pos,
 						resultVertex->Normal,
 						vertex->Pos,
 						vertex->Normal,
-						&vertex->BoneIndex.X,
-						&vertex->BoneWeight.X,
-						2);
+						vertex->BoneWeight.Z);
+				}
 
 				// bone 3
 				if (vertex->BoneWeight.W > 0.0f)
-					skinVertex(arrayJoint,
+				{
+					skinVertex(arrayJoint[(int)vertex->BoneIndex.W].SkinningMatrix,
 						resultVertex->Pos,
 						resultVertex->Normal,
 						vertex->Pos,
 						vertex->Normal,
-						&vertex->BoneIndex.X,
-						&vertex->BoneWeight.X,
-						3);
+						vertex->BoneWeight.W);
+				}
 
 				// apply skin normal
-				float length = resultVertex->Normal.X * resultVertex->Normal.X +
+#ifdef VERTEX_NORMALIZE
+				length = resultVertex->Normal.X * resultVertex->Normal.X +
 					resultVertex->Normal.Y * resultVertex->Normal.Y +
 					resultVertex->Normal.Z * resultVertex->Normal.Z;
 
-				float invLength = 1.0f / sqrtf(length);
+				invLength = 1.0f / sqrtf(length);
 				resultVertex->Normal.X = resultVertex->Normal.X * invLength;
 				resultVertex->Normal.Y = resultVertex->Normal.Y * invLength;
 				resultVertex->Normal.Z = resultVertex->Normal.Z * invLength;
+#endif
 
 				++resultVertex;
 				++vertex;
@@ -367,27 +378,22 @@ namespace Skylicht
 		skinnedMesh->setDirty(EBT_VERTEX);
 	}
 
-	void CSoftwareSkinningUtils::skinVertex(CSkinnedMesh::SJoint* arrayJoint,
+	float px, py, pz, nx, ny, nz;
+
+	void CSoftwareSkinningUtils::skinVertex(const float* m,
 		core::vector3df& vertex,
 		core::vector3df& normal,
 		const core::vector3df& srcPos,
 		const core::vector3df& srcNormal,
-		const float* boneID,
-		const float* boneWeight,
-		int boneIndex)
+		const float& weight)
 	{
-		CSkinnedMesh::SJoint* pJoint = &arrayJoint[(int)boneID[boneIndex]];
+		px = srcPos.X * m[0] + srcPos.Y * m[4] + srcPos.Z * m[8] + m[12];
+		py = srcPos.X * m[1] + srcPos.Y * m[5] + srcPos.Z * m[9] + m[13];
+		pz = srcPos.X * m[2] + srcPos.Y * m[6] + srcPos.Z * m[10] + m[14];
 
-		float* m = pJoint->SkinningMatrix;
-		float px = srcPos.X * m[0] + srcPos.Y * m[4] + srcPos.Z * m[8] + m[12];
-		float py = srcPos.X * m[1] + srcPos.Y * m[5] + srcPos.Z * m[9] + m[13];
-		float pz = srcPos.X * m[2] + srcPos.Y * m[6] + srcPos.Z * m[10] + m[14];
-
-		float nx = srcNormal.X * m[0] + srcNormal.Y * m[4] + srcNormal.Z * m[8];
-		float ny = srcNormal.X * m[1] + srcNormal.Y * m[5] + srcNormal.Z * m[9];
-		float nz = srcNormal.X * m[2] + srcNormal.Y * m[6] + srcNormal.Z * m[10];
-
-		float weight = boneWeight[boneIndex];
+		nx = srcNormal.X * m[0] + srcNormal.Y * m[4] + srcNormal.Z * m[8];
+		ny = srcNormal.X * m[1] + srcNormal.Y * m[5] + srcNormal.Z * m[9];
+		nz = srcNormal.X * m[2] + srcNormal.Y * m[6] + srcNormal.Z * m[10];
 
 		px *= weight;
 		py *= weight;
@@ -424,31 +430,72 @@ namespace Skylicht
 			video::S3DVertexSkinTangents* vertex = NULL;
 			video::S3DVertexSkinTangents* resultVertex = NULL;
 
-			const core::vector3df* offsets = NULL;
-			const core::vector3df* offset = NULL;
+			core::vector3df* srcPos, * dstPos, * srcNormal, * dstNormal;
+
+			const core::vector3df* positionOffsets = NULL;
+			const core::vector3df* positionOffset = NULL;
+
+			const core::vector3df* normalOffsets = NULL;
+			const core::vector3df* normalOffset = NULL;
+
+			const u32* vtxId = NULL;
 
 			float weight = 0.0f;
+			u32 ix, size;
+
+#ifdef VERTEX_NORMALIZE
+			float length, invLength;
+#endif
 
 			// morphing
 			for (u32 j = 0; j < numBlendShape; j++)
 			{
-				weight = blendShapeData[j]->Weight;
+				CBlendShape* blendShape = blendShapeData[j];
+
+				weight = blendShape->Weight;
 				if (weight == 0.0f)
 					continue;
 
 				vertex = (video::S3DVertexSkinTangents*)originalVertexbuffer->getVertices();
 				resultVertex = (video::S3DVertexSkinTangents*)vertexbuffer->getVertices();
 
-				offsets = blendShapeData[j]->Offset.const_pointer();
+				vtxId = blendShape->VtxId.const_pointer();
+				size = blendShape->Offset.size();
+				positionOffsets = blendShape->Offset.const_pointer();
+				normalOffsets = blendShape->NormalOffset.const_pointer();
 
 				for (int i = 0; i < numVertex; i++)
 				{
-					offset = &offsets[(int)(vertex->VertexData.Y)];
+					ix = vtxId[(int)(vertex->VertexData.Y)];
+					if (ix < size)
+					{
+						positionOffset = &positionOffsets[ix];
+						normalOffset = &normalOffsets[ix];
 
-					resultVertex->Pos.X = vertex->Pos.X + weight * offset->X;
-					resultVertex->Pos.Y = vertex->Pos.Y + weight * offset->Y;
-					resultVertex->Pos.Z = vertex->Pos.Z + weight * offset->Z;
+						srcPos = &vertex->Pos;
+						dstPos = &resultVertex->Pos;
+						srcNormal = &vertex->Normal;
+						dstNormal = &resultVertex->Normal;
 
+						dstPos->X = srcPos->X + weight * positionOffset->X;
+						dstPos->Y = srcPos->Y + weight * positionOffset->Y;
+						dstPos->Z = srcPos->Z + weight * positionOffset->Z;
+
+						dstNormal->X = srcNormal->X + weight * normalOffset->X;
+						dstNormal->Y = srcNormal->Y + weight * normalOffset->Y;
+						dstNormal->Z = srcNormal->Z + weight * normalOffset->Z;
+
+#ifdef VERTEX_NORMALIZE
+						length = dstNormal->X * dstNormal->X +
+							dstNormal->Y * dstNormal->Y +
+							dstNormal->Z * dstNormal->Z;
+
+						invLength = 1.0f / sqrtf(length);
+						dstNormal->X = dstNormal->X * invLength;
+						dstNormal->Y = dstNormal->Y * invLength;
+						dstNormal->Z = dstNormal->Z * invLength;
+#endif
+					}
 					++resultVertex;
 					++vertex;
 				}
