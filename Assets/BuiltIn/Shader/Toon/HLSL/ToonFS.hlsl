@@ -20,6 +20,7 @@ cbuffer cbPerFrame
 	float4 uShadowColor;
 	float2 uWrapFactor;
 	float3 uSpecular;
+	float4 uSHConst[4];
 };
 static const float gamma = 2.2;
 static const float invGamma = 1.0 / 2.2;
@@ -31,6 +32,7 @@ float3 linearRGB(float3 color)
 {
 	return pow(color, invGamma);
 }
+static const float PI = 3.1415926;
 float4 main(PS_INPUT input) : SV_TARGET
 {
 	float4 diffuse = uTexDiffuse.Sample(uTexDiffuseSampler, input.tex0);

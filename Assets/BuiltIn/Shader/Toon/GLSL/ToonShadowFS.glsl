@@ -11,6 +11,7 @@ uniform vec4 uColor;
 uniform vec4 uShadowColor;
 uniform vec2 uWrapFactor;
 uniform vec3 uSpecular;
+uniform vec4 uSHConst[4];
 uniform vec3 uShadowDistance;
 uniform mat4 uShadowMatrix[3];
 in vec2 vTexCoord0;
@@ -65,6 +66,7 @@ float shadow(const vec4 shadowCoord[3], const float shadowDistance[3], const flo
 	{off = vec2(1, 1) * size;rand = uv + off;rand += (vec2(fract(sin(dot(rand.xy, kRandom1)) * kRandom2), fract(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, textureLod(uShadowMap, vec3(rand, id), 0.0).r));}
 	return result / 9.0;
 }
+const float PI = 3.1415926;
 void main(void)
 {
 	vec4 diffuse = texture(uTexDiffuse, vTexCoord0.xy);

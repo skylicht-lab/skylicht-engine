@@ -27,6 +27,8 @@ protected:
 	CGUIText* m_textInfo;
 	CGlyphFont* m_font;
 
+	std::vector<CGameObject*> m_allObjects;
+
 protected:
 	io::path getBuiltInPath(const char* name);
 

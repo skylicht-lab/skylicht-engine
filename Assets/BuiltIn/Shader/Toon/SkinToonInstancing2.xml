@@ -1,4 +1,5 @@
 <shaderConfig name="SkinToonInstancing2" baseShader="SOLID" shadowDepth="SDWSkinInstancing2">
+	<dependent shader="../ShadowDepthWrite/SDWSkinInstancing2.xml"/>
 	<uniforms>
 		<vs>
 			<uniform name="uVpMatrix" type="VIEW_PROJECTION" value="0" float="16" matrix="true"/>
@@ -16,6 +17,7 @@
 			<uniform name="uShadowColor" type="MATERIAL_PARAM" valueIndex="2" value="0.5, 0.5, 0.5, 0.5" float="4"/>
 			<uniform name="uWrapFactor" type="MATERIAL_PARAM" valueIndex="3" value="1.0, 0.0" float="2"/>
 			<uniform name="uSpecular" type="MATERIAL_PARAM" valueIndex="4" value="0.5, 0.5; 0.3" float="3"/>
+			<uniform name="uSHConst" type="SH_CONST" value="0" float="4" array="4"/>
 		</fs>
 	</uniforms>
 	<resources>

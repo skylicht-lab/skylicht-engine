@@ -20,6 +20,8 @@ uniform vec4 uColor;
 uniform vec4 uShadowColor;
 uniform vec2 uWrapFactor;
 uniform vec3 uSpecular;
+uniform vec4 uSHConst[4];
+
 #if defined(SHADOW)
 uniform vec3 uShadowDistance;
 uniform mat4 uShadowMatrix[3];
@@ -41,6 +43,8 @@ out vec4 FragColor;
 #if defined(SHADOW)
 #include "../../Shadow/GLSL/LibShadow.glsl"
 #endif
+
+const float PI = 3.1415926;
 
 void main(void)
 {
@@ -80,6 +84,14 @@ void main(void)
 
 	visibility = shadow(shadowCoord, shadowDistance, depth);
 #endif
+	/*
+	// SH Ambient
+	vec3 ambientLighting = uSHConst[0].xyz +
+		uSHConst[1].xyz * vWorldNormal.y +
+		uSHConst[2].xyz * vWorldNormal.z +
+		uSHConst[3].xyz * vWorldNormal.x;
+	ambientLighting = sRGB(ambientLighting * 0.9);	// fix for SH4
+	*/
 	
 	// Shadows intensity through alpha
 	vec3 ramp = mix(color, shadowColor, shadowIntensity * (1.0 - visibility));

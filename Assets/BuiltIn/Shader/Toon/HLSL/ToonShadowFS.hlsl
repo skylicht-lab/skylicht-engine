@@ -22,6 +22,7 @@ cbuffer cbPerFrame
 	float4 uShadowColor;
 	float2 uWrapFactor;
 	float3 uSpecular;
+	float4 uSHConst[4];
 	float3 uShadowDistance;
 	float4x4 uShadowMatrix[3];
 };
@@ -71,6 +72,7 @@ float shadow(const float4 shadowCoord[3], const float shadowDistance[3], const f
 	{off = float2(1, 1) * size;rand = uv + off;rand += (float2(frac(sin(dot(rand.xy, kRandom1)) * kRandom2), frac(sin(dot(rand.yx, kRandom1)) * kRandom2)) * kRandom3);result += (step(depth, uShadowMap.SampleLevel(uShadowMapSampler, float3(rand, id), 0).r));}
 	return result / 9.0;
 }
+static const float PI = 3.1415926;
 float4 main(PS_INPUT input) : SV_TARGET
 {
 	float4 diffuse = uTexDiffuse.Sample(uTexDiffuseSampler, input.tex0);

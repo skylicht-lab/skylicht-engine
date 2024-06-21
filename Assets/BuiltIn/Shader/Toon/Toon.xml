@@ -16,6 +16,7 @@
 			<uniform name="uShadowColor" type="MATERIAL_PARAM" valueIndex="2" value="0.5, 0.5, 0.5, 0.5" float="4"/>
 			<uniform name="uWrapFactor" type="MATERIAL_PARAM" valueIndex="3" value="1.0, 0.0" float="2"/>
 			<uniform name="uSpecular" type="MATERIAL_PARAM" valueIndex="4" value="0.5, 0.5; 0.3" float="3"/>
+			<uniform name="uSHConst" type="SH_CONST" value="0" float="4" array="4"/>
 		</fs>
 	</uniforms>
 	<resources>

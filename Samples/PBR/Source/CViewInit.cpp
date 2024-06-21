@@ -208,8 +208,8 @@ void CViewInit::onUpdate()
 				// retry download
 				delete m_getFile;
 				m_getFile = NULL;
-	}
-	}
+			}
+		}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -220,7 +220,7 @@ void CViewInit::onUpdate()
 
 		m_initState = CViewInit::InitScene;
 #endif
-}
+	}
 	break;
 	case CViewInit::InitScene:
 	{

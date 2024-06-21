@@ -32,6 +32,7 @@ cbuffer cbPerFrame
 	float4 uShadowColor;
 	float2 uWrapFactor;
 	float3 uSpecular;
+	float4 uSHConst[4];
 #if defined(SHADOW)
 	float3 uShadowDistance;
 	float4x4 uShadowMatrix[3];
@@ -43,6 +44,8 @@ cbuffer cbPerFrame
 #if defined(SHADOW)
 #include "../../Shadow/HLSL/LibShadow.hlsl"
 #endif
+
+static const float PI = 3.1415926;
 
 float4 main(PS_INPUT input) : SV_TARGET
 {
@@ -78,6 +81,17 @@ float4 main(PS_INPUT input) : SV_TARGET
 	visibility = shadow(shadowCoord, shadowDistance, depth);
 #endif
 
+	// SH4 Ambient
+	/*
+	float3 ambientLighting = uSHConst[0].xyz +
+		uSHConst[1].xyz * input.worldNormal.y +
+		uSHConst[2].xyz * input.worldNormal.z +
+		uSHConst[3].xyz * input.worldNormal.x;
+
+	// Tone Mapping
+	ambientLighting = sRGB(ambientLighting * 0.9); // fix for SH4
+	*/
+	
 	float NdotL = max((dot(input.worldNormal, uLightDirection.xyz) + uWrapFactor.x) / (1.0 + uWrapFactor.x), 0.0);
 	float3 rampMap = uTexRamp.Sample(uTexRampSampler, float2(NdotL, NdotL)).rgb;
 

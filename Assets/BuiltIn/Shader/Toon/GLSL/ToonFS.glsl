@@ -10,6 +10,7 @@ uniform vec4 uColor;
 uniform vec4 uShadowColor;
 uniform vec2 uWrapFactor;
 uniform vec3 uSpecular;
+uniform vec4 uSHConst[4];
 in vec2 vTexCoord0;
 in vec3 vWorldNormal;
 in vec3 vWorldViewDir;
@@ -26,6 +27,7 @@ vec3 linearRGB(vec3 color)
 {
 	return pow(color, vec3(invGamma));
 }
+const float PI = 3.1415926;
 void main(void)
 {
 	vec4 diffuse = texture(uTexDiffuse, vTexCoord0.xy);
