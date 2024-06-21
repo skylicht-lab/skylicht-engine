@@ -171,6 +171,20 @@ namespace Skylicht
 			{
 				m_sh[tid] *= finalWeight;
 			}
+
+			// test radiance
+			/*
+			static int t = 0;
+			static bool test = true;
+			if (test == true)
+			{
+				char filename[512];
+				sprintf(filename, "test_%d.png", t);
+				CBaseRP::saveFBOToFile(m_radiance, filename);
+				test = true;
+			}
+			t++;
+			*/
 		}
 	}
 }

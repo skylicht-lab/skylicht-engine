@@ -224,6 +224,8 @@ void CViewInit::initEnviroment(CZone* zone, float& envMin, float& envMax)
 
 		meshInstancing->applyShareTransformBuffer();
 		meshInstancing->applyShareMaterialBuffer();
+
+		plane->addComponent<CIndirectLighting>();
 	}
 
 	std::vector<std::string> randomWallMesh;
@@ -243,6 +245,8 @@ void CViewInit::initEnviroment(CZone* zone, float& envMin, float& envMax)
 			CRenderMeshInstancing* meshInstancing = border->addComponent<CRenderMeshInstancing>();
 			meshInstancing->initFromPrefab(prefab);
 			meshInstancing->initMaterial(envMaterials);
+
+			border->addComponent<CIndirectLighting>();
 
 			meshInstancings.push_back(meshInstancing);
 		}
@@ -322,6 +326,8 @@ void CViewInit::initEnviroment(CZone* zone, float& envMin, float& envMax)
 			transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 			transform->Relative = rot270 * scaleMat;
 			transform->Relative.setTranslation(core::vector3df(maxBound * space + halfSpace, 0.0f, -maxBound * space - halfSpace));
+
+			corner->addComponent<CIndirectLighting>();
 		}
 	}
 }
@@ -517,6 +523,8 @@ void CViewInit::initSkinnedCrowd(CGameObject* crowd, CEntityPrefab* modelPrefab,
 	material[0]->autoDetectLoadTexture();
 
 	crowdSkinnedMesh->initMaterial(material);
+
+	crowd->addComponent<CIndirectLighting>();
 }
 
 void CViewInit::onDestroy()

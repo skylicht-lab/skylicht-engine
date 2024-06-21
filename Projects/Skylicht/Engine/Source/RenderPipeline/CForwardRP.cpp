@@ -134,11 +134,11 @@ namespace Skylicht
 
 		onNext(currentTarget, camera, entityManager, viewport, cubeFaceId);
 
-		if (m_postProcessor != NULL && s_bakeMode == false)
+		if (m_postProcessor && s_bakeMode == false)
 		{
 			m_postProcessor->postProcessing(target, m_target, m_emission, NULL, NULL, viewport, cubeFaceId);
 		}
-		else if (m_useLinearRGB && m_target != NULL)
+		else if (m_target != NULL)
 		{
 			setTarget(target, cubeFaceId);
 
