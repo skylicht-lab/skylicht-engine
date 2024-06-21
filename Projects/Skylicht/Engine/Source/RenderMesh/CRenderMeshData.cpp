@@ -211,45 +211,7 @@ namespace Skylicht
 
 	void CRenderMeshData::initSoftwareBlendShape()
 	{
-		IMeshManipulator* mh = getIrrlichtDevice()->getSceneManager()->getMeshManipulator();
-		CMesh* mesh = RenderMesh->clone();
-
-		for (int i = 0, n = RenderMesh->getMeshBufferCount(); i < n; i++)
-		{
-			IMeshBuffer* originalMeshBuffer = RenderMesh->getMeshBuffer(i);
-
-			video::E_VERTEX_TYPE vertexType = originalMeshBuffer->getVertexType();
-			video::E_INDEX_TYPE indexType = originalMeshBuffer->getIndexBuffer()->getType();
-			video::IVertexDescriptor* vtxDes = getVideoDriver()->getVertexDescriptor(vertexType);
-
-			IMeshBuffer* meshBuffer = NULL;
-
-			if (vertexType == EVT_TANGENTS)
-				meshBuffer = new CMeshBuffer<video::S3DVertexTangents>(vtxDes, indexType);
-			else if (vertexType == EVT_SKIN_TANGENTS)
-				meshBuffer = new CMeshBuffer<video::S3DVertexSkinTangents>(vtxDes, indexType);
-
-			// copy mesh data
-			mh->copyVertices(originalMeshBuffer->getVertexBuffer(), 0, vtxDes, meshBuffer->getVertexBuffer(), 0, vtxDes, true);
-			mh->copyIndices(originalMeshBuffer->getIndexBuffer(), meshBuffer->getIndexBuffer());
-
-			// copy material
-			meshBuffer->getMaterial() = originalMeshBuffer->getMaterial();
-
-			// apply static material
-			CShaderManager* shaderMgr = CShaderManager::getInstance();
-			if (meshBuffer->getMaterial().getTexture(0) != NULL)
-				meshBuffer->getMaterial().MaterialType = shaderMgr->getShaderIDByName("TextureColor");
-			else
-				meshBuffer->getMaterial().MaterialType = shaderMgr->getShaderIDByName("VertexColor");
-
-			// copy bbox (that fixed unitScale for culling)
-			meshBuffer->getBoundingBox() = originalMeshBuffer->getBoundingBox();
-
-			mesh->replaceMeshBuffer(i, meshBuffer);
-
-			meshBuffer->drop();
-		}
+		CMesh* mesh = CSoftwareSkinningUtils::initSoftwareBlendShape(RenderMesh);
 
 		mesh->setHardwareMappingHint(EHM_STREAM, EBT_VERTEX);
 		mesh->setHardwareMappingHint(EHM_STATIC, EBT_INDEX);
