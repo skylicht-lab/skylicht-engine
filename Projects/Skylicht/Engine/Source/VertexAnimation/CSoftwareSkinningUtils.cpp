@@ -290,13 +290,13 @@ namespace Skylicht
 		for (u32 i = 0, n = sourceMesh->getMeshBufferCount(); i < n; i++)
 		{
 			IMeshBuffer* originalMeshBuffer = sourceMesh->getMeshBuffer(i);
-			CVertexBuffer<video::S3DVertexSkinTangents>* originalVertexbuffer = (CVertexBuffer<video::S3DVertexSkinTangents>*)originalMeshBuffer->getVertexBuffer(0);
+			IVertexBuffer* originalVertexbuffer = originalMeshBuffer->getVertexBuffer(0);
 			video::S3DVertexSkinTangents* vertex = (video::S3DVertexSkinTangents*)originalVertexbuffer->getVertices();
 
 			int numVertex = originalVertexbuffer->getVertexCount();
 
 			IMeshBuffer* skinnedMeshBuffer = skinnedMesh->getMeshBuffer(i);
-			CVertexBuffer<video::S3DVertex>* vertexbuffer = (CVertexBuffer<video::S3DVertex>*)skinnedMeshBuffer->getVertexBuffer(0);
+			IVertexBuffer* vertexbuffer = skinnedMeshBuffer->getVertexBuffer(0);
 			video::S3DVertex* resultVertex = (video::S3DVertex*)vertexbuffer->getVertices();
 
 #ifdef VERTEX_NORMALIZE
@@ -420,12 +420,12 @@ namespace Skylicht
 		for (u32 i = 0, n = originalMesh->getMeshBufferCount(); i < n; i++)
 		{
 			IMeshBuffer* originalMeshBuffer = originalMesh->getMeshBuffer(i);
-			CVertexBuffer<video::S3DVertexSkinTangents>* originalVertexbuffer = (CVertexBuffer<video::S3DVertexSkinTangents>*)originalMeshBuffer->getVertexBuffer(0);
+			IVertexBuffer* originalVertexbuffer = originalMeshBuffer->getVertexBuffer(0);
 
 			int numVertex = originalVertexbuffer->getVertexCount();
 
 			IMeshBuffer* skinnedMeshBuffer = blendShape->getMeshBuffer(i);
-			CVertexBuffer<video::S3DVertexSkinTangents>* vertexbuffer = (CVertexBuffer<video::S3DVertexSkinTangents>*)skinnedMeshBuffer->getVertexBuffer(0);
+			IVertexBuffer* vertexbuffer = skinnedMeshBuffer->getVertexBuffer(0);
 
 			video::S3DVertexSkinTangents* vertex = NULL;
 			video::S3DVertexSkinTangents* resultVertex = NULL;
@@ -460,7 +460,7 @@ namespace Skylicht
 				resultVertex = (video::S3DVertexSkinTangents*)vertexbuffer->getVertices();
 
 				vtxId = blendShape->VtxId.const_pointer();
-				size = blendShape->Offset.size();
+				size = blendShape->Offset.size() - 1;
 				positionOffsets = blendShape->Offset.const_pointer();
 				normalOffsets = blendShape->NormalOffset.const_pointer();
 

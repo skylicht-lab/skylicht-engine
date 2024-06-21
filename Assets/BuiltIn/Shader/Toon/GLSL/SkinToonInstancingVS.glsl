@@ -22,6 +22,7 @@ out vec3 vWorldNormal;
 out vec3 vWorldViewDir;
 out vec3 vWorldPosition;
 out vec3 vDepth;
+out vec4 vColor;
 mat4 getTransformFromTexture(vec2 p)
 {
 	float centerX = 0.5 / uTransformTextureSize.x;
@@ -64,5 +65,6 @@ void main(void)
 	vDepth = uCameraPosition.xyz - vWorldPosition;
 	vWorldNormal = normalize(worldNormal.xyz);
 	vWorldViewDir = normalize(vDepth);
+	vColor = uColor * inColor / 255.0;
 	gl_Position = uVpMatrix * worldPos;
 }

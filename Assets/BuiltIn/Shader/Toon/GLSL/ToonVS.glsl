@@ -13,6 +13,7 @@ out vec3 vWorldNormal;
 out vec3 vWorldViewDir;
 out vec3 vWorldPosition;
 out vec3 vDepth;
+out vec4 vColor;
 
 void main(void)
 {
@@ -26,6 +27,8 @@ void main(void)
 	
 	vWorldNormal = normalize(worldNormal.xyz);
 	vWorldViewDir = normalize(vDepth);
+	
+	vColor = inColor / 255.0;
 	
 	gl_Position = uMvpMatrix * inPosition;
 }
