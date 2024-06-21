@@ -14,7 +14,8 @@
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
 	m_getFile(NULL),
-	m_downloaded(0)
+	m_downloaded(0),
+	m_bakeSHLighting(true)
 {
 
 }
@@ -37,7 +38,7 @@ void CViewInit::onInit()
 
 	CShaderManager* shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
-    shaderMgr->loadShader("BuiltIn/Shader/Toon/Toon.xml"); // for fallback software skinning
+	shaderMgr->loadShader("BuiltIn/Shader/Toon/Toon.xml"); // for fallback software skinning
 
 	CGlyphFreetype* freetypeFont = CGlyphFreetype::getInstance();
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
@@ -120,6 +121,8 @@ void CViewInit::initScene()
 	treeRenderer->initFromPrefab(treePrefab);
 	treeRenderer->initMaterial(treeMaterials);
 
+	tree->addComponent<CIndirectLighting>();
+
 	// create cat
 	CGameObject* cat = zone->createEmptyObject();
 	cat->setName("Cat");
@@ -128,6 +131,8 @@ void CViewInit::initScene()
 	CRenderMesh* catRenderer = cat->addComponent<CRenderMesh>();
 	catRenderer->initFromPrefab(catPrefab);
 	catRenderer->initMaterial(catMaterials);
+
+	cat->addComponent<CIndirectLighting>();
 
 	// init animation
 	CAnimationController* animController = cat->addComponent<CAnimationController>();
@@ -143,6 +148,9 @@ void CViewInit::initScene()
 
 	// apply tree position for cat at (0.0, 0.0, 0.0)
 	tree->getTransformEuler()->setPosition(core::vector3df(0.0f, -17.6f, 0.0f));
+
+	m_allObjects.push_back(cat);
+	m_allObjects.push_back(tree);
 
 	// save to context
 	CContext* context = CContext::getInstance();
@@ -211,15 +219,15 @@ void CViewInit::onUpdate()
 				// retry download
 				delete m_getFile;
 				m_getFile = NULL;
-	}
-	}
+			}
+		}
 #else
 
 		for (std::string& bundle : listBundles)
 		{
 			const char* r = bundle.c_str();
 			fileSystem->addFileArchive(getBuiltInPath(r), false, false);
-}
+		}
 
 		m_initState = CViewInit::InitScene;
 #endif
@@ -250,6 +258,48 @@ void CViewInit::onUpdate()
 
 void CViewInit::onRender()
 {
-	CCamera* guiCamera = CContext::getInstance()->getGUICamera();
-	CGraphics2D::getInstance()->render(guiCamera);
+	if (m_initState == CViewInit::Finished)
+	{
+		CContext* context = CContext::getInstance();
+		CScene* scene = CContext::getInstance()->getScene();
+		CBaseRP* rp = CContext::getInstance()->getRenderPipeline();
+
+		if (m_bakeSHLighting == true)
+		{
+			m_bakeSHLighting = false;
+
+			CZone* zone = scene->getZone(0);
+
+			// hide all
+			for (CGameObject* obj : m_allObjects)
+				obj->setVisible(false);
+
+			// light probe
+			CGameObject* lightProbeObj = zone->createEmptyObject();
+			CLightProbe* lightProbe = lightProbeObj->addComponent<CLightProbe>();
+			lightProbeObj->getTransformEuler()->setPosition(core::vector3df(0.0f, 1.0f, 0.0f));
+
+			CGameObject* bakeCameraObj = scene->getZone(0)->createEmptyObject();
+			CCamera* bakeCamera = bakeCameraObj->addComponent<CCamera>();
+			scene->updateAddRemoveObject();
+
+			// bake light probe
+			Lightmapper::CLightmapper* lm = Lightmapper::CLightmapper::getInstance();
+			lm->initBaker(64);
+
+			std::vector<CLightProbe*> probes;
+			probes.push_back(lightProbe);
+
+			lm->bakeProbes(probes, bakeCamera, rp, scene->getEntityManager());
+
+			// hide all
+			for (CGameObject* obj : m_allObjects)
+				obj->setVisible(true);
+		}
+	}
+	else
+	{
+		CCamera* guiCamera = CContext::getInstance()->getGUICamera();
+		CGraphics2D::getInstance()->render(guiCamera);
+	}
 }
