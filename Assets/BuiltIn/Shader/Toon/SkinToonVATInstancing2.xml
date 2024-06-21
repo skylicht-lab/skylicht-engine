@@ -15,7 +15,7 @@
 			<uniform name="uLightColor" type="LIGHT_COLOR" value="1.0, 1.0, 1.0, 1.0" float="4"/>
 			<uniform name="uColor" type="MATERIAL_PARAM" valueIndex="1" value="1.0, 1.0, 1.0, 1.0" float="4"/>
 			<uniform name="uShadowColor" type="MATERIAL_PARAM" valueIndex="2" value="0.5, 0.5, 0.5, 0.5" float="4"/>
-			<uniform name="uWrapFactor" type="MATERIAL_PARAM" valueIndex="3" value="1.0, 0.0" float="2"/>
+			<uniform name="uWrapFactor" type="MATERIAL_PARAM" valueIndex="3" value="1.0, 0.3" float="2"/>
 			<uniform name="uSpecular" type="MATERIAL_PARAM" valueIndex="4" value="0.5, 0.5; 0.3" float="3"/>
 			<uniform name="uSHConst" type="SH_CONST" value="0" float="4" array="4"/>
 		</fs>
@@ -33,8 +33,8 @@
 			<ui control="UIFloat4" name="uUVScale" elementName="UV ScaleX;UV ScaleY;UV OffsetX;UV OffsetY"/>
 			<ui control="UIColor" name="uColor"/>
 			<ui control="UIColor" name="uShadowColor"/>
-			<ui control="UIFloat2" name="uWrapFactor" elementName="Wrap Factor" min="0.0" max="10.0"/>
-			<ui control="UIFloat3" name="uSpecular" elementName="Glossiness;Specular;SpecSmooth" min="0.0" max="10.0"/>
+			<ui control="UIFloat2" name="uWrapFactor" elementName="Wrap Factor;Ambient" min="0.0" max="10.0"/>
+			<ui control="UIFloat3" name="uSpecular" elementName="Glossiness;Specular;SpecSmooth" min="0.0" max="1.0"/>
 		</ui>
 	</customUI>
 	<shader type="GLSL" vs="GLSL/SkinToonVATInstancing2VS.glsl" fs="GLSL/ToonFS.glsl" fs_source="GLSL/ToonFS.d.glsl"/>

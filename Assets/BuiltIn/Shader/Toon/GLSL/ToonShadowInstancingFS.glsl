@@ -89,6 +89,11 @@ void main(void)
 	shadowDistance[1] = uShadowDistance.y;
 	shadowDistance[2] = uShadowDistance.z;
 	visibility = shadow(shadowCoord, shadowDistance, depth);
+	vec3 ambientLighting = uSHConst[0].xyz +
+		uSHConst[1].xyz * vWorldNormal.y +
+		uSHConst[2].xyz * vWorldNormal.z +
+		uSHConst[3].xyz * vWorldNormal.x;
+	ambientLighting = sRGB(ambientLighting * 0.9);
 	vec3 ramp = mix(color, shadowColor, shadowIntensity * (1.0 - visibility));
 	ramp = mix(ramp, color, rampMap);
 	vec3 h = normalize(uLightDirection.xyz + vWorldViewDir);
@@ -96,5 +101,5 @@ void main(void)
 	NdotH = max(NdotH, 0.0);
 	float spec = pow(NdotH, uSpecular.x*128.0) * uSpecular.y;
 	spec = smoothstep(0.5-uSpecular.z*0.5, 0.5+uSpecular.z*0.5, spec);
-	FragColor = vec4(diffuseMap * lightColor * ramp * (0.5 + visibility * 0.5) + lightColor * spec * visibility, diffuse.a);
+	FragColor = vec4(diffuseMap * lightColor * ramp * (visibility * (1.0 - uWrapFactor.y)) + lightColor * spec * visibility + uWrapFactor.y * diffuseMap * ambientLighting / PI, diffuse.a);
 }

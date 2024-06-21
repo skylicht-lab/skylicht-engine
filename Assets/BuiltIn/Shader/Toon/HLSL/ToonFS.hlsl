@@ -42,6 +42,11 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 shadowColor = sRGB(uShadowColor.rgb);
 	float3 lightColor = sRGB(uLightColor.rgb);
 	float visibility = 1.0;
+	float3 ambientLighting = uSHConst[0].xyz +
+		uSHConst[1].xyz * input.worldNormal.y +
+		uSHConst[2].xyz * input.worldNormal.z +
+		uSHConst[3].xyz * input.worldNormal.x;
+	ambientLighting = sRGB(ambientLighting * 0.9);
 	float NdotL = max((dot(input.worldNormal, uLightDirection.xyz) + uWrapFactor.x) / (1.0 + uWrapFactor.x), 0.0);
 	float3 rampMap = uTexRamp.Sample(uTexRampSampler, float2(NdotL, NdotL)).rgb;
 	float3 ramp = lerp(color, shadowColor, shadowIntensity * (1.0 - visibility));
@@ -50,5 +55,5 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float NdotH = max(0, dot(input.worldNormal, h));
 	float spec = pow(NdotH, uSpecular.x*128.0) * uSpecular.y;
 	spec = smoothstep(0.5-uSpecular.z*0.5, 0.5+uSpecular.z*0.5, spec);
-	return float4(diffuseMap * lightColor * ramp * (0.5 + visibility * 0.5) + lightColor * spec * visibility, diffuse.a);
+	return float4(diffuseMap * lightColor * ramp * (visibility * (1.0 - uWrapFactor.y)) + lightColor * spec * visibility + uWrapFactor.y * diffuseMap * ambientLighting / PI, diffuse.a);
 }

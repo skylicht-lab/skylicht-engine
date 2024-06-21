@@ -226,6 +226,8 @@ void CViewInit::initEnviroment(CZone* zone, float& envMin, float& envMax)
 		meshInstancing->applyShareMaterialBuffer();
 
 		plane->addComponent<CIndirectLighting>();
+
+		m_allObjects.push_back(plane);
 	}
 
 	std::vector<std::string> randomWallMesh;
@@ -249,6 +251,8 @@ void CViewInit::initEnviroment(CZone* zone, float& envMin, float& envMax)
 			border->addComponent<CIndirectLighting>();
 
 			meshInstancings.push_back(meshInstancing);
+
+			m_allObjects.push_back(border);
 		}
 	}
 
@@ -328,6 +332,8 @@ void CViewInit::initEnviroment(CZone* zone, float& envMin, float& envMax)
 			transform->Relative.setTranslation(core::vector3df(maxBound * space + halfSpace, 0.0f, -maxBound * space - halfSpace));
 
 			corner->addComponent<CIndirectLighting>();
+
+			m_allObjects.push_back(corner);
 		}
 	}
 }
@@ -525,6 +531,8 @@ void CViewInit::initSkinnedCrowd(CGameObject* crowd, CEntityPrefab* modelPrefab,
 	crowdSkinnedMesh->initMaterial(material);
 
 	crowd->addComponent<CIndirectLighting>();
+
+	m_allObjects.push_back(crowd);
 }
 
 void CViewInit::onDestroy()
@@ -584,7 +592,7 @@ void CViewInit::onUpdate()
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-		}
+	}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -617,7 +625,7 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-	}
+}
 }
 
 void CViewInit::onRender()
@@ -633,6 +641,10 @@ void CViewInit::onRender()
 			m_bakeSHLighting = false;
 
 			CZone* zone = scene->getZone(0);
+
+			// hide all
+			for (CGameObject* obj : m_allObjects)
+				obj->setVisible(false);
 
 			// light probe
 			CGameObject* lightProbeObj = zone->createEmptyObject();
@@ -651,6 +663,10 @@ void CViewInit::onRender()
 			probes.push_back(lightProbe);
 
 			lm->bakeProbes(probes, bakeCamera, rp, scene->getEntityManager());
+
+			// hide all
+			for (CGameObject* obj : m_allObjects)
+				obj->setVisible(true);
 		}
 	}
 	else

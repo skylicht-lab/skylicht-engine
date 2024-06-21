@@ -9,7 +9,7 @@
             <Param name='uUVScale' floatSize='4' floatValue='1.000000,1.000000,0.000000,0.000000'/>
             <Param name='uColor' floatSize='4' floatValue='1.000000,1.000000,1.000000,1.000000'/>
             <Param name='uShadowColor' floatSize='4' floatValue='0.500000,0.500000,0.500000,0.500000'/>
-            <Param name='uWrapFactor' floatSize='4' floatValue='1.000000,0.000000,0.000000,0.000000'/>
+            <Param name='uWrapFactor' floatSize='4' floatValue='1.000000,0.300000,0.000000,0.000000'/>
             <Param name='uSpecular' floatSize='4' floatValue='0.500000,0.500000,0.000000,0.000000'/>
         </Params>
         <Properties>

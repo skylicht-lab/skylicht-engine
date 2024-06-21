@@ -25,6 +25,9 @@ protected:
 	CGUIText* m_textInfo;
 	CGlyphFont* m_font;
 
+	bool m_bakeSHLighting;
+	std::vector<CGameObject*> m_allObjects;
+
 protected:
 	io::path getBuiltInPath(const char* name);
 
