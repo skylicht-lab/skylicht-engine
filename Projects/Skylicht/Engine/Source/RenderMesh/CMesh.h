@@ -38,13 +38,21 @@ namespace Skylicht
 
 		float Weight;
 
+		// see function CSoftwareSkinningUtils::softwareBlendShape, CFBXMeshLoader::loadModel
+		core::array<u32> VtxId;
 		core::array<core::vector3df> Offset;
+		core::array<core::vector3df> NormalOffset;
 
 		CBlendShape()
 		{
 			Weight = 1.0f;
 		}
-	};	
+
+		~CBlendShape()
+		{
+
+		}
+	};
 
 	class SKYLICHT_API CMesh : public IMesh
 	{

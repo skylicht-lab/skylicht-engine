@@ -542,22 +542,39 @@ namespace Skylicht
 						if (chan->keyframes.count == 0)
 							continue;
 
+						ufbx_blend_shape* shape = chan->keyframes.data[chan->keyframes.count - 1].shape;
+
 						// alloc blendshape data
 						CBlendShape* blendShape = new CBlendShape();
 						blendShape->Name = chan->name.data;
 						blendShape->Weight = ci == 0 ? 1.0f : 0.0f;
-						blendShape->Offset.set_used((u32)mesh->num_vertices);
 
-						for (size_t i = 0; i < mesh->num_vertices; i++)
-							blendShape->Offset[(u32)i].set(0.0f, 0.0f, 0.0f);
+						u32 vtxCount = (u32)mesh->num_vertices;
+						u32 offsetCount = (u32)shape->num_offsets + 1;
+
+						blendShape->VtxId.set_used(vtxCount);
+						blendShape->Offset.set_used(offsetCount);
+						blendShape->NormalOffset.set_used(offsetCount);
+
+						for (u32 i = 0; i < vtxCount; i++)
+							blendShape->VtxId[i] = offsetCount;
+
+						for (u32 i = 0; i < offsetCount; i++)
+						{
+							blendShape->Offset[i].set(0.0f, 0.0f, 0.0f);
+							blendShape->NormalOffset[i].set(0.0f, 0.0f, 0.0f);
+						}
 
 						// read blend shape data
-						ufbx_blend_shape* shape = chan->keyframes.data[chan->keyframes.count - 1].shape;
-						for (size_t oi = 0; oi < shape->num_offsets; oi++)
+						for (size_t oi = 0, n = (u32)shape->num_offsets; oi < n; oi++)
 						{
 							uint32_t ix = (uint32_t)shape->offset_vertices[oi];
-							if (ix < mesh->num_vertices)
-								blendShape->Offset[ix] = convertFBXVec3(shape->position_offsets[oi]);
+							if (ix < vtxCount)
+							{
+								blendShape->VtxId[ix] = oi;
+								blendShape->Offset[oi] = convertFBXVec3(shape->position_offsets[oi]);
+								blendShape->NormalOffset[oi] = convertFBXVec3(shape->normal_offsets[oi]);
+							}
 						}
 
 						resultMesh->addBlendShape(blendShape);
