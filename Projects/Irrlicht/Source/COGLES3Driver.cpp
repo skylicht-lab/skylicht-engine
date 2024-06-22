@@ -761,6 +761,8 @@ namespace irr
 			const s32 index = OcclusionQueries.linear_search(SOccQuery(node));
 			if ((index != -1) && (OcclusionQueries[index].UID == 0))
 				glGenQueries(1, reinterpret_cast<GLuint*>(&OcclusionQueries[index].UID));
+            
+            testGLError();
 		}
 
 
@@ -790,10 +792,9 @@ namespace irr
 			{
 				if (OcclusionQueries[index].UID)
 					glBeginQuery(GL_ANY_SAMPLES_PASSED, OcclusionQueries[index].UID);
-				CNullDriver::runOcclusionQuery(node, visible);
+                CNullDriver::runOcclusionQuery(node, visible);
 				if (OcclusionQueries[index].UID)
 					glEndQuery(GL_ANY_SAMPLES_PASSED);
-				testGLError();
 			}
 		}
 
@@ -810,20 +811,18 @@ namespace irr
 				if (OcclusionQueries[index].Run == u32(~0))
 					return;
 
-				GLuint available = block ? GL_TRUE : GL_FALSE;
+                GLuint available = block ? GL_TRUE : GL_FALSE;
 
-				if (!block)
-					glGetQueryObjectuiv(OcclusionQueries[index].UID, GL_QUERY_RESULT_AVAILABLE, &available);
-
-				testGLError();
+                if (!block)
+                    glGetQueryObjectuiv(OcclusionQueries[index].UID, GL_QUERY_RESULT_AVAILABLE, &available);
+                
 				if (available == GL_TRUE)
 				{
 					glGetQueryObjectuiv(OcclusionQueries[index].UID, GL_QUERY_RESULT, &available);
-
+                    
 					if (queryFeature(EVDF_OCCLUSION_QUERY))
 						OcclusionQueries[index].Result = available;
 				}
-				testGLError();
 			}
 		}
 
