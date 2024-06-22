@@ -221,8 +221,9 @@ namespace irr
 				case EVDF_MRT_BLEND:
 				case EVDF_MRT_COLOR_MASK:
 				case EVDF_MRT_BLEND_FUNC:
+                    return false;
 				case EVDF_OCCLUSION_QUERY:
-					return false;
+					return true;
 				case EVDF_BLEND_OPERATIONS:
 					return false;
 				case EVDF_TEXTURE_COMPRESSED_DXT:
