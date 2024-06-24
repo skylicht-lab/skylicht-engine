@@ -260,9 +260,9 @@ namespace Skylicht
 	void CPrimitive::setInstancing(bool b)
 	{
 		m_instancing = b;
-		for (CEntity* entity : m_entities)
+		for (u32 i = 0, n = m_entities.size(); i < n; i++)
 		{
-			CPrimiviteData* data = GET_ENTITY_DATA(entity, CPrimiviteData);
+			CPrimiviteData* data = GET_ENTITY_DATA(m_entities[i], CPrimiviteData);
 			if (data)
 				data->Instancing = b;
 		}

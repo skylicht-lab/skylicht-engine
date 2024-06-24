@@ -139,9 +139,9 @@ namespace Skylicht
 
 		void setSkinnedInstancing(bool b);
 
-		void setMaterial(CMaterial* material);
+		bool setMaterial(CMaterial* material);
 
-		void unusedMaterial(CMaterial* material);
+		bool unusedMaterial(CMaterial* material);
 
 		virtual bool serializable(CMemoryStream* stream);
 

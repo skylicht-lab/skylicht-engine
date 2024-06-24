@@ -61,8 +61,8 @@ namespace Skylicht
 		{
 			CEntityManager* entityMgr = m_gameObject->getEntityManager();
 
-			std::vector<CEntity*>& entities = m_primitive->getEntities();
-			for (size_t i = 0, n = entities.size(); i < n; i++)
+			core::array<CEntity*>& entities = m_primitive->getEntities();
+			for (u32 i = 0, n = entities.size(); i < n; i++)
 			{
 				CEntity* entity = entities[i];
 

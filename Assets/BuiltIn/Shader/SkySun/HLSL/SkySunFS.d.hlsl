@@ -22,8 +22,7 @@ cbuffer cbPerFrame
 
 float4 main(PS_INPUT input) : SV_TARGET
 {
-	float3 viewDir = normalize(input.worldPos.xyz - uCamPosition.xyz);	
-	float y = 1.0 - (max(viewDir.y, 0.0) * 0.8 + 0.2) * 0.8;
+	float3 viewDir = normalize(input.worldPos.xyz - uCamPosition.xyz);
 	
 	// SKY & SUN
 	float3 skyColor = GetSkyColor(

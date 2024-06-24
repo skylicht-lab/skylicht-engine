@@ -120,7 +120,7 @@ namespace Skylicht
 		{
 			if (m_entities[i] == entity)
 			{
-				m_entities.erase(m_entities.begin() + i);
+				m_entities.erase(i);
 				entityManager->removeEntity(entity);
 			}
 		}
@@ -140,10 +140,10 @@ namespace Skylicht
 		m_entities.clear();
 	}
 
-	void CEntityHandler::setEntities(CEntity** entities, int count)
+	void CEntityHandler::setEntities(CEntity** entities, u32 count)
 	{
 		m_entities.clear();
-		for (int i = 0; i < count; i++)
+		for (u32 i = 0; i < count; i++)
 		{
 			CEntity* entity = entities[i];
 			CWorldTransformData* transformData = GET_ENTITY_DATA(entity, CWorldTransformData);
