@@ -74,9 +74,10 @@ namespace Skylicht
 		m_renderData->Texture = texture;
 		m_renderData->Material->setTexture(0, texture);
 
-		std::vector<CEntity*>& entities = getEntities();
-		for (CEntity* entity : entities)
+		core::array<CEntity*>& entities = getEntities();
+		for (u32 i = 0, n = entities.size(); i < n; i++)
 		{
+			CEntity* entity = entities[i];
 			CDecalData* decal = GET_ENTITY_DATA(entity, CDecalData);
 			if (decal != NULL)
 			{
@@ -128,9 +129,11 @@ namespace Skylicht
 
 	void CDecals::bake(CCollisionBuilder* collisionMgr)
 	{
-		std::vector<CEntity*>& entities = getEntities();
-		for (CEntity* entity : entities)
+		core::array<CEntity*>& entities = getEntities();
+		for (u32 i = 0, n = entities.size(); i < n; i++)
 		{
+			CEntity* entity = entities[i];
+
 			CDecalData* decalData = GET_ENTITY_DATA(entity, CDecalData);
 			CWorldTransformData* decalTransform = GET_ENTITY_DATA(entity, CWorldTransformData);
 

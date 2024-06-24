@@ -37,7 +37,6 @@ namespace Skylicht
 	{
 	protected:
 		CEntity* m_root;
-		core::array<CEntity*> m_allEntities;
 
 		std::vector<CWorldTransformData*> m_renderTransforms;
 		std::vector<CWorldTransformData*> m_transforms;
@@ -86,6 +85,12 @@ namespace Skylicht
 
 		void enableInstancing(bool b);
 
+		void removeRenderMeshName(const char* name);
+
+		void removeRenderMesh(CRenderMeshData* renderMesh);
+
+		void attachMeshFromPrefab(CEntityPrefab* prefab, std::vector<std::string>& names, ArrayMaterial& materials, bool cloneMaterial = false);
+
 		inline int getMaterialCount()
 		{
 			return (int)m_materials.size();
@@ -94,11 +99,6 @@ namespace Skylicht
 		CMaterial* getMaterial(int i)
 		{
 			return m_materials[i];
-		}
-
-		core::array<CEntity*>& getEntities()
-		{
-			return m_allEntities;
 		}
 
 		std::vector<CRenderMeshData*>& getRenderers()

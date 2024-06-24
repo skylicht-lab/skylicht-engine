@@ -73,9 +73,9 @@ namespace Skylicht
 			CEntityHandler* entityHandler = m_gameObject->getComponent<CEntityHandler>();
 			if (entityHandler != NULL)
 			{
-				std::vector<CEntity*>& entities = entityHandler->getEntities();
-				for (CEntity* entity : entities)
-					addLightingData(entity);
+				core::array<CEntity*>& entities = entityHandler->getEntities();
+				for (u32 i = 0, n = entities.size(); i < n; i++)
+					addLightingData(entities[i]);
 			}
 			else
 			{

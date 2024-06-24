@@ -134,19 +134,19 @@ namespace Skylicht
 						std::string assetFolder = CAssetManager::getInstance()->getAssetFolder();
 						GUI::COpenSaveDialog* dialog = new GUI::COpenSaveDialog(m_canvas, GUI::COpenSaveDialog::Save, assetFolder.c_str(), assetFolder.c_str(), "scene;*");
 						dialog->OnSave = [&](std::string path)
-						{
-							save(path.c_str());
-						};
+							{
+								save(path.c_str());
+							};
 					}
 					else
 					{
 						save(m_scenePath.c_str());
 						doLoadScene(p);
 					}
-				};
+					};
 				msgBox->OnNo = [&, p = path](GUI::CBase* button) {
 					doLoadScene(p);
-				};
+					};
 			}
 			else
 			{
@@ -379,9 +379,11 @@ namespace Skylicht
 			std::map<int, CHierachyNode*> treeNodes;
 			treeNodes[root->getIndex()] = rootNode;
 
-			std::vector<CEntity*>& entities = entityHandler->getEntities();
-			for (CEntity* entity : entities)
+			core::array<CEntity*>& entities = entityHandler->getEntities();
+			for (u32 i = 0, n = entities.size(); i < n; i++)
 			{
+				CEntity* entity = entities[i];
+
 				CWorldTransformData* worldData = GET_ENTITY_DATA(entity, CWorldTransformData);
 				CRenderMeshData* renderData = GET_ENTITY_DATA(entity, CRenderMeshData);
 

@@ -39,13 +39,13 @@ namespace Skylicht
 			IMeshBuffer* originalMeshBuffer = originalMesh->getMeshBuffer(i);
 
 			// alloc new mesh buffer
-			CMeshBuffer<video::S3DVertex>* meshBuffer = new CMeshBuffer<video::S3DVertex>(
+			IMeshBuffer* meshBuffer = new CMeshBuffer<video::S3DVertex>(
 				getVideoDriver()->getVertexDescriptor(video::EVT_STANDARD),
 				originalMeshBuffer->getIndexBuffer()->getType());
 
 			// get new index & new vertex buffer
 			CVertexBuffer<video::S3DVertex>* vertexBuffer = dynamic_cast<CVertexBuffer<video::S3DVertex>*>(meshBuffer->getVertexBuffer(0));
-			CIndexBuffer* indexBuffer = dynamic_cast<CIndexBuffer*>(meshBuffer->getIndexBuffer());
+			IIndexBuffer* indexBuffer = meshBuffer->getIndexBuffer();
 
 			if (originalMeshBuffer->getVertexType() == video::EVT_SKIN_TANGENTS)
 			{
@@ -85,10 +85,12 @@ namespace Skylicht
 			}
 
 			// copy indices
-			int numIndex = originalMeshBuffer->getIndexBuffer()->getIndexCount();
+			IIndexBuffer* originalIndexBuffer = originalMeshBuffer->getIndexBuffer();
+
+			int numIndex = originalIndexBuffer->getIndexCount();
 			indexBuffer->set_used(numIndex);
 			for (int i = 0; i < numIndex; i++)
-				indexBuffer->setIndex(i, originalMeshBuffer->getIndexBuffer()->getIndex(i));
+				indexBuffer->setIndex(i, originalIndexBuffer->getIndex(i));
 
 			// copy material
 			meshBuffer->getMaterial() = originalMeshBuffer->getMaterial();
@@ -194,13 +196,13 @@ namespace Skylicht
 		for (u32 i = 0, n = sourceMesh->getMeshBufferCount(); i < n; i++)
 		{
 			IMeshBuffer* originalMeshBuffer = sourceMesh->getMeshBuffer(i);
-			CVertexBuffer<video::S3DVertexSkin>* originalVertexbuffer = (CVertexBuffer<video::S3DVertexSkin>*)originalMeshBuffer->getVertexBuffer(0);
+			IVertexBuffer* originalVertexbuffer = originalMeshBuffer->getVertexBuffer(0);
 			video::S3DVertexSkin* vertex = (video::S3DVertexSkin*)originalVertexbuffer->getVertices();
 
 			int numVertex = originalVertexbuffer->getVertexCount();
 
 			IMeshBuffer* skinnedMeshBuffer = skinnedMesh->getMeshBuffer(i);
-			CVertexBuffer<video::S3DVertex>* vertexbuffer = (CVertexBuffer<video::S3DVertex>*)skinnedMeshBuffer->getVertexBuffer(0);
+			IVertexBuffer* vertexbuffer = skinnedMeshBuffer->getVertexBuffer(0);
 			video::S3DVertex* resultVertex = (video::S3DVertex*)vertexbuffer->getVertices();
 
 #ifdef VERTEX_NORMALIZE
@@ -467,7 +469,7 @@ namespace Skylicht
 				for (int i = 0; i < numVertex; i++)
 				{
 					ix = vtxId[(int)(vertex->VertexData.Y)];
-					if (ix < size)
+					if (ix != size)
 					{
 						positionOffset = &positionOffsets[ix];
 						normalOffset = &normalOffsets[ix];

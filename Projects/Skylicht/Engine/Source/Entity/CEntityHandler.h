@@ -32,7 +32,7 @@ namespace Skylicht
 	class SKYLICHT_API CEntityHandler : public CComponentSystem
 	{
 	protected:
-		std::vector<CEntity*> m_entities;
+		core::array<CEntity*> m_entities;
 
 	public:
 		CEntityHandler();
@@ -56,7 +56,7 @@ namespace Skylicht
 
 		void removeAllEntities();
 
-		std::vector<CEntity*>& getEntities()
+		core::array<CEntity*>& getEntities()
 		{
 			return m_entities;
 		}
@@ -68,7 +68,7 @@ namespace Skylicht
 
 	protected:
 
-		void setEntities(CEntity** entities, int count);
+		void setEntities(CEntity** entities, u32 count);
 
 	};
 }

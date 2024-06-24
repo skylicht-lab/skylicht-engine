@@ -150,9 +150,9 @@ namespace Skylicht
 	{
 		positions.clear();
 
-		for (CEntity* entity : m_entities)
+		for (u32 i = 0, n = (u32)m_entities.size(); i < n; i++)
 		{
-			CWorldTransformData* data = GET_ENTITY_DATA(entity, CWorldTransformData);
+			CWorldTransformData* data = GET_ENTITY_DATA(m_entities[i], CWorldTransformData);
 			positions.push_back(data->World.getTranslation());
 		}
 
@@ -162,9 +162,9 @@ namespace Skylicht
 	void CLightProbes::setSH(std::vector<core::vector3df>& sh)
 	{
 		int i = 0;
-		for (CEntity* entity : m_entities)
+		for (u32 it = 0, n = m_entities.size(); it < n; it++)
 		{
-			CLightProbeData* data = GET_ENTITY_DATA(entity, CLightProbeData);
+			CLightProbeData* data = GET_ENTITY_DATA(m_entities[it], CLightProbeData);
 			data->NeedValidate = true;
 			for (int j = 0; j < 9; j++)
 				data->SH[j] = sh[i++];

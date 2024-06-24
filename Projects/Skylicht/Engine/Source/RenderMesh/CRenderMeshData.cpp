@@ -119,8 +119,10 @@ namespace Skylicht
 		IsSkinnedInstancing = b;
 	}
 
-	void CRenderMeshData::setMaterial(CMaterial* material)
+	bool CRenderMeshData::setMaterial(CMaterial* material)
 	{
+		bool ret = false;
+
 		CMesh* mesh = RenderMesh;
 		if (SoftwareBlendShapeMesh)
 			mesh = SoftwareBlendShapeMesh;
@@ -139,6 +141,8 @@ namespace Skylicht
 
 				mesh->Materials[bufferID] = material;
 				mesh->Materials[bufferID]->grab();
+
+				ret = true;
 			}
 
 			bufferID++;
@@ -165,10 +169,14 @@ namespace Skylicht
 				}
 			}
 		}
+
+		return ret;
 	}
 
-	void CRenderMeshData::unusedMaterial(CMaterial* material)
+	bool CRenderMeshData::unusedMaterial(CMaterial* material)
 	{
+		bool ret = false;
+
 		CMesh* mesh = RenderMesh;
 		if (SoftwareBlendShapeMesh)
 			mesh = SoftwareBlendShapeMesh;
@@ -187,6 +195,8 @@ namespace Skylicht
 					mesh->Materials[bufferID]->drop();
 					mesh->Materials[bufferID] = NULL;
 				}
+
+				ret = true;
 			}
 
 			bufferID++;
@@ -207,6 +217,8 @@ namespace Skylicht
 				}
 			}
 		}
+
+		return ret;
 	}
 
 	void CRenderMeshData::initSoftwareBlendShape()
