@@ -91,6 +91,8 @@ namespace Skylicht
 
 		void attachMeshFromPrefab(CEntityPrefab* prefab, std::vector<std::string>& names, ArrayMaterial& materials, bool cloneMaterial = false);
 
+		void resetDefaultTransform(CEntityPrefab* prefab, std::vector<std::string>& transformsName);
+
 		inline int getMaterialCount()
 		{
 			return (int)m_materials.size();

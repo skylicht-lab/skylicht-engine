@@ -772,7 +772,8 @@ namespace Skylicht
 						CWorldTransformData* transform = nameToTransform[srcBone->Name];
 
 						// revert default transform
-						transform->Relative = srcBone->Relative;
+						// need call function CRenderMesh::resetDefaultTransform
+						// transform->Relative = srcBone->Relative;
 
 						joint.EntityIndex = transform->EntityIndex;
 						joint.JointData = GET_ENTITY_DATA(transform->Entity, CJointData);
@@ -808,6 +809,31 @@ namespace Skylicht
 
 		for (CMaterial* m : useMaterial)
 			m->applyMaterial();
+	}
+
+	void CRenderMesh::resetDefaultTransform(CEntityPrefab* prefab, std::vector<std::string>& transformsName)
+	{
+		std::map<std::string, CWorldTransformData*> nameToTransform;
+		for (CWorldTransformData* transform : m_transforms)
+			nameToTransform[transform->Name] = transform;
+
+		CEntity** entities = prefab->getEntities();
+		for (u32 i = 0, n = prefab->getNumEntities(); i < n; i++)
+		{
+			CEntity* srcEntity = entities[i];
+			CWorldTransformData* srcTransform = srcEntity->getData<CWorldTransformData>();
+
+			for (std::string& name : transformsName)
+			{
+				if (srcTransform->Name == name)
+				{
+					CWorldTransformData* t = nameToTransform[name];
+					if (t)
+						t->Relative = srcTransform->Relative;
+					break;
+				}
+			}
+		}
 	}
 
 	void CRenderMesh::printEntites()

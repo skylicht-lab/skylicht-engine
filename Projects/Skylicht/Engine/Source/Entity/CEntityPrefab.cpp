@@ -61,7 +61,7 @@ namespace Skylicht
 		m_unused.set_used(0);
 	}
 
-	void CEntityPrefab::removeEntity(int index)
+	void CEntityPrefab::removeEntity(u32 index)
 	{
 		CEntity* entity = m_entities[index];
 		entity->setAlive(false);

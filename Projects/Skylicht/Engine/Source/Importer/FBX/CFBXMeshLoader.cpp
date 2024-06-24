@@ -566,7 +566,7 @@ namespace Skylicht
 						}
 
 						// read blend shape data
-						for (size_t oi = 0, n = (u32)shape->num_offsets; oi < n; oi++)
+						for (u32 oi = 0, n = (u32)shape->num_offsets; oi < n; oi++)
 						{
 							uint32_t ix = (uint32_t)shape->offset_vertices[oi];
 							if (ix < vtxCount)
