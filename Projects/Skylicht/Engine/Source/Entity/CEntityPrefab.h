@@ -46,13 +46,13 @@ namespace Skylicht
 
 		void releaseAllEntities();
 
-		void removeEntity(int index);
+		void removeEntity(u32 index);
 
 		void removeEntity(CEntity* entity);
 
-		inline int getNumEntities()
+		inline u32 getNumEntities()
 		{
-			return (int)m_entities.size();
+			return m_entities.size();
 		}
 
 		inline CEntity** getEntities()
@@ -60,7 +60,7 @@ namespace Skylicht
 			return m_entities.pointer();
 		}
 
-		inline CEntity* getEntity(int index)
+		inline CEntity* getEntity(u32 index)
 		{
 			return m_entities[index];
 		}
