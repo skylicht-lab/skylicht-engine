@@ -89,7 +89,7 @@ namespace Skylicht
 
 		void removeRenderMesh(CRenderMeshData* renderMesh);
 
-		void attachMeshFromPrefab(CEntityPrefab* prefab, std::vector<std::string>& names, ArrayMaterial& materials, bool cloneMaterial = false);
+		void attachMeshFromPrefab(CEntityPrefab* prefab, std::vector<std::string>& names, ArrayMaterial& materials, bool cloneMaterial = false, bool resetBoneTransform = false);
 
 		void resetDefaultTransform(CEntityPrefab* prefab, std::vector<std::string>& transformsName);
 

@@ -517,7 +517,7 @@ namespace Skylicht
 		removeEntity(renderMesh->Entity);
 	}
 
-	void CRenderMesh::attachMeshFromPrefab(CEntityPrefab* prefab, std::vector<std::string>& names, ArrayMaterial& materials, bool cloneMaterial)
+	void CRenderMesh::attachMeshFromPrefab(CEntityPrefab* prefab, std::vector<std::string>& names, ArrayMaterial& materials, bool cloneMaterial, bool resetBoneTransform)
 	{
 		CEntityManager* entityManager = m_gameObject->getEntityManager();
 
@@ -771,9 +771,9 @@ namespace Skylicht
 
 						CWorldTransformData* transform = nameToTransform[srcBone->Name];
 
-						// revert default transform
-						// need call function CRenderMesh::resetDefaultTransform
-						// transform->Relative = srcBone->Relative;
+						// or you can call function CRenderMesh::resetDefaultTransform
+						if (resetBoneTransform)
+							transform->Relative = srcBone->Relative;
 
 						joint.EntityIndex = transform->EntityIndex;
 						joint.JointData = GET_ENTITY_DATA(transform->Entity, CJointData);

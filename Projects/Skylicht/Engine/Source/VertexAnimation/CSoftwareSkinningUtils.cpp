@@ -201,9 +201,9 @@ namespace Skylicht
 
 			int numVertex = originalVertexbuffer->getVertexCount();
 
-			IMeshBuffer* skinnedMeshBuffer = skinnedMesh->getMeshBuffer(i);
-			IVertexBuffer* vertexbuffer = skinnedMeshBuffer->getVertexBuffer(0);
-			video::S3DVertex* resultVertex = (video::S3DVertex*)vertexbuffer->getVertices();
+			IMeshBuffer* resultMeshBuffer = skinnedMesh->getMeshBuffer(i);
+			IVertexBuffer* resultVertexBuffer = resultMeshBuffer->getVertexBuffer(0);
+			video::S3DVertex* resultVertex = (video::S3DVertex*)resultVertexBuffer->getVertices();
 
 #ifdef VERTEX_NORMALIZE
 			float length, invLength;
@@ -297,9 +297,9 @@ namespace Skylicht
 
 			int numVertex = originalVertexbuffer->getVertexCount();
 
-			IMeshBuffer* skinnedMeshBuffer = skinnedMesh->getMeshBuffer(i);
-			IVertexBuffer* vertexbuffer = skinnedMeshBuffer->getVertexBuffer(0);
-			video::S3DVertex* resultVertex = (video::S3DVertex*)vertexbuffer->getVertices();
+			IMeshBuffer* resultMeshBuffer = skinnedMesh->getMeshBuffer(i);
+			IVertexBuffer* resultVertexBuffer = resultMeshBuffer->getVertexBuffer(0);
+			video::S3DVertex* resultVertex = (video::S3DVertex*)resultVertexBuffer->getVertices();
 
 #ifdef VERTEX_NORMALIZE
 			float length, invLength;
@@ -426,8 +426,8 @@ namespace Skylicht
 
 			int numVertex = originalVertexbuffer->getVertexCount();
 
-			IMeshBuffer* skinnedMeshBuffer = blendShape->getMeshBuffer(i);
-			IVertexBuffer* vertexbuffer = skinnedMeshBuffer->getVertexBuffer(0);
+			IMeshBuffer* resultMeshBuffer = blendShape->getMeshBuffer(i);
+			IVertexBuffer* resultVertexBuffer = resultMeshBuffer->getVertexBuffer(0);
 
 			video::S3DVertexSkinTangents* vertex = NULL;
 			video::S3DVertexSkinTangents* resultVertex = NULL;
@@ -449,7 +449,6 @@ namespace Skylicht
 			float length, invLength;
 #endif
 
-			// morphing
 			for (u32 j = 0; j < numBlendShape; j++)
 			{
 				CBlendShape* blendShape = blendShapeData[j];
@@ -459,7 +458,7 @@ namespace Skylicht
 					continue;
 
 				vertex = (video::S3DVertexSkinTangents*)originalVertexbuffer->getVertices();
-				resultVertex = (video::S3DVertexSkinTangents*)vertexbuffer->getVertices();
+				resultVertex = (video::S3DVertexSkinTangents*)resultVertexBuffer->getVertices();
 
 				vtxId = blendShape->VtxId.const_pointer();
 				size = blendShape->Offset.size() - 1;
