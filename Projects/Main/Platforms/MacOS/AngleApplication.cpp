@@ -44,7 +44,7 @@ AngleApplication::AngleApplication(std::string name,
     // mPlatformParams.renderer = EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE; // Maybe OpenGL backend
     mPlatformParams.renderer = EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE; // Metal backend
     mPlatformParams.deviceType = EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE;
-        
+	
     mOSWindow = OSWindow::New();
 
     // Load EGL library so we can initialize the display.

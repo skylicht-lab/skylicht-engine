@@ -165,6 +165,8 @@ namespace Skylicht
 				readLUpAxis = false;
 			}
 			break;
+			default:
+				break;
 			}
 		}
 

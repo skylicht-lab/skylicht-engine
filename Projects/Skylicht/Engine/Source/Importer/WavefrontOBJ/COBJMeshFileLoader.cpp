@@ -58,7 +58,7 @@ namespace Skylicht
 
 		c8* buf = new c8[filesize];
 		memset(buf, 0, filesize);
-		file->read((void*)buf, filesize);
+		file->read((void*)buf, (u32)filesize);
 		const c8* const bufEnd = buf + filesize;
 
 		// Process obj information
@@ -368,7 +368,7 @@ namespace Skylicht
 		}
 
 		c8* buf = new c8[filesize];
-		mtlReader->read((void*)buf, filesize);
+		mtlReader->read((void*)buf, (u32)filesize);
 		const c8* bufEnd = buf + filesize;
 
 		SObjMtl* currMaterial = 0;

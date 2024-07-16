@@ -239,6 +239,8 @@ namespace Skylicht
 			{
 			}
 			break;
+			default:
+				break;					
 			}
 		}
 
