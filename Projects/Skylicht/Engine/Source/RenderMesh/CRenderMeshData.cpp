@@ -442,6 +442,8 @@ namespace Skylicht
 					case EVT_SKIN_2TCOORDS_TANGENTS:
 						mb = new CMeshBuffer<S3DVertexSkin2TCoordsTangents>(vertexDes, indexType);
 						break;
+					default:
+						break;
 					}
 				}
 				else

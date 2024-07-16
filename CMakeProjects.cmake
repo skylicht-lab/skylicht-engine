@@ -17,6 +17,11 @@ if (BUILD_EXAMPLES AND BUILD_SKYLICHT_LIGHMAPPER)
 	endif()
 	
 	subdirs(Samples/DrawPrimitives)
+
+	if (BUILD_SKYLICHT_UI)
+	subdirs(Samples/GUI)
+	endif()
+	
 	subdirs(Samples/HelloWorld)
 	subdirs(Samples/Instancing)
 	

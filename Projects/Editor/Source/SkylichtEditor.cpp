@@ -19,7 +19,7 @@
 #include "HttpRequest/CHttpRequest.h"
 #endif
 
-#if defined(MACOS)
+#if defined(MACOS) || defined(LINUX)
 // Generated in CMakeLists.txt
 #include "ProjectPath.h"
 #endif
@@ -34,7 +34,7 @@ SkylichtEditor::SkylichtEditor() :
 	m_editor(NULL),
 	m_editorState(Startup)
 {
-#if defined(MACOS)
+#if defined(MACOS) || defined(LINUX)
     getIrrlichtDevice()->getFileSystem()->changeWorkingDirectoryTo(PROJECT_PATH);
 #endif
     

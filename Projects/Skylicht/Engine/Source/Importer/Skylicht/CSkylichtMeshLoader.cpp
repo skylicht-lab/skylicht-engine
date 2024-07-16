@@ -55,13 +55,13 @@ namespace Skylicht
 		if (readFile == NULL)
 			return false;
 
-		u32 size = readFile->getSize();
+		long size = readFile->getSize();
 
 		unsigned char* data = new unsigned char[size];
-		readFile->read(data, size);
+		readFile->read(data, (u32)size);
 		readFile->drop();
 
-		CMemoryStream stream(data, size);
+		CMemoryStream stream(data, (u32)size);
 
 		// read header
 		SAssetHeader assetHeader;

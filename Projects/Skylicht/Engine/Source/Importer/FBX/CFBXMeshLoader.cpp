@@ -73,7 +73,7 @@ namespace Skylicht
 
 		c8* buf = new c8[filesize];
 		memset(buf, 0, filesize);
-		file->read((void*)buf, filesize);
+		file->read((void*)buf, (u32)filesize);
 
 		ufbx_load_opts opts;
 		memset(&opts, 0, sizeof(ufbx_load_opts));
