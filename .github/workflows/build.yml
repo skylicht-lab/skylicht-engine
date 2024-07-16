@@ -89,7 +89,7 @@ jobs:
       - name: Unit Test
         run: |
           cd PrjLinux
-          ctest --verpose
+          ctest
           cd ..
       - name: Package
         run: |
@@ -126,7 +126,7 @@ jobs:
       - name: Unit Test
         run: |
           cd PrjLinux
-          ctest --verpose
+          ctest
           cd ..
       - name: Package
         run: |
@@ -162,7 +162,7 @@ jobs:
       - name: Unit Test
         run: |
           cd PrjMac
-          ctest --verpose --output-on-failure -C Release
+          ctest -C Release
           cat Testing/Temporary/LastTest.log
           cd ..
       - name: Package
@@ -237,7 +237,7 @@ jobs:
       - name: Unit Test
         run: |
           cd PrjVisualStudio
-          ctest -C Release --verpose
+          ctest -C Release
           cat Testing/Temporary/LastTest.log
           cd ..
       - name: Package
@@ -259,7 +259,7 @@ jobs:
       - name: Unit Test
         run: |
           cd PrjVisualStudio
-          ctest -C Release --verpose
+          ctest -C Release
           cat Testing/Temporary/LastTest.log
           cd ..
       - name: Package
@@ -281,7 +281,7 @@ jobs:
       - name: Unit Test
         run: |
           cd PrjVisualStudio
-          ctest -C Release --verpose
+          ctest -C Release
           cat Testing/Temporary/LastTest.log
           cd ..
       - name: Package
