@@ -31,20 +31,23 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include <mutex>
 
-namespace SkylichtSystem
+namespace Skylicht
 {
-	class CSTDThreadMutex : public IMutex
+	namespace System
 	{
-	protected:
-		std::mutex m_mutex;
-
-	public:
-		CSTDThreadMutex();
-		virtual ~CSTDThreadMutex();
-
-		virtual void lock();
-		virtual void unlock();
-	};
+		class CSTDThreadMutex : public IMutex
+		{
+		protected:
+			std::mutex m_mutex;
+			
+		public:
+			CSTDThreadMutex();
+			virtual ~CSTDThreadMutex();
+			
+			virtual void lock();
+			virtual void unlock();
+		};
+	}
 }
 
 #endif

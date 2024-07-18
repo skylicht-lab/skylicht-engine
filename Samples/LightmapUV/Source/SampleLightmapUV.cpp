@@ -152,7 +152,7 @@ void SampleLightmapUV::onInitApp()
 		m_allRenderers = renderers;
 
 		// run thread
-		m_thread = SkylichtSystem::IThread::createThread(this);
+		m_thread = Skylicht::System::IThread::createThread(this);
 	}
 
 	// Render pipeline

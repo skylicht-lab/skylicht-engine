@@ -31,20 +31,23 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include <Windows.h>
 
-namespace SkylichtSystem
+namespace Skylicht
 {
-	class CWinMutex : public IMutex
+	namespace System
 	{
-	protected:
-		HANDLE m_mutex;
-
-	public:
-		CWinMutex();
-		virtual ~CWinMutex();
-
-		virtual void lock();
-		virtual void unlock();
-	};
+		class CWinMutex : public IMutex
+		{
+		protected:
+			HANDLE m_mutex;
+			
+		public:
+			CWinMutex();
+			virtual ~CWinMutex();
+			
+			virtual void lock();
+			virtual void unlock();
+		};
+	}
 }
 
 #endif

@@ -26,17 +26,20 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "IMutex.h"
 
-namespace SkylichtSystem
+namespace Skylicht
 {
-	class CNullMutex : public IMutex
+	namespace System
 	{
-	protected:
-
-	public:
-		CNullMutex();
-		virtual ~CNullMutex();
-
-		virtual void lock();
-		virtual void unlock();
-	};
+		class CNullMutex : public IMutex
+		{
+		protected:
+			
+		public:
+			CNullMutex();
+			virtual ~CNullMutex();
+			
+			virtual void lock();
+			virtual void unlock();
+		};
+	}
 }

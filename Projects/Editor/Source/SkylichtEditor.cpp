@@ -39,7 +39,7 @@ SkylichtEditor::SkylichtEditor() :
 #endif
     
 #if defined(BUILD_SKYLICHT_NETWORK)
-	CHttpRequest::globalInit();
+	Network::CHttpRequest::globalInit();
 #endif
 
 	Lightmapper::CLightmapper::createGetInstance();
@@ -57,7 +57,7 @@ SkylichtEditor::SkylichtEditor() :
 SkylichtEditor::~SkylichtEditor()
 {
 #if defined(BUILD_SKYLICHT_NETWORK)
-	CHttpRequest::globalFree();
+	Network::CHttpRequest::globalFree();
 #endif
 
 	Lightmapper::CLightmapper::releaseInstance();

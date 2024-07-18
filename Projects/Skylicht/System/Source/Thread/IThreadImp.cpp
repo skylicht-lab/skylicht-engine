@@ -45,71 +45,74 @@ https://github.com/skylicht-lab/skylicht-engine
 #include <sys/time.h>
 #endif
 
-namespace SkylichtSystem
+namespace Skylicht
 {
-	float IThread::getTime()
+	namespace System
 	{
-#if defined(_WIN32)
-		LARGE_INTEGER freq, start;
-		double ticks, f;
-
-		QueryPerformanceFrequency(&freq);
-		QueryPerformanceCounter(&start);
-		f = (double)freq.QuadPart;
-		ticks = (double)start.QuadPart;
-
-		double time = ticks / f;
-		return (float)time * 1000.0f;
-#elif defined(ANDROID)
-		timespec systemtime;
-		clock_gettime(CLOCK_MONOTONIC, &systemtime);
-		return (float)((systemtime.tv_sec * 1000UL) + (systemtime.tv_nsec / 1000000UL));
-#else
-		struct timeval tp;
-		double sec, usec;
-		gettimeofday(&tp, 0);
-		sec = tp.tv_sec;
-		usec = tp.tv_usec;
-		double time = (sec + usec / 1000000);
-		return (float)time * 1000.0f;
-#endif
-	}
-
-	void IThread::sleep(unsigned int time)
-	{
-#ifdef _WIN32
-		//#if WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP
+		float IThread::getTime()
+		{
+	#if defined(_WIN32)
+			LARGE_INTEGER freq, start;
+			double ticks, f;
+			
+			QueryPerformanceFrequency(&freq);
+			QueryPerformanceCounter(&start);
+			f = (double)freq.QuadPart;
+			ticks = (double)start.QuadPart;
+			
+			double time = ticks / f;
+			return (float)time * 1000.0f;
+	#elif defined(ANDROID)
+			timespec systemtime;
+			clock_gettime(CLOCK_MONOTONIC, &systemtime);
+			return (float)((systemtime.tv_sec * 1000UL) + (systemtime.tv_nsec / 1000000UL));
+	#else
+			struct timeval tp;
+			double sec, usec;
+			gettimeofday(&tp, 0);
+			sec = tp.tv_sec;
+			usec = tp.tv_usec;
+			double time = (sec + usec / 1000000);
+			return (float)time * 1000.0f;
+	#endif
+		}
+		
+		void IThread::sleep(unsigned int time)
+		{
+	#ifdef _WIN32
+			//#if WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP
 			// Window phone
 			// std::this_thread::sleep_for(std::chrono::milliseconds(time));
-		//#else
+			//#else
 			// Win32
-		Sleep(time);
-		//#endif
-#elif defined(EMSCRIPTEN)
-
-#else
-		struct timespec ts;
-		ts.tv_sec = (time_t)(time / 1000);
-		ts.tv_nsec = (long)(time % 1000) * 1000000;
-
-		nanosleep(&ts, NULL);
-#endif
-	}
-
-	IThread* IThread::createThread(IThreadCallback* callback)
-	{
-#if defined(USE_PTHREAD)
-		printf("[IThread] Create pthread\n");
-		return new CPThread(callback);
-#elif defined(USE_STDTHREAD)
-		printf("[IThread] Create std::thread\n");
-		return new CSTDThread(callback);
-#elif defined(USE_WINTHREAD)
-		printf("[IThread] Create winthread\n");
-		return new CWinThread(callback);
-#else
-		printf("[IThread] Warning: create null thread\n");
-		return NULL;
-#endif		
+			Sleep(time);
+			//#endif
+	#elif defined(EMSCRIPTEN)
+			
+	#else
+			struct timespec ts;
+			ts.tv_sec = (time_t)(time / 1000);
+			ts.tv_nsec = (long)(time % 1000) * 1000000;
+			
+			nanosleep(&ts, NULL);
+	#endif
+		}
+		
+		IThread* IThread::createThread(IThreadCallback* callback)
+		{
+	#if defined(USE_PTHREAD)
+			printf("[IThread] Create pthread\n");
+			return new CPThread(callback);
+	#elif defined(USE_STDTHREAD)
+			printf("[IThread] Create std::thread\n");
+			return new CSTDThread(callback);
+	#elif defined(USE_WINTHREAD)
+			printf("[IThread] Create winthread\n");
+			return new CWinThread(callback);
+	#else
+			printf("[IThread] Warning: create null thread\n");
+			return NULL;
+	#endif
+		}
 	}
 }

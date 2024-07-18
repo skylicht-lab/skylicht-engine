@@ -25,6 +25,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CDownloadGMapThread.h"
 
+using namespace Skylicht::Network;
+
 namespace Skylicht
 {
 	namespace Editor

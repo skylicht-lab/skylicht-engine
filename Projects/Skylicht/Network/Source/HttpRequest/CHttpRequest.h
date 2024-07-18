@@ -28,6 +28,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #ifndef __EMSCRIPTEN__
 
+#include "IHttpRequest.h"
+
 #include "curl/curl.h"
 #include "CHttpStream.h"
 
@@ -37,230 +39,139 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CHttpRequest
+	namespace Network
 	{
-	public:
-		enum ERequestType
+		class CHttpRequest: public IHttpRequest
 		{
-			Get = 0,
-			Post,
-			PostJson,
-			Put,
-			Delete
-		};
-	protected:
-		// curl handle
-		CURL* m_curl;
-		CURLM* m_multiHandle;
-
-		void* m_formpost;
-		void* m_lastptr;
-
-		// total size download
-		unsigned long m_downloading;
-		unsigned long m_total;
-		int m_needContinue;
-
-		int m_httpCode;
-
-		std::string m_url;
-		bool m_sendRequest;
-
-		ERequestType m_requestType;
-
-		IHttpStream* m_dataStream;
-		int m_requestID;
-
-		bool m_cancel;
-		bool m_isTimeOut;
-
-		unsigned char* m_downloadBuffer;
-		unsigned long m_sizeBuffer;
-
-		void* m_md5Context;
-		char m_hashString[HASHSTRING_SIZE];
-
-		unsigned long m_requestTime;
-		unsigned long m_time;
-		unsigned long m_revcTime;
-		unsigned long m_currentTime;
-		unsigned long m_requestTimeOut;
-
-		unsigned long m_totalBytePerSecond;
-		unsigned long m_bytePerSecond;
-
-		std::string m_postField;
-
-		std::string m_sessionFile;
-
-		struct SForm
-		{
-			std::string	Name;
-			std::string Value;
-			bool File;
-
-			SForm()
+		protected:
+			// curl handle
+			CURL* m_curl;
+			CURLM* m_multiHandle;
+			
+			void* m_formpost;
+			void* m_lastptr;
+			
+			// total size download
+			unsigned long m_downloading;
+			unsigned long m_total;
+			int m_needContinue;
+			
+			bool m_sendRequest;
+			
+			bool m_cancel;
+			bool m_isTimeOut;
+			
+			unsigned char* m_downloadBuffer;
+			unsigned long m_sizeBuffer;
+			
+			void* m_md5Context;
+			char m_hashString[HASHSTRING_SIZE];
+			
+			unsigned long m_requestTime;
+			unsigned long m_time;
+			unsigned long m_revcTime;
+			unsigned long m_currentTime;
+			unsigned long m_requestTimeOut;
+			
+			unsigned long m_totalBytePerSecond;
+			unsigned long m_bytePerSecond;
+			
+			std::string m_postField;
+			std::string m_sessionFile;
+			
+			curl_slist* m_headerlist;
+			
+			bool m_checkTimeout;
+			
+		public:
+			CHttpRequest(IHttpStream* stream);
+			
+			virtual ~CHttpRequest();
+			
+			static void globalInit();
+			
+			static void globalFree();
+			
+			static std::string urlEncode(const std::string& s);
+			
+			inline void setSessionFile(const char* session)
 			{
-				File = false;
+				m_sessionFile = session;
+			}
+			
+			void sendRequestByPost();
+			void sendRequestByPostJson();
+			void sendRequestByGet();
+			void sendRequestByPut();
+			void sendRequestByDelete();
+			
+			virtual void sendRequest();
+			
+			inline bool isSendRequest()
+			{
+				return m_sendRequest;
+			}
+			
+			bool updateRequest();
+			
+			bool checkTimeOut();
+			
+			inline bool isTimeOut()
+			{
+				return m_isTimeOut;
+			}
+			
+			inline unsigned long getRequestTime()
+			{
+				return m_currentTime - m_requestTime;
+			}
+			
+			void onRevcData(unsigned char* lpData, unsigned long size, unsigned long num);
+			
+			void onReadData(unsigned char* lpData, unsigned long size, unsigned long num);
+			
+			inline unsigned long getByteDownload()
+			{
+				return m_downloading;
+			}
+			
+			inline unsigned long getSpeedDownload()
+			{
+				return m_bytePerSecond;
+			}
+			
+			inline void updateStatusDownload(unsigned long downLoad, unsigned long total)
+			{
+				m_downloading = downLoad;
+				m_total = total;
+			}
+			
+			inline void cancel()
+			{
+				m_cancel = true;
+			}
+			
+			inline bool isCancel()
+			{
+				return m_cancel;
+			}
+			
+			inline const char* getCurrentHashString()
+			{
+				return m_hashString;
+			}
+			
+			inline long getCurrentTimeOut()
+			{
+				return m_currentTime - m_revcTime;
+			}
+			
+			inline long getTimeOut()
+			{
+				return m_requestTimeOut;
 			}
 		};
-
-		std::vector<SForm> m_post;
-
-		curl_slist* m_headerlist;
-
-		void* m_userData;
-
-		std::vector<std::string> m_headers;
-
-		bool m_checkTimeout;
-
-	public:
-		CHttpRequest(IHttpStream* stream);
-		virtual ~CHttpRequest();
-
-		static void globalInit();
-		
-		static void globalFree();
-
-		static std::string urlEncode(const std::string& s);
-
-		inline void setURL(const char* url)
-		{
-			m_url = url;
-		}
-
-		inline const std::string& getURL()
-		{
-			return m_url;
-		}
-
-		inline void setSessionFile(const char* session)
-		{
-			m_sessionFile = session;
-		}
-
-		void addFormRequest(const char* name, const char* value);
-		void addFormFileRequest(const char* name, const char* value);
-
-		void sendRequestByPost();
-		void sendRequestByPostJson();
-		void sendRequestByGet();
-		void sendRequestByPut();
-		void sendRequestByDelete();
-
-		void sendRequest();
-
-		inline bool isSendRequest()
-		{
-			return m_sendRequest;
-		}
-
-		inline void setSendRequestType(ERequestType type)
-		{
-			m_requestType = type;
-		}
-
-		bool updateRequest();
-
-		bool checkTimeOut();
-
-		inline bool isTimeOut()
-		{
-			return m_isTimeOut;
-		}
-
-		inline unsigned long getRequestTime()
-		{
-			return m_currentTime - m_requestTime;
-		}
-
-		inline void setUserData(void* data)
-		{
-			m_userData = data;
-		}
-
-		inline void* getUserData()
-		{
-			return m_userData;
-		}
-
-		inline void clearHeader()
-		{
-			m_headers.clear();
-		}
-
-		inline void addHeader(const char* header)
-		{
-			m_headers.push_back(header);
-		}
-
-		void onRevcData(unsigned char* lpData, unsigned long size, unsigned long num);
-
-		void onReadData(unsigned char* lpData, unsigned long size, unsigned long num);
-
-		inline unsigned long getByteDownload()
-		{
-			return m_downloading;
-		}
-
-		inline unsigned long getSpeedDownload()
-		{
-			return m_bytePerSecond;
-		}
-
-		inline void updateStatusDownload(unsigned long downLoad, unsigned long total)
-		{
-			m_downloading = downLoad;
-			m_total = total;
-		}
-
-		inline int getResponseCode()
-		{
-			return m_httpCode;
-		}
-
-		inline IHttpStream* getStream()
-		{
-			return m_dataStream;
-		}
-
-		inline void setRequestID(int id)
-		{
-			m_requestID = id;
-		}
-
-		inline int getRequestID()
-		{
-			return m_requestID;
-		}
-
-		inline void cancel()
-		{
-			m_cancel = true;
-		}
-
-		inline bool isCancel()
-		{
-			return m_cancel;
-		}
-
-		inline const char* getCurrentHashString()
-		{
-			return m_hashString;
-		}
-
-		inline long getCurrentTimeOut()
-		{
-			return m_currentTime - m_revcTime;
-		}
-
-		inline long getTimeOut()
-		{
-			return m_requestTimeOut;
-		}
-	};
-
+	}
 }
 
 #endif

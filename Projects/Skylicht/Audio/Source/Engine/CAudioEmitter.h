@@ -37,7 +37,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #define SKYLICHTAUDIO_MIN_GAIN	0.0f
 #define SKYLICHTAUDIO_MAX_GAIN	4.0f
 
-using namespace SkylichtSystem;
+using namespace Skylicht::System;
 
 namespace SkylichtAudio
 {

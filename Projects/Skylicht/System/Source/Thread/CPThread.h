@@ -31,25 +31,28 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include <pthread.h>
 
-namespace SkylichtSystem
+namespace Skylicht
 {
-	class CPThread : public IThread
+	namespace System
 	{
-	protected:
-		pthread_t m_pthread;
-		pthread_mutex_t m_loopMutex;
-
-		bool m_run;
-	public:
-		CPThread(IThreadCallback *callback);
-		virtual ~CPThread();
-
-		virtual void update();
-
-		virtual void stop();
-
-		static void* run(void *param);
-	};
+		class CPThread : public IThread
+		{
+		protected:
+			pthread_t m_pthread;
+			pthread_mutex_t m_loopMutex;
+			
+			bool m_run;
+		public:
+			CPThread(IThreadCallback *callback);
+			virtual ~CPThread();
+			
+			virtual void update();
+			
+			virtual void stop();
+			
+			static void* run(void *param);
+		};
+	}
 }
 
 #endif

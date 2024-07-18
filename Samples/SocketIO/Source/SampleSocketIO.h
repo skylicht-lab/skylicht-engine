@@ -3,6 +3,7 @@
 #include "IApplicationEventReceiver.h"
 
 #include "SocketIO/CSocketIO.h"
+using namespace Skylicht::Network;
 
 class SampleSocketIO :
 	public IApplicationEventReceiver

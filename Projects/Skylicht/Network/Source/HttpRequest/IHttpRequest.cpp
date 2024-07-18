@@ -22,68 +22,47 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
 #include "pch.h"
-#include "IHttpStream.h"
-#include "Utils/CMemoryStream.h"
+#include "IHttpRequest.h"
 
 namespace Skylicht
 {
 	namespace Network
 	{
-		class CHttpStream : public IHttpStream
+		IHttpRequest::IHttpRequest(IHttpStream* stream):
+		m_dataStream(stream),
+		m_userData(NULL),
+		m_requestType(IHttpRequest::Get),
+		m_httpCode(-1),
+		m_requestID(-1)
 		{
-		protected:
-			CMemoryStream* m_memory;
 			
-		public:
-			CHttpStream(unsigned int datasize = 65536);
-			
-			virtual ~CHttpStream();
-			
-			virtual void write(void* data, unsigned int size);
-			
-			virtual const unsigned char* getData();
-			
-			virtual unsigned int getDataSize();
-			
-			virtual const char* getStreamPath()
-			{
-				return NULL;
-			}
-			
-		};
+		}
 		
-		class CHttpFileStream : public IHttpStream
+		IHttpRequest::~IHttpRequest()
 		{
-		protected:
-			io::IWriteFile* m_file;
-			std::string m_filePath;
+			if (m_dataStream)
+				delete m_dataStream;
+		}
+		
+		void IHttpRequest::addFormRequest(const char* name, const char* value)
+		{
+			m_post.push_back(SForm());
+			SForm& form = m_post.back();
 			
-		public:
-			CHttpFileStream(const char* fileName);
+			form.Name = name;
+			form.Value = value;
+			form.File = false;
+		}
+		
+		void IHttpRequest::addFormFileRequest(const char* name, const char* value)
+		{
+			m_post.push_back(SForm());
+			SForm& form = m_post.back();
 			
-			virtual ~CHttpFileStream();
-			
-			virtual void write(void* data, unsigned int size);
-			
-			virtual void endStream();
-			
-			virtual const unsigned char* getData()
-			{
-				return NULL;
-			}
-			
-			virtual unsigned int getDataSize()
-			{
-				return 0;
-			}
-			
-			virtual const char* getStreamPath()
-			{
-				return m_filePath.c_str();
-			}
-		};
+			form.Name = name;
+			form.Value = value;
+			form.File = true;
+		}
 	}
 }

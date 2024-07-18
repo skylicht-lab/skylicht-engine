@@ -27,30 +27,33 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #ifdef USE_WINTHREAD
 
-namespace SkylichtSystem
+namespace Skylicht
 {
-	CWinMutex::CWinMutex()
+	namespace System
 	{
-		m_mutex = CreateMutex(NULL, FALSE, NULL);
-		if (m_mutex == NULL)
+		CWinMutex::CWinMutex()
 		{
-			printf("[CWinMutex] Warning: init error: %d\n", GetLastError());
+			m_mutex = CreateMutex(NULL, FALSE, NULL);
+			if (m_mutex == NULL)
+			{
+				printf("[CWinMutex] Warning: init error: %d\n", GetLastError());
+			}
 		}
-	}
 
-	CWinMutex::~CWinMutex()
-	{
-		CloseHandle(m_mutex);
-	}
+		CWinMutex::~CWinMutex()
+		{
+			CloseHandle(m_mutex);
+		}
 
-	void CWinMutex::lock()
-	{
-		WaitForSingleObject(m_mutex, INFINITE);
-	}
+		void CWinMutex::lock()
+		{
+			WaitForSingleObject(m_mutex, INFINITE);
+		}
 
-	void CWinMutex::unlock()
-	{
-		ReleaseMutex(m_mutex);
+		void CWinMutex::unlock()
+		{
+			ReleaseMutex(m_mutex);
+		}
 	}
 }
 

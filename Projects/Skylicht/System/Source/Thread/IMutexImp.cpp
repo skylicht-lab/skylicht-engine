@@ -34,18 +34,21 @@ https://github.com/skylicht-lab/skylicht-engine
 #endif
 #include "CNullMutex.h"
 
-namespace SkylichtSystem
+namespace Skylicht
 {
-	IMutex* IMutex::createMutex()
+	namespace System
 	{
-#if defined(USE_PTHREAD)
-		return new CPThreadMutex();
-#elif defined(USE_STDTHREAD)
-		return new CSTDThreadMutex();
-#elif defined(USE_WINTHREAD)
-		return new CWinMutex();
-#else
-		return new CNullMutex();
-#endif
+		IMutex* IMutex::createMutex()
+		{
+	#if defined(USE_PTHREAD)
+			return new CPThreadMutex();
+	#elif defined(USE_STDTHREAD)
+			return new CSTDThreadMutex();
+	#elif defined(USE_WINTHREAD)
+			return new CWinMutex();
+	#else
+			return new CNullMutex();
+	#endif
+		}
 	}
 }

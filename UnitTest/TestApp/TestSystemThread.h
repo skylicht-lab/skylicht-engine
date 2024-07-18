@@ -6,10 +6,10 @@
 
 using namespace Skylicht;
 
-class TestThreadCallback: public SkylichtSystem::IThreadCallback
+class TestThreadCallback: public Skylicht::System::IThreadCallback
 {
 protected:
-	SkylichtSystem::IMutex *m_mutex;
+	Skylicht::System::IMutex *m_mutex;
 
 public:
 	TestThreadCallback();	

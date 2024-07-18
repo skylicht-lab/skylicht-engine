@@ -31,25 +31,28 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include <Windows.h>
 
-namespace SkylichtSystem
+namespace Skylicht
 {
-	class CWinThread : public IThread
+	namespace System
 	{
-	protected:
-		HANDLE m_thread;
-		HANDLE m_loopMutex;
-		bool m_run;
-
-	public:
-		CWinThread(IThreadCallback* callback);
-		virtual ~CWinThread();
-
-		virtual void update();
-
-		virtual void stop();
-
-		static void* run(void* param);
-	};
+		class CWinThread : public IThread
+		{
+		protected:
+			HANDLE m_thread;
+			HANDLE m_loopMutex;
+			bool m_run;
+			
+		public:
+			CWinThread(IThreadCallback* callback);
+			virtual ~CWinThread();
+			
+			virtual void update();
+			
+			virtual void stop();
+			
+			static void* run(void* param);
+		};
+	}
 }
 
 #endif

@@ -9,7 +9,7 @@
 
 class SampleLightmapUV :
 	public IApplicationEventReceiver,
-	public SkylichtSystem::IThreadCallback
+	public Skylicht::System::IThreadCallback
 {
 private:
 	CScene *m_scene;
@@ -26,7 +26,7 @@ private:
 
 	ITexture *m_UVChartsTexture;
 
-	SkylichtSystem::IThread *m_thread;
+	Skylicht::System::IThread *m_thread;
 
 	bool m_threadFinish;
 	bool m_initMeshUV;
@@ -56,7 +56,7 @@ public:
 
 	virtual void onQuitApp();
 
-	// SkylichtSystem::IThreadCallback implement
+	// Skylicht::System::IThreadCallback implement
 	virtual bool enableThreadLoop()
 	{
 		return false;

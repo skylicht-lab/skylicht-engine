@@ -27,73 +27,75 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CHttpStream::CHttpStream(unsigned int datasize)
+	namespace Network
 	{
-		m_memory = new CMemoryStream(datasize);
-
-		// erase data
-		memset(m_memory->getData(), 0, datasize);
-	}
-
-	CHttpStream::~CHttpStream()
-	{
-		delete m_memory;
-	}
-
-	void CHttpStream::write(void* data, unsigned int size)
-	{
-		if (m_memory->getSize() + size >= m_memory->getTotalSize())
+		CHttpStream::CHttpStream(unsigned int datasize)
 		{
-			os::Printer::log("CHttpStream::write (out size) - realloc new size\n");
-			int newDataSize = (m_memory->getTotalSize() + size) * 2;
-
-			CMemoryStream* mem = new CMemoryStream(newDataSize);
-			memset(mem->getData(), 0, newDataSize);
-
-			// write old data
-			mem->writeData(m_memory->getData(), m_memory->getSize());
-
-			// delete old data
-			delete m_memory;
-			m_memory = mem;
+			m_memory = new CMemoryStream(datasize);
+			
+			// erase data
+			memset(m_memory->getData(), 0, datasize);
 		}
-
-		m_memory->writeData(data, size);
+		
+		CHttpStream::~CHttpStream()
+		{
+			delete m_memory;
+		}
+		
+		void CHttpStream::write(void* data, unsigned int size)
+		{
+			if (m_memory->getSize() + size >= m_memory->getTotalSize())
+			{
+				os::Printer::log("CHttpStream::write (out size) - realloc new size\n");
+				int newDataSize = (m_memory->getTotalSize() + size) * 2;
+				
+				CMemoryStream* mem = new CMemoryStream(newDataSize);
+				memset(mem->getData(), 0, newDataSize);
+				
+				// write old data
+				mem->writeData(m_memory->getData(), m_memory->getSize());
+				
+				// delete old data
+				delete m_memory;
+				m_memory = mem;
+			}
+			
+			m_memory->writeData(data, size);
+		}
+		
+		const unsigned char* CHttpStream::getData()
+		{
+			return m_memory->getData();
+		}
+		
+		unsigned int CHttpStream::getDataSize()
+		{
+			return m_memory->getSize();
+		}
+		
+		
+		CHttpFileStream::CHttpFileStream(const char* fileName)
+		{
+			m_file = getIrrlichtDevice()->getFileSystem()->createAndWriteFile(fileName);
+			m_filePath = fileName;
+		}
+		
+		CHttpFileStream::~CHttpFileStream()
+		{
+			endStream();
+		}
+		
+		void CHttpFileStream::write(void* data, unsigned int size)
+		{
+			if (m_file)
+				m_file->write(data, size);
+		}
+		
+		void CHttpFileStream::endStream()
+		{
+			if (m_file)
+				m_file->drop();
+			m_file = NULL;
+		}
 	}
-
-	const unsigned char* CHttpStream::getData()
-	{
-		return m_memory->getData();
-	}
-
-	unsigned int CHttpStream::getDataSize()
-	{
-		return m_memory->getSize();
-	}
-
-
-	CHttpFileStream::CHttpFileStream(const char* fileName)
-	{
-		m_file = getIrrlichtDevice()->getFileSystem()->createAndWriteFile(fileName);
-		m_filePath = fileName;
-	}
-
-	CHttpFileStream::~CHttpFileStream()
-	{
-		endStream();
-	}
-
-	void CHttpFileStream::write(void* data, unsigned int size)
-	{
-		if (m_file)
-			m_file->write(data, size);
-	}
-
-	void CHttpFileStream::endStream()
-	{
-		if (m_file)
-			m_file->drop();
-		m_file = NULL;
-	}
-
 }

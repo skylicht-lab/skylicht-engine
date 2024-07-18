@@ -26,13 +26,13 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Thread/IThread.h"
 #include "Thread/IMutex.h"
-
-using namespace SkylichtSystem;
+using namespace Skylicht::System;
 
 #include "DownloadMap.h"
 
 #ifdef BUILD_SKYLICHT_NETWORK
 #include "HttpRequest/CHttpRequest.h"
+using namespace Skylicht::Network;
 #endif
 
 #define NUM_HTTPREQUEST	8

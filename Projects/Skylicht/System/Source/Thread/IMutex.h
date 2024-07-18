@@ -26,37 +26,40 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "stdafx.h"
 
-namespace SkylichtSystem
+namespace Skylicht
 {
-	class IMutex
+	namespace System
 	{
-	public:
-		virtual ~IMutex()
+		class IMutex
 		{
-		}
-
-		virtual void lock() = 0;
-		virtual void unlock() = 0;
-
-		static IMutex* createMutex();
-	};
-
-
-	struct SScopeMutex
-	{
-		IMutex* m;
-
-		SScopeMutex(IMutex* mutex)
+		public:
+			virtual ~IMutex()
+			{
+			}
+			
+			virtual void lock() = 0;
+			virtual void unlock() = 0;
+			
+			static IMutex* createMutex();
+		};
+		
+		
+		struct SScopeMutex
+		{
+			IMutex* m;
+			
+			SScopeMutex(IMutex* mutex)
 			:m(mutex)
-		{
-			if (m != NULL)
-				m->lock();
-		}
-
-		~SScopeMutex()
-		{
-			if (m != NULL)
-				m->unlock();
-		}
-	};
+			{
+				if (m != NULL)
+					m->lock();
+			}
+			
+			~SScopeMutex()
+			{
+				if (m != NULL)
+					m->unlock();
+			}
+		};
+	}
 };
