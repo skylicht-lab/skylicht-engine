@@ -5,19 +5,19 @@
 
 CViewDemo::CViewDemo()
 {
-	SkylichtAudio::initSkylichtAudio();
+	Audio::initSkylichtAudio();
 
 	// add to support read resource on ZIP Bundle
 	m_streamFactory = new CZipAudioStreamFactory();
-	SkylichtAudio::CAudioEngine::getSoundEngine()->registerStreamFactory(m_streamFactory);
+	Audio::CAudioEngine::getSoundEngine()->registerStreamFactory(m_streamFactory);
 }
 
 CViewDemo::~CViewDemo()
 {
-	SkylichtAudio::CAudioEngine::getSoundEngine()->unRegisterStreamFactory(m_streamFactory);
+	Audio::CAudioEngine::getSoundEngine()->unRegisterStreamFactory(m_streamFactory);
 	delete m_streamFactory;
 
-	SkylichtAudio::releaseSkylichtAudio();
+	Audio::releaseSkylichtAudio();
 }
 
 void CViewDemo::onInit()
@@ -28,8 +28,9 @@ void CViewDemo::onInit()
 	os::Printer::log("Init sound emitter");
 
 	// test sound
-	SkylichtAudio::CAudioEngine *engine = SkylichtAudio::CAudioEngine::getSoundEngine();
-	SkylichtAudio::CAudioEmitter *emitter = engine->createAudioEmitter("SampleAudio/file_example_MP3_5MG.mp3", false);
+	Audio::CAudioEngine *engine = Audio::CAudioEngine::getSoundEngine();
+	Audio::CAudioEmitter *emitter = engine->createAudioEmitter("SampleAudio/file_example_MP3_5MG.mp3", false);
+	
 	if (emitter != NULL)
 	{
 		emitter->setLoop(true);

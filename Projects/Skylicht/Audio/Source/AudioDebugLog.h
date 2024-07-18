@@ -25,9 +25,12 @@ https://github.com/skylicht-lab/skylicht-engine
 #ifndef _SKYLICHT_AUDIO_DEBUG_LOG_H_
 #define _SKYLICHT_AUDIO_DEBUG_LOG_H_
 
-namespace SkylichtAudio
+namespace Skylicht
 {
-	void printLog(const char *fmt, ...);
+	namespace Audio
+	{
+		void printLog(const char *fmt, ...);
+	}
 }
 
 #endif

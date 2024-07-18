@@ -3,26 +3,28 @@
 
 #include "IWavSubDecoder.h"
 
-namespace SkylichtAudio
+namespace Skylicht
 {
-
-	class CWavSubDecoderPCM : public IWavSubDecoder
+	namespace Audio
 	{
-	public:
-		CWavSubDecoderPCM(IStreamCursor* streamCursor, SWaveChunk* waveChunks);
-		virtual ~CWavSubDecoderPCM();
-
-		virtual int decode(void* buffer, int size);
-
-		virtual int seek(int size);
-
-	protected:
-		int getDataSize();
-
-	protected:
-
-		int m_decodedSamples;
-	};
+		class CWavSubDecoderPCM : public IWavSubDecoder
+		{
+		public:
+			CWavSubDecoderPCM(IStreamCursor* streamCursor, SWaveChunk* waveChunks);
+			virtual ~CWavSubDecoderPCM();
+			
+			virtual int decode(void* buffer, int size);
+			
+			virtual int seek(int size);
+			
+		protected:
+			int getDataSize();
+			
+		protected:
+			
+			int m_decodedSamples;
+		};
+	}
 }
 
 #endif

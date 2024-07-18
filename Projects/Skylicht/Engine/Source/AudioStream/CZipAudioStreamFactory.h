@@ -6,11 +6,10 @@
 
 namespace Skylicht
 {
-
-	class SKYLICHT_API CZipAudioStreamFactory : public SkylichtAudio::CStreamFactory
+	class SKYLICHT_API CZipAudioStreamFactory : public Skylicht::Audio::CStreamFactory
 	{
 	public:
-		virtual SkylichtAudio::IStream* createStreamFromFile(const char* fileName);
+		virtual Skylicht::Audio::IStream* createStreamFromFile(const char* fileName);
 	};
 
 }

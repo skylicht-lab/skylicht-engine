@@ -33,25 +33,26 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CDriverOpenAL.h"
 #include "CDriverAudioUnit.h"
 
-namespace SkylichtAudio
+namespace Skylicht
 {
-
-	ISoundDriver* ISoundDriver::createDriver()
+	namespace Audio
 	{
-#if defined(USE_XAUDIO2)
-		return new CDriverXAudio2();
-#elif defined(USE_MMDRIVER)
-		return new CDriverMMSystem();
-#elif defined(USE_OPENSL)
-		return new CDriverOpenSL();
-#elif defined(USE_OPENAL)
-		return new CDriverOpenAL();
-#elif defined(USE_AUDIO_UNIT)
-		return new CDriverAudioUnit();
-#else
-		return new CDriverNull();
-#endif
+		ISoundDriver* ISoundDriver::createDriver()
+		{
+	#if defined(USE_XAUDIO2)
+			return new CDriverXAudio2();
+	#elif defined(USE_MMDRIVER)
+			return new CDriverMMSystem();
+	#elif defined(USE_OPENSL)
+			return new CDriverOpenSL();
+	#elif defined(USE_OPENAL)
+			return new CDriverOpenAL();
+	#elif defined(USE_AUDIO_UNIT)
+			return new CDriverAudioUnit();
+	#else
+			return new CDriverNull();
+	#endif
+		}
 	}
-
 }
 

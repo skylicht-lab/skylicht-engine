@@ -22,52 +22,48 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _DRIVER_REMOTEIO_H_
-#define _DRIVER_REMOTEIO_H_
+#pragma once
 
 #include "SkylichtAudioConfig.h"
 
 #ifdef USE_AUDIO_UNIT
 
 #import <AudioUnit/AudioUnit.h>
-
 #include "CDriverNull.h"
-
 #include "Thread/IThread.h"
 #include "Thread/IMutex.h"
 
 using namespace Skylicht::System;
 
-namespace SkylichtAudio
+namespace Skylicht
 {
-
-	class CDriverAudioUnit : public CDriverNull
+	namespace Audio
 	{
-	protected:
-		AudioComponentInstance m_audioUnit;
-
-		int m_bufferSizeIO;
-
-	public:
-		CDriverAudioUnit();
-
-		virtual ~CDriverAudioUnit();
-
-		virtual void init();
-
-		virtual void shutdown();
-
-		virtual void suspend();
-
-		virtual void resume();
-
-	public:
-
-		static OSStatus playbackCallback(void *inRefCon, AudioUnitRenderActionFlags *ioActionFlags, const AudioTimeStamp *inTimeStamp, UInt32 inBusNumber, UInt32 inNumberFrames, AudioBufferList *ioData);
-	};
-
+		class CDriverAudioUnit : public CDriverNull
+		{
+		protected:
+			AudioComponentInstance m_audioUnit;
+			
+			int m_bufferSizeIO;
+			
+		public:
+			CDriverAudioUnit();
+			
+			virtual ~CDriverAudioUnit();
+			
+			virtual void init();
+			
+			virtual void shutdown();
+			
+			virtual void suspend();
+			
+			virtual void resume();
+			
+		public:
+			
+			static OSStatus playbackCallback(void *inRefCon, AudioUnitRenderActionFlags *ioActionFlags, const AudioTimeStamp *inTimeStamp, UInt32 inBusNumber, UInt32 inNumberFrames, AudioBufferList *ioData);
+		};
+	}
 }
 
 #endif
-
-#endif /* CDriverAudioUnit_hpp */

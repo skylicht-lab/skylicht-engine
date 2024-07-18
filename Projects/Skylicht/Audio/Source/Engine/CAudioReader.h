@@ -32,56 +32,59 @@ https://github.com/skylicht-lab/skylicht-engine
 
 using namespace Skylicht::System;
 
-namespace SkylichtAudio
+namespace Skylicht
 {
-	class CAudioReader
+	namespace Audio
 	{
-	protected:
-		bool m_isError;
-		int m_initState;
-
-		IAudioDecoder* m_decoder;
-		ISoundDriver* m_driver;
-
-		IMutex* m_mutex;
-		IStream* m_stream;
-
-		ISoundSource::ESourceState m_state;
-		IAudioDecoder::EDecoderType m_decodeType;
-
-	public:
-		CAudioReader(IStream* stream, IAudioDecoder::EDecoderType type, ISoundDriver* driver);
-
-		CAudioReader(const char* file, ISoundDriver* driver);
-
-		virtual ~CAudioReader();
-
-		void initReader();
-
-		EStatus initDecoder();
-
-		EStatus readAudio(unsigned char* data, int size);
-
-		IAudioDecoder::EDecoderType getDecoderType()
+		class CAudioReader
 		{
-			return m_decodeType;
-		}
-
-		IAudioDecoder* getDecoder()
-		{
-			return m_decoder;
-		}
-
-		IStream* getStream()
-		{
-			return m_stream;
-		}
-
-		ISoundSource::ESourceState getState()
-		{
-			return m_state;
-		}
-	};
+		protected:
+			bool m_isError;
+			int m_initState;
+			
+			IAudioDecoder* m_decoder;
+			ISoundDriver* m_driver;
+			
+			IMutex* m_mutex;
+			IStream* m_stream;
+			
+			ISoundSource::ESourceState m_state;
+			IAudioDecoder::EDecoderType m_decodeType;
+			
+		public:
+			CAudioReader(IStream* stream, IAudioDecoder::EDecoderType type, ISoundDriver* driver);
+			
+			CAudioReader(const char* file, ISoundDriver* driver);
+			
+			virtual ~CAudioReader();
+			
+			void initReader();
+			
+			EStatus initDecoder();
+			
+			EStatus readAudio(unsigned char* data, int size);
+			
+			IAudioDecoder::EDecoderType getDecoderType()
+			{
+				return m_decodeType;
+			}
+			
+			IAudioDecoder* getDecoder()
+			{
+				return m_decoder;
+			}
+			
+			IStream* getStream()
+			{
+				return m_stream;
+			}
+			
+			ISoundSource::ESourceState getState()
+			{
+				return m_state;
+			}
+		};
+	}
 }
 
 #endif

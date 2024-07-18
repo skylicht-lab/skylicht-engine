@@ -9,33 +9,34 @@
 #include "IAudioDecoder.h"
 #include "WavHeader.h"
 
-namespace SkylichtAudio
+namespace Skylicht
 {
-
-	class CAudioDecoderWav : public IAudioDecoder
+	namespace Audio
 	{
-	protected:
-		IStreamCursor* m_streamCursor;
-		SWaveChunk m_waveChunk;
-
-		IWavSubDecoder* m_subDecoder;
-
-	public:
-		CAudioDecoderWav(IStream* stream);
-
-		virtual ~CAudioDecoderWav();
-
-		virtual EStatus initDecode();
-
-		virtual EStatus decode(void* outputBuffer, int bufferSize);
-
-		virtual int seek(int bufferSize);
-
-		virtual void getTrackParam(STrackParams* track);
-
-		virtual float getCurrentTime();
-	};
-
+		class CAudioDecoderWav : public IAudioDecoder
+		{
+		protected:
+			IStreamCursor* m_streamCursor;
+			SWaveChunk m_waveChunk;
+			
+			IWavSubDecoder* m_subDecoder;
+			
+		public:
+			CAudioDecoderWav(IStream* stream);
+			
+			virtual ~CAudioDecoderWav();
+			
+			virtual EStatus initDecode();
+			
+			virtual EStatus decode(void* outputBuffer, int bufferSize);
+			
+			virtual int seek(int bufferSize);
+			
+			virtual void getTrackParam(STrackParams* track);
+			
+			virtual float getCurrentTime();
+		};
+	}
 }
 
 #endif

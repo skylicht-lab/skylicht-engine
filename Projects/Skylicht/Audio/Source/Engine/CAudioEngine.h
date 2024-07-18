@@ -40,120 +40,123 @@ https://github.com/skylicht-lab/skylicht-engine
 
 using namespace Skylicht::System;
 
-namespace SkylichtAudio
+namespace Skylicht
 {
-	void initSkylichtAudio();
-
-	void releaseSkylichtAudio();
-
-	void updateSkylichtAudio();
-
-	class CAudioEngine : public IThreadCallback
+	namespace Audio
 	{
-	protected:
-		IThread* m_thread;
-
-		IMutex* m_mutex;
-
-		ISoundDriver* m_driver;
-
-		IStreamFactory* m_defaultStreamFactory;
-
-		std::vector<IStreamFactory*> m_streamFactorys;
-
-		std::vector<CAudioEmitter*> m_emitters;
-
-		std::vector<CAudioReader*> m_readers;
-
-		std::map<std::string, IStream*>	m_fileToStream;
-
-		SListener m_listener;
-
-	public:
-		static CAudioEngine* getSoundEngine();
-
-		static void shutdownEngine();
-
-		CAudioEngine();
-
-		virtual ~CAudioEngine();
-
-		void init();
-
-		void shutdown();
-
-		void pauseEngine();
-
-		void resumeEngine();
-
-		void updateDriver();
-
-		void stopAllSound();
-
-		virtual void updateEmitter();
-
-		virtual void updateThread();
-
-		void lockThread()
+		void initSkylichtAudio();
+		
+		void releaseSkylichtAudio();
+		
+		void updateSkylichtAudio();
+		
+		class CAudioEngine : public IThreadCallback
 		{
-			m_mutex->lock();
-
-			if (m_driver)
-				m_driver->lockThread();
-		}
-
-		void unLockThread()
-		{
-			m_mutex->unlock();
-
-			if (m_driver)
-				m_driver->unlockThread();
-		}
-
-		ISoundDriver* getSoundDriver()
-		{
-			return m_driver;
-		}
-
-		void registerStreamFactory(IStreamFactory* streamFactory);
-
-		void unRegisterStreamFactory(IStreamFactory* streamFactory);
-
-		IStream* createStreamFromMemory(unsigned char* buffer, int size, bool takeOwnerShip = false);
-
-		IStream* createStreamFromFile(const char* fileName);
-
-		IStream* createStreamFromFileAndCache(const char* fileName, bool cache);
-
-		IStream* createOnlineStream();
-
-		CAudioEmitter* createAudioEmitter(IStream* stream, IAudioDecoder::EDecoderType decode);
-
-		CAudioEmitter* createAudioEmitter(const char* fileName, bool cache);
-
-		CAudioEmitter* createRawAudioEmitter(IStream* stream);
-
-		CAudioReader* createAudioReader(IStream* stream, IAudioDecoder::EDecoderType decode);
-
-		CAudioReader* createAudioReader(const char* fileName);
-
-		void destroyEmitter(CAudioEmitter* emitter);
-
-		void destroyReader(CAudioReader* reader);
-
-		void destroyAllEmitter();
-
-		void destroyAllReader();
-
-		void releaseAllStream();
-
-		void setListener(float posx, float posy, float posz, float upx, float upy, float upz, float frontx, float fronty, float frontz);
-
-		const SListener& getListener()
-		{
-			return m_listener;
-		}
-	};
+		protected:
+			IThread* m_thread;
+			
+			IMutex* m_mutex;
+			
+			ISoundDriver* m_driver;
+			
+			IStreamFactory* m_defaultStreamFactory;
+			
+			std::vector<IStreamFactory*> m_streamFactorys;
+			
+			std::vector<CAudioEmitter*> m_emitters;
+			
+			std::vector<CAudioReader*> m_readers;
+			
+			std::map<std::string, IStream*>	m_fileToStream;
+			
+			SListener m_listener;
+			
+		public:
+			static CAudioEngine* getSoundEngine();
+			
+			static void shutdownEngine();
+			
+			CAudioEngine();
+			
+			virtual ~CAudioEngine();
+			
+			void init();
+			
+			void shutdown();
+			
+			void pauseEngine();
+			
+			void resumeEngine();
+			
+			void updateDriver();
+			
+			void stopAllSound();
+			
+			virtual void updateEmitter();
+			
+			virtual void updateThread();
+			
+			void lockThread()
+			{
+				m_mutex->lock();
+				
+				if (m_driver)
+					m_driver->lockThread();
+			}
+			
+			void unLockThread()
+			{
+				m_mutex->unlock();
+				
+				if (m_driver)
+					m_driver->unlockThread();
+			}
+			
+			ISoundDriver* getSoundDriver()
+			{
+				return m_driver;
+			}
+			
+			void registerStreamFactory(IStreamFactory* streamFactory);
+			
+			void unRegisterStreamFactory(IStreamFactory* streamFactory);
+			
+			IStream* createStreamFromMemory(unsigned char* buffer, int size, bool takeOwnerShip = false);
+			
+			IStream* createStreamFromFile(const char* fileName);
+			
+			IStream* createStreamFromFileAndCache(const char* fileName, bool cache);
+			
+			IStream* createOnlineStream();
+			
+			CAudioEmitter* createAudioEmitter(IStream* stream, IAudioDecoder::EDecoderType decode);
+			
+			CAudioEmitter* createAudioEmitter(const char* fileName, bool cache);
+			
+			CAudioEmitter* createRawAudioEmitter(IStream* stream);
+			
+			CAudioReader* createAudioReader(IStream* stream, IAudioDecoder::EDecoderType decode);
+			
+			CAudioReader* createAudioReader(const char* fileName);
+			
+			void destroyEmitter(CAudioEmitter* emitter);
+			
+			void destroyReader(CAudioReader* reader);
+			
+			void destroyAllEmitter();
+			
+			void destroyAllReader();
+			
+			void releaseAllStream();
+			
+			void setListener(float posx, float posy, float posz, float upx, float upy, float upz, float frontx, float fronty, float frontz);
+			
+			const SListener& getListener()
+			{
+				return m_listener;
+			}
+		};
+	}
 };
 
 #endif

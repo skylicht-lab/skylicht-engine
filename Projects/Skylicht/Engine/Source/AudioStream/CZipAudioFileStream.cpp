@@ -27,7 +27,7 @@ namespace Skylicht
 		return m_file == NULL;
 	}
 
-	SkylichtAudio::IStreamCursor* CZipAudioFileStream::createCursor()
+	Skylicht::Audio::IStreamCursor* CZipAudioFileStream::createCursor()
 	{
 		if (m_file == NULL)
 			return NULL;

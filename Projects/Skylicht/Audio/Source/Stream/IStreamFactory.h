@@ -27,21 +27,22 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "IStream.h"
 
-namespace SkylichtAudio
+namespace Skylicht
 {
-
-	class IStreamFactory
+	namespace Audio
 	{
-	public:
-		virtual ~IStreamFactory()
+		class IStreamFactory
 		{
-		}
-
-		virtual IStream* createStreamFromMemory(unsigned char* buffer, int size, bool takeOwnership) = 0;
-		virtual IStream* createStreamFromFile(const char* fileName) = 0;
-		virtual IStream* createOnlineStream() = 0;
-	};
-
+		public:
+			virtual ~IStreamFactory()
+			{
+			}
+			
+			virtual IStream* createStreamFromMemory(unsigned char* buffer, int size, bool takeOwnership) = 0;
+			virtual IStream* createStreamFromFile(const char* fileName) = 0;
+			virtual IStream* createOnlineStream() = 0;
+		};
+	}
 }
 
 #endif

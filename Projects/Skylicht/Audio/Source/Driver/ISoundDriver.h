@@ -27,39 +27,42 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "ISoundSource.h"
 
-namespace SkylichtAudio
+namespace Skylicht
 {
-	class ISoundDriver
+	namespace Audio
 	{
-	public:
-		ISoundDriver()
+		class ISoundDriver
 		{
-		}
-
-		virtual ~ISoundDriver()
-		{
-		}
-
-		virtual void init() = 0;
-		virtual void shutdown() = 0;
-		virtual void suspend() = 0;
-		virtual void resume() = 0;
-		virtual void update() = 0;
-
-		virtual void lockThread() = 0;
-		virtual void unlockThread() = 0;
-
-		virtual void fillBuffer(unsigned short* outBuffer, int numSample) = 0;
-
-		virtual ISoundSource* createSource() = 0;
-		virtual void destroyDriverSource(ISoundSource* driverSource) = 0;
-		virtual void destroyAllSource() = 0;
-		virtual void getSourceParam(SSourceParam* source) = 0;
-
-		virtual void changeDuration(float duration) = 0;
-
-		static ISoundDriver* createDriver();
-	};
+		public:
+			ISoundDriver()
+			{
+			}
+			
+			virtual ~ISoundDriver()
+			{
+			}
+			
+			virtual void init() = 0;
+			virtual void shutdown() = 0;
+			virtual void suspend() = 0;
+			virtual void resume() = 0;
+			virtual void update() = 0;
+			
+			virtual void lockThread() = 0;
+			virtual void unlockThread() = 0;
+			
+			virtual void fillBuffer(unsigned short* outBuffer, int numSample) = 0;
+			
+			virtual ISoundSource* createSource() = 0;
+			virtual void destroyDriverSource(ISoundSource* driverSource) = 0;
+			virtual void destroyAllSource() = 0;
+			virtual void getSourceParam(SSourceParam* source) = 0;
+			
+			virtual void changeDuration(float duration) = 0;
+			
+			static ISoundDriver* createDriver();
+		};
+	}
 }
 
 #endif

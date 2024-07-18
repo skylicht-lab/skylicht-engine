@@ -6,8 +6,7 @@
 
 namespace Skylicht
 {
-
-	SkylichtAudio::IStream* CZipAudioStreamFactory::createStreamFromFile(const char *fileName)
+	Skylicht::Audio::IStream* CZipAudioStreamFactory::createStreamFromFile(const char *fileName)
 	{
 		CZipAudioFileStream *file = new CZipAudioFileStream(fileName);
 

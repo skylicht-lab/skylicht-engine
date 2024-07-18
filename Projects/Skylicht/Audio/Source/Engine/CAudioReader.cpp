@@ -31,106 +31,76 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Decoder/CAudioDecoderRawWav.h"
 #include "Engine/CAudioEngine.h"
 
-namespace SkylichtAudio
+namespace Skylicht
 {
-	CAudioReader::CAudioReader(IStream* stream, IAudioDecoder::EDecoderType type, ISoundDriver* driver)
+	namespace Audio
 	{
-		m_initState = 0;
-		m_state = ISoundSource::StateInitial;
-		m_isError = false;
-		m_decoder = NULL;
-		m_decodeType = type;
-		m_driver = driver;
-		m_mutex = IMutex::createMutex();
-
-		m_stream = stream;
-		m_stream->grab();
-
-		initReader();
-	}
-
-	CAudioReader::CAudioReader(const char* file, ISoundDriver* driver)
-	{
-		m_initState = 0;
-		m_state = ISoundSource::StateInitial;
-		m_isError = false;
-		m_decoder = NULL;
-		m_decodeType = CAudioEmitter::getDecode(file);
-		m_driver = driver;
-		m_stream = CAudioEngine::getSoundEngine()->createStreamFromFileAndCache(file, false);
-		m_mutex = IMutex::createMutex();
-
-		initReader();
-	}
-
-	CAudioReader::~CAudioReader()
-	{
-		if (m_decoder != NULL)
-			delete m_decoder;
-
-		m_stream->drop();
-		delete m_mutex;
-	}
-
-	void CAudioReader::initReader()
-	{
-		if (m_stream == NULL)
-			return;
-
-		switch (m_decodeType)
+		CAudioReader::CAudioReader(IStream* stream, IAudioDecoder::EDecoderType type, ISoundDriver* driver)
 		{
-		case IAudioDecoder::Wav:
-			m_decoder = new CAudioDecoderWav(m_stream);
-			break;
-		case IAudioDecoder::Mp3:
-			m_decoder = new CAudioDecoderMp3(m_stream);
-			break;
-		case IAudioDecoder::RawWav:
-			m_decoder = new CAudioDecoderRawWav(m_stream);
-			break;
-		default:
+			m_initState = 0;
+			m_state = ISoundSource::StateInitial;
+			m_isError = false;
 			m_decoder = NULL;
-			break;
+			m_decodeType = type;
+			m_driver = driver;
+			m_mutex = IMutex::createMutex();
+			
+			m_stream = stream;
+			m_stream->grab();
+			
+			initReader();
 		}
-	}
-
-	EStatus CAudioReader::initDecoder()
-	{
-		SScopeMutex scopelock(m_mutex);
-
-		EStatus status = m_decoder->initDecode();
-		if (status == WaitData)
-			return status;
-		else if (status == Failed)
+		
+		CAudioReader::CAudioReader(const char* file, ISoundDriver* driver)
 		{
-			m_state = ISoundSource::StateError;
-			return Failed;
+			m_initState = 0;
+			m_state = ISoundSource::StateInitial;
+			m_isError = false;
+			m_decoder = NULL;
+			m_decodeType = CAudioEmitter::getDecode(file);
+			m_driver = driver;
+			m_stream = CAudioEngine::getSoundEngine()->createStreamFromFileAndCache(file, false);
+			m_mutex = IMutex::createMutex();
+			
+			initReader();
 		}
-		else if (status == Success)
+		
+		CAudioReader::~CAudioReader()
 		{
-			m_initState++;
-			m_state = ISoundSource::StatePlaying;
-			return Success;
+			if (m_decoder != NULL)
+				delete m_decoder;
+			
+			m_stream->drop();
+			delete m_mutex;
 		}
-
-		return status;
-	}
-
-	EStatus CAudioReader::readAudio(unsigned char* data, int size)
-	{
-		SScopeMutex scopelock(m_mutex);
-
-		if (data != NULL && size > 0)
-			memset(data, 0, size);
-
-		if (m_state == ISoundSource::StateError ||
-			m_state == ISoundSource::StateStopped)
-			return Failed;
-
-		EStatus status = Success;
-		if (m_initState == 0)
+		
+		void CAudioReader::initReader()
 		{
-			status = m_decoder->initDecode();
+			if (m_stream == NULL)
+				return;
+			
+			switch (m_decodeType)
+			{
+				case IAudioDecoder::Wav:
+					m_decoder = new CAudioDecoderWav(m_stream);
+					break;
+				case IAudioDecoder::Mp3:
+					m_decoder = new CAudioDecoderMp3(m_stream);
+					break;
+				case IAudioDecoder::RawWav:
+					m_decoder = new CAudioDecoderRawWav(m_stream);
+					break;
+				default:
+					m_decoder = NULL;
+					break;
+			}
+		}
+		
+		EStatus CAudioReader::initDecoder()
+		{
+			SScopeMutex scopelock(m_mutex);
+			
+			EStatus status = m_decoder->initDecode();
 			if (status == WaitData)
 				return status;
 			else if (status == Failed)
@@ -144,26 +114,59 @@ namespace SkylichtAudio
 				m_state = ISoundSource::StatePlaying;
 				return Success;
 			}
+			
+			return status;
 		}
-		else if (data != NULL && size > 0)
+		
+		EStatus CAudioReader::readAudio(unsigned char* data, int size)
 		{
-			status = m_decoder->decode(data, size);
-			if (status == WaitData)
+			SScopeMutex scopelock(m_mutex);
+			
+			if (data != NULL && size > 0)
+				memset(data, 0, size);
+			
+			if (m_state == ISoundSource::StateError ||
+				m_state == ISoundSource::StateStopped)
+				return Failed;
+			
+			EStatus status = Success;
+			if (m_initState == 0)
 			{
-				m_state = ISoundSource::StatePauseWaitData;
+				status = m_decoder->initDecode();
+				if (status == WaitData)
+					return status;
+				else if (status == Failed)
+				{
+					m_state = ISoundSource::StateError;
+					return Failed;
+				}
+				else if (status == Success)
+				{
+					m_initState++;
+					m_state = ISoundSource::StatePlaying;
+					return Success;
+				}
 			}
-			else if (status == Failed || status == EndStream)
+			else if (data != NULL && size > 0)
 			{
-				// todo post event stop
-				m_state = ISoundSource::StateStopped;
+				status = m_decoder->decode(data, size);
+				if (status == WaitData)
+				{
+					m_state = ISoundSource::StatePauseWaitData;
+				}
+				else if (status == Failed || status == EndStream)
+				{
+					// todo post event stop
+					m_state = ISoundSource::StateStopped;
+				}
+				else if (status == Success)
+				{
+					// todo nothing
+					m_state = ISoundSource::StatePlaying;
+				}
 			}
-			else if (status == Success)
-			{
-				// todo nothing
-				m_state = ISoundSource::StatePlaying;
-			}
+			
+			return status;
 		}
-
-		return status;
 	}
 }

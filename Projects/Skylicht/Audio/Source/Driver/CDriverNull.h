@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _CDRIVER_NULL_
-#define _CDRIVER_NULL_
+#pragma once
 
 #include "stdafx.h"
 #include "ISoundDriver.h"
@@ -33,67 +32,68 @@ https://github.com/skylicht-lab/skylicht-engine
 
 using namespace Skylicht::System;
 
-namespace SkylichtAudio
+namespace Skylicht
 {
-	class CDriverNull : public ISoundDriver
+	namespace Audio
 	{
-	protected:
-		std::vector<CSoundSource*> m_sources;
-
-		int* m_mixBuffer;
-		int m_numMixSampler;
-
-		unsigned char* m_buffer;
-		float m_bufferLength;
-		int m_preferedRate;
-
-		IMutex* m_mutex;
-
-		float m_masterGain;
-
-	public:
-		CDriverNull();
-
-		virtual ~CDriverNull();
-
-		void setMasterGain(float g)
+		class CDriverNull : public ISoundDriver
 		{
-			m_masterGain = g;
-		}
-
-		float getMasterGain()
-		{
-			return m_masterGain;
-		}
-
-		virtual void init();
-
-		virtual void shutdown();
-
-		virtual void suspend();
-
-		virtual void resume();
-
-		virtual void update();
-
-		virtual void lockThread();
-
-		virtual void unlockThread();
-
-		virtual void fillBuffer(unsigned short* outBuffer, int numSample);
-
-		virtual ISoundSource* createSource();
-
-		virtual void destroyDriverSource(ISoundSource* driverSource);
-
-		virtual void destroyAllSource();
-
-		virtual void getSourceParam(SSourceParam* source);
-
-		virtual int getBufferSize();
-
-		virtual void changeDuration(float duration);
-	};
+		protected:
+			std::vector<CSoundSource*> m_sources;
+			
+			int* m_mixBuffer;
+			int m_numMixSampler;
+			
+			unsigned char* m_buffer;
+			float m_bufferLength;
+			int m_preferedRate;
+			
+			IMutex* m_mutex;
+			
+			float m_masterGain;
+			
+		public:
+			CDriverNull();
+			
+			virtual ~CDriverNull();
+			
+			void setMasterGain(float g)
+			{
+				m_masterGain = g;
+			}
+			
+			float getMasterGain()
+			{
+				return m_masterGain;
+			}
+			
+			virtual void init();
+			
+			virtual void shutdown();
+			
+			virtual void suspend();
+			
+			virtual void resume();
+			
+			virtual void update();
+			
+			virtual void lockThread();
+			
+			virtual void unlockThread();
+			
+			virtual void fillBuffer(unsigned short* outBuffer, int numSample);
+			
+			virtual ISoundSource* createSource();
+			
+			virtual void destroyDriverSource(ISoundSource* driverSource);
+			
+			virtual void destroyAllSource();
+			
+			virtual void getSourceParam(SSourceParam* source);
+			
+			virtual int getBufferSize();
+			
+			virtual void changeDuration(float duration);
+		};
+	}
 }
-
-#endif
