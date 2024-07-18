@@ -235,7 +235,7 @@ namespace Skylicht
 			{
 				// todo update all emitter & decode stream
 		#ifndef USE_MULTITHREAD_UPDATE
-				SkylichtAudio::CAudioEngine::getSoundEngine()->updateEmitter();
+				Skylicht::Audio::CAudioEngine::getSoundEngine()->updateEmitter();
 		#endif
 				
 				// Remove the Buffer from the Queue.  (uiBuffer contains the Buffer ID for the unqueued Buffer)
@@ -304,7 +304,7 @@ namespace Skylicht
 				{
 					// todo update all emitter & decode stream
 		#ifndef USE_MULTITHREAD_UPDATE
-					SkylichtAudio::CAudioEngine::getSoundEngine()->updateEmitter();
+					Skylicht::Audio::CAudioEngine::getSoundEngine()->updateEmitter();
 		#endif
 					
 					// Remove the Buffer from the Queue.  (uiBuffer contains the Buffer ID for the unqueued Buffer)
