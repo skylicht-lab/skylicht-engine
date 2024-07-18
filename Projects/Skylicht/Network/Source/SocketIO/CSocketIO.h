@@ -1,8 +1,10 @@
 #pragma once
 
 #include "pch.h"
-#include "easywsclient.hpp"
 
+#ifndef __EMSCRIPTEN__
+
+#include "easywsclient.hpp"
 #include <functional>
 
 namespace Skylicht
@@ -109,3 +111,5 @@ namespace Skylicht
 	};
 
 };
+
+#endif

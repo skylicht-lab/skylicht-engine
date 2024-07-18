@@ -1,6 +1,8 @@
 #ifndef EASYWSCLIENT_HPP_20120819_MIOFVASDTNUASZDQPLFD
 #define EASYWSCLIENT_HPP_20120819_MIOFVASDTNUASZDQPLFD
 
+#ifndef __EMSCRIPTEN__
+
 // This code comes from:
 // https://github.com/dhbaird/easywsclient
 //
@@ -74,5 +76,7 @@ namespace easywsclient {
 	};
 
 } // namespace easywsclient
+
+#endif // emscripten
 
 #endif /* EASYWSCLIENT_HPP_20120819_MIOFVASDTNUASZDQPLFD */

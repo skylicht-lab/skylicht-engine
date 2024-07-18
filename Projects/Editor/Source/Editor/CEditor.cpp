@@ -711,6 +711,8 @@ namespace Skylicht
 					// std::wstring text = xmlRead->getNodeData();
 				}
 				break;
+				default:
+					break;
 				}
 			}
 
@@ -801,6 +803,8 @@ namespace Skylicht
 					}
 				}
 				break;
+				default:
+					break;
 				}
 			}
 		}
@@ -925,6 +929,8 @@ namespace Skylicht
 					}
 				}
 				break;
+				default:
+					break;
 				}
 			}
 		}
@@ -973,6 +979,8 @@ namespace Skylicht
 					}
 				}
 				break;
+				default:
+					break;
 				}
 			}
 		}

@@ -62,9 +62,9 @@ namespace Skylicht
 
 	public:
 		CHttpStream(unsigned int datasize = 65536);
+		
 		virtual ~CHttpStream();
 
-		// IHttpStream implement
 		virtual void write(void* data, unsigned int size);
 
 		virtual const unsigned char* getData();

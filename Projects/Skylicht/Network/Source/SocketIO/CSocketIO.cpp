@@ -1,4 +1,7 @@
 #include "pch.h"
+
+#ifndef __EMSCRIPTEN__
+
 #include "CSocketIO.h"
 #include "HttpRequest/CHttpRequest.h"
 
@@ -381,3 +384,5 @@ namespace Skylicht
 		return value;
 	}
 }
+
+#endif
