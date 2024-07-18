@@ -27,20 +27,22 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CMD5.h"
 #include "CHttpRequest.h"
 
+#ifndef __EMSCRIPTEN__
+
 namespace Skylicht
 {
 	size_t httpWriteFunc(void* data, size_t n, size_t sizeData, void* obj)
 	{
 		// inc data revc
 		CHttpRequest* pHttp = (CHttpRequest*)obj;
-		pHttp->onRevcData((unsigned char*)data, (long)sizeData, (long)n);
+		pHttp->onRevcData((unsigned char*)data, (unsigned long)sizeData, (unsigned long)n);
 		return sizeData * n;
 	}
 
 	size_t httpReadFunc(void* data, size_t n, size_t sizeData, void* obj)
 	{
 		CHttpRequest* pHttp = (CHttpRequest*)obj;
-		pHttp->onReadData((unsigned char*)data, (long)sizeData, (long)n);
+		pHttp->onReadData((unsigned char*)data, (unsigned long)sizeData, (unsigned long)n);
 		return sizeData * n;
 	}
 
@@ -51,7 +53,7 @@ namespace Skylicht
 		double ulnow)
 	{
 		CHttpRequest* pHttp = (CHttpRequest*)obj;
-		pHttp->updateStatusDownload((long)d, (long)t);
+		pHttp->updateStatusDownload((unsigned long)d, (unsigned long)t);
 
 		// cancel
 		if (pHttp->isCancel() == true)
@@ -130,7 +132,6 @@ namespace Skylicht
 		m_userData = NULL;
 
 		m_headerlist = NULL;
-		m_signSecondParams = false;
 
 		// timeout is 15s
 		m_requestTimeOut = 15000;
@@ -219,13 +220,13 @@ namespace Skylicht
 		{
 			SForm& pForm = (*i);
 
-			if (first == false)
+			if (first)
 			{
-				m_postField += ",";
+				m_postField = "{";
 			}
 			else
 			{
-				m_postField = "{";
+				m_postField += ",";
 			}
 
 			sprintf(format, "\"%s\":\"%s\"", pForm.Name.c_str(), pForm.Value.c_str());
@@ -236,24 +237,6 @@ namespace Skylicht
 		}
 
 		m_postField += "}";
-
-		// todo we need sign key
-		std::string signKey;
-		std::string requestURL = m_url;
-
-		// add sign on request
-		if (m_signPrivateKey.empty() == false)
-		{
-			signKey = m_postField + m_signPrivateKey;
-			signKey = CMD5::calc((unsigned char*)signKey.c_str(), (int)signKey.size());
-
-			if (m_signSecondParams == false)
-				requestURL += "?sign=";
-			else
-				requestURL += "&sign=";
-
-			requestURL += signKey;
-		}
 
 		m_sendRequest = true;
 
@@ -268,7 +251,7 @@ namespace Skylicht
 		}
 
 		// set url
-		curl_easy_setopt(m_curl, CURLOPT_URL, requestURL.c_str());
+		curl_easy_setopt(m_curl, CURLOPT_URL, m_url.c_str());
 		curl_easy_setopt(m_curl, CURLOPT_CUSTOMREQUEST, "PUT");
 		curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, m_headerlist);
 
@@ -277,7 +260,6 @@ namespace Skylicht
 			curl_easy_setopt(m_curl, CURLOPT_POSTFIELDS, m_postField.c_str());
 		}
 
-		// apply session
 		if (m_sessionFile.empty() == false)
 		{
 			curl_easy_setopt(m_curl, CURLOPT_COOKIEFILE, m_sessionFile.c_str());
@@ -358,8 +340,6 @@ namespace Skylicht
 		m_formpost = NULL;
 		m_lastptr = NULL;
 
-		bool fileUpload = false;
-
 		std::vector<SForm>::iterator i = m_post.begin(), end = m_post.end();
 		while (i != end)
 		{
@@ -376,10 +356,10 @@ namespace Skylicht
 					CURLFORM_END
 				);
 
-				if (m_postField.empty() == false)
-					m_postField += ",";
-				else
+				if (m_postField.empty())
 					m_postField = "{";
+				else
+					m_postField += ",";
 
 				m_postField += "\"";
 				m_postField += pForm.Name;
@@ -396,14 +376,7 @@ namespace Skylicht
 					CURLFORM_FILE, pForm.Value.c_str(),
 					CURLFORM_END
 				);
-
-				if (fileUpload == false)
-				{
-					// m_headers.push_back("Expect:");
-					fileUpload = true;
-				}
-
-				// todo no need check request timeout
+		
 				m_checkTimeout = false;
 			}
 
@@ -415,25 +388,8 @@ namespace Skylicht
 
 		m_sendRequest = true;
 
-		// todo we need sign key
-		std::string signKey;
-		std::string requestURL = m_url;
-
-		if (m_signPrivateKey.empty() == false)
-		{
-			signKey = m_postField + m_signPrivateKey;
-			signKey = CMD5::calc((unsigned char*)signKey.c_str(), (int)signKey.size());
-
-			if (m_signSecondParams == false)
-				requestURL += "?sign=";
-			else
-				requestURL += "&sign=";
-
-			requestURL += signKey;
-		}
-
 		// set url
-		curl_easy_setopt(m_curl, CURLOPT_URL, requestURL.c_str());
+		curl_easy_setopt(m_curl, CURLOPT_URL, m_url.c_str());
 
 		// apply session
 		if (m_sessionFile.empty() == false)
@@ -489,13 +445,13 @@ namespace Skylicht
 
 			if (pForm.File == false)
 			{
-				if (first == false)
+				if (first)
 				{
-					m_postField += ",";
+					m_postField = "{";
 				}
 				else
 				{
-					m_postField = "{";
+					m_postField += ",";
 				}
 
 				sprintf(format, "\"%s\":\"%s\"", pForm.Name.c_str(), pForm.Value.c_str());
@@ -521,25 +477,8 @@ namespace Skylicht
 			m_headerlist = curl_slist_append(m_headerlist, m_headers[i].c_str());
 		}
 
-		// todo we need sign key
-		std::string signKey;
-		std::string requestURL = m_url;
-
-		if (m_signPrivateKey.empty() == false)
-		{
-			signKey = m_postField + m_signPrivateKey;
-			signKey = CMD5::calc((unsigned char*)signKey.c_str(), (int)signKey.size());
-
-			if (m_signSecondParams == false)
-				requestURL += "?sign=";
-			else
-				requestURL += "&sign=";
-
-			requestURL += signKey;
-		}
-
 		// set url
-		curl_easy_setopt(m_curl, CURLOPT_URL, requestURL.c_str());
+		curl_easy_setopt(m_curl, CURLOPT_URL, m_url.c_str());
 		curl_easy_setopt(m_curl, CURLOPT_CUSTOMREQUEST, "POST");
 		curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, m_headerlist);
 
@@ -621,8 +560,6 @@ namespace Skylicht
 
 	bool CHttpRequest::checkTimeOut()
 	{
-		// time out
-		// we need quit request
 		if (getCurrentTimeOut() > getTimeOut())
 		{
 			m_hashString[0] = 0;
@@ -683,7 +620,7 @@ namespace Skylicht
 				os::Printer::log("CHttpRequest close connection\n");
 			}
 
-			// todo wait dns thread		
+			// todo wait dns thread
 			return false;
 		}
 
@@ -730,7 +667,7 @@ namespace Skylicht
 			// write file
 			if (m_dataStream)
 			{
-				m_dataStream->write((void*)m_downloadBuffer, m_sizeBuffer);
+				m_dataStream->write((void*)m_downloadBuffer, (unsigned int)m_sizeBuffer);
 				m_dataStream->endStream();
 			}
 
@@ -764,7 +701,7 @@ namespace Skylicht
 		return true;
 	}
 
-	void CHttpRequest::onRevcData(unsigned char* lpData, long size, long num)
+	void CHttpRequest::onRevcData(unsigned char* lpData, unsigned long size, unsigned long num)
 	{
 		// last time revc data
 		m_revcTime = os::Timer::getTime();
@@ -777,7 +714,7 @@ namespace Skylicht
 
 			// flush
 			if (m_dataStream)
-				m_dataStream->write((void*)m_downloadBuffer, m_sizeBuffer);
+				m_dataStream->write((void*)m_downloadBuffer, (unsigned int)m_sizeBuffer);
 
 			m_sizeBuffer = 0;
 		}
@@ -789,9 +726,11 @@ namespace Skylicht
 		m_sizeBuffer += size;
 	}
 
-	void CHttpRequest::onReadData(unsigned char* lpData, long size, long num)
+	void CHttpRequest::onReadData(unsigned char* lpData, unsigned long size, unsigned long num)
 	{
 		// implement if upload data
 	}
 
 }
+
+#endif

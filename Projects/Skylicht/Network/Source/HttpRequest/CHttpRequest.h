@@ -25,6 +25,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "pch.h"
+
+#ifndef __EMSCRIPTEN__
+
 #include "curl/curl.h"
 #include "CHttpStream.h"
 
@@ -54,8 +57,8 @@ namespace Skylicht
 		void* m_lastptr;
 
 		// total size download
-		long m_downloading;
-		long m_total;
+		unsigned long m_downloading;
+		unsigned long m_total;
 		int m_needContinue;
 
 		int m_httpCode;
@@ -72,7 +75,7 @@ namespace Skylicht
 		bool m_isTimeOut;
 
 		unsigned char* m_downloadBuffer;
-		long m_sizeBuffer;
+		unsigned long m_sizeBuffer;
 
 		void* m_md5Context;
 		char m_hashString[HASHSTRING_SIZE];
@@ -110,9 +113,6 @@ namespace Skylicht
 
 		std::vector<std::string> m_headers;
 
-		std::string	m_signPrivateKey;
-		bool m_signSecondParams;
-
 		bool m_checkTimeout;
 
 	public:
@@ -120,27 +120,22 @@ namespace Skylicht
 		virtual ~CHttpRequest();
 
 		static void globalInit();
+		
 		static void globalFree();
 
 		static std::string urlEncode(const std::string& s);
 
-		void setURL(const char* url)
+		inline void setURL(const char* url)
 		{
 			m_url = url;
 		}
 
-		const std::string& getURL()
+		inline const std::string& getURL()
 		{
 			return m_url;
 		}
 
-		void setSignPrivateKey(const char* key, bool secondParam = false)
-		{
-			m_signPrivateKey = key;
-			m_signSecondParams = secondParam;
-		}
-
-		void setSessionFile(const char* session)
+		inline void setSessionFile(const char* session)
 		{
 			m_sessionFile = session;
 		}
@@ -156,12 +151,12 @@ namespace Skylicht
 
 		void sendRequest();
 
-		bool isSendRequest()
+		inline bool isSendRequest()
 		{
 			return m_sendRequest;
 		}
 
-		void setSendRequestType(ERequestType type)
+		inline void setSendRequestType(ERequestType type)
 		{
 			m_requestType = type;
 		}
@@ -175,36 +170,36 @@ namespace Skylicht
 			return m_isTimeOut;
 		}
 
-		int getRequestTime()
+		inline unsigned long getRequestTime()
 		{
 			return m_currentTime - m_requestTime;
 		}
 
-		void setUserData(void* data)
+		inline void setUserData(void* data)
 		{
 			m_userData = data;
 		}
 
-		void* getUserData()
+		inline void* getUserData()
 		{
 			return m_userData;
 		}
 
-		void clearHeader()
+		inline void clearHeader()
 		{
 			m_headers.clear();
 		}
 
-		void addHeader(const char* header)
+		inline void addHeader(const char* header)
 		{
 			m_headers.push_back(header);
 		}
 
-		void onRevcData(unsigned char* lpData, long size, long num);
+		void onRevcData(unsigned char* lpData, unsigned long size, unsigned long num);
 
-		void onReadData(unsigned char* lpData, long size, long num);
+		void onReadData(unsigned char* lpData, unsigned long size, unsigned long num);
 
-		inline long getByteDownload()
+		inline unsigned long getByteDownload()
 		{
 			return m_downloading;
 		}
@@ -214,43 +209,43 @@ namespace Skylicht
 			return m_bytePerSecond;
 		}
 
-		void inline updateStatusDownload(int downLoad, int total)
+		inline void updateStatusDownload(unsigned long downLoad, unsigned long total)
 		{
 			m_downloading = downLoad;
 			m_total = total;
 		}
 
-		int getResponseCode()
+		inline int getResponseCode()
 		{
 			return m_httpCode;
 		}
 
-		IHttpStream* getStream()
+		inline IHttpStream* getStream()
 		{
 			return m_dataStream;
 		}
 
-		void setRequestID(int id)
+		inline void setRequestID(int id)
 		{
 			m_requestID = id;
 		}
 
-		int getRequestID()
+		inline int getRequestID()
 		{
 			return m_requestID;
 		}
 
-		void cancel()
+		inline void cancel()
 		{
 			m_cancel = true;
 		}
 
-		bool isCancel()
+		inline bool isCancel()
 		{
 			return m_cancel;
 		}
 
-		const char* getCurrentHashString()
+		inline const char* getCurrentHashString()
 		{
 			return m_hashString;
 		}
@@ -267,3 +262,5 @@ namespace Skylicht
 	};
 
 }
+
+#endif
