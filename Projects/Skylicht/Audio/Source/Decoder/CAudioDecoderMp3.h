@@ -35,49 +35,50 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "mpg123.h"
 
 
-namespace SkylichtAudio
+namespace Skylicht
 {
-
-	class CAudioDecoderMp3 : public IAudioDecoder
+	namespace Audio
 	{
-	protected:
-		IStreamCursor* m_streamCursor;
-
-		bool m_floatSample;
-		int m_bitPerSample;
-
-		mpg123_handle* m_mp3Handle;
-		int m_initState;
-
-	public:
-		CAudioDecoderMp3(IStream* stream);
-		virtual ~CAudioDecoderMp3();
-
-		virtual EStatus initDecode();
-		virtual EStatus decode(void* outputBuffer, int bufferSize);
-		virtual float getCurrentTime();
-		virtual int seek(int bufferSize);
-
-		virtual void getTrackParam(STrackParams* track);
-
-	protected:
-
-		void resizeData(int size);
-
-		void convertFloat32ToShort(short* dest, float* src, int size);
-
-	protected:
-		STrackParams m_trackParams;
-
-		int m_dataInBuffer;
-		int m_dataInBufferConsumed;
-
-		int m_bufferSize;
-
-		unsigned char* m_sampleBuffer;
-		unsigned char* m_sampleDecodeBuffer;
-	};
-
+		class CAudioDecoderMp3 : public IAudioDecoder
+		{
+		protected:
+			IStreamCursor* m_streamCursor;
+			
+			bool m_floatSample;
+			int m_bitPerSample;
+			
+			mpg123_handle* m_mp3Handle;
+			int m_initState;
+			
+		public:
+			CAudioDecoderMp3(IStream* stream);
+			virtual ~CAudioDecoderMp3();
+			
+			virtual EStatus initDecode();
+			virtual EStatus decode(void* outputBuffer, int bufferSize);
+			virtual float getCurrentTime();
+			virtual int seek(int bufferSize);
+			
+			virtual void getTrackParam(STrackParams* track);
+			
+		protected:
+			
+			void resizeData(int size);
+			
+			void convertFloat32ToShort(short* dest, float* src, int size);
+			
+		protected:
+			STrackParams m_trackParams;
+			
+			int m_dataInBuffer;
+			int m_dataInBufferConsumed;
+			
+			int m_bufferSize;
+			
+			unsigned char* m_sampleBuffer;
+			unsigned char* m_sampleDecodeBuffer;
+		};
+	}
 }
 
 #endif

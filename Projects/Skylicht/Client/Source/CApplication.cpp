@@ -223,7 +223,7 @@ namespace Skylicht
 		Skylicht::updateSkylicht();
 
 #ifdef BUILD_SKYLICHT_AUDIO
-		SkylichtAudio::updateSkylichtAudio();
+		Audio::updateSkylichtAudio();
 #endif
 		// application receiver
 		sendEventToAppReceiver(AppEventUpdate);

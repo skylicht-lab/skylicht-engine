@@ -6,32 +6,33 @@
 #include "Driver/ISoundDriver.h"
 #include "IAudioDecoder.h"
 
-namespace SkylichtAudio
+namespace Skylicht
 {
-
-	class CAudioDecoderRawWav : public IAudioDecoder
+	namespace Audio
 	{
-	protected:
-		IStreamCursor* m_streamCursor;
-
-	public:
-		CAudioDecoderRawWav(IStream* stream);
-
-		virtual ~CAudioDecoderRawWav();
-
-		virtual EStatus initDecode();
-
-		virtual EStatus decode(void* outputBuffer, int bufferSize);
-
-		virtual int seek(int bufferSize);
-
-		virtual void getTrackParam(STrackParams* track);
-
-		virtual float getCurrentTime();
-
-		virtual void stopStream();
-	};
-
+		class CAudioDecoderRawWav : public IAudioDecoder
+		{
+		protected:
+			IStreamCursor* m_streamCursor;
+			
+		public:
+			CAudioDecoderRawWav(IStream* stream);
+			
+			virtual ~CAudioDecoderRawWav();
+			
+			virtual EStatus initDecode();
+			
+			virtual EStatus decode(void* outputBuffer, int bufferSize);
+			
+			virtual int seek(int bufferSize);
+			
+			virtual void getTrackParam(STrackParams* track);
+			
+			virtual float getCurrentTime();
+			
+			virtual void stopStream();
+		};
+	}
 }
 
 #endif

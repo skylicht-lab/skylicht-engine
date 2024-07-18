@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _DRIVER_XAUDIO2_H_
-#define _DRIVER_XAUDIO2_H_
+#pragma once
 
 #include "SkylichtAudioConfig.h"
 
@@ -39,93 +38,94 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Thread/IMutex.h"
 using namespace Skylicht::System;
 
-namespace SkylichtAudio
+namespace Skylicht
 {
-	//--------------------------------------------------------------------------------------
-	// Callback structure
-	//--------------------------------------------------------------------------------------
-	struct StreamingVoiceContext : public IXAudio2VoiceCallback
+	namespace Audio
 	{
-		STDMETHOD_(void, OnVoiceProcessingPassStart)(UINT32) override
+		//--------------------------------------------------------------------------------------
+		// Callback structure
+		//--------------------------------------------------------------------------------------
+		struct StreamingVoiceContext : public IXAudio2VoiceCallback
 		{
-		}
-		STDMETHOD_(void, OnVoiceProcessingPassEnd)() override
-		{
-		}
-		STDMETHOD_(void, OnStreamEnd)() override
-		{
-		}
-		STDMETHOD_(void, OnBufferStart)(void*) override
-		{
-		}
-		STDMETHOD_(void, OnBufferEnd)(void*) override
-		{
-		}
-		STDMETHOD_(void, OnLoopEnd)(void*) override
-		{
-		}
-		STDMETHOD_(void, OnVoiceError)(void*, HRESULT) override
-		{
-		}
-
-		HANDLE hBufferEndEvent;
-
-		StreamingVoiceContext()
-		{
-		}
-
-		virtual ~StreamingVoiceContext()
-		{
-		}
-	};
-
-
-	class CDriverXAudio2 :
-		public CDriverNull,
-		public IThreadCallback
-	{
-	protected:
-		IXAudio2* m_xaudio;
-		IXAudio2MasteringVoice* m_masteringVoice;
-
-		StreamingVoiceContext m_voiceContext;
-		IXAudio2SourceVoice* m_sourceVoice;
-
-	public:
-		CDriverXAudio2();
-		virtual ~CDriverXAudio2();
-
-		virtual void init();
-		virtual void shutdown();
-		virtual void suspend();
-		virtual void resume();
-
-		virtual void updateThread();
-	protected:
-		int m_minBufferSize;
-		int m_v5MinLatency;
-		int m_v6MinLatency;
-
-		// Buffer parameters
-		struct SBufferParam
-		{
-			int NumBuffers;
-			int BufferSize;
-			int CurrentBuffer;
-			unsigned char** Buffers;
-
-			// MMSytem parameters
-			// WAVEFORMATEX Waveformat;
-			// WAVEHDR *WaveBlocks;		// Objects containing buffer address provided (by reference) to mmsystem.
-
-			IThread* UpdateThread;
-			bool IsThreadRunning;
+			STDMETHOD_(void, OnVoiceProcessingPassStart)(UINT32) override
+			{
+			}
+			STDMETHOD_(void, OnVoiceProcessingPassEnd)() override
+			{
+			}
+			STDMETHOD_(void, OnStreamEnd)() override
+			{
+			}
+			STDMETHOD_(void, OnBufferStart)(void*) override
+			{
+			}
+			STDMETHOD_(void, OnBufferEnd)(void*) override
+			{
+			}
+			STDMETHOD_(void, OnLoopEnd)(void*) override
+			{
+			}
+			STDMETHOD_(void, OnVoiceError)(void*, HRESULT) override
+			{
+			}
+			
+			HANDLE hBufferEndEvent;
+			
+			StreamingVoiceContext()
+			{
+			}
+			
+			virtual ~StreamingVoiceContext()
+			{
+			}
 		};
-
-		SBufferParam m_output;
-		SBufferParam m_input;
-	};
+		
+		
+		class CDriverXAudio2 :
+			public CDriverNull,
+			public IThreadCallback
+		{
+		protected:
+			IXAudio2* m_xaudio;
+			IXAudio2MasteringVoice* m_masteringVoice;
+			
+			StreamingVoiceContext m_voiceContext;
+			IXAudio2SourceVoice* m_sourceVoice;
+			
+		public:
+			CDriverXAudio2();
+			virtual ~CDriverXAudio2();
+			
+			virtual void init();
+			virtual void shutdown();
+			virtual void suspend();
+			virtual void resume();
+			
+			virtual void updateThread();
+		protected:
+			int m_minBufferSize;
+			int m_v5MinLatency;
+			int m_v6MinLatency;
+			
+			// Buffer parameters
+			struct SBufferParam
+			{
+				int NumBuffers;
+				int BufferSize;
+				int CurrentBuffer;
+				unsigned char** Buffers;
+				
+				// MMSytem parameters
+				// WAVEFORMATEX Waveformat;
+				// WAVEHDR *WaveBlocks;		// Objects containing buffer address provided (by reference) to mmsystem.
+				
+				IThread* UpdateThread;
+				bool IsThreadRunning;
+			};
+			
+			SBufferParam m_output;
+			SBufferParam m_input;
+		};
+	}
 }
-#endif
-
 #endif

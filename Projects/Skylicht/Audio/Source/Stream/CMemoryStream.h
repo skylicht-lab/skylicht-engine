@@ -27,42 +27,43 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "IStream.h"
 
-namespace SkylichtAudio
+namespace Skylicht
 {
-
-	class CMemoryStreamCursor : public IStreamCursor
+	namespace Audio
 	{
-	public:
-		unsigned char *m_buffer;
-		int m_size;
-		int m_pos;
-
-	public:
-		CMemoryStreamCursor(unsigned char *buffer, int size);
-		virtual ~CMemoryStreamCursor();
-
-		virtual int seek(int pos, EOrigin origin);
-		virtual int tell();
-		virtual int read(unsigned char* buff, int len);
-		virtual bool endOfStream();
-		virtual int size();
-		virtual bool readyReadData(int len);
-	};
-
-	class CMemoryStream : public IStream
-	{
-	protected:
-		unsigned char *m_buffer;
-		int m_size;
-		bool m_takeOwnership;
-
-	public:
-		CMemoryStream(unsigned char *buffer, int size, bool takeOwnership = false);
-		virtual ~CMemoryStream();
-
-		virtual IStreamCursor* createCursor();
-	};
-
+		class CMemoryStreamCursor : public IStreamCursor
+		{
+		public:
+			unsigned char *m_buffer;
+			int m_size;
+			int m_pos;
+			
+		public:
+			CMemoryStreamCursor(unsigned char *buffer, int size);
+			virtual ~CMemoryStreamCursor();
+			
+			virtual int seek(int pos, EOrigin origin);
+			virtual int tell();
+			virtual int read(unsigned char* buff, int len);
+			virtual bool endOfStream();
+			virtual int size();
+			virtual bool readyReadData(int len);
+		};
+		
+		class CMemoryStream : public IStream
+		{
+		protected:
+			unsigned char *m_buffer;
+			int m_size;
+			bool m_takeOwnership;
+			
+		public:
+			CMemoryStream(unsigned char *buffer, int size, bool takeOwnership = false);
+			virtual ~CMemoryStream();
+			
+			virtual IStreamCursor* createCursor();
+		};
+	}
 }
 
 #endif

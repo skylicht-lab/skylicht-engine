@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _DRIVER_OPENSL_H_
-#define _DRIVER_OPENSL_H_
+#pragma once
 
 #include "SkylichtAudioConfig.h"
 
@@ -39,48 +38,49 @@ using namespace Skylicht::System;
 #include <SLES/OpenSLES.h>
 #include <SLES/OpenSLES_Platform.h>
 
-namespace SkylichtAudio
+namespace Skylicht
 {
-	class CDriverOpenSL : public CDriverNull
+	namespace Audio
 	{
-	public:
-		CDriverOpenSL();
-		virtual ~CDriverOpenSL();
-
-		virtual void init();
-		virtual void shutdown();
-		virtual void suspend();
-		virtual void resume();
-
-		// doCallbackOSL
-		// fill buffer
-		void doCallbackOSL();
-
-		// callback OpenSLES
-		static void callbackOSL(SLBufferQueueItf bufferQueue, void *caller);
-
-	protected:
-		unsigned int m_minBufferSize;
-
-		//Engine
-		SLObjectItf	m_engineObject;
-		SLEngineItf m_engine;
-		SLObjectItf m_output;
-
-		//Player
-		SLObjectItf	m_playerObject;
-		SLPlayItf m_play;
-		SLBufferQueueItf m_bufferQueue;
-
-		unsigned char**	m_buffers;
-		SLuint32 m_numBuffers;
-		unsigned int m_bufferSizeOSL;
-		unsigned int m_currentBuffer;
-
-		bool	m_active;
-	};
+		class CDriverOpenSL : public CDriverNull
+		{
+		public:
+			CDriverOpenSL();
+			virtual ~CDriverOpenSL();
+			
+			virtual void init();
+			virtual void shutdown();
+			virtual void suspend();
+			virtual void resume();
+			
+			// doCallbackOSL
+			// fill buffer
+			void doCallbackOSL();
+			
+			// callback OpenSLES
+			static void callbackOSL(SLBufferQueueItf bufferQueue, void *caller);
+			
+		protected:
+			unsigned int m_minBufferSize;
+			
+			//Engine
+			SLObjectItf	m_engineObject;
+			SLEngineItf m_engine;
+			SLObjectItf m_output;
+			
+			//Player
+			SLObjectItf	m_playerObject;
+			SLPlayItf m_play;
+			SLBufferQueueItf m_bufferQueue;
+			
+			unsigned char**	m_buffers;
+			SLuint32 m_numBuffers;
+			unsigned int m_bufferSizeOSL;
+			unsigned int m_currentBuffer;
+			
+			bool	m_active;
+		};
+	}
 }
-
-#endif
 
 #endif

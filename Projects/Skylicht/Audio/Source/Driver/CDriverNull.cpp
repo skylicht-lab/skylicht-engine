@@ -26,178 +26,181 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CDriverNull.h"
 #include "Engine/CAudioEmitter.h"
 
-namespace SkylichtAudio
+namespace Skylicht
 {
-	CDriverNull::CDriverNull()
+	namespace Audio
 	{
-		m_mixBuffer = NULL;
-		m_numMixSampler = 0;
-
-		m_bufferLength = 0.0625f;
-		m_preferedRate = 44100; // hz (num sampler per second)
-
-		m_masterGain = 1.0f;
-
-		m_mutex = IMutex::createMutex();
-	}
-
-	CDriverNull::~CDriverNull()
-	{
-		delete m_mutex;
-
-		if (m_mixBuffer)
-			delete m_mixBuffer;
-
-		shutdown();
-	}
-
-	void CDriverNull::init()
-	{
-	}
-
-	void CDriverNull::shutdown()
-	{
-	}
-
-	void CDriverNull::suspend()
-	{
-	}
-
-	void CDriverNull::resume()
-	{
-	}
-
-	void CDriverNull::update()
-	{
-	}
-
-	void CDriverNull::lockThread()
-	{
-		m_mutex->lock();
-	}
-
-	void CDriverNull::unlockThread()
-	{
-		m_mutex->unlock();
-	}
-
-	void CDriverNull::changeDuration(float duration)
-	{
-		m_bufferLength = duration;
-
-		// loop all source
-		std::vector<CSoundSource*>::iterator i = m_sources.begin(), end = m_sources.end();
-		while (i != end)
+		CDriverNull::CDriverNull()
 		{
-			(*i)->changeDuration(duration);
-			++i;
+			m_mixBuffer = NULL;
+			m_numMixSampler = 0;
+			
+			m_bufferLength = 0.0625f;
+			m_preferedRate = 44100; // hz (num sampler per second)
+			
+			m_masterGain = 1.0f;
+			
+			m_mutex = IMutex::createMutex();
 		}
-	}
-
-	void CDriverNull::fillBuffer(unsigned short* outBuffer, int numSample)
-	{
-		SScopeMutex lockScope(m_mutex);
-
-		int totalSamples = numSample * 2;	// left & right
-		int safeBufferSize = totalSamples + totalSamples / 2;
-
-		// alloc mix buffer
-		if (m_numMixSampler < numSample)
+		
+		CDriverNull::~CDriverNull()
 		{
-			m_numMixSampler = numSample;
-
-			// free current mix buffer
-			if (m_mixBuffer != NULL)
+			delete m_mutex;
+			
+			if (m_mixBuffer)
 				delete m_mixBuffer;
-
-			m_mixBuffer = new int[safeBufferSize];
-			m_numMixSampler = numSample;
+			
+			shutdown();
 		}
-
-		// silent audio
-		memset(m_mixBuffer, 0, sizeof(int)*safeBufferSize);
-
-		// mix audio
-		std::vector<CSoundSource*>::iterator iSource = m_sources.begin(), sourceEnd = m_sources.end();
-		while (iSource != sourceEnd)
+		
+		void CDriverNull::init()
 		{
-			CSoundSource *source = (*iSource);
-
-			// mix playing source
-			if (source->getState() == ISoundSource::StatePlaying)
+		}
+		
+		void CDriverNull::shutdown()
+		{
+		}
+		
+		void CDriverNull::suspend()
+		{
+		}
+		
+		void CDriverNull::resume()
+		{
+		}
+		
+		void CDriverNull::update()
+		{
+		}
+		
+		void CDriverNull::lockThread()
+		{
+			m_mutex->lock();
+		}
+		
+		void CDriverNull::unlockThread()
+		{
+			m_mutex->unlock();
+		}
+		
+		void CDriverNull::changeDuration(float duration)
+		{
+			m_bufferLength = duration;
+			
+			// loop all source
+			std::vector<CSoundSource*>::iterator i = m_sources.begin(), end = m_sources.end();
+			while (i != end)
 			{
-				source->fillBuffer(m_mixBuffer, numSample, m_masterGain);
+				(*i)->changeDuration(duration);
+				++i;
 			}
-
-			++iSource;
 		}
-
-		// clamp audio (convert fixed to short)
-		int *mixingBufferCursor = m_mixBuffer;
-		short *outBufferCursor = (short*)outBuffer;
-
-		for (int i = 0; i < totalSamples; i++)
+		
+		void CDriverNull::fillBuffer(unsigned short* outBuffer, int numSample)
 		{
-			if ((unsigned int)(*mixingBufferCursor + 32768) > 65535)
-				*outBufferCursor = (short)(*mixingBufferCursor < 0 ? -32768 : 32767);
-			else
-				*outBufferCursor = (short)(*mixingBufferCursor);
-
-			outBufferCursor++;
-			mixingBufferCursor++;
-		}
-	}
-
-	ISoundSource* CDriverNull::createSource()
-	{
-		SScopeMutex lockScope(m_mutex);
-
-		CSoundSource *source = new CSoundSource(m_bufferLength);
-		m_sources.push_back(source);
-		return source;
-	}
-
-	void CDriverNull::destroyDriverSource(ISoundSource* driverSource)
-	{
-		SScopeMutex lockScope(m_mutex);
-
-		std::vector<CSoundSource*>::iterator i = m_sources.begin(), end = m_sources.end();
-		while (i != end)
-		{
-			if ((*i) == driverSource)
+			SScopeMutex lockScope(m_mutex);
+			
+			int totalSamples = numSample * 2;	// left & right
+			int safeBufferSize = totalSamples + totalSamples / 2;
+			
+			// alloc mix buffer
+			if (m_numMixSampler < numSample)
 			{
-				delete driverSource;
-				m_sources.erase(i);
-				return;
+				m_numMixSampler = numSample;
+				
+				// free current mix buffer
+				if (m_mixBuffer != NULL)
+					delete m_mixBuffer;
+				
+				m_mixBuffer = new int[safeBufferSize];
+				m_numMixSampler = numSample;
 			}
-			++i;
+			
+			// silent audio
+			memset(m_mixBuffer, 0, sizeof(int)*safeBufferSize);
+			
+			// mix audio
+			std::vector<CSoundSource*>::iterator iSource = m_sources.begin(), sourceEnd = m_sources.end();
+			while (iSource != sourceEnd)
+			{
+				CSoundSource *source = (*iSource);
+				
+				// mix playing source
+				if (source->getState() == ISoundSource::StatePlaying)
+				{
+					source->fillBuffer(m_mixBuffer, numSample, m_masterGain);
+				}
+				
+				++iSource;
+			}
+			
+			// clamp audio (convert fixed to short)
+			int *mixingBufferCursor = m_mixBuffer;
+			short *outBufferCursor = (short*)outBuffer;
+			
+			for (int i = 0; i < totalSamples; i++)
+			{
+				if ((unsigned int)(*mixingBufferCursor + 32768) > 65535)
+					*outBufferCursor = (short)(*mixingBufferCursor < 0 ? -32768 : 32767);
+				else
+					*outBufferCursor = (short)(*mixingBufferCursor);
+				
+				outBufferCursor++;
+				mixingBufferCursor++;
+			}
 		}
-	}
-
-	void CDriverNull::destroyAllSource()
-	{
-		SScopeMutex lockScope(m_mutex);
-
-		std::vector<CSoundSource*>::iterator i = m_sources.begin(), end = m_sources.end();
-		while (i != end)
+		
+		ISoundSource* CDriverNull::createSource()
 		{
-			delete (*i);
-			++i;
+			SScopeMutex lockScope(m_mutex);
+			
+			CSoundSource *source = new CSoundSource(m_bufferLength);
+			m_sources.push_back(source);
+			return source;
 		}
-		m_sources.clear();
-	}
-
-	void CDriverNull::getSourceParam(SSourceParam *source)
-	{
-		source->NumBuffer = 2;
-		source->BufferSize = (int)(m_bufferLength * m_preferedRate);
-		source->SamplingRate = m_preferedRate;
-		source->BitPerSampler = 16;
-	}
-
-	int CDriverNull::getBufferSize()
-	{
-		int bufferSize = (int)(m_bufferLength * m_preferedRate);
-		return bufferSize;
+		
+		void CDriverNull::destroyDriverSource(ISoundSource* driverSource)
+		{
+			SScopeMutex lockScope(m_mutex);
+			
+			std::vector<CSoundSource*>::iterator i = m_sources.begin(), end = m_sources.end();
+			while (i != end)
+			{
+				if ((*i) == driverSource)
+				{
+					delete driverSource;
+					m_sources.erase(i);
+					return;
+				}
+				++i;
+			}
+		}
+		
+		void CDriverNull::destroyAllSource()
+		{
+			SScopeMutex lockScope(m_mutex);
+			
+			std::vector<CSoundSource*>::iterator i = m_sources.begin(), end = m_sources.end();
+			while (i != end)
+			{
+				delete (*i);
+				++i;
+			}
+			m_sources.clear();
+		}
+		
+		void CDriverNull::getSourceParam(SSourceParam *source)
+		{
+			source->NumBuffer = 2;
+			source->BufferSize = (int)(m_bufferLength * m_preferedRate);
+			source->SamplingRate = m_preferedRate;
+			source->BitPerSampler = 16;
+		}
+		
+		int CDriverNull::getBufferSize()
+		{
+			int bufferSize = (int)(m_bufferLength * m_preferedRate);
+			return bufferSize;
+		}
 	}
 }

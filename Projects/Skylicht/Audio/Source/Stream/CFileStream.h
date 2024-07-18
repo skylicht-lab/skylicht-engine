@@ -28,48 +28,50 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "stdafx.h"
 #include "IStream.h"
 
-namespace SkylichtAudio
+namespace Skylicht
 {
-	class CFileStreamCursor : public IStreamCursor
+	namespace Audio
 	{
-	protected:
-		FILE *m_file;
-		int m_size;
-		int m_pos;
-
-		unsigned char* m_buffer;
-		int m_bufferSize;
-		int m_bufferAvailableBytes;
-		int m_bufferPos;
-		int m_bufferOffset;
-	public:
-		CFileStreamCursor(FILE *file);
-		virtual ~CFileStreamCursor();
-
-		virtual int seek(int pos, EOrigin origin);
-		virtual int tell();
-		virtual int read(unsigned char* buff, int len);
-		virtual bool endOfStream();
-		virtual int size();
-		virtual bool readyReadData(int len);
-	};
-
-	class CFileStream : public IStream
-	{
-	protected:
-		std::string	m_fileName;
-		FILE *m_file;
-		int m_size;
-
-	public:
-		CFileStream(const char *fileName);
-		virtual ~CFileStream();
-
-		bool isError();
-
-		virtual IStreamCursor* createCursor();
-	};
-
+		class CFileStreamCursor : public IStreamCursor
+		{
+		protected:
+			FILE *m_file;
+			int m_size;
+			int m_pos;
+			
+			unsigned char* m_buffer;
+			int m_bufferSize;
+			int m_bufferAvailableBytes;
+			int m_bufferPos;
+			int m_bufferOffset;
+		public:
+			CFileStreamCursor(FILE *file);
+			virtual ~CFileStreamCursor();
+			
+			virtual int seek(int pos, EOrigin origin);
+			virtual int tell();
+			virtual int read(unsigned char* buff, int len);
+			virtual bool endOfStream();
+			virtual int size();
+			virtual bool readyReadData(int len);
+		};
+		
+		class CFileStream : public IStream
+		{
+		protected:
+			std::string	m_fileName;
+			FILE *m_file;
+			int m_size;
+			
+		public:
+			CFileStream(const char *fileName);
+			virtual ~CFileStream();
+			
+			bool isError();
+			
+			virtual IStreamCursor* createCursor();
+		};
+	}
 }
 
 #endif

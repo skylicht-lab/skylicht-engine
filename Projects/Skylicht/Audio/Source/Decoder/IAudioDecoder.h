@@ -30,69 +30,71 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "AudioDebugLog.h"
 
-namespace SkylichtAudio
+namespace Skylicht
 {
-	enum EStatus
+	namespace Audio
 	{
-		Failed = 0,
-		Success,
-		WaitData,
-		EndStream,
-	};
-
-	class IAudioDecoder
-	{
-	public:
-		enum EDecoderType
+		enum EStatus
 		{
-			Wav,
-			Mp3,
-			RawWav,	// use for micro, video audio
-			Num
+			Failed = 0,
+			Success,
+			WaitData,
+			EndStream,
 		};
-
-	protected:
-		bool m_loop;
-
-		IStream* m_stream;
-
-	public:
-		IAudioDecoder(IStream* stream)
+		
+		class IAudioDecoder
 		{
-			m_loop = false;
-			m_stream = stream;
-		}
-
-		virtual ~IAudioDecoder()
-		{
-		}
-
-		virtual EStatus initDecode() = 0;
-
-		virtual EStatus decode(void* outputBuffer, int bufferSize) = 0;
-
-		virtual float getCurrentTime() = 0;
-
-		virtual int seek(int bufferSize) = 0;
-
-		virtual void setLoop(bool loop)
-		{
-			m_loop = loop;
-		}
-
-		virtual bool isLoop()
-		{
-			return m_loop;
-		}
-
-		virtual void getTrackParam(STrackParams* track) = 0;
-
-		virtual void stopStream()
-		{
-
-		}
-	};
-
+		public:
+			enum EDecoderType
+			{
+				Wav,
+				Mp3,
+				RawWav,	// use for micro, video audio
+				Num
+			};
+			
+		protected:
+			bool m_loop;
+			
+			IStream* m_stream;
+			
+		public:
+			IAudioDecoder(IStream* stream)
+			{
+				m_loop = false;
+				m_stream = stream;
+			}
+			
+			virtual ~IAudioDecoder()
+			{
+			}
+			
+			virtual EStatus initDecode() = 0;
+			
+			virtual EStatus decode(void* outputBuffer, int bufferSize) = 0;
+			
+			virtual float getCurrentTime() = 0;
+			
+			virtual int seek(int bufferSize) = 0;
+			
+			virtual void setLoop(bool loop)
+			{
+				m_loop = loop;
+			}
+			
+			virtual bool isLoop()
+			{
+				return m_loop;
+			}
+			
+			virtual void getTrackParam(STrackParams* track) = 0;
+			
+			virtual void stopStream()
+			{
+				
+			}
+		};
+	}
 }
 
 #endif

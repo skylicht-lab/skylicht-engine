@@ -29,29 +29,31 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Stream/CFileStream.h"
 #include "Stream/COnlineMemoryStream.h"
 
-namespace SkylichtAudio
+namespace Skylicht
 {
-
-	IStream* CStreamFactory::createStreamFromMemory(unsigned char* buffer, int size, bool takeOwnership)
+	namespace Audio
 	{
-		return new CMemoryStream(buffer, size, takeOwnership);
-	}
-
-	IStream* CStreamFactory::createStreamFromFile(const char* fileName)
-	{
-		CFileStream* file = new CFileStream(fileName);
-
-		if (file->isError() == true)
+		IStream* CStreamFactory::createStreamFromMemory(unsigned char* buffer, int size, bool takeOwnership)
 		{
-			delete file;
-			file = NULL;
+			return new CMemoryStream(buffer, size, takeOwnership);
 		}
-
-		return file;
-	}
-
-	IStream* CStreamFactory::createOnlineStream()
-	{
-		return new COnlineMemoryStream();
+		
+		IStream* CStreamFactory::createStreamFromFile(const char* fileName)
+		{
+			CFileStream* file = new CFileStream(fileName);
+			
+			if (file->isError() == true)
+			{
+				delete file;
+				file = NULL;
+			}
+			
+			return file;
+		}
+		
+		IStream* CStreamFactory::createOnlineStream()
+		{
+			return new COnlineMemoryStream();
+		}
 	}
 }

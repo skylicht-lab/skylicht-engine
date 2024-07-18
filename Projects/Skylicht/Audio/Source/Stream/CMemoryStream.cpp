@@ -25,129 +25,130 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "stdafx.h"
 #include "CMemoryStream.h"
 
-namespace SkylichtAudio
+namespace Skylicht
 {
-	///////////////////////////////////////////
-	// CMemoryStream
-	///////////////////////////////////////////
-
-
-	CMemoryStream::CMemoryStream(unsigned char *buffer, int size, bool takeOwnership)
+	namespace Audio
 	{
-		m_takeOwnership = takeOwnership;
-		m_size = size;
-
-		if (takeOwnership)
+		///////////////////////////////////////////
+		// CMemoryStream
+		///////////////////////////////////////////
+		CMemoryStream::CMemoryStream(unsigned char *buffer, int size, bool takeOwnership)
+		{
+			m_takeOwnership = takeOwnership;
+			m_size = size;
+			
+			if (takeOwnership)
+			{
+				m_buffer = buffer;
+				m_size = size;
+			}
+			else
+			{
+				m_buffer = new unsigned char[m_size];
+				m_size = size;
+				
+				memcpy(m_buffer, buffer, size);
+			}
+		}
+		
+		CMemoryStream::~CMemoryStream()
+		{
+			if (m_takeOwnership == false)
+				delete m_buffer;
+		}
+		
+		IStreamCursor* CMemoryStream::createCursor()
+		{
+			return new CMemoryStreamCursor(m_buffer, m_size);
+		}
+		
+		
+		///////////////////////////////////////////
+		// CMemoryStreamCursor
+		///////////////////////////////////////////
+		
+		CMemoryStreamCursor::CMemoryStreamCursor(unsigned char *buffer, int size)
 		{
 			m_buffer = buffer;
 			m_size = size;
+			m_pos = 0;
 		}
-		else
+		
+		CMemoryStreamCursor::~CMemoryStreamCursor()
 		{
-			m_buffer = new unsigned char[m_size];
-			m_size = size;
-
-			memcpy(m_buffer, buffer, size);
 		}
-	}
-
-	CMemoryStream::~CMemoryStream()
-	{
-		if (m_takeOwnership == false)
-			delete m_buffer;
-	}
-
-	IStreamCursor* CMemoryStream::createCursor()
-	{
-		return new CMemoryStreamCursor(m_buffer, m_size);
-	}
-
-
-	///////////////////////////////////////////
-	// CMemoryStreamCursor
-	///////////////////////////////////////////
-
-	CMemoryStreamCursor::CMemoryStreamCursor(unsigned char *buffer, int size)
-	{
-		m_buffer = buffer;
-		m_size = size;
-		m_pos = 0;
-	}
-
-	CMemoryStreamCursor::~CMemoryStreamCursor()
-	{
-	}
-
-	int CMemoryStreamCursor::seek(int pos, EOrigin origin)
-	{
-		int currentPosition = m_pos;
-
-		switch (origin)
+		
+		int CMemoryStreamCursor::seek(int pos, EOrigin origin)
 		{
-		case OriginStart:
-		{
-			currentPosition = pos;
-			break;
+			int currentPosition = m_pos;
+			
+			switch (origin)
+			{
+				case OriginStart:
+				{
+					currentPosition = pos;
+					break;
+				}
+				case OriginCurrent:
+				{
+					currentPosition += pos;
+					break;
+				}
+				case OriginEnd:
+				{
+					currentPosition = m_size - pos;
+					break;
+				}
+			}
+			
+			if (currentPosition < 0 || currentPosition > m_size)
+			{
+				return -1;
+			}
+			else
+			{
+				m_pos = currentPosition;
+				return m_pos;
+			}
 		}
-		case OriginCurrent:
+		
+		int CMemoryStreamCursor::tell()
 		{
-			currentPosition += pos;
-			break;
-		}
-		case OriginEnd:
-		{
-			currentPosition = m_size - pos;
-			break;
-		}
-		}
-
-		if (currentPosition < 0 || currentPosition > m_size)
-		{
-			return -1;
-		}
-		else
-		{
-			m_pos = currentPosition;
 			return m_pos;
 		}
-	}
-
-	int CMemoryStreamCursor::tell()
-	{
-		return m_pos;
-	}
-
-	int CMemoryStreamCursor::read(unsigned char* buff, int len)
-	{
-		if (buff  && len > 0)
+		
+		int CMemoryStreamCursor::read(unsigned char* buff, int len)
 		{
-			int remain = m_size - m_pos;
-
-			if (len > remain)
-				len = remain;
-
-			memcpy(buff, m_buffer + m_pos, len);
-			m_pos += len;
-			return len;
+			if (buff  && len > 0)
+			{
+				int remain = m_size - m_pos;
+				
+				if (len > remain)
+					len = remain;
+				
+				memcpy(buff, m_buffer + m_pos, len);
+				m_pos += len;
+				return len;
+			}
+			else
+			{
+				return 0;
+			}
 		}
-		else
+		
+		bool CMemoryStreamCursor::endOfStream()
 		{
-			return 0;
+			return m_pos >= m_size - 1;
 		}
-	}
-
-	bool CMemoryStreamCursor::endOfStream()
-	{
-		return m_pos >= m_size - 1;
-	}
-
-	int CMemoryStreamCursor::size()
-	{
-		return m_size;
-	}
-
-	bool CMemoryStreamCursor::readyReadData(int len)
-	{
-		return true;
+		
+		int CMemoryStreamCursor::size()
+		{
+			return m_size;
+		}
+		
+		bool CMemoryStreamCursor::readyReadData(int len)
+		{
+			return true;
+		}
 	}
 }

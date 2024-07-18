@@ -30,21 +30,24 @@ https://github.com/skylicht-lab/skylicht-engine
 #include <android/log.h>
 #endif
 
-namespace SkylichtAudio
+namespace Skylicht
 {
-	void printLog(const char *fmt, ...)
+	namespace Audio
 	{
-		static char logBuffer[1024];
-
-		va_list ap; /* points to each unnamed arg in turn */
-		va_start(ap, fmt);
-		vsnprintf(logBuffer, 1024, fmt, ap);
-		va_end(ap);
-
-#ifdef ANDROID
-		__android_log_print(ANDROID_LOG_INFO, "libAudio.so", "%s", logBuffer);
-#else
-		printf("%s\n", logBuffer);
-#endif		
+		void printLog(const char *fmt, ...)
+		{
+			static char logBuffer[1024];
+			
+			va_list ap; /* points to each unnamed arg in turn */
+			va_start(ap, fmt);
+			vsnprintf(logBuffer, 1024, fmt, ap);
+			va_end(ap);
+			
+	#ifdef ANDROID
+			__android_log_print(ANDROID_LOG_INFO, "libAudio.so", "%s", logBuffer);
+	#else
+			printf("%s\n", logBuffer);
+	#endif
+		}
 	}
 }

@@ -80,15 +80,15 @@ protected:
 	CButton* m_left;
 	CButton* m_right;
 
-	SkylichtAudio::CAudioEmitter* m_musicBG;
-	SkylichtAudio::CAudioEmitter* m_soundTada;
-	SkylichtAudio::CAudioEmitter* m_soundSpin;
-	SkylichtAudio::CAudioEmitter* m_soundStop;
-	SkylichtAudio::CAudioEmitter* m_soundShowStop;
-	SkylichtAudio::CAudioEmitter* m_soundCountDown;
-	SkylichtAudio::CAudioEmitter* m_soundAccept;
-	SkylichtAudio::CAudioEmitter* m_soundIgnore;
-	SkylichtAudio::CAudioEmitter* m_soundUp;
+	Audio::CAudioEmitter* m_musicBG;
+	Audio::CAudioEmitter* m_soundTada;
+	Audio::CAudioEmitter* m_soundSpin;
+	Audio::CAudioEmitter* m_soundStop;
+	Audio::CAudioEmitter* m_soundShowStop;
+	Audio::CAudioEmitter* m_soundCountDown;
+	Audio::CAudioEmitter* m_soundAccept;
+	Audio::CAudioEmitter* m_soundIgnore;
+	Audio::CAudioEmitter* m_soundUp;
 
 	int m_randomPeople;
 	int m_randomNumber;

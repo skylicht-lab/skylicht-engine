@@ -23,11 +23,11 @@ CViewDemo::CViewDemo() :
 	m_randomNumber(0),
 	m_randomPeople(0)
 {
-	SkylichtAudio::initSkylichtAudio();
+	Audio::initSkylichtAudio();
 
 	// add to support read resource on ZIP Bundle
 	m_streamFactory = new CZipAudioStreamFactory();
-	SkylichtAudio::CAudioEngine::getSoundEngine()->registerStreamFactory(m_streamFactory);
+	Audio::CAudioEngine::getSoundEngine()->registerStreamFactory(m_streamFactory);
 }
 
 CViewDemo::~CViewDemo()
@@ -51,10 +51,10 @@ CViewDemo::~CViewDemo()
 	delete m_left;
 	delete m_right;
 
-	SkylichtAudio::CAudioEngine::getSoundEngine()->unRegisterStreamFactory(m_streamFactory);
+	Audio::CAudioEngine::getSoundEngine()->unRegisterStreamFactory(m_streamFactory);
 	delete m_streamFactory;
 
-	SkylichtAudio::releaseSkylichtAudio();
+	Audio::releaseSkylichtAudio();
 }
 
 void CViewDemo::onInit()
@@ -76,7 +76,7 @@ void CViewDemo::onInit()
 	m_textSmallFont->setFont("Sans", 18.0f);
 
 	// init audio
-	SkylichtAudio::CAudioEngine* engine = SkylichtAudio::CAudioEngine::getSoundEngine();
+	Audio::CAudioEngine* engine = Audio::CAudioEngine::getSoundEngine();
 	m_musicBG = engine->createAudioEmitter("LuckyDraw/background.mp3", false);
 	m_musicBG->setLoop(true);
 	m_soundTada = engine->createAudioEmitter("LuckyDraw/game-tada.mp3", false);

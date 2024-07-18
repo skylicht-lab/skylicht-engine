@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _DRIVER_OPENAL_H_
-#define _DRIVER_OPENAL_H_
+#pragma once
 
 #include "SkylichtAudioConfig.h"
 
@@ -50,46 +49,47 @@ using namespace Skylicht::System;
 #pragma comment(lib,"OpenAL32.lib")
 #endif
 
-namespace SkylichtAudio
+namespace Skylicht
 {
-	class CDriverOpenAL :
-		public CDriverNull,
-		public IThreadCallback
+	namespace Audio
 	{
-	protected:
-		ALCdevice* m_device;
-		ALCcontext* m_context;
-
-		ALuint m_alBufferID[NUM_ALBUFFERS];
-		ALuint m_alSourceID;
-
-		int m_minBufferSize;
-		unsigned char* m_buffer;
-		int m_numBuffers;
-		int m_bufferSizeOAL;
-		int m_currentBuffer;
-
-		bool m_isPause;
-
-		IMutex *m_mutex;
-
-	public:
-		CDriverOpenAL();
-		virtual ~CDriverOpenAL();
-
-		virtual void init();
-		virtual void shutdown();
-		virtual void suspend();
-		virtual void resume();
-		virtual void update();
-		virtual void updateThread();
-
-	public:
-		IThread* UpdateThread;
-		bool IsThreadRunning;
-	};
+		class CDriverOpenAL :
+			public CDriverNull,
+			public IThreadCallback
+		{
+		protected:
+			ALCdevice* m_device;
+			ALCcontext* m_context;
+			
+			ALuint m_alBufferID[NUM_ALBUFFERS];
+			ALuint m_alSourceID;
+			
+			int m_minBufferSize;
+			unsigned char* m_buffer;
+			int m_numBuffers;
+			int m_bufferSizeOAL;
+			int m_currentBuffer;
+			
+			bool m_isPause;
+			
+			IMutex *m_mutex;
+			
+		public:
+			CDriverOpenAL();
+			virtual ~CDriverOpenAL();
+			
+			virtual void init();
+			virtual void shutdown();
+			virtual void suspend();
+			virtual void resume();
+			virtual void update();
+			virtual void updateThread();
+			
+		public:
+			IThread* UpdateThread;
+			bool IsThreadRunning;
+		};
+	}
 }
-
-#endif
 
 #endif

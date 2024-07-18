@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _DRIVER_MMSYSTEM_H_
-#define _DRIVER_MMSYSTEM_H_
+#pragma once
 
 #include "SkylichtAudioConfig.h"
 
@@ -39,51 +38,52 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Thread/IMutex.h"
 using namespace Skylicht::System;
 
-namespace SkylichtAudio
+namespace Skylicht
 {
-	class CDriverMMSystem :
-		public CDriverNull,
-		public IThreadCallback
+	namespace Audio
 	{
-	public:
-		CDriverMMSystem();
-		virtual ~CDriverMMSystem();
-
-		virtual void init();
-		virtual void shutdown();
-		virtual void suspend();
-		virtual void resume();
-
-		virtual void updateThread();
-	protected:
-		int m_minBufferSize;
-		int m_v5MinLatency;
-		int m_v6MinLatency;
-
-		// Buffer parameters
-		struct SBufferParam
+		class CDriverMMSystem :
+			public CDriverNull,
+			public IThreadCallback
 		{
-			int NumBuffers;
-			int BufferSize;
-			int CurrentBuffer;
-			unsigned char** Buffers;
-
-			// MMSytem parameters
-			WAVEFORMATEX Waveformat;
-			WAVEHDR* WaveBlocks;		// Objects containing buffer address provided (by reference) to mmsystem.
-
-			IThread* UpdateThread;
-			bool IsThreadRunning;
+		public:
+			CDriverMMSystem();
+			virtual ~CDriverMMSystem();
+			
+			virtual void init();
+			virtual void shutdown();
+			virtual void suspend();
+			virtual void resume();
+			
+			virtual void updateThread();
+		protected:
+			int m_minBufferSize;
+			int m_v5MinLatency;
+			int m_v6MinLatency;
+			
+			// Buffer parameters
+			struct SBufferParam
+			{
+				int NumBuffers;
+				int BufferSize;
+				int CurrentBuffer;
+				unsigned char** Buffers;
+				
+				// MMSytem parameters
+				WAVEFORMATEX Waveformat;
+				WAVEHDR* WaveBlocks;		// Objects containing buffer address provided (by reference) to mmsystem.
+				
+				IThread* UpdateThread;
+				bool IsThreadRunning;
+			};
+			
+			HWAVEOUT m_waveOut;
+			HWAVEIN m_waveIn;
+			
+			SBufferParam m_output;
+			SBufferParam m_input;
 		};
-
-		HWAVEOUT m_waveOut;
-		HWAVEIN m_waveIn;
-
-		SBufferParam m_output;
-		SBufferParam m_input;
-	};
+	}
 }
-
-#endif
 
 #endif

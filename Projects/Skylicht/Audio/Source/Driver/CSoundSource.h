@@ -22,8 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#ifndef _SOUND_SOURCE_H_
-#define _SOUND_SOURCE_H_
+#pragma once
 
 #include "stdafx.h"
 #include "Thread/IMutex.h"
@@ -31,84 +30,85 @@ https://github.com/skylicht-lab/skylicht-engine
 
 using namespace Skylicht::System;
 
-namespace SkylichtAudio
+namespace Skylicht
 {
-	class CSoundSource : public ISoundSource
+	namespace Audio
 	{
-	public:
-		CSoundSource(float length);
-		virtual ~CSoundSource();
-
-		virtual void init(const STrackParams& trackParam, const SSourceParam& driverParam);
-		virtual bool needData();
-
-		virtual void changeDuration(float duration);
-
-		virtual void play();
-		virtual void stop();
-		virtual void pause();
-		virtual void reset();
-
-		virtual ESourceState getState();
-		virtual void setState(ESourceState state);
-
-		virtual long getByteOffset();
-		virtual void setByteOffset(int offset);
-
-		virtual int getBufferSize();
-
-		virtual void uploadData(void* soundData, unsigned int bufferSize);
-
-		virtual void lockThread();
-		virtual void unlockThread();
-
-		virtual void fillBuffer(int* buffer, int nbSample, float gain = 1.0f);
-
-		virtual void setGain(float gain);
-		virtual void setPitch(float pitch);
-		virtual void setPosition(const SVector3& pos);
-		virtual void setRollOff(float rollOff);
-		virtual void set3DSound(bool b);
-
-		virtual float getGain();
-		virtual float getPitch();
-
-		virtual void update(float dt);
-
-		virtual float getBufferLength();
-		virtual int getSampleRate();
-
-	protected:
-		void update3D();
-		float calcDistanceGain(const SListener& listener);
-		void calcLeftRightGain(const SListener& listener, float& left, float& right);
-	protected:
-		STrackParams m_trackParams;
-		int m_numDriverBuffer;
-		int m_driverBuffer;
-		int m_driverBufferSize;
-		int m_driverSamplingRate;
-
-		float m_bufferDuration;
-		int m_bufferSize;
-		int m_bitPerSample;
-		int m_numChannels;
-
-		std::vector<SDriverBuffer> m_buffers;
-		IMutex* m_mutex;
-
-		float m_distanceGain;
-		float m_leftGain;
-		float m_rightGain;
-		float m_gain;
-		float m_pitch;
-
-		bool m_is3DSound;
-		SVector3 m_position;
-		float m_rollOff;
-
-		ISoundSource::ESourceState m_state;
-	};
+		class CSoundSource : public ISoundSource
+		{
+		public:
+			CSoundSource(float length);
+			virtual ~CSoundSource();
+			
+			virtual void init(const STrackParams& trackParam, const SSourceParam& driverParam);
+			virtual bool needData();
+			
+			virtual void changeDuration(float duration);
+			
+			virtual void play();
+			virtual void stop();
+			virtual void pause();
+			virtual void reset();
+			
+			virtual ESourceState getState();
+			virtual void setState(ESourceState state);
+			
+			virtual long getByteOffset();
+			virtual void setByteOffset(int offset);
+			
+			virtual int getBufferSize();
+			
+			virtual void uploadData(void* soundData, unsigned int bufferSize);
+			
+			virtual void lockThread();
+			virtual void unlockThread();
+			
+			virtual void fillBuffer(int* buffer, int nbSample, float gain = 1.0f);
+			
+			virtual void setGain(float gain);
+			virtual void setPitch(float pitch);
+			virtual void setPosition(const SVector3& pos);
+			virtual void setRollOff(float rollOff);
+			virtual void set3DSound(bool b);
+			
+			virtual float getGain();
+			virtual float getPitch();
+			
+			virtual void update(float dt);
+			
+			virtual float getBufferLength();
+			virtual int getSampleRate();
+			
+		protected:
+			void update3D();
+			float calcDistanceGain(const SListener& listener);
+			void calcLeftRightGain(const SListener& listener, float& left, float& right);
+		protected:
+			STrackParams m_trackParams;
+			int m_numDriverBuffer;
+			int m_driverBuffer;
+			int m_driverBufferSize;
+			int m_driverSamplingRate;
+			
+			float m_bufferDuration;
+			int m_bufferSize;
+			int m_bitPerSample;
+			int m_numChannels;
+			
+			std::vector<SDriverBuffer> m_buffers;
+			IMutex* m_mutex;
+			
+			float m_distanceGain;
+			float m_leftGain;
+			float m_rightGain;
+			float m_gain;
+			float m_pitch;
+			
+			bool m_is3DSound;
+			SVector3 m_position;
+			float m_rollOff;
+			
+			ISoundSource::ESourceState m_state;
+		};
+	}
 }
-
-#endif
