@@ -38,7 +38,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CAudioEmitter.h"
 #include "CAudioReader.h"
 
-using namespace SkylichtSystem;
+using namespace Skylicht::System;
 
 namespace SkylichtAudio
 {

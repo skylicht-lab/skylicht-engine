@@ -27,79 +27,82 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #ifdef USE_PTHREAD
 
-namespace SkylichtSystem
+namespace Skylicht
 {
-	CPThread::CPThread(IThreadCallback *callback) :
+	namespace System
+	{
+		CPThread::CPThread(IThreadCallback *callback) :
 		IThread(callback),
 		m_run(false)
-	{
-		pthread_mutex_init(&m_loopMutex, 0);
-
-		int result = pthread_create(&m_pthread, 0, CPThread::run, this);
-		if (result != 0)
 		{
-			printf("CPThread::CPThread error in creating thread\n");
+			pthread_mutex_init(&m_loopMutex, 0);
+			
+			int result = pthread_create(&m_pthread, 0, CPThread::run, this);
+			if (result != 0)
+			{
+				printf("CPThread::CPThread error in creating thread\n");
+			}
 		}
-	}
-
-	CPThread::~CPThread()
-	{
-		stop();
-
-		pthread_mutex_destroy(&m_loopMutex);
-	}
-
-	void* CPThread::run(void *param)
-	{
-		CPThread* p = (CPThread*)param;
-		p->update();
-		return 0;
-	}
-
-	void CPThread::update()
-	{
-		if (m_callback == NULL)
-			return;
-
-		// todo run thread
-		m_run = m_callback->enableThreadLoop();
-
-		bool needUnlock = false;
-		if (m_run)
+		
+		CPThread::~CPThread()
 		{
-			pthread_mutex_lock(&m_loopMutex);
-			needUnlock = true;
+			stop();
+			
+			pthread_mutex_destroy(&m_loopMutex);
 		}
-
-		m_callback->runThread();
-
-		// callback
-		while (m_run)
+		
+		void* CPThread::run(void *param)
 		{
-			pthread_mutex_unlock(&m_loopMutex);
-			m_callback->updateThread();
-			pthread_mutex_lock(&m_loopMutex);
+			CPThread* p = (CPThread*)param;
+			p->update();
+			return 0;
 		}
-
-		if (needUnlock)
+		
+		void CPThread::update()
 		{
-			pthread_mutex_unlock(&m_loopMutex);
+			if (m_callback == NULL)
+				return;
+			
+			// todo run thread
+			m_run = m_callback->enableThreadLoop();
+			
+			bool needUnlock = false;
+			if (m_run)
+			{
+				pthread_mutex_lock(&m_loopMutex);
+				needUnlock = true;
+			}
+			
+			m_callback->runThread();
+			
+			// callback
+			while (m_run)
+			{
+				pthread_mutex_unlock(&m_loopMutex);
+				m_callback->updateThread();
+				pthread_mutex_lock(&m_loopMutex);
+			}
+			
+			if (needUnlock)
+			{
+				pthread_mutex_unlock(&m_loopMutex);
+			}
+			
+			// IThread::sleep(1);
 		}
-
-		// IThread::sleep(1);
-	}
-
-	void CPThread::stop()
-	{
-		if (m_run)
+		
+		void CPThread::stop()
 		{
-			printf("CPThread::stop\n");
-			pthread_mutex_lock(&m_loopMutex);
-			m_run = false;
-			pthread_mutex_unlock(&m_loopMutex);
-
-			pthread_join(m_pthread, 0);
-			printf("CPThread::stop Thread is stop!\n");
+			if (m_run)
+			{
+				printf("CPThread::stop\n");
+				pthread_mutex_lock(&m_loopMutex);
+				m_run = false;
+				pthread_mutex_unlock(&m_loopMutex);
+				
+				pthread_join(m_pthread, 0);
+				printf("CPThread::stop Thread is stop!\n");
+			}
 		}
 	}
 }

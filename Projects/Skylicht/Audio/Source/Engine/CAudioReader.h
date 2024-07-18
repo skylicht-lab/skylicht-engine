@@ -30,7 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Decoder/IAudioDecoder.h"
 #include "Thread/IMutex.h"
 
-using namespace SkylichtSystem;
+using namespace Skylicht::System;
 
 namespace SkylichtAudio
 {

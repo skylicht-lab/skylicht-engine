@@ -32,7 +32,7 @@ namespace Skylicht
 
 	CTouchManager::CTouchManager()
 	{
-		m_mutex = SkylichtSystem::IMutex::createMutex();
+		m_mutex = Skylicht::System::IMutex::createMutex();
 
 		resetTouch();
 	}
@@ -59,7 +59,7 @@ namespace Skylicht
 
 	void CTouchManager::update()
 	{
-		SkylichtSystem::SScopeMutex lockScope(m_mutex);
+		Skylicht::System::SScopeMutex lockScope(m_mutex);
 
 		int n = m_touchQueue.size();
 		if (n == 0)
@@ -81,7 +81,7 @@ namespace Skylicht
 
 	void CTouchManager::touchEvent(ETouchEvent touchEvent, int x, int y, long id)
 	{
-		SkylichtSystem::SScopeMutex lockScope(m_mutex);
+		Skylicht::System::SScopeMutex lockScope(m_mutex);
 
 		// todo add event to queue
 		STouchStatus t;

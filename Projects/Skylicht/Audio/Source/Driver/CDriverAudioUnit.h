@@ -35,7 +35,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Thread/IThread.h"
 #include "Thread/IMutex.h"
-using namespace SkylichtSystem;
+
+using namespace Skylicht::System;
 
 namespace SkylichtAudio
 {

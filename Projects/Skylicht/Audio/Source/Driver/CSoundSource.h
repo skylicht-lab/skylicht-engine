@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Thread/IMutex.h"
 #include "ISoundSource.h"
 
-using namespace SkylichtSystem;
+using namespace Skylicht::System;
 
 namespace SkylichtAudio
 {

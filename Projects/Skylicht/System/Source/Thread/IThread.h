@@ -26,60 +26,63 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "stdafx.h"
 
-namespace SkylichtSystem
+namespace Skylicht
 {
-	class IThreadCallback
+	namespace System
 	{
-	public:
-		IThreadCallback()
+		class IThreadCallback
 		{
-
-		}
-
-		virtual ~IThreadCallback()
+		public:
+			IThreadCallback()
+			{
+				
+			}
+			
+			virtual ~IThreadCallback()
+			{
+				
+			}
+			
+			virtual bool enableThreadLoop()
+			{
+				return true;
+			}
+			
+			virtual void runThread() {}
+			
+			virtual void updateThread() = 0;
+		};
+		
+		
+		class IThread
 		{
-
-		}
-
-		virtual bool enableThreadLoop()
-		{
-			return true;
-		}
-
-		virtual void runThread() {}
-
-		virtual void updateThread() = 0;
-	};
-
-
-	class IThread
-	{
-	protected:
-		IThreadCallback* m_callback;
-
-	public:
-		IThread(IThreadCallback* callback)
-		{
-			m_callback = callback;
-		}
-
-		virtual ~IThread()
-		{
-		}
-
-		IThreadCallback* getCallback()
-		{
-			return m_callback;
-		}
-
-		virtual void update() = 0;
-
-		virtual void stop() = 0;
-
-		static void sleep(unsigned int time);
-
-		static float getTime();
-
-		static IThread* createThread(IThreadCallback* callback);
-	};
+		protected:
+			IThreadCallback* m_callback;
+			
+		public:
+			IThread(IThreadCallback* callback)
+			{
+				m_callback = callback;
+			}
+			
+			virtual ~IThread()
+			{
+			}
+			
+			IThreadCallback* getCallback()
+			{
+				return m_callback;
+			}
+			
+			virtual void update() = 0;
+			
+			virtual void stop() = 0;
+			
+			static void sleep(unsigned int time);
+			
+			static float getTime();
+			
+			static IThread* createThread(IThreadCallback* callback);
+		};
+	}
 };

@@ -5,12 +5,12 @@
 bool g_threadRunPass = false;
 bool g_threadPass = false;
 bool g_threadRelease = false;
-SkylichtSystem::IThread* g_thread = NULL;
+Skylicht::System::IThread* g_thread = NULL;
 
 TestThreadCallback::TestThreadCallback()
 {
 	TEST_CASE("Mutex thread created");
-	m_mutex = SkylichtSystem::IMutex::createMutex();
+	m_mutex = Skylicht::System::IMutex::createMutex();
 	TEST_ASSERT_THROW(m_mutex != NULL);
 }
 
@@ -33,13 +33,13 @@ void TestThreadCallback::updateThread()
 		TEST_CASE("System mutex lock");
 
 	g_threadPass = true;
-	SkylichtSystem::SScopeMutex lock(m_mutex);
+	Skylicht::System::SScopeMutex lock(m_mutex);
 }
 
 void testSystemThread()
 {
 	TEST_CASE("System thread start");
-	g_thread = SkylichtSystem::IThread::createThread(new TestThreadCallback());
+	g_thread = Skylicht::System::IThread::createThread(new TestThreadCallback());
 
 	getIrrlichtDevice()->sleep(100);
 }

@@ -27,81 +27,84 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #ifdef USE_STDTHREAD
 
-namespace SkylichtSystem
+namespace Skylicht
 {
-	CSTDThread::CSTDThread(IThreadCallback* callback) :
+	namespace System
+	{
+		CSTDThread::CSTDThread(IThreadCallback* callback) :
 		IThread(callback),
 		m_run(false)
-	{
-		printf("[CSTDThread] created\n");
-		m_thread = new std::thread(CSTDThread::run, this);
-	}
-
-	CSTDThread::~CSTDThread()
-	{
-		stop();
-
-		delete m_thread;
-	}
-
-	void CSTDThread::update()
-	{
-		if (m_callback == NULL)
 		{
-			printf("[CSTDThread] quit - no Callback\n");
-			return;
+			printf("[CSTDThread] created\n");
+			m_thread = new std::thread(CSTDThread::run, this);
 		}
-
-		printf("[CSTDThread] run update\n");
-
-		// run thread
-		m_run = m_callback->enableThreadLoop();
-
-		bool needUnlock = false;
-		if (m_run)
+		
+		CSTDThread::~CSTDThread()
 		{
-			m_loopMutex.lock();
-			needUnlock = true;
+			stop();
+			
+			delete m_thread;
 		}
-
-		m_callback->runThread();
-
-		// callback
-		while (m_run)
+		
+		void CSTDThread::update()
 		{
-			m_loopMutex.unlock();
-			m_callback->updateThread();
-			m_loopMutex.lock();
+			if (m_callback == NULL)
+			{
+				printf("[CSTDThread] quit - no Callback\n");
+				return;
+			}
+			
+			printf("[CSTDThread] run update\n");
+			
+			// run thread
+			m_run = m_callback->enableThreadLoop();
+			
+			bool needUnlock = false;
+			if (m_run)
+			{
+				m_loopMutex.lock();
+				needUnlock = true;
+			}
+			
+			m_callback->runThread();
+			
+			// callback
+			while (m_run)
+			{
+				m_loopMutex.unlock();
+				m_callback->updateThread();
+				m_loopMutex.lock();
+			}
+			
+			if (needUnlock)
+			{
+				m_loopMutex.unlock();
+			}
+			
+			printf("[CSTDThread] end update\n");
+			
+			// IThread::sleep(1);
 		}
-
-		if (needUnlock)
+		
+		void CSTDThread::stop()
 		{
-			m_loopMutex.unlock();
+			if (m_run)
+			{
+				m_loopMutex.lock();
+				m_run = false;
+				m_loopMutex.unlock();
+				
+				m_thread->join();
+				printf("[CSTDThread] stop!\n");
+			}
 		}
-
-		printf("[CSTDThread] end update\n");
-
-		// IThread::sleep(1);
-	}
-
-	void CSTDThread::stop()
-	{
-		if (m_run)
+		
+		void* CSTDThread::run(void* param)
 		{
-			m_loopMutex.lock();
-			m_run = false;
-			m_loopMutex.unlock();
-
-			m_thread->join();
-			printf("[CSTDThread] stop!\n");
+			CSTDThread* p = reinterpret_cast<CSTDThread*>(param);
+			p->update();
+			return 0;
 		}
-	}
-
-	void* CSTDThread::run(void* param)
-	{
-		CSTDThread* p = reinterpret_cast<CSTDThread*>(param);
-		p->update();
-		return 0;
 	}
 }
 

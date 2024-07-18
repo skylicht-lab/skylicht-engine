@@ -30,20 +30,23 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include <pthread.h>
 
-namespace SkylichtSystem
+namespace Skylicht
 {
-	class CPThreadMutex : public IMutex
+	namespace System
 	{
-	protected:
-		pthread_mutex_t m_mutex;
-
-	public:
-		CPThreadMutex();
-		virtual ~CPThreadMutex();
-
-		virtual void lock();
-		virtual void unlock();
-	};
+		class CPThreadMutex : public IMutex
+		{
+		protected:
+			pthread_mutex_t m_mutex;
+			
+		public:
+			CPThreadMutex();
+			virtual ~CPThreadMutex();
+			
+			virtual void lock();
+			virtual void unlock();
+		};
+	}
 }
 
 #endif

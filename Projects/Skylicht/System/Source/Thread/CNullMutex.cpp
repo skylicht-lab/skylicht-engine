@@ -25,23 +25,28 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "stdafx.h"
 #include "CNullMutex.h"
 
-namespace SkylichtSystem
+namespace Skylicht
 {
-	CNullMutex::CNullMutex()
+	namespace System
 	{
-	}
-
-	CNullMutex::~CNullMutex()
-	{
-	}
-
-	void CNullMutex::lock()
-	{
-		// do nothing for nonthread system (Emscripten)
-	}
-
-	void CNullMutex::unlock()
-	{
-		// do nothing for nonthread system (Emscripten)
+		CNullMutex::CNullMutex()
+		{
+			
+		}
+		
+		CNullMutex::~CNullMutex()
+		{
+			
+		}
+		
+		void CNullMutex::lock()
+		{
+			// do nothing for nonthread system (Emscripten)
+		}
+		
+		void CNullMutex::unlock()
+		{
+			// do nothing for nonthread system (Emscripten)
+		}
 	}
 }

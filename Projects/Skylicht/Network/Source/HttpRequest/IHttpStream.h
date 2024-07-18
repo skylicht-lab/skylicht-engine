@@ -24,65 +24,31 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "pch.h"
-#include "IHttpStream.h"
-#include "Utils/CMemoryStream.h"
-
 namespace Skylicht
 {
 	namespace Network
 	{
-		class CHttpStream : public IHttpStream
+		class IHttpStream
 		{
-		protected:
-			CMemoryStream* m_memory;
-			
 		public:
-			CHttpStream(unsigned int datasize = 65536);
-			
-			virtual ~CHttpStream();
-			
-			virtual void write(void* data, unsigned int size);
-			
-			virtual const unsigned char* getData();
-			
-			virtual unsigned int getDataSize();
-			
-			virtual const char* getStreamPath()
-			{
-				return NULL;
+			IHttpStream()
+			{				
 			}
 			
-		};
-		
-		class CHttpFileStream : public IHttpStream
-		{
-		protected:
-			io::IWriteFile* m_file;
-			std::string m_filePath;
-			
-		public:
-			CHttpFileStream(const char* fileName);
-			
-			virtual ~CHttpFileStream();
-			
-			virtual void write(void* data, unsigned int size);
-			
-			virtual void endStream();
-			
-			virtual const unsigned char* getData()
+			virtual ~IHttpStream()
 			{
-				return NULL;
 			}
 			
-			virtual unsigned int getDataSize()
-			{
-				return 0;
-			}
+			virtual void write(void* data, unsigned int size) = 0;
 			
-			virtual const char* getStreamPath()
+			virtual const unsigned char* getData() = 0;
+			
+			virtual unsigned int getDataSize() = 0;
+			
+			virtual const char* getStreamPath() = 0;
+			
+			virtual void endStream()
 			{
-				return m_filePath.c_str();
 			}
 		};
 	}

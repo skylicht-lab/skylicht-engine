@@ -27,24 +27,27 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #ifdef USE_STDTHREAD
 
-namespace SkylichtSystem
+namespace Skylicht
 {
-	CSTDThreadMutex::CSTDThreadMutex()
+	namespace System
 	{
-	}
+		CSTDThreadMutex::CSTDThreadMutex()
+		{
+		}
 
-	CSTDThreadMutex::~CSTDThreadMutex()
-	{
-	}
+		CSTDThreadMutex::~CSTDThreadMutex()
+		{
+		}
 
-	void CSTDThreadMutex::lock()
-	{
-		m_mutex.lock();
-	}
+		void CSTDThreadMutex::lock()
+		{
+			m_mutex.lock();
+		}
 
-	void CSTDThreadMutex::unlock()
-	{
-		m_mutex.unlock();
+		void CSTDThreadMutex::unlock()
+		{
+			m_mutex.unlock();
+		}
 	}
 }
 
