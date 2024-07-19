@@ -64,7 +64,7 @@ namespace Skylicht
 			m_toolBar->addButton(L"Save", GUI::ESystemIcon::Save);
 			m_toolBar->addSpace();
 
-			btn = m_toolBar->addButton(L"Zoom in", GUI::ESystemIcon::ZoomIn);;
+			btn = m_toolBar->addButton(L"Zoom in", GUI::ESystemIcon::ZoomIn);
 			btn->OnPress = BIND_LISTENER(&CSpaceGUIDesign::onZoomIn, this);
 
 			btn = m_toolBar->addButton(L"Zoom out", GUI::ESystemIcon::ZoomOut);
@@ -74,6 +74,12 @@ namespace Skylicht
 			m_toolBar->addButton(L"Copy", GUI::ESystemIcon::Copy);
 			m_toolBar->addButton(L"Paste", GUI::ESystemIcon::Paste);
 
+			m_toolBar->addSpace();
+			btn = m_toolBar->addButton(L"Setting", GUI::ESystemIcon::Setting, true);
+			m_canvasSettingMenu = new GUI::CMenu(window->getCanvas());
+			m_canvasSettingController = new CCanvasSettingController(editor, m_canvasSettingMenu);
+			btn->OnPress = BIND_LISTENER(&CSpaceGUIDesign::onSetting, this);
+			
 			m_textMousePos = new GUI::CLabel(m_toolBar);
 			m_toolBar->addControl(m_textMousePos, true);
 			m_textMousePos->setPadding(GUI::SPadding(0.0f, 3.0f, 0.0f, 0.0f));
@@ -460,6 +466,12 @@ namespace Skylicht
 			}
 		}
 
+		void CSpaceGUIDesign::onSetting(GUI::CBase* base)
+		{
+			m_canvasSettingMenu->open(base);
+			m_canvasSettingController->onShow();
+		}
+	
 		void CSpaceGUIDesign::onRender(GUI::CBase* base)
 		{
 			// flush 2d gui
