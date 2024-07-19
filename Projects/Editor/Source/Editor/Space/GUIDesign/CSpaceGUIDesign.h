@@ -29,6 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "EditorComponents/Handles/CGUIHandlesRenderer.h"
 #include "Editor/Gizmos/GUITransform/CGUITransformGizmos.h"
 #include "Selection/CGUISelecting.h"
+#include "CCanvasSettingController.h"
 
 namespace Skylicht
 {
@@ -70,6 +71,9 @@ namespace Skylicht
 			CGUITransformGizmos* m_gizmos;
 			CGUISelecting* m_selecting;
 
+			GUI::CMenu* m_canvasSettingMenu;
+			CCanvasSettingController* m_canvasSettingController;
+			
 		public:
 			CSpaceGUIDesign(GUI::CWindow* window, CEditor* editor);
 
@@ -103,6 +107,8 @@ namespace Skylicht
 
 			void doZoomOut(float dx, float dy);
 
+			void onSetting(GUI::CBase* base);
+			
 			void onRender(GUI::CBase* base);
 
 			void postMouseEventToHandles(EMOUSE_INPUT_EVENT eventType);

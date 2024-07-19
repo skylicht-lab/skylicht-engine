@@ -59,7 +59,7 @@ namespace Skylicht
 		STouchStatus	m_touch[MAX_MULTITOUCH];
 		CTouchIdentify	m_touchIdentify;
 
-		Skylicht::System::IMutex* m_mutex;
+		System::IMutex* m_mutex;
 
 	public:
 		CTouchManager();

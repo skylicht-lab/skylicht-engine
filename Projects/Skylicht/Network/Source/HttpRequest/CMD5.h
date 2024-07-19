@@ -4,12 +4,14 @@
 
 namespace Skylicht
 {
-	class CMD5
+	namespace Network
 	{
-	public:
-		static std::string calc(const char* file);
-
-		static std::string calc(unsigned char* buffer, int size);
-	};
-
+		class CMD5
+		{
+		public:
+			static std::string calc(const char* file);
+			
+			static std::string calc(unsigned char* buffer, int size);
+		};
+	}
 }

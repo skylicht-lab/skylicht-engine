@@ -72,10 +72,10 @@ namespace Skylicht
 
 							// parse sid in 40{sid:"xxxxx"};
 							char id[512];
-							int pos = Skylicht::CStringImp::find<const char>(message.c_str(), ":\"");
+							int pos = CStringImp::find<const char>(message.c_str(), ":\"");
 							if (pos > 0)
 							{
-								if (Skylicht::CStringImp::getBlock(id, message.c_str(), "\"", pos + 1) > 0)
+								if (CStringImp::getBlock(id, message.c_str(), "\"", pos + 1) > 0)
 								{
 									g_currentIO->setSocketID(id);
 								}
@@ -98,10 +98,10 @@ namespace Skylicht
 							std::string data = message.c_str() + 2;
 							char id[16];
 
-							int pos = Skylicht::CStringImp::find<const char>(data.c_str(), '[');
+							int pos = CStringImp::find<const char>(data.c_str(), '[');
 							if (pos > 0)
 							{
-								Skylicht::CStringImp::mid(id, data.c_str(), 0, pos);
+								CStringImp::mid(id, data.c_str(), 0, pos);
 
 								data = data.c_str() + pos;
 								g_currentIO->onMessageAsk(data, atoi(id));

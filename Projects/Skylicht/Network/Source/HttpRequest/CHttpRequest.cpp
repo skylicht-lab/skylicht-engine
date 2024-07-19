@@ -183,11 +183,11 @@ namespace Skylicht
 		void CHttpRequest::sendRequestByPut()
 		{
 			m_lastptr = NULL;
+			m_postField.clear();
 			
 			bool first = true;
-			
 			char format[32 * 1024];
-			
+						
 			std::vector<SForm>::iterator i = m_post.begin(), end = m_post.end();
 			while (i != end)
 			{
@@ -209,7 +209,8 @@ namespace Skylicht
 				i++;
 			}
 			
-			m_postField += "}";
+			if (m_postField.empty() == false)
+				m_postField += "}";
 			
 			m_sendRequest = true;
 			
@@ -312,6 +313,7 @@ namespace Skylicht
 			
 			m_formpost = NULL;
 			m_lastptr = NULL;
+			m_postField.clear();
 			
 			std::vector<SForm>::iterator i = m_post.begin(), end = m_post.end();
 			while (i != end)
@@ -406,6 +408,7 @@ namespace Skylicht
 		void CHttpRequest::sendRequestByPostJson()
 		{
 			m_lastptr = NULL;
+			m_postField.clear();
 			
 			bool first = true;
 			char format[32 * 1024];
@@ -435,7 +438,8 @@ namespace Skylicht
 				i++;
 			}
 			
-			m_postField += "}";
+			if (m_postField.empty() == false)
+				m_postField += "}";
 			
 			m_sendRequest = true;
 			
