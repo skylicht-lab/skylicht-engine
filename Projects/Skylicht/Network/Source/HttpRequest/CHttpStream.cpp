@@ -44,22 +44,6 @@ namespace Skylicht
 		
 		void CHttpStream::write(void* data, unsigned int size)
 		{
-			if (m_memory->getSize() + size >= m_memory->getTotalSize())
-			{
-				os::Printer::log("CHttpStream::write (out size) - realloc new size\n");
-				int newDataSize = (m_memory->getTotalSize() + size) * 2;
-				
-				CMemoryStream* mem = new CMemoryStream(newDataSize);
-				memset(mem->getData(), 0, newDataSize);
-				
-				// write old data
-				mem->writeData(m_memory->getData(), m_memory->getSize());
-				
-				// delete old data
-				delete m_memory;
-				m_memory = mem;
-			}
-			
 			m_memory->writeData(data, size);
 		}
 		
