@@ -31,8 +31,10 @@ namespace Skylicht
 	class SKYLICHT_API CGUIImporter
 	{
 	public:
+		static bool loadGUI(const char* file, CCanvas* canvas);
+		
 		static bool beginImport(const char* file, CCanvas* canvas);
-
+		
 		static bool updateLoadGUI();
 
 		static float getLoadingPercent();

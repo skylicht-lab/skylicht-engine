@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "CViewInit.h"
+#include "CViewHeader.h"
 #include "CViewDemo.h"
 
 #include "ViewManager/CViewManager.h"
@@ -201,7 +202,10 @@ void CViewInit::onUpdate()
 		if (scene != NULL)
 			scene->update();
 
-		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
+		
+		CViewManager* viewMgr = CViewManager::getInstance();
+		viewMgr->getLayer(0)->changeView<CViewDemo>();
+		viewMgr->getLayer(1)->pushView<CViewHeader>();
 	}
 	break;
 	}

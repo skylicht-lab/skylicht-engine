@@ -219,4 +219,19 @@ namespace Skylicht
 		int size = (int)g_listGUIObject.size();
 		return g_guiLoading / (float)size;
 	}
+
+	bool CGUIImporter::loadGUI(const char* file, CCanvas* canvas)
+	{
+		if (!beginImport(file, canvas))
+			return false;
+		
+		bool finish = false;
+		do
+		{
+			finish = updateLoadGUI();
+		}
+		while (!finish);
+		
+		return true;
+	}
 }
