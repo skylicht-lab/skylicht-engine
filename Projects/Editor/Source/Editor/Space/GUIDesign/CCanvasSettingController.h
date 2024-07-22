@@ -54,6 +54,12 @@ namespace Skylicht
 			void onOK(GUI::CBase* base);
 
 			void onChanged(GUI::CBase* base);
+			
+		private:
+			
+			void enableTabGroup();
+			
+			void clearTabGroup();
 		};
 	}
 }
