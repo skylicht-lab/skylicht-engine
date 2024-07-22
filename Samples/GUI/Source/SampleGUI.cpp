@@ -16,7 +16,10 @@ void installApplication(const std::vector<std::string>& argv)
 SampleGUI::SampleGUI()
 {
 	CContext::createGetInstance();
-	CViewManager::createGetInstance()->initViewLayer(1);
+	// layer 0: Main GUI
+	// layer 1: Header
+	// layer 2: Popup
+	CViewManager::createGetInstance()->initViewLayer(3);
 	CLightmapper::createGetInstance();
 
 	CImguiManager::createGetInstance();

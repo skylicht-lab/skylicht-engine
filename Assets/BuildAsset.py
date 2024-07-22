@@ -2,7 +2,7 @@ import zipfile
 import os
 
 compressExt = ["xml", "ttf", "otf", "txt",
-               "spritedata",
+               "spritedata","gui",
                "mat",
                "hlsl", "glsl",
                "png", "jpg",
