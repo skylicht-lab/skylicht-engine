@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CCanvasSettingController.h"
 #include "Editor/SpaceController/CSceneController.h"
+#include "GUI/Utils/CTabableGroup.h"
 
 namespace Skylicht
 {
@@ -98,17 +99,55 @@ namespace Skylicht
 
 		void CCanvasSettingController::onShow()
 		{
+			CScene* scene = CSceneController::getInstance()->getScene();
+			CGameObject* canvasObj = scene->searchObjectInChild(L"GUICanvas");
 			
+			CCanvas* canvas = canvasObj->getComponent<CCanvas>();
+			CGUIElement* root = canvas->getRootElement();
+			float w = root->getWidth();
+			float h = root->getHeight();
+			
+			m_inputWidth->setValue(w, false);
+			m_inputHeight->setValue(h, false);
+			
+			enableTabGroup();
 		}
 
+		void CCanvasSettingController::enableTabGroup()
+		{
+			GUI::CTabableGroup& tabGroup = m_menu->getCanvas()->TabableGroup;
+			tabGroup.add(m_inputWidth);
+			tabGroup.add(m_inputHeight);
+		}
+		
+		void CCanvasSettingController::clearTabGroup()
+		{
+			GUI::CTabableGroup& tabGroup = m_menu->getCanvas()->TabableGroup;
+			tabGroup.remove(m_inputWidth);
+			tabGroup.remove(m_inputHeight);
+		}
+	
 		void CCanvasSettingController::onCancel(GUI::CBase* base)
 		{
 			m_menu->close();
+			clearTabGroup();
 		}
 
 		void CCanvasSettingController::onOK(GUI::CBase* base)
 		{
+			float w = m_inputWidth->getValue();
+			float h = m_inputHeight->getValue();
+			
+			CScene* scene = CSceneController::getInstance()->getScene();
+			CGameObject* canvasObj = scene->searchObjectInChild(L"GUICanvas");
+			
+			CCanvas* canvas = canvasObj->getComponent<CCanvas>();
+			CGUIElement* root = canvas->getRootElement();
+			
+			root->setRect(core::rectf(0.0f, 0.0f, w, h));
+			
 			m_menu->close();
+			clearTabGroup();
 		}
 
 		void CCanvasSettingController::onChanged(GUI::CBase* base)

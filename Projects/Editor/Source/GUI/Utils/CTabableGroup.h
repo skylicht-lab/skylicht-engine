@@ -53,16 +53,16 @@ namespace Skylicht
 				};
 
 				std::list<SElement> m_list;
-
+				
 			public:
 				CTabableGroup();
 
 				virtual ~CTabableGroup();
 
 				void disableAllControl();
-
+				
 				void setEnableControl(CBase* control);
-
+				
 				void add(CBase* control);
 
 				void remove(CBase* control);
