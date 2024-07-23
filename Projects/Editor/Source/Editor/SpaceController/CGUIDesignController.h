@@ -112,6 +112,14 @@ namespace Skylicht
 
 			CGUIHierachyNode* selectOnHierachy(CGUIElement* element);
 
+			void onCopy();
+			
+			void onPaste();
+			
+			void onDuplicate();
+			
+			void onCut();
+			
 		protected:
 
 			void rebuildGUIHierachy(CGUIElement* parent, CGUIHierachyNode* parentNode);
