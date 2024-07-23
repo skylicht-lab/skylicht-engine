@@ -35,7 +35,8 @@ namespace Skylicht
 		Source(this, "source"),
 		FontSizePt(this, "fontSizePt", 20.0f),
 		m_font(NULL),
-		m_sizePt(0.0f)
+		m_sizePt(0.0f),
+		m_revision(0)
 	{
 		// font source
 		Source.Exts.push_back("ttf");
@@ -54,17 +55,19 @@ namespace Skylicht
 	CFontSource::~CFontSource()
 	{
 		if (m_font)
-			delete m_font;
+			m_font->drop();
 	}
 
 	IFont* CFontSource::initFont()
 	{
+		m_revision++;
+		
 		const std::string& fontPath = Source.get();
 		if (fontPath.empty())
 		{
 			if (m_font)
 			{
-				delete m_font;
+				m_font->drop();
 				m_font = NULL;
 			}
 
@@ -92,7 +95,7 @@ namespace Skylicht
 				if (CGlyphFreetype::getInstance()->initFont(fontName.c_str(), fontPath.c_str()))
 				{
 					if (m_font)
-						delete m_font;
+						m_font->drop();
 
 					m_font = new CGlyphFont(fontName.c_str(), FontSizePt.get());
 
@@ -110,14 +113,14 @@ namespace Skylicht
 			}
 
 			if (m_font)
-				delete m_font;
+				m_font->drop();
 
 			CSpriteFont* spriteFont = new CSpriteFont();
 			if (spriteFont->loadFont(fontPath.c_str()))
 				m_font = spriteFont;
 			else
 			{
-				delete spriteFont;
+				spriteFont->drop();
 				m_font = NULL;
 			}
 

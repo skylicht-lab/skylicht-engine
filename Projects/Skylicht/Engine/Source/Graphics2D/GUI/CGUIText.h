@@ -76,7 +76,8 @@ namespace Skylicht
 		std::string m_fontGUID;
 
 		CFontSource* m_fontData;
-
+		int m_fontChanged;
+		
 		float m_lastWidth;
 		float m_lastHeight;
 	protected:

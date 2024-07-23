@@ -36,7 +36,6 @@ namespace Skylicht
 		protected:
 			std::string m_path;
 
-			IFont* m_font;
 			CFontSource* m_fontSource;
 
 		public:
