@@ -502,5 +502,25 @@ namespace Skylicht
 			// refresh editor
 			CEditor::getInstance()->refresh();
 		}
+	
+		void CGUIDesignController::onCopy()
+		{
+		
+		}
+		
+		void CGUIDesignController::onPaste()
+		{
+			
+		}
+		
+		void CGUIDesignController::onDuplicate()
+		{
+			
+		}
+		
+		void CGUIDesignController::onCut()
+		{
+			
+		}
 	}
 }

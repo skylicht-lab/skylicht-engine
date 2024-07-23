@@ -180,12 +180,15 @@ namespace Skylicht
 		{
 			if (hotkey == "Ctrl + C")
 			{
+				CGUIDesignController::getInstance()->onCopy();
 			}
 			else if (hotkey == "Ctrl + V")
 			{
+				CGUIDesignController::getInstance()->onPaste();
 			}
 			else if (hotkey == "Ctrl + D")
 			{
+				CGUIDesignController::getInstance()->onDuplicate();
 			}
 			else if (hotkey == "Ctrl + Z")
 			{

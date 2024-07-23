@@ -118,6 +118,22 @@ namespace Skylicht
 				m_contextNode->remove();
 				m_contextNode = NULL;
 			}
+			else if (command == L"Copy")
+			{
+				CGUIDesignController::getInstance()->onCopy();
+			}
+			else if (command == L"Paste")
+			{
+				CGUIDesignController::getInstance()->onPaste();
+			}
+			else if (command == L"Duplicate")
+			{
+				CGUIDesignController::getInstance()->onDuplicate();
+			}
+			else if (command == L"Cut")
+			{
+				CGUIDesignController::getInstance()->onCut();
+			}
 		}
 
 		void CContextMenuGUIElement::OnContextMenuAddCommand(GUI::CBase* sender)

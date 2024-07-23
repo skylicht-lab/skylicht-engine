@@ -180,6 +180,23 @@ namespace Skylicht
 				contextEntity == NULL)
 				return;
 
+			if (command == L"Copy")
+			{
+				CSceneController::getInstance()->onCopy();
+			}
+			else if (command == L"Paste")
+			{
+				CSceneController::getInstance()->onPaste();
+			}
+			else if (command == L"Duplicate")
+			{
+				CSceneController::getInstance()->onDuplicate();
+			}
+			else if (command == L"Cut")
+			{
+				CSceneController::getInstance()->onCut();
+			}
+			
 			if (contextObject != NULL)
 			{
 				if (command == L"Empty Object")
