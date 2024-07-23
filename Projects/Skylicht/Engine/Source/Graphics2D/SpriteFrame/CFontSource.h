@@ -53,6 +53,8 @@ namespace Skylicht
 		std::string m_source;
 		float m_sizePt;
 
+		int m_revision;
+		
 	public:
 		CFontSource();
 
@@ -65,14 +67,19 @@ namespace Skylicht
 			return m_font;
 		}
 
-		const void setPath(const char* path)
+		inline const void setPath(const char* path)
 		{
 			m_path = path;
 		}
 
-		const char* getPath()
+		inline const char* getPath()
 		{
 			return m_path.c_str();
+		}
+		
+		inline int getChangeRevision()
+		{
+			return m_revision;
 		}
 	};
 }

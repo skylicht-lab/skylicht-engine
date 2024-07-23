@@ -42,8 +42,7 @@ namespace Skylicht
 		ASSET_EDITOR_REGISTER(CFontEditor, font);
 
 		CFontEditor::CFontEditor() :
-			m_fontSource(NULL),
-			m_font(NULL)
+			m_fontSource(NULL)
 		{
 
 		}
@@ -62,12 +61,6 @@ namespace Skylicht
 					m_fontSource->save(m_path.c_str());
 			}
 
-			if (m_fontSource)
-			{
-				delete m_fontSource;
-				m_fontSource = NULL;
-			}
-
 			// close
 			CAssetEditor::closeGUI();
 		}
@@ -76,9 +69,9 @@ namespace Skylicht
 		{
 			CEditor* editor = CEditor::getInstance();
 
-			m_fontSource = new CFontSource();
+			m_fontSource = CFontManager::getInstance()->loadFontSource(path);
 			CSerializableLoader::loadSerializable(path, m_fontSource);
-			m_font = m_fontSource->initFont();
+			m_fontSource->initFont();
 
 			m_path = path;
 
@@ -113,14 +106,14 @@ namespace Skylicht
 			}
 
 			if (m_fontSource)
-				m_font = m_fontSource->initFont();
+				m_fontSource->initFont();
 		}
 
 		void CFontEditor::onRenderPreview(GUI::CBase* base)
 		{
 			if (!m_fontSource || m_fontSource->getFont() == NULL)
 				return;
-
+			
 			// flush 2d gui
 			GUI::CGUIContext::getRenderer()->flush();
 			IVideoDriver* driver = getVideoDriver();
@@ -157,7 +150,7 @@ namespace Skylicht
 				float y = 10.0f;
 				float w = viewport.getWidth() - 2.0f * x;
 
-				SModuleOffset* moduleCharA = m_font->getCharacterModule((int)'A');
+				SModuleOffset* moduleCharA = font->getCharacterModule((int)'A');
 				if (moduleCharA)
 				{
 					float charHeight = moduleCharA->OffsetY + moduleCharA->Module->H;
@@ -187,7 +180,9 @@ namespace Skylicht
 
 		void CFontEditor::renderString(const wchar_t* text, float& px, float& py, float x, float w)
 		{
-			SModuleOffset* moduleCharA = m_font->getCharacterModule((int)'A');
+			IFont* font = m_fontSource->getFont();
+			
+			SModuleOffset* moduleCharA = font->getCharacterModule((int)'A');
 			float charHeight = moduleCharA->OffsetY + moduleCharA->Module->H;
 
 			CGraphics2D* g = CGraphics2D::getInstance();
@@ -199,7 +194,7 @@ namespace Skylicht
 			int i = 0;
 			while (text[i] != 0)
 			{
-				SModuleOffset* c = m_font->getCharacterModule((int)text[i]);
+				SModuleOffset* c = font->getCharacterModule((int)text[i]);
 				if (c != NULL)
 					modules.push_back(c);
 
@@ -209,7 +204,7 @@ namespace Skylicht
 			float spacePadding = 0.0f;
 			float charPadding = 0.0f;
 
-			m_font->updateFontTexture();
+			font->updateFontTexture();
 
 			for (int i = 0, n = (int)modules.size(); i < n; i++)
 			{

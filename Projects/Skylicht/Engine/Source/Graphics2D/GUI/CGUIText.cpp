@@ -44,9 +44,12 @@ namespace Skylicht
 		m_customfont(font),
 		m_fontData(NULL),
 		m_lastWidth(0.0f),
-		m_lastHeight(0.0f)
+		m_lastHeight(0.0f),
+		m_fontChanged(-1)
 	{
 		m_enableMaterial = true;
+		
+		init();
 	}
 
 	CGUIText::CGUIText(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect, IFont* font) :
@@ -63,7 +66,8 @@ namespace Skylicht
 		m_customfont(font),
 		m_fontData(NULL),
 		m_lastWidth(0.0f),
-		m_lastHeight(0.0f)
+		m_lastHeight(0.0f),
+		m_fontChanged(-1)
 	{
 		init();
 	}
@@ -412,10 +416,22 @@ namespace Skylicht
 			return;
 		}
 
-		if (font != m_font)
+		// fix: sometime font address pointer is not change (so font != m_font is not correct)
+		bool fontChanged = false;
+		if (m_fontData)
+		{
+			if (m_fontData->getChangeRevision() != m_fontChanged)
+			{
+				m_fontChanged =m_fontData->getChangeRevision();
+				fontChanged = true;
+			}
+		}
+		
+		if (fontChanged || font != m_font)
 		{
 			initFont(font);
 			m_font = font;
+			m_updateTextRender = true;
 		}
 
 		const core::rectf& rect = getRect();
