@@ -188,6 +188,14 @@ namespace Skylicht
 				addSelect(s);
 			}
 		}
+	
+		void CSelection::addSelect(const std::vector<CGUIElement*>& ui)
+		{
+			for (CGUIElement* s : ui)
+			{
+				addSelect(s);
+			}
+		}
 
 		bool CSelection::unSelect(CGameObject* obj)
 		{

@@ -72,4 +72,19 @@ namespace Skylicht
 			}
 		}
 	}
+
+	CObjectSerializable* CGUIExporter::createSerializable(CGUIElement* ui)
+	{
+		CObjectSerializable* object = ui->createSerializable();
+
+		if (ui->getChilds().size())
+		{
+			CObjectSerializable* childs = new CObjectSerializable("Childs");
+			object->addProperty(childs);
+			object->autoRelease(childs);
+			addChild(ui, childs);
+		}
+		
+		return object;
+	}
 }

@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Editor/CEditor.h"
 #include "Editor/Space/GUIDesign/CSpaceGUIDesign.h"
 #include "Editor/SpaceController/CPropertyController.h"
+#include "CopyPaste/CCopyPasteUI.h"
 #include "GUI/Utils/CDragAndDrop.h"
 #include "CGUIDesignController.h"
 #include "CSceneController.h"
@@ -505,12 +506,69 @@ namespace Skylicht
 	
 		void CGUIDesignController::onCopy()
 		{
-		
+			CScene* scene = CSceneController::getInstance()->getScene();
+			if (!scene)
+				return;
+			
+			CSelection* selection = CSelection::getInstance();
+			std::vector<CSelectObject*>& selected = selection->getAllSelected();
+
+			std::vector<CGUIElement*> listUI;
+
+			CGameObject* guiCanvas = scene->searchObjectInChild(L"GUICanvas");
+			CCanvas* canvas = guiCanvas->getComponent<CCanvas>();
+			
+			for (CSelectObject* selectObject : selected)
+			{
+				CSelectObject::ESelectType type = selectObject->getType();
+				if (type == CSelectObject::GUIElement)
+				{
+					CGUIElement* gui = canvas->getGUIByID(selectObject->getID().c_str());
+					if (gui)
+						listUI.push_back(gui);
+				}
+			}
+
+			CCopyPasteUI::getInstance()->copy(listUI);
 		}
 		
 		void CGUIDesignController::onPaste()
 		{
+			CScene* scene = CSceneController::getInstance()->getScene();
+			if (!scene)
+				return;
+
+			CGameObject* guiCanvas = scene->searchObjectInChild(L"GUICanvas");
+			CCanvas* canvas = guiCanvas->getComponent<CCanvas>();
 			
+			CSelection* selection = CSelection::getInstance();
+			CCopyPasteUI* copyPaste = CCopyPasteUI::getInstance();
+
+			std::vector<CGUIElement*> newUIs;
+
+			CSelectObject* lastSelected = selection->getLastSelected();
+			if (lastSelected == NULL)
+			{
+				CCopyPasteUI::getInstance()->paste(canvas->getRootElement());
+			}
+			else
+			{
+				if (lastSelected->getType() == CSelectObject::GUIElement)
+				{
+					CGUIElement* gui = canvas->getGUIByID(lastSelected->getID().c_str());
+					if (gui)
+					{
+						CCopyPasteUI::getInstance()->paste(gui->getParent());
+					}
+					else
+					{
+						CCopyPasteUI::getInstance()->paste(canvas->getRootElement());
+					}
+				}
+			}
+
+			selection->clear();
+			selection->addSelect(newUIs);
 		}
 		
 		void CGUIDesignController::onDuplicate()

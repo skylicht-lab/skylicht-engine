@@ -234,4 +234,56 @@ namespace Skylicht
 		
 		return true;
 	}
+
+	CGUIElement* CGUIImporter::importGUI(CCanvas* canvas, CGUIElement* parent, CObjectSerializable* obj)
+	{
+		core::rectf nullRect;
+		SColor nullColor;
+		
+		CGUIElement *element = NULL;
+		
+		const std::string& type = obj->Name;
+		
+		if (type == "CGUIElement")
+			element = canvas->createElement(parent, nullRect);
+		else if (type == "CGUIImage")
+			element = canvas->createImage(parent, nullRect);
+		else if (type == "CGUIMask")
+			element = canvas->createMask(parent, nullRect);
+		else if (type == "CGUIRect")
+			element = canvas->createRect(parent, nullRect, nullColor);
+		else if (type == "CGUISprite")
+			element = canvas->createSprite(parent, nullRect, NULL);
+		else if (type == "CGUIText")
+			element = canvas->createText(parent, nullRect, NULL);
+		else if (type == "CGUILayout")
+			element = canvas->createLayout(parent, nullRect);
+		else if (type == "CGUICustomSizeSprite")
+			element = canvas->createFitSprite(parent, nullRect, NULL);			
+		
+		if (!element)
+			return NULL;
+			
+		element->loadSerializable(obj);
+		
+		CValueProperty* childs = obj->getProperty("Childs");
+		if (childs && childs->getType() == Skylicht::Object)
+		{
+			CObjectSerializable* objs = dynamic_cast<CObjectSerializable*>(childs);
+			if (objs)
+			{
+				for (u32 i = 0, n = objs->getNumProperty(); i < n; i++)
+				{
+					CValueProperty *obj = objs->getPropertyID(i);
+					if (obj->getType() == Skylicht::Object)
+					{
+						CObjectSerializable* uiObj = dynamic_cast<CObjectSerializable*>(obj);
+						importGUI(canvas, element, uiObj);
+					}
+				}
+			}
+		}
+		
+		return element;
+	}
 }
