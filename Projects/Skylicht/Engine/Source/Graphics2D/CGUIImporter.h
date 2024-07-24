@@ -39,6 +39,8 @@ namespace Skylicht
 
 		static float getLoadingPercent();
 
+		static CGUIElement* importGUI(CCanvas* canvas, CGUIElement* target, CObjectSerializable* obj);
+		
 	protected:
 
 		static bool loadStep(CCanvas* canvas, io::IXMLReader* reader);
