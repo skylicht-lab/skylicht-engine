@@ -176,6 +176,10 @@ namespace Skylicht
 
 		public:
 
+			void onSaveScene();
+			
+			void onSaveGUICanvas();
+			
 			void showProjectSetting();
 
 			void showGoogleMap();

@@ -61,7 +61,10 @@ namespace Skylicht
 			GUI::CButton* btn = NULL;
 			m_toolBar = new GUI::CToolbar(window);
 			m_toolBar->addButton(L"New", GUI::ESystemIcon::NewFile);
-			m_toolBar->addButton(L"Save", GUI::ESystemIcon::Save);
+			
+			btn = m_toolBar->addButton(L"Save", GUI::ESystemIcon::Save);
+			btn->OnPress = BIND_LISTENER(&CSpaceGUIDesign::onSave, this);
+			
 			m_toolBar->addSpace();
 
 			btn = m_toolBar->addButton(L"Zoom in", GUI::ESystemIcon::ZoomIn);
@@ -71,9 +74,12 @@ namespace Skylicht
 			btn->OnPress = BIND_LISTENER(&CSpaceGUIDesign::onZoomOut, this);
 
 			m_toolBar->addSpace();
-			m_toolBar->addButton(L"Copy", GUI::ESystemIcon::Copy);
-			m_toolBar->addButton(L"Paste", GUI::ESystemIcon::Paste);
-
+			btn = m_toolBar->addButton(L"Copy", GUI::ESystemIcon::Copy);
+			btn->OnPress = BIND_LISTENER(&CSpaceGUIDesign::onCopy, this);
+			
+			btn = m_toolBar->addButton(L"Paste", GUI::ESystemIcon::Paste);
+			btn->OnPress = BIND_LISTENER(&CSpaceGUIDesign::onPaste, this);
+			
 			m_toolBar->addSpace();
 			btn = m_toolBar->addButton(L"Setting", GUI::ESystemIcon::Setting, true);
 			m_canvasSettingMenu = new GUI::CMenu(window->getCanvas());
@@ -470,6 +476,26 @@ namespace Skylicht
 		{
 			m_canvasSettingMenu->open(base);
 			m_canvasSettingController->onShow();
+		}
+	
+		void CSpaceGUIDesign::onNew(GUI::CBase* base)
+		{
+			
+		}
+		
+		void CSpaceGUIDesign::onSave(GUI::CBase* base)
+		{
+			CEditor::getInstance()->onSaveGUICanvas();
+		}
+	
+		void CSpaceGUIDesign::onCopy(GUI::CBase* base)
+		{
+			CGUIDesignController::getInstance()->onCopy();
+		}
+
+		void CSpaceGUIDesign::onPaste(GUI::CBase* base)
+		{
+			CGUIDesignController::getInstance()->onPaste();
 		}
 	
 		void CSpaceGUIDesign::onRender(GUI::CBase* base)

@@ -233,22 +233,27 @@ namespace Skylicht
 				std::wstring newName = nameHint + L" " + newNode->getNameW();
 				newNode->setName(newName.c_str());
 
-				CGUIHierachyNode* node = parent->addChild();
-				node->setName(newName.c_str());
-				node->setTagData(newNode, CGUIHierachyNode::GUIElement);
-
-				setNodeEvent(node);
-
-				if (newNode->getChilds().size() > 0)
-				{
-					rebuildGUIHierachy(newNode, node);
-				}
-
-				if (m_spaceHierarchy != NULL)
-					m_spaceHierarchy->addToTreeNode(node);
+				createGUINode(parent, newNode);
 			}
 		}
 
+		void CGUIDesignController::createGUINode(CGUIHierachyNode* parent, CGUIElement* node)
+		{
+			CGUIHierachyNode* guiNode = parent->addChild();
+			guiNode->setName(node->getNameW().c_str());
+			guiNode->setTagData(node, CGUIHierachyNode::GUIElement);
+
+			setNodeEvent(guiNode);
+
+			if (node->getChilds().size() > 0)
+			{
+				rebuildGUIHierachy(node, guiNode);
+			}
+
+			if (m_spaceHierarchy != NULL)
+				m_spaceHierarchy->addToTreeNode(guiNode);
+		}
+	
 		void CGUIDesignController::deselectAllOnHierachy()
 		{
 			CScene* scene = CSceneController::getInstance()->getScene();
@@ -525,7 +530,14 @@ namespace Skylicht
 				{
 					CGUIElement* gui = canvas->getGUIByID(selectObject->getID().c_str());
 					if (gui)
-						listUI.push_back(gui);
+					{
+						if (gui == canvas->getRootElement())
+							continue;
+						if (gui == m_rootNode->getTagData())
+							continue;
+						else
+							listUI.push_back(gui);
+					}
 				}
 			}
 
@@ -573,12 +585,14 @@ namespace Skylicht
 		
 		void CGUIDesignController::onDuplicate()
 		{
-			
+			onCopy();
+			onPaste();
 		}
 		
 		void CGUIDesignController::onCut()
 		{
-			
+			onCopy();
+			onDelete();
 		}
 	}
 }
