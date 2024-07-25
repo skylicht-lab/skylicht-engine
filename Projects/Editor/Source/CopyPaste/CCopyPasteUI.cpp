@@ -69,7 +69,6 @@ namespace Skylicht
 			std::vector<CGUIElement*> results;
 			CCanvas *canvas = target->getCanvas();
 		
-			/*
 			CGUIDesignController* guiEditorController = CGUIDesignController::getInstance();
 			CGUIHierachyNode* parentNode = NULL;
 			CGUIHierarchyController* hierarchyController = NULL;
@@ -84,9 +83,15 @@ namespace Skylicht
 			{
 				CGUIElement* ui = CGUIImporter::importGUI(canvas, target, obj);
 				if (ui)
+				{
 					results.push_back(ui);
+					
+					if (hierarchyController && parentNode)
+					{
+						guiEditorController->createGUINode(parentNode, ui);
+					}
+				}
 			}
-			*/
 			
 			return results;
 		}

@@ -109,6 +109,14 @@ namespace Skylicht
 
 			void onSetting(GUI::CBase* base);
 			
+			void onNew(GUI::CBase* base);
+			
+			void onSave(GUI::CBase* base);
+			
+			void onCopy(GUI::CBase* base);
+			
+			void onPaste(GUI::CBase* base);
+			
 			void onRender(GUI::CBase* base);
 
 			void postMouseEventToHandles(EMOUSE_INPUT_EVENT eventType);
