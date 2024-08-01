@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CGUIImporter.h"
+#include "Graphics2D/CGraphics2D.h"
 #include "Utils/CStringImp.h"
 
 namespace Skylicht
@@ -34,6 +35,8 @@ namespace Skylicht
 
 	int g_loadGUIStep = 10;
 	int g_guiLoading = 0;
+
+	bool g_isEditor = false;
 
 	std::list<CGUIElement*> g_listGUIObject;
 	std::list<CGUIElement*>::iterator g_currentGUI;
@@ -206,6 +209,8 @@ namespace Skylicht
 				g_guiReader = NULL;
 			}
 
+			resetForInGameCanvas(g_canvas);
+
 			g_canvas = NULL;
 			g_listGUIObject.clear();
 			return true;
@@ -224,14 +229,15 @@ namespace Skylicht
 	{
 		if (!beginImport(file, canvas))
 			return false;
-		
+
 		bool finish = false;
 		do
 		{
 			finish = updateLoadGUI();
-		}
-		while (!finish);
-		
+		} while (!finish);
+
+		resetForInGameCanvas(canvas);
+
 		return true;
 	}
 
@@ -239,11 +245,11 @@ namespace Skylicht
 	{
 		core::rectf nullRect;
 		SColor nullColor;
-		
-		CGUIElement *element = NULL;
-		
+
+		CGUIElement* element = NULL;
+
 		const std::string& type = obj->Name;
-		
+
 		if (type == "CGUIElement")
 			element = canvas->createElement(parent, nullRect);
 		else if (type == "CGUIImage")
@@ -259,13 +265,13 @@ namespace Skylicht
 		else if (type == "CGUILayout")
 			element = canvas->createLayout(parent, nullRect);
 		else if (type == "CGUICustomSizeSprite")
-			element = canvas->createFitSprite(parent, nullRect, NULL);			
-		
+			element = canvas->createFitSprite(parent, nullRect, NULL);
+
 		if (!element)
 			return NULL;
-			
+
 		element->loadSerializable(obj);
-		
+
 		CValueProperty* childs = obj->getProperty("Childs");
 		if (childs && childs->getType() == Skylicht::Object)
 		{
@@ -274,7 +280,7 @@ namespace Skylicht
 			{
 				for (u32 i = 0, n = objs->getNumProperty(); i < n; i++)
 				{
-					CValueProperty *obj = objs->getPropertyID(i);
+					CValueProperty* obj = objs->getPropertyID(i);
 					if (obj->getType() == Skylicht::Object)
 					{
 						CObjectSerializable* uiObj = dynamic_cast<CObjectSerializable*>(obj);
@@ -283,7 +289,43 @@ namespace Skylicht
 				}
 			}
 		}
-		
+
+		resetForInGameCanvas(canvas);
+
 		return element;
+	}
+
+	void CGUIImporter::setIsEditor(bool b)
+	{
+		g_isEditor = b;
+	}
+
+	void CGUIImporter::resetForInGameCanvas(CCanvas* canvas)
+	{
+		if (g_isEditor)
+			return;
+
+		CGUIElement* root = canvas->getRootElement();
+		if (!root)
+			return;
+
+		// reset position (because it moving from editor)
+		root->setPosition(core::vector3df());
+
+		// reset width/height
+		core::dimension2du screenSize = getVideoDriver()->getScreenSize();
+
+		core::rectf r = root->getRect();
+		r.LowerRightCorner.X = r.UpperLeftCorner.X + screenSize.Width;
+		r.LowerRightCorner.Y = r.UpperLeftCorner.Y + screenSize.Height;
+		root->setRect(r);
+
+		// reset background color
+		if (root->getChilds().size() > 0)
+		{
+			CGUIRect* bg = dynamic_cast<CGUIRect*>(root->getChilds()[0]);
+			if (bg)
+				bg->setColor(SColor(0, 0, 0, 0));
+		}
 	}
 }

@@ -38,7 +38,6 @@ void CViewInit::onInit()
 
 	CShaderManager* shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
-	shaderMgr->loadShader("BuiltIn/Shader/Toon/Toon.xml"); // for fallback software skinning
 
 	CGlyphFreetype* freetypeFont = CGlyphFreetype::getInstance();
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");

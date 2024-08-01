@@ -48,7 +48,7 @@ namespace Skylicht
 		m_fontChanged(-1)
 	{
 		m_enableMaterial = true;
-		
+
 		init();
 	}
 
@@ -410,7 +410,7 @@ namespace Skylicht
 	{
 		IFont* font = getCurrentFont();
 
-		if (!font)
+		if (!font || getColor().getAlpha() == 0)
 		{
 			CGUIElement::render(camera);
 			return;
@@ -422,11 +422,11 @@ namespace Skylicht
 		{
 			if (m_fontData->getChangeRevision() != m_fontChanged)
 			{
-				m_fontChanged =m_fontData->getChangeRevision();
+				m_fontChanged = m_fontData->getChangeRevision();
 				fontChanged = true;
 			}
 		}
-		
+
 		if (fontChanged || font != m_font)
 		{
 			initFont(font);

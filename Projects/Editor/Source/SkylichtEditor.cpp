@@ -16,6 +16,8 @@
 #include "LightProbes/CLightProbeRender.h"
 #include "ReflectionProbe/CReflectionProbeRender.h"
 
+#include "Graphics2D/CGUIImporter.h"
+
 #if defined(BUILD_SKYLICHT_NETWORK)
 #include "HttpRequest/CHttpRequest.h"
 #endif
@@ -36,9 +38,9 @@ SkylichtEditor::SkylichtEditor() :
 	m_editorState(Startup)
 {
 #if defined(MACOS) || defined(LINUX)
-    getIrrlichtDevice()->getFileSystem()->changeWorkingDirectoryTo(PROJECT_PATH);
+	getIrrlichtDevice()->getFileSystem()->changeWorkingDirectoryTo(PROJECT_PATH);
 #endif
-    
+
 #if defined(BUILD_SKYLICHT_NETWORK)
 	Network::CHttpRequest::globalInit();
 #endif
@@ -51,6 +53,8 @@ SkylichtEditor::SkylichtEditor() :
 	Editor::CSelecting::createGetInstance();
 	Editor::CCopyPaste::createGetInstance();
 	Editor::CCopyPasteUI::createGetInstance();
+
+	CGUIImporter::setIsEditor(true);
 
 	CLightProbeRender::showProbe(true);
 	CReflectionProbeRender::showProbe(true);
@@ -66,7 +70,7 @@ SkylichtEditor::~SkylichtEditor()
 
 	Editor::GUI::CGUIContext::destroyGUI();
 
-	Editor::CEditor::releaseInstance();	
+	Editor::CEditor::releaseInstance();
 	Editor::CCopyPasteUI::releaseInstance();
 	Editor::CCopyPaste::releaseInstance();
 	Editor::CSelecting::releaseInstance();

@@ -53,15 +53,19 @@ namespace Skylicht
 	{
 		if (m_image != NULL)
 		{
-			CGraphics2D::getInstance()->addImageBatch(
-				m_image,
-				getRect(),
-				m_sourceRect,
-				getColor(),
-				m_transform->World,
-				getShaderID(),
-				getMaterial(),
-				m_pivot.X, m_pivot.Y);
+			const SColor& color = getColor();
+			if (color.getAlpha() > 0)
+			{
+				CGraphics2D::getInstance()->addImageBatch(
+					m_image,
+					getRect(),
+					m_sourceRect,
+					color,
+					m_transform->World,
+					getShaderID(),
+					getMaterial(),
+					m_pivot.X, m_pivot.Y);
+			}
 		}
 
 		CGUIElement::render(camera);
