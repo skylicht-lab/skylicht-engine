@@ -34,6 +34,7 @@ using namespace irr::video;
 
 namespace Skylicht
 {
+	// Use in CPrimitiveRendererInstancing
 	struct SInstancingVertexBuffer
 	{
 		IVertexBuffer* Instancing;

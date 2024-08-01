@@ -34,6 +34,7 @@ namespace Skylicht
 {
 	struct SMeshInstancingGroup;
 
+	// Use in CMeshRendererInstancing
 	struct SMeshInstancing
 	{
 		// base source mesh buffers
@@ -48,7 +49,7 @@ namespace Skylicht
 		// shader instancing handle (use on SkinnedInstancing)
 		IShaderInstancing* HandleShader;
 
-		// vertex buffer, that batch materials
+		// vertex buffer, that batch materials (color, uv, sg, bone..)
 		core::array<IVertexBuffer*> MaterialBuffer;
 
 		// vertex buffer, that batch transform
@@ -66,7 +67,7 @@ namespace Skylicht
 		// list buffers in IndirectLightingMesh (CMesh property)
 		core::array<IMeshBuffer*> RenderLightMeshBuffers;
 
-		// the group, that have many instance will be render
+		// the group, that have many instances will be render
 		SMeshInstancingGroup* InstancingGroup;
 
 		// That tell us that, transform and lighting buffer is shared with another Mesh

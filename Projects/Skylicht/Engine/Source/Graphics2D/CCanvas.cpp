@@ -44,6 +44,7 @@ namespace Skylicht
 
 		// default rect is fullscreen
 		m_rect = core::rectf(0.0f, 0.0f, w, h);
+		m_defaultRect = m_rect;
 
 		m_entityMgr = new CEntityPrefab();
 
@@ -340,6 +341,34 @@ namespace Skylicht
 	void CCanvas::removeAllElement()
 	{
 		m_root->removeAllChilds();
+	}
+
+	void CCanvas::applyScaleGUI(float widthOrHeight)
+	{
+		if (m_defaultRect.getWidth() == 0.0f || m_defaultRect.getHeight() == 0.0f)
+			return;
+
+		float s = core::clamp(widthOrHeight, 0.0f, 1.0f);
+
+		CGraphics2D* g = CGraphics2D::getInstance();
+		float screenW = (float)g->getScreenSize().Width;
+		float screenH = (float)g->getScreenSize().Height;
+
+		float sw = screenW / m_defaultRect.getWidth();
+		float sh = screenH / m_defaultRect.getHeight();
+
+		float scale = sw + (sh - sw) * widthOrHeight;
+		float w = screenW / scale;
+		float h = screenH / scale;
+
+		// apply new rect
+		core::rectf r = m_root->getRect();
+		r.LowerRightCorner.X = r.UpperLeftCorner.X + w;
+		r.LowerRightCorner.Y = r.UpperLeftCorner.Y + h;
+		m_root->setRect(r);
+
+		// apply new scale
+		m_root->setScale(core::vector3df(scale, scale, 1.0f));
 	}
 
 	/*

@@ -45,8 +45,6 @@ namespace Skylicht
 		int m_currentW;
 		int m_currentH;
 
-		float m_scaleRatio;
-
 		IVideoDriver* m_driver;
 
 		std::vector<IMeshBuffer*> m_allBuffers;
@@ -76,16 +74,6 @@ namespace Skylicht
 		bool isHD();
 
 		bool isWideScreen();
-
-		float getScale()
-		{
-			return m_scaleRatio;
-		}
-
-		void setScale(float f)
-		{
-			m_scaleRatio = f;
-		}
 
 		void addCanvas(CCanvas* canvas);
 
