@@ -32,15 +32,19 @@ namespace Skylicht
 	{
 	public:
 		static bool loadGUI(const char* file, CCanvas* canvas);
-		
+
 		static bool beginImport(const char* file, CCanvas* canvas);
-		
+
 		static bool updateLoadGUI();
 
 		static float getLoadingPercent();
 
 		static CGUIElement* importGUI(CCanvas* canvas, CGUIElement* target, CObjectSerializable* obj);
-		
+
+		static void setIsEditor(bool b);
+
+		static void resetForInGameCanvas(CCanvas* canvas);
+
 	protected:
 
 		static bool loadStep(CCanvas* canvas, io::IXMLReader* reader);

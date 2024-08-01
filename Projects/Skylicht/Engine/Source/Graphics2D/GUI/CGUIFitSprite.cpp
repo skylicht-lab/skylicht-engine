@@ -67,48 +67,52 @@ namespace Skylicht
 	{
 		if (m_frame != NULL && m_frame->ModuleOffset.size() > 0)
 		{
-			CGraphics2D* g = CGraphics2D::getInstance();
-
-			SFrame* frame = m_frame->ModuleOffset[0].Frame;
-			float w = (float)frame->getWidth();
-			float h = (float)frame->getHeight();
-
-			switch (m_anchorType)
+			const SColor& color = getColor();
+			if (color.getAlpha() > 0)
 			{
-			case CGUIFitSprite::AnchorAll:
-				g->addModuleBatch(&m_frame->ModuleOffset[0],
-					getColor(),
-					m_transform->World,
-					getRect(),
-					m_anchorLeft,
-					w - m_anchorRight,
-					m_anchorTop,
-					h - m_anchorBottom,
-					getShaderID(),
-					getMaterial());
-				break;
-			case CGUIFitSprite::AnchorLeftRight:
-				g->addModuleBatchLR(&m_frame->ModuleOffset[0],
-					getColor(),
-					m_transform->World,
-					getRect(),
-					m_anchorLeft,
-					w - m_anchorRight,
-					getShaderID(),
-					getMaterial());
-				break;
-			case CGUIFitSprite::AnchorTopBottom:
-				g->addModuleBatchTB(&m_frame->ModuleOffset[0],
-					getColor(),
-					m_transform->World,
-					getRect(),
-					m_anchorTop,
-					h - m_anchorBottom,
-					getShaderID(),
-					getMaterial());
-				break;
-			default:
-				break;
+				CGraphics2D* g = CGraphics2D::getInstance();
+
+				SFrame* frame = m_frame->ModuleOffset[0].Frame;
+				float w = (float)frame->getWidth();
+				float h = (float)frame->getHeight();
+
+				switch (m_anchorType)
+				{
+				case CGUIFitSprite::AnchorAll:
+					g->addModuleBatch(&m_frame->ModuleOffset[0],
+						color,
+						m_transform->World,
+						getRect(),
+						m_anchorLeft,
+						w - m_anchorRight,
+						m_anchorTop,
+						h - m_anchorBottom,
+						getShaderID(),
+						getMaterial());
+					break;
+				case CGUIFitSprite::AnchorLeftRight:
+					g->addModuleBatchLR(&m_frame->ModuleOffset[0],
+						color,
+						m_transform->World,
+						getRect(),
+						m_anchorLeft,
+						w - m_anchorRight,
+						getShaderID(),
+						getMaterial());
+					break;
+				case CGUIFitSprite::AnchorTopBottom:
+					g->addModuleBatchTB(&m_frame->ModuleOffset[0],
+						color,
+						m_transform->World,
+						getRect(),
+						m_anchorTop,
+						h - m_anchorBottom,
+						getShaderID(),
+						getMaterial());
+					break;
+				default:
+					break;
+				}
 			}
 		}
 
