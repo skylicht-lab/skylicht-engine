@@ -94,10 +94,6 @@ namespace Skylicht
 
 	void CTouchManager::updateTouch(ETouchEvent touchEvent, int x, int y, long id)
 	{
-		float scale = CGraphics2D::getInstance()->getScale();
-		x = (int)((float)x * scale);
-		y = (int)((float)y * scale);
-
 		//if (touchEvent != CTouchManager::TouchMove)
 		//{
 		//	char msg[1024] = {0};

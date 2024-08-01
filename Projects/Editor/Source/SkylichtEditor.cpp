@@ -54,8 +54,6 @@ SkylichtEditor::SkylichtEditor() :
 	Editor::CCopyPaste::createGetInstance();
 	Editor::CCopyPasteUI::createGetInstance();
 
-	CGUIImporter::setIsEditor(true);
-
 	CLightProbeRender::showProbe(true);
 	CReflectionProbeRender::showProbe(true);
 }

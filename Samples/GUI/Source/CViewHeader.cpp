@@ -16,13 +16,14 @@ CViewHeader::~CViewHeader()
 
 void CViewHeader::onInit()
 {
-	CScene *scene = CContext::getInstance()->getScene();
-	CZone *zone = scene->getZone(0);
-	
-	CGameObject *header = zone->createEmptyObject();
-	CCanvas *canvas = header->addComponent<CCanvas>();
-	
+	CScene* scene = CContext::getInstance()->getScene();
+	CZone* zone = scene->getZone(0);
+
+	CGameObject* header = zone->createEmptyObject();
+	CCanvas* canvas = header->addComponent<CCanvas>();
+
 	CGUIImporter::loadGUI("SampleGUI/Header.gui", canvas);
+	canvas->applyScaleGUI(1.0f);
 }
 
 void CViewHeader::onDestroy()
@@ -32,20 +33,20 @@ void CViewHeader::onDestroy()
 
 void CViewHeader::onUpdate()
 {
-	
+
 }
 
 void CViewHeader::onRender()
 {
-	
+
 }
 
 void CViewHeader::onGUI()
 {
-	
+
 }
 
 void CViewHeader::onPostRender()
 {
-	
+
 }

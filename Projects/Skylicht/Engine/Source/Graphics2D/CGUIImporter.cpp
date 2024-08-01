@@ -36,8 +36,6 @@ namespace Skylicht
 	int g_loadGUIStep = 10;
 	int g_guiLoading = 0;
 
-	bool g_isEditor = false;
-
 	std::list<CGUIElement*> g_listGUIObject;
 	std::list<CGUIElement*>::iterator g_currentGUI;
 
@@ -209,7 +207,7 @@ namespace Skylicht
 				g_guiReader = NULL;
 			}
 
-			resetForInGameCanvas(g_canvas);
+			reset(g_canvas);
 
 			g_canvas = NULL;
 			g_listGUIObject.clear();
@@ -235,8 +233,6 @@ namespace Skylicht
 		{
 			finish = updateLoadGUI();
 		} while (!finish);
-
-		resetForInGameCanvas(canvas);
 
 		return true;
 	}
@@ -290,32 +286,31 @@ namespace Skylicht
 			}
 		}
 
-		resetForInGameCanvas(canvas);
+		reset(canvas);
 
 		return element;
 	}
 
-	void CGUIImporter::setIsEditor(bool b)
+	void CGUIImporter::reset(CCanvas* canvas)
 	{
-		g_isEditor = b;
-	}
-
-	void CGUIImporter::resetForInGameCanvas(CCanvas* canvas)
-	{
-		if (g_isEditor)
+		if (canvas->IsInEditor)
 			return;
 
 		CGUIElement* root = canvas->getRootElement();
 		if (!root)
 			return;
 
-		// reset position (because it moving from editor)
+		// reset position (because it moved from editor)
 		root->setPosition(core::vector3df());
 
 		// reset width/height
 		core::dimension2du screenSize = getVideoDriver()->getScreenSize();
 
 		core::rectf r = root->getRect();
+
+		core::rectf defaultGUIRect(0.0f, 0.0f, r.getWidth(), r.getHeight());
+		canvas->setDefaultRect(defaultGUIRect);
+
 		r.LowerRightCorner.X = r.UpperLeftCorner.X + screenSize.Width;
 		r.LowerRightCorner.Y = r.UpperLeftCorner.Y + screenSize.Height;
 		root->setRect(r);

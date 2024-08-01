@@ -41,9 +41,7 @@ namespace Skylicht
 
 		static CGUIElement* importGUI(CCanvas* canvas, CGUIElement* target, CObjectSerializable* obj);
 
-		static void setIsEditor(bool b);
-
-		static void resetForInGameCanvas(CCanvas* canvas);
+		static void reset(CCanvas* canvas);
 
 	protected:
 

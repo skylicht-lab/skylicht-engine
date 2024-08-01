@@ -42,6 +42,7 @@ namespace Skylicht
 			Shader = NULL;
 			Mesh = NULL;
 			IndirectLM = NULL;
+			DirectLM = NULL;
 			for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
 				Textures[i] = NULL;
 		}

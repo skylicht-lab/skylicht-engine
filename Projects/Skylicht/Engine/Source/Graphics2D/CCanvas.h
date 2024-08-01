@@ -47,6 +47,8 @@ namespace Skylicht
 	protected:
 		core::rectf m_rect;
 
+		core::rectf m_defaultRect;
+
 		CGUIElement* m_root;
 
 		int m_sortDepth;
@@ -107,6 +109,18 @@ namespace Skylicht
 		{
 			m_rect = r;
 		}
+
+		inline void setDefaultRect(const core::rectf& r)
+		{
+			m_defaultRect = r;
+		}
+
+		inline const core::rectf& getDefaultRect()
+		{
+			return m_defaultRect;
+		}
+
+		void applyScaleGUI(float widthOrHeight = 1.0f);
 
 		inline CGUIElement* getRootElement()
 		{

@@ -43,7 +43,6 @@ namespace Skylicht
 	CGraphics2D::CGraphics2D() :
 		m_currentW(-1),
 		m_currentH(-1),
-		m_scaleRatio(1.0f),
 		m_vertexColorShader(0),
 		m_bufferID(0)
 	{
@@ -89,8 +88,8 @@ namespace Skylicht
 	{
 		core::dimension2du screenSize = getVideoDriver()->getScreenSize();
 
-		float w = (float)screenSize.Width * m_scaleRatio;
-		float h = (float)screenSize.Height * m_scaleRatio;
+		float w = (float)screenSize.Width;
+		float h = (float)screenSize.Height;
 
 		screenSize.set((int)w, (int)h);
 
@@ -324,9 +323,6 @@ namespace Skylicht
 			// set shader if default
 			if (material.MaterialType > 0)
 			{
-				if (m_scaleRatio != 1.0f)
-					material.setFlag(video::EMF_TRILINEAR_FILTER, true);
-
 				// set material
 				m_driver->setMaterial(material);
 
