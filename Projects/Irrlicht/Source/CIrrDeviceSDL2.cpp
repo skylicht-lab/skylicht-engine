@@ -309,6 +309,7 @@ namespace irr
 			case SDL_MOUSEMOTION:
 				irrevent.EventType = irr::EET_MOUSE_INPUT_EVENT;
 				irrevent.MouseInput.Event = irr::EMIE_MOUSE_MOVED;
+				irrevent.MouseInput.ID = 0;
 				MouseX = irrevent.MouseInput.X = SDL_event.motion.x;
 				MouseY = irrevent.MouseInput.Y = SDL_event.motion.y;
 				MouseXRel = SDL_event.motion.xrel;
@@ -320,6 +321,7 @@ namespace irr
 			case SDL_MOUSEWHEEL:
 				irrevent.EventType = irr::EET_MOUSE_INPUT_EVENT;
 				irrevent.MouseInput.Event = irr::EMIE_MOUSE_WHEEL;
+				irrevent.MouseInput.ID = 0;
 				if (SDL_event.wheel.y < 0)
 					irrevent.MouseInput.Wheel = 1;
 				else
@@ -333,6 +335,7 @@ namespace irr
 				irrevent.EventType = irr::EET_MOUSE_INPUT_EVENT;
 				irrevent.MouseInput.X = SDL_event.button.x;
 				irrevent.MouseInput.Y = SDL_event.button.y;
+				irrevent.MouseInput.ID = 0;
 
 				irrevent.MouseInput.Event = irr::EMIE_MOUSE_MOVED;
 

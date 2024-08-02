@@ -83,8 +83,17 @@ namespace Skylicht
 		}
 		else
 		{
+			for (int i = 0; i < m_numValue; i++)
+				m_value[i] = m_toValue[i];
+
+			updateValue();
+
+			if (OnUpdate != nullptr)
+				OnUpdate(this);
+
 			if (OnFinish != nullptr)
 				OnFinish(this);
+
 			CTweenManager::getInstance()->removeTween(this);
 		}
 	}

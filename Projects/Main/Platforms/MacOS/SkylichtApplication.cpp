@@ -200,6 +200,7 @@ void SkylichtApplication::onMouseMoved(const Event::MouseMoveEvent &mouseEvent)
     event.MouseInput.Y = mouseEvent.Y;
     event.MouseInput.Shift = m_shiftHold;
     event.MouseInput.Control = m_controlHold;
+    event.MouseInput.ID = 0;
     
     m_mouseX = mouseEvent.X;
     m_mouseY = mouseEvent.Y;
@@ -251,6 +252,7 @@ void SkylichtApplication::onMouseButtonPressed(const Event::MouseButtonEvent &mo
     event.MouseInput.Y = mouseEvent.Y;
     event.MouseInput.Shift = m_shiftHold;
     event.MouseInput.Control = m_controlHold;
+    event.MouseInput.ID = 0;
     
     if (sendEvent == true)
     {
@@ -290,6 +292,7 @@ void SkylichtApplication::onMouseButtonRelease(const Event::MouseButtonEvent &mo
     event.MouseInput.Y = mouseEvent.Y;
     event.MouseInput.Shift = m_shiftHold;
     event.MouseInput.Control = m_controlHold;
+    event.MouseInput.ID = 0;
     
     if (sendEvent == true)
     {
@@ -309,6 +312,7 @@ void SkylichtApplication::onWheel(const Event::MouseWheelEvent &wheelEvent)
     event.MouseInput.Y = m_mouseY;
     event.MouseInput.Shift = m_shiftHold;
     event.MouseInput.Control = m_controlHold;
+    event.MouseInput.ID = 0;
     
     if (wheelEvent.Delta < 0)
         event.MouseInput.Wheel = 1.0f;

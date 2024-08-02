@@ -125,7 +125,7 @@ namespace Skylicht
 			if (io.WantCaptureMouse == true)
 			{
 				skipAllEvent = true;
-				CTouchManager::getInstance()->setTouchIdentify(event.MouseInput.ID, CTouchIdentify::TouchOnControl);
+				CTouchManager::getInstance()->setTouchIdentify(event.MouseInput.ID, CTouchIdentify::TouchOnUI);
 			}
 		}
 		else if (event.EventType == irr::EET_KEY_INPUT_EVENT)

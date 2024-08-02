@@ -42,7 +42,6 @@ namespace Skylicht
 	{
 	}
 
-	// touchRelease
 	void CTouchIdentify::touchPress(int pos, int touchID)
 	{
 		m_touchIdentity[pos].TouchID = touchID;
@@ -50,7 +49,6 @@ namespace Skylicht
 		m_touchIdentity[pos].Data = NULL;
 	}
 
-	// touchRelease
 	void CTouchIdentify::touchRelease(int pos, int touchID)
 	{
 		m_touchIdentity[pos].TouchID = -1;
@@ -58,7 +56,6 @@ namespace Skylicht
 		m_touchIdentity[pos].Data = NULL;
 	}
 
-	// setTouchIdentify
 	void CTouchIdentify::setTouchIdentify(int touchID, CTouchIdentify::ETouchIdentify identify, void *data)
 	{
 		for (int i = 0; i < MAX_MULTITOUCH; i++)
@@ -72,7 +69,6 @@ namespace Skylicht
 		}
 	}
 
-	// getTouchIdentify
 	CTouchIdentify::ETouchIdentify CTouchIdentify::getTouchIdentify(int touchID)
 	{
 		for (int i = 0; i < MAX_MULTITOUCH; i++)

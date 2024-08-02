@@ -902,6 +902,7 @@ bool CIrrDeviceLinux::run()
 				irrevent.MouseInput.Event = irr::EMIE_MOUSE_MOVED;
 				irrevent.MouseInput.X = event.xbutton.x;
 				irrevent.MouseInput.Y = event.xbutton.y;
+				irrevent.MouseInput.ID = 0;
 				irrevent.MouseInput.Control = (event.xkey.state & ControlMask) != 0;
 				irrevent.MouseInput.Shift = (event.xkey.state & ShiftMask) != 0;
 
@@ -919,6 +920,7 @@ bool CIrrDeviceLinux::run()
 				irrevent.EventType = irr::EET_MOUSE_INPUT_EVENT;
 				irrevent.MouseInput.X = event.xbutton.x;
 				irrevent.MouseInput.Y = event.xbutton.y;
+				irrevent.MouseInput.ID = 0;
 				irrevent.MouseInput.Control = (event.xkey.state & ControlMask) != 0;
 				irrevent.MouseInput.Shift = (event.xkey.state & ShiftMask) != 0;
 

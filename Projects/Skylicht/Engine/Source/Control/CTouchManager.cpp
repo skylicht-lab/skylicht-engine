@@ -25,24 +25,27 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CTouchManager.h"
 #include "Graphics2D/CGraphics2D.h"
+#include "Thread/IMutex.h"
 
 namespace Skylicht
 {
+	System::IMutex* g_mutex = NULL;
+
 	IMPLEMENT_SINGLETON(CTouchManager);
 
 	CTouchManager::CTouchManager()
 	{
-		m_mutex = System::IMutex::createMutex();
+		g_mutex = System::IMutex::createMutex();
 
 		resetTouch();
 	}
 
 	CTouchManager::~CTouchManager()
 	{
-		if (m_mutex)
+		if (g_mutex)
 		{
-			delete m_mutex;
-			m_mutex = NULL;
+			delete g_mutex;
+			g_mutex = NULL;
 		}
 	}
 
@@ -59,7 +62,7 @@ namespace Skylicht
 
 	void CTouchManager::update()
 	{
-		System::SScopeMutex lockScope(m_mutex);
+		System::SScopeMutex lockScope(g_mutex);
 
 		int n = m_touchQueue.size();
 		if (n == 0)
@@ -81,7 +84,7 @@ namespace Skylicht
 
 	void CTouchManager::touchEvent(ETouchEvent touchEvent, int x, int y, long id)
 	{
-		System::SScopeMutex lockScope(m_mutex);
+		System::SScopeMutex lockScope(g_mutex);
 
 		// todo add event to queue
 		STouchStatus t;

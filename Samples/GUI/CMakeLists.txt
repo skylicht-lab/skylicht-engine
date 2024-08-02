@@ -11,6 +11,7 @@ include_directories(
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Client/Source
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Lightmapper/Source
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Audio/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/UserInterface/Source
 	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/source/freetype2/include
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Bullet3/src
 )

@@ -24,13 +24,11 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Thread/IMutex.h"
 #include "Utils/CSingleton.h"
 #include "CTouchIdentify.h"
 
 namespace Skylicht
 {
-
 	class SKYLICHT_API CTouchManager
 	{
 	public:
@@ -48,18 +46,16 @@ namespace Skylicht
 		struct STouchStatus
 		{
 			ETouchEvent	touchEvent;
-			int			x;
-			int			y;
-			long		touchID;
+			int x;
+			int y;
+			long touchID;
 		};
 
 	protected:
-		core::array<STouchStatus>	m_touchQueue;
+		core::array<STouchStatus> m_touchQueue;
 
-		STouchStatus	m_touch[MAX_MULTITOUCH];
-		CTouchIdentify	m_touchIdentify;
-
-		System::IMutex* m_mutex;
+		STouchStatus m_touch[MAX_MULTITOUCH];
+		CTouchIdentify m_touchIdentify;
 
 	public:
 		CTouchManager();

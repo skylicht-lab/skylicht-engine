@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2024 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -22,42 +22,57 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
+#include "pch.h"
+#include "CColorMotion.h"
 
-#define MAX_MULTITOUCH	10
+#include "Tween/CTweenColor.h"
 
 namespace Skylicht
 {
-	class SKYLICHT_API CTouchIdentify
+	namespace UI
 	{
-	public:
-		enum ETouchIdentify
+		CColorMotion::CColorMotion(const SColor& color) :
+			m_color(color),
+			m_toDefault(false)
 		{
-			Nothing = 0,
-			TouchOnUI,
-			TouchOnScreen,
-		};
 
-		struct STouchIdentity
+		}
+
+		CColorMotion::CColorMotion() :
+			m_toDefault(true)
 		{
-			int				TouchID;
-			ETouchIdentify	Identitfy;
-			void			*Data;
-		};
 
-	protected:
-		STouchIdentity	m_touchIdentity[MAX_MULTITOUCH];
+		}
 
-	public:
-		CTouchIdentify();
-		virtual ~CTouchIdentify();
+		CColorMotion::~CColorMotion()
+		{
+			
+		}
 
-		void touchPress(int pos, int touchID);
+		void CColorMotion::init(CGUIElement* gui)
+		{
+			CMotion::init(gui);
+			m_defaultColor = gui->getColor();
+		}
 
-		void touchRelease(int pos, int touchID);
+		void CColorMotion::start()
+		{
+			if (m_toDefault)
+				m_tween = new CTweenColor(m_gui->getColor(), m_defaultColor, m_duration);
+			else
+				m_tween = new CTweenColor(m_defaultColor, m_color, m_duration);
 
-		void setTouchIdentify(int touchID, CTouchIdentify::ETouchIdentify identify, void *data = NULL);
+			m_tween->setDelay(m_delay);
+			m_tween->OnUpdate = [&](CTween* t)
+				{
+					m_gui->setColor(((CTweenColor*)t)->getValue());
+				};
+			m_tween->OnFinish = [&](CTween* t)
+				{
+					m_tween = NULL;
+				};
 
-		CTouchIdentify::ETouchIdentify getTouchIdentify(int touchID);
-	};
+			CTweenManager::getInstance()->addTween(m_tween);
+		}
+	}
 }

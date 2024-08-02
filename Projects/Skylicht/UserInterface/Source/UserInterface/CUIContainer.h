@@ -33,21 +33,26 @@ namespace Skylicht
 {
 	namespace UI
 	{
-		class CUIContainer : public IEventProcessor
+		class CUIContainer :
+			public CComponentSystem,
+			public IEventProcessor
 		{
 		protected:
-
-			std::string m_name;
-
 			bool m_enable;
 
 			std::vector<CUIBase*> m_arrayUIObjects;
-			core::array<CUIBase*> m_raycastUIObjects;
+			std::vector<CUIBase*> m_raycastUIObjects;
+
+			CUIBase* m_hover;
 
 		public:
 			CUIContainer();
 
 			virtual ~CUIContainer();
+
+			virtual void initComponent();
+
+			virtual void updateComponent();
 
 			void addChild(CUIBase* base);
 
