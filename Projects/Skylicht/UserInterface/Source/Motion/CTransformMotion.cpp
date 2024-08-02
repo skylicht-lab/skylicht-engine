@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2024 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -22,42 +22,13 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#define MAX_MULTITOUCH	10
+#include "pch.h"
+#include "CTransformMotion.h"
 
 namespace Skylicht
 {
-	class SKYLICHT_API CTouchIdentify
+	namespace UI
 	{
-	public:
-		enum ETouchIdentify
-		{
-			Nothing = 0,
-			TouchOnUI,
-			TouchOnScreen,
-		};
 
-		struct STouchIdentity
-		{
-			int				TouchID;
-			ETouchIdentify	Identitfy;
-			void			*Data;
-		};
-
-	protected:
-		STouchIdentity	m_touchIdentity[MAX_MULTITOUCH];
-
-	public:
-		CTouchIdentify();
-		virtual ~CTouchIdentify();
-
-		void touchPress(int pos, int touchID);
-
-		void touchRelease(int pos, int touchID);
-
-		void setTouchIdentify(int touchID, CTouchIdentify::ETouchIdentify identify, void *data = NULL);
-
-		CTouchIdentify::ETouchIdentify getTouchIdentify(int touchID);
-	};
+	}
 }

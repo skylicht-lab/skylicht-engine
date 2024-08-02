@@ -51,7 +51,7 @@ namespace Skylicht
 		// add root
 		m_root = new CGUIElement(this, NULL, m_rect);
 		m_root->setDock(EGUIDock::DockFill);
-		m_root->setName("Root GUI");
+		m_root->setName("Root");
 
 		m_systems.push_back(new CGUILayoutSystem());
 		for (IEntitySystem* system : m_systems)
@@ -585,5 +585,49 @@ namespace Skylicht
 		}
 
 		return NULL;
+	}
+
+	CGUIElement* CCanvas::getGUIByPath(const char* path)
+	{
+		if (m_root->getChilds().size() == 0)
+			return NULL;
+
+		return getGUIByPath(m_root, path);
+	}
+
+	CGUIElement* CCanvas::getGUIByPath(CGUIElement* search, const char* path)
+	{
+		CGUIElement* ret = search;
+
+		std::vector<std::string> splitPath;
+		CStringImp::splitString(path, "\\/", splitPath);
+
+		while (splitPath.size() > 0)
+		{
+			const char* currentGUI = splitPath[0].c_str();
+			bool found = false;
+
+			std::vector<CGUIElement*>& childs = ret->getChilds();
+
+			for (CGUIElement* gui : childs)
+			{
+				if (CStringImp::comp(gui->getName(), currentGUI) == 0)
+				{
+					ret = gui;
+					found = true;
+					break;
+				}
+			}
+
+			if (!found)
+			{
+				ret = NULL;
+				break;
+			}
+
+			splitPath.erase(splitPath.begin());
+		}
+
+		return ret;
 	}
 }

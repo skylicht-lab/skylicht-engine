@@ -772,12 +772,10 @@ namespace Skylicht
 		m_fontSource = object->get<std::string>("font", std::string(""));
 		m_fontGUID = object->get<std::string>("font.guid", std::string(""));
 
-		// read font by id first
-		m_fontData = CFontManager::getInstance()->getFontById(m_fontGUID.c_str());
+		// load path first
+		m_fontData = CFontManager::getInstance()->loadFontSource(m_fontSource.c_str());
 		if (!m_fontData)
-		{
-			m_fontData = CFontManager::getInstance()->loadFontSource(m_fontSource.c_str());
-		}
+			m_fontData = CFontManager::getInstance()->getFontById(m_fontGUID.c_str());
 
 		// init font
 		if (m_fontData)

@@ -207,5 +207,9 @@ namespace Skylicht
 		}
 
 		CGUIElement* getGUIByID(const char* id);
+
+		CGUIElement* getGUIByPath(const char* path);
+
+		CGUIElement* getGUIByPath(CGUIElement* search, const char* path);
 	};
 }

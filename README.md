@@ -38,11 +38,11 @@ C:\skylicht-engine\Assets>cd ..
 
 -   Run CMake from the current directory to generate visual studio project or xcode project
 ```Shell
-# Visual Studio 2017
-C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A x64
-
 # Visual Studio 2019
 C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 16 2019" -A x64
+
+# Visual Studio 2022
+C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 17 2022" -A x64
 
 # Xcode
 /User/Skylicht/Documents/skylicht-engine$cmake -S . -B ./PrjMac -G Xcode 
@@ -70,11 +70,10 @@ C:\skylicht-engine>C:\Python37\Scripts\pip install tinydb
 # https://pillow.readthedocs.io/en/4.1.x/index.html
 C:\skylicht-engine>C:\Python37\Scripts\pip install Pillow
 
-# Compress TGA to DDS, ETC2, PVR texture
+# Compress TGA to DDS, ETC2 texture
 C:\skylicht-engine>cd Assets    
 C:\skylicht-engine\Assets>python BuildTextureCompressDDS.py
 C:\skylicht-engine\Assets>python BuildTextureCompressETC.py
-C:\skylicht-engine\Assets>python BuildTextureCompressPVR.py
 C:\skylicht-engine\Assets>cd ..
 ```
 ### Build Shader

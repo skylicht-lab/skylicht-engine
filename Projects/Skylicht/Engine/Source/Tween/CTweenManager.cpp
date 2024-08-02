@@ -39,11 +39,23 @@ namespace Skylicht
 
 	void CTweenManager::addTween(CTween* tween)
 	{
+		for (CTween* t : m_insert)
+		{
+			if (t == tween)
+				return;
+		}
+
 		m_insert.push_back(tween);
 	}
 
 	void CTweenManager::removeTween(CTween* tween)
 	{
+		for (CTween* t : m_remove)
+		{
+			if (t == tween)
+				return;
+		}
+
 		m_remove.push_back(tween);
 	}
 }

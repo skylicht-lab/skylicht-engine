@@ -40,6 +40,9 @@ namespace Skylicht
 		CUIBase::~CUIBase()
 		{
 			m_container->removeChild(this);
+
+			for (int i = 0, n = (int)EMotionEvent::NumEvent; i < n; i++)
+				removeMotions((EMotionEvent)i);
 		}
 
 		core::vector3df* CUIBase::getRectTransform()
@@ -76,24 +79,32 @@ namespace Skylicht
 
 		void CUIBase::onPointerHover(float pointerX, float pointerY)
 		{
+			startMotion(EMotionEvent::PointerHover);
+
 			if (OnPointerHover != nullptr)
 				OnPointerHover(pointerX, pointerY);
 		}
 
 		void CUIBase::onPointerOut(float pointerX, float pointerY)
 		{
+			startMotion(EMotionEvent::PointerOut);
+
 			if (OnPointerOut != nullptr)
 				OnPointerOut(pointerX, pointerY);
 		}
 
 		void CUIBase::onPointerDown(float pointerX, float pointerY)
 		{
+			startMotion(EMotionEvent::PointerDown);
+
 			if (OnPointerDown != nullptr)
 				OnPointerDown(pointerX, pointerY);
 		}
 
 		void CUIBase::onPointerUp(float pointerX, float pointerY)
 		{
+			startMotion(EMotionEvent::PointerUp);
+
 			if (OnPointerUp != nullptr)
 				OnPointerUp(pointerX, pointerY);
 		}
@@ -102,6 +113,55 @@ namespace Skylicht
 		{
 			if (OnPressed != nullptr)
 				OnPressed();
+		}
+
+		void CUIBase::startMotion(EMotionEvent event)
+		{
+			for (int i = 0, n = (int)EMotionEvent::NumEvent; i < n; i++)
+			{
+				EMotionEvent e = (EMotionEvent)i;
+
+				std::vector<CMotion*>& motions = m_motions[i];
+				for (CMotion* m : motions)
+				{
+					if (e == event)
+						m->start();
+					else
+						m->stop();
+				}
+			}
+		}
+
+		CMotion* CUIBase::addMotion(EMotionEvent event, CMotion* motion)
+		{
+			std::vector<CMotion*>& motions = m_motions[(int)event];
+			motions.push_back(motion);
+
+			motion->setEvent(event);
+			motion->init(m_element);
+
+			return motion;
+		}
+
+		bool CUIBase::removeMotion(EMotionEvent event, CMotion* motion)
+		{
+			std::vector<CMotion*>& motions = m_motions[(int)event];
+			auto it = std::find(motions.begin(), motions.end(), motion);
+			if (it != motions.end())
+			{
+				motions.erase(it);
+				delete motion;
+				return true;
+			}
+			return false;
+		}
+
+		void CUIBase::removeMotions(EMotionEvent event)
+		{
+			std::vector<CMotion*>& motions = m_motions[(int)event];
+			for (CMotion* m : motions)
+				delete m;
+			motions.clear();
 		}
 	}
 }

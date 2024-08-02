@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2024 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,40 +24,57 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#define MAX_MULTITOUCH	10
+#include "Graphics2D/GUI/CGUIElement.h"
+#include "Tween/CTween.h"
+#include "Tween/CTweenManager.h"
 
 namespace Skylicht
 {
-	class SKYLICHT_API CTouchIdentify
+	namespace UI
 	{
-	public:
-		enum ETouchIdentify
+		enum class EMotionEvent
 		{
-			Nothing = 0,
-			TouchOnUI,
-			TouchOnScreen,
+			In = 0,
+			Out,
+			PointerHover,
+			PointerOut,
+			PointerDown,
+			PointerUp,
+			NumEvent
 		};
 
-		struct STouchIdentity
+		class CMotion
 		{
-			int				TouchID;
-			ETouchIdentify	Identitfy;
-			void			*Data;
+		protected:
+			CTween* m_tween;
+			CGUIElement* m_gui;
+
+			float m_delay;
+			float m_duration;
+
+			EMotionEvent m_event;
+
+		public:
+			CMotion();
+
+			virtual ~CMotion();
+
+			virtual void init(CGUIElement* gui);
+
+			virtual void start() = 0;
+
+			virtual void stop();
+
+			inline void setTime(float delay, float duration)
+			{
+				m_delay = delay;
+				m_duration = duration;
+			}
+
+			inline void setEvent(EMotionEvent e)
+			{
+				m_event = e;
+			}
 		};
-
-	protected:
-		STouchIdentity	m_touchIdentity[MAX_MULTITOUCH];
-
-	public:
-		CTouchIdentify();
-		virtual ~CTouchIdentify();
-
-		void touchPress(int pos, int touchID);
-
-		void touchRelease(int pos, int touchID);
-
-		void setTouchIdentify(int touchID, CTouchIdentify::ETouchIdentify identify, void *data = NULL);
-
-		CTouchIdentify::ETouchIdentify getTouchIdentify(int touchID);
-	};
+	}
 }

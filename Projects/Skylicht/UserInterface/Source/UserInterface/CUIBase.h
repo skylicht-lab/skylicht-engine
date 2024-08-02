@@ -27,6 +27,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Graphics2D/GUI/CGUIElement.h"
 #include "Graphics2D/CCanvas.h"
 
+#include "Motion/CMotion.h"
+
 namespace Skylicht
 {
 	namespace UI
@@ -41,6 +43,8 @@ namespace Skylicht
 			CGUIElement* m_element;
 
 			core::vector3df m_rectTransform[4];
+
+			std::vector<CMotion*> m_motions[(int)EMotionEvent::NumEvent];
 
 		public:
 			std::function<void(float, float)> OnPointerHover;
@@ -71,6 +75,14 @@ namespace Skylicht
 			virtual void onPointerUp(float pointerX, float pointerY);
 
 			virtual void onPressed();
+
+			void startMotion(EMotionEvent event);
+
+			CMotion* addMotion(EMotionEvent event, CMotion* motion);
+
+			bool removeMotion(EMotionEvent event, CMotion* motion);
+
+			void removeMotions(EMotionEvent event);
 		};
 	}
 }

@@ -409,6 +409,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		event.MouseInput.Event = (irr::EMOUSE_INPUT_EVENT)m->irrMessage;
 		event.MouseInput.X = (short)LOWORD(lParam);
 		event.MouseInput.Y = (short)HIWORD(lParam);
+		event.MouseInput.ID = 0;
 		event.MouseInput.Shift = ((LOWORD(wParam) & MK_SHIFT) != 0);
 		event.MouseInput.Control = ((LOWORD(wParam) & MK_CONTROL) != 0);
 		// left and right mouse buttons
