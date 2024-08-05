@@ -488,22 +488,23 @@ namespace Skylicht
 		int textHeight = (int)m_arrayCharRender.size() * (m_textHeight + m_linePadding);
 		textHeight -= m_linePadding;
 
-		int y = 0;
+		int x = (int)rect.UpperLeftCorner.X;
+		int y = (int)rect.UpperLeftCorner.Y;
 
 		// calc text algin vertial
 		if (TextVertical == EGUIVerticalAlign::Middle)
-			y = ((int)m_lastHeight - textHeight - m_textOffsetY) / 2;
+			y = y + ((int)m_lastHeight - textHeight - m_textOffsetY) / 2;
 		else if (TextVertical == EGUIVerticalAlign::Bottom)
-			y = (int)m_lastHeight - textHeight;
+			y = y + (int)m_lastHeight - textHeight;
 
 		if (m_centerRotate == true)
-			y = -textHeight / 2;
+			y = y - textHeight / 2;
 
 		// render
 		for (int i = 0, n = (int)m_arrayCharRender.size(); i < n; i++)
 		{
 			// render text
-			renderText(m_arrayCharRender[i], m_arrayCharFormat[i], y);
+			renderText(m_arrayCharRender[i], m_arrayCharFormat[i], x, y);
 
 			// new line
 			y += (m_textHeight + m_linePadding);
@@ -512,11 +513,11 @@ namespace Skylicht
 		CGUIElement::render(camera);
 	}
 
-	void CGUIText::renderText(ArrayModuleOffset& string, ArrayInt& stringFormat, int posY)
+	void CGUIText::renderText(ArrayModuleOffset& string, ArrayInt& stringFormat, int posX, int posY)
 	{
 		CGraphics2D* g = CGraphics2D::getInstance();
 
-		int x = 0;
+		int x = posX;
 		int y = posY;
 
 		int stringWidth = 0;

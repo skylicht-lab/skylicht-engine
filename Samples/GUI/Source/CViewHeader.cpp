@@ -31,7 +31,7 @@ void CViewHeader::onInit()
 	UI::CUIContainer* uiContainer = header->addComponent<UI::CUIContainer>();
 
 	UI::CUIBase* btnUserName = new UI::CUIBase(uiContainer, canvas->getGUIByPath("Canvas/Header/txtUserName"));
-	btnUserName->addMotion(UI::EMotionEvent::PointerHover, new UI::CColorMotion(SColor(255, 255, 0, 0)));
+	btnUserName->addMotion(UI::EMotionEvent::PointerHover, new UI::CColorMotion(SColor(255, 230, 90, 30)));
 	btnUserName->addMotion(UI::EMotionEvent::PointerOut, new UI::CColorMotion());
 	btnUserName->addMotion(UI::EMotionEvent::PointerDown, new UI::CAlphaMotion(0.8f))->setTime(0.0f, 0.0f);
 	btnUserName->addMotion(UI::EMotionEvent::PointerDown, new UI::CPositionMotion(2.0f, 2.0f, 0.0f))->setTime(0.0f, 50.0f);

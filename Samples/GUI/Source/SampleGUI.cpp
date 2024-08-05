@@ -6,6 +6,7 @@
 #include "CImguiManager.h"
 
 #include "CViewInit.h"
+#include "UserInterface/CUIEventManager.h"
 
 void installApplication(const std::vector<std::string>& argv)
 {
@@ -23,10 +24,12 @@ SampleGUI::SampleGUI()
 	CLightmapper::createGetInstance();
 
 	CImguiManager::createGetInstance();
+	UI::CUIEventManager::createGetInstance();
 }
 
 SampleGUI::~SampleGUI()
 {
+	UI::CUIEventManager::releaseInstance();
 	CImguiManager::releaseInstance();
 
 	CViewManager::releaseInstance();

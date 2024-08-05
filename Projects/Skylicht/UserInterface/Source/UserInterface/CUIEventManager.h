@@ -24,44 +24,31 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CUIEventManager.h"
-#include "Components/CComponentSystem.h"
-
-#include "CUIBase.h"
+#include "EventManager/CEventManager.h"
 
 namespace Skylicht
 {
 	namespace UI
 	{
-		class CUIContainer :
-			public CComponentSystem,
-			public IEventProcessor
+		class CUIContainer;
+
+		class CUIEventManager : IEventProcessor
 		{
-		protected:
-			bool m_enable;
+		public:
+			DECLARE_SINGLETON(CUIEventManager)
 
-			std::vector<CUIBase*> m_arrayUIObjects;
-			std::vector<CUIBase*> m_raycastUIObjects;
-
-			CUIBase* m_hover;
-			CCanvas* m_canvas;
+			std::vector<CUIContainer*> m_containers;
 
 		public:
-			CUIContainer();
+			CUIEventManager();
 
-			virtual ~CUIContainer();
-
-			virtual void initComponent();
-
-			virtual void updateComponent();
-
-			CCanvas* getCanvas();
-
-			void addChild(CUIBase* base);
-
-			bool removeChild(CUIBase* base);
+			virtual ~CUIEventManager();
 
 			virtual bool OnProcessEvent(const SEvent& event);
+
+			void registerUIContainer(CUIContainer* container);
+
+			void unregisterUIContainer(CUIContainer* container);
 		};
 	}
 }

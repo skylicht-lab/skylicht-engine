@@ -3,6 +3,7 @@
 
 #include "Projective/CProjective.h"
 #include "Control/CTouchManager.h"
+#include "GameObject/CGameObject.h"
 
 namespace Skylicht
 {
@@ -10,14 +11,16 @@ namespace Skylicht
 	{
 		CUIContainer::CUIContainer() :
 			m_enable(true),
-			m_hover(NULL)
+			m_hover(NULL),
+			m_canvas(NULL)
 		{
 
 		}
 
 		CUIContainer::~CUIContainer()
 		{
-			CEventManager::getInstance()->unRegisterProcessorEvent(this);
+			if (CUIEventManager::getInstance() != NULL)
+				CUIEventManager::getInstance()->unregisterUIContainer(this);
 
 			// delete all ui
 			std::vector<CUIBase*> objects = m_arrayUIObjects;
@@ -27,12 +30,31 @@ namespace Skylicht
 
 		void CUIContainer::initComponent()
 		{
-			CEventManager::getInstance()->registerProcessorEvent(m_gameObject->getNameA(), this);
+			if (getCanvas() == NULL)
+			{
+				os::Printer::log("[CUIContainer] Should add CCanvas in this Object");
+				return;
+			}
+
+			if (CUIEventManager::getInstance() == NULL)
+			{
+				os::Printer::log("[CUIContainer] Should call CUIEventManager::createGetInstance");
+				return;
+			}
+
+			CUIEventManager::getInstance()->registerUIContainer(this);
 		}
 
 		void CUIContainer::updateComponent()
 		{
 
+		}
+
+		CCanvas* CUIContainer::getCanvas()
+		{
+			if (!m_canvas)
+				m_canvas = m_gameObject->getComponent<CCanvas>();
+			return m_canvas;
 		}
 
 		void CUIContainer::addChild(CUIBase* base)
