@@ -32,21 +32,19 @@ namespace Skylicht
 	namespace UI
 	{
 		CColorMotion::CColorMotion(const SColor& color) :
-			m_color(color),
-			m_toDefault(false)
+			m_color(color)
 		{
 
 		}
 
-		CColorMotion::CColorMotion() :
-			m_toDefault(true)
+		CColorMotion::CColorMotion()
 		{
-
+			m_toDefault = true;
 		}
 
 		CColorMotion::~CColorMotion()
 		{
-			
+
 		}
 
 		void CColorMotion::init(CGUIElement* gui)
@@ -63,6 +61,7 @@ namespace Skylicht
 				m_tween = new CTweenColor(m_defaultColor, m_color, m_duration);
 
 			m_tween->setDelay(m_delay);
+			m_tween->setEase(m_ease);
 			m_tween->OnUpdate = [&](CTween* t)
 				{
 					m_gui->setColor(((CTweenColor*)t)->getValue());

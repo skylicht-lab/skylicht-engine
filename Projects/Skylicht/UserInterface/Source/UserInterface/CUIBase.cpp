@@ -47,6 +47,9 @@ namespace Skylicht
 
 		core::vector3df* CUIBase::getRectTransform()
 		{
+			if (!m_element)
+				return NULL;
+
 			// get current canvas
 			CCanvas* canvas = m_element->getCanvas();
 
@@ -117,6 +120,9 @@ namespace Skylicht
 
 		void CUIBase::startMotion(EMotionEvent event)
 		{
+			if (!m_element)
+				return;
+
 			for (int i = 0, n = (int)EMotionEvent::NumEvent; i < n; i++)
 			{
 				EMotionEvent e = (EMotionEvent)i;

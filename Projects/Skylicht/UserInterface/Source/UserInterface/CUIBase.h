@@ -28,6 +28,11 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Graphics2D/CCanvas.h"
 
 #include "Motion/CMotion.h"
+#include "Motion/CColorMotion.h"
+#include "Motion/CAlphaMotion.h"
+#include "Motion/CPositionMotion.h"
+#include "Motion/CScaleMotion.h"
+#include "Motion/CRotationMotion.h"
 
 namespace Skylicht
 {

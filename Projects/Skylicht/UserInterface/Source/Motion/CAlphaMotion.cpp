@@ -31,18 +31,16 @@ namespace Skylicht
 	{
 		CAlphaMotion::CAlphaMotion(float alpha) :
 			m_alpha(alpha),
-			m_defaultAlpha(1.0f),
-			m_toDefault(false)
+			m_defaultAlpha(1.0f)
 		{
 
 		}
 
 		CAlphaMotion::CAlphaMotion() :
 			m_alpha(1.0f),
-			m_defaultAlpha(1.0f),
-			m_toDefault(true)
+			m_defaultAlpha(1.0f)
 		{
-
+			m_toDefault = true;
 		}
 
 		CAlphaMotion::~CAlphaMotion()
@@ -72,6 +70,7 @@ namespace Skylicht
 			}
 
 			m_tween->setDelay(m_delay);
+			m_tween->setEase(m_ease);
 			m_tween->OnUpdate = [&](CTween* t)
 				{
 					float alpha = ((CTweenFloat*)t)->getValue();
