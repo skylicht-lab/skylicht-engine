@@ -35,8 +35,7 @@ namespace Skylicht
 		protected:
 			SColor m_defaultColor;
 			SColor m_color;
-			bool m_toDefault;
-
+			
 		public:
 			CColorMotion(const SColor& color);
 			CColorMotion();

@@ -35,7 +35,6 @@ namespace Skylicht
 		protected:
 			float m_defaultAlpha;
 			float m_alpha;
-			bool m_toDefault;
 
 		public:
 			CAlphaMotion(float alpha);

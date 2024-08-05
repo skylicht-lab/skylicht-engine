@@ -53,7 +53,9 @@ namespace Skylicht
 			float m_duration;
 
 			EMotionEvent m_event;
+			EEasingFunctions m_ease;
 
+			bool m_toDefault;
 		public:
 			CMotion();
 
@@ -74,6 +76,11 @@ namespace Skylicht
 			inline void setEvent(EMotionEvent e)
 			{
 				m_event = e;
+			}
+
+			inline void setEasingFunction(EEasingFunctions f)
+			{
+				m_ease = f;
 			}
 		};
 	}
