@@ -192,7 +192,7 @@ namespace Skylicht
 				nameHint = L"Sprite";
 				CGUIFitSprite* fitSprite = parentNode->getCanvas()->createFitSprite(parentNode, r, NULL);
 				fitSprite->setFrameSource(
-					"SampleGUI/SampleGUI.spritedata", 
+					"SampleGUI/SampleGUI.spritedata",
 					"popup",
 					"SampleGUI/!Sprites/popup.png"
 				);
@@ -209,9 +209,9 @@ namespace Skylicht
 				newNode = parentNode->getCanvas()->createElement(parentNode, r);
 
 				CGUIFitSprite* bg = parentNode->getCanvas()->createFitSprite(newNode, r, NULL);
-				bg->setName(L".background");
+				bg->setName(L"Background");
 				bg->setFrameSource(
-					"SampleGUI/SampleGUI.spritedata", 
+					"SampleGUI/SampleGUI.spritedata",
 					"button-small",
 					"SampleGUI/!Sprites/button-small.png");
 				bg->setDock(EGUIDock::DockFill);
@@ -221,11 +221,48 @@ namespace Skylicht
 					bg->setMaterialSource("BuiltIn/Textures/Shiny.mat");
 
 				CGUIText* text = parentNode->getCanvas()->createText(newNode, r, NULL);
-				text->setName(L".text");
+				text->setName(L"Text");
 				text->setText(L"Button");
 				text->setDock(EGUIDock::DockFill);
 				text->setTextAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
 				text->setFontSource("SampleGUI/Fonts/Roboto-Bold.font");
+			}
+			else if (command == L"UI Slider")
+			{
+
+			}
+			else if (command == L"UI Input")
+			{
+				r.LowerRightCorner.X = 220.0f;
+				r.LowerRightCorner.Y = 60.0f;
+
+				nameHint = L"Input";
+				newNode = parentNode->getCanvas()->createElement(parentNode, r);
+
+				CGUIFitSprite* bg = parentNode->getCanvas()->createFitSprite(newNode, r, NULL);
+				bg->setName(L"Background");
+				bg->setFrameSource(
+					"SampleGUI/SampleGUI.spritedata",
+					"input",
+					"SampleGUI/!Sprites/input.png");
+				bg->setDock(EGUIDock::DockFill);
+				bg->setAnchor(CGUIFitSprite::AnchorAll, 15.0f, 15.0f, 15.0f, 15.0f);
+
+				CGUIText* text = parentNode->getCanvas()->createText(newNode, r, NULL);
+				text->setName(L"Text");
+				text->setText(L"Enter text here");
+				text->setDock(EGUIDock::DockFill);
+				text->setTextAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
+				text->setMargin(SMargin(5.0f, 5.0f, 5.0f, 5.0f));
+				text->setFontSource("SampleGUI/Fonts/Roboto.font");
+			}
+			else if (command == L"UI Checkbox")
+			{
+
+			}
+			else if (command == L"UI Switch")
+			{
+
 			}
 
 			if (newNode)
@@ -253,7 +290,7 @@ namespace Skylicht
 			if (m_spaceHierarchy != NULL)
 				m_spaceHierarchy->addToTreeNode(guiNode);
 		}
-	
+
 		void CGUIDesignController::deselectAllOnHierachy()
 		{
 			CScene* scene = CSceneController::getInstance()->getScene();
@@ -508,13 +545,13 @@ namespace Skylicht
 			// refresh editor
 			CEditor::getInstance()->refresh();
 		}
-	
+
 		void CGUIDesignController::onCopy()
 		{
 			CScene* scene = CSceneController::getInstance()->getScene();
 			if (!scene)
 				return;
-			
+
 			CSelection* selection = CSelection::getInstance();
 			std::vector<CSelectObject*>& selected = selection->getAllSelected();
 
@@ -522,7 +559,7 @@ namespace Skylicht
 
 			CGameObject* guiCanvas = scene->searchObjectInChild(L"GUICanvas");
 			CCanvas* canvas = guiCanvas->getComponent<CCanvas>();
-			
+
 			for (CSelectObject* selectObject : selected)
 			{
 				CSelectObject::ESelectType type = selectObject->getType();
@@ -543,7 +580,7 @@ namespace Skylicht
 
 			CCopyPasteUI::getInstance()->copy(listUI);
 		}
-		
+
 		void CGUIDesignController::onPaste()
 		{
 			CScene* scene = CSceneController::getInstance()->getScene();
@@ -552,7 +589,7 @@ namespace Skylicht
 
 			CGameObject* guiCanvas = scene->searchObjectInChild(L"GUICanvas");
 			CCanvas* canvas = guiCanvas->getComponent<CCanvas>();
-			
+
 			CSelection* selection = CSelection::getInstance();
 			CCopyPasteUI* copyPaste = CCopyPasteUI::getInstance();
 
@@ -582,13 +619,13 @@ namespace Skylicht
 			selection->clear();
 			selection->addSelect(newUIs);
 		}
-		
+
 		void CGUIDesignController::onDuplicate()
 		{
 			onCopy();
 			onPaste();
 		}
-		
+
 		void CGUIDesignController::onCut()
 		{
 			onCopy();

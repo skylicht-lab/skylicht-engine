@@ -135,13 +135,10 @@ namespace Skylicht
 		prepareBuffer();
 
 		// sort canvas by depth
-		struct {
-			bool operator()(CCanvas* a, CCanvas* b) const
+		std::sort(m_canvas.begin(), m_canvas.end(), [](CCanvas*& a, CCanvas*& b)
 			{
 				return a->getSortDepth() < b->getSortDepth();
-			}
-		} customLess;
-		std::sort(m_canvas.begin(), m_canvas.end(), customLess);
+			});
 
 		core::matrix4 billboardMatrix;
 

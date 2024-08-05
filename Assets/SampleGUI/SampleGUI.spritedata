@@ -7,34 +7,37 @@
 		<module id="0" x="0.000000" y="0.000000" w="150.000000" h="90.000000"/>
 		<module id="1" x="152.000000" y="0.000000" w="150.000000" h="70.000000"/>
 		<module id="2" x="304.000000" y="0.000000" w="150.000000" h="70.000000"/>
-		<module id="3" x="0.000000" y="92.000000" w="150.000000" h="90.000000"/>
-		<module id="4" x="456.000000" y="0.000000" w="24.000000" h="24.000000"/>
-		<module id="5" x="482.000000" y="0.000000" w="24.000000" h="24.000000"/>
-		<module id="6" x="152.000000" y="92.000000" w="56.000000" h="56.000000"/>
-		<module id="7" x="210.000000" y="92.000000" w="56.000000" h="56.000000"/>
-		<module id="8" x="0.000000" y="184.000000" w="200.000000" h="228.000000"/>
-		<module id="9" x="202.000000" y="184.000000" w="150.000000" h="60.000000"/>
-		<module id="10" x="354.000000" y="184.000000" w="150.000000" h="60.000000"/>
-		<module id="11" x="268.000000" y="92.000000" w="150.000000" h="45.000000"/>
-		<module id="12" x="420.000000" y="92.000000" w="150.000000" h="45.000000"/>
-		<module id="13" x="0.000000" y="414.000000" w="200.000000" h="200.000000"/>
-		<module id="14" x="508.000000" y="0.000000" w="150.000000" h="20.000000"/>
-		<module id="15" x="506.000000" y="184.000000" w="60.000000" h="60.000000"/>
-		<module id="16" x="568.000000" y="184.000000" w="60.000000" h="60.000000"/>
-		<module id="17" x="630.000000" y="184.000000" w="60.000000" h="60.000000"/>
-		<module id="18" x="202.000000" y="246.000000" w="64.000000" h="64.000000"/>
-		<module id="19" x="268.000000" y="246.000000" w="64.000000" h="64.000000"/>
-		<module id="20" x="152.000000" y="150.000000" w="30.000000" h="30.000000"/>
-		<module id="21" x="184.000000" y="150.000000" w="30.000000" h="30.000000"/>
-		<module id="22" x="202.000000" y="414.000000" w="200.000000" h="200.000000"/>
-		<module id="23" x="216.000000" y="150.000000" w="150.000000" h="30.000000"/>
-		<module id="24" x="456.000000" y="26.000000" w="40.000000" h="40.000000"/>
-		<module id="25" x="368.000000" y="150.000000" w="150.000000" h="30.000000"/>
-		<module id="26" x="692.000000" y="184.000000" w="46.000000" h="46.000000"/>
-		<module id="27" x="740.000000" y="184.000000" w="46.000000" h="46.000000"/>
-		<module id="28" x="334.000000" y="246.000000" w="124.000000" h="64.000000"/>
-		<module id="29" x="460.000000" y="246.000000" w="124.000000" h="64.000000"/>
-		<module id="30" x="586.000000" y="246.000000" w="124.000000" h="64.000000"/>
+		<module id="3" x="456.000000" y="0.000000" w="150.000000" h="70.000000"/>
+		<module id="4" x="0.000000" y="92.000000" w="150.000000" h="90.000000"/>
+		<module id="5" x="152.000000" y="92.000000" w="150.000000" h="90.000000"/>
+		<module id="6" x="608.000000" y="0.000000" w="24.000000" h="24.000000"/>
+		<module id="7" x="634.000000" y="0.000000" w="24.000000" h="24.000000"/>
+		<module id="8" x="304.000000" y="92.000000" w="56.000000" h="56.000000"/>
+		<module id="9" x="362.000000" y="92.000000" w="56.000000" h="56.000000"/>
+		<module id="10" x="0.000000" y="184.000000" w="200.000000" h="228.000000"/>
+		<module id="11" x="152.000000" y="72.000000" w="18.000000" h="18.000000"/>
+		<module id="12" x="202.000000" y="184.000000" w="150.000000" h="60.000000"/>
+		<module id="13" x="354.000000" y="184.000000" w="150.000000" h="60.000000"/>
+		<module id="14" x="420.000000" y="92.000000" w="150.000000" h="45.000000"/>
+		<module id="15" x="572.000000" y="92.000000" w="150.000000" h="45.000000"/>
+		<module id="16" x="0.000000" y="414.000000" w="200.000000" h="200.000000"/>
+		<module id="17" x="660.000000" y="0.000000" w="150.000000" h="20.000000"/>
+		<module id="18" x="506.000000" y="184.000000" w="60.000000" h="60.000000"/>
+		<module id="19" x="568.000000" y="184.000000" w="60.000000" h="60.000000"/>
+		<module id="20" x="630.000000" y="184.000000" w="60.000000" h="60.000000"/>
+		<module id="21" x="202.000000" y="246.000000" w="64.000000" h="64.000000"/>
+		<module id="22" x="268.000000" y="246.000000" w="64.000000" h="64.000000"/>
+		<module id="23" x="304.000000" y="150.000000" w="30.000000" h="30.000000"/>
+		<module id="24" x="336.000000" y="150.000000" w="30.000000" h="30.000000"/>
+		<module id="25" x="202.000000" y="414.000000" w="200.000000" h="200.000000"/>
+		<module id="26" x="368.000000" y="150.000000" w="150.000000" h="30.000000"/>
+		<module id="27" x="608.000000" y="26.000000" w="40.000000" h="40.000000"/>
+		<module id="28" x="520.000000" y="150.000000" w="150.000000" h="30.000000"/>
+		<module id="29" x="692.000000" y="184.000000" w="46.000000" h="46.000000"/>
+		<module id="30" x="740.000000" y="184.000000" w="46.000000" h="46.000000"/>
+		<module id="31" x="334.000000" y="246.000000" w="124.000000" h="64.000000"/>
+		<module id="32" x="460.000000" y="246.000000" w="124.000000" h="64.000000"/>
+		<module id="33" x="586.000000" y="246.000000" w="124.000000" h="64.000000"/>
 	</modules>
 	<frames>
 		<frame id="abd38ad8c2e594ed" name="button-disable" page="0">
@@ -43,92 +46,101 @@
 		<frame id="eaedc7dc681d3188" name="button-small-disable" page="0">
 			<fmodule id="1" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="40bb4b1f8abccfd9" name="button-small" page="0">
+		<frame id="a231cb96eeb5dfbb" name="button-small-white" page="0">
 			<fmodule id="2" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="186591cd56eff816" name="button" page="0">
+		<frame id="40bb4b1f8abccfd9" name="button-small" page="0">
 			<fmodule id="3" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="fc4be1afbec0a132" name="checkbox-center-disable" page="0">
+		<frame id="503fed580eb1abf9" name="button-white" page="0">
 			<fmodule id="4" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="0bc2c2dd66ff6bb0" name="checkbox-center" page="0">
+		<frame id="186591cd56eff816" name="button" page="0">
 			<fmodule id="5" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="17e896323705821a" name="checkbox-disable" page="0">
+		<frame id="fc4be1afbec0a132" name="checkbox-center-disable" page="0">
 			<fmodule id="6" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="a78c4be6c9c4e053" name="checkbox" page="0">
+		<frame id="0bc2c2dd66ff6bb0" name="checkbox-center" page="0">
 			<fmodule id="7" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="9a4ba3f91df7eb67" name="dialog" page="0">
+		<frame id="17e896323705821a" name="checkbox-disable" page="0">
 			<fmodule id="8" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="58e8b1424a9a77bb" name="input-activate" page="0">
+		<frame id="a78c4be6c9c4e053" name="checkbox" page="0">
 			<fmodule id="9" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="20d790a0784c78eb" name="input" page="0">
+		<frame id="9a4ba3f91df7eb67" name="dialog" page="0">
 			<fmodule id="10" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="99b73204d3cef53d" name="loading-background" page="0">
+		<frame id="9ded314457bae99b" name="icon-x" page="0">
 			<fmodule id="11" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="c3502cec80b919ad" name="loading" page="0">
+		<frame id="58e8b1424a9a77bb" name="input-activate" page="0">
 			<fmodule id="12" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="7321a8ae6e4d013b" name="popup" page="0">
+		<frame id="20d790a0784c78eb" name="input" page="0">
 			<fmodule id="13" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="ece6d9f17a485560" name="progress-background" page="0">
+		<frame id="99b73204d3cef53d" name="loading-background" page="0">
 			<fmodule id="14" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="b7d1721e0057af47" name="progress-circle-disable" page="0">
+		<frame id="c3502cec80b919ad" name="loading" page="0">
 			<fmodule id="15" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="4a502e72edcd0683" name="progress-circle-done" page="0">
+		<frame id="7321a8ae6e4d013b" name="popup" page="0">
 			<fmodule id="16" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="c1c84d0d32c50ca6" name="progress-circle-inprogress" page="0">
+		<frame id="ece6d9f17a485560" name="progress-background" page="0">
 			<fmodule id="17" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="ad82f59cf5363cae" name="radio-button-disable" page="0">
+		<frame id="b7d1721e0057af47" name="progress-circle-disable" page="0">
 			<fmodule id="18" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="3d43b43ca0f5d18f" name="radio-button" page="0">
+		<frame id="4a502e72edcd0683" name="progress-circle-done" page="0">
 			<fmodule id="19" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="07df3be11df7ff2f" name="radio-circle-center-disable" page="0">
+		<frame id="c1c84d0d32c50ca6" name="progress-circle-inprogress" page="0">
 			<fmodule id="20" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="1d643900dd260108" name="radio-circle-center" page="0">
+		<frame id="ad82f59cf5363cae" name="radio-button-disable" page="0">
 			<fmodule id="21" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="67cb841d4c083499" name="skylicht-icon" page="0">
+		<frame id="3d43b43ca0f5d18f" name="radio-button" page="0">
 			<fmodule id="22" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="d7ac2f0974d25d5f" name="slider-background" page="0">
+		<frame id="07df3be11df7ff2f" name="radio-circle-center-disable" page="0">
 			<fmodule id="23" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="b739815963d0f1a2" name="slider-circle" page="0">
+		<frame id="1d643900dd260108" name="radio-circle-center" page="0">
 			<fmodule id="24" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="9b83802cacec55af" name="slider-selected" page="0">
+		<frame id="67cb841d4c083499" name="skylicht-icon" page="0">
 			<fmodule id="25" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="c5b3d538c2951917" name="switch-circle-disable" page="0">
+		<frame id="d7ac2f0974d25d5f" name="slider-background" page="0">
 			<fmodule id="26" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="f9e5211e00a21c6e" name="switch-circle" page="0">
+		<frame id="b739815963d0f1a2" name="slider-circle" page="0">
 			<fmodule id="27" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="c8d7b1260ce23958" name="switch-disable" page="0">
+		<frame id="9b83802cacec55af" name="slider-selected" page="0">
 			<fmodule id="28" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="d699422cf40a29fe" name="switch-off" page="0">
+		<frame id="c5b3d538c2951917" name="switch-circle-disable" page="0">
 			<fmodule id="29" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="dbbc6b190569ce4a" name="switch-on" page="0">
+		<frame id="f9e5211e00a21c6e" name="switch-circle" page="0">
 			<fmodule id="30" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
+		</frame>
+		<frame id="c8d7b1260ce23958" name="switch-disable" page="0">
+			<fmodule id="31" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
+		</frame>
+		<frame id="d699422cf40a29fe" name="switch-off" page="0">
+			<fmodule id="32" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
+		</frame>
+		<frame id="dbbc6b190569ce4a" name="switch-on" page="0">
+			<fmodule id="33" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
 	</frames>
 </sprite>

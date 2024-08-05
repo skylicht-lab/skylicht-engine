@@ -66,6 +66,14 @@ namespace Skylicht
 			Right = 0.0f;
 			Bottom = 0.0f;
 		}
+
+		SMargin(float l, float t, float r, float b)
+		{
+			Left = l;
+			Top = t;
+			Right = r;
+			Bottom = b;
+		}
 	};
 
 	class SKYLICHT_API CGUIAlignData : public IEntityData

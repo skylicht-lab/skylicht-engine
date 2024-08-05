@@ -45,6 +45,7 @@ namespace Skylicht
 		std::wstring attributeName;
 
 		std::stack<CGUIElement*> parents;
+		std::stack<int> parentTypes;
 
 		g_listGUIObject.clear();
 
@@ -88,8 +89,14 @@ namespace Skylicht
 								element = canvas->createText(parent, nullRect, NULL);
 							else if (attributeName == L"CGUILayout")
 								element = canvas->createLayout(parent, nullRect);
-							else if (attributeName == L"CGUICustomSizeSprite")
+							else if (attributeName == L"CGUIFitSprite")
 								element = canvas->createFitSprite(parent, nullRect, NULL);
+							else if (attributeName != L"Childs")
+							{
+								char log[512];
+								sprintf(log, "[CGUIImporter] Can't create element: %s", CStringImp::convertUnicodeToUTF8(attributeName.c_str()).c_str());
+								os::Printer::log(log);
+							}
 						}
 						else
 						{
@@ -103,9 +110,21 @@ namespace Skylicht
 							currentObject = element;
 						}
 
-						if (currentObject && attributeName == L"Childs")
+						if (currentObject)
 						{
-							parents.push(currentObject);
+							if (attributeName == L"Childs")
+							{
+								parentTypes.push(1);
+								parents.push(currentObject);
+							}
+							else
+							{
+								parentTypes.push(0);
+							}
+						}
+						else
+						{
+							parentTypes.push(0);
 						}
 					}
 				}
@@ -113,9 +132,14 @@ namespace Skylicht
 			case io::EXN_ELEMENT_END:
 				if (nodeName == reader->getNodeName())
 				{
-					if (attributeName == L"Childs")
+					if (parentTypes.top() == 1)
 					{
+						parentTypes.pop();
 						parents.pop();
+					}
+					else
+					{
+						parentTypes.pop();
 					}
 				}
 				break;
@@ -173,7 +197,8 @@ namespace Skylicht
 							attributeName == L"CGUIRect" ||
 							attributeName == L"CGUISprite" ||
 							attributeName == L"CGUIText" ||
-							attributeName == L"CGUILayout")
+							attributeName == L"CGUILayout" ||
+							attributeName == L"CGUIFitSprite")
 						{
 							CGUIElement* guiObject = dynamic_cast<CGUIElement*>(*g_currentGUI);
 							++g_currentGUI;
@@ -184,6 +209,16 @@ namespace Skylicht
 							data->parseSerializable(reader);
 							guiObject->loadSerializable(data);
 							delete data;
+						}
+						else if (attributeName != L"Childs")
+						{
+							char log[512];
+							sprintf(log, "[CGUIImporter] Can't load element: %s", CStringImp::convertUnicodeToUTF8(attributeName.c_str()).c_str());
+							os::Printer::log(log);
+
+							++g_currentGUI;
+							++g_guiLoading;
+							++step;
 						}
 					}
 				}
@@ -260,8 +295,14 @@ namespace Skylicht
 			element = canvas->createText(parent, nullRect, NULL);
 		else if (type == "CGUILayout")
 			element = canvas->createLayout(parent, nullRect);
-		else if (type == "CGUICustomSizeSprite")
+		else if (type == "CGUIFitSprite")
 			element = canvas->createFitSprite(parent, nullRect, NULL);
+		else
+		{
+			char log[512];
+			sprintf(log, "[CGUIImporter] Can't create element: %s", type.c_str());
+			os::Printer::log(log);
+		}
 
 		if (!element)
 			return NULL;
