@@ -41,6 +41,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Primitive/CSphere.h"
 #include "Primitive/CPlane.h"
 
+#ifdef BUILD_SKYLICHT_PHYSIC
 #include "Collider/CBoxCollider.h"
 #include "Collider/CStaticPlaneCollider.h"
 #include "Collider/CBvhMeshCollider.h"
@@ -50,10 +51,10 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Collider/CCapsuleCollider.h"
 #include "Collider/CSphereCollider.h"
 #include "RigidBody/CRigidbody.h"
+using namespace Physics;
+#endif
 
 #define USE_COMPONENT(component) CComponentSystem *component##_used = addComponent(new component())
-
-using namespace Physics;
 
 namespace Skylicht
 {
@@ -96,6 +97,7 @@ namespace Skylicht
 		USE_COMPONENT(CSphere);
 		USE_COMPONENT(CPlane);
 
+#ifdef BUILD_SKYLICHT_PHYSIC
 		USE_COMPONENT(CRigidbody);
 		USE_COMPONENT(CBoxCollider);
 		USE_COMPONENT(CStaticPlaneCollider);
@@ -105,6 +107,7 @@ namespace Skylicht
 		USE_COMPONENT(CCylinderCollider);
 		USE_COMPONENT(CCapsuleCollider);
 		USE_COMPONENT(CSphereCollider);
+#endif
 
 		// END DECLARE COMPONENT
 

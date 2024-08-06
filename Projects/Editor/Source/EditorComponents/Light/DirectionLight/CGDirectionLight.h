@@ -27,7 +27,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "EditorComponents/CGizmosComponent.h"
 #include "Lighting/CDirectionalLight.h"
 #include "SpriteDraw/CSprite.h"
-#include "Collision/CCollisionNode.h"
 
 namespace Skylicht
 {
@@ -40,7 +39,6 @@ namespace Skylicht
 
 			CDirectionalLight* m_directionLight;
 			CSprite* m_sprite;
-			CCollisionNode* m_collisionNode;
 
 		public:
 			CGDirectionLight();

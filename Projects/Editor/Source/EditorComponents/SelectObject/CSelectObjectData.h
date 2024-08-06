@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Entity/IEntityData.h"
-#include "Collision/CCollisionNode.h"
+#include "GameObject/CGameObject.h"
 
 namespace Skylicht
 {
