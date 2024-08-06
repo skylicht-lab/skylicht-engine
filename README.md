@@ -78,7 +78,7 @@ C:\skylicht-engine\Assets>cd ..
 ```
 ### Build Shader
 -   **Optional**, You can skip this step if you don't modify any shader.
--   This python tool use C Preprocessor to inline shader script (HLSL, HLSL)
+-   This python tool use C Preprocessor to inline shader (GLSL, HLSL) script.
 ```Shell
 # Install pcpp (C Preprocessor tool)
 # https://pypi.org/project/pcpp
@@ -112,7 +112,7 @@ C:\skylicht-engine\Assets>cd ..
 ## Add source code
 - Add new source files or subfolders on `Projects/{ProjectName}/Source` and regenerate project
 ```Shell
-C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A x64
+C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 17 2022" -A x64
 ```
 
 ## Create application project
@@ -166,7 +166,8 @@ C:\skylicht-engine\Assets>cd..
 ```
 C:\skylicht-engine>SET ASSET_PATH=Projects\Android\app\src\main\assets
 ```
-**Android AAB:** Assets will be copied to assetPack: **appdata**
+**Android AAB:**
+Assets will be copied to assetPack: **appdata**
 ```
 C:\skylicht-engine>SET ASSET_PATH=Projects\Android\appdata\src\main\assets
 ```

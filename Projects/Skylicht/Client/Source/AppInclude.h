@@ -40,10 +40,6 @@ using namespace irr::video;
 #include "SkylichtConfig.h"
 #include "Skylicht.h"
 
-#ifdef BUILD_SKYLICHT_COMPONENTS
-#include "CollisionConfig.h"
-#endif
-
 #ifdef BUILD_SKYLICHT_COLLISION
 #include "CollisionConfig.h"
 #endif
