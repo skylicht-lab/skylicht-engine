@@ -151,7 +151,7 @@ if (BUILD_MACOS)
 endif()
 endif()
 
-if (INSTALL_LIBS)
+if (INSTALL_LIBS OR BUILD_SHARED_LIBS)
 	if (MSVC OR CYGWIN OR MINGW)
 		target_link_libraries(ThirdParty PRIVATE ws2_32)
 	endif()
