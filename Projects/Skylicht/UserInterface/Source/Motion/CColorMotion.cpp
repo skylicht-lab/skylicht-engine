@@ -58,7 +58,12 @@ namespace Skylicht
 			if (m_toDefault)
 				m_tween = new CTweenColor(m_gui->getColor(), m_defaultColor, m_duration);
 			else
-				m_tween = new CTweenColor(m_defaultColor, m_color, m_duration);
+			{
+				if (m_inverseMotion)
+					m_tween = new CTweenColor(m_color, m_defaultColor, m_duration);
+				else
+					m_tween = new CTweenColor(m_defaultColor, m_color, m_duration);
+			}
 
 			m_tween->setDelay(m_delay);
 			m_tween->setEase(m_ease);

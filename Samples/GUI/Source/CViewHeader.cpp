@@ -1,8 +1,12 @@
 #include "pch.h"
 #include "CViewHeader.h"
 #include "Context/CContext.h"
+#include "ViewManager/CViewManager.h"
+
+#include "CViewPopupEnterName.h"
 
 #include "Graphics2D/CGUIImporter.h"
+#include "GameObject/CGameObject.h"
 
 #include "UserInterface/CUIContainer.h"
 #include "UserInterface/CUIButton.h"
@@ -27,6 +31,7 @@ void CViewHeader::onInit()
 
 	CGUIImporter::loadGUI("SampleGUI/Header.gui", canvas);
 	canvas->applyScaleGUI(1.0f);
+	canvas->setSortDepth(1);
 
 	UI::CUIContainer* uiContainer = header->addComponent<UI::CUIContainer>();
 
@@ -37,14 +42,16 @@ void CViewHeader::onInit()
 	btnUserName->addMotion(UI::EMotionEvent::PointerDown, new UI::CPositionMotion(2.0f, 2.0f, 0.0f))->setTime(0.0f, 50.0f);
 	btnUserName->addMotion(UI::EMotionEvent::PointerUp, new UI::CAlphaMotion())->setTime(0.0f, 50.0f);
 	btnUserName->addMotion(UI::EMotionEvent::PointerUp, new UI::CPositionMotion());
+	btnUserName->OnPressed = []()
+		{
+			CViewManager::getInstance()->getLayer(2)->pushView<CViewPopupEnterName>();
+		};
 
 	UI::CUIBase* btnAvatar = new UI::CUIBase(uiContainer, canvas->getGUIByPath("Canvas/Header/Avatar"));
-	btnAvatar->addMotion(UI::EMotionEvent::PointerHover, new UI::CScaleMotion(1.1f, 1.1f, 1.1f));
-	btnAvatar->addMotion(UI::EMotionEvent::PointerOut, new UI::CScaleMotion());
-	btnAvatar->addMotion(UI::EMotionEvent::PointerDown, new UI::CAlphaMotion(0.8f))->setTime(0.0f, 0.0f);
-	btnAvatar->addMotion(UI::EMotionEvent::PointerDown, new UI::CScaleMotion(1.0f, 1.0f, 1.0f))->setTime(0.0f, 50.0f);
-	btnAvatar->addMotion(UI::EMotionEvent::PointerUp, new UI::CAlphaMotion())->setTime(0.0f, 50.0f);
-	btnAvatar->addMotion(UI::EMotionEvent::PointerUp, new UI::CScaleMotion(1.1f, 1.1f, 1.1f))->setTime(0.0f, 100.0f);
+	btnAvatar->addMotion(UI::EMotionEvent::PointerHover, new UI::CAlphaMotion(0.8f));
+	btnAvatar->addMotion(UI::EMotionEvent::PointerOut, new UI::CAlphaMotion());
+	btnAvatar->addMotion(UI::EMotionEvent::PointerDown, new UI::CScaleMotion(0.9f, 0.9f, 0.9f))->setTime(0.0f, 50.0f);
+	btnAvatar->addMotion(UI::EMotionEvent::PointerUp, new UI::CScaleMotion())->setTime(0.0f, 100.0f);
 }
 
 void CViewHeader::onDestroy()

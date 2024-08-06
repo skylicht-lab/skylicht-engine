@@ -66,7 +66,10 @@ namespace Skylicht
 			}
 			else
 			{
-				m_tween = new CTweenFloat(m_defaultAlpha, m_alpha, m_duration);
+				if (m_inverseMotion)
+					m_tween = new CTweenFloat(m_alpha, m_defaultAlpha, m_duration);
+				else
+					m_tween = new CTweenFloat(m_defaultAlpha, m_alpha, m_duration);
 			}
 
 			m_tween->setDelay(m_delay);

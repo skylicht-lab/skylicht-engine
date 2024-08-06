@@ -62,6 +62,12 @@ namespace Skylicht
 			bool removeChild(CUIBase* base);
 
 			virtual bool OnProcessEvent(const SEvent& event);
+
+			void onPointerOut(float x, float y);
+
+			void startInMotion();
+
+			void startOutMotion();
 		};
 	}
 }

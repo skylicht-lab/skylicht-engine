@@ -35,7 +35,8 @@ namespace Skylicht
 			m_delay(0.0f),
 			m_duration(150.0f),
 			m_toDefault(false),
-			m_ease(EEasingFunctions::EaseInCubic),
+			m_inverseMotion(false),
+			m_ease(EEasingFunctions::EaseOutCubic),
 			m_event(EMotionEvent::In)
 		{
 

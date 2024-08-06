@@ -64,7 +64,12 @@ namespace Skylicht
 			if (m_toDefault)
 				m_tween = new CTweenVector3df(m_gui->getScale(), m_defaultScale, m_duration);
 			else
-				m_tween = new CTweenVector3df(m_defaultScale, m_defaultScale * m_scale, m_duration);
+			{
+				if (m_inverseMotion)
+					m_tween = new CTweenVector3df(m_defaultScale * m_scale, m_defaultScale, m_duration);
+				else
+					m_tween = new CTweenVector3df(m_defaultScale, m_defaultScale * m_scale, m_duration);
+			}
 
 			m_tween->setDelay(m_delay);
 			m_tween->setEase(m_ease);
