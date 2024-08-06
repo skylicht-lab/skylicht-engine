@@ -27,7 +27,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "EditorComponents/CGizmosComponent.h"
 #include "Lighting/CSpotLight.h"
 #include "SpriteDraw/CSprite.h"
-#include "Collision/CCollisionNode.h"
 
 namespace Skylicht
 {
@@ -40,7 +39,6 @@ namespace Skylicht
 
 			CSpotLight* m_spotLight;
 			CSprite* m_sprite;
-			CCollisionNode* m_collisionNode;
 
 			core::vector3df* m_circlePos;
 
