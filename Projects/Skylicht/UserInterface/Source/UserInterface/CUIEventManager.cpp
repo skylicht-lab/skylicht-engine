@@ -46,17 +46,34 @@ namespace Skylicht
 
 		bool CUIEventManager::OnProcessEvent(const SEvent& event)
 		{
-			std::vector<CUIContainer*> list = m_containers;
-
-			std::sort(list.begin(), list.end(), [](CUIContainer*& a, CUIContainer*& b)
-				{
-					return a->getCanvas()->getSortDepth() > b->getCanvas()->getSortDepth();
-				});
-
-			for (CUIContainer* ui : list)
+			if (event.EventType == EET_MOUSE_INPUT_EVENT)
 			{
-				if (ui->OnProcessEvent(event) == false)
-					return false;
+				f32 mouseX = (f32)event.MouseInput.X;
+				f32 mouseY = (f32)event.MouseInput.Y;
+
+				std::vector<CUIContainer*> list = m_containers;
+
+				std::sort(list.begin(), list.end(), [](CUIContainer*& a, CUIContainer*& b)
+					{
+						return a->getCanvas()->getSortDepth() > b->getCanvas()->getSortDepth();
+					});
+
+				bool result = true;
+
+				for (CUIContainer* ui : list)
+				{
+					if (result)
+					{
+						if (ui->OnProcessEvent(event) == false)
+							result = false;
+					}
+					else
+					{
+						ui->onPointerOut(mouseX, mouseY);
+					}
+				}
+
+				return result;
 			}
 
 			return true;

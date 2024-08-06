@@ -22,7 +22,18 @@ namespace Skylicht
 
 		for (CTween* tween : m_tweens)
 		{
-			tween->update();
+			bool isRemoved = false;
+			for (CTween* t : m_remove)
+			{
+				if (t == tween)
+				{
+					isRemoved = true;
+					break;
+				}
+			}
+
+			if (!isRemoved)
+				tween->update();
 		}
 
 		for (CTween* tween : m_remove)

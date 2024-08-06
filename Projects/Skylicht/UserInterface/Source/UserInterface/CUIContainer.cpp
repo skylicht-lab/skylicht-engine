@@ -139,7 +139,7 @@ namespace Skylicht
 
 				std::sort(m_raycastUIObjects.begin(), m_raycastUIObjects.end(), [](CUIBase*& a, CUIBase*& b)
 					{
-						return a->getElement()->getDepth() < b->getElement()->getDepth();
+						return a->getElement()->getDepth() > b->getElement()->getDepth();
 					});
 
 				if (m_hover != m_raycastUIObjects[0])
@@ -170,6 +170,27 @@ namespace Skylicht
 			}
 
 			return true;
+		}
+
+		void CUIContainer::onPointerOut(float x, float y)
+		{
+			if (m_hover)
+			{
+				m_hover->onPointerOut(x, y);
+				m_hover = NULL;
+			}
+		}
+
+		void CUIContainer::startInMotion()
+		{
+			for (CUIBase* base : m_arrayUIObjects)
+				base->startMotion(UI::EMotionEvent::In);
+		}
+
+		void CUIContainer::startOutMotion()
+		{
+			for (CUIBase* base : m_arrayUIObjects)
+				base->startMotion(UI::EMotionEvent::Out);
 		}
 	}
 }

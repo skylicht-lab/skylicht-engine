@@ -56,6 +56,8 @@ namespace Skylicht
 			EEasingFunctions m_ease;
 
 			bool m_toDefault;
+			bool m_inverseMotion;
+
 		public:
 			CMotion();
 
@@ -67,20 +69,35 @@ namespace Skylicht
 
 			virtual void stop();
 
-			inline void setTime(float delay, float duration)
+			inline CMotion* setTime(float delay, float duration)
 			{
 				m_delay = delay;
 				m_duration = duration;
+				return this;
 			}
 
-			inline void setEvent(EMotionEvent e)
+			inline CMotion* setEvent(EMotionEvent e)
 			{
 				m_event = e;
+				return this;
 			}
 
-			inline void setEasingFunction(EEasingFunctions f)
+			inline CMotion* setEasingFunction(EEasingFunctions f)
 			{
 				m_ease = f;
+				return this;
+			}
+
+			inline CMotion* setInverse(bool b)
+			{
+				m_inverseMotion = b;
+				return this;
+			}
+
+			inline CMotion* setToDefault(bool b)
+			{
+				m_toDefault = b;
+				return this;
 			}
 		};
 	}

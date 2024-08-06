@@ -2,8 +2,6 @@
 
 #include "ViewManager/CView.h"
 #include "GameObject/CGameObject.h"
-#include "RenderMesh/CMesh.h"
-#include "Animation/CAnimationController.h"
 
 class CViewDemo : public CView
 {

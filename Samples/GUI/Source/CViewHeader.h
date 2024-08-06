@@ -1,9 +1,6 @@
 #pragma once
 
 #include "ViewManager/CView.h"
-#include "GameObject/CGameObject.h"
-#include "RenderMesh/CMesh.h"
-#include "Animation/CAnimationController.h"
 
 class CViewHeader : public CView
 {
