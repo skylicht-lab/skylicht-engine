@@ -107,7 +107,7 @@ endif()
 	
 if (BUILD_MACOS OR BUILD_LINUX)
 	# Generate header source path
-	set(path_content "#define PROJECT_PATH \"${EDITOR_ROOT_DIR}/Assets\"")
+	set(path_content "#define PROJECT_PATH \"${SKYLICHT_EDITOR_ROOT_DIR}/Assets\"")
 	file(WRITE ${SKYLICHT_EDITOR_SOURCE_DIR}/Editor/Source/ProjectPath.h ${path_content})
 	list (APPEND application_source ${SKYLICHT_EDITOR_SOURCE_DIR}/Editor/Source/ProjectPath.h)
 endif()
@@ -292,4 +292,4 @@ if (BUILD_OPENSSL AND MSVC)
 endif()
 
 set_target_properties(SkylichtEditor PROPERTIES VERSION ${SKYLICHT_VERSION})
-set_target_properties(SkylichtEditor PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${SKYLICHT_ENGINE_SOURCE_DIR}/Assets")
+set_target_properties(SkylichtEditor PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${SKYLICHT_EDITOR_ROOT_DIR}/Assets")
