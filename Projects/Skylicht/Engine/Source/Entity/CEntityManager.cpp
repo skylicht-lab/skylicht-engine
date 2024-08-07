@@ -262,18 +262,24 @@ namespace Skylicht
 			{
 				CWorldTransformData* world = GET_ENTITY_DATA(entity, CWorldTransformData);
 
-				int depth = world->Depth;
 				if (world->AttachParentIndex >= 0)
 				{
 					CEntity* parent = m_entities[world->AttachParentIndex];
 					CWorldTransformData* parentWorld = GET_ENTITY_DATA(parent, CWorldTransformData);
-					depth = parentWorld->Depth + 1;
+					world->Depth = parentWorld->Depth + 1;
+				}
+				else
+				{
+					if (world->Parent)
+						world->Depth = world->Parent->Depth + 1;
+					else
+						world->Depth = 0;
 				}
 
-				m_sortDepth[depth].push(entity);
+				m_sortDepth[world->Depth].push(entity);
 
-				if (maxDepth < depth)
-					maxDepth = depth;
+				if (maxDepth < world->Depth)
+					maxDepth = world->Depth;
 			}
 		}
 
