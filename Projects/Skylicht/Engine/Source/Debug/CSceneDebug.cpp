@@ -257,7 +257,6 @@ namespace Skylicht
 	void CSceneDebug::addTransform(const core::matrix4& mat, float vectorLength)
 	{
 		core::vector3df pos = mat.getTranslation();
-		core::vector3df scale = mat.getScale();
 
 		core::vector3df y(0.0f, 1.0f, 0.0f);
 		core::vector3df x(1.0f, 0.0f, 0.0f);
@@ -267,8 +266,8 @@ namespace Skylicht
 		mat.rotateVect(y);
 		mat.rotateVect(z);
 
-		addLine(pos, pos + x * vectorLength * scale.X, SColor(255, 255, 0, 0));
-		addLine(pos, pos + y * vectorLength * scale.Y, SColor(255, 0, 255, 0));
-		addLine(pos, pos + z * vectorLength * scale.Z, SColor(255, 0, 0, 255));
+		addLine(pos, pos + x * vectorLength, SColor(255, 255, 0, 0));
+		addLine(pos, pos + y * vectorLength, SColor(255, 0, 255, 0));
+		addLine(pos, pos + z * vectorLength, SColor(255, 0, 0, 255));
 	}
 }

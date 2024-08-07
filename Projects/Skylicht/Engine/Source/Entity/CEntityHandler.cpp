@@ -75,7 +75,6 @@ namespace Skylicht
 		{
 			transformData->Name = name;
 			transformData->ParentIndex = parent->getIndex();
-			transformData->Depth = GET_ENTITY_DATA(parent, CWorldTransformData)->Depth + 1;
 		}
 
 		// add handle data
@@ -105,7 +104,6 @@ namespace Skylicht
 		{
 			transformData->Name = name;
 			transformData->ParentIndex = parent->getIndex();
-			transformData->Depth = GET_ENTITY_DATA(parent, CWorldTransformData)->Depth + 1;
 		}
 
 		m_entities.push_back(entity);

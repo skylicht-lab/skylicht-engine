@@ -86,7 +86,12 @@ namespace Skylicht
 
 		io::IXMLReader* xmlRead = fs->createXMLReader(filename);
 		if (xmlRead == NULL)
+		{
+			char log[512];
+			sprintf(log, "[CMaterialManager] loadMaterial %s not found!", filename);
+			os::Printer::log(log);
 			return result;
+		}
 
 		const wchar_t* textw;
 		char text[1024];
@@ -240,7 +245,7 @@ namespace Skylicht
 			}
 			break;
 			default:
-				break;					
+				break;
 			}
 		}
 
