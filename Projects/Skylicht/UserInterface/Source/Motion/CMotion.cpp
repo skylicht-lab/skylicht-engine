@@ -61,5 +61,12 @@ namespace Skylicht
 				m_tween = NULL;
 			}
 		}
+
+		bool CMotion::isPlaying()
+		{
+			if (m_tween)
+				return true;
+			return false;
+		}
 	}
 }

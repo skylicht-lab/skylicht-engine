@@ -34,12 +34,12 @@ void CViewPopupEnterName::onInit()
 	UI::CUIContainer* uiContainer = m_popup->addComponent<UI::CUIContainer>();
 
 	UI::CUIBase* bg = new UI::CUIBase(uiContainer, canvas->getGUIByPath("Canvas/Background"));
-	bg->addMotion(UI::EMotionEvent::In, new UI::CAlphaMotion(0.0f))->setInverse(true)->setTime(0.0f, 250.0f);
-	bg->addMotion(UI::EMotionEvent::Out, new UI::CAlphaMotion())->setTime(0.0f, 250.0f);
+	bg->addMotion(UI::EMotionEvent::In, new UI::CAlphaMotion(0.0f))->setInverse(true)->setTime(0.0f, 250.0f)->setEasingFunction(EaseLinear);
+	bg->addMotion(UI::EMotionEvent::Out, new UI::CAlphaMotion(0.0f))->setTime(0.0f, 250.0f)->setEasingFunction(EaseLinear);
 
 	UI::CUIBase* dialog = new UI::CUIBase(uiContainer, canvas->getGUIByPath("Canvas/Dialog"));
 	dialog->addMotion(UI::EMotionEvent::In, new UI::CAlphaMotion(0.0f))->setInverse(true)->setTime(0.0f, 250.0f);
-	dialog->addMotion(UI::EMotionEvent::Out, new UI::CAlphaMotion())->setTime(0.0f, 500.0f);
+	dialog->addMotion(UI::EMotionEvent::Out, new UI::CAlphaMotion(0.0f))->setTime(0.0f, 250.0f);
 
 	UI::CUIBase* btnClose = new UI::CUIBase(uiContainer, canvas->getGUIByPath("Canvas/Dialog/btnClose"));
 	btnClose->addMotion(UI::EMotionEvent::PointerHover, new UI::CScaleMotion(1.2f, 1.2f, 1.0f));
@@ -51,13 +51,38 @@ void CViewPopupEnterName::onInit()
 			close();
 		};
 
+	UI::CUIButton* btnCancel = new UI::CUIButton(uiContainer, canvas->getGUIByPath("Canvas/Dialog/btnCancel"));
+	btnCancel->addMotion(UI::EMotionEvent::PointerHover, btnCancel->getBackground(), new UI::CAlphaMotion(0.8f));
+	btnCancel->addMotion(UI::EMotionEvent::PointerOut, btnCancel->getBackground(), new UI::CAlphaMotion());
+	btnCancel->addMotion(UI::EMotionEvent::PointerDown, new UI::CScaleMotion(0.9f, 0.9f, 0.9f))->setTime(0.0f, 50.0f);
+	btnCancel->addMotion(UI::EMotionEvent::PointerUp, new UI::CScaleMotion())->setTime(0.0f, 100.0f);
+	btnCancel->OnPressed = [&]()
+		{
+			close();
+		};
+
+	UI::CUIButton* btnOk = new UI::CUIButton(uiContainer, canvas->getGUIByPath("Canvas/Dialog/btnOK"));
+	btnOk->addMotion(UI::EMotionEvent::PointerHover, btnOk->getBackground(), new UI::CAlphaMotion(0.8f));
+	btnOk->addMotion(UI::EMotionEvent::PointerOut, btnOk->getBackground(), new UI::CAlphaMotion());
+	btnOk->addMotion(UI::EMotionEvent::PointerDown, new UI::CScaleMotion(0.9f, 0.9f, 0.9f))->setTime(0.0f, 50.0f);
+	btnOk->addMotion(UI::EMotionEvent::PointerUp, new UI::CScaleMotion())->setTime(0.0f, 100.0f);
+	btnOk->OnPressed = [&]()
+		{
+			close();
+		};
+
 	uiContainer->startInMotion();
 }
 
 void CViewPopupEnterName::close()
 {
-	m_popup->remove();
-	CViewManager::getInstance()->getLayer(2)->removeView(this);
+	UI::CUIContainer* uiContainer = m_popup->getComponent<UI::CUIContainer>();
+	uiContainer->startOutMotion();
+	uiContainer->OnMotionOutFinish = [&]()
+		{
+			m_popup->remove();
+			CViewManager::getInstance()->getLayer(2)->removeView(this);
+		};
 }
 
 void CViewPopupEnterName::onDestroy()

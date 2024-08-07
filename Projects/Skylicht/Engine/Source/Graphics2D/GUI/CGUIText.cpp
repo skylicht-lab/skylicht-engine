@@ -533,12 +533,12 @@ namespace Skylicht
 
 		// text align
 		if (TextHorizontal == EGUIHorizontalAlign::Center)
-			x = ((int)getRect().getWidth() - stringWidth) / 2;
+			x = x + ((int)getRect().getWidth() - stringWidth) / 2;
 		else if (TextHorizontal == EGUIHorizontalAlign::Right)
-			x = (int)getRect().getWidth() - stringWidth;
+			x = x + (int)getRect().getWidth() - stringWidth;
 
 		if (m_centerRotate == true)
-			x = -stringWidth / 2;
+			x = x - stringWidth / 2;
 
 		// draw bbox
 		// CGraphics::getInstance()->addRectBatch(core::recti(x,y,x+stringWidth,y+stringHeight), SColor(255,255,0,255), AbsoluteTransformation);

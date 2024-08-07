@@ -32,7 +32,11 @@ namespace Skylicht
 	{
 		CUIBase::CUIBase(CUIContainer* container, CGUIElement* element) :
 			m_container(container),
-			m_element(element)
+			m_element(element),
+			m_enable(true),
+			m_visible(true),
+			m_isPointerHover(false),
+			m_isPointerDown(false)
 		{
 			m_container->addChild(this);
 		}
@@ -43,6 +47,18 @@ namespace Skylicht
 
 			for (int i = 0, n = (int)EMotionEvent::NumEvent; i < n; i++)
 				removeMotions((EMotionEvent)i);
+		}
+
+		void CUIBase::setEnable(bool b)
+		{
+			m_enable = b;
+		}
+
+		void CUIBase::setVisible(bool b)
+		{
+			m_visible = b;
+			if (m_element)
+				m_element->setVisible(b);
 		}
 
 		core::vector3df* CUIBase::getRectTransform()
@@ -82,6 +98,7 @@ namespace Skylicht
 
 		void CUIBase::onPointerHover(float pointerX, float pointerY)
 		{
+			m_isPointerHover = true;
 			startMotion(EMotionEvent::PointerHover);
 
 			if (OnPointerHover != nullptr)
@@ -90,6 +107,7 @@ namespace Skylicht
 
 		void CUIBase::onPointerOut(float pointerX, float pointerY)
 		{
+			m_isPointerHover = false;
 			startMotion(EMotionEvent::PointerOut);
 
 			if (OnPointerOut != nullptr)
@@ -98,6 +116,7 @@ namespace Skylicht
 
 		void CUIBase::onPointerDown(float pointerX, float pointerY)
 		{
+			m_isPointerDown = true;
 			startMotion(EMotionEvent::PointerDown);
 
 			if (OnPointerDown != nullptr)
@@ -106,6 +125,7 @@ namespace Skylicht
 
 		void CUIBase::onPointerUp(float pointerX, float pointerY)
 		{
+			m_isPointerDown = false;
 			startMotion(EMotionEvent::PointerUp);
 
 			if (OnPointerUp != nullptr)
@@ -123,6 +143,9 @@ namespace Skylicht
 			if (!m_element)
 				return;
 
+			if (m_motions[(int)event].size() == 0)
+				return;
+
 			for (int i = 0, n = (int)EMotionEvent::NumEvent; i < n; i++)
 			{
 				EMotionEvent e = (EMotionEvent)i;
@@ -133,19 +156,66 @@ namespace Skylicht
 					if (e == event)
 						m->start();
 					else
-						m->stop();
+					{
+						if (e != EMotionEvent::In &&
+							e != EMotionEvent::Out)
+						{
+							m->stop();
+						}
+					}
 				}
 			}
 		}
 
+		bool CUIBase::isMotionPlaying(EMotionEvent event)
+		{
+			if (!m_element)
+				return false;
+
+			std::vector<CMotion*>& motions = m_motions[(int)event];
+			if (motions.size() == 0)
+				return false;
+
+			for (CMotion* m : motions)
+			{
+				if (m->isPlaying())
+					return true;
+			}
+
+			return false;
+		}
+
 		CMotion* CUIBase::addMotion(EMotionEvent event, CMotion* motion)
 		{
-			std::vector<CMotion*>& motions = m_motions[(int)event];
-			motions.push_back(motion);
+			if (m_element)
+			{
+				std::vector<CMotion*>& motions = m_motions[(int)event];
+				motions.push_back(motion);
 
-			motion->setEvent(event);
-			motion->init(m_element);
+				motion->setEvent(event);
+				motion->init(m_element);
+			}
+			else
+			{
+				os::Printer::log("[CUIBase] addMotion with m_element = Null");
+			}
+			return motion;
+		}
 
+		CMotion* CUIBase::addMotion(EMotionEvent event, CGUIElement* element, CMotion* motion)
+		{
+			if (element)
+			{
+				std::vector<CMotion*>& motions = m_motions[(int)event];
+				motions.push_back(motion);
+
+				motion->setEvent(event);
+				motion->init(element);
+			}
+			else
+			{
+				os::Printer::log("[CUIBase] addMotion with element = Null");
+			}
 			return motion;
 		}
 

@@ -46,6 +46,14 @@ namespace Skylicht
 			CUIBase* m_hover;
 			CCanvas* m_canvas;
 
+			bool m_inMotion;
+			bool m_outMotion;
+
+		public:
+
+			std::function<void()> OnMotionInFinish;
+			std::function<void()> OnMotionOutFinish;
+
 		public:
 			CUIContainer();
 
@@ -68,6 +76,16 @@ namespace Skylicht
 			void startInMotion();
 
 			void startOutMotion();
+
+			inline void setEnable(bool b)
+			{
+				m_enable = b;
+			}
+
+			inline bool isEnable()
+			{
+				return m_enable;
+			}
 		};
 	}
 }
