@@ -73,7 +73,6 @@ namespace Skylicht
 		if (entity)
 		{
 			transform->AttachParentIndex = entity->getIndex();
-			transform->Depth = parent->Depth + 1;
 			m_attached = true;
 		}
 		else
@@ -81,7 +80,6 @@ namespace Skylicht
 			CEntity* defaultParent = m_gameObject->getEntityManager()->getEntity(transform->ParentIndex);
 			parent = GET_ENTITY_DATA(defaultParent, CWorldTransformData);
 
-			transform->Depth = parent->Depth + 1;
 			transform->AttachParentIndex = -1;
 			m_attached = false;
 		}

@@ -179,7 +179,6 @@ namespace Skylicht
 		{
 			transformData->Name = transform->getName();
 			transformData->ParentIndex = parent->getIndex();
-			transformData->Depth = GET_ENTITY_DATA(parent, CWorldTransformData)->Depth + 1;
 		}
 	}
 
@@ -198,15 +197,9 @@ namespace Skylicht
 		// update parent
 		CEntity* parent = componentData->TransformComponent->getParentEntity();
 		if (parent != NULL)
-		{
 			transformData->ParentIndex = parent->getIndex();
-			transformData->Depth = GET_ENTITY_DATA(parent, CWorldTransformData)->Depth + 1;
-		}
 		else
-		{
 			transformData->ParentIndex = -1;
-			transformData->Depth = 0;
-		}
 
 		notifyUpdateSortEntities();
 	}

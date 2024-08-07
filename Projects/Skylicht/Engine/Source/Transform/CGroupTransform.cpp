@@ -71,6 +71,7 @@ namespace Skylicht
 			if (parentID != -1)
 			{
 				transform->Parent = GET_ENTITY_DATA(allEntities[parentID], CWorldTransformData);
+				transform->Depth = transform->Parent->Depth + 1;
 
 				// this transform changed because parent is changed
 				if (transform->Parent->NeedValidate)
@@ -82,6 +83,7 @@ namespace Skylicht
 			else
 			{
 				transform->Parent = NULL;
+				transform->Depth = 0;
 			}
 
 			// tag to update list
