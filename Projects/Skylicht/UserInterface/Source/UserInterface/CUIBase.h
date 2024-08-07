@@ -44,12 +44,17 @@ namespace Skylicht
 		{
 		protected:
 			CUIContainer* m_container;
-
 			CGUIElement* m_element;
 
 			core::vector3df m_rectTransform[4];
 
 			std::vector<CMotion*> m_motions[(int)EMotionEvent::NumEvent];
+
+			bool m_enable;
+			bool m_visible;
+
+			bool m_isPointerHover;
+			bool m_isPointerDown;
 
 		public:
 			std::function<void(float, float)> OnPointerHover;
@@ -64,9 +69,50 @@ namespace Skylicht
 
 			virtual ~CUIBase();
 
+			void setEnable(bool b);
+
+			void setVisible(bool b);
+
+			inline bool isEnable()
+			{
+				return m_enable;
+			}
+
+			inline bool isVisible()
+			{
+				return m_visible;
+			}
+
+			inline void setPointerHover(bool b)
+			{
+				m_isPointerHover = b;
+			}
+
+			inline bool isPointerHover()
+			{
+				return m_isPointerHover;
+			}
+
+			inline void setPointerDown(bool b)
+			{
+				m_isPointerDown = b;
+			}
+
+			inline bool isPointerDown()
+			{
+				return m_isPointerDown;
+			}
+
 			inline CGUIElement* getElement()
 			{
 				return m_element;
+			}
+
+			inline CCanvas* getCanvas()
+			{
+				if (m_element)
+					return m_element->getCanvas();
+				return NULL;
 			}
 
 			core::vector3df* getRectTransform();
@@ -83,7 +129,11 @@ namespace Skylicht
 
 			void startMotion(EMotionEvent event);
 
-			CMotion* addMotion(EMotionEvent event, CMotion* motion);
+			bool isMotionPlaying(EMotionEvent event);
+
+			virtual CMotion* addMotion(EMotionEvent event, CMotion* motion);
+
+			virtual CMotion* addMotion(EMotionEvent event, CGUIElement* element, CMotion* motion);
 
 			bool removeMotion(EMotionEvent event, CMotion* motion);
 

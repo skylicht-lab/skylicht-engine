@@ -32,10 +32,28 @@ namespace Skylicht
 	{
 		class CUIButton : public CUIBase
 		{
+		protected:
+			CGUIElement* m_background;
+			CGUIText* m_text;
+
 		public:
 			CUIButton(CUIContainer* container, CGUIElement* element);
 
 			virtual ~CUIButton();
+
+			void setLabel(const char* string);
+
+			void setLabel(const wchar_t* string);
+
+			inline CGUIElement* getBackground()
+			{
+				return m_background;
+			}
+
+			inline CGUIText* getText()
+			{
+				return m_text;
+			}
 		};
 	}
 }

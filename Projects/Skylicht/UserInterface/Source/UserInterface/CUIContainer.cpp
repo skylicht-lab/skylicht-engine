@@ -12,7 +12,9 @@ namespace Skylicht
 		CUIContainer::CUIContainer() :
 			m_enable(true),
 			m_hover(NULL),
-			m_canvas(NULL)
+			m_canvas(NULL),
+			m_inMotion(false),
+			m_outMotion(false)
 		{
 
 		}
@@ -47,7 +49,45 @@ namespace Skylicht
 
 		void CUIContainer::updateComponent()
 		{
+			if (m_inMotion)
+			{
+				bool isPlaying = false;
+				for (CUIBase* base : m_arrayUIObjects)
+				{
+					if (base->isMotionPlaying(UI::EMotionEvent::In))
+					{
+						isPlaying = true;
+						break;
+					}
+				}
 
+				if (isPlaying == false)
+				{
+					m_inMotion = false;
+					if (OnMotionInFinish != nullptr)
+						OnMotionInFinish();
+				}
+			}
+
+			if (m_outMotion)
+			{
+				bool isPlaying = false;
+				for (CUIBase* base : m_arrayUIObjects)
+				{
+					if (base->isMotionPlaying(UI::EMotionEvent::Out))
+					{
+						isPlaying = true;
+						break;
+					}
+				}
+
+				if (isPlaying == false)
+				{
+					m_outMotion = false;
+					if (OnMotionOutFinish != nullptr)
+						OnMotionOutFinish();
+				}
+			}
 		}
 
 		CCanvas* CUIContainer::getCanvas()
@@ -98,6 +138,12 @@ namespace Skylicht
 					if (base->getElement() == NULL)
 						continue;
 
+					if (!base->getElement()->isVisible())
+						continue;
+
+					if (!base->isEnable() || !base->isVisible())
+						continue;
+
 					CCanvas* canvas = base->getElement()->getCanvas();
 					CCamera* camera = canvas->getRenderCamera();
 					if (camera == NULL)
@@ -132,6 +178,9 @@ namespace Skylicht
 					if (m_hover)
 					{
 						m_hover->onPointerOut(mouseX, mouseY);
+						if (m_hover->isPointerDown())
+							m_hover->onPointerUp(mouseX, mouseY);
+
 						m_hover = NULL;
 					}
 					return true;
@@ -145,7 +194,11 @@ namespace Skylicht
 				if (m_hover != m_raycastUIObjects[0])
 				{
 					if (m_hover)
+					{
 						m_hover->onPointerOut(mouseX, mouseY);
+						if (m_hover->isPointerDown())
+							m_hover->onPointerUp(mouseX, mouseY);
+					}
 
 					m_hover = m_raycastUIObjects[0];
 					m_hover->onPointerHover(mouseX, mouseY);
@@ -183,12 +236,15 @@ namespace Skylicht
 
 		void CUIContainer::startInMotion()
 		{
+			m_inMotion = true;
 			for (CUIBase* base : m_arrayUIObjects)
 				base->startMotion(UI::EMotionEvent::In);
 		}
 
 		void CUIContainer::startOutMotion()
 		{
+			m_enable = false;
+			m_outMotion = true;
 			for (CUIBase* base : m_arrayUIObjects)
 				base->startMotion(UI::EMotionEvent::Out);
 		}

@@ -69,6 +69,8 @@ namespace Skylicht
 
 			virtual void stop();
 
+			bool isPlaying();
+
 			inline CMotion* setTime(float delay, float duration)
 			{
 				m_delay = delay;

@@ -30,14 +30,33 @@ namespace Skylicht
 	namespace UI
 	{
 		CUIButton::CUIButton(CUIContainer* container, CGUIElement* element) :
-			CUIBase(container, element)
+			CUIBase(container, element),
+			m_background(NULL),
+			m_text(NULL)
 		{
-
+			CCanvas* canvas = getCanvas();
+			if (canvas)
+			{
+				m_background = canvas->getGUIByPath(element, "Background");
+				m_text = dynamic_cast<CGUIText*>(canvas->getGUIByPath(element, "Text"));
+			}
 		}
 
 		CUIButton::~CUIButton()
 		{
 
+		}
+
+		void CUIButton::setLabel(const char* string)
+		{
+			if (m_text)
+				m_text->setText(string);
+		}
+
+		void CUIButton::setLabel(const wchar_t* string)
+		{
+			if (m_text)
+				m_text->setText(string);
 		}
 	}
 }
