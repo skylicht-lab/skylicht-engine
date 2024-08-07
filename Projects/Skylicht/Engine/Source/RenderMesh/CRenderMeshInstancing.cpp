@@ -178,6 +178,7 @@ namespace Skylicht
 
 				spawnTransform->Relative = m;
 				spawnTransform->HasChanged = true;
+				spawnTransform->Depth = rootTransform->Depth + 1;
 				spawnTransform->ParentIndex = m_root->getIndex();
 
 				m_transforms.push_back(spawnTransform);

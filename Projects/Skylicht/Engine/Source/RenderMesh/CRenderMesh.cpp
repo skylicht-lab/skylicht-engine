@@ -229,6 +229,7 @@ namespace Skylicht
 				spawnTransform->Name = srcTransform->Name;
 				spawnTransform->Relative = srcTransform->Relative;
 				spawnTransform->HasChanged = true;
+				spawnTransform->Depth = rootTransform->Depth + 1 + srcTransform->Depth;
 
 				if (srcTransform->ParentIndex == -1 || entityIndex.find(srcTransform->ParentIndex) == entityIndex.end())
 					spawnTransform->ParentIndex = m_root->getIndex();
@@ -398,6 +399,7 @@ namespace Skylicht
 
 				spawnTransform->Relative = m;
 				spawnTransform->HasChanged = true;
+				spawnTransform->Depth = rootTransform->Depth + 1;
 				spawnTransform->ParentIndex = m_root->getIndex();
 
 				m_transforms.push_back(spawnTransform);
@@ -658,6 +660,7 @@ namespace Skylicht
 					spawnTransform->Name = srcTransform->Name;
 					spawnTransform->Relative = srcTransform->Relative;
 					spawnTransform->HasChanged = true;
+					spawnTransform->Depth = rootTransform->Depth + 1 + srcTransform->Depth;
 					spawnTransform->ParentIndex = parentTransform->EntityIndex;
 				}
 				else
@@ -676,6 +679,7 @@ namespace Skylicht
 
 					spawnTransform->Relative = m;
 					spawnTransform->HasChanged = true;
+					spawnTransform->Depth = rootTransform->Depth + 1;
 					spawnTransform->ParentIndex = m_root->getIndex();
 				}
 
