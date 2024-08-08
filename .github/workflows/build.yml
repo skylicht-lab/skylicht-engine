@@ -6,7 +6,9 @@ jobs:
   Emscripten:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
       - name: Install Dependencies
         shell: cmd
         run: |
@@ -74,7 +76,9 @@ jobs:
   Linux-Static:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
       - name: Install Dependencies
         run: |
           sudo apt-get update -y -qq
@@ -111,7 +115,9 @@ jobs:
   Linux-Shared:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
       - name: Install Dependencies
         run: |
           sudo apt-get update -y -qq
@@ -148,7 +154,9 @@ jobs:
   MacOS:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
       - name: Build
         run: |
           brew install libomp
@@ -189,7 +197,9 @@ jobs:
     env:
       PLATFORM: SIMULATORARM64
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
       - name: Build
         run: |
           cd Assets
@@ -225,7 +235,9 @@ jobs:
   Windows-Static:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
       - name: Build
         shell: cmd
         run: |
@@ -247,7 +259,9 @@ jobs:
   Windows-Shared:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
       - name: Build
         shell: cmd
         run: |
@@ -269,7 +283,9 @@ jobs:
   Windows-Shared-Smallest:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
       - name: Build
         shell: cmd
         run: |
