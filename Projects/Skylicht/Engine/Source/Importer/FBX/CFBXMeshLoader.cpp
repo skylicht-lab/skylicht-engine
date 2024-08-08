@@ -500,17 +500,6 @@ namespace Skylicht
 
 						jointData->SID = bone_node->name.data;
 						jointData->BoneName = bone_node->name.data;
-
-						if (bone_node->parent)
-						{
-							CEntity* boneParentEntity = mapNodes[bone_node->parent];
-							if (boneParentEntity)
-							{
-								CJointData* parentJoint = GET_ENTITY_DATA(boneParentEntity, CJointData);
-								if (parentJoint == NULL)
-									jointData->BoneRoot = true;
-							}
-						}
 					}
 
 					skinnedMesh->Joints.push_back(CSkinnedMesh::SJoint());
