@@ -160,7 +160,6 @@ namespace Skylicht
 			if (srcJointData != NULL)
 			{
 				CJointData* spawnJoint = spawnEntity->addData<CJointData>();
-				spawnJoint->BoneRoot = srcJointData->BoneRoot;
 				spawnJoint->SID = srcJointData->SID;
 				spawnJoint->BoneName = srcJointData->BoneName;
 				spawnJoint->AnimationMatrix = srcJointData->AnimationMatrix;

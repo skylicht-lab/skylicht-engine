@@ -1560,9 +1560,6 @@ namespace Skylicht
 				CJointData* jointData = entity->addData<CJointData>();
 				jointData->BoneName = name;
 
-				if (node->ChildLevel == 0)
-					jointData->BoneRoot = true;
-
 				if (node->SID.size() > 0)
 				{
 					CStringImp::copy(name, node->SID.c_str());

@@ -280,7 +280,6 @@ namespace Skylicht
 			if (srcJointData != NULL)
 			{
 				CJointData* spawnJoint = spawnEntity->addData<CJointData>();
-				spawnJoint->BoneRoot = srcJointData->BoneRoot;
 				spawnJoint->SID = srcJointData->SID;
 				spawnJoint->BoneName = srcJointData->BoneName;
 				spawnJoint->AnimationMatrix = srcJointData->AnimationMatrix;
@@ -729,7 +728,6 @@ namespace Skylicht
 			if (srcJointData != NULL)
 			{
 				CJointData* spawnJoint = spawnEntity->addData<CJointData>();
-				spawnJoint->BoneRoot = srcJointData->BoneRoot;
 				spawnJoint->SID = srcJointData->SID;
 				spawnJoint->BoneName = srcJointData->BoneName;
 				spawnJoint->AnimationMatrix = srcJointData->AnimationMatrix;
@@ -777,6 +775,12 @@ namespace Skylicht
 
 						joint.EntityIndex = transform->EntityIndex;
 						joint.JointData = GET_ENTITY_DATA(transform->Entity, CJointData);
+						if (joint.JointData == NULL)
+						{
+							char log[512];
+							sprintf(log, "[CRenderMesh] attachMeshFromPrefab missing JoinData at %s", srcBone->Name.c_str());
+							os::Printer::log(log);
+						}
 
 						// pointer to skin mesh animation matrix
 						joint.SkinningMatrix = skinMesh->SkinningMatrix + i * 16;
@@ -853,6 +857,8 @@ namespace Skylicht
 			for (int i = 0; i < d; i++)
 				log += "    ";
 			log += entity->Name;
+			if (GET_ENTITY_DATA(entity->Entity, CJointData) != NULL)
+				log += " [b]";
 			os::Printer::log(log.c_str());
 		}
 	}

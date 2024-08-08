@@ -32,7 +32,6 @@ namespace Skylicht
 	IMPLEMENT_DATA_TYPE_INDEX(CJointData);
 
 	CJointData::CJointData() :
-		BoneRoot(false),
 		RootIndex(-1),
 		BoneID(-1)
 	{
@@ -46,7 +45,7 @@ namespace Skylicht
 
 	bool CJointData::serializable(CMemoryStream* stream)
 	{
-		stream->writeChar(BoneRoot == true ? 1 : 0);
+		stream->writeChar(0);
 		stream->writeString(SID);
 		stream->writeString(BoneName);
 		return true;
@@ -54,7 +53,7 @@ namespace Skylicht
 
 	bool CJointData::deserializable(CMemoryStream* stream, int version)
 	{
-		BoneRoot = stream->readChar() == 1 ? true : false;
+		stream->readChar();
 		SID = stream->readString();
 		BoneName = stream->readString();
 		return true;

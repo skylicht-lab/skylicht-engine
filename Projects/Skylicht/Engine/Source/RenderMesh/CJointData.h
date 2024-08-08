@@ -31,13 +31,11 @@ namespace Skylicht
 	class SKYLICHT_API CJointData : public IEntityData
 	{
 	public:
-		bool BoneRoot;
-
 		int RootIndex;
-		
+
 		std::string SID;
 		std::string BoneName;
-		
+
 		int BoneID;
 
 		// absolute joint transform at (0,0,0)
