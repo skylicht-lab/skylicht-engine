@@ -33,9 +33,7 @@ namespace Skylicht
 {
 	namespace UI
 	{
-		class CUIContainer :
-			public CComponentSystem,
-			public IEventProcessor
+		class CUIContainer : public CComponentSystem
 		{
 		protected:
 			bool m_enable;
@@ -48,6 +46,8 @@ namespace Skylicht
 
 			bool m_inMotion;
 			bool m_outMotion;
+
+			bool m_pointerDown;
 
 		public:
 
@@ -69,7 +69,7 @@ namespace Skylicht
 
 			bool removeChild(CUIBase* base);
 
-			virtual bool OnProcessEvent(const SEvent& event);
+			virtual CUIBase* OnProcessEvent(const SEvent& event);
 
 			void onPointerOut(float x, float y);
 

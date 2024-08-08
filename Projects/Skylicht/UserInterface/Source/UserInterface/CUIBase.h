@@ -56,6 +56,8 @@ namespace Skylicht
 			bool m_isPointerHover;
 			bool m_isPointerDown;
 
+			bool m_enableTouchScreen;
+
 		public:
 			std::function<void(float, float)> OnPointerHover;
 			std::function<void(float, float)> OnPointerOut;
@@ -81,6 +83,16 @@ namespace Skylicht
 			inline bool isVisible()
 			{
 				return m_visible;
+			}
+
+			inline void setEnableTouchScreen(bool b)
+			{
+				m_enableTouchScreen = b;
+			}
+
+			inline bool isEnableTouchScreen()
+			{
+				return m_enableTouchScreen;
 			}
 
 			inline void setPointerHover(bool b)

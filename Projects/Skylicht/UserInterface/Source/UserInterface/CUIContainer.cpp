@@ -14,7 +14,8 @@ namespace Skylicht
 			m_hover(NULL),
 			m_canvas(NULL),
 			m_inMotion(false),
-			m_outMotion(false)
+			m_outMotion(false),
+			m_pointerDown(false)
 		{
 
 		}
@@ -117,10 +118,10 @@ namespace Skylicht
 			return false;
 		}
 
-		bool CUIContainer::OnProcessEvent(const SEvent& event)
+		CUIBase* CUIContainer::OnProcessEvent(const SEvent& event)
 		{
 			if (!m_enable)
-				return true;
+				return NULL;
 
 			if (event.EventType == EET_MOUSE_INPUT_EVENT)
 			{
@@ -183,7 +184,7 @@ namespace Skylicht
 
 						m_hover = NULL;
 					}
-					return true;
+					return NULL;
 				}
 
 				std::sort(m_raycastUIObjects.begin(), m_raycastUIObjects.end(), [](CUIBase*& a, CUIBase*& b)
@@ -202,15 +203,21 @@ namespace Skylicht
 
 					m_hover = m_raycastUIObjects[0];
 					m_hover->onPointerHover(mouseX, mouseY);
+
+					// if drag over
+					if (m_pointerDown)
+						m_hover->onPointerDown(mouseX, mouseY);
 				}
 
 				if (event.MouseInput.Event == EMIE_LMOUSE_PRESSED_DOWN)
 				{
+					m_pointerDown = true;
 					if (m_hover)
 						m_hover->onPointerDown(mouseX, mouseY);
 				}
 				else if (event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
 				{
+					m_pointerDown = false;
 					if (m_hover)
 					{
 						m_hover->onPointerUp(mouseX, mouseY);
@@ -219,10 +226,10 @@ namespace Skylicht
 				}
 
 				// disable event
-				return false;
+				return m_hover;
 			}
 
-			return true;
+			return NULL;
 		}
 
 		void CUIContainer::onPointerOut(float x, float y)
@@ -232,6 +239,7 @@ namespace Skylicht
 				m_hover->onPointerOut(x, y);
 				m_hover = NULL;
 			}
+			m_pointerDown = false;
 		}
 
 		void CUIContainer::startInMotion()
