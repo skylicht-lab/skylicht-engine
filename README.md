@@ -28,7 +28,7 @@ Skylicht Engine is a super lightweight Game Engine that targets mobile platforms
 
 ## Build source code
 -   Clone this repo
--   Skylicht project have used the Large Files like .tga, .fbx..., so you must install [Git LFS])(https://git-lfs.com)
+-   Skylicht project have used the Large Files like .tga, .fbx..., so you must install [Git LFS](https://git-lfs.com)
 ```Shell
 # call 'git lfs pull' after checkout
 git lfs fetch --all
