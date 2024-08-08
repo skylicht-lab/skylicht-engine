@@ -34,7 +34,8 @@ namespace Skylicht
 	{
 		IMPLEMENT_SINGLETON(CUIEventManager);
 
-		CUIEventManager::CUIEventManager()
+		CUIEventManager::CUIEventManager() :
+			m_pointerId(-1)
 		{
 			CEventManager::getInstance()->registerProcessorEvent("CUIEventManager", this);
 		}
@@ -51,6 +52,14 @@ namespace Skylicht
 				f32 mouseX = (f32)event.MouseInput.X;
 				f32 mouseY = (f32)event.MouseInput.Y;
 
+				if (m_pointerId != -1 && event.MouseInput.ID != m_pointerId)
+					return true;
+
+				if (event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
+					m_pointerId = -1;
+				else
+					m_pointerId = event.MouseInput.ID;
+
 				std::vector<CUIContainer*> list = m_containers;
 
 				std::sort(list.begin(), list.end(), [](CUIContainer*& a, CUIContainer*& b)
@@ -58,14 +67,13 @@ namespace Skylicht
 						return a->getCanvas()->getSortDepth() > b->getCanvas()->getSortDepth();
 					});
 
-				bool result = true;
+				CUIBase* base = NULL;
 
 				for (CUIContainer* ui : list)
 				{
-					if (result)
+					if (!base)
 					{
-						if (ui->OnProcessEvent(event) == false)
-							result = false;
+						base = ui->OnProcessEvent(event);
 					}
 					else
 					{
@@ -73,7 +81,10 @@ namespace Skylicht
 					}
 				}
 
-				return result;
+				if (!base)
+					return true;
+				else
+					return base->isEnableTouchScreen();
 			}
 
 			return true;

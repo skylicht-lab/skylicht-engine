@@ -36,7 +36,8 @@ namespace Skylicht
 			m_enable(true),
 			m_visible(true),
 			m_isPointerHover(false),
-			m_isPointerDown(false)
+			m_isPointerDown(false),
+			m_enableTouchScreen(false)
 		{
 			m_container->addChild(this);
 		}
@@ -146,6 +147,8 @@ namespace Skylicht
 			if (m_motions[(int)event].size() == 0)
 				return;
 
+			std::vector<CMotion*> startMotions = m_motions[(int)event];
+
 			for (int i = 0, n = (int)EMotionEvent::NumEvent; i < n; i++)
 			{
 				EMotionEvent e = (EMotionEvent)i;
@@ -160,7 +163,15 @@ namespace Skylicht
 						if (e != EMotionEvent::In &&
 							e != EMotionEvent::Out)
 						{
-							m->stop();
+							for (CMotion* st : startMotions)
+							{
+								if (typeid(m) == typeid(st))
+								{
+									// just stop same motion type
+									m->stop();
+									break;
+								}
+							}
 						}
 					}
 				}

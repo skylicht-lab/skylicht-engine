@@ -39,6 +39,8 @@ namespace Skylicht
 
 			std::vector<CUIContainer*> m_containers;
 
+			int m_pointerId;
+
 		public:
 			CUIEventManager();
 
