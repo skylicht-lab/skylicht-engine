@@ -42,7 +42,7 @@ void CViewHeader::onInit()
 	btnUserName->addMotion(UI::EMotionEvent::PointerDown, new UI::CPositionMotion(2.0f, 2.0f, 0.0f))->setTime(0.0f, 50.0f);
 	btnUserName->addMotion(UI::EMotionEvent::PointerUp, new UI::CAlphaMotion())->setTime(0.0f, 50.0f);
 	btnUserName->addMotion(UI::EMotionEvent::PointerUp, new UI::CPositionMotion());
-	btnUserName->OnPressed = []()
+	btnUserName->OnPressed = [](UI::CUIBase* base)
 		{
 			CViewManager::getInstance()->getLayer(2)->pushView<CViewPopupEnterName>();
 		};

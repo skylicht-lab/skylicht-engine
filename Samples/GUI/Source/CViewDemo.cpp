@@ -6,6 +6,11 @@
 
 #include "Context/CContext.h"
 
+#include "Graphics2D/CGUIImporter.h"
+
+#include "UserInterface/CUIContainer.h"
+#include "UserInterface/CUIListView.h"
+
 CViewDemo::CViewDemo()
 {
 
@@ -23,6 +28,26 @@ void CViewDemo::onInit()
 
 	CScene* scene = context->getScene();
 	scene->updateIndexSearchObject();
+
+	CZone* zone = scene->getZone(0);
+
+	CGameObject* leftPanel = zone->createEmptyObject();
+	CCanvas* canvas = leftPanel->addComponent<CCanvas>();
+
+	CGUIImporter::loadGUI("SampleGUI/Main.gui", canvas);
+	canvas->applyScaleGUI(1.0f);
+	canvas->setSortDepth(0);
+
+	UI::CUIContainer* uiContainer = leftPanel->addComponent<UI::CUIContainer>();
+
+	UI::CUIListView* list = new UI::CUIListView(uiContainer,
+		canvas->getGUIByPath("Canvas/Container/ListCoin"),
+		canvas->getGUIByPath("Canvas/Container/ListCoin/Item"));
+
+	for (int i = 0; i < 10; i++)
+	{
+		list->addItem();
+	}
 }
 
 void CViewDemo::onDestroy()
@@ -56,7 +81,7 @@ void CViewDemo::onRender()
 		context->getRenderPipeline()->render(NULL, camera, scene->getEntityManager(), core::recti());
 	}
 
-	// render GUI
+	// render all GUI
 	if (guiCamera != NULL)
 	{
 		CGraphics2D::getInstance()->render(guiCamera);
@@ -69,10 +94,10 @@ void CViewDemo::onRender()
 
 void CViewDemo::onGUI()
 {
-	
+
 }
 
 void CViewDemo::onPostRender()
 {
-	
+
 }

@@ -137,7 +137,7 @@ namespace Skylicht
 		// sort canvas by depth
 		std::sort(m_canvas.begin(), m_canvas.end(), [](CCanvas*& a, CCanvas*& b)
 			{
-				return a->getSortDepth() < b->getSortDepth();
+				return a->getSortDepth() > b->getSortDepth();
 			});
 
 		core::matrix4 billboardMatrix;

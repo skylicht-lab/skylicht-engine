@@ -28,7 +28,7 @@ namespace Skylicht
 			// delete all ui
 			std::vector<CUIBase*> objects = m_arrayUIObjects;
 			for (CUIBase* base : objects)
-				delete base;
+				base->remove();
 		}
 
 		void CUIContainer::initComponent()
@@ -89,6 +89,12 @@ namespace Skylicht
 						OnMotionOutFinish();
 				}
 			}
+
+			for (CUIBase* base : m_arrayUIObjects)
+			{
+				if (base->isEnable() && base->isVisible())
+					base->update();
+			}
 		}
 
 		CCanvas* CUIContainer::getCanvas()
@@ -116,6 +122,38 @@ namespace Skylicht
 				++i;
 			}
 			return false;
+		}
+
+		void CUIContainer::removeChildsByGUI(CGUIElement* element)
+		{
+			std::stack<CGUIElement*> stack;
+			stack.push(element);
+
+			while (stack.size() > 0)
+			{
+				CGUIElement* gui = stack.top();
+				stack.pop();
+
+				CUIBase* base = getChildByGUI(gui);
+				if (base)
+					base->remove();
+
+				std::vector<CGUIElement*>& childs = element->getChilds();
+				for (CGUIElement* e : childs)
+					stack.push(e);
+			}
+		}
+
+		CUIBase* CUIContainer::getChildByGUI(CGUIElement* element)
+		{
+			std::vector<CUIBase*>::iterator i = m_arrayUIObjects.begin(), end = m_arrayUIObjects.end();
+			while (i != end)
+			{
+				if ((*i)->getElement() == element)
+					return *i;
+				++i;
+			}
+			return NULL;
 		}
 
 		CUIBase* CUIContainer::OnProcessEvent(const SEvent& event)
@@ -172,6 +210,8 @@ namespace Skylicht
 					{
 						m_raycastUIObjects.push_back(base);
 					}
+
+					base->onPointerMove(mouseX, mouseY);
 				}
 
 				if (m_raycastUIObjects.size() == 0)
