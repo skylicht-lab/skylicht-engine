@@ -44,10 +44,19 @@ namespace Skylicht
 
 		CUIBase::~CUIBase()
 		{
-			m_container->removeChild(this);
-
 			for (int i = 0, n = (int)EMotionEvent::NumEvent; i < n; i++)
 				removeMotions((EMotionEvent)i);
+		}
+
+		void CUIBase::remove()
+		{
+			m_container->removeChild(this);
+			delete this;
+		}
+
+		void CUIBase::update()
+		{
+
 		}
 
 		void CUIBase::setEnable(bool b)
@@ -133,10 +142,15 @@ namespace Skylicht
 				OnPointerUp(pointerX, pointerY);
 		}
 
+		void CUIBase::onPointerMove(float pointerX, float pointerY)
+		{
+
+		}
+
 		void CUIBase::onPressed()
 		{
 			if (OnPressed != nullptr)
-				OnPressed();
+				OnPressed(this);
 		}
 
 		void CUIBase::startMotion(EMotionEvent event)

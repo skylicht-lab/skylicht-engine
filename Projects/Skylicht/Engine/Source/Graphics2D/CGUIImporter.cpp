@@ -327,8 +327,6 @@ namespace Skylicht
 			}
 		}
 
-		reset(canvas);
-
 		return element;
 	}
 

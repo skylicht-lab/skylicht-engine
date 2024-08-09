@@ -46,7 +46,7 @@ void CViewPopupEnterName::onInit()
 	btnClose->addMotion(UI::EMotionEvent::PointerOut, new UI::CScaleMotion());
 	btnClose->addMotion(UI::EMotionEvent::PointerDown, new UI::CScaleMotion(0.9f, 0.9f, 0.9f))->setTime(0.0f, 50.0f);
 	btnClose->addMotion(UI::EMotionEvent::PointerUp, new UI::CScaleMotion())->setTime(0.0f, 100.0f);
-	btnClose->OnPressed = [&]()
+	btnClose->OnPressed = [&](UI::CUIBase* base)
 		{
 			close();
 		};
@@ -56,7 +56,7 @@ void CViewPopupEnterName::onInit()
 	btnCancel->addMotion(UI::EMotionEvent::PointerOut, btnCancel->getBackground(), new UI::CAlphaMotion());
 	btnCancel->addMotion(UI::EMotionEvent::PointerDown, new UI::CScaleMotion(0.9f, 0.9f, 0.9f))->setTime(0.0f, 50.0f);
 	btnCancel->addMotion(UI::EMotionEvent::PointerUp, new UI::CScaleMotion())->setTime(0.0f, 100.0f);
-	btnCancel->OnPressed = [&]()
+	btnCancel->OnPressed = [&](UI::CUIBase* base)
 		{
 			close();
 		};
@@ -66,7 +66,7 @@ void CViewPopupEnterName::onInit()
 	btnOk->addMotion(UI::EMotionEvent::PointerOut, btnOk->getBackground(), new UI::CAlphaMotion());
 	btnOk->addMotion(UI::EMotionEvent::PointerDown, new UI::CScaleMotion(0.9f, 0.9f, 0.9f))->setTime(0.0f, 50.0f);
 	btnOk->addMotion(UI::EMotionEvent::PointerUp, new UI::CScaleMotion())->setTime(0.0f, 100.0f);
-	btnOk->OnPressed = [&]()
+	btnOk->OnPressed = [&](UI::CUIBase* base)
 		{
 			close();
 		};

@@ -64,12 +64,16 @@ namespace Skylicht
 			std::function<void(float, float)> OnPointerDown;
 			std::function<void(float, float)> OnPointerUp;
 
-			std::function<void()> OnPressed;
+			std::function<void(CUIBase*)> OnPressed;
 
 		public:
 			CUIBase(CUIContainer* container, CGUIElement* element);
 
 			virtual ~CUIBase();
+
+			void remove();
+
+			virtual void update();
 
 			void setEnable(bool b);
 
@@ -136,6 +140,8 @@ namespace Skylicht
 			virtual void onPointerDown(float pointerX, float pointerY);
 
 			virtual void onPointerUp(float pointerX, float pointerY);
+
+			virtual void onPointerMove(float pointerX, float pointerY);
 
 			virtual void onPressed();
 

@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2023 Skylicht Technology CO., LTD
+Copyright (c) 2024 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,74 +24,67 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CUIEventManager.h"
-#include "Components/CComponentSystem.h"
-
 #include "CUIBase.h"
 
 namespace Skylicht
 {
 	namespace UI
 	{
-		class CUIContainer : public CComponentSystem
+		class CUIListView : public CUIBase
 		{
 		protected:
-			bool m_enable;
+			bool m_vertical;
 
-			std::vector<CUIBase*> m_arrayUIObjects;
-			std::vector<CUIBase*> m_raycastUIObjects;
+			CGUIMask* m_mask;
 
-			CUIBase* m_hover;
-			CCanvas* m_canvas;
+			std::vector<CGUIElement*> m_items;
 
-			bool m_inMotion;
-			bool m_outMotion;
+			CGUIElement* m_baseItem;
+			CObjectSerializable* m_itemSerializable;
 
-			bool m_pointerDown;
+			float m_offset;
+			float m_drag;
+
+			float m_pointerX;
+			float m_pointerY;
+			float m_pointerDownX;
+			float m_pointerDownY;
 
 		public:
+			CUIListView(CUIContainer* container, CGUIElement* element, CGUIElement* baseItem);
 
-			std::function<void()> OnMotionInFinish;
-			std::function<void()> OnMotionOutFinish;
+			virtual ~CUIListView();
 
-		public:
-			CUIContainer();
+			CGUIElement* addItem();
 
-			virtual ~CUIContainer();
+			bool removeItem(CGUIElement* item);
 
-			virtual void initComponent();
+			virtual void update();
 
-			virtual void updateComponent();
+			virtual void onPointerDown(float pointerX, float pointerY);
 
-			CCanvas* getCanvas();
+			virtual void onPointerUp(float pointerX, float pointerY);
 
-			void addChild(CUIBase* base);
+			virtual void onPointerMove(float pointerX, float pointerY);
 
-			bool removeChild(CUIBase* base);
-
-			void removeChildsByGUI(CGUIElement* element);
-
-			CUIBase* getChildByGUI(CGUIElement* element);
-
-			CUIBase* removeChildByGUI(CGUIElement* element);
-
-			virtual CUIBase* OnProcessEvent(const SEvent& event);
-
-			void onPointerOut(float x, float y);
-
-			void startInMotion();
-
-			void startOutMotion();
-
-			inline void setEnable(bool b)
+			inline void setVertical(bool b)
 			{
-				m_enable = b;
+				m_vertical = b;
 			}
 
-			inline bool isEnable()
+			inline bool isVertical()
 			{
-				return m_enable;
+				return m_vertical;
 			}
+
+		protected:
+
+			void updateItemPosition();
+
+			void updateItemMovement();
+
+			void updateItemPositionHorizontal();
+
 		};
 	}
 }
