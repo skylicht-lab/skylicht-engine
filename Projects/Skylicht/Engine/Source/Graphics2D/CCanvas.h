@@ -122,6 +122,8 @@ namespace Skylicht
 
 		void applyScaleGUI(float widthOrHeight = 1.0f);
 
+		const core::vector3df& getRootScale();
+
 		inline CGUIElement* getRootElement()
 		{
 			return m_root;

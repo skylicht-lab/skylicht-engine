@@ -28,6 +28,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Graphics2D/CGUIImporter.h"
 #include "Graphics2D/CGUIExporter.h"
 
+#include "CUIEventManager.h"
+
 namespace Skylicht
 {
 	namespace UI
@@ -39,11 +41,13 @@ namespace Skylicht
 			m_baseItem(baseItem),
 			m_itemSerializable(NULL),
 			m_offset(0.0f),
-			m_drag(0.0f),
 			m_pointerX(0.0f),
 			m_pointerY(0.0f),
-			m_pointerDownX(0.0f),
-			m_pointerDownY(0.0f)
+			m_lastPointerX(0.0f),
+			m_lastPointerY(0.0f),
+			m_speed(0.0f),
+			m_maxOffset(0.0f),
+			m_springOffset(0.0f)
 		{
 			if (m_element)
 			{
@@ -97,21 +101,22 @@ namespace Skylicht
 		{
 			CUIBase::onPointerDown(pointerX, pointerY);
 
-			m_pointerDownX = pointerX;
-			m_pointerDownY = pointerY;
+			CUIEventManager::getInstance()->setCapture(this);
 		}
 
 		void CUIListView::onPointerUp(float pointerX, float pointerY)
 		{
 			CUIBase::onPointerUp(pointerX, pointerY);
-			m_offset = m_offset + m_drag;
-			m_drag = 0.0f;
+
+			CUIEventManager::getInstance()->setCapture(NULL);
 		}
 
 		void CUIListView::onPointerMove(float pointerX, float pointerY)
 		{
 			CUIBase::onPointerMove(pointerX, pointerY);
 
+			m_lastPointerX = m_pointerX;
+			m_lastPointerY = m_pointerY;
 			m_pointerX = pointerX;
 			m_pointerY = pointerY;
 		}
@@ -120,17 +125,37 @@ namespace Skylicht
 		{
 			if (m_vertical)
 			{
+				updateLimitOffset();
 				updateItemPosition();
 				updateItemMovement();
 			}
 			else
+			{
 				updateItemPositionHorizontal();
+			}
+		}
+
+		void CUIListView::updateLimitOffset()
+		{
+			m_springOffset = 0.0f;
+			m_maxOffset = 0.0f;
+
+			if (m_items.size() > 0)
+			{
+				float height = m_element->getHeight();
+				m_springOffset = height * 0.2f;
+
+				for (CGUIElement* item : m_items)
+					m_maxOffset = m_maxOffset + item->getHeight();
+
+				m_maxOffset = m_maxOffset - height;
+			}
 		}
 
 		void CUIListView::updateItemPosition()
 		{
 			float x = 0.0f;
-			float y = m_offset + m_drag;
+			float y = m_offset;
 
 			for (CGUIElement* item : m_items)
 			{
@@ -143,17 +168,86 @@ namespace Skylicht
 		{
 			if (m_isPointerDown)
 			{
-				m_drag = m_pointerY - m_pointerDownY;
+				const core::vector3df& scale = m_element->getCanvas()->getRootScale();
+				m_speed = (m_pointerY - m_lastPointerY) / scale.Y;
+
+				updateStopSpeed();
+
+				m_offset = m_offset + m_speed;
 			}
 			else
 			{
-
+				updateInertia();
 			}
 		}
 
 		void CUIListView::updateItemPositionHorizontal()
 		{
 
+		}
+
+		void CUIListView::updateStopSpeed()
+		{
+			if (m_springOffset > 0)
+			{
+				if (m_offset > 0.0f && m_speed > 0.0f)
+				{
+					float d = 1.0f - (m_offset / m_springOffset);
+					if (d < 0.0f)
+						d = 0.0f;
+					m_speed = m_speed * d;
+				}
+				else if (m_offset < -m_maxOffset && m_speed < 0.0f)
+				{
+					float f = -(m_offset + m_maxOffset);
+					float d = 1.0f - (f / m_springOffset);
+					if (d < 0.0f)
+						d = 0.0f;
+					m_speed = m_speed * d;
+				}
+			}
+		}
+
+		void CUIListView::updateInertia()
+		{
+			if (fabs(m_speed) > 0.2f)
+			{
+				float dec = fabs(m_speed) * core::min_<float>(0.9f, 0.01f * getTimeStep());
+
+				if (m_speed > 0)
+					m_speed = m_speed - dec;
+				else
+					m_speed = m_speed + dec;
+
+				if (fabs(m_speed) < dec)
+					m_speed = 0.0f;
+
+				m_offset = m_offset + m_speed;
+
+				// note: m_offset will scroll from 0 to -maxOffset;
+
+				if (m_offset > m_springOffset || m_offset < -(m_maxOffset + m_springOffset))
+					updateStopSpeed();
+			}
+			else
+			{
+				float dec = core::min_<float>(0.9f, 0.005f * getTimeStep());
+
+				if (m_offset > 0.0f)
+				{
+					// scroll to 0.0f
+					m_offset = m_offset - m_offset * dec;
+					if (m_offset < dec)
+						m_offset = 0.0f;
+				}
+				else if (m_offset < -m_maxOffset)
+				{
+					// scroll to -maxOffset
+					m_offset = m_offset - (m_offset + m_maxOffset) * dec;
+					if (m_offset > (-m_maxOffset - dec))
+						m_offset = -m_maxOffset;
+				}
+			}
 		}
 	}
 }

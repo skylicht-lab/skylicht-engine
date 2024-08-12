@@ -35,7 +35,8 @@ namespace Skylicht
 		IMPLEMENT_SINGLETON(CUIEventManager);
 
 		CUIEventManager::CUIEventManager() :
-			m_pointerId(-1)
+			m_pointerId(-1),
+			m_capture(NULL)
 		{
 			CEventManager::getInstance()->registerProcessorEvent("CUIEventManager", this);
 		}
@@ -69,15 +70,31 @@ namespace Skylicht
 
 				CUIBase* base = NULL;
 
-				for (CUIContainer* ui : list)
+				if (m_capture)
 				{
-					if (!base)
+					CUIContainer* captureContainer = m_capture->getContainer();
+					captureContainer->OnProcessEvent(event, m_capture);
+
+					for (CUIContainer* ui : list)
 					{
-						base = ui->OnProcessEvent(event);
+						if (captureContainer != ui)
+							ui->onPointerOut(mouseX, mouseY);
 					}
-					else
+
+					base = m_capture;
+				}
+				else
+				{
+					for (CUIContainer* ui : list)
 					{
-						ui->onPointerOut(mouseX, mouseY);
+						if (!base)
+						{
+							base = ui->OnProcessEvent(event);
+						}
+						else
+						{
+							ui->onPointerOut(mouseX, mouseY);
+						}
 					}
 				}
 

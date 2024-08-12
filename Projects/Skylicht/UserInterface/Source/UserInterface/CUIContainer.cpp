@@ -272,6 +272,39 @@ namespace Skylicht
 			return NULL;
 		}
 
+		CUIBase* CUIContainer::OnProcessEvent(const SEvent& event, CUIBase* capture)
+		{
+			if (!m_enable)
+				return NULL;
+
+			if (m_hover != capture)
+				return NULL;
+
+			if (event.EventType == EET_MOUSE_INPUT_EVENT)
+			{
+				f32 mouseX = (f32)event.MouseInput.X;
+				f32 mouseY = (f32)event.MouseInput.Y;
+
+				if (event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
+				{
+					m_pointerDown = false;
+					capture->onPointerUp(mouseX, mouseY);
+					capture->onPressed();
+				}
+				else if (event.MouseInput.Event == EMIE_LMOUSE_PRESSED_DOWN)
+				{
+					m_pointerDown = true;
+					capture->onPointerDown(mouseX, mouseY);
+				}
+				else
+				{
+					capture->onPointerMove(mouseX, mouseY);
+				}
+			}
+
+			return capture;
+		}
+
 		void CUIContainer::onPointerOut(float x, float y)
 		{
 			if (m_hover)

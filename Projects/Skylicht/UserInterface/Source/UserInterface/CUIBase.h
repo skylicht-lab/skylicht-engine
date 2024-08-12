@@ -131,6 +131,11 @@ namespace Skylicht
 				return NULL;
 			}
 
+			inline CUIContainer* getContainer()
+			{
+				return m_container;
+			}
+
 			core::vector3df* getRectTransform();
 
 			virtual void onPointerHover(float pointerX, float pointerY);

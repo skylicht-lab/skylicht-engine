@@ -43,13 +43,15 @@ namespace Skylicht
 			CObjectSerializable* m_itemSerializable;
 
 			float m_offset;
-			float m_drag;
+			float m_speed;
 
+			float m_lastPointerX;
+			float m_lastPointerY;
 			float m_pointerX;
 			float m_pointerY;
-			float m_pointerDownX;
-			float m_pointerDownY;
 
+			float m_maxOffset;
+			float m_springOffset;
 		public:
 			CUIListView(CUIContainer* container, CGUIElement* element, CGUIElement* baseItem);
 
@@ -79,12 +81,17 @@ namespace Skylicht
 
 		protected:
 
+			void updateLimitOffset();
+
 			void updateItemPosition();
 
 			void updateItemMovement();
 
 			void updateItemPositionHorizontal();
 
+			void updateInertia();
+
+			void updateStopSpeed();
 		};
 	}
 }

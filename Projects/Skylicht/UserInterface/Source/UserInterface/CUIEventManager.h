@@ -30,6 +30,8 @@ namespace Skylicht
 {
 	namespace UI
 	{
+		class CUIBase;
+
 		class CUIContainer;
 
 		class CUIEventManager : IEventProcessor
@@ -41,6 +43,8 @@ namespace Skylicht
 
 			int m_pointerId;
 
+			CUIBase* m_capture;
+
 		public:
 			CUIEventManager();
 
@@ -51,6 +55,11 @@ namespace Skylicht
 			void registerUIContainer(CUIContainer* container);
 
 			void unregisterUIContainer(CUIContainer* container);
+
+			inline void setCapture(CUIBase* base)
+			{
+				m_capture = base;
+			}
 		};
 	}
 }
