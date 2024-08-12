@@ -99,8 +99,6 @@ namespace Skylicht
 
 			virtual void updateItemMovement();
 
-			virtual void updateItemPositionHorizontal();
-
 			virtual void updateInertia();
 
 			virtual void updateStopSpeed();

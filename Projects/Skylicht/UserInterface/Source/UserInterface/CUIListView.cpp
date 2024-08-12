@@ -124,16 +124,9 @@ namespace Skylicht
 
 		void CUIListView::update()
 		{
-			if (m_vertical)
-			{
-				updateLimitOffset();
-				updateItemPosition();
-				updateItemMovement();
-			}
-			else
-			{
-				updateItemPositionHorizontal();
-			}
+			updateLimitOffset();
+			updateItemPosition();
+			updateItemMovement();
 		}
 
 		void CUIListView::updateLimitOffset()
@@ -143,27 +136,56 @@ namespace Skylicht
 
 			if (m_items.size() > 0)
 			{
-				float height = m_element->getHeight();
-				m_springOffset = height * 0.2f;
+				if (m_vertical)
+				{
+					float height = m_element->getHeight();
+					m_springOffset = height * 0.2f;
 
-				for (CGUIElement* item : m_items)
-					m_maxOffset = m_maxOffset + item->getHeight() + m_itemSpacing;
+					for (CGUIElement* item : m_items)
+						m_maxOffset = m_maxOffset + item->getHeight() + m_itemSpacing;
 
-				m_maxOffset = m_maxOffset - height;
-				if (m_maxOffset < 0.0f)
-					m_maxOffset = 0.0f;
+					m_maxOffset = m_maxOffset - height;
+					if (m_maxOffset < 0.0f)
+						m_maxOffset = 0.0f;
+				}
+				else
+				{
+					float width = m_element->getWidth();
+					m_springOffset = width * 0.2f;
+
+					for (CGUIElement* item : m_items)
+						m_maxOffset = m_maxOffset + item->getWidth() + m_itemSpacing;
+
+					m_maxOffset = m_maxOffset - width;
+					if (m_maxOffset < 0.0f)
+						m_maxOffset = 0.0f;
+				}
 			}
 		}
 
 		void CUIListView::updateItemPosition()
 		{
-			float x = 0.0f;
-			float y = m_offset;
+			float x = 0.0f, y = 0.0f;
+
+			if (m_vertical)
+			{
+				x = 0.0f;
+				y = m_offset;
+			}
+			else
+			{
+				x = m_offset;
+				y = 0.0f;
+			}
 
 			for (CGUIElement* item : m_items)
 			{
 				item->setPosition(core::vector3df(x, y, 0.0f));
-				y = y + item->getHeight() + m_itemSpacing;
+
+				if (m_vertical)
+					y = y + item->getHeight() + m_itemSpacing;
+				else
+					x = x + item->getWidth() + m_itemSpacing;
 			}
 		}
 
@@ -172,7 +194,11 @@ namespace Skylicht
 			if (m_isPointerDown)
 			{
 				const core::vector3df& scale = m_element->getCanvas()->getRootScale();
-				m_speed = (m_pointerY - m_lastPointerY) / scale.Y;
+
+				if (m_vertical)
+					m_speed = (m_pointerY - m_lastPointerY) / scale.Y;
+				else
+					m_speed = (m_pointerX - m_lastPointerX) / scale.X;
 
 				updateStopSpeed();
 
@@ -182,11 +208,6 @@ namespace Skylicht
 			{
 				updateInertia();
 			}
-		}
-
-		void CUIListView::updateItemPositionHorizontal()
-		{
-
 		}
 
 		void CUIListView::updateStopSpeed()

@@ -57,59 +57,122 @@ namespace Skylicht
 				float height = m_element->getHeight();
 				float width = m_element->getWidth();
 
-				m_springOffset = height * 0.2f;
-
 				float x = 0.0f;
 				float y = 0.0f;
-				float lastItemHeight = 0.0f;
-				float itemHeight = 0.0f;
 
-				for (CGUIElement* item : m_items)
+				if (m_vertical)
 				{
-					if (item->getHeight() > itemHeight)
-					{
-						itemHeight = item->getHeight();
-						lastItemHeight = itemHeight;
-					}
+					m_springOffset = height * 0.2f;
 
-					if (x + item->getWidth() >= width)
+					float lastItemHeight = 0.0f;
+					float itemHeight = 0.0f;
+
+					for (CGUIElement* item : m_items)
 					{
-						x = 0.0f;
-						y = y + itemHeight + m_itemSpacingY;
-						itemHeight = 0.0f;
-					}
-					else
-					{
+						if (item->getHeight() > itemHeight)
+						{
+							itemHeight = item->getHeight();
+							lastItemHeight = itemHeight;
+						}
+
 						x = x + item->getWidth() + m_itemSpacingX;
+						if (x >= width - item->getWidth())
+						{
+							x = 0.0f;
+							y = y + itemHeight + m_itemSpacingY;
+							itemHeight = 0.0f;
+						}
 					}
-				}
 
-				m_maxOffset = y + lastItemHeight;
-				m_maxOffset = m_maxOffset - height;
-				if (m_maxOffset < 0.0f)
-					m_maxOffset = 0.0f;
+					m_maxOffset = y + lastItemHeight;
+					m_maxOffset = m_maxOffset - height;
+					if (m_maxOffset < 0.0f)
+						m_maxOffset = 0.0f;
+				}
+				else
+				{
+					m_springOffset = width * 0.2f;
+
+					float lastItemWidth = 0.0f;
+					float itemWidth = 0.0f;
+
+					for (CGUIElement* item : m_items)
+					{
+						if (item->getWidth() > itemWidth)
+						{
+							itemWidth = item->getWidth();
+							lastItemWidth = itemWidth;
+						}
+
+						y = y + item->getHeight() + m_itemSpacingY;
+						if (y >= height - item->getHeight())
+						{
+							y = 0.0f;
+							x = x + itemWidth + m_itemSpacingX;
+							itemWidth = 0.0f;
+						}
+					}
+
+					m_maxOffset = x + lastItemWidth;
+					m_maxOffset = m_maxOffset - width;
+					if (m_maxOffset < 0.0f)
+						m_maxOffset = 0.0f;
+				}
 			}
 		}
 
 		void CUIGridView::updateItemPosition()
 		{
-			float x = 0.0f;
-			float y = m_offset;
+			float x = 0.0f, y = 0.0f;
 
 			float width = m_element->getWidth();
+			float height = m_element->getHeight();
+
+			if (m_vertical)
+			{
+				x = 0.0f;
+				y = m_offset;
+			}
+			else
+			{
+				x = m_offset;
+				y = 0.0f;
+			}
+
+			float itemWidth = 0.0f;
+			float itemHeight = 0.0f;
 
 			for (CGUIElement* item : m_items)
 			{
-				if (x + item->getWidth() >= width)
+				if (m_vertical)
 				{
+					if (item->getHeight() > itemHeight)
+						itemHeight = item->getHeight();
+
 					item->setPosition(core::vector3df(x, y, 0.0f));
-					x = 0.0f;
-					y = y + item->getHeight() + m_itemSpacingY;
+					x = x + item->getWidth() + m_itemSpacingX;
+
+					if (x >= width - item->getWidth())
+					{
+						x = 0.0f;
+						y = y + itemHeight + m_itemSpacingY;
+						itemHeight = 0.0f;
+					}
 				}
 				else
 				{
+					if (item->getWidth() > itemWidth)
+						itemWidth = item->getWidth();
+
 					item->setPosition(core::vector3df(x, y, 0.0f));
-					x = x + item->getWidth() + m_itemSpacingX;
+					y = y + item->getHeight() + m_itemSpacingY;
+
+					if (y >= height - item->getHeight())
+					{
+						y = 0.0f;
+						x = x + itemWidth + m_itemSpacingX;
+						itemWidth = 0.0f;
+					}
 				}
 			}
 		}
