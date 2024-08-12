@@ -44,9 +44,15 @@ void CViewDemo::onInit()
 		canvas->getGUIByPath("Canvas/Container/ListItems"),
 		canvas->getGUIByPath("Canvas/Container/ListItems/Item"));
 
-	for (int i = 0; i < 50; i++)
+	// list->setVertical(false);
+
+	for (int i = 0; i < 29; i++)
 	{
-		list->addItem();
+		CGUIElement* element = list->addItem();
+		CGUIText* text = (CGUIText*)canvas->getGUIByPath(element, "Name");
+		char t[32];
+		sprintf(t, "%d", i);
+		text->setText(t);
 	}
 }
 
