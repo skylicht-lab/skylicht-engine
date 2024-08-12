@@ -47,7 +47,8 @@ namespace Skylicht
 			m_lastPointerY(0.0f),
 			m_speed(0.0f),
 			m_maxOffset(0.0f),
-			m_springOffset(0.0f)
+			m_springOffset(0.0f),
+			m_itemSpacing(0.0f)
 		{
 			if (m_element)
 			{
@@ -146,9 +147,11 @@ namespace Skylicht
 				m_springOffset = height * 0.2f;
 
 				for (CGUIElement* item : m_items)
-					m_maxOffset = m_maxOffset + item->getHeight();
+					m_maxOffset = m_maxOffset + item->getHeight() + m_itemSpacing;
 
 				m_maxOffset = m_maxOffset - height;
+				if (m_maxOffset < 0.0f)
+					m_maxOffset = 0.0f;
 			}
 		}
 
@@ -160,7 +163,7 @@ namespace Skylicht
 			for (CGUIElement* item : m_items)
 			{
 				item->setPosition(core::vector3df(x, y, 0.0f));
-				y = y + item->getHeight();
+				y = y + item->getHeight() + m_itemSpacing;
 			}
 		}
 
