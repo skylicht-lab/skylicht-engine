@@ -73,9 +73,9 @@ namespace Skylicht
 
 			CUIBase* getChildByGUI(CGUIElement* element);
 
-			CUIBase* removeChildByGUI(CGUIElement* element);
-
 			virtual CUIBase* OnProcessEvent(const SEvent& event);
+
+			virtual CUIBase* OnProcessEvent(const SEvent& event, CUIBase* capture);
 
 			void onPointerOut(float x, float y);
 

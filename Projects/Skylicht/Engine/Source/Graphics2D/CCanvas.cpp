@@ -371,6 +371,11 @@ namespace Skylicht
 		m_root->setScale(core::vector3df(scale, scale, 1.0f));
 	}
 
+	const core::vector3df& CCanvas::getRootScale()
+	{
+		return m_root->getScale();
+	}
+
 	/*
 	* Element constructor
 	*/
