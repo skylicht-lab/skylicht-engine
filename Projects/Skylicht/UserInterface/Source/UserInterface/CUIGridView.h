@@ -25,85 +25,32 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CUIBase.h"
+#include "CUIListView.h"
 
 namespace Skylicht
 {
 	namespace UI
 	{
-		class CUIListView : public CUIBase
+		class CUIGridView : public CUIListView
 		{
 		protected:
-			bool m_vertical;
-
-			CGUIMask* m_mask;
-
-			std::vector<CGUIElement*> m_items;
-
-			CGUIElement* m_baseItem;
-			CObjectSerializable* m_itemSerializable;
-
-			float m_offset;
-			float m_speed;
-
-			float m_lastPointerX;
-			float m_lastPointerY;
-			float m_pointerX;
-			float m_pointerY;
-
-			float m_maxOffset;
-			float m_springOffset;
-			float m_itemSpacing;
+			float m_itemSpacingX;
+			float m_itemSpacingY;
 
 		public:
-			CUIListView(CUIContainer* container, CGUIElement* element, CGUIElement* baseItem);
+			CUIGridView(CUIContainer* container, CGUIElement* element, CGUIElement* baseItem);
 
-			virtual ~CUIListView();
-
-			CGUIElement* addItem();
-
-			bool removeItem(CGUIElement* item);
-
-			virtual void update();
-
-			virtual void onPointerDown(float pointerX, float pointerY);
-
-			virtual void onPointerUp(float pointerX, float pointerY);
-
-			virtual void onPointerMove(float pointerX, float pointerY);
-
-			inline void setVertical(bool b)
-			{
-				m_vertical = b;
-			}
-
-			inline bool isVertical()
-			{
-				return m_vertical;
-			}
-
-			inline void setItemSpacing(float b)
-			{
-				m_itemSpacing = b;
-			}
-
-			inline float getItemSpacing()
-			{
-				return m_itemSpacing;
-			}
-
-		protected:
+			virtual ~CUIGridView();
 
 			virtual void updateLimitOffset();
 
 			virtual void updateItemPosition();
 
-			virtual void updateItemMovement();
-
-			virtual void updateItemPositionHorizontal();
-
-			virtual void updateInertia();
-
-			virtual void updateStopSpeed();
+			inline void setItemSpacing(float x, float y)
+			{
+				m_itemSpacingX = x;
+				m_itemSpacingY = y;
+			}
 		};
 	}
 }

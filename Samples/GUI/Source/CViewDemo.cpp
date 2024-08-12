@@ -9,7 +9,7 @@
 #include "Graphics2D/CGUIImporter.h"
 
 #include "UserInterface/CUIContainer.h"
-#include "UserInterface/CUIListView.h"
+#include "UserInterface/CUIGridView.h"
 
 CViewDemo::CViewDemo()
 {
@@ -40,11 +40,11 @@ void CViewDemo::onInit()
 
 	UI::CUIContainer* uiContainer = leftPanel->addComponent<UI::CUIContainer>();
 
-	UI::CUIListView* list = new UI::CUIListView(uiContainer,
-		canvas->getGUIByPath("Canvas/Container/ListCoin"),
-		canvas->getGUIByPath("Canvas/Container/ListCoin/Item"));
+	UI::CUIGridView* list = new UI::CUIGridView(uiContainer,
+		canvas->getGUIByPath("Canvas/Container/ListItems"),
+		canvas->getGUIByPath("Canvas/Container/ListItems/Item"));
 
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 50; i++)
 	{
 		list->addItem();
 	}
