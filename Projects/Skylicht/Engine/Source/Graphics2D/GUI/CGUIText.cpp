@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Utils/CStringImp.h"
 #include "Graphics2D/CGraphics2D.h"
 #include "Graphics2D/SpriteFrame/CFontManager.h"
+#include "Graphics2D/CCanvas.h"
 
 namespace Skylicht
 {
@@ -46,6 +47,12 @@ namespace Skylicht
 		m_lastWidth(0.0f),
 		m_lastHeight(0.0f),
 		m_fontChanged(-1)
+#ifdef HAVE_CARET
+		, m_showCaret(false),
+		m_caretShader(0),
+		m_caretBlink(0.0f),
+		m_caretBlinkSpeed(500.0f)
+#endif
 	{
 		m_enableMaterial = true;
 
@@ -68,6 +75,12 @@ namespace Skylicht
 		m_lastWidth(0.0f),
 		m_lastHeight(0.0f),
 		m_fontChanged(-1)
+#ifdef HAVE_CARET
+		, m_showCaret(false),
+		m_caretShader(0),
+		m_caretBlink(0.0f),
+		m_caretBlinkSpeed(500.0f)
+#endif
 	{
 		init();
 	}
@@ -77,6 +90,10 @@ namespace Skylicht
 		m_textOffsetY = 0;
 		m_textHeight = 50;
 		m_textSpaceWidth = 20;
+
+#ifdef HAVE_CARET
+		m_caretShader = CShaderManager::getInstance()->getShaderIDByName("VertexColorAlpha");
+#endif
 
 		for (int i = 0; i < MAX_FORMATCOLOR; i++)
 			m_colorFormat[i].set(255, 255, 255, 255);
@@ -406,6 +423,22 @@ namespace Skylicht
 		return stringWidth;
 	}
 
+#ifdef HAVE_CARET
+	void CGUIText::updateCaret()
+	{
+		if (m_showCaret)
+		{
+			m_caretBlink = m_caretBlink + getTimeStep();
+			if (m_caretBlink > 2.0f * m_caretBlinkSpeed)
+				m_caretBlink = 0.0f;
+		}
+		else
+		{
+			m_caretBlink = 0.0f;
+		}
+	}
+#endif
+
 	void CGUIText::render(CCamera* camera)
 	{
 		IFont* font = getCurrentFont();
@@ -415,6 +448,10 @@ namespace Skylicht
 			CGUIElement::render(camera);
 			return;
 		}
+
+#ifdef HAVE_CARET
+		updateCaret();
+#endif
 
 		// fix: sometime font address pointer is not change (so font != m_font is not correct)
 		bool fontChanged = false;
@@ -504,7 +541,7 @@ namespace Skylicht
 		for (int i = 0, n = (int)m_arrayCharRender.size(); i < n; i++)
 		{
 			// render text
-			renderText(m_arrayCharRender[i], m_arrayCharFormat[i], x, y);
+			renderText(m_arrayCharRender[i], m_arrayCharFormat[i], x, y, i);
 
 			// new line
 			y += (m_textHeight + m_linePadding);
@@ -513,16 +550,20 @@ namespace Skylicht
 		CGUIElement::render(camera);
 	}
 
-	void CGUIText::renderText(ArrayModuleOffset& string, ArrayInt& stringFormat, int posX, int posY)
+	void CGUIText::renderText(ArrayModuleOffset& string, ArrayInt& stringFormat, int posX, int posY, int line)
 	{
+		if (string.size() == 0)
+			return;
+
 		CGraphics2D* g = CGraphics2D::getInstance();
 
 		int x = posX;
 		int y = posY;
 
 		int stringWidth = 0;
+		int numCharacter = (int)string.size();
 
-		for (int i = 0, n = (int)string.size(); i < n; i++)
+		for (int i = 0; i < numCharacter; i++)
 		{
 			SModuleOffset* moduleOffset = string[i];
 			if (moduleOffset->Character == ' ')
@@ -543,8 +584,58 @@ namespace Skylicht
 		// draw bbox
 		// CGraphics::getInstance()->addRectBatch(core::recti(x,y,x+stringWidth,y+stringHeight), SColor(255,255,0,255), AbsoluteTransformation);
 
+#ifdef HAVE_CARET
+		if (m_showCaret && m_caretBlink <= m_caretBlinkSpeed)
+		{
+			int cx = x;
+
+			if (line == m_caret.Y)
+			{
+				SModuleOffset* fistChar = string[0];
+				float top = fistChar->OffsetY;
+				float bottom = top + fistChar->Module->H;
+
+				for (int i = 0; i < numCharacter; i++)
+				{
+					SModuleOffset* moduleOffset = string[i];
+					if (moduleOffset->OffsetY < top)
+						top = moduleOffset->OffsetY;
+
+					if (moduleOffset->OffsetY + moduleOffset->Module->H > bottom)
+						bottom = moduleOffset->OffsetY + moduleOffset->Module->H;
+				}
+
+				for (int i = 0; i < numCharacter; i++)
+				{
+					SModuleOffset* moduleOffset = string[i];
+
+					if (i == m_caret.X)
+						break;
+
+					if (moduleOffset->Character == ' ')
+						cx += ((int)moduleOffset->XAdvance + m_charSpacePadding);
+					else
+						cx += ((int)moduleOffset->XAdvance + m_charPadding);
+				}
+
+				g->addRectangleBatch(
+					core::rectf(
+						(float)cx,
+						(float)y,
+						(float)cx + 2.0f,
+						(float)y + bottom
+					),
+					core::rectf(0.0f, 0.0f, 1.0f, 1.0f),
+					getColor(),
+					m_transform->World,
+					m_caretShader
+				);
+			}
+		}
+#endif
+
 		// render string
-		for (int i = 0, n = (int)string.size(); i < n; i++)
+		for (int i = 0; i < numCharacter; i++)
 		{
 			SModuleOffset* moduleOffset = string[i];
 			int format = stringFormat[i];
@@ -806,5 +897,109 @@ namespace Skylicht
 		}
 
 		m_updateTextRender = true;
+	}
+
+	void CGUIText::getClosestCharacter(float posX, float posY, int& line, int& character)
+	{
+		line = 0;
+		character = 0;
+
+		if (m_arrayCharRender.size() == 0)
+			return;
+
+		// calc multiline height
+		int textHeight = (int)m_arrayCharRender.size() * (m_textHeight + m_linePadding);
+		textHeight -= m_linePadding;
+
+		const core::rectf& rect = getRect();
+		int x = (int)rect.UpperLeftCorner.X;
+		int y = (int)rect.UpperLeftCorner.Y;
+		int h = m_textHeight + m_linePadding;
+
+		// calc text algin vertial
+		if (TextVertical == EGUIVerticalAlign::Middle)
+			y = y + ((int)m_lastHeight - textHeight - m_textOffsetY) / 2;
+		else if (TextVertical == EGUIVerticalAlign::Bottom)
+			y = y + (int)m_lastHeight - textHeight;
+
+		if (m_centerRotate == true)
+			y = y - textHeight / 2;
+
+		core::vector3df linePos;
+
+		const core::matrix4& render = getCanvas()->getRenderWorldTransform();
+		core::matrix4 world = render * m_transform->World;
+
+		for (int i = 0, n = (int)m_arrayCharRender.size(); i < n; i++)
+		{
+			y += h;
+			linePos.set((float)x, (float)y, 0.0f);
+			world.transformVect(linePos);
+
+			line = i;
+
+			if (posY < linePos.Y)
+			{
+				break;
+			}
+		}
+
+		getClosestCharacter(posX, x, y - h, line, world, character);
+	}
+
+	void CGUIText::getClosestCharacter(float posX, int x, int y, int line, const core::matrix4& world, int& character)
+	{
+		ArrayModuleOffset& string = m_arrayCharRender[line];
+		int stringWidth = 0;
+
+		for (int i = 0, n = (int)string.size(); i < n; i++)
+		{
+			SModuleOffset* moduleOffset = string[i];
+			if (moduleOffset->Character == ' ')
+				stringWidth += ((int)moduleOffset->XAdvance + m_charSpacePadding);
+			else
+				stringWidth += ((int)moduleOffset->XAdvance + m_charPadding);
+		}
+
+		// text align
+		if (TextHorizontal == EGUIHorizontalAlign::Center)
+			x = x + ((int)getRect().getWidth() - stringWidth) / 2;
+		else if (TextHorizontal == EGUIHorizontalAlign::Right)
+			x = x + (int)getRect().getWidth() - stringWidth;
+
+		if (m_centerRotate == true)
+			x = x - stringWidth / 2;
+
+		float minX = 300000.0f;
+		float testX = 0.0f;
+		core::vector3df p;
+
+		int numCharacter = (int)string.size();
+		for (int i = 0; i < numCharacter; i++)
+		{
+			p.set((float)x, (float)y, 0.0f);
+			world.transformVect(p);
+
+			SModuleOffset* moduleOffset = string[i];
+
+			float dx = fabsf(posX - p.X);
+			if (dx < minX)
+			{
+				minX = dx;
+				testX = posX - p.X;
+				character = i;
+			}
+
+			if (moduleOffset->Character == ' ')
+				x += ((int)moduleOffset->XAdvance + m_charSpacePadding);
+			else
+				x += ((int)moduleOffset->XAdvance + m_charPadding);
+		}
+
+		if (character == numCharacter - 1 && minX >= string.back()->Module->W)
+		{
+			// end last char
+			character++;
+		}
 	}
 }

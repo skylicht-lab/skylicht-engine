@@ -8,8 +8,10 @@
 
 #include "UserInterface/CUIContainer.h"
 #include "UserInterface/CUIButton.h"
+#include "UserInterface/CUITextBox.h"
 
-CViewPopupEnterName::CViewPopupEnterName()
+CViewPopupEnterName::CViewPopupEnterName() :
+	m_popup(NULL)
 {
 
 }
@@ -40,6 +42,8 @@ void CViewPopupEnterName::onInit()
 	UI::CUIBase* dialog = new UI::CUIBase(uiContainer, canvas->getGUIByPath("Canvas/Dialog"));
 	dialog->addMotion(UI::EMotionEvent::In, new UI::CAlphaMotion(0.0f))->setInverse(true)->setTime(0.0f, 250.0f);
 	dialog->addMotion(UI::EMotionEvent::Out, new UI::CAlphaMotion(0.0f))->setTime(0.0f, 250.0f);
+
+	UI::CUITextBox* txtBox = new UI::CUITextBox(uiContainer, canvas->getGUIByPath("Canvas/Dialog/InputName"));
 
 	UI::CUIBase* btnClose = new UI::CUIBase(uiContainer, canvas->getGUIByPath("Canvas/Dialog/btnClose"));
 	btnClose->addMotion(UI::EMotionEvent::PointerHover, new UI::CScaleMotion(1.2f, 1.2f, 1.0f));

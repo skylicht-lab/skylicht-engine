@@ -203,6 +203,9 @@ namespace Skylicht
 				updateStopSpeed();
 
 				m_offset = m_offset + m_speed;
+
+				m_lastPointerX = m_pointerX;
+				m_lastPointerY = m_pointerY;
 			}
 			else
 			{

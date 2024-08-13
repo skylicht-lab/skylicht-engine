@@ -36,7 +36,8 @@ namespace Skylicht
 
 		CUIEventManager::CUIEventManager() :
 			m_pointerId(-1),
-			m_capture(NULL)
+			m_capture(NULL),
+			m_focus(NULL)
 		{
 			CEventManager::getInstance()->registerProcessorEvent("CUIEventManager", this);
 		}
@@ -98,6 +99,9 @@ namespace Skylicht
 					}
 				}
 
+				if (event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
+					setFocus(base);
+
 				if (!base)
 					return true;
 				else
@@ -132,6 +136,19 @@ namespace Skylicht
 				}
 				++i;
 			}
+		}
+
+		void CUIEventManager::setFocus(CUIBase* focus)
+		{
+			if (m_focus == focus)
+				return;
+
+			if (m_focus && m_focus != focus)
+				m_focus->onLostFocus();
+
+			m_focus = focus;
+			if (m_focus)
+				m_focus->onFocus();
 		}
 	}
 }
