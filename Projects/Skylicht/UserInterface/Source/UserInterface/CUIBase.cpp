@@ -153,6 +153,18 @@ namespace Skylicht
 				OnPressed(this);
 		}
 
+		void CUIBase::onFocus()
+		{
+			if (OnFocus != nullptr)
+				OnFocus(this);
+		}
+
+		void CUIBase::onLostFocus()
+		{
+			if (OnLostFocus != nullptr)
+				OnLostFocus(this);
+		}
+
 		void CUIBase::startMotion(EMotionEvent event)
 		{
 			if (!m_element)

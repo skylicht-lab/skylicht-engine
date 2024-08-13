@@ -65,6 +65,8 @@ namespace Skylicht
 			std::function<void(float, float)> OnPointerUp;
 
 			std::function<void(CUIBase*)> OnPressed;
+			std::function<void(CUIBase*)> OnFocus;
+			std::function<void(CUIBase*)> OnLostFocus;
 
 		public:
 			CUIBase(CUIContainer* container, CGUIElement* element);
@@ -149,6 +151,10 @@ namespace Skylicht
 			virtual void onPointerMove(float pointerX, float pointerY);
 
 			virtual void onPressed();
+
+			virtual void onFocus();
+
+			virtual void onLostFocus();
 
 			void startMotion(EMotionEvent event);
 

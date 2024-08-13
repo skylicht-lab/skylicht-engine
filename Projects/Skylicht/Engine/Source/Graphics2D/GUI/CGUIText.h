@@ -29,6 +29,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #define MAX_FORMATCOLOR 32
 
+#define HAVE_CARET
+
 namespace Skylicht
 {
 	class CFontSource;
@@ -80,11 +82,20 @@ namespace Skylicht
 
 		float m_lastWidth;
 		float m_lastHeight;
+
+#ifdef HAVE_CARET
+		bool m_showCaret;
+		int m_caretShader;
+		float m_caretBlink;
+		float m_caretBlinkSpeed;
+		core::vector2di m_caret;
+#endif
+
 	protected:
 		CGUIText(CCanvas* canvas, CGUIElement* parent, IFont* font);
 		CGUIText(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect, IFont* font);
 
-		virtual void renderText(ArrayModuleOffset& string, ArrayInt& format, int posX, int posY);
+		virtual void renderText(ArrayModuleOffset& string, ArrayInt& format, int posX, int posY, int line);
 
 		void init();
 
@@ -179,7 +190,26 @@ namespace Skylicht
 
 		virtual void loadSerializable(CObjectSerializable* object);
 
+		void getClosestCharacter(float posX, float posY, int& line, int& character);
+
+#ifdef HAVE_CARET
+		void updateCaret();
+
+		inline void showCaret(bool b)
+		{
+			m_showCaret = b;
+		}
+
+		inline void setCaret(int line, int character)
+		{
+			m_caret.set(character, line);
+			m_caretBlink = 0.0f;
+		}
+#endif
+
 	protected:
+
+		void getClosestCharacter(float posX, int x, int y, int line, const core::matrix4& world, int& character);
 
 		void initFont(IFont* font);
 

@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2023 Skylicht Technology CO., LTD
+Copyright (c) 2024 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,47 +24,40 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "EventManager/CEventManager.h"
+#include "CUIBase.h"
 
 namespace Skylicht
 {
 	namespace UI
 	{
-		class CUIBase;
-
-		class CUIContainer;
-
-		class CUIEventManager : IEventProcessor
+		class CUITextBox : public CUIBase
 		{
-		public:
-			DECLARE_SINGLETON(CUIEventManager)
-
-			std::vector<CUIContainer*> m_containers;
-
-			int m_pointerId;
-
-			CUIBase* m_capture;
-
-			CUIBase* m_focus;
+		protected:
+			CGUIElement* m_background;
+			CGUIText* m_text;
 
 		public:
-			CUIEventManager();
+			CUITextBox(CUIContainer* container, CGUIElement* element);
 
-			virtual ~CUIEventManager();
+			virtual ~CUITextBox();
 
-			virtual bool OnProcessEvent(const SEvent& event);
-
-			void registerUIContainer(CUIContainer* container);
-
-			void unregisterUIContainer(CUIContainer* container);
-
-			inline void setCapture(CUIBase* base)
+			inline CGUIElement* getBackground()
 			{
-				m_capture = base;
+				return m_background;
 			}
 
-			void setFocus(CUIBase* focus);
+			inline CGUIText* getText()
+			{
+				return m_text;
+			}
 
+			virtual void onPointerHover(float pointerX, float pointerY);
+
+			virtual void onPointerOut(float pointerX, float pointerY);
+
+			virtual void onPointerDown(float pointerX, float pointerY);
+
+			virtual void onLostFocus();
 		};
 	}
 }

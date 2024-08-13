@@ -9,6 +9,7 @@
 #include "Graphics2D/CGUIImporter.h"
 
 #include "UserInterface/CUIContainer.h"
+#include "UserInterface/CUIListView.h"
 #include "UserInterface/CUIGridView.h"
 
 CViewDemo::CViewDemo()
@@ -40,7 +41,7 @@ void CViewDemo::onInit()
 
 	UI::CUIContainer* uiContainer = leftPanel->addComponent<UI::CUIContainer>();
 
-	UI::CUIGridView* list = new UI::CUIGridView(uiContainer,
+	UI::CUIListView* list = new UI::CUIListView(uiContainer,
 		canvas->getGUIByPath("Canvas/Container/ListItems"),
 		canvas->getGUIByPath("Canvas/Container/ListItems/Item"));
 
@@ -50,9 +51,12 @@ void CViewDemo::onInit()
 	{
 		CGUIElement* element = list->addItem();
 		CGUIText* text = (CGUIText*)canvas->getGUIByPath(element, "Name");
-		char t[32];
-		sprintf(t, "%d", i);
-		text->setText(t);
+		if (text)
+		{
+			char t[32];
+			sprintf(t, "List item: %d", i);
+			text->setText(t);
+		}
 	}
 }
 
