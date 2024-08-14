@@ -65,6 +65,10 @@ namespace Skylicht
 
 			void setFocus(CUIBase* focus);
 
+			inline CUIBase* getFocus()
+			{
+				return m_focus;
+			}
 		};
 	}
 }

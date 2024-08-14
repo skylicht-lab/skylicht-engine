@@ -56,7 +56,7 @@ namespace Skylicht
 			bool m_isPointerHover;
 			bool m_isPointerDown;
 
-			bool m_enableTouchScreen;
+			bool m_contineGameEvent;
 
 		public:
 			std::function<void(float, float)> OnPointerHover;
@@ -67,6 +67,7 @@ namespace Skylicht
 			std::function<void(CUIBase*)> OnPressed;
 			std::function<void(CUIBase*)> OnFocus;
 			std::function<void(CUIBase*)> OnLostFocus;
+			std::function<void(CUIBase*, const SEvent&)> OnKeyEvent;
 
 		public:
 			CUIBase(CUIContainer* container, CGUIElement* element);
@@ -91,14 +92,14 @@ namespace Skylicht
 				return m_visible;
 			}
 
-			inline void setEnableTouchScreen(bool b)
+			inline void setContinueGameEvent(bool b)
 			{
-				m_enableTouchScreen = b;
+				m_contineGameEvent = b;
 			}
 
-			inline bool isEnableTouchScreen()
+			inline bool isContinueGameEvent()
 			{
-				return m_enableTouchScreen;
+				return m_contineGameEvent;
 			}
 
 			inline void setPointerHover(bool b)
@@ -155,6 +156,8 @@ namespace Skylicht
 			virtual void onFocus();
 
 			virtual void onLostFocus();
+
+			virtual void onKeyEvent(const SEvent& event);
 
 			void startMotion(EMotionEvent event);
 

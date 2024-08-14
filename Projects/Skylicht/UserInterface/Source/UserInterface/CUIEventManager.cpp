@@ -73,6 +73,8 @@ namespace Skylicht
 
 				if (m_capture)
 				{
+					base = m_capture;
+
 					CUIContainer* captureContainer = m_capture->getContainer();
 					captureContainer->OnProcessEvent(event, m_capture);
 
@@ -81,8 +83,6 @@ namespace Skylicht
 						if (captureContainer != ui)
 							ui->onPointerOut(mouseX, mouseY);
 					}
-
-					base = m_capture;
 				}
 				else
 				{
@@ -105,7 +105,15 @@ namespace Skylicht
 				if (!base)
 					return true;
 				else
-					return base->isEnableTouchScreen();
+					return base->isContinueGameEvent();
+			}
+			else if (event.EventType == EET_KEY_INPUT_EVENT)
+			{
+				if (m_focus)
+				{
+					m_focus->onKeyEvent(event);
+					return m_focus->isContinueGameEvent();
+				}
 			}
 
 			return true;
@@ -144,11 +152,17 @@ namespace Skylicht
 				return;
 
 			if (m_focus && m_focus != focus)
+			{
 				m_focus->onLostFocus();
+				m_focus->startMotion(UI::EMotionEvent::UnFocus);
+			}
 
 			m_focus = focus;
 			if (m_focus)
+			{
 				m_focus->onFocus();
+				m_focus->startMotion(UI::EMotionEvent::Focus);
+			}
 		}
 	}
 }

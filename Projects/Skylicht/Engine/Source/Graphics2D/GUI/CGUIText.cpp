@@ -46,9 +46,11 @@ namespace Skylicht
 		m_fontData(NULL),
 		m_lastWidth(0.0f),
 		m_lastHeight(0.0f),
-		m_fontChanged(-1)
+		m_fontChanged(-1),
+		m_enableTextFormat(true)
 #ifdef HAVE_CARET
 		, m_showCaret(false),
+		m_setCaret(-1),
 		m_caretShader(0),
 		m_caretBlink(0.0f),
 		m_caretBlinkSpeed(500.0f)
@@ -74,7 +76,8 @@ namespace Skylicht
 		m_fontData(NULL),
 		m_lastWidth(0.0f),
 		m_lastHeight(0.0f),
-		m_fontChanged(-1)
+		m_fontChanged(-1),
+		m_enableTextFormat(true)
 #ifdef HAVE_CARET
 		, m_showCaret(false),
 		m_caretShader(0),
@@ -133,6 +136,13 @@ namespace Skylicht
 
 	void CGUIText::setFormatText(const char* formatText)
 	{
+		if (!m_enableTextFormat)
+		{
+			// just render all like "<formatId>text"
+			setText(formatText);
+			return;
+		}
+
 		int i = 0;
 		int j = 0;
 
@@ -437,6 +447,229 @@ namespace Skylicht
 			m_caretBlink = 0.0f;
 		}
 	}
+
+	void CGUIText::updateSetCaret()
+	{
+		bool set = false;
+		int numLine = (int)m_arrayCharId.size();
+
+		for (int l = 0; l < numLine; l++)
+		{
+			ArrayInt& line = m_arrayCharId[l];
+
+			for (int i = 0, n = (int)line.size() - 1; i < n; i++)
+			{
+				if (m_setCaret <= line[i] || (line[i] <= m_setCaret && m_setCaret < line[i + 1]))
+				{
+					m_caret.set(i, l);
+					set = true;
+					break;
+				}
+			}
+
+			if (set)
+				break;
+		}
+
+		if (set == false)
+		{
+			int lastLine = numLine - 1;
+			ArrayInt& line = m_arrayCharId[lastLine];
+
+			if (line.back() == m_setCaret)
+				m_caret.set((int)line.size() - 1, lastLine);
+			else
+				m_caret.set((int)line.size(), lastLine);
+		}
+	}
+
+	void CGUIText::setCaret(int charPos)
+	{
+		m_setCaret = charPos;
+		m_caretBlink = 0.0f;
+		m_updateTextRender = true;
+	}
+
+	int CGUIText::getNumCharacter(int line)
+	{
+		if (line < 0 || line >= (int)m_arrayCharRender.size())
+			return 0;
+
+		return (int)m_arrayCharRender[line].size();
+	}
+
+	bool CGUIText::isCharacter(wchar_t c)
+	{
+		if ('a' <= c && c <= 'z')
+			return true;
+
+		if ('A' <= c && c <= 'Z')
+			return true;
+
+		if ('0' <= c && c <= '9')
+			return true;
+
+		return false;
+	}
+
+	bool CGUIText::getWordAtPosition(int line, int charPosition, int& from, int& to)
+	{
+		if (line < 0 || line >= (int)m_arrayCharRender.size())
+			return false;
+
+		from = charPosition;
+		to = charPosition;
+
+		ArrayModuleOffset& string = m_arrayCharRender[line];
+		int numCharacter = (int)string.size();
+
+		for (int i = 0; i < numCharacter; i++)
+		{
+			if (charPosition < numCharacter)
+			{
+				bool isCharacterGroup = isCharacter(string[charPosition]->Character);
+
+				from = to = charPosition;
+				while (from > 0)
+				{
+					from--;
+					bool g = isCharacter(string[from]->Character);
+					if (g != isCharacterGroup)
+					{
+						from++;
+						break;
+					}
+				}
+
+				while (to < numCharacter)
+				{
+					bool g = isCharacter(string[to]->Character);
+					if (g != isCharacterGroup)
+					{
+						break;
+					}
+					to++;
+				}
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	void CGUIText::doBackspace()
+	{
+		int numLine = (int)m_arrayCharRender.size();
+
+		if (m_caret.Y > numLine)
+			return;
+
+		if (m_caret.X == 0)
+		{
+			if (m_caret.Y == 0)
+				return;
+			else
+			{
+				m_caret.Y--;
+				m_caret.X = (int)m_arrayCharRender[m_caret.Y].size();
+			}
+		}
+		ArrayModuleOffset& string = m_arrayCharRender[m_caret.Y];
+
+		ArrayInt& id = m_arrayCharId[m_caret.Y];
+		m_caret.X--;
+
+		int charId = id[m_caret.X];
+		if (charId < 0)
+			charId = 0;
+
+		m_textw.erase(m_textw.begin() + charId);
+		m_textFormat.erase(m_textFormat.begin() + charId);
+
+		m_text = CStringImp::convertUnicodeToUTF8(m_textw.c_str());
+
+		setCaret(charId);
+		updateSplitText();
+	}
+
+	void CGUIText::doDelete()
+	{
+		int numLine = (int)m_arrayCharRender.size();
+
+		if (m_caret.Y > numLine)
+			return;
+
+		if (m_caret.X >= m_arrayCharRender[m_caret.Y].size())
+		{
+			if (m_caret.Y < numLine - 1)
+			{
+				// delete first char at next line
+				m_caret.X = 0;
+				m_caret.Y++;
+			}
+			else
+				return;
+		}
+
+		ArrayModuleOffset& string = m_arrayCharRender[m_caret.Y];
+
+		ArrayInt& id = m_arrayCharId[m_caret.Y];
+		int charId = id[m_caret.X];
+
+		m_textw.erase(m_textw.begin() + charId);
+		m_textFormat.erase(m_textFormat.begin() + charId);
+
+		m_text = CStringImp::convertUnicodeToUTF8(m_textw.c_str());
+
+		setCaret(charId);
+		updateSplitText();
+	}
+
+	void CGUIText::insert(wchar_t c)
+	{
+		int numLine = (int)m_arrayCharRender.size();
+		if (m_caret.Y >= numLine)
+			return;
+
+		ArrayModuleOffset& string = m_arrayCharRender[m_caret.Y];
+		if (m_caret.X >= string.size() && m_caret.Y == numLine - 1)
+		{
+			m_textw.push_back(c);
+			m_textFormat.push_back(0);
+
+			m_text = CStringImp::convertUnicodeToUTF8(m_textw.c_str());
+
+			setCaret((int)m_textw.size());
+		}
+		else if (m_caret.X >= 0)
+		{
+			int charId = 0;
+			ArrayInt& id = m_arrayCharId[m_caret.Y];
+			if (m_caret.X >= id.size())
+			{
+				m_caret.Y++;
+				m_caret.X = 0;
+				ArrayInt& id = m_arrayCharId[m_caret.Y];
+				charId = id[m_caret.X];
+			}
+			else
+			{
+				charId = id[m_caret.X];
+			}
+
+			m_textw.insert(m_textw.begin() + charId, c);
+			m_textFormat.insert(m_textFormat.begin() + charId, 0);
+
+			m_text = CStringImp::convertUnicodeToUTF8(m_textw.c_str());
+
+			setCaret(charId + 1);
+		}
+
+		updateSplitText();
+	}
 #endif
 
 	void CGUIText::render(CCamera* camera)
@@ -482,40 +715,7 @@ namespace Skylicht
 
 		if (m_updateTextRender == true)
 		{
-			// encode string to list modules & format
-			m_arrayCharRender.clear();
-			m_arrayCharFormat.clear();
-
-			if (m_multiLine == true)
-			{
-				// split to multi line
-				splitText(m_arrayCharRender, m_arrayCharFormat, (int)m_lastWidth);
-			}
-			else
-			{
-				// copy all string
-				ArrayModuleOffset modules;
-				ArrayInt fm;
-
-				const wchar_t* lpString = m_textw.c_str();
-				ArrayInt& lpFormat = m_textFormat;
-				int i = 0;
-
-				while (lpString[i] != 0)
-				{
-					SModuleOffset* c = m_font->getCharacterModule((int)lpString[i]);
-					if (c != NULL)
-					{
-						modules.push_back(c);
-						fm.push_back(lpFormat[i]);
-					}
-					i++;
-				}
-
-				m_arrayCharRender.push_back(modules);
-				m_arrayCharFormat.push_back(fm);
-			}
-
+			updateSplitText();
 			m_updateTextRender = false;
 		}
 
@@ -552,9 +752,6 @@ namespace Skylicht
 
 	void CGUIText::renderText(ArrayModuleOffset& string, ArrayInt& stringFormat, int posX, int posY, int line)
 	{
-		if (string.size() == 0)
-			return;
-
 		CGraphics2D* g = CGraphics2D::getInstance();
 
 		int x = posX;
@@ -591,9 +788,8 @@ namespace Skylicht
 
 			if (line == m_caret.Y)
 			{
-				SModuleOffset* fistChar = string[0];
-				float top = fistChar->OffsetY;
-				float bottom = top + fistChar->Module->H;
+				float top = 0;
+				float bottom = top + m_textHeight;
 
 				for (int i = 0; i < numCharacter; i++)
 				{
@@ -657,10 +853,60 @@ namespace Skylicht
 		}
 	}
 
-	void CGUIText::splitText(std::vector<ArrayModuleOffset>& split, std::vector<ArrayInt>& format, int width)
+	void CGUIText::updateSplitText()
+	{
+		// encode string to list modules & format
+		m_arrayCharRender.clear();
+		m_arrayCharFormat.clear();
+		m_arrayCharId.clear();
+
+		if (m_multiLine == true)
+		{
+			// split to multi line
+			splitText(m_arrayCharRender, m_arrayCharFormat, m_arrayCharId, (int)m_lastWidth);
+		}
+		else
+		{
+			// copy all string
+			ArrayModuleOffset modules;
+			ArrayInt fm;
+			ArrayInt p;
+
+			const wchar_t* lpString = m_textw.c_str();
+			ArrayInt& lpFormat = m_textFormat;
+			int i = 0;
+
+			while (lpString[i] != 0)
+			{
+				SModuleOffset* c = m_font->getCharacterModule((int)lpString[i]);
+				if (c != NULL)
+				{
+					modules.push_back(c);
+					fm.push_back(lpFormat[i]);
+					p.push_back(i);
+				}
+				i++;
+			}
+
+			m_arrayCharRender.push_back(modules);
+			m_arrayCharFormat.push_back(fm);
+			m_arrayCharId.push_back(p);
+		}
+
+#ifdef HAVE_CARET
+		if (m_setCaret >= 0)
+		{
+			updateSetCaret();
+			m_setCaret = -1;
+		}
+#endif
+	}
+
+	void CGUIText::splitText(std::vector<ArrayModuleOffset>& split, std::vector<ArrayInt>& format, std::vector<ArrayInt>& id, int width)
 	{
 		split.clear();
 		format.clear();
+		id.clear();
 
 		const wchar_t* lpString = m_textw.c_str();
 		ArrayInt& lpFormat = m_textFormat;
@@ -679,8 +925,9 @@ namespace Skylicht
 			// new line
 			if (lpString[i] == '\n')
 			{
-				ArrayModuleOffset	modules;
-				ArrayInt			fm;
+				ArrayModuleOffset modules;
+				ArrayInt fm;
+				ArrayInt p;
 
 				// loop all string on sentence
 				for (int j = begin; j < i; j++)
@@ -690,12 +937,14 @@ namespace Skylicht
 					{
 						modules.push_back(c);
 						fm.push_back(lpFormat[j]);
+						p.push_back(j);
 					}
 				}
 
 				// split text
 				split.push_back(modules);
 				format.push_back(fm);
+				id.push_back(p);
 
 				// seek next char
 				i++;
@@ -711,6 +960,7 @@ namespace Skylicht
 				{
 					ArrayModuleOffset modules;
 					ArrayInt fm;
+					ArrayInt p;
 
 					// loop all string on sentence
 					for (int j = begin; j < i; j++)
@@ -720,12 +970,14 @@ namespace Skylicht
 						{
 							modules.push_back(c);
 							fm.push_back(lpFormat[j]);
+							p.push_back(j);
 						}
 					}
 
 					// split text
 					split.push_back(modules);
 					format.push_back(fm);
+					id.push_back(p);
 
 					// seek to ansi text
 					i += 2;
@@ -762,12 +1014,9 @@ namespace Skylicht
 			// need split
 			if (x >= width)
 			{
-				ArrayModuleOffset	modules;
-				ArrayInt			fm;
-
-				// pham hong duc hardcode
-				if (begin == lastSpace)
-					lastSpace = i + 1;
+				ArrayModuleOffset modules;
+				ArrayInt fm;
+				ArrayInt p;
 
 				for (int j = begin; j < lastSpace; j++)
 				{
@@ -776,19 +1025,16 @@ namespace Skylicht
 					{
 						modules.push_back(c);
 						fm.push_back(lpFormat[j]);
+						p.push_back(j);
 					}
 				}
 
 				split.push_back(modules);
 				format.push_back(fm);
+				id.push_back(p);
 
 				i = lastSpace;
-				while (lpString[i] == ' ')
-				{
-					i++;
-					if (lpString[i] == 0)
-						return;
-				}
+
 				begin = i;
 				lastSpace = i;
 				x = 0;
@@ -799,6 +1045,7 @@ namespace Skylicht
 
 		ArrayModuleOffset modules;
 		ArrayInt fm;
+		ArrayInt p;
 
 		for (int j = begin; j < i; j++)
 		{
@@ -807,11 +1054,13 @@ namespace Skylicht
 			{
 				modules.push_back(c);
 				fm.push_back(lpFormat[j]);
+				p.push_back(j);
 			}
 		}
 
 		split.push_back(modules);
 		format.push_back(fm);
+		id.push_back(p);
 	}
 
 	CObjectSerializable* CGUIText::createSerializable()
