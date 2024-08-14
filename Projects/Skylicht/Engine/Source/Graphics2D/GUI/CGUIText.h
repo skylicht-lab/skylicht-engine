@@ -54,6 +54,8 @@ namespace Skylicht
 		std::wstring m_textw;
 		ArrayInt m_textFormat;
 
+		bool m_enableTextFormat;
+
 		std::string m_textId;
 		std::wstring m_textwId;
 
@@ -73,6 +75,7 @@ namespace Skylicht
 
 		std::vector<ArrayModuleOffset> m_arrayCharRender;
 		std::vector<ArrayInt> m_arrayCharFormat;
+		std::vector<ArrayInt> m_arrayCharId;
 
 		std::string m_fontSource;
 		std::string m_fontGUID;
@@ -86,6 +89,7 @@ namespace Skylicht
 #ifdef HAVE_CARET
 		bool m_showCaret;
 		int m_caretShader;
+		int m_setCaret;
 		float m_caretBlink;
 		float m_caretBlinkSpeed;
 		core::vector2di m_caret;
@@ -104,8 +108,6 @@ namespace Skylicht
 
 		virtual void render(CCamera* camera);
 
-		void splitText(std::vector<ArrayModuleOffset>& split, std::vector<ArrayInt>& format, int width);
-
 		void setTextAlign(EGUIHorizontalAlign h, EGUIVerticalAlign v)
 		{
 			TextVertical = v;
@@ -114,7 +116,7 @@ namespace Skylicht
 
 		/*
 		* Example:
-		* <1>PLAYERA <0>kill <1>PLAYERB <0>with <2>AK47
+		* <1>PLAYERA <0>gives <2>a heart <0>to <1>PLAYERB
 		* With format:
 		* <1> -> RED
 		* <0> -> WHITE
@@ -161,6 +163,16 @@ namespace Skylicht
 			return m_textwId.c_str();
 		}
 
+		inline void setEnableTextFormnat(bool b)
+		{
+			m_enableTextFormat = b;
+		}
+
+		inline bool isEnableTextFormat()
+		{
+			return m_enableTextFormat;
+		}
+
 		inline void setCharPadding(int charPadding)
 		{
 			m_charPadding = charPadding;
@@ -193,8 +205,6 @@ namespace Skylicht
 		void getClosestCharacter(float posX, float posY, int& line, int& character);
 
 #ifdef HAVE_CARET
-		void updateCaret();
-
 		inline void showCaret(bool b)
 		{
 			m_showCaret = b;
@@ -205,9 +215,44 @@ namespace Skylicht
 			m_caret.set(character, line);
 			m_caretBlink = 0.0f;
 		}
+
+		void setCaret(int charPos);
+
+		inline void getCaretPosition(int& line, int& character)
+		{
+			character = m_caret.X;
+			line = m_caret.Y;
+		}
+
+		inline int getNumLine()
+		{
+			return (int)m_arrayCharRender.size();
+		}
+
+		int getNumCharacter(int line);
+
+		bool getWordAtPosition(int line, int charPosition, int& from, int& to);
+
+		bool isCharacter(wchar_t c);
+
+		void doBackspace();
+
+		void doDelete();
+
+		void insert(wchar_t c);
 #endif
 
 	protected:
+
+#ifdef HAVE_CARET
+		void updateCaret();
+
+		void updateSetCaret();
+#endif
+
+		void updateSplitText();
+
+		void splitText(std::vector<ArrayModuleOffset>& split, std::vector<ArrayInt>& format, std::vector<ArrayInt>& id, int width);
 
 		void getClosestCharacter(float posX, int x, int y, int line, const core::matrix4& world, int& character);
 

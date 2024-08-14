@@ -40,6 +40,8 @@ namespace Skylicht
 			PointerOut,
 			PointerDown,
 			PointerUp,
+			Focus,
+			UnFocus,
 			NumEvent
 		};
 

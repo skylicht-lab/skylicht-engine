@@ -36,6 +36,11 @@ namespace Skylicht
 			CGUIElement* m_background;
 			CGUIText* m_text;
 
+			bool m_editable;
+
+		public:
+			std::function<void(CUIBase*)> OnTextChanged;
+
 		public:
 			CUITextBox(CUIContainer* container, CGUIElement* element);
 
@@ -51,13 +56,29 @@ namespace Skylicht
 				return m_text;
 			}
 
+			inline void setEditable(bool b)
+			{
+				m_editable = b;
+			}
+
+			inline bool isEditable()
+			{
+				return m_editable;
+			}
+
 			virtual void onPointerHover(float pointerX, float pointerY);
 
 			virtual void onPointerOut(float pointerX, float pointerY);
 
 			virtual void onPointerDown(float pointerX, float pointerY);
 
+			virtual void onPointerUp(float pointerX, float pointerY);
+
+			virtual void onPointerMove(float pointerX, float pointerY);
+
 			virtual void onLostFocus();
+
+			virtual void onKeyEvent(const SEvent& event);
 		};
 	}
 }

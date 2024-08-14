@@ -37,7 +37,7 @@ namespace Skylicht
 			m_visible(true),
 			m_isPointerHover(false),
 			m_isPointerDown(false),
-			m_enableTouchScreen(false)
+			m_contineGameEvent(false)
 		{
 			m_container->addChild(this);
 		}
@@ -163,6 +163,12 @@ namespace Skylicht
 		{
 			if (OnLostFocus != nullptr)
 				OnLostFocus(this);
+		}
+
+		void CUIBase::onKeyEvent(const SEvent& event)
+		{
+			if (OnKeyEvent != nullptr)
+				OnKeyEvent(this, event);
 		}
 
 		void CUIBase::startMotion(EMotionEvent event)

@@ -29,11 +29,11 @@ SampleGUI::SampleGUI()
 
 SampleGUI::~SampleGUI()
 {
-	UI::CUIEventManager::releaseInstance();
-	CImguiManager::releaseInstance();
-
 	CViewManager::releaseInstance();
 	CContext::releaseInstance();
+
+	UI::CUIEventManager::releaseInstance();
+	CImguiManager::releaseInstance();
 	CLightmapper::releaseInstance();
 }
 

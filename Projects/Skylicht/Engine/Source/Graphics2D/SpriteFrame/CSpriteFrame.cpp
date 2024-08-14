@@ -31,18 +31,17 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	SModuleOffset::SModuleOffset()
+	SModuleOffset::SModuleOffset() :
+		OffsetX(0),
+		OffsetY(0),
+		FlipX(false),
+		FlipY(false),
+		XAdvance(0.0f),
+		Character(0),
+		Frame(NULL),
+		Module(NULL)
 	{
-		OffsetX = 0;
-		OffsetY = 0;
-		FlipX = false;
-		FlipY = false;
 
-		XAdvance = 0.0f;
-		Character = 0;
-
-		Frame = NULL;
-		Module = NULL;
 	}
 
 	void SModuleOffset::getPositionBuffer(video::S3DVertex* vertices, u16* indices, int vertexOffset, const core::matrix4& mat, float scaleW, float scaleH)
