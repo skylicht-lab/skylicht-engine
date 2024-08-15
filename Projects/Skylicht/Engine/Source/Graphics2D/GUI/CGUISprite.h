@@ -63,9 +63,37 @@ namespace Skylicht
 
 		virtual const core::rectf getNativeRect();
 
-		void setFrame(SFrame* frame);
+		inline void setFrame(SFrame* frame)
+		{
+			m_frame = frame;
+		}
 
-		void setFrameSource(const char* spritePath, const char* frameName, const char* editorRileRef = NULL);
+		inline SFrame* getFrame()
+		{
+			return m_frame;
+		}
+
+		inline const char* getFrameName()
+		{
+			return m_frameName.c_str();
+		}
+
+		inline const char* getSpriteName()
+		{
+			return m_sprite.c_str();
+		}
+
+		inline const char* getSpriteId()
+		{
+			return m_spriteId.c_str();
+		}
+
+		inline const char* getFrameId()
+		{
+			return m_guid.c_str();
+		}
+
+		void setFrameSource(const char* spritePath, const char* frameName, const char* editorFileRef = NULL);
 
 		void setAutoRotate(bool rotate, float rotateAngle, float framePerSec);
 
