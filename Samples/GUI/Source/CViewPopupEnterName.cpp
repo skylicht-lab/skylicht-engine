@@ -48,6 +48,14 @@ void CViewPopupEnterName::onInit()
 
 	m_textBox = new UI::CUITextBox(uiContainer, canvas->getGUIByPath("Canvas/Dialog/InputName"));
 
+	CSpriteFrame* spriteFrame = CSpriteManager::getInstance()->loadSprite("SampleGUI/SampleGUI.spritedata");
+	SFrame* frame = spriteFrame->getFrameByName("input-activate");
+	if (frame && m_textBox->getBackground())
+	{
+		m_textBox->addMotion(UI::EMotionEvent::Focus, m_textBox->getBackground(), new UI::CFrameMotion(frame))->setTime(0.0f, 50.0f);
+		m_textBox->addMotion(UI::EMotionEvent::UnFocus, m_textBox->getBackground(), new UI::CFrameMotion())->setTime(0.0f, 50.0f);
+	}
+
 	UI::CUIBase* btnClose = new UI::CUIBase(uiContainer, canvas->getGUIByPath("Canvas/Dialog/btnClose"));
 	btnClose->addMotion(UI::EMotionEvent::PointerHover, new UI::CScaleMotion(1.2f, 1.2f, 1.0f));
 	btnClose->addMotion(UI::EMotionEvent::PointerOut, new UI::CScaleMotion());

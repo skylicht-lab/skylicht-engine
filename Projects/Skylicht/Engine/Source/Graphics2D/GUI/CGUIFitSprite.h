@@ -68,7 +68,35 @@ namespace Skylicht
 
 		void setFrameSource(const char* spritePath, const char* frameName, const char* editorFileRef = NULL);
 
-		void setFrame(SFrame* frame);
+		inline void setFrame(SFrame* frame)
+		{
+			m_frame = frame;
+		}
+
+		inline SFrame* getFrame()
+		{
+			return m_frame;
+		}
+
+		inline const char* getFrameName()
+		{
+			return m_frameName.c_str();
+		}
+
+		inline const char* getSpriteName()
+		{
+			return m_sprite.c_str();
+		}
+
+		inline const char* getSpriteId()
+		{
+			return m_spriteId.c_str();
+		}
+
+		inline const char* getFrameId()
+		{
+			return m_guid.c_str();
+		}
 
 		void setAnchor(AnchorType type, float left, float right, float top, float bottom);
 

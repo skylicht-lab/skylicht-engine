@@ -146,11 +146,6 @@ namespace Skylicht
 		}
 	}
 
-	void CGUIFitSprite::setFrame(SFrame* frame)
-	{
-		m_frame = frame;
-	}
-
 	void CGUIFitSprite::setFrameSource(const char* spritePath, const char* frameName, const char* editorFileRef)
 	{
 		CSpriteManager* spriteMgr = CSpriteManager::getInstance();
