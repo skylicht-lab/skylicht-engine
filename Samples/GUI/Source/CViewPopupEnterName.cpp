@@ -32,7 +32,7 @@ void CViewPopupEnterName::onInit()
 	m_popup = zone->createEmptyObject();
 	CCanvas* canvas = m_popup->addComponent<CCanvas>();
 
-	CGUIImporter::loadGUI("SampleGUI/PopupEnterName.gui", canvas);
+	CGUIImporter::loadGUI("SampleGUIDemo/PopupEnterName.gui", canvas);
 	canvas->applyScaleGUI(1.0f);
 	canvas->setSortDepth(2);
 

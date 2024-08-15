@@ -31,7 +31,7 @@ void CViewHeader::onInit()
 	CGameObject* header = zone->createEmptyObject();
 	CCanvas* canvas = header->addComponent<CCanvas>();
 
-	CGUIImporter::loadGUI("SampleGUI/Header.gui", canvas);
+	CGUIImporter::loadGUI("SampleGUIDemo/Header.gui", canvas);
 	canvas->applyScaleGUI(1.0f);
 	canvas->setSortDepth(1);
 
