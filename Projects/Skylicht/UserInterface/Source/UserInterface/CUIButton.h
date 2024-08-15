@@ -36,6 +36,12 @@ namespace Skylicht
 			CGUIElement* m_background;
 			CGUIText* m_text;
 
+			bool m_isToggle;
+			bool m_toggleStatus;
+
+		public:
+			std::function<void(CUIBase*, bool)> OnToggle;
+
 		public:
 			CUIButton(CUIContainer* container, CGUIElement* element);
 
@@ -44,6 +50,29 @@ namespace Skylicht
 			void setLabel(const char* string);
 
 			void setLabel(const wchar_t* string);
+
+			virtual void onPointerHover(float pointerX, float pointerY);
+
+			virtual void onPointerOut(float pointerX, float pointerY);
+
+			virtual void onPressed();
+
+			inline void setToggleButton(bool b)
+			{
+				m_isToggle = b;
+			}
+
+			inline bool isToggleButton(bool b)
+			{
+				return m_isToggle;
+			}
+
+			virtual void setToggle(bool b, bool invokeEvent = true);
+
+			inline bool isToggle()
+			{
+				return m_toggleStatus;
+			}
 
 			inline CGUIElement* getBackground()
 			{

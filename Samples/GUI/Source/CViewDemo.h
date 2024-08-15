@@ -6,11 +6,14 @@
 #include "UserInterface/CUIContainer.h"
 #include "UserInterface/CUIListView.h"
 #include "UserInterface/CUIGridView.h"
+#include "UserInterface/CUIButton.h"
 
 class CViewDemo : public CView
 {
 protected:
+	UI::CUIContainer* m_uiContainer;
 	UI::CUIListView* m_listUniform;
+	std::vector<UI::CUIButton*> m_listUniformBtn;
 	CCanvas* m_canvas;
 
 public:
@@ -33,4 +36,6 @@ protected:
 	void onGUI();
 
 	void addListIconItem(SFrame* frame);
+
+	void onChangeUniform(UI::CUIBase* btn);
 };
