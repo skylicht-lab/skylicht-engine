@@ -1,6 +1,6 @@
 version: 2.1
 
-commands:  
+commands:
   build-engine-native:
     steps:
       - run:
@@ -12,19 +12,19 @@ commands:
   build-asset-bundles:
     steps:
       - run:
-          command:  > 
+          command: >
             cd Assets
 
             chmod +x ../Tools/PVRTexTool/linux/PVRTexToolCLI
 
             sudo apt-get update
-            
+
             sudo apt install python3
 
             sudo apt install python3-pip
 
             pip3 install tinydb
-          
+
             pip3 install Pillow
 
             python3 BuildTextureCompressETC.py
@@ -67,32 +67,32 @@ commands:
           name: Build Android APK
   build-android-aab:
     steps:
-        - run:
-            command: >
-              export ANDROID_BUNDLE_PATH=Projects/Android/appdata/src/main/assets
+      - run:
+          command: >
+            export ANDROID_BUNDLE_PATH=Projects/Android/appdata/src/main/assets
 
-              export ANDROID_ASSET_PATH=Projects/Android/app/src/main/assets
+            export ANDROID_ASSET_PATH=Projects/Android/app/src/main/assets
 
-              rm $ANDROID_ASSET_PATH/*.zip
+            rm $ANDROID_ASSET_PATH/*.zip
 
-              cp Bin/BuiltIn.zip $ANDROID_BUNDLE_PATH
+            cp Bin/BuiltIn.zip $ANDROID_BUNDLE_PATH
 
-              cp Bin/Common.zip $ANDROID_BUNDLE_PATH
+            cp Bin/Common.zip $ANDROID_BUNDLE_PATH
 
-              cp Bin/SampleModelsResource.zip $ANDROID_BUNDLE_PATH
+            cp Bin/SampleModelsResource.zip $ANDROID_BUNDLE_PATH
 
-              cp Bin/SampleModelsETC.zip $ANDROID_BUNDLE_PATH
+            cp Bin/SampleModelsETC.zip $ANDROID_BUNDLE_PATH
 
-              cd Projects/Android
+            cd Projects/Android
 
-              chmod +x ./gradlew
+            chmod +x ./gradlew
 
-              ./gradlew bundleDebug
+            ./gradlew bundleDebug
 
-              ls -l app/build/outputs/bundle/debug
+            ls -l app/build/outputs/bundle/debug
 
-              cd ../..
-            name: Build Android AAB
+            cd ../..
+          name: Build Android AAB
 jobs:
   build-android:
     docker:
@@ -100,8 +100,18 @@ jobs:
     environment:
       ABI: arm64-v8a
       APP_NAME: libSampleSkinnedMesh.so
+      GIT_LFS_SKIP_SMUDGE: 1
     steps:
       - checkout
+      - restore_cache:
+          key: git-lfs-cache-key-1
+      - run:
+          command: >
+            git lfs pull
+      - save_cache:
+          key: git-lfs-cache-key-1
+          paths:
+            - .git/lfs
       - build-engine-native
       - build-asset-bundles
       - build-android-apk

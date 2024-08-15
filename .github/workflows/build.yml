@@ -7,8 +7,8 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
-        with:
-          lfs: true
+        #with:
+        #  lfs: true
       - name: Install Dependencies
         shell: cmd
         run: |
@@ -77,8 +77,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        with:
-          lfs: true
+        #with:
+        #  lfs: true
       - name: Install Dependencies
         run: |
           sudo apt-get update -y -qq
@@ -116,8 +116,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        with:
-          lfs: true
+        #with:
+        #  lfs: true
       - name: Install Dependencies
         run: |
           sudo apt-get update -y -qq
@@ -155,8 +155,8 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
-        with:
-          lfs: true
+        #with:
+        #  lfs: true
       - name: Build
         run: |
           brew install libomp
@@ -236,8 +236,8 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
-        with:
-          lfs: true
+        #with:
+        #  lfs: true
       - name: Build
         shell: cmd
         run: |
@@ -260,8 +260,8 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
-        with:
-          lfs: true
+        #with:
+        #  lfs: true
       - name: Build
         shell: cmd
         run: |
@@ -284,8 +284,8 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
-        with:
-          lfs: true
+        #with:
+        #  lfs: true
       - name: Build
         shell: cmd
         run: |
