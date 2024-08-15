@@ -6,6 +6,7 @@
 #include "CImguiManager.h"
 
 #include "CViewInit.h"
+#include "CProfileData.h"
 #include "UserInterface/CUIEventManager.h"
 
 void installApplication(const std::vector<std::string>& argv)
@@ -17,6 +18,9 @@ void installApplication(const std::vector<std::string>& argv)
 SampleGUI::SampleGUI()
 {
 	CContext::createGetInstance();
+
+	CProfileData::createGetInstance();
+
 	// layer 0: Main GUI
 	// layer 1: Header
 	// layer 2: Popup
@@ -31,6 +35,8 @@ SampleGUI::~SampleGUI()
 {
 	CViewManager::releaseInstance();
 	CContext::releaseInstance();
+
+	CProfileData::releaseInstance();
 
 	UI::CUIEventManager::releaseInstance();
 	CImguiManager::releaseInstance();

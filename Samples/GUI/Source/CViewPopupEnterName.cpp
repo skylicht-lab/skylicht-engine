@@ -3,6 +3,8 @@
 #include "Context/CContext.h"
 #include "ViewManager/CViewManager.h"
 
+#include "CProfileData.h"
+
 #include "Graphics2D/CGUIImporter.h"
 #include "GameObject/CGameObject.h"
 
@@ -11,7 +13,8 @@
 #include "UserInterface/CUITextBox.h"
 
 CViewPopupEnterName::CViewPopupEnterName() :
-	m_popup(NULL)
+	m_popup(NULL),
+	m_textBox(NULL)
 {
 
 }
@@ -43,7 +46,7 @@ void CViewPopupEnterName::onInit()
 	dialog->addMotion(UI::EMotionEvent::In, new UI::CAlphaMotion(0.0f))->setInverse(true)->setTime(0.0f, 250.0f);
 	dialog->addMotion(UI::EMotionEvent::Out, new UI::CAlphaMotion(0.0f))->setTime(0.0f, 250.0f);
 
-	UI::CUITextBox* txtBox = new UI::CUITextBox(uiContainer, canvas->getGUIByPath("Canvas/Dialog/InputName"));
+	m_textBox = new UI::CUITextBox(uiContainer, canvas->getGUIByPath("Canvas/Dialog/InputName"));
 
 	UI::CUIBase* btnClose = new UI::CUIBase(uiContainer, canvas->getGUIByPath("Canvas/Dialog/btnClose"));
 	btnClose->addMotion(UI::EMotionEvent::PointerHover, new UI::CScaleMotion(1.2f, 1.2f, 1.0f));
@@ -72,7 +75,8 @@ void CViewPopupEnterName::onInit()
 	btnOk->addMotion(UI::EMotionEvent::PointerUp, new UI::CScaleMotion())->setTime(0.0f, 100.0f);
 	btnOk->OnPressed = [&](UI::CUIBase* base)
 		{
-			close();
+			if (onOK())
+				close();
 		};
 
 	uiContainer->startInMotion();
@@ -87,6 +91,26 @@ void CViewPopupEnterName::close()
 			m_popup->remove();
 			CViewManager::getInstance()->getLayer(2)->removeView(this);
 		};
+}
+
+bool CViewPopupEnterName::onOK()
+{
+	wchar_t name[64];
+	CStringImp::copy(name, m_textBox->getTextW());
+	CStringImp::trim(name);
+
+	if (CStringImp::length(name) > 0)
+	{
+		CProfileData::getInstance()->Name = name;
+		CViewManager::getInstance()->onData();
+		return true;
+	}
+	return false;
+}
+
+void CViewPopupEnterName::onData()
+{
+	m_textBox->setText(CProfileData::getInstance()->Name.c_str());
 }
 
 void CViewPopupEnterName::onDestroy()

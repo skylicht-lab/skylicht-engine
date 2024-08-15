@@ -25,7 +25,7 @@ void CViewManager::initViewLayer(int numLayer)
 
 void CViewManager::releaseAllLayer()
 {
-	for (CViewLayer *&layer : m_viewLayers)
+	for (CViewLayer*& layer : m_viewLayers)
 	{
 		delete layer;
 	}
@@ -34,7 +34,7 @@ void CViewManager::releaseAllLayer()
 
 void CViewManager::update()
 {
-	for (CViewLayer *&layer : m_viewLayers)
+	for (CViewLayer*& layer : m_viewLayers)
 	{
 		layer->update();
 	}
@@ -42,7 +42,7 @@ void CViewManager::update()
 
 void CViewManager::render()
 {
-	for (CViewLayer *&layer : m_viewLayers)
+	for (CViewLayer*& layer : m_viewLayers)
 	{
 		layer->render();
 	}
@@ -50,7 +50,7 @@ void CViewManager::render()
 
 void CViewManager::postRender()
 {
-	for (CViewLayer *&layer : m_viewLayers)
+	for (CViewLayer*& layer : m_viewLayers)
 	{
 		layer->postRender();
 	}
@@ -58,7 +58,7 @@ void CViewManager::postRender()
 
 void CViewManager::onResume()
 {
-	for (CViewLayer *&layer : m_viewLayers)
+	for (CViewLayer*& layer : m_viewLayers)
 	{
 		layer->onResume();
 	}
@@ -66,7 +66,7 @@ void CViewManager::onResume()
 
 void CViewManager::onPause()
 {
-	for (CViewLayer *&layer : m_viewLayers)
+	for (CViewLayer*& layer : m_viewLayers)
 	{
 		layer->onPause();
 	}
@@ -75,11 +75,22 @@ void CViewManager::onPause()
 bool CViewManager::onBack()
 {
 	bool doDefaultOSBackKey = false;
-	
-	for (CViewLayer *&layer : m_viewLayers)
+
+	for (CViewLayer*& layer : m_viewLayers)
 	{
 		doDefaultOSBackKey = doDefaultOSBackKey | layer->onBack();
 	}
-	
+
 	return doDefaultOSBackKey;
+}
+
+void CViewManager::onData()
+{
+	for (CViewLayer*& layer : m_viewLayers)
+	{
+		for (int i = 0, n = layer->getViewCount(); i < n; i++)
+		{
+			layer->getView(i)->onData();
+		}
+	}
 }

@@ -11,6 +11,8 @@ public:
 
 	virtual void onInit();
 
+	virtual void onData();
+
 	virtual void onDestroy();
 
 	virtual void onActive();

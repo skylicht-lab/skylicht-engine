@@ -38,6 +38,8 @@ namespace Skylicht
 
 			bool m_editable;
 
+			int m_maxLength;
+
 		public:
 			std::function<void(CUIBase*)> OnTextChanged;
 
@@ -51,10 +53,20 @@ namespace Skylicht
 				return m_background;
 			}
 
-			inline CGUIText* getText()
+			inline CGUIText* getTextGUI()
 			{
 				return m_text;
 			}
+
+			void setText(const char* text);
+
+			void setText(const wchar_t* text);
+
+			const char* getText();
+
+			const wchar_t* getTextW();
+
+			int getTextLength();
 
 			inline void setEditable(bool b)
 			{
@@ -64,6 +76,16 @@ namespace Skylicht
 			inline bool isEditable()
 			{
 				return m_editable;
+			}
+
+			inline void setMaxLength(int l)
+			{
+				m_maxLength = l;
+			}
+
+			inline int getMaxLength()
+			{
+				return m_maxLength;
 			}
 
 			virtual void onPointerHover(float pointerX, float pointerY);

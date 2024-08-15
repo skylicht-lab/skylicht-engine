@@ -41,4 +41,6 @@ public:
 	void onPause();
 
 	bool onBack();
+
+	void onData();
 };
