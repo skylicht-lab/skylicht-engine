@@ -3,10 +3,13 @@
 #include "ViewManager/CView.h"
 #include "GameObject/CGameObject.h"
 
+#include "UserInterface/CUITextBox.h"
+
 class CViewPopupEnterName : public CView
 {
 protected:
 	CGameObject* m_popup;
+	UI::CUITextBox* m_textBox;
 
 public:
 	CViewPopupEnterName();
@@ -14,6 +17,8 @@ public:
 	virtual ~CViewPopupEnterName();
 
 	virtual void onInit();
+
+	virtual void onData();
 
 	virtual void onDestroy();
 
@@ -26,6 +31,8 @@ public:
 protected:
 
 	void close();
+
+	bool onOK();
 
 	void onGUI();
 

@@ -16,6 +16,11 @@ void CView::onInit()
 
 }
 
+void CView::onData()
+{
+
+}
+
 void CView::onDestroy()
 {
 

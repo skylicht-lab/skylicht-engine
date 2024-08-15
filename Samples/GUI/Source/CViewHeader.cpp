@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "CProfileData.h"
 #include "CViewHeader.h"
 #include "Context/CContext.h"
 #include "ViewManager/CViewManager.h"
@@ -11,7 +12,8 @@
 #include "UserInterface/CUIContainer.h"
 #include "UserInterface/CUIButton.h"
 
-CViewHeader::CViewHeader()
+CViewHeader::CViewHeader() :
+	m_txtUserName(NULL)
 {
 
 }
@@ -35,7 +37,8 @@ void CViewHeader::onInit()
 
 	UI::CUIContainer* uiContainer = header->addComponent<UI::CUIContainer>();
 
-	UI::CUIBase* btnUserName = new UI::CUIBase(uiContainer, canvas->getGUIByPath("Canvas/Header/txtUserName"));
+	m_txtUserName = dynamic_cast<CGUIText*>(canvas->getGUIByPath("Canvas/Header/txtUserName"));
+	UI::CUIBase* btnUserName = new UI::CUIBase(uiContainer, m_txtUserName);
 	btnUserName->addMotion(UI::EMotionEvent::PointerHover, new UI::CColorMotion(SColor(255, 230, 90, 30)));
 	btnUserName->addMotion(UI::EMotionEvent::PointerOut, new UI::CColorMotion());
 	btnUserName->addMotion(UI::EMotionEvent::PointerDown, new UI::CAlphaMotion(0.8f))->setTime(0.0f, 0.0f);
@@ -57,6 +60,12 @@ void CViewHeader::onInit()
 void CViewHeader::onDestroy()
 {
 
+}
+
+void CViewHeader::onData()
+{
+	if (m_txtUserName)
+		m_txtUserName->setText(CProfileData::getInstance()->Name.c_str());
 }
 
 void CViewHeader::onUpdate()

@@ -35,7 +35,8 @@ namespace Skylicht
 			CUIBase(container, element),
 			m_background(NULL),
 			m_text(NULL),
-			m_editable(true)
+			m_editable(true),
+			m_maxLength(64)
 		{
 			CCanvas* canvas = getCanvas();
 			if (canvas)
@@ -49,9 +50,40 @@ namespace Skylicht
 
 		CUITextBox::~CUITextBox()
 		{
-			CUIEventManager* eventMgr = CUIEventManager::getInstance();
-			if (eventMgr->getFocus() == this)
-				eventMgr->setFocus(NULL);
+
+		}
+
+		void CUITextBox::setText(const char* text)
+		{
+			if (m_text)
+				m_text->setText(text);
+		}
+
+		void CUITextBox::setText(const wchar_t* text)
+		{
+			if (m_text)
+				m_text->setText(text);
+		}
+
+		const char* CUITextBox::getText()
+		{
+			if (m_text)
+				return m_text->getText();
+			return "";
+		}
+
+		const wchar_t* CUITextBox::getTextW()
+		{
+			if (m_text)
+				return m_text->getTextW();
+			return L"";
+		}
+
+		int CUITextBox::getTextLength()
+		{
+			if (m_text)
+				return m_text->getTextLength();
+			return 0;
 		}
 
 		void CUITextBox::onPointerHover(float pointerX, float pointerY)
@@ -293,7 +325,8 @@ namespace Skylicht
 				}
 				else if (onChar && event.KeyInput.Char > 0)
 				{
-					m_text->insert(event.KeyInput.Char);
+					if (m_text->getTextLength() < m_maxLength)
+						m_text->insert(event.KeyInput.Char);
 				}
 			}
 		}

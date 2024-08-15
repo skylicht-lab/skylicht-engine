@@ -98,6 +98,7 @@ T* CViewLayer::pushView()
 
 	m_views.insert(m_views.begin(), newView);
 	newView->onInit();
+	newView->onData();
 	return newView;
 }
 
@@ -115,6 +116,7 @@ T* CViewLayer::changeView()
 
 		m_views.insert(m_views.begin(), newView);
 		newView->onInit();
+		newView->onData();
 		return newView;
 	}
 
@@ -138,6 +140,7 @@ T* CViewLayer::replaceView(CView* oldView)
 
 			m_views.insert(m_views.begin() + i, newView);
 			newView->onInit();
+			newView->onData();
 			return newView;
 		}
 	}

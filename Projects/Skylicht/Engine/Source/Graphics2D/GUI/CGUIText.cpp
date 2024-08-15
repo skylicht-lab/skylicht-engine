@@ -475,11 +475,17 @@ namespace Skylicht
 		{
 			int lastLine = numLine - 1;
 			ArrayInt& line = m_arrayCharId[lastLine];
-
-			if (line.back() == m_setCaret)
-				m_caret.set((int)line.size() - 1, lastLine);
+			if (line.size() == 0)
+			{
+				m_caret.set(0, lastLine);
+			}
 			else
-				m_caret.set((int)line.size(), lastLine);
+			{
+				if (line.back() == m_setCaret)
+					m_caret.set((int)line.size() - 1, lastLine);
+				else
+					m_caret.set((int)line.size(), lastLine);
+			}
 		}
 	}
 

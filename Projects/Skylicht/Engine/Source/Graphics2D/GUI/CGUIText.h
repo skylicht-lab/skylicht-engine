@@ -163,6 +163,11 @@ namespace Skylicht
 			return m_textwId.c_str();
 		}
 
+		inline int getTextLength()
+		{
+			return (int)m_textw.size();
+		}
+
 		inline void setEnableTextFormnat(bool b)
 		{
 			m_enableTextFormat = b;

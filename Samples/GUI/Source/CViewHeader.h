@@ -1,10 +1,12 @@
 #pragma once
 
+#include "Graphics2D/GUI/CGUIText.h"
 #include "ViewManager/CView.h"
 
 class CViewHeader : public CView
 {
 protected:
+	CGUIText* m_txtUserName;
 
 public:
 	CViewHeader();
@@ -12,6 +14,8 @@ public:
 	virtual ~CViewHeader();
 
 	virtual void onInit();
+
+	virtual void onData();
 
 	virtual void onDestroy();
 
