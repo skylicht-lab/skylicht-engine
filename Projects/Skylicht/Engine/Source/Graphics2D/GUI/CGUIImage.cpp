@@ -94,21 +94,34 @@ namespace Skylicht
 	CObjectSerializable* CGUIImage::createSerializable()
 	{
 		CObjectSerializable* object = CGUIElement::createSerializable();
-		object->autoRelease(new CImageSourceProperty(object, "imageSrc", m_resource.c_str()));
+
+		CImageSourceProperty* img = new CImageSourceProperty(object, "imageSrc", m_resource.c_str());
+		img->setGUID(m_id.c_str());
+		object->autoRelease(img);
 		return object;
 	}
 
 
 	void CGUIImage::loadSerializable(CObjectSerializable* object)
 	{
-		std::string src = object->get("imageSrc", std::string(""));
+		CImageSourceProperty* image = dynamic_cast<CImageSourceProperty*>(object->getProperty("imageSrc"));
+
 		CGUIElement::loadSerializable(object);
+
+		std::string src, id;
+		if (image)
+		{
+			src = image->get();
+			id = image->getGUID();
+		}
 
 		if (src != m_resource)
 		{
-			m_resource = src;
-			ITexture* t = CTextureManager::getInstance()->getTexture(m_resource.c_str());
+			ITexture* t = CTextureManager::getInstance()->getTexture(src.c_str());
 			setImage(t);
 		}
+
+		m_resource = src;
+		m_id = id;
 	}
 }

@@ -8,10 +8,6 @@
 
 #include "Graphics2D/CGUIImporter.h"
 
-#include "UserInterface/CUIContainer.h"
-#include "UserInterface/CUIListView.h"
-#include "UserInterface/CUIGridView.h"
-
 CViewDemo::CViewDemo()
 {
 
@@ -33,30 +29,36 @@ void CViewDemo::onInit()
 	CZone* zone = scene->getZone(0);
 
 	CGameObject* leftPanel = zone->createEmptyObject();
-	CCanvas* canvas = leftPanel->addComponent<CCanvas>();
+	m_canvas = leftPanel->addComponent<CCanvas>();
 
-	CGUIImporter::loadGUI("SampleGUI/Main.gui", canvas);
-	canvas->applyScaleGUI(1.0f);
-	canvas->setSortDepth(0);
+	CGUIImporter::loadGUI("SampleGUIDemo/Main.gui", m_canvas);
+	m_canvas->applyScaleGUI(1.0f);
+	m_canvas->setSortDepth(0);
 
 	UI::CUIContainer* uiContainer = leftPanel->addComponent<UI::CUIContainer>();
 
-	UI::CUIListView* list = new UI::CUIListView(uiContainer,
-		canvas->getGUIByPath("Canvas/Container/ListItems"),
-		canvas->getGUIByPath("Canvas/Container/ListItems/Item"));
+	m_listUniform = new UI::CUIListView(uiContainer,
+		m_canvas->getGUIByPath("Canvas/Container/ListItems"),
+		m_canvas->getGUIByPath("Canvas/Container/ListItems/Item"));
 
-	// list->setVertical(false);
-
-	for (int i = 0; i < 29; i++)
+	CSpriteFrame* spriteFrame = CSpriteManager::getInstance()->loadSprite("SampleGUIDemo/TabIcon.spritedata");
+	if (spriteFrame)
 	{
-		CGUIElement* element = list->addItem();
-		CGUIText* text = (CGUIText*)canvas->getGUIByPath(element, "Name");
-		if (text)
-		{
-			char t[32];
-			sprintf(t, "List item: %d", i);
-			text->setText(t);
-		}
+		addListIconItem(spriteFrame->getFrameByName("ic-hair"));
+		addListIconItem(spriteFrame->getFrameByName("ic-shirt"));
+		addListIconItem(spriteFrame->getFrameByName("ic-pant"));
+		addListIconItem(spriteFrame->getFrameByName("ic-heels"));
+	}
+}
+
+void CViewDemo::addListIconItem(SFrame* frame)
+{
+	if (frame)
+	{
+		CGUIElement* element = m_listUniform->addItem();
+		CGUISprite* iconGUI = (CGUISprite*)m_canvas->getGUIByPath(element, "Icon");
+		if (iconGUI)
+			iconGUI->setFrame(frame);
 	}
 }
 

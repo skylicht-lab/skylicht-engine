@@ -36,6 +36,7 @@ namespace Skylicht
 		ITexture* m_image;
 
 		std::string m_resource;
+		std::string m_id;
 
 		core::rectf m_sourceRect;
 		core::position2df m_pivot;
