@@ -1,7 +1,4 @@
 *.tga filter=lfs diff=lfs merge=lfs -text
-*.jpg filter=lfs diff=lfs merge=lfs -text
-*.jpeg filter=lfs diff=lfs merge=lfs -text
-*.png filter=lfs diff=lfs merge=lfs -text
 *.bmp filter=lfs diff=lfs merge=lfs -text
 *.dds filter=lfs diff=lfs merge=lfs -text
 *.pvr filter=lfs diff=lfs merge=lfs -text
@@ -22,6 +19,3 @@
 *.ttf filter=lfs diff=lfs merge=lfs -text
 *.otf filter=lfs diff=lfs merge=lfs -text
 *.dylib filter=lfs diff=lfs merge=lfs -text
-*.jpg !text !filter !merge !diff
-*.jpeg !text !filter !merge !diff
-*.png !text !filter !merge !diff
