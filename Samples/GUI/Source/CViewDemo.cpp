@@ -5,10 +5,12 @@
 #include "CImguiManager.h"
 
 #include "Context/CContext.h"
-
 #include "Graphics2D/CGUIImporter.h"
 
-CViewDemo::CViewDemo()
+CViewDemo::CViewDemo() :
+	m_uiContainer(NULL),
+	m_listUniform(NULL),
+	m_canvas(NULL)
 {
 
 }
@@ -35,9 +37,9 @@ void CViewDemo::onInit()
 	m_canvas->applyScaleGUI(1.0f);
 	m_canvas->setSortDepth(0);
 
-	UI::CUIContainer* uiContainer = leftPanel->addComponent<UI::CUIContainer>();
+	m_uiContainer = leftPanel->addComponent<UI::CUIContainer>();
 
-	m_listUniform = new UI::CUIListView(uiContainer,
+	m_listUniform = new UI::CUIListView(m_uiContainer,
 		m_canvas->getGUIByPath("Canvas/Container/ListItems"),
 		m_canvas->getGUIByPath("Canvas/Container/ListItems/Item"));
 
@@ -51,6 +53,11 @@ void CViewDemo::onInit()
 	}
 }
 
+void CViewDemo::onDestroy()
+{
+
+}
+
 void CViewDemo::addListIconItem(SFrame* frame)
 {
 	if (frame)
@@ -59,12 +66,46 @@ void CViewDemo::addListIconItem(SFrame* frame)
 		CGUISprite* iconGUI = (CGUISprite*)m_canvas->getGUIByPath(element, "Icon");
 		if (iconGUI)
 			iconGUI->setFrame(frame);
+
+		CGUIElement* bg = m_canvas->getGUIByPath(element, "Background");
+		if (bg)
+		{
+			UI::CUIButton* button = new UI::CUIButton(m_uiContainer, element);
+			button->addMotion(UI::EMotionEvent::PointerHover, bg, new UI::CColorMotion(SColor(0xfffe7200)))->setTime(0.0f, 50.0f);
+			button->addMotion(UI::EMotionEvent::PointerOut, bg, new UI::CColorMotion())->setTime(0.0f, 50.0f);
+			button->setToggleButton(true);
+			button->OnToggle = [bg, view = this](UI::CUIBase* button, bool status)
+				{
+					if (status)
+					{
+						bg->setColor(SColor(0xff0072fe));
+						button->setEnable(false);
+						view->onChangeUniform(button);
+					}
+					else
+					{
+						bg->setColor(SColor(0xff201a2b));
+					}
+				};
+
+			if (m_listUniformBtn.size() == 0)
+				button->setToggle(true);
+
+			m_listUniformBtn.push_back(button);
+		}
 	}
 }
 
-void CViewDemo::onDestroy()
+void CViewDemo::onChangeUniform(UI::CUIBase* btn)
 {
-
+	for (UI::CUIButton* b : m_listUniformBtn)
+	{
+		if (b != btn)
+		{
+			b->setToggle(false);
+			b->setEnable(true);
+		}
+	}
 }
 
 void CViewDemo::onUpdate()

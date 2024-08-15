@@ -32,7 +32,9 @@ namespace Skylicht
 		CUIButton::CUIButton(CUIContainer* container, CGUIElement* element) :
 			CUIBase(container, element),
 			m_background(NULL),
-			m_text(NULL)
+			m_text(NULL),
+			m_isToggle(false),
+			m_toggleStatus(false)
 		{
 			CCanvas* canvas = getCanvas();
 			if (canvas)
@@ -57,6 +59,48 @@ namespace Skylicht
 		{
 			if (m_text)
 				m_text->setText(string);
+		}
+
+		void CUIButton::setToggle(bool b, bool invokeEvent)
+		{
+			m_toggleStatus = b;
+			if (invokeEvent && OnToggle != nullptr)
+				OnToggle(this, b);
+		}
+
+		void CUIButton::onPressed()
+		{
+			CUIBase::onPressed();
+			if (m_isToggle)
+				setToggle(!m_toggleStatus);
+		}
+
+		void CUIButton::onPointerHover(float pointerX, float pointerY)
+		{
+			if (m_isToggle && m_toggleStatus)
+			{
+				m_isPointerHover = true;
+				if (OnPointerHover != nullptr)
+					OnPointerHover(pointerX, pointerY);
+			}
+			else
+			{
+				CUIBase::onPointerHover(pointerX, pointerY);
+			}
+		}
+
+		void CUIButton::onPointerOut(float pointerX, float pointerY)
+		{
+			if (m_isToggle && m_toggleStatus)
+			{
+				m_isPointerHover = false;
+				if (OnPointerOut != nullptr)
+					OnPointerOut(pointerX, pointerY);
+			}
+			else
+			{
+				CUIBase::onPointerOut(pointerX, pointerY);
+			}
 		}
 	}
 }
