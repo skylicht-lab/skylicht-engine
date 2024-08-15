@@ -155,8 +155,8 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
-        #with:
-        #  lfs: true
+        with:
+          lfs: true
       - name: Build
         run: |
           brew install libomp

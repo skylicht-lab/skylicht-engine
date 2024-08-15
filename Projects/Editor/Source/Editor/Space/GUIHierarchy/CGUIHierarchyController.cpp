@@ -204,7 +204,7 @@ namespace Skylicht
 			if (tree == NULL)
 				return;
 
-			if (press = true)
+			if (press == true)
 			{
 				if (key == GUI::KEY_F2)
 				{

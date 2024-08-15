@@ -13,6 +13,7 @@ environment:
       toolchain: Cygwin
       configuration: Release
       cmake_args: -B ./PrjCygwin -G "Unix Makefiles" -DBUILD_BULLET_PHYSIC_LIB=OFF -DBUILD_SHARED_LIBS=ON
+      GIT_LFS_SKIP_SMUDGE: 1
 
     # Win32/x86/Release
     # - platform: Win32 x86
@@ -21,6 +22,7 @@ environment:
     #   configuration: Release
     #   cmake_args: -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A Win32 -DBUILD_BULLET_PHYSIC_LIB=OFF -DBUILD_SHARED_LIBS=ON
     #   cmake_build: /verbosity:minimal /maxcpucount
+    #   GIT_LFS_SKIP_SMUDGE: 1
 
 # clone directory
 clone_folder: C:\Projects\Skylicht_Engine
