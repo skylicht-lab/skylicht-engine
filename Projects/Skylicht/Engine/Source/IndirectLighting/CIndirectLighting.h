@@ -104,7 +104,10 @@ namespace Skylicht
 		}
 
 		bool isLightmapEmpty();
+
 		bool isLightmapChanged(const std::vector<std::string>& paths);
+
+		void removeAllData();
 
 		DECLARE_GETTYPENAME(CIndirectLighting)
 	};
