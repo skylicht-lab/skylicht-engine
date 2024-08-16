@@ -94,14 +94,26 @@ namespace Skylicht
 
 	void CIndirectLighting::addLightingData(CEntity* entity)
 	{
-		// add indirect data info
-		CIndirectLightingData* data = entity->addData<CIndirectLightingData>();
+		CIndirectLightingData* data = entity->getData<CIndirectLightingData>();
+		if (data == NULL)
+		{
+			// add indirect data info
+			data = entity->addData<CIndirectLightingData>();
+		}
 
 		data->Type = (CIndirectLightingData::EType)m_type;
 		data->SH = m_sh;
 		data->AutoSH = &m_autoSH;
 
-		m_data.push_back(data);
+		if (std::find(m_data.begin(), m_data.end(), data) == m_data.end())
+			m_data.push_back(data);
+	}
+
+	void CIndirectLighting::removeAllData()
+	{
+		for (CIndirectLightingData* d : m_data)
+			d->Entity->removeData<CIndirectLightingData>();
+		m_data.clear();
 	}
 
 	void CIndirectLighting::updateComponent()
