@@ -100,7 +100,7 @@ void CViewInit::initScene()
 
 	core::vector3df direction = core::vector3df(0.0f, -1.5f, -2.0f);
 	lightTransform->setOrientation(direction, Transform::Oy);
-	
+
 	// grid plane
 	CGameObject* gridPlane = zone->createEmptyObject();
 	gridPlane->addComponent<CGridPlane>();
@@ -202,7 +202,7 @@ void CViewInit::onUpdate()
 		if (scene != NULL)
 			scene->update();
 
-		
+
 		CViewManager* viewMgr = CViewManager::getInstance();
 		viewMgr->getLayer(0)->changeView<CViewDemo>();
 		viewMgr->getLayer(1)->pushView<CViewHeader>();

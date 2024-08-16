@@ -183,6 +183,9 @@ namespace Skylicht
 					if (!base->isEnable() || !base->isVisible())
 						continue;
 
+					if (base == m_skip)
+						continue;
+
 					CCanvas* canvas = base->getElement()->getCanvas();
 					CCamera* camera = canvas->getRenderCamera();
 					if (camera == NULL)
@@ -258,6 +261,7 @@ namespace Skylicht
 				else if (event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
 				{
 					m_pointerDown = false;
+					m_skip = NULL;
 					if (m_hover)
 					{
 						m_hover->onPointerUp(mouseX, mouseY);
@@ -288,6 +292,7 @@ namespace Skylicht
 				if (event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
 				{
 					m_pointerDown = false;
+					m_skip = NULL;
 					capture->onPointerUp(mouseX, mouseY);
 					capture->onPressed();
 				}
@@ -312,7 +317,18 @@ namespace Skylicht
 				m_hover->onPointerOut(x, y);
 				m_hover = NULL;
 			}
+			m_skip = NULL;
 			m_pointerDown = false;
+		}
+
+		void CUIContainer::cancelPointerDown(CUIBase* base, float pointerX, float pointerY)
+		{
+			if (m_hover == base)
+			{
+				m_hover->onPointerOut(pointerX, pointerY);
+				m_hover = NULL;
+			}
+			m_skip = base;
 		}
 
 		void CUIContainer::startInMotion()

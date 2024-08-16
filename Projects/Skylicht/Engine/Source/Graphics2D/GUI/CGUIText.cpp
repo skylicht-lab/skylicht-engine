@@ -918,7 +918,12 @@ namespace Skylicht
 		ArrayInt& lpFormat = m_textFormat;
 
 		if (m_font == NULL || lpString == NULL)
+		{
+			m_arrayCharRender.push_back(ArrayModuleOffset());
+			m_arrayCharFormat.push_back(ArrayInt());
+			m_arrayCharId.push_back(ArrayInt());
 			return;
+		}
 
 		int i = 0;
 		int x = 0;
@@ -1014,6 +1019,7 @@ namespace Skylicht
 			}
 
 			// ------------------
+
 			if (c)
 				x = x + (int)c->XAdvance + m_charPadding;
 
@@ -1023,6 +1029,10 @@ namespace Skylicht
 				ArrayModuleOffset modules;
 				ArrayInt fm;
 				ArrayInt p;
+
+				// ducph: fix stuck loop
+				if (begin == lastSpace)
+					lastSpace = i + 1;
 
 				for (int j = begin; j < lastSpace; j++)
 				{

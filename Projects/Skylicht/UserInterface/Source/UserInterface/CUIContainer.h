@@ -41,6 +41,7 @@ namespace Skylicht
 			std::vector<CUIBase*> m_arrayUIObjects;
 			std::vector<CUIBase*> m_raycastUIObjects;
 
+			CUIBase* m_skip;
 			CUIBase* m_hover;
 			CCanvas* m_canvas;
 
@@ -78,6 +79,8 @@ namespace Skylicht
 			virtual CUIBase* OnProcessEvent(const SEvent& event, CUIBase* capture);
 
 			void onPointerOut(float x, float y);
+
+			void cancelPointerDown(CUIBase* base, float pointerX, float pointerY);
 
 			void startInMotion();
 
