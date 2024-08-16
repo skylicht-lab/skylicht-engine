@@ -37,7 +37,10 @@ namespace Skylicht
 			m_visible(true),
 			m_isPointerHover(false),
 			m_isPointerDown(false),
-			m_contineGameEvent(false)
+			m_continueGameEvent(false),
+			m_skipPointerEventWhenDrag(false),
+			m_pointerDownX(0.0f),
+			m_pointerDownY(0.0f)
 		{
 			m_container->addChild(this);
 		}
@@ -131,6 +134,9 @@ namespace Skylicht
 		void CUIBase::onPointerDown(float pointerX, float pointerY)
 		{
 			m_isPointerDown = true;
+			m_pointerDownX = pointerX;
+			m_pointerDownY = pointerY;
+
 			startMotion(EMotionEvent::PointerDown);
 
 			if (OnPointerDown != nullptr)
@@ -148,7 +154,14 @@ namespace Skylicht
 
 		void CUIBase::onPointerMove(float pointerX, float pointerY)
 		{
-
+			if (m_skipPointerEventWhenDrag && m_isPointerDown)
+			{
+				if (fabsf(pointerX - m_pointerDownX) > 10.0f ||
+					fabsf(pointerY - m_pointerDownY) > 10.0f)
+				{
+					m_container->cancelPointerDown(this, pointerX, pointerY);
+				}
+			}
 		}
 
 		void CUIBase::onPressed()

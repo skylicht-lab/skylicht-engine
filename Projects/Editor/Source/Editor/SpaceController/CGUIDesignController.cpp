@@ -130,6 +130,9 @@ namespace Skylicht
 			CGUIElement* newNode = NULL;
 
 			core::rectf r = parentNode->getRect();
+
+			r.UpperLeftCorner.X = 0.0f;
+			r.UpperLeftCorner.Y = 0.0f;
 			if (r.getWidth() > 200.0f)
 				r.LowerRightCorner.X = 200.0f;
 			if (r.getHeight() > 200.0f)
@@ -251,6 +254,28 @@ namespace Skylicht
 				CGUIText* text = parentNode->getCanvas()->createText(newNode, r, NULL);
 				text->setName(L"Text");
 				text->setText(L"Enter text here");
+				text->setDock(EGUIDock::DockFill);
+				text->setTextAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
+				text->setMargin(SMargin(5.0f, 5.0f, 5.0f, 5.0f));
+				text->setFontSource("SampleGUI/Fonts/Roboto.font");
+			}
+			else if (command == L"UI List")
+			{
+				r.LowerRightCorner.X = 220.0f;
+				r.LowerRightCorner.Y = 180.0f;
+
+				nameHint = L"List";
+				newNode = parentNode->getCanvas()->createElement(parentNode, r);
+
+				r.UpperLeftCorner.Y = 0.0f;
+				r.LowerRightCorner.Y = 60.0f;
+
+				CGUIElement* item = parentNode->getCanvas()->createElement(newNode, r);
+				item->setName(L"Item");
+
+				CGUIText* text = parentNode->getCanvas()->createText(item, r, NULL);
+				text->setName(L"Text");
+				text->setText(L"Item name");
 				text->setDock(EGUIDock::DockFill);
 				text->setTextAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
 				text->setMargin(SMargin(5.0f, 5.0f, 5.0f, 5.0f));

@@ -67,6 +67,7 @@ namespace Skylicht
 			addMenu->addItem(L"UI Button (Shiny)");
 			addMenu->addItem(L"UI Slider");
 			addMenu->addItem(L"UI Input");
+			addMenu->addItem(L"UI List");
 			addMenu->addItem(L"UI Checkbox");
 			addMenu->addItem(L"UI Switch");
 			addMenu->OnCommand = BIND_LISTENER(&CContextMenuGUIElement::OnContextMenuAddCommand, this);

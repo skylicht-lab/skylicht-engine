@@ -12,7 +12,11 @@ class CViewDemo : public CView
 {
 protected:
 	UI::CUIContainer* m_uiContainer;
-	UI::CUIListView* m_listUniform;
+	UI::CUIListView* m_listTab;
+	UI::CUIGridView* m_listItems;
+
+	CGUIText* m_txtTitle;
+
 	std::vector<UI::CUIButton*> m_listUniformBtn;
 	CCanvas* m_canvas;
 
@@ -35,7 +39,7 @@ protected:
 
 	void onGUI();
 
-	void addListIconItem(SFrame* frame);
+	void addListIconItem(SFrame* frame, const char* name);
 
-	void onChangeUniform(UI::CUIBase* btn);
+	void onChangeUniform(UI::CUIBase* btn, const char* name);
 };

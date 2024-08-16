@@ -57,7 +57,11 @@ namespace Skylicht
 			bool m_isPointerHover;
 			bool m_isPointerDown;
 
-			bool m_contineGameEvent;
+			bool m_skipPointerEventWhenDrag;
+			bool m_continueGameEvent;
+
+			float m_pointerDownX;
+			float m_pointerDownY;
 
 		public:
 			std::function<void(float, float)> OnPointerHover;
@@ -95,12 +99,17 @@ namespace Skylicht
 
 			inline void setContinueGameEvent(bool b)
 			{
-				m_contineGameEvent = b;
+				m_continueGameEvent = b;
 			}
 
 			inline bool isContinueGameEvent()
 			{
-				return m_contineGameEvent;
+				return m_continueGameEvent;
+			}
+
+			inline void setSkipPointerEventWhenDrag(bool b)
+			{
+				m_skipPointerEventWhenDrag = b;
 			}
 
 			inline void setPointerHover(bool b)

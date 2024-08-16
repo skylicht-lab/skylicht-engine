@@ -9,7 +9,7 @@
 
 CViewDemo::CViewDemo() :
 	m_uiContainer(NULL),
-	m_listUniform(NULL),
+	m_listTab(NULL),
 	m_canvas(NULL)
 {
 
@@ -39,18 +39,24 @@ void CViewDemo::onInit()
 
 	m_uiContainer = leftPanel->addComponent<UI::CUIContainer>();
 
-	m_listUniform = new UI::CUIListView(m_uiContainer,
-		m_canvas->getGUIByPath("Canvas/Container/ListItems"),
-		m_canvas->getGUIByPath("Canvas/Container/ListItems/Item"));
+	m_txtTitle = dynamic_cast<CGUIText*>(m_canvas->getGUIByPath("Canvas/Container/Items/txtTabName"));
+
+	m_listTab = new UI::CUIListView(m_uiContainer,
+		m_canvas->getGUIByPath("Canvas/Container/ListTab"),
+		m_canvas->getGUIByPath("Canvas/Container/ListTab/Item"));
 
 	CSpriteFrame* spriteFrame = CSpriteManager::getInstance()->loadSprite("SampleGUIDemo/TabIcon.spritedata");
 	if (spriteFrame)
 	{
-		addListIconItem(spriteFrame->getFrameByName("ic-hair"));
-		addListIconItem(spriteFrame->getFrameByName("ic-shirt"));
-		addListIconItem(spriteFrame->getFrameByName("ic-pant"));
-		addListIconItem(spriteFrame->getFrameByName("ic-heels"));
+		addListIconItem(spriteFrame->getFrameByName("ic-hair"), "Hair");
+		addListIconItem(spriteFrame->getFrameByName("ic-shirt"), "Shirt");
+		addListIconItem(spriteFrame->getFrameByName("ic-pant"), "Pant");
+		addListIconItem(spriteFrame->getFrameByName("ic-heels"), "Heels");
 	}
+
+	m_listItems = new UI::CUIGridView(m_uiContainer,
+		m_canvas->getGUIByPath("Canvas/Container/Items/ListItems"),
+		m_canvas->getGUIByPath("Canvas/Container/Items/ListItems/Item"));
 }
 
 void CViewDemo::onDestroy()
@@ -58,11 +64,11 @@ void CViewDemo::onDestroy()
 
 }
 
-void CViewDemo::addListIconItem(SFrame* frame)
+void CViewDemo::addListIconItem(SFrame* frame, const char* name)
 {
 	if (frame)
 	{
-		CGUIElement* element = m_listUniform->addItem();
+		CGUIElement* element = m_listTab->addItem();
 		CGUISprite* iconGUI = (CGUISprite*)m_canvas->getGUIByPath(element, "Icon");
 		if (iconGUI)
 			iconGUI->setFrame(frame);
@@ -74,13 +80,15 @@ void CViewDemo::addListIconItem(SFrame* frame)
 			button->addMotion(UI::EMotionEvent::PointerHover, bg, new UI::CColorMotion(SColor(0xfffe7200)))->setTime(0.0f, 50.0f);
 			button->addMotion(UI::EMotionEvent::PointerOut, bg, new UI::CColorMotion())->setTime(0.0f, 50.0f);
 			button->setToggleButton(true);
-			button->OnToggle = [bg, view = this](UI::CUIBase* button, bool status)
+			button->setSkipPointerEventWhenDrag(true);
+			button->OnToggle = [bg, view = this, name](UI::CUIBase* button, bool status)
 				{
 					if (status)
 					{
 						bg->setColor(SColor(0xff0072fe));
 						button->setEnable(false);
-						view->onChangeUniform(button);
+
+						view->onChangeUniform(button, name);
 					}
 					else
 					{
@@ -96,8 +104,11 @@ void CViewDemo::addListIconItem(SFrame* frame)
 	}
 }
 
-void CViewDemo::onChangeUniform(UI::CUIBase* btn)
+void CViewDemo::onChangeUniform(UI::CUIBase* btn, const char* name)
 {
+	if (m_txtTitle)
+		m_txtTitle->setText(name);
+
 	for (UI::CUIButton* b : m_listUniformBtn)
 	{
 		if (b != btn)
