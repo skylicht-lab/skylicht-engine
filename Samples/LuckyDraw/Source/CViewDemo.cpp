@@ -2,6 +2,7 @@
 #include "SkylichtEngine.h"
 #include "Context/CContext.h"
 #include "CViewDemo.h"
+#include "CUIHelper.h"
 
 CViewDemo::CViewDemo() :
 	m_largeFont(NULL),
@@ -42,14 +43,15 @@ CViewDemo::~CViewDemo()
 		delete s;
 	m_scrollers.clear();
 	delete m_controller;
-	delete m_list;
 
-	delete m_spin;
-	delete m_stop;
-	delete m_accept;
-	delete m_ignore;
-	delete m_left;
-	delete m_right;
+	m_list->remove();
+
+	m_spin->remove();
+	m_stop->remove();
+	m_accept->remove();
+	m_ignore->remove();
+	m_left->remove();
+	m_right->remove();
 
 	Audio::CAudioEngine::getSoundEngine()->unRegisterStreamFactory(m_streamFactory);
 	delete m_streamFactory;
@@ -130,9 +132,14 @@ void CViewDemo::onInit()
 		p.IsLucky = false;
 	}
 
+	// Note:
+	// This is a demo of creating the GUI using 2d position code
+	// You can see the Samples/GUI, that init GUI by load .gui (that designed from Skylicht Editor)
+
 	// create 2D Canvas
 	CGameObject* canvasObject = zone->createEmptyObject();
 	m_canvas = canvasObject->addComponent<CCanvas>();
+	m_uiContainer = canvasObject->addComponent<UI::CUIContainer>();
 
 	// show debug rectangle
 	// m_canvas->IsInEditor = true;
@@ -191,7 +198,7 @@ void CViewDemo::onInit()
 	CGUIRect* listGUI = m_canvas->createRect(listSize, SColor(150, 0, 0, 0));
 	listGUI->setAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
 	listGUI->setPosition(core::vector3df(0.0f, listY, 0.0f));
-	m_list = new CList(listGUI);
+	m_list = CUIHelper::addListView(m_uiContainer, listGUI);
 	m_list->setVisible(false);
 
 	// create label
@@ -212,30 +219,31 @@ void CViewDemo::onInit()
 	core::rectf buttonSize(0.0f, 0.0f, buttonW, buttonH);
 
 	CGUIElement* buttonSpinGUI = m_canvas->createElement(buttonSize);
+
 	buttonSpinGUI->setAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
 	buttonSpinGUI->setPosition(core::vector3df(0.0f, buttonY, 0.0f));
-	m_spin = new CButton(buttonSpinGUI, btnYellowBackground, CLocalize::get("TXT_SPIN"), m_textMedium2Font, SColor(255, 107, 76, 8));
-	m_spin->OnClick = std::bind(&CViewDemo::onSpinClick, this);
+	m_spin = CUIHelper::addButton(m_uiContainer, buttonSpinGUI, btnYellowBackground, CLocalize::get("TXT_SPIN"), m_textMedium2Font, SColor(255, 107, 76, 8));
+	m_spin->OnPressed = std::bind(&CViewDemo::onSpinClick, this, std::placeholders::_1);
 
 	CGUIElement* buttonStopGUI = m_canvas->createElement(buttonSize);
 	buttonStopGUI->setAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
 	buttonStopGUI->setPosition(core::vector3df(0.0f, buttonY, 0.0f));
-	m_stop = new CButton(buttonStopGUI, btnYellowBackground, CLocalize::get("TXT_STOP"), m_textMedium2Font, SColor(255, 107, 76, 8));
-	m_stop->OnClick = std::bind(&CViewDemo::onStopClick, this);
+	m_stop = CUIHelper::addButton(m_uiContainer, buttonStopGUI, btnYellowBackground, CLocalize::get("TXT_STOP"), m_textMedium2Font, SColor(255, 107, 76, 8));
+	m_stop->OnPressed = std::bind(&CViewDemo::onStopClick, this, std::placeholders::_1);
 	m_stop->setVisible(false);
 
 	CGUIElement* buttonAcceptGUI = m_canvas->createElement(buttonSize);
 	buttonAcceptGUI->setAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
 	buttonAcceptGUI->setPosition(core::vector3df(-buttonAcceptPaddingX, buttonY, 0.0f));
-	m_accept = new CButton(buttonAcceptGUI, btnYellowBackground, CLocalize::get("TXT_ACCEPT"), m_textMedium2Font, SColor(255, 107, 76, 8));
-	m_accept->OnClick = std::bind(&CViewDemo::onAcceptClick, this);
+	m_accept = CUIHelper::addButton(m_uiContainer, buttonAcceptGUI, btnYellowBackground, CLocalize::get("TXT_ACCEPT"), m_textMedium2Font, SColor(255, 107, 76, 8));
+	m_accept->OnPressed = std::bind(&CViewDemo::onAcceptClick, this, std::placeholders::_1);
 	m_accept->setVisible(false);
 
 	CGUIElement* buttonQuitGUI = m_canvas->createElement(buttonSize);
 	buttonQuitGUI->setAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
 	buttonQuitGUI->setPosition(core::vector3df(buttonAcceptPaddingX, buttonY, 0.0f));
-	m_ignore = new CButton(buttonQuitGUI, btnVioletBackground, CLocalize::get("TXT_IGNORE"), m_textMedium2Font, SColor(255, 187, 179, 234));
-	m_ignore->OnClick = std::bind(&CViewDemo::onIgnoreClick, this);
+	m_ignore = CUIHelper::addButton(m_uiContainer, buttonQuitGUI, btnVioletBackground, CLocalize::get("TXT_IGNORE"), m_textMedium2Font, SColor(255, 187, 179, 234));
+	m_ignore->OnPressed = std::bind(&CViewDemo::onIgnoreClick, this, std::placeholders::_1);
 	m_ignore->setVisible(false);
 
 	// left/right button to change state
@@ -245,21 +253,21 @@ void CViewDemo::onInit()
 	buttonY = 20.0f;
 
 #if defined(IOS)
-    buttonY = 100.0f;
+	buttonY = 100.0f;
 #endif
-    
+
 	CGUIElement* buttonLeftGUI = m_canvas->createElement(leftBtnSize);
 	buttonLeftGUI->setAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Bottom);
 	buttonLeftGUI->setPosition(core::vector3df(-150.0f, buttonY, 0.0f));
-	m_left = new CButton(buttonLeftGUI, btnLeft);
+	m_left = CUIHelper::addButton(m_uiContainer, buttonLeftGUI, btnLeft);
 	m_left->setVisible(false);
 
 	CGUIElement* buttonRightGUI = m_canvas->createElement(leftBtnSize);
 	buttonRightGUI->setAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Bottom);
 	buttonRightGUI->setPosition(core::vector3df(150.0f, buttonY, 0.0f));
-	m_right = new CButton(buttonRightGUI, btnRight);
+	m_right = CUIHelper::addButton(m_uiContainer, buttonRightGUI, btnRight);
 
-	m_left->OnClick = [&, r = m_right, l = m_left]() {
+	m_left->OnPressed = [&, r = m_right, l = m_left](UI::CUIBase* base) {
 		int state = getState();
 		if (state < getNumState() - 1)
 		{
@@ -269,9 +277,9 @@ void CViewDemo::onInit()
 		}
 		if (state == getNumState() - 1)
 			l->setVisible(false);
-	};
+		};
 
-	m_right->OnClick = [&, r = m_right, l = m_left]() {
+	m_right->OnPressed = [&, r = m_right, l = m_left](UI::CUIBase* base) {
 		int state = getState();
 		if (state > 0)
 		{
@@ -281,7 +289,7 @@ void CViewDemo::onInit()
 		}
 		if (state == 0)
 			r->setVisible(false);
-	};
+		};
 
 	m_switchPrize = m_canvas->createText(m_textSmallFont);
 	m_switchPrize->setRect(core::rectf(0.0f, 0.0f, 200.0f, leftH));
@@ -359,21 +367,16 @@ void CViewDemo::checkToShowListLuckyPeople()
 		m_spin->setVisible(false);
 		m_list->setVisible(true);
 
-		m_list->clearAllItem();
+		m_list->clear();
 
 		CGUIElement* listElement = m_list->getElement();
-
-		float height = 0.0f;
+		core::rectf itemRect = core::rectf(0.0f, 0.0f, listElement->getWidth(), 50.0f);
 
 		for (SPeople& p : m_people)
 		{
 			if (p.WinPrize == m_state)
 			{
-				core::rectf itemRect = core::rectf(0.0f, 0.0f, listElement->getWidth(), 50.0f);
-
-				height = height + itemRect.getHeight();
-
-				CGUIElement* element = m_canvas->createElement(listElement, itemRect);
+				CGUIElement* element = m_list->addItem();
 
 				CGUIText* nameText = m_canvas->createText(element, itemRect, m_textMedium2Font);
 				nameText->setPosition(core::vector3df(200.0f, 0.0f, 0.0f));
@@ -390,20 +393,7 @@ void CViewDemo::checkToShowListLuckyPeople()
 
 				sprintf(text, "%d", p.ID);
 				numText->setText(text);
-
-				m_list->addItem(element);
 			}
-		}
-
-		// center item in list
-		if (height < listElement->getHeight())
-		{
-			float centerY = listElement->getHeight() / 2.0f - height / 2.0f;
-			m_list->setBasePosition(centerY);
-		}
-		else
-		{
-			m_list->setBasePosition(0.0f);
 		}
 	}
 	else
@@ -427,7 +417,7 @@ void CViewDemo::showLeftRightButton()
 		m_right->setVisible(true);
 }
 
-void CViewDemo::onSpinClick()
+void CViewDemo::onSpinClick(UI::CUIBase* base)
 {
 	m_listPeople.set_used(0);
 	for (SPeople& p : m_people)
@@ -453,7 +443,7 @@ void CViewDemo::onSpinClick()
 	m_countDown = false;
 }
 
-void CViewDemo::onStopClick()
+void CViewDemo::onStopClick(UI::CUIBase* base)
 {
 	m_randomPeople = os::Randomizer::rand() % m_listPeople.size();
 	m_randomNumber = m_listPeople[m_randomPeople];
@@ -468,7 +458,7 @@ void CViewDemo::onStopClick()
 	m_soundStop->play();
 }
 
-void CViewDemo::onAcceptClick()
+void CViewDemo::onAcceptClick(UI::CUIBase* base)
 {
 	m_prize[m_state].PeopleCount++;
 
@@ -492,7 +482,7 @@ void CViewDemo::onAcceptClick()
 	checkToShowListLuckyPeople();
 }
 
-void CViewDemo::onIgnoreClick()
+void CViewDemo::onIgnoreClick(UI::CUIBase* base)
 {
 	m_title->setText(m_prize[m_state].Name.c_str());
 
