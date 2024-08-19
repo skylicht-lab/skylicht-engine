@@ -92,6 +92,8 @@ namespace Skylicht
 				return m_guiFilePath;
 			}
 
+			bool needSave();
+
 			void save(const char* path);
 
 			virtual void loadFile(const std::string& path);
@@ -103,7 +105,7 @@ namespace Skylicht
 			void createGUINode(CGUIHierachyNode* parent, const std::wstring& command);
 
 			void createGUINode(CGUIHierachyNode* parent, CGUIElement* node);
-			
+
 			void deselectAllOnHierachy();
 
 			void onDelete();
@@ -115,13 +117,13 @@ namespace Skylicht
 			CGUIHierachyNode* selectOnHierachy(CGUIElement* element);
 
 			void onCopy();
-			
+
 			void onPaste();
-			
+
 			void onDuplicate();
-			
+
 			void onCut();
-			
+
 		protected:
 
 			void rebuildGUIHierachy(CGUIElement* parent, CGUIHierachyNode* parentNode);

@@ -31,6 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Scene/CScene.h"
 
 #include "Editor/SpaceController/CGUIDesignController.h"
+#include "Selection/CSelection.h"
 
 namespace Skylicht
 {
@@ -258,7 +259,9 @@ namespace Skylicht
 			{
 				CGUIHierachyNode* node = (CGUIHierachyNode*)treeNode->getTagData();
 				if (node->OnSelected != nullptr)
+				{
 					node->OnSelected(node, treeNode->isSelected());
+				}
 			}
 		}
 
@@ -278,93 +281,95 @@ namespace Skylicht
 			}
 
 			rowItem->OnAcceptDragDrop = [node](GUI::SDragDropPackage* data)
-			{
-				if (data->Name == "GUIHierarchyNode")
 				{
-					return true;
-				}
-				else if (data->Name == "ListFSItem")
-				{
-					GUI::CListRowItem* rowItem = (GUI::CListRowItem*)data->UserData;
-					bool isFolder = rowItem->getTagBool();
-					if (isFolder)
-						return false;
-
-					std::string path = rowItem->getTagString();
-					std::string fileExt = CPath::getFileNameExt(path);
-					fileExt = CStringImp::toLower(fileExt);
-					if (fileExt == "png" || fileExt == "tga")
+					if (data->Name == "GUIHierarchyNode")
 					{
 						return true;
 					}
-				}
-				return false;
-			};
+					else if (data->Name == "ListFSItem")
+					{
+						GUI::CListRowItem* rowItem = (GUI::CListRowItem*)data->UserData;
+						bool isFolder = rowItem->getTagBool();
+						if (isFolder)
+							return false;
+
+						std::string path = rowItem->getTagString();
+						std::string fileExt = CPath::getFileNameExt(path);
+						fileExt = CStringImp::toLower(fileExt);
+						if (fileExt == "png" || fileExt == "tga")
+						{
+							return true;
+						}
+					}
+					return false;
+				};
 
 			rowItem->OnDragDropHover = [rowItem, node](GUI::SDragDropPackage* data, float mouseX, float mouseY)
-			{
-				GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
-
-				if (node->getParent() == NULL)
 				{
-					// this is canvas node
-					rowItem->enableDrawLine(false, false);
-				}
-				else
-				{
-					if (local.Y < rowItem->height() * 0.25f)
-					{
-						rowItem->enableDrawLine(true, false);
-					}
-					else if (local.Y > rowItem->height() * 0.75f)
-					{
-						rowItem->enableDrawLine(false, true);
-					}
-					else
-					{
-						rowItem->enableDrawLine(false, false);
-					}
-				}
-			};
-
-			rowItem->OnDragDropOut = [rowItem, node](GUI::SDragDropPackage* data, float mouseX, float mouseY)
-			{
-				rowItem->enableDrawLine(false, false);
-			};
-
-			rowItem->OnDrop = [&, editor = m_editor, rowItem, node](GUI::SDragDropPackage* data, float mouseX, float mouseY)
-			{
-				if (data->Name == "GUIHierarchyNode")
-				{
-					CGUIHierachyNode* dragNode = (CGUIHierachyNode*)data->UserData;
+					GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
 
 					if (node->getParent() == NULL)
 					{
 						// this is canvas node
-						moveToChild(dragNode, node);
+						rowItem->enableDrawLine(false, false);
 					}
 					else
 					{
-						// this is child node
-						GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
 						if (local.Y < rowItem->height() * 0.25f)
 						{
-							move(dragNode, node, false);
+							rowItem->enableDrawLine(true, false);
 						}
 						else if (local.Y > rowItem->height() * 0.75f)
 						{
-							move(dragNode, node, true);
+							rowItem->enableDrawLine(false, true);
 						}
 						else
 						{
-							moveToChild(dragNode, node);
+							rowItem->enableDrawLine(false, false);
 						}
 					}
-				}
+				};
 
-				rowItem->enableDrawLine(false, false);
-				editor->refresh();
-			};
+			rowItem->OnDragDropOut = [rowItem, node](GUI::SDragDropPackage* data, float mouseX, float mouseY)
+				{
+					rowItem->enableDrawLine(false, false);
+				};
+
+			rowItem->OnDrop = [&, editor = m_editor, rowItem, node](GUI::SDragDropPackage* data, float mouseX, float mouseY)
+				{
+					if (data->Name == "GUIHierarchyNode")
+					{
+						CGUIHierachyNode* dragNode = (CGUIHierachyNode*)data->UserData;
+
+						if (node->getParent() == NULL)
+						{
+							// this is canvas node
+							moveToChild(dragNode, node);
+						}
+						else
+						{
+							// this is child node
+							GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
+							if (local.Y < rowItem->height() * 0.25f)
+							{
+								move(dragNode, node, false);
+							}
+							else if (local.Y > rowItem->height() * 0.75f)
+							{
+								move(dragNode, node, true);
+							}
+							else
+							{
+								moveToChild(dragNode, node);
+							}
+						}
+
+						dragNode->getGUINode()->setSelected(true);
+					}
+
+					rowItem->enableDrawLine(false, false);
+					editor->refresh();
+				};
 		}
 
 		void CGUIHierarchyController::move(CGUIHierachyNode* from, CGUIHierachyNode* target, bool behind)

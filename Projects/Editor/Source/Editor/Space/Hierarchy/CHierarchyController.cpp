@@ -287,209 +287,214 @@ namespace Skylicht
 			}
 
 			rowItem->OnAcceptDragDrop = [node](GUI::SDragDropPackage* data)
-			{
-				if (node->isTagGameObject())
 				{
-					// accept hierarchy node
-					if (data->Name == "HierarchyNode")
+					if (node->isTagGameObject())
 					{
-						CHierachyNode* dragNode = (CHierachyNode*)data->UserData;
-
-						if (dragNode->getTagDataType() == CHierachyNode::Zone)
+						// accept hierarchy node
+						if (data->Name == "HierarchyNode")
 						{
-							if (node->getTagDataType() == CHierachyNode::Zone)
+							CHierachyNode* dragNode = (CHierachyNode*)data->UserData;
+
+							if (dragNode->getTagDataType() == CHierachyNode::Zone)
 							{
-								// only allow zone drag over on zone
-								return true;
-							}
-							return false;
-						}
-						else
-						{
-							// dont accept drag to child node
-							if (dragNode->isChild(node))
+								if (node->getTagDataType() == CHierachyNode::Zone)
+								{
+									// only allow zone drag over on zone
+									return true;
+								}
 								return false;
-						}
-						return true;
-					}
-					else if (data->Name == "ListFSItem")
-					{
-						GUI::CListRowItem* rowItem = (GUI::CListRowItem*)data->UserData;
-						bool isFolder = rowItem->getTagBool();
-						if (isFolder)
-							return false;
-
-						std::string path = rowItem->getTagString();
-						std::string fileExt = CPath::getFileNameExt(path);
-						fileExt = CStringImp::toLower(fileExt);
-						if (fileExt == "dae" || 
-							fileExt == "obj" ||
-							fileExt == "fbx" ||
-							fileExt == "smesh")
-						{
+							}
+							else
+							{
+								// dont accept drag to child node
+								if (dragNode->isChild(node))
+									return false;
+							}
 							return true;
 						}
+						else if (data->Name == "ListFSItem")
+						{
+							GUI::CListRowItem* rowItem = (GUI::CListRowItem*)data->UserData;
+							bool isFolder = rowItem->getTagBool();
+							if (isFolder)
+								return false;
+
+							std::string path = rowItem->getTagString();
+							std::string fileExt = CPath::getFileNameExt(path);
+							fileExt = CStringImp::toLower(fileExt);
+							if (fileExt == "dae" ||
+								fileExt == "obj" ||
+								fileExt == "fbx" ||
+								fileExt == "smesh")
+							{
+								return true;
+							}
+						}
 					}
-				}
-				return false;
-			};
+					return false;
+				};
 
 			rowItem->OnDragDropHover = [rowItem, node](GUI::SDragDropPackage* data, float mouseX, float mouseY)
-			{
-				if (node->getTagDataType() == CHierachyNode::Zone)
 				{
-					if (data->Name == "HierarchyNode")
-					{
-						CHierachyNode* dragNode = (CHierachyNode*)data->UserData;
-						if (dragNode->getTagDataType() == CHierachyNode::Zone)
-						{
-							GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
-							if (local.Y < rowItem->height() * 0.5f)
-							{
-								rowItem->enableDrawLine(true, false);
-							}
-							else
-							{
-								rowItem->enableDrawLine(false, true);
-							}
-						}
-					}
-					else if (data->Name == "ListFSItem")
-					{
-						rowItem->enableDrawLine(false, true);
-					}
-				}
-				else if (node->getTagDataType() == CHierachyNode::Container)
-				{
-					GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
-					if (local.Y < rowItem->height() * 0.25f)
-					{
-						rowItem->enableDrawLine(true, false);
-					}
-					else if (local.Y > rowItem->height() * 0.75f)
-					{
-						rowItem->enableDrawLine(false, true);
-					}
-					else
-					{
-						rowItem->enableDrawLine(false, false);
-					}
-				}
-				else if (node->getTagDataType() == CHierachyNode::GameObject)
-				{
-					GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
-					if (local.Y < rowItem->height() * 0.5f)
-					{
-						rowItem->enableDrawLine(true, false);
-					}
-					else
-					{
-						rowItem->enableDrawLine(false, true);
-					}
-				}
-			};
-
-			rowItem->OnDragDropOut = [rowItem, node](GUI::SDragDropPackage* data, float mouseX, float mouseY)
-			{
-				rowItem->enableDrawLine(false, false);
-			};
-
-			rowItem->OnDrop = [&, editor = m_editor, rowItem, node](GUI::SDragDropPackage* data, float mouseX, float mouseY)
-			{
-				if (data->Name == "HierarchyNode")
-				{
-					CHierachyNode* dragNode = (CHierachyNode*)data->UserData;
 					if (node->getTagDataType() == CHierachyNode::Zone)
 					{
-						if (dragNode->getTagDataType() == CHierachyNode::Zone)
+						if (data->Name == "HierarchyNode")
 						{
-							GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
-							if (local.Y < rowItem->height() * 0.5f)
+							CHierachyNode* dragNode = (CHierachyNode*)data->UserData;
+							if (dragNode->getTagDataType() == CHierachyNode::Zone)
 							{
-								move(dragNode, node, false);
-							}
-							else
-							{
-								move(dragNode, node, true);
+								GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
+								if (local.Y < rowItem->height() * 0.5f)
+								{
+									rowItem->enableDrawLine(true, false);
+								}
+								else
+								{
+									rowItem->enableDrawLine(false, true);
+								}
 							}
 						}
-						else
+						else if (data->Name == "ListFSItem")
 						{
-							moveToChild(dragNode, node);
+							rowItem->enableDrawLine(false, true);
 						}
 					}
 					else if (node->getTagDataType() == CHierachyNode::Container)
 					{
 						GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
 						if (local.Y < rowItem->height() * 0.25f)
-							move(dragNode, node, false);
+						{
+							rowItem->enableDrawLine(true, false);
+						}
 						else if (local.Y > rowItem->height() * 0.75f)
-							move(dragNode, node, true);
+						{
+							rowItem->enableDrawLine(false, true);
+						}
 						else
-							moveToChild(dragNode, node);
+						{
+							rowItem->enableDrawLine(false, false);
+						}
 					}
 					else if (node->getTagDataType() == CHierachyNode::GameObject)
 					{
 						GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
 						if (local.Y < rowItem->height() * 0.5f)
-							move(dragNode, node, false);
+						{
+							rowItem->enableDrawLine(true, false);
+						}
 						else
-							move(dragNode, node, true);
+						{
+							rowItem->enableDrawLine(false, true);
+						}
 					}
-				}
-				else if (data->Name == "ListFSItem")
-				{
-					CHierachyNode* newNode = NULL;
+				};
 
-					if (node->getTagDataType() == CHierachyNode::Zone)
+			rowItem->OnDragDropOut = [rowItem, node](GUI::SDragDropPackage* data, float mouseX, float mouseY)
+				{
+					rowItem->enableDrawLine(false, false);
+				};
+
+			rowItem->OnDrop = [&, editor = m_editor, rowItem, node](GUI::SDragDropPackage* data, float mouseX, float mouseY)
+				{
+					if (data->Name == "HierarchyNode")
 					{
-						newNode = createChildObject(node);
+						CHierachyNode* dragNode = (CHierachyNode*)data->UserData;
+						if (node->getTagDataType() == CHierachyNode::Zone)
+						{
+							if (dragNode->getTagDataType() == CHierachyNode::Zone)
+							{
+								GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
+								if (local.Y < rowItem->height() * 0.5f)
+								{
+									move(dragNode, node, false);
+								}
+								else
+								{
+									move(dragNode, node, true);
+								}
+							}
+							else
+							{
+								moveToChild(dragNode, node);
+							}
+							dragNode->getGUINode()->setSelected(true);
+						}
+						else if (node->getTagDataType() == CHierachyNode::Container)
+						{
+							GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
+							if (local.Y < rowItem->height() * 0.25f)
+								move(dragNode, node, false);
+							else if (local.Y > rowItem->height() * 0.75f)
+								move(dragNode, node, true);
+							else
+								moveToChild(dragNode, node);
+							dragNode->getGUINode()->setSelected(true);
+						}
+						else if (node->getTagDataType() == CHierachyNode::GameObject)
+						{
+							GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
+							if (local.Y < rowItem->height() * 0.5f)
+								move(dragNode, node, false);
+							else
+								move(dragNode, node, true);
+							dragNode->getGUINode()->setSelected(true);
+						}
 					}
-					else if (node->getTagDataType() == CHierachyNode::Container)
+					else if (data->Name == "ListFSItem")
 					{
-						GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
-						if (local.Y < rowItem->height() * 0.25f)
-						{
-							newNode = createObjectAt(node, false);
-						}
-						else if (local.Y > rowItem->height() * 0.75f)
-						{
-							newNode = createObjectAt(node, true);
-						}
-						else
+						CHierachyNode* newNode = NULL;
+
+						if (node->getTagDataType() == CHierachyNode::Zone)
 						{
 							newNode = createChildObject(node);
 						}
-					}
-					else if (node->getTagDataType() == CHierachyNode::GameObject)
-					{
-						GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
-						if (local.Y < rowItem->height() * 0.5f)
+						else if (node->getTagDataType() == CHierachyNode::Container)
 						{
-							newNode = createObjectAt(node, false);
+							GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
+							if (local.Y < rowItem->height() * 0.25f)
+							{
+								newNode = createObjectAt(node, false);
+							}
+							else if (local.Y > rowItem->height() * 0.75f)
+							{
+								newNode = createObjectAt(node, true);
+							}
+							else
+							{
+								newNode = createChildObject(node);
+							}
 						}
-						else
+						else if (node->getTagDataType() == CHierachyNode::GameObject)
 						{
-							newNode = createObjectAt(node, true);
+							GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
+							if (local.Y < rowItem->height() * 0.5f)
+							{
+								newNode = createObjectAt(node, false);
+							}
+							else
+							{
+								newNode = createObjectAt(node, true);
+							}
+						}
+
+						if (newNode != NULL)
+						{
+							CGameObject* targetObject = (CGameObject*)newNode->getTagData();
+
+							GUI::CListRowItem* rowItem = (GUI::CListRowItem*)data->UserData;
+							std::string path = rowItem->getTagString();
+
+							CSceneController* sceneController = CSceneController::getInstance();
+							sceneController->createResourceComponent(path, targetObject);
+							sceneController->updateTreeNode(targetObject);
+
+							newNode->getGUINode()->setSelected(true);
 						}
 					}
 
-					if (newNode != NULL)
-					{
-						CGameObject* targetObject = (CGameObject*)newNode->getTagData();
-
-						GUI::CListRowItem* rowItem = (GUI::CListRowItem*)data->UserData;
-						std::string path = rowItem->getTagString();
-
-						CSceneController* sceneController = CSceneController::getInstance();
-						sceneController->createResourceComponent(path, targetObject);
-						sceneController->updateTreeNode(targetObject);
-					}
-				}
-
-				rowItem->enableDrawLine(false, false);
-				editor->refresh();
-			};
+					rowItem->enableDrawLine(false, false);
+					editor->refresh();
+				};
 		}
 
 		void CHierarchyController::move(CHierachyNode* from, CHierachyNode* target, bool behind)
