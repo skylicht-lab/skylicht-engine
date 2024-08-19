@@ -73,7 +73,7 @@ namespace Skylicht
 
 			GUI::CMenu* m_canvasSettingMenu;
 			CCanvasSettingController* m_canvasSettingController;
-			
+
 		public:
 			CSpaceGUIDesign(GUI::CWindow* window, CEditor* editor);
 
@@ -108,15 +108,19 @@ namespace Skylicht
 			void doZoomOut(float dx, float dy);
 
 			void onSetting(GUI::CBase* base);
-			
+
 			void onNew(GUI::CBase* base);
-			
+
+			void newGUI();
+
+			void resetView(CCanvas* canvas);
+
 			void onSave(GUI::CBase* base);
-			
+
 			void onCopy(GUI::CBase* base);
-			
+
 			void onPaste(GUI::CBase* base);
-			
+
 			void onRender(GUI::CBase* base);
 
 			void postMouseEventToHandles(EMOUSE_INPUT_EVENT eventType);

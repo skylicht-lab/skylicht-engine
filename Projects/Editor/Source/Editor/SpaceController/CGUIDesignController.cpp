@@ -509,6 +509,11 @@ namespace Skylicht
 			}
 		}
 
+		bool CGUIDesignController::needSave()
+		{
+			return true;
+		}
+
 		void CGUIDesignController::save(const char* path)
 		{
 			// Save the canvas infomation to file

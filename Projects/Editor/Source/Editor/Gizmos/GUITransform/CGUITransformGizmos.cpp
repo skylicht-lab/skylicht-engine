@@ -221,7 +221,9 @@ namespace Skylicht
 
 		void CGUITransformGizmos::onRemove()
 		{
-
+			CSelection::getInstance()->clear();
+			CGUIHandles::getInstance()->end();
+			m_selectID = "";
 		}
 
 		void CGUITransformGizmos::refresh()

@@ -143,6 +143,7 @@ namespace Skylicht
 		{
 			if (m_guiNode != NULL)
 			{
+				m_guiNode->setSelected(false);
 				m_guiNode->remove();
 				m_guiNode = NULL;
 			}

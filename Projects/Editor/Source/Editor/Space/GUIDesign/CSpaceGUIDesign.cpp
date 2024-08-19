@@ -60,11 +60,12 @@ namespace Skylicht
 		{
 			GUI::CButton* btn = NULL;
 			m_toolBar = new GUI::CToolbar(window);
-			m_toolBar->addButton(L"New", GUI::ESystemIcon::NewFile);
-			
+			btn = m_toolBar->addButton(L"New", GUI::ESystemIcon::NewFile);
+			btn->OnPress = BIND_LISTENER(&CSpaceGUIDesign::onNew, this);
+
 			btn = m_toolBar->addButton(L"Save", GUI::ESystemIcon::Save);
 			btn->OnPress = BIND_LISTENER(&CSpaceGUIDesign::onSave, this);
-			
+
 			m_toolBar->addSpace();
 
 			btn = m_toolBar->addButton(L"Zoom in", GUI::ESystemIcon::ZoomIn);
@@ -76,16 +77,16 @@ namespace Skylicht
 			m_toolBar->addSpace();
 			btn = m_toolBar->addButton(L"Copy", GUI::ESystemIcon::Copy);
 			btn->OnPress = BIND_LISTENER(&CSpaceGUIDesign::onCopy, this);
-			
+
 			btn = m_toolBar->addButton(L"Paste", GUI::ESystemIcon::Paste);
 			btn->OnPress = BIND_LISTENER(&CSpaceGUIDesign::onPaste, this);
-			
+
 			m_toolBar->addSpace();
 			btn = m_toolBar->addButton(L"Setting", GUI::ESystemIcon::Setting, true);
 			m_canvasSettingMenu = new GUI::CMenu(window->getCanvas());
 			m_canvasSettingController = new CCanvasSettingController(editor, m_canvasSettingMenu);
 			btn->OnPress = BIND_LISTENER(&CSpaceGUIDesign::onSetting, this);
-			
+
 			m_textMousePos = new GUI::CLabel(m_toolBar);
 			m_toolBar->addControl(m_textMousePos, true);
 			m_textMousePos->setPadding(GUI::SPadding(0.0f, 3.0f, 0.0f, 0.0f));
@@ -189,24 +190,28 @@ namespace Skylicht
 
 					CGUIDesignController::getInstance()->rebuildGUIHierachy();
 
-					// reset view
-					m_guiScale = 1.0f;
-					m_viewX = 0.0f;
-					m_viewY = 0.0f;
-
-					float dx = 0.0f;
-					float dy = 0.0f;
-					m_topRuler->setPosition(-(m_viewX * m_guiScale + dx));
-					m_leftRuler->setPosition(-(m_viewY * m_guiScale + dy));
-
-					canvas->getRootElement()->setPosition(
-						core::vector3df(
-							m_viewX + dx / m_guiScale,
-							m_viewY + dy / m_guiScale,
-							0.0f)
-					);
+					resetView(canvas);
 				}
 			}
+		}
+
+		void CSpaceGUIDesign::resetView(CCanvas* canvas)
+		{
+			m_guiScale = 1.0f;
+			m_viewX = 0.0f;
+			m_viewY = 0.0f;
+
+			float dx = 0.0f;
+			float dy = 0.0f;
+			m_topRuler->setPosition(-(m_viewX * m_guiScale + dx));
+			m_leftRuler->setPosition(-(m_viewY * m_guiScale + dy));
+
+			canvas->getRootElement()->setPosition(
+				core::vector3df(
+					m_viewX + dx / m_guiScale,
+					m_viewY + dy / m_guiScale,
+					0.0f)
+			);
 		}
 
 		void CSpaceGUIDesign::onKeyPressed(GUI::CBase* base, int key, bool down)
@@ -477,17 +482,58 @@ namespace Skylicht
 			m_canvasSettingMenu->open(base);
 			m_canvasSettingController->onShow();
 		}
-	
+
 		void CSpaceGUIDesign::onNew(GUI::CBase* base)
 		{
-			
+			CGUIDesignController* guiController = CGUIDesignController::getInstance();
+			if (guiController->needSave())
+			{
+				const std::string& path = guiController->getSaveGUIPath();
+				std::string name = CPath::getFileName(path);
+				if (name.empty())
+					name = "UntitledGUI.gui";
+
+				GUI::CMessageBox* msgBox = new GUI::CMessageBox(m_window->getCanvas(), GUI::CMessageBox::YesNoCancel);
+				msgBox->setMessage("Save changes (GUI) before new GUI?", name);
+				msgBox->OnYes = [&, &p = path, controller = guiController](GUI::CBase* button) {
+					if (p.empty())
+					{
+						std::string assetFolder = CAssetManager::getInstance()->getAssetFolder();
+						GUI::COpenSaveDialog* dialog = new GUI::COpenSaveDialog(m_window->getCanvas(), GUI::COpenSaveDialog::Save, assetFolder.c_str(), assetFolder.c_str(), "scene;*");
+						dialog->OnSave = [&, controller = controller](std::string path)
+							{
+								controller->save(path.c_str());
+								newGUI();
+							};
+					}
+					else
+					{
+						controller->save(path.c_str());
+						newGUI();
+					}
+					};
+				msgBox->OnNo = [&](GUI::CBase* button) {
+					newGUI();
+					};
+			}
 		}
-		
+
+		void CSpaceGUIDesign::newGUI()
+		{
+			CGameObject* canvasObj = m_scene->searchObjectInChild(L"GUICanvas");
+			CCanvas* canvas = canvasObj->getComponent<CCanvas>();
+			canvas->removeAllElement();
+			m_gizmos->onRemove();
+
+			CGUIDesignController::getInstance()->rebuildGUIHierachy();
+			resetView(canvas);
+		}
+
 		void CSpaceGUIDesign::onSave(GUI::CBase* base)
 		{
 			CEditor::getInstance()->onSaveGUICanvas();
 		}
-	
+
 		void CSpaceGUIDesign::onCopy(GUI::CBase* base)
 		{
 			CGUIDesignController::getInstance()->onCopy();
@@ -497,7 +543,7 @@ namespace Skylicht
 		{
 			CGUIDesignController::getInstance()->onPaste();
 		}
-	
+
 		void CSpaceGUIDesign::onRender(GUI::CBase* base)
 		{
 			// flush 2d gui
