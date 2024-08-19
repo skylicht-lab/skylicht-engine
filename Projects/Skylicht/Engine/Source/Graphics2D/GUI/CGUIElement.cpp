@@ -517,4 +517,9 @@ namespace Skylicht
 		}
 		return false;
 	}
+
+	CGUIElement* CGUIElement::getGUIByPath(const char* path)
+	{
+		return m_canvas->getGUIByPath(this, path);
+	}
 }

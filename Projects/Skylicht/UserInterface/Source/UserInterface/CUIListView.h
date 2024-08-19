@@ -63,6 +63,15 @@ namespace Skylicht
 
 			bool removeItem(CGUIElement* item);
 
+			void clear();
+
+			inline int getItemCount()
+			{
+				return (int)m_items.size();
+			}
+
+			CGUIElement* getItem(int id);
+
 			virtual void update();
 
 			virtual void onPointerDown(float pointerX, float pointerY);
