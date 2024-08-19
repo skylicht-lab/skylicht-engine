@@ -5,11 +5,12 @@
 #include "AudioStream/CZipAudioStreamFactory.h"
 #include "AudioStream/CZipAudioFileStream.h"
 
+#include "UserInterface/CUIButton.h"
+#include "UserInterface/CUIListView.h"
+
 #include "CScroller.h"
 #include "CScrollerController.h"
 #include "CLocalize.h"
-#include "CButton.h"
-#include "CList.h"
 
 #define MAX_STATE 4
 
@@ -58,6 +59,8 @@ protected:
 	CGlyphFont* m_textSmallFont;
 
 	CCanvas* m_canvas;
+	UI::CUIContainer* m_uiContainer;
+
 	CGUISprite* m_iconSprite;
 	CGUISprite* m_iconPeople;
 	CGUIImage* m_backgroundImage;
@@ -70,15 +73,15 @@ protected:
 	std::vector<CScroller*> m_scrollers;
 	CScrollerController* m_controller;
 
-	CList* m_list;
+	UI::CUIListView* m_list;
 
-	CButton* m_spin;
-	CButton* m_stop;
-	CButton* m_accept;
-	CButton* m_ignore;
+	UI::CUIButton* m_spin;
+	UI::CUIButton* m_stop;
+	UI::CUIButton* m_accept;
+	UI::CUIButton* m_ignore;
 
-	CButton* m_left;
-	CButton* m_right;
+	UI::CUIButton* m_left;
+	UI::CUIButton* m_right;
 
 	Audio::CAudioEmitter* m_musicBG;
 	Audio::CAudioEmitter* m_soundTada;
@@ -130,13 +133,13 @@ public:
 
 protected:
 
-	void onSpinClick();
+	void onSpinClick(UI::CUIBase* base);
 
-	void onStopClick();
+	void onStopClick(UI::CUIBase* base);
 
-	void onAcceptClick();
+	void onAcceptClick(UI::CUIBase* base);
 
-	void onIgnoreClick();
+	void onIgnoreClick(UI::CUIBase* base);
 
 public:
 

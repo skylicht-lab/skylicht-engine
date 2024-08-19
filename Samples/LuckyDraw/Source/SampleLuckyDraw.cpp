@@ -7,6 +7,8 @@
 #include "CViewInit.h"
 #include "CLocalize.h"
 
+#include "UserInterface/CUIEventManager.h"
+
 void installApplication(const std::vector<std::string>& argv)
 {
 	SampleLuckyDraw* app = new SampleLuckyDraw();
@@ -17,6 +19,7 @@ SampleLuckyDraw::SampleLuckyDraw()
 {
 	CContext::createGetInstance();
 	CLocalize::createGetInstance();
+	UI::CUIEventManager::createGetInstance();
 	CViewManager::createGetInstance()->initViewLayer(1);
 	CLightmapper::createGetInstance();
 }
@@ -24,6 +27,7 @@ SampleLuckyDraw::SampleLuckyDraw()
 SampleLuckyDraw::~SampleLuckyDraw()
 {
 	CViewManager::releaseInstance();
+	UI::CUIEventManager::releaseInstance();
 	CLocalize::releaseInstance();
 	CContext::releaseInstance();
 	CLightmapper::releaseInstance();

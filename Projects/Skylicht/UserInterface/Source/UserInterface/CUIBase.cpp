@@ -48,7 +48,7 @@ namespace Skylicht
 		CUIBase::~CUIBase()
 		{
 			CUIEventManager* eventMgr = CUIEventManager::getInstance();
-			if (eventMgr->getFocus() == this)
+			if (eventMgr && eventMgr->getFocus() == this)
 				eventMgr->setFocus(NULL);
 
 			for (int i = 0, n = (int)EMotionEvent::NumEvent; i < n; i++)
