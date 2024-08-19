@@ -347,6 +347,8 @@ namespace Skylicht
 
 		bool isChild(CGUIElement* e);
 
+		CGUIElement* getGUIByPath(const char* path);
+
 		DECLARE_GETTYPENAME(CGUIElement)
 
 		virtual CObjectSerializable* createSerializable();

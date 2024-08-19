@@ -20,6 +20,11 @@ protected:
 	std::vector<UI::CUIButton*> m_listUniformBtn;
 	CCanvas* m_canvas;
 
+	std::string m_tab;
+
+	std::vector<ITexture*> m_itemImage;
+	std::vector<UI::CUIButton*> m_listItemsBtn;
+
 public:
 	CViewDemo();
 
@@ -35,11 +40,21 @@ public:
 
 	virtual void onPostRender();
 
+	virtual void onData();
+
 protected:
 
 	void onGUI();
 
-	void addListIconItem(SFrame* frame, const char* name);
+	void onChangeTab();
 
-	void onChangeUniform(UI::CUIBase* btn, const char* name);
+	void addRandomItem(int count);
+
+	void addTabItem(SFrame* frame, const char* name);
+
+	void onSelectTab(UI::CUIBase* btn, const char* name);
+
+	void onSelectItem(UI::CUIBase* btn);
+
+	void selectItem(UI::CUIButton* btn);
 };

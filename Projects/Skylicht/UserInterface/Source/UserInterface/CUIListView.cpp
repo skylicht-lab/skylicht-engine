@@ -98,6 +98,26 @@ namespace Skylicht
 			return false;
 		}
 
+		void CUIListView::clear()
+		{
+			auto i = m_items.begin(), end = m_items.end();
+			while (i != end)
+			{
+				CGUIElement* item = (*i);
+				m_container->removeChildsByGUI(item);
+				item->remove();
+				++i;
+			}
+			m_items.clear();
+		}
+
+		CGUIElement* CUIListView::getItem(int id)
+		{
+			if (id < 0 || id >= m_items.size())
+				return NULL;
+			return m_items[id];
+		}
+
 		void CUIListView::onPointerDown(float pointerX, float pointerY)
 		{
 			CUIBase::onPointerDown(pointerX, pointerY);

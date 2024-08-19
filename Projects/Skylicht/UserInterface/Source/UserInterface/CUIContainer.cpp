@@ -131,10 +131,10 @@ namespace Skylicht
 
 			while (stack.size() > 0)
 			{
-				CGUIElement* gui = stack.top();
+				element = stack.top();
 				stack.pop();
 
-				CUIBase* base = getChildByGUI(gui);
+				CUIBase* base = getChildByGUI(element);
 				if (base)
 					base->remove();
 
