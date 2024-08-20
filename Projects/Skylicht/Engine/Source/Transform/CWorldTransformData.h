@@ -63,6 +63,8 @@ namespace Skylicht
 			return World.getTranslation();
 		}
 
+		void attachParent(CWorldTransformData* parent);
+
 		DECLARE_GETTYPENAME(CWorldTransformData)
 	};
 
