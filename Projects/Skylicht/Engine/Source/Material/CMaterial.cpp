@@ -509,7 +509,6 @@ namespace Skylicht
 				if (uniform != NULL)
 				{
 					int textureSlot = (int)uniform->Value[0];
-
 					ITexture*& texture = m_resourceTexture[textureSlot];
 
 					// drop current holder
@@ -546,6 +545,66 @@ namespace Skylicht
 					// hold this texture
 					if (texture != NULL)
 						texture->grab();
+				}
+			}
+		}
+	}
+
+	void CMaterial::unloadDefaultTexture()
+	{
+		CTextureManager* textureManager = CTextureManager::getInstance();
+
+		if (m_shader != NULL)
+		{
+			for (int i = 0, n = m_shader->getNumResource(); i < n; i++)
+			{
+				CShader::SResource* r = m_shader->getResouceInfo(i);
+
+				SUniform* uniform = m_shader->getFSUniform(r->Name.c_str());
+				if (uniform != NULL)
+				{
+					int textureSlot = (int)uniform->Value[0];
+					ITexture*& texture = m_resourceTexture[textureSlot];
+
+					// drop current holder
+					if (texture != NULL)
+					{
+						texture->drop();
+						if (r->Type == CShader::Texture)
+						{
+							textureManager->removeTexture(texture);
+						}
+						else if (r->Type == CShader::CubeTexture)
+						{
+							// texture = textureManager->getCubeTexture( ... );
+						}
+						texture = NULL;
+					}
+				}
+			}
+		}
+	}
+
+	void CMaterial::unloadUniformTexture()
+	{
+		if (m_shader == NULL)
+			return;
+
+		CTextureManager* textureManager = CTextureManager::getInstance();
+
+		for (int i = 0, n = (int)m_uniformTextures.size(); i < n; i++)
+		{
+			SUniformTexture* textureUI = m_uniformTextures[i];
+			SUniform* uniform = m_shader->getFSUniform(textureUI->Name.c_str());
+
+			if (uniform != NULL)
+			{
+				int textureSlot = (int)uniform->Value[0];
+				if (textureSlot < MATERIAL_MAX_TEXTURES && m_textures[textureSlot])
+				{
+					textureManager->removeTexture(m_textures[textureSlot]);
+					m_textures[textureSlot] = NULL;
+					textureUI->Texture = NULL;
 				}
 			}
 		}

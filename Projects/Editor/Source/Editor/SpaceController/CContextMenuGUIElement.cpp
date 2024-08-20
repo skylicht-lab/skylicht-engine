@@ -70,6 +70,7 @@ namespace Skylicht
 			addMenu->addItem(L"UI List");
 			addMenu->addItem(L"UI Checkbox");
 			addMenu->addItem(L"UI Switch");
+			addMenu->addItem(L"UI ProgressBar");
 			addMenu->OnCommand = BIND_LISTENER(&CContextMenuGUIElement::OnContextMenuAddCommand, this);
 		}
 

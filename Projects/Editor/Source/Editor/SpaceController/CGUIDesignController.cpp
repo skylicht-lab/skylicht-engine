@@ -289,6 +289,39 @@ namespace Skylicht
 			{
 
 			}
+			else if (command == L"UI ProgressBar")
+			{
+				r.LowerRightCorner.X = 220.0f;
+				r.LowerRightCorner.Y = 45.0f;
+
+				nameHint = L"Progress";
+				newNode = parentNode->getCanvas()->createElement(parentNode, r);
+
+				CGUIFitSprite* bg = parentNode->getCanvas()->createFitSprite(newNode, r, NULL);
+				bg->setName(L"Background");
+				bg->setFrameSource(
+					"SampleGUI/SampleGUI.spritedata",
+					"loading-background",
+					"SampleGUI/!Sprites/loading-background.png");
+				bg->setDock(EGUIDock::DockFill);
+				bg->setAnchor(CGUIFitSprite::AnchorAll, 15.0f, 15.0f, 15.0f, 15.0f);
+
+				r.UpperLeftCorner.X = 0.0f;
+				r.UpperLeftCorner.Y = 0.0f;
+				r.LowerRightCorner.X = 110.0f;
+				CGUIMask* mask = parentNode->getCanvas()->createMask(newNode, r);
+				mask->setName(L"Mask");
+
+				CGUIFitSprite* progress = parentNode->getCanvas()->createFitSprite(newNode, r, NULL);
+				progress->setName(L"Loading");
+				progress->setDock(EGUIDock::DockFill);
+				progress->setFrameSource(
+					"SampleGUI/SampleGUI.spritedata",
+					"loading",
+					"SampleGUI/!Sprites/loading.png");
+				progress->setAnchor(CGUIFitSprite::AnchorAll, 15.0f, 15.0f, 15.0f, 15.0f);
+				progress->setMaterialSource("SampleGUI/Textures/ProgressBar.mat");
+			}
 
 			if (newNode)
 			{

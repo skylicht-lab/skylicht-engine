@@ -192,7 +192,11 @@ namespace Skylicht
 
 		void updateRectBuffer(video::S3DVertex* vtx, const core::rectf& r, const core::matrix4& mat);
 
-		void updateRectTexcoordBuffer(video::S3DVertex* vtx, const core::rectf& r, float texWidth, float texHeight, SModuleRect* moduleRect);
+		void updateRectTexcoordBuffer(
+			video::S3DVertex* vtx,
+			const core::rectf& r, float texWidth, float texHeight,
+			const core::rectf& drawRect, const core::rectf& rect, float w, float h,
+			SModuleRect* moduleRect);
 	};
 
 }
