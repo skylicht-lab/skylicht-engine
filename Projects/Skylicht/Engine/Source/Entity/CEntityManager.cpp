@@ -270,6 +270,9 @@ namespace Skylicht
 				}
 				else
 				{
+					if (world->ParentIndex >= 0)
+						world->Parent = GET_ENTITY_DATA(m_entities[world->ParentIndex], CWorldTransformData);
+
 					if (world->Parent)
 						world->Depth = world->Parent->Depth + 1;
 					else

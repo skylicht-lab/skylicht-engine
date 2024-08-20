@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CWorldTransformData.h"
+#include "Entity/CEntityManager.h"
 
 namespace Skylicht
 {
@@ -68,5 +69,12 @@ namespace Skylicht
 
 		HasChanged = true;
 		return true;
+	}
+
+	void CWorldTransformData::attachParent(CWorldTransformData* parent)
+	{
+		AttachParentIndex = parent->EntityIndex;
+		HasChanged = true;
+		Entity->getEntityManager()->notifyUpdateSortEntities();
 	}
 }

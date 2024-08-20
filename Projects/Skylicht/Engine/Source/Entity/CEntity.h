@@ -70,6 +70,11 @@ namespace Skylicht
 
 		IEntityData* addDataByActivator(const char* dataType);
 
+		inline CEntityManager* getEntityManager()
+		{
+			return m_mgr;
+		}
+
 		inline int getDataCount()
 		{
 			return MAX_ENTITY_DATA;
