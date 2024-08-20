@@ -1,0 +1,30 @@
+<shaderConfig name="ProgressBarUI" baseShader="TRANSPARENT_ALPHA_CHANNEL">
+	<uniforms>
+		<vs>
+			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+			<uniform name="uUVScale" type="MATERIAL_PARAM" valueIndex="0" value="1.0, 1.0, 0.0, 0.0" float="4"/>
+			<uniform name="uTime" type="TIME" value="4.0, 0.0, 0.0, 0.0" float="4"/>
+			<uniform name="uUVTiling" type="MATERIAL_PARAM" valueIndex="2" value="4.0, 1.0, 1.0, -1.0" float="4"/>
+		</vs>
+		<fs>
+			<uniform name="uTexDiffuse" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
+			<uniform name="uTexTiling" type="DEFAULT_VALUE" value="1" float="1" directX="false"/>
+			<uniform name="uColor" type="MATERIAL_PARAM" valueIndex="1" value="1.0, 1.0, 1.0, 1.0" float="4"/>
+		</fs>
+	</uniforms>
+	<resources>
+	</resources>
+	<customUI>
+		<ui control="UIGroup" name="Texture">
+			<ui control="UITexture" name="uTexDiffuse" autoReplace="_diff.;_Diffuse.;_D."/>
+			<ui control="UITexture" name="uTexTiling" autoReplace="_A."/>
+		</ui>
+		<ui control="UIGroup" name="Customize">
+			<ui control="UIColor" name="uColor"/>
+			<ui control="UIFloat4" name="uUVScale" elementName="UV ScaleX;UV ScaleY;UV OffsetX;UV OffsetY"/>
+			<ui control="UIFloat4" name="uUVTiling" elementName="TileX;TileY;Speed"/>
+		</ui>
+	</customUI>
+	<shader type="GLSL" vs="GLSL/ProgressBarUIVS.glsl" fs="GLSL/ProgressBarUIFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/ProgressBarUIVS.hlsl" fs="HLSL/ProgressBarUIFS.hlsl"/>
+</shaderConfig>

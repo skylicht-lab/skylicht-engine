@@ -31,6 +31,7 @@ void installApplication(const std::vector<std::string>& argv)
 {
 	SkylichtEditor* app = new SkylichtEditor();
 	getApplication()->registerAppEvent("SkylichtEditor", app);
+	// getApplication()->showDebugConsole();
 }
 
 SkylichtEditor::SkylichtEditor() :
