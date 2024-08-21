@@ -110,7 +110,7 @@ namespace Skylicht
 							}
 							else
 							{
-								// no select gui							
+								// no select gui
 								controller->deselectAllOnHierachy();
 								selection->clear();
 							}
