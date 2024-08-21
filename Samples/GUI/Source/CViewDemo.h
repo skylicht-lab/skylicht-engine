@@ -8,6 +8,8 @@
 #include "UserInterface/CUIGridView.h"
 #include "UserInterface/CUIButton.h"
 
+#include "Tween/CTweenManager.h"
+
 class CViewDemo : public CView
 {
 protected:
@@ -15,15 +17,21 @@ protected:
 	UI::CUIListView* m_listTab;
 	UI::CUIGridView* m_listItems;
 
-	CGUIText* m_txtTitle;
+	UI::CUIButton* m_btnShowHideItems;
+	bool m_showItems;
 
-	std::vector<UI::CUIButton*> m_listUniformBtn;
+	CGUIText* m_txtTitle;
+	CGUIElement* m_itemsPanel;
+
+	std::vector<UI::CUIButton*> m_listTabBtn;
 	CCanvas* m_canvas;
 
 	std::string m_tab;
 
 	std::vector<ITexture*> m_itemImage;
 	std::vector<UI::CUIButton*> m_listItemsBtn;
+
+	CTween* m_tweenShowHide;
 
 public:
 	CViewDemo();
@@ -57,4 +65,6 @@ protected:
 	void onSelectItem(UI::CUIBase* btn);
 
 	void selectItem(UI::CUIButton* btn);
+
+	void onShowHidePanel(UI::CUIBase* btn);
 };

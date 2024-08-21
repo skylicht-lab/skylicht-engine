@@ -71,7 +71,20 @@ namespace Skylicht
 			m_inputHeight->setValue(1080.0f, false);
 			m_inputHeight->OnTextChanged = BIND_LISTENER(&CCanvasSettingController::onChanged, this);
 			boxLayout->endVertical();
-			
+
+			boxLayout->addSpace(5.0f);
+
+			layout = boxLayout->beginVertical();
+			label = new GUI::CLabel(layout);
+			label->setPadding(GUI::SMargin(0.0f, 2.0, 0.0f, 0.0f));
+			label->setString("Draw GUI outline");
+			label->setTextAlignment(GUI::TextRight);
+
+			GUI::CBase* checkBoxContainer = new GUI::CBase(layout);
+			m_checkboxOutline = new GUI::CCheckBox(checkBoxContainer);
+			m_checkboxOutline->OnChanged = BIND_LISTENER(&CCanvasSettingController::onCheckBoxOutline, this);
+			boxLayout->endVertical();
+
 			boxLayout->addSpace(20.0f);
 
 			layout = boxLayout->beginVertical();
@@ -101,15 +114,20 @@ namespace Skylicht
 		{
 			CScene* scene = CSceneController::getInstance()->getScene();
 			CGameObject* canvasObj = scene->searchObjectInChild(L"GUICanvas");
-			
-			CCanvas* canvas = canvasObj->getComponent<CCanvas>();
-			CGUIElement* root = canvas->getRootElement();
-			float w = root->getWidth();
-			float h = root->getHeight();
-			
-			m_inputWidth->setValue(w, false);
-			m_inputHeight->setValue(h, false);
-			
+			if (canvasObj)
+			{
+				CCanvas* canvas = canvasObj->getComponent<CCanvas>();
+				if (canvas)
+				{
+					CGUIElement* root = canvas->getRootElement();
+					float w = root->getWidth();
+					float h = root->getHeight();
+
+					m_inputWidth->setValue(w, false);
+					m_inputHeight->setValue(h, false);
+					m_checkboxOutline->setToggle(canvas->DrawOutline);
+				}
+			}
 			enableTabGroup();
 		}
 
@@ -119,14 +137,14 @@ namespace Skylicht
 			tabGroup.add(m_inputWidth);
 			tabGroup.add(m_inputHeight);
 		}
-		
+
 		void CCanvasSettingController::clearTabGroup()
 		{
 			GUI::CTabableGroup& tabGroup = m_menu->getCanvas()->TabableGroup;
 			tabGroup.remove(m_inputWidth);
 			tabGroup.remove(m_inputHeight);
 		}
-	
+
 		void CCanvasSettingController::onCancel(GUI::CBase* base)
 		{
 			m_menu->close();
@@ -137,22 +155,39 @@ namespace Skylicht
 		{
 			float w = m_inputWidth->getValue();
 			float h = m_inputHeight->getValue();
-			
+
 			CScene* scene = CSceneController::getInstance()->getScene();
 			CGameObject* canvasObj = scene->searchObjectInChild(L"GUICanvas");
-			
+
 			CCanvas* canvas = canvasObj->getComponent<CCanvas>();
 			CGUIElement* root = canvas->getRootElement();
-			
+
 			root->setRect(core::rectf(0.0f, 0.0f, w, h));
-			
+
 			m_menu->close();
 			clearTabGroup();
 		}
 
 		void CCanvasSettingController::onChanged(GUI::CBase* base)
 		{
-			
+			CScene* scene = CSceneController::getInstance()->getScene();
+			CGameObject* canvasObj = scene->searchObjectInChild(L"GUICanvas");
+
+			CCanvas* canvas = canvasObj->getComponent<CCanvas>();
+		}
+
+		void CCanvasSettingController::onCheckBoxOutline(GUI::CBase* base)
+		{
+			CScene* scene = CSceneController::getInstance()->getScene();
+			CGameObject* canvasObj = scene->searchObjectInChild(L"GUICanvas");
+			if (canvasObj)
+			{
+				CCanvas* canvas = canvasObj->getComponent<CCanvas>();
+				if (canvas)
+				{
+					canvas->DrawOutline = m_checkboxOutline->getToggle();
+				}
+			}
 		}
 	}
 }

@@ -11,14 +11,23 @@ CViewDemo::CViewDemo() :
 	m_uiContainer(NULL),
 	m_listTab(NULL),
 	m_listItems(NULL),
-	m_canvas(NULL)
+	m_canvas(NULL),
+	m_txtTitle(NULL),
+	m_btnShowHideItems(NULL),
+	m_itemsPanel(NULL),
+	m_showItems(true),
+	m_tweenShowHide(NULL)
 {
 
 }
 
 CViewDemo::~CViewDemo()
 {
-
+	if (m_tweenShowHide)
+	{
+		m_tweenShowHide->stop();
+		m_tweenShowHide = NULL;
+	}
 }
 
 void CViewDemo::onInit()
@@ -38,20 +47,15 @@ void CViewDemo::onInit()
 	m_canvas->applyScaleGUI(1.0f);
 	m_canvas->setSortDepth(0);
 
+	// Apply mask for panel items
+	CGUIMask* mask = dynamic_cast<CGUIMask*>(m_canvas->getGUIByPath("Canvas/Container/MaskItem"));
+	m_itemsPanel = m_canvas->getGUIByPath("Canvas/Container/Items");
+	if (mask && m_itemsPanel)
+		m_itemsPanel->setMask(mask);
+
 	m_uiContainer = leftPanel->addComponent<UI::CUIContainer>();
 
 	m_txtTitle = dynamic_cast<CGUIText*>(m_canvas->getGUIByPath("Canvas/Container/Items/txtTabName"));
-
-	// LIST: ITEMS
-	m_listItems = new UI::CUIGridView(m_uiContainer,
-		m_canvas->getGUIByPath("Canvas/Container/Items/ListItems"),
-		m_canvas->getGUIByPath("Canvas/Container/Items/ListItems/Item"));
-
-	CTextureManager* textureMgr = CTextureManager::getInstance();
-	m_itemImage.push_back(textureMgr->getTexture("SampleGUIDemo/Demo/3d-cube-0.png"));
-	m_itemImage.push_back(textureMgr->getTexture("SampleGUIDemo/Demo/3d-cube-1.png"));
-	m_itemImage.push_back(textureMgr->getTexture("SampleGUIDemo/Demo/3d-cube-2.png"));
-	m_itemImage.push_back(textureMgr->getTexture("SampleGUIDemo/Demo/3d-cube-3.png"));
 
 	// CATEGORY: TAB
 	m_listTab = new UI::CUIListView(m_uiContainer,
@@ -66,6 +70,25 @@ void CViewDemo::onInit()
 		addTabItem(spriteFrame->getFrameByName("ic-pant"), "Pant");
 		addTabItem(spriteFrame->getFrameByName("ic-heels"), "Heels");
 	}
+
+	// LIST: ITEMS
+	m_listItems = new UI::CUIGridView(m_uiContainer,
+		m_canvas->getGUIByPath("Canvas/Container/Items/ListItems"),
+		m_canvas->getGUIByPath("Canvas/Container/Items/ListItems/Item"));
+
+	CTextureManager* textureMgr = CTextureManager::getInstance();
+	m_itemImage.push_back(textureMgr->getTexture("SampleGUIDemo/Demo/3d-cube-0.png"));
+	m_itemImage.push_back(textureMgr->getTexture("SampleGUIDemo/Demo/3d-cube-1.png"));
+	m_itemImage.push_back(textureMgr->getTexture("SampleGUIDemo/Demo/3d-cube-2.png"));
+	m_itemImage.push_back(textureMgr->getTexture("SampleGUIDemo/Demo/3d-cube-3.png"));
+
+	// BUTTON: Show/Hide
+	m_btnShowHideItems = new UI::CUIButton(m_uiContainer, m_canvas->getGUIByPath("Canvas/Container/Items/btnShowHide"));
+	m_btnShowHideItems->addMotion(UI::EMotionEvent::PointerHover, new UI::CScaleMotion(1.2f, 1.2f, 1.0f));
+	m_btnShowHideItems->addMotion(UI::EMotionEvent::PointerOut, new UI::CScaleMotion());
+	m_btnShowHideItems->addMotion(UI::EMotionEvent::PointerDown, new UI::CScaleMotion(0.9f, 0.9f, 0.9f))->setTime(0.0f, 50.0f);
+	m_btnShowHideItems->addMotion(UI::EMotionEvent::PointerUp, new UI::CScaleMotion())->setTime(0.0f, 100.0f);
+	m_btnShowHideItems->OnPressed = std::bind(&CViewDemo::onShowHidePanel, this, std::placeholders::_1);
 }
 
 void CViewDemo::onDestroy()
@@ -110,10 +133,10 @@ void CViewDemo::addTabItem(SFrame* frame, const char* name)
 					}
 				};
 
-			if (m_listUniformBtn.size() == 0)
+			if (m_listTabBtn.size() == 0)
 				button->setToggle(true);
 
-			m_listUniformBtn.push_back(button);
+			m_listTabBtn.push_back(button);
 		}
 	}
 }
@@ -125,7 +148,7 @@ void CViewDemo::onSelectTab(UI::CUIBase* btn, const char* name)
 
 	m_tab = name;
 
-	for (UI::CUIButton* b : m_listUniformBtn)
+	for (UI::CUIButton* b : m_listTabBtn)
 	{
 		if (b != btn)
 		{
@@ -139,6 +162,9 @@ void CViewDemo::onSelectTab(UI::CUIBase* btn, const char* name)
 
 void CViewDemo::onChangeTab()
 {
+	if (m_listItems == NULL)
+		return;
+
 	m_listItems->clear();
 	m_listItemsBtn.clear();
 
@@ -218,6 +244,66 @@ void CViewDemo::onSelectItem(UI::CUIBase* btn)
 			b->setToggle(false);
 			b->setEnable(true);
 		}
+	}
+}
+
+void CViewDemo::onShowHidePanel(UI::CUIBase* btn)
+{
+	m_showItems = !m_showItems;
+
+	// update margin because m_itemsPanel dock: LEFT
+	float showMLeft = 95.0f;
+	float hideMLeft = -200.000f;
+	float time = 250.0f;
+
+	SMargin m = m_itemsPanel->getMargin();
+
+	CGUISprite* btnIcon = NULL;
+	CSpriteFrame* spriteFrame = CSpriteManager::getInstance()->loadSprite("SampleGUI/SampleGUI.spritedata");
+	if (spriteFrame)
+		btnIcon = dynamic_cast<CGUISprite*>(m_btnShowHideItems->getElement()->getGUIByPath("Icon"));
+
+	if (!m_showItems)
+	{
+		if (btnIcon)
+			btnIcon->setFrame(spriteFrame->getFrameByName("triangle-r"));
+
+		// hide
+		m_tweenShowHide = new CTweenFloat(showMLeft, hideMLeft, time);
+		m_tweenShowHide->setEase(EEasingFunctions::EaseOutQuad);
+		m_tweenShowHide->OnUpdate = [&, m](CTween* tween) {
+			SMargin update = m;
+			update.Left = ((CTweenFloat*)tween)->getValue();
+			m_itemsPanel->setMargin(update);
+			m_itemsPanel->invalidate();
+			m_btnShowHideItems->setEnable(false);
+			};
+		m_tweenShowHide->OnFinish = [&](CTween* tween) {
+			m_tweenShowHide = NULL;
+			m_btnShowHideItems->setEnable(true);
+			};
+		CTweenManager::getInstance()->addTween(m_tweenShowHide);
+	}
+	else
+	{
+		if (btnIcon)
+			btnIcon->setFrame(spriteFrame->getFrameByName("triangle-l"));
+
+		// show
+		m_tweenShowHide = new CTweenFloat(hideMLeft, showMLeft, time);
+		m_tweenShowHide->setEase(EEasingFunctions::EaseOutQuad);
+		m_tweenShowHide->OnUpdate = [&, m](CTween* tween) {
+			SMargin update = m;
+			update.Left = ((CTweenFloat*)tween)->getValue();
+			m_itemsPanel->setMargin(update);
+			m_itemsPanel->invalidate();
+			m_btnShowHideItems->setEnable(false);
+			};
+		m_tweenShowHide->OnFinish = [&](CTween* tween) {
+			m_tweenShowHide = NULL;
+			m_btnShowHideItems->setEnable(true);
+			};
+		CTweenManager::getInstance()->addTween(m_tweenShowHide);
 	}
 }
 

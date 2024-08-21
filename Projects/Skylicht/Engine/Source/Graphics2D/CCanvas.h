@@ -46,18 +46,19 @@ namespace Skylicht
 	{
 	protected:
 		core::rectf m_rect;
-
 		core::rectf m_defaultRect;
 
 		CGUIElement* m_root;
 
 		int m_sortDepth;
-
+		float m_scaleGUI;
+		bool m_haveScaleGUI;
 		bool m_enable3DBillboard;
 
 		core::matrix4 m_renderWorldTransform;
 
 		CCamera* m_renderCamera;
+		CGUIMask* m_currentMask;
 
 		// ECS System
 		CEntityPrefab* m_entityMgr;
@@ -70,6 +71,7 @@ namespace Skylicht
 	public:
 
 		bool IsInEditor;
+		bool DrawOutline;
 
 	public:
 		CCanvas();
@@ -121,6 +123,8 @@ namespace Skylicht
 		}
 
 		void applyScaleGUI(float widthOrHeight = 1.0f);
+
+		void resetScaleGUI();
 
 		const core::vector3df& getRootScale();
 

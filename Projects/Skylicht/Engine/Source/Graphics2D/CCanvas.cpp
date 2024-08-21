@@ -34,9 +34,13 @@ namespace Skylicht
 {
 	CCanvas::CCanvas() :
 		m_sortDepth(0),
+		m_scaleGUI(1.0f),
+		m_haveScaleGUI(false),
 		m_enable3DBillboard(false),
 		m_renderCamera(NULL),
-		IsInEditor(false)
+		m_currentMask(NULL),
+		IsInEditor(false),
+		DrawOutline(false)
 	{
 		CGraphics2D* g = CGraphics2D::getInstance();
 		float w = (float)g->getScreenSize().Width;
@@ -102,6 +106,10 @@ namespace Skylicht
 
 			// update the root rect
 			m_rect = core::rectf(0.0f, 0.0f, w, h);
+			m_root->setRect(m_rect);
+
+			if (m_haveScaleGUI)
+				applyScaleGUI(m_scaleGUI);
 		}
 	}
 
@@ -160,41 +168,52 @@ namespace Skylicht
 	void CCanvas::render(CCamera* camera)
 	{
 		m_renderCamera = camera;
+		m_currentMask = NULL;
 
 		// render
 		std::stack<CGUIElement*> renderEntity;
 		renderEntity.push(m_root);
 
+		CGUIMask* parentMask = NULL;
+		CGUIElement* entity = NULL;
+		CGUIElement* parent = NULL;
+
 		while (renderEntity.size() > 0)
 		{
-			CGUIElement* entity = renderEntity.top();
+			entity = renderEntity.top();
 			renderEntity.pop();
 
-			// skip the invisible
 			if (entity->isVisible() == false)
 				continue;
 
-			// update the entity
 			entity->update(camera);
 
-			// apply mask
-			entity->applyCurrentMask(entity->getMask());
-
-			// try set the parrent mask
-			CGUIElement* parent = entity->getParent();
+			parent = entity->getParent();
 			if (parent != NULL)
 			{
-				CGUIMask* mask = parent->getMask();
-				if (mask == NULL)
-					mask = parent->getCurrentMask();
-
-				if (mask != NULL)
-					entity->applyCurrentMask(mask);
+				parentMask = parent->getMask();
+				if (parentMask == NULL)
+					parentMask = parent->getCurrentMask();
 			}
+
+			if (entity->getMask() != NULL)
+				entity->applyCurrentMask(entity->getMask());
+			else
+				entity->applyCurrentMask(parentMask);
 
 			CGUIMask* mask = entity->getCurrentMask();
 			if (mask != NULL)
+			{
+				if (m_currentMask != mask)
+				{
+					// clear last mask to apply new mask
+					if (m_currentMask)
+						m_currentMask->clearMask();
+					m_currentMask = mask;
+				}
+				mask->applyParentClip(parentMask);
 				mask->beginMaskTest(camera);
+			}
 
 			entity->render(camera);
 
@@ -349,6 +368,8 @@ namespace Skylicht
 			return;
 
 		float s = core::clamp(widthOrHeight, 0.0f, 1.0f);
+		m_scaleGUI = s;
+		m_haveScaleGUI = true;
 
 		CGraphics2D* g = CGraphics2D::getInstance();
 		float screenW = (float)g->getScreenSize().Width;
@@ -369,6 +390,18 @@ namespace Skylicht
 
 		// apply new scale
 		m_root->setScale(core::vector3df(scale, scale, 1.0f));
+	}
+
+	void CCanvas::resetScaleGUI()
+	{
+		m_haveScaleGUI = false;
+
+		CGraphics2D* g = CGraphics2D::getInstance();
+		float w = (float)g->getScreenSize().Width;
+		float h = (float)g->getScreenSize().Height;
+		m_rect = core::rectf(0.0f, 0.0f, w, h);
+		m_root->setRect(m_rect);
+		m_root->setScale(core::vector3df(1.0f, 1.0f, 1.0f));
 	}
 
 	const core::vector3df& CCanvas::getRootScale()

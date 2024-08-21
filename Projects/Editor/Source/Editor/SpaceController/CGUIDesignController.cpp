@@ -230,6 +230,32 @@ namespace Skylicht
 				text->setTextAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
 				text->setFontSource("SampleGUI/Fonts/Roboto-Bold.font");
 			}
+			else if (command == L"UI Icon Button")
+			{
+				r.LowerRightCorner.X = 64.0f;
+				r.LowerRightCorner.Y = 64.0f;
+
+				nameHint = L"Btn";
+				newNode = parentNode->getCanvas()->createElement(parentNode, r);
+
+				CGUISprite* bg = parentNode->getCanvas()->createSprite(newNode, r, NULL);
+				bg->setName(L"Background");
+				bg->setFrameSource(
+					"SampleGUI/SampleGUI.spritedata",
+					"switch-circle-disable",
+					"SampleGUI/!Sprites/switch-circle-disable.png");
+				bg->setRect(core::rectf(0.0f, 0.0f, 46.0f, 46.0f));
+				bg->setAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
+
+				CGUISprite* icon = parentNode->getCanvas()->createSprite(newNode, r, NULL);
+				icon->setName(L"Icon");
+				icon->setFrameSource(
+					"SampleGUI/SampleGUI.spritedata",
+					"triangle-l",
+					"SampleGUI/!Sprites/triangle-l.png");
+				icon->setRect(core::rectf(0.0f, 0.0f, 14.0f, 18.0f));
+				icon->setAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
+			}
 			else if (command == L"UI Slider")
 			{
 
@@ -305,12 +331,6 @@ namespace Skylicht
 					"SampleGUI/!Sprites/loading-background.png");
 				bg->setDock(EGUIDock::DockFill);
 				bg->setAnchor(CGUIFitSprite::AnchorAll, 15.0f, 15.0f, 15.0f, 15.0f);
-
-				r.UpperLeftCorner.X = 0.0f;
-				r.UpperLeftCorner.Y = 0.0f;
-				r.LowerRightCorner.X = 110.0f;
-				CGUIMask* mask = parentNode->getCanvas()->createMask(newNode, r);
-				mask->setName(L"Mask");
 
 				CGUIFitSprite* progress = parentNode->getCanvas()->createFitSprite(newNode, r, NULL);
 				progress->setName(L"Loading");

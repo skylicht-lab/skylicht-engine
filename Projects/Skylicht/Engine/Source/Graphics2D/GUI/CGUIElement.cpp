@@ -198,7 +198,7 @@ namespace Skylicht
 		bool drawBorder = m_drawBorder;
 		SColor borderColor(100, 255, 255, 255);
 
-		if (m_canvas->IsInEditor)
+		if (m_canvas->DrawOutline)
 		{
 			drawBorder = true;
 			if (m_drawBorder)
