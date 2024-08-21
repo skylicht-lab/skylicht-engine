@@ -54,6 +54,8 @@ namespace Skylicht
 		bool m_visible;
 		bool m_enableMaterial;
 
+		int m_renderOrder;
+
 		ArrayMaterial m_materials;
 
 		int m_materialId;
@@ -156,6 +158,11 @@ namespace Skylicht
 		inline int getDepth()
 		{
 			return m_transform->Depth;
+		}
+
+		inline int getRenderOrder()
+		{
+			return m_renderOrder;
 		}
 
 		inline void setDock(EGUIDock dock)

@@ -178,6 +178,8 @@ namespace Skylicht
 		CGUIElement* entity = NULL;
 		CGUIElement* parent = NULL;
 
+		int renderOrder = 0;
+
 		while (renderEntity.size() > 0)
 		{
 			entity = renderEntity.top();
@@ -217,6 +219,9 @@ namespace Skylicht
 
 			entity->render(camera);
 
+			// update render order for UI Hitest
+			entity->m_renderOrder = renderOrder++;
+
 			if (mask != NULL)
 				mask->endMaskTest();
 
@@ -254,7 +259,7 @@ namespace Skylicht
 			up = look.crossProduct(right);
 			up.normalize();
 
-			// billboard matrix		
+			// billboard matrix
 			f32* matData = billboardMatrix.pointer();
 
 			matData[0] = right.X;

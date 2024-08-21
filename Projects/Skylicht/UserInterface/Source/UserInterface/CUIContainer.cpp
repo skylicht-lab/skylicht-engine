@@ -13,6 +13,7 @@ namespace Skylicht
 			m_enable(true),
 			m_hover(NULL),
 			m_canvas(NULL),
+			m_skip(NULL),
 			m_inMotion(false),
 			m_outMotion(false),
 			m_pointerDown(false)
@@ -232,7 +233,7 @@ namespace Skylicht
 
 				std::sort(m_raycastUIObjects.begin(), m_raycastUIObjects.end(), [](CUIBase*& a, CUIBase*& b)
 					{
-						return a->getElement()->getDepth() > b->getElement()->getDepth();
+						return a->getElement()->getRenderOrder() > b->getElement()->getRenderOrder();
 					});
 
 				if (m_hover != m_raycastUIObjects[0])
@@ -317,6 +318,7 @@ namespace Skylicht
 				m_hover->onPointerOut(x, y);
 				m_hover = NULL;
 			}
+
 			m_skip = NULL;
 			m_pointerDown = false;
 		}
