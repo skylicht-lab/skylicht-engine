@@ -354,6 +354,7 @@ namespace Skylicht
 
 			CCanvas* canvas = guiCanvas->addComponent<CCanvas>();
 			canvas->IsInEditor = true;
+			canvas->DrawOutline = true;
 
 			/*
 			CGUIRect* rect = canvas->createRect(SColor(255, 0, 0, 0));

@@ -43,45 +43,68 @@ namespace Skylicht
 
 	void CGUIMask::update(CCamera* camera)
 	{
+		updateClipRect(camera);
+	}
+
+	void CGUIMask::updateClipRect(CCamera* camera)
+	{
+		const core::rectf& r = getRect();
 		m_drawMask = false;
+
+		float z = 0.0f;
+		if (camera->getProjectionType() != CCamera::OrthoUI)
+			z = 0.1f;
+
+		m_topLeft.set(r.UpperLeftCorner.X, r.UpperLeftCorner.Y, z);
+		m_bottomRight.set(r.LowerRightCorner.X, r.LowerRightCorner.Y, z);
+
+		m_transform->World.transformVect(m_topLeft);
+		m_transform->World.transformVect(m_bottomRight);
+	}
+
+	void CGUIMask::applyParentClip(CGUIMask* parent)
+	{
+		if (parent == NULL || parent == this)
+			return;
+
+		if (m_topLeft.X < parent->m_topLeft.X)
+			m_topLeft.X = parent->m_topLeft.X;
+		if (m_topLeft.Y < parent->m_topLeft.Y)
+			m_topLeft.Y = parent->m_topLeft.Y;
+
+		if (m_bottomRight.X > parent->m_bottomRight.X)
+			m_bottomRight.X = parent->m_bottomRight.X;
+		if (m_bottomRight.Y > parent->m_bottomRight.Y)
+			m_bottomRight.Y = parent->m_bottomRight.Y;
 	}
 
 	void CGUIMask::render(CCamera* camera)
 	{
 		CGUIElement::render(camera);
-
-		if (m_drawMask == false)
-		{
-			core::rectf r = getRect();
-
-			float z = 0.0f;
-			if (camera->getProjectionType() != CCamera::OrthoUI)
-				z = 0.1f;
-
-			core::vector3df topLeft(r.UpperLeftCorner.X, r.UpperLeftCorner.Y, z);
-			core::vector3df bottomRight(r.LowerRightCorner.X, r.LowerRightCorner.Y, z);
-
-			m_transform->World.transformVect(topLeft);
-			m_transform->World.transformVect(bottomRight);
-
-			CGraphics2D* g = CGraphics2D::getInstance();
-
-			// draw depth for mask
-			g->beginDrawDepth();
-			g->draw2DRectangle(topLeft, bottomRight, SColor(255, 0, 0, 0));
-			g->endDrawDepth();
-		}
-
-		m_drawMask = true;
 	}
 
 	void CGUIMask::beginMaskTest(CCamera* camera)
 	{
 		if (m_drawMask == false)
-			render(camera);
+			drawMask(camera);
 
 		// depth test for clip mask
 		CGraphics2D::getInstance()->beginDepthTest();
+	}
+
+	void CGUIMask::drawMask(CCamera* camera)
+	{
+		if (m_drawMask == false)
+		{
+			CGraphics2D* g = CGraphics2D::getInstance();
+
+			// draw depth for mask
+			g->beginDrawDepth();
+			g->draw2DRectangle(m_topLeft, m_bottomRight, SColor(255, 0, 0, 0));
+			g->endDrawDepth();
+		}
+
+		m_drawMask = true;
 	}
 
 	void CGUIMask::endMaskTest()

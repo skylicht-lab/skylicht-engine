@@ -38,6 +38,10 @@
 		<module id="31" x="334.000000" y="246.000000" w="124.000000" h="64.000000"/>
 		<module id="32" x="460.000000" y="246.000000" w="124.000000" h="64.000000"/>
 		<module id="33" x="586.000000" y="246.000000" w="124.000000" h="64.000000"/>
+		<module id="34" x="172.000000" y="72.000000" w="19.000000" h="14.000000"/>
+		<module id="35" x="812.000000" y="0.000000" w="14.000000" h="18.000000"/>
+		<module id="36" x="828.000000" y="0.000000" w="14.000000" h="18.000000"/>
+		<module id="37" x="193.000000" y="72.000000" w="18.000000" h="14.000000"/>
 	</modules>
 	<frames>
 		<frame id="abd38ad8c2e594ed" name="button-disable" page="0">
@@ -141,6 +145,18 @@
 		</frame>
 		<frame id="dbbc6b190569ce4a" name="switch-on" page="0">
 			<fmodule id="33" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
+		</frame>
+		<frame id="5916f1c284b74f6f" name="triangle-d" page="0">
+			<fmodule id="34" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
+		</frame>
+		<frame id="f75ba76731d50f99" name="triangle-l" page="0">
+			<fmodule id="35" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
+		</frame>
+		<frame id="2812c836e798a15f" name="triangle-r" page="0">
+			<fmodule id="36" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
+		</frame>
+		<frame id="22910e3eb1f489c8" name="triangle-u" page="0">
+			<fmodule id="37" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
 	</frames>
 </sprite>

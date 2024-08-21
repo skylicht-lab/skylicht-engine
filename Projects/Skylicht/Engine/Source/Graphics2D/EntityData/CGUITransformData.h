@@ -107,6 +107,7 @@ namespace Skylicht
 		inline void setRect(const core::rectf& r)
 		{
 			Rect = r;
+			HasChanged = true;
 		}
 
 		DECLARE_GETTYPENAME(CGUITransformData)

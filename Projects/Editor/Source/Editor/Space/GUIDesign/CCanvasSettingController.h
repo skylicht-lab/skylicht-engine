@@ -39,6 +39,7 @@ namespace Skylicht
 
 			GUI::CNumberInput* m_inputWidth;
 			GUI::CNumberInput* m_inputHeight;
+			GUI::CCheckBox* m_checkboxOutline;
 
 		public:
 			CCanvasSettingController(CEditor* editor, GUI::CMenu* menu);
@@ -54,11 +55,13 @@ namespace Skylicht
 			void onOK(GUI::CBase* base);
 
 			void onChanged(GUI::CBase* base);
-			
+
+			void onCheckBoxOutline(GUI::CBase* base);
+
 		private:
-			
+
 			void enableTabGroup();
-			
+
 			void clearTabGroup();
 		};
 	}

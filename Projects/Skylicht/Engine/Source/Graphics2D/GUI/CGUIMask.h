@@ -35,6 +35,8 @@ namespace Skylicht
 		CGUIMask(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect);
 
 		bool m_drawMask;
+		core::vector3df m_topLeft;
+		core::vector3df m_bottomRight;
 
 	public:
 		virtual ~CGUIMask();
@@ -43,9 +45,22 @@ namespace Skylicht
 
 		virtual void render(CCamera* camera);
 
+		void applyParentClip(CGUIMask* parent);
+
 		void beginMaskTest(CCamera* camera);
 
+		void drawMask(CCamera* camera);
+
 		void endMaskTest();
+
+		inline void clearMask()
+		{
+			m_drawMask = false;
+		}
+
+	protected:
+
+		void updateClipRect(CCamera* camera);
 
 		DECLARE_GETTYPENAME(CGUIMask)
 	};
