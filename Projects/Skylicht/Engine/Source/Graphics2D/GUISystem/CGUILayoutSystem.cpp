@@ -215,7 +215,7 @@ namespace Skylicht
 			t->m_transformPosition.X = parentRect.UpperLeftCorner.X + (parentRect.getWidth() - t->Rect.getWidth()) * 0.5f + t->m_position.X;
 			break;
 		case EGUIHorizontalAlign::Right:
-			t->m_transformPosition.X = parentRect.LowerRightCorner.X - t->Rect.getWidth() - t->m_position.Y;
+			t->m_transformPosition.X = parentRect.LowerRightCorner.X - t->Rect.getWidth() - t->m_position.X;
 			break;
 		default:
 			break;
