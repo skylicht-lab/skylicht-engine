@@ -200,7 +200,7 @@ namespace Skylicht
 			t->m_transformPosition.Y = parentRect.UpperLeftCorner.Y + (parentRect.getHeight() - t->Rect.getHeight()) * 0.5f + t->m_position.Y;
 			break;
 		case EGUIVerticalAlign::Bottom:
-			t->m_transformPosition.Y = parentRect.LowerRightCorner.Y - t->Rect.getHeight() - t->m_position.Y;
+			t->m_transformPosition.Y = parentRect.LowerRightCorner.Y - t->Rect.getHeight() + t->m_position.Y;
 			break;
 		default:
 			break;
@@ -215,7 +215,7 @@ namespace Skylicht
 			t->m_transformPosition.X = parentRect.UpperLeftCorner.X + (parentRect.getWidth() - t->Rect.getWidth()) * 0.5f + t->m_position.X;
 			break;
 		case EGUIHorizontalAlign::Right:
-			t->m_transformPosition.X = parentRect.LowerRightCorner.X - t->Rect.getWidth() - t->m_position.X;
+			t->m_transformPosition.X = parentRect.LowerRightCorner.X - t->Rect.getWidth() + t->m_position.X;
 			break;
 		default:
 			break;
