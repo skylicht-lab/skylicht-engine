@@ -250,10 +250,10 @@ void CViewDemo::onInit()
 	float leftW = btnLeft->getWidth();
 	float leftH = btnLeft->getHeight();
 	core::rectf leftBtnSize(0.0f, 0.0f, leftW, leftH);
-	buttonY = 20.0f;
+	buttonY = -20.0f;
 
 #if defined(IOS)
-	buttonY = 100.0f;
+	buttonY = -100.0f;
 #endif
 
 	CGUIElement* buttonLeftGUI = m_canvas->createElement(leftBtnSize);
