@@ -48,6 +48,8 @@ namespace Skylicht
 
 		ArrayMaterial& loadMaterial(const char* filename, bool loadTexture, const std::vector<std::string>& textureFolders);
 
+		void unloadMaterial(const char* filename);
+
 		CMaterial* createMaterial(ArrayMaterial& materials);
 
 		void deleteMaterial(ArrayMaterial& materials, CMaterial* material);
