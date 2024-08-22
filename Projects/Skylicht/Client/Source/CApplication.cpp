@@ -368,11 +368,16 @@ namespace Skylicht
 			m_width = w;
 			m_height = h;
 
+			IrrlichtDevice* dev = getIrrlichtDevice();
+
+#ifdef __EMSCRIPTEN__
+			dev->onWindowResize((u32)w, (u32)h);
+#endif
 			// resize window
 			m_driver->OnResize(core::dimension2du((u32)w, (u32)h));
 
 			// resize mouse
-			if (getIrrlichtDevice()->isFullscreen())
+			if (dev->isFullscreen())
 			{
 				core::rect<s32> winRect(0, 0, w, h);
 				m_device->getCursorControl()->setReferenceRect(&winRect);

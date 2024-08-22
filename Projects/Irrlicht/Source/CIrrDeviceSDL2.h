@@ -94,6 +94,8 @@ namespace irr
 			return EIDT_SDL;
 		}
 
+		virtual void onWindowResize(u32 w, u32 h) _IRR_OVERRIDE_;
+
 		//! Implementation of the linux cursor control
 		class CCursorControl : public gui::ICursorControl
 		{

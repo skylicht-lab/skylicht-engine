@@ -231,6 +231,8 @@ namespace irr
 			return &CreationParams;
 		}
 
+		virtual void onWindowResize(u32 w, u32 h);
+
 	protected:
 
 		void createGUIAndScene();
