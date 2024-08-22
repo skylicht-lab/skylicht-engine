@@ -562,6 +562,11 @@ namespace Skylicht
 			}
 		}
 
+		void CGUIDesignController::newGUI()
+		{
+			m_guiFilePath = "";
+		}
+
 		bool CGUIDesignController::needSave()
 		{
 			return true;

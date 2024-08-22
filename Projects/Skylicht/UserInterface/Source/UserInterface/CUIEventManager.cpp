@@ -35,7 +35,9 @@ namespace Skylicht
 		CUIEventManager::CUIEventManager() :
 			m_pointerId(-1),
 			m_capture(NULL),
-			m_focus(NULL)
+			m_focus(NULL),
+			m_pointerX(0),
+			m_pointerY(0)
 		{
 			CEventManager::getInstance()->registerProcessorEvent("CUIEventManager", this);
 		}
@@ -51,6 +53,9 @@ namespace Skylicht
 			{
 				f32 mouseX = (f32)event.MouseInput.X;
 				f32 mouseY = (f32)event.MouseInput.Y;
+
+				m_pointerX = event.MouseInput.X;
+				m_pointerY = event.MouseInput.Y;
 
 				if (m_pointerId != -1 && event.MouseInput.ID != m_pointerId)
 					return true;

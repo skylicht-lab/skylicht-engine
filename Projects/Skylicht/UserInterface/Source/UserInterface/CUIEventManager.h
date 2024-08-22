@@ -39,13 +39,15 @@ namespace Skylicht
 		public:
 			DECLARE_SINGLETON(CUIEventManager)
 
+		protected:
 			std::vector<CUIContainer*> m_containers;
 
-			int m_pointerId;
-
 			CUIBase* m_capture;
-
 			CUIBase* m_focus;
+
+			int m_pointerId;
+			int m_pointerX;
+			int m_pointerY;
 
 		public:
 			CUIEventManager();
@@ -68,6 +70,16 @@ namespace Skylicht
 			inline CUIBase* getFocus()
 			{
 				return m_focus;
+			}
+
+			inline int getPointerX()
+			{
+				return m_pointerX;
+			}
+
+			inline int getPointerY()
+			{
+				return m_pointerY;
 			}
 		};
 	}

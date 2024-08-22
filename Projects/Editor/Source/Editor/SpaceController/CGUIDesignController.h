@@ -92,6 +92,8 @@ namespace Skylicht
 				return m_guiFilePath;
 			}
 
+			void newGUI();
+
 			bool needSave();
 
 			void save(const char* path);
