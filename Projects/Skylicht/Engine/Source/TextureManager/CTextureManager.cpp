@@ -68,7 +68,7 @@ namespace Skylicht
 		while (i != end)
 		{
 			char log[512];
-			sprintf(log, "Remove Texture: %s", (*i)->texture->getName().getPath().c_str());
+			sprintf(log, "Remove texture: %s", (*i)->texture->getName().getPath().c_str());
 			os::Printer::log(log);
 
 			driver->removeTexture((*i)->texture);
@@ -87,6 +87,10 @@ namespace Skylicht
 		{
 			if ((*i)->texture == tex)
 			{
+				char log[512];
+				sprintf(log, "Remove texture: %s", (*i)->texture->getName().getPath().c_str());
+				os::Printer::log(log);
+
 				driver->removeTexture((*i)->texture);
 				delete (*i);
 

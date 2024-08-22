@@ -64,6 +64,27 @@ namespace Skylicht
 		m_listGenerateMaterials.clear();
 	}
 
+	void CMaterialManager::unloadMaterial(const char* filename)
+	{
+		std::map<std::string, ArrayMaterial>::iterator it = m_materials.find(filename);
+		if (it == m_materials.end())
+		{
+			char log[512];
+			sprintf(log, "[CMaterialManager] %s not found", filename);
+			os::Printer::log(log);
+			return;
+		}
+
+		ArrayMaterial& list = (*it).second;
+		for (int j = 0, n = (int)list.size(); j < n; j++)
+		{
+			CMaterial* m = list[j];
+			m->drop();
+		}
+
+		m_materials.erase(it);
+	}
+
 	ArrayMaterial& CMaterialManager::loadMaterial(const char* filename, bool loadTexture, const std::vector<std::string>& textureFolders)
 	{
 		// find in cached
