@@ -275,6 +275,11 @@ void CIrrDeviceStub::setRandomizer(IRandomizer* r)
 	}
 }
 
+void CIrrDeviceStub::onWindowResize(u32 w, u32 h)
+{
+
+}
+
 namespace
 {
 	struct SDefaultRandomizer : public IRandomizer

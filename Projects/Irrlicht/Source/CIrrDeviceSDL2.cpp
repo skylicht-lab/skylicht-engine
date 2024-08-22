@@ -480,8 +480,9 @@ namespace irr
 				{
 					// FIXME: Implement more precise window control
 				case SDL_WINDOWEVENT_SIZE_CHANGED:
+#ifndef EMSCRIPTEN
 					// SKYLICHT: Need post an event to application, I will fix it later...
-					// FIXME: Check if the window is game window					
+					// FIXME: Check if the window is game window
 					if ((SDL_event.window.data1 != (int)Width) || (SDL_event.window.data2 != (int)Height))
 					{
 						Width = SDL_event.window.data1;
@@ -495,6 +496,7 @@ namespace irr
 						irrevent.UserEvent.UserData2 = (s32)Height;
 						postEventFromUser(irrevent);
 					}
+#endif
 					break;
 				case SDL_WINDOWEVENT_ENTER:
 				case SDL_WINDOWEVENT_FOCUS_GAINED:
@@ -977,6 +979,15 @@ namespace irr
 		KeyMap.sort();
 	}
 
+	void CIrrDeviceSDL2::onWindowResize(u32 w, u32 h)
+	{
+#ifdef EMSCRIPTEN
+		Width = w;
+		Height = h;
+		resizeWindow(w, h);
+#endif
+	}
+
 	void CIrrDeviceSDL2::resizeWindow(u32 x, u32 y)
 	{
 		if (ScreenWindow)
@@ -994,6 +1005,10 @@ namespace irr
 		{
 			ScreenTexture = SDL_CreateTexture(ScreenRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, Width, Height);
 		}
+
+		char log[512];
+		sprintf(log, "[CIrrDeviceSDL2] resizeWindow %d %d - %d %d", x, y, Width, Height);
+		os::Printer::log(log);
 	}
 
 	CIrrDeviceSDL2::CCursorControl::CCursorControl(CIrrDeviceSDL2* dev)
