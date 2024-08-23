@@ -301,6 +301,8 @@ namespace Skylicht
 
 		void unloadUniformTexture();
 
+		void unloadUniformTexture(const char *name);
+
 		void setOverrideResource(ITexture* texture, CShader::EResourceType type)
 		{
 			m_overrideTextures[type] = texture;

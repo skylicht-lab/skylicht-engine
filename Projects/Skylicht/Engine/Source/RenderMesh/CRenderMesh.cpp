@@ -516,6 +516,31 @@ namespace Skylicht
 		removeEntity(renderMesh->Entity);
 	}
 
+	void CRenderMesh::removeMaterials(ArrayMaterial& materials)
+	{
+		for (CMaterial* m : materials)
+		{
+			for (CRenderMeshData* renderer : m_renderers)
+			{
+				renderer->unusedMaterial(m);
+			}
+
+			ArrayMaterial::iterator i = m_materials.begin(), end = m_materials.end();
+			while (i != end)
+			{
+				CMaterial* findMaterial = (*i);
+
+				if (findMaterial == m)
+				{
+					findMaterial->drop();
+					m_materials.erase(i);
+					break;
+				}
+				++i;
+			}
+		}
+	}
+
 	void CRenderMesh::attachMeshFromPrefab(CEntityPrefab* prefab, std::vector<std::string>& names, ArrayMaterial& materials, bool cloneMaterial, bool resetBoneTransform)
 	{
 		CEntityManager* entityManager = m_gameObject->getEntityManager();

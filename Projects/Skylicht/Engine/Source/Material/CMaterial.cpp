@@ -610,6 +610,18 @@ namespace Skylicht
 		}
 	}
 
+	void CMaterial::unloadUniformTexture(const char* name)
+	{
+		SUniformTexture* p = getUniformTexture(name);
+		if (p != NULL && p->Texture)
+		{
+			CTextureManager* textureManager = CTextureManager::getInstance();
+			textureManager->removeTexture(p->Texture);
+			p->Texture = NULL;
+			m_textures[p->TextureSlot] = NULL;
+		}
+	}
+
 	void CMaterial::initMaterial()
 	{
 		deleteAllParams();
