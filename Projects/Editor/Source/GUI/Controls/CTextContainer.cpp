@@ -321,6 +321,12 @@ namespace Skylicht
 					doDeleteTextInSelection();
 				}
 
+				u32 size = (u32)m_string.size();
+				if (size == 0)
+					m_caretBegin = m_caretEnd = 0;
+				else if (m_caretBegin > size)
+					m_caretBegin = size;
+
 				m_string.insert(m_caretBegin, 1, c);
 
 				m_caretBegin++;

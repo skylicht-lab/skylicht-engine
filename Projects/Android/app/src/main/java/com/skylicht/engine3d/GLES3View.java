@@ -3,6 +3,7 @@ package com.skylicht.engine3d;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.util.Log;
+import android.view.MotionEvent;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGL10;
@@ -23,6 +24,62 @@ public class GLES3View extends GLSurfaceView {
         setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
     }
 
+    @Override
+    public boolean onTouchEvent(final MotionEvent event) {
+        int action = event.getAction();
+        int actionCode = action & MotionEvent.ACTION_MASK;
+
+        if (actionCode == MotionEvent.ACTION_POINTER_DOWN) {
+            int i = event.getActionIndex();
+
+            int touchX = (int) (event.getX(i) * GameInstance.ScreenScale);
+            int touchY = (int) (event.getY(i) * GameInstance.ScreenScale);
+
+            NativeInterface.getInstance().mainTouchDown(event.getPointerId(i), touchX, touchY);
+        } else if (actionCode == MotionEvent.ACTION_POINTER_UP) {
+            int i = event.getActionIndex();
+
+            int touchX = (int) (event.getX(i) * GameInstance.ScreenScale);
+            int touchY = (int) (event.getY(i) * GameInstance.ScreenScale);
+
+            NativeInterface.getInstance().mainTouchUp(event.getPointerId(i), touchX, touchY);
+        } else if (actionCode == MotionEvent.ACTION_DOWN) {
+            // only 1 touch
+            int i = 0;
+            int touchX = (int) (event.getX(i) * GameInstance.ScreenScale);
+            int touchY = (int) (event.getY(i) * GameInstance.ScreenScale);
+
+            NativeInterface.getInstance().mainTouchDown(event.getPointerId(i), touchX, touchY);
+        } else if (actionCode == MotionEvent.ACTION_UP) {
+            // only 1 touch
+            int i = 0;
+            int touchX = (int) (event.getX(i) * GameInstance.ScreenScale);
+            int touchY = (int) (event.getY(i) * GameInstance.ScreenScale);
+
+            NativeInterface.getInstance().mainTouchUp(event.getPointerId(i), touchX, touchY);
+        } else if (actionCode == MotionEvent.ACTION_CANCEL) {
+            int numPointer = event.getPointerCount();
+            for (int i = 0; i < numPointer; i++) {
+                int touchX = (int) (event.getX(i) * GameInstance.ScreenScale);
+                int touchY = (int) (event.getY(i) * GameInstance.ScreenScale);
+
+                NativeInterface.getInstance().mainTouchUp(event.getPointerId(i), touchX, touchY);
+            }
+        } else if (actionCode == MotionEvent.ACTION_MOVE) {
+            int numPointer = event.getPointerCount();
+            for (int i = 0; i < numPointer; i++) {
+                int touchX = (int) (event.getX(i) * GameInstance.ScreenScale);
+                int touchY = (int) (event.getY(i) * GameInstance.ScreenScale);
+
+                NativeInterface.getInstance().mainTouchMove(event.getPointerId(i), touchX, touchY);
+            }
+        } else {
+            Log.e("gameplay", String.format("Do not process touch event %d", action));
+        }
+
+        return true;
+    }
+
     private static class ContextFactory implements GLSurfaceView.EGLContextFactory {
         private static final int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
 
@@ -37,7 +94,7 @@ public class GLES3View extends GLSurfaceView {
 
         public void destroyContext(EGL10 egl, EGLDisplay display, EGLContext context) {
             // native release application
-            NativeInterface.getInstance().mainReleaseDevice();
+            NativeInterface.getInstance().mainExitApp();
 
             egl.eglDestroyContext(display, context);
         }

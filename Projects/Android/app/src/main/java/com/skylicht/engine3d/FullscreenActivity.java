@@ -3,8 +3,6 @@ package com.skylicht.engine3d;
 import android.Manifest;
 import android.annotation.SuppressLint;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -27,12 +25,10 @@ import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -233,62 +229,6 @@ public class FullscreenActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public boolean onTouchEvent(final MotionEvent event) {
-        int action = event.getAction();
-        int actionCode = action & MotionEvent.ACTION_MASK;
-
-        if (actionCode == MotionEvent.ACTION_POINTER_DOWN) {
-            int i = event.getActionIndex();
-
-            int touchX = (int) (event.getX(i) * GameInstance.ScreenScale);
-            int touchY = (int) (event.getY(i) * GameInstance.ScreenScale);
-
-            NativeInterface.getInstance().mainTouchDown(event.getPointerId(i), touchX, touchY);
-        } else if (actionCode == MotionEvent.ACTION_POINTER_UP) {
-            int i = event.getActionIndex();
-
-            int touchX = (int) (event.getX(i) * GameInstance.ScreenScale);
-            int touchY = (int) (event.getY(i) * GameInstance.ScreenScale);
-
-            NativeInterface.getInstance().mainTouchUp(event.getPointerId(i), touchX, touchY);
-        } else if (actionCode == MotionEvent.ACTION_DOWN) {
-            // only 1 touch
-            int i = 0;
-            int touchX = (int) (event.getX(i) * GameInstance.ScreenScale);
-            int touchY = (int) (event.getY(i) * GameInstance.ScreenScale);
-
-            NativeInterface.getInstance().mainTouchDown(event.getPointerId(i), touchX, touchY);
-        } else if (actionCode == MotionEvent.ACTION_UP) {
-            // only 1 touch
-            int i = 0;
-            int touchX = (int) (event.getX(i) * GameInstance.ScreenScale);
-            int touchY = (int) (event.getY(i) * GameInstance.ScreenScale);
-
-            NativeInterface.getInstance().mainTouchUp(event.getPointerId(i), touchX, touchY);
-        } else if (actionCode == MotionEvent.ACTION_CANCEL) {
-            int numPointer = event.getPointerCount();
-            for (int i = 0; i < numPointer; i++) {
-                int touchX = (int) (event.getX(i) * GameInstance.ScreenScale);
-                int touchY = (int) (event.getY(i) * GameInstance.ScreenScale);
-
-                NativeInterface.getInstance().mainTouchUp(event.getPointerId(i), touchX, touchY);
-            }
-        } else if (actionCode == MotionEvent.ACTION_MOVE) {
-            int numPointer = event.getPointerCount();
-            for (int i = 0; i < numPointer; i++) {
-                int touchX = (int) (event.getX(i) * GameInstance.ScreenScale);
-                int touchY = (int) (event.getY(i) * GameInstance.ScreenScale);
-
-                NativeInterface.getInstance().mainTouchMove(event.getPointerId(i), touchX, touchY);
-            }
-        } else {
-            Log.e("gameplay", String.format("Do not process touch event %d", action));
-        }
-
-        return super.onTouchEvent(event);
-    }
-
     /**
      * CHECK NETWORK AVAILABLE AND OPEN URL FUNCTION
      */
@@ -388,10 +328,42 @@ public class FullscreenActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    ActivityResultLauncher<String> launcherPermission = registerForActivityResult(
+            new ActivityResultContracts.RequestPermission(),
+            result -> {
+                if (result)
+                    GameInstance.HaveReadWritePermission = true;
+                else
+                    onWritePermissionDenied(false);
+            });
+
     void requestWritePermission() {
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, PERM_REQUEST_READWRITE);
+        // ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, PERM_REQUEST_READWRITE);
+        launcherPermission.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE);
     }
 
+    /*
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == PERM_REQUEST_READWRITE) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                // DENIED
+                onWritePermissionDenied(false);
+            } else {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    // OK RUN GAME
+                    GameInstance.HaveReadWritePermission = true;
+
+                } else {
+                    // SHOW ALERT
+                    onWritePermissionDenied(true);
+                }
+            }
+        }
+    }
+    */
     void onWritePermissionDenied(boolean dontAskAgain) {
         if (!dontAskAgain) {
             final DialogInterface.OnClickListener listener = (dialog, which) -> {
@@ -415,34 +387,13 @@ public class FullscreenActivity extends AppCompatActivity {
         }
     }
 
-    ActivityResultLauncher<Intent> launcher = registerForActivityResult(
+    ActivityResultLauncher<Intent> launcherSetting = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> checkReadWritePermission());
 
     private void gotoSettings() {
         final Intent intent;
         intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", getPackageName(), null));
-        launcher.launch(intent);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == PERM_REQUEST_READWRITE) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                // DENIED
-                onWritePermissionDenied(false);
-            } else {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                    // OK RUN GAME
-                    GameInstance.HaveReadWritePermission = true;
-
-                } else {
-                    // SHOW ALERT
-                    onWritePermissionDenied(true);
-                }
-            }
-        }
+        launcherSetting.launch(intent);
     }
 }

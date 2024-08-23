@@ -265,36 +265,36 @@ namespace Skylicht
 				btn->enableDrawBackground(false);
 				btn->tagData(editor);
 				btn->OnPress = [&, editor](GUI::CBase* button)
-				{
-					CGameObject* object = editor->getGameObject();
-					CComponentSystem* component = editor->getComponent();
+					{
+						CGameObject* object = editor->getGameObject();
+						CComponentSystem* component = editor->getComponent();
 
-					if (dynamic_cast<CTransformEuler*>(component) != NULL)
-					{
-						// disable move & delete on transform editor
-						m_menuUp->setDisabled(true);
-						m_menuDown->setDisabled(true);
-						m_menuRemove->setDisabled(true);
-					}
-					else
-					{
-						int pos = object->getComponentPosition(component);
-						if (pos > 1)
-							m_menuUp->setDisabled(false);
-						else
+						if (dynamic_cast<CTransformEuler*>(component) != NULL)
+						{
+							// disable move & delete on transform editor
 							m_menuUp->setDisabled(true);
-
-						if (pos < object->getSerializableComponentCount() - 1)
-							m_menuDown->setDisabled(false);
-						else
 							m_menuDown->setDisabled(true);
+							m_menuRemove->setDisabled(true);
+						}
+						else
+						{
+							int pos = object->getComponentPosition(component);
+							if (pos > 1)
+								m_menuUp->setDisabled(false);
+							else
+								m_menuUp->setDisabled(true);
 
-						m_menuRemove->setDisabled(false);
-					}
+							if (pos < object->getSerializableComponentCount() - 1)
+								m_menuDown->setDisabled(false);
+							else
+								m_menuDown->setDisabled(true);
 
-					m_menuContextEditor = editor;
-					m_componentContextMenu->open(button);
-				};
+							m_menuRemove->setDisabled(false);
+						}
+
+						m_menuContextEditor = editor;
+						m_componentContextMenu->open(button);
+					};
 			}
 
 			m_groups.push_back(g);
@@ -458,14 +458,15 @@ namespace Skylicht
 				// when check value change => update ui
 				CObserver* onChange = new CObserver();
 				onChange->Notify = [me = onChange, target = input, ui = layout](ISubject* subject, IObserver* from)
-				{
-					if (from != me)
 					{
-						CSubject<float>* value = (CSubject<float>*)subject;
-						target->setValue(value->get(), false);
-						ui->setHidden(!value->isEnable());
-					}
-				};
+						if (from != me)
+						{
+							CSubject<float>* value = (CSubject<float>*)subject;
+							if (GUI::CGUIContext::KeyboardFocus != target)
+								target->setValue(value->get(), false);
+							ui->setHidden(!value->isEnable());
+						}
+					};
 
 				value->addObserver(onChange, true);
 
@@ -473,7 +474,7 @@ namespace Skylicht
 				input->OnTextChanged = [value, input, observer = onChange](GUI::CBase* base) {
 					value->set(input->getValue());
 					value->notify(observer);
-				};
+					};
 			}
 		}
 
@@ -501,14 +502,15 @@ namespace Skylicht
 				// when check value change => update ui
 				CObserver* onChange = new CObserver();
 				onChange->Notify = [me = onChange, target = input, ui = layout](ISubject* subject, IObserver* from)
-				{
-					if (from != me)
 					{
-						CSubject<int>* value = (CSubject<int>*)subject;
-						target->setValue((float)value->get(), false);
-						ui->setHidden(!value->isEnable());
-					}
-				};
+						if (from != me)
+						{
+							CSubject<int>* value = (CSubject<int>*)subject;
+							if (GUI::CGUIContext::KeyboardFocus != target)
+								target->setValue((float)value->get(), false);
+							ui->setHidden(!value->isEnable());
+						}
+					};
 
 				value->addObserver(onChange, true);
 
@@ -516,7 +518,7 @@ namespace Skylicht
 				input->OnTextChanged = [value, input, observer = onChange](GUI::CBase* base) {
 					value->set((int)input->getValue());
 					value->notify(observer);
-				};
+					};
 			}
 		}
 
@@ -544,14 +546,15 @@ namespace Skylicht
 				// when check value change => update ui
 				CObserver* onChange = new CObserver();
 				onChange->Notify = [me = onChange, target = input, ui = layout](ISubject* subject, IObserver* from)
-				{
-					if (from != me)
 					{
-						CSubject<u32>* value = (CSubject<u32>*)subject;
-						target->setValue((float)value->get(), false);
-						ui->setHidden(!value->isEnable());
-					}
-				};
+						if (from != me)
+						{
+							CSubject<u32>* value = (CSubject<u32>*)subject;
+							if (GUI::CGUIContext::KeyboardFocus != target)
+								target->setValue((float)value->get(), false);
+							ui->setHidden(!value->isEnable());
+						}
+					};
 
 				value->addObserver(onChange, true);
 
@@ -559,7 +562,7 @@ namespace Skylicht
 				input->OnTextChanged = [value, input, observer = onChange](GUI::CBase* base) {
 					value->set((u32)input->getValue());
 					value->notify(observer);
-				};
+					};
 			}
 		}
 
@@ -581,21 +584,21 @@ namespace Skylicht
 				// when check value change => update ui
 				CObserver* onChange = new CObserver();
 				onChange->Notify = [me = onChange, target = input, ui = layout](ISubject* subject, IObserver* from)
-				{
-					if (from != me)
 					{
-						CSubject<std::wstring>* value = (CSubject<std::wstring>*)subject;
-						target->setString(value->get());
-						ui->setHidden(!value->isEnable());
-					}
-				};
+						if (from != me)
+						{
+							CSubject<std::wstring>* value = (CSubject<std::wstring>*)subject;
+							target->setString(value->get());
+							ui->setHidden(!value->isEnable());
+						}
+					};
 
 				// when input text change
 				value->addObserver(onChange, true);
 				input->OnTextChanged = [value, input, observer = onChange](GUI::CBase* base) {
 					value->set(input->getString());
 					value->notify(observer);
-				};
+					};
 			}
 
 			boxLayout->endVertical();
@@ -624,21 +627,22 @@ namespace Skylicht
 				// when check value change => update ui
 				CObserver* onChange = new CObserver();
 				onChange->Notify = [me = onChange, target = input, ui = layout](ISubject* subject, IObserver* from)
-				{
-					if (from != me)
 					{
-						CSubject<std::wstring>* value = (CSubject<std::wstring>*)subject;
-						target->setString(value->get());
-						ui->setHidden(!value->isEnable());
-					}
-				};
+						if (from != me)
+						{
+							CSubject<std::wstring>* value = (CSubject<std::wstring>*)subject;
+							if (GUI::CGUIContext::KeyboardFocus != target)
+								target->setString(value->get());
+							ui->setHidden(!value->isEnable());
+						}
+					};
 
 				// when input text change
 				value->addObserver(onChange, true);
 				input->OnLostKeyboardFocus = [value, input, observer = onChange](GUI::CBase* base) {
 					value->set(input->getValueInt());
 					value->notify(observer);
-				};
+					};
 			}
 
 			boxLayout->endVertical();
@@ -664,21 +668,21 @@ namespace Skylicht
 				// when check value change => update ui
 				CObserver* onChange = new CObserver();
 				onChange->Notify = [me = onChange, target = check, ui = layout](ISubject* subject, IObserver* from)
-				{
-					if (from != me)
 					{
-						CSubject<bool>* value = (CSubject<bool>*)subject;
-						target->setToggle(value->get());
-						ui->setHidden(!value->isEnable());
-					}
-				};
+						if (from != me)
+						{
+							CSubject<bool>* value = (CSubject<bool>*)subject;
+							target->setToggle(value->get());
+							ui->setHidden(!value->isEnable());
+						}
+					};
 
 				// when check control change => update value
 				value->addObserver(onChange, true);
 				check->OnChanged = [value, check, observer = onChange](GUI::CBase* base) {
 					value->set(check->getToggle());
 					value->notify(observer);
-				};
+					};
 			}
 
 			boxLayout->endVertical();
@@ -700,22 +704,22 @@ namespace Skylicht
 
 			// when check value change => update ui
 			onChange->Notify = [me = onChange, target = comboBox, ui = layout](ISubject* subject, IObserver* from)
-			{
-				if (from != me)
 				{
-					CSubject<std::wstring>* value = (CSubject<std::wstring>*)subject;
-					target->setLabel(value->get());
-					ui->setHidden(!value->isEnable());
-				}
-			};
+					if (from != me)
+					{
+						CSubject<std::wstring>* value = (CSubject<std::wstring>*)subject;
+						target->setLabel(value->get());
+						ui->setHidden(!value->isEnable());
+					}
+				};
 
 			// when combobox change => update value
 			value->addObserver(onChange, true);
 			comboBox->OnChanged = [value, comboBox, observer = onChange](GUI::CBase* base)
-			{
-				value->set(comboBox->getLabel());
-				value->notify(observer);
-			};
+				{
+					value->set(comboBox->getLabel());
+					value->notify(observer);
+				};
 
 			comboBox->setLabel(value->get());
 
@@ -738,21 +742,21 @@ namespace Skylicht
 
 			// when check value change => update ui
 			onChange->Notify = [me = onChange, target = slider, ui = layout](ISubject* subject, IObserver* from)
-			{
-				if (from != me)
 				{
-					CSubject<float>* value = (CSubject<float>*)subject;
-					target->setValue(value->get(), false);
-					ui->setHidden(!value->isEnable());
-				}
-			};
+					if (from != me)
+					{
+						CSubject<float>* value = (CSubject<float>*)subject;
+						target->setValue(value->get(), false);
+						ui->setHidden(!value->isEnable());
+					}
+				};
 
 			// when slider change => update value
 			value->addObserver(onChange, true);
 			slider->OnTextChanged = [value, slider, observer = onChange](GUI::CBase* base) {
 				value->set(slider->getValue());
 				value->notify(observer);
-			};
+				};
 
 			boxLayout->endVertical();
 		}
@@ -773,15 +777,15 @@ namespace Skylicht
 			// when check value change => update ui
 			CObserver* onChange = new CObserver();
 			onChange->Notify = [me = onChange, target = colorPicker, ui = layout](ISubject* subject, IObserver* from)
-			{
-				if (from != me)
 				{
-					CSubject<SColor>* value = (CSubject<SColor>*)subject;
-					const SColor& c = value->get();
-					target->setColor(GUI::SGUIColor(c.getAlpha(), c.getRed(), c.getGreen(), c.getBlue()));
-					ui->setHidden(!value->isEnable());
-				}
-			};
+					if (from != me)
+					{
+						CSubject<SColor>* value = (CSubject<SColor>*)subject;
+						const SColor& c = value->get();
+						target->setColor(GUI::SGUIColor(c.getAlpha(), c.getRed(), c.getGreen(), c.getBlue()));
+						ui->setHidden(!value->isEnable());
+					}
+				};
 
 			// when color pick change => update value
 			value->addObserver(onChange, true);
@@ -789,7 +793,7 @@ namespace Skylicht
 				const GUI::SGUIColor& guiColor = colorPicker->getColor();
 				value->set(SColor(guiColor.A, guiColor.R, guiColor.G, guiColor.B));
 				value->notify(observer);
-			};
+				};
 
 			boxLayout->endVertical();
 		}
@@ -841,69 +845,69 @@ namespace Skylicht
 			}
 
 			input->OnPressed = [value](GUI::CBase* base)
-			{
-				std::string path = value->get();
-				if (!path.empty())
-					CAssetPropertyController::getInstance()->browseAsset(path.c_str());
-			};
+				{
+					std::string path = value->get();
+					if (!path.empty())
+						CAssetPropertyController::getInstance()->browseAsset(path.c_str());
+				};
 
 			input->OnAcceptDragDrop = [&, x = exts](GUI::SDragDropPackage* data)
-			{
-				if (data->Name == "ListFSItem")
 				{
-					GUI::CListRowItem* rowItem = (GUI::CListRowItem*)data->UserData;
-					bool isFolder = rowItem->getTagBool();
-					if (isFolder)
-						return false;
+					if (data->Name == "ListFSItem")
+					{
+						GUI::CListRowItem* rowItem = (GUI::CListRowItem*)data->UserData;
+						bool isFolder = rowItem->getTagBool();
+						if (isFolder)
+							return false;
 
-					if (x.size() == 0)
-					{
-						// Enable all ext
-						return true;
-					}
-					else
-					{
-						// Check ext
-						std::string path = rowItem->getTagString();
-						std::string fileExt = CPath::getFileNameExt(path);
-						for (const std::string& s : x)
+						if (x.size() == 0)
 						{
-							if (s == fileExt)
-								return true;
+							// Enable all ext
+							return true;
 						}
-						return false;
+						else
+						{
+							// Check ext
+							std::string path = rowItem->getTagString();
+							std::string fileExt = CPath::getFileNameExt(path);
+							for (const std::string& s : x)
+							{
+								if (s == fileExt)
+									return true;
+							}
+							return false;
+						}
 					}
-				}
-				return false;
-			};
+					return false;
+				};
 
 			// when check value change => update ui
 			CObserver* onChange = new CObserver();
 			onChange->Notify = [me = onChange, target = input, ui = layout](ISubject* subject, IObserver* from)
-			{
-				CSubject<std::string>* value = (CSubject<std::string>*)subject;
-				std::string fileName = CPath::getFileName(value->get());
-				if (fileName.size() > 0)
-					target->setString(CStringImp::convertUTF8ToUnicode(fileName.c_str()));
-				else
-					target->setString(L"None");
+				{
+					CSubject<std::string>* value = (CSubject<std::string>*)subject;
+					std::string fileName = CPath::getFileName(value->get());
+					if (fileName.size() > 0)
+						target->setString(CStringImp::convertUTF8ToUnicode(fileName.c_str()));
+					else
+						target->setString(L"None");
 
-				ui->setHidden(!value->isEnable());
-			};
+					ui->setHidden(!value->isEnable());
+				};
 
 			// when ui update => change value
 			value->addObserver(onChange, true);
 			input->OnDrop = [s = value, observer = onChange](GUI::SDragDropPackage* data, float mouseX, float mouseY)
-			{
-				if (data->Name == "ListFSItem")
 				{
-					GUI::CListRowItem* rowItem = (GUI::CListRowItem*)data->UserData;
-					std::string path = rowItem->getTagString();
-					path = CAssetManager::getInstance()->getShortPath(path.c_str());
-					s->set(path);
-					s->notify(observer);
-				}
-			};
+					if (data->Name == "ListFSItem")
+					{
+						GUI::CListRowItem* rowItem = (GUI::CListRowItem*)data->UserData;
+						std::string path = rowItem->getTagString();
+						path = CAssetManager::getInstance()->getShortPath(path.c_str());
+						s->set(path);
+						s->notify(observer);
+					}
+				};
 			boxLayout->endVertical();
 
 			return input;
@@ -928,63 +932,63 @@ namespace Skylicht
 				input->setString(L"None");
 
 			input->OnPressed = [value](GUI::CBase* base)
-			{
-				std::string path = value->get();
-				if (!path.empty())
-					CAssetPropertyController::getInstance()->browseAsset(path.c_str());
-			};
+				{
+					std::string path = value->get();
+					if (!path.empty())
+						CAssetPropertyController::getInstance()->browseAsset(path.c_str());
+				};
 
 			input->OnAcceptDragDrop = [&](GUI::SDragDropPackage* data)
-			{
-				if (data->Name == "ListFSItem")
 				{
-					GUI::CListRowItem* rowItem = (GUI::CListRowItem*)data->UserData;
-					bool isFolder = rowItem->getTagBool();
-					if (isFolder)
+					if (data->Name == "ListFSItem")
+					{
+						GUI::CListRowItem* rowItem = (GUI::CListRowItem*)data->UserData;
+						bool isFolder = rowItem->getTagBool();
+						if (isFolder)
+							return true;
+						return false;
+					}
+					else if (data->Name == "TreeFSItem")
+					{
 						return true;
+					}
 					return false;
-				}
-				else if (data->Name == "TreeFSItem")
-				{
-					return true;
-				}
-				return false;
-			};
+				};
 
 			// when check value change => update ui
 			CObserver* onChange = new CObserver();
 			onChange->Notify = [me = onChange, target = input, ui = layout](ISubject* subject, IObserver* from)
-			{
-				CSubject<std::string>* value = (CSubject<std::string>*)subject;
-				std::string fileName = CPath::getFileName(value->get());
-				if (fileName.size() > 0)
-					target->setString(CStringImp::convertUTF8ToUnicode(fileName.c_str()));
-				else
-					target->setString(L"None");
+				{
+					CSubject<std::string>* value = (CSubject<std::string>*)subject;
+					std::string fileName = CPath::getFileName(value->get());
+					if (fileName.size() > 0)
+						target->setString(CStringImp::convertUTF8ToUnicode(fileName.c_str()));
+					else
+						target->setString(L"None");
 
-				ui->setHidden(!value->isEnable());
-			};
+					ui->setHidden(!value->isEnable());
+				};
 
 			value->addObserver(onChange, true);
 			input->OnDrop = [s = value, observer = onChange](GUI::SDragDropPackage* data, float mouseX, float mouseY)
-			{
-				if (data->Name == "ListFSItem")
 				{
-					GUI::CListRowItem* rowItem = (GUI::CListRowItem*)data->UserData;
-					std::string path = rowItem->getTagString();
-					path = CAssetManager::getInstance()->getShortPath(path.c_str());
-					s->set(path);
-					s->notify(observer);
-				}
-				else if (data->Name == "TreeFSItem")
-				{
-					GUI::CTreeNode* node = (GUI::CTreeNode*)data->UserData;
-					std::string path = node->getTagString();
-					path = CAssetManager::getInstance()->getShortPath(path.c_str());
-					s->set(path);
-					s->notify(observer);
-				}
-			};
+					if (data->Name == "ListFSItem")
+					{
+						GUI::CListRowItem* rowItem = (GUI::CListRowItem*)data->UserData;
+						std::string path = rowItem->getTagString();
+						path = CAssetManager::getInstance()->getShortPath(path.c_str());
+						s->set(path);
+						s->notify(observer);
+					}
+					else if (data->Name == "TreeFSItem")
+					{
+						GUI::CTreeNode* node = (GUI::CTreeNode*)data->UserData;
+						std::string path = node->getTagString();
+						path = CAssetManager::getInstance()->getShortPath(path.c_str());
+						s->set(path);
+						s->notify(observer);
+					}
+				};
 			boxLayout->endVertical();
 
 			return input;
