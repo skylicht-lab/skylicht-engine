@@ -451,6 +451,7 @@ namespace Skylicht
 		}
 
 		core::matrix4 relative = parentInv * world;
+
 		setRelativeTransform(relative);
 	}
 
@@ -501,7 +502,22 @@ namespace Skylicht
 		position = mat.getTranslation();
 		scale = mat.getScale();
 
-		setPosition(position);
+		core::vector3df pivot;
+		core::rectf parentRect;
+		if (m_parent)
+			parentRect = m_parent->getRect();
+
+		if (m_guiAlign->Vertical == EGUIVerticalAlign::Middle)
+			pivot.Y = parentRect.UpperLeftCorner.Y + (parentRect.getHeight() - getHeight()) * 0.5f;
+		else if (m_guiAlign->Vertical == EGUIVerticalAlign::Bottom)
+			pivot.Y = parentRect.LowerRightCorner.Y - getHeight();
+
+		if (m_guiAlign->Horizontal == EGUIHorizontalAlign::Center)
+			pivot.X = parentRect.UpperLeftCorner.X + (parentRect.getWidth() - getWidth()) * 0.5f;
+		else if (m_guiAlign->Horizontal == EGUIHorizontalAlign::Right)
+			pivot.X = parentRect.LowerRightCorner.X - getWidth();
+
+		setPosition(position - pivot);
 		setScale(scale);
 		setRotation(rotation);
 	}
