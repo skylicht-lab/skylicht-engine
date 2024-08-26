@@ -2,6 +2,7 @@
 #include "CViewInit.h"
 #include "CViewHeader.h"
 #include "CViewDemo.h"
+#include "CViewPopupLoading.h"
 
 #include "ViewManager/CViewManager.h"
 #include "Context/CContext.h"
@@ -56,7 +57,7 @@ void CViewInit::onInit()
 	m_textInfo->setTextAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
 	m_textInfo->setText(L"Init assets");
 
-	// crate gui camera
+	// create gui camera
 	CGameObject* guiCameraObject = zone->createEmptyObject();
 	CCamera* guiCamera = guiCameraObject->addComponent<CCamera>();
 	guiCamera->setProjectionType(CCamera::OrthoUI);
@@ -202,10 +203,10 @@ void CViewInit::onUpdate()
 		if (scene != NULL)
 			scene->update();
 
-
 		CViewManager* viewMgr = CViewManager::getInstance();
 		viewMgr->getLayer(0)->changeView<CViewDemo>();
 		viewMgr->getLayer(1)->pushView<CViewHeader>();
+		viewMgr->getLayer(2)->pushView<CViewPopupLoading>();
 	}
 	break;
 	}
