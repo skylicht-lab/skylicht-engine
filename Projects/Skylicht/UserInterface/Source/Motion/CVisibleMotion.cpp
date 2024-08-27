@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2024 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -22,23 +22,66 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "CCanvas.h"
+#include "pch.h"
+#include "CVisibleMotion.h"
 
 namespace Skylicht
 {
-	class SKYLICHT_API CGUIExporter
+	namespace UI
 	{
-	public:
-		static bool save(const char* file, CCanvas* canvas);
+		CVisibleMotion::CVisibleMotion(bool visible) :
+			m_visible(visible),
+			m_defaultVisible(true)
+		{
 
-		static CObjectSerializable* createSerializable(CGUIElement* ui);
+		}
 
-	private:
+		CVisibleMotion::CVisibleMotion() :
+			m_visible(true),
+			m_defaultVisible(true)
+		{
+			m_toDefault = true;
+		}
 
-		static void addChild(CGUIElement* parent, CObjectSerializable* parents);
+		CVisibleMotion::~CVisibleMotion()
+		{
 
-		static void saveGUIPath(const char* file, CObjectSerializable* data);
-	};
+		}
+
+		void CVisibleMotion::init(CGUIElement* gui)
+		{
+			CMotion::init(gui);
+			m_defaultVisible = gui->isVisible();
+		}
+
+		void CVisibleMotion::start()
+		{
+			m_tween = new CTweenFloat(0.0f, 1.0f, m_duration);
+			m_tween->setDelay(m_delay);
+			m_tween->setEase(m_ease);
+			m_tween->OnUpdate = [&](CTween* t)
+				{
+					// wait delay and update
+					if (m_toDefault)
+					{
+						m_gui->setVisible(m_defaultVisible);
+					}
+					else
+					{
+						if (m_inverseMotion)
+							m_gui->setVisible(m_defaultVisible);
+						else
+							m_gui->setVisible(m_visible);
+					}
+					m_tween->stop();
+					m_tween = NULL;
+				};
+			m_tween->OnFinish = [&](CTween* t)
+				{
+					m_tween = NULL;
+				};
+
+			CTweenManager::getInstance()->addTween(m_tween);
+		}
+	}
 }

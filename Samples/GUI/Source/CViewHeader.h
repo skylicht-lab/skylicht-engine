@@ -1,4 +1,5 @@
 #pragma once
+#pragma once
 
 #include "Graphics2D/GUI/CGUIText.h"
 #include "ViewManager/CView.h"

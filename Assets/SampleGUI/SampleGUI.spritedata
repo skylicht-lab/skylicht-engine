@@ -29,19 +29,20 @@
 		<module id="22" x="268.000000" y="246.000000" w="64.000000" h="64.000000"/>
 		<module id="23" x="304.000000" y="150.000000" w="30.000000" h="30.000000"/>
 		<module id="24" x="336.000000" y="150.000000" w="30.000000" h="30.000000"/>
-		<module id="25" x="202.000000" y="414.000000" w="200.000000" h="200.000000"/>
-		<module id="26" x="368.000000" y="150.000000" w="150.000000" h="30.000000"/>
-		<module id="27" x="608.000000" y="26.000000" w="40.000000" h="40.000000"/>
-		<module id="28" x="520.000000" y="150.000000" w="150.000000" h="30.000000"/>
-		<module id="29" x="692.000000" y="184.000000" w="46.000000" h="46.000000"/>
-		<module id="30" x="740.000000" y="184.000000" w="46.000000" h="46.000000"/>
-		<module id="31" x="334.000000" y="246.000000" w="124.000000" h="64.000000"/>
-		<module id="32" x="460.000000" y="246.000000" w="124.000000" h="64.000000"/>
-		<module id="33" x="586.000000" y="246.000000" w="124.000000" h="64.000000"/>
-		<module id="34" x="172.000000" y="72.000000" w="19.000000" h="14.000000"/>
-		<module id="35" x="812.000000" y="0.000000" w="14.000000" h="18.000000"/>
-		<module id="36" x="828.000000" y="0.000000" w="14.000000" h="18.000000"/>
-		<module id="37" x="193.000000" y="72.000000" w="18.000000" h="14.000000"/>
+		<module id="25" x="608.000000" y="26.000000" w="40.000000" h="40.000000"/>
+		<module id="26" x="202.000000" y="414.000000" w="200.000000" h="200.000000"/>
+		<module id="27" x="368.000000" y="150.000000" w="150.000000" h="30.000000"/>
+		<module id="28" x="650.000000" y="26.000000" w="40.000000" h="40.000000"/>
+		<module id="29" x="520.000000" y="150.000000" w="150.000000" h="30.000000"/>
+		<module id="30" x="692.000000" y="184.000000" w="46.000000" h="46.000000"/>
+		<module id="31" x="740.000000" y="184.000000" w="46.000000" h="46.000000"/>
+		<module id="32" x="334.000000" y="246.000000" w="124.000000" h="64.000000"/>
+		<module id="33" x="460.000000" y="246.000000" w="124.000000" h="64.000000"/>
+		<module id="34" x="586.000000" y="246.000000" w="124.000000" h="64.000000"/>
+		<module id="35" x="172.000000" y="72.000000" w="19.000000" h="14.000000"/>
+		<module id="36" x="812.000000" y="0.000000" w="14.000000" h="18.000000"/>
+		<module id="37" x="828.000000" y="0.000000" w="14.000000" h="18.000000"/>
+		<module id="38" x="193.000000" y="72.000000" w="18.000000" h="14.000000"/>
 	</modules>
 	<frames>
 		<frame id="abd38ad8c2e594ed" name="button-disable" page="0">
@@ -119,44 +120,47 @@
 		<frame id="1d643900dd260108" name="radio-circle-center" page="0">
 			<fmodule id="24" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="67cb841d4c083499" name="skylicht-icon" page="0">
+		<frame id="87cc7f024fb32e4c" name="setting-icon" page="0">
 			<fmodule id="25" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="d7ac2f0974d25d5f" name="slider-background" page="0">
+		<frame id="67cb841d4c083499" name="skylicht-icon" page="0">
 			<fmodule id="26" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="b739815963d0f1a2" name="slider-circle" page="0">
+		<frame id="d7ac2f0974d25d5f" name="slider-background" page="0">
 			<fmodule id="27" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="9b83802cacec55af" name="slider-selected" page="0">
+		<frame id="b739815963d0f1a2" name="slider-circle" page="0">
 			<fmodule id="28" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="c5b3d538c2951917" name="switch-circle-disable" page="0">
+		<frame id="9b83802cacec55af" name="slider-selected" page="0">
 			<fmodule id="29" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="f9e5211e00a21c6e" name="switch-circle" page="0">
+		<frame id="c5b3d538c2951917" name="switch-circle-disable" page="0">
 			<fmodule id="30" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="c8d7b1260ce23958" name="switch-disable" page="0">
+		<frame id="f9e5211e00a21c6e" name="switch-circle" page="0">
 			<fmodule id="31" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="d699422cf40a29fe" name="switch-off" page="0">
+		<frame id="c8d7b1260ce23958" name="switch-disable" page="0">
 			<fmodule id="32" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="dbbc6b190569ce4a" name="switch-on" page="0">
+		<frame id="d699422cf40a29fe" name="switch-off" page="0">
 			<fmodule id="33" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="5916f1c284b74f6f" name="triangle-d" page="0">
+		<frame id="dbbc6b190569ce4a" name="switch-on" page="0">
 			<fmodule id="34" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="f75ba76731d50f99" name="triangle-l" page="0">
+		<frame id="5916f1c284b74f6f" name="triangle-d" page="0">
 			<fmodule id="35" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="2812c836e798a15f" name="triangle-r" page="0">
+		<frame id="f75ba76731d50f99" name="triangle-l" page="0">
 			<fmodule id="36" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
-		<frame id="22910e3eb1f489c8" name="triangle-u" page="0">
+		<frame id="2812c836e798a15f" name="triangle-r" page="0">
 			<fmodule id="37" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
+		</frame>
+		<frame id="22910e3eb1f489c8" name="triangle-u" page="0">
+			<fmodule id="38" x="0.000000" y="0.000000" flipX="0" flipY="0"/>
 		</frame>
 	</frames>
 </sprite>

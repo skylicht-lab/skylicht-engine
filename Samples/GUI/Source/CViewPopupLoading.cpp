@@ -37,10 +37,10 @@ void CViewPopupLoading::onInit()
 	m_progressBar = new UI::CUIProgressBar(uiContainer, canvas->getGUIByPath("Canvas/Container/Dialog/ProgressBar"));
 	m_progressBar->setPercent(0.0f);
 
-	// fake load in 5s to demo ProgressBar
-	CTweenFloat* t = new CTweenFloat(0.0f, 1.0f, 3000.0f);
+	// fake load in 2s to demo ProgressBar
+	CTweenFloat* t = new CTweenFloat(0.0f, 1.0f, 2000.0f);
 	t->setEase(EaseLinear);
-	t->setEndDelay(1000.0f);
+	t->setEndDelay(500.0f);
 	t->OnUpdate = [&](CTween* t)
 		{
 			CTweenFloat* f = (CTweenFloat*)t;
