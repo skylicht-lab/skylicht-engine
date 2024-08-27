@@ -34,6 +34,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Motion/CScaleMotion.h"
 #include "Motion/CRotationMotion.h"
 #include "Motion/CFrameMotion.h"
+#include "Motion/CVisibleMotion.h"
 
 namespace Skylicht
 {

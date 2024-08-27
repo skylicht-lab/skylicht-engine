@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2024 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,21 +24,32 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CCanvas.h"
+#include "Motion/CMotion.h"
 
 namespace Skylicht
 {
-	class SKYLICHT_API CGUIExporter
+	namespace UI
 	{
-	public:
-		static bool save(const char* file, CCanvas* canvas);
+		class CVisibleMotion : public CMotion
+		{
+		protected:
+			bool m_defaultVisible;
+			bool m_visible;
 
-		static CObjectSerializable* createSerializable(CGUIElement* ui);
+		public:
+			CVisibleMotion(bool visible);
+			CVisibleMotion();
 
-	private:
+			virtual ~CVisibleMotion();
 
-		static void addChild(CGUIElement* parent, CObjectSerializable* parents);
+			virtual void init(CGUIElement* gui);
 
-		static void saveGUIPath(const char* file, CObjectSerializable* data);
-	};
+			virtual void start();
+
+			inline void setVisible(bool visible)
+			{
+				m_visible = visible;
+			}
+		};
+	}
 }

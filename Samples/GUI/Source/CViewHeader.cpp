@@ -5,6 +5,7 @@
 #include "ViewManager/CViewManager.h"
 
 #include "CViewPopupEnterName.h"
+#include "CViewPopupSetting.h"
 
 #include "Graphics2D/CGUIImporter.h"
 #include "GameObject/CGameObject.h"
@@ -55,6 +56,16 @@ void CViewHeader::onInit()
 	btnAvatar->addMotion(UI::EMotionEvent::PointerOut, new UI::CAlphaMotion());
 	btnAvatar->addMotion(UI::EMotionEvent::PointerDown, new UI::CScaleMotion(0.9f, 0.9f, 0.9f))->setTime(0.0f, 50.0f);
 	btnAvatar->addMotion(UI::EMotionEvent::PointerUp, new UI::CScaleMotion())->setTime(0.0f, 100.0f);
+
+	UI::CUIButton* btnSetting = new UI::CUIButton(uiContainer, canvas->getGUIByPath("Canvas/Header/BtnSetting"));
+	btnSetting->addMotion(UI::EMotionEvent::PointerHover, btnSetting->getBackground(), new UI::CVisibleMotion(true));
+	btnSetting->addMotion(UI::EMotionEvent::PointerOut, btnSetting->getBackground(), new UI::CVisibleMotion());
+	btnSetting->addMotion(UI::EMotionEvent::PointerDown, new UI::CScaleMotion(0.9f, 0.9f, 0.9f))->setTime(0.0f, 50.0f);
+	btnSetting->addMotion(UI::EMotionEvent::PointerUp, new UI::CScaleMotion())->setTime(0.0f, 100.0f);
+	btnSetting->OnPressed = [](UI::CUIBase* base)
+		{
+			CViewManager::getInstance()->getLayer(2)->pushView<CViewPopupSetting>();
+		};
 }
 
 void CViewHeader::onDestroy()
