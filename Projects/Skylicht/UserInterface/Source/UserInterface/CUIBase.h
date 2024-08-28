@@ -69,6 +69,7 @@ namespace Skylicht
 			std::function<void(float, float)> OnPointerOut;
 			std::function<void(float, float)> OnPointerDown;
 			std::function<void(float, float)> OnPointerUp;
+			std::function<void(float, float, bool)> OnPointerMove;
 
 			std::function<void(CUIBase*)> OnPressed;
 			std::function<void(CUIBase*)> OnFocus;
@@ -181,6 +182,12 @@ namespace Skylicht
 			bool removeMotion(EMotionEvent event, CMotion* motion);
 
 			void removeMotions(EMotionEvent event);
+
+			void convertToUICoordinate(float& pointerX, float& pointerY);
+
+			void convertWorldToLocal(CGUIElement* element, float& x, float& y);
+
+			void convertLocalToWorld(CGUIElement* element, float& x, float& y);
 		};
 	}
 }

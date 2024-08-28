@@ -22,45 +22,48 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CUIProgressBar.h"
+#pragma once
+
+#include "CUIBase.h"
 
 namespace Skylicht
 {
 	namespace UI
 	{
-		CUIProgressBar::CUIProgressBar(CUIContainer* container, CGUIElement* element) :
-			CUIBase(container, element),
-			m_background(NULL),
-			m_loading(NULL),
-			m_mask(NULL)
+		class CUISlider : public CUIBase
 		{
-			if (m_element)
+		protected:
+			CGUIElement* m_background;
+			CGUIElement* m_fillBar;
+			CGUIElement* m_handle;
+			CGUIMask* m_mask;
+
+			CUIBase* m_buttonHander;
+
+			float m_value;
+			float m_handleWidth;
+
+			core::vector2df m_offset;
+		public:
+			CUISlider(CUIContainer* container, CGUIElement* element);
+
+			virtual ~CUISlider();
+
+			void setValue(float value);
+
+			inline float getValue()
 			{
-				CCanvas* canvas = getCanvas();
-				m_background = canvas->getGUIByPath(element, "Background");
-				m_loading = canvas->getGUIByPath(element, "Loading");
-
-				m_mask = m_element->getCanvas()->createMask(m_element, m_element->getRect());
-
-				if (m_background)
-					element->bringToNext(m_mask, m_background, true);
-
-				if (m_loading)
-					m_loading->setMask(m_mask);
+				return m_value;
 			}
-		}
 
-		CUIProgressBar::~CUIProgressBar()
-		{
+		protected:
 
-		}
+			void onBeginDrag();
 
-		void CUIProgressBar::setPercent(float f)
-		{
-			core::rectf maskRect = m_element->getRect();
-			maskRect.LowerRightCorner.X = maskRect.getWidth() * f;
-			m_mask->setRect(maskRect);
-		}
+			void updateDrag();
+
+			void onEndDrag();
+
+		};
 	}
 }

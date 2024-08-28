@@ -5,12 +5,14 @@
 
 #include "UserInterface/CUIContainer.h"
 #include "UserInterface/CUIProgressBar.h"
+#include "UserInterface/CUISlider.h"
 
 class CViewPopupSetting : public CView
 {
 protected:
 	CGameObject* m_popup;
 
+	UI::CUISlider* m_slider;
 public:
 	CViewPopupSetting();
 
