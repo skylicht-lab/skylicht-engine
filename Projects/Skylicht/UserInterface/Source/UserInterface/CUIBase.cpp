@@ -154,6 +154,9 @@ namespace Skylicht
 
 		void CUIBase::onPointerMove(float pointerX, float pointerY)
 		{
+			if (OnPointerMove != nullptr)
+				OnPointerMove(pointerX, pointerY, m_isPointerDown);
+
 			if (m_skipPointerEventWhenDrag && m_isPointerDown)
 			{
 				if (fabsf(pointerX - m_pointerDownX) > 10.0f ||
@@ -298,6 +301,96 @@ namespace Skylicht
 			for (CMotion* m : motions)
 				delete m;
 			motions.clear();
+		}
+
+		void CUIBase::convertToUICoordinate(float& pointerX, float& pointerY)
+		{
+			CCanvas* canvas = getCanvas();
+			if (canvas == NULL)
+			{
+				pointerX = 0.0f;
+				pointerY = 0.0f;
+				return;
+			}
+
+			CCamera* camera = canvas->getRenderCamera();
+			if (camera == NULL)
+			{
+				pointerX = 0.0f;
+				pointerY = 0.0f;
+				return;
+			}
+
+			// we convert pointer (pixel xy) to render viewport like this,
+			// that will fix for 3d canvas
+			// 
+			// (-1,1)              (1,1)
+			//
+			//
+			//          (0,0)
+			//
+			//
+			// (-1,-1)             (1,-1)
+
+			const core::recti& vp = getVideoDriver()->getViewPort();
+			pointerX = pointerX / (vp.getWidth() * 0.5f) - 1.0f;
+			pointerY = 1.0f - pointerY / (vp.getHeight() * 0.5f);
+
+			core::matrix4 trans = camera->getProjectionMatrix();
+			trans *= camera->getViewMatrix();
+			trans.makeInverse();
+
+			// convert Screen to UI coordinate axis
+			core::vector3df pointer(pointerX, pointerY, 0.0f);
+			trans.transformVect(pointer);
+
+			pointerX = pointer.X;
+			pointerY = pointer.Y;
+		}
+
+		void CUIBase::convertWorldToLocal(CGUIElement* element, float& x, float& y)
+		{
+			CCanvas* canvas = getCanvas();
+			if (canvas == NULL)
+			{
+				x = 0.0f;
+				y = 0.0f;
+				return;
+			}
+
+			const core::matrix4& canvasTransform = canvas->getRenderWorldTransform();
+			const core::matrix4& elementTransform = element->getAbsoluteTransform();
+
+			core::matrix4 world = canvasTransform * elementTransform;
+			core::matrix4 worldInv(world, core::matrix4::EM4CONST_INVERSE);
+
+			core::vector3df pointer(x, y, 0.0f);
+			worldInv.transformVect(pointer);
+
+			x = pointer.X;
+			y = pointer.Y;
+		}
+
+		void CUIBase::convertLocalToWorld(CGUIElement* element, float& x, float& y)
+		{
+			CCanvas* canvas = getCanvas();
+			if (canvas == NULL)
+			{
+				x = 0.0f;
+				y = 0.0f;
+				return;
+			}
+
+			const core::matrix4& canvasTransform = canvas->getRenderWorldTransform();
+			const core::matrix4& elementTransform = element->getAbsoluteTransform();
+
+			core::matrix4 world = canvasTransform * elementTransform;
+
+			core::vector3df pointer(x, y, 0.0f);
+			world.transformVect(pointer);
+
+			x = pointer.X;
+			y = pointer.Y;
 		}
 	}
 }

@@ -51,6 +51,9 @@ void CViewPopupSetting::onInit()
 			close();
 		};
 
+	m_slider = new UI::CUISlider(uiContainer, canvas->getGUIByPath("Canvas/Container/Dialog/Slider"));
+	m_slider->setValue(0.5f);
+
 	uiContainer->startInMotion();
 }
 

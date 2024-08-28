@@ -27,9 +27,12 @@ namespace Skylicht
 				CUIEventManager::getInstance()->unregisterUIContainer(this);
 
 			// delete all ui
-			std::vector<CUIBase*> objects = m_arrayUIObjects;
-			for (CUIBase* base : objects)
+			while (m_arrayUIObjects.size() > 0)
+			{
+				CUIBase* base = m_arrayUIObjects[0];
+				m_arrayUIObjects.erase(m_arrayUIObjects.begin());
 				base->remove();
+			}
 		}
 
 		void CUIContainer::initComponent()

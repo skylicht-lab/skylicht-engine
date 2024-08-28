@@ -274,25 +274,25 @@ namespace Skylicht
 				bg->setMargin(SMargin(0.0f, 15.0f, 0.0f, 15.0f));
 				bg->setAnchor(CGUIFitSprite::AnchorAll, 15.0f, 15.0f, 15.0f, 15.0f);
 
-				CGUIFitSprite* selected = parentNode->getCanvas()->createFitSprite(newNode, r, NULL);
-				selected->setName(L"Selected");
-				selected->setFrameSource(
+				CGUIFitSprite* fillBar = parentNode->getCanvas()->createFitSprite(newNode, r, NULL);
+				fillBar->setName(L"FillBar");
+				fillBar->setFrameSource(
 					"SampleGUI/SampleGUI.spritedata",
 					"slider-selected",
 					"SampleGUI/!Sprites/slider-selected.png");
-				selected->setDock(EGUIDock::DockFill);
-				selected->setMargin(SMargin(0.0f, 15.0f, 0.0f, 15.0f));
-				selected->setAnchor(CGUIFitSprite::AnchorAll, 15.0f, 15.0f, 15.0f, 15.0f);
+				fillBar->setDock(EGUIDock::DockFill);
+				fillBar->setMargin(SMargin(0.0f, 15.0f, 0.0f, 15.0f));
+				fillBar->setAnchor(CGUIFitSprite::AnchorAll, 15.0f, 15.0f, 15.0f, 15.0f);
 
 				r.LowerRightCorner.X = 40.0f;
 				r.LowerRightCorner.Y = 40.0f;
-				CGUISprite* circle = parentNode->getCanvas()->createSprite(newNode, r, NULL);
-				circle->setName(L"Circle");
-				circle->setFrameSource(
+				CGUISprite* hander = parentNode->getCanvas()->createSprite(newNode, r, NULL);
+				hander->setName(L"Handle");
+				hander->setFrameSource(
 					"SampleGUI/SampleGUI.spritedata",
 					"slider-circle",
 					"SampleGUI/!Sprites/slider-circle.png");
-				circle->setPosition(core::vector3df(180.0f, 10.0f, 0.0f));
+				hander->setPosition(core::vector3df(180.0f, 10.0f, 0.0f));
 			}
 			else if (command == L"UI Input")
 			{
