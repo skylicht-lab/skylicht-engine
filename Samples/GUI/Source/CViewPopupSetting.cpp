@@ -51,8 +51,30 @@ void CViewPopupSetting::onInit()
 			close();
 		};
 
-	m_slider = new UI::CUISlider(uiContainer, canvas->getGUIByPath("Canvas/Container/Dialog/Slider"));
-	m_slider->setValue(0.5f);
+	UI::CUISlider* slider = new UI::CUISlider(uiContainer, canvas->getGUIByPath("Canvas/Container/Dialog/Slider"));
+	slider->setValue(0.5f);
+
+	UI::CUISwitch* options = new UI::CUISwitch(uiContainer, canvas->getGUIByPath("Canvas/Container/Dialog/BtnSwitch"));
+	options->setHandleColor(SColor(255, 255, 255, 255), SColor(255, 200, 200, 200));
+
+	CSpriteFrame* spriteFrame = CSpriteManager::getInstance()->loadSprite("SampleGUI/SampleGUI.spritedata");
+	SFrame* frameOn = spriteFrame->getFrameByName("switch-on");
+	SFrame* frameOff = spriteFrame->getFrameByName("switch-off");
+	if (frameOn && frameOff && options->getBackground())
+	{
+		options->OnChanged = [options, frameOn, frameOff](UI::CUISwitch* s, bool value) {
+			CGUISprite* bg = dynamic_cast<CGUISprite*>(options->getBackground());
+			if (bg)
+			{
+				if (value)
+					bg->setFrame(frameOn);
+				else
+					bg->setFrame(frameOff);
+			}
+			};
+	}
+
+	options->setToggle(true);
 
 	uiContainer->startInMotion();
 }

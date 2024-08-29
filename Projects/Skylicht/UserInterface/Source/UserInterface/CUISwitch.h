@@ -30,44 +30,62 @@ namespace Skylicht
 {
 	namespace UI
 	{
-		class CUISlider : public CUIBase
+		class CUISwitch : public CUIBase
 		{
 		protected:
 			CGUIElement* m_background;
-			CGUIElement* m_fillBar;
+			CGUIElement* m_on;
 			CGUIElement* m_handle;
-			CGUIMask* m_mask;
 
-			CUIBase* m_buttonHander;
+			bool m_toggleStatus;
 
-			float m_value;
-			float m_handleWidth;
+			core::vector3df m_onPosition;
+			core::vector3df m_offPosition;
 
-			core::vector2df m_offset;
+			CTween* m_tween;
+
+			SColor m_onColor;
+			SColor m_offColor;
 
 		public:
-			std::function<void(CUISlider*, float)> OnChanged;
+
+			std::function<void(CUISwitch*, bool)> OnChanged;
 
 		public:
-			CUISlider(CUIContainer* container, CGUIElement* element);
+			CUISwitch(CUIContainer* container, CGUIElement* element);
 
-			virtual ~CUISlider();
+			virtual ~CUISwitch();
 
-			void setValue(float value, bool invokeEvent = true);
+			virtual void onPressed();
 
-			inline float getValue()
+			void setToggle(bool b, bool invokeEvent = true, bool doAnimation = false);
+
+			inline bool isToggle()
 			{
-				return m_value;
+				return m_toggleStatus;
+			}
+
+			void setHandleColor(const SColor& on, const SColor& off)
+			{
+				m_onColor = on;
+				m_offColor = off;
+			}
+
+			inline CGUIElement* getBackground()
+			{
+				return m_background;
+			}
+
+			inline CGUIElement* getHandle()
+			{
+				return m_handle;
 			}
 
 		protected:
 
-			void onBeginDrag();
+			void stopTween();
 
-			void updateDrag();
-
-			void onEndDrag();
-
+			void playTween();
 		};
 	}
 }
