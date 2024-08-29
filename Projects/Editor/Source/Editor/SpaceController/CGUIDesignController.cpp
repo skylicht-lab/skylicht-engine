@@ -286,13 +286,13 @@ namespace Skylicht
 
 				r.LowerRightCorner.X = 40.0f;
 				r.LowerRightCorner.Y = 40.0f;
-				CGUISprite* hander = parentNode->getCanvas()->createSprite(newNode, r, NULL);
-				hander->setName(L"Handle");
-				hander->setFrameSource(
+				CGUISprite* handle = parentNode->getCanvas()->createSprite(newNode, r, NULL);
+				handle->setName(L"Handle");
+				handle->setFrameSource(
 					"SampleGUI/SampleGUI.spritedata",
 					"slider-circle",
 					"SampleGUI/!Sprites/slider-circle.png");
-				hander->setPosition(core::vector3df(180.0f, 10.0f, 0.0f));
+				handle->setPosition(core::vector3df(180.0f, 10.0f, 0.0f));
 			}
 			else if (command == L"UI Input")
 			{
@@ -347,7 +347,37 @@ namespace Skylicht
 			}
 			else if (command == L"UI Switch")
 			{
+				r.LowerRightCorner.X = 124.0f;
+				r.LowerRightCorner.Y = 64.0f;
 
+				nameHint = L"Btn";
+				newNode = parentNode->getCanvas()->createElement(parentNode, r);
+
+				CGUISprite* background = parentNode->getCanvas()->createSprite(newNode, r, NULL);
+				background->setName(L"Background");
+				background->setFrameSource(
+					"SampleGUI/SampleGUI.spritedata",
+					"switch-off",
+					"SampleGUI/!Sprites/switch-off.png");
+
+				r.LowerRightCorner.X = 46.0f;
+				r.LowerRightCorner.Y = 46.0f;
+				CGUISprite* handle = parentNode->getCanvas()->createSprite(newNode, r, NULL);
+				handle->setName(L"HandleOff");
+				handle->setFrameSource(
+					"SampleGUI/SampleGUI.spritedata",
+					"switch-circle",
+					"SampleGUI/!Sprites/switch-circle.png");
+				handle->setPosition(core::vector3df(10.0f, 9.0f, 0.0f));
+
+				handle = parentNode->getCanvas()->createSprite(newNode, r, NULL);
+				handle->setName(L"HandleOn");
+				handle->setFrameSource(
+					"SampleGUI/SampleGUI.spritedata",
+					"switch-circle",
+					"SampleGUI/!Sprites/switch-circle.png");
+				handle->setPosition(core::vector3df(68.0f, 9.0f, 0.0f));
+				handle->setVisible(false);
 			}
 			else if (command == L"UI ProgressBar")
 			{

@@ -143,6 +143,9 @@ namespace Skylicht
 			}
 
 			m_handle->setPosition(core::vector3df(currentX, currentY, 0.0f));
+
+			if (OnChanged != nullptr)
+				OnChanged(this, m_value);
 		}
 
 		void CUISlider::onEndDrag()
@@ -150,7 +153,7 @@ namespace Skylicht
 
 		}
 
-		void CUISlider::setValue(float value)
+		void CUISlider::setValue(float value, bool invokeEvent)
 		{
 			m_value = value;
 			m_value = core::clamp(m_value, 0.0f, 1.0f);
@@ -174,6 +177,12 @@ namespace Skylicht
 			}
 
 			m_handle->setPosition(core::vector3df(currentX, currentY, 0.0f));
+
+			if (invokeEvent)
+			{
+				if (OnChanged != nullptr)
+					OnChanged(this, m_value);
+			}
 		}
 	}
 }
