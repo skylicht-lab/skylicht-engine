@@ -343,7 +343,33 @@ namespace Skylicht
 			}
 			else if (command == L"UI Checkbox")
 			{
+				r.LowerRightCorner.X = 64.0f;
+				r.LowerRightCorner.Y = 64.0f;
 
+				nameHint = L"CB";
+				newNode = parentNode->getCanvas()->createElement(parentNode, r);
+
+				r.LowerRightCorner.X = 56.0f;
+				r.LowerRightCorner.Y = 56.0f;
+
+				CGUISprite* background = parentNode->getCanvas()->createSprite(newNode, r, NULL);
+				background->setName(L"Background");
+				background->setFrameSource(
+					"SampleGUI/SampleGUI.spritedata",
+					"checkbox",
+					"SampleGUI/!Sprites/checkbox.png");
+				background->setAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
+
+				r.LowerRightCorner.X = 24.0f;
+				r.LowerRightCorner.Y = 24.0f;
+				CGUISprite* checked = parentNode->getCanvas()->createSprite(newNode, r, NULL);
+				checked->setName(L"Checked");
+				checked->setFrameSource(
+					"SampleGUI/SampleGUI.spritedata",
+					"checkbox-center",
+					"SampleGUI/!Sprites/checkbox-center.png");
+				checked->setAlignCenterModule();
+				checked->setPosition(core::vector3df(32.0f, 32.0f, 0.0f));
 			}
 			else if (command == L"UI Switch")
 			{

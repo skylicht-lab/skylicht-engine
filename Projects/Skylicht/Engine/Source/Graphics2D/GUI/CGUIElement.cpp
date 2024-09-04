@@ -320,6 +320,7 @@ namespace Skylicht
 
 		// color
 		object->autoRelease(new CColorProperty(object, "color", m_renderData->Color));
+		object->autoRelease(new CBoolProperty(object, "affectOpacityInChild", m_renderData->AffectOpacityInChild));
 
 		// materials
 		object->autoRelease(new CIntProperty(object, "materialId", m_materialId, 0, (int)m_materials.size()));
@@ -362,6 +363,7 @@ namespace Skylicht
 
 		// color
 		m_renderData->Color = object->get("color", SColor(255, 255, 255, 255));
+		m_renderData->AffectOpacityInChild = object->get("affectOpacityInChild", false);
 
 		// materials
 		m_materialId = object->get<int>("materialId", 0);

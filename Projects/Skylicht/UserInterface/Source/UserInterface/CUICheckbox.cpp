@@ -23,45 +23,35 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CUISwitch.h"
+#include "CUICheckbox.h"
 #include "Tween/CTweenManager.h"
 
 namespace Skylicht
 {
 	namespace UI
 	{
-		CUISwitch::CUISwitch(CUIContainer* container, CGUIElement* element) :
+		CUICheckbox::CUICheckbox(CUIContainer* container, CGUIElement* element) :
 			CUIBase(container, element),
 			m_background(NULL),
-			m_handle(NULL),
-			m_on(NULL),
+			m_checked(NULL),
 			m_toggleStatus(false),
-			m_tween(NULL),
-			m_onColor(255, 255, 255, 255),
-			m_offColor(255, 255, 255, 255)
+			m_tween(NULL)
 		{
 			if (m_element)
 			{
 				CCanvas* canvas = getCanvas();
 				m_background = canvas->getGUIByPath(element, "Background");
-				m_handle = canvas->getGUIByPath(element, "HandleOff");
-				m_on = canvas->getGUIByPath(element, "HandleOn");
-				m_on->setVisible(false);
-
-				if (m_handle)
-					m_offPosition = m_handle->getPosition();
-
-				if (m_on)
-					m_onPosition = m_on->getPosition();
+				m_checked = canvas->getGUIByPath(element, "Checked");
+				m_checked->setVisible(false);
 			}
 		}
 
-		CUISwitch::~CUISwitch()
+		CUICheckbox::~CUICheckbox()
 		{
 			stopTween();
 		}
 
-		void CUISwitch::stopTween()
+		void CUICheckbox::stopTween()
 		{
 			if (m_tween)
 			{
@@ -70,39 +60,49 @@ namespace Skylicht
 			}
 		}
 
-		void CUISwitch::playTween()
+		void CUICheckbox::playTween()
 		{
 			stopTween();
 
 			if (m_toggleStatus)
 			{
-				m_tween = new CTweenVector3df(m_offPosition, m_onPosition, 200.0f);
-				m_handle->setColor(m_onColor);
+				m_tween = new CTweenFloat(0.0f, 1.0f, 200.0f);
+				m_checked->setVisible(true);
 			}
 			else
 			{
-				m_tween = new CTweenVector3df(m_onPosition, m_offPosition, 200.0f);
-				m_handle->setColor(m_offColor);
+				m_tween = new CTweenFloat(1.0f, 0.0f, 200.0f);
 			}
 
 			m_tween->setEase(EEasingFunctions::EaseOutCubic);
 			m_tween->OnUpdate = [&](CTween* t)
 				{
-					CTweenVector3df* tween = (CTweenVector3df*)t;
-					m_handle->setPosition(tween->getValue());
+					float alpha = ((CTweenFloat*)t)->getValue();
+					SColor c = m_checked->getColor();
+					c.setAlpha((u32)(alpha * 255.0f));
+					m_checked->setColor(c);
+
+					core::vector3df scale(1.0f, 1.0f, 1.0f);
+					float s = (0.5f + alpha * 0.5f);
+					scale.X = scale.X * s;
+					scale.Y = scale.Y * s;
+					m_checked->setScale(scale);
 				};
 			m_tween->OnFinish = [&](CTween* t)
 				{
 					m_tween = NULL;
+
+					if (!m_toggleStatus)
+						m_checked->setVisible(false);
 				};
 			CTweenManager::getInstance()->addTween(m_tween);
 		}
 
-		void CUISwitch::setToggle(bool b, bool invokeEvent, bool doAnimation)
+		void CUICheckbox::setToggle(bool b, bool invokeEvent, bool doAnimation)
 		{
 			m_toggleStatus = b;
 
-			if (m_handle)
+			if (m_checked)
 			{
 				if (doAnimation)
 				{
@@ -112,15 +112,9 @@ namespace Skylicht
 				{
 					stopTween();
 					if (m_toggleStatus)
-					{
-						m_handle->setPosition(m_onPosition);
-						m_handle->setColor(m_onColor);
-					}
+						m_checked->setVisible(true);
 					else
-					{
-						m_handle->setPosition(m_offPosition);
-						m_handle->setColor(m_offColor);
-					}
+						m_checked->setVisible(false);
 				}
 			}
 
@@ -131,11 +125,11 @@ namespace Skylicht
 			}
 		}
 
-		void CUISwitch::onPressed()
+		void CUICheckbox::onPressed()
 		{
 			m_toggleStatus = !m_toggleStatus;
 
-			if (m_handle)
+			if (m_checked)
 				playTween();
 
 			if (OnChanged != nullptr)

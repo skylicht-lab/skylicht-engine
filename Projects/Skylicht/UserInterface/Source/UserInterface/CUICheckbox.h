@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2022 Skylicht Technology CO., LTD
+Copyright (c) 2024 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -22,39 +22,57 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CGUIRenderData.h"
+#pragma once
+
+#include "CUIBase.h"
 
 namespace Skylicht
 {
-	IMPLEMENT_DATA_TYPE_INDEX(CGUIRenderData);
-
-	CGUIRenderData::CGUIRenderData() :
-		Color(255, 255, 255, 255),
-		Material(NULL),
-		AffectOpacityInChild(false),
-		m_applyParentOpacity(false),
-		m_opacity(1.0f)
+	namespace UI
 	{
-		ShaderID = CShaderManager::getInstance()->getShaderIDByName("TextureColorAlpha");
-	}
-
-	CGUIRenderData::~CGUIRenderData()
-	{
-
-	}
-
-	const SColor& CGUIRenderData::getColor()
-	{
-		m_renderColor = Color;
-
-		if (m_opacity != 1.0f)
+		class CUICheckbox : public CUIBase
 		{
-			u32 a = m_renderColor.getAlpha();
-			a = core::clamp<u32>((u32)(a * m_opacity), 0, 255);
-			m_renderColor.setAlpha(a);
-		}
+		protected:
+			CGUIElement* m_background;
+			CGUIElement* m_checked;
 
-		return m_renderColor;
+			bool m_toggleStatus;
+
+			CTween* m_tween;
+
+		public:
+
+			std::function<void(CUICheckbox*, bool)> OnChanged;
+
+		public:
+			CUICheckbox(CUIContainer* container, CGUIElement* element);
+
+			virtual ~CUICheckbox();
+
+			virtual void onPressed();
+
+			void setToggle(bool b, bool invokeEvent = true, bool doAnimation = false);
+
+			inline bool isToggle()
+			{
+				return m_toggleStatus;
+			}
+
+			inline CGUIElement* getBackground()
+			{
+				return m_background;
+			}
+
+			inline CGUIElement* getChecked()
+			{
+				return m_checked;
+			}
+
+		protected:
+
+			void stopTween();
+
+			void playTween();
+		};
 	}
 }

@@ -135,7 +135,7 @@ namespace Skylicht
 
 		const SColor& getColor()
 		{
-			return m_renderData->Color;
+			return m_renderData->getColor();
 		}
 
 		inline float getHeight()
