@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2022 Skylicht Technology CO., LTD
+Copyright (c) 2024 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -22,39 +22,32 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CGUIRenderData.h"
+#include "Entity/IEntitySystem.h"
+#include "Entity/CArrayUtils.h"
+
+#include "Transform/CWorldTransformData.h"
+#include "Graphics2D/EntityData/CGUITransformData.h"
+#include "Graphics2D/EntityData/CGUIRenderData.h"
 
 namespace Skylicht
 {
-	IMPLEMENT_DATA_TYPE_INDEX(CGUIRenderData);
-
-	CGUIRenderData::CGUIRenderData() :
-		Color(255, 255, 255, 255),
-		Material(NULL),
-		AffectOpacityInChild(false),
-		m_applyParentOpacity(false),
-		m_opacity(1.0f)
+	class SKYLICHT_API CGUIOpacitySystem : public IEntitySystem
 	{
-		ShaderID = CShaderManager::getInstance()->getShaderIDByName("TextureColorAlpha");
-	}
+	protected:
+		CFastArray<CWorldTransformData*> m_worldTransforms;
+		CFastArray<CGUIRenderData*> m_guiRenderData;
 
-	CGUIRenderData::~CGUIRenderData()
-	{
+	public:
+		CGUIOpacitySystem();
 
-	}
+		virtual ~CGUIOpacitySystem();
 
-	const SColor& CGUIRenderData::getColor()
-	{
-		m_renderColor = Color;
+		virtual void beginQuery(CEntityManager* entityManager);
 
-		if (m_opacity != 1.0f)
-		{
-			u32 a = m_renderColor.getAlpha();
-			a = core::clamp<u32>((u32)(a * m_opacity), 0, 255);
-			m_renderColor.setAlpha(a);
-		}
+		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int count);
 
-		return m_renderColor;
-	}
+		virtual void init(CEntityManager* entityManager);
+
+		virtual void update(CEntityManager* entityManager);
+	};
 }

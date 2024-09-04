@@ -7,6 +7,7 @@
 #include "UserInterface/CUIProgressBar.h"
 #include "UserInterface/CUISlider.h"
 #include "UserInterface/CUISwitch.h"
+#include "UserInterface/CUICheckbox.h"
 
 class CViewPopupSetting : public CView
 {

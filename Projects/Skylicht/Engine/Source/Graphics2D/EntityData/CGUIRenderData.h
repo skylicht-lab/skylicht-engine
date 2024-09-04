@@ -32,18 +32,26 @@ namespace Skylicht
 	class SKYLICHT_API CGUIRenderData : public IEntityData
 	{
 		friend class CGUILayoutSystem;
+		friend class CGUIOpacitySystem;
 
 	public:
 		SColor Color;
-
+		bool AffectOpacityInChild;
 		int ShaderID;
-
 		CMaterial* Material;
+
+	protected:
+
+		bool m_applyParentOpacity;
+		float m_opacity;
+		SColor m_renderColor;
 
 	public:
 		CGUIRenderData();
 
 		virtual ~CGUIRenderData();
+
+		const SColor& getColor();
 
 		DECLARE_GETTYPENAME(CGUIRenderData)
 	};

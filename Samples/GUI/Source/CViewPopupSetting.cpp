@@ -76,6 +76,9 @@ void CViewPopupSetting::onInit()
 
 	options->setToggle(true);
 
+	UI::CUICheckbox* checkbox = new UI::CUICheckbox(uiContainer, canvas->getGUIByPath("Canvas/Container/Dialog/CBCheck"));
+	checkbox->setToggle(true);
+
 	uiContainer->startInMotion();
 }
 

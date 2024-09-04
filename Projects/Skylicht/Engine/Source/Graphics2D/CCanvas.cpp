@@ -28,6 +28,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Projective/CProjective.h"
 
 #include "GUISystem/CGUILayoutSystem.h"
+#include "GUISystem/CGUIOpacitySystem.h"
+
 #include "Utils/CStringImp.h"
 
 namespace Skylicht
@@ -58,6 +60,8 @@ namespace Skylicht
 		m_root->setName("Root");
 
 		m_systems.push_back(new CGUILayoutSystem());
+		m_systems.push_back(new CGUIOpacitySystem());
+
 		for (IEntitySystem* system : m_systems)
 		{
 			system->init(NULL);
