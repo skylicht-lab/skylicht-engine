@@ -63,6 +63,8 @@ namespace Skylicht
 		virtual ~CIndirectLightingData();
 
 		void initSH();
+
+		void releaseSH();
 	};
 
 	DECLARE_PUBLIC_DATA_TYPE_INDEX(CIndirectLightingData);

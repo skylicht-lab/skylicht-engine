@@ -64,6 +64,7 @@ namespace Skylicht
 		// init material
 		m_material = new CMaterial("Primitive", "BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");
 		m_material->setUniform4("uColor", m_color);
+		m_material->updateShaderParams();
 
 		// add default primitive
 		if (m_type != CPrimiviteData::Unknown)
@@ -265,6 +266,20 @@ namespace Skylicht
 			CPrimiviteData* data = GET_ENTITY_DATA(m_entities[i], CPrimiviteData);
 			if (data)
 				data->Instancing = b;
+		}
+	}
+
+	void CPrimitive::setColor(const SColor& color)
+	{
+		m_color = color;
+
+		m_material->setUniform4("uColor", m_color);
+		m_material->updateShaderParams();
+
+		if (m_customMaterial)
+		{
+			m_customMaterial->setUniform4("uColor", m_color);
+			m_customMaterial->updateShaderParams();
 		}
 	}
 }

@@ -45,14 +45,7 @@ namespace Skylicht
 
 	CIndirectLightingData::~CIndirectLightingData()
 	{
-		if (ReleaseSH)
-		{
-			if (SH)
-				delete[]SH;
-
-			if (AutoSH)
-				delete AutoSH;
-		}
+		releaseSH();
 	}
 
 	void CIndirectLightingData::initSH()
@@ -62,5 +55,23 @@ namespace Skylicht
 		SH = new core::vector3df[9];
 		ReleaseSH = true;
 		*AutoSH = true;
+	}
+
+	void CIndirectLightingData::releaseSH()
+	{
+		if (ReleaseSH)
+		{
+			if (SH)
+			{
+				delete[]SH;
+				SH = NULL;
+			}
+			if (AutoSH)
+			{
+				delete AutoSH;
+				AutoSH = NULL;
+			}
+			ReleaseSH = false;
+		}
 	}
 }
