@@ -45,6 +45,7 @@ namespace Skylicht
 {
 	bool g_enableRenderIndirect = true;
 	bool g_enableRenderTestIndirect = false;
+	int g_enableRenderTestBuffer = -1;
 
 	CDeferredRP::CDeferredRP() :
 		m_albedo(NULL),
@@ -265,6 +266,11 @@ namespace Skylicht
 	void CDeferredRP::enableTestIndirect(bool b)
 	{
 		g_enableRenderTestIndirect = b;
+	}
+
+	void CDeferredRP::enableTestBuffer(int bufferId)
+	{
+		g_enableRenderTestBuffer = bufferId;
 	}
 
 	void CDeferredRP::enableRenderIndirect(bool b)
@@ -692,11 +698,17 @@ namespace Skylicht
 		}
 
 		// test
-		/*
-		SMaterial t = m_finalPass;
-		t.setTexture(0, m_data);
-		t.MaterialType = m_textureColorShader;
-		renderBufferToTarget(0.0f, 0.0f, renderW, renderH, 0.0f, 0.0f, renderW, renderH, t);
-		*/
+		if (g_enableRenderTestBuffer >= 0)
+		{
+			SMaterial t = m_finalPass;
+			if (g_enableRenderTestBuffer == 0)
+				t.setTexture(0, m_albedo);
+			else if (g_enableRenderTestBuffer == 1)
+				t.setTexture(0, m_normal);
+			else
+				t.setTexture(0, m_data);
+			t.MaterialType = m_textureColorShader;
+			renderBufferToTarget(0.0f, 0.0f, renderW, renderH, 0.0f, 0.0f, renderW, renderH, t);
+		}
 	}
 }

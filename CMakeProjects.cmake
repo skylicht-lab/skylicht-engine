@@ -39,6 +39,7 @@ if (BUILD_EXAMPLES AND BUILD_SKYLICHT_LIGHMAPPER)
 	subdirs(Samples/SkinnedMesh)
 	subdirs(Samples/SkinnedMeshInstancing)
 	subdirs(Samples/Sponza)
+	subdirs(Samples/SpringBone)
 	subdirs(Samples/TankScene)
 	subdirs(Samples/WalkIK)
 	

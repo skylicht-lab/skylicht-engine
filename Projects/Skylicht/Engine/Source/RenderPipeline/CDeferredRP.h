@@ -135,6 +135,8 @@ namespace Skylicht
 
 		static void enableTestIndirect(bool b);
 
+		static void enableTestBuffer(int bufferId);
+
 	protected:
 
 		void initRTT(int w, int h);

@@ -190,14 +190,7 @@ namespace Skylicht
 				continue;
 
 			if (mat != data->Material)
-			{
 				mat = data->Material;
-
-				for (u32 i = 0, n = mesh->MeshBuffers.size(); i < n; i++)
-				{
-					mat->updateTexture(mesh->MeshBuffers[i]->getMaterial());
-				}
-			}
 
 			driver->setTransform(video::ETS_WORLD, transform->World);
 

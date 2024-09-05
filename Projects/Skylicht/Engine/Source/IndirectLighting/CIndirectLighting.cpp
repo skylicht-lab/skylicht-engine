@@ -100,10 +100,15 @@ namespace Skylicht
 			// add indirect data info
 			data = entity->addData<CIndirectLightingData>();
 		}
+		else
+		{
+			data->releaseSH();
+		}
 
 		data->Type = (CIndirectLightingData::EType)m_type;
 		data->SH = m_sh;
 		data->AutoSH = &m_autoSH;
+		data->ReleaseSH = false;
 
 		if (std::find(m_data.begin(), m_data.end(), data) == m_data.end())
 			m_data.push_back(data);

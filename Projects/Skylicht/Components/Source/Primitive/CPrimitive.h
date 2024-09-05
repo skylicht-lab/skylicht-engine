@@ -71,6 +71,13 @@ namespace Skylicht
 
 		CMesh* getMesh();
 
+		inline const SColor& getColor()
+		{
+			return m_color;
+		}
+
+		void setColor(const SColor& color);
+
 		void setCustomMaterial(CMaterial* material);
 
 		void setInstancing(bool b);
