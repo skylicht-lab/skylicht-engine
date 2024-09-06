@@ -5,8 +5,6 @@
 #include "ViewManager/CViewManager.h"
 #include "Context/CContext.h"
 
-#include "Primitive/CPlane.h"
-#include "Primitive/CCube.h"
 #include "GridPlane/CGridPlane.h"
 #include "SkyDome/CSkyDome.h"
 
@@ -102,8 +100,8 @@ void CViewInit::initScene()
 	CReflectionProbe* reflection = reflectionProbeObj->addComponent<CReflectionProbe>();
 	reflection->loadStaticTexture("Common/Textures/Sky/PaperMill");
 
-	// CGameObject* gridPlaneObj = zone->createEmptyObject();
-	// gridPlaneObj->addComponent<CGridPlane>();
+	CGameObject* gridPlaneObj = zone->createEmptyObject();
+	gridPlaneObj->addComponent<CGridPlane>();
 
 	// lighting
 	CGameObject* lightObj = zone->createEmptyObject();

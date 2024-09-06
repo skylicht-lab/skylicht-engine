@@ -1,14 +1,12 @@
 #pragma once
 
 #include "ViewManager/CView.h"
+#include "Verlet/CVerlet.h"
 
-class CViewDemo :
-	public CView,
-	public IEventReceiver
+class CViewDemo : public CView
 {
 protected:
-	int m_mouseX;
-	int m_mouseY;
+	Verlet::CVerlet m_verlet;
 
 public:
 	CViewDemo();
@@ -25,5 +23,10 @@ public:
 
 	virtual void onPostRender();
 
-	virtual bool OnEvent(const SEvent& event);
+	void onGUI();
+
+protected:
+
+	void initDemo1();
+
 };
