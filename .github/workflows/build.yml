@@ -7,8 +7,6 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
-        #with:
-        #  lfs: true
       - name: Install Dependencies
         shell: cmd
         run: |
@@ -45,13 +43,7 @@ jobs:
           set /p CONFIG_VERSION=<Version.txt
           set file_version=%CONFIG_VERSION:.=_%
           set output=SkylichtDemo_%file_version%_Emscripten.zip
-          cd Bin
-          7z a %output% *.zip
-          7z a %output% *.wasm.*
-          7z a %output% *.html
-          cd..
-          copy Bin\%output% Build
-          dir -l Bin\%output% Build
+          dir Bin
     #- name: Result
     #  uses: actions/upload-artifact@v1
     #  with:
@@ -77,8 +69,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        #with:
-        #  lfs: true
       - name: Install Dependencies
         run: |
           sudo apt-get update -y -qq
@@ -102,10 +92,6 @@ jobs:
           version=$(cat "Version.txt")
           file_version=${version//./_}
           output=../Build/SkylichtDemo_${file_version}_Linux.zip
-          cd Bin
-          7z a ${output} ./*
-          cd ..
-          ls -l Build
     #- name: Result
     #  uses: actions/upload-artifact@v1
     #  with:
@@ -116,8 +102,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        #with:
-        #  lfs: true
       - name: Install Dependencies
         run: |
           sudo apt-get update -y -qq
@@ -141,10 +125,7 @@ jobs:
           version=$(cat "Version.txt")
           file_version=${version//./_}
           output=../Build/SkylichtDemo_${file_version}_Linux.zip
-          cd Bin
-          7z a ${output} ./*
-          cd ..
-          ls -l Build
+          ls -l Bin
     #- name: Result
     #  uses: actions/upload-artifact@v1
     #  with:
@@ -155,8 +136,14 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Restore LFS cache
+        uses: actions/cache@v3
+        id: lfs-macos-cache
         with:
-          lfs: true
+          path: .git/lfs
+          key: lfs-macos-cache-v1
+      - name: Git LFS Pull
+        run: git lfs pull
       - name: Build
         run: |
           brew install libomp
@@ -178,14 +165,10 @@ jobs:
           brew install p7zip
           mkdir Build
           ls -l Bin/Release
-        #version=$(cat "Version.txt")
-        #file_version=${version//./_}
-        #output=SkylichtDemo_${file_version}_MacOS.zip
-        #cd Bin/Release
-        #7z a ${output} *.*
-        #cd ../..
-        #cp Bin/Release/${output} Build
-        #ls -l Build
+          version=$(cat "Version.txt")
+          file_version=${version//./_}
+          output=SkylichtDemo_${file_version}_MacOS.zip
+          ls - Bin/Release        
     #- name: Result
     #  uses: actions/upload-artifact@v1
     #  with:
@@ -198,8 +181,14 @@ jobs:
       PLATFORM: SIMULATORARM64
     steps:
       - uses: actions/checkout@v2
+      - name: Restore LFS cache
+        uses: actions/cache@v3
+        id: lfs-ios-cache
         with:
-          lfs: true
+          path: .git/lfs
+          key: lfs-ios-cache-v1
+      - name: Git LFS Pull
+        run: git lfs pull
       - name: Build
         run: |
           cd Assets
@@ -218,14 +207,10 @@ jobs:
           brew install p7zip
           mkdir Build
           ls -l Bin/${PLATFORM}/Release
-        #version=$(cat "Version.txt")
-        #file_version=${version//./_}
-        #output=SkylichtDemo_${file_version}_IOS.zip
-        #cd Bin/${PLATFORM}/Release
-        #7z a ${output} *.*
-        #cd ../../..
-        #cp Bin/${PLATFORM}/Release/${output} Build
-        #ls -l Build
+          version=$(cat "Version.txt")
+          file_version=${version//./_}
+          output=SkylichtDemo_${file_version}_IOS.zip
+          ls - Bin/${PLATFORM}/Release        
     #- name: Result
     #  uses: actions/upload-artifact@v1
     #  with:
@@ -236,8 +221,6 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
-        #with:
-        #  lfs: true
       - name: Build
         shell: cmd
         run: |
@@ -260,8 +243,14 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Restore LFS cache
+        uses: actions/cache@v3
+        id: lfs-windows-cache
         with:
-          lfs: true
+          path: .git/lfs
+          key: lfs-windows-cache-v1
+      - name: Git LFS Pull
+        run: git lfs pull
       - name: Build
         shell: cmd
         run: |
@@ -284,8 +273,6 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
-        #with:
-        #  lfs: true
       - name: Build
         shell: cmd
         run: |
