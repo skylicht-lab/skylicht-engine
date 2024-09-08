@@ -162,13 +162,11 @@ jobs:
           cd ..
       - name: Package
         run: |
-          brew install p7zip
           mkdir Build
           ls -l Bin/Release
           version=$(cat "Version.txt")
           file_version=${version//./_}
           output=SkylichtDemo_${file_version}_MacOS.zip
-          ls - Bin/Release        
     #- name: Result
     #  uses: actions/upload-artifact@v1
     #  with:
@@ -204,13 +202,10 @@ jobs:
           cd ..
       - name: Package
         run: |
-          brew install p7zip
-          mkdir Build
           ls -l Bin/${PLATFORM}/Release
           version=$(cat "Version.txt")
           file_version=${version//./_}
           output=SkylichtDemo_${file_version}_IOS.zip
-          ls - Bin/${PLATFORM}/Release        
     #- name: Result
     #  uses: actions/upload-artifact@v1
     #  with:
