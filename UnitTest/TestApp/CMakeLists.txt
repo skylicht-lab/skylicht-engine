@@ -1,22 +1,22 @@
 include_directories(
 	${HELLO_SKYLICHT_SOURCE_DIR}/UnitTest/TestApp
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Main/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Main
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Include	
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Engine/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Components/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Collision/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Physics/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Client/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Lightmapper/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Audio/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/source/freetype2/include
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Engine
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Components
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Collision
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Physics
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Client
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Lightmapper
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Audio
+	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/freetype2/include
 )
 
 add_definitions(-DTEST_APP)
 
 if (BUILD_IMGUI)
-	include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/Imgui/Source)
+	include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/Imgui)
 endif()
 
 set(template_path ${SKYLICHT_ENGINE_PROJECT_DIR}/Main)

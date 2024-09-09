@@ -1,14 +1,14 @@
 include_directories(
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Audio/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/source/libmpg123
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Audio
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System
+	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/libmpg123
 )
 
 file(GLOB_RECURSE skylicht_audio_source 
-	./Source/*.cpp 
-	./Source/*.hpp 
-	./Source/*.c
-	./Source/*.h)
+	./*.cpp 
+	./*.hpp 
+	./*.c
+	./*.h)
 setup_project_group("${skylicht_audio_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_library(Audio ${ENGINE_SHARED_OR_STATIC_LIB} ${skylicht_audio_source})
@@ -18,7 +18,7 @@ if (BUILD_SHARED_LIBS)
 	add_definitions(-DAUDIO_EXPORTS)
 endif()
 
-target_precompiled_header(Audio ./Source/stdafx.cpp ${skylicht_audio_source})
+target_precompiled_header(Audio ./stdafx.cpp ${skylicht_audio_source})
 
 set_target_properties(Audio PROPERTIES VERSION ${SKYLICHT_VERSION})
 
@@ -58,8 +58,8 @@ install(TARGETS Audio
 			LIBRARY DESTINATION lib
 			ARCHIVE DESTINATION lib)
 
-install (DIRECTORY ${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Audio/Source
-	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}/Skylicht/Audio
+install (DIRECTORY ${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Audio
+	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}/Skylicht
 	FILES_MATCHING PATTERN "*.h*")
 
 install(EXPORT AudioTargets

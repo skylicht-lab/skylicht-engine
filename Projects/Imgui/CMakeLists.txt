@@ -1,14 +1,14 @@
 include_directories(
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Include
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Engine/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Imgui/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Engine
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Imgui
 )
 
 file(GLOB_RECURSE imgui_source
-	./Source/**.cpp
-	./Source/**.c 
-	./Source/**.h)
+	./**.cpp
+	./**.c 
+	./**.h)
 
 setup_project_group("${imgui_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -25,8 +25,8 @@ install(TARGETS Imgui
 			LIBRARY DESTINATION lib
 			ARCHIVE DESTINATION lib)
 			
-install (DIRECTORY ${SKYLICHT_ENGINE_PROJECT_DIR}/Imgui/Source
-	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}/Imgui
+install (DIRECTORY ${SKYLICHT_ENGINE_PROJECT_DIR}/Imgui
+	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}
 	FILES_MATCHING PATTERN "*.h*")
 
 install(EXPORT ImguiTargets

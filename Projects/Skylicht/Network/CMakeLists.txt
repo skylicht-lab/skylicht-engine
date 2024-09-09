@@ -1,18 +1,17 @@
 include_directories(
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Network/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Network
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Include
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/source/curl/include
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Engine/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Crypto/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/curl/include
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Engine
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Crypto
 )
 
 file(GLOB_RECURSE skylicht_network 
-	./Source/*.cpp 
-	./Source/*.hpp 
-	./Source/*.c 
-	./Source/*.h)
+	./*.cpp 
+	./*.hpp 
+	./*.c 
+	./*.h)
 setup_project_group("${skylicht_network}" ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_library(Network ${ENGINE_SHARED_OR_STATIC_LIB}
@@ -23,7 +22,7 @@ if (BUILD_SHARED_LIBS)
 set_target_properties(Network PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS true)
 endif()
 
-target_precompiled_header(Network ./Source/pch.cpp ${skylicht_network})
+target_precompiled_header(Network ./pch.cpp ${skylicht_network})
 
 set_target_properties(Network PROPERTIES VERSION ${SKYLICHT_VERSION})
 
@@ -40,8 +39,8 @@ install(TARGETS Network
 			LIBRARY DESTINATION lib
 			ARCHIVE DESTINATION lib)
 
-install (DIRECTORY ${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Network/Source
-	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}/Skylicht/Network
+install (DIRECTORY ${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Network
+	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}/Skylicht
 	FILES_MATCHING PATTERN "*.h*")
 
 install(EXPORT NetworkTargets
