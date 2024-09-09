@@ -283,7 +283,7 @@ else()
 	add_executable(SampleLightmappingVertex ${application_source})
 endif()
 
-target_precompiled_header(SampleLightmappingVertex ${template_path}/Source/pch.cpp ${application_source})
+target_precompiled_header(SampleLightmappingVertex ${template_path}/pch.cpp ${application_source})
 
 # Linker
 if (BUILD_ANDROID)

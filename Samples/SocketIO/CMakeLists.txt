@@ -296,7 +296,7 @@ else()
 	add_executable(SampleSocketIO ${application_source})
 endif()
 
-target_precompiled_header(SampleSocketIO ${template_path}/Source/pch.cpp ${application_source})
+target_precompiled_header(SampleSocketIO ${template_path}/pch.cpp ${application_source})
 
 # Linker
 if (BUILD_ANDROID)

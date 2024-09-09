@@ -285,7 +285,7 @@ else()
 	add_executable(SampleLightmappingDirectional ${application_source})
 endif()
 
-target_precompiled_header(SampleLightmappingDirectional ${template_path}/Source/pch.cpp ${application_source})
+target_precompiled_header(SampleLightmappingDirectional ${template_path}/pch.cpp ${application_source})
 
 # Linker
 if (BUILD_ANDROID)

@@ -280,7 +280,7 @@ else()
 	add_executable(SampleLightmapUV ${application_source})
 endif()
 
-target_precompiled_header(SampleLightmapUV ${template_path}/Source/pch.cpp ${application_source})
+target_precompiled_header(SampleLightmapUV ${template_path}/pch.cpp ${application_source})
 
 # Linker
 if (BUILD_ANDROID)
