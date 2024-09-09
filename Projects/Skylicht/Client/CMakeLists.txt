@@ -1,14 +1,14 @@
 include_directories(
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Client/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Client
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Include
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Engine/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Components/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Collision/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Physics/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Lightmapper/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Audio/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/GUI/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Engine
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Components
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Collision
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Physics
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Lightmapper
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Audio
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/GUI
 )
 
 if (BUILD_DEBUG_VLD)
@@ -23,13 +23,13 @@ if (BUILD_DEBUG_VLD)
 endif()
 
 if (BUILD_SKYLICHT_NETWORK)
-include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Network/Source)
+include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Network)
 endif()
 
 file(GLOB_RECURSE skylicht_client_source 
-	./Source/**.cpp 
-	./Source/**.c 
-	./Source/**.h)
+	./**.cpp 
+	./**.c 
+	./**.h)
 	
 setup_project_group("${skylicht_client_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 	
@@ -39,7 +39,7 @@ if (BUILD_SHARED_LIBS)
 set_target_properties(Client PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS true)
 endif()
 
-target_precompiled_header(Client ./Source/pch.cpp ${skylicht_client_source})
+target_precompiled_header(Client ./pch.cpp ${skylicht_client_source})
 
 set_target_properties(Client PROPERTIES VERSION ${SKYLICHT_VERSION})
 
@@ -81,8 +81,8 @@ install(TARGETS Client
 			LIBRARY DESTINATION lib
 			ARCHIVE DESTINATION lib)
 			
-install (DIRECTORY ${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Client/Source
-	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}/Skylicht/Client
+install (DIRECTORY ${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Client
+	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}/Skylicht
 	FILES_MATCHING PATTERN "*.h*")
 
 install(EXPORT ClientTargets

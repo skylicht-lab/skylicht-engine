@@ -1,22 +1,22 @@
 include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Samples/SpringBone/Source
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Samples/SampleFW
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Main/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Main
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Include
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Engine/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Components/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Collision/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Physics/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Client/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Lightmapper/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Audio/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/source/freetype2/include
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Engine
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Components
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Collision
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Physics
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Client
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Lightmapper
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Audio
+	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/freetype2/include
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Bullet3/src
 )
 
 if (BUILD_IMGUI)
-	include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/Imgui/Source)
+	include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/Imgui)
 endif()
 
 set(template_path ${SKYLICHT_ENGINE_PROJECT_DIR}/Main)
@@ -30,8 +30,8 @@ file(GLOB_RECURSE application_source
 
 setup_project_group("${application_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 
-list (APPEND application_source ${template_path}/Source/pch.cpp)
-list (APPEND application_source ${template_path}/Source/pch.h)
+list (APPEND application_source ${template_path}/pch.cpp)
+list (APPEND application_source ${template_path}/pch.h)
 
 if (BUILD_ANDROID)
 	file(GLOB_RECURSE platform_android_source 
@@ -284,7 +284,7 @@ else()
 	add_executable(SampleSpringBone ${application_source})
 endif()
 
-target_precompiled_header(SampleSpringBone ${template_path}/Source/pch.cpp ${application_source})
+target_precompiled_header(SampleSpringBone ${template_path}/pch.cpp ${application_source})
 
 # Linker
 if (BUILD_ANDROID)

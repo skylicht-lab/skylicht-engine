@@ -1,12 +1,12 @@
 include_directories(
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Crypto/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Crypto
 )
 
 file(GLOB_RECURSE crypto_source 
-	./Source/*.cpp 
-	./Source/*.hpp 
-	./Source/*.c 
-	./Source/*.h)
+	./*.cpp 
+	./*.hpp 
+	./*.c 
+	./*.h)
 setup_project_group("${crypto_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 
 if (BUILD_SHARED_LIBS)
@@ -26,8 +26,8 @@ install(TARGETS CryptoLib
 			LIBRARY DESTINATION lib
 			ARCHIVE DESTINATION lib)
 			
-install (DIRECTORY ${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Crypto/Source
-	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}/Skylicht/Crypto
+install (DIRECTORY ${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Crypto
+	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}/Skylicht
 	FILES_MATCHING PATTERN "*.h*")
 
 install(EXPORT CryptoLibTargets

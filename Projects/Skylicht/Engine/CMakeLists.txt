@@ -1,18 +1,17 @@
 include_directories(
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Engine/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Engine
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Include
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/source/freetype2/include
-	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/source/kdtree
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Audio/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/freetype2/include
+	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/kdtree
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Audio
 )
 
 file(GLOB_RECURSE skylicht_source 
-	./Source/*.cpp 
-	./Source/*.hpp 
-	./Source/*.c 
-	./Source/*.h)
+	./*.cpp 
+	./*.hpp 
+	./*.c 
+	./*.h)
 setup_project_group("${skylicht_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_library(Engine ${ENGINE_SHARED_OR_STATIC_LIB} ${skylicht_source})
@@ -22,7 +21,7 @@ if (BUILD_SHARED_LIBS)
 	add_definitions(-DSKYLICHT_EXPORTS)
 endif()
 
-target_precompiled_header(Engine ./Source/pch.cpp ${skylicht_source})
+target_precompiled_header(Engine ./pch.cpp ${skylicht_source})
 
 set_target_properties(Engine PROPERTIES VERSION ${SKYLICHT_VERSION})
 
@@ -39,8 +38,8 @@ install(TARGETS Engine
 			LIBRARY DESTINATION lib
 			ARCHIVE DESTINATION lib)
 
-install (DIRECTORY ${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Engine/Source
-	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}/Skylicht/Engine
+install (DIRECTORY ${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Engine
+	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}/Skylicht
 	FILES_MATCHING PATTERN "*.h*")
 
 install(EXPORT EngineTargets

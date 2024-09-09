@@ -1,14 +1,14 @@
 include_directories(
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Lightmapper/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Lightmapper
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Include	
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Engine/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Engine
 )
 
 file(GLOB_RECURSE skylicht_lightmapper_source 
-	./Source/**.cpp 
-	./Source/**.c 
-	./Source/**.h)
+	./**.cpp 
+	./**.c 
+	./**.h)
 	
 setup_project_group("${skylicht_lightmapper_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 	
@@ -29,8 +29,8 @@ install(TARGETS Lightmapper
 			LIBRARY DESTINATION lib
 			ARCHIVE DESTINATION lib)
 			
-install (DIRECTORY ${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Lightmapper/Source
-	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}/Skylicht/Lightmapper
+install (DIRECTORY ${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Lightmapper
+	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}/Skylicht
 	FILES_MATCHING PATTERN "*.h*")
 
 install(EXPORT LightmapperTargets

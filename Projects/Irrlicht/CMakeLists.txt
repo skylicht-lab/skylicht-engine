@@ -1,6 +1,6 @@
 include_directories(
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Include
-	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty
 )
 
 # SDL Include
