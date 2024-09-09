@@ -284,7 +284,7 @@ else()
 	add_executable(SampleWalkIK ${application_source})
 endif()
 
-target_precompiled_header(SampleWalkIK ${template_path}/Source/pch.cpp ${application_source})
+target_precompiled_header(SampleWalkIK ${template_path}/pch.cpp ${application_source})
 
 # Linker
 if (BUILD_ANDROID)

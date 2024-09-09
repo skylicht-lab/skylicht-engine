@@ -280,7 +280,7 @@ else()
 	add_executable(SampleShader ${application_source})
 endif()
 
-target_precompiled_header(SampleShader ${template_path}/Source/pch.cpp ${application_source})
+target_precompiled_header(SampleShader ${template_path}/pch.cpp ${application_source})
 
 # Linker
 if (BUILD_ANDROID)

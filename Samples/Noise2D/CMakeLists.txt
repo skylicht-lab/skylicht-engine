@@ -280,7 +280,7 @@ else()
 	add_executable(SampleNoise2D ${application_source})
 endif()
 
-target_precompiled_header(SampleNoise2D ${template_path}/Source/pch.cpp ${application_source})
+target_precompiled_header(SampleNoise2D ${template_path}/pch.cpp ${application_source})
 
 # Linker
 if (BUILD_ANDROID)
