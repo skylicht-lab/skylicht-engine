@@ -1,13 +1,13 @@
 include_directories(
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System
+	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty
 )
 
 file(GLOB_RECURSE skylicht_system_source 
-	./Source/*.cpp 
-	./Source/*.hpp 
-	./Source/*.c 
-	./Source/*.h)
+	./*.cpp 
+	./*.hpp 
+	./*.c 
+	./*.h)
 setup_project_group("${skylicht_system_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_library(System ${ENGINE_SHARED_OR_STATIC_LIB}
@@ -32,8 +32,8 @@ install(TARGETS System
 			LIBRARY DESTINATION lib
 			ARCHIVE DESTINATION lib)
 
-install (DIRECTORY ${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System/Source
-	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}/Skylicht/System
+install (DIRECTORY ${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System
+	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}/Skylicht
 	FILES_MATCHING PATTERN "*.h*")
 
 install(EXPORT SystemTargets

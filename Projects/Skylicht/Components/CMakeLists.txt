@@ -1,16 +1,15 @@
 include_directories(
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Components/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Components
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Include
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Engine/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Engine
 )
 
 file(GLOB_RECURSE skylicht_components 
-	./Source/*.cpp 
-	./Source/*.hpp 
-	./Source/*.c 
-	./Source/*.h)
+	./*.cpp 
+	./*.hpp 
+	./*.c 
+	./*.h)
 setup_project_group("${skylicht_components}" ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_library(Components ${ENGINE_SHARED_OR_STATIC_LIB}
@@ -22,7 +21,7 @@ if (BUILD_SHARED_LIBS)
 	add_definitions(-DCOMPONENTS_EXPORTS)
 endif()
 
-target_precompiled_header(Components ./Source/pch.cpp ${skylicht_components})
+target_precompiled_header(Components ./pch.cpp ${skylicht_components})
 
 set_target_properties(Components PROPERTIES VERSION ${SKYLICHT_VERSION})
 
@@ -35,8 +34,8 @@ install(TARGETS Components
 			LIBRARY DESTINATION lib
 			ARCHIVE DESTINATION lib)
 
-install (DIRECTORY ${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Components/Source
-	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}/Skylicht/Components
+install (DIRECTORY ${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Components
+	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}/Skylicht
 	FILES_MATCHING PATTERN "*.h*")
 
 install(EXPORT ComponentsTargets

@@ -1,16 +1,15 @@
 include_directories(
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Collision/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Collision
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Include
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System/Source
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Engine/Source
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Engine
 )
 
 file(GLOB_RECURSE skylicht_collision 
-	./Source/*.cpp 
-	./Source/*.hpp 
-	./Source/*.c 
-	./Source/*.h)
+	./*.cpp 
+	./*.hpp 
+	./*.c 
+	./*.h)
 setup_project_group("${skylicht_collision}" ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_library(Collision ${ENGINE_SHARED_OR_STATIC_LIB}
@@ -22,7 +21,7 @@ if (BUILD_SHARED_LIBS)
 	add_definitions(-DCOLLISION_EXPORTS)
 endif()
 
-target_precompiled_header(Collision ./Source/pch.cpp ${skylicht_collision})
+target_precompiled_header(Collision ./pch.cpp ${skylicht_collision})
 
 set_target_properties(Collision PROPERTIES VERSION ${SKYLICHT_VERSION})
 
@@ -35,8 +34,8 @@ install(TARGETS Collision
 			LIBRARY DESTINATION lib
 			ARCHIVE DESTINATION lib)
 
-install (DIRECTORY ${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Collision/Source
-	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}/Skylicht/Collision
+install (DIRECTORY ${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Collision
+	DESTINATION ${SKYLICHT_INCLUDE_INSTALL_DIR}/Skylicht
 	FILES_MATCHING PATTERN "*.h*")
 
 install(EXPORT CollisionTargets
