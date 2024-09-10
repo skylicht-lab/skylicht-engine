@@ -83,10 +83,13 @@ namespace Verlet
 				continue;
 
 			p->Velocity = (p->Position - p->OldPosition) * p->Friction;
+			p->Velocity += p->AffectVelocity;
 
 			p->OldPosition = p->Position;
 			p->Position += m_gravity * timestep * p->Mass;
 			p->Position += p->Velocity;
+
+			p->AffectVelocity.set(0.0f, 0.0f, 0.0f);
 		}
 	}
 

@@ -2,11 +2,13 @@
 
 #include "ViewManager/CView.h"
 #include "Verlet/CVerlet.h"
+#include "Wind/CWind.h"
 
 class CViewDemo : public CView
 {
 protected:
 	Verlet::CVerlet m_verlet;
+	Verlet::CWind m_wind;
 
 	bool m_moveParticle;
 	float m_moveValue;

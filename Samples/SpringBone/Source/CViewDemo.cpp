@@ -45,6 +45,8 @@ void CViewDemo::onUpdate()
 
 	updateDemo();
 
+	m_wind.update(&m_verlet);
+
 	m_verlet.update();
 
 	m_verlet.drawDebug();
@@ -91,8 +93,8 @@ void CViewDemo::onGUI()
 	ImGuiWindowFlags window_flags = 0;
 
 	// We specify a default position/size in case there's no data in the .ini file. Typically this isn't required! We only do it to make the Demo applications a little more welcoming.
-	ImGui::SetNextWindowPos(ImVec2(935, 15), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(310, 270), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowPos(ImVec2(850, 15), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(280, 270), ImGuiCond_FirstUseEver);
 
 	if (!ImGui::Begin("Verlet Test", &open, window_flags))
 	{
@@ -103,12 +105,76 @@ void CViewDemo::onGUI()
 
 	// BEGIN WINDOW
 	{
-		ImGui::Checkbox("Move particle", &m_moveParticle);
+		if (ImGui::CollapsingHeader("Demo 1", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			ImGui::Checkbox("Move particle", &m_moveParticle);
+		}
+
+		if (ImGui::CollapsingHeader("Wind", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			static float scale = m_wind.getScale();
+			static float strong = m_wind.getStrong();
+
+			ImGui::SliderFloat("Scale", &scale, 0.001f, 5.0f);
+			ImGui::SliderFloat("Strong", &strong, 0.0f, 0.1f);
+
+			m_wind.setScale(scale);
+			m_wind.setStrong(strong);
+		}
 
 		if (ImGui::Button("Reset"))
 		{
 			initDemo();
 		}
+
+		ImGui::End();
+	}
+
+
+	ImGui::SetNextWindowPos(ImVec2(850, 400), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(280, 130), ImGuiCond_FirstUseEver);
+
+	if (!ImGui::Begin("Wind", &open, window_flags))
+	{
+		// Early out if the window is collapsed, as an optimization.
+		ImGui::End();
+		return;
+	}
+
+	// BEGIN WINDOW
+	{
+		ImVec2 windowPos = ImGui::GetWindowPos();
+		windowPos.x += 25.0f;
+		windowPos.y += 25.0f;
+
+		ImVec2 windowSize = ImGui::GetWindowSize();
+		windowSize.x -= 50.0f;
+		windowSize.y -= 50.0f;
+
+		ImVec2 windowEnd = ImVec2(windowPos.x + windowSize.x, windowPos.y + windowSize.y);
+
+		ImDrawList* drawList = ImGui::GetForegroundDrawList();
+
+		int numPoint = 30;
+
+		ImVec2* points = new ImVec2[numPoint];
+
+		float x = windowPos.x;
+		float y = windowPos.y + windowSize.y;
+		float step = windowSize.x / numPoint;
+
+		float space = 0.1f;
+		for (int i = 0; i < numPoint; i++)
+		{
+			float nosieY = i * space;
+			float noise = m_wind.getNoiseValue(nosieY);
+			points[i] = ImVec2(x, y - noise * windowSize.y);
+			x += step;
+		}
+
+		drawList->AddPolyline(points, numPoint, IM_COL32(255, 255, 255, 255), false, 2.0f);
+
+		delete[]points;
 
 		ImGui::End();
 	}

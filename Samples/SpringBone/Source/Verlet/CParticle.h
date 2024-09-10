@@ -8,6 +8,8 @@ namespace Verlet
 		core::vector3df Position;
 		core::vector3df OldPosition;
 		core::vector3df Velocity;
+		core::vector3df AffectVelocity;
+
 		bool IsConstraint;
 		float Mass;
 		float Friction;
