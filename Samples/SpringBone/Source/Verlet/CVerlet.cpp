@@ -68,7 +68,7 @@ namespace Verlet
 	void CVerlet::simulation(float timestep)
 	{
 		updateParticle(timestep);
-		updateStick(timestep);
+		updateStickDistance(timestep);
 	}
 
 	void CVerlet::updateParticle(float timestep)
@@ -82,33 +82,41 @@ namespace Verlet
 			if (p->IsConstraint)
 				continue;
 
-			p->Velocity = p->Position - p->OldPosition;
+			p->Velocity = (p->Position - p->OldPosition) * p->Friction;
+
 			p->OldPosition = p->Position;
-			p->Velocity += m_gravity * timestep * p->Mass;
+			p->Position += m_gravity * timestep * p->Mass;
 			p->Position += p->Velocity;
 		}
 	}
 
-	void CVerlet::updateStick(float timestep)
+	void CVerlet::updateStickDistance(float timestep)
 	{
+		// reference: https://github.com/subprotocol/verlet-js/blob/master/lib/constraint.js
 		Verlet::CStick** sticks = m_sticks.pointer();
 
 		core::vector3df v;
+		Verlet::CStick* stick;
+
+		float a, x;
 
 		for (u32 i = 0, n = m_sticks.size(); i < n; i++)
 		{
-			Verlet::CStick* stick = sticks[i];
+			stick = sticks[i];
 
 			core::vector3df& p1Position = stick->P1->Position;
 			core::vector3df& p2Position = stick->P2->Position;
 
-			float d = p1Position.getDistanceFrom(p2Position);
-			if (d < 0.05f)
-				d = 0.05f;
+			v = p2Position - p1Position;
 
-			stick->F = timestep * stick->Stiffness * 0.5f * (stick->getDefaultLength() - d) / d;
+			// see graph: y = b * (a - x)/x;
+			a = stick->getDefaultDistance2();
+			x = v.getLengthSQ();
+			x = core::max_(x, a);
 
-			v = (p2Position - p1Position) * stick->F;
+			stick->F = timestep * stick->Stiffness * ((a - x) / x);
+
+			v = v * stick->F;
 
 			if (!stick->P1->IsConstraint)
 				p1Position -= v;
@@ -131,13 +139,23 @@ namespace Verlet
 		{
 			CStick* s = sticks[i];
 
-			bool isConstraint = s->P1->IsConstraint || s->P2->IsConstraint;
-
-			debug->addLine(
-				s->P1->Position,
-				s->P2->Position,
-				isConstraint ? colorRed : colorWhite
-			);
+			if (s->DebugColor)
+			{
+				debug->addLine(
+					s->P1->Position,
+					s->P2->Position,
+					s->Color
+				);
+			}
+			else
+			{
+				bool isConstraint = s->P1->IsConstraint || s->P2->IsConstraint;
+				debug->addLine(
+					s->P1->Position,
+					s->P2->Position,
+					isConstraint ? colorRed : colorWhite
+				);
+			}
 		}
 	}
 }

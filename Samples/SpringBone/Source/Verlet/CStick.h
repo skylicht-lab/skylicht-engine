@@ -12,18 +12,27 @@ namespace Verlet
 		float F;
 		float Stiffness;
 
+		bool DebugColor;
+		SColor Color;
+
 	protected:
 
-		float m_defaultLength;
+		float m_defaultDistance;
+		float m_defaultDistance2;
 
 	public:
 		CStick(CParticle* p1, CParticle* p2);
 
 		virtual ~CStick();
 
-		inline float getDefaultLength()
+		inline float getDefaultDistance()
 		{
-			return m_defaultLength;
+			return m_defaultDistance;
+		}
+
+		inline float getDefaultDistance2()
+		{
+			return m_defaultDistance2;
 		}
 	};
 }

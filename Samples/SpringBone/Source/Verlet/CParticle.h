@@ -10,6 +10,7 @@ namespace Verlet
 		core::vector3df Velocity;
 		bool IsConstraint;
 		float Mass;
+		float Friction;
 
 	public:
 		CParticle();

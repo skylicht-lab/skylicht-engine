@@ -5,7 +5,8 @@ namespace Verlet
 {
 	CParticle::CParticle() :
 		IsConstraint(false),
-		Mass(0.001f)
+		Mass(0.001f),
+		Friction(0.997f)
 	{
 
 	}

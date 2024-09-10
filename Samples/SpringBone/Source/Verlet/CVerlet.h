@@ -55,7 +55,7 @@ namespace Verlet
 
 		void updateParticle(float timestep);
 
-		void updateStick(float timestep);
+		void updateStickDistance(float timestep);
 
 	};
 }

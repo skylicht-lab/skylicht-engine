@@ -8,6 +8,11 @@ class CViewDemo : public CView
 protected:
 	Verlet::CVerlet m_verlet;
 
+	bool m_moveParticle;
+	float m_moveValue;
+	float m_moveRadius;
+	int m_moveId;
+
 public:
 	CViewDemo();
 
@@ -27,6 +32,8 @@ public:
 
 protected:
 
-	void initDemo1();
+	void initDemo();
+
+	void updateDemo();
 
 };

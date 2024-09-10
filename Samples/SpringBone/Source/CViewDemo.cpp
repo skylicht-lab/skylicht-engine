@@ -6,7 +6,11 @@
 #include "imgui.h"
 #include "CImguiManager.h"
 
-CViewDemo::CViewDemo()
+CViewDemo::CViewDemo() :
+	m_moveParticle(false),
+	m_moveId(0),
+	m_moveValue(0.0f),
+	m_moveRadius(0.0f)
 {
 
 }
@@ -21,7 +25,7 @@ void CViewDemo::onInit()
 	CContext* context = CContext::getInstance();
 	CCamera* camera = context->getActiveCamera();
 
-	initDemo1();
+	initDemo();
 }
 
 void CViewDemo::onDestroy()
@@ -38,6 +42,8 @@ void CViewDemo::onUpdate()
 		// update scene
 		scene->update();
 	}
+
+	updateDemo();
 
 	m_verlet.update();
 
@@ -97,16 +103,25 @@ void CViewDemo::onGUI()
 
 	// BEGIN WINDOW
 	{
+		ImGui::Checkbox("Move particle", &m_moveParticle);
+
+		if (ImGui::Button("Reset"))
+		{
+			initDemo();
+		}
+
 		ImGui::End();
 	}
 }
 
-void CViewDemo::initDemo1()
+void CViewDemo::initDemo()
 {
 	int numCol = 32;
 	int numRow = 32;
 
 	int numParticles = numCol * numRow;
+
+	m_moveValue = 0.0f;
 
 	m_verlet.clear();
 	m_verlet.addParticle(numParticles);
@@ -120,25 +135,54 @@ void CViewDemo::initDemo1()
 	{
 		for (int x = 0; x < numCol; x++)
 		{
-			int id = y * numRow + x;
+			int id = y * numCol + x;
 
 			Verlet::CParticle* p = particles[id];
 			p->setPosition(offset + core::vector3df(x * space, -y * space, 0.0f));
 		}
 	}
 
+	m_moveId = numCol - 1;
+
 	particles[0]->IsConstraint = true;
-	particles[numCol - 1]->IsConstraint = true;
+	particles[m_moveId]->IsConstraint = true;
+
+	m_moveRadius = particles[m_moveId]->Position.X;
 
 	for (int y = 0; y < numRow; y++)
 	{
 		for (int x = 0; x < numCol; x++)
 		{
 			if (x < numCol - 1)
-				m_verlet.addStick(particles[y * numRow + x], particles[y * numRow + x + 1]);
+			{
+				m_verlet.addStick(
+					particles[y * numCol + x],
+					particles[y * numCol + x + 1]
+				);
+			}
 
 			if (y < numRow - 1)
-				m_verlet.addStick(particles[y * numRow + x], particles[(y + 1) * numRow + x]);
+			{
+				m_verlet.addStick(
+					particles[y * numCol + x],
+					particles[(y + 1) * numCol + x]
+				);
+			}
 		}
+	}
+}
+
+void CViewDemo::updateDemo()
+{
+	if (m_moveParticle)
+	{
+		Verlet::CParticle** particles = m_verlet.getParticles();
+
+		m_moveValue = m_moveValue + 0.001f * getTimeStep();
+		m_moveValue = fmodf(m_moveValue, 2.0f * core::PI);
+
+		core::vector3df& pos = particles[m_moveId]->Position;
+		pos.X = cosf(m_moveValue) * m_moveRadius;
+		pos.Z = sinf(m_moveValue) * m_moveRadius;
 	}
 }
