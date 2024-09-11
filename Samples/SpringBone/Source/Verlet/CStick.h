@@ -4,7 +4,7 @@
 
 namespace Verlet
 {
-	class CStick
+	class CStickDistance
 	{
 	public:
 		CParticle* P1;
@@ -21,9 +21,9 @@ namespace Verlet
 		float m_defaultDistance2;
 
 	public:
-		CStick(CParticle* p1, CParticle* p2);
+		CStickDistance(CParticle* p1, CParticle* p2);
 
-		virtual ~CStick();
+		virtual ~CStickDistance();
 
 		inline float getDefaultDistance()
 		{

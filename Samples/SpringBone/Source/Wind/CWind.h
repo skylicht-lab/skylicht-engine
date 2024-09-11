@@ -12,6 +12,7 @@ namespace Verlet
 		float m_strong;
 		float m_windTime;
 		float m_scale;
+		float m_timeRatio;
 
 		siv::BasicPerlinNoise<float> m_perlin;
 
@@ -50,6 +51,16 @@ namespace Verlet
 		inline float getTime()
 		{
 			return m_windTime;
+		}
+
+		inline void setTimeRatio(float t)
+		{
+			m_timeRatio = t;
+		}
+
+		inline float getTimeRatio()
+		{
+			return m_timeRatio;
 		}
 
 		float getNoiseValue(float y);

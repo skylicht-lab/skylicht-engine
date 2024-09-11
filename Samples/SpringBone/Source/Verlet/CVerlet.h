@@ -9,7 +9,7 @@ namespace Verlet
 	{
 	protected:
 		core::array<CParticle*> m_particles;
-		core::array<CStick*> m_sticks;
+		core::array<CStickDistance*> m_stickDistances;
 
 		core::vector3df m_gravity;
 	public:
@@ -21,9 +21,9 @@ namespace Verlet
 
 		void addParticle(int num);
 
-		CStick* addStick(u32 p1, u32 p2);
+		CStickDistance* addStickDistance(u32 p1, u32 p2);
 
-		CStick* addStick(CParticle* p1, CParticle* p2);
+		CStickDistance* addStickDistance(CParticle* p1, CParticle* p2);
 
 		void clear();
 
@@ -37,17 +37,27 @@ namespace Verlet
 			return m_particles.size();
 		}
 
-		inline CStick** getSticks()
+		inline CStickDistance** getStickDistances()
 		{
-			return m_sticks.pointer();
+			return m_stickDistances.pointer();
 		}
 
-		inline u32 getNumStick()
+		inline u32 getNumStickDistance()
 		{
-			return m_sticks.size();
+			return m_stickDistances.size();
 		}
 
 		void drawDebug();
+
+		inline void setGravity(const core::vector3df& g)
+		{
+			m_gravity = g;
+		}
+
+		inline const core::vector3df& getGravity()
+		{
+			return m_gravity;
+		}
 
 	protected:
 

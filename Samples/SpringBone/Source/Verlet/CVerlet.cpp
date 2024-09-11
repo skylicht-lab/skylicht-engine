@@ -23,27 +23,27 @@ namespace Verlet
 		}
 	}
 
-	CStick* CVerlet::addStick(u32 p1, u32 p2)
+	CStickDistance* CVerlet::addStickDistance(u32 p1, u32 p2)
 	{
 		u32 n = m_particles.size();
 		if (p1 >= n || p2 >= n)
 			return NULL;
 
-		return addStick(m_particles[p1], m_particles[p2]);
+		return addStickDistance(m_particles[p1], m_particles[p2]);
 	}
 
-	CStick* CVerlet::addStick(CParticle* p1, CParticle* p2)
+	CStickDistance* CVerlet::addStickDistance(CParticle* p1, CParticle* p2)
 	{
-		CStick* stick = new CStick(p1, p2);
-		m_sticks.push_back(stick);
+		CStickDistance* stick = new CStickDistance(p1, p2);
+		m_stickDistances.push_back(stick);
 		return stick;
 	}
 
 	void CVerlet::clear()
 	{
-		for (u32 i = 0, n = m_sticks.size(); i < n; i++)
-			delete m_sticks[i];
-		m_sticks.clear();
+		for (u32 i = 0, n = m_stickDistances.size(); i < n; i++)
+			delete m_stickDistances[i];
+		m_stickDistances.clear();
 
 		for (u32 i = 0, n = m_particles.size(); i < n; i++)
 			delete m_particles[i];
@@ -96,14 +96,14 @@ namespace Verlet
 	void CVerlet::updateStickDistance(float timestep)
 	{
 		// reference: https://github.com/subprotocol/verlet-js/blob/master/lib/constraint.js
-		Verlet::CStick** sticks = m_sticks.pointer();
+		Verlet::CStickDistance** sticks = m_stickDistances.pointer();
 
 		core::vector3df v;
-		Verlet::CStick* stick;
+		Verlet::CStickDistance* stick;
 
 		float a, x;
 
-		for (u32 i = 0, n = m_sticks.size(); i < n; i++)
+		for (u32 i = 0, n = m_stickDistances.size(); i < n; i++)
 		{
 			stick = sticks[i];
 
@@ -136,11 +136,11 @@ namespace Verlet
 		SColor colorWhite(255, 200, 200, 200);
 		SColor colorRed(255, 200, 0, 0);
 
-		CStick** sticks = m_sticks.pointer();
+		CStickDistance** sticks = m_stickDistances.pointer();
 
-		for (u32 i = 0, n = m_sticks.size(); i < n; i++)
+		for (u32 i = 0, n = m_stickDistances.size(); i < n; i++)
 		{
-			CStick* s = sticks[i];
+			CStickDistance* s = sticks[i];
 
 			if (s->DebugColor)
 			{

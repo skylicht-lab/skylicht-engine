@@ -7,7 +7,8 @@ namespace Verlet
 		m_vector(0.0f, 0.0f, 1.0f),
 		m_strong(0.01f),
 		m_windTime(0.0f),
-		m_scale(0.5f)
+		m_scale(0.5f),
+		m_timeRatio(1.0f)
 	{
 		m_perlin.reseed(getIrrlichtDevice()->getRandomizer()->rand());
 	}
@@ -26,7 +27,7 @@ namespace Verlet
 
 		float step = getTimeStep() * 0.001f;
 
-		m_windTime = m_windTime + step;
+		m_windTime = m_windTime + step * m_timeRatio;
 
 		for (int i = 0, n = verlet->getNumParticle(); i < n; i++)
 		{
