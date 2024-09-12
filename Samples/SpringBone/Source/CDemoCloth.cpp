@@ -28,6 +28,7 @@ void CDemoCloth::init()
 
 	m_verlet->clear();
 	m_verlet->addParticle(numParticles);
+	m_verlet->setDefaultGravity();
 
 	Verlet::CParticle** particles = m_verlet->getParticles();
 

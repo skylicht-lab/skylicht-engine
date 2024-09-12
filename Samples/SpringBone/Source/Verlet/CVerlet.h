@@ -10,8 +10,11 @@ namespace Verlet
 	protected:
 		core::array<CParticle*> m_particles;
 		core::array<CStickDistance*> m_stickDistances;
+		core::array<CStickAngle*> m_stickAngles;
 
 		core::vector3df m_gravity;
+
+		bool m_firstUpdate;
 	public:
 		CVerlet();
 
@@ -21,9 +24,15 @@ namespace Verlet
 
 		void addParticle(int num);
 
+		CParticle* addParticle();
+
 		CStickDistance* addStickDistance(u32 p1, u32 p2);
 
 		CStickDistance* addStickDistance(CParticle* p1, CParticle* p2);
+
+		CStickAngle* addStickAngle(u32 p1, u32 p2, u32 p3);
+
+		CStickAngle* addStickAngle(CParticle* p1, CParticle* p2, CParticle* p3);
 
 		void clear();
 
@@ -47,7 +56,7 @@ namespace Verlet
 			return m_stickDistances.size();
 		}
 
-		void drawDebug();
+		void drawDebug(bool drawingParticle);
 
 		inline void setGravity(const core::vector3df& g)
 		{
@@ -59,6 +68,11 @@ namespace Verlet
 			return m_gravity;
 		}
 
+		inline void setDefaultGravity()
+		{
+			m_gravity.set(0.0f, -9.81f * 0.001f, 0.0f);
+		}
+
 	protected:
 
 		void simulation(float timestep);
@@ -66,6 +80,10 @@ namespace Verlet
 		void updateParticle(float timestep);
 
 		void updateStickDistance(float timestep);
+
+		void updateStickAngle(float timestep);
+
+		void rotate(const core::vector3df& origin, core::vector3df& pos, const core::quaternion& q);
 
 	};
 }

@@ -7,7 +7,8 @@
 #include "CImguiManager.h"
 
 CViewDemo::CViewDemo() :
-	m_demoId(0)
+	m_demoId(0),
+	m_windDirection(0.0f)
 {
 	m_demo[0] = new CDemoCloth(&m_verlet);
 	m_demo[1] = new CDemoTree(&m_verlet);
@@ -15,7 +16,8 @@ CViewDemo::CViewDemo() :
 
 CViewDemo::~CViewDemo()
 {
-
+	delete m_demo[0];
+	delete m_demo[1];
 }
 
 void CViewDemo::onInit()
@@ -47,7 +49,7 @@ void CViewDemo::onUpdate()
 
 	m_verlet.update();
 
-	m_verlet.drawDebug();
+	m_verlet.drawDebug(m_demo[m_demoId]->isDrawingParticle());
 
 	// imgui update
 	CImguiManager::getInstance()->onNewFrame();
@@ -120,14 +122,28 @@ void CViewDemo::onGUI()
 
 		if (ImGui::CollapsingHeader("Wind", ImGuiTreeNodeFlags_DefaultOpen))
 		{
-			static float scale = m_wind.getScale();
-			static float strong = m_wind.getStrong();
+			bool enable = m_wind.isEnable();
+			float scale = m_wind.getScale();
+			float strong = m_wind.getStrong();
+			float timeSpeed = m_wind.getTimeRatio();
 
+			ImGui::Checkbox("Enable", &enable);
 			ImGui::SliderFloat("Scale", &scale, 0.001f, 5.0f);
 			ImGui::SliderFloat("Strong", &strong, 0.0f, 0.1f);
+			ImGui::SliderFloat("Time speed", &timeSpeed, 0.2f, 2.0f);
+			ImGui::SliderFloat("Direction", &m_windDirection, 0.0f, 360.0f);
 
+			core::quaternion q;
+			q.fromAngleAxis(m_windDirection * core::DEGTORAD, core::vector3df(0.0f, 1.0f, 0.0f));
+
+			core::vector3df v(0.0f, 0.0f, 1.0f);
+			v = q * v;
+
+			m_wind.setEnable(enable);
 			m_wind.setScale(scale);
 			m_wind.setStrong(strong);
+			m_wind.setTimeRatio(timeSpeed);
+			m_wind.setDirection(v);
 		}
 
 		if (ImGui::Button("Reset"))
@@ -191,6 +207,8 @@ void CViewDemo::onGUI()
 void CViewDemo::initDemo()
 {
 	m_demo[m_demoId]->init();
+
+	m_wind.setEnable(m_demo[m_demoId]->isEnableWind());
 }
 
 void CViewDemo::updateDemo()

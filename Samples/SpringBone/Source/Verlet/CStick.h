@@ -35,4 +35,22 @@ namespace Verlet
 			return m_defaultDistance2;
 		}
 	};
+
+	class CStickAngle
+	{
+	public:
+		CParticle* P1;
+		CParticle* P2;
+		CParticle* P3;
+
+		float Stiffness;
+
+		core::vector3df Direction1;
+		core::vector3df Direction2;
+
+	public:
+		CStickAngle(CParticle* p1, CParticle* p2, CParticle* p3);
+
+		virtual ~CStickAngle();
+	};
 }

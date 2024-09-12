@@ -8,13 +8,15 @@ namespace Verlet
 	class CWind
 	{
 	private:
-		core::vector3df m_vector;
+		core::vector3df m_direction;
 		float m_strong;
 		float m_windTime;
 		float m_scale;
 		float m_timeRatio;
 
 		siv::BasicPerlinNoise<float> m_perlin;
+
+		bool m_enable;
 
 	public:
 		CWind();
@@ -43,9 +45,9 @@ namespace Verlet
 			m_strong = f;
 		}
 
-		inline void setVector(const core::vector3df& v)
+		inline void setDirection(const core::vector3df& v)
 		{
-			m_vector = v;
+			m_direction = v;
 		}
 
 		inline float getTime()
@@ -61,6 +63,16 @@ namespace Verlet
 		inline float getTimeRatio()
 		{
 			return m_timeRatio;
+		}
+
+		inline bool isEnable()
+		{
+			return m_enable;
+		}
+
+		inline void setEnable(bool enable)
+		{
+			m_enable = enable;
 		}
 
 		float getNoiseValue(float y);

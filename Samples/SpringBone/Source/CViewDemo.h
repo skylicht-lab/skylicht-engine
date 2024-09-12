@@ -16,6 +16,8 @@ protected:
 	CDemo* m_demo[2];
 
 	int m_demoId;
+	float m_windDirection;
+
 public:
 	CViewDemo();
 
