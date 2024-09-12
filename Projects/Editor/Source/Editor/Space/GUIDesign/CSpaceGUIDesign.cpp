@@ -526,8 +526,8 @@ namespace Skylicht
 			m_gizmos->onRemove();
 
 			CGUIDesignController* controller = CGUIDesignController::getInstance();
-			controller->rebuildGUIHierachy();
 			controller->newGUI();
+			controller->rebuildGUIHierachy();
 			resetView(canvas);
 		}
 

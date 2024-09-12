@@ -95,7 +95,9 @@ namespace Skylicht
 			}
 
 			root->setDock(EGUIDock::NoDock);
-			root->setRect(core::rectf(0.0f, 0.0f, 1920.0f, 1080.0f));
+
+			if (m_guiFilePath.empty())
+				root->setRect(core::rectf(0.0f, 0.0f, 1920.0f, 1080.0f));
 
 			m_rootNode = new CGUIHierachyNode(NULL);
 			m_rootNode->setTagData(fullRect, CGUIHierachyNode::Canvas);
@@ -699,10 +701,10 @@ namespace Skylicht
 
 			if (space)
 			{
+				m_guiFilePath = path;
+
 				CSpaceGUIDesign* spaceGUI = dynamic_cast<CSpaceGUIDesign*>(space);
 				spaceGUI->openGUI(path.c_str());
-
-				m_guiFilePath = path;
 			}
 
 			// Show GUI Hierarchy window
