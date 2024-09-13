@@ -32,7 +32,10 @@ namespace Skylicht
 	namespace UI
 	{
 		CUIDraggable::CUIDraggable(CUIContainer* container, CGUIElement* element) :
-			CUIBase(container, element)
+			CUIBase(container, element),
+			m_lockX(false),
+			m_lockY(false),
+			m_limitDragToRect(false)
 		{
 
 		}
@@ -102,6 +105,19 @@ namespace Skylicht
 
 			float currentX = pointerX - m_offset.X;
 			float currentY = pointerY - m_offset.Y;
+
+			if (m_lockX)
+				currentX = m_oldPosition.X;
+			if (m_lockY)
+				currentY = m_oldPosition.Y;
+
+			if (m_limitDragToRect)
+			{
+				currentX = core::max_(currentX, m_bounds.UpperLeftCorner.X);
+				currentY = core::max_(currentY, m_bounds.UpperLeftCorner.Y);
+				currentX = core::min_(currentX, m_bounds.LowerRightCorner.X);
+				currentY = core::min_(currentY, m_bounds.LowerRightCorner.Y);
+			}
 
 			m_element->setPosition(core::vector3df(currentX, currentY, m_oldPosition.Z));
 

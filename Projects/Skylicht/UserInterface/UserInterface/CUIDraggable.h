@@ -36,6 +36,12 @@ namespace Skylicht
 			core::vector2df m_offset;
 			core::vector3df m_oldPosition;
 
+			bool m_lockX;
+			bool m_lockY;
+
+			bool m_limitDragToRect;
+			core::rectf m_bounds;
+
 		public:
 			std::function<void(CUIDraggable*, float x, float y)> OnBeginDrag;
 			std::function<void(CUIDraggable*, float x, float y)> OnDrag;
@@ -45,6 +51,22 @@ namespace Skylicht
 			CUIDraggable(CUIContainer* container, CGUIElement* element);
 
 			virtual ~CUIDraggable();
+
+			inline void lock(bool x, bool y)
+			{
+				m_lockX = x;
+				m_lockY = y;
+			}
+
+			inline void limitDragToRect(bool b)
+			{
+				m_limitDragToRect = b;
+			}
+
+			inline void setBounds(const core::rectf& r)
+			{
+				m_bounds = r;
+			}
 
 		protected:
 
