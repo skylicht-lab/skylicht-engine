@@ -688,7 +688,7 @@ namespace Skylicht
 		saveExtraParams();
 
 		// new shader path
-		m_shaderPath = shader->getShaderPath();
+		m_shaderPath = shader->getSource();
 
 		// init default params
 		initMaterial();

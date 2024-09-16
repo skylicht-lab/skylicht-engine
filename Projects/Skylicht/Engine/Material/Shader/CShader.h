@@ -224,7 +224,6 @@ namespace Skylicht
 
 	protected:
 		std::string	m_name;
-		std::string	m_shaderPath;
 
 		core::array<SUniform> m_vsUniforms;
 		core::array<SUniform> m_fsUniforms;
@@ -267,13 +266,17 @@ namespace Skylicht
 		CShader* m_shadowDepthShader;
 		CShader* m_shadowDistanceShader;
 
+		std::string m_source;
+
 	public:
 
 		CShader();
 
 		virtual ~CShader();
 
-		void initShader(io::IXMLReader* xmlReader, const char* shaderFolder);
+		void clear();
+
+		void initShader(io::IXMLReader* xmlReader, const char* source, const char* shaderFolder);
 
 		void parseUniform(io::IXMLReader* xmlReader);
 
@@ -288,9 +291,9 @@ namespace Skylicht
 			return m_name;
 		}
 
-		inline const std::string& getShaderPath()
+		inline const std::string& getSource()
 		{
-			return m_shaderPath;
+			return m_source;
 		}
 
 		inline const std::string& getSoftwareSkinningName()
@@ -339,11 +342,6 @@ namespace Skylicht
 		inline SAttributeMapping& getAttributeMapping(int id)
 		{
 			return m_attributeMapping[id];
-		}
-
-		inline void setShaderPath(const char* path)
-		{
-			m_shaderPath = path;
 		}
 
 		inline int getNumResource()

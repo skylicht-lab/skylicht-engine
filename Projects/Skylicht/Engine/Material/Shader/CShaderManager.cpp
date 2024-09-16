@@ -216,9 +216,6 @@ namespace Skylicht
 
 	CShader* CShaderManager::loadShader(const char* shaderConfig)
 	{
-		std::string shaderFolder = CPath::getFolderPath(std::string(shaderConfig));
-		shaderFolder += "/";
-
 		char log[512];
 
 		io::IXMLReader* xmlReader = getIrrlichtDevice()->getFileSystem()->createXMLReader(shaderConfig);
@@ -232,9 +229,30 @@ namespace Skylicht
 		sprintf(log, "Load shader: %s", shaderConfig);
 		os::Printer::log(log);
 
+		std::string shaderFolder = CPath::getFolderPath(std::string(shaderConfig));
+		shaderFolder += "/";
+
 		// init shader
 		CShader* shader = new CShader();
-		shader->initShader(xmlReader, shaderFolder.c_str());
+
+		if (buildShader(shader, xmlReader, shaderConfig, shaderFolder.c_str(), false) == false)
+		{
+			std::string name = shader->getName();
+			delete shader;
+			shader = NULL;
+
+			// try test loaded shader
+			shader = getShaderByName(name.c_str());
+		}
+
+		xmlReader->drop();
+		return shader;
+	}
+
+	bool CShaderManager::buildShader(CShader* shader, io::IXMLReader* xmlReader, const char* source, const char* shaderFolder, bool rebuild)
+	{
+		// init shader config
+		shader->initShader(xmlReader, source, shaderFolder);
 
 		// init instancing batching
 		IShaderInstancing* instancing = NULL;
@@ -248,9 +266,6 @@ namespace Skylicht
 		}
 		shader->setInstancing(instancing);
 
-		// close xml file reader
-		xmlReader->drop();
-
 		const std::string& shaderName = shader->getName();
 
 		// warning if it not yet support instancing
@@ -261,25 +276,22 @@ namespace Skylicht
 			os::Printer::log(log);
 		}
 
-		// if this name it loaded
-		if (m_listShaderID.find(shaderName) != m_listShaderID.end())
+		if (!rebuild)
 		{
-			char log[512];
-			sprintf(log, "!!! Warning: Name '%s' is loaded <-- SKIP", shaderName.c_str());
-			os::Printer::log(log);
+			// if this name it loaded
+			if (m_listShaderID.find(shaderName) != m_listShaderID.end())
+			{
+				char log[512];
+				sprintf(log, "!!! Warning: Name '%s' is loaded <-- SKIP", shaderName.c_str());
+				os::Printer::log(log);
 
-			CShader* ret = getShaderByName(shaderName.c_str());
-
-			delete shader;
-			shader = NULL;
-
-			return ret;
+				return false;
+			}
 		}
 
 		// build shader
 		shader->buildShader();
 		shader->buildUIUniform();
-		shader->setShaderPath(shaderConfig);
 
 		// if shader load success
 		int materialID = shader->getMaterialRenderID();
@@ -287,7 +299,9 @@ namespace Skylicht
 		if (shaderName.empty() == false && materialID >= 0)
 		{
 			m_listShaderID[shaderName] = materialID;
-			m_listShader.push_back(shader);
+
+			if (!rebuild)
+				m_listShader.push_back(shader);
 		}
 		else
 		{
@@ -295,25 +309,49 @@ namespace Skylicht
 			sprintf(log, "Load shader error: %s !!!!!", shaderName.c_str());
 			os::Printer::log(log);
 
-			delete shader;
-			shader = NULL;
+			return false;
 		}
 
-		if (shader)
+		std::vector<std::string>& deps = shader->getDependents();
+		for (std::string& p : deps)
 		{
-			std::vector<std::string>& deps = shader->getDependents();
-			for (std::string& p : deps)
+			if (loadShader(p.c_str()) == NULL)
 			{
-				if (loadShader(p.c_str()) == NULL)
-				{
-					char log[512];
-					sprintf(log, "!!! Warning: Name '%s' fail dependent:'%s'", shaderName.c_str(), p.c_str());
-					os::Printer::log(log);
-				}
+				char log[512];
+				sprintf(log, "!!! Warning: Name '%s' fail dependent:'%s'", shaderName.c_str(), p.c_str());
+				os::Printer::log(log);
 			}
 		}
 
-		return shader;
+		return true;
+	}
+
+	bool CShaderManager::rebuildShader(CShader* shader)
+	{
+		std::string source = shader->getSource();
+		const char* shaderConfig = source.c_str();
+
+		char log[512];
+
+		io::IXMLReader* xmlReader = getIrrlichtDevice()->getFileSystem()->createXMLReader(shaderConfig);
+		if (xmlReader == NULL)
+		{
+			sprintf(log, "Reload shader: %s - File not found", shaderConfig);
+			os::Printer::log(log);
+			return NULL;
+		}
+
+		sprintf(log, "Reload shader: %s", shaderConfig);
+		os::Printer::log(log);
+
+		std::string shaderFolder = CPath::getFolderPath(std::string(shaderConfig));
+		shaderFolder += "/";
+
+		buildShader(shader, xmlReader, shaderConfig, shaderFolder.c_str(), true);
+
+		xmlReader->drop();
+
+		return true;
 	}
 
 	int CShaderManager::getShaderIDByName(const char* name)
@@ -343,7 +381,7 @@ namespace Skylicht
 	{
 		for (u32 i = 0, n = (u32)m_listShader.size(); i < n; i++)
 		{
-			if (m_listShader[i]->getShaderPath() == path)
+			if (m_listShader[i]->getSource() == path)
 				return m_listShader[i];
 		}
 

@@ -1,0 +1,1 @@
+https://boringssl.googlesource.com/boringssl/+/HEAD/BUILDING.md

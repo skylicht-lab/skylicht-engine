@@ -532,7 +532,7 @@ namespace Skylicht
 								CShader* shader = CShaderManager::getInstance()->getShaderByID(material.MaterialType);
 								if (shader != NULL)
 								{
-									sprintf(data, "\t<Material name='%s' shader='%s'>\n", materialName, shader->getShaderPath().c_str());
+									sprintf(data, "\t<Material name='%s' shader='%s'>\n", materialName, shader->getSource().c_str());
 									buffer += data;
 
 									// write texture slot
@@ -629,7 +629,7 @@ namespace Skylicht
 								CShader* shader = CShaderManager::getInstance()->getShaderByID(material.MaterialType);
 								if (shader != NULL)
 								{
-									materialObj = new CMaterial(materialName, shader->getShaderPath().c_str());
+									materialObj = new CMaterial(materialName, shader->getSource().c_str());
 									materialObj->loadDefaultTexture();
 
 									ITexture* t[MATERIAL_MAX_TEXTURES];

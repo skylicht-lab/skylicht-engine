@@ -111,16 +111,16 @@ namespace Skylicht
 				GUI::CMessageBox* msgBox = new GUI::CMessageBox(GUI::CGUIContext::getRoot(), GUI::CMessageBox::YesNo);
 				msgBox->setMessage("Do you want to delete the material", m_materialContext->getName());
 				msgBox->OnYes = [&](GUI::CBase*)
-				{
-					// hide this group
-					m_groupContext->setHidden(true);
+					{
+						// hide this group
+						m_groupContext->setHidden(true);
 
-					// delete and save material
-					CMaterialManager::getInstance()->deleteMaterial(m_materials, m_materialContext);
+						// delete and save material
+						CMaterialManager::getInstance()->deleteMaterial(m_materials, m_materialContext);
 
-					// save material					
-					CMaterialManager::getInstance()->saveMaterial(m_materials, m_path.c_str());
-				};
+						// save material					
+						CMaterialManager::getInstance()->saveMaterial(m_materials, m_path.c_str());
+					};
 			}
 		}
 
@@ -179,27 +179,27 @@ namespace Skylicht
 				btn->enableDrawBackground(false);
 				btn->tagData(editor);
 				btn->OnPress = [&, editor, textEditHelper, btn, material, group](GUI::CBase* button)
-				{
-					m_groupContext = group;
-					m_materialContext = material;
-					m_renameContext = textEditHelper;
-
-					GUI::CMenuItem* item = s_settingMaterialMenu->getItemByPath(L"Delete");
-					if (item)
 					{
-						if (m_materials.size() == 1)
-						{
-							// do not enable delete first item
-							item->setDisabled(true);
-						}
-						else
-						{
-							item->setDisabled(false);
-						}
-					}
+						m_groupContext = group;
+						m_materialContext = material;
+						m_renameContext = textEditHelper;
 
-					s_settingMaterialMenu->open(btn);
-				};
+						GUI::CMenuItem* item = s_settingMaterialMenu->getItemByPath(L"Delete");
+						if (item)
+						{
+							if (m_materials.size() == 1)
+							{
+								// do not enable delete first item
+								item->setDisabled(true);
+							}
+							else
+							{
+								item->setDisabled(false);
+							}
+						}
+
+						s_settingMaterialMenu->open(btn);
+					};
 
 
 				GUI::CBoxLayout* layout = ui->createBoxLayout(group);
@@ -224,7 +224,7 @@ namespace Skylicht
 						material->changeShader(value->get().c_str());
 						showMaterialGUI(ui, layout, material);
 
-						// save material						
+						// save material
 						CMaterialManager::getInstance()->saveMaterial(m_materials, m_path.c_str());
 					}), true);
 				m_subjects.push_back(shaderValue);
@@ -243,17 +243,40 @@ namespace Skylicht
 
 			GUI::CCollapsibleGroup* group = ui->addGroup("Functions", this);
 			GUI::CBoxLayout* layout = ui->createBoxLayout(group);
+			ui->addButton(layout, L"Rebuild shader")->OnPress = [&](GUI::CBase* button)
+				{
+					CShaderManager* shaderMgr = CShaderManager::getInstance();
+
+					std::vector<CShader*> rebuildShaders;
+
+					for (CMaterial* m : m_materials)
+					{
+						CShader* shader = m->getShader();
+
+						if (shader)
+						{
+							if (std::find(rebuildShaders.begin(), rebuildShaders.end(), shader) == rebuildShaders.end())
+							{
+								shaderMgr->rebuildShader(shader);
+								rebuildShaders.push_back(shader);
+							}
+						}
+					}
+
+					// update the gui
+					CAssetPropertyController::getInstance()->onSelectAsset(m_path.c_str(), false);
+				};
 			ui->addButton(layout, L"Add new material")->OnPress = [&](GUI::CBase* button)
-			{
-				// Add new material
-				CMaterialManager::getInstance()->createMaterial(m_materials);
+				{
+					// Add new material
+					CMaterialManager::getInstance()->createMaterial(m_materials);
 
-				// save material
-				CMaterialManager::getInstance()->saveMaterial(m_materials, m_path.c_str());
+					// save material
+					CMaterialManager::getInstance()->saveMaterial(m_materials, m_path.c_str());
 
-				// update the gui
-				CAssetPropertyController::getInstance()->onSelectAsset(m_path.c_str(), false);
-			};
+					// update the gui
+					CAssetPropertyController::getInstance()->onSelectAsset(m_path.c_str(), false);
+				};
 			group->setExpand(true);
 
 			if (groups.size() < 3)
@@ -473,11 +496,11 @@ namespace Skylicht
 
 				CObserver* observer = new CObserver();
 				observer->Notify = [&, colorSubject, material, uniformUI](ISubject* subject, IObserver* from)
-				{
-					// on change color
-					material->setUniform4(uniformUI->Name.c_str(), colorSubject->get());
-					material->applyMaterial();
-				};
+					{
+						// on change color
+						material->setUniform4(uniformUI->Name.c_str(), colorSubject->get());
+						material->applyMaterial();
+					};
 
 				colorSubject->addObserver(observer, true);
 			}
@@ -502,10 +525,10 @@ namespace Skylicht
 				// event change value
 				CObserver* observer = new CObserver();
 				observer->Notify = [&, x, material, uniformUI](ISubject* subject, IObserver* from)
-				{
-					material->setUniform(uniformUI->Name.c_str(), x->get());
-					material->applyMaterial();
-				};
+					{
+						material->setUniform(uniformUI->Name.c_str(), x->get());
+						material->applyMaterial();
+					};
 
 				x->addObserver(observer, true);
 			}
@@ -566,14 +589,14 @@ namespace Skylicht
 				// event change value
 				CObserver* observer = new CObserver();
 				observer->Notify = [&, x, y, material, uniformUI](ISubject* subject, IObserver* from)
-				{
-					float value[2];
-					value[0] = x->get();
-					value[1] = y->get();
+					{
+						float value[2];
+						value[0] = x->get();
+						value[1] = y->get();
 
-					material->setUniform2(uniformUI->Name.c_str(), value);
-					material->applyMaterial();
-				};
+						material->setUniform2(uniformUI->Name.c_str(), value);
+						material->applyMaterial();
+					};
 
 				x->addObserver(observer);
 				y->addObserver(observer, true); // x use same observer
@@ -654,15 +677,15 @@ namespace Skylicht
 				// event change value
 				CObserver* observer = new CObserver();
 				observer->Notify = [&, x, y, z, material, uniformUI](ISubject* subject, IObserver* from)
-				{
-					float value[3];
-					value[0] = x->get();
-					value[1] = y->get();
-					value[2] = z->get();
+					{
+						float value[3];
+						value[0] = x->get();
+						value[1] = y->get();
+						value[2] = z->get();
 
-					material->setUniform3(uniformUI->Name.c_str(), value);
-					material->applyMaterial();
-				};
+						material->setUniform3(uniformUI->Name.c_str(), value);
+						material->applyMaterial();
+					};
 
 				x->addObserver(observer);
 				y->addObserver(observer);
@@ -763,16 +786,16 @@ namespace Skylicht
 				// event change value
 				CObserver* observer = new CObserver();
 				observer->Notify = [&, x, y, z, w, material, uniformUI](ISubject* subject, IObserver* from)
-				{
-					float value[4];
-					value[0] = x->get();
-					value[1] = y->get();
-					value[2] = z->get();
-					value[3] = w->get();
+					{
+						float value[4];
+						value[0] = x->get();
+						value[1] = y->get();
+						value[2] = z->get();
+						value[3] = w->get();
 
-					material->setUniform4(uniformUI->Name.c_str(), value);
-					material->applyMaterial();
-				};
+						material->setUniform4(uniformUI->Name.c_str(), value);
+						material->applyMaterial();
+					};
 
 				x->addObserver(observer);
 				y->addObserver(observer);
@@ -799,99 +822,99 @@ namespace Skylicht
 				}
 
 				imageButton->OnAcceptDragDrop = [](GUI::SDragDropPackage* data)
-				{
-					if (data->Name == "ListFSItem")
 					{
-						GUI::CListRowItem* item = (GUI::CListRowItem*)data->Control;
-
-						std::string fullPath = item->getTagString();
-						bool isFolder = item->getTagBool();
-
-						if (!isFolder)
+						if (data->Name == "ListFSItem")
 						{
-							std::string ext = CPath::getFileNameExt(fullPath);
-							ext = CStringImp::toLower(ext);
-							if (ext == "png" || ext == "tga" || ext == "bmp" || ext == "jpg" || ext == "jpeg")
+							GUI::CListRowItem* item = (GUI::CListRowItem*)data->Control;
+
+							std::string fullPath = item->getTagString();
+							bool isFolder = item->getTagBool();
+
+							if (!isFolder)
 							{
-								return true;
+								std::string ext = CPath::getFileNameExt(fullPath);
+								ext = CStringImp::toLower(ext);
+								if (ext == "png" || ext == "tga" || ext == "bmp" || ext == "jpg" || ext == "jpeg")
+								{
+									return true;
+								}
 							}
 						}
-					}
-					return false;
-				};
+						return false;
+					};
 
 				imageButton->OnDrop = [imageButton, uniformName = uniformUI->Name, material, onChange](GUI::SDragDropPackage* data, float mouseX, float mouseY)
-				{
-					if (data->Name == "ListFSItem")
 					{
-						GUI::CListRowItem* item = (GUI::CListRowItem*)data->Control;
-
-						std::string fullPath = item->getTagString();
-						std::string shortPath = CAssetManager::getInstance()->getShortPath(fullPath.c_str());
-						std::string name = CPath::getFileName(shortPath);
-
-						ITexture* texture = CTextureManager::getInstance()->getTexture(shortPath.c_str());
-						if (texture != NULL)
+						if (data->Name == "ListFSItem")
 						{
-							// set texture
-							CMaterial::SUniformTexture* uniform = material->getUniformTexture(uniformName.c_str());
-							uniform->Path = shortPath;
-							uniform->Texture = texture;
-							material->autoDetectLoadTexture();
-							material->applyMaterial();
+							GUI::CListRowItem* item = (GUI::CListRowItem*)data->Control;
 
-							// update gui
-							const core::dimension2du& size = texture->getSize();
-							imageButton->getImage()->setImage(
-								texture,
-								GUI::SRect(0.0f, 0.0f, (float)size.Width, (float)size.Height)
-							);
-							imageButton->getImage()->setColor(GUI::SGUIColor(255, 255, 255, 255));
+							std::string fullPath = item->getTagString();
+							std::string shortPath = CAssetManager::getInstance()->getShortPath(fullPath.c_str());
+							std::string name = CPath::getFileName(shortPath);
 
-							// save
-							onChange();
+							ITexture* texture = CTextureManager::getInstance()->getTexture(shortPath.c_str());
+							if (texture != NULL)
+							{
+								// set texture
+								CMaterial::SUniformTexture* uniform = material->getUniformTexture(uniformName.c_str());
+								uniform->Path = shortPath;
+								uniform->Texture = texture;
+								material->autoDetectLoadTexture();
+								material->applyMaterial();
+
+								// update gui
+								const core::dimension2du& size = texture->getSize();
+								imageButton->getImage()->setImage(
+									texture,
+									GUI::SRect(0.0f, 0.0f, (float)size.Width, (float)size.Height)
+								);
+								imageButton->getImage()->setColor(GUI::SGUIColor(255, 255, 255, 255));
+
+								// save
+								onChange();
+							}
+							else
+							{
+								CEditor* editor = CEditor::getInstance();
+
+								GUI::CMessageBox* msgBox = new GUI::CMessageBox(editor->getRootCanvas(), GUI::CMessageBox::OK);
+								msgBox->setMessage("Can't load texture!", name.c_str());
+								msgBox->getMessageIcon()->setIcon(GUI::ESystemIcon::Alert);
+							}
 						}
-						else
-						{
-							CEditor* editor = CEditor::getInstance();
-
-							GUI::CMessageBox* msgBox = new GUI::CMessageBox(editor->getRootCanvas(), GUI::CMessageBox::OK);
-							msgBox->setMessage("Can't load texture!", name.c_str());
-							msgBox->getMessageIcon()->setIcon(GUI::ESystemIcon::Alert);
-						}
-					}
-				};
+					};
 
 				imageButton->OnPress = [uniformName = uniformUI->Name, material](GUI::CBase* button)
-				{
-					CMaterial::SUniformTexture* uniform = material->getUniformTexture(uniformName.c_str());
-					if (uniform->Texture)
 					{
-						std::string assetPath = uniform->Texture->getName().getPath().c_str();
-						assetPath = CAssetManager::getInstance()->getShortPath(assetPath.c_str());
-						CAssetPropertyController::getInstance()->browseAsset(assetPath.c_str());
-					}
-				};
+						CMaterial::SUniformTexture* uniform = material->getUniformTexture(uniformName.c_str());
+						if (uniform->Texture)
+						{
+							std::string assetPath = uniform->Texture->getName().getPath().c_str();
+							assetPath = CAssetManager::getInstance()->getShortPath(assetPath.c_str());
+							CAssetPropertyController::getInstance()->browseAsset(assetPath.c_str());
+						}
+					};
 
 				imageButton->OnRightPress = [uniformName = uniformUI->Name, material, imageButton, onChange](GUI::CBase* button)
-				{
-					GUI::SPoint mousePos = GUI::CInput::getInput()->getMousePosition();
-					s_pickTextureMenu->open(mousePos);
-					s_pickTextureMenu->OnCommand = [name = uniformName, material, imageButton, onChange](GUI::CBase* item)
 					{
-						// clear texture
-						CMaterial::SUniformTexture* uniform = material->getUniformTexture(name.c_str());
-						uniform->Path = "";
-						uniform->Texture = NULL;
+						GUI::SPoint mousePos = GUI::CInput::getInput()->getMousePosition();
+						s_pickTextureMenu->open(mousePos);
+						s_pickTextureMenu->OnCommand = [name = uniformName, material, imageButton, onChange](GUI::CBase* item)
+							{
+								// clear texture
+								CMaterial::SUniformTexture* uniform = material->getUniformTexture(name.c_str());
+								uniform->Path = "";
+								uniform->Texture = NULL;
 
-						// clear gui
-						imageButton->getImage()->setImage(NULL, GUI::SRect(0.0f, 0.0f, 0.0f, 0.0f));
-						imageButton->getImage()->setColor(GUI::SGUIColor(255, 0, 0, 0));
+								// clear gui
+								imageButton->getImage()->setImage(NULL, GUI::SRect(0.0f, 0.0f, 0.0f, 0.0f));
+								imageButton->getImage()->setColor(GUI::SGUIColor(255, 0, 0, 0));
 
-						// save
-						onChange();
+								// save
+								onChange();
+							};
 					};
-				};
 
 				// GUI::CBoxLayout* group = ui->addChildGroup(layout, L"WrapUV");
 				// ui->addLabel(group, L"WrapU");

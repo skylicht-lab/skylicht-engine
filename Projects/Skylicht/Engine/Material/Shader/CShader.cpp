@@ -538,8 +538,33 @@ namespace Skylicht
 		}
 	}
 
-	void CShader::initShader(io::IXMLReader* xmlReader, const char* shaderFolder)
+	void CShader::clear()
 	{
+		deleteAllUI();
+		deleteAllResource();
+
+		m_vsUniforms.clear();
+		m_fsUniforms.clear();
+
+		m_attributeMapping.clear();
+		m_dependents.clear();
+
+		m_listVSUniforms = NULL;
+		m_listFSUniforms = NULL;
+		m_numVSUniform = 0;
+		m_numFSUniform = 0;
+
+		m_initCallback = true;
+
+		setMaterialRenderID(-1);
+	}
+
+	void CShader::initShader(io::IXMLReader* xmlReader, const char* source, const char* shaderFolder)
+	{
+		clear();
+
+		m_source = source;
+
 		const wchar_t* wtext;
 		char text[1024];
 

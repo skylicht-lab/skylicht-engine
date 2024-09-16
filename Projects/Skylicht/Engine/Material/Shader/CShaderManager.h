@@ -102,6 +102,8 @@ namespace Skylicht
 		// load game shader from file config
 		CShader* loadShader(const char* shaderConfig);
 
+		bool rebuildShader(CShader* shader);
+
 		int getShaderIDByName(const char* name);
 
 		CShader* getShaderByName(const char* name);
@@ -122,6 +124,9 @@ namespace Skylicht
 			return m_listShader[i];
 		}
 
+	protected:
+
+		bool buildShader(CShader* shader, io::IXMLReader* xmlReader, const char* source, const char* shaderFolder, bool rebuild);
 	};
 
 }
