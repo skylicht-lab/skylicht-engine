@@ -171,6 +171,8 @@ namespace Skylicht
 
 			virtual void onKeyEvent(const SEvent& event);
 
+			void resetPointer();
+
 			void startMotion(EMotionEvent event);
 
 			bool isMotionPlaying(EMotionEvent event);
@@ -188,6 +190,7 @@ namespace Skylicht
 			void convertWorldToLocal(CGUIElement* element, float& x, float& y);
 
 			void convertLocalToWorld(CGUIElement* element, float& x, float& y);
+
 		};
 	}
 }

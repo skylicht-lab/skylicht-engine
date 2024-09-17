@@ -273,6 +273,13 @@ namespace Skylicht
 					}
 				}
 
+				if (!m_hover->isEnable())
+				{
+					// if call setEnable(false) on pointerEvent
+					m_hover->resetPointer();
+					m_hover = NULL;
+				}
+
 				// disable event
 				return m_hover;
 			}

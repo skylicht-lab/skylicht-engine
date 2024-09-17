@@ -303,6 +303,12 @@ namespace Skylicht
 			motions.clear();
 		}
 
+		void CUIBase::resetPointer()
+		{
+			m_isPointerHover = false;
+			m_isPointerDown = false;
+		}
+
 		void CUIBase::convertToUICoordinate(float& pointerX, float& pointerY)
 		{
 			CCanvas* canvas = getCanvas();
