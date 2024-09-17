@@ -43,9 +43,9 @@ namespace Skylicht
 			core::rectf m_bounds;
 
 		public:
-			std::function<void(CUIDraggable*, float x, float y)> OnBeginDrag;
-			std::function<void(CUIDraggable*, float x, float y)> OnDrag;
-			std::function<void(CUIDraggable*, float x, float y)> OnEndDrag;
+			std::function<void(CUIDraggable*, float posX, float posY)> OnBeginDrag;
+			std::function<void(CUIDraggable*, float posX, float posY)> OnDrag;
+			std::function<void(CUIDraggable*, float posX, float posY)> OnEndDrag;
 
 		public:
 			CUIDraggable(CUIContainer* container, CGUIElement* element);

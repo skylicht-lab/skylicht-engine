@@ -122,6 +122,7 @@ namespace Skylicht
 
 			float currentX = pointerX - m_offset.X;
 			float currentY = m_handle->getPosition().Y;
+			float currentZ = m_handle->getPosition().Z;
 
 			currentX = core::clamp(currentX, sliderBegin, sliderEnd);
 
@@ -142,7 +143,7 @@ namespace Skylicht
 				m_value = core::clamp(m_value, 0.0f, 1.0f);
 			}
 
-			m_handle->setPosition(core::vector3df(currentX, currentY, 0.0f));
+			m_handle->setPosition(core::vector3df(currentX, currentY, currentZ));
 
 			if (OnChanged != nullptr)
 				OnChanged(this, m_value);

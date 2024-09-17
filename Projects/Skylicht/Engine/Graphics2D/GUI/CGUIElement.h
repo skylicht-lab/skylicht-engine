@@ -148,6 +148,16 @@ namespace Skylicht
 			return m_guiTransform->getWidth();
 		}
 
+		inline void setHeight(float h)
+		{
+			m_guiTransform->setHeight(h);
+		}
+
+		inline void setWidth(float w)
+		{
+			m_guiTransform->setWidth(w);
+		}
+
 		inline const core::rectf& getRect()
 		{
 			return m_guiTransform->getRect();

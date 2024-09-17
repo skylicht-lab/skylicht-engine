@@ -99,6 +99,16 @@ namespace Skylicht
 			return Rect.getWidth();
 		}
 
+		inline void setWidth(float width)
+		{
+			Rect.LowerRightCorner.X = Rect.UpperLeftCorner.X + width;
+		}
+
+		inline void setHeight(float height)
+		{
+			Rect.LowerRightCorner.Y = Rect.UpperLeftCorner.Y + height;
+		}
+
 		inline const core::rectf& getRect()
 		{
 			return Rect;
