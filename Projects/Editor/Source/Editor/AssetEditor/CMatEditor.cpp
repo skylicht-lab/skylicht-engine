@@ -261,6 +261,16 @@ namespace Skylicht
 								rebuildShaders.push_back(shader);
 							}
 						}
+						else
+						{
+							m->initMaterial();
+
+							shader = m->getShader();
+							if (shader)
+							{
+								rebuildShaders.push_back(shader);
+							}
+						}
 					}
 
 					// update the gui

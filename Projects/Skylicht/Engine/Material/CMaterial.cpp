@@ -658,6 +658,8 @@ namespace Skylicht
 		initDefaultValue();
 
 		bindUniformParam();
+
+		updateShaderParams();
 	}
 
 	// PUBLIC FOR USE
@@ -976,6 +978,9 @@ namespace Skylicht
 		if (m_shader != NULL)
 		{
 			mat.MaterialType = m_shader->getMaterialRenderID();
+
+			if (mat.MaterialType == -1)
+				mat.MaterialType = 0;
 
 			// manual init
 			if (m_manualInitMaterial == true)

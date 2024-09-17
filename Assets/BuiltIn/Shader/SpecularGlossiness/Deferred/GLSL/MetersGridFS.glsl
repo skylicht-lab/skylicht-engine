@@ -23,45 +23,47 @@ const vec3 darkColor = vec3(0.156863, 0.156863, 0.160784);
 const vec3 borderColor = vec3(0.8, 0.8, 0.8);
 
 const float gridSize = 4.0;
-float h = gridSize / 2.0;
-float border = gridSize / 1000.0;
+float border = gridSize / 200.0;
 
-bool borde(float pos) 
+float gridBorder(vec3 uv3, float borderWidth, float aa)
 {
-	float m1_0 = mod(pos, 1.0);
-	float m0_5 = mod(pos, 0.5);
+	vec2 uv = uv3.xz + uv3.xy + uv3.yz;
 	
-	return 
-		m1_0 < border || 
-		(1.0 - m1_0) < border || 
-		m0_5 < border || 
-		(0.5 - m0_5) < border;
+	vec2 dx = dFdx(uv);
+	vec2 dy = dFdy(uv);
+	
+	vec4 uvDDXY = vec4(dx, dy);
+	vec2 uvDeriv = vec2(length(uvDDXY.xz), length(uvDDXY.yw));
+	
+	vec2 targetWidth = vec2(borderWidth, borderWidth);
+	
+	vec2 lineAA = uvDeriv * 1.5 * aa;
+	vec2 gridUV = vec2(1.0, 1.0) - abs(fract(uv3.xz) * 2.0 - vec2(1.0, 1.0));
+	
+	vec2 drawWidth = clamp(targetWidth, uvDeriv, vec2(1.0, 1.0));
+	vec2 gridBase  = smoothstep(drawWidth  + lineAA, drawWidth - lineAA, gridUV);
+	
+	vec2 greyScale = clamp(targetWidth / drawWidth, 0.0, 1.0);
+	
+	gridBase *= greyScale;
+	
+	return mix(gridBase.x, 1.0, gridBase.y);
 }
 
 void main(void)
 {
 	vec3 pos = vWorldPosition.xyz;
 	
-	// This is to avoid the zero incoherence
-	if (pos.x <= 0.0) pos.x = abs(pos.x - h);
-	if (pos.y <= 0.0) pos.y = abs(pos.y - h);
-	if (pos.z <= 0.0) pos.z = abs(pos.z - h);
-	pos /= gridSize;
+	vec3 uv = pos / gridSize;
+	float grid = gridBorder(uv, border, 1.0);
 	
-	pos.y += float(fract(float(int(pos.x*h))/h));
-	pos.z += float(fract(float(int(pos.y*h))/h));
+	pos.x = pos.x + gridSize / 2;
+	pos.z = pos.z + gridSize / 2;
+	uv = pos / (gridSize * 2);
+	float checkerBoard = gridBorder(uv, 0.5, 1.5);
 	
-	// grid color
-	vec3 col = vec3(0.0, 0.0, 0.0);
-	if (fract(float(int(pos.z*h))/h) == 0.0) 
-		col += lightColor;
-	else 
-		col += darkColor;
-	
-	// border color
-	if (borde(pos.x)) col = borderColor;
-	// if (borde(pos.y)) col = borderColor;
-	if (borde(pos.z)) col = borderColor;
+	vec3 col = mix(lightColor, darkColor, vec3(checkerBoard, checkerBoard, checkerBoard));
+	col = mix(col, borderColor, vec3(grid, grid, grid));
 	
 #ifdef INSTANCING
 	Diffuse = vColor * vec4(col.r, col.g, col.b, 1.0);
