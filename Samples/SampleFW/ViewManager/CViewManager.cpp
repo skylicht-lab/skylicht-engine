@@ -78,7 +78,7 @@ bool CViewManager::onBack()
 
 	for (CViewLayer*& layer : m_viewLayers)
 	{
-		doDefaultOSBackKey = doDefaultOSBackKey | layer->onBack();
+		doDefaultOSBackKey = doDefaultOSBackKey || layer->onBack();
 	}
 
 	return doDefaultOSBackKey;

@@ -51,6 +51,10 @@ namespace Skylicht
 
 			void setLabel(const wchar_t* string);
 
+			void setLabelAndChangeWidth(const char* string, float addition);
+
+			void setLabelAndChangeWidth(const wchar_t* string, float addition);
+
 			virtual void onPointerHover(float pointerX, float pointerY);
 
 			virtual void onPointerOut(float pointerX, float pointerY);

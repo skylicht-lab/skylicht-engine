@@ -76,6 +76,8 @@ namespace Skylicht
 			std::function<void(CUIBase*)> OnLostFocus;
 			std::function<void(CUIBase*, const SEvent&)> OnKeyEvent;
 
+			std::function<void(CUIBase*, EMotionEvent)> OnMotionFinish[(int)EMotionEvent::NumEvent];
+
 		public:
 			CUIBase(CUIContainer* container, CGUIElement* element);
 

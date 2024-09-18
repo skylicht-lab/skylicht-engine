@@ -419,7 +419,45 @@ namespace Skylicht
 		std::vector<SModuleOffset*>	listModule;
 		std::vector<int> listFormat;
 
-		m_font->getListModule(wtext, format, listModule, listFormat);
+		IFont* font = getCurrentFont();
+		if (font == NULL)
+			return stringWidth;
+
+		font->getListModule(wtext, format, listModule, listFormat);
+
+		for (int i = 0, n = (int)listModule.size(); i < n; i++)
+		{
+			SModuleOffset* moduleOffset = listModule[i];
+			if (moduleOffset->Character == ' ')
+				stringWidth += ((int)moduleOffset->XAdvance + m_charSpacePadding);
+			else
+				stringWidth += ((int)moduleOffset->XAdvance + m_charPadding);
+		}
+
+		return stringWidth;
+	}
+
+	int CGUIText::getStringWidth(const wchar_t* wtext)
+	{
+		ArrayInt format;
+
+		int i = 0;
+		while (wtext[i] != 0)
+		{
+			format.push_back(0);
+			++i;
+		}
+
+		int stringWidth = 0;
+
+		std::vector<SModuleOffset*>	listModule;
+		std::vector<int> listFormat;
+
+		IFont* font = getCurrentFont();
+		if (font == NULL)
+			return stringWidth;
+
+		font->getListModule(wtext, format, listModule, listFormat);
 
 		for (int i = 0, n = (int)listModule.size(); i < n; i++)
 		{

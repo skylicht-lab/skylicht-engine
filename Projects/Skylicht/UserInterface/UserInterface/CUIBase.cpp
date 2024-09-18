@@ -63,7 +63,19 @@ namespace Skylicht
 
 		void CUIBase::update()
 		{
+			for (int i = 0, n = (int)EMotionEvent::NumEvent; i < n; i++)
+			{
+				if (OnMotionFinish[i] != nullptr)
+				{
+					EMotionEvent eventId = (EMotionEvent)i;
 
+					if (!isMotionPlaying(eventId))
+					{
+						OnMotionFinish[i](this, eventId);
+						OnMotionFinish[i] = nullptr;
+					}
+				}
+			}
 		}
 
 		void CUIBase::setEnable(bool b)

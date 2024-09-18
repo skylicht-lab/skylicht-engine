@@ -96,7 +96,7 @@ namespace Skylicht
 
 			for (CUIBase* base : m_arrayUIObjects)
 			{
-				if (base->isEnable() && base->isVisible())
+				if (base->isVisible())
 					base->update();
 			}
 		}
@@ -273,7 +273,7 @@ namespace Skylicht
 					}
 				}
 
-				if (!m_hover->isEnable())
+				if (m_hover && !m_hover->isEnable())
 				{
 					// if call setEnable(false) on pointerEvent
 					m_hover->resetPointer();

@@ -141,6 +141,7 @@ namespace Skylicht
 		void setTextId(const wchar_t* textId);
 
 		int getStringWidth(const char* text);
+		int getStringWidth(const wchar_t* text);
 		int getCharWidth(wchar_t c);
 
 		const char* getText()

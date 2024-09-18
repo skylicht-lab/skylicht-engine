@@ -61,6 +61,26 @@ namespace Skylicht
 				m_text->setText(string);
 		}
 
+		void CUIButton::setLabelAndChangeWidth(const char* string, float addition)
+		{
+			if (m_text)
+			{
+				int stringWidth = m_text->getStringWidth(string);
+				m_text->setText(string);
+				m_element->setWidth((float)stringWidth + addition);
+			}
+		}
+
+		void CUIButton::setLabelAndChangeWidth(const wchar_t* string, float addition)
+		{
+			if (m_text)
+			{
+				int stringWidth = m_text->getStringWidth(string);
+				m_text->setText(string);
+				m_element->setWidth((float)stringWidth + addition);
+			}
+		}
+
 		void CUIButton::setToggle(bool b, bool invokeEvent)
 		{
 			m_toggleStatus = b;
