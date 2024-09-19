@@ -39,7 +39,13 @@ namespace Skylicht
 
 		static float getLoadingPercent();
 
+		static CObjectSerializable* loadGUIObject(const char* file, CCanvas* canvas);
+
+		static void loadGUI(CObjectSerializable* gui, CCanvas* canvas);
+
 		static CGUIElement* importGUI(CCanvas* canvas, CGUIElement* target, CObjectSerializable* obj);
+
+		static CObjectSerializable* getGUIByPath(CObjectSerializable* obj, const char* path);
 
 		static void reset(CCanvas* canvas);
 
@@ -48,5 +54,9 @@ namespace Skylicht
 		static bool loadStep(CCanvas* canvas, io::IXMLReader* reader);
 
 		static void buildCanvas(CCanvas* canvas, io::IXMLReader* reader);
+
+		static bool loadObjStep(CObjectSerializable* obj, CCanvas* canvas, io::IXMLReader* reader);
+
+		static bool loadObjChilds(CObjectSerializable* obj, CCanvas* canvas, io::IXMLReader* reader);
 	};
 }

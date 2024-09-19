@@ -159,6 +159,9 @@ namespace Skylicht
 			m_value = value;
 			m_value = core::clamp(m_value, 0.0f, 1.0f);
 
+			if (!m_element || !m_handle)
+				return;
+
 			float sliderWidth = m_element->getWidth();
 			float sliderBegin = -m_handleWidth * 0.5f;
 			float sliderEnd = sliderWidth - m_handleWidth * 0.5f;

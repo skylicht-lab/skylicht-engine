@@ -197,6 +197,10 @@ namespace Skylicht
 
 		CGUIFitSprite* createFitSprite(CGUIElement* e, const core::rectf& r, SFrame* frame);
 
+		virtual CGUIElement* createNullElement(CGUIElement* parent, const char* type);
+
+		virtual CGUIElement* createNullElement(CGUIElement* parent, const wchar_t* type);
+
 		const core::matrix4& getRenderWorldTransform()
 		{
 			return m_renderWorldTransform;

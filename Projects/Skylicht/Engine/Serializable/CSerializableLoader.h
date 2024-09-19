@@ -37,8 +37,6 @@ namespace Skylicht
 		
 		static bool loadSerializable(const char* file, CObjectSerializable* object);
 
-	protected:
-
 		static void initProperty(CObjectSerializable* object, io::IAttributes* attributes);
 	};
 }

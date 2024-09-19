@@ -609,6 +609,46 @@ namespace Skylicht
 		return element;
 	}
 
+	CGUIElement* CCanvas::createNullElement(CGUIElement* parent, const char* type)
+	{
+		std::wstring wtype = CStringImp::convertUTF8ToUnicode(type);
+		return createNullElement(parent, wtype.c_str());
+	}
+
+	CGUIElement* CCanvas::createNullElement(CGUIElement* parent, const wchar_t* type)
+	{
+		std::wstring typeName = type;
+
+		CGUIElement* element = NULL;
+		core::rectf nullRect;
+		SColor nullColor;
+
+		if (typeName == L"CGUIElement")
+			element = createElement(parent, nullRect);
+		else if (typeName == L"CGUIImage")
+			element = createImage(parent, nullRect);
+		else if (typeName == L"CGUIMask")
+			element = createMask(parent, nullRect);
+		else if (typeName == L"CGUIRect")
+			element = createRect(parent, nullRect, nullColor);
+		else if (typeName == L"CGUISprite")
+			element = createSprite(parent, nullRect, NULL);
+		else if (typeName == L"CGUIText")
+			element = createText(parent, nullRect, NULL);
+		else if (typeName == L"CGUILayout")
+			element = createLayout(parent, nullRect);
+		else if (typeName == L"CGUIFitSprite")
+			element = createFitSprite(parent, nullRect, NULL);
+		else if (typeName != L"Childs")
+		{
+			char log[512];
+			sprintf(log, "[CCanvas] createNullElement can't create element: %s", CStringImp::convertUnicodeToUTF8(typeName.c_str()).c_str());
+			os::Printer::log(log);
+		}
+
+		return element;
+	}
+
 	CGUIElement* CCanvas::getGUIByID(const char* id)
 	{
 		std::queue<CGUIElement*> queue;

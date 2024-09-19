@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CGUIImporter.h"
 #include "Graphics2D/CGraphics2D.h"
 #include "Utils/CStringImp.h"
+#include "Serializable/CSerializableLoader.h"
 
 namespace Skylicht
 {
@@ -51,9 +52,6 @@ namespace Skylicht
 
 		CGUIElement* currentObject = NULL;
 
-		core::rectf nullRect;
-		SColor nullColor;
-
 		while (reader->read())
 		{
 			switch (reader->getNodeType())
@@ -75,28 +73,7 @@ namespace Skylicht
 						if (parent)
 						{
 							// create null object, that will load data in later
-							if (attributeName == L"CGUIElement")
-								element = canvas->createElement(parent, nullRect);
-							else if (attributeName == L"CGUIImage")
-								element = canvas->createImage(parent, nullRect);
-							else if (attributeName == L"CGUIMask")
-								element = canvas->createMask(parent, nullRect);
-							else if (attributeName == L"CGUIRect")
-								element = canvas->createRect(parent, nullRect, nullColor);
-							else if (attributeName == L"CGUISprite")
-								element = canvas->createSprite(parent, nullRect, NULL);
-							else if (attributeName == L"CGUIText")
-								element = canvas->createText(parent, nullRect, NULL);
-							else if (attributeName == L"CGUILayout")
-								element = canvas->createLayout(parent, nullRect);
-							else if (attributeName == L"CGUIFitSprite")
-								element = canvas->createFitSprite(parent, nullRect, NULL);
-							else if (attributeName != L"Childs")
-							{
-								char log[512];
-								sprintf(log, "[CGUIImporter] Can't create element: %s", CStringImp::convertUnicodeToUTF8(attributeName.c_str()).c_str());
-								os::Printer::log(log);
-							}
+							element = canvas->createNullElement(parent, attributeName.c_str());
 						}
 						else
 						{
@@ -190,35 +167,31 @@ namespace Skylicht
 					if (reader->getAttributeValue(L"type") != NULL)
 					{
 						attributeName = reader->getAttributeValue(L"type");
-
-						if (attributeName == L"CGUIElement" ||
-							attributeName == L"CGUIImage" ||
-							attributeName == L"CGUIMask" ||
-							attributeName == L"CGUIRect" ||
-							attributeName == L"CGUISprite" ||
-							attributeName == L"CGUIText" ||
-							attributeName == L"CGUILayout" ||
-							attributeName == L"CGUIFitSprite")
+						if (attributeName != L"Childs")
 						{
 							CGUIElement* guiObject = dynamic_cast<CGUIElement*>(*g_currentGUI);
-							++g_currentGUI;
-							++g_guiLoading;
-							++step;
 
-							CObjectSerializable* data = guiObject->createSerializable();
-							data->parseSerializable(reader);
-							guiObject->loadSerializable(data);
-							delete data;
-						}
-						else if (attributeName != L"Childs")
-						{
-							char log[512];
-							sprintf(log, "[CGUIImporter] Can't load element: %s", CStringImp::convertUnicodeToUTF8(attributeName.c_str()).c_str());
-							os::Printer::log(log);
+							if (guiObject)
+							{
+								++g_currentGUI;
+								++g_guiLoading;
+								++step;
 
-							++g_currentGUI;
-							++g_guiLoading;
-							++step;
+								CObjectSerializable* data = guiObject->createSerializable();
+								data->parseSerializable(reader);
+								guiObject->loadSerializable(data);
+								delete data;
+							}
+							else
+							{
+								char log[512];
+								sprintf(log, "[CGUIImporter] Can't load element: %s", CStringImp::convertUnicodeToUTF8(attributeName.c_str()).c_str());
+								os::Printer::log(log);
+
+								++g_currentGUI;
+								++g_guiLoading;
+								++step;
+							}
 						}
 					}
 				}
@@ -272,38 +245,191 @@ namespace Skylicht
 		return true;
 	}
 
+	void CGUIImporter::loadGUI(CObjectSerializable* gui, CCanvas* canvas)
+	{
+		CValueProperty* childs = gui->getProperty("Childs");
+		if (childs == NULL)
+			return;
+
+		CGUIElement* root = canvas->getRootElement();
+		root->loadSerializable(gui);
+
+		if (childs && childs->getType() == Skylicht::Object)
+		{
+			CObjectSerializable* objs = dynamic_cast<CObjectSerializable*>(childs);
+			if (objs)
+			{
+				for (u32 i = 0, n = objs->getNumProperty(); i < n; i++)
+				{
+					CValueProperty* obj = objs->getPropertyID(i);
+					if (obj->getType() == Skylicht::Object)
+					{
+						CObjectSerializable* uiObj = dynamic_cast<CObjectSerializable*>(obj);
+						importGUI(canvas, root, uiObj);
+					}
+				}
+			}
+		}
+
+		reset(canvas);
+	}
+
+	CObjectSerializable* CGUIImporter::loadGUIObject(const char* file, CCanvas* canvas)
+	{
+		io::IXMLReader* reader = getIrrlichtDevice()->getFileSystem()->createXMLReader(file);
+		if (!reader)
+			return NULL;
+
+		std::wstring nodeName = L"node";
+		std::wstring attributeName;
+
+		CObjectSerializable* obj = NULL;
+
+		while (reader->read())
+		{
+			switch (reader->getNodeType())
+			{
+			case io::EXN_ELEMENT:
+				if (nodeName == reader->getNodeName())
+				{
+					attributeName = reader->getAttributeValue(L"type");
+
+					CGUIElement* element = canvas->createNullElement(canvas->getRootElement(), attributeName.c_str());
+					if (element != NULL)
+					{
+						if (obj)
+						{
+							// note: only 1 node root
+							delete obj;
+							obj = NULL;
+						}
+
+						obj = element->createSerializable();
+						element->remove();
+
+						if (!loadObjStep(obj, canvas, reader))
+						{
+							reader->drop();
+							return obj;
+						}
+					}
+				}
+				break;
+			default:
+				break;
+			}
+		}
+
+		reader->drop();
+		return obj;
+	}
+
+	bool CGUIImporter::loadObjStep(CObjectSerializable* obj, CCanvas* canvas, io::IXMLReader* reader)
+	{
+		io::IFileSystem* fs = getIrrlichtDevice()->getFileSystem();
+
+		// read attribute
+		io::IAttributes* attr = fs->createEmptyAttributes();
+		attr->read(reader);
+		obj->deserialize(attr);
+		attr->drop();
+
+		// read childs
+		std::wstring nodeName = L"node";
+		std::wstring attributeName;
+
+		CObjectSerializable* childs = NULL;
+
+		while (reader->read())
+		{
+			switch (reader->getNodeType())
+			{
+			case io::EXN_ELEMENT:
+				if (nodeName == reader->getNodeName())
+				{
+					attributeName = reader->getAttributeValue(L"type");
+					if (attributeName == L"Childs")
+					{
+						childs = new CObjectSerializable("Childs");
+						obj->addProperty(childs);
+						obj->autoRelease(childs);
+
+						if (!loadObjChilds(childs, canvas, reader))
+							return false;
+					}
+					else
+					{
+						return false;
+					}
+				}
+				break;
+			case io::EXN_ELEMENT_END:
+				if (nodeName == reader->getNodeName())
+				{
+					return true;
+				}
+				break;
+			default:
+				break;
+			}
+		}
+
+		return false;
+	}
+
+	bool CGUIImporter::loadObjChilds(CObjectSerializable* obj, CCanvas* canvas, io::IXMLReader* reader)
+	{
+		std::wstring nodeName = L"node";
+		std::wstring attributeName;
+
+		while (reader->read())
+		{
+			switch (reader->getNodeType())
+			{
+			case io::EXN_ELEMENT:
+				if (nodeName == reader->getNodeName())
+				{
+					attributeName = reader->getAttributeValue(L"type");
+					if (attributeName == L"Childs")
+					{
+						return false;
+					}
+					else
+					{
+						CGUIElement* element = canvas->createNullElement(canvas->getRootElement(), attributeName.c_str());
+						if (element == NULL)
+							return false;
+
+						CObjectSerializable* newObj = element->createSerializable();
+						element->remove();
+
+						loadObjStep(newObj, canvas, reader);
+						obj->addProperty(newObj);
+						obj->autoRelease(newObj);
+					}
+				}
+				break;
+			case io::EXN_ELEMENT_END:
+				if (nodeName == reader->getNodeName())
+				{
+					return true;
+				}
+				break;
+			default:
+				break;
+			}
+		}
+		return false;
+	}
+
 	CGUIElement* CGUIImporter::importGUI(CCanvas* canvas, CGUIElement* parent, CObjectSerializable* obj)
 	{
-		core::rectf nullRect;
-		SColor nullColor;
-
-		CGUIElement* element = NULL;
+		if (obj == NULL)
+			return NULL;
 
 		const std::string& type = obj->Name;
 
-		if (type == "CGUIElement")
-			element = canvas->createElement(parent, nullRect);
-		else if (type == "CGUIImage")
-			element = canvas->createImage(parent, nullRect);
-		else if (type == "CGUIMask")
-			element = canvas->createMask(parent, nullRect);
-		else if (type == "CGUIRect")
-			element = canvas->createRect(parent, nullRect, nullColor);
-		else if (type == "CGUISprite")
-			element = canvas->createSprite(parent, nullRect, NULL);
-		else if (type == "CGUIText")
-			element = canvas->createText(parent, nullRect, NULL);
-		else if (type == "CGUILayout")
-			element = canvas->createLayout(parent, nullRect);
-		else if (type == "CGUIFitSprite")
-			element = canvas->createFitSprite(parent, nullRect, NULL);
-		else
-		{
-			char log[512];
-			sprintf(log, "[CGUIImporter] Can't create element: %s", type.c_str());
-			os::Printer::log(log);
-		}
-
+		CGUIElement* element = canvas->createNullElement(parent, type.c_str());
 		if (!element)
 			return NULL;
 
@@ -328,6 +454,71 @@ namespace Skylicht
 		}
 
 		return element;
+	}
+
+	std::vector<CObjectSerializable*> getObjChilds(CObjectSerializable* obj)
+	{
+		std::vector<CObjectSerializable*> ret;
+		CValueProperty* childs = obj->getProperty("Childs");
+		if (childs && childs->getType() == Skylicht::Object)
+		{
+			CObjectSerializable* objs = dynamic_cast<CObjectSerializable*>(childs);
+			if (objs)
+			{
+				for (u32 i = 0, n = objs->getNumProperty(); i < n; i++)
+				{
+					CValueProperty* obj = objs->getPropertyID(i);
+					if (obj->getType() == Skylicht::Object)
+					{
+						CObjectSerializable* child = dynamic_cast<CObjectSerializable*>(obj);
+						if (child)
+							ret.push_back(child);
+					}
+				}
+			}
+		}
+		return ret;
+	}
+
+	CObjectSerializable* CGUIImporter::getGUIByPath(CObjectSerializable* obj, const char* path)
+	{
+		if (obj == NULL)
+			return NULL;
+
+		CObjectSerializable* ret = obj;
+
+		std::vector<CObjectSerializable*> childs;
+		std::vector<std::string> splitPath;
+		CStringImp::splitString(path, "\\/", splitPath);
+
+		while (splitPath.size() > 0)
+		{
+			const char* currentGUI = splitPath[0].c_str();
+			bool found = false;
+
+			childs = getObjChilds(ret);
+
+			for (CObjectSerializable* gui : childs)
+			{
+				std::string name = gui->get("name", std::string("No name"));
+				if (CStringImp::comp(name.c_str(), currentGUI) == 0)
+				{
+					ret = gui;
+					found = true;
+					break;
+				}
+			}
+
+			if (!found)
+			{
+				ret = NULL;
+				break;
+			}
+
+			splitPath.erase(splitPath.begin());
+		}
+
+		return ret;
 	}
 
 	void CGUIImporter::reset(CCanvas* canvas)

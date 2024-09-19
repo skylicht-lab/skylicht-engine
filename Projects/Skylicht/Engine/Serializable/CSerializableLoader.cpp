@@ -43,7 +43,7 @@ namespace Skylicht
 			attr->read(reader);
 
 			if (object->getNumProperty() > 0)
-				object->deserialize(attr);	// for SerializableActivator
+				object->deserialize(attr); // for SerializableActivator
 			else
 			{
 				if (object->isArray())
