@@ -54,6 +54,10 @@ namespace Skylicht
 			return getPropertyID(i);
 		}
 
+		void removeByIndex(int index);
+
+		void clear();
+
 		virtual bool haveCreateElementFunction()
 		{
 			return false;
@@ -70,6 +74,10 @@ namespace Skylicht
 		{
 			return true;
 		}
+
+	protected:
+
+		void autoName();
 	};
 
 	template <class T>

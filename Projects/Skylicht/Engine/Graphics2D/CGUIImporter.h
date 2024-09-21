@@ -39,13 +39,13 @@ namespace Skylicht
 
 		static float getLoadingPercent();
 
-		static CObjectSerializable* loadGUIObject(const char* file, CCanvas* canvas);
+		static CObjectSerializable* loadGUIToSerializable(const char* file, CCanvas* canvas);
 
-		static void loadGUI(CObjectSerializable* gui, CCanvas* canvas);
+		static void loadGUIFromSerializable(CObjectSerializable* gui, CCanvas* canvas);
 
 		static CGUIElement* importGUI(CCanvas* canvas, CGUIElement* target, CObjectSerializable* obj);
 
-		static CObjectSerializable* getGUIByPath(CObjectSerializable* obj, const char* path);
+		static CObjectSerializable* getSerializableByPath(CObjectSerializable* obj, const char* path);
 
 		static void reset(CCanvas* canvas);
 

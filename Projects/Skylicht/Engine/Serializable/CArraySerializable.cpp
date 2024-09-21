@@ -43,6 +43,41 @@ namespace Skylicht
 
 	}
 
+	void CArraySerializable::removeByIndex(int index)
+	{
+		if (index < 0 || index >= (int)m_value.size())
+			return;
+
+		CValueProperty* value = m_value[index];
+		m_value.erase(m_value.begin() + index);
+
+		auto i = m_autoRelease.begin();
+		auto e = m_autoRelease.end();
+
+		while (i != e)
+		{
+			if ((*i) == value)
+			{
+				delete (*i);
+				m_autoRelease.erase(i);
+				break;
+			}
+			++i;
+		}
+
+		autoName();
+	}
+
+	void CArraySerializable::clear()
+	{
+		for (CValueProperty* p : m_autoRelease)
+		{
+			delete p;
+		}
+		m_autoRelease.clear();
+		m_value.clear();
+	}
+
 	bool CArraySerializable::resize(int count)
 	{
 		if (count < 0)
@@ -71,15 +106,19 @@ namespace Skylicht
 			}
 		}
 
-		// rename
+		autoName();
+
+		return true;
+	}
+
+	void CArraySerializable::autoName()
+	{
 		char name[32];
-		numElement = getElementCount();
+		int numElement = getElementCount();
 		for (int i = 0; i < numElement; i++)
 		{
 			sprintf(name, "[%d]", i);
 			getElement(i)->Name = name;
 		}
-
-		return true;
 	}
 }

@@ -47,6 +47,8 @@ namespace Skylicht
 		{
 			delete p;
 		}
+		m_autoRelease.clear();
+		m_value.clear();
 	}
 
 	void CObjectSerializable::remove(CValueProperty* value)

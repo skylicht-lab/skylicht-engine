@@ -245,7 +245,7 @@ namespace Skylicht
 		return true;
 	}
 
-	void CGUIImporter::loadGUI(CObjectSerializable* gui, CCanvas* canvas)
+	void CGUIImporter::loadGUIFromSerializable(CObjectSerializable* gui, CCanvas* canvas)
 	{
 		CValueProperty* childs = gui->getProperty("Childs");
 		if (childs == NULL)
@@ -274,7 +274,7 @@ namespace Skylicht
 		reset(canvas);
 	}
 
-	CObjectSerializable* CGUIImporter::loadGUIObject(const char* file, CCanvas* canvas)
+	CObjectSerializable* CGUIImporter::loadGUIToSerializable(const char* file, CCanvas* canvas)
 	{
 		io::IXMLReader* reader = getIrrlichtDevice()->getFileSystem()->createXMLReader(file);
 		if (!reader)
@@ -480,7 +480,7 @@ namespace Skylicht
 		return ret;
 	}
 
-	CObjectSerializable* CGUIImporter::getGUIByPath(CObjectSerializable* obj, const char* path)
+	CObjectSerializable* CGUIImporter::getSerializableByPath(CObjectSerializable* obj, const char* path)
 	{
 		if (obj == NULL)
 			return NULL;
