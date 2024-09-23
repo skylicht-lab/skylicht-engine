@@ -125,11 +125,13 @@ namespace Skylicht
 
 	CCrashHandler::~CCrashHandler()
 	{
+#ifdef USE_CRASHHANDLER
 		if (g_process != nullptr)
 		{
 			SymCleanup(g_process);
 			g_process = nullptr;
 		}
+#endif
 	}
 
 	void CCrashHandler::init()
