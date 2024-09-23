@@ -53,6 +53,11 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "SkylichtAudio.h"
 #endif
 
+// Crash hander
+#ifdef USE_CRASHHANDLER
+#include "CrashHandler/CCrashHandler.h"
+#endif
+
 CBaseApp* g_app = NULL;
 Skylicht::CBuildConfig* g_config = Skylicht::CBuildConfig::createGetInstance();
 
@@ -72,6 +77,10 @@ namespace Skylicht
 		g_app = this;
 		CConsoleLog::createGetInstance();
 
+#ifdef USE_CRASHHANDLER
+		CCrashHandler::createGetInstance()->init();
+#endif
+
 #if _DEBUG
 		m_showFPS = true;
 #endif
@@ -80,6 +89,10 @@ namespace Skylicht
 	CApplication::~CApplication()
 	{
 		CConsoleLog::releaseInstance();
+
+#ifdef USE_CRASHHANDLER
+		CCrashHandler::releaseInstance();
+#endif
 	}
 
 	bool CApplication::OnEvent(const SEvent& event)

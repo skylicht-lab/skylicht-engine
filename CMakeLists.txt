@@ -60,6 +60,8 @@ option(BUILD_ENGINE_TOOL "Build with scene editor" ON)
 # skylicht engine option
 option(BUILD_DEBUG_VLD "Build with debug visual leak detector" OFF)
 
+option(BUILD_DEBUG_CRASHHANDLER "Build with debug crash handler" OFF)
+
 option(BUILD_SDL "Build with Simple DirectMedia Layer is a cross-platform development library" OFF)
 
 option(USE_OPENMP "Use openmp for multithread optimize" ON)
@@ -104,6 +106,10 @@ if (USE_OPENMP)
 		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fopenmp")
 		add_definitions(-DUSE_OPENMP)
 	endif()
+endif()
+
+if (BUILD_DEBUG_CRASHHANDLER AND MSVC)
+	add_definitions(-DUSE_CRASHHANDLER)
 endif()
 
 # network
