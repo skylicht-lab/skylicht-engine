@@ -68,7 +68,7 @@ namespace Skylicht
 	private:
 
 		wchar_t buffer[MaxStringLength];
-#endif
 
 	};
+#endif
 }
