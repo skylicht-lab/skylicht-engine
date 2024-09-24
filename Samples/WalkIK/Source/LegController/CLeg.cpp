@@ -19,7 +19,6 @@ CLeg::CLeg(
 	m_stepHeight(stepHeight),
 	m_stepTime(stepTime),
 	m_animTime(stepTime),
-	m_link(NULL),
 	m_waiting(false),
 	m_waitingTime(0.0f)
 {

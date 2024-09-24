@@ -36,7 +36,7 @@ public:
 		return m_enableWind;
 	}
 
-	inline bool setEnableWind(bool b)
+	inline void setEnableWind(bool b)
 	{
 		m_enableWind = b;
 	}
