@@ -4,12 +4,17 @@
 
 #include "AudioStream/CZipAudioStreamFactory.h"
 #include "AudioStream/CZipAudioFileStream.h"
+#include "Graphics2D/SpriteFrame/CSpriteAtlas.h"
 
 class CViewDemo : public CView
 {
 protected:
-	CZipAudioStreamFactory *m_streamFactory;
+	CZipAudioStreamFactory* m_streamFactory;
 
+	Audio::CAudioEmitter* m_music;
+	Audio::CAudioEmitter* m_sound;
+
+	CSpriteAtlas* m_sprite;
 public:
 	CViewDemo();
 
@@ -24,4 +29,6 @@ public:
 	virtual void onRender();
 
 	virtual void onPostRender();
+
+	void onGUI();
 };

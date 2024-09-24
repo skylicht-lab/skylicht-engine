@@ -114,7 +114,7 @@ namespace Skylicht
 		}
 	};
 
-	class SKYLICHT_API CSpriteFrame
+	class SKYLICHT_API CSpriteFrame : public IReferenceCounted
 	{
 	protected:
 		std::vector<SImage*> m_images;

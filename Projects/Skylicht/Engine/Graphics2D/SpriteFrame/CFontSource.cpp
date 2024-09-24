@@ -55,7 +55,7 @@ namespace Skylicht
 	CFontSource::~CFontSource()
 	{
 		if (m_font)
-			m_font->drop();
+			m_font->dropFont();
 	}
 
 	IFont* CFontSource::initFont()
@@ -67,7 +67,7 @@ namespace Skylicht
 		{
 			if (m_font)
 			{
-				m_font->drop();
+				m_font->dropFont();
 				m_font = NULL;
 			}
 
@@ -95,7 +95,7 @@ namespace Skylicht
 				if (CGlyphFreetype::getInstance()->initFont(fontName.c_str(), fontPath.c_str()))
 				{
 					if (m_font)
-						m_font->drop();
+						m_font->dropFont();
 
 					m_font = new CGlyphFont(fontName.c_str(), FontSizePt.get());
 
@@ -113,7 +113,7 @@ namespace Skylicht
 			}
 
 			if (m_font)
-				m_font->drop();
+				m_font->dropFont();
 
 			CSpriteFont* spriteFont = new CSpriteFont();
 			if (spriteFont->loadFont(fontPath.c_str()))

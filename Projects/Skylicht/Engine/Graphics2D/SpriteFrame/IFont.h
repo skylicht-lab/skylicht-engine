@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class SKYLICHT_API IFont : public IReferenceCounted
+	class SKYLICHT_API IFont
 	{
 	public:
 		IFont() {}
@@ -40,5 +40,9 @@ namespace Skylicht
 		virtual void getListModule(const wchar_t* string, std::vector<int>& format, std::vector<SModuleOffset*>& output, std::vector<int>& outputFormat);
 
 		virtual void updateFontTexture();
+
+		virtual bool dropFont();
+
+		virtual void grabFont();
 	};
 }

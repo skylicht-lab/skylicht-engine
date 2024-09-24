@@ -27,7 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	void IFont::getListModule(const wchar_t *string, std::vector<int>& format, std::vector<SModuleOffset*>& output, std::vector<int>& outputFormat)
+	void IFont::getListModule(const wchar_t* string, std::vector<int>& format, std::vector<SModuleOffset*>& output, std::vector<int>& outputFormat)
 	{
 		output.clear();
 		outputFormat.clear();
@@ -50,5 +50,20 @@ namespace Skylicht
 	void IFont::updateFontTexture()
 	{
 
+	}
+
+	bool IFont::dropFont()
+	{
+		IReferenceCounted* ref = dynamic_cast<IReferenceCounted*>(this);
+		if (ref)
+			return ref->drop();
+		return false;
+	}
+
+	void IFont::grabFont()
+	{
+		IReferenceCounted* ref = dynamic_cast<IReferenceCounted*>(this);
+		if (ref)
+			ref->grab();
 	}
 }

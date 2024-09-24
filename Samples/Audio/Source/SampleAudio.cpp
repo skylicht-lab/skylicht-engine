@@ -3,6 +3,7 @@
 
 #include "Context/CContext.h"
 #include "ViewManager/CViewManager.h"
+#include "CImguiManager.h"
 
 #include "CViewInit.h"
 
@@ -17,6 +18,7 @@ SampleAudio::SampleAudio()
 	CContext::createGetInstance();
 	CViewManager::createGetInstance()->initViewLayer(1);
 	CLightmapper::createGetInstance();
+	CImguiManager::createGetInstance();
 }
 
 SampleAudio::~SampleAudio()
@@ -24,6 +26,7 @@ SampleAudio::~SampleAudio()
 	CViewManager::releaseInstance();
 	CContext::releaseInstance();
 	CLightmapper::releaseInstance();
+	CImguiManager::releaseInstance();
 }
 
 void SampleAudio::onInitApp()
