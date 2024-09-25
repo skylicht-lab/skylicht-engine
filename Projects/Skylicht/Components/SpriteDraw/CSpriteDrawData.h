@@ -38,6 +38,8 @@ namespace Skylicht
 
 		virtual ~CSpriteDrawData();
 
+		ITexture* Texture;
+
 		SFrame* Frame;
 
 		SColor Color;

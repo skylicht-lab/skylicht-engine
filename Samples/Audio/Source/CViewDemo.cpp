@@ -10,7 +10,6 @@
 CViewDemo::CViewDemo() :
 	m_music(NULL),
 	m_sound(NULL),
-	m_sprite(NULL),
 	m_streamFactory(NULL)
 {
 	Audio::initSkylichtAudio();
@@ -22,9 +21,6 @@ CViewDemo::CViewDemo() :
 
 CViewDemo::~CViewDemo()
 {
-	if (m_sprite)
-		m_sprite->drop();
-
 	Audio::CAudioEngine::getSoundEngine()->unRegisterStreamFactory(m_streamFactory);
 	delete m_streamFactory;
 
@@ -68,9 +64,7 @@ void CViewDemo::onInit()
 	}
 
 	// atlas texture
-	m_sprite = new CSpriteAtlas(video::ECF_A8R8G8B8, 512, 512);
-	SFrame* frame = m_sprite->addFrame("Helicopter", "SampleAudio/helicopter.png");
-	m_sprite->updateTexture();
+	ITexture* texture = CTextureManager::getInstance()->getTexture("SampleAudio/helicopter.png");
 
 	// create helicoper obj & sound
 	CScene* scene = context->getScene();
@@ -78,7 +72,9 @@ void CViewDemo::onInit()
 
 	CGameObject* helicoper = zone->createEmptyObject();
 	CTestSoundComponent* testSound = helicoper->addComponent<CTestSoundComponent>();
-	testSound->setFrame(m_sprite, frame);
+	testSound->setTexture(texture, 0.005f, SColor(255, 255, 255, 255));
+	testSound->setBillboard(true);
+	testSound->setCenter(true);
 	testSound->setAudioEmitter(m_sound);
 }
 

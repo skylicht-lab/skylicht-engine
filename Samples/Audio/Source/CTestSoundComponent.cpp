@@ -3,8 +3,6 @@
 #include "GameObject/CGameObject.h"
 
 CTestSoundComponent::CTestSoundComponent() :
-	m_sprite(NULL),
-	m_frame(NULL),
 	m_sound(NULL),
 	m_angle(90.0f),
 	m_radius(5.0f)
@@ -14,19 +12,7 @@ CTestSoundComponent::CTestSoundComponent() :
 
 CTestSoundComponent::~CTestSoundComponent()
 {
-	m_sprite->drop();
-}
 
-void CTestSoundComponent::setFrame(CSpriteAtlas* sprite, SFrame* frame)
-{
-	m_sprite = sprite;
-	m_frame = frame;
-
-	m_sprite->grab();
-
-	CSprite::setFrame(m_frame, 0.005f, SColor(255, 255, 255, 255));
-	setBillboard(true);
-	setCenter(true);
 }
 
 void CTestSoundComponent::initComponent()

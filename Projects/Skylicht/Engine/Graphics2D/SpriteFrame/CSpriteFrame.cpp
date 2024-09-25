@@ -136,7 +136,7 @@ namespace Skylicht
 		vertices[1].TCoords.Y = y1;
 
 		vertices[1].Normal.X = 1.0f;
-		vertices[1].Normal.Y = 0;
+		vertices[1].Normal.Y = 0.0f;
 
 		vertices[2].TCoords.X = x2;
 		vertices[2].TCoords.Y = y2;

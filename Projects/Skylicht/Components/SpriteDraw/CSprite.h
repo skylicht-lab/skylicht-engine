@@ -48,6 +48,16 @@ namespace Skylicht
 			m_data->Color = color;
 		}
 
+		inline const SColor& getColor()
+		{
+			return m_data->Color;
+		}
+
+		inline void setScale(float scale)
+		{
+			m_data->Scale = scale;
+		}
+
 		inline float getScale()
 		{
 			return m_data->Scale;
@@ -57,6 +67,8 @@ namespace Skylicht
 		{
 			return m_data->ViewScale;
 		}
+
+		void setTexture(ITexture* texture, float scale, const SColor& color);
 
 		void setFrame(SFrame* frame, float scale, const SColor& color);
 

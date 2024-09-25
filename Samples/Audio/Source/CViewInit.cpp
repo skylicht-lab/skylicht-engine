@@ -29,7 +29,7 @@ CViewInit::~CViewInit()
 	CEventManager::getInstance()->unRegisterEvent(this);
 }
 
-io::path CViewInit::getBuiltInPath(const char *name)
+io::path CViewInit::getBuiltInPath(const char* name)
 {
 	return getApplication()->getBuiltInPath(name);
 }
@@ -40,10 +40,10 @@ void CViewInit::onInit()
 	app->showDebugConsole();
 	app->getFileSystem()->addFileArchive(getBuiltInPath("BuiltIn.zip"), false, false);
 
-	CShaderManager *shaderMgr = CShaderManager::getInstance();
+	CShaderManager* shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
 
-	CGlyphFreetype *freetypeFont = CGlyphFreetype::getInstance();
+	CGlyphFreetype* freetypeFont = CGlyphFreetype::getInstance();
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
 
 	// handle click event
@@ -55,34 +55,34 @@ void CViewInit::initScene()
 	CBaseApp* app = getApplication();
 
 	// create a scene
-	CScene *scene = CContext::getInstance()->initScene();
-	CZone *zone = scene->createZone();
+	CScene* scene = CContext::getInstance()->initScene();
+	CZone* zone = scene->createZone();
 
 	// create 2D camera
-	CGameObject *guiCameraObject = zone->createEmptyObject();
-	CCamera *guiCamera = guiCameraObject->addComponent<CCamera>();
+	CGameObject* guiCameraObject = zone->createEmptyObject();
+	CCamera* guiCamera = guiCameraObject->addComponent<CCamera>();
 	guiCamera->setProjectionType(CCamera::OrthoUI);
 
 	// create 3D camera
-	CGameObject *camObj = zone->createEmptyObject();
+	CGameObject* camObj = zone->createEmptyObject();
 	camObj->addComponent<CCamera>();
 	camObj->addComponent<CEditorCamera>()->setMoveSpeed(2.0f);
 
-	CCamera *camera = camObj->getComponent<CCamera>();
+	CCamera* camera = camObj->getComponent<CCamera>();
 	camera->setPosition(core::vector3df(0.0f, 1.5f, 4.0f));
 	camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
 
 	// 3d grid
-	CGameObject *grid = zone->createEmptyObject();
+	CGameObject* grid = zone->createEmptyObject();
 	grid->addComponent<CGridPlane>();
 
 	// lighting
-	CGameObject *lightObj = zone->createEmptyObject();
-	CDirectionalLight *directionalLight = lightObj->addComponent<CDirectionalLight>();
+	CGameObject* lightObj = zone->createEmptyObject();
+	CDirectionalLight* directionalLight = lightObj->addComponent<CDirectionalLight>();
 	SColor c(255, 255, 244, 214);
 	directionalLight->setColor(SColorf(c));
 
-	CTransformEuler *lightTransform = lightObj->getTransformEuler();
+	CTransformEuler* lightTransform = lightObj->getTransformEuler();
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
 
 	core::vector3df direction = core::vector3df(0.0f, -1.5f, 2.0f);
@@ -94,7 +94,7 @@ void CViewInit::initScene()
 
 	// create 2D Canvas
 	m_canvasObject = zone->createEmptyObject();
-	CCanvas *canvas = m_canvasObject->addComponent<CCanvas>();
+	CCanvas* canvas = m_canvasObject->addComponent<CCanvas>();
 
 	// create UI Text in Canvas
 	m_guiText = canvas->createText(m_largeFont);
@@ -106,8 +106,8 @@ void CViewInit::initScene()
 	u32 w = app->getWidth();
 	u32 h = app->getHeight();
 
-	CContext *context = CContext::getInstance();
-	CForwardRP  *fwrp = new CForwardRP();
+	CContext* context = CContext::getInstance();
+	CForwardRP* fwrp = new CForwardRP();
 	fwrp->initRender(w, h);
 
 	context->setCustomRP(fwrp);
@@ -124,7 +124,7 @@ void CViewInit::onDestroy()
 
 void CViewInit::onUpdate()
 {
-	CContext *context = CContext::getInstance();
+	CContext* context = CContext::getInstance();
 
 	switch (m_initState)
 	{
@@ -136,7 +136,7 @@ void CViewInit::onUpdate()
 		listBundles.push_back("SampleAudio.zip");
 
 #ifdef __EMSCRIPTEN__
-		const char *filename = listBundles[m_downloaded].c_str();
+		const char* filename = listBundles[m_downloaded].c_str();
 
 		if (m_getFile == NULL)
 		{
@@ -173,7 +173,7 @@ void CViewInit::onUpdate()
 
 		for (std::string& bundle : listBundles)
 		{
-			const char *r = bundle.c_str();
+			const char* r = bundle.c_str();
 			fileSystem->addFileArchive(getBuiltInPath(r), false, false);
 		}
 
@@ -187,7 +187,7 @@ void CViewInit::onUpdate()
 		m_initState = CViewInit::Finished;
 
 #if !defined(__EMSCRIPTEN__)
-        CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
+		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 #endif
 	}
 	break;
@@ -198,7 +198,7 @@ void CViewInit::onUpdate()
 	break;
 	default:
 	{
-		CScene *scene = context->getScene();
+		CScene* scene = context->getScene();
 		if (scene != NULL)
 			scene->update();
 	}
@@ -230,8 +230,8 @@ bool CViewInit::OnEvent(const SEvent& event)
 	{
 		if (event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
 		{
-            if (m_initState == CViewInit::Finished)
-                CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
+			if (m_initState == CViewInit::Finished)
+				CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 		}
 	}
 

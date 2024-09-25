@@ -70,7 +70,7 @@ namespace Skylicht
 			CEntity* entity = entities[i];
 
 			CSpriteDrawData* spriteData = GET_ENTITY_DATA(entity, CSpriteDrawData);
-			if (spriteData != NULL && spriteData->Frame != NULL)
+			if (spriteData != NULL && (spriteData->Frame != NULL || spriteData->Texture != NULL))
 				m_sprites.push(spriteData);
 		}
 	}
@@ -95,11 +95,14 @@ namespace Skylicht
 		CSpriteDrawData* a = *((CSpriteDrawData**)ca);
 		CSpriteDrawData* b = *((CSpriteDrawData**)cb);
 
-		if (a->Frame->Image->Texture == b->Frame->Image->Texture)
+		ITexture* textureA = a->Texture != NULL ? a->Texture : a->Frame->Image->Texture;
+		ITexture* textureB = b->Texture != NULL ? b->Texture : b->Frame->Image->Texture;
+
+		if (textureA == textureB)
 		{
 			return 0;
 		}
-		else if (a->Frame->Image->Texture > b->Frame->Image->Texture)
+		else if (textureA > textureB)
 		{
 			return 1;
 		}
@@ -173,8 +176,6 @@ namespace Skylicht
 		{
 			CSpriteDrawData* sprite = sprites[i];
 
-			SFrame* frame = sprite->Frame;
-
 			// position
 			CWorldTransformData* transformData = GET_ENTITY_DATA(sprite->Entity, CWorldTransformData);
 			core::vector3df pos = transformData->World.getTranslation();
@@ -189,17 +190,37 @@ namespace Skylicht
 			}
 
 			// render buffer
-			currentTexture = frame->Image->Texture;
-
-			core::dimension2du size = frame->Image->Texture->getSize();
-			float texWidth = (float)size.Width;
-			float texHeight = (float)size.Height;
-
-			// batch sprite
-			std::vector<SModuleOffset>::iterator it = frame->ModuleOffset.begin(), end = frame->ModuleOffset.end();
-			while (it != end)
+			if (sprite->Texture)
 			{
-				SModuleOffset& module = (*it);
+				currentTexture = sprite->Texture;
+
+				const core::matrix4* mat = NULL;
+				core::dimension2du size = currentTexture->getSize();
+				float texWidth = (float)size.Width;
+				float texHeight = (float)size.Height;
+
+				float offsetX = 0.0f;
+				float offsetY = 0.0f;
+
+				if (sprite->Center)
+				{
+					offsetX = -texWidth * 0.5f * scale;
+					offsetY = -texHeight * 0.5f * scale;
+				}
+
+				if (sprite->Billboard)
+				{
+					matData[12] = pos.X;
+					matData[13] = pos.Y;
+					matData[14] = pos.Z;
+					matData[15] = 1.0f;
+
+					mat = &transform;
+				}
+				else
+				{
+					mat = &transformData->World;
+				}
 
 				vb->set_used(numVertex + 4);
 				ib->set_used(numIndex + 6);
@@ -210,41 +231,133 @@ namespace Skylicht
 				u16* indices = (u16*)ib->getIndices();
 				indices += numIndex;
 
-				// center
-				float offsetX = 0.0f;
-				float offsetY = 0.0f;
+				float x1 = (float)offsetX;
+				float y1 = (float)offsetY;
+				float x2 = (float)(offsetX + texWidth * scale);
+				float y2 = (float)(offsetY + texHeight * scale);
 
-				if (sprite->Center)
-				{
-					offsetX = module.Module->W * 0.5f * scale;
-					offsetY = module.Module->H * 0.5f * scale;
-				}
+				vertices[0].Pos.X = x1;
+				vertices[0].Pos.Y = y1;
+				vertices[0].Pos.Z = 0.0f;
+				mat->transformVect(vertices[0].Pos);
 
-				if (sprite->Billboard)
-				{
-					matData[12] = pos.X;
-					matData[13] = pos.Y;
-					matData[14] = pos.Z;
-					matData[15] = 1.0f;
+				vertices[1].Pos.X = x2;
+				vertices[1].Pos.Y = y1;
+				vertices[1].Pos.Z = 0.0f;
+				mat->transformVect(vertices[1].Pos);
 
-					module.getPositionBuffer(vertices, indices, numVertex, -offsetX, offsetY, transform, scale, -scale);
-				}
-				else
-				{
-					module.getPositionBuffer(vertices, indices, numVertex, -offsetX, offsetY, transformData->World, scale, -scale);
-				}
+				vertices[2].Pos.X = x2;
+				vertices[2].Pos.Y = y2;
+				vertices[2].Pos.Z = 0.0f;
+				mat->transformVect(vertices[2].Pos);
 
-				module.getTexCoordBuffer(vertices, texWidth, texHeight);
-				module.getColorBuffer(vertices, sprite->Color);
+				vertices[3].Pos.X = x1;
+				vertices[3].Pos.Y = y2;
+				vertices[3].Pos.Z = 0.0f;
+				mat->transformVect(vertices[3].Pos);
+
+				vertices[0].TCoords.X = 0.0f;
+				vertices[0].TCoords.Y = 1.0f;
+				vertices[0].Normal.X = 0.0f;
+				vertices[0].Normal.Y = 1.0f;
+
+				vertices[1].TCoords.X = 1.0f;
+				vertices[1].TCoords.Y = 1.0f;
+				vertices[1].Normal.X = 1.0f;
+				vertices[1].Normal.Y = 1.0f;
+
+				vertices[2].TCoords.X = 1.0f;
+				vertices[2].TCoords.Y = 0.0f;
+				vertices[2].Normal.X = 1.0f;
+				vertices[2].Normal.Y = 0.0f;
+
+				vertices[3].TCoords.X = 0.0f;
+				vertices[3].TCoords.Y = 0.0f;
+				vertices[3].Normal.X = 0.0f;
+				vertices[3].Normal.Y = 0.0f;
+
+				vertices[0].Color = sprite->Color;
+				vertices[1].Color = sprite->Color;
+				vertices[2].Color = sprite->Color;
+				vertices[3].Color = sprite->Color;
+
+				indices[0] = numVertex;
+				indices[1] = numVertex + 1;
+				indices[2] = numVertex + 2;
+				indices[3] = numVertex;
+				indices[4] = numVertex + 2;
+				indices[5] = numVertex + 3;
 
 				numVertex += 4;
 				numIndex += 6;
+			}
+			else
+			{
+				currentTexture = sprite->Frame->Image->Texture;
 
-				++it;
+				core::dimension2du size = currentTexture->getSize();
+				float texWidth = (float)size.Width;
+				float texHeight = (float)size.Height;
+
+				// batch sprite
+				SFrame* frame = sprite->Frame;
+				std::vector<SModuleOffset>::iterator it = frame->ModuleOffset.begin(), end = frame->ModuleOffset.end();
+				while (it != end)
+				{
+					SModuleOffset& module = (*it);
+
+					vb->set_used(numVertex + 4);
+					ib->set_used(numIndex + 6);
+
+					video::S3DVertex* vertices = (video::S3DVertex*)vb->getVertices();
+					vertices += numVertex;
+
+					u16* indices = (u16*)ib->getIndices();
+					indices += numIndex;
+
+					// center
+					float offsetX = 0.0f;
+					float offsetY = 0.0f;
+
+					if (sprite->Center)
+					{
+						offsetX = module.Module->W * 0.5f * scale;
+						offsetY = module.Module->H * 0.5f * scale;
+					}
+
+					if (sprite->Billboard)
+					{
+						matData[12] = pos.X;
+						matData[13] = pos.Y;
+						matData[14] = pos.Z;
+						matData[15] = 1.0f;
+
+						module.getPositionBuffer(vertices, indices, numVertex, -offsetX, offsetY, transform, scale, -scale);
+					}
+					else
+					{
+						module.getPositionBuffer(vertices, indices, numVertex, -offsetX, offsetY, transformData->World, scale, -scale);
+					}
+
+					module.getTexCoordBuffer(vertices, texWidth, texHeight);
+					module.getColorBuffer(vertices, sprite->Color);
+
+					numVertex += 4;
+					numIndex += 6;
+
+					++it;
+				}
 			}
 
 			// if change texture or last sprite
-			if (i == n - 1 || currentTexture != sprites[i + 1]->Frame->Image->Texture)
+			ITexture* nextTexture = NULL;
+			if (i < n - 1)
+			{
+				CSpriteDrawData* nextSprite = sprites[i + 1];
+				nextTexture = nextSprite->Texture != NULL ? nextSprite->Texture : nextSprite->Frame->Image->Texture;
+			}
+
+			if (i == n - 1 || currentTexture != nextTexture)
 			{
 				m_meshBuffer->setDirty();
 

@@ -8,8 +8,6 @@
 class CTestSoundComponent : public Skylicht::CSprite
 {
 protected:
-	CSpriteAtlas* m_sprite;
-	SFrame* m_frame;
 	Audio::CAudioEmitter* m_sound;
 
 	float m_angle;
@@ -23,8 +21,6 @@ public:
 	virtual void initComponent();
 
 	virtual void updateComponent();
-
-	void setFrame(CSpriteAtlas* sprite, SFrame* frame);
 
 	inline void setAudioEmitter(Audio::CAudioEmitter* sound)
 	{

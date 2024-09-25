@@ -55,6 +55,13 @@ namespace Skylicht
 
 	}
 
+	void CSprite::setTexture(ITexture* texture, float scale, const SColor& color)
+	{
+		m_data->Texture = texture;
+		m_data->Scale = scale;
+		m_data->Color = color;
+	}
+
 	void CSprite::setFrame(SFrame* frame, float scale, const SColor& color)
 	{
 		m_data->Frame = frame;

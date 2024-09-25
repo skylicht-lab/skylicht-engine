@@ -30,6 +30,7 @@ namespace Skylicht
 	IMPLEMENT_DATA_TYPE_INDEX(CSpriteDrawData);
 
 	CSpriteDrawData::CSpriteDrawData() :
+		Texture(NULL),
 		Frame(NULL),
 		Scale(1.0f),
 		ViewScale(0.0f),
