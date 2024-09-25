@@ -77,7 +77,8 @@ namespace Skylicht
 			delete m_transformGizmos;
 			delete m_worldTransformDataGizmos;
 
-			delete m_history;
+			if (m_history)
+				delete m_history;
 
 			removeAllHierarchyNodes();
 
@@ -169,8 +170,11 @@ namespace Skylicht
 
 			m_gizmos = NULL;
 
-			delete m_history;
-			m_history = NULL;
+			if (m_history)
+			{
+				delete m_history;
+				m_history = NULL;
+			}
 
 			if (m_spaceHierarchy != NULL)
 			{

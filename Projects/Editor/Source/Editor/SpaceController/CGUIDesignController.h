@@ -33,6 +33,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Editor/Space/GUIHierarchy/CSpaceGUIHierarchy.h"
 #include "Editor/Space/GUIDesign/CSpaceGUIDesign.h"
 #include "CContextMenuGUIElement.h"
+#include "History/CGUIEditorHistory.h"
 
 namespace Skylicht
 {
@@ -59,6 +60,8 @@ namespace Skylicht
 			CContextMenuGUIElement* m_contextMenu;
 
 			std::string m_guiFilePath;
+
+			CGUIEditorHistory* m_history;
 
 		public:
 			CGUIDesignController();
@@ -90,6 +93,11 @@ namespace Skylicht
 			inline const std::string& getSaveGUIPath()
 			{
 				return m_guiFilePath;
+			}
+
+			inline CGUIEditorHistory* getHistory()
+			{
+				return m_history;
 			}
 
 			void newGUI();
@@ -125,6 +133,10 @@ namespace Skylicht
 			void onDuplicate();
 
 			void onCut();
+
+			void onUndo();
+
+			void onRedo();
 
 		protected:
 

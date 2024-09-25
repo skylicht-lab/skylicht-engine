@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Entity/CEntityHandleData.h"
 
 #include "Editor/SpaceController/CSceneController.h"
+#include "Editor/SpaceController/CGUIDesignController.h"
 
 namespace Skylicht
 {
@@ -178,6 +179,10 @@ namespace Skylicht
 			selected = new CSelectObject(gui);
 			m_selected.push_back(selected);
 
+			// notify history
+			CGUIEditorHistory* history = CGUIDesignController::getInstance()->getHistory();
+			history->beginSaveHistory(gui);
+
 			return selected;
 		}
 
@@ -188,7 +193,7 @@ namespace Skylicht
 				addSelect(s);
 			}
 		}
-	
+
 		void CSelection::addSelect(const std::vector<CGUIElement*>& ui)
 		{
 			for (CGUIElement* s : ui)
@@ -282,6 +287,10 @@ namespace Skylicht
 				CSelectObject* sel = (*i);
 				if (sel->getType() == CSelectObject::GUIElement && sel->getID() == id)
 				{
+					// notify history
+					CGUIEditorHistory* history = CGUIDesignController::getInstance()->getHistory();
+					history->removeSaveHistory(gui);
+
 					delete sel;
 					m_selected.erase(i);
 					return;

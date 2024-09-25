@@ -45,7 +45,8 @@ namespace Skylicht
 			m_rootNode(NULL),
 			m_spaceHierarchy(NULL),
 			m_spaceDesign(NULL),
-			m_contextMenu(NULL)
+			m_contextMenu(NULL),
+			m_history(NULL)
 		{
 			CAssetManager::getInstance()->registerFileLoader("gui", this);
 		}
@@ -53,6 +54,9 @@ namespace Skylicht
 		CGUIDesignController::~CGUIDesignController()
 		{
 			CAssetManager::getInstance()->unRegisterFileLoader("gui", this);
+
+			if (m_history)
+				delete m_history;
 
 			if (m_rootNode)
 				delete m_rootNode;
@@ -109,6 +113,14 @@ namespace Skylicht
 
 			if (m_spaceHierarchy)
 				m_spaceHierarchy->setTreeNode(m_rootNode);
+
+			if (m_history)
+			{
+				delete m_history;
+				m_history = NULL;
+			}
+
+			m_history = new CGUIEditorHistory(m_guiCanvas);
 		}
 
 		void CGUIDesignController::rebuildGUIHierachy(CGUIElement* parent, CGUIHierachyNode* parentNode)
@@ -810,6 +822,16 @@ namespace Skylicht
 		{
 			onCopy();
 			onDelete();
+		}
+
+		void CGUIDesignController::onUndo()
+		{
+			m_history->undo();
+		}
+
+		void CGUIDesignController::onRedo()
+		{
+			m_history->redo();
 		}
 	}
 }

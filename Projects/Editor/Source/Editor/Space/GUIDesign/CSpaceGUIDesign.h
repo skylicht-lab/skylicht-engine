@@ -125,6 +125,8 @@ namespace Skylicht
 
 			void postMouseEventToHandles(EMOUSE_INPUT_EVENT eventType);
 
+			virtual void onHotkey(GUI::CBase* base, const std::string& hotkey);
+
 		public:
 
 			inline CGUITransformGizmos* getGizmos()

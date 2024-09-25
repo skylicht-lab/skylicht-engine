@@ -14,7 +14,6 @@ protected:
 	Audio::CAudioEmitter* m_music;
 	Audio::CAudioEmitter* m_sound;
 
-	CSpriteAtlas* m_sprite;
 public:
 	CViewDemo();
 

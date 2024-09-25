@@ -193,9 +193,11 @@ namespace Skylicht
 			}
 			else if (hotkey == "Ctrl + Z")
 			{
+				CGUIDesignController::getInstance()->onUndo();
 			}
 			else if (hotkey == "Ctrl + Y")
 			{
+				CGUIDesignController::getInstance()->onRedo();
 			}
 		}
 

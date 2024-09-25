@@ -129,6 +129,12 @@ namespace Skylicht
 			m_view->OnRightMouseClick = std::bind(&CSpaceGUIDesign::onRightMouseClick, this, _1, _2, _3, _4);
 			m_view->OnKeyPress = std::bind(&CSpaceGUIDesign::onKeyPressed, this, _1, _2, _3);
 
+			m_view->addAccelerator("Ctrl + C", [&](GUI::CBase* base) {this->onHotkey(base, "Ctrl + C"); });
+			m_view->addAccelerator("Ctrl + V", [&](GUI::CBase* base) {this->onHotkey(base, "Ctrl + V"); });
+			m_view->addAccelerator("Ctrl + D", [&](GUI::CBase* base) {this->onHotkey(base, "Ctrl + D"); });
+			m_view->addAccelerator("Ctrl + Z", [&](GUI::CBase* base) {this->onHotkey(base, "Ctrl + Z"); });
+			m_view->addAccelerator("Ctrl + Y", [&](GUI::CBase* base) {this->onHotkey(base, "Ctrl + Y"); });
+
 			m_view->OnRender = BIND_LISTENER(&CSpaceGUIDesign::onRender, this);
 
 			m_gizmos = new CGUITransformGizmos();
@@ -544,6 +550,30 @@ namespace Skylicht
 		void CSpaceGUIDesign::onPaste(GUI::CBase* base)
 		{
 			CGUIDesignController::getInstance()->onPaste();
+		}
+
+		void CSpaceGUIDesign::onHotkey(GUI::CBase* base, const std::string& hotkey)
+		{
+			if (hotkey == "Ctrl + C")
+			{
+				CGUIDesignController::getInstance()->onCopy();
+			}
+			else if (hotkey == "Ctrl + V")
+			{
+				CGUIDesignController::getInstance()->onPaste();
+			}
+			else if (hotkey == "Ctrl + D")
+			{
+				CGUIDesignController::getInstance()->onDuplicate();
+			}
+			else if (hotkey == "Ctrl + Z")
+			{
+				CGUIDesignController::getInstance()->onUndo();
+			}
+			else if (hotkey == "Ctrl + Y")
+			{
+				CGUIDesignController::getInstance()->onRedo();
+			}
 		}
 
 		void CSpaceGUIDesign::onRender(GUI::CBase* base)

@@ -7,8 +7,6 @@
 
 #include "CViewInit.h"
 
-#include <vector>
-
 void installApplication(const std::vector<std::string>& argv)
 {
 	SampleAnimations* app = new SampleAnimations();
