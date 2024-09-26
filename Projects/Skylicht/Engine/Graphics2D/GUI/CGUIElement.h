@@ -372,11 +372,13 @@ namespace Skylicht
 
 		CGUIElement* getGUIByPath(const char* path);
 
-		DECLARE_GETTYPENAME(CGUIElement)
-
 		virtual CObjectSerializable* createSerializable();
 
 		virtual void loadSerializable(CObjectSerializable* object);
+
+		void generateNewId();
+
+		DECLARE_GETTYPENAME(CGUIElement)
 
 	protected:
 

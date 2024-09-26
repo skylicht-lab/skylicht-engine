@@ -404,6 +404,11 @@ namespace Skylicht
 		notifyChanged();
 	}
 
+	void CGUIElement::generateNewId()
+	{
+		m_entity->setID(CRandomID::generate().c_str());
+	}
+
 	void CGUIElement::setMaterialId(int id)
 	{
 		m_materialId = id;

@@ -81,7 +81,7 @@ namespace Skylicht
 
 			for (CObjectSerializable* obj: m_guiObjects)
 			{
-				CGUIElement* ui = CGUIImporter::importGUI(canvas, target, obj);
+				CGUIElement* ui = CGUIImporter::importGUI(canvas, target, obj, true);
 				if (ui)
 				{
 					results.push_back(ui);

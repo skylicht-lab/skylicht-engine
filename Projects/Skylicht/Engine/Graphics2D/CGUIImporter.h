@@ -43,7 +43,7 @@ namespace Skylicht
 
 		static void loadGUIFromSerializable(CObjectSerializable* gui, CCanvas* canvas);
 
-		static CGUIElement* importGUI(CCanvas* canvas, CGUIElement* target, CObjectSerializable* obj);
+		static CGUIElement* importGUI(CCanvas* canvas, CGUIElement* target, CObjectSerializable* obj, bool generateNewId = false);
 
 		static CObjectSerializable* getSerializableByPath(CObjectSerializable* obj, const char* path);
 

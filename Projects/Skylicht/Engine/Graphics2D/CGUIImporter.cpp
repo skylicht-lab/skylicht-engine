@@ -422,7 +422,7 @@ namespace Skylicht
 		return false;
 	}
 
-	CGUIElement* CGUIImporter::importGUI(CCanvas* canvas, CGUIElement* parent, CObjectSerializable* obj)
+	CGUIElement* CGUIImporter::importGUI(CCanvas* canvas, CGUIElement* parent, CObjectSerializable* obj, bool generateNewId)
 	{
 		if (obj == NULL)
 			return NULL;
@@ -434,6 +434,8 @@ namespace Skylicht
 			return NULL;
 
 		element->loadSerializable(obj);
+		if (generateNewId)
+			element->generateNewId();
 
 		CValueProperty* childs = obj->getProperty("Childs");
 		if (childs && childs->getType() == Skylicht::Object)
@@ -447,7 +449,7 @@ namespace Skylicht
 					if (obj->getType() == Skylicht::Object)
 					{
 						CObjectSerializable* uiObj = dynamic_cast<CObjectSerializable*>(obj);
-						importGUI(canvas, element, uiObj);
+						importGUI(canvas, element, uiObj, generateNewId);
 					}
 				}
 			}
