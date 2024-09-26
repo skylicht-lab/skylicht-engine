@@ -114,6 +114,9 @@ namespace Skylicht
 				// update node name
 				node->setName(object->getNameW().c_str());
 
+				if (node->OnUpdate)
+					node->OnUpdate(node);
+
 				// rebuild-gui child of entity
 				std::vector<CGUIHierachyNode*>& childs = node->getChilds();
 				for (CGUIHierachyNode* child : childs)

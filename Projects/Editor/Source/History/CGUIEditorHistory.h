@@ -79,6 +79,12 @@ namespace Skylicht
 
 		protected:
 
+			void doDelete(SHistoryData* historyData);
+
+			void doCreate(SHistoryData* historyData);
+
+			void doModify(SHistoryData* historyData, bool undo);
+
 			void freeCurrentObjectData();
 
 			SGUIObjectHistory* getObjectHistory(const std::string& id);

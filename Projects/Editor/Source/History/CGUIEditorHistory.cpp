@@ -43,6 +43,89 @@ namespace Skylicht
 			freeCurrentObjectData();
 		}
 
+		void CGUIEditorHistory::doDelete(SHistoryData* historyData)
+		{
+			CGUIDesignController* controller = CGUIDesignController::getInstance();
+			CGUIHierarchyController* hierarchyController = NULL;
+			CCanvas* canvas = controller->getCanvas();
+
+			size_t numObject = historyData->ObjectID.size();
+			for (size_t i = 0; i < numObject; i++)
+			{
+				// object id
+				std::string& id = historyData->ObjectID[i];
+
+				// remove this object
+				CGUIElement* element = canvas->getGUIByID(id.c_str());
+				if (element)
+					controller->removeGUIElement(element);
+			}
+		}
+
+		void CGUIEditorHistory::doCreate(SHistoryData* historyData)
+		{
+			CGUIDesignController* controller = CGUIDesignController::getInstance();
+			CGUIHierarchyController* hierarchyController = NULL;
+			CCanvas* canvas = controller->getCanvas();
+
+			if (controller->getSpaceHierarchy() != NULL)
+				hierarchyController = controller->getSpaceHierarchy()->getController();
+
+			size_t numObject = historyData->ObjectID.size();
+			for (size_t i = 0; i < numObject; i++)
+			{
+				std::string& parentId = historyData->Container[i];
+				if (parentId != "_")
+				{
+					CGUIElement* parent = canvas->getGUIByID(parentId.c_str());
+					if (parent)
+					{
+						CGUIElement* ui = CGUIImporter::importGUI(canvas, parent, historyData->Data[i]);
+
+						// update on GUI
+						if (ui && hierarchyController)
+						{
+							CGUIHierachyNode* parentNode = hierarchyController->getNodeByObject(parent);
+							if (parentNode)
+								controller->createGUINode(parentNode, ui);
+						}
+					}
+				}
+			}
+		}
+
+		void CGUIEditorHistory::doModify(SHistoryData* historyData, bool undo)
+		{
+			CGUIDesignController* controller = CGUIDesignController::getInstance();
+			CGUIHierarchyController* hierarchyController = NULL;
+			CCanvas* canvas = controller->getCanvas();
+
+			if (controller->getSpaceHierarchy() != NULL)
+				hierarchyController = controller->getSpaceHierarchy()->getController();
+
+			size_t numObject = historyData->DataModified.size();
+			for (size_t i = 0; i < numObject; i++)
+			{
+				// object id
+				std::string& id = historyData->ObjectID[i];
+
+				// revert to old data
+				CObjectSerializable* data = undo ? historyData->Data[i] : historyData->DataModified[i];
+
+				// get object and undo data
+				CGUIElement* element = canvas->getGUIByID(id.c_str());
+				if (element != NULL)
+					element->loadSerializable(data);
+
+				controller->onHistoryModifyObject(element);
+
+				// set current data for next action
+				SGUIObjectHistory* objHistory = getObjectHistory(id);
+				if (objHistory != NULL)
+					objHistory->changeData(data);
+			}
+		}
+
 		void CGUIEditorHistory::undo()
 		{
 			size_t historySize = m_history.size();
@@ -52,78 +135,22 @@ namespace Skylicht
 			// last history save
 			SHistoryData* historyData = m_history[historySize - 1];
 
-			CGUIDesignController* controller = CGUIDesignController::getInstance();
-			CGUIHierarchyController* hierarchyController = NULL;
-			CCanvas* canvas = controller->getCanvas();
-
-			if (controller->getSpaceHierarchy() != NULL)
-				hierarchyController = controller->getSpaceHierarchy()->getController();
 
 			switch (historyData->History)
 			{
 			case EHistory::Create:
 			{
-				size_t numObject = historyData->ObjectID.size();
-				for (size_t i = 0; i < numObject; i++)
-				{
-					// object id
-					std::string& id = historyData->ObjectID[i];
-
-					// remove this object
-					CGUIElement* element = canvas->getGUIByID(id.c_str());
-					if (element)
-						controller->removeGUIElement(element);
-				}
+				doDelete(historyData);
 			}
 			break;
 			case EHistory::Modify:
 			{
-				size_t numObject = historyData->DataModified.size();
-				for (size_t i = 0; i < numObject; i++)
-				{
-					// object id
-					std::string& id = historyData->ObjectID[i];
-
-					// revert to old data
-					CObjectSerializable* data = historyData->Data[i];
-
-					// get object and undo data
-					CGUIElement* element = canvas->getGUIByID(id.c_str());
-					if (element != NULL)
-						element->loadSerializable(data);
-
-					controller->onHistoryModifyObject(element);
-
-					// set current data for next action
-					SGUIObjectHistory* objHistory = getObjectHistory(id);
-					if (objHistory != NULL)
-						objHistory->changeData(data);
-				}
+				doModify(historyData, true);
 			}
 			break;
 			case EHistory::Delete:
 			{
-				size_t numObject = historyData->ObjectID.size();
-				for (size_t i = 0; i < numObject; i++)
-				{
-					std::string& parentId = historyData->Container[i];
-					if (parentId != "_")
-					{
-						CGUIElement* parent = canvas->getGUIByID(parentId.c_str());
-						if (parent)
-						{
-							CGUIElement* ui = CGUIImporter::importGUI(canvas, parent, historyData->Data[i]);
-
-							// update on GUI
-							if (ui && hierarchyController)
-							{
-								CGUIHierachyNode* parentNode = hierarchyController->getNodeByObject(parent);
-								if (parentNode)
-									controller->createGUINode(parentNode, ui);
-							}
-						}
-					}
-				}
+				doCreate(historyData);
 			}
 			break;
 			}
@@ -149,43 +176,17 @@ namespace Skylicht
 			{
 			case EHistory::Create:
 			{
-				size_t numObject = historyData->ObjectID.size();
-				for (size_t i = 0; i < numObject; i++)
-				{
-					std::string& id = historyData->Container[i];
-					if (id != "_")
-					{
-
-					}
-				}
+				doCreate(historyData);
 			}
 			break;
 			case EHistory::Modify:
 			{
-				size_t numObject = historyData->DataModified.size();
-				for (size_t i = 0; i < numObject; i++)
-				{
-					// object id
-					std::string& id = historyData->ObjectID[i];
-
-					CObjectSerializable* data = historyData->DataModified[i];
-
-					// get object and redo data
-
-				}
+				doModify(historyData, false);
 			}
 			break;
 			case EHistory::Delete:
 			{
-				size_t numObject = historyData->ObjectID.size();
-				for (size_t i = 0; i < numObject; i++)
-				{
-					// object id
-					std::string& id = historyData->ObjectID[i];
-
-					// remove this object
-
-				}
+				doDelete(historyData);
 			}
 			break;
 			}

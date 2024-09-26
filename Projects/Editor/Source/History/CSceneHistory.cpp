@@ -43,14 +43,79 @@ namespace Skylicht
 			freeCurrentObjectData();
 		}
 
+		void CSceneHistory::doDelete(SHistoryData* historyData)
+		{
+			CSceneController* sceneController = CSceneController::getInstance();
+			CScene* scene = sceneController->getScene();
+
+			size_t numObject = historyData->ObjectID.size();
+			for (size_t i = 0; i < numObject; i++)
+			{
+				// object id
+				std::string& id = historyData->ObjectID[i];
+
+				// remove this object
+				CGameObject* gameObject = scene->searchObjectInChildByID(id.c_str());
+				if (gameObject != NULL)
+					sceneController->removeObject(gameObject);
+			}
+		}
+
+		void CSceneHistory::doCreate(SHistoryData* historyData)
+		{
+			CSceneController* sceneController = CSceneController::getInstance();
+			CScene* scene = sceneController->getScene();
+
+			size_t numObject = historyData->ObjectID.size();
+			for (size_t i = 0; i < numObject; i++)
+			{
+				std::string& id = historyData->Container[i];
+				if (id != "_")
+				{
+					CContainerObject* containerObject = (CContainerObject*)scene->searchObjectInChildByID(id.c_str());
+					if (containerObject != NULL)
+						sceneController->createGameObject(containerObject, historyData->Data[i], false);
+				}
+				else
+				{
+					sceneController->createZoneObject(historyData->Data[i], false);
+				}
+			}
+		}
+
+		void CSceneHistory::doModify(SHistoryData* historyData, bool undo)
+		{
+			CSceneController* sceneController = CSceneController::getInstance();
+			CScene* scene = sceneController->getScene();
+
+			size_t numObject = historyData->DataModified.size();
+			for (size_t i = 0; i < numObject; i++)
+			{
+				// object id
+				std::string& id = historyData->ObjectID[i];
+
+				// revert data
+				CObjectSerializable* data = undo ? historyData->Data[i] : historyData->DataModified[i];
+
+				// get object and undo data
+				CGameObject* gameObject = scene->searchObjectInChildByID(id.c_str());
+				if (gameObject != NULL)
+					gameObject->loadSerializable(data);
+
+				sceneController->onHistoryModifyObject(gameObject);
+
+				// set current data for next action
+				SGameObjectHistory* objHistory = getObjectHistory(id);
+				if (objHistory != NULL)
+					objHistory->changeData(data);
+			}
+		}
+
 		void CSceneHistory::undo()
 		{
 			size_t historySize = m_history.size();
 			if (historySize == 0)
 				return;
-
-			CSceneController* sceneController = CSceneController::getInstance();
-			CScene* scene = sceneController->getScene();
 
 			// last history save
 			SHistoryData* historyData = m_history[historySize - 1];
@@ -59,61 +124,17 @@ namespace Skylicht
 			{
 			case EHistory::Create:
 			{
-				size_t numObject = historyData->ObjectID.size();
-				for (size_t i = 0; i < numObject; i++)
-				{
-					// object id
-					std::string& id = historyData->ObjectID[i];
-
-					// remove this object
-					CGameObject* gameObject = scene->searchObjectInChildByID(id.c_str());
-					if (gameObject != NULL)
-						sceneController->removeObject(gameObject);
-				}
+				doDelete(historyData);
 			}
 			break;
 			case EHistory::Modify:
 			{
-				size_t numObject = historyData->DataModified.size();
-				for (size_t i = 0; i < numObject; i++)
-				{
-					// object id
-					std::string& id = historyData->ObjectID[i];
-
-					// revert to old data
-					CObjectSerializable* data = historyData->Data[i];
-
-					// get object and undo data
-					CGameObject* gameObject = scene->searchObjectInChildByID(id.c_str());
-					if (gameObject != NULL)
-						gameObject->loadSerializable(data);
-
-					sceneController->onHistoryModifyObject(gameObject);
-
-					// set current data for next action
-					SGameObjectHistory* objHistory = getObjectHistory(id);
-					if (objHistory != NULL)
-						objHistory->changeData(data);
-				}
+				doModify(historyData, true);
 			}
 			break;
 			case EHistory::Delete:
 			{
-				size_t numObject = historyData->ObjectID.size();
-				for (size_t i = 0; i < numObject; i++)
-				{
-					std::string& id = historyData->Container[i];
-					if (id != "_")
-					{
-						CContainerObject* containerObject = (CContainerObject*)scene->searchObjectInChildByID(id.c_str());
-						if (containerObject != NULL)
-							sceneController->createGameObject(containerObject, historyData->Data[i], false);
-					}
-					else
-					{
-						sceneController->createZoneObject(historyData->Data[i], false);
-					}
-				}
+				doCreate(historyData);
 			}
 			break;
 			}
@@ -142,60 +163,17 @@ namespace Skylicht
 			{
 			case EHistory::Create:
 			{
-				size_t numObject = historyData->ObjectID.size();
-				for (size_t i = 0; i < numObject; i++)
-				{
-					std::string& id = historyData->Container[i];
-					if (id != "_")
-					{
-						CContainerObject* containerObject = (CContainerObject*)scene->searchObjectInChildByID(id.c_str());
-						if (containerObject != NULL)
-							sceneController->createGameObject(containerObject, historyData->Data[i], false);
-					}
-					else
-					{
-						sceneController->createZoneObject(historyData->Data[i], false);
-					}
-				}
+				doCreate(historyData);
 			}
 			break;
 			case EHistory::Modify:
 			{
-				size_t numObject = historyData->DataModified.size();
-				for (size_t i = 0; i < numObject; i++)
-				{
-					// object id
-					std::string& id = historyData->ObjectID[i];
-
-					CObjectSerializable* data = historyData->DataModified[i];
-
-					// get object and redo data
-					CGameObject* gameObject = scene->searchObjectInChildByID(id.c_str());
-					if (gameObject != NULL)
-						gameObject->loadSerializable(data);
-
-					sceneController->onHistoryModifyObject(gameObject);
-
-					// set current data for next action
-					SGameObjectHistory* objHistory = getObjectHistory(id);
-					if (objHistory != NULL)
-						objHistory->changeData(data);
-				}
+				doModify(historyData, false);
 			}
 			break;
 			case EHistory::Delete:
 			{
-				size_t numObject = historyData->ObjectID.size();
-				for (size_t i = 0; i < numObject; i++)
-				{
-					// object id
-					std::string& id = historyData->ObjectID[i];
-
-					// remove this object
-					CGameObject* gameObject = scene->searchObjectInChildByID(id.c_str());
-					if (gameObject != NULL)
-						sceneController->removeObject(gameObject);
-				}
+				doDelete(historyData);
 			}
 			break;
 			}
