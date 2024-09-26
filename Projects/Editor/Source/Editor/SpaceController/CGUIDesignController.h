@@ -90,6 +90,13 @@ namespace Skylicht
 
 			void initContextMenu(GUI::CCanvas* canvas);
 
+			void initHistory();
+
+			inline Skylicht::CCanvas* getCanvas()
+			{
+				return m_guiCanvas;
+			}
+
 			inline const std::string& getSaveGUIPath()
 			{
 				return m_guiFilePath;
@@ -117,6 +124,10 @@ namespace Skylicht
 			void createGUINode(CGUIHierachyNode* parent, CGUIElement* node);
 
 			void deselectAllOnHierachy();
+
+			void removeGUIElement(CGUIElement* node);
+
+			void onHistoryModifyObject(CGUIElement* node);
 
 			void onDelete();
 

@@ -144,7 +144,9 @@ namespace Skylicht
 
 			m_selecting = new CGUISelecting();
 
-			CGUIDesignController::getInstance()->setSpaceDesign(this);
+			CGUIDesignController* controller = CGUIDesignController::getInstance();
+			controller->setSpaceDesign(this);
+			controller->initHistory();
 		}
 
 		CSpaceGUIDesign::~CSpaceGUIDesign()
@@ -194,7 +196,9 @@ namespace Skylicht
 						loadFinish = CGUIImporter::updateLoadGUI();
 					} while (!loadFinish);
 
-					CGUIDesignController::getInstance()->rebuildGUIHierachy();
+					CGUIDesignController* controller = CGUIDesignController::getInstance();
+					controller->rebuildGUIHierachy();
+					controller->initHistory();
 
 					resetView(canvas);
 				}
@@ -534,6 +538,7 @@ namespace Skylicht
 			CGUIDesignController* controller = CGUIDesignController::getInstance();
 			controller->newGUI();
 			controller->rebuildGUIHierachy();
+			controller->initHistory();
 			resetView(canvas);
 		}
 

@@ -273,6 +273,9 @@ namespace Skylicht
 
 		void CSceneHistory::saveCreateHistory(std::vector<CGameObject*> gameObjects)
 		{
+			if (gameObjects.size() == 0)
+				return;
+
 			std::vector<std::string> container;
 			std::vector<std::string> id;
 			std::vector<CObjectSerializable*> modifyData;
@@ -316,6 +319,9 @@ namespace Skylicht
 
 		void CSceneHistory::saveDeleteHistory(std::vector<CGameObject*> gameObjects)
 		{
+			if (gameObjects.size() == 0)
+				return;
+
 			std::vector<std::string> container;
 			std::vector<std::string> id;
 			std::vector<CObjectSerializable*> modifyData;
@@ -352,6 +358,9 @@ namespace Skylicht
 
 		bool CSceneHistory::saveModifyHistory(std::vector<CGameObject*> gameObjects)
 		{
+			if (gameObjects.size() == 0)
+				return false;
+
 			bool success = true;
 
 			std::vector<std::string> container;

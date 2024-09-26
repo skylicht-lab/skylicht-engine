@@ -48,7 +48,7 @@ namespace Skylicht
 
 		void CGUIEditor::closeGUI()
 		{
-			if (m_isChanged)
+			if (m_isChanged && m_gui)
 			{
 				// save history
 				CGUIDesignController::getInstance()->getHistory()->saveModifyHistory(m_gui);
@@ -56,6 +56,7 @@ namespace Skylicht
 
 			if (m_guiData)
 				delete m_guiData;
+
 			m_gui = NULL;
 			m_guiData = NULL;
 			CSerializableEditor::closeGUI();
@@ -66,6 +67,9 @@ namespace Skylicht
 			m_isChanged = false;
 			m_gui = gui;
 			m_guiData = m_gui->createSerializable();
+
+			// hide id field
+			m_guiData->getProperty("id")->setHidden(true);
 		}
 
 		void CGUIEditor::onUpdateValue(CObjectSerializable* object)

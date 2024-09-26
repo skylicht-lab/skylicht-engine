@@ -46,6 +46,8 @@ namespace Skylicht
 			m_spaceHierarchy(NULL),
 			m_spaceDesign(NULL),
 			m_contextMenu(NULL),
+			m_canvas(NULL),
+			m_guiCanvas(NULL),
 			m_history(NULL)
 		{
 			CAssetManager::getInstance()->registerFileLoader("gui", this);
@@ -113,7 +115,10 @@ namespace Skylicht
 
 			if (m_spaceHierarchy)
 				m_spaceHierarchy->setTreeNode(m_rootNode);
+		}
 
+		void CGUIDesignController::initHistory()
+		{
 			if (m_history)
 			{
 				delete m_history;
@@ -454,6 +459,7 @@ namespace Skylicht
 
 				// add history create
 				std::vector<CGUIElement*> listObjects;
+				listObjects.push_back(newNode);
 				newNode->getAllChilds(listObjects);
 				m_history->saveCreateHistory(listObjects);
 
@@ -476,6 +482,12 @@ namespace Skylicht
 
 			if (m_spaceHierarchy != NULL)
 				m_spaceHierarchy->addToTreeNode(guiNode);
+
+			// add history create
+			std::vector<CGUIElement*> listObjects;
+			listObjects.push_back(node);
+			node->getAllChilds(listObjects);
+			m_history->saveCreateHistory(listObjects);
 		}
 
 		void CGUIDesignController::deselectAllOnHierachy()
@@ -523,6 +535,20 @@ namespace Skylicht
 				m_spaceHierarchy->scrollToNode(treeNode);
 			}
 			return node;
+		}
+
+		void CGUIDesignController::removeGUIElement(CGUIElement* node)
+		{
+			node->remove();
+
+			CSelection::getInstance()->clear();
+			rebuildGUIHierachy();
+		}
+
+		void CGUIDesignController::onHistoryModifyObject(CGUIElement* node)
+		{
+			if (m_spaceHierarchy != NULL)
+				m_spaceHierarchy->getController()->updateTreeNode(node);
 		}
 
 		void CGUIDesignController::onDelete()
@@ -574,7 +600,13 @@ namespace Skylicht
 			}
 
 			// add history
-			m_history->saveDeleteHistory(deleteList);
+			std::vector<CGUIElement*> saveHistory;
+			for (CGUIElement* del : deleteList)
+			{
+				saveHistory.push_back(del);
+				del->getAllChilds(saveHistory);
+			}
+			m_history->saveDeleteHistory(saveHistory);
 
 			for (CGUIElement* del : deleteList)
 			{

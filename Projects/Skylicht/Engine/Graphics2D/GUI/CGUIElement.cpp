@@ -179,8 +179,8 @@ namespace Skylicht
 			CGUIElement* element = stack.top();
 			stack.pop();
 
-			std::vector<CGUIElement*>& childs = element->getChilds();
-			for (CGUIElement* gui : childs)
+			std::vector<CGUIElement*>& elementChilds = element->getChilds();
+			for (CGUIElement* gui : elementChilds)
 			{
 				childs.push_back(gui);
 				stack.push(gui);
@@ -298,6 +298,7 @@ namespace Skylicht
 		CObjectSerializable* object = new CObjectSerializable(getTypeName().c_str());
 
 		// element data
+		object->autoRelease(new CStringProperty(object, "id", getID()));
 		object->autoRelease(new CStringProperty(object, "name", getName()));
 		object->autoRelease(new CBoolProperty(object, "visible", m_visible));
 
@@ -355,6 +356,10 @@ namespace Skylicht
 
 	void CGUIElement::loadSerializable(CObjectSerializable* object)
 	{
+		std::string id = object->get("id", std::string());
+		if (!id.empty())
+			m_entity->setID(id.c_str());
+
 		// gui data
 		setName(object->get("name", std::string("No name")).c_str());
 		m_visible = object->get("visible", false);

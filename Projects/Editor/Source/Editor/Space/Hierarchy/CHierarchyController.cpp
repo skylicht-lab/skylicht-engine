@@ -112,9 +112,10 @@ namespace Skylicht
 				return;
 
 			CHierachyNode* node = m_node->getNodeByTag(object);
-			if (node != NULL && node->OnUpdate != NULL)
+			if (node != NULL)
 			{
-				node->OnUpdate(node);
+				// update node name
+				node->setName(object->getName());
 
 				// rebuild-gui child of entity
 				std::vector<CHierachyNode*>& childs = node->getChilds();

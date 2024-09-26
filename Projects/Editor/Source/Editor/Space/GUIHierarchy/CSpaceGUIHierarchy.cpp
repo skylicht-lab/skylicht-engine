@@ -72,8 +72,9 @@ namespace Skylicht
 			m_hierarchyController = new CGUIHierarchyController(window->getCanvas(), m_tree, m_editor);
 			m_hierarchyContextMenu = new CGUIHierachyContextMenu(m_tree);
 
-			CGUIDesignController::getInstance()->setSpaceHierarchy(this);
-			CGUIDesignController::getInstance()->rebuildGUIHierachy();
+			CGUIDesignController* controller = CGUIDesignController::getInstance();
+			controller->setSpaceHierarchy(this);
+			controller->rebuildGUIHierachy();
 		}
 
 		CSpaceGUIHierarchy::~CSpaceGUIHierarchy()

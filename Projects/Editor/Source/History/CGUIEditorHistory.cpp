@@ -24,8 +24,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CGUIEditorHistory.h"
-#include "Scene/CSceneExporter.h"
-#include "Editor/SpaceController/CSceneController.h"
+#include "Graphics2D/CGUIImporter.h"
+#include "Editor/SpaceController/CGUIDesignController.h"
 #include "Selection/CSelection.h"
 
 namespace Skylicht
@@ -52,6 +52,13 @@ namespace Skylicht
 			// last history save
 			SHistoryData* historyData = m_history[historySize - 1];
 
+			CGUIDesignController* controller = CGUIDesignController::getInstance();
+			CGUIHierarchyController* hierarchyController = NULL;
+			CCanvas* canvas = controller->getCanvas();
+
+			if (controller->getSpaceHierarchy() != NULL)
+				hierarchyController = controller->getSpaceHierarchy()->getController();
+
 			switch (historyData->History)
 			{
 			case EHistory::Create:
@@ -63,7 +70,9 @@ namespace Skylicht
 					std::string& id = historyData->ObjectID[i];
 
 					// remove this object
-
+					CGUIElement* element = canvas->getGUIByID(id.c_str());
+					if (element)
+						controller->removeGUIElement(element);
 				}
 			}
 			break;
@@ -79,7 +88,16 @@ namespace Skylicht
 					CObjectSerializable* data = historyData->Data[i];
 
 					// get object and undo data
+					CGUIElement* element = canvas->getGUIByID(id.c_str());
+					if (element != NULL)
+						element->loadSerializable(data);
 
+					controller->onHistoryModifyObject(element);
+
+					// set current data for next action
+					SGUIObjectHistory* objHistory = getObjectHistory(id);
+					if (objHistory != NULL)
+						objHistory->changeData(data);
 				}
 			}
 			break;
@@ -88,14 +106,22 @@ namespace Skylicht
 				size_t numObject = historyData->ObjectID.size();
 				for (size_t i = 0; i < numObject; i++)
 				{
-					std::string& id = historyData->Container[i];
-					if (id != "_")
+					std::string& parentId = historyData->Container[i];
+					if (parentId != "_")
 					{
+						CGUIElement* parent = canvas->getGUIByID(parentId.c_str());
+						if (parent)
+						{
+							CGUIElement* ui = CGUIImporter::importGUI(canvas, parent, historyData->Data[i]);
 
-					}
-					else
-					{
-
+							// update on GUI
+							if (ui && hierarchyController)
+							{
+								CGUIHierachyNode* parentNode = hierarchyController->getNodeByObject(parent);
+								if (parentNode)
+									controller->createGUINode(parentNode, ui);
+							}
+						}
 					}
 				}
 			}
@@ -116,9 +142,6 @@ namespace Skylicht
 			if (historySize == 0)
 				return;
 
-			CSceneController* sceneController = CSceneController::getInstance();
-			CScene* scene = sceneController->getScene();
-
 			// last history save
 			SHistoryData* historyData = m_redo[historySize - 1];
 
@@ -131,10 +154,6 @@ namespace Skylicht
 				{
 					std::string& id = historyData->Container[i];
 					if (id != "_")
-					{
-
-					}
-					else
 					{
 
 					}
@@ -244,6 +263,9 @@ namespace Skylicht
 
 		void CGUIEditorHistory::saveCreateHistory(std::vector<CGUIElement*> guiObjects)
 		{
+			if (guiObjects.size() == 0)
+				return;
+
 			std::vector<std::string> container;
 			std::vector<std::string> id;
 			std::vector<CObjectSerializable*> modifyData;
@@ -281,12 +303,18 @@ namespace Skylicht
 		void CGUIEditorHistory::saveDeleteHistory(CGUIElement* guiObject)
 		{
 			std::vector<CGUIElement*> guiObjects;
+
 			guiObjects.push_back(guiObject);
+			guiObject->getAllChilds(guiObjects);
+
 			saveDeleteHistory(guiObjects);
 		}
 
 		void CGUIEditorHistory::saveDeleteHistory(std::vector<CGUIElement*> guiObjects)
 		{
+			if (guiObjects.size() == 0)
+				return;
+
 			std::vector<std::string> container;
 			std::vector<std::string> id;
 			std::vector<CObjectSerializable*> modifyData;
@@ -330,6 +358,9 @@ namespace Skylicht
 
 		bool CGUIEditorHistory::saveModifyHistory(std::vector<CGUIElement*> guiObjects)
 		{
+			if (guiObjects.size() == 0)
+				return false;
+
 			bool success = true;
 
 			std::vector<std::string> container;
