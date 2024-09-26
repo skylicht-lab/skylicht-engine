@@ -89,7 +89,7 @@ namespace Skylicht
 					CSubject<float>* Z = new CSubject<float>(v.Z);
 
 					CObserver* observer = new CObserver();
-					observer->Notify = [&, value, X, Y, Z, observer](ISubject* subject, IObserver* from)
+					observer->Notify = [&, object, value, X, Y, Z, observer](ISubject* subject, IObserver* from)
 						{
 							if (from != observer)
 							{
@@ -146,7 +146,7 @@ namespace Skylicht
 				{
 					CBoolProperty* value = dynamic_cast<CBoolProperty*>(valueProperty);
 					CSubject<bool>* subject = new CSubject<bool>(value->get());
-					CObserver* observer = new CObserver([&, value, s = subject](ISubject* subject, IObserver* from)
+					CObserver* observer = new CObserver([&, object, value, s = subject](ISubject* subject, IObserver* from)
 						{
 							value->set(s->get());
 							onUpdateValue(object);
@@ -177,7 +177,7 @@ namespace Skylicht
 						// add slider control on Limit Float
 						CSubject<float>* subject = new CSubject<float>(value->get());
 						CObserver* observer = new CObserver();
-						observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
+						observer->Notify = [&, object, value, s = subject, o = observer](ISubject* subject, IObserver* from)
 							{
 								if (from != o)
 								{
@@ -208,7 +208,7 @@ namespace Skylicht
 					{
 						CSubject<float>* subject = new CSubject<float>(value->get());
 						CObserver* observer = new CObserver();
-						observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
+						observer->Notify = [&, object, value, s = subject, o = observer](ISubject* subject, IObserver* from)
 							{
 								if (from != o)
 								{
@@ -260,7 +260,7 @@ namespace Skylicht
 					CIntProperty* value = dynamic_cast<CIntProperty*>(valueProperty);
 					CSubject<int>* subject = new CSubject<int>(value->get());
 					CObserver* observer = new CObserver();
-					observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
+					observer->Notify = [&, object, value, s = subject, o = observer](ISubject* subject, IObserver* from)
 						{
 							if (from != o)
 							{
@@ -311,7 +311,7 @@ namespace Skylicht
 					CUIntProperty* value = dynamic_cast<CUIntProperty*>(valueProperty);
 					CSubject<u32>* subject = new CSubject<u32>(value->get());
 					CObserver* observer = new CObserver();
-					observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
+					observer->Notify = [&, object, value, s = subject, o = observer](ISubject* subject, IObserver* from)
 						{
 							if (from != o)
 							{
@@ -360,7 +360,7 @@ namespace Skylicht
 					CSubject<std::wstring>* subject = new CSubject<std::wstring>(stringValue);
 
 					CObserver* observer = new CObserver();
-					observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
+					observer->Notify = [&, object, value, s = subject, o = observer](ISubject* subject, IObserver* from)
 						{
 							if (from != o)
 							{
@@ -394,7 +394,7 @@ namespace Skylicht
 					CColorProperty* value = dynamic_cast<CColorProperty*>(valueProperty);
 					CSubject<SColor>* subject = new CSubject<SColor>(value->get());
 					CObserver* observer = new CObserver();
-					observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
+					observer->Notify = [&, object, value, s = subject, o = observer](ISubject* subject, IObserver* from)
 						{
 							if (from != o)
 							{
@@ -426,7 +426,7 @@ namespace Skylicht
 					CFilePathProperty* value = dynamic_cast<CFilePathProperty*>(valueProperty);
 					CSubject<std::string>* subject = new CSubject<std::string>(value->get());
 					CObserver* observer = new CObserver();
-					observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
+					observer->Notify = [&, object, value, s = subject, o = observer](ISubject* subject, IObserver* from)
 						{
 							if (from != o)
 							{
@@ -469,7 +469,7 @@ namespace Skylicht
 					CFolderPathProperty* value = dynamic_cast<CFolderPathProperty*>(valueProperty);
 					CSubject<std::string>* subject = new CSubject<std::string>(value->get());
 					CObserver* observer = new CObserver();
-					observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
+					observer->Notify = [&, object, value, s = subject, o = observer](ISubject* subject, IObserver* from)
 						{
 							if (from != o)
 							{
@@ -535,7 +535,7 @@ namespace Skylicht
 						if (enumData.Value == currentValue)
 							dropBox->setLabel(enumName);
 
-						item->OnPress = [&, item, enumValue, dropBox, ui](GUI::CBase* base)
+						item->OnPress = [&, object, item, enumValue, dropBox, ui](GUI::CBase* base)
 							{
 								enumValue->setIntValue(item->getTagInt());
 
@@ -587,7 +587,7 @@ namespace Skylicht
 							objectLayout = ui->createBoxLayout(group);
 
 							CObserver* observer = new CObserver();
-							observer->Notify = [&, arrayObject, count, o = observer, objectLayout, group, ui](ISubject* subject, IObserver* from)
+							observer->Notify = [&, object, arrayObject, count, o = observer, objectLayout, group, ui](ISubject* subject, IObserver* from)
 								{
 									if (from != o)
 									{
@@ -619,7 +619,7 @@ namespace Skylicht
 					CImageSourceProperty* value = dynamic_cast<CImageSourceProperty*>(valueProperty);
 					CSubject<std::string>* subject = new CSubject<std::string>(value->get());
 					CObserver* observer = new CObserver();
-					observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
+					observer->Notify = [&, object, value, s = subject, o = observer](ISubject* subject, IObserver* from)
 						{
 							if (from != o)
 							{
@@ -783,7 +783,7 @@ namespace Skylicht
 							objectLayout = ui->createBoxLayout(group);
 
 							CObserver* observer = new CObserver();
-							observer->Notify = [&, arrayObject, count, o = observer, objectLayout, group, ui](ISubject* subject, IObserver* from)
+							observer->Notify = [&, object, arrayObject, count, o = observer, objectLayout, group, ui](ISubject* subject, IObserver* from)
 								{
 									if (from != o)
 									{
@@ -815,7 +815,7 @@ namespace Skylicht
 					CImageSourceProperty* value = dynamic_cast<CImageSourceProperty*>(valueProperty);
 					CSubject<std::string>* subject = new CSubject<std::string>(value->get());
 					CObserver* observer = new CObserver();
-					observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
+					observer->Notify = [&, object, value, s = subject, o = observer](ISubject* subject, IObserver* from)
 						{
 							if (from != o)
 							{
@@ -954,7 +954,7 @@ namespace Skylicht
 					CFrameSourceProperty* value = dynamic_cast<CFrameSourceProperty*>(valueProperty);
 					CSubject<std::string>* subject = new CSubject<std::string>(value->get());
 					CObserver* observer = new CObserver();
-					observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
+					observer->Notify = [&, object, value, s = subject, o = observer](ISubject* subject, IObserver* from)
 						{
 							if (from != o)
 							{

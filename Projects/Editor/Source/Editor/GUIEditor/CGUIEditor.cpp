@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CGUIEditor.h"
 #include "Editor/CEditor.h"
 #include "Editor/Space/GUIDesign/CSpaceGUIDesign.h"
+#include "Editor/SpaceController/CGUIDesignController.h"
 #include "Selection/CSelection.h"
 
 namespace Skylicht
@@ -34,7 +35,8 @@ namespace Skylicht
 	{
 		CGUIEditor::CGUIEditor() :
 			m_gui(NULL),
-			m_guiData(NULL)
+			m_guiData(NULL),
+			m_isChanged(false)
 		{
 
 		}
@@ -46,6 +48,12 @@ namespace Skylicht
 
 		void CGUIEditor::closeGUI()
 		{
+			if (m_isChanged)
+			{
+				// save history
+				CGUIDesignController::getInstance()->getHistory()->saveModifyHistory(m_gui);
+			}
+
 			if (m_guiData)
 				delete m_guiData;
 			m_gui = NULL;
@@ -55,12 +63,16 @@ namespace Skylicht
 
 		void CGUIEditor::initGUI(CGUIElement* gui, CSpaceProperty* ui)
 		{
+			m_isChanged = false;
 			m_gui = gui;
 			m_guiData = m_gui->createSerializable();
 		}
 
 		void CGUIEditor::onUpdateValue(CObjectSerializable* object)
 		{
+			if (object)
+				m_isChanged = true;
+
 			m_gui->loadSerializable(m_guiData);
 
 			// notify to update on GUI

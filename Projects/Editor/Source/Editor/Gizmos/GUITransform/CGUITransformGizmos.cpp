@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CGUITransformGizmos.h"
 #include "Handles/CGUIHandles.h"
 #include "Editor/SpaceController/CSceneController.h"
+#include "Editor/SpaceController/CGUIDesignController.h"
 #include "Editor/CEditor.h"
 #include "Activator/CEditorActivator.h"
 #include "Editor/GUIEditor/CGUIEditor.h"
@@ -134,8 +135,8 @@ namespace Skylicht
 					handle->end();
 
 					// save undo/redo
-					// if (m_changed)
-					//	saveHistorySelectedObject();
+					if (m_changed)
+						saveHistorySelectedObject();
 				}
 			}
 
@@ -166,8 +167,8 @@ namespace Skylicht
 					m_selectID = "";
 
 					// save undo/redo
-					// if (m_changed)
-					//	saveHistorySelectedObject();
+					if (m_changed)
+						saveHistorySelectedObject();
 				}
 			}
 		}
@@ -307,6 +308,14 @@ namespace Skylicht
 					guis.push_back(sel);
 				}
 			}
+		}
+
+		void CGUITransformGizmos::saveHistorySelectedObject()
+		{
+			std::vector<CGUIElement*> selectedObject;
+			getSelectedGUI(selectedObject);
+
+			CGUIDesignController::getInstance()->getHistory()->saveModifyHistory(selectedObject);
 		}
 	}
 }

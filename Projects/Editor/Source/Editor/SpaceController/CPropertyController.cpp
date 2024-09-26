@@ -61,11 +61,11 @@ namespace Skylicht
 			{
 				if (object->getType() == CSelectObject::GameObject)
 				{
+					clearProperty();
+
 					CGameObject* obj = scene->searchObjectInChildByID(object->getID().c_str());
 					if (obj != NULL)
 					{
-						clearProperty();
-
 						// Name and icon
 						spaceProperty->setIcon(GUI::ESystemIcon::Res3D);
 						spaceProperty->setLabel(obj->getName());
@@ -122,7 +122,7 @@ namespace Skylicht
 			{
 				spaceProperty->setIcon(GUI::ESystemIcon::None);
 				spaceProperty->setLabel(L"");
-				spaceProperty->clearAllGroup();
+				clearProperty();
 			}
 
 			// force update layout
@@ -186,9 +186,9 @@ namespace Skylicht
 			{
 				GUI::CButton* button = space->addButton(L"Add");
 				button->OnPress = [&, obj, space](GUI::CBase* button)
-				{
-					space->popupComponentMenu(obj, button);
-				};
+					{
+						space->popupComponentMenu(obj, button);
+					};
 			}
 		}
 

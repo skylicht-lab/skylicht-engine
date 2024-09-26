@@ -39,7 +39,7 @@ namespace Skylicht
 			m_rotation(core::quaternion()),
 			m_scale(core::vector3df(1.0f, 1.0f, 1.0f)),
 			m_lastType(ETransformGizmo::Translate),
-			changed(false)
+			m_changed(false)
 		{
 			getSubjectTransformGizmos().addObserver(this);
 
@@ -183,7 +183,7 @@ namespace Skylicht
 				m_parentWorld.makeIdentity();
 				handle->setWorld(m_parentWorld);
 				handle->end();
-				changed = false;
+				m_changed = false;
 				m_selectID = "";
 				return;
 			}
@@ -211,7 +211,7 @@ namespace Skylicht
 						m_position = m_transform->getPosition();
 						m_rotation = m_transform->getRotationQuaternion();
 						m_scale = m_transform->getScale();
-						changed = false;
+						m_changed = false;
 
 						onEnable();
 					}
@@ -246,7 +246,7 @@ namespace Skylicht
 
 					m_transform->setPosition(newPos);
 
-					changed = true;
+					m_changed = true;
 				}
 
 				if (handle->endCheck())
@@ -255,7 +255,7 @@ namespace Skylicht
 					handle->end();
 
 					// save undo/redo
-					if (changed)
+					if (m_changed)
 						saveHistorySelectedObject();
 
 					m_cacheSelectedObjects.clear();
@@ -279,7 +279,7 @@ namespace Skylicht
 					m_rotation.notify(this);
 
 					m_transform->setRotation(newRot);
-					changed = true;
+					m_changed = true;
 				}
 
 				if (handle->endCheck())
@@ -288,7 +288,7 @@ namespace Skylicht
 					handle->end();
 
 					// save undo/redo
-					if (changed)
+					if (m_changed)
 						saveHistorySelectedObject();
 
 					m_cacheSelectedObjects.clear();
@@ -306,7 +306,7 @@ namespace Skylicht
 					m_scale.notify(this);
 
 					m_transform->setScale(newScale);
-					changed = true;
+					m_changed = true;
 				}
 
 				if (handle->endCheck())
@@ -315,7 +315,7 @@ namespace Skylicht
 					handle->end();
 
 					// save undo/redo
-					if (changed)
+					if (m_changed)
 						saveHistorySelectedObject();
 
 					m_cacheSelectedObjects.clear();
@@ -325,7 +325,7 @@ namespace Skylicht
 			{
 				handle->end();
 				m_cacheSelectedObjects.clear();
-				changed = false;
+				m_changed = false;
 			}
 
 		}

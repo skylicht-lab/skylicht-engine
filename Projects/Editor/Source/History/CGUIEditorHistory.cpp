@@ -321,6 +321,13 @@ namespace Skylicht
 			addHistory(EHistory::Delete, container, id, modifyData, objectData);
 		}
 
+		bool CGUIEditorHistory::saveModifyHistory(CGUIElement* guiObject)
+		{
+			std::vector<CGUIElement*> guiObjects;
+			guiObjects.push_back(guiObject);
+			return saveModifyHistory(guiObjects);
+		}
+
 		bool CGUIEditorHistory::saveModifyHistory(std::vector<CGUIElement*> guiObjects)
 		{
 			bool success = true;

@@ -71,6 +71,8 @@ namespace Skylicht
 
 			void saveDeleteHistory(std::vector<CGUIElement*> guiObject);
 
+			bool saveModifyHistory(CGUIElement* guiObject);
+
 			bool saveModifyHistory(std::vector<CGUIElement*> guiObject);
 
 			void endSaveHistory();

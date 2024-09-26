@@ -452,6 +452,11 @@ namespace Skylicht
 				std::wstring newName = nameHint + L" " + newNode->getNameW();
 				newNode->setName(newName.c_str());
 
+				// add history create
+				std::vector<CGUIElement*> listObjects;
+				newNode->getAllChilds(listObjects);
+				m_history->saveCreateHistory(listObjects);
+
 				createGUINode(parent, newNode);
 			}
 		}
@@ -545,11 +550,11 @@ namespace Skylicht
 				});
 
 			CGUIElement* root = m_guiCanvas->getRootElement();
-			CGUIElement* fullRect = root->getChilds()[0];
+			CGUIElement* rootCanvas = root->getChilds()[0];
 
 			for (CGUIElement* sel : selelectList)
 			{
-				if (sel == fullRect)
+				if (sel == rootCanvas)
 					continue;
 
 				bool addToDeleteList = true;
@@ -567,6 +572,9 @@ namespace Skylicht
 					deleteList.push_back(sel);
 				}
 			}
+
+			// add history
+			m_history->saveDeleteHistory(deleteList);
 
 			for (CGUIElement* del : deleteList)
 			{

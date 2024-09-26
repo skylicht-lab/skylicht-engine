@@ -41,6 +41,8 @@ namespace Skylicht
 			CGUIElement* m_gui;
 			CObjectSerializable* m_guiData;
 
+			bool m_isChanged;
+
 		public:
 			CGUIEditor();
 

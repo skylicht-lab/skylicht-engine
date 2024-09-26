@@ -42,7 +42,7 @@ namespace Skylicht
 			CGameObject* m_selectObject;
 			CTransformEuler* m_transform;
 
-			bool changed;
+			bool m_changed;
 
 			CSubject<core::vector3df> m_position;
 			CSubject<core::quaternion> m_rotation;

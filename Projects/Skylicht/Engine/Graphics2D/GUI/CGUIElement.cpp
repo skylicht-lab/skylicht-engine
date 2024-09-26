@@ -169,6 +169,25 @@ namespace Skylicht
 		return false;
 	}
 
+	void CGUIElement::getAllChilds(std::vector<CGUIElement*>& childs)
+	{
+		std::stack<CGUIElement*> stack;
+		stack.push(this);
+
+		while (stack.size() > 0)
+		{
+			CGUIElement* element = stack.top();
+			stack.pop();
+
+			std::vector<CGUIElement*>& childs = element->getChilds();
+			for (CGUIElement* gui : childs)
+			{
+				childs.push_back(gui);
+				stack.push(gui);
+			}
+		}
+	}
+
 	void CGUIElement::remove()
 	{
 		if (m_parent)
@@ -199,6 +218,9 @@ namespace Skylicht
 	{
 		bool drawBorder = m_drawBorder;
 		SColor borderColor(100, 255, 255, 255);
+
+		if (OnRender != nullptr)
+			OnRender(this);
 
 		if (m_canvas->DrawOutline)
 		{

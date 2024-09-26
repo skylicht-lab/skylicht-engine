@@ -85,6 +85,8 @@ namespace Skylicht
 
 			void getSelectedGUI(std::vector<CGUIElement*>& guis);
 
+			void saveHistorySelectedObject();
+
 		protected:
 
 			void updateProperty();

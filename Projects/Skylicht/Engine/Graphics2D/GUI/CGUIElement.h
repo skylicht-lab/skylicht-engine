@@ -69,6 +69,10 @@ namespace Skylicht
 
 		std::string m_materialFile;
 
+	public:
+
+		std::function<void(CGUIElement*)> OnRender;
+
 	protected:
 		CGUIElement(CCanvas* canvas, CGUIElement* parent);
 		CGUIElement(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect);
@@ -127,6 +131,8 @@ namespace Skylicht
 		{
 			return m_childs;
 		}
+
+		void getAllChilds(std::vector<CGUIElement*>& childs);
 
 		inline void setColor(const SColor& c)
 		{
