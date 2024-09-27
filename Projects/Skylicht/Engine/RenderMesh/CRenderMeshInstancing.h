@@ -128,6 +128,8 @@ namespace Skylicht
 		virtual void releaseBaseEntities();
 
 		void addRendererInstancing(CEntity* entity, CRenderMeshData* baseRenderMesh, CWorldTransformData* baseTransform);
+
+		void addMaterial(CMaterial* material);
 	};
 
 }

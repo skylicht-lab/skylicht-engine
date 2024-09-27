@@ -469,7 +469,7 @@ namespace Skylicht
 				renderer->setMaterial(mat);
 			}
 
-			m_materials.push_back(mat);
+			addMaterial(mat);
 		}
 
 		for (CMaterial* m : m_materials)
@@ -830,7 +830,7 @@ namespace Skylicht
 			{
 				if (renderer->setMaterial(mat) == true)
 				{
-					m_materials.push_back(mat);
+					addMaterial(mat);
 					useMaterial.push_back(mat);
 				}
 			}
@@ -936,5 +936,15 @@ namespace Skylicht
 			}
 		}
 		return (int)childs.size();
+	}
+
+	void CRenderMesh::addMaterial(CMaterial* material)
+	{
+		for (CMaterial* mat : m_materials)
+		{
+			if (mat == material)
+				return;
+		}
+		m_materials.push_back(material);
 	}
 }

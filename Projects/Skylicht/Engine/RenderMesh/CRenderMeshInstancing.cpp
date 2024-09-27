@@ -323,7 +323,7 @@ namespace Skylicht
 				renderer->setMaterial(mat);
 			}
 
-			m_materials.push_back(mat);
+			addMaterial(mat);
 		}
 
 		for (CMaterial* m : m_materials)
@@ -454,5 +454,15 @@ namespace Skylicht
 		CWorldTransformData* transform = entity->getData<CWorldTransformData>();
 		transform->Relative = baseTransform->Relative;
 		transform->HasChanged = true;
+	}
+
+	void CRenderMeshInstancing::addMaterial(CMaterial* material)
+	{
+		for (CMaterial* mat : m_materials)
+		{
+			if (mat == material)
+				return;
+		}
+		m_materials.push_back(material);
 	}
 }
