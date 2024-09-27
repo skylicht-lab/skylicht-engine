@@ -52,7 +52,12 @@ namespace Skylicht
 			for (int j = 0, n = (int)list.size(); j < n; j++)
 			{
 				CMaterial* m = list[j];
-				m->drop();
+				if (m->drop() == false)
+				{
+					char log[512];
+					sprintf(log, "[CMaterialManager] Leak material %s - file: %s", m->getName(), m->getMaterialPath());
+					os::Printer::log(log);
+				}
 			}
 			list.clear();
 			++i;
@@ -60,7 +65,14 @@ namespace Skylicht
 		m_materials.clear();
 
 		for (CMaterial* m : m_listGenerateMaterials)
-			m->drop();
+		{
+			if (m->drop() == false)
+			{
+				char log[512];
+				sprintf(log, "[CMaterialManager] Leak material generated %s", m->getName());
+				os::Printer::log(log);
+			}
+		}
 		m_listGenerateMaterials.clear();
 	}
 

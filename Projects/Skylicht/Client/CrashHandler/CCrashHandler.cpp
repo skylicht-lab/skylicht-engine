@@ -25,6 +25,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CCrashHandler.h"
 
+#include "CApplication.h"
+#include "Utils/CStringImp.h"
+
 #ifdef USE_CRASHHANDLER
 #define MAX_STACK_DEPTH 64
 #define MAX_UNDECORATEDNAME_LENGTH 256
@@ -76,9 +79,11 @@ namespace Skylicht
 		SYSTEMTIME time;
 		GetLocalTime(&time);
 
+		std::wstring appName = CStringImp::convertUTF8ToUnicode(getApplication()->getAppName());
+
 		wchar_t szFileName[MAX_PATH];
 		swprintf(szFileName, MAX_PATH, L"%s-%04d-%02d%02d-%02d%02d.dmp",
-			L"SkylichtApp",
+			appName.c_str(),
 			time.wYear,
 			time.wMonth,
 			time.wDay,

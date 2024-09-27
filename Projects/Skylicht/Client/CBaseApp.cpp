@@ -56,6 +56,8 @@ namespace Skylicht
 #if defined(_WIN32)
 		m_enableRunWhenPause = true;
 #endif
+
+		m_appName = "Skylicht Engine";
 	}
 
 	CBaseApp::~CBaseApp()
@@ -92,6 +94,7 @@ namespace Skylicht
 		}
 
 		m_appEventReceivers.push_back(appEventType(name, pEvent));
+		m_appName = name;
 	}
 
 	void CBaseApp::unRegisterAppEvent(IApplicationEventReceiver* pEvent)

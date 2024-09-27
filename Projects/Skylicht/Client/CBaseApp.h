@@ -66,6 +66,9 @@ namespace Skylicht
 		bool m_enableRunWhenPause;
 
 		video::SColor m_clearColor;
+
+		std::string m_appName;
+
 	public:
 
 		CBaseApp();
@@ -75,6 +78,11 @@ namespace Skylicht
 		std::vector<appEventType> m_appEventReceivers;
 
 	public:
+
+		inline const char* getAppName()
+		{
+			return m_appName.c_str();
+		}
 
 		void showDebugConsole();
 

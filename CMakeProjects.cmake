@@ -33,6 +33,7 @@ if (BUILD_EXAMPLES AND BUILD_SKYLICHT_LIGHMAPPER)
 	subdirs(Samples/PBR)
 	
 	if (BUILD_SKYLICHT_PHYSIC)
+	subdirs(Samples/CharacterController)
 	subdirs(Samples/Physics)
 	endif()
 	
