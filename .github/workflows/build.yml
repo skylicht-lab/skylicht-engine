@@ -238,14 +238,6 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Restore LFS cache
-        uses: actions/cache@v3
-        id: lfs-windows-cache
-        with:
-          path: .git/lfs
-          key: lfs-windows-cache-v1
-      - name: Git LFS Pull
-        run: git lfs pull
       - name: Build
         shell: cmd
         run: |
