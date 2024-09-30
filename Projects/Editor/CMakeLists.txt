@@ -19,6 +19,10 @@ include_directories(
 
 add_definitions(-DSKYLICHT_EDITOR)
 
+if (SKYLICHT_EDITOR_LOAD_BUNDLE)
+add_definitions(-DSKYLICHT_EDITOR_LOAD_BUNDLE)
+endif()
+
 if (BUILD_IMGUI)
 	include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/Imgui)
 endif()

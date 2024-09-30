@@ -94,6 +94,9 @@ void SkylichtEditor::onUpdate()
 	switch (m_editorState)
 	{
 	case Startup:
+#ifdef SKYLICHT_EDITOR_LOAD_BUNDLE
+		getIrrlichtDevice()->getFileSystem()->addFileArchive("Editor.zip", false, false);
+#endif
 		// init engine
 		m_editorState = InitGUI;
 		break;
@@ -106,7 +109,7 @@ void SkylichtEditor::onUpdate()
 		CShaderManager* shaderMgr = CShaderManager::getInstance();
 		shaderMgr->initGUIShader();
 
-		// init editor gui		
+		// init editor gui
 		u32 w = app->getWidth();
 		u32 h = app->getHeight();
 		Editor::GUI::CGUIContext::initGUI((float)w, (float)h);

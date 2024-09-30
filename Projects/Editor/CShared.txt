@@ -14,10 +14,14 @@ include_directories(
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Network
 	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/curl/include
 	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/freetype2/include
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Bullet3/src
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Bullet3
 )
 
 add_definitions(-DSKYLICHT_EDITOR)
+
+if (SKYLICHT_EDITOR_LOAD_BUNDLE)
+add_definitions(-DSKYLICHT_EDITOR_LOAD_BUNDLE)
+endif()
 
 if (BUILD_IMGUI)
 	include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/Imgui)
@@ -289,6 +293,19 @@ if (BUILD_OPENSSL AND MSVC)
 	foreach(openssl_bin ${openssl_bin_files})
 		add_custom_command(TARGET SkylichtEditor POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${openssl_bin} $<TARGET_FILE_DIR:SkylichtEditor>)
 	endforeach()
+endif()
+
+if (SKYLICHT_EDITOR_INSTALL_PATH)
+install(TARGETS SkylichtEditor RUNTIME DESTINATION bin)
+endif()
+
+# SKYLICHT
+if (USE_SKYLICHT_SHARED_LIBS AND SKYLICHT_ENGINE_DLL_PATH)
+file(GLOB_RECURSE skylicht_dll_files ${SKYLICHT_ENGINE_DLL_PATH})
+foreach(dll_file ${skylicht_dll_files})
+	add_custom_command(TARGET SkylichtEditor POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${dll_file} $<TARGET_FILE_DIR:SkylichtEditor>)
+	install(FILES ${dll_file} DESTINATION bin)
+endforeach()
 endif()
 
 set_target_properties(SkylichtEditor PROPERTIES VERSION ${SKYLICHT_VERSION})
