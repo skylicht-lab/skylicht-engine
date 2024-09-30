@@ -11,9 +11,7 @@ public:
 
 	virtual ~CCapsuleMesh();
 
-	void init(float radius, float height);
-
-	void drawOutline();
+	void init(float radius, float height, CMaterial* material);
 
 protected:
 

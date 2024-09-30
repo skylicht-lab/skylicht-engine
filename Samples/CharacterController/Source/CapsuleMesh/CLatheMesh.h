@@ -18,7 +18,10 @@ public:
 	{
 		return m_mesh;
 	}
+
+	void drawOutline();
+
 protected:
 
-	void initLatheMesh();
+	void initLatheMesh(CMaterial* material);
 };

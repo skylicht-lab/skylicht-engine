@@ -11,6 +11,8 @@
 #include "Primitive/CSphere.h"
 #include "SkySun/CSkySun.h"
 
+#include "CapsuleMesh/CCapsuleComponent.h"
+
 
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
@@ -132,6 +134,16 @@ void CViewInit::initScene()
 		testScene->getTransformEuler()->setScale(core::vector3df(0.01f, 0.01f, 0.01f));
 	}
 
+	// capsule
+	CGameObject* capsuleObj = zone->createEmptyObject();
+	CCapsuleComponent* capsule = capsuleObj->addComponent<CCapsuleComponent>();
+	capsule->init(0.5f, 1.8f);
+	CMaterial* capsuleMaterial = capsule->getMaterial();
+	capsuleMaterial->changeShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");
+	capsuleMaterial->setUniform4("uColor", SColor(255, 200, 200, 200));
+	capsuleMaterial->updateShaderParams();
+	m_objects.push_back(capsuleObj);
+
 	// rendering
 	u32 w = app->getWidth();
 	u32 h = app->getHeight();
@@ -203,8 +215,8 @@ void CViewInit::onUpdate()
 				// retry download
 				delete m_getFile;
 				m_getFile = NULL;
-			}
-		}
+	}
+	}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -215,7 +227,7 @@ void CViewInit::onUpdate()
 
 		m_initState = CViewInit::InitScene;
 #endif
-	}
+}
 	break;
 	case CViewInit::InitScene:
 	{
@@ -237,7 +249,7 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-	}
+}
 }
 
 void CViewInit::onRender()
@@ -253,6 +265,9 @@ void CViewInit::onRender()
 			m_bakeSHLighting = false;
 
 			CZone* zone = scene->getZone(0);
+
+			for (CGameObject* obj : m_objects)
+				obj->setVisible(false);
 
 			// light probe
 			CGameObject* lightProbeObj = zone->createEmptyObject();
@@ -271,6 +286,9 @@ void CViewInit::onRender()
 			probes.push_back(lightProbe);
 
 			lm->bakeProbes(probes, bakeCamera, rp, scene->getEntityManager());
+
+			for (CGameObject* obj : m_objects)
+				obj->setVisible(true);
 		}
 	}
 	else

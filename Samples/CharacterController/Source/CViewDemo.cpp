@@ -22,8 +22,6 @@ void CViewDemo::onInit()
 
 	CScene* scene = context->getScene();
 	scene->updateIndexSearchObject();
-
-
 }
 
 void CViewDemo::onDestroy()

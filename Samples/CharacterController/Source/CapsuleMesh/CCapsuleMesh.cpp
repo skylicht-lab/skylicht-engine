@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "CCapsuleMesh.h"
-#include "Debug/CSceneDebug.h"
 
 CCapsuleMesh::CCapsuleMesh()
 {
@@ -12,18 +11,19 @@ CCapsuleMesh::~CCapsuleMesh()
 
 }
 
-void CCapsuleMesh::init(float radius, float height)
+void CCapsuleMesh::init(float radius, float height, CMaterial* material)
 {
 	if (height < radius * 2)
 		height = radius * 2;
 
 	initOutline(radius, height);
-	initLatheMesh();
+	initLatheMesh(material);
 }
 
 void CCapsuleMesh::initOutline(float radius, float height)
 {
 	m_outline.Points.clear();
+	m_outline.Normals.clear();
 
 	core::vector3df center;
 	center.set(0.0f, height - radius, 0.0f);
@@ -31,35 +31,29 @@ void CCapsuleMesh::initOutline(float radius, float height)
 	int step = 5;
 	float angle = 0.0f;
 	float stepAngle = 90.0f / (float)step;
-	core::vector3df p;
+	core::vector3df normal;
 
 	// top capsule
 	for (int i = 0; i <= step; i++)
 	{
 		angle = i * stepAngle;
-		p.set(0.0f, radius * cosf(angle * core::DEGTORAD), radius * sinf(angle * core::DEGTORAD));
-		m_outline.Points.push_back(center + p);
+		normal.set(0.0f, radius * cosf(angle * core::DEGTORAD), radius * sinf(angle * core::DEGTORAD));
+		m_outline.Points.push_back(center + normal);
+		m_outline.Normals.push_back(normal);
 	}
 
 	// body capsule
 	center.set(0.0f, radius, 0.0f);
-	p.set(0.0f, 0.0f, radius);
-	m_outline.Points.push_back(center + p);
+	normal.set(0.0f, 0.0f, radius);
+	m_outline.Points.push_back(center + normal);
+	m_outline.Normals.push_back(normal);
 
 	// bottom capsule
 	for (int i = 0; i <= step; i++)
 	{
 		angle = i * stepAngle;
-		p.set(0.0f, -radius * sinf(angle * core::DEGTORAD), radius * cosf(angle * core::DEGTORAD));
-		m_outline.Points.push_back(center + p);
-	}
-}
-
-void CCapsuleMesh::drawOutline()
-{
-	if (m_outline.Points.size() >= 2)
-	{
-		CSceneDebug* sceneDebug = CSceneDebug::getInstance();
-		sceneDebug->addLinestrip(m_outline.Points, SColor(255, 255, 0, 0));
+		normal.set(0.0f, -radius * sinf(angle * core::DEGTORAD), radius * cosf(angle * core::DEGTORAD));
+		m_outline.Points.push_back(center + normal);
+		m_outline.Normals.push_back(normal);
 	}
 }
