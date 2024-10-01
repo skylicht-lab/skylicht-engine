@@ -12,6 +12,7 @@
 #include "SkySun/CSkySun.h"
 
 #include "CapsuleMesh/CCapsuleComponent.h"
+#include "LightProbes/CLightProbeRender.h"
 
 
 CViewInit::CViewInit() :
@@ -20,7 +21,7 @@ CViewInit::CViewInit() :
 	m_downloaded(0),
 	m_bakeSHLighting(true)
 {
-
+	CLightProbeRender::showProbe(true);
 }
 
 CViewInit::~CViewInit()
@@ -139,9 +140,10 @@ void CViewInit::initScene()
 	CCapsuleComponent* capsule = capsuleObj->addComponent<CCapsuleComponent>();
 	capsule->init(0.5f, 1.8f);
 	CMaterial* capsuleMaterial = capsule->getMaterial();
-	capsuleMaterial->changeShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");
+	capsuleMaterial->changeShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGColor.xml");
 	capsuleMaterial->setUniform4("uColor", SColor(255, 200, 200, 200));
 	capsuleMaterial->updateShaderParams();
+	capsuleObj->addComponent<CIndirectLighting>();
 	m_objects.push_back(capsuleObj);
 
 	// rendering
@@ -215,8 +217,8 @@ void CViewInit::onUpdate()
 				// retry download
 				delete m_getFile;
 				m_getFile = NULL;
-	}
-	}
+			}
+		}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -227,7 +229,7 @@ void CViewInit::onUpdate()
 
 		m_initState = CViewInit::InitScene;
 #endif
-}
+	}
 	break;
 	case CViewInit::InitScene:
 	{
@@ -249,7 +251,7 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-}
+	}
 }
 
 void CViewInit::onRender()
@@ -272,7 +274,7 @@ void CViewInit::onRender()
 			// light probe
 			CGameObject* lightProbeObj = zone->createEmptyObject();
 			CLightProbe* lightProbe = lightProbeObj->addComponent<CLightProbe>();
-			lightProbeObj->getTransformEuler()->setPosition(core::vector3df(0.0f, 1.0f, 0.0f));
+			lightProbeObj->getTransformEuler()->setPosition(core::vector3df(0.0f, 5.0f, 0.0f));
 
 			CGameObject* bakeCameraObj = scene->getZone(0)->createEmptyObject();
 			CCamera* bakeCamera = bakeCameraObj->addComponent<CCamera>();

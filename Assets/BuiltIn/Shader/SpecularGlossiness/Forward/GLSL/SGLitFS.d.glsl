@@ -85,7 +85,7 @@ void main(void)
 	float metallic = solveMetallic(diffuseMap.rgb, specularColor, oneMinusSpecularStrength);
 
 	f0 = vec3(0.04, 0.04, 0.04);
-	vec3 diffuseColor = diffuseMap.rgb * (vec3(1.0, 1.0, 1.0) - f0) * (1.0 - metallic);
+	vec3 diffuseColor = diffuseMap.rgb;// * (vec3(1.0, 1.0, 1.0) - f0) * (1.0 - metallic);
 	specularColor = mix(f0, diffuseMap.rgb, metallic);
 
 	// SH Ambient

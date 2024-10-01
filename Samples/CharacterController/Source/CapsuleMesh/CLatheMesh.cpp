@@ -27,7 +27,7 @@ void CLatheMesh::initLatheMesh(CMaterial* material)
 
 	m_mesh = new CMesh();
 
-	int step = 10;
+	int step = 20;
 	float angleStep = 2.0f * core::PI / (float)step;
 	float angle = 0.0f;
 

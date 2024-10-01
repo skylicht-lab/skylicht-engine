@@ -188,6 +188,7 @@ namespace Skylicht
 	{
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/ReflectionProbe.xml");
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/SG.xml");
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGColor.xml");
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGNoNormalMap.xml");
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGSkin.xml");
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGSkinAlpha.xml");

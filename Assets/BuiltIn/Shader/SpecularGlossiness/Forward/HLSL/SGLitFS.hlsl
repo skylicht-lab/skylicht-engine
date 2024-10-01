@@ -67,7 +67,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float oneMinusSpecularStrength = 1.0 - specMap.r;
 	float metallic = solveMetallic(diffuseMap.rgb, specularColor, oneMinusSpecularStrength);
 	f0 = float3(0.04, 0.04, 0.04);
-	float3 diffuseColor = diffuseMap.rgb * (float3(1.0, 1.0, 1.0) - f0) * (1.0 - metallic);
+	float3 diffuseColor = diffuseMap.rgb;
 	specularColor = lerp(f0, diffuseMap.rgb, metallic);
 	float3 ambientLighting = uSHConst[0].xyz +
 		uSHConst[1].xyz * n.y +

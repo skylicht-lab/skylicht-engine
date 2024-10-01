@@ -100,7 +100,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float metallic = solveMetallic(diffuseMap.rgb, specularColor, oneMinusSpecularStrength);
 
 	f0 = float3(0.04, 0.04, 0.04);
-	float3 diffuseColor = diffuseMap.rgb * (float3(1.0, 1.0, 1.0) - f0) * (1.0 - metallic);
+	float3 diffuseColor = diffuseMap.rgb;// * (float3(1.0, 1.0, 1.0) - f0) * (1.0 - metallic);
 	specularColor = lerp(f0, diffuseMap.rgb, metallic);
 
 	// SH4 Ambient
@@ -128,10 +128,10 @@ float4 main(PS_INPUT input) : SV_TARGET
 
 	// IBL lighting
 	color += ambientLighting * diffuseColor / PI;
-
+	
 	// IBL reflection
 	float3 reflection = -normalize(reflect(input.worldViewDir, n));
 	color += sRGB(uTexReflect.SampleLevel(uTexReflectSampler, reflection, roughness * 8).xyz) * specularColor * metallic;
-
+	
 	return float4(color, diffuseMap.a);
 }

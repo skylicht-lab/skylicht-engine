@@ -59,7 +59,7 @@ void main(void)
 	float oneMinusSpecularStrength = 1.0 - specMap.r;
 	float metallic = solveMetallic(diffuseMap.rgb, specularColor, oneMinusSpecularStrength);
 	f0 = vec3(0.04, 0.04, 0.04);
-	vec3 diffuseColor = diffuseMap.rgb * (vec3(1.0, 1.0, 1.0) - f0) * (1.0 - metallic);
+	vec3 diffuseColor = diffuseMap.rgb;
 	specularColor = mix(f0, diffuseMap.rgb, metallic);
 	vec3 ambientLighting = uSHConst[0].xyz +
 		uSHConst[1].xyz * n.y +
