@@ -74,6 +74,67 @@ namespace Skylicht
 
 			void syncTransform();
 
+			void setWalkDirection(const core::vector3df& walk);
+
+			bool canJump();
+
+			bool onGround();
+
+			void setMaxSlope(float slopeRadians);
+
+			float getMaxSlope() const;
+
+			void setMaxPenetrationDepth(float d);
+
+			float getMaxPenetrationDepth() const;
+
+			void reset();
+
+			void setStepHeight(float h);
+
+			float getStepHeight() const;
+
+			void setFallSpeed(float fallSpeed);
+
+			float getFallSpeed() const;
+
+			void setJumpSpeed(float jumpSpeed);
+
+			float getJumpSpeed() const;
+
+			void setMaxJumpHeight(float maxJumpHeight);
+
+			void jump(const core::vector3df& v);
+
+			void setGravity(const core::vector3df& gravity);
+
+			core::vector3df getGravity() const;
+
+			inline void applyImpulse(const core::vector3df& v)
+			{
+				jump(v);
+			}
+
+			void setAngularVelocity(const core::vector3df& velocity);
+
+			core::vector3df getAngularVelocity() const;
+
+			void setLinearVelocity(const core::vector3df& velocity);
+
+			core::vector3df getLinearVelocity() const;
+
+			void setLinearDamping(float d);
+
+			float getLinearDamping() const;
+
+			void setAngularDamping(float d);
+
+			float getAngularDamping() const;
+
+			void setUp(const core::vector3df& up);
+
+			core::vector3df getUp();
+
 		protected:
 
 #ifdef USE_BULLET_PHYSIC_ENGINE

@@ -21,6 +21,8 @@
 #include "RigidBody/CRigidbody.h"
 #include "CharacterController/CCharacterController.h"
 
+#include "DirectionalInput/CDirectionalInput.h"
+
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
 	m_getFile(NULL),
@@ -90,7 +92,6 @@ void CViewInit::initScene()
 	CGameObject* camObj = zone->createEmptyObject();
 	camObj->addComponent<CCamera>();
 	camObj->addComponent<CEditorCamera>()->setMoveSpeed(2.0f);
-	camObj->addComponent<CFpsMoveCamera>()->setMoveSpeed(1.0f);
 
 	CCamera* camera = camObj->getComponent<CCamera>();
 	camera->setPosition(core::vector3df(0.0f, 5.0f, 10.0f));
@@ -175,6 +176,10 @@ void CViewInit::initScene()
 	characterController->setPosition(core::vector3df(0.0f, 5.0f, 0.0f));
 	characterController->setRotation(core::vector3df(0.0f, 0.0f, 0.0f));
 	characterController->syncTransform();
+
+	// input to control capsule
+	capsuleObj->addComponent<CDirectionalInput>();
+
 	m_objects.push_back(capsuleObj);
 
 	// Cube
@@ -270,7 +275,7 @@ void CViewInit::onUpdate()
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-	}
+		}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -303,7 +308,7 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-}
+	}
 }
 
 void CViewInit::onRender()
