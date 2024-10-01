@@ -1,11 +1,14 @@
 #include "pch.h"
 #include "CharacterController.h"
 
+#include "PhysicsEngine/CPhysicsEngine.h"
+
 #include "Context/CContext.h"
 #include "ViewManager/CViewManager.h"
 #include "CImguiManager.h"
 
 #include "CViewInit.h"
+
 
 void installApplication(const std::vector<std::string>& argv)
 {
@@ -19,6 +22,8 @@ CharacterController::CharacterController()
 	CViewManager::createGetInstance()->initViewLayer(1);
 	CLightmapper::createGetInstance();
 	CImguiManager::createGetInstance();
+
+	Physics::CPhysicsEngine::createGetInstance();
 }
 
 CharacterController::~CharacterController()
@@ -27,6 +32,8 @@ CharacterController::~CharacterController()
 	CContext::releaseInstance();
 	CLightmapper::releaseInstance();
 	CImguiManager::releaseInstance();
+
+	Physics::CPhysicsEngine::releaseInstance();
 }
 
 void CharacterController::onInitApp()

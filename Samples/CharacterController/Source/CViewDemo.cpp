@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "CViewDemo.h"
 
+#include "PhysicsEngine/CPhysicsEngine.h"
 #include "Context/CContext.h"
 #include "CImguiManager.h"
 #include "imgui.h"
@@ -34,7 +35,13 @@ void CViewDemo::onUpdate()
 	CContext* context = CContext::getInstance();
 	CScene* scene = context->getScene();
 	if (scene != NULL)
+	{
+		// update physics
+		float timestepSec = getTimeStep() / 1000.0f;
+		Physics::CPhysicsEngine::getInstance()->updatePhysics(timestepSec);
+
 		scene->update();
+	}
 }
 
 void CViewDemo::onRender()

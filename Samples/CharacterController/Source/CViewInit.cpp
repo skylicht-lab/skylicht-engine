@@ -14,6 +14,10 @@
 #include "CapsuleMesh/CCapsuleComponent.h"
 #include "LightProbes/CLightProbeRender.h"
 
+#include "PhysicsEngine/CPhysicsEngine.h"
+#include "Collider/CBvhMeshCollider.h"
+#include "Collider/CBoxCollider.h"
+#include "RigidBody/CRigidbody.h"
 
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
@@ -21,7 +25,7 @@ CViewInit::CViewInit() :
 	m_downloaded(0),
 	m_bakeSHLighting(true)
 {
-	CLightProbeRender::showProbe(true);
+	// CLightProbeRender::showProbe(true);
 }
 
 CViewInit::~CViewInit()
@@ -77,6 +81,9 @@ void CViewInit::initScene()
 	CScene* scene = CContext::getInstance()->getScene();
 	CZone* zone = scene->getZone(0);
 
+	// init physics engine
+	Physics::CPhysicsEngine::getInstance()->initPhysics();
+
 	// camera
 	CGameObject* camObj = zone->createEmptyObject();
 	camObj->addComponent<CCamera>();
@@ -130,12 +137,18 @@ void CViewInit::initScene()
 		renderer->initFromPrefab(prefab);
 		renderer->initMaterial(materials);
 
-		CIndirectLighting* indirectLighting = testScene->addComponent<CIndirectLighting>();
+		// physics & collider
+		Physics::CBvhMeshCollider* collider = testScene->addComponent<Physics::CBvhMeshCollider>();
+		collider->setMeshSource("SampleModels/TestScene/TestScene.dae");
 
-		testScene->getTransformEuler()->setScale(core::vector3df(0.01f, 0.01f, 0.01f));
+		Physics::CRigidbody* rigidBody = testScene->addComponent<Physics::CRigidbody>();
+		rigidBody->setDynamic(false);
+		rigidBody->initRigidbody();
+
+		CIndirectLighting* indirectLighting = testScene->addComponent<CIndirectLighting>();
 	}
 
-	// capsule
+	// Capsule
 	CGameObject* capsuleObj = zone->createEmptyObject();
 	CCapsuleComponent* capsule = capsuleObj->addComponent<CCapsuleComponent>();
 	capsule->init(0.5f, 1.8f);
@@ -145,6 +158,29 @@ void CViewInit::initScene()
 	capsuleMaterial->updateShaderParams();
 	capsuleObj->addComponent<CIndirectLighting>();
 	m_objects.push_back(capsuleObj);
+
+	// CUBE
+	// cube 1
+	CGameObject* cubeObj = zone->createEmptyObject();
+	cubeObj->setName("Cube 1");
+
+	// cube & material
+	CCube* cube = cubeObj->addComponent<CCube>();
+	CMaterial* material = cube->getMaterial();
+	material->changeShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");
+
+	// indirect lighting
+	cubeObj->addComponent<CIndirectLighting>();
+
+	// Init physics
+	cubeObj->addComponent<Physics::CBoxCollider>();
+	Physics::CRigidbody* body = cubeObj->addComponent<Physics::CRigidbody>();
+	body->initRigidbody();
+	body->setPosition(core::vector3df(-6.0f, 5.0f, 0.0f));
+	body->setRotation(core::vector3df(45.0f, 45.0f, 0.0f));
+	body->syncTransform();
+
+	m_objects.push_back(cubeObj);
 
 	// rendering
 	u32 w = app->getWidth();

@@ -209,13 +209,14 @@ namespace Skylicht
 				}
 			}
 
-			core::matrix4 world = getWorldTransform();
-			core::matrix4 m;
+			// core::matrix4 world = getWorldTransform();
+			// core::matrix4 m;
 
 			for (int i = 0; i < numEntities; i++)
 			{
-				m = world * m_transforms[i];
-				callback(m, m_meshs[i]);
+				// m = world * m_transforms[i];
+				// callback(m, m_meshs[i]);
+				callback(m_transforms[i], m_meshs[i]);
 			}
 		}
 #endif
