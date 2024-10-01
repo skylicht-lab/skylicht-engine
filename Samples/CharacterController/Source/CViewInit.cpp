@@ -17,7 +17,9 @@
 #include "PhysicsEngine/CPhysicsEngine.h"
 #include "Collider/CBvhMeshCollider.h"
 #include "Collider/CBoxCollider.h"
+#include "Collider/CCapsuleCollider.h"
 #include "RigidBody/CRigidbody.h"
+#include "CharacterController/CCharacterController.h"
 
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
@@ -148,23 +150,37 @@ void CViewInit::initScene()
 		CIndirectLighting* indirectLighting = testScene->addComponent<CIndirectLighting>();
 	}
 
+	Physics::CRigidbody* body;
+
 	// Capsule
+	float capsuleRadius = 0.5f;
+	float capsuleHeight = 1.2f;
+
 	CGameObject* capsuleObj = zone->createEmptyObject();
+
+	// renderer
 	CCapsuleComponent* capsule = capsuleObj->addComponent<CCapsuleComponent>();
-	capsule->init(0.5f, 1.8f);
+	capsule->init(capsuleRadius, capsuleHeight);
 	CMaterial* capsuleMaterial = capsule->getMaterial();
-	capsuleMaterial->changeShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGColor.xml");
+	capsuleMaterial->changeShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");
 	capsuleMaterial->setUniform4("uColor", SColor(255, 200, 200, 200));
 	capsuleMaterial->updateShaderParams();
 	capsuleObj->addComponent<CIndirectLighting>();
+
+	// collider & chracter
+	Physics::CCapsuleCollider* capsuleCollider = capsuleObj->addComponent<Physics::CCapsuleCollider>();
+	capsuleCollider->setCapsule(capsuleRadius, capsuleHeight);
+	Physics::CCharacterController* characterController = capsuleObj->addComponent<Physics::CCharacterController>();
+	characterController->initCharacter(capsuleRadius);
+	characterController->setPosition(core::vector3df(0.0f, 5.0f, 0.0f));
+	characterController->setRotation(core::vector3df(0.0f, 0.0f, 0.0f));
+	characterController->syncTransform();
 	m_objects.push_back(capsuleObj);
 
-	// CUBE
-	// cube 1
+	// Cube
 	CGameObject* cubeObj = zone->createEmptyObject();
-	cubeObj->setName("Cube 1");
 
-	// cube & material
+	// renderer
 	CCube* cube = cubeObj->addComponent<CCube>();
 	CMaterial* material = cube->getMaterial();
 	material->changeShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");
@@ -172,9 +188,9 @@ void CViewInit::initScene()
 	// indirect lighting
 	cubeObj->addComponent<CIndirectLighting>();
 
-	// Init physics
+	// collider & rigidbody
 	cubeObj->addComponent<Physics::CBoxCollider>();
-	Physics::CRigidbody* body = cubeObj->addComponent<Physics::CRigidbody>();
+	body = cubeObj->addComponent<Physics::CRigidbody>();
 	body->initRigidbody();
 	body->setPosition(core::vector3df(-6.0f, 5.0f, 0.0f));
 	body->setRotation(core::vector3df(45.0f, 45.0f, 0.0f));
@@ -254,7 +270,7 @@ void CViewInit::onUpdate()
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-		}
+	}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -287,7 +303,7 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-	}
+}
 }
 
 void CViewInit::onRender()

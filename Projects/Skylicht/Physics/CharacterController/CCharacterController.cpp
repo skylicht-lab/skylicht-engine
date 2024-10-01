@@ -1,0 +1,245 @@
+/*
+!@
+MIT License
+
+Copyright (c) 2024 Skylicht Technology CO., LTD
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
+(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
+merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+This file is part of the "Skylicht Engine".
+https://github.com/skylicht-lab/skylicht-engine
+!#
+*/
+
+#include "pch.h"
+#include "CCharacterController.h"
+#include "GameObject/CGameObject.h"
+
+#include "Collider/CCollider.h"
+#include "PhysicsEngine/CPhysicsEngine.h"
+
+namespace Skylicht
+{
+	namespace Physics
+	{
+		ACTIVATOR_REGISTER(CCharacterController);
+
+		CATEGORY_COMPONENT(CCharacterController, "Character Controller", "Physics/Character");
+
+		CCharacterController::CCharacterController()
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			:m_ghostObject(NULL),
+			m_controller(NULL),
+			m_shape(NULL)
+#endif
+		{
+
+		}
+
+		CCharacterController::~CCharacterController()
+		{
+			releaseCharacter();
+		}
+
+		void CCharacterController::initComponent()
+		{
+			// convert to readonly transform
+			m_gameObject->setupMatrixTransform();
+		}
+
+		void CCharacterController::startComponent()
+		{
+
+		}
+
+		void CCharacterController::updateComponent()
+		{
+
+		}
+
+		bool CCharacterController::initCharacter(float stepHeight)
+		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			CTransformMatrix* transform = m_gameObject->getTransformMatrix();
+			if (transform == NULL)
+				return false;
+
+			CPhysicsEngine* engine = CPhysicsEngine::getInstance();
+			if (engine == NULL)
+				return false;
+
+			CCollider* collider = m_gameObject->getComponent<CCollider>();
+			if (collider == NULL)
+				return false;
+
+			if (m_ghostObject && m_shape)
+			{
+				releaseCharacter();
+			}
+
+			// init shape
+			m_shape = dynamic_cast<btConvexShape*>(collider->initCollisionShape());
+			if (m_shape == NULL)
+				return false;
+
+			m_ghostObject = new btPairCachingGhostObject();
+			m_ghostObject->setCollisionShape(m_shape);
+			m_ghostObject->setCollisionFlags(btCollisionObject::CF_CHARACTER_OBJECT);
+
+			m_controller = new btKinematicCharacterController(
+				m_ghostObject,
+				m_shape,
+				stepHeight,
+				btVector3(0.0, 1.0, 0.0));
+
+			engine->addCharacter(this);
+			return true;
+#else
+			return false;
+#endif	
+		}
+
+		void CCharacterController::releaseCharacter()
+		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			CPhysicsEngine* engine = CPhysicsEngine::getInstance();
+			if (engine)
+				engine->removeCharacter(this);
+
+			if (m_controller)
+			{
+				delete m_controller;
+				m_controller = NULL;
+			}
+
+			if (m_ghostObject)
+			{
+				delete m_ghostObject;
+				m_ghostObject = NULL;
+			}
+
+			if (m_shape)
+			{
+				CCollider* collider = (CCollider*)m_shape->getUserPointer();
+				if (collider)
+					collider->dropCollisionShape();
+
+				delete m_shape;
+				m_shape = NULL;
+			}
+#endif
+		}
+
+		core::vector3df CCharacterController::getPosition()
+		{
+			core::vector3df position;
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_ghostObject)
+			{
+				const btTransform& world = m_ghostObject->getWorldTransform();
+				const btVector3& origin = world.getOrigin();
+				position.X = origin.x();
+				position.Y = origin.y();
+				position.Z = origin.z();
+			}
+#endif
+			return position;
+		}
+
+		void CCharacterController::setPosition(const core::vector3df& pos)
+		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_ghostObject)
+			{
+				btTransform& world = m_ghostObject->getWorldTransform();
+				world.setOrigin(btVector3(pos.X, pos.Y, pos.Z));
+			}
+#endif
+		}
+
+		core::vector3df CCharacterController::getRotationEuler()
+		{
+			core::vector3df rotation;
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_ghostObject)
+			{
+				const btTransform& world = m_ghostObject->getWorldTransform();
+				btQuaternion q = world.getRotation();
+
+				btVector3 euler;
+				Bullet::quaternionToEuler(q, euler);
+
+				rotation.set(euler.x(), euler.y(), euler.z());
+			}
+#endif
+			return rotation;
+		}
+
+		core::quaternion CCharacterController::getRotation()
+		{
+			core::quaternion rotation;
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_ghostObject)
+			{
+				const btTransform& world = m_ghostObject->getWorldTransform();
+				btQuaternion q = world.getRotation();
+				rotation.set(q.x(), q.y(), q.z(), q.w());
+			}
+#endif
+			return rotation;
+		}
+
+		void CCharacterController::setRotation(const core::vector3df& eulerDeg)
+		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_ghostObject)
+			{
+				btTransform& world = m_ghostObject->getWorldTransform();
+				btQuaternion rot(eulerDeg.Y * core::DEGTORAD,
+					eulerDeg.X * core::DEGTORAD,
+					eulerDeg.Z * core::DEGTORAD);
+				world.setRotation(rot);
+			}
+#endif
+		}
+
+		void CCharacterController::setRotation(const core::quaternion& q)
+		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_ghostObject)
+			{
+				btTransform& world = m_ghostObject->getWorldTransform();
+				btQuaternion rot(q.X, q.Y, q.Z, q.W);
+				world.setRotation(rot);
+			}
+#endif
+		}
+
+		void CCharacterController::syncTransform()
+		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_ghostObject)
+			{
+				const btTransform& world = m_ghostObject->getWorldTransform();
+				CTransformMatrix* transform = m_gameObject->getTransformMatrix();
+
+				core::matrix4 mat;
+				Bullet::bulletTransformToIrrMatrix(world, mat);
+
+				transform->setWorldMatrix(mat);
+			}
+#endif
+		}
+	}
+}

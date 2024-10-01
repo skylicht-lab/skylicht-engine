@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CPhysicsEngine.h"
 #include "RigidBody/CRigidbody.h"
+#include "CharacterController/CCharacterController.h"
 #include "GameObject/CGameObject.h"
 
 #ifdef USE_BULLET_PHYSIC_ENGINE
@@ -70,6 +71,9 @@ namespace Skylicht
 			// btDbvtBroadphase is a good general purpose broadphase. 
 			// You can also try out btAxis3Sweep.
 			m_broadphase = new btDbvtBroadphase();
+
+			// for ghost object
+			m_broadphase->getOverlappingPairCache()->setInternalGhostPairCallback(new btGhostPairCallback());
 
 			// the default constraint solver. 
 			// For parallel processing you can use a different solver (see Extras/BulletMultiThreaded)
@@ -129,7 +133,7 @@ namespace Skylicht
 			int id = -1;
 			for (int i = 0; i < used; i++)
 			{
-				if (m_bodies[i]->Body == body)
+				if (bodies[i]->Body == body)
 				{
 					id = i;
 					break;
@@ -149,6 +153,59 @@ namespace Skylicht
 
 				// remove last
 				m_bodies.set_used(used - 1);
+			}
+#endif
+		}
+
+		void CPhysicsEngine::addCharacter(CCharacterController* character)
+		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			SCharacterData* b = new SCharacterData();
+			b->Controller = character;
+			b->Transform = character->getGameObject()->getTransformMatrix();
+			b->BulletCharacter = character->getCharacterController();
+			b->GhostObject = character->getGhostObject();
+
+			m_characters.push_back(b);
+
+			// add character
+			m_dynamicsWorld->addCollisionObject(b->GhostObject,
+				btBroadphaseProxy::CharacterFilter,
+				btBroadphaseProxy::AllFilter);
+			m_dynamicsWorld->addCharacter(b->BulletCharacter);
+#endif
+		}
+
+		void CPhysicsEngine::removeCharacter(CCharacterController* character)
+		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			SCharacterData** characters = m_characters.pointer();
+			int used = (int)m_characters.size();
+
+			int id = -1;
+			for (int i = 0; i < used; i++)
+			{
+				if (characters[i]->Controller == character)
+				{
+					id = i;
+					break;
+				}
+			}
+
+			if (id >= 0)
+			{
+				// drop rigid body
+				m_dynamicsWorld->removeCollisionObject(characters[id]->GhostObject);
+				m_dynamicsWorld->removeCharacter(characters[id]->BulletCharacter);
+
+				delete characters[id];
+
+				// move last body to id
+				if (used >= 2)
+					characters[id] = characters[used - 1];
+
+				// remove last
+				m_characters.set_used(used - 1);
 			}
 #endif
 		}
@@ -204,6 +261,31 @@ namespace Skylicht
 #endif
 
 				bodies[i]->Transform->setWorldMatrix(world);
+			}
+
+			SCharacterData** characters = m_characters.pointer();
+			btPairCachingGhostObject* ghostObj;
+
+			used = (int)m_characters.size();
+
+			for (int i = 0; i < used; i++)
+			{
+				ghostObj = characters[i]->GhostObject;
+
+				btTransform& transform = ghostObj->getWorldTransform();
+
+#ifdef BT_USE_NEON
+				transform.getOpenGLMatrix(ptr);
+
+				float* m = world.pointer();
+				for (int i = 0; i < 16; i++)
+					m[i] = ptr[i];
+#else
+				f32* ptr = world.pointer();
+				transform.getOpenGLMatrix(ptr);
+#endif
+
+				characters[i]->Transform->setWorldMatrix(world);
 			}
 #endif
 		}

@@ -26,7 +26,7 @@ void CCapsuleMesh::initOutline(float radius, float height)
 	m_outline.Normals.clear();
 
 	core::vector3df center;
-	center.set(0.0f, height - radius, 0.0f);
+	center.set(0.0f, height * 0.5f, 0.0f);
 
 	int step = 5;
 	float angle = 0.0f;
@@ -43,7 +43,7 @@ void CCapsuleMesh::initOutline(float radius, float height)
 	}
 
 	// body capsule
-	center.set(0.0f, radius, 0.0f);
+	center.set(0.0f, -(height * 0.5f), 0.0f);
 	normal.set(0.0f, 0.0f, radius);
 	m_outline.Points.push_back(center + normal);
 	m_outline.Normals.push_back(normal);

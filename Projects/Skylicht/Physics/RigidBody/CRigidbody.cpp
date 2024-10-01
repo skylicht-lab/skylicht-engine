@@ -4,10 +4,6 @@
 #include "GameObject/CGameObject.h"
 
 #include "Collider/CCollider.h"
-#include "Collider/CBoxCollider.h"
-#include "Collider/CStaticPlaneCollider.h"
-#include "Collider/CMeshCollider.h"
-
 #include "PhysicsEngine/CPhysicsEngine.h"
 
 namespace Skylicht

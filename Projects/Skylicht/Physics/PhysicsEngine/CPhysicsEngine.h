@@ -31,6 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #ifdef USE_BULLET_PHYSIC_ENGINE
 #include <btBulletCollisionCommon.h>
 #include <btBulletDynamicsCommon.h>
+#include <BulletDynamics/Character/btKinematicCharacterController.h>
 #endif
 
 namespace Skylicht
@@ -38,6 +39,7 @@ namespace Skylicht
 	namespace Physics
 	{
 		class CRigidbody;
+		class CCharacterController;
 
 		struct SRigidbodyData
 		{
@@ -48,9 +50,21 @@ namespace Skylicht
 #endif
 		};
 
+		struct SCharacterData
+		{
+			CCharacterController* Controller;
+			CTransformMatrix* Transform;
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			btKinematicCharacterController* BulletCharacter;
+			btPairCachingGhostObject* GhostObject;
+#endif
+		};
+
 		class CPhysicsEngine
 		{
 			friend class CRigidbody;
+			friend class CCharacterController;
+
 		public:
 			DECLARE_SINGLETON(CPhysicsEngine);
 
@@ -65,6 +79,7 @@ namespace Skylicht
 			float m_gravity;
 
 			core::array<SRigidbodyData*> m_bodies;
+			core::array<SCharacterData*> m_characters;
 
 		public:
 			CPhysicsEngine();
@@ -101,6 +116,10 @@ namespace Skylicht
 			void addBody(CRigidbody* body);
 
 			void removeBody(CRigidbody* body);
+
+			void addCharacter(CCharacterController* character);
+
+			void removeCharacter(CCharacterController* character);
 
 			void syncTransforms();
 
