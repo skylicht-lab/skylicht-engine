@@ -64,6 +64,10 @@ namespace Skylicht
 			bool m_isDynamic;
 			float m_mass;
 
+			float m_friction;
+			float m_rollingFriction;
+			float m_spinningFriction;
+
 			bool m_needUpdateTransform;
 
 #ifdef USE_BULLET_PHYSIC_ENGINE
@@ -87,6 +91,27 @@ namespace Skylicht
 			inline bool isDynamic()
 			{
 				return m_isDynamic;
+			}
+
+			void setFriction(float f);
+
+			inline float getFriction()
+			{
+				return m_friction;
+			}
+
+			void setRollingFriction(float f);
+
+			inline float getRollingFriction()
+			{
+				return m_rollingFriction;
+			}
+
+			void setSpinningFriction(float f);
+
+			inline float getSpinningFriction()
+			{
+				return m_spinningFriction;
 			}
 
 			void setMass(float m);

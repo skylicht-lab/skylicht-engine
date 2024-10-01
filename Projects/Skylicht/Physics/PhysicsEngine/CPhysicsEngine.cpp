@@ -235,6 +235,7 @@ namespace Skylicht
 			float ptr[16] __attribute__((aligned(16)));
 #endif
 
+			// RIGIDBODY
 			for (int i = 0; i < used; i++)
 			{
 				btRigidBody* body = bodies[i]->BulletBody;
@@ -263,6 +264,7 @@ namespace Skylicht
 				bodies[i]->Transform->setWorldMatrix(world);
 			}
 
+			// CHARACTER
 			SCharacterData** characters = m_characters.pointer();
 			btPairCachingGhostObject* ghostObj;
 

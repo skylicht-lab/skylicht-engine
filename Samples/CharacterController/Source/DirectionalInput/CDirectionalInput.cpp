@@ -7,7 +7,8 @@
 
 CDirectionalInput::CDirectionalInput() :
 	m_controller(NULL),
-	m_moveSpeed(1.5f)
+	m_moveSpeed(5.0f),
+	m_jumpSpeed(15.0f)
 {
 	m_keyMap.push_back(SKeyMap{ MoveForward , irr::KEY_UP });
 	m_keyMap.push_back(SKeyMap{ MoveBackward , irr::KEY_DOWN });
@@ -18,6 +19,8 @@ CDirectionalInput::CDirectionalInput() :
 	m_keyMap.push_back(SKeyMap{ MoveBackward , irr::KEY_KEY_S });
 	m_keyMap.push_back(SKeyMap{ StrafeLeft , irr::KEY_KEY_A });
 	m_keyMap.push_back(SKeyMap{ StrafeRight , irr::KEY_KEY_D });
+
+	m_keyMap.push_back(SKeyMap{ Jump , irr::KEY_SPACE });
 
 	for (u32 i = 0; i < DirectionCount; i++)
 		m_input[i] = false;
@@ -49,7 +52,10 @@ void CDirectionalInput::updateComponent()
 	// convert to sec
 	timeDiff = timeDiff * 0.001f;
 
-	core::vector3df movedir = m_gameObject->getFront();
+	CCamera* camera = CContext::getInstance()->getActiveCamera();
+
+	core::vector3df movedir = camera->getGameObject()->getFront();
+	movedir.Y = 0.0f;
 	movedir.normalize();
 
 	core::vector3df walkDirection;
@@ -68,6 +74,15 @@ void CDirectionalInput::updateComponent()
 
 	if (m_input[StrafeRight])
 		walkDirection -= strafevect * timeDiff * m_moveSpeed;
+
+	if (m_input[Jump])
+	{
+		if (m_controller->canJump())
+		{
+			m_controller->setJumpSpeed(m_jumpSpeed);
+			m_controller->jump(core::vector3df());
+		}
+	}
 
 	m_controller->setWalkDirection(walkDirection);
 }

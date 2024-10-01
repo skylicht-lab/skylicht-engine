@@ -16,6 +16,9 @@ namespace Skylicht
 
 		CRigidbody::CRigidbody() :
 			m_mass(1.0f),
+			m_friction(0.5f),
+			m_rollingFriction(0.0f),
+			m_spinningFriction(0.0f),
 			m_isDynamic(true),
 			m_needUpdateTransform(true)
 #ifdef USE_BULLET_PHYSIC_ENGINE
@@ -45,6 +48,21 @@ namespace Skylicht
 		void CRigidbody::updateComponent()
 		{
 
+		}
+
+		void CRigidbody::setFriction(float f)
+		{
+			m_friction = f;
+		}
+
+		void CRigidbody::setRollingFriction(float f)
+		{
+			m_rollingFriction = f;
+		}
+
+		void CRigidbody::setSpinningFriction(float f)
+		{
+			m_spinningFriction = f;
 		}
 
 		void CRigidbody::setDynamic(bool b)
@@ -118,6 +136,10 @@ namespace Skylicht
 
 			btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
 			btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, m_shape, localInertia);
+
+			rbInfo.m_friction = m_friction;
+			rbInfo.m_rollingFriction = m_rollingFriction;
+			rbInfo.m_spinningFriction = m_spinningFriction;
 
 			m_rigidBody = new btRigidBody(rbInfo);
 			m_rigidBody->setUserPointer(this);

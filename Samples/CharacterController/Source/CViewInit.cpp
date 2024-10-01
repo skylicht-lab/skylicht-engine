@@ -22,6 +22,7 @@
 #include "CharacterController/CCharacterController.h"
 
 #include "DirectionalInput/CDirectionalInput.h"
+#include "Camera/C3rdCamera.h"
 
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
@@ -91,7 +92,7 @@ void CViewInit::initScene()
 	// camera
 	CGameObject* camObj = zone->createEmptyObject();
 	camObj->addComponent<CCamera>();
-	camObj->addComponent<CEditorCamera>()->setMoveSpeed(2.0f);
+	C3rdCamera* followCamera = camObj->addComponent<C3rdCamera>();
 
 	CCamera* camera = camObj->getComponent<CCamera>();
 	camera->setPosition(core::vector3df(0.0f, 5.0f, 10.0f));
@@ -180,6 +181,10 @@ void CViewInit::initScene()
 	// input to control capsule
 	capsuleObj->addComponent<CDirectionalInput>();
 
+	// follow camera
+	followCamera->setFollowTarget(capsuleObj);
+	followCamera->setTargetDistance(5.0f);
+
 	m_objects.push_back(capsuleObj);
 
 	// Cube
@@ -197,6 +202,7 @@ void CViewInit::initScene()
 	cubeObj->addComponent<Physics::CBoxCollider>();
 	body = cubeObj->addComponent<Physics::CRigidbody>();
 	body->initRigidbody();
+	// body->setState(Physics::CRigidbody::Alway);
 	body->setPosition(core::vector3df(-6.0f, 5.0f, 0.0f));
 	body->setRotation(core::vector3df(45.0f, 45.0f, 0.0f));
 	body->syncTransform();

@@ -15,6 +15,7 @@ protected:
 		MoveBackward,
 		StrafeLeft,
 		StrafeRight,
+		Jump,
 		DirectionCount
 	};
 
@@ -31,6 +32,8 @@ protected:
 	bool m_input[DirectionCount];
 
 	f32 m_moveSpeed;
+	f32 m_jumpSpeed;
+
 public:
 	CDirectionalInput();
 
