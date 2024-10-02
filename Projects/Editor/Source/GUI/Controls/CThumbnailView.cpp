@@ -56,7 +56,7 @@ namespace Skylicht
 
 				float itemWidth = totalWidth / numItemInRow;
 
-				float offsetX = (int)((itemWidth - m_itemWidth) * 0.5f);
+				float offsetX = (itemWidth - m_itemWidth) * 0.5f;
 				float x = 0.0f;
 				float y = 0.0f;
 

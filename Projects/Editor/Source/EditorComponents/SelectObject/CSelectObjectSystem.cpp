@@ -72,21 +72,20 @@ namespace Skylicht
 			{
 				CEntity* entity = entities[i];
 
-				// check this entity is culled from camera?
-				CCullingData* cullingData = GET_ENTITY_DATA(entity, CCullingData);
-				if (cullingData != NULL && !cullingData->Visible)
-					continue;
-
-				// check this entity is visible?
-				CVisibleData* visibleData = GET_ENTITY_DATA(entity, CVisibleData);
-				if (visibleData != NULL && !visibleData->Visible)
-					continue;
-
 				CSelectObjectData* collisionData = GET_ENTITY_DATA(entity, CSelectObjectData);
 				if (collisionData != NULL)
 				{
-					CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+					// check this entity is visible?
+					CVisibleData* visibleData = GET_ENTITY_DATA(entity, CVisibleData);
+					if (visibleData != NULL && !visibleData->Visible)
+						continue;
 
+					// check this entity is culled from camera?
+					CCullingData* cullingData = GET_ENTITY_DATA(entity, CCullingData);
+					if (cullingData != NULL && cullingData->CameraCulled)
+						continue;
+
+					CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 					m_collision.push_back(collisionData);
 					m_transform.push_back(transform);
 				}
@@ -107,8 +106,6 @@ namespace Skylicht
 			CWorldTransformData** transforms = m_transform.pointer();
 
 			CCamera* camera = entityManager->getCamera();
-
-			// core::matrix4 invTrans;
 
 			std::map<CGameObject*, core::aabbox3df> selectedBox;
 
