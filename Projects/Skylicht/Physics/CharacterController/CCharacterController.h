@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Components/CComponentSystem.h"
+#include "PhysicsEngine/ICollisionObject.h"
 
 #ifdef USE_BULLET_PHYSIC_ENGINE
 #include <btBulletDynamicsCommon.h>
@@ -36,7 +36,7 @@ namespace Skylicht
 {
 	namespace Physics
 	{
-		class CCharacterController : public CComponentSystem
+		class CCharacterController : public ICollisionObject
 		{
 			friend class CPhysicsEngine;
 		protected:

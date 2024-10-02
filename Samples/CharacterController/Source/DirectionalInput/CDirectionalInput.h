@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CharacterController/CCharacterController.h"
+#include "Camera/CCamera.h"
 
 class CDirectionalInput :
 	public CComponentSystem,
@@ -33,6 +34,7 @@ protected:
 
 	f32 m_moveSpeed;
 	f32 m_jumpSpeed;
+	f32 m_linearDamping;
 
 public:
 	CDirectionalInput();

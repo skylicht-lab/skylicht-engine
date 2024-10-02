@@ -46,7 +46,7 @@ namespace Skylicht
 			m_shape(NULL)
 #endif
 		{
-
+			m_collisionType = ICollisionObject::Character;
 		}
 
 		CCharacterController::~CCharacterController()
@@ -98,6 +98,7 @@ namespace Skylicht
 			m_ghostObject = new btPairCachingGhostObject();
 			m_ghostObject->setCollisionShape(m_shape);
 			m_ghostObject->setCollisionFlags(btCollisionObject::CF_CHARACTER_OBJECT);
+			m_ghostObject->setUserPointer(this);
 
 			m_controller = new btKinematicCharacterController(
 				m_ghostObject,

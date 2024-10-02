@@ -7,11 +7,14 @@
 
 #include "Primitive/CPlane.h"
 #include "Primitive/CCube.h"
+#include "Primitive/CSphere.h"
+
 #include "SkyDome/CSkyDome.h"
 
 #include "PhysicsEngine/CPhysicsEngine.h"
 #include "Collider/CStaticPlaneCollider.h"
 #include "Collider/CBoxCollider.h"
+#include "Collider/CSphereCollider.h"
 #include "RigidBody/CRigidbody.h"
 
 CViewInit::CViewInit() :
@@ -129,7 +132,7 @@ void CViewInit::initScene()
 	// that will disable replace transform in next update
 	body->notifyUpdateTransform(false);
 
-	// cube 1
+	// Cube 1
 	CGameObject* cubeObj = zone->createEmptyObject();
 	cubeObj->setName("Cube 1");
 
@@ -148,8 +151,14 @@ void CViewInit::initScene()
 	body->setPosition(core::vector3df(0.0f, 5.0f, 0.0f));
 	body->setRotation(core::vector3df(45.0f, 45.0f, 0.0f));
 	body->syncTransform();
-	body->OnCollision = [](Physics::CRigidbody* bodyA, Physics::CRigidbody* bodyB, Physics::SCollisionContactPoint* colliderInfo, int numContact)
+	body->OnCollision = [](Physics::ICollisionObject* a, Physics::ICollisionObject* b, Physics::SCollisionContactPoint* colliderInfo, int numContact)
 		{
+			Physics::CRigidbody* bodyA = dynamic_cast<Physics::CRigidbody*>(a);
+			Physics::CRigidbody* bodyB = dynamic_cast<Physics::CRigidbody*>(b);
+
+			if (bodyA == NULL || bodyB == NULL)
+				return;
+
 			if (bodyA->getState() != Physics::CRigidbody::Sleep ||
 				bodyB->getState() != Physics::CRigidbody::Sleep)
 			{
@@ -180,8 +189,14 @@ void CViewInit::initScene()
 	body->initRigidbody();
 	body->setPosition(core::vector3df(0.0f, 10.0f, 0.0f));
 	body->syncTransform();
-	body->OnCollision = [](Physics::CRigidbody* bodyA, Physics::CRigidbody* bodyB, Physics::SCollisionContactPoint* colliderInfo, int numContact)
+	body->OnCollision = [](Physics::ICollisionObject* a, Physics::ICollisionObject* b, Physics::SCollisionContactPoint* colliderInfo, int numContact)
 		{
+			Physics::CRigidbody* bodyA = dynamic_cast<Physics::CRigidbody*>(a);
+			Physics::CRigidbody* bodyB = dynamic_cast<Physics::CRigidbody*>(b);
+
+			if (bodyA == NULL || bodyB == NULL)
+				return;
+
 			if (bodyA->getState() != Physics::CRigidbody::Sleep ||
 				bodyB->getState() != Physics::CRigidbody::Sleep)
 			{
@@ -194,6 +209,26 @@ void CViewInit::initScene()
 				os::Printer::log(log);
 			}
 		};
+
+	// Sphere
+	CGameObject* sphereObj = zone->createEmptyObject();
+	sphereObj->setName("Sphere");
+
+	// cube & material
+	CSphere* sphere = sphereObj->addComponent<CSphere>();
+	material = sphere->getMaterial();
+	material->changeShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");
+
+	// indirect lighting
+	sphereObj->addComponent<CIndirectLighting>();
+	sphereObj->addComponent<Physics::CSphereCollider>();
+	body = sphereObj->addComponent<Physics::CRigidbody>();
+	body->setRollingFriction(0.02f);
+	body->setSpinningFriction(0.02f);
+	body->initRigidbody();
+	body->setPosition(core::vector3df(1.0f, 5.0f, 0.0f));
+	body->syncTransform();
+
 
 	// lighting
 	CGameObject* lightObj = zone->createEmptyObject();
@@ -274,7 +309,7 @@ void CViewInit::onUpdate()
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-		}
+	}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -307,7 +342,7 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-	}
+}
 }
 
 void CViewInit::onRender()

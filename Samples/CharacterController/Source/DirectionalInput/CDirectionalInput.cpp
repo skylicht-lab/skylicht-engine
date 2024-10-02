@@ -8,7 +8,8 @@
 CDirectionalInput::CDirectionalInput() :
 	m_controller(NULL),
 	m_moveSpeed(5.0f),
-	m_jumpSpeed(15.0f)
+	m_jumpSpeed(25.0f),
+	m_linearDamping(0.99f)
 {
 	m_keyMap.push_back(SKeyMap{ MoveForward , irr::KEY_UP });
 	m_keyMap.push_back(SKeyMap{ MoveBackward , irr::KEY_DOWN });
@@ -59,21 +60,34 @@ void CDirectionalInput::updateComponent()
 	movedir.normalize();
 
 	core::vector3df walkDirection;
+	bool input = false;
 
 	if (m_input[MoveForward])
+	{
 		walkDirection += movedir * timeDiff * m_moveSpeed;
+		input = true;
+	}
 
 	if (m_input[MoveBackward])
+	{
 		walkDirection -= movedir * timeDiff * m_moveSpeed;
+		input = true;
+	}
 
 	core::vector3df strafevect = movedir;
 	strafevect = strafevect.crossProduct(Transform::Oy);
 
 	if (m_input[StrafeLeft])
+	{
 		walkDirection += strafevect * timeDiff * m_moveSpeed;
+		input = true;
+	}
 
 	if (m_input[StrafeRight])
+	{
 		walkDirection -= strafevect * timeDiff * m_moveSpeed;
+		input = true;
+	}
 
 	if (m_input[Jump])
 	{
@@ -84,7 +98,11 @@ void CDirectionalInput::updateComponent()
 		}
 	}
 
-	m_controller->setWalkDirection(walkDirection);
+	if (input)
+	{
+		m_controller->setLinearDamping(m_linearDamping);
+		m_controller->setWalkDirection(walkDirection);
+	}
 }
 
 bool CDirectionalInput::OnEvent(const SEvent& evt)

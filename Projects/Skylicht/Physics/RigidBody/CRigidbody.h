@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Components/CComponentSystem.h"
+#include "PhysicsEngine/ICollisionObject.h"
 
 #ifdef USE_BULLET_PHYSIC_ENGINE
 #include <btBulletCollisionCommon.h>
@@ -38,14 +38,7 @@ namespace Skylicht
 {
 	namespace Physics
 	{
-		struct SCollisionContactPoint
-		{
-			core::vector3df PositionWorldOnA;
-			core::vector3df PositionWorldOnB;
-			core::vector3df NormalWorldOnB;
-		};
-
-		class CRigidbody : public CComponentSystem
+		class CRigidbody : public ICollisionObject
 		{
 			friend class CPhysicsEngine;
 		public:
@@ -57,8 +50,6 @@ namespace Skylicht
 				Alway,
 				Disable
 			};
-
-			std::function<void(CRigidbody*, CRigidbody*, SCollisionContactPoint*, int)> OnCollision;
 
 		protected:
 			bool m_isDynamic;
@@ -140,6 +131,8 @@ namespace Skylicht
 			void syncTransform();
 
 			void setState(EActivationState state);
+
+			void activate();
 
 			EActivationState getState();
 

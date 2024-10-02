@@ -6,22 +6,12 @@
 #include "Context/CContext.h"
 #include "Transform/CWorldTransformSystem.h"
 
-#include "Primitive/CPlane.h"
-#include "Primitive/CCube.h"
-#include "Primitive/CSphere.h"
 #include "SkySun/CSkySun.h"
 
-#include "CapsuleMesh/CCapsuleComponent.h"
 #include "LightProbes/CLightProbeRender.h"
 
 #include "PhysicsEngine/CPhysicsEngine.h"
 #include "Collider/CBvhMeshCollider.h"
-#include "Collider/CBoxCollider.h"
-#include "Collider/CCapsuleCollider.h"
-#include "RigidBody/CRigidbody.h"
-#include "CharacterController/CCharacterController.h"
-
-#include "DirectionalInput/CDirectionalInput.h"
 #include "Camera/C3rdCamera.h"
 
 CViewInit::CViewInit() :
@@ -92,7 +82,7 @@ void CViewInit::initScene()
 	// camera
 	CGameObject* camObj = zone->createEmptyObject();
 	camObj->addComponent<CCamera>();
-	C3rdCamera* followCamera = camObj->addComponent<C3rdCamera>();
+	camObj->addComponent<C3rdCamera>();
 
 	CCamera* camera = camObj->getComponent<CCamera>();
 	camera->setPosition(core::vector3df(0.0f, 5.0f, 10.0f));
@@ -151,63 +141,6 @@ void CViewInit::initScene()
 
 		CIndirectLighting* indirectLighting = testScene->addComponent<CIndirectLighting>();
 	}
-
-	Physics::CRigidbody* body;
-
-	// Capsule
-	float capsuleRadius = 0.5f;
-	float capsuleHeight = 1.2f;
-
-	CGameObject* capsuleObj = zone->createEmptyObject();
-
-	// renderer
-	CCapsuleComponent* capsule = capsuleObj->addComponent<CCapsuleComponent>();
-	capsule->init(capsuleRadius, capsuleHeight);
-	CMaterial* capsuleMaterial = capsule->getMaterial();
-	capsuleMaterial->changeShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");
-	capsuleMaterial->setUniform4("uColor", SColor(255, 200, 200, 200));
-	capsuleMaterial->updateShaderParams();
-	capsuleObj->addComponent<CIndirectLighting>();
-
-	// collider & chracter
-	Physics::CCapsuleCollider* capsuleCollider = capsuleObj->addComponent<Physics::CCapsuleCollider>();
-	capsuleCollider->setCapsule(capsuleRadius, capsuleHeight);
-	Physics::CCharacterController* characterController = capsuleObj->addComponent<Physics::CCharacterController>();
-	characterController->initCharacter(capsuleRadius);
-	characterController->setPosition(core::vector3df(0.0f, 5.0f, 0.0f));
-	characterController->setRotation(core::vector3df(0.0f, 0.0f, 0.0f));
-	characterController->syncTransform();
-
-	// input to control capsule
-	capsuleObj->addComponent<CDirectionalInput>();
-
-	// follow camera
-	followCamera->setFollowTarget(capsuleObj);
-	followCamera->setTargetDistance(5.0f);
-
-	m_objects.push_back(capsuleObj);
-
-	// Cube
-	CGameObject* cubeObj = zone->createEmptyObject();
-
-	// renderer
-	CCube* cube = cubeObj->addComponent<CCube>();
-	CMaterial* material = cube->getMaterial();
-	material->changeShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");
-
-	// indirect lighting
-	cubeObj->addComponent<CIndirectLighting>();
-
-	// collider & rigidbody
-	cubeObj->addComponent<Physics::CBoxCollider>();
-	body = cubeObj->addComponent<Physics::CRigidbody>();
-	body->initRigidbody();
-	// body->setState(Physics::CRigidbody::Alway);
-	body->setPosition(core::vector3df(-6.0f, 5.0f, 0.0f));
-	body->setRotation(core::vector3df(45.0f, 45.0f, 0.0f));
-	body->syncTransform();
-
-	m_objects.push_back(cubeObj);
 
 	// rendering
 	u32 w = app->getWidth();
@@ -331,9 +264,6 @@ void CViewInit::onRender()
 
 			CZone* zone = scene->getZone(0);
 
-			for (CGameObject* obj : m_objects)
-				obj->setVisible(false);
-
 			// light probe
 			CGameObject* lightProbeObj = zone->createEmptyObject();
 			CLightProbe* lightProbe = lightProbeObj->addComponent<CLightProbe>();
@@ -351,9 +281,6 @@ void CViewInit::onRender()
 			probes.push_back(lightProbe);
 
 			lm->bakeProbes(probes, bakeCamera, rp, scene->getEntityManager());
-
-			for (CGameObject* obj : m_objects)
-				obj->setVisible(true);
 		}
 	}
 	else

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Material/CMaterial.h"
+
 class CCapsuleComponent : public CComponentSystem
 {
 protected:

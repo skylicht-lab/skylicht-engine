@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CPhysicsEngine.h"
+#include "ICollisionObject.h"
 #include "RigidBody/CRigidbody.h"
 #include "CharacterController/CCharacterController.h"
 #include "GameObject/CGameObject.h"
@@ -306,8 +307,8 @@ namespace Skylicht
 				btCollisionObject* obA = (btCollisionObject*)contactManifold->getBody0();
 				btCollisionObject* obB = (btCollisionObject*)contactManifold->getBody1();
 
-				CRigidbody* bodyA = (CRigidbody*)obA->getUserPointer();
-				CRigidbody* bodyB = (CRigidbody*)obB->getUserPointer();
+				ICollisionObject* bodyA = (ICollisionObject*)obA->getUserPointer();
+				ICollisionObject* bodyB = (ICollisionObject*)obB->getUserPointer();
 
 				if (bodyA == NULL || bodyB == NULL)
 					continue;

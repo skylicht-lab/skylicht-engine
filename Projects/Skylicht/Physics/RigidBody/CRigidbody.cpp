@@ -26,7 +26,7 @@ namespace Skylicht
 			m_rigidBody(NULL)
 #endif
 		{
-
+			m_collisionType = ICollisionObject::RigidBody;
 		}
 
 		CRigidbody::~CRigidbody()
@@ -311,6 +311,16 @@ namespace Skylicht
 			}
 #endif
 			m_needUpdateTransform = true;
+		}
+
+		void CRigidbody::activate()
+		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_rigidBody)
+			{
+				m_rigidBody->activate(true);
+			}
+#endif
 		}
 
 		CRigidbody::EActivationState CRigidbody::getState()
