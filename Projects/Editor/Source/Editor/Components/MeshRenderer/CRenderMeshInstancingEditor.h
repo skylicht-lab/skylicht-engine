@@ -27,21 +27,23 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Serializable/CObjectSerializable.h"
 #include "Editor/Components/CComponentEditor.h"
 #include "Activator/CEditorActivator.h"
-#include "RenderMesh/CRenderMesh.h"
+#include "RenderMesh/CRenderMeshInstancing.h"
 #include "Editor/Components/Default/CDefaultEditor.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CRenderMeshEditor : public CDefaultEditor
+		class CRenderMeshInstancingEditor : public CDefaultEditor
 		{
 		public:
-			CRenderMeshEditor();
+			CRenderMeshInstancingEditor();
 
-			virtual ~CRenderMeshEditor();
+			virtual ~CRenderMeshInstancingEditor();
 
 			virtual void initGUI(CComponentSystem* target, CSpaceProperty* spaceProperty);
+
+			virtual void initCustomGUI(GUI::CBoxLayout* layout, CSpaceProperty* ui);
 
 			virtual void update();
 		};

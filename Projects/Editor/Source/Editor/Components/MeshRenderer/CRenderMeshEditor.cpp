@@ -33,8 +33,7 @@ namespace Skylicht
 	{
 		EDITOR_REGISTER(CRenderMeshEditor, CRenderMesh);
 
-		CRenderMeshEditor::CRenderMeshEditor() :
-			m_renderMesh(NULL)
+		CRenderMeshEditor::CRenderMeshEditor()
 		{
 
 		}

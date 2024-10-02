@@ -105,7 +105,7 @@ namespace Skylicht
 		if (m_instancingShader == NULL && !m_instancingShaderName.empty())
 		{
 			CShaderManager* shaderManager = CShaderManager::getInstance();
-			m_softwareSkinningShader = shaderManager->getShaderByName(m_instancingShaderName.c_str());
+			m_instancingShader = shaderManager->getShaderByName(m_instancingShaderName.c_str());
 		}
 		return m_instancingShader;
 	}

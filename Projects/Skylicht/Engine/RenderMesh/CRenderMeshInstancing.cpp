@@ -215,7 +215,7 @@ namespace Skylicht
 		object->autoRelease(new CBoolProperty(object, "inserse normal", m_fixInverseNormal));
 		object->autoRelease(new CBoolProperty(object, "load texcoord2", m_loadTexcoord2));
 
-		std::vector<std::string> meshExts = { "dae","obj","smesh" };
+		std::vector<std::string> meshExts = { "fbx","dae","obj","smesh" };
 		std::vector<std::string> materialExts = { "xml","mat" };
 
 		object->autoRelease(new CFilePathProperty(object, "mesh", m_meshFile.c_str(), meshExts));
@@ -418,9 +418,9 @@ namespace Skylicht
 	{
 		CEntity* entity = createEntity();
 
-		for (CRenderMeshData*& renderer : m_renderers)
+		for (int i = 0, n = (int)m_renderers.size(); i < n; i++)
 		{
-			addRendererInstancing(createEntity(entity), m_renderers[0], m_renderTransforms[0]);
+			addRendererInstancing(createEntity(entity), m_renderers[i], m_renderTransforms[i]);
 		}
 
 		return entity;

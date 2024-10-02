@@ -100,7 +100,7 @@ namespace Skylicht
 		object->autoRelease(new CBoolProperty(object, "optimize", m_optimizeForRender));
 		object->autoRelease(new CBoolProperty(object, "instancing", m_enableInstancing));
 
-		std::vector<std::string> meshExts = { "dae","obj","smesh" };
+		std::vector<std::string> meshExts = { "fbx","dae","obj","smesh" };
 		std::vector<std::string> materialExts = { "xml","mat" };
 
 		object->autoRelease(new CFilePathProperty(object, "mesh", m_meshFile.c_str(), meshExts));

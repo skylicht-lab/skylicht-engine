@@ -22,28 +22,51 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "Serializable/CObjectSerializable.h"
-#include "Editor/Components/CComponentEditor.h"
-#include "Activator/CEditorActivator.h"
-#include "RenderMesh/CRenderMesh.h"
-#include "Editor/Components/Default/CDefaultEditor.h"
+#include "pch.h"
+#include "CRenderMeshInstancingEditor.h"
+#include "Editor/Space/Property/CSpaceProperty.h"
+#include "Editor/SpaceController/CSceneController.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CRenderMeshEditor : public CDefaultEditor
+		EDITOR_REGISTER(CRenderMeshInstancingEditor, CRenderMeshInstancing);
+
+		CRenderMeshInstancingEditor::CRenderMeshInstancingEditor()
 		{
-		public:
-			CRenderMeshEditor();
 
-			virtual ~CRenderMeshEditor();
+		}
 
-			virtual void initGUI(CComponentSystem* target, CSpaceProperty* spaceProperty);
+		CRenderMeshInstancingEditor::~CRenderMeshInstancingEditor()
+		{
 
-			virtual void update();
-		};
+		}
+
+		void CRenderMeshInstancingEditor::initGUI(CComponentSystem* target, CSpaceProperty* ui)
+		{
+			CDefaultEditor::initGUI(target, ui);
+		}
+
+		void CRenderMeshInstancingEditor::initCustomGUI(GUI::CBoxLayout* layout, CSpaceProperty* ui)
+		{
+			layout->addSpace(5.0f);
+
+			ui->addButton(layout, L"Add Entity")->OnPress = [&](GUI::CBase* button)
+				{
+					CRenderMeshInstancing* renderInstancing = (CRenderMeshInstancing*)m_component;
+					CEntity* newEntity = renderInstancing->spawn();
+
+					CSceneController* sceneController = CSceneController::getInstance();
+					sceneController->updateTreeNode(m_gameObject);
+					sceneController->deselectAllOnHierachy();
+					sceneController->selectOnHierachy(newEntity);
+				};
+		}
+
+		void CRenderMeshInstancingEditor::update()
+		{
+
+		}
 	}
 }
