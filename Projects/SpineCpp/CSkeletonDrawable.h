@@ -25,7 +25,11 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include <spine/spine.h>
-#include "Graphics2D/GUI/CGUIElement.h"
+
+namespace Skylicht
+{
+	class CGUIElement;
+}
 
 namespace spine
 {
@@ -35,8 +39,9 @@ namespace spine
 		spine::Skeleton* m_skeleton;
 		spine::AnimationState* m_animationState;
 
-		bool m_usePremultipliedAlpha;
 		bool m_ownsAnimationStateData;
+
+		core::vector2df m_drawOffset;
 
 	public:
 		CSkeletonDrawable(spine::SkeletonData* skeletonData, spine::AnimationStateData* animationStateData = NULL);
@@ -45,6 +50,21 @@ namespace spine
 
 		void update(float delta, spine::Physics physics);
 
-		void render();
+		void render(Skylicht::CGUIElement* insideElement);
+
+		inline spine::Skeleton* getSkeleton()
+		{
+			return m_skeleton;
+		}
+
+		inline spine::AnimationState* getAnimationState()
+		{
+			return m_animationState;
+		}
+
+		inline void setDrawOffset(const core::vector2df& offset)
+		{
+			m_drawOffset = offset;
+		}
 	};
 }

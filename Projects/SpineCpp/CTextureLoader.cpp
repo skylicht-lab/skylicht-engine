@@ -23,8 +23,9 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CTextureLoader.h"
+#include <spine/spine.h>
 
+#include "CTextureLoader.h"
 #include "TextureManager/CTextureManager.h"
 
 using namespace Skylicht;
@@ -42,6 +43,10 @@ namespace spine
 		if (!texture)
 			return;
 		page.texture = texture;
+
+		const core::dimension2du& size = texture->getSize();
+		page.width = (int)size.Width;
+		page.height = (int)size.Height;
 	}
 
 	void CTextureLoader::unload(void* texture)

@@ -28,6 +28,9 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace spine
 {
+	class AtlasPage;
+	class String;
+
 	class CTextureLoader : public spine::TextureLoader
 	{
 	public:

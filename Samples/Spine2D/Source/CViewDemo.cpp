@@ -5,16 +5,18 @@
 #include "CImguiManager.h"
 #include "imgui.h"
 
-#include "CSpineResource.h"
-
-CViewDemo::CViewDemo()
+CViewDemo::CViewDemo() :
+	m_spineResource(NULL)
 {
-
+	spine::CSpineResource::initRenderer();
 }
 
 CViewDemo::~CViewDemo()
 {
+	if (m_spineResource)
+		delete m_spineResource;
 
+	spine::CSpineResource::releaseRenderer();
 }
 
 void CViewDemo::onInit()
@@ -28,18 +30,33 @@ void CViewDemo::onInit()
 	CGameObject* canvasObj = zone->createEmptyObject();
 	CCanvas* canvas = canvasObj->addComponent<CCanvas>();
 
+	// this is the gui element, that will render spine inside
 	CGUIElement* element = canvas->createElement();
-	element->setWidth(800.0f);
+	element->setWidth(400.0f);
 	element->setHeight(400.0f);
 	element->setAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
 	element->setDrawBorder(true);
 
-	io::IFileSystem* fs = getIrrlichtDevice()->getFileSystem();
+	// init spine2d
+	m_spineResource = new spine::CSpineResource();
+	if (m_spineResource->loadAtlas("SampleSpine2D/spineboy-pma.atlas", "SampleSpine2D"))
+	{
+		if (m_spineResource->loadSkeletonJson("SampleSpine2D/spineboy-pro.json", 0.5f))
+		{
+			spine::CSkeletonDrawable* drawable = m_spineResource->getDrawable();
+			spine::Skeleton* skeleton = drawable->getSkeleton();
+			spine::AnimationState* animationState = drawable->getAnimationState();
 
-	// spine2d
-	spine::CSpineResource spineRes;
-	spineRes.loadAtlas("SampleSpine2D/spineboy-pma.atlas", "SampleSpine2D");
-	spineRes.loadSkeletonJson("SampleSpine2D/spineboy-pro.json");
+			animationState->getData()->setDefaultMix(0.2f);
+			skeleton->setToSetupPose();
+
+			animationState->setAnimation(0, "portal", true);
+			animationState->addAnimation(0, "run", true, 0);
+
+			// callback for draw spine
+			element->OnRender = std::bind(&CViewDemo::renderSpine, this, std::placeholders::_1);
+		}
+	}
 
 	scene->updateIndexSearchObject();
 }
@@ -76,6 +93,18 @@ void CViewDemo::onRender()
 	if (guiCamera != NULL)
 	{
 		CGraphics2D::getInstance()->render(guiCamera);
+	}
+}
+
+void CViewDemo::renderSpine(CGUIElement* element)
+{
+	if (m_spineResource)
+	{
+		spine::CSkeletonDrawable* drawable = m_spineResource->getDrawable();
+
+		drawable->setDrawOffset(core::vector2df(0.0f, element->getHeight() * 0.5f));
+		drawable->update(getTimeStep(), spine::Physics_Update);
+		drawable->render(element);
 	}
 }
 

@@ -1,10 +1,13 @@
 #pragma once
 
 #include "ViewManager/CView.h"
+#include "Graphics2D/GUI/CGUIElement.h"
+#include "CSpineResource.h"
 
 class CViewDemo : public CView
 {
 protected:
+	spine::CSpineResource* m_spineResource;
 
 public:
 	CViewDemo();
@@ -20,4 +23,9 @@ public:
 	virtual void onRender();
 
 	virtual void onPostRender();
+
+protected:
+
+	void renderSpine(CGUIElement *element);
+
 };

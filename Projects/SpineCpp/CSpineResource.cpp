@@ -24,11 +24,68 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CSpineResource.h"
+#include "Material/Shader/CShaderManager.h"
 
 using namespace Skylicht;
 
 namespace spine
 {
+	spine::SkeletonRenderer* g_renderer = NULL;
+
+	spine::SkeletonRenderer* CSpineResource::initRenderer()
+	{
+		if (g_renderer == NULL)
+			g_renderer = new spine::SkeletonRenderer();
+		return g_renderer;
+	}
+
+	void CSpineResource::releaseRenderer()
+	{
+		if (g_renderer)
+		{
+			delete g_renderer;
+			g_renderer = NULL;
+		}
+	}
+
+	spine::SkeletonRenderer* CSpineResource::getRenderer()
+	{
+		return g_renderer;
+	}
+
+	int g_textColorBlend = 0;
+	int g_textColorAddtive = 0;
+	int g_textColorMultiply = 0;
+	int g_textColorScreen = 0;
+
+	int CSpineResource::getTextureColorBlend()
+	{
+		if (g_textColorBlend == 0)
+			g_textColorBlend = CShaderManager::getInstance()->getShaderIDByName("TextureColorAlpha");
+		return g_textColorBlend;
+	}
+
+	int CSpineResource::getTextureColorAddtive()
+	{
+		if (g_textColorAddtive == 0)
+			g_textColorAddtive = CShaderManager::getInstance()->getShaderIDByName("TextureColorAdditive");
+		return g_textColorAddtive;
+	}
+
+	int CSpineResource::getTextureColorMultiply()
+	{
+		if (g_textColorMultiply == 0)
+			g_textColorMultiply = CShaderManager::getInstance()->getShaderIDByName("TextureColorAlpha");
+		return g_textColorMultiply;
+	}
+
+	int CSpineResource::getTextureColorScreen()
+	{
+		if (g_textColorScreen == 0)
+			g_textColorScreen = CShaderManager::getInstance()->getShaderIDByName("TextureColorAlpha");
+		return g_textColorScreen;
+	}
+
 	CSpineResource::CSpineResource() :
 		m_textureLoader(NULL),
 		m_drawable(NULL),
@@ -70,7 +127,7 @@ namespace spine
 		return true;
 	}
 
-	bool CSpineResource::loadSkeletonJson(const char* path)
+	bool CSpineResource::loadSkeletonJson(const char* path, float scale)
 	{
 		if (m_atlas == NULL)
 		{
@@ -89,7 +146,9 @@ namespace spine
 
 		if (m_skeletonJson)
 			delete m_skeletonJson;
+
 		m_skeletonJson = new spine::SkeletonJson(m_attachmentLoader);
+		m_skeletonJson->setScale(scale);
 
 		if (m_drawable)
 		{

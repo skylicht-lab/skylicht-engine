@@ -24,6 +24,11 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CSkeletonDrawable.h"
+#include "CSpineResource.h"
+
+#include "Graphics2D/CGraphics2D.h"
+#include "Graphics2D/CCanvas.h"
+#include "Graphics2D/GUI/CGUIElement.h"
 
 using namespace Skylicht;
 
@@ -36,7 +41,6 @@ namespace spine
 	CSkeletonDrawable::CSkeletonDrawable(spine::SkeletonData* skeletonData, spine::AnimationStateData* animationStateData) :
 		m_skeleton(NULL),
 		m_animationState(NULL),
-		m_usePremultipliedAlpha(false),
 		m_ownsAnimationStateData(false)
 	{
 		m_skeleton = new spine::Skeleton(skeletonData);
@@ -59,14 +63,103 @@ namespace spine
 
 	void CSkeletonDrawable::update(float delta, spine::Physics physics)
 	{
-		m_animationState->update(delta);
+		m_animationState->update(delta * 0.001f);
 		m_animationState->apply(*m_skeleton);
 		m_skeleton->update(delta);
 		m_skeleton->updateWorldTransform(physics);
 	}
 
-	void CSkeletonDrawable::render()
+	void CSkeletonDrawable::render(CGUIElement* insideElement)
 	{
+		if (insideElement == NULL)
+			return;
 
+		spine::SkeletonRenderer* renderer = CSpineResource::getRenderer();
+		if (renderer == NULL)
+			return;
+
+		CCanvas* canvas = insideElement->getCanvas();
+		float canvasHeight = canvas->getRootElement()->getHeight();
+
+		// move to center of element
+		core::vector3df pos = insideElement->getAbsoluteTransform().getTranslation();
+		pos.X = pos.X + insideElement->getWidth() * 0.5f + m_drawOffset.X;
+		pos.Y = pos.Y + insideElement->getHeight() * 0.5f + m_drawOffset.Y;
+
+		// set position (flip Y)
+		m_skeleton->setPosition(pos.X, canvasHeight - pos.Y);
+
+		// flush the current buffer
+		CGraphics2D* graphics = CGraphics2D::getInstance();
+		video::SMaterial& material = graphics->getMaterial();
+		graphics->flush();
+
+		RenderCommand* command = renderer->render(*m_skeleton);
+		while (command)
+		{
+			IMeshBuffer* meshBuffer = graphics->getCurrentBuffer();
+
+			scene::IVertexBuffer* vtxBuffer = meshBuffer->getVertexBuffer();
+			scene::IIndexBuffer* idxBuffer = meshBuffer->getIndexBuffer();
+
+			float* positions = command->positions;
+			float* uvs = command->uvs;
+			uint32_t* colors = command->colors;
+
+			// alloc vertex buffer
+			vtxBuffer->set_used(command->numVertices);
+			S3DVertex* vertices = (S3DVertex*)vtxBuffer->getVertices();
+
+			for (int ii = 0; ii < command->numVertices << 1; ii += 2)
+			{
+				S3DVertex* v = &vertices[ii >> 1];
+
+				v->Pos.X = positions[ii];
+				// warning: flip Y
+				v->Pos.Y = canvasHeight - positions[ii + 1];
+				v->Pos.Z = 0.0f;
+
+				v->TCoords.X = uvs[ii];
+				v->TCoords.Y = uvs[ii + 1];
+
+				v->Color.set(colors[ii >> 1]);
+			}
+
+			// alloc index buffer
+			idxBuffer->set_used(command->numIndices);
+			u16* index = (u16*)idxBuffer->getIndices();
+			uint16_t* indices = command->indices;
+
+			for (int ii = 0; ii < command->numIndices; ii++)
+			{
+				index[ii] = indices[ii];
+			}
+
+			// texture
+			material.setTexture(0, (ITexture*)command->texture);
+
+			// blendmode
+			BlendMode blendMode = command->blendMode;
+			switch (blendMode)
+			{
+			case BlendMode_Normal:
+				material.MaterialType = CSpineResource::getTextureColorBlend();
+				break;
+			case BlendMode_Multiply:
+				material.MaterialType = CSpineResource::getTextureColorMultiply();
+				break;
+			case BlendMode_Additive:
+				material.MaterialType = CSpineResource::getTextureColorAddtive();
+				break;
+			case BlendMode_Screen:
+				material.MaterialType = CSpineResource::getTextureColorScreen();
+				break;
+			}
+
+			// draw this command
+			graphics->flush();
+
+			command = command->next;
+		}
 	}
 }

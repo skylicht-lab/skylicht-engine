@@ -24,8 +24,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CTextureLoader.h"
 #include "CSkeletonDrawable.h"
+#include "CTextureLoader.h"
 
 namespace spine
 {
@@ -41,13 +41,29 @@ namespace spine
 		spine::SkeletonData* m_skeletonData;
 
 	public:
+
+		static spine::SkeletonRenderer* initRenderer();
+
+		static void releaseRenderer();
+
+		static spine::SkeletonRenderer* getRenderer();
+
+		static int getTextureColorBlend();
+
+		static int getTextureColorAddtive();
+
+		static int getTextureColorMultiply();
+
+		static int getTextureColorScreen();
+
+	public:
 		CSpineResource();
 
 		virtual ~CSpineResource();
 
 		bool loadAtlas(const char* path, const char* folder);
 
-		bool loadSkeletonJson(const char* path);
+		bool loadSkeletonJson(const char* path, float scale);
 
 		void free();
 
