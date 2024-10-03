@@ -23,13 +23,13 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CSpineLoader.h"
+#include "CSpineResource.h"
 
 using namespace Skylicht;
 
 namespace spine
 {
-	CSpineLoader::CSpineLoader() :
+	CSpineResource::CSpineResource() :
 		m_textureLoader(NULL),
 		m_drawable(NULL),
 		m_atlas(NULL),
@@ -40,12 +40,12 @@ namespace spine
 
 	}
 
-	CSpineLoader::~CSpineLoader()
+	CSpineResource::~CSpineResource()
 	{
 		free();
 	}
 
-	bool CSpineLoader::loadAtlas(const char* path, const char* folder)
+	bool CSpineResource::loadAtlas(const char* path, const char* folder)
 	{
 		io::IFileSystem* fs = getIrrlichtDevice()->getFileSystem();
 
@@ -70,11 +70,11 @@ namespace spine
 		return true;
 	}
 
-	bool CSpineLoader::loadSkeletonJson(const char* path)
+	bool CSpineResource::loadSkeletonJson(const char* path)
 	{
 		if (m_atlas == NULL)
 		{
-			os::Printer::log("[CSpineLoader] loadSkeletonJson with NULL atlas");
+			os::Printer::log("[CSpineResource] loadSkeletonJson with NULL atlas");
 			return false;
 		}
 
@@ -109,7 +109,7 @@ namespace spine
 		}
 		else
 		{
-			os::Printer::log("[CSpineLoader] loadSkeletonJson load json failed!");
+			os::Printer::log("[CSpineResource] loadSkeletonJson load json failed!");
 			os::Printer::log(m_skeletonJson->getError().buffer());
 		}
 
@@ -117,7 +117,7 @@ namespace spine
 		return true;
 	}
 
-	void CSpineLoader::free()
+	void CSpineResource::free()
 	{
 		if (m_skeletonJson)
 			delete m_skeletonJson;

@@ -5,7 +5,7 @@
 #include "CImguiManager.h"
 #include "imgui.h"
 
-#include "CSpineLoader.h"
+#include "CSpineResource.h"
 
 CViewDemo::CViewDemo()
 {
@@ -37,9 +37,9 @@ void CViewDemo::onInit()
 	io::IFileSystem* fs = getIrrlichtDevice()->getFileSystem();
 
 	// spine2d
-	spine::CSpineLoader spineLoader;
-	spineLoader.loadAtlas("SampleSpine2D/spineboy-pma.atlas", "SampleSpine2D");
-	spineLoader.loadSkeletonJson("SampleSpine2D/spineboy-pro.json");
+	spine::CSpineResource spineRes;
+	spineRes.loadAtlas("SampleSpine2D/spineboy-pma.atlas", "SampleSpine2D");
+	spineRes.loadSkeletonJson("SampleSpine2D/spineboy-pro.json");
 
 	scene->updateIndexSearchObject();
 }

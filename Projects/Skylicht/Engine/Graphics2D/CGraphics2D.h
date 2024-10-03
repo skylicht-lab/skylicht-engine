@@ -188,6 +188,11 @@ namespace Skylicht
 			return m_2dMaterial;
 		}
 
+		IMeshBuffer* getCurrentBuffer()
+		{
+			return m_buffer;
+		}
+
 	private:
 
 		void updateRectBuffer(video::S3DVertex* vtx, const core::rectf& r, const core::matrix4& mat);

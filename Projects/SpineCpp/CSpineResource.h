@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace spine
 {
-	class CSpineLoader
+	class CSpineResource
 	{
 	protected:
 		CTextureLoader* m_textureLoader;
@@ -41,14 +41,19 @@ namespace spine
 		spine::SkeletonData* m_skeletonData;
 
 	public:
-		CSpineLoader();
+		CSpineResource();
 
-		virtual ~CSpineLoader();
+		virtual ~CSpineResource();
 
 		bool loadAtlas(const char* path, const char* folder);
 
 		bool loadSkeletonJson(const char* path);
 
 		void free();
+
+		inline CSkeletonDrawable* getDrawable()
+		{
+			return m_drawable;
+		}
 	};
 }
