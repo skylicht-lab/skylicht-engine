@@ -18,6 +18,13 @@ if (BUILD_IMGUI)
 	include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/Imgui)
 endif()
 
+if (BUILD_SPINE_RUNTIMES)
+	include_directories(
+		${SKYLICHT_ENGINE_PROJECT_DIR}/SpineCpp/spine-cpp/include
+		${SKYLICHT_ENGINE_PROJECT_DIR}/SpineCpp
+	)
+endif()
+
 set(template_path ${SKYLICHT_ENGINE_PROJECT_DIR}/Main)
 
 file(GLOB_RECURSE application_source 
@@ -293,6 +300,11 @@ endif()
 # Imgui
 if (BUILD_IMGUI)
 	target_link_libraries(@project_name@ Imgui)
+endif()
+
+# Spine runtimes
+if (BUILD_SPINE_RUNTIMES)
+	target_link_libraries(@project_name@ SpineRuntimes)
 endif()
 
 # Emscripten

@@ -245,6 +245,11 @@ add_definitions(-DBUILD_IMGUI)
 subdirs (Projects/Imgui)
 endif()
 
+# spine runtimes
+if (BUILD_SPINE_RUNTIMES)
+subdirs (Projects/SpineCpp)
+endif()
+
 # skylicht components
 if (BUILD_SKYLICHT_COMPONENTS)
 add_definitions(-DBUILD_SKYLICHT_COMPONENTS)

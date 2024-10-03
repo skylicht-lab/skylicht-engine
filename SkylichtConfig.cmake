@@ -1,5 +1,6 @@
 option(BUILD_IMGUI "Build Ocornut Imgui" ON)
 option(BUILD_FREETYPE "Build freetype font library" ON)
+option(BUILD_SPINE_RUNTIMES "Build spine runtimes library" ON)
 option(BUILD_SKYLICHT_AUDIO "Build with audio engine" ON)
 option(BUILD_SKYLICHT_COMPONENTS "Build with components" ON)
 option(BUILD_SKYLICHT_LIGHMAPPER "Build with lightmapper" ON)
