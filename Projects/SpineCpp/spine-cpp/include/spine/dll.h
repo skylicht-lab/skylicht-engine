@@ -30,22 +30,36 @@
 #ifndef SPINE_SHAREDLIB_H
 #define SPINE_SHAREDLIB_H
 
-#ifdef _WIN32
-#define DLLIMPORT __declspec(dllimport)
-#define DLLEXPORT __declspec(dllexport)
+#if defined(_WIN32) || defined(_WIN64) || defined(WIN32) || defined(WIN64)
+
+#ifdef _SKYLICHT_STATIC_LIB_
+	#define SP_API
 #else
-#ifndef DLLIMPORT
-#define DLLIMPORT
-#endif
-#ifndef DLLEXPORT
-#define DLLEXPORT
-#endif
+	
+#ifdef _MSC_VER
+	// Visual studio
+	#define SP_API
+#else
+	// Cygwin & MinGW
+	#ifdef SPINE_EXPORTS
+	#define SP_API __declspec(dllexport)
+	#else
+	#define SP_API __declspec(dllimport)
+	#endif
 #endif
 
-#ifdef SPINEPLUGIN_API
-#define SP_API SPINEPLUGIN_API
+#endif
+
 #else
-#define SP_API
+
+// GCC or OTHER
+// Force symbol export in shared libraries built with gcc.
+#if (__GNUC__ >= 4) && !defined(_SKYLICHT_STATIC_LIB_) && defined(SPINE_EXPORTS)
+	#define SP_API __attribute__ ((visibility("default")))
+#else
+	#define SP_API
+#endif
+
 #endif
 
 #endif /* SPINE_SHAREDLIB_H */

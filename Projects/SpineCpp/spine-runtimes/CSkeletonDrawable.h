@@ -33,7 +33,7 @@ namespace Skylicht
 
 namespace spine
 {
-	class CSkeletonDrawable
+	class SP_API CSkeletonDrawable
 	{
 	protected:
 		spine::Skeleton* m_skeleton;

@@ -22,7 +22,7 @@ endif()
 if (BUILD_SPINE_RUNTIMES)
 	include_directories(
 		${SKYLICHT_ENGINE_PROJECT_DIR}/SpineCpp/spine-cpp/include
-		${SKYLICHT_ENGINE_PROJECT_DIR}/SpineCpp
+		${SKYLICHT_ENGINE_PROJECT_DIR}/SpineCpp/spine-runtimes
 	)
 endif()
 

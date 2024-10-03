@@ -31,7 +31,7 @@ namespace spine
 	class AtlasPage;
 	class String;
 
-	class CTextureLoader : public spine::TextureLoader
+	class SP_API CTextureLoader : public spine::TextureLoader
 	{
 	public:
 		CTextureLoader();

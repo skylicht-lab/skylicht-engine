@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace spine
 {
-	class CSpineResource
+	class SP_API CSpineResource
 	{
 	protected:
 		CTextureLoader* m_textureLoader;
