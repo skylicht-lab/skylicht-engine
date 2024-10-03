@@ -5,8 +5,7 @@
 #include "CImguiManager.h"
 #include "imgui.h"
 
-#include "CTextureLoader.h"
-#include "CSkeletonDrawable.h"
+#include "CSpineLoader.h"
 
 CViewDemo::CViewDemo()
 {
@@ -38,38 +37,9 @@ void CViewDemo::onInit()
 	io::IFileSystem* fs = getIrrlichtDevice()->getFileSystem();
 
 	// spine2d
-
-	// load atlas
-	io::IReadFile* fileAtlas = fs->createAndOpenFile("SampleSpine2D/spineboy-pma.atlas");
-	u32 fileSize = fileAtlas->getSize();
-	c8* fileData = new c8[fileSize];
-	fileAtlas->read(fileData, fileSize);
-
-	spine::CTextureLoader textureLoader;
-	spine::Atlas atlas(fileData, fileSize, "SampleSpine2D", &textureLoader);
-	spine::AtlasAttachmentLoader attachmentLoader(&atlas);
-	spine::SkeletonJson json(&attachmentLoader);
-
-	delete[]fileData;
-
-	// drawable
-	io::IReadFile* fileJson = fs->createAndOpenFile("SampleSpine2D/spineboy-pro.json");
-
-	fileSize = fileJson->getSize();
-	fileData = new c8[fileSize];
-	fileJson->read(fileData, fileSize);
-
-	spine::SkeletonData* skeletonData = json.readSkeletonData(fileData);
-	if (skeletonData != NULL)
-	{
-		spine::CSkeletonDrawable drawable(skeletonData);
-	}
-	else
-	{
-		os::Printer::log(json.getError().buffer());
-	}
-
-	delete[]fileData;
+	spine::CSpineLoader spineLoader;
+	spineLoader.loadAtlas("SampleSpine2D/spineboy-pma.atlas", "SampleSpine2D");
+	spineLoader.loadSkeletonJson("SampleSpine2D/spineboy-pro.json");
 
 	scene->updateIndexSearchObject();
 }

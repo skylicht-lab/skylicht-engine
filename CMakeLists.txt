@@ -248,7 +248,6 @@ endif()
 # spine runtimes
 if (BUILD_SPINE_RUNTIMES)
 subdirs (Projects/SpineCpp)
-subdirs (Projects/Skylicht/SpineRuntimes)
 endif()
 
 # skylicht components
