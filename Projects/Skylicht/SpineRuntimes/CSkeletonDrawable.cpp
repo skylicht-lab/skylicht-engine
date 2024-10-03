@@ -25,18 +25,48 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CSkeletonDrawable.h"
 
-namespace Skylicht
+using namespace Skylicht;
+
+spine::SpineExtension* spine::getDefaultExtension() {
+	return new spine::DefaultSpineExtension();
+}
+
+namespace spine
 {
-	namespace Spine
+	CSkeletonDrawable::CSkeletonDrawable(spine::SkeletonData* skeletonData, spine::AnimationStateData* animationStateData) :
+		m_skeleton(NULL),
+		m_animationState(NULL),
+		m_usePremultipliedAlpha(false),
+		m_ownsAnimationStateData(false)
 	{
-		CSkeletonDrawable::CSkeletonDrawable()
-		{
+		m_skeleton = new spine::Skeleton(skeletonData);
 
-		}
+		m_ownsAnimationStateData = animationStateData == NULL;
+		if (m_ownsAnimationStateData)
+			animationStateData = new spine::AnimationStateData(skeletonData);
 
-		CSkeletonDrawable::~CSkeletonDrawable()
-		{
+		m_animationState = new spine::AnimationState(animationStateData);
+	}
 
-		}
+	CSkeletonDrawable::~CSkeletonDrawable()
+	{
+		if (m_ownsAnimationStateData)
+			delete m_animationState->getData();
+
+		delete m_animationState;
+		delete m_skeleton;
+	}
+
+	void CSkeletonDrawable::update(float delta, spine::Physics physics)
+	{
+		m_animationState->update(delta);
+		m_animationState->apply(*m_skeleton);
+		m_skeleton->update(delta);
+		m_skeleton->updateWorldTransform(physics);
+	}
+
+	void CSkeletonDrawable::render()
+	{
+
 	}
 }

@@ -8,7 +8,8 @@ compressExt = ["xml", "ttf", "otf", "txt",
                "png", "jpg",
                "smesh", "sanim",
                "mp3", "wav",
-               "font"]
+               "font",
+               "atlas","json"]
 compressResourceModel = ["dae", "obj", "mtl", "fbx"]
 compressTextureDDSExt = ["dds"]
 compressTexturePVRExt = ["pvr"]

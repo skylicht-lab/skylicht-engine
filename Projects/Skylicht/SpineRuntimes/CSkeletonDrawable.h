@@ -25,17 +25,26 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include <spine/spine.h>
+#include "Graphics2D/GUI/CGUIElement.h"
 
-namespace Skylicht
+namespace spine
 {
-	namespace Spine
+	class CSkeletonDrawable
 	{
-		class CSkeletonDrawable
-		{
-		public:
-			CSkeletonDrawable();
+	protected:
+		spine::Skeleton* m_skeleton;
+		spine::AnimationState* m_animationState;
 
-			virtual ~CSkeletonDrawable();
-		};
-	}
+		bool m_usePremultipliedAlpha;
+		bool m_ownsAnimationStateData;
+
+	public:
+		CSkeletonDrawable(spine::SkeletonData* skeletonData, spine::AnimationStateData* animationStateData = NULL);
+
+		virtual ~CSkeletonDrawable();
+
+		void update(float delta, spine::Physics physics);
+
+		void render();
+	};
 }

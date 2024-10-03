@@ -27,27 +27,26 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "TextureManager/CTextureManager.h"
 
-namespace Skylicht
+using namespace Skylicht;
+
+namespace spine
 {
-	namespace Spine
+	CTextureLoader::CTextureLoader()
 	{
-		CTextureLoader::CTextureLoader()
-		{
 
-		}
+	}
 
-		void CTextureLoader::load(spine::AtlasPage& page, const spine::String& path)
-		{
-			ITexture* texture = CTextureManager::getInstance()->getTexture(path.buffer());
-			if (!texture)
-				return;
-			page.texture = texture;
-		}
+	void CTextureLoader::load(spine::AtlasPage& page, const spine::String& path)
+	{
+		ITexture* texture = CTextureManager::getInstance()->getTexture(path.buffer());
+		if (!texture)
+			return;
+		page.texture = texture;
+	}
 
-		void CTextureLoader::unload(void* texture)
-		{
-			ITexture* t = (ITexture*)texture;
-			CTextureManager::getInstance()->removeTexture(t);
-		}
+	void CTextureLoader::unload(void* texture)
+	{
+		ITexture* t = (ITexture*)texture;
+		CTextureManager::getInstance()->removeTexture(t);
 	}
 }

@@ -1,5 +1,6 @@
 include_directories(
-	${SKYLICHT_ENGINE_SOURCE_DIR}/@project_path@/Source
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Samples/Spine2D/Source
+	${SKYLICHT_ENGINE_SOURCE_DIR}/Samples/SampleFW
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Main
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Include
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System
@@ -30,7 +31,9 @@ set(template_path ${SKYLICHT_ENGINE_PROJECT_DIR}/Main)
 file(GLOB_RECURSE application_source 
 	./Source/**.cpp 
 	./Source/**.c 
-	./Source/**.h)
+	./Source/**.h
+	../SampleFW/**.cpp
+	../SampleFW/**.h)
 
 setup_project_group("${application_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -47,24 +50,24 @@ if (BUILD_ANDROID)
 endif()
 
 if (BUILD_WINDOWS_STORE)
-	file(MAKE_DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/@project_path@)
-	file(MAKE_DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/@project_path@/Assets)
+	file(MAKE_DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/Spine2D)
+	file(MAKE_DIRECTORY ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/Spine2D/Assets)
 	
 	file(GLOB uwp_assets 
 		${template_path}/Platforms/UWP/Assets/**.*
 		${SKYLICHT_ENGINE_BIN_DIR}/**.zip)
 	
 	foreach(asset_file ${uwp_assets})
-		file(COPY "${asset_file}" DESTINATION ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/@project_path@/Assets)
+		file(COPY "${asset_file}" DESTINATION ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/Spine2D/Assets)
 	endforeach()
 
 	file(COPY ${template_path}/Platforms/UWP/Package.appxmanifest
 		DESTINATION 
-		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/@project_path@)
+		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/Spine2D)
 		
 	file(COPY ${template_path}/Platforms/UWP/TemporaryKey.pfx
 		DESTINATION 
-		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/@project_path@)
+		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/Spine2D)
 
 	file(GLOB_RECURSE platform_uwp_source 
 		${template_path}/Platforms/UWP/**.cpp 
@@ -72,7 +75,7 @@ if (BUILD_WINDOWS_STORE)
 		${template_path}/Platforms/UWP/**.h)
 	
 	# copy resource to generate prj folder
-	file(GLOB_RECURSE platform_uwp_asset ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/@project_path@/Assets/**.*)
+	file(GLOB_RECURSE platform_uwp_asset ${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/Spine2D/Assets/**.*)
 	add_source_group("${platform_uwp_asset}" "Assets")
 	
 	list (APPEND application_source ${platform_uwp_source})
@@ -152,31 +155,31 @@ if (MINGW OR CYGWIN)
 endif()
 
 if (BUILD_EMSCRIPTEN)
-	add_executable(@project_name@ 
+	add_executable(SampleSpine2D 
 		${application_source}
 		${template_path}/Platforms/Emscripten/MainWebGL.cpp
 	)
 elseif(BUILD_SDL)
-	add_executable(@project_name@ 
+	add_executable(SampleSpine2D 
 		${application_source}
 		${template_path}/Platforms/SDL2/MainSDL.cpp
 	)
 elseif(BUILD_LINUX)
-	add_executable(@project_name@ 
+	add_executable(SampleSpine2D 
 		${application_source}
 		${template_path}/Platforms/Linux/MainLinux.cpp
 	)
 elseif(BUILD_ANDROID)
-	add_library(@project_name@ SHARED ${application_source})
+	add_library(SampleSpine2D SHARED ${application_source})
 elseif (BUILD_WINDOWS_STORE)
-	add_executable(@project_name@
+	add_executable(SampleSpine2D
 		${application_source}
 		${platform_uwp_asset}
-		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/@project_path@/TemporaryKey.pfx
-		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/@project_path@/Package.appxmanifest
+		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/Spine2D/TemporaryKey.pfx
+		${SKYLICHT_ENGINE_SOURCE_DIR}/PrjUWP/Samples/Spine2D/Package.appxmanifest
 	)
 elseif (MSVC OR CYGWIN OR MINGW)
-	add_executable(@project_name@ WIN32
+	add_executable(SampleSpine2D WIN32
 		${application_source}
 		${template_path}/Platforms/Win32/Skylicht.rc
 	)
@@ -186,17 +189,17 @@ elseif (BUILD_MACOS)
 	set(angle_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/Angle/out/MacOS/Release/${CMAKE_OSX_ARCHITECTURES}")
 	file(GLOB dylib_files "${angle_lib_path}/*.dylib")
 
-	add_executable(@project_name@ 
+	add_executable(SampleSpine2D 
 		${application_source} 
 		${resources_files}
 		${dylib_files}
 	)
 	
-	set_target_properties(@project_name@ PROPERTIES MACOSX_BUNDLE TRUE)
+	set_target_properties(SampleSpine2D PROPERTIES MACOSX_BUNDLE TRUE)
 	
-	target_link_libraries(@project_name@ "-framework Cocoa")
+	target_link_libraries(SampleSpine2D "-framework Cocoa")
 		
-	message(STATUS "- Setup project: @project_name@")
+	message(STATUS "- Setup project: SampleSpine2D")
 	foreach(res_file ${resources_files})
 		file(RELATIVE_PATH res_path "${SKYLICHT_ENGINE_BIN_DIR}" ${res_file})
 		message(STATUS "  - Add resources: ${res_path}")
@@ -210,25 +213,25 @@ elseif (BUILD_MACOS)
 		source_group("Libs" FILES "${lib_file}")
 	endforeach()
 
-	add_custom_command(TARGET @project_name@ 
+	add_custom_command(TARGET SampleSpine2D 
 		POST_BUILD COMMAND 
 		${CMAKE_INSTALL_NAME_TOOL} -change ./libEGL.dylib @rpath/libEGL.dylib
-		$<TARGET_FILE:@project_name@>)
+		$<TARGET_FILE:SampleSpine2D>)
 
-	add_custom_command(TARGET @project_name@ 
+	add_custom_command(TARGET SampleSpine2D 
 		POST_BUILD COMMAND 
 		${CMAKE_INSTALL_NAME_TOOL} -change ./libGLESv2.dylib @rpath/libGLESv2.dylib
-		$<TARGET_FILE:@project_name@>)
+		$<TARGET_FILE:SampleSpine2D>)
 
-	set_target_properties(@project_name@ PROPERTIES
+	set_target_properties(SampleSpine2D PROPERTIES
 		MACOSX_RPATH ON
 		BUILD_WITH_INSTALL_RPATH 1
 		INSTALL_RPATH "@executable_path/../Frameworks"
 	)
 elseif (BUILD_IOS)
-	set(MACOSX_BUNDLE_EXECUTABLE_NAME @project_name@)
+	set(MACOSX_BUNDLE_EXECUTABLE_NAME SampleSpine2D)
 
-	set(APP_NAME "@project_name@")
+	set(APP_NAME "SampleSpine2D")
 	set(APP_BUNDLE_IDENTIFIER "com.team_name.project_name")
 	set(CODE_SIGN_IDENTITY "iPhone Developer")
 
@@ -246,14 +249,14 @@ elseif (BUILD_IOS)
 	set (framework_files "")
 	list (APPEND framework_files ${angle_framework_files})
 
-	add_executable(@project_name@ MACOSX_BUNDLE 
+	add_executable(SampleSpine2D MACOSX_BUNDLE 
 		${application_source}
 		${resources_files}
 		${platform_ios_resources}
 		${framework_files}
 	)
 	
-	message(STATUS "- Setup project: @project_name@")
+	message(STATUS "- Setup project: SampleSpine2D")
 	foreach(res_file ${resources_files})
 		file(RELATIVE_PATH res_path "${SKYLICHT_ENGINE_BIN_DIR}" ${res_file})
 		source_group("Bin" FILES "${res_file}")
@@ -265,46 +268,46 @@ elseif (BUILD_IOS)
 		set_source_files_properties(${lib_file} PROPERTIES XCODE_FILE_ATTRIBUTES "CodeSignOnCopy")
 	endforeach()
 
-	set_target_properties(@project_name@ PROPERTIES XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER ${APP_BUNDLE_IDENTIFIER})
-	set_target_properties(@project_name@ PROPERTIES XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY ${CODE_SIGN_IDENTITY})
-	set_target_properties(@project_name@ PROPERTIES XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY ${DEVICE_FAMILY})
-	set_target_properties(@project_name@ PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${template_path}/Platforms/IOS/plist.in")
+	set_target_properties(SampleSpine2D PROPERTIES XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER ${APP_BUNDLE_IDENTIFIER})
+	set_target_properties(SampleSpine2D PROPERTIES XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY ${CODE_SIGN_IDENTITY})
+	set_target_properties(SampleSpine2D PROPERTIES XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY ${DEVICE_FAMILY})
+	set_target_properties(SampleSpine2D PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${template_path}/Platforms/IOS/plist.in")
 	
 	# add assets icon
-	target_sources(@project_name@ PRIVATE "${template_path}/Platforms/IOS/Assets.xcassets")
+	target_sources(SampleSpine2D PRIVATE "${template_path}/Platforms/IOS/Assets.xcassets")
 	
 	list (APPEND platform_ios_resources "${template_path}/Platforms/IOS/Assets.xcassets")
-	set_target_properties(@project_name@ PROPERTIES RESOURCE "${resources_files} ${platform_ios_resources}")
+	set_target_properties(SampleSpine2D PROPERTIES RESOURCE "${resources_files} ${platform_ios_resources}")
 
 	# link framework
-	target_link_libraries(@project_name@ "-framework Foundation")
-	target_link_libraries(@project_name@ "-framework UIKit")
-	target_link_libraries(@project_name@ "-framework CoreGraphics")
-	target_link_libraries(@project_name@ "-framework Metal")
-	target_link_libraries(@project_name@ "-framework MetalKit")
-	target_link_libraries(@project_name@ "-framework AudioToolbox")
-	target_link_libraries(@project_name@ "-framework AVFAudio")
+	target_link_libraries(SampleSpine2D "-framework Foundation")
+	target_link_libraries(SampleSpine2D "-framework UIKit")
+	target_link_libraries(SampleSpine2D "-framework CoreGraphics")
+	target_link_libraries(SampleSpine2D "-framework Metal")
+	target_link_libraries(SampleSpine2D "-framework MetalKit")
+	target_link_libraries(SampleSpine2D "-framework AudioToolbox")
+	target_link_libraries(SampleSpine2D "-framework AVFAudio")
 else()
-	add_executable(@project_name@ ${application_source})
+	add_executable(SampleSpine2D ${application_source})
 endif()
 
-target_precompiled_header(@project_name@ ${template_path}/pch.cpp ${application_source})
+target_precompiled_header(SampleSpine2D ${template_path}/pch.cpp ${application_source})
 
 # Linker
 if (BUILD_ANDROID)
-	target_link_libraries(@project_name@ Client log)
+	target_link_libraries(SampleSpine2D Client log)
 else()
-	target_link_libraries(@project_name@ Client)
+	target_link_libraries(SampleSpine2D Client)
 endif()
 
 # Imgui
 if (BUILD_IMGUI)
-	target_link_libraries(@project_name@ Imgui)
+	target_link_libraries(SampleSpine2D Imgui)
 endif()
 
 # Spine runtimes
 if (BUILD_SPINE_RUNTIMES)
-	target_link_libraries(@project_name@ SpineRuntimes)
+	target_link_libraries(SampleSpine2D SpineRuntimes)
 endif()
 
 # Emscripten
@@ -314,18 +317,18 @@ if (BUILD_EMSCRIPTEN)
 	
 	message(STATUS "Setting compilation target to WASM")
 	set(CMAKE_EXECUTABLE_SUFFIX ".wasm.html")
-	set_target_properties(@project_name@ PROPERTIES LINK_FLAGS "-s USE_SDL=2 -s USE_WEBGL2=1 -s FORCE_FILESYSTEM=1 -s FETCH=1 -s ALLOW_MEMORY_GROWTH=1 -s EXPORTED_FUNCTIONS=['_main','_main_resize'] -s EXPORTED_RUNTIME_METHODS=['ccall'] --preload-file ./BuiltIn --shell-file ${template_path}/Platforms/Emscripten/Shell/shell.html --disable-shared -s WASM=1 -s BINARYEN_METHOD='native-wasm'")
+	set_target_properties(SampleSpine2D PROPERTIES LINK_FLAGS "-s USE_SDL=2 -s USE_WEBGL2=1 -s FORCE_FILESYSTEM=1 -s FETCH=1 -s ALLOW_MEMORY_GROWTH=1 -s EXPORTED_FUNCTIONS=['_main','_main_resize'] -s EXPORTED_RUNTIME_METHODS=['ccall'] --preload-file ./BuiltIn --shell-file ${template_path}/Platforms/Emscripten/Shell/shell.html --disable-shared -s WASM=1 -s BINARYEN_METHOD='native-wasm'")
 	
-	set(project_name @project_name@)
+	set(project_name SampleSpine2D)
 	configure_file(${template_path}/Platforms/Emscripten/Index.html ${SKYLICHT_ENGINE_BIN_DIR}/Index.html)
-	configure_file(${template_path}/Platforms/Emscripten/Index.html ${SKYLICHT_ENGINE_BIN_DIR}/@project_name@.html)
+	configure_file(${template_path}/Platforms/Emscripten/Index.html ${SKYLICHT_ENGINE_BIN_DIR}/SampleSpine2D.html)
 endif()
 
 #VLD
 if (BUILD_DEBUG_VLD)
 	file(GLOB_RECURSE vld_bin_files ${vld_dll_path})
 	foreach(vld_bin ${vld_bin_files})
-		add_custom_command(TARGET @project_name@ POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${vld_bin} $<TARGET_FILE_DIR:@project_name@>)
+		add_custom_command(TARGET SampleSpine2D POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${vld_bin} $<TARGET_FILE_DIR:SampleSpine2D>)
 	endforeach()
 endif()
 
@@ -333,9 +336,9 @@ endif()
 if (BUILD_SDL AND MSVC)
 	file(GLOB_RECURSE sdl_bin_files ${sdl_dll_path})
 	foreach(sdl_bin ${sdl_bin_files})
-		add_custom_command(TARGET @project_name@ POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${sdl_bin} $<TARGET_FILE_DIR:@project_name@>)
+		add_custom_command(TARGET SampleSpine2D POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${sdl_bin} $<TARGET_FILE_DIR:SampleSpine2D>)
 	endforeach()
 endif()
 
-set_target_properties(@project_name@ PROPERTIES VERSION ${SKYLICHT_VERSION})
-set_target_properties(@project_name@ PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+set_target_properties(SampleSpine2D PROPERTIES VERSION ${SKYLICHT_VERSION})
+set_target_properties(SampleSpine2D PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")

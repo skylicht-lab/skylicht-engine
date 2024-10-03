@@ -26,18 +26,15 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include <spine/spine.h>
 
-namespace Skylicht
+namespace spine
 {
-	namespace Spine
+	class CTextureLoader : public spine::TextureLoader
 	{
-		class CTextureLoader : public spine::TextureLoader
-		{
-		public:
-			CTextureLoader();
+	public:
+		CTextureLoader();
 
-			void load(spine::AtlasPage& page, const spine::String& path);
+		void load(spine::AtlasPage& page, const spine::String& path);
 
-			void unload(void* texture);
-		};
-	}
+		void unload(void* texture);
+	};
 }

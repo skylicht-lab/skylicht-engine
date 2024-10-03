@@ -39,6 +39,11 @@ if (BUILD_EXAMPLES AND BUILD_SKYLICHT_LIGHMAPPER)
 	
 	subdirs(Samples/SkinnedMesh)
 	subdirs(Samples/SkinnedMeshInstancing)
+	
+	if (BUILD_SPINE_RUNTIMES)
+	subdirs(Samples/Spine2D)
+	endif()
+	
 	subdirs(Samples/Sponza)
 	subdirs(Samples/SpringBone)
 	subdirs(Samples/TankScene)
