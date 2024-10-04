@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CEntityHandler.h"
 #include "CEntityHandleData.h"
+#include "CEntityChildsData.h"
 #include "CEntityManager.h"
 #include "GameObject/CGameObject.h"
 #include "GameObject/CZone.h"
@@ -104,9 +105,17 @@ namespace Skylicht
 		{
 			transformData->Name = name;
 			transformData->ParentIndex = parent->getIndex();
+
+			CEntityChildsData* childs = GET_ENTITY_DATA(parent, CEntityChildsData);
+			if (childs == NULL)
+				childs = parent->addData<CEntityChildsData>();
+
+			childs->Childs.push_back(entity);
 		}
 
-		m_entities.push_back(entity);
+		if (parent == NULL)
+			m_entities.push_back(entity);
+
 		return entity;
 	}
 
@@ -118,6 +127,8 @@ namespace Skylicht
 		{
 			if (m_entities[i] == entity)
 			{
+				removeChilds(entity);
+
 				m_entities.erase(i);
 				entityManager->removeEntity(entity);
 			}
@@ -134,8 +145,28 @@ namespace Skylicht
 			return;
 
 		for (int i = (int)m_entities.size() - 1; i >= 0; i--)
-			entityManager->removeEntity(m_entities[i]);
+		{
+			CEntity* entity = m_entities[i];
+
+			removeChilds(entity);
+			entityManager->removeEntity(entity);
+		}
+
 		m_entities.clear();
+	}
+
+	void CEntityHandler::removeChilds(CEntity* entity)
+	{
+		CEntityManager* entityManager = m_gameObject->getEntityManager();
+		CEntityChildsData* childs = GET_ENTITY_DATA(entity, CEntityChildsData);
+
+		if (childs)
+		{
+			u32 childCount = childs->Childs.size();
+			for (u32 i = 0; i < childCount; i++)
+				entityManager->removeEntity(childs->Childs[i]);
+			childs->Childs.clear();
+		}
 	}
 
 	void CEntityHandler::setEntities(CEntity** entities, u32 count)

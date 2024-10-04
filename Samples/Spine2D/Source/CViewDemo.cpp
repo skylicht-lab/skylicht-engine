@@ -111,7 +111,7 @@ void CViewDemo::renderSpine(CGUIElement* element)
 		spine::Bone* crosshair = skeleton->findBone("crosshair");
 		if (crosshair)
 		{
-			float x = 200.0f, y = 200;
+			float x = 200.0f, y = 200.0f;
 			crosshair->setX(x);
 			crosshair->setY(y);
 		}

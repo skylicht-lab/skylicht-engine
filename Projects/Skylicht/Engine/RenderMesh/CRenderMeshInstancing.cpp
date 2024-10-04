@@ -16,7 +16,7 @@ namespace Skylicht
 {
 	ACTIVATOR_REGISTER(CRenderMeshInstancing);
 
-	CATEGORY_COMPONENT(CRenderMeshInstancing, "Mesh", "Renderer/Instancing");
+	CATEGORY_COMPONENT(CRenderMeshInstancing, "Render Mesh Instancing", "Renderer");
 
 	CRenderMeshInstancing::CRenderMeshInstancing() :
 		m_root(NULL),
@@ -220,6 +220,23 @@ namespace Skylicht
 
 		object->autoRelease(new CFilePathProperty(object, "mesh", m_meshFile.c_str(), meshExts));
 		object->autoRelease(new CFilePathProperty(object, "material", m_materialFile.c_str(), materialExts));
+
+		// save entities transform
+		CArraySerializable* entities = new CArraySerializable("Entities");
+		object->addProperty(entities);
+		object->autoRelease(entities);
+
+		int numPrimities = (int)m_entities.size();
+		for (int i = 0; i < numPrimities; i++)
+		{
+			CMatrixProperty* transformData = new CMatrixProperty(entities, "transform");
+			entities->autoRelease(transformData);
+
+			// get world transform data
+			CWorldTransformData* world = GET_ENTITY_DATA(m_entities[i], CWorldTransformData);
+			transformData->set(world->Relative);
+		}
+
 		return object;
 	}
 
@@ -263,6 +280,28 @@ namespace Skylicht
 
 			if (materials.size() > 0)
 				initMaterial(materials);
+		}
+
+		// load entities
+		CArraySerializable* entities = (CArraySerializable*)object->getProperty("Entities");
+		if (entities == NULL)
+			return;
+
+		int numEntities = entities->getElementCount();
+
+		removeAllEntities();
+
+		for (int i = 0; i < numEntities; i++)
+		{
+			CMatrixProperty* transformData = (CMatrixProperty*)entities->getElement(i);
+			if (transformData == NULL)
+				return;
+
+			CEntity* entity = spawn();
+
+			// set transform
+			CWorldTransformData* world = GET_ENTITY_DATA(entity, CWorldTransformData);
+			world->Relative = transformData->get();
 		}
 	}
 

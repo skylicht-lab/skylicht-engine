@@ -5,7 +5,7 @@ MIT License
 Copyright (c) 2022 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -24,52 +24,20 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Components/CComponentSystem.h"
-#include "CEntity.h"
+#include "Entity/IEntityData.h"
 
 namespace Skylicht
 {
-	class SKYLICHT_API CEntityHandler : public CComponentSystem
+	class SKYLICHT_API CEntityChildsData : public IEntityData
 	{
-	protected:
-		core::array<CEntity*> m_entities;
+	public:
+		core::array<CEntity*> Childs;
 
 	public:
-		CEntityHandler();
+		CEntityChildsData();
 
-		virtual ~CEntityHandler();
-
-		virtual void initComponent();
-
-		virtual void updateComponent();
-
-		CEntity* createEntity();
-
-		CEntity* createEntity(CEntity* parent);
-
-		virtual CEntity* spawn()
-		{
-			return NULL;
-		}
-
-		void removeEntity(CEntity* entity);
-
-		void removeAllEntities();
-
-		core::array<CEntity*>& getEntities()
-		{
-			return m_entities;
-		}
-
-		inline int getEntityCount()
-		{
-			return (int)m_entities.size();
-		}
-
-	protected:
-
-		void setEntities(CEntity** entities, u32 count);
-
-		void removeChilds(CEntity* entity);
+		virtual ~CEntityChildsData();
 	};
+
+	DECLARE_PUBLIC_DATA_TYPE_INDEX(CEntityChildsData);
 }
