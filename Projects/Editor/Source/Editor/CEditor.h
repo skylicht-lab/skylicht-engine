@@ -152,7 +152,11 @@ namespace Skylicht
 
 			void OnMenuQuit(GUI::CBase* item);
 
+			void OnMenuNewScene(GUI::CBase* item);
+
 			void OnMenuSave(GUI::CBase* item);
+
+			void OnMenuSaveAs(GUI::CBase* item);
 
 			void OnCommandLogo(GUI::CBase* item);
 
@@ -177,9 +181,9 @@ namespace Skylicht
 		public:
 
 			void onSaveScene();
-			
+
 			void onSaveGUICanvas();
-			
+
 			void showProjectSetting();
 
 			void showGoogleMap();

@@ -155,9 +155,42 @@ namespace Skylicht
 			}
 		}
 
-		void CSceneController::doLoadScene(const std::string& path)
+		void CSceneController::newScene()
 		{
-			m_scenePath = path;
+			bool modify = true;
+			if (modify)
+			{
+				GUI::CMessageBox* msgBox = new GUI::CMessageBox(m_canvas, GUI::CMessageBox::YesNoCancel);
+				msgBox->setMessage(L"Do you want to save current scene?", m_scene->getName());
+				msgBox->OnYes = [&](GUI::CBase* button) {
+					if (m_scenePath.empty() == true)
+					{
+						std::string assetFolder = CAssetManager::getInstance()->getAssetFolder();
+						GUI::COpenSaveDialog* dialog = new GUI::COpenSaveDialog(m_canvas, GUI::COpenSaveDialog::Save, assetFolder.c_str(), assetFolder.c_str(), "scene;*");
+						dialog->OnSave = [&](std::string path)
+							{
+								save(path.c_str());
+							};
+					}
+					else
+					{
+						save(m_scenePath.c_str());
+						doNewScene();
+					}
+					};
+				msgBox->OnNo = [&](GUI::CBase* button) {
+					doNewScene();
+					};
+			}
+			else
+			{
+				doNewScene();
+			}
+		}
+
+		void CSceneController::doNewScene()
+		{
+			m_scenePath.clear();
 
 			// clear current scene gui
 			CSelection::getInstance()->clear();
@@ -181,6 +214,49 @@ namespace Skylicht
 				m_spaceHierarchy->deleteHierarchyNode();
 				m_hierachyNode = NULL;
 			}
+
+			deleteScene();
+
+			if (m_spaceScene == NULL)
+			{
+				return;
+			}
+
+			m_spaceScene->initDefaultScene();
+		}
+
+		void CSceneController::doLoadScene(const std::string& path)
+		{
+			// clear current scene gui
+			CSelection::getInstance()->clear();
+			CSelecting::getInstance()->end();
+
+			CPropertyController::getInstance()->setProperty(NULL);
+
+			CHandles::getInstance()->end();
+			CHandles::getInstance()->setNullRenderer();
+
+			m_gizmos = NULL;
+
+			if (m_history)
+			{
+				delete m_history;
+				m_history = NULL;
+			}
+
+			if (m_spaceHierarchy != NULL)
+			{
+				m_spaceHierarchy->deleteHierarchyNode();
+				m_hierachyNode = NULL;
+			}
+
+			if (m_spaceScene == NULL)
+			{
+				deleteScene();
+				return;
+			}
+
+			m_scenePath = path;
 
 			// create new scene
 			m_scene = m_spaceScene->initNullScene();
@@ -945,6 +1021,13 @@ namespace Skylicht
 					selection->unSelect(entity);
 					propertyController->setProperty(NULL);
 				}
+			}
+			else
+			{
+				// remove last observer
+				CSelectObject* selectedObject = selection->getLastSelected();
+				if (selectedObject != NULL)
+					selectedObject->removeAllObserver();
 			}
 		}
 

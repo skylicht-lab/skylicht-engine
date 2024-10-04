@@ -366,7 +366,7 @@ namespace Skylicht
 			root->setDock(EGUIDock::NoDock);
 			root->setRect(core::rectf(0.0f, 0.0f, 1920.0f, 1080.0f));
 
-			// camera			
+			// camera
 			camObj = zone->createEmptyObject();
 			camObj->setName(L"GUICamera");
 			camObj->setEditorObject(true);

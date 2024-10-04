@@ -376,6 +376,8 @@ namespace Skylicht
 
 			GUI::CMenuItem* file = m_menuBar->addItem(L"File");
 			submenu = file->getMenu();
+			submenu->addItem(L"New scene");
+			submenu->addSeparator();
 			submenu->addItem(L"Save", GUI::ESystemIcon::Save, L"Ctrl + S");
 			submenu->addItem(L"Save As");
 			submenu->OnOpen = BIND_LISTENER(&CEditor::OnOpenMenuFile, this);
@@ -1043,6 +1045,11 @@ namespace Skylicht
 			}
 		}
 
+		void CEditor::OnMenuNewScene(GUI::CBase* item)
+		{
+			CSceneController::getInstance()->newScene();
+		}
+
 		void CEditor::OnMenuSave(GUI::CBase* item)
 		{
 			bool saveScene = true;
@@ -1065,6 +1072,50 @@ namespace Skylicht
 			else if (saveCanvas)
 			{
 				onSaveGUICanvas();
+			}
+		}
+
+		void CEditor::OnMenuSaveAs(GUI::CBase* item)
+		{
+			bool saveScene = true;
+			bool saveCanvas = false;
+
+			CSelectObject* selectObject = CSelection::getInstance()->getLastSelected();
+			if (selectObject != NULL)
+			{
+				if (selectObject->getType() == CSelectObject::GUIElement)
+				{
+					saveCanvas = true;
+					saveScene = false;
+				}
+			}
+
+			std::string assetFolder = CAssetManager::getInstance()->getAssetFolder();
+
+			if (saveScene)
+			{
+				GUI::COpenSaveDialog* dialog = new GUI::COpenSaveDialog(m_canvas,
+					GUI::COpenSaveDialog::SaveAs,
+					assetFolder.c_str(),
+					assetFolder.c_str(),
+					"scene;*");
+				dialog->OnSave = [&](std::string path)
+					{
+						CSceneController::getInstance()->save(path.c_str());
+					};
+			}
+			else if (saveCanvas)
+			{
+				GUI::COpenSaveDialog* dialog = new GUI::COpenSaveDialog(m_canvas,
+					GUI::COpenSaveDialog::Save,
+					assetFolder.c_str(),
+					assetFolder.c_str(),
+					"gui;*"
+				);
+				dialog->OnSave = [&](std::string path)
+					{
+						CGUIDesignController::getInstance()->save(path.c_str());
+					};
 			}
 		}
 
@@ -1110,9 +1161,9 @@ namespace Skylicht
 					"gui;*"
 				);
 
-				dialog->OnSave = [&, controller = guiDesignController](std::string path)
+				dialog->OnSave = [&](std::string path)
 					{
-						controller->save(path.c_str());
+						CGUIDesignController::getInstance()->save(path.c_str());
 					};
 			}
 			else
@@ -1120,7 +1171,7 @@ namespace Skylicht
 				guiDesignController->save(fileName.c_str());
 			}
 		}
-	
+
 		void CEditor::OnCommandLogo(GUI::CBase* item)
 		{
 			GUI::CMenuItem* menuItem = dynamic_cast<GUI::CMenuItem*>(item);
@@ -1152,19 +1203,17 @@ namespace Skylicht
 			GUI::CMenuItem* menuItem = dynamic_cast<GUI::CMenuItem*>(item);
 			const std::wstring& label = menuItem->getLabel();
 
-			if (label == L"Save")
+			if (label == L"New scene")
+			{
+				OnMenuNewScene(item);
+			}
+			else if (label == L"Save")
 			{
 				OnMenuSave(item);
 			}
 			else if (label == L"Save As")
 			{
-				std::string assetFolder = CAssetManager::getInstance()->getAssetFolder();
-
-				GUI::COpenSaveDialog* dialog = new GUI::COpenSaveDialog(m_canvas, GUI::COpenSaveDialog::SaveAs, assetFolder.c_str(), assetFolder.c_str(), "scene;*");
-				dialog->OnSave = [&, controller = CSceneController::getInstance()](std::string path)
-					{
-						controller->save(path.c_str());
-					};
+				OnMenuSaveAs(item);
 			}
 		}
 
