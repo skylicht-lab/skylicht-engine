@@ -78,16 +78,13 @@ namespace spine
 		if (renderer == NULL)
 			return;
 
-		CCanvas* canvas = insideElement->getCanvas();
-		float canvasHeight = canvas->getRootElement()->getHeight();
-
 		// move to center of element
 		core::vector3df pos = insideElement->getAbsoluteTransform().getTranslation();
-		pos.X = pos.X + insideElement->getWidth() * 0.5f + m_drawOffset.X;
-		pos.Y = pos.Y + insideElement->getHeight() * 0.5f + m_drawOffset.Y;
+		pos.X = pos.X + m_drawOffset.X;
+		pos.Y = pos.Y + m_drawOffset.Y;
 
 		// set position (flip Y)
-		m_skeleton->setPosition(pos.X, canvasHeight - pos.Y);
+		m_skeleton->setPosition(pos.X, pos.Y);
 
 		// flush the current buffer
 		CGraphics2D* graphics = CGraphics2D::getInstance();
@@ -115,8 +112,7 @@ namespace spine
 				S3DVertex* v = &vertices[ii >> 1];
 
 				v->Pos.X = positions[ii];
-				// warning: flip Y
-				v->Pos.Y = canvasHeight - positions[ii + 1];
+				v->Pos.Y = positions[ii + 1];
 				v->Pos.Z = 0.0f;
 
 				v->TCoords.X = uvs[ii];

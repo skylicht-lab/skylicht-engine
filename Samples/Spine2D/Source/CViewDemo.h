@@ -26,6 +26,8 @@ public:
 
 protected:
 
-	void renderSpine(CGUIElement *element);
+	void renderSpine(CGUIElement* element);
+
+	void onGUI();
 
 };
