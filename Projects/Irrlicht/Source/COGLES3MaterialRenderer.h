@@ -116,10 +116,7 @@ namespace irr
 			COGLES3Driver* Driver;
 			IShaderConstantSetCallBack* CallBack;
 
-			bool Alpha;
-			bool Blending;
-			bool FixedBlending;
-			bool AlphaTest;
+			E_MATERIAL_TYPE BaseMaterial;
 
 			struct SUniformInfo
 			{

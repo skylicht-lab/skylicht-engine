@@ -44,27 +44,11 @@ COpenGLSLMaterialRenderer::COpenGLSLMaterialRenderer(video::COpenGLDriver* drive
 		IShaderConstantSetCallBack* callback,
 		E_MATERIAL_TYPE baseMaterial,
 		s32 userData)
-	: Driver(driver), CallBack(callback), Alpha(false), Blending(false), FixedBlending(false), AlphaTest(false), Program(0), UserData(userData)
+	: Driver(driver), CallBack(callback), BaseMaterial(baseMaterial), Program(0), UserData(userData)
 {
 	#ifdef _DEBUG
 	setDebugName("COpenGLSLMaterialRenderer");
 	#endif
-
-	switch (baseMaterial)
-	{
-	case EMT_TRANSPARENT_VERTEX_ALPHA:
-	case EMT_TRANSPARENT_ALPHA_CHANNEL:
-		Alpha = true;
-		break;
-	case EMT_TRANSPARENT_ADD_COLOR:
-		FixedBlending = true;
-		break;	
-	case EMT_TRANSPARENT_ALPHA_CHANNEL_REF:
-		AlphaTest = true;
-		break;
-	default:
-		break;
-	}
 
 	if (CallBack)
 		CallBack->grab();
@@ -81,24 +65,8 @@ COpenGLSLMaterialRenderer::COpenGLSLMaterialRenderer(video::COpenGLDriver* drive
 COpenGLSLMaterialRenderer::COpenGLSLMaterialRenderer(COpenGLDriver* driver,
 					IShaderConstantSetCallBack* callback,
 					E_MATERIAL_TYPE baseMaterial, s32 userData)
-: Driver(driver), CallBack(callback), Alpha(false), Blending(false), FixedBlending(false), AlphaTest(false), Program(0), UserData(userData)
+: Driver(driver), CallBack(callback), BaseMaterial(baseMaterial), Program(0), UserData(userData)
 {
-	switch (baseMaterial)
-	{
-	case EMT_TRANSPARENT_VERTEX_ALPHA:
-	case EMT_TRANSPARENT_ALPHA_CHANNEL:
-		Alpha = true;
-		break;
-	case EMT_TRANSPARENT_ADD_COLOR:
-		FixedBlending = true;
-		break;	
-	case EMT_TRANSPARENT_ALPHA_CHANNEL_REF:
-		AlphaTest = true;
-		break;
-	default:
-		break;
-	}
-
 	if (CallBack)
 		CallBack->grab();
 }
@@ -211,27 +179,38 @@ void COpenGLSLMaterialRenderer::OnSetMaterial(const video::SMaterial& material,
 			Driver->extGlUseProgram(Program);		
 	}
 
-	Driver->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
+	Driver->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);	
 
-	if (Alpha)
+	if (BaseMaterial == EMT_TRANSPARENT_VERTEX_ALPHA ||
+		BaseMaterial == EMT_TRANSPARENT_ALPHA_CHANNEL)
 	{
 		bridgeCalls->setBlend(true);
 		
 		// C = (src a) x S + (1 - src a) x D
-		bridgeCalls->setBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);		
-
-		// multiply
-		// C = (0) x S + S x D
-		// bridgeCalls->setBlendFunc(GL_ZERO, GL_SRC_COLOR);
+		bridgeCalls->setBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
-	else if (FixedBlending)
+	else if (BaseMaterial == EMT_TRANSPARENT_MULTIPLY_COLOR)
+	{
+		bridgeCalls->setBlend(true);
+
+		// C = (0) x S + S x D
+		bridgeCalls->setBlendFunc(GL_ZERO, GL_SRC_COLOR);
+	}
+	else if (BaseMaterial == EMT_TRANSPARENT_SCREEN_COLOR)
 	{
 		bridgeCalls->setBlend(true);
 
 		// C = (1) x S + (1 - S) x D
-		bridgeCalls->setBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_COLOR);		
+		bridgeCalls->setBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_COLOR);
 	}
-	else if (Blending)
+	else if (BaseMaterial == EMT_TRANSPARENT_ADD_COLOR)
+	{
+		bridgeCalls->setBlend(true);
+
+		// C = (src a) x S + (1) x D
+		bridgeCalls->setBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	}
+	else if (BaseMaterial == EMT_TRANSPARENT_ALPHA_CHANNEL || BaseMaterial == EMT_TRANSPARENT_VERTEX_ALPHA)
 	{
 		E_BLEND_FACTOR srcRGBFact,dstRGBFact,srcAlphaFact,dstAlphaFact;
 		E_MODULATE_FUNC modulate;
@@ -254,7 +233,7 @@ void COpenGLSLMaterialRenderer::OnSetMaterial(const video::SMaterial& material,
 
 		bridgeCalls->setBlend(true);
 	}
-	else if (AlphaTest)
+	else if (BaseMaterial == EMT_TRANSPARENT_ALPHA_CHANNEL_REF)
 	{
 		bridgeCalls->setAlphaTest(true);
 		bridgeCalls->setAlphaFunc(GL_GREATER, 0.5f);
@@ -269,7 +248,7 @@ void COpenGLSLMaterialRenderer::OnSetMaterial(const video::SMaterial& material,
 		CallBack->OnSetMaterial(material);
 
 	if (Program)
-		Driver->setActiveGLSLProgram(Program);	
+		Driver->setActiveGLSLProgram(Program);
 	else
 		Driver->setActiveGLSLProgram(0);
 }
@@ -287,7 +266,15 @@ void COpenGLSLMaterialRenderer::OnUnsetMaterial()
 //! Returns if the material is transparent.
 bool COpenGLSLMaterialRenderer::isTransparent() const
 {
-	return (Alpha || Blending || FixedBlending);
+	if (BaseMaterial == EMT_TRANSPARENT_ALPHA_CHANNEL ||
+		BaseMaterial == EMT_TRANSPARENT_ADD_COLOR ||
+		BaseMaterial == EMT_TRANSPARENT_VERTEX_ALPHA ||
+		BaseMaterial == EMT_TRANSPARENT_MULTIPLY_COLOR ||
+		BaseMaterial == EMT_TRANSPARENT_SCREEN_COLOR)
+	{
+		return true;
+	}
+	return false;
 }
 
 

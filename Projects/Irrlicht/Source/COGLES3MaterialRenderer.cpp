@@ -43,27 +43,11 @@ namespace irr
 			IShaderConstantSetCallBack* callback,
 			E_MATERIAL_TYPE baseMaterial,
 			s32 userData)
-			: Driver(driver), CallBack(callback), Alpha(false), Blending(false), FixedBlending(false), AlphaTest(false), Program(0), UserData(userData)
+			: Driver(driver), CallBack(callback), BaseMaterial(baseMaterial), Program(0), UserData(userData)
 		{
 #ifdef _DEBUG
 			setDebugName("COGLES3MaterialRenderer");
 #endif
-
-			switch (baseMaterial)
-			{
-			case EMT_TRANSPARENT_VERTEX_ALPHA:
-			case EMT_TRANSPARENT_ALPHA_CHANNEL:
-				Alpha = true;
-				break;
-			case EMT_TRANSPARENT_ADD_COLOR:
-				FixedBlending = true;
-				break;
-			case EMT_TRANSPARENT_ALPHA_CHANNEL_REF:
-				AlphaTest = true;
-				break;
-			default:
-				break;
-			}
 
 			if (CallBack)
 				CallBack->grab();
@@ -80,24 +64,8 @@ namespace irr
 		COGLES3MaterialRenderer::COGLES3MaterialRenderer(COGLES3Driver* driver,
 			IShaderConstantSetCallBack* callback,
 			E_MATERIAL_TYPE baseMaterial, s32 userData)
-			: Driver(driver), CallBack(callback), Alpha(false), Blending(false), FixedBlending(false), AlphaTest(false), Program(0), UserData(userData)
+			: Driver(driver), CallBack(callback), BaseMaterial(baseMaterial), Program(0), UserData(userData)
 		{
-			switch (baseMaterial)
-			{
-			case EMT_TRANSPARENT_VERTEX_ALPHA:
-			case EMT_TRANSPARENT_ALPHA_CHANNEL:
-				Alpha = true;
-				break;
-			case EMT_TRANSPARENT_ADD_COLOR:
-				FixedBlending = true;
-				break;
-			case EMT_TRANSPARENT_ALPHA_CHANNEL_REF:
-				AlphaTest = true;
-				break;
-			default:
-				break;
-			}
-
 			if (CallBack)
 				CallBack->grab();
 		}
@@ -210,17 +178,28 @@ namespace irr
 
 			Driver->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
 
-			if (Alpha)
+			if (BaseMaterial == EMT_TRANSPARENT_VERTEX_ALPHA ||
+				BaseMaterial == EMT_TRANSPARENT_ALPHA_CHANNEL)
 			{
 				bridgeCalls->setBlend(true);
 				bridgeCalls->setBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			}
-			else if (FixedBlending)
+			else if (BaseMaterial == EMT_TRANSPARENT_MULTIPLY_COLOR)
 			{
-				bridgeCalls->setBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_COLOR);
 				bridgeCalls->setBlend(true);
+				bridgeCalls->setBlendFunc(GL_ZERO, GL_SRC_COLOR);
 			}
-			else if (Blending)
+			else if (BaseMaterial == EMT_TRANSPARENT_SCREEN_COLOR)
+			{
+				bridgeCalls->setBlend(true);
+				bridgeCalls->setBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_COLOR);
+			}
+			else if (BaseMaterial == EMT_TRANSPARENT_ADD_COLOR)
+			{
+				bridgeCalls->setBlend(true);
+				bridgeCalls->setBlendFunc(GL_SRC_ALPHA, GL_ONE);
+			}
+			else if (BaseMaterial == EMT_TRANSPARENT_ALPHA_CHANNEL || BaseMaterial == EMT_TRANSPARENT_VERTEX_ALPHA)
 			{
 				E_BLEND_FACTOR srcRGBFact, dstRGBFact, srcAlphaFact, dstAlphaFact;
 				E_MODULATE_FUNC modulate;
@@ -239,7 +218,7 @@ namespace irr
 
 				bridgeCalls->setBlend(true);
 			}
-			else if (AlphaTest)
+			else if (BaseMaterial == EMT_TRANSPARENT_ALPHA_CHANNEL_REF)
 			{
 				bridgeCalls->setAlphaTest(true);
 				bridgeCalls->setAlphaFunc(GL_GREATER, 0.5f);
@@ -272,7 +251,15 @@ namespace irr
 		//! Returns if the material is transparent.
 		bool COGLES3MaterialRenderer::isTransparent() const
 		{
-			return (Alpha || Blending || FixedBlending);
+			if (BaseMaterial == EMT_TRANSPARENT_ALPHA_CHANNEL ||
+				BaseMaterial == EMT_TRANSPARENT_ADD_COLOR ||
+				BaseMaterial == EMT_TRANSPARENT_VERTEX_ALPHA ||
+				BaseMaterial == EMT_TRANSPARENT_MULTIPLY_COLOR ||
+				BaseMaterial == EMT_TRANSPARENT_SCREEN_COLOR)
+			{
+				return true;
+			}
+			return false;
 		}
 
 

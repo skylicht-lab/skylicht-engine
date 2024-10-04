@@ -52,7 +52,8 @@ namespace Skylicht
 		m_shadow(true),
 		m_shadowDepthShader(NULL),
 		m_shadowDistanceShader(NULL),
-		m_vertexType(video::EVT_UNKNOWN)
+		m_vertexType(video::EVT_UNKNOWN),
+		m_baseShader(EMT_SOLID)
 	{
 		// builtin callback
 		addCallback<CShaderLighting>();
@@ -211,6 +212,10 @@ namespace Skylicht
 			return EMT_SOLID;
 		else if (type == "TRANSPARENT_ADD_COLOR")
 			return EMT_TRANSPARENT_ADD_COLOR;
+		else if (type == "EMT_TRANSPARENT_MULTIPLY_COLOR")
+			return EMT_TRANSPARENT_MULTIPLY_COLOR;
+		else if (type == "EMT_TRANSPARENT_SCREEN_COLOR")
+			return EMT_TRANSPARENT_SCREEN_COLOR;
 		else if (type == "TRANSPARENT_ALPHA_CHANNEL")
 			return EMT_TRANSPARENT_ALPHA_CHANNEL;
 

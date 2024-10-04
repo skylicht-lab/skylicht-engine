@@ -528,7 +528,9 @@ bool CD3D11MaterialRenderer::isTransparent() const
 {
 	if (BaseMaterial == EMT_TRANSPARENT_ALPHA_CHANNEL ||
 		BaseMaterial == EMT_TRANSPARENT_ADD_COLOR ||
-		BaseMaterial == EMT_TRANSPARENT_VERTEX_ALPHA)
+		BaseMaterial == EMT_TRANSPARENT_VERTEX_ALPHA ||
+		BaseMaterial == EMT_TRANSPARENT_MULTIPLY_COLOR ||
+		BaseMaterial == EMT_TRANSPARENT_SCREEN_COLOR)
 	{
 		return true;
 	}
@@ -552,6 +554,7 @@ void CD3D11MaterialRenderer::OnSetMaterial(const video::SMaterial& material, con
 			blendDesc.RenderTarget[0].BlendEnable = FALSE;
 			break;
 		case EMT_TRANSPARENT_ALPHA_CHANNEL:
+			// dst.rgb = src.rgb * src.a + dst.rgb * (1 – src.a)
 			blendDesc.RenderTarget[0].BlendEnable = TRUE;
 			blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
 			blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
@@ -561,15 +564,30 @@ void CD3D11MaterialRenderer::OnSetMaterial(const video::SMaterial& material, con
 			blendDesc.RenderTarget[0].BlendEnable = FALSE;
 			break;
 		case EMT_TRANSPARENT_ADD_COLOR:
+			// dst.rgb = src.rgb * src.a + dst.rgb * 1.0
 			blendDesc.RenderTarget[0].BlendEnable = TRUE;
-			blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
-			blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_COLOR;
+			blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+			blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
 			blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
 			break;
 		case EMT_TRANSPARENT_VERTEX_ALPHA:
 			blendDesc.RenderTarget[0].BlendEnable = TRUE;
 			blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
 			blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+			blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+			break;
+		case EMT_TRANSPARENT_MULTIPLY_COLOR:
+			// dst.rgb = src.rgb * dst.rgb + dst.rgb * 0
+			blendDesc.RenderTarget[0].BlendEnable = TRUE;
+			blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_DEST_COLOR;
+			blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ZERO;
+			blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+			break;
+		case EMT_TRANSPARENT_SCREEN_COLOR:
+			// dst.rgb = src.rgb * 1.0 + dst.rgb * (white – src.rgb)
+			blendDesc.RenderTarget[0].BlendEnable = TRUE;
+			blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+			blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_COLOR;
 			blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
 			break;
 		default:

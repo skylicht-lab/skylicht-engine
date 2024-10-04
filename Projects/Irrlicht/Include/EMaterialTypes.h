@@ -58,8 +58,8 @@ namespace video
 		EMT_TRANSPARENT_VERTEX_ALPHA,
 
 		//! Skylicht engine update
-		EMT_TRANSPARENT_MULTIPLY,
-		EMT_TRANSPARENT_SCREEN,
+		EMT_TRANSPARENT_MULTIPLY_COLOR,
+		EMT_TRANSPARENT_SCREEN_COLOR,
 
 		//! This value is not used. It only forces this enumeration to compile to 32 bit.
 		EMT_FORCE_32BIT = 0x7fffffff
