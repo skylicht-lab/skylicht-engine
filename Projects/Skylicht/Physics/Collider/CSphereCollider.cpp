@@ -57,7 +57,7 @@ namespace Skylicht
 		CObjectSerializable* CSphereCollider::createSerializable()
 		{
 			CObjectSerializable* obj = CComponentSystem::createSerializable();
-			obj->addProperty(new CFloatProperty(obj, "radius", m_radius));
+			obj->autoRelease(new CFloatProperty(obj, "radius", m_radius));
 			return obj;
 		}
 

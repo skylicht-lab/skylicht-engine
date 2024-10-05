@@ -93,8 +93,7 @@ namespace Skylicht
 		color->setUIHeader("Default Material");
 		object->autoRelease(color);
 
-		std::vector<std::string> exts = { "mat" };
-		CFilePathProperty* material = new CFilePathProperty(object, "material", m_materialPath.c_str(), exts);
+		CFilePathProperty* material = new CFilePathProperty(object, "material", m_materialPath.c_str(), CMaterialManager::getMaterialExts());
 		material->setUIHeader("Custom Material");
 		object->autoRelease(material);
 

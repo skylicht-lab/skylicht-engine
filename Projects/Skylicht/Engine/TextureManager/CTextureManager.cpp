@@ -39,6 +39,21 @@ namespace Skylicht
 		}
 	}
 
+	std::vector<std::string> CTextureManager::getTextureExts()
+	{
+		std::vector<std::string> textureExts = { "png", "jpg", "jpeg", "tga", "bmp" };
+		return textureExts;
+	}
+
+	bool CTextureManager::isTextureExt(const char* ext)
+	{
+		std::vector<std::string> listExt = getTextureExts();
+		for (auto s : listExt)
+			if (s == ext)
+				return true;
+		return false;
+	}
+
 	void CTextureManager::registerTexture(ITexture* tex)
 	{
 		if (tex == NULL)
@@ -184,7 +199,7 @@ namespace Skylicht
 #else
 			CStringImp::replacePathExt(ansiPath, ".tga");
 #endif
-		}
+	}
 		else if (driver->getDriverType() == video::EDT_DIRECT3D11 || driver->getDriverType() == video::EDT_OPENGL)
 		{
 			CStringImp::replacePathExt(ansiPath, ".dds");
@@ -220,7 +235,7 @@ namespace Skylicht
 		}
 
 		return true;
-	}
+}
 
 	ITexture* CTextureManager::getTexture(const char* filename, const std::vector<std::string>& textureFolder)
 	{
@@ -300,7 +315,7 @@ namespace Skylicht
 #else
 			CStringImp::replacePathExt(ansiPath, ".tga");
 #endif
-		}
+	}
 		else if (driver->getDriverType() == video::EDT_DIRECT3D11 || driver->getDriverType() == video::EDT_OPENGL)
 		{
 			CStringImp::replacePathExt(ansiPath, ".dds");
@@ -407,7 +422,7 @@ namespace Skylicht
 #else
 				CStringImp::replacePathExt(ansiPath, ".tga");
 #endif
-			}
+		}
 			else if (driver->getDriverType() == video::EDT_DIRECT3D11 || driver->getDriverType() == video::EDT_OPENGL)
 				CStringImp::replacePathExt(ansiPath, ".dds");
 
@@ -492,7 +507,7 @@ namespace Skylicht
 			}
 
 			listImage.push_back(image);
-		}
+	}
 
 		ITexture* texture = NULL;
 

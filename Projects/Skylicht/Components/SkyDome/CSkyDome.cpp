@@ -72,9 +72,7 @@ namespace Skylicht
 	{
 		CObjectSerializable* object = CComponentSystem::createSerializable();
 
-		std::vector<std::string> textureExts = { "tga","png" };
-
-		object->autoRelease(new CFilePathProperty(object, "texture", m_texture.c_str(), textureExts));
+		object->autoRelease(new CFilePathProperty(object, "texture", m_texture.c_str(), CTextureManager::getTextureExts()));
 		object->autoRelease(new CColorProperty(object, "color", m_color));
 		object->autoRelease(new CFloatProperty(object, "intensity", m_intensity, 0.0f, 3.0f));
 

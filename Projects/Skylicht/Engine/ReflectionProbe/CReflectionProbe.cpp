@@ -121,10 +121,7 @@ namespace Skylicht
 		bakeSizeType->addEnumString("2048", EReflectionSize::X2048);
 		object->autoRelease(bakeSizeType);
 
-		std::vector<std::string> exts;
-		exts.push_back("tga");
-		exts.push_back("png");
-		CFilePathProperty* staticReflection = new CFilePathProperty(object, "static", m_staticPath.c_str(), exts);
+		CFilePathProperty* staticReflection = new CFilePathProperty(object, "static", m_staticPath.c_str(), CTextureManager::getTextureExts());
 		staticReflection->setUIHeader("Static Probe");
 		object->autoRelease(staticReflection);
 

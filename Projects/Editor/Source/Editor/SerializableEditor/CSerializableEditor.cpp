@@ -680,7 +680,7 @@ namespace Skylicht
 								{
 									std::string ext = CPath::getFileNameExt(fullPath);
 									ext = CStringImp::toLower(ext);
-									if (ext == "png" || ext == "tga" || ext == "bmp" || ext == "jpg" || ext == "jpeg")
+									if (CTextureManager::isTextureExt(ext.c_str()))
 									{
 										return true;
 									}
@@ -876,7 +876,7 @@ namespace Skylicht
 								{
 									std::string ext = CPath::getFileNameExt(fullPath);
 									ext = CStringImp::toLower(ext);
-									if (ext == "png" || ext == "tga" || ext == "bmp" || ext == "jpg" || ext == "jpeg")
+									if (CTextureManager::isTextureExt(ext.c_str()))
 									{
 										return true;
 									}
@@ -1030,7 +1030,7 @@ namespace Skylicht
 								{
 									std::string ext = CPath::getFileNameExt(fullPath);
 									ext = CStringImp::toLower(ext);
-									if (ext == "png")
+									if (CTextureManager::isTextureExt(ext.c_str()))
 									{
 										return true;
 									}

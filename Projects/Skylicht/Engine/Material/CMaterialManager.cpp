@@ -43,6 +43,12 @@ namespace Skylicht
 		releaseAllMaterials();
 	}
 
+	std::vector<std::string> CMaterialManager::getMaterialExts()
+	{
+		std::vector<std::string> materialExts = { "xml", "mat" };
+		return materialExts;
+	}
+
 	void CMaterialManager::releaseAllMaterials()
 	{
 		std::map<std::string, ArrayMaterial>::iterator i = m_materials.begin(), end = m_materials.end();

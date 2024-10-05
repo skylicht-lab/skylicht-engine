@@ -73,19 +73,15 @@ namespace Skylicht
 		CObjectSerializable* CStaticPlaneCollider::createSerializable()
 		{
 			CObjectSerializable* obj = CComponentSystem::createSerializable();
-			obj->addProperty(new CFloatProperty(obj, "normalX", m_normal.X));
-			obj->addProperty(new CFloatProperty(obj, "normalY", m_normal.Y));
-			obj->addProperty(new CFloatProperty(obj, "normalZ", m_normal.Z));
-			obj->addProperty(new CFloatProperty(obj, "d", m_d));
+			obj->autoRelease(new CVector3Property(obj, "normal", m_normal));
+			obj->autoRelease(new CFloatProperty(obj, "d", m_d));
 			return obj;
 		}
 
 		void CStaticPlaneCollider::loadSerializable(CObjectSerializable* object)
 		{
 			CComponentSystem::loadSerializable(object);
-			m_normal.X = object->get<float>("normalX", 0.0f);
-			m_normal.Y = object->get<float>("normalY", 1.0f);
-			m_normal.Z = object->get<float>("normalZ", 0.0f);
+			m_normal = object->get<core::vector3df>("normal", core::vector3df(0.0f, 1.0f, 0.0f));
 			m_d = object->get<float>("d", 0.0f);
 		}
 

@@ -28,6 +28,17 @@ namespace Skylicht
 		releaseAllInstancingMesh();
 	}
 
+	std::vector<std::string> CMeshManager::getMeshExts()
+	{
+		std::vector<std::string> meshExts = {
+			"fbx",
+			"dae",
+			"obj",
+			"smesh"
+		};
+		return meshExts;
+	}
+
 	void CMeshManager::releasePrefab(CEntityPrefab* prefab)
 	{
 		std::map<std::string, CEntityPrefab*>::iterator i = m_meshPrefabs.begin(), end = m_meshPrefabs.end();

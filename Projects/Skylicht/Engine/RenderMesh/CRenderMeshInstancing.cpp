@@ -215,11 +215,8 @@ namespace Skylicht
 		object->autoRelease(new CBoolProperty(object, "inserse normal", m_fixInverseNormal));
 		object->autoRelease(new CBoolProperty(object, "load texcoord2", m_loadTexcoord2));
 
-		std::vector<std::string> meshExts = { "fbx","dae","obj","smesh" };
-		std::vector<std::string> materialExts = { "xml","mat" };
-
-		object->autoRelease(new CFilePathProperty(object, "mesh", m_meshFile.c_str(), meshExts));
-		object->autoRelease(new CFilePathProperty(object, "material", m_materialFile.c_str(), materialExts));
+		object->autoRelease(new CFilePathProperty(object, "mesh", m_meshFile.c_str(), CMeshManager::getMeshExts()));
+		object->autoRelease(new CFilePathProperty(object, "material", m_materialFile.c_str(), CMaterialManager::getMaterialExts()));
 
 		// save entities transform
 		CArraySerializable* entities = new CArraySerializable("Entities");

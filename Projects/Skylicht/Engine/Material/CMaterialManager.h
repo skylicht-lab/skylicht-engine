@@ -44,6 +44,8 @@ namespace Skylicht
 
 		virtual ~CMaterialManager();
 
+		static std::vector<std::string> getMaterialExts();
+
 		void releaseAllMaterials();
 
 		ArrayMaterial& loadMaterial(const char* filename, bool loadTexture, const std::vector<std::string>& textureFolders);

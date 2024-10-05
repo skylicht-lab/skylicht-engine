@@ -57,18 +57,14 @@ namespace Skylicht
 		CObjectSerializable* CBoxCollider::createSerializable()
 		{
 			CObjectSerializable* obj = CComponentSystem::createSerializable();
-			obj->addProperty(new CFloatProperty(obj, "sizeX", m_size.X));
-			obj->addProperty(new CFloatProperty(obj, "sizeY", m_size.Y));
-			obj->addProperty(new CFloatProperty(obj, "sizeZ", m_size.Z));
+			obj->autoRelease(new CVector3Property(obj, "size", m_size));
 			return obj;
 		}
 
 		void CBoxCollider::loadSerializable(CObjectSerializable* object)
 		{
 			CComponentSystem::loadSerializable(object);
-			m_size.X = object->get<float>("sizeX", 1.0f);
-			m_size.Y = object->get<float>("sizeY", 1.0f);
-			m_size.Z = object->get<float>("sizeZ", 1.0f);
+			m_size = object->get<core::vector3df>("size", core::vector3df(1.0f, 1.0f, 1.0f));
 		}
 
 #ifdef USE_BULLET_PHYSIC_ENGINE

@@ -56,7 +56,12 @@ namespace Skylicht
 
 	public:
 		CTextureManager();
+
 		virtual ~CTextureManager();
+
+		static std::vector<std::string> getTextureExts();
+
+		static bool isTextureExt(const char* ext);
 
 		void setCurrentPackage(const char* name)
 		{

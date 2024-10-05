@@ -131,15 +131,15 @@ namespace Skylicht
 						CSubject<float>* subject = new CSubject<float>(value->get());
 						CObserver* observer = new CObserver();
 						observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
-						{
-							if (from != o)
 							{
-								float v = s->get();
-								value->set(v);
-								s->set(v);
-								updateData();
-							}
-						};
+								if (from != o)
+								{
+									float v = s->get();
+									value->set(v);
+									s->set(v);
+									updateData();
+								}
+							};
 						subject->addObserver(observer, true);
 						ui->addSlider(layout, ui->getPrettyName(value->Name), subject, value->Min, value->Max);
 					}
@@ -148,10 +148,49 @@ namespace Skylicht
 						CSubject<float>* subject = new CSubject<float>(value->get());
 						CObserver* observer = new CObserver();
 						observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
+							{
+								if (from != o)
+								{
+									float v = s->get();
+									bool notifyUI = false;
+
+									if (value->ClampMin && v < value->Min)
+									{
+										v = value->Min;
+										notifyUI = true;
+									}
+									if (value->ClampMax && v > value->Max)
+									{
+										v = value->Max;
+										notifyUI = true;
+									}
+
+									value->set(v);
+
+									if (notifyUI)
+									{
+										s->set(v);
+										s->notify(o);
+									}
+
+									updateData();
+								}
+							};
+						subject->addObserver(observer, true);
+						ui->addNumberInput(layout, ui->getPrettyName(value->Name), subject, 0.01f);
+						m_subjects.push_back(subject);
+					}
+				}
+				else if (valueProperty->getType() == EPropertyDataType::Integer)
+				{
+					CIntProperty* value = dynamic_cast<CIntProperty*>(valueProperty);
+					CSubject<int>* subject = new CSubject<int>(value->get());
+					CObserver* observer = new CObserver();
+					observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
 						{
 							if (from != o)
 							{
-								float v = s->get();
+								int v = s->get();
 								bool notifyUI = false;
 
 								if (value->ClampMin && v < value->Min)
@@ -176,48 +215,72 @@ namespace Skylicht
 								updateData();
 							}
 						};
-						subject->addObserver(observer, true);
-						ui->addNumberInput(layout, ui->getPrettyName(value->Name), subject, 0.01f);
-						m_subjects.push_back(subject);
-					}
-				}
-				else if (valueProperty->getType() == EPropertyDataType::Integer)
-				{
-					CIntProperty* value = dynamic_cast<CIntProperty*>(valueProperty);
-					CSubject<int>* subject = new CSubject<int>(value->get());
-					CObserver* observer = new CObserver();
-					observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
-					{
-						if (from != o)
-						{
-							int v = s->get();
-							bool notifyUI = false;
-
-							if (value->ClampMin && v < value->Min)
-							{
-								v = value->Min;
-								notifyUI = true;
-							}
-							if (value->ClampMax && v > value->Max)
-							{
-								v = value->Max;
-								notifyUI = true;
-							}
-
-							value->set(v);
-
-							if (notifyUI)
-							{
-								s->set(v);
-								s->notify(o);
-							}
-
-							updateData();
-						}
-					};
 					subject->addObserver(observer, true);
 					ui->addNumberInput(layout, ui->getPrettyName(value->Name), subject);
 					m_subjects.push_back(subject);
+				}
+				else if (valueProperty->getType() == EPropertyDataType::Vector3)
+				{
+					CVector3Property* value = dynamic_cast<CVector3Property*>(valueProperty);
+					const core::vector3df& v = value->get();
+
+					CSubject<float>* X = new CSubject<float>(v.X);
+					CSubject<float>* Y = new CSubject<float>(v.Y);
+					CSubject<float>* Z = new CSubject<float>(v.Z);
+
+					CObserver* observer = new CObserver();
+					observer->Notify = [&, value, X, Y, Z, observer](ISubject* subject, IObserver* from)
+						{
+							if (from != observer)
+							{
+								core::vector3df v = value->get();
+								v.X = X->get();
+								v.Y = Y->get();
+								v.Z = Z->get();
+								value->set(v);
+								updateData();
+							}
+						};
+
+					X->addObserver(observer);
+					Y->addObserver(observer);
+					Z->addObserver(observer, true);
+
+					valueProperty->OnSetHidden = [X, Y, Z, o = observer](bool hide)
+						{
+							X->setEnable(!hide);
+							X->notify(o);
+
+							Y->setEnable(!hide);
+							Y->notify(o);
+
+							Z->setEnable(!hide);
+							Z->notify(o);
+						};
+
+					valueProperty->OnChanged = [value, X, Y, Z, observer]()
+						{
+							X->set(value->get().X);
+							X->notify(observer);
+
+							Y->set(value->get().Y);
+							Y->notify(observer);
+
+							Z->set(value->get().Z);
+							Z->notify(observer);
+						};
+
+					std::wstring name = ui->getPrettyName(value->Name);
+					name += L" X";
+
+					ui->addNumberInput(layout, name.c_str(), X, 0.1f);
+					ui->addNumberInput(layout, L"Y", Y, 0.1f);
+					ui->addNumberInput(layout, L"Z", Z, 0.1f);
+					layout->addSpace(5.0f);
+
+					m_subjects.push_back(X);
+					m_subjects.push_back(Y);
+					m_subjects.push_back(Z);
 				}
 				else if (valueProperty->getType() == EPropertyDataType::UInteger)
 				{
@@ -225,29 +288,29 @@ namespace Skylicht
 					CSubject<u32>* subject = new CSubject<u32>(value->get());
 					CObserver* observer = new CObserver();
 					observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
-					{
-						if (from != o)
 						{
-							u32 v = s->get();
-							bool notifyUI = false;
-
-							if (value->ClampMax && v > value->Max)
+							if (from != o)
 							{
-								v = value->Max;
-								notifyUI = true;
+								u32 v = s->get();
+								bool notifyUI = false;
+
+								if (value->ClampMax && v > value->Max)
+								{
+									v = value->Max;
+									notifyUI = true;
+								}
+
+								value->set(v);
+
+								if (notifyUI)
+								{
+									s->set(v);
+									s->notify(o);
+								}
+
+								updateData();
 							}
-
-							value->set(v);
-
-							if (notifyUI)
-							{
-								s->set(v);
-								s->notify(o);
-							}
-
-							updateData();
-						}
-					};
+						};
 					subject->addObserver(observer, true);
 					ui->addNumberInput(layout, ui->getPrettyName(value->Name), subject);
 					m_subjects.push_back(subject);
@@ -261,15 +324,15 @@ namespace Skylicht
 
 					CObserver* observer = new CObserver();
 					observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
-					{
-						if (from != o)
 						{
-							const std::wstring& stringValue = s->get();
-							std::string stringValueA = CStringImp::convertUnicodeToUTF8(stringValue.c_str());
-							value->set(stringValueA);
-							updateData();
-						}
-					};
+							if (from != o)
+							{
+								const std::wstring& stringValue = s->get();
+								std::string stringValueA = CStringImp::convertUnicodeToUTF8(stringValue.c_str());
+								value->set(stringValueA);
+								updateData();
+							}
+						};
 
 					subject->addObserver(observer, true);
 					ui->addTextBox(layout, ui->getPrettyName(value->Name), subject);
@@ -281,14 +344,14 @@ namespace Skylicht
 					CSubject<SColor>* subject = new CSubject<SColor>(value->get());
 					CObserver* observer = new CObserver();
 					observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
-					{
-						if (from != o)
 						{
-							const SColor& color = s->get();
-							value->set(color);
-							updateData();
-						}
-					};
+							if (from != o)
+							{
+								const SColor& color = s->get();
+								value->set(color);
+								updateData();
+							}
+						};
 
 					subject->addObserver(observer, true);
 					ui->addColorPicker(layout, ui->getPrettyName(value->Name), subject);
@@ -300,14 +363,14 @@ namespace Skylicht
 					CSubject<std::string>* subject = new CSubject<std::string>(value->get());
 					CObserver* observer = new CObserver();
 					observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
-					{
-						if (from != o)
 						{
-							const std::string& path = s->get();
-							value->set(path);
-							updateData();
-						}
-					};
+							if (from != o)
+							{
+								const std::string& path = s->get();
+								value->set(path);
+								updateData();
+							}
+						};
 
 					subject->addObserver(observer, true);
 					ui->addInputFile(layout, ui->getPrettyName(value->Name), subject, value->Exts);
@@ -319,14 +382,14 @@ namespace Skylicht
 					CSubject<std::string>* subject = new CSubject<std::string>(value->get());
 					CObserver* observer = new CObserver();
 					observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
-					{
-						if (from != o)
 						{
-							const std::string& path = s->get();
-							value->set(path);
-							updateData();
-						}
-					};
+							if (from != o)
+							{
+								const std::string& path = s->get();
+								value->set(path);
+								updateData();
+							}
+						};
 
 					subject->addObserver(observer, true);
 					ui->addInputFolder(layout, ui->getPrettyName(value->Name), subject);
@@ -355,12 +418,12 @@ namespace Skylicht
 							dropBox->setLabel(enumName);
 
 						item->OnPress = [&, item, enumValue, dropBox, ui](GUI::CBase* base)
-						{
-							enumValue->setIntValue(item->getTagInt());
-							updateData();
-							dropBox->setLabel(item->getLabel());
-							ui->getWindow()->getCanvas()->closeMenu();
-						};
+							{
+								enumValue->setIntValue(item->getTagInt());
+								updateData();
+								dropBox->setLabel(item->getLabel());
+								ui->getWindow()->getCanvas()->closeMenu();
+							};
 					}
 				}
 				else if (valueProperty->getType() == EPropertyDataType::Object)
@@ -389,23 +452,23 @@ namespace Skylicht
 
 							CObserver* observer = new CObserver();
 							observer->Notify = [&, arrayObject, count, o = observer, objectLayout, group, ui](ISubject* subject, IObserver* from)
-							{
-								if (from != o)
 								{
-									int numElement = count->get();
-									if (arrayObject->resize(numElement))
+									if (from != o)
 									{
-										// remove old ui
-										objectLayout->getChild(0)->removeAllChildren();
+										int numElement = count->get();
+										if (arrayObject->resize(numElement))
+										{
+											// remove old ui
+											objectLayout->getChild(0)->removeAllChildren();
 
-										// re-init ui									
-										initDataGUI(arrayObject, objectLayout, ui);
+											// re-init ui									
+											initDataGUI(arrayObject, objectLayout, ui);
 
-										// update object data
-										m_component->loadSerializable(m_data);
+											// update object data
+											m_component->loadSerializable(m_data);
+										}
 									}
-								}
-							};
+								};
 							count->addObserver(observer, true);
 						}
 					}

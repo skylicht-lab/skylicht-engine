@@ -57,18 +57,14 @@ namespace Skylicht
 		CObjectSerializable* CCylinderCollider::createSerializable()
 		{
 			CObjectSerializable* obj = CComponentSystem::createSerializable();
-			obj->addProperty(new CFloatProperty(obj, "halfSizeX", m_halfSize.X));
-			obj->addProperty(new CFloatProperty(obj, "halfSizeY", m_halfSize.Y));
-			obj->addProperty(new CFloatProperty(obj, "halfSizeZ", m_halfSize.Z));
+			obj->autoRelease(new CVector3Property(obj, "halfSize", m_halfSize));
 			return obj;
 		}
 
 		void CCylinderCollider::loadSerializable(CObjectSerializable* object)
 		{
 			CComponentSystem::loadSerializable(object);
-			m_halfSize.X = object->get<float>("halfSizeX", 1.0f);
-			m_halfSize.Y = object->get<float>("halfSizeY", 1.0f);
-			m_halfSize.Z = object->get<float>("halfSizeZ", 1.0f);
+			m_halfSize = object->get<core::vector3df>("halfSize", core::vector3df(1.0f, 1.0f, 1.0f));
 		}
 
 #ifdef USE_BULLET_PHYSIC_ENGINE

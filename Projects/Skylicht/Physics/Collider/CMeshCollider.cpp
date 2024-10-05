@@ -61,10 +61,8 @@ namespace Skylicht
 
 		CObjectSerializable* CMeshCollider::createSerializable()
 		{
-			std::vector<std::string> meshExts = { "dae","obj","smesh" };
-
 			CObjectSerializable* obj = CComponentSystem::createSerializable();
-			obj->addProperty(new CFilePathProperty(obj, "source", m_source.c_str(), meshExts));
+			obj->autoRelease(new CFilePathProperty(obj, "source", m_source.c_str(), CMeshManager::getMeshExts()));
 			return obj;
 		}
 

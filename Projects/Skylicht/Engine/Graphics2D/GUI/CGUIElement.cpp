@@ -347,9 +347,7 @@ namespace Skylicht
 
 		// materials
 		object->autoRelease(new CIntProperty(object, "materialId", m_materialId, 0, (int)m_materials.size()));
-
-		std::vector<std::string> materialExts = { "xml","mat" };
-		object->autoRelease(new CFilePathProperty(object, "material", m_materialFile.c_str(), materialExts));
+		object->autoRelease(new CFilePathProperty(object, "material", m_materialFile.c_str(), CMaterialManager::getMaterialExts()));
 
 		return object;
 	}

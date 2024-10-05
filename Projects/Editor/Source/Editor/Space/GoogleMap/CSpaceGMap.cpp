@@ -162,7 +162,7 @@ namespace Skylicht
 				std::string path = file.path().generic_u8string();
 
 				std::string ext = CPath::getFileNameExt(path);
-				if (ext == "png" || ext == "jpeg" || ext == "jpg")
+				if (CTextureManager::isTextureExt(ext.c_str()))
 				{
 					fs::remove(path);
 				}
@@ -174,9 +174,9 @@ namespace Skylicht
 			std::string assetFolder = CAssetManager::getInstance()->getAssetFolder();
 			GUI::COpenSaveDialog* dialog = new GUI::COpenSaveDialog(m_window->getCanvas(), GUI::COpenSaveDialog::Save, assetFolder.c_str(), assetFolder.c_str(), "png;*");
 			dialog->OnSave = [&](std::string path)
-			{
-				exportMap(path.c_str());
-			};
+				{
+					exportMap(path.c_str());
+				};
 		}
 
 		void CSpaceGMap::exportMap(const char* path)

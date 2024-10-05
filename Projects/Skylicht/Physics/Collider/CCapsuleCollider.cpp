@@ -58,8 +58,8 @@ namespace Skylicht
 		CObjectSerializable* CCapsuleCollider::createSerializable()
 		{
 			CObjectSerializable* obj = CComponentSystem::createSerializable();
-			obj->addProperty(new CFloatProperty(obj, "radius", m_radius));
-			obj->addProperty(new CFloatProperty(obj, "height", m_height));
+			obj->autoRelease(new CFloatProperty(obj, "radius", m_radius));
+			obj->autoRelease(new CFloatProperty(obj, "height", m_height));
 			return obj;
 		}
 
