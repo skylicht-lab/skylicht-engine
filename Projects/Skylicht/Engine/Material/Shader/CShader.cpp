@@ -212,9 +212,9 @@ namespace Skylicht
 			return EMT_SOLID;
 		else if (type == "TRANSPARENT_ADD_COLOR")
 			return EMT_TRANSPARENT_ADD_COLOR;
-		else if (type == "EMT_TRANSPARENT_MULTIPLY_COLOR")
+		else if (type == "TRANSPARENT_MULTIPLY_COLOR")
 			return EMT_TRANSPARENT_MULTIPLY_COLOR;
-		else if (type == "EMT_TRANSPARENT_SCREEN_COLOR")
+		else if (type == "TRANSPARENT_SCREEN_COLOR")
 			return EMT_TRANSPARENT_SCREEN_COLOR;
 		else if (type == "TRANSPARENT_ALPHA_CHANNEL")
 			return EMT_TRANSPARENT_ALPHA_CHANNEL;

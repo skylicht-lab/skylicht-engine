@@ -94,6 +94,8 @@ namespace Skylicht
 
 		loadShader("BuiltIn/Shader/Basic/TextureColorAdditive.xml");
 		loadShader("BuiltIn/Shader/Basic/TextureColor2LayerAdditive.xml");
+		loadShader("BuiltIn/Shader/Basic/TextureColorMultiply.xml");
+		loadShader("BuiltIn/Shader/Basic/TextureColorScreen.xml");
 
 		loadShader("BuiltIn/Shader/Basic/AlphaTest.xml");
 		loadShader("BuiltIn/Shader/Basic/AlphaBlend.xml");

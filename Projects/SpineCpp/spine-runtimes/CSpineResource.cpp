@@ -32,10 +32,22 @@ namespace spine
 {
 	spine::SkeletonRenderer* g_renderer = NULL;
 
+	int g_shaderColorBlend = 0;
+	int g_shaderColorAddtive = 0;
+	int g_shaderColorMultiply = 0;
+	int g_shaderColorScreen = 0;
+
 	spine::SkeletonRenderer* CSpineResource::initRenderer()
 	{
 		if (g_renderer == NULL)
 			g_renderer = new spine::SkeletonRenderer();
+
+		CShaderManager* shaderMgr = CShaderManager::getInstance();
+		g_shaderColorBlend = shaderMgr->getShaderIDByName("TextureColorAlpha");
+		g_shaderColorAddtive = shaderMgr->getShaderIDByName("TextureColorAdditive");
+		g_shaderColorMultiply = shaderMgr->getShaderIDByName("TextureColorMultiply");
+		g_shaderColorScreen = shaderMgr->getShaderIDByName("TextureColorScreen");
+
 		return g_renderer;
 	}
 
@@ -53,37 +65,24 @@ namespace spine
 		return g_renderer;
 	}
 
-	int g_textColorBlend = 0;
-	int g_textColorAddtive = 0;
-	int g_textColorMultiply = 0;
-	int g_textColorScreen = 0;
-
 	int CSpineResource::getTextureColorBlend()
 	{
-		if (g_textColorBlend == 0)
-			g_textColorBlend = CShaderManager::getInstance()->getShaderIDByName("TextureColorAlpha");
-		return g_textColorBlend;
+		return g_shaderColorBlend;
 	}
 
 	int CSpineResource::getTextureColorAddtive()
 	{
-		if (g_textColorAddtive == 0)
-			g_textColorAddtive = CShaderManager::getInstance()->getShaderIDByName("TextureColorAdditive");
-		return g_textColorAddtive;
+		return g_shaderColorAddtive;
 	}
 
 	int CSpineResource::getTextureColorMultiply()
 	{
-		if (g_textColorMultiply == 0)
-			g_textColorMultiply = CShaderManager::getInstance()->getShaderIDByName("TextureColorAlpha");
-		return g_textColorMultiply;
+		return g_shaderColorMultiply;
 	}
 
 	int CSpineResource::getTextureColorScreen()
 	{
-		if (g_textColorScreen == 0)
-			g_textColorScreen = CShaderManager::getInstance()->getShaderIDByName("TextureColorAlpha");
-		return g_textColorScreen;
+		return g_shaderColorScreen;
 	}
 
 	CSpineResource::CSpineResource() :
