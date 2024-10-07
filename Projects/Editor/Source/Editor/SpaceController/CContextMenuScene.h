@@ -65,6 +65,10 @@ namespace Skylicht
 		protected:
 
 			void OnContextMenuCommand(GUI::CBase* sender);
+
+			void addTemplateItem(GUI::CMenu* menu);
+
+			void showHideTemplateItem(GUI::CMenu* menu, bool isTemplate);
 		};
 	}
 }

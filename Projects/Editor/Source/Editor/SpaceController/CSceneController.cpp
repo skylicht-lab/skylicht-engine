@@ -1229,12 +1229,12 @@ namespace Skylicht
 					CGameObject* gameObject = m_scene->searchObjectInChildByID(lastSelected->getID().c_str());
 					if (gameObject != NULL)
 					{
-						CContainerObject* container = dynamic_cast<CContainerObject*>(gameObject);
-						if (container != NULL)
-							newObjects = CCopyPaste::getInstance()->paste(container);
+						CZone* zone = dynamic_cast<CZone*>(gameObject);
+						if (zone != NULL)
+							newObjects = CCopyPaste::getInstance()->paste(zone);
 						else
 						{
-							container = dynamic_cast<CContainerObject*>(gameObject->getParent());
+							CContainerObject* container = dynamic_cast<CContainerObject*>(gameObject->getParent());
 							newObjects = CCopyPaste::getInstance()->paste(container);
 						}
 					}

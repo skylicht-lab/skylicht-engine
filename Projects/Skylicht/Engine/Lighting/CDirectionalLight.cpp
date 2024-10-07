@@ -62,6 +62,9 @@ namespace Skylicht
 		const core::matrix4& transform = m_gameObject->getTransform()->getRelativeTransform();
 		transform.rotateVect(m_direction);
 		m_direction.normalize();
+
+		if (CShaderLighting::getDirectionalLight() == NULL)
+			CShaderLighting::setDirectionalLight(this);
 	}
 
 	CDirectionalLight* CDirectionalLight::getCurrentDirectionLight()

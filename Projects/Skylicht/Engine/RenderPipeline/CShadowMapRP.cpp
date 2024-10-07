@@ -477,11 +477,11 @@ namespace Skylicht
 		bool castShadow = true;
 
 		CDirectionalLight* light = CShaderLighting::getDirectionalLight();
-		if (light != NULL)
-		{
-			m_lightDirection = light->getDirection();
-			castShadow = light->isCastShadow();
-		}
+		if (light == NULL)
+			return;
+
+		m_lightDirection = light->getDirection();
+		castShadow = light->isCastShadow();
 
 		// no render shadow on bake light
 		if (s_bakeMode == false && light->getLightType() == CLight::Baked)

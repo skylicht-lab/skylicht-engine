@@ -219,8 +219,9 @@ namespace Skylicht
 
 		void CPhysicsEngine::enableDrawDebug(bool b)
 		{
-#ifdef USE_BULLET_PHYSIC_ENGINE
 			m_enableDrawDebug = b;
+
+#ifdef USE_BULLET_PHYSIC_ENGINE
 			if (m_enableDrawDebug)
 				m_dynamicsWorld->setDebugDrawer(m_drawDebug);
 			else

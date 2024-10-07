@@ -78,13 +78,13 @@ namespace Skylicht
 			btConstraintSolver* m_solver;
 			btDefaultCollisionConfiguration* m_collisionConfiguration;
 			btDiscreteDynamicsWorld* m_dynamicsWorld;
+
+			CDrawDebug* m_drawDebug;
 #endif
 			float m_gravity;
 
 			core::array<SRigidbodyData*> m_bodies;
 			core::array<SCharacterData*> m_characters;
-
-			CDrawDebug* m_drawDebug;
 
 			bool m_enableDrawDebug;
 

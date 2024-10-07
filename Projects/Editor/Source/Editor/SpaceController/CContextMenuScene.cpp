@@ -52,6 +52,8 @@ namespace Skylicht
 			m_contextMenuGameObject->setHidden(true);
 			m_contextMenuGameObject->OnCommand = BIND_LISTENER(&CContextMenuScene::OnContextMenuCommand, this);
 
+			addTemplateItem(m_contextMenuGameObject);
+			m_contextMenuGameObject->addSeparator();
 			m_contextMenuGameObject->addItem(L"Rename", L"F2");
 			m_contextMenuGameObject->addSeparator();
 			m_contextMenuGameObject->addItem(L"Copy", GUI::ESystemIcon::Copy, L"Ctrl + C");
@@ -82,6 +84,8 @@ namespace Skylicht
 			submenu->OnCommand = BIND_LISTENER(&CContextMenuScene::OnContextMenuCommand, this);
 
 			m_contextMenuContainer->addSeparator();
+			addTemplateItem(m_contextMenuContainer);
+			m_contextMenuContainer->addSeparator();
 			m_contextMenuContainer->addItem(L"Rename", L"F2");
 			m_contextMenuContainer->addSeparator();
 			m_contextMenuContainer->addItem(L"Copy", GUI::ESystemIcon::Copy);
@@ -93,6 +97,18 @@ namespace Skylicht
 		CContextMenuScene::~CContextMenuScene()
 		{
 
+		}
+
+		void CContextMenuScene::addTemplateItem(GUI::CMenu* menu)
+		{
+			GUI::CMenuItem* templateMenu = menu->addItem(L"Template");
+
+			GUI::CMenu* submenu = templateMenu->getMenu();
+			submenu->addItem(L"Create", GUI::ESystemIcon::ResFile);
+			submenu->addItem(L"Revert");
+			submenu->addItem(L"Apply");
+			submenu->addItem(L"Unpack");
+			submenu->OnCommand = BIND_LISTENER(&CContextMenuScene::OnContextMenuCommand, this);
 		}
 
 		bool CContextMenuScene::onContextMenu(CSpaceHierarchy* spaceHierachy, CHierachyNode* node, CScene* scene, CZone* zone)
@@ -136,10 +152,16 @@ namespace Skylicht
 							m_spaceZone->setHidden(true);
 						}
 
+						showHideTemplateItem(m_contextMenuContainer, gameObject->isTemplateAsset());
+
 						m_contextMenuContainer->open(mousePos);
 					}
 					else
+					{
+						showHideTemplateItem(m_contextMenuGameObject, gameObject->isTemplateAsset());
+
 						m_contextMenuGameObject->open(mousePos);
+					}
 
 					return true;
 				}
@@ -151,6 +173,27 @@ namespace Skylicht
 				return true;
 			}
 			return false;
+		}
+
+		void CContextMenuScene::showHideTemplateItem(GUI::CMenu* menu, bool isTemplate)
+		{
+			GUI::CMenuItem* item = NULL;
+
+			item = menu->getItemByPath(L"Template/Create");
+			if (item)
+				item->setHidden(isTemplate ? true : false);
+
+			item = menu->getItemByPath(L"Template/Revert");
+			if (item)
+				item->setHidden(isTemplate ? false : true);
+
+			item = menu->getItemByPath(L"Template/Apply");
+			if (item)
+				item->setHidden(isTemplate ? false : true);
+
+			item = menu->getItemByPath(L"Template/Unpack");
+			if (item)
+				item->setHidden(isTemplate ? false : true);
 		}
 
 		void CContextMenuScene::OnContextMenuCommand(GUI::CBase* sender)
@@ -196,7 +239,7 @@ namespace Skylicht
 			{
 				CSceneController::getInstance()->onCut();
 			}
-			
+
 			if (contextObject != NULL)
 			{
 				if (command == L"Empty Object")
