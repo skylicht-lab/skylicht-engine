@@ -90,6 +90,8 @@ namespace Skylicht
 
 			void update();
 
+			void updateSelectedRigidBody();
+
 			void refresh();
 
 			inline CTransformGizmos* getTransformGizmos()

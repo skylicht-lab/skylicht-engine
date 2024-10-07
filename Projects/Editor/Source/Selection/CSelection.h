@@ -86,7 +86,7 @@ namespace Skylicht
 			void addSelect(const std::vector<CGameObject*>& obj);
 
 			void addSelect(const std::vector<CGUIElement*>& ui);
-			
+
 			bool unSelect(CGameObject* obj);
 
 			bool unSelect(const std::vector<CGameObject*>& obj);
@@ -96,6 +96,7 @@ namespace Skylicht
 			void unSelect(const std::vector<CEntity*>& entities);
 
 			void unSelect(CGUIElement* gui);
+
 		};
 	}
 }

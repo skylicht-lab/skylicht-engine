@@ -168,12 +168,29 @@ namespace Skylicht
 		if (getComponent<CTransformMatrix>() == NULL)
 		{
 			core::matrix4 relative;
+			core::vector3df pos;
+			core::vector3df rot;
+			core::vector3df scale(1.0f, 1.0f, 1.0f);
+
 			if (getTransform())
+			{
 				relative = getTransform()->getRelativeTransform();
+
+				CTransformEuler* euler = getTransformEuler();
+				if (euler)
+				{
+					pos = euler->getPosition();
+					rot = euler->getRotation();
+					scale = euler->getScale();
+				}
+			}
 
 			removeComponent<CTransformEuler>();
 			CTransformMatrix* t = addComponent<CTransformMatrix>();
 			t->setRelativeTransform(relative);
+			t->setPosition(pos);
+			t->setRotation(rot);
+			t->setScale(scale);
 
 			CTransformComponentData* componentData = GET_ENTITY_DATA(m_entity, CTransformComponentData);
 			componentData->TransformComponent = t;

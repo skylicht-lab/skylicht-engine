@@ -24,6 +24,9 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CCollider.h"
+#include "RigidBody/CRigidbody.h"
+#include "GameObject/CGameObject.h"
+#include "PhysicsEngine/CPhysicsEngine.h"
 
 namespace Skylicht
 {
@@ -45,12 +48,33 @@ namespace Skylicht
 #endif
 		}
 
+		void CCollider::initComponent()
+		{
+			CPhysicsEngine* engine = CPhysicsEngine::getInstance();
+			if (engine && engine->IsInEditor)
+				initRigidbody();
+		}
+
 #ifdef USE_BULLET_PHYSIC_ENGINE
 		void CCollider::dropCollisionShape()
 		{
 			if (m_shape)
 				m_shape->setUserPointer(NULL);
 			m_shape = NULL;
+		}
+
+		void CCollider::initRigidbody()
+		{
+			CRigidbody* rigidBody = m_gameObject->getComponent<CRigidbody>();
+			if (rigidBody)
+				rigidBody->initRigidbody();
+		}
+
+		void CCollider::clampSize(core::vector3df& size)
+		{
+			size.X = core::max_(size.X, 0.0f);
+			size.Y = core::max_(size.Y, 0.0f);
+			size.Z = core::max_(size.Z, 0.0f);
 		}
 #endif
 	}

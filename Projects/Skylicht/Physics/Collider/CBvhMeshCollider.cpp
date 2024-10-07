@@ -99,7 +99,11 @@ namespace Skylicht
 							vertices[k] = btVector3(v.X, v.Y, v.Z);
 						}
 
-						triangleMesh->addTriangle(vertices[0], vertices[1], vertices[2]);
+						int v1 = triangleMesh->findOrAddVertex(vertices[0], true);
+						int v2 = triangleMesh->findOrAddVertex(vertices[1], true);
+						int v3 = triangleMesh->findOrAddVertex(vertices[2], true);
+
+						triangleMesh->addTriangleIndices(v1, v2, v3);
 					}
 				}
 

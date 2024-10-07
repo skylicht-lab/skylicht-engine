@@ -27,6 +27,10 @@
 #include "ProjectPath.h"
 #endif
 
+#ifdef BUILD_SKYLICHT_PHYSIC
+#include "PhysicsEngine/CPhysicsEngine.h"
+#endif
+
 void installApplication(const std::vector<std::string>& argv)
 {
 	SkylichtEditor* app = new SkylichtEditor();
@@ -57,6 +61,12 @@ SkylichtEditor::SkylichtEditor() :
 
 	CLightProbeRender::showProbe(true);
 	CReflectionProbeRender::showProbe(true);
+
+#ifdef BUILD_SKYLICHT_PHYSIC
+	Physics::CPhysicsEngine* physicsEngine = Physics::CPhysicsEngine::createGetInstance();
+	physicsEngine->initPhysics();
+	physicsEngine->IsInEditor = true;
+#endif
 }
 
 SkylichtEditor::~SkylichtEditor()
@@ -70,6 +80,11 @@ SkylichtEditor::~SkylichtEditor()
 	Editor::GUI::CGUIContext::destroyGUI();
 
 	Editor::CEditor::releaseInstance();
+
+#ifdef BUILD_SKYLICHT_PHYSIC
+	Physics::CPhysicsEngine::getInstance()->exitPhysics();
+#endif
+
 	Editor::CCopyPasteUI::releaseInstance();
 	Editor::CCopyPaste::releaseInstance();
 	Editor::CSelecting::releaseInstance();

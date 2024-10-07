@@ -42,8 +42,6 @@ namespace Skylicht
 
 			virtual ~CMeshCollider();
 
-			virtual void initComponent();
-
 			virtual void updateComponent();
 
 			virtual CObjectSerializable* createSerializable();

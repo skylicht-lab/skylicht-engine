@@ -45,11 +45,6 @@ namespace Skylicht
 
 		}
 
-		void CStaticPlaneCollider::initComponent()
-		{
-
-		}
-
 		void CStaticPlaneCollider::updateComponent()
 		{
 

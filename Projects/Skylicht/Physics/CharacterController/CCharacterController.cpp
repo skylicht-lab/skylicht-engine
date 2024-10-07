@@ -248,65 +248,68 @@ namespace Skylicht
 		void CCharacterController::setWalkDirection(const core::vector3df& walk)
 		{
 #ifdef USE_BULLET_PHYSIC_ENGINE
-			m_controller->setWalkDirection(btVector3(walk.X, walk.Y, walk.Z));
+			if (m_controller)
+				m_controller->setWalkDirection(btVector3(walk.X, walk.Y, walk.Z));
 #endif
 		}
 
 		bool CCharacterController::canJump()
 		{
 #ifdef USE_BULLET_PHYSIC_ENGINE
-			return m_controller->canJump();
-#else
-			return false;
+			if (m_controller)
+				return m_controller->canJump();
 #endif
+			return false;
 		}
 
 		bool CCharacterController::onGround()
 		{
 #ifdef USE_BULLET_PHYSIC_ENGINE
-			return m_controller->onGround();
-#else
-			return false;
+			if (m_controller)
+				return m_controller->onGround();
 #endif
+			return false;
 		}
 
 		void CCharacterController::setMaxSlope(float slopeRadians)
 		{
 #ifdef USE_BULLET_PHYSIC_ENGINE
-			m_controller->setMaxSlope(slopeRadians);
+			if (m_controller)
+				m_controller->setMaxSlope(slopeRadians);
 #endif
 		}
 
 		float CCharacterController::getMaxSlope() const
 		{
 #ifdef USE_BULLET_PHYSIC_ENGINE
-			return m_controller->getMaxSlope();
-#else
-			return 0.0f;
+			if (m_controller)
+				return m_controller->getMaxSlope();
 #endif
+			return 0.0f;
 		}
 
 		void CCharacterController::setMaxPenetrationDepth(float d)
 		{
 #ifdef USE_BULLET_PHYSIC_ENGINE
-			return m_controller->setMaxPenetrationDepth(d);
+			if (m_controller)
+				m_controller->setMaxPenetrationDepth(d);
 #endif
 		}
 
 		float CCharacterController::getMaxPenetrationDepth() const
 		{
 #ifdef USE_BULLET_PHYSIC_ENGINE
-			return m_controller->getMaxSlope();
-#else
-			return 0.0f;
+			if (m_controller)
+				return m_controller->getMaxSlope();
 #endif
+			return 0.0f;
 		}
 
 		void CCharacterController::reset()
 		{
 #ifdef USE_BULLET_PHYSIC_ENGINE
 			CPhysicsEngine* engine = CPhysicsEngine::getInstance();
-			if (engine != NULL)
+			if (engine && m_controller)
 				m_controller->reset(engine->getDynamicsWorld());
 #endif
 		}
@@ -314,159 +317,171 @@ namespace Skylicht
 		void CCharacterController::setStepHeight(float h)
 		{
 #ifdef USE_BULLET_PHYSIC_ENGINE
-			m_controller->setStepHeight(h);
+			if (m_controller)
+				m_controller->setStepHeight(h);
 #endif
 		}
 
 		float CCharacterController::getStepHeight() const
 		{
 #ifdef USE_BULLET_PHYSIC_ENGINE
-			return m_controller->getStepHeight();
-#else
-			return 0.0f;
+			if (m_controller)
+				return m_controller->getStepHeight();
 #endif
+			return 0.0f;
 		}
 
 		void CCharacterController::setFallSpeed(float fallSpeed)
 		{
 #ifdef USE_BULLET_PHYSIC_ENGINE
-			m_controller->setFallSpeed(fallSpeed);
+			if (m_controller)
+				m_controller->setFallSpeed(fallSpeed);
 #endif
 		}
 
 		float CCharacterController::getFallSpeed() const
 		{
 #ifdef USE_BULLET_PHYSIC_ENGINE
-			return m_controller->getFallSpeed();
-#else
-			return 0.0f;
+			if (m_controller)
+				return m_controller->getFallSpeed();
 #endif
+			return 0.0f;
 		}
 
 		void CCharacterController::setJumpSpeed(float jumpSpeed)
 		{
 #ifdef USE_BULLET_PHYSIC_ENGINE
-			m_controller->setJumpSpeed(jumpSpeed);
+			if (m_controller)
+				m_controller->setJumpSpeed(jumpSpeed);
 #endif
 		}
 
 		float CCharacterController::getJumpSpeed() const
 		{
 #ifdef USE_BULLET_PHYSIC_ENGINE
-			return m_controller->getJumpSpeed();
-#else
-			return 0.0f;
+			if (m_controller)
+				return m_controller->getJumpSpeed();
 #endif
+			return 0.0f;
+
 		}
 
 		void CCharacterController::setMaxJumpHeight(float maxJumpHeight)
 		{
 #ifdef USE_BULLET_PHYSIC_ENGINE
-			m_controller->setMaxJumpHeight(maxJumpHeight);
+			if (m_controller)
+				m_controller->setMaxJumpHeight(maxJumpHeight);
 #endif
 		}
 
 		void CCharacterController::jump(const core::vector3df& v)
 		{
 #ifdef USE_BULLET_PHYSIC_ENGINE
-			m_controller->jump(btVector3(v.X, v.Y, v.Z));
+			if (m_controller)
+				m_controller->jump(btVector3(v.X, v.Y, v.Z));
 #endif
 		}
 
 		void CCharacterController::setGravity(const core::vector3df& gravity)
 		{
 #ifdef USE_BULLET_PHYSIC_ENGINE
-			m_controller->setGravity(btVector3(gravity.X, gravity.Y, gravity.Z));
+			if (m_controller)
+				m_controller->setGravity(btVector3(gravity.X, gravity.Y, gravity.Z));
 #endif
 		}
 
 		core::vector3df CCharacterController::getGravity() const
 		{
 #ifdef USE_BULLET_PHYSIC_ENGINE
-			return Bullet::bulletVectorToIrrVector(m_controller->getGravity());
-#else
-			return core::vector3df();
+			if (m_controller)
+				return Bullet::bulletVectorToIrrVector(m_controller->getGravity());
 #endif
+			return core::vector3df();
 		}
 
 		void CCharacterController::setAngularVelocity(const core::vector3df& velocity)
 		{
 #ifdef USE_BULLET_PHYSIC_ENGINE
-			m_controller->setAngularVelocity(btVector3(velocity.X, velocity.Y, velocity.Z));
+			if (m_controller)
+				m_controller->setAngularVelocity(btVector3(velocity.X, velocity.Y, velocity.Z));
 #endif
 		}
 
 		core::vector3df CCharacterController::getAngularVelocity() const
 		{
 #ifdef USE_BULLET_PHYSIC_ENGINE
-			return Bullet::bulletVectorToIrrVector(m_controller->getAngularVelocity());
-#else
-			return core::vector3df();
+			if (m_controller)
+				return Bullet::bulletVectorToIrrVector(m_controller->getAngularVelocity());
 #endif
+			return core::vector3df();
 		}
 
 		void CCharacterController::setLinearVelocity(const core::vector3df& velocity)
 		{
 #ifdef USE_BULLET_PHYSIC_ENGINE
-			m_controller->setLinearVelocity(btVector3(velocity.X, velocity.Y, velocity.Z));
+			if (m_controller)
+				m_controller->setLinearVelocity(btVector3(velocity.X, velocity.Y, velocity.Z));
 #endif
 		}
 
 		core::vector3df CCharacterController::getLinearVelocity() const
 		{
 #ifdef USE_BULLET_PHYSIC_ENGINE
-			return Bullet::bulletVectorToIrrVector(m_controller->getLinearVelocity());
-#else
-			return core::vector3df();
+			if (m_controller)
+				return Bullet::bulletVectorToIrrVector(m_controller->getLinearVelocity());
 #endif
+			return core::vector3df();
 		}
 
 		void CCharacterController::setLinearDamping(float d)
 		{
 #ifdef USE_BULLET_PHYSIC_ENGINE
-			m_controller->setLinearDamping(d);
+			if (m_controller)
+				m_controller->setLinearDamping(d);
 #endif
 		}
 
 		float CCharacterController::getLinearDamping() const
 		{
 #ifdef USE_BULLET_PHYSIC_ENGINE
-			return m_controller->getLinearDamping();
-#else
-			return 0.0f;
+			if (m_controller)
+				return m_controller->getLinearDamping();
 #endif
+			return 0.0f;
 		}
 
 		void CCharacterController::setAngularDamping(float d)
 		{
 #ifdef USE_BULLET_PHYSIC_ENGINE
-			m_controller->setAngularDamping(d);
+			if (m_controller)
+				m_controller->setAngularDamping(d);
 #endif
 		}
 
 		float CCharacterController::getAngularDamping() const
 		{
 #ifdef USE_BULLET_PHYSIC_ENGINE
-			return m_controller->getAngularDamping();
-#else
-			return 0.0f;
+			if (m_controller)
+				return m_controller->getAngularDamping();
 #endif
+			return 0.0f;
 		}
 
 		void CCharacterController::setUp(const core::vector3df& up)
 		{
 #ifdef USE_BULLET_PHYSIC_ENGINE
-			m_controller->setUp(btVector3(up.X, up.Y, up.Z));
+			if (m_controller)
+				m_controller->setUp(btVector3(up.X, up.Y, up.Z));
 #endif
 		}
 
 		core::vector3df CCharacterController::getUp()
 		{
 #ifdef USE_BULLET_PHYSIC_ENGINE
-			return Bullet::bulletVectorToIrrVector(m_controller->getUp());
-#else
-			return core::vector3df(0.0f, 1.0f, 0.0f);
+			if (m_controller)
+				return Bullet::bulletVectorToIrrVector(m_controller->getUp());
 #endif
+			return core::vector3df(0.0f, 1.0f, 0.0f);
 		}
 	}
 }

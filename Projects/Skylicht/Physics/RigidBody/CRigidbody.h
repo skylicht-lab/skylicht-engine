@@ -61,6 +61,8 @@ namespace Skylicht
 
 			bool m_needUpdateTransform;
 
+			bool m_drawDebug;
+
 #ifdef USE_BULLET_PHYSIC_ENGINE
 			btRigidBody* m_rigidBody;
 			btCollisionShape* m_shape;
@@ -76,6 +78,10 @@ namespace Skylicht
 			virtual void startComponent();
 
 			virtual void updateComponent();
+
+			virtual CObjectSerializable* createSerializable();
+
+			virtual void loadSerializable(CObjectSerializable* object);
 
 			void setDynamic(bool b);
 
@@ -163,9 +169,19 @@ namespace Skylicht
 				return m_needUpdateTransform;
 			}
 
-			void notifyUpdateTransform(bool b)
+			inline void notifyUpdateTransform(bool b)
 			{
 				m_needUpdateTransform = b;
+			}
+
+			inline void setDrawDebug(bool b)
+			{
+				m_drawDebug = b;
+			}
+
+			inline bool enableDrawDebug()
+			{
+				return m_drawDebug;
 			}
 
 		private:

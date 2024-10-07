@@ -35,7 +35,7 @@ namespace Skylicht
 		core::vector3df m_rotation;
 		core::vector3df m_scale;
 
-		core::matrix4	m_transform;
+		core::matrix4 m_transform;
 
 		bool m_matrixChanged;
 

@@ -45,6 +45,10 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "ResourceSettings/MeshExportSettings.h"
 
+#if BUILD_SKYLICHT_PHYSIC
+#include "PhysicsEngine/CPhysicsEngine.h"
+#endif
+
 namespace Skylicht
 {
 	namespace Editor
@@ -491,6 +495,38 @@ namespace Skylicht
 			{
 				m_gizmos->onGizmos();
 			}
+
+			updateSelectedRigidBody();
+		}
+
+		void CSceneController::updateSelectedRigidBody()
+		{
+#ifdef BUILD_SKYLICHT_PHYSIC
+			Physics::CPhysicsEngine* physicsEngine = Physics::CPhysicsEngine::getInstance();
+
+			std::vector<CSelectObject*>& objectsSelected = CSelection::getInstance()->getAllSelected();
+
+			core::array<Physics::SRigidbodyData*>& bodies = physicsEngine->getBodies();
+			for (u32 i = 0, n = bodies.size(); i < n; i++)
+			{
+				Physics::SRigidbodyData* body = bodies[i];
+
+				std::string& objectId = body->Body->getGameObject()->getID();
+
+				bool selected = false;
+
+				for (CSelectObject* obj : objectsSelected)
+				{
+					if (obj->getID() == objectId)
+					{
+						selected = true;
+						break;
+					}
+				}
+
+				body->Body->setDrawDebug(selected);
+			}
+#endif
 		}
 
 		void CSceneController::refresh()

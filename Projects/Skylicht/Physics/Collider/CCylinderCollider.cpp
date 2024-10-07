@@ -44,11 +44,6 @@ namespace Skylicht
 
 		}
 
-		void CCylinderCollider::initComponent()
-		{
-
-		}
-
 		void CCylinderCollider::updateComponent()
 		{
 
@@ -65,6 +60,9 @@ namespace Skylicht
 		{
 			CComponentSystem::loadSerializable(object);
 			m_halfSize = object->get<core::vector3df>("halfSize", core::vector3df(1.0f, 1.0f, 1.0f));
+
+			clampSize(m_halfSize);
+			initRigidbody();
 		}
 
 #ifdef USE_BULLET_PHYSIC_ENGINE

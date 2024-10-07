@@ -19,6 +19,8 @@ subject to the following restrictions:
 #include "btVector3.h"
 #include "btTransform.h"
 
+class btCollisionObject;
+
 ///The btIDebugDraw interface class allows hooking up a debug renderer to visually debug simulations.
 ///Typical use case: create a debug drawer object, and assign it to a btCollisionWorld or btDynamicsWorld using setDebugDrawer and call debugDrawWorld.
 ///A class that implements the btIDebugDraw interface will need to provide non-empty implementations of the the drawLine and getDebugMode methods at a minimum.
@@ -131,6 +133,8 @@ public:
 	virtual void setDebugMode(int debugMode) = 0;
 
 	virtual int getDebugMode() const = 0;
+
+	virtual void drawCurrentObject(btCollisionObject* obj) = 0;
 
 	virtual void drawAabb(const btVector3& from, const btVector3& to, const btVector3& color)
 	{

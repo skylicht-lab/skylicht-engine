@@ -41,8 +41,6 @@ namespace Skylicht
 
 			virtual ~CStaticPlaneCollider();
 
-			virtual void initComponent();
-
 			virtual void updateComponent();
 
 			virtual CObjectSerializable* createSerializable();

@@ -39,8 +39,11 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Editor/SpaceController/CSceneController.h"
 #include "Editor/SpaceController/CPropertyController.h"
-
 #include "Editor/Gizmos/Transform/CTransformGizmos.h"
+
+#ifdef BUILD_SKYLICHT_PHYSIC
+#include "PhysicsEngine/CPhysicsEngine.h"
+#endif
 
 using namespace std::placeholders;
 
@@ -82,6 +85,11 @@ namespace Skylicht
 				reinitCurrentScene();
 			}
 
+#ifdef BUILD_SKYLICHT_PHYSIC
+			Physics::CPhysicsEngine* physicsEngine = Physics::CPhysicsEngine::getInstance();
+			physicsEngine->enableDrawDebug(true);
+#endif
+
 			GUI::CToolbar* toolbar = new GUI::CToolbar(window);
 			m_groupEditor = new GUI::CToggleGroup();
 			m_groupTransform = new GUI::CToggleGroup();
@@ -102,7 +110,7 @@ namespace Skylicht
 
 			toolbar->addSpace();
 
-			// transform			
+			// transform
 			button = toolbar->addButton(L"Move", GUI::ESystemIcon::Move);
 			button->OnPress = BIND_LISTENER(&CSpaceScene::onToolbarTransform, this);
 			m_toolbarButton[ESceneToolBar::Move] = button;
@@ -744,6 +752,12 @@ namespace Skylicht
 			// update camera setting
 			if (!m_cameraSettingMenu->isHidden())
 				m_cameraSettingController->update();
+
+#ifdef BUILD_SKYLICHT_PHYSIC
+			Physics::CPhysicsEngine* physicsEngine = Physics::CPhysicsEngine::getInstance();
+			physicsEngine->syncTransformToPhysics();
+			physicsEngine->debugDrawWorld();
+#endif
 
 			// update scene
 			m_scene->update();

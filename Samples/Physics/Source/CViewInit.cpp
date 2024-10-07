@@ -110,27 +110,26 @@ void CViewInit::initScene()
 	reflection->loadStaticTexture("Common/Textures/Sky/PaperMill");
 
 	// plane
-	CGameObject* grid = zone->createEmptyObject();
-	grid->setName("Plane");
+	CContainerObject* planePhysics = zone->createContainerObject();
+	planePhysics->setName("Plane");
 
-	CPlane* plane = grid->addComponent<CPlane>();
+	planePhysics->addComponent<Physics::CStaticPlaneCollider>();
+	Physics::CRigidbody* body = planePhysics->addComponent<Physics::CRigidbody>();
+	body->setDynamic(false); // this is kinematic
+	body->initRigidbody();
+
+	CGameObject* planeObject = planePhysics->createEmptyObject();
+	CPlane* plane = planeObject->addComponent<CPlane>();
 	plane->getMaterial()->changeShader("BuiltIn/Shader/SpecularGlossiness/Deferred/MetersGrid.xml");
 
 	// indirect lighting
-	grid->addComponent<CIndirectLighting>();
-
-	grid->addComponent<Physics::CStaticPlaneCollider>();
-	Physics::CRigidbody* body = grid->addComponent<Physics::CRigidbody>();
-	body->setDynamic(false); // kinematic
-	body->initRigidbody();
+	planeObject->addComponent<CIndirectLighting>();
 
 	// scale plane for render
 	core::matrix4 m;
 	m.setScale(core::vector3df(100.0, 1.0f, 100.0f));
-	grid->getTransform()->setRelativeTransform(m);
+	planeObject->getTransform()->setRelativeTransform(m);
 
-	// that will disable replace transform in next update
-	body->notifyUpdateTransform(false);
 
 	// Cube 1
 	CGameObject* cubeObj = zone->createEmptyObject();
@@ -309,7 +308,7 @@ void CViewInit::onUpdate()
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-	}
+		}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -342,7 +341,7 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-}
+	}
 }
 
 void CViewInit::onRender()

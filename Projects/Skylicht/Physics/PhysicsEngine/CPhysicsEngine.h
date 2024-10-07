@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Utils/CSingleton.h"
 #include "Transform/CTransformMatrix.h"
 #include "CPhysicsRaycast.h"
+#include "CDrawDebug.h"
 
 #ifdef USE_BULLET_PHYSIC_ENGINE
 #include <btBulletCollisionCommon.h>
@@ -43,8 +44,8 @@ namespace Skylicht
 
 		struct SRigidbodyData
 		{
+			CTransform* Transform;
 			CRigidbody* Body;
-			CTransformMatrix* Transform;
 #ifdef USE_BULLET_PHYSIC_ENGINE
 			btRigidBody* BulletBody;
 #endif
@@ -52,8 +53,8 @@ namespace Skylicht
 
 		struct SCharacterData
 		{
+			CTransform* Transform;
 			CCharacterController* Controller;
-			CTransformMatrix* Transform;
 #ifdef USE_BULLET_PHYSIC_ENGINE
 			btKinematicCharacterController* BulletCharacter;
 			btPairCachingGhostObject* GhostObject;
@@ -68,6 +69,8 @@ namespace Skylicht
 		public:
 			DECLARE_SINGLETON(CPhysicsEngine);
 
+			bool IsInEditor;
+
 		protected:
 #ifdef USE_BULLET_PHYSIC_ENGINE
 			btBroadphaseInterface* m_broadphase;
@@ -81,6 +84,10 @@ namespace Skylicht
 			core::array<SRigidbodyData*> m_bodies;
 			core::array<SCharacterData*> m_characters;
 
+			CDrawDebug* m_drawDebug;
+
+			bool m_enableDrawDebug;
+
 		public:
 			CPhysicsEngine();
 
@@ -91,6 +98,12 @@ namespace Skylicht
 			void exitPhysics();
 
 			void updatePhysics(float timestepSec);
+
+			void syncTransformToPhysics();
+
+			void debugDrawWorld();
+
+			void enableDrawDebug(bool b);
 
 			inline float getGravity()
 			{
@@ -104,6 +117,16 @@ namespace Skylicht
 			bool rayTest(const core::vector3df& from, const core::vector3df& to, SAllRaycastResult& result);
 
 			bool rayTest(const core::vector3df& from, const core::vector3df& to, SClosestRaycastResult& result);
+
+			core::array<SRigidbodyData*>& getBodies()
+			{
+				return m_bodies;
+			}
+
+			core::array<SCharacterData*>& getCharacters()
+			{
+				return m_characters;
+			}
 
 		private:
 

@@ -1503,7 +1503,10 @@ void btCollisionWorld::debugDrawWorld()
 				btCollisionObject* colObj = m_collisionObjects[i];
 				if ((colObj->getCollisionFlags() & btCollisionObject::CF_DISABLE_VISUALIZE_OBJECT) == 0)
 				{
-					if (getDebugDrawer() && (getDebugDrawer()->getDebugMode() & btIDebugDraw::DBG_DrawWireframe))
+					if (m_debugDrawer)
+						m_debugDrawer->drawCurrentObject(colObj);
+
+					if (m_debugDrawer && (m_debugDrawer->getDebugMode() & btIDebugDraw::DBG_DrawWireframe))
 					{
 						btVector3 color(btScalar(0.4), btScalar(0.4), btScalar(0.4));
 

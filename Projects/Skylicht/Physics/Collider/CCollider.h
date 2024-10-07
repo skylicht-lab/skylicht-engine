@@ -49,7 +49,7 @@ namespace Skylicht
 				Mesh,
 				Unknown,
 			};
-			
+
 		protected:
 			EColliderType m_colliderType;
 
@@ -64,6 +64,8 @@ namespace Skylicht
 
 			virtual ~CCollider();
 
+			virtual void initComponent();
+
 			EColliderType getColliderType()
 			{
 				return m_colliderType;
@@ -73,6 +75,10 @@ namespace Skylicht
 			virtual btCollisionShape* initCollisionShape() = 0;
 
 			virtual void dropCollisionShape();
+
+			void initRigidbody();
+
+			void clampSize(core::vector3df& size);
 #endif
 		};
 	}

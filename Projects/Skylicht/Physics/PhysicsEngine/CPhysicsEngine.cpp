@@ -41,16 +41,21 @@ namespace Skylicht
 		IMPLEMENT_SINGLETON(CPhysicsEngine);
 
 		CPhysicsEngine::CPhysicsEngine() :
-			m_gravity(-10.0f)
+			m_gravity(-10.0f),
+			IsInEditor(false),
 #ifdef USE_BULLET_PHYSIC_ENGINE
-			, m_broadphase(NULL),
+			m_broadphase(NULL),
 			m_dispatcher(NULL),
 			m_solver(NULL),
 			m_collisionConfiguration(NULL),
-			m_dynamicsWorld(NULL)
+			m_dynamicsWorld(NULL),
+			m_drawDebug(NULL),
+			m_enableDrawDebug(false)
 #endif
 		{
-
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			m_drawDebug = new CDrawDebug();
+#endif
 		}
 
 		CPhysicsEngine::~CPhysicsEngine()
@@ -69,7 +74,7 @@ namespace Skylicht
 			// (see Extras/BulletMultiThreaded)
 			m_dispatcher = new btCollisionDispatcher(m_collisionConfiguration);
 
-			// btDbvtBroadphase is a good general purpose broadphase. 
+			// btDbvtBroadphase is a good general purpose broadphase.
 			// You can also try out btAxis3Sweep.
 			m_broadphase = new btDbvtBroadphase();
 
@@ -100,6 +105,7 @@ namespace Skylicht
 				delete m_broadphase;
 				delete m_dispatcher;
 				delete m_collisionConfiguration;
+				delete m_drawDebug;
 
 				m_dynamicsWorld = NULL;
 				m_solver = NULL;
@@ -116,7 +122,7 @@ namespace Skylicht
 			SRigidbodyData* b = new SRigidbodyData();
 			b->Body = body;
 			b->BulletBody = body->getBody();
-			b->Transform = body->getGameObject()->getTransformMatrix();
+			b->Transform = body->getGameObject()->getTransform();
 
 			m_bodies.push_back(b);
 
@@ -211,6 +217,17 @@ namespace Skylicht
 #endif
 		}
 
+		void CPhysicsEngine::enableDrawDebug(bool b)
+		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			m_enableDrawDebug = b;
+			if (m_enableDrawDebug)
+				m_dynamicsWorld->setDebugDrawer(m_drawDebug);
+			else
+				m_dynamicsWorld->setDebugDrawer(NULL);
+#endif
+		}
+
 		void CPhysicsEngine::updatePhysics(float timestepSec)
 		{
 #ifdef USE_BULLET_PHYSIC_ENGINE
@@ -221,7 +238,18 @@ namespace Skylicht
 				syncTransforms();
 
 				checkCollision();
+
+				if (m_enableDrawDebug)
+					m_dynamicsWorld->debugDrawWorld();
 			}
+#endif
+		}
+
+		void CPhysicsEngine::debugDrawWorld()
+		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_enableDrawDebug)
+				m_dynamicsWorld->debugDrawWorld();
 #endif
 		}
 
@@ -289,6 +317,33 @@ namespace Skylicht
 #endif
 
 				characters[i]->Transform->setWorldMatrix(world);
+			}
+#endif
+		}
+
+		void CPhysicsEngine::syncTransformToPhysics()
+		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			SRigidbodyData** bodies = m_bodies.pointer();
+			int used = (int)m_bodies.size();
+			core::matrix4 world;
+
+			// RIGIDBODY
+			for (int i = 0; i < used; i++)
+			{
+				btRigidBody* body = bodies[i]->BulletBody;
+				CRigidbody* engineBody = bodies[i]->Body;
+
+				CTransformEuler* transform = (CTransformEuler*)bodies[i]->Transform;
+
+				const core::vector3df& rot = transform->getRotation();
+				const core::vector3df& pos = transform->getPosition();
+
+				world.makeIdentity();
+				world.setRotationDegrees(rot);
+				world.setTranslation(pos);
+
+				body->getWorldTransform().setFromOpenGLMatrix(world.pointer());
 			}
 #endif
 		}

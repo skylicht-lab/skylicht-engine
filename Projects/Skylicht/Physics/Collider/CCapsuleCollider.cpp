@@ -45,11 +45,6 @@ namespace Skylicht
 
 		}
 
-		void CCapsuleCollider::initComponent()
-		{
-
-		}
-
 		void CCapsuleCollider::updateComponent()
 		{
 
@@ -58,8 +53,8 @@ namespace Skylicht
 		CObjectSerializable* CCapsuleCollider::createSerializable()
 		{
 			CObjectSerializable* obj = CComponentSystem::createSerializable();
-			obj->autoRelease(new CFloatProperty(obj, "radius", m_radius));
-			obj->autoRelease(new CFloatProperty(obj, "height", m_height));
+			obj->autoRelease(new CFloatProperty(obj, "radius", m_radius, 0.0f));
+			obj->autoRelease(new CFloatProperty(obj, "height", m_height, 0.0f));
 			return obj;
 		}
 
@@ -68,6 +63,8 @@ namespace Skylicht
 			CComponentSystem::loadSerializable(object);
 			m_radius = object->get<float>("radius", 1.0f);
 			m_height = object->get<float>("height", 1.0f);
+
+			initRigidbody();
 		}
 
 #ifdef USE_BULLET_PHYSIC_ENGINE

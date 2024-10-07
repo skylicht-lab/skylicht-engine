@@ -20,7 +20,8 @@ namespace Skylicht
 			m_rollingFriction(0.0f),
 			m_spinningFriction(0.0f),
 			m_isDynamic(true),
-			m_needUpdateTransform(true)
+			m_needUpdateTransform(true),
+			m_drawDebug(false)
 #ifdef USE_BULLET_PHYSIC_ENGINE
 			, m_shape(NULL),
 			m_rigidBody(NULL)
@@ -36,8 +37,18 @@ namespace Skylicht
 
 		void CRigidbody::initComponent()
 		{
-			// convert to readonly transform
-			m_gameObject->setupMatrixTransform();
+			CPhysicsEngine* engine = CPhysicsEngine::getInstance();
+			if (engine != NULL)
+			{
+				if (!engine->IsInEditor)
+				{
+					// note: MatrixTransform is faster
+					m_gameObject->setupMatrixTransform();
+				}
+
+				if (engine->IsInEditor)
+					initRigidbody();
+			}
 		}
 
 		void CRigidbody::startComponent()
@@ -48,6 +59,32 @@ namespace Skylicht
 		void CRigidbody::updateComponent()
 		{
 
+		}
+
+		CObjectSerializable* CRigidbody::createSerializable()
+		{
+			CObjectSerializable* object = CComponentSystem::createSerializable();
+
+			object->autoRelease(new CBoolProperty(object, "isDynamic", m_isDynamic));
+			object->autoRelease(new CFloatProperty(object, "mass", m_mass, 0.0f));
+			object->autoRelease(new CFloatProperty(object, "friction", m_friction, 0.0f));
+			object->autoRelease(new CFloatProperty(object, "rollingFriction", m_rollingFriction, 0.0f));
+			object->autoRelease(new CFloatProperty(object, "spinningFriction", m_spinningFriction, 0.0f));
+
+			return object;
+		}
+
+		void CRigidbody::loadSerializable(CObjectSerializable* object)
+		{
+			CComponentSystem::loadSerializable(object);
+
+			m_isDynamic = object->get<bool>("isDynamic", true);
+			m_mass = object->get<float>("mass", 1.0f);
+			m_friction = object->get<float>("friction", 1.0f);
+			m_rollingFriction = object->get<float>("rollingFriction", 0.0f);
+			m_spinningFriction = object->get<float>("spinningFriction", 0.0f);
+
+			initRigidbody();
 		}
 
 		void CRigidbody::setFriction(float f)
@@ -99,16 +136,16 @@ namespace Skylicht
 		bool CRigidbody::initRigidbody()
 		{
 #ifdef USE_BULLET_PHYSIC_ENGINE
-			CTransformMatrix* transform = m_gameObject->getTransformMatrix();
-			if (transform == NULL)
-				return false;
-
 			CPhysicsEngine* engine = CPhysicsEngine::getInstance();
 			if (engine == NULL)
 				return false;
 
 			CCollider* collider = m_gameObject->getComponent<CCollider>();
 			if (collider == NULL)
+				return false;
+
+			CTransform* transform = m_gameObject->getTransform();
+			if (transform == NULL)
 				return false;
 
 			if (m_rigidBody && m_shape)

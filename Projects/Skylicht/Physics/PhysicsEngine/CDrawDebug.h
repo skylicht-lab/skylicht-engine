@@ -24,50 +24,43 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CCollider.h"
+#ifdef USE_BULLET_PHYSIC_ENGINE
+
+#include "LinearMath/btIDebugDraw.h"
+
+#include <btBulletCollisionCommon.h>
+#include <btBulletDynamicsCommon.h>
 
 namespace Skylicht
 {
 	namespace Physics
 	{
-		class CCapsuleCollider : public CCollider
+		class CDrawDebug : public btIDebugDraw
 		{
 		protected:
-			float m_radius;
-			float m_height;
+			int m_debugMode;
+			bool m_enableDraw;
 
 		public:
-			CCapsuleCollider();
+			CDrawDebug();
 
-			virtual ~CCapsuleCollider();
+			virtual ~CDrawDebug();
 
-			virtual void updateComponent();
+			virtual void drawCurrentObject(btCollisionObject* obj);
 
-			virtual CObjectSerializable* createSerializable();
+			virtual void drawLine(const btVector3& from, const btVector3& to, const btVector3& color);
 
-			virtual void loadSerializable(CObjectSerializable* object);
+			virtual void drawContactPoint(const btVector3& PointOnB, const btVector3& normalOnB, btScalar distance, int lifeTime, const btVector3& color);
 
-			inline float getRadius()
-			{
-				return m_radius;
-			}
+			virtual void reportErrorWarning(const char* warningString);
 
-			inline float getHeight()
-			{
-				return m_height;
-			}
+			virtual void draw3dText(const btVector3& location, const char* textString);
 
-			inline void setCapsule(float radius, float height)
-			{
-				m_radius = radius;
-				m_height = height;
-			}
+			virtual void setDebugMode(int debugMode);
 
-#ifdef USE_BULLET_PHYSIC_ENGINE
-			virtual btCollisionShape* initCollisionShape();
-#endif
-
-			DECLARE_GETTYPENAME(CCapsuleCollider)
+			virtual int getDebugMode() const { return m_debugMode; }
 		};
 	}
 }
+
+#endif

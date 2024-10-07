@@ -40,8 +40,6 @@ namespace Skylicht
 
 			virtual ~CCylinderCollider();
 
-			virtual void initComponent();
-
 			virtual void updateComponent();
 
 			virtual CObjectSerializable* createSerializable();
