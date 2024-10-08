@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CSceneController.h"
 #include "Selection/CSelection.h"
 #include "Editor/SpaceController/CPropertyController.h"
+#include "Editor/SpaceController/CAssetPropertyController.h"
 #include "GUI/Input/CInput.h"
 #include "Entity/CEntityHandleData.h"
 
@@ -105,6 +106,7 @@ namespace Skylicht
 
 			GUI::CMenu* submenu = templateMenu->getMenu();
 			submenu->addItem(L"Create", GUI::ESystemIcon::ResFile);
+			submenu->addItem(L"Select");
 			submenu->addItem(L"Revert");
 			submenu->addItem(L"Apply");
 			submenu->addItem(L"Unpack");
@@ -182,6 +184,10 @@ namespace Skylicht
 			item = menu->getItemByPath(L"Template/Create");
 			if (item)
 				item->setHidden(isTemplate ? true : false);
+
+			item = menu->getItemByPath(L"Template/Select");
+			if (item)
+				item->setHidden(isTemplate ? false : true);
 
 			item = menu->getItemByPath(L"Template/Revert");
 			if (item)
@@ -325,6 +331,11 @@ namespace Skylicht
 
 			if (command == L"Create")
 				sceneController->onCreateTemplate(contextObject);
+			else if (command == L"Select")
+			{
+				if (contextObject->isTemplateAsset())
+					CAssetPropertyController::getInstance()->browseAsset(contextObject->getTemplateAsset());
+			}
 			else if (command == L"Apply")
 				sceneController->onApplyTemplate(contextObject);
 			else if (command == L"Revert")

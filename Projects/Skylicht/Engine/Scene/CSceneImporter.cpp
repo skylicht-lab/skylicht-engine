@@ -92,13 +92,16 @@ namespace Skylicht
 		}
 	}
 
-	void CSceneImporter::buildScene(CScene* scene, io::IXMLReader* reader)
+	void CSceneImporter::buildScene(CScene* scene, CContainerObject* target, io::IXMLReader* reader)
 	{
 		std::wstring nodeName = L"node";
 		std::wstring attributeName;
 
 		std::stack<std::wstring> serializableTree;
+
 		std::stack<CContainerObject*> container;
+		if (target)
+			container.push(target);
 
 		g_listGameObject.clear();
 
@@ -175,11 +178,6 @@ namespace Skylicht
 		g_currentGameObject = g_listGameObject.begin();
 	}
 
-	void CSceneImporter::exportGameObject(CObjectSerializable* data, CContainerObject* target)
-	{
-
-	}
-
 	bool CSceneImporter::beginImportScene(CScene* scene, const char* file)
 	{
 		// step 1
@@ -188,7 +186,7 @@ namespace Skylicht
 		if (g_sceneReader == NULL)
 			return false;
 
-		buildScene(scene, g_sceneReader);
+		buildScene(scene, NULL, g_sceneReader);
 
 		// close
 		g_sceneReader->drop();
@@ -262,6 +260,11 @@ namespace Skylicht
 		return g_loadingScene / (float)size;
 	}
 
+	int CSceneImporter::getTotalObjects()
+	{
+		return (int)g_listGameObject.size();
+	}
+
 	bool CSceneImporter::updateLoadScene()
 	{
 		// step 2
@@ -282,5 +285,38 @@ namespace Skylicht
 		}
 
 		return false;
+	}
+
+	CGameObject* CSceneImporter::importTemplate(CContainerObject* target, const char* path)
+	{
+		if (!beginImportTemplate(target, path))
+			return NULL;
+
+		if (g_listGameObject.size() == 0)
+			return NULL;
+
+		// re-open the scene file
+		g_sceneReader = getIrrlichtDevice()->getFileSystem()->createXMLReader(path);
+		g_sceneReaderPath = path;
+		g_scene = target->getScene();
+		g_loadingScene = 0;
+
+		// import object
+		while (updateLoadScene() == false);
+
+		return g_listGameObject.front();
+	}
+
+	bool CSceneImporter::beginImportTemplate(CContainerObject* target, const char* path)
+	{
+		io::IXMLReader* xmlReader = getIrrlichtDevice()->getFileSystem()->createXMLReader(path);
+		if (xmlReader == NULL)
+			return false;
+
+		buildScene(target->getScene(), target, xmlReader);
+
+		xmlReader->drop();
+
+		return true;
 	}
 }

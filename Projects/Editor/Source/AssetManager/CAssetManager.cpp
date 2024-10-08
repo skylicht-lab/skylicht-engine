@@ -300,7 +300,7 @@ namespace Skylicht
 
 		std::string CAssetManager::getShortPath(const char* folder)
 		{
-			std::string assetPath = m_assetFolder + "/";
+			std::string assetPath = m_assetFolder;
 			std::string sortPath = folder;
 
 			if (CStringImp::length(folder) < assetPath.size())
@@ -308,6 +308,9 @@ namespace Skylicht
 
 			if (sortPath.find(assetPath.c_str()) == 0)
 				sortPath.replace(0, assetPath.size(), "");
+
+			while (!sortPath.empty() && sortPath[0] == '/')
+				sortPath.erase(sortPath.begin());
 
 			return sortPath;
 		}

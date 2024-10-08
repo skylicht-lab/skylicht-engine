@@ -53,7 +53,7 @@ namespace Skylicht
 			if (spaceProperty == NULL || isFolder)
 				return;
 
-			// Name and icon			
+			// Name and icon
 			std::string fileName = CPath::getFileName(path);
 			std::string ext = CPath::getFileNameExt(path);
 

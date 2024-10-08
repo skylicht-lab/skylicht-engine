@@ -35,17 +35,22 @@ namespace Skylicht
 	{
 		static void buildComponent(CGameObject* object, io::IXMLReader* xmlReader);
 
-		static void buildScene(CScene* scene, io::IXMLReader* xmlReader);
+		static void buildScene(CScene* scene, CContainerObject* target, io::IXMLReader* xmlReader);
 
 		static bool loadStep(CScene* scene, io::IXMLReader* reader);
 
 	public:
-		static void exportGameObject(CObjectSerializable* data, CContainerObject* target);
 
 		static bool beginImportScene(CScene* scene, const char* path);
 
 		static bool updateLoadScene();
 
 		static float getLoadingPercent();
+
+		static int getTotalObjects();
+
+		static CGameObject* importTemplate(CContainerObject* target, const char* path);
+
+		static bool beginImportTemplate(CContainerObject* target, const char* path);
 	};
 }

@@ -85,6 +85,8 @@ namespace Skylicht
 
 		GUI::CBase* CListFSController::scrollAndSelectPath(const char* path)
 		{
+			GUI::CListRowItem* result = NULL;
+
 			std::list<GUI::CListRowItem*> items = m_listFS->getAllItems();
 			for (GUI::CListRowItem* item : items)
 			{
@@ -97,11 +99,15 @@ namespace Skylicht
 					m_listFS->recurseLayout();
 					m_listFS->scrollToItem(item);
 
-					return item;
+					result = item;
+				}
+				else
+				{
+					item->setToggle(false);
 				}
 			}
 
-			return NULL;
+			return result;
 		}
 
 		void CListFSController::OnPress(GUI::CBase* item)
@@ -402,10 +408,10 @@ namespace Skylicht
 				m_msgBox->setMessage("Folder with the new name already exists!", newName.c_str());
 				m_msgBox->getMessageIcon()->setIcon(GUI::ESystemIcon::Alert);
 				m_msgBox->OnOK = [controller = this, parentPath = parent](GUI::CBase* base)
-				{
-					// Retry command new folder
-					controller->newFolder(parentPath.c_str());
-				};
+					{
+						// Retry command new folder
+						controller->newFolder(parentPath.c_str());
+					};
 
 				m_newFolderItem->remove();
 				m_newFolderItem = NULL;

@@ -42,9 +42,9 @@ namespace Skylicht
 
 		CPhysicsEngine::CPhysicsEngine() :
 			m_gravity(-10.0f),
-			IsInEditor(false),
+			IsInEditor(false)
 #ifdef USE_BULLET_PHYSIC_ENGINE
-			m_broadphase(NULL),
+			, m_broadphase(NULL),
 			m_dispatcher(NULL),
 			m_solver(NULL),
 			m_collisionConfiguration(NULL),

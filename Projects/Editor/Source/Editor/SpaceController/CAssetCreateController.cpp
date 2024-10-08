@@ -183,18 +183,20 @@ namespace Skylicht
 		void CAssetCreateController::createTemplate(CGameObject* obj)
 		{
 			CSpaceAssets* spaceAssets = (CSpaceAssets*)CEditor::getInstance()->getWorkspaceByName(L"Assets");
-
 			CAssetManager* assetMgr = CAssetManager::getInstance();
 
 			std::string currentFolder = assetMgr->getAssetFolder();
 			if (spaceAssets != NULL)
 				currentFolder = spaceAssets->getListController()->getCurrentFolder();
 
-			std::string fileName = std::string("/") + std::string(obj->getNameA()) + std::string(".tobj");
+			std::string ext = ".template";
+			std::string fileName;
+			fileName += std::string("/");
+			fileName += std::string(obj->getNameA()) + ext;
 			std::string fullPath = currentFolder + fileName;
 			if (assetMgr->isExist(fullPath.c_str()))
 			{
-				fileName = std::string("/") + std::string(obj->getNameA()) + std::string("%02d.tobj");
+				fileName = std::string("/") + std::string(obj->getNameA()) + std::string("%02d") + ext;
 				fullPath = assetMgr->generateAssetPath(fileName.c_str(), currentFolder.c_str());
 			}
 
@@ -203,6 +205,8 @@ namespace Skylicht
 			delete data;
 
 			std::string id = assetMgr->getGenerateMetaGUID(fullPath.c_str());
+
+			fullPath = assetMgr->getShortPath(fullPath.c_str());
 
 			obj->setTemplateAsset(fullPath.c_str());
 			obj->setTemplateId(id.c_str());
