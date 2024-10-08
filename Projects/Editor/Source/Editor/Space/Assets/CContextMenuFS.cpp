@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CContextMenuFS.h"
 #include "Utils/CStringImp.h"
+#include "Utils/CPath.h"
 #include "GUI/Input/CInput.h"
 #include "GUI/Clipboard/CClipboard.h"
 
@@ -155,18 +156,27 @@ namespace Skylicht
 			}
 			else if (label == L"Show in Explorer")
 			{
+				bool isFolder = CAssetManager::getInstance()->isFolder(m_selectedPath.c_str());
+
 #if defined(WIN32)
 				char path[512] = { 0 };
 				CStringImp::replaceText(path, m_selectedPath.c_str(), "/", "\\");
-				ShellExecuteA(NULL, "open", path, NULL, NULL, SW_SHOWDEFAULT);
-#elif defined(__APPLE__)				
+				if (isFolder)
+					ShellExecuteA(NULL, "open", path, NULL, NULL, SW_SHOWDEFAULT);
+				else
+				{
+					std::string param = std::string("/select, ") + std::string(path);
+					ShellExecuteA(NULL, "open", "explorer.exe", param.c_str(), NULL, SW_SHOWDEFAULT);
+				}
+
+#elif defined(__APPLE__)
 				char cmd[1024] = { 0 };
 				sprintf(cmd, "osascript -e 'tell app \"Finder\" to open POSIX file \"%s\"'", m_selectedPath.c_str()); // to reveal
 				system(cmd);
 
 				sprintf(cmd, "osascript -e 'tell app \"Finder\" to activate'");
 				system(cmd);
-#endif
+#endif				
 			}
 			else if (label == L"Delete")
 			{
@@ -175,13 +185,13 @@ namespace Skylicht
 				m_msgBox->setMessage("Delete selected asset?\nYou can't undo this action", shortPath.c_str());
 				m_msgBox->getMessageIcon()->setIcon(GUI::ESystemIcon::Alert);
 				m_msgBox->OnYes = [asset = m_assetManager, path = m_selectedPath, listController = m_listFSController, treeController = m_treeFSController](GUI::CBase* dialog)
-				{
-					if (asset->deleteAsset(path.c_str()))
 					{
-						listController->removePath(path.c_str());
-						treeController->removePath(path.c_str());
-					}
-				};
+						if (asset->deleteAsset(path.c_str()))
+						{
+							listController->removePath(path.c_str());
+							treeController->removePath(path.c_str());
+						}
+					};
 			}
 			else if (label == L"Rename")
 			{

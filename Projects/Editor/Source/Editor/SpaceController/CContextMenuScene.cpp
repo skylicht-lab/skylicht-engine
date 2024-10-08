@@ -108,7 +108,7 @@ namespace Skylicht
 			submenu->addItem(L"Revert");
 			submenu->addItem(L"Apply");
 			submenu->addItem(L"Unpack");
-			submenu->OnCommand = BIND_LISTENER(&CContextMenuScene::OnContextMenuCommand, this);
+			submenu->OnCommand = BIND_LISTENER(&CContextMenuScene::OnContextMenuTemplateCommand, this);
 		}
 
 		bool CContextMenuScene::onContextMenu(CSpaceHierarchy* spaceHierachy, CHierachyNode* node, CScene* scene, CZone* zone)
@@ -302,6 +302,35 @@ namespace Skylicht
 				}
 			}
 
+		}
+
+		void CContextMenuScene::OnContextMenuTemplateCommand(GUI::CBase* sender)
+		{
+			GUI::CMenuItem* menuItem = dynamic_cast<GUI::CMenuItem*>(sender);
+			if (menuItem == NULL)
+				return;
+
+			const std::wstring& command = menuItem->getLabel();
+
+			CSceneController* sceneController = CSceneController::getInstance();
+
+			CHierachyNode* contextNode = sceneController->getContextNode();
+
+			CGameObject* contextObject = NULL;
+			if (contextNode->isTagGameObject())
+				contextObject = (CGameObject*)contextNode->getTagData();
+
+			if (contextObject == NULL)
+				return;
+
+			if (command == L"Create")
+				sceneController->onCreateTemplate(contextObject);
+			else if (command == L"Apply")
+				sceneController->onApplyTemplate(contextObject);
+			else if (command == L"Revert")
+				sceneController->onRevertTemplate(contextObject);
+			else if (command == L"Unpack")
+				sceneController->onUnpackTemplate(contextObject);
 		}
 	}
 }

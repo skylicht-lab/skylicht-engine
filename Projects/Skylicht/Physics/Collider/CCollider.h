@@ -75,11 +75,12 @@ namespace Skylicht
 			virtual btCollisionShape* initCollisionShape() = 0;
 
 			virtual void dropCollisionShape();
+#endif
 
 			void initRigidbody();
 
 			void clampSize(core::vector3df& size);
-#endif
+
 		};
 	}
 }

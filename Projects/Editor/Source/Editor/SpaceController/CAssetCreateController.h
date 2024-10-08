@@ -51,9 +51,12 @@ namespace Skylicht
 
 			void createEmptyGUI();
 
+			void createTemplate(CGameObject* obj);
+
 		protected:
 
 			void importAndSelect(const char* path);
+
 		};
 	}
 }

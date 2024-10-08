@@ -31,6 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Scene/CScene.h"
 
 #include "Editor/SpaceController/CSceneController.h"
+#include "AssetManager/CAssetManager.h"
 
 namespace Skylicht
 {
@@ -116,6 +117,15 @@ namespace Skylicht
 			{
 				// update node name
 				node->setName(object->getName());
+
+				// template object
+				if (object->isTemplateAsset())
+				{
+					if (CAssetManager::getInstance()->isExist(object->getTemplateAsset()))
+						node->setIconColor(GUI::SGUIColor(255, 110, 170, 255));
+					else
+						node->setIconColor(GUI::SGUIColor(255, 255, 170, 110));
+				}
 
 				// call sync node
 				if (node->OnUpdate)

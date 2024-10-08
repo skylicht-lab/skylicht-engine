@@ -180,6 +180,36 @@ namespace Skylicht
 			canvas->remove();
 		}
 
+		void CAssetCreateController::createTemplate(CGameObject* obj)
+		{
+			CSpaceAssets* spaceAssets = (CSpaceAssets*)CEditor::getInstance()->getWorkspaceByName(L"Assets");
+
+			CAssetManager* assetMgr = CAssetManager::getInstance();
+
+			std::string currentFolder = assetMgr->getAssetFolder();
+			if (spaceAssets != NULL)
+				currentFolder = spaceAssets->getListController()->getCurrentFolder();
+
+			std::string fileName = std::string("/") + std::string(obj->getNameA()) + std::string(".tobj");
+			std::string fullPath = currentFolder + fileName;
+			if (assetMgr->isExist(fullPath.c_str()))
+			{
+				fileName = std::string("/") + std::string(obj->getNameA()) + std::string("%02d.tobj");
+				fullPath = assetMgr->generateAssetPath(fileName.c_str(), currentFolder.c_str());
+			}
+
+			CObjectSerializable* data = CSceneExporter::exportGameObject(obj);
+			data->save(fullPath.c_str());
+			delete data;
+
+			std::string id = assetMgr->getGenerateMetaGUID(fullPath.c_str());
+
+			obj->setTemplateAsset(fullPath.c_str());
+			obj->setTemplateId(id.c_str());
+
+			importAndSelect(fullPath.c_str());
+		}
+
 		void CAssetCreateController::importAndSelect(const char* path)
 		{
 			CAssetImporter importer;

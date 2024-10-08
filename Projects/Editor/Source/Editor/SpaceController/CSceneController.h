@@ -252,6 +252,14 @@ namespace Skylicht
 
 			void updateTreeNode(CGameObject* object);
 
+			void onCreateTemplate(CGameObject* object);
+
+			void onApplyTemplate(CGameObject* object);
+
+			void onRevertTemplate(CGameObject* object);
+
+			void onUnpackTemplate(CGameObject* object);
+
 		protected:
 
 			void setNodeEvent(CHierachyNode* node);

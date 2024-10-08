@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CSceneController.h"
 #include "CPropertyController.h"
 #include "CGUIDesignController.h"
+#include "CAssetCreateController.h"
 
 #include "Selection/CSelection.h"
 
@@ -1352,6 +1353,29 @@ namespace Skylicht
 						onObjectChange(obj);
 				}
 			}
+		}
+
+		void CSceneController::onCreateTemplate(CGameObject* object)
+		{
+			CAssetCreateController::getInstance()->createTemplate(object);
+
+			if (m_spaceHierarchy)
+				m_spaceHierarchy->getController()->updateTreeNode(object);
+		}
+
+		void CSceneController::onApplyTemplate(CGameObject* object)
+		{
+
+		}
+
+		void CSceneController::onRevertTemplate(CGameObject* object)
+		{
+
+		}
+
+		void CSceneController::onUnpackTemplate(CGameObject* object)
+		{
+
 		}
 	}
 }

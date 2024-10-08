@@ -76,6 +76,7 @@ namespace Skylicht
 		CTransformEuler* m_transformEuler;
 		CTransformMatrix* m_transformMatrix;
 
+		std::string m_templateId;
 		std::string m_templateAsset;
 
 	public:
@@ -130,7 +131,7 @@ namespace Skylicht
 			return !m_templateAsset.empty();
 		}
 
-		inline const char* getTemplatesset()
+		inline const char* getTemplateAsset()
 		{
 			return m_templateAsset.c_str();
 		}
@@ -138,6 +139,16 @@ namespace Skylicht
 		inline void setTemplateAsset(const char* asset)
 		{
 			m_templateAsset = asset;
+		}
+
+		inline const char* getTemplateId()
+		{
+			return m_templateId.c_str();
+		}
+
+		inline void setTemplateId(const char* id)
+		{
+			m_templateId = id;
 		}
 
 		inline CGameObject* getParent()

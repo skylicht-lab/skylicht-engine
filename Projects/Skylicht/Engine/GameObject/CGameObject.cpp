@@ -461,6 +461,10 @@ namespace Skylicht
 		CObjectSerializable* object = new CObjectSerializable(getTypeName().c_str());
 		object->autoRelease(new CStringProperty(object, "id", getID().c_str()));
 		object->autoRelease(new CStringProperty(object, "name", getNameA()));
+
+		object->autoRelease(new CStringProperty(object, "templateId", getTemplateId()));
+		object->autoRelease(new CStringProperty(object, "templateAsset", getTemplateAsset()));
+
 		object->autoRelease(new CBoolProperty(object, "enable", isEnable()));
 		object->autoRelease(new CBoolProperty(object, "visible", isVisible()));
 		object->autoRelease(new CBoolProperty(object, "static", isStatic()));
@@ -500,6 +504,10 @@ namespace Skylicht
 	{
 		setID(object->get("id", std::string("")).c_str());
 		setName(object->get("name", std::string("")).c_str());
+
+		setTemplateId(object->get("templateId", std::string("")).c_str());
+		setTemplateAsset(object->get("templateAsset", std::string("")).c_str());
+
 		setEnable(object->get("enable", true));
 		setVisible(object->get("visible", true));
 		setStatic(object->get("static", true));

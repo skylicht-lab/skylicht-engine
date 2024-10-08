@@ -62,6 +62,7 @@ namespace Skylicht
 				m_shape->setUserPointer(NULL);
 			m_shape = NULL;
 		}
+#endif
 
 		void CCollider::initRigidbody()
 		{
@@ -76,6 +77,5 @@ namespace Skylicht
 			size.Y = core::max_(size.Y, 0.0f);
 			size.Z = core::max_(size.Z, 0.0f);
 		}
-#endif
 	}
 }
