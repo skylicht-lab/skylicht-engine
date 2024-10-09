@@ -31,6 +31,7 @@ namespace Skylicht
 	io::IXMLReader* g_sceneReader = NULL;
 	std::string g_sceneReaderPath;
 	CScene* g_scene = NULL;
+	bool g_generateId = false;
 
 	int g_loadSceneStep = 10;
 	int g_loadingScene = 0;
@@ -196,6 +197,7 @@ namespace Skylicht
 		g_sceneReaderPath = file;
 		g_scene = scene;
 		g_loadingScene = 0;
+		g_generateId = false;
 
 		return true;
 	}
@@ -230,6 +232,10 @@ namespace Skylicht
 							attributeName == L"CGameObject")
 						{
 							CGameObject* gameobject = dynamic_cast<CGameObject*>(*g_currentGameObject);
+
+							// get id generated
+							std::string id = gameobject->getID();
+
 							++g_currentGameObject;
 							++g_loadingScene;
 							++step;
@@ -242,6 +248,10 @@ namespace Skylicht
 							gameobject->loadSerializable(data);
 							gameobject->startComponent();
 							delete data;
+
+							// use new id, that generated
+							if (g_generateId)
+								gameobject->setID(id.c_str());
 						}
 					}
 				}
@@ -300,6 +310,7 @@ namespace Skylicht
 		g_sceneReaderPath = path;
 		g_scene = target->getScene();
 		g_loadingScene = 0;
+		g_generateId = true;
 
 		// import object
 		while (updateLoadScene() == false);
@@ -316,6 +327,11 @@ namespace Skylicht
 		buildScene(target->getScene(), target, xmlReader);
 
 		xmlReader->drop();
+
+		g_sceneReaderPath = path;
+		g_scene = target->getScene();
+		g_loadingScene = 0;
+		g_generateId = true;
 
 		return true;
 	}

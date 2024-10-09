@@ -84,7 +84,6 @@ namespace Skylicht
 			submenu->addItem(L"Container Object", GUI::ESystemIcon::Folder);
 			submenu->OnCommand = BIND_LISTENER(&CContextMenuScene::OnContextMenuCommand, this);
 
-			m_contextMenuContainer->addSeparator();
 			addTemplateItem(m_contextMenuContainer);
 			m_contextMenuContainer->addSeparator();
 			m_contextMenuContainer->addItem(L"Rename", L"F2");
@@ -154,13 +153,13 @@ namespace Skylicht
 							m_spaceZone->setHidden(true);
 						}
 
-						showHideTemplateItem(m_contextMenuContainer, gameObject->isTemplateAsset());
+						showHideTemplateItem(m_contextMenuContainer, gameObject);
 
 						m_contextMenuContainer->open(mousePos);
 					}
 					else
 					{
-						showHideTemplateItem(m_contextMenuGameObject, gameObject->isTemplateAsset());
+						showHideTemplateItem(m_contextMenuGameObject, gameObject);
 
 						m_contextMenuGameObject->open(mousePos);
 					}
@@ -177,9 +176,23 @@ namespace Skylicht
 			return false;
 		}
 
-		void CContextMenuScene::showHideTemplateItem(GUI::CMenu* menu, bool isTemplate)
+		void CContextMenuScene::showHideTemplateItem(GUI::CMenu* menu, CGameObject* go)
 		{
 			GUI::CMenuItem* item = NULL;
+
+			if (go->getTypeName() == "CZone")
+			{
+				item = menu->getItemByPath(L"Template");
+				item->setHidden(true);
+				return;
+			}
+			else
+			{
+				item = menu->getItemByPath(L"Template");
+				item->setHidden(false);
+			}
+
+			bool isTemplate = go->isTemplateAsset();
 
 			item = menu->getItemByPath(L"Template/Create");
 			if (item)

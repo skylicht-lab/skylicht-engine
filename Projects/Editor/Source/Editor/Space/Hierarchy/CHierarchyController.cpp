@@ -340,7 +340,8 @@ namespace Skylicht
 							if (fileExt == "dae" ||
 								fileExt == "obj" ||
 								fileExt == "fbx" ||
-								fileExt == "smesh")
+								fileExt == "smesh" ||
+								fileExt == "template")
 							{
 								return true;
 							}
@@ -457,53 +458,119 @@ namespace Skylicht
 					}
 					else if (data->Name == "ListFSItem")
 					{
+						GUI::CListRowItem* fsItem = (GUI::CListRowItem*)data->UserData;
+
+						std::string path = fsItem->getTagString();
+						std::string fileExt = CPath::getFileNameExt(path);
+						fileExt = CStringImp::toLower(fileExt);
+
 						CHierachyNode* newNode = NULL;
 
-						if (node->getTagDataType() == CHierachyNode::Zone)
+						if (fileExt == "template")
 						{
-							newNode = createChildObject(node);
+							CContainerObject* container = NULL;
+							bool behind = false;
+							bool updateNodePosition = true;
+
+							if (node->getTagDataType() == CHierachyNode::Zone)
+							{
+								container = (CContainerObject*)node->getTagData();
+								updateNodePosition = false;
+							}
+							else if (node->getTagDataType() == CHierachyNode::Container)
+							{
+								GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
+								if (local.Y < rowItem->height() * 0.25f)
+								{
+									container = (CContainerObject*)node->getParent()->getTagData();
+									behind = false;
+								}
+								else if (local.Y > rowItem->height() * 0.75f)
+								{
+									container = (CContainerObject*)node->getParent()->getTagData();
+									behind = true;
+								}
+								else
+								{
+									container = (CContainerObject*)node->getTagData();
+									updateNodePosition = false;
+								}
+							}
+							else if (node->getTagDataType() == CHierachyNode::GameObject)
+							{
+								GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
+								if (local.Y < rowItem->height() * 0.5f)
+								{
+									container = (CContainerObject*)node->getParent()->getTagData();
+									behind = false;
+								}
+								else
+								{
+									container = (CContainerObject*)node->getParent()->getTagData();
+									behind = true;
+								}
+							}
+
+							if (container)
+							{
+								CSceneController* sceneController = CSceneController::getInstance();
+
+								CGameObject* targetObject = sceneController->createTemplateObject(path, container);
+								updateTreeNode(targetObject);
+
+								newNode = m_node->getNodeByTag(targetObject);
+								if (newNode && updateNodePosition)
+								{
+									move(newNode, node, behind);
+									newNode->getGUINode()->setSelected(true);
+								}
+							}
 						}
-						else if (node->getTagDataType() == CHierachyNode::Container)
+						else
 						{
-							GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
-							if (local.Y < rowItem->height() * 0.25f)
-							{
-								newNode = createObjectAt(node, false);
-							}
-							else if (local.Y > rowItem->height() * 0.75f)
-							{
-								newNode = createObjectAt(node, true);
-							}
-							else
+							if (node->getTagDataType() == CHierachyNode::Zone)
 							{
 								newNode = createChildObject(node);
 							}
-						}
-						else if (node->getTagDataType() == CHierachyNode::GameObject)
-						{
-							GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
-							if (local.Y < rowItem->height() * 0.5f)
+							else if (node->getTagDataType() == CHierachyNode::Container)
 							{
-								newNode = createObjectAt(node, false);
+								GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
+								if (local.Y < rowItem->height() * 0.25f)
+								{
+									newNode = createObjectAt(node, false);
+								}
+								else if (local.Y > rowItem->height() * 0.75f)
+								{
+									newNode = createObjectAt(node, true);
+								}
+								else
+								{
+									newNode = createChildObject(node);
+								}
 							}
-							else
+							else if (node->getTagDataType() == CHierachyNode::GameObject)
 							{
-								newNode = createObjectAt(node, true);
+								GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
+								if (local.Y < rowItem->height() * 0.5f)
+								{
+									newNode = createObjectAt(node, false);
+								}
+								else
+								{
+									newNode = createObjectAt(node, true);
+								}
 							}
-						}
 
-						if (newNode != NULL)
-						{
-							CGameObject* targetObject = (CGameObject*)newNode->getTagData();
+							if (newNode != NULL)
+							{
+								CGameObject* targetObject = (CGameObject*)newNode->getTagData();
 
-							GUI::CListRowItem* rowItem = (GUI::CListRowItem*)data->UserData;
-							std::string path = rowItem->getTagString();
+								CSceneController* sceneController = CSceneController::getInstance();
+								sceneController->createResourceComponent(path, targetObject);
 
-							CSceneController* sceneController = CSceneController::getInstance();
-							sceneController->createResourceComponent(path, targetObject);
-							sceneController->updateTreeNode(targetObject);
-
-							newNode->getGUINode()->setSelected(true);
+								updateTreeNode(targetObject);
+								newNode->getGUINode()->setSelected(true);
+							}
 						}
 					}
 

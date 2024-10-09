@@ -246,6 +246,8 @@ namespace Skylicht
 
 			void createResourceComponent(const std::string& path, CGameObject* gameObject);
 
+			CGameObject* createTemplateObject(const std::string& path, CContainerObject* container);
+
 			CHierachyNode* buildHierarchyData(CGameObject* object, CHierachyNode* parentNode);
 
 			void rebuildHierarchyEntityData(CGameObject* object, CHierachyNode* parentNode);

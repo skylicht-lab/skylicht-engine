@@ -228,7 +228,8 @@ namespace Skylicht
 						if (fileExt == "dae" ||
 							fileExt == "obj" ||
 							fileExt == "fbx" ||
-							fileExt == "smesh")
+							fileExt == "smesh" ||
+							fileExt == "template")
 						{
 							return true;
 						}
@@ -256,18 +257,35 @@ namespace Skylicht
 						{
 							CSceneController* sceneController = CSceneController::getInstance();
 
-							CGameObject* targetObject = sceneController->createEmptyObject(NULL);
-							targetObject->getTransformEuler()->setPosition(out);
+							GUI::CListRowItem* rowItem = (GUI::CListRowItem*)data->UserData;
+							std::string path = rowItem->getTagString();
 
-							if (targetObject != NULL)
+							std::string fileExt = CPath::getFileNameExt(path);
+							fileExt = CStringImp::toLower(fileExt);
+
+							CGameObject* targetObject = NULL;
+
+							if (fileExt == "template")
 							{
-								GUI::CListRowItem* rowItem = (GUI::CListRowItem*)data->UserData;
-								std::string path = rowItem->getTagString();
+								targetObject = sceneController->createTemplateObject(path, sceneController->getZone());
+							}
+							else
+							{
+								targetObject = sceneController->createEmptyObject(NULL);
+								if (targetObject != NULL)
+									sceneController->createResourceComponent(path, targetObject);
+							}
 
-								sceneController->createResourceComponent(path, targetObject);
+							if (targetObject)
+							{
+								targetObject->getTransformEuler()->setPosition(out);
+
 								CHierachyNode* node = sceneController->selectOnHierachy(targetObject);
-								sceneController->onSelectNode(node, true);
-								sceneController->updateTreeNode(targetObject);
+								if (node)
+								{
+									sceneController->onSelectNode(node, true);
+									sceneController->updateTreeNode(targetObject);
+								}
 							}
 						}
 					}

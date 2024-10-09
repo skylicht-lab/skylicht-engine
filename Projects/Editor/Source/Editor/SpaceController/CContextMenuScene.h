@@ -70,7 +70,7 @@ namespace Skylicht
 
 			void addTemplateItem(GUI::CMenu* menu);
 
-			void showHideTemplateItem(GUI::CMenu* menu, bool isTemplate);
+			void showHideTemplateItem(GUI::CMenu* menu, CGameObject* go);
 		};
 	}
 }

@@ -916,6 +916,44 @@ namespace Skylicht
 			}
 		}
 
+		CGameObject* CSceneController::createTemplateObject(const std::string& path, CContainerObject* container)
+		{
+			CGameObject* result = CSceneImporter::importTemplate(container, path.c_str());
+
+			if (result)
+			{
+				result->getZone()->updateAddRemoveObject();
+				result->getZone()->updateIndexSearchObject();
+
+				CHierachyNode* parentNode = m_hierachyNode->getNodeByTag(container);
+				if (parentNode != NULL)
+				{
+					CHierachyNode* node = parentNode->addChild();
+					node->setName(result->getName());
+
+					if (result->getTypeName() == "CContainerObject")
+					{
+						node->setIcon(GUI::ESystemIcon::Folder);
+						node->setTagData(result, CHierachyNode::Container);
+					}
+					else
+					{
+						node->setIcon(GUI::ESystemIcon::Res3D);
+						node->setTagData(result, CHierachyNode::GameObject);
+					}
+
+					setNodeEvent(node);
+
+					if (m_spaceHierarchy != NULL)
+						m_spaceHierarchy->addToTreeNode(node);
+				}
+
+				m_history->saveCreateHistory(result);
+			}
+
+			return result;
+		}
+
 		void CSceneController::deselectAllOnHierachy()
 		{
 			if (m_spaceHierarchy)
