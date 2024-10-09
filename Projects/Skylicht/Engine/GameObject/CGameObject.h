@@ -141,6 +141,12 @@ namespace Skylicht
 			m_templateAsset = asset;
 		}
 
+		inline void unpackTemplate()
+		{
+			m_templateAsset.clear();
+			m_templateId.clear();
+		}
+
 		inline const char* getTemplateId()
 		{
 			return m_templateId.c_str();

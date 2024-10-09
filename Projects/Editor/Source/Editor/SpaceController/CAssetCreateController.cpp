@@ -200,18 +200,35 @@ namespace Skylicht
 				fullPath = assetMgr->generateAssetPath(fileName.c_str(), currentFolder.c_str());
 			}
 
+			// generate templateId
+			std::string id = assetMgr->getGenerateMetaGUID(fullPath.c_str());
+			std::string shortPath = assetMgr->getShortPath(fullPath.c_str());
+
+			obj->setTemplateAsset(shortPath.c_str());
+			obj->setTemplateId(id.c_str());
+
+			// save .template
 			CObjectSerializable* data = CSceneExporter::exportGameObject(obj);
 			data->save(fullPath.c_str());
 			delete data;
 
-			std::string id = assetMgr->getGenerateMetaGUID(fullPath.c_str());
+			// import to editor
+			importAndSelect(shortPath.c_str());
+		}
 
-			fullPath = assetMgr->getShortPath(fullPath.c_str());
+		void CAssetCreateController::applyTemplate(CGameObject* obj)
+		{
+			CAssetManager* assetMgr = CAssetManager::getInstance();
 
-			obj->setTemplateAsset(fullPath.c_str());
-			obj->setTemplateId(id.c_str());
+			std::string assetPath = obj->getTemplateAsset();
 
-			importAndSelect(fullPath.c_str());
+			// save .template
+			CObjectSerializable* data = CSceneExporter::exportGameObject(obj);
+			data->save(assetPath.c_str());
+			delete data;
+
+			// import to editor
+			importAndSelect(assetPath.c_str());
 		}
 
 		void CAssetCreateController::importAndSelect(const char* path)

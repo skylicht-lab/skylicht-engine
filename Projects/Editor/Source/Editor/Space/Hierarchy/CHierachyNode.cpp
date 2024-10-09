@@ -37,7 +37,7 @@ namespace Skylicht
 			m_dataType(Unknown),
 			m_color(false),
 			m_bgColor(255, 45, 140, 95),
-			m_iconColor(255, 255, 255, 255)
+			m_iconColor(255, 200, 200, 200)
 		{
 
 		}

@@ -41,7 +41,8 @@ namespace Skylicht
 			m_editor(editor),
 			m_canvas(canvas),
 			m_tree(tree),
-			m_node(NULL)
+			m_node(NULL),
+			m_renameNode(NULL)
 		{
 			m_tree->OnKeyPress = std::bind(
 				&CHierarchyController::OnKeyPress,
@@ -56,6 +57,76 @@ namespace Skylicht
 			m_tree->addAccelerator("Ctrl + D", [&](GUI::CBase* base) {this->OnHotkey(base, "Ctrl + D"); });
 			m_tree->addAccelerator("Ctrl + Z", [&](GUI::CBase* base) {this->OnHotkey(base, "Ctrl + Z"); });
 			m_tree->addAccelerator("Ctrl + Y", [&](GUI::CBase* base) {this->OnHotkey(base, "Ctrl + Y"); });
+
+			tree->getInnerPanel()->OnAcceptDragDrop = [](GUI::SDragDropPackage* data)
+				{
+					if (data->Name == "ListFSItem")
+					{
+						GUI::CListRowItem* rowItem = (GUI::CListRowItem*)data->UserData;
+						bool isFolder = rowItem->getTagBool();
+						if (isFolder)
+							return false;
+
+						std::string path = rowItem->getTagString();
+						std::string fileExt = CPath::getFileNameExt(path);
+						fileExt = CStringImp::toLower(fileExt);
+						if (fileExt == "dae" ||
+							fileExt == "obj" ||
+							fileExt == "fbx" ||
+							fileExt == "smesh" ||
+							fileExt == "template")
+						{
+							return true;
+						}
+					}
+					return false;
+				};
+
+			tree->getInnerPanel()->OnDrop = [&, editor = m_editor](GUI::SDragDropPackage* data, float mouseX, float mouseY)
+				{
+					if (data->Name == "ListFSItem")
+					{
+						GUI::CListRowItem* fsItem = (GUI::CListRowItem*)data->UserData;
+
+						std::string path = fsItem->getTagString();
+						std::string fileExt = CPath::getFileNameExt(path);
+						fileExt = CStringImp::toLower(fileExt);
+
+						CHierachyNode* newNode = NULL;
+						CSceneController* sceneController = CSceneController::getInstance();
+
+						if (fileExt == "template")
+						{
+							CContainerObject* container = sceneController->getZone();
+
+							CGameObject* targetObject = sceneController->createTemplateObject(path, container);
+							updateTreeNode(targetObject);
+
+							newNode = m_node->getNodeByTag(targetObject);
+						}
+						else
+						{
+							CContainerObject* container = sceneController->getZone();
+							CHierachyNode* node = getNodeByObject(container);
+							if (node)
+							{
+								newNode = createChildObject(node);
+								if (newNode != NULL)
+								{
+									CGameObject* targetObject = (CGameObject*)newNode->getTagData();
+
+									CSceneController* sceneController = CSceneController::getInstance();
+									sceneController->createResourceComponent(path, targetObject);
+
+									updateTreeNode(targetObject);
+									newNode->getGUINode()->setSelected(true);
+								}
+							}
+						}
+					}
+
+					editor->refresh();
+				};
 		}
 
 		CHierarchyController::~CHierarchyController()
@@ -126,6 +197,10 @@ namespace Skylicht
 					else
 						node->setIconColor(GUI::SGUIColor(255, 255, 170, 110));
 				}
+				else
+				{
+					node->setIconColor(GUI::SGUIColor(255, 200, 200, 200));
+				}
 
 				// call sync node
 				if (node->OnUpdate)
@@ -157,6 +232,9 @@ namespace Skylicht
 
 			// link data node to gui
 			node->setGUINode(guiNode);
+
+			// set icon color
+			guiNode->setIconColor(node->getIconColor());
 
 			// apply active color
 			if (node->haveColor())

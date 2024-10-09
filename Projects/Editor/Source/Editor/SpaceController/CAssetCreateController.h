@@ -53,6 +53,8 @@ namespace Skylicht
 
 			void createTemplate(CGameObject* obj);
 
+			void applyTemplate(CGameObject* obj);
+
 		protected:
 
 			void importAndSelect(const char* path);

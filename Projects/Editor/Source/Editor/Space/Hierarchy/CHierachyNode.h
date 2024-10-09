@@ -158,6 +158,11 @@ namespace Skylicht
 				m_color = b;
 			}
 
+			inline GUI::SGUIColor& getIconColor()
+			{
+				return m_iconColor;
+			}
+
 			inline GUI::SGUIColor& getBGColor()
 			{
 				return m_bgColor;
