@@ -250,6 +250,8 @@ namespace Skylicht
 
 			CHierachyNode* buildHierarchyData(CGameObject* object, CHierachyNode* parentNode);
 
+			void rebuildHierarchyData(CGameObject* object);
+
 			void rebuildHierarchyEntityData(CGameObject* object, CHierachyNode* parentNode);
 
 			void updateTreeNode(CGameObject* object);

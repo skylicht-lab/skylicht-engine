@@ -78,6 +78,7 @@ namespace Skylicht
 
 		std::string m_templateId;
 		std::string m_templateAsset;
+		std::string m_templateObjectId;
 
 	public:
 		CGameObject(CGameObject* parent, CZone* zone);
@@ -147,14 +148,24 @@ namespace Skylicht
 			m_templateId.clear();
 		}
 
-		inline const char* getTemplateId()
+		inline const char* getTemplateID()
 		{
 			return m_templateId.c_str();
 		}
 
-		inline void setTemplateId(const char* id)
+		inline void setTemplateID(const char* id)
 		{
 			m_templateId = id;
+		}
+
+		inline const char* getTemplateObjectID()
+		{
+			return m_templateObjectId.c_str();
+		}
+
+		inline void setTemplateObjectID(const char* id)
+		{
+			m_templateObjectId = id;
 		}
 
 		inline CGameObject* getParent()

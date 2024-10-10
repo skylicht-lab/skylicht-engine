@@ -462,8 +462,9 @@ namespace Skylicht
 		object->autoRelease(new CStringProperty(object, "id", getID().c_str()));
 		object->autoRelease(new CStringProperty(object, "name", getNameA()));
 
-		object->autoRelease(new CStringProperty(object, "templateId", getTemplateId()));
+		object->autoRelease(new CStringProperty(object, "templateId", getTemplateID()));
 		object->autoRelease(new CStringProperty(object, "templateAsset", getTemplateAsset()));
+		object->autoRelease(new CStringProperty(object, "templateObjectId", getTemplateObjectID()));
 
 		object->autoRelease(new CBoolProperty(object, "enable", isEnable()));
 		object->autoRelease(new CBoolProperty(object, "visible", isVisible()));
@@ -505,8 +506,9 @@ namespace Skylicht
 		setID(object->get("id", std::string("")).c_str());
 		setName(object->get("name", std::string("")).c_str());
 
-		setTemplateId(object->get("templateId", std::string("")).c_str());
+		setTemplateID(object->get("templateId", std::string("")).c_str());
 		setTemplateAsset(object->get("templateAsset", std::string("")).c_str());
+		setTemplateObjectID(object->get("templateObjectId", std::string("")).c_str());
 
 		setEnable(object->get("enable", true));
 		setVisible(object->get("visible", true));

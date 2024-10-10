@@ -395,17 +395,14 @@ namespace Skylicht
 				return NULL;
 
 			CContainerObject* container = dynamic_cast<CContainerObject*>(object);
-			CZone* zone = dynamic_cast<CZone*>(object);
-
 			CHierachyNode* node = NULL;
 
 			if (container != NULL)
 			{
 				// add container child
 				node = parentNode->addChild();
-				node->setName(object->getName());
 
-				if (zone != NULL)
+				if (container->getTypeName() == "CZone")
 				{
 					node->setTagData(object, CHierachyNode::Zone);
 					node->setIcon(GUI::ESystemIcon::Folder);
@@ -416,9 +413,7 @@ namespace Skylicht
 					node->setIcon(GUI::ESystemIcon::Folder);
 				}
 
-				// enable color on current zone
-				// if (m_zone == object)
-				//	node->EnableColor(true);
+				CHierarchyController::updateObjectToUI(object, node);
 
 				ArrayGameObject* childs = container->getChilds();
 				for (CGameObject* childObject : *childs)
@@ -430,9 +425,11 @@ namespace Skylicht
 			{
 				// add child
 				node = parentNode->addChild();
-				node->setName(object->getName());
+
 				node->setIcon(GUI::ESystemIcon::Res3D);
 				node->setTagData(object, CHierachyNode::GameObject);
+
+				CHierarchyController::updateObjectToUI(object, node);
 
 				rebuildHierarchyEntityData(object, node);
 			}
@@ -448,6 +445,47 @@ namespace Skylicht
 			if (m_spaceHierarchy != NULL)
 			{
 				m_spaceHierarchy->getController()->updateTreeNode(object);
+			}
+		}
+
+		void CSceneController::rebuildHierarchyData(CGameObject* object)
+		{
+			CHierachyNode* node = m_hierachyNode->getNodeByTag(object);
+			if (node == NULL)
+				return;
+
+			node->removeAllChild();
+
+			CContainerObject* container = dynamic_cast<CContainerObject*>(object);
+			if (container)
+			{
+				if (container->getTypeName() == "CZone")
+				{
+					node->setTagData(object, CHierachyNode::Zone);
+					node->setIcon(GUI::ESystemIcon::Folder);
+				}
+				else
+				{
+					node->setTagData(object, CHierachyNode::Container);
+					node->setIcon(GUI::ESystemIcon::Folder);
+				}
+
+				CHierarchyController::updateObjectToUI(object, node);
+
+				ArrayGameObject* childs = container->getChilds();
+				for (CGameObject* childObject : *childs)
+				{
+					buildHierarchyData(childObject, node);
+				}
+			}
+			else
+			{
+				node->setIcon(GUI::ESystemIcon::Res3D);
+				node->setTagData(object, CHierachyNode::GameObject);
+
+				node->setName(object->getName());
+
+				rebuildHierarchyEntityData(object, node);
 			}
 		}
 
@@ -1394,7 +1432,22 @@ namespace Skylicht
 
 		void CSceneController::onRevertTemplate(CGameObject* object)
 		{
+			if (!object->isTemplateAsset())
+				return;
 
+			std::string templatePath = object->getTemplateAsset();
+
+			CObjectSerializable* templateData = CSceneImporter::importTemplateToObject(m_zone, templatePath.c_str());
+			if (templateData)
+			{
+				CSceneImporter::reloadTemplate(object, templateData);
+				delete templateData;
+
+				rebuildHierarchyData(object);
+
+				if (m_spaceHierarchy)
+					m_spaceHierarchy->getController()->updateTreeNode(object);
+			}
 		}
 
 		void CSceneController::onUnpackTemplate(CGameObject* object)

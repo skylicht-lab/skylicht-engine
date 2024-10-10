@@ -178,6 +178,25 @@ namespace Skylicht
 			return m_node->getNodeByTag(object);
 		}
 
+		void CHierarchyController::updateObjectToUI(CGameObject* object, CHierachyNode* node)
+		{
+			// update node name
+			node->setName(object->getName());
+
+			// template object
+			if (object->isTemplateAsset())
+			{
+				if (CAssetManager::getInstance()->isExist(object->getTemplateAsset()))
+					node->setIconColor(GUI::SGUIColor(255, 110, 170, 255));
+				else
+					node->setIconColor(GUI::SGUIColor(255, 255, 170, 110));
+			}
+			else
+			{
+				node->setIconColor(GUI::SGUIColor(255, 200, 200, 200));
+			}
+		}
+
 		void CHierarchyController::updateTreeNode(CGameObject* object)
 		{
 			if (m_node == NULL)
@@ -186,21 +205,7 @@ namespace Skylicht
 			CHierachyNode* node = m_node->getNodeByTag(object);
 			if (node != NULL)
 			{
-				// update node name
-				node->setName(object->getName());
-
-				// template object
-				if (object->isTemplateAsset())
-				{
-					if (CAssetManager::getInstance()->isExist(object->getTemplateAsset()))
-						node->setIconColor(GUI::SGUIColor(255, 110, 170, 255));
-					else
-						node->setIconColor(GUI::SGUIColor(255, 255, 170, 110));
-				}
-				else
-				{
-					node->setIconColor(GUI::SGUIColor(255, 200, 200, 200));
-				}
+				updateObjectToUI(object, node);
 
 				// call sync node
 				if (node->OnUpdate)

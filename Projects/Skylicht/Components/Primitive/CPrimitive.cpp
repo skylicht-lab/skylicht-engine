@@ -119,13 +119,23 @@ namespace Skylicht
 	{
 		CComponentSystem::loadSerializable(object);
 
+		bool forceUpdateMaterial = false;
+		bool useMaterial = !m_materialPath.empty();
+
 		m_instancing = object->get<bool>("instancing", false);
 		bool useCustom = object->get<bool>("custom material", false);
 		m_useNormalMap = object->get<bool>("normal map", false);
 		m_color = object->get<SColor>("color", SColor(255, 180, 180, 180));
 		m_materialPath = object->get<std::string>("material", std::string());
 
-		if (m_useCustomMaterial != useCustom)
+		if (!m_materialPath.empty() && !useMaterial)
+		{
+			// force enable material while update new material in editor
+			useCustom = true;
+			forceUpdateMaterial = true;
+		}
+
+		if (forceUpdateMaterial || m_useCustomMaterial != useCustom)
 		{
 			if (useCustom == true && !m_materialPath.empty())
 			{

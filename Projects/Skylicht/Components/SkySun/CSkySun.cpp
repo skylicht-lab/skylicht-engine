@@ -35,7 +35,7 @@ namespace Skylicht
 {
 	ACTIVATOR_REGISTER(CSkySun);
 
-	CATEGORY_COMPONENT(CSkySun, "Sky Sun", "Renderer");
+	CATEGORY_COMPONENT(CSkySun, "SkySun", "Renderer");
 
 	CSkySun::CSkySun() :
 		m_skySunData(NULL),

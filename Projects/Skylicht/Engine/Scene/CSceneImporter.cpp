@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CSceneImporter.h"
+#include "CSceneExporter.h"
 #include "Utils/CStringImp.h"
 
 namespace Skylicht
@@ -251,7 +252,11 @@ namespace Skylicht
 
 							// use new id, that generated
 							if (g_generateId)
+							{
+								if (gameobject->isTemplateAsset())
+									gameobject->setTemplateObjectID(gameobject->getID().c_str());
 								gameobject->setID(id.c_str());
+							}
 						}
 					}
 				}
@@ -334,5 +339,23 @@ namespace Skylicht
 		g_generateId = true;
 
 		return true;
+	}
+
+	CObjectSerializable* CSceneImporter::importTemplateToObject(CZone* zone, const char* path)
+	{
+		CGameObject* obj = importTemplate(zone, path);
+		if (obj == NULL)
+			return NULL;
+
+		CObjectSerializable* data = CSceneExporter::exportGameObject(obj);
+		obj->remove();
+		return data;
+	}
+
+	void CSceneImporter::reloadTemplate(CGameObject* obj, CObjectSerializable* templateData)
+	{
+		CObjectSerializable* srcTemplate = obj->createSerializable();
+
+
 	}
 }
