@@ -60,9 +60,9 @@ namespace Skylicht
 		void CUIProgressBar::setPercent(float f)
 		{
 			core::rectf maskRect = m_element->getRect();
-			maskRect.UpperLeftCorner.set(0.0f, 0.0f);
 			maskRect.LowerRightCorner.Y = maskRect.getHeight();
 			maskRect.LowerRightCorner.X = maskRect.getWidth() * f;
+			maskRect.UpperLeftCorner.set(0.0f, 0.0f);
 			m_mask->setRect(maskRect);
 		}
 	}
