@@ -88,4 +88,10 @@ namespace Skylicht
 	{
 		setEnable(object->get("enable", true));
 	}
+
+	int CComponentSystem::useComponent(CComponentSystem* used)
+	{
+		delete used;
+		return 1;
+	}
 }

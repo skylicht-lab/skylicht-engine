@@ -41,7 +41,8 @@ namespace Skylicht
 				m_background = canvas->getGUIByPath(element, "Background");
 				m_loading = canvas->getGUIByPath(element, "Loading");
 
-				m_mask = m_element->getCanvas()->createMask(m_element, m_element->getRect());
+				const core::rectf& r = m_element->getRect();
+				m_mask = m_element->getCanvas()->createMask(m_element, core::rectf(0.0f, 0.0f, r.getWidth(), r.getHeight()));
 
 				if (m_background)
 					element->bringToNext(m_mask, m_background, true);
@@ -59,6 +60,8 @@ namespace Skylicht
 		void CUIProgressBar::setPercent(float f)
 		{
 			core::rectf maskRect = m_element->getRect();
+			maskRect.UpperLeftCorner.set(0.0f, 0.0f);
+			maskRect.LowerRightCorner.Y = maskRect.getHeight();
 			maskRect.LowerRightCorner.X = maskRect.getWidth() * f;
 			m_mask->setRect(maskRect);
 		}

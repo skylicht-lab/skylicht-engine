@@ -29,6 +29,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CharacterController/CCharacterController.h"
 #include "GameObject/CGameObject.h"
 
+#include "Transform/CWorldTransformData.h"
+#include "Entity/CEntity.h"
+
 #ifdef USE_BULLET_PHYSIC_ENGINE
 #include "BulletCollision/NarrowPhaseCollision/btRaycastCallback.h"
 #include "BulletCollision/Gimpact/btGImpactShape.h"
@@ -335,15 +338,10 @@ namespace Skylicht
 				btRigidBody* body = bodies[i]->BulletBody;
 				CRigidbody* engineBody = bodies[i]->Body;
 
-				CTransformEuler* transform = (CTransformEuler*)bodies[i]->Transform;
+				CGameObject* go = bodies[i]->Transform->getGameObject();
+				CWorldTransformData* transform = GET_ENTITY_DATA(go->getEntity(), CWorldTransformData);
 
-				const core::vector3df& rot = transform->getRotation();
-				const core::vector3df& pos = transform->getPosition();
-
-				world.makeIdentity();
-				world.setRotationDegrees(rot);
-				world.setTranslation(pos);
-
+				const core::matrix4& world = transform->World;
 				body->getWorldTransform().setFromOpenGLMatrix(world.pointer());
 			}
 #endif

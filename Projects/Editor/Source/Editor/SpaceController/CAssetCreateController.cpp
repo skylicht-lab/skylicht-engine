@@ -204,8 +204,10 @@ namespace Skylicht
 			std::string id = assetMgr->getGenerateMetaGUID(fullPath.c_str());
 			std::string shortPath = assetMgr->getShortPath(fullPath.c_str());
 
+			// apply template data for this object
 			obj->setTemplateAsset(shortPath.c_str());
 			obj->setTemplateID(id.c_str());
+			obj->setTemplateObjectID(obj->getID().c_str());
 
 			// save .template
 			CObjectSerializable* data = CSceneExporter::exportGameObject(obj);

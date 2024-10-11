@@ -29,6 +29,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Serializable/CArraySerializable.h"
 #include "CComponentCategory.h"
 
+#define USE_COMPONENT(component) int component##_used = Skylicht::CComponentSystem::useComponent(new component())
+
 namespace Skylicht
 {
 	class CGameObject;
@@ -48,6 +50,10 @@ namespace Skylicht
 		bool m_serializable;
 
 		std::vector<CComponentSystem*> m_linkComponent;
+
+	public:
+
+		static int useComponent(CComponentSystem* used);
 
 	public:
 		friend class CGameObject;

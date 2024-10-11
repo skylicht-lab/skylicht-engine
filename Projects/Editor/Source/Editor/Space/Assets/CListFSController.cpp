@@ -328,6 +328,12 @@ namespace Skylicht
 		{
 			std::vector<SFileInfo> files;
 
+			if (!m_currentFolder.empty() && !m_assetManager->isExist(m_currentFolder.c_str()))
+			{
+				// if this folder is deleted or isn't exist, we refesh to root
+				m_currentFolder.clear();
+			}
+
 			if (m_currentFolder.empty())
 				m_assetManager->getRoot(files);
 			else

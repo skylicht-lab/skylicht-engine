@@ -54,31 +54,11 @@ https://github.com/skylicht-lab/skylicht-engine
 using namespace Physics;
 #endif
 
-#define USE_COMPONENT(component) CComponentSystem *component##_used = addComponent(new component())
-
 namespace Skylicht
 {
 	namespace Editor
 	{
-		std::vector<CComponentSystem*> g_component_used;
-
-		CComponentSystem* addComponent(CComponentSystem* add)
-		{
-			g_component_used.push_back(add);
-			return add;
-		}
-
-		int cleanUp()
-		{
-			for (CComponentSystem* comp : g_component_used)
-				delete comp;
-
-			g_component_used.clear();
-			return 0;
-		}
-
 		// BEGIN DECLARE COMPONENT THAT WILL COMPILE
-
 		USE_COMPONENT(CDirectionalLight);
 		USE_COMPONENT(CPointLight);
 		USE_COMPONENT(CSpotLight);
@@ -108,9 +88,6 @@ namespace Skylicht
 		USE_COMPONENT(CCapsuleCollider);
 		USE_COMPONENT(CSphereCollider);
 #endif
-
 		// END DECLARE COMPONENT
-
-		int clean = cleanUp();
 	}
 }
