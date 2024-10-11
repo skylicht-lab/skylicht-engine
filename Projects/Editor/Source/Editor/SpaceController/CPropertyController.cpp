@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CPropertyController.h"
 #include "CSceneController.h"
+#include "CGUIDesignController.h"
 
 #include "Activator/CEditorActivator.h"
 #include "Editor/Components/CComponentEditor.h"
@@ -51,6 +52,8 @@ namespace Skylicht
 		void CPropertyController::setProperty(CSelectObject* object)
 		{
 			CSceneController* sceneController = CSceneController::getInstance();
+			CGUIDesignController* guiDesignController = CGUIDesignController::getInstance();
+
 			CScene* scene = sceneController->getScene();
 
 			CSpaceProperty* spaceProperty = (CSpaceProperty*)CEditor::getInstance()->getWorkspaceByName(L"Property");
@@ -105,8 +108,7 @@ namespace Skylicht
 					std::wstring label = L"GUI: ";
 
 					// Show GUI Property
-					CGameObject* guiCanvas = scene->searchObjectInChild(L"GUICanvas");
-					CCanvas* canvas = guiCanvas->getComponent<CCanvas>();
+					CCanvas* canvas = guiDesignController->getCanvas();
 					CGUIElement* gui = canvas->getGUIByID(object->getID().c_str());
 					if (gui)
 					{

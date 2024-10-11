@@ -25,7 +25,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CGUITransformGizmos.h"
 #include "Handles/CGUIHandles.h"
-#include "Editor/SpaceController/CSceneController.h"
 #include "Editor/SpaceController/CGUIDesignController.h"
 #include "Editor/CEditor.h"
 #include "Activator/CEditorActivator.h"
@@ -69,14 +68,13 @@ namespace Skylicht
 				m_selectID = selectObject->getID();
 				m_parentWorld.makeIdentity();
 
-				CSceneController* sceneController = CSceneController::getInstance();
-				CScene* scene = sceneController->getScene();
+				CGUIDesignController* controller = CGUIDesignController::getInstance();
+				CScene* scene = controller->getScene();
 
 				if (selectObject->getType() == CSelectObject::GUIElement)
 				{
 					// Show GUI Property
-					CGameObject* guiCanvas = scene->searchObjectInChild(L"GUICanvas");
-					CCanvas* canvas = guiCanvas->getComponent<CCanvas>();
+					CCanvas* canvas = controller->getCanvas();
 					CGUIElement* gui = canvas->getGUIByID(selectObject->getID().c_str());
 					if (gui)
 					{
@@ -269,10 +267,9 @@ namespace Skylicht
 		void CGUITransformGizmos::getSelectedGUI(std::vector<CGUIElement*>& guis)
 		{
 			// Show GUI Property
-			CSceneController* sceneController = CSceneController::getInstance();
-			CScene* scene = sceneController->getScene();
-			CGameObject* guiCanvas = scene->searchObjectInChild(L"GUICanvas");
-			CCanvas* canvas = guiCanvas->getComponent<CCanvas>();
+			CGUIDesignController* controller = CGUIDesignController::getInstance();
+			CScene* scene = controller->getScene();
+			CCanvas* canvas = controller->getCanvas();
 
 			std::vector<CGUIElement*> selects;
 

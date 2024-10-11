@@ -87,6 +87,8 @@ namespace Skylicht
 
 		protected:
 
+			void newGUIScene();
+
 			void onKeyPressed(GUI::CBase* base, int key, bool down);
 
 			void onMiddleMouseClick(GUI::CBase* view, float x, float y, bool down);

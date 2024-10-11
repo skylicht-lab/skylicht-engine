@@ -31,6 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Editor/Space/Scene/CSpaceScene.h"
 #include "Editor/Space/Hierarchy/CSpaceHierarchy.h"
 #include "Editor/Space/Hierarchy/CHierachyNode.h"
+#include "Editor/Space/GUIDesign/CSpaceGUIDesign.h"
 
 #include "Editor/Gizmos/CGizmos.h"
 #include "EditorComponents/SelectObject/CSelectObjectSystem.h"

@@ -26,7 +26,6 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CSceneController.h"
 #include "CPropertyController.h"
-#include "CGUIDesignController.h"
 #include "CAssetCreateController.h"
 
 #include "Selection/CSelection.h"
@@ -270,7 +269,6 @@ namespace Skylicht
 			std::string sceneName = CPath::getFileName(path);
 			m_scene->setName(sceneName.c_str());
 
-			// init load scene space
 			m_spaceScene->enableRender(false);
 			m_spaceScene->getEditor()->initLoadSceneGUI(path.c_str());
 
@@ -332,9 +330,6 @@ namespace Skylicht
 				m_history = NULL;
 			}
 			m_history = new CSceneHistory(m_scene);
-
-			// update gui
-			CGUIDesignController::getInstance()->rebuildGUIHierachy();
 		}
 
 		void CSceneController::reinitHierachyData()

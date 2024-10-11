@@ -28,7 +28,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CSelection.h"
 #include "GUI/Input/CInput.h"
 #include "Handles/CGUIHandles.h"
-#include "Editor/SpaceController/CSceneController.h"
 #include "Editor/SpaceController/CGUIDesignController.h"
 
 namespace Skylicht
@@ -69,18 +68,13 @@ namespace Skylicht
 				{
 					if (CGUIHandles::getInstance()->isMouseDragging() == false)
 					{
-						CScene* scene = CSceneController::getInstance()->getScene();
 						CGUIDesignController* controller = CGUIDesignController::getInstance();
 						CSelection* selection = CSelection::getInstance();
+						CCanvas* canvas = controller->getCanvas();
+						CCamera* camera = controller->getCamera();
 
-						if (scene)
+						if (canvas && camera)
 						{
-							CGameObject* canvasObj = scene->searchObjectInChild(L"GUICanvas");
-							CCanvas* canvas = canvasObj->getComponent<CCanvas>();
-
-							CGameObject* cameraObj = scene->searchObjectInChild(L"GUICamera");
-							CCamera* camera = cameraObj->getComponent<CCamera>();
-
 							CGUIElement* gui = canvas->getHitTest(camera, (float)mouseX, (float)mouseY, m_viewport);
 							if (gui)
 							{

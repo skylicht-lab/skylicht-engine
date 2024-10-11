@@ -106,6 +106,7 @@ namespace Skylicht
 			getSubjectTransformGizmos().removeAllObserver();
 
 			CSceneController::getInstance()->deleteScene();
+			CGUIDesignController::getInstance()->deleteScene();
 
 			CEditorActivator::releaseInstance();
 			CAssetPropertyController::releaseInstance();

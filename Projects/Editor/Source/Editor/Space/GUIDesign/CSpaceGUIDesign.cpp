@@ -26,7 +26,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CSpaceGUIDesign.h"
 #include "GUI/Input/CInput.h"
 
-#include "Editor/SpaceController/CSceneController.h"
 #include "Editor/SpaceController/CGUIDesignController.h"
 
 #include "Handles/CGUIHandles.h"
@@ -145,7 +144,13 @@ namespace Skylicht
 			m_selecting = new CGUISelecting();
 
 			CGUIDesignController* controller = CGUIDesignController::getInstance();
+
+			m_scene = controller->getScene();
+			if (m_scene == NULL)
+				newGUIScene();
+
 			controller->setSpaceDesign(this);
+			controller->rebuildGUIHierachy();
 			controller->initHistory();
 		}
 
@@ -162,9 +167,49 @@ namespace Skylicht
 				controller->setSpaceDesign(NULL);
 		}
 
+		void CSpaceGUIDesign::newGUIScene()
+		{
+			m_scene = new CScene();
+			CZone* zone = m_scene->createZone();
+
+			// gui canvas
+			CGameObject* guiCanvas = zone->createEmptyObject();
+			guiCanvas->setName(L"GUICanvas");
+			guiCanvas->setEditorObject(true);
+
+			CCanvas* canvas = guiCanvas->addComponent<CCanvas>();
+			canvas->IsInEditor = true;
+			canvas->DrawOutline = true;
+
+			/*
+			CGUIRect* rect = canvas->createRect(SColor(255, 0, 0, 0));
+			rect->setDock(EGUIDock::DockFill);
+			rect->setName("Canvas");
+			*/
+
+			CGUIElement* root = canvas->getRootElement();
+			root->setDock(EGUIDock::NoDock);
+			root->setRect(core::rectf(0.0f, 0.0f, 1920.0f, 1080.0f));
+
+			// camera
+			CGameObject* camObj = zone->createEmptyObject();
+			camObj->setName(L"GUICamera");
+			camObj->setEditorObject(true);
+			camObj->addComponent<CCamera>()->setProjectionType(CCamera::OrthoUI);
+
+			m_scene->updateIndexSearchObject();
+
+			// set scene to controller
+			CGUIDesignController::getInstance()->setScene(m_scene);
+		}
+
 		void CSpaceGUIDesign::update()
 		{
 			CSpace::update();
+
+			if (m_scene)
+				m_scene->update();
+
 			m_gizmos->onGizmos();
 		}
 
@@ -178,9 +223,6 @@ namespace Skylicht
 		void CSpaceGUIDesign::openGUI(const char* path)
 		{
 			// fix for open new space and open path
-			if (!m_scene)
-				m_scene = CSceneController::getInstance()->getScene();
-
 			if (m_scene)
 			{
 				CGameObject* canvasObj = m_scene->searchObjectInChild(L"GUICanvas");
@@ -601,9 +643,6 @@ namespace Skylicht
 
 				// setup new viewport
 				getVideoDriver()->setViewPort(viewport);
-
-				if (!m_scene)
-					m_scene = CSceneController::getInstance()->getScene();
 
 				if (m_scene)
 				{

@@ -29,7 +29,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CopyPaste/CCopyPasteUI.h"
 #include "GUI/Utils/CDragAndDrop.h"
 #include "CGUIDesignController.h"
-#include "CSceneController.h"
 #include "Selection/CSelection.h"
 #include "Graphics2D/CCanvas.h"
 #include "Graphics2D/CGUIExporter.h"
@@ -48,6 +47,8 @@ namespace Skylicht
 			m_contextMenu(NULL),
 			m_canvas(NULL),
 			m_guiCanvas(NULL),
+			m_guiCamera(NULL),
+			m_scene(NULL),
 			m_history(NULL)
 		{
 			CAssetManager::getInstance()->registerFileLoader("gui", this);
@@ -67,6 +68,32 @@ namespace Skylicht
 				delete m_contextMenu;
 		}
 
+		void CGUIDesignController::setScene(CScene* scene)
+		{
+			m_scene = scene;
+			m_guiCanvas = NULL;
+
+			if (m_scene)
+			{
+				CGameObject* guiCanvas = m_scene->searchObjectInChild(L"GUICanvas");
+				m_guiCanvas = guiCanvas->getComponent<CCanvas>();
+
+				CGameObject* cameraObj = scene->searchObjectInChild(L"GUICamera");
+				m_guiCamera = cameraObj->getComponent<CCamera>();
+			}
+		}
+
+		void CGUIDesignController::deleteScene()
+		{
+			if (m_scene)
+			{
+				delete m_scene;
+				m_scene = NULL;
+				m_guiCanvas = NULL;
+				m_guiCamera = NULL;
+			}
+		}
+
 		void CGUIDesignController::initContextMenu(GUI::CCanvas* canvas)
 		{
 			m_canvas = canvas;
@@ -75,15 +102,11 @@ namespace Skylicht
 
 		void CGUIDesignController::rebuildGUIHierachy()
 		{
-			CScene* scene = CSceneController::getInstance()->getScene();
-			if (!scene)
+			if (!m_guiCanvas)
 				return;
 
 			if (m_rootNode)
 				delete m_rootNode;
-
-			CGameObject* guiCanvas = scene->searchObjectInChild(L"GUICanvas");
-			m_guiCanvas = guiCanvas->getComponent<CCanvas>();
 
 			CGUIElement* root = m_guiCanvas->getRootElement();
 			CGUIElement* fullRect;
@@ -492,18 +515,14 @@ namespace Skylicht
 
 		void CGUIDesignController::deselectAllOnHierachy()
 		{
-			CScene* scene = CSceneController::getInstance()->getScene();
-			if (scene)
+			if (m_guiCanvas)
 			{
-				CGameObject* guiCanvas = scene->searchObjectInChild(L"GUICanvas");
-				CCanvas* canvas = guiCanvas->getComponent<CCanvas>();
-
 				std::vector<CSelectObject*>& listSelected = CSelection::getInstance()->getSelected();
 				for (CSelectObject* obj : listSelected)
 				{
 					if (obj->getType() == CSelectObject::GUIElement)
 					{
-						CGUIElement* gui = canvas->getGUIByID(obj->getID().c_str());
+						CGUIElement* gui = m_guiCanvas->getGUIByID(obj->getID().c_str());
 						if (gui)
 							gui->setDrawBorder(false);
 					}
@@ -532,7 +551,9 @@ namespace Skylicht
 			{
 				GUI::CTreeNode* treeNode = node->getGUINode();
 				treeNode->setSelected(true);
-				m_spaceHierarchy->scrollToNode(treeNode);
+
+				if (m_spaceHierarchy)
+					m_spaceHierarchy->scrollToNode(treeNode);
 			}
 			return node;
 		}
@@ -547,7 +568,7 @@ namespace Skylicht
 
 		void CGUIDesignController::onHistoryModifyObject(CGUIElement* node)
 		{
-			if (m_spaceHierarchy != NULL)
+			if (m_spaceHierarchy)
 				m_spaceHierarchy->getController()->updateTreeNode(node);
 		}
 
@@ -687,13 +708,10 @@ namespace Skylicht
 			{
 				const std::string& id = selected->getID();
 
-				CScene* scene = CSceneController::getInstance()->getScene();
-				if (!scene)
+				if (!m_guiCanvas)
 					return;
 
-				CGameObject* guiCanvas = scene->searchObjectInChild(L"GUICanvas");
-				CCanvas* canvas = guiCanvas->getComponent<CCanvas>();
-				CGUIElement* gui = canvas->getGUIByID(id.c_str());
+				CGUIElement* gui = m_guiCanvas->getGUIByID(id.c_str());
 				if (gui)
 				{
 					CGUIHierachyNode* guiNode = m_spaceHierarchy->getController()->getNodeByObject(gui);
@@ -780,8 +798,7 @@ namespace Skylicht
 
 		void CGUIDesignController::onCopy()
 		{
-			CScene* scene = CSceneController::getInstance()->getScene();
-			if (!scene)
+			if (!m_guiCanvas)
 				return;
 
 			CSelection* selection = CSelection::getInstance();
@@ -789,18 +806,15 @@ namespace Skylicht
 
 			std::vector<CGUIElement*> listUI;
 
-			CGameObject* guiCanvas = scene->searchObjectInChild(L"GUICanvas");
-			CCanvas* canvas = guiCanvas->getComponent<CCanvas>();
-
 			for (CSelectObject* selectObject : selected)
 			{
 				CSelectObject::ESelectType type = selectObject->getType();
 				if (type == CSelectObject::GUIElement)
 				{
-					CGUIElement* gui = canvas->getGUIByID(selectObject->getID().c_str());
+					CGUIElement* gui = m_guiCanvas->getGUIByID(selectObject->getID().c_str());
 					if (gui)
 					{
-						if (gui == canvas->getRootElement())
+						if (gui == m_guiCanvas->getRootElement())
 							continue;
 						if (gui == m_rootNode->getTagData())
 							continue;
@@ -815,12 +829,8 @@ namespace Skylicht
 
 		void CGUIDesignController::onPaste()
 		{
-			CScene* scene = CSceneController::getInstance()->getScene();
-			if (!scene)
+			if (!m_guiCanvas)
 				return;
-
-			CGameObject* guiCanvas = scene->searchObjectInChild(L"GUICanvas");
-			CCanvas* canvas = guiCanvas->getComponent<CCanvas>();
 
 			CSelection* selection = CSelection::getInstance();
 			CCopyPasteUI* copyPaste = CCopyPasteUI::getInstance();
@@ -830,20 +840,20 @@ namespace Skylicht
 			CSelectObject* lastSelected = selection->getLastSelected();
 			if (lastSelected == NULL)
 			{
-				CCopyPasteUI::getInstance()->paste(canvas->getRootElement());
+				CCopyPasteUI::getInstance()->paste(m_guiCanvas->getRootElement());
 			}
 			else
 			{
 				if (lastSelected->getType() == CSelectObject::GUIElement)
 				{
-					CGUIElement* gui = canvas->getGUIByID(lastSelected->getID().c_str());
+					CGUIElement* gui = m_guiCanvas->getGUIByID(lastSelected->getID().c_str());
 					if (gui)
 					{
 						CCopyPasteUI::getInstance()->paste(gui->getParent());
 					}
 					else
 					{
-						CCopyPasteUI::getInstance()->paste(canvas->getRootElement());
+						CCopyPasteUI::getInstance()->paste(m_guiCanvas->getRootElement());
 					}
 				}
 			}

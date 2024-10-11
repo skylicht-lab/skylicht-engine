@@ -47,18 +47,18 @@ namespace Skylicht
 			DECLARE_SINGLETON(CGUIDesignController)
 
 		protected:
+			CScene* m_scene;
 			GUI::CCanvas* m_canvas;
-
 			Skylicht::CCanvas* m_guiCanvas;
 
-			CGUIHierachyNode* m_rootNode;
+			CCamera* m_guiCamera;
 
 			CSpaceGUIHierarchy* m_spaceHierarchy;
-
 			CSpaceGUIDesign* m_spaceDesign;
 
 			CContextMenuGUIElement* m_contextMenu;
 
+			CGUIHierachyNode* m_rootNode;
 			std::string m_guiFilePath;
 
 			CGUIEditorHistory* m_history;
@@ -67,6 +67,20 @@ namespace Skylicht
 			CGUIDesignController();
 
 			virtual ~CGUIDesignController();
+
+			void setScene(CScene* scene);
+
+			void deleteScene();
+
+			inline CScene* getScene()
+			{
+				return m_scene;
+			}
+
+			inline CCamera* getCamera()
+			{
+				return m_guiCamera;
+			}
 
 			inline void setSpaceHierarchy(CSpaceGUIHierarchy* space)
 			{
@@ -86,6 +100,11 @@ namespace Skylicht
 			inline CSpaceGUIDesign* getSpaceDesign()
 			{
 				return m_spaceDesign;
+			}
+
+			inline CGUIHierachyNode* getRootNode()
+			{
+				return m_rootNode;
 			}
 
 			void initContextMenu(GUI::CCanvas* canvas);

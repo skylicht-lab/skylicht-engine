@@ -55,7 +55,7 @@ void CViewDemo::initObjects()
 	capsuleMaterial->updateShaderParams();
 	capsuleObj->addComponent<CIndirectLighting>();
 
-	// collider & chracter
+	// collider & character
 	Physics::CCapsuleCollider* capsuleCollider = capsuleObj->addComponent<Physics::CCapsuleCollider>();
 	capsuleCollider->setCapsule(capsuleRadius, capsuleHeight);
 	m_player = capsuleObj->addComponent<Physics::CCharacterController>();
