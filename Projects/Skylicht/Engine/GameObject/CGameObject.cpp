@@ -176,6 +176,11 @@ namespace Skylicht
 			{
 				relative = getTransform()->calcWorldTransform();
 
+				char logPosition[512];
+				core::vector3df pos = relative.getTranslation();
+				sprintf(logPosition, "[CGameObject] setupMatrixTransform %s - %f, %f, %f", m_namec.c_str(), pos.X, pos.Y, pos.Z);
+				os::Printer::log(logPosition);
+
 				CTransformEuler* euler = getTransformEuler();
 				if (euler)
 				{
@@ -188,6 +193,8 @@ namespace Skylicht
 			removeComponent<CTransformEuler>();
 			CTransformMatrix* t = addComponent<CTransformMatrix>();
 			t->setRelativeTransform(relative);
+
+			// set position for editor handles
 			t->setPosition(pos);
 			t->setRotation(rot);
 			t->setScale(scale);

@@ -56,8 +56,7 @@ namespace Skylicht
 
 		void CCharacterController::initComponent()
 		{
-			// convert to readonly transform
-			m_gameObject->setupMatrixTransform();
+
 		}
 
 		void CCharacterController::startComponent()
@@ -73,13 +72,12 @@ namespace Skylicht
 		bool CCharacterController::initCharacter(float stepHeight)
 		{
 #ifdef USE_BULLET_PHYSIC_ENGINE
-			CTransformMatrix* transform = m_gameObject->getTransformMatrix();
-			if (transform == NULL)
-				return false;
-
 			CPhysicsEngine* engine = CPhysicsEngine::getInstance();
 			if (engine == NULL)
+			{
+				os::Printer::log("[CCharacterController] initCharacter failed because Physics engine is not init");
 				return false;
+			}
 
 			CCollider* collider = m_gameObject->getComponent<CCollider>();
 			if (collider == NULL)
@@ -88,6 +86,15 @@ namespace Skylicht
 			if (m_ghostObject && m_shape)
 			{
 				releaseCharacter();
+			}
+
+			// convert to readonly transform
+			m_gameObject->setupMatrixTransform();
+
+			CTransformMatrix* transform = m_gameObject->getTransformMatrix();
+			if (transform == NULL)
+			{
+				return false;
 			}
 
 			// init shape

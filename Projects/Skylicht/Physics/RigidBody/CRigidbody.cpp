@@ -132,7 +132,10 @@ namespace Skylicht
 #ifdef USE_BULLET_PHYSIC_ENGINE
 			CPhysicsEngine* engine = CPhysicsEngine::getInstance();
 			if (engine == NULL)
+			{
+				os::Printer::log("[CRigidbody] initRigidbody failed because Physics engine is not init");
 				return false;
+			}
 
 			CCollider* collider = m_gameObject->getComponent<CCollider>();
 			if (collider == NULL)
