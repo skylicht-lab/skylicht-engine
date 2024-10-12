@@ -138,6 +138,12 @@ namespace Skylicht
 			if (collider == NULL)
 				return false;
 
+			if (!engine->IsInEditor)
+			{
+				// note: MatrixTransform is faster
+				m_gameObject->setupMatrixTransform();
+			}
+
 			CTransform* transform = m_gameObject->getTransform();
 			if (transform == NULL)
 				return false;
@@ -145,12 +151,6 @@ namespace Skylicht
 			if (m_rigidBody && m_shape)
 			{
 				releaseRigidbody();
-			}
-
-			if (!engine->IsInEditor)
-			{
-				// note: MatrixTransform is faster
-				m_gameObject->setupMatrixTransform();
 			}
 
 			// init shape
