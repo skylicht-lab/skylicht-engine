@@ -72,6 +72,17 @@ namespace Skylicht
 		ImGui_Impl_Skylicht_NewFrame();
 	}
 
+	void CImguiManager::onEndFrame()
+	{
+		ImGui::EndFrame();
+
+		ImGuiIO& io = ImGui::GetIO();
+		io.WantCaptureMouse = false;
+		io.WantCaptureKeyboard = false;
+		io.WantTextInput = false;
+		io.WantSetMousePos = false;
+	}
+
 	void CImguiManager::onRender()
 	{
 		ImGui::Render();

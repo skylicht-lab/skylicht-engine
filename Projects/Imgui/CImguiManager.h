@@ -44,6 +44,8 @@ namespace Skylicht
 
 		void onNewFrame();
 
+		void onEndFrame();
+
 		void onRender();
 
 		virtual bool OnProcessEvent(const SEvent& event);

@@ -40,12 +40,6 @@ namespace Skylicht
 			CPhysicsEngine* engine = CPhysicsEngine::getInstance();
 			if (engine != NULL)
 			{
-				if (!engine->IsInEditor)
-				{
-					// note: MatrixTransform is faster
-					m_gameObject->setupMatrixTransform();
-				}
-
 				if (engine->IsInEditor)
 					initRigidbody();
 			}
@@ -151,6 +145,12 @@ namespace Skylicht
 			if (m_rigidBody && m_shape)
 			{
 				releaseRigidbody();
+			}
+
+			if (!engine->IsInEditor)
+			{
+				// note: MatrixTransform is faster
+				m_gameObject->setupMatrixTransform();
 			}
 
 			// init shape

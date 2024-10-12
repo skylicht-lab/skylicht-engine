@@ -174,7 +174,7 @@ namespace Skylicht
 
 			if (getTransform())
 			{
-				relative = getTransform()->getRelativeTransform();
+				relative = getTransform()->calcWorldTransform();
 
 				CTransformEuler* euler = getTransformEuler();
 				if (euler)
