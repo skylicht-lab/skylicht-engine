@@ -347,6 +347,11 @@ namespace Skylicht
 			return (int)m_components.size();
 		}
 
+		inline CComponentSystem* getComponentByPos(int i)
+		{
+			return m_components[i];
+		}
+
 		void moveComponentUp(CComponentSystem* comp);
 
 		void moveComponentDown(CComponentSystem* comp);
@@ -356,6 +361,8 @@ namespace Skylicht
 		void moveSerializableComponentUp(CComponentSystem* comp);
 
 		void moveSerializableComponentDown(CComponentSystem* comp);
+
+		void sortComponent(std::vector<std::string>& templateOrder);
 
 		inline void enableEditorChange(bool b)
 		{

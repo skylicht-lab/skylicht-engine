@@ -209,6 +209,31 @@ namespace Skylicht
 			obj->setTemplateID(id.c_str());
 			obj->setTemplateObjectID(obj->getID().c_str());
 
+			// sync template id to all childs
+			CContainerObject* container = dynamic_cast<CContainerObject*>(obj);
+			if (container)
+			{
+				std::stack<CContainerObject*> stack;
+				stack.push(container);
+
+				while (!stack.empty())
+				{
+					CContainerObject* container = stack.top();
+					stack.pop();
+
+					ArrayGameObject* childs = container->getChilds();
+					for (CGameObject* child : *childs)
+					{
+						child->setTemplateID(id.c_str());
+						child->setTemplateObjectID(child->getID().c_str());
+
+						CContainerObject* c = dynamic_cast<CContainerObject*>(obj);
+						if (c)
+							stack.push(c);
+					}
+				}
+			}
+
 			// save .template
 			CObjectSerializable* data = CSceneExporter::exportGameObject(obj);
 			data->save(fullPath.c_str());

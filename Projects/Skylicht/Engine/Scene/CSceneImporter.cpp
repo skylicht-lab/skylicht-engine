@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CSceneImporter.h"
 #include "CSceneExporter.h"
 #include "Utils/CStringImp.h"
+#include "Components/CDependentComponent.h"
 
 namespace Skylicht
 {
@@ -252,11 +253,7 @@ namespace Skylicht
 
 							// use new id, that generated
 							if (g_generateId)
-							{
-								if (gameobject->isTemplateAsset())
-									gameobject->setTemplateObjectID(gameobject->getID().c_str());
 								gameobject->setID(id.c_str());
-							}
 						}
 					}
 				}
@@ -354,8 +351,80 @@ namespace Skylicht
 
 	void CSceneImporter::reloadTemplate(CGameObject* obj, CObjectSerializable* templateData)
 	{
-		CObjectSerializable* srcTemplate = obj->createSerializable();
+		if (obj->getTypeName() != templateData->Name)
+			return;
 
+		std::vector<std::string> componentOrder;
+		CDependentComponent* depComp = CDependentComponent::getInstance();
 
+		CObjectSerializable* components = templateData->getProperty<CObjectSerializable>("Components");
+		if (components)
+		{
+			// remove the components, hat is not exist in template
+			std::vector<CComponentSystem*> remove;
+			for (int i = 0, n = obj->getComponentCount(); i < n; i++)
+			{
+				CComponentSystem* comp = obj->getComponentByPos(i);
+				CObjectSerializable* compProperty = components->getProperty<CObjectSerializable>(comp->getTypeName().c_str());
+				if (compProperty == NULL)
+				{
+					if (!depComp->isDependentComponent(comp->getTypeName().c_str()))
+						remove.push_back(comp);
+				}
+			}
+
+			while (remove.size() > 0)
+			{
+				obj->removeComponent(remove[remove.size() - 1]);
+				remove.erase(--remove.end());
+			}
+
+			// add new components, that is not exist in gameobject
+			for (int i = 0, n = components->getNumProperty(); i < n; i++)
+			{
+				CValueProperty* p = components->getPropertyID(i);
+
+				const char* componentName = p->Name.c_str();
+				componentOrder.push_back(componentName);
+
+				if (p->getType() == Skylicht::Object)
+				{
+					if (obj->getComponentByTypeName(componentName) == NULL)
+						obj->addComponentByTypeName(componentName);
+				}
+
+			}
+		}
+		else
+		{
+			obj->releaseAllComponent();
+		}
+
+		// sync data
+		obj->sortComponent(componentOrder);
+
+		// get id generated
+		std::string id = obj->getID();
+
+		// load data
+		obj->loadSerializable(templateData);
+		obj->startComponent();
+
+		if (obj->isTemplateAsset())
+			obj->setTemplateObjectID(obj->getID().c_str());
+
+		// revert id
+		obj->setID(id.c_str());
+
+		// sync in childs object
+		CContainerObject* container = dynamic_cast<CContainerObject*>(obj);
+		if (container)
+		{
+			CObjectSerializable* childs = templateData->getProperty<CObjectSerializable>("Childs");
+			if (childs)
+			{
+				// ... not yet
+			}
+		}
 	}
 }

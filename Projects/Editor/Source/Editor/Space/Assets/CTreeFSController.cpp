@@ -347,38 +347,14 @@ namespace Skylicht
 
 			GUI::CTreeRowItem* row = node->getRowItem();
 			row->OnAcceptDragDrop = [node](GUI::SDragDropPackage* data)
-			{
-				if (data->Name == "HierarchyNode")
 				{
-					CHierachyNode* dragNode = (CHierachyNode*)data->UserData;
-					if (dragNode->isTagGameObject() &&
-						dragNode->getTagDataType() != CHierachyNode::Zone)
-					{
-						return true;
-					}
-				}
-				return false;
-			};
+					return false;
+				};
 
 			row->OnDrop = [node](GUI::SDragDropPackage* data, float mouseX, float mouseY)
-			{
-				if (data->Name == "HierarchyNode")
 				{
-					CHierachyNode* dragNode = (CHierachyNode*)data->UserData;
-					CGameObject* object = (CGameObject*)dragNode->getTagData();
 
-					std::string path = node->getTagString();
-					path += "/";
-					path += object->getNameA();
-					path += ".xml";
-
-					CSceneExporter::exportGameObject(object, path.c_str());
-
-					CAssetImporter importer;
-					importer.add(path.c_str());
-					importer.importAll();
-				}
-			};
+				};
 
 			GUI::SDragDropPackage* dragDrop = row->setDragDropPackage("TreeFSItem", row);
 			dragDrop->UserData = node;

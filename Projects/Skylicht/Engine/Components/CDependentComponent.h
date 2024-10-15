@@ -48,5 +48,7 @@ namespace Skylicht
 		bool registerDependent(const char* componentName, const char* dependentComponent);
 
 		void createDependentComponent(CComponentSystem* componentName);
+
+		bool isDependentComponent(const char* componentName);
 	};
 }

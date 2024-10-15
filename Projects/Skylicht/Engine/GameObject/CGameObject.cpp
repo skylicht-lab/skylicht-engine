@@ -414,6 +414,43 @@ namespace Skylicht
 		}
 	}
 
+	void CGameObject::sortComponent(std::vector<std::string>& templateOrder)
+	{
+		auto getOrder = [](const char* name, std::vector<std::string>& templateOrder)
+			{
+				int i = 0;
+				for (auto value : templateOrder)
+				{
+					if (value == name)
+						return i;
+					i++;
+				}
+				return 0;
+			};
+
+		int numComponent = (int)m_components.size();
+		for (int i = 0; i < numComponent - 1; i++)
+		{
+			for (int j = i + 1; j < numComponent; j++)
+			{
+				CComponentSystem* a = m_components[i];
+				CComponentSystem* b = m_components[j];
+
+				if (a && b && a->isSerializable() && b->isSerializable())
+				{
+					std::string nameA = a->getTypeName();
+					std::string nameB = b->getTypeName();
+
+					if (getOrder(nameA.c_str(), templateOrder) > getOrder(nameB.c_str(), templateOrder))
+					{
+						m_components[i] = b;
+						m_components[j] = a;
+					}
+				}
+			}
+		}
+	}
+
 	int CGameObject::getComponentPosition(CComponentSystem* comp)
 	{
 		int pos = 0;
