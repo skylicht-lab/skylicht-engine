@@ -541,7 +541,7 @@ namespace Skylicht
 
 		void CSpaceScene::onEditorSelect(GUI::CBase* base)
 		{
-			if (CSelection::getInstance()->getSelected().size() == 0)
+			if (CSelection::getInstance()->getAllSelected().size() == 0)
 			{
 				m_groupTransform->enable(false);
 				m_toolbarButton[World]->setDisabled(true);

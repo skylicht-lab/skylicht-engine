@@ -157,14 +157,17 @@ namespace Skylicht
 	{
 		CGameObject* ret = NULL;
 
+		std::string saveId;
+		CStringProperty* id = (CStringProperty*)data->getProperty("id");
+
+		if (generateNewID)
+		{
+			saveId = id->get();
+			id->set(CRandomID::generate());
+		}
+
 		if (data->Name == "CZone" || data->Name == "CContainerObject")
 		{
-			if (generateNewID)
-			{
-				CStringProperty* id = (CStringProperty*)data->getProperty("id");
-				id->set(CRandomID::generate());
-			}
-
 			CContainerObject* container = createContainerObject();
 			container->loadSerializable(data);
 			container->startComponent();
@@ -183,16 +186,13 @@ namespace Skylicht
 		}
 		else if (data->Name == "CGameObject")
 		{
-			if (generateNewID)
-			{
-				CStringProperty* id = (CStringProperty*)data->getProperty("id");
-				id->set(CRandomID::generate());
-			}
-
 			ret = createEmptyObject();
 			ret->loadSerializable(data);
 			ret->startComponent();
 		}
+
+		if (generateNewID)
+			id->set(saveId);
 
 		if (ret != NULL)
 			updateIndexSearchObject();
@@ -345,6 +345,43 @@ namespace Skylicht
 		m_lastGenerateID = -1;
 	}
 
+	void CContainerObject::sortChildsByTemplateOrder(std::vector<std::string>& order)
+	{
+		auto getOrder = [](const char* id, std::vector<std::string>& order)
+			{
+				int i = 0;
+				for (auto value : order)
+				{
+					if (value == id)
+						return i;
+					i++;
+				}
+				return 0;
+			};
+
+		int numChild = (int)m_childs.size();
+		for (int i = 0; i < numChild - 1; i++)
+		{
+			for (int j = i + 1; j < numChild; j++)
+			{
+				CGameObject* a = m_childs[i];
+				CGameObject* b = m_childs[j];
+
+				std::string ta = a->getTemplateObjectID();
+				std::string tb = b->getTemplateObjectID();
+
+				if (!ta.empty() && tb.empty())
+				{
+					if (getOrder(ta.c_str(), order) > getOrder(tb.c_str(), order))
+					{
+						m_childs[i] = b;
+						m_childs[j] = a;
+					}
+				}
+			}
+		}
+	}
+
 	CGameObject* CContainerObject::searchObject(const wchar_t* objectName)
 	{
 		core::map<std::wstring, CGameObject*>::Node* node = m_objectByName.find(std::wstring(objectName));
@@ -428,6 +465,27 @@ namespace Skylicht
 		return m_zone->getScene()->searchObjectInChild(objectName);
 	}
 
+	CGameObject* CContainerObject::searchObjectInChildByTemplateObjId(const char* id)
+	{
+		for (CGameObject*& obj : m_childs)
+		{
+			if (CStringImp::comp(obj->getTemplateObjectID(), id) == 0)
+			{
+				return obj;
+			}
+
+			CContainerObject* container = dynamic_cast<CContainerObject*>(obj);
+			if (container != NULL)
+			{
+				CGameObject* ret = container->searchObjectInChildByTemplateObjId(id);
+				if (ret)
+					return ret;
+			}
+		}
+
+		return NULL;
+	}
+
 	bool CContainerObject::testConflictName(const wchar_t* objectName)
 	{
 		return searchObject(objectName) != NULL;
@@ -452,7 +510,7 @@ namespace Skylicht
 		m_lastGenerateID = objectID;
 
 		return std::string(lpName);
-	}	
+	}
 
 	void CContainerObject::registerObjectInSearchList(CGameObject* obj)
 	{

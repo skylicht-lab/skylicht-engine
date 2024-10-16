@@ -56,5 +56,9 @@ namespace Skylicht
 		static CObjectSerializable* importTemplateToObject(CZone* zone, const char* path);
 
 		static void reloadTemplate(CGameObject* obj, CObjectSerializable* templateData);
+
+		static int beginReloadTemplate(CScene* scene, CObjectSerializable* templateData);
+
+		static bool reloadTemplate();
 	};
 }

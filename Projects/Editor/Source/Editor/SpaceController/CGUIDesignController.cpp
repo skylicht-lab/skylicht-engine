@@ -517,7 +517,7 @@ namespace Skylicht
 		{
 			if (m_guiCanvas)
 			{
-				std::vector<CSelectObject*>& listSelected = CSelection::getInstance()->getSelected();
+				std::vector<CSelectObject*>& listSelected = CSelection::getInstance()->getAllSelected();
 				for (CSelectObject* obj : listSelected)
 				{
 					if (obj->getType() == CSelectObject::GUIElement)

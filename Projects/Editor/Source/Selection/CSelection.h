@@ -44,11 +44,6 @@ namespace Skylicht
 
 			virtual ~CSelection();
 
-			std::vector<CSelectObject*>& getSelected()
-			{
-				return m_selected;
-			}
-
 			bool isSelected()
 			{
 				return m_selected.size() > 0;

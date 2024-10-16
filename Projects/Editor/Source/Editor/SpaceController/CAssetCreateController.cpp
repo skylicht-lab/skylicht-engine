@@ -224,10 +224,12 @@ namespace Skylicht
 					ArrayGameObject* childs = container->getChilds();
 					for (CGameObject* child : *childs)
 					{
-						child->setTemplateID(id.c_str());
-						child->setTemplateObjectID(child->getID().c_str());
-
-						CContainerObject* c = dynamic_cast<CContainerObject*>(obj);
+						if (!child->isTemplateAsset())
+						{
+							child->setTemplateID(id.c_str());
+							child->setTemplateObjectID(child->getID().c_str());
+						}
+						CContainerObject* c = dynamic_cast<CContainerObject*>(child);
 						if (c)
 							stack.push(c);
 					}

@@ -71,6 +71,8 @@ namespace Skylicht
 
 		void bringToChild(CGameObject* object);
 
+		void sortChildsByTemplateOrder(std::vector<std::string>& order);
+
 		virtual CGameObject* searchObject(const wchar_t* objectName);
 
 		virtual CGameObject* searchObjectInChild(const wchar_t* objectName);
@@ -81,9 +83,11 @@ namespace Skylicht
 
 		virtual CGameObject* searchObjectInScene(const wchar_t* objectName);
 
+		virtual CGameObject* searchObjectInChildByTemplateObjId(const char* id);
+
 		virtual bool testConflictName(const wchar_t* objectName);
 
-		std::string generateObjectName(const char* objTemplate);		
+		std::string generateObjectName(const char* objTemplate);
 
 		void registerObjectInSearchList(CGameObject* obj);
 

@@ -41,6 +41,8 @@ namespace Skylicht
 	std::list<CGameObject*> g_listGameObject;
 	std::list<CGameObject*>::iterator g_currentGameObject;
 
+	CObjectSerializable* g_template = NULL;
+
 	void CSceneImporter::buildComponent(CGameObject* object, io::IXMLReader* reader)
 	{
 		std::wstring nodeName = L"node";
@@ -354,13 +356,16 @@ namespace Skylicht
 		if (obj->getTypeName() != templateData->Name)
 			return;
 
+		// save the transform
+		core::matrix4 saveTransform = obj->getTransform()->getRelativeTransform();
+
 		std::vector<std::string> componentOrder;
 		CDependentComponent* depComp = CDependentComponent::getInstance();
 
 		CObjectSerializable* components = templateData->getProperty<CObjectSerializable>("Components");
 		if (components)
 		{
-			// remove the components, hat is not exist in template
+			// remove the components, that is not exist in template
 			std::vector<CComponentSystem*> remove;
 			for (int i = 0, n = obj->getComponentCount(); i < n; i++)
 			{
@@ -410,8 +415,8 @@ namespace Skylicht
 		obj->loadSerializable(templateData);
 		obj->startComponent();
 
-		if (obj->isTemplateAsset())
-			obj->setTemplateObjectID(obj->getID().c_str());
+		// apply current transform
+		obj->getTransform()->setRelativeTransform(saveTransform);
 
 		// revert id
 		obj->setID(id.c_str());
@@ -420,11 +425,117 @@ namespace Skylicht
 		CContainerObject* container = dynamic_cast<CContainerObject*>(obj);
 		if (container)
 		{
+			std::vector<CGameObject*> syncObjects;
+			std::vector<std::string> objectOrder;
+
+			// reload template data in childs
 			CObjectSerializable* childs = templateData->getProperty<CObjectSerializable>("Childs");
 			if (childs)
 			{
-				// ... not yet
+				for (int i = 0, n = childs->getNumProperty(); i < n; i++)
+				{
+					CObjectSerializable* child = dynamic_cast<CObjectSerializable*>(childs->getPropertyID(i));
+
+					std::string templateObjId = child->get("templateObjectId", std::string(""));
+					if (!templateObjId.empty())
+					{
+						objectOrder.push_back(templateObjId);
+
+						CGameObject* obj = container->searchObjectInChildByTemplateObjId(templateObjId.c_str());
+						if (obj)
+						{
+							// don't reload child template asset
+							if (!obj->isTemplateAsset())
+							{
+								reloadTemplate(obj, child);
+							}
+
+							syncObjects.push_back(obj);
+						}
+						else
+						{
+							// create new game object
+							container->createObject(child, true);
+						}
+					}
+				}
+			}
+
+			// remove the gameobject, that is not exist in template
+			ArrayGameObject* childObjs = container->getChilds();
+			for (CGameObject* obj : *childObjs)
+			{
+				bool remove = true;
+
+				for (CGameObject* i : syncObjects)
+				{
+					if (obj == i)
+					{
+						remove = false;
+						break;
+					}
+				}
+
+				if (remove)
+				{
+					obj->remove();
+				}
+			}
+
+			if (objectOrder.size() > 0)
+				container->sortChildsByTemplateOrder(objectOrder);
+		}
+	}
+
+	int CSceneImporter::beginReloadTemplate(CScene* scene, CObjectSerializable* templateData)
+	{
+		std::string templateId = templateData->get("templateId", std::string(""));
+
+		std::stack<CContainerObject*> stack;
+
+		for (int i = 0, n = scene->getZoneCount(); i < n; i++)
+			stack.push(scene->getZone(i));
+
+		g_listGameObject.clear();
+
+		while (!stack.empty())
+		{
+			CContainerObject* container = stack.top();
+			stack.pop();
+
+			ArrayGameObject* childs = container->getChilds();
+			for (CGameObject* child : *childs)
+			{
+				if (child->isTemplateAsset() && templateId == child->getTemplateID())
+				{
+					g_listGameObject.push_back(child);
+				}
 			}
 		}
+
+		g_template = templateData;
+		g_loadingScene = 0;
+		g_currentGameObject = g_listGameObject.begin();
+
+		return (int)g_listGameObject.size();
+	}
+
+	bool CSceneImporter::reloadTemplate()
+	{
+		if (g_listGameObject.size() == 0 || g_template == NULL)
+			return true;
+
+		reloadTemplate(*g_currentGameObject, g_template);
+
+		++g_currentGameObject;
+		++g_loadingScene;
+
+		if (g_currentGameObject == g_listGameObject.end())
+		{
+			g_template = NULL;
+			return true;
+		}
+
+		return false;
 	}
 }

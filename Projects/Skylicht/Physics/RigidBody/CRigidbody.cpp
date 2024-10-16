@@ -188,9 +188,12 @@ namespace Skylicht
 			// add rigid body
 			engine->addBody(this);
 
-			// Transform component isnot in relative in Parent
-			// It is sync from Physics Engine
-			transform->setIsWorldTransform(true);
+			if (!engine->IsInEditor)
+			{
+				// Transform component isnot in relative in Parent
+				// It is sync from Physics Engine
+				transform->setIsWorldTransform(true);
+			}
 
 			return true;
 #else

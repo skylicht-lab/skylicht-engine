@@ -1438,10 +1438,15 @@ namespace Skylicht
 				CSceneImporter::reloadTemplate(object, templateData);
 				delete templateData;
 
+				m_scene->updateAddRemoveObject();
+
 				rebuildHierarchyData(object);
 
 				if (m_spaceHierarchy)
 					m_spaceHierarchy->getController()->updateTreeNode(object);
+
+				CSelectObject* selectObject = CSelection::getInstance()->getLastSelected();
+				CPropertyController::getInstance()->setProperty(selectObject);
 			}
 		}
 
