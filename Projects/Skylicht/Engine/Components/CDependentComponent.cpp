@@ -56,9 +56,9 @@ namespace Skylicht
 	{
 		std::map<std::string, std::vector<std::string>>::iterator it = m_dependent.find(componentName);
 		if (it != m_dependent.end())
-			return false;
+			return true;
 
-		return true;
+		return false;
 	}
 
 	void CDependentComponent::createDependentComponent(CComponentSystem* component)

@@ -197,7 +197,7 @@ namespace Skylicht
 			}
 		}
 
-		void CHierarchyController::updateTreeNode(CGameObject* object)
+		void CHierarchyController::updateTreeNode(CGameObject* object, bool rebuildAllTree)
 		{
 			if (m_node == NULL)
 				return;
@@ -215,8 +215,15 @@ namespace Skylicht
 				std::vector<CHierachyNode*>& childs = node->getChilds();
 				for (CHierachyNode* child : childs)
 				{
-					if (child->getTagDataType() == CHierachyNode::Entity)
+					if (rebuildAllTree)
+					{
 						buildTreeNode(node->getGUINode(), child);
+					}
+					else
+					{
+						if (child->getTagDataType() == CHierachyNode::Entity)
+							buildTreeNode(node->getGUINode(), child);
+					}
 				}
 			}
 		}
@@ -260,7 +267,7 @@ namespace Skylicht
 			}
 
 			// expand
-			parentGuiNode->expand(false);
+			// parentGuiNode->expand(false);
 
 			return guiNode;
 		}

@@ -346,6 +346,10 @@ namespace Skylicht
 		if (obj == NULL)
 			return NULL;
 
+		CContainerObject* container = dynamic_cast<CContainerObject*>(obj);
+		if (container)
+			container->updateAddRemoveObject();
+
 		CObjectSerializable* data = CSceneExporter::exportGameObject(obj);
 		obj->remove();
 		return data;

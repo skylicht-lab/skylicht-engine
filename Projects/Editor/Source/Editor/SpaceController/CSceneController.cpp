@@ -1443,7 +1443,7 @@ namespace Skylicht
 				rebuildHierarchyData(object);
 
 				if (m_spaceHierarchy)
-					m_spaceHierarchy->getController()->updateTreeNode(object);
+					m_spaceHierarchy->getController()->updateTreeNode(object, true);
 
 				CSelectObject* selectObject = CSelection::getInstance()->getLastSelected();
 				CPropertyController::getInstance()->setProperty(selectObject);
