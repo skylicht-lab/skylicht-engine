@@ -23,7 +23,7 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "GUI/CGUIContext.h"
+#include "GUI/GUIContext.h"
 #include "CSpaceSprite.h"
 #include "AssetManager/CAssetManager.h"
 #include "Editor/CEditor.h"
@@ -98,7 +98,7 @@ namespace Skylicht
 		void CSpaceSprite::onRenderFrame(GUI::CBase* base, SFrame* frame)
 		{
 			// flush the current gui
-			GUI::CGUIContext::getRenderer()->flush();
+			GUI::Context::getRenderer()->flush();
 			core::recti vp = getVideoDriver()->getViewPort();
 
 			// get base rect for renderer
@@ -127,7 +127,7 @@ namespace Skylicht
 			// resume gui render
 			getVideoDriver()->enableScissor(true);
 			getVideoDriver()->setViewPort(vp);
-			GUI::CGUIContext::getRenderer()->setProjection();
+			GUI::Context::getRenderer()->setProjection();
 		}
 	}
 }

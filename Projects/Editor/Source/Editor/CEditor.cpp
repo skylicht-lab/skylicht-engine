@@ -77,7 +77,7 @@ namespace Skylicht
 			m_assetWatcher(NULL)
 		{
 			// init canvas
-			m_canvas = GUI::CGUIContext::getRoot();
+			m_canvas = GUI::Context::getRoot();
 
 			// file watcher
 			m_assetWatcher = new CAssetWatcher();

@@ -2,6 +2,7 @@ include_directories(
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Editor/Source
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Main
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Include
+	${SKYLICHT_ENGINE_PROJECT_DIR}/EditorGUI
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Engine
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Components
@@ -244,6 +245,8 @@ if (BUILD_ANDROID)
 else()
 	target_link_libraries(SkylichtEditor Client)
 endif()
+
+target_link_libraries(SkylichtEditor EditorGUI)
 
 if (BUILD_SKYLICHT_NETWORK)
 # Crypto

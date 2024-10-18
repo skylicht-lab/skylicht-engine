@@ -61,7 +61,7 @@ namespace Skylicht
 			m_treeFS->setMultiSelected(true);
 
 			m_nodeAssets = m_treeFS->addNode(L"Assets", GUI::ESystemIcon::OpenFolder);
-			m_nodeAssets->setIconColor(GUI::CThemeConfig::FolderColor);
+			m_nodeAssets->setIconColor(GUI::ThemeConfig::FolderColor);
 			m_nodeAssets->tagString(m_assetManager->getAssetFolder());
 			m_nodeAssets->OnExpand = BIND_LISTENER(&CTreeFSController::OnExpand, this);
 			m_nodeAssets->OnCollapse = BIND_LISTENER(&CTreeFSController::OnCollapse, this);
@@ -89,7 +89,7 @@ namespace Skylicht
 				if (f.IsFolder == true)
 				{
 					GUI::CTreeNode* childNode = node->addNode(f.NameW.c_str(), GUI::ESystemIcon::Folder);
-					childNode->setIconColor(GUI::CThemeConfig::FolderColor);
+					childNode->setIconColor(GUI::ThemeConfig::FolderColor);
 					childNode->tagString(f.FullPath);
 					childNode->OnExpand = BIND_LISTENER(&CTreeFSController::OnExpand, this);
 					childNode->OnCollapse = BIND_LISTENER(&CTreeFSController::OnCollapse, this);

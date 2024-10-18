@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "GUI/CGUIContext.h"
+#include "GUI/GUIContext.h"
 
 #include "Utils/CSingleton.h"
 #include "AssetManager/CAssetManager.h"

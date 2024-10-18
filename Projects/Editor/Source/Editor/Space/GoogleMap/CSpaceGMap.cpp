@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CSpaceGMap.h"
 #include "GMapUtils.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 #include "GUI/Input/CInput.h"
 #include "HitTest2D/CHitTest2D.h"
 #include "AssetManager/CAssetManager.h"
@@ -99,8 +99,8 @@ namespace Skylicht
 
 			m_materialID = CShaderManager::getInstance()->getShaderIDByName("TextureColorAlpha");
 
-			m_fontLarge = new CGlyphFont(GUI::CThemeConfig::FontName.c_str(), GUI::CThemeConfig::getFontSizePt(GUI::EFontSize::SizeLarge));
-			m_fontNormal = new CGlyphFont(GUI::CThemeConfig::FontName.c_str(), GUI::CThemeConfig::getFontSizePt(GUI::EFontSize::SizeNormal));
+			m_fontLarge = new CGlyphFont(GUI::ThemeConfig::FontName.c_str(), GUI::ThemeConfig::getFontSizePt(GUI::EFontSize::SizeLarge));
+			m_fontNormal = new CGlyphFont(GUI::ThemeConfig::FontName.c_str(), GUI::ThemeConfig::getFontSizePt(GUI::EFontSize::SizeNormal));
 
 
 			m_downloadThread = new CDownloadGMapThread();
@@ -415,7 +415,7 @@ namespace Skylicht
 		void CSpaceGMap::onRender(GUI::CBase* base)
 		{
 			// flush 2d gui
-			GUI::CGUIContext::getRenderer()->flush();
+			GUI::Context::getRenderer()->flush();
 
 			IVideoDriver* driver = getVideoDriver();
 
@@ -447,7 +447,7 @@ namespace Skylicht
 			// resume gui render
 			driver->enableScissor(true);
 			driver->setViewPort(vp);
-			GUI::CGUIContext::getRenderer()->setProjection();
+			GUI::Context::getRenderer()->setProjection();
 		}
 
 		void CSpaceGMap::updateMap()

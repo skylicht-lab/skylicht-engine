@@ -108,7 +108,7 @@ namespace Skylicht
 			}
 			else if (command == L"Delete")
 			{
-				GUI::CMessageBox* msgBox = new GUI::CMessageBox(GUI::CGUIContext::getRoot(), GUI::CMessageBox::YesNo);
+				GUI::CMessageBox* msgBox = new GUI::CMessageBox(GUI::Context::getRoot(), GUI::CMessageBox::YesNo);
 				msgBox->setMessage("Do you want to delete the material", m_materialContext->getName());
 				msgBox->OnYes = [&](GUI::CBase*)
 					{

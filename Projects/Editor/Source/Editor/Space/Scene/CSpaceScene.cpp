@@ -766,7 +766,7 @@ namespace Skylicht
 			if (m_renderRP != NULL)
 			{
 				// flush 2d gui
-				GUI::CGUIContext::getRenderer()->flush();
+				GUI::Context::getRenderer()->flush();
 				core::recti vp = getVideoDriver()->getViewPort();
 				getVideoDriver()->enableScissor(false);
 				getVideoDriver()->clearZBuffer();
@@ -834,7 +834,7 @@ namespace Skylicht
 				// resume gui render
 				getVideoDriver()->enableScissor(true);
 				getVideoDriver()->setViewPort(vp);
-				GUI::CGUIContext::getRenderer()->setProjection();
+				GUI::Context::getRenderer()->setProjection();
 			}
 		}
 
