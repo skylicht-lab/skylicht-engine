@@ -26,7 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CCheckBox.h"
 #include "GUI//Renderer/CRenderer.h"
 #include "GUI/Theme/CTheme.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 
 namespace Skylicht
 {
@@ -64,7 +64,7 @@ namespace Skylicht
 					r.Y = renderOffset.Y - 2.0f;
 
 					CRenderer::getRenderer()->setRenderOffset(r);
-					CTheme::getTheme()->drawIcon(getRenderBounds(), ESystemIcon::Check, CThemeConfig::DefaultIconColor, false);
+					CTheme::getTheme()->drawIcon(getRenderBounds(), ESystemIcon::Check, ThemeConfig::DefaultIconColor, false);
 					CRenderer::getRenderer()->setRenderOffset(renderOffset);
 				}
 			}

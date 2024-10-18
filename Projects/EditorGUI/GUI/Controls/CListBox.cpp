@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CListBox.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 #include "GUI/Input/CInput.h"
 
 namespace Skylicht

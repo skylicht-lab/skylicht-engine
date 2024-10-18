@@ -22,7 +22,7 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 #include "pch.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 #include "GUI/Input/CInput.h"
 #include "CTimeline.h"
 
@@ -39,7 +39,7 @@ namespace Skylicht
 				m_contentPadding(50.0f)
 			{
 				enableRenderFillRect(true);
-				setFillRectColor(CThemeConfig::TimelineItemBG);
+				setFillRectColor(ThemeConfig::TimelineItemBG);
 
 				m_timelineInfo = new CLabel(this);
 				m_timelineInfo->setTextAlignment(ETextAlign::TextCenter);
@@ -60,7 +60,7 @@ namespace Skylicht
 				m_scrollPanel = new CScrollControl(this);
 				m_scrollPanel->dock(EPosition::Fill);
 				m_scrollPanel->enableRenderFillRect(true);
-				m_scrollPanel->setFillRectColor(CThemeConfig::Timeline);
+				m_scrollPanel->setFillRectColor(ThemeConfig::Timeline);
 				m_scrollPanel->enableScroll(false, true);
 				m_scrollPanel->showScrollBar(false, true);
 

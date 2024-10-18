@@ -2,10 +2,10 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2012 - 2019 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -24,31 +24,29 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "GUI/GUIContext.h"
 
-#include "Utils/CSingleton.h"
-#include "AssetManager/CAssetManager.h"
+#if defined(_WIN32) || defined(_WIN64) || defined(WIN32) || defined(WIN64)
 
-namespace Skylicht
-{
-	namespace Editor
-	{
-		class CSpriteController : public IFileLoader
-		{
-		public:
-			DECLARE_SINGLETON(CSpriteController)
+#ifdef _SKYLICHT_STATIC_LIB_
+#define EDITOR_GUI_API
+#else
 
-		protected:
-			GUI::CCanvas* m_canvas;
+#ifdef EDITOR_GUI_EXPORTS
+#define EDITOR_GUI_API __declspec(dllexport)
+#else
+#define EDITOR_GUI_API __declspec(dllimport)
+#endif
 
-		public:
-			CSpriteController();
+#endif
 
-			virtual ~CSpriteController();
+#else
 
-			void initContextMenu(GUI::CCanvas* canvas);
+// GCC or OTHER
+// Force symbol export in shared libraries built with gcc.
+#if (__GNUC__ >= 4) && !defined(_SKYLICHT_STATIC_LIB_) && defined(EDITOR_GUI_EXPORTS)
+#define EDITOR_GUI_API __attribute__ ((visibility("default")))
+#else
+#define EDITOR_GUI_API
+#endif
 
-			virtual void loadFile(const std::string& path);
-		};
-	}
-}
+#endif

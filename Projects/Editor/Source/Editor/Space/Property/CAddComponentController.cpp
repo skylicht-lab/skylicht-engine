@@ -55,7 +55,7 @@ namespace Skylicht
 
 			GUI::CBase* categoryPanel = new GUI::CBase(menu);
 			categoryPanel->setHeight(20.0f);
-			categoryPanel->setFillRectColor(GUI::CThemeConfig::CollapsibleColor);
+			categoryPanel->setFillRectColor(GUI::ThemeConfig::CollapsibleColor);
 			categoryPanel->enableRenderFillRect(true);
 			categoryPanel->dock(GUI::EPosition::Top);
 
@@ -101,7 +101,7 @@ namespace Skylicht
 				std::wstring name = CStringImp::convertUTF8ToUnicode(subCategory->Name.c_str());
 				GUI::CListRowItem* item = m_list->addItem(name.c_str(), GUI::ESystemIcon::Folder);
 				item->tagString(subCategory->Name);
-				item->setIconColor(GUI::CThemeConfig::FolderColor);
+				item->setIconColor(GUI::ThemeConfig::FolderColor);
 				item->OnDoubleLeftMouseClick = BIND_LISTENER(&CAddComponentController::OnSelectCategory, this);
 			}
 

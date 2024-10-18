@@ -26,8 +26,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CDockPanel.h"
 #include "CDockableWindow.h"
 #include "CDockTabControl.h"
-#include "GUI/Theme/CThemeConfig.h"
-#include "GUI/CGUIContext.h"
+#include "GUI/Theme/ThemeConfig.h"
+#include "GUI/GUIContext.h"
 #include "GUI/Input/CInput.h"
 
 namespace Skylicht
@@ -68,7 +68,7 @@ namespace Skylicht
 
 				m_hintWindow = new CBase(this);
 				m_hintWindow->enableRenderFillRect(true);
-				m_hintWindow->setFillRectColor(CThemeConfig::DockHintWindowColor);
+				m_hintWindow->setFillRectColor(ThemeConfig::DockHintWindowColor);
 
 				m_dockHint[0] = new CDockHintIcon(this, EDockHintIcon::Center);
 
@@ -173,10 +173,10 @@ namespace Skylicht
 			void CDockPanel::showDockHintWindow(CDockHintIcon *hint, CDockableWindow *window)
 			{
 				if (m_hoverHint != NULL && m_hoverHint != hint)
-					m_hoverHint->setColor(CThemeConfig::DefaultIconColor);
+					m_hoverHint->setColor(ThemeConfig::DefaultIconColor);
 
 				m_hoverHint = hint;
-				m_hoverHint->setColor(CThemeConfig::ButtonPressColor);
+				m_hoverHint->setColor(ThemeConfig::ButtonPressColor);
 
 				m_hintWindow->bringNextToControl(m_dockHint[0], false);
 				m_hintWindow->setHidden(false);
@@ -857,13 +857,13 @@ namespace Skylicht
 
 				invalidate();
 
-				CGUIContext::getRoot()->notifySaveDockLayout();
+				Context::getRoot()->notifySaveDockLayout();
 			}
 
 			void CDockPanel::hideDockHintWindow()
 			{
 				if (m_hoverHint != NULL)
-					m_hoverHint->setColor(CThemeConfig::DefaultIconColor);
+					m_hoverHint->setColor(ThemeConfig::DefaultIconColor);
 				m_hoverHint = NULL;
 
 				m_hintWindow->setHidden(true);
@@ -901,9 +901,9 @@ namespace Skylicht
 					m_dockHint[i]->setHidden(true);
 
 					if (m_dockHint[i] == m_hoverHint)
-						m_dockHint[i]->setColor(CThemeConfig::ButtonPressColor);
+						m_dockHint[i]->setColor(ThemeConfig::ButtonPressColor);
 					else
-						m_dockHint[i]->setColor(CThemeConfig::DefaultIconColor);
+						m_dockHint[i]->setColor(ThemeConfig::DefaultIconColor);
 				}
 			}
 

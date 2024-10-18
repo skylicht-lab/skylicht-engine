@@ -2,7 +2,7 @@
 
 #include "IApplicationEventReceiver.h"
 
-#include "GUI/CGUIContext.h"
+#include "GUI/GUIContext.h"
 #include "Editor/CEditor.h"
 
 class SkylichtEditor : public IApplicationEventReceiver

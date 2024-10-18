@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CTabButton.h"
 #include "CTabControl.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 #include "GUI/Input/CInput.h"
 
 namespace Skylicht
@@ -45,13 +45,13 @@ namespace Skylicht
 			{
 				setPadding(SPadding(8.0f, 0.0f, -2.0f, 0.0f));
 
-				m_color = CThemeConfig::TabButtonColor;
-				m_pressColor = CThemeConfig::TabButtonActiveColor;
-				m_hoverColor = CThemeConfig::TabButtonActiveColor;
-				m_focusColor = CThemeConfig::TabButtonFocusColor;
+				m_color = ThemeConfig::TabButtonColor;
+				m_pressColor = ThemeConfig::TabButtonActiveColor;
+				m_hoverColor = ThemeConfig::TabButtonActiveColor;
+				m_focusColor = ThemeConfig::TabButtonFocusColor;
 
 				m_label->setMargin(SMargin(0.0f, 4.0f, 0.0f, 0.0f));
-				m_label->setColor(CThemeConfig::TabTextColor);
+				m_label->setColor(ThemeConfig::TabTextColor);
 
 				m_close = new CIconButton(this);
 				m_close->setMargin(SMargin(0.0f, 1.0f, 0.0f, -1.0f));
@@ -188,11 +188,11 @@ namespace Skylicht
 				{
 					c = m_pressColor;
 
-					m_label->setColor(CThemeConfig::TabTextFocusColor);
+					m_label->setColor(ThemeConfig::TabTextFocusColor);
 				}
 				else
 				{
-					m_label->setColor(CThemeConfig::TabTextColor);
+					m_label->setColor(ThemeConfig::TabTextColor);
 				}
 
 				SRect renderBound = getRenderBounds();

@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CSkylichtTheme.h"
-#include "GUI/CGUIContext.h"
+#include "GUI/GUIContext.h"
 #include "Utils/CPath.h"
 
 namespace Skylicht
@@ -317,7 +317,7 @@ namespace Skylicht
 				float bottom = 55.0f;
 				float radius = 3.0f;
 
-				drawGUIModule(m_window, rect, CThemeConfig::WindowBackgroundColor, left, top, right, bottom, radius);
+				drawGUIModule(m_window, rect, ThemeConfig::WindowBackgroundColor, left, top, right, bottom, radius);
 			}
 
 			void CSkylichtTheme::drawWindowShadow(const SRect& rect)
@@ -328,7 +328,7 @@ namespace Skylicht
 				float bottom = 55.0f;
 				float radius = 3.0f;
 
-				drawGUIModule(m_windowShadow, rect, CThemeConfig::White, left, top, right, bottom, radius);
+				drawGUIModule(m_windowShadow, rect, ThemeConfig::White, left, top, right, bottom, radius);
 			}
 
 			void CSkylichtTheme::drawButtonShadow(const SRect& rect)
@@ -339,7 +339,7 @@ namespace Skylicht
 				float bottom = 18.0f;
 				float radius = 3.0f;
 
-				drawGUIModule(m_buttonShadow, rect, CThemeConfig::White, left, top, right, bottom, radius);
+				drawGUIModule(m_buttonShadow, rect, ThemeConfig::White, left, top, right, bottom, radius);
 			}
 
 			void CSkylichtTheme::drawButton(const SRect& rect, const SGUIColor& color)
@@ -361,7 +361,7 @@ namespace Skylicht
 				float bottom = 18.0f;
 				float radius = 3.0f;
 
-				drawGUIModule(m_textboxShadow, rect, CThemeConfig::White, left, top, right, bottom, radius);
+				drawGUIModule(m_textboxShadow, rect, ThemeConfig::White, left, top, right, bottom, radius);
 				drawGUIModule(m_textbox, rect, color, left, top, right, bottom, radius);
 			}
 

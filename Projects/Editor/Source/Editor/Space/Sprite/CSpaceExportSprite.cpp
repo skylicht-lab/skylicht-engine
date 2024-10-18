@@ -23,7 +23,7 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "GUI/CGUIContext.h"
+#include "GUI/GUIContext.h"
 #include "CSpaceExportSprite.h"
 #include "AssetManager/CAssetManager.h"
 #include "Editor/CEditor.h"

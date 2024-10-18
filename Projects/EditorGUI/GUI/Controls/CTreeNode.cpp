@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CContentSizeControl.h"
 #include "CTreeControl.h"
 
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 #include "GUI//Input/CInput.h"
 
 namespace Skylicht
@@ -71,7 +71,7 @@ namespace Skylicht
 				m_innerPanel = sizeContent;
 				m_innerPanel->dock(EPosition::Top);
 				m_innerPanel->setHeight(20.0f);
-				m_innerPanel->setMargin(SMargin(CThemeConfig::TreeIndentationSize, 0.0f, 0.0f, 0.0f));
+				m_innerPanel->setMargin(SMargin(ThemeConfig::TreeIndentationSize, 0.0f, 0.0f, 0.0f));
 				m_innerPanel->setHidden(true);
 				m_innerPanel->setTransparentMouseInput(true);
 

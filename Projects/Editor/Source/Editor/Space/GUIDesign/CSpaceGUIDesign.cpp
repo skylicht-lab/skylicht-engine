@@ -118,7 +118,7 @@ namespace Skylicht
 			m_view = new GUI::CBase(window);
 			m_view->dock(GUI::EPosition::Fill);
 			m_view->enableRenderFillRect(true);
-			m_view->setFillRectColor(GUI::CThemeConfig::WindowBackgroundColor);
+			m_view->setFillRectColor(GUI::ThemeConfig::WindowBackgroundColor);
 			m_view->setKeyboardInputEnabled(true);
 
 			m_view->OnMouseWheeled = std::bind(&CSpaceGUIDesign::onMouseWheel, this, _1, _2);
@@ -626,7 +626,7 @@ namespace Skylicht
 		void CSpaceGUIDesign::onRender(GUI::CBase* base)
 		{
 			// flush 2d gui
-			GUI::CGUIContext::getRenderer()->flush();
+			GUI::Context::getRenderer()->flush();
 			core::recti vp = getVideoDriver()->getViewPort();
 			getVideoDriver()->enableScissor(false);
 			getVideoDriver()->clearZBuffer();
@@ -668,7 +668,7 @@ namespace Skylicht
 			// resume gui render
 			getVideoDriver()->enableScissor(true);
 			getVideoDriver()->setViewPort(vp);
-			GUI::CGUIContext::getRenderer()->setProjection();
+			GUI::Context::getRenderer()->setProjection();
 		}
 	}
 }

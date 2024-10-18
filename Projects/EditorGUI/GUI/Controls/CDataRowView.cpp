@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CDataRowView.h"
 #include "CDataGridView.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 
 namespace Skylicht
 {
@@ -51,8 +51,8 @@ namespace Skylicht
 				if (icon != ESystemIcon::None)
 					showIcon(true);
 
-				setHoverColor(CThemeConfig::ListItemBackgroundHoverColor);
-				setPressColor(CThemeConfig::ListItemBackgroundFocusColor);
+				setHoverColor(ThemeConfig::ListItemBackgroundHoverColor);
+				setPressColor(ThemeConfig::ListItemBackgroundFocusColor);
 
 				m_childs.push_back(m_label);
 				for (int i = 1; i < gridView->getNumColumn(); i++)
@@ -109,7 +109,7 @@ namespace Skylicht
 						if (m_owner->isKeyboardFocus() == true)
 							c = m_pressColor;
 						else
-							c = CThemeConfig::ListItemBackgroundUnfocusColor;
+							c = ThemeConfig::ListItemBackgroundUnfocusColor;
 					}
 				}
 

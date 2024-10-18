@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CScrollBar.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 
 namespace Skylicht
 {
@@ -46,7 +46,7 @@ namespace Skylicht
 				m_bar->OnBarMoved = BIND_LISTENER(&CScrollBar::onBarMoved, this);
 
 				enableRenderFillRect(true);
-				setFillRectColor(CThemeConfig::ScrollBarColor);
+				setFillRectColor(ThemeConfig::ScrollBarColor);
 			}
 
 			CScrollBar::~CScrollBar()

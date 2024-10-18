@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CIcon.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 
 namespace Skylicht
 {
@@ -35,7 +35,7 @@ namespace Skylicht
 			CIcon::CIcon(CBase *parent, ESystemIcon icon, bool use32Bit) :
 				m_icon(icon),
 				m_use32Bit(use32Bit),
-				m_color(CThemeConfig::DefaultIconColor),
+				m_color(ThemeConfig::DefaultIconColor),
 				CBase(parent)
 			{
 				setMouseInputEnabled(false);

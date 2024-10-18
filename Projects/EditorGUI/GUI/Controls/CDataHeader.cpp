@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CDataHeader.h"
 #include "CDataGridView.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 #include "GUI/Renderer/CRenderer.h"
 
 namespace Skylicht
@@ -44,9 +44,9 @@ namespace Skylicht
 				for (int i = 0, n = view->getNumColumn(); i < n; i++)
 				{
 					CFlatButton* btn = new CFlatButton(this);
-					btn->setLabelColor(CThemeConfig::DefaultTextColor);
-					btn->setHoverColor(CThemeConfig::HeaderHover);
-					btn->setBorderColor(CThemeConfig::HeaderBorder);
+					btn->setLabelColor(ThemeConfig::DefaultTextColor);
+					btn->setHoverColor(ThemeConfig::HeaderHover);
+					btn->setBorderColor(ThemeConfig::HeaderBorder);
 					btn->enableRenderBorder(false, true, false, true);
 					btn->enableDrawBackground(false);
 					m_label.push_back(btn);
@@ -67,7 +67,7 @@ namespace Skylicht
 					}
 				}
 
-				m_fillRectColor = CThemeConfig::Header;
+				m_fillRectColor = ThemeConfig::Header;
 			}
 
 			CDataHeader::~CDataHeader()
@@ -90,10 +90,10 @@ namespace Skylicht
 
 				SRect border = r;
 				border.Height = 1.0f;
-				renderer->drawFillRect(border, CThemeConfig::HeaderBorder);
+				renderer->drawFillRect(border, ThemeConfig::HeaderBorder);
 
 				border.Y = height() - 1.0f;
-				renderer->drawFillRect(border, CThemeConfig::HeaderBorder);
+				renderer->drawFillRect(border, ThemeConfig::HeaderBorder);
 			}
 
 			void CDataHeader::layout()

@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CIconTextItem.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 
 namespace Skylicht
 {
@@ -44,7 +44,7 @@ namespace Skylicht
 				m_label = new CTextContainer(this);
 				m_label->setMargin(SMargin(0.0f, 4.0f, 0.0f, 0.0f));
 				m_label->dock(EPosition::Fill);
-				m_label->setColor(CThemeConfig::ButtonTextColor);
+				m_label->setColor(ThemeConfig::ButtonTextColor);
 
 				setSize(80.0f, 20.0f);
 				setMargin(SMargin(0.0f, 0.0f, 0.0f, 0.0f));

@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CDockHintIcon.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 
 namespace Skylicht
 {
@@ -34,7 +34,7 @@ namespace Skylicht
 		{
 			CDockHintIcon::CDockHintIcon(CBase *parent, EDockHintIcon icon) :
 				m_icon(icon),
-				m_color(CThemeConfig::DefaultIconColor),
+				m_color(ThemeConfig::DefaultIconColor),
 				CBase(parent)
 			{
 				setSize(40, 40);

@@ -27,7 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "GUI/Input/CInput.h"
 #include "GUI/Renderer/CRenderer.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 
 #include "Utils/CStringImp.h"
 
@@ -91,7 +91,7 @@ namespace Skylicht
 					CTheme* theme = CTheme::getTheme();
 					CRenderer* renderer = CRenderer::getRenderer();
 
-					theme->drawTextBox(getRenderBounds(), CThemeConfig::SliderColor);
+					theme->drawTextBox(getRenderBounds(), ThemeConfig::SliderColor);
 
 					float d = m_max - m_min;
 					if (!m_focusTextbox && d > 0.0f)
@@ -109,7 +109,7 @@ namespace Skylicht
 							renderer->enableClip(true);
 							renderer->startClip();
 
-							theme->drawTextBox(getRenderBounds(), CThemeConfig::SliderBarColor);
+							theme->drawTextBox(getRenderBounds(), ThemeConfig::SliderBarColor);
 
 							renderer->setClipRegion(oldClipRect);
 							renderer->enableClip(isEnableClip);
@@ -118,13 +118,13 @@ namespace Skylicht
 					}
 
 					if (m_textContainer->isActivate())
-						theme->drawTextBoxBorder(getRenderBounds(), CThemeConfig::ButtonPressColor);
+						theme->drawTextBoxBorder(getRenderBounds(), ThemeConfig::ButtonPressColor);
 					else
 					{
 						if (isHovered())
-							theme->drawTextBoxBorder(getRenderBounds(), CThemeConfig::ButtonHoverColor);
+							theme->drawTextBoxBorder(getRenderBounds(), ThemeConfig::ButtonHoverColor);
 						else
-							theme->drawTextBoxBorder(getRenderBounds(), CThemeConfig::TextBoxBorderColor);
+							theme->drawTextBoxBorder(getRenderBounds(), ThemeConfig::TextBoxBorderColor);
 					}
 				}
 				else

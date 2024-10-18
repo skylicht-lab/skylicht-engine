@@ -27,7 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CScrollBar.h"
 
 #include "GUI/Theme/CTheme.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 
 namespace Skylicht
 {
@@ -53,9 +53,9 @@ namespace Skylicht
 
 			void CScrollBarBar::render()
 			{
-				SGUIColor c = CThemeConfig::ScrollBarBarColor;
+				SGUIColor c = ThemeConfig::ScrollBarBarColor;
 				if (isHovered())
-					c = CThemeConfig::ScrollBarBarHoverColor;
+					c = ThemeConfig::ScrollBarBarHoverColor;
 
 				CTheme::getTheme()->drawScrollbar(getRenderBounds(), c, m_isHoriontal);
 			}

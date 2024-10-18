@@ -85,7 +85,7 @@ namespace Skylicht
 				std::string assetFolder = CAssetManager::getInstance()->getAssetFolder();
 
 				GUI::COpenSaveDialog* dialog = new GUI::COpenSaveDialog(
-					GUI::CGUIContext::getRoot(),
+					GUI::Context::getRoot(),
 					GUI::COpenSaveDialog::Save,
 					assetFolder.c_str(),
 					assetFolder.c_str(),

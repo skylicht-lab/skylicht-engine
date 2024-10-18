@@ -28,8 +28,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/Input/CInput.h"
 #include "GUI/Clipboard/CClipboard.h"
 #include "GUI/Theme/CTheme.h"
-#include "GUI/Theme/CThemeConfig.h"
-#include "GUI/CGUIContext.h"
+#include "GUI/Theme/ThemeConfig.h"
+#include "GUI/GUIContext.h"
 
 namespace Skylicht
 {
@@ -42,7 +42,7 @@ namespace Skylicht
 				m_press(false),
 				m_editable(true),
 				m_drawTextbox(true),
-				m_textBoxColor(CThemeConfig::TextBoxColor),
+				m_textBoxColor(ThemeConfig::TextBoxColor),
 				m_onCharEvent(false)
 			{
 				setSize(100.0f, 20.0f);
@@ -58,7 +58,7 @@ namespace Skylicht
 				m_textHint = new CTextContainer(this);
 				m_textHint->setPos(4.0f, 3.0f);
 				m_textHint->setInnerPaddingRight(4.0f);
-				m_textHint->setColor(CThemeConfig::TextHintColor);
+				m_textHint->setColor(ThemeConfig::TextHintColor);
 
 				m_textContainer = new CTextContainer(this);
 				m_textContainer->setPos(4.0f, 3.0f);
@@ -130,13 +130,13 @@ namespace Skylicht
 					theme->drawTextBox(getRenderBounds(), m_textBoxColor);
 
 					if (m_textContainer->isActivate())
-						theme->drawTextBoxBorder(getRenderBounds(), CThemeConfig::ButtonPressColor);
+						theme->drawTextBoxBorder(getRenderBounds(), ThemeConfig::ButtonPressColor);
 					else
 					{
 						if (isHovered())
-							theme->drawTextBoxBorder(getRenderBounds(), CThemeConfig::ButtonHoverColor);
+							theme->drawTextBoxBorder(getRenderBounds(), ThemeConfig::ButtonHoverColor);
 						else
-							theme->drawTextBoxBorder(getRenderBounds(), CThemeConfig::TextBoxBorderColor);
+							theme->drawTextBoxBorder(getRenderBounds(), ThemeConfig::TextBoxBorderColor);
 					}
 				}
 				else
@@ -162,7 +162,7 @@ namespace Skylicht
 					// auto scrol if drag up/down
 					if (m_canScrollV)
 					{
-						float dt = CGUIContext::getDeltaTime();
+						float dt = Context::getDeltaTime();
 						float delta = 0.0f;
 						SPoint pos = canvasPosToLocal(mousePos);
 
@@ -511,7 +511,7 @@ namespace Skylicht
 			{
 				m_editable = b;
 
-				if (CGUIContext::KeyboardFocus == this)
+				if (Context::KeyboardFocus == this)
 					m_textContainer->showCaret(b);
 				else
 					m_textContainer->showCaret(false);

@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CTreeRowItem.h"
 #include "CTreeNode.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 #include "GUI/Renderer/CRenderer.h"
 
 namespace Skylicht
@@ -45,8 +45,8 @@ namespace Skylicht
 				setIsToggle(true);
 				enableDrawBackground(false);
 
-				setHoverColor(CThemeConfig::ListItemBackgroundHoverColor);
-				setPressColor(CThemeConfig::ListItemBackgroundFocusColor);
+				setHoverColor(ThemeConfig::ListItemBackgroundHoverColor);
+				setPressColor(ThemeConfig::ListItemBackgroundFocusColor);
 			}
 
 			CTreeRowItem::~CTreeRowItem()
@@ -87,7 +87,7 @@ namespace Skylicht
 						if (m_root->isKeyboardFocus() == true)
 							c = m_pressColor;
 						else
-							c = CThemeConfig::ListItemBackgroundUnfocusColor;
+							c = ThemeConfig::ListItemBackgroundUnfocusColor;
 					}
 				}
 

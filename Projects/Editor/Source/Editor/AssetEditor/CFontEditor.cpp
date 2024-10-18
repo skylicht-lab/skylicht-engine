@@ -115,7 +115,7 @@ namespace Skylicht
 				return;
 			
 			// flush 2d gui
-			GUI::CGUIContext::getRenderer()->flush();
+			GUI::Context::getRenderer()->flush();
 			IVideoDriver* driver = getVideoDriver();
 
 			core::recti vp = driver->getViewPort();
@@ -175,7 +175,7 @@ namespace Skylicht
 			// resume gui render
 			driver->enableScissor(true);
 			driver->setViewPort(vp);
-			GUI::CGUIContext::getRenderer()->setProjection();
+			GUI::Context::getRenderer()->setProjection();
 		}
 
 		void CFontEditor::renderString(const wchar_t* text, float& px, float& py, float x, float w)

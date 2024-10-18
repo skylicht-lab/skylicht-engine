@@ -24,8 +24,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CButton.h"
-#include "GUI/CGUIContext.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/GUIContext.h"
+#include "GUI/Theme/ThemeConfig.h"
 
 namespace Skylicht
 {
@@ -35,10 +35,10 @@ namespace Skylicht
 		{
 			CButton::CButton(CBase* parent) :
 				CBase(parent),
-				m_color(CThemeConfig::ButtonColor),
-				m_hoverColor(CThemeConfig::ButtonHoverColor),
-				m_pressColor(CThemeConfig::ButtonPressColor),
-				m_focusColor(CThemeConfig::ButtonFocusColor),
+				m_color(ThemeConfig::ButtonColor),
+				m_hoverColor(ThemeConfig::ButtonHoverColor),
+				m_pressColor(ThemeConfig::ButtonPressColor),
+				m_focusColor(ThemeConfig::ButtonFocusColor),
 				m_pressed(false),
 				m_drawBackground(true),
 				m_isToggle(false),
@@ -52,7 +52,7 @@ namespace Skylicht
 				m_label = new CTextContainer(this);
 				m_label->setMargin(SMargin(0.0f, 2.0f, 0.0f, 0.0f));
 				m_label->dock(EPosition::Fill);
-				m_label->setColor(CThemeConfig::ButtonTextColor);
+				m_label->setColor(ThemeConfig::ButtonTextColor);
 
 				setSize(80.0f, 20.0f);
 				m_icon->setHidden(true);
@@ -76,8 +76,8 @@ namespace Skylicht
 
 				if (disable)
 				{
-					m_label->setColor(CThemeConfig::ButtonTextDisableColor);
-					m_icon->setColor(CThemeConfig::ButtonTextDisableColor);
+					m_label->setColor(ThemeConfig::ButtonTextDisableColor);
+					m_icon->setColor(ThemeConfig::ButtonTextDisableColor);
 
 					if (m_drawDisableButton)
 						CTheme::getTheme()->drawButtonShadow(getRenderBounds());
@@ -106,7 +106,7 @@ namespace Skylicht
 				}
 
 				if (disable && m_drawDisableButton)
-					CTheme::getTheme()->drawButton(getRenderBounds(), CThemeConfig::ButtonDisableColor);
+					CTheme::getTheme()->drawButton(getRenderBounds(), ThemeConfig::ButtonDisableColor);
 
 				if (!disable && (m_drawBackground || hover || (m_isToggle && m_toggleStatus)))
 					CTheme::getTheme()->drawButton(getRenderBounds(), c);
@@ -141,7 +141,7 @@ namespace Skylicht
 				if (down)
 				{
 					m_pressed = true;
-					m_label->setColor(CThemeConfig::TextPressColor);
+					m_label->setColor(ThemeConfig::TextPressColor);
 
 					if (OnDown != nullptr)
 						OnDown(this);
@@ -170,8 +170,8 @@ namespace Skylicht
 				if (down)
 				{
 					m_pressed = true;
-					m_icon->setColor(CThemeConfig::IconPressColor);
-					m_label->setColor(CThemeConfig::TextPressColor);
+					m_icon->setColor(ThemeConfig::IconPressColor);
+					m_label->setColor(ThemeConfig::TextPressColor);
 
 					if (OnDown != nullptr)
 						OnDown(this);

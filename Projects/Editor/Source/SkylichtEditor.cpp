@@ -77,7 +77,7 @@ SkylichtEditor::~SkylichtEditor()
 
 	Lightmapper::CLightmapper::releaseInstance();
 
-	Editor::GUI::CGUIContext::destroyGUI();
+	Editor::GUI::Context::destroyGUI();
 
 	Editor::CEditor::releaseInstance();
 
@@ -127,7 +127,7 @@ void SkylichtEditor::onUpdate()
 		// init editor gui
 		u32 w = app->getWidth();
 		u32 h = app->getHeight();
-		Editor::GUI::CGUIContext::initGUI((float)w, (float)h);
+		Editor::GUI::Context::initGUI((float)w, (float)h);
 
 		m_editor = Editor::CEditor::createGetInstance();
 		m_editorState = InitEngine;
@@ -162,20 +162,20 @@ void SkylichtEditor::onUpdate()
 
 		// running
 		m_editor->update();
-		Editor::GUI::CGUIContext::update(currentTime);
+		Editor::GUI::Context::update(currentTime);
 	}
 	break;
 	default:
 		// running
 		m_editor->update();
-		Editor::GUI::CGUIContext::update(currentTime);
+		Editor::GUI::Context::update(currentTime);
 		break;
 	}
 }
 
 void SkylichtEditor::onRender()
 {
-	Editor::GUI::CGUIContext::render();
+	Editor::GUI::Context::render();
 }
 
 void SkylichtEditor::onPostRender()
@@ -194,7 +194,7 @@ bool SkylichtEditor::onBack()
 void SkylichtEditor::onResize(int w, int h)
 {
 	// on window size changed
-	Editor::GUI::CGUIContext::resize((float)w, (float)h);
+	Editor::GUI::Context::resize((float)w, (float)h);
 }
 
 void SkylichtEditor::onResume()

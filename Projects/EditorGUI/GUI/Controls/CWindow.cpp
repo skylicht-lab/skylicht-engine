@@ -26,7 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CDragger.h"
 #include "CWindow.h"
 #include "CLabel.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 
 namespace Skylicht
 {

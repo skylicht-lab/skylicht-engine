@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CIconButton.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 
 namespace Skylicht
 {
@@ -35,7 +35,7 @@ namespace Skylicht
 			CIconButton::CIconButton(CBase *parent) :
 				CButton(parent),
 				m_drawHoverRectangle(false),
-				m_hoverRectangleColor(CThemeConfig::TabCloseButtonHoverColor)
+				m_hoverRectangleColor(ThemeConfig::TabCloseButtonHoverColor)
 			{
 				setSize(20.0f, 20.0f);
 				showIcon(true);

@@ -27,7 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CCanvas.h"
 #include "GUI//Renderer/CRenderer.h"
 #include "GUI/Theme/CTheme.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 
 namespace Skylicht
 {

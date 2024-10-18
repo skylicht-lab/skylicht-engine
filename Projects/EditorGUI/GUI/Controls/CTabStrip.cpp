@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CTabStrip.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 
 namespace Skylicht
 {
@@ -38,7 +38,7 @@ namespace Skylicht
 				setHeight(28.0f);
 
 				enableRenderFillRect(true);
-				setFillRectColor(CThemeConfig::TabStripColor);
+				setFillRectColor(ThemeConfig::TabStripColor);
 			}
 
 			CTabStrip::~CTabStrip()

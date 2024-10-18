@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CMenuBar.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 #include "GUI/Controls/CCanvas.h"
 
 namespace Skylicht
@@ -41,7 +41,7 @@ namespace Skylicht
 				setHidden(false);
 
 				enableRenderFillRect(true);
-				setFillRectColor(CThemeConfig::MenuBarColor);
+				setFillRectColor(ThemeConfig::MenuBarColor);
 			}
 
 			CMenuBar::~CMenuBar()

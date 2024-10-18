@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CRulerBar.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 
 namespace Skylicht
 {
@@ -56,7 +56,7 @@ namespace Skylicht
 
 				enableClip(true);
 				enableRenderFillRect(true);
-				setFillRectColor(CThemeConfig::RulerBG);
+				setFillRectColor(ThemeConfig::RulerBG);
 			}
 
 			CRulerBar::~CRulerBar()
@@ -82,7 +82,7 @@ namespace Skylicht
 				// begin unit from m_position (round)
 				float offset = m_position - unit * m_pixelPerUnit;
 
-				SGUIColor& lineColor = CThemeConfig::RulerLine1;
+				SGUIColor lineColor = ThemeConfig::RulerLine1;
 				wchar_t textValue[64];
 
 				if (m_isHorizontal)
@@ -93,22 +93,22 @@ namespace Skylicht
 					while (x < w)
 					{
 						size = size1;
-						lineColor = CThemeConfig::RulerLine1;
+						lineColor = ThemeConfig::RulerLine1;
 
 						if (unit % 2 == 0)
 						{
 							size = size2;
-							lineColor = CThemeConfig::RulerLine1;
+							lineColor = ThemeConfig::RulerLine1;
 						}
 						if (unit % 5 == 0)
 						{
 							size = size3;
-							lineColor = CThemeConfig::RulerLine2;
+							lineColor = ThemeConfig::RulerLine2;
 						}
 						if (unit % 10 == 0)
 						{
 							size = size4;
-							lineColor = CThemeConfig::RulerLine3;
+							lineColor = ThemeConfig::RulerLine3;
 						}
 
 						renderer->drawLineY(x, 0.0f, size, lineColor);
@@ -121,7 +121,7 @@ namespace Skylicht
 							r.Width = 9.0f * m_pixelPerUnit;
 							r.Height = 20.0f;
 							swprintf(textValue, 64, L"%d", (int)(unit * m_unitScale));
-							renderer->renderText(r, SizeNormal, CThemeConfig::DefaultTextColor, std::wstring(textValue));
+							renderer->renderText(r, SizeNormal, ThemeConfig::DefaultTextColor, std::wstring(textValue));
 						}
 
 						x = x + m_pixelPerUnit;
@@ -131,7 +131,7 @@ namespace Skylicht
 					if (m_drawCursorLine)
 					{
 						float x = m_beginOffset - m_position + m_cursorPosition;
-						renderer->drawLineY(x, 0.0f, size4, CThemeConfig::RulerCursor);
+						renderer->drawLineY(x, 0.0f, size4, ThemeConfig::RulerCursor);
 					}
 				}
 				else
@@ -142,22 +142,22 @@ namespace Skylicht
 					while (y < h)
 					{
 						size = size1;
-						lineColor = CThemeConfig::RulerLine1;
+						lineColor = ThemeConfig::RulerLine1;
 
 						if (unit % 2 == 0)
 						{
 							size = size2;
-							lineColor = CThemeConfig::RulerLine1;
+							lineColor = ThemeConfig::RulerLine1;
 						}
 						if (unit % 5 == 0)
 						{
 							size = size3;
-							lineColor = CThemeConfig::RulerLine2;
+							lineColor = ThemeConfig::RulerLine2;
 						}
 						if (unit % 10 == 0)
 						{
 							size = size4;
-							lineColor = CThemeConfig::RulerLine3;
+							lineColor = ThemeConfig::RulerLine3;
 						}
 
 						renderer->drawLineX(0.0f, y, size, lineColor);
@@ -170,7 +170,7 @@ namespace Skylicht
 							r.Width = 20.0f;
 							r.Height = 20.0f;
 							swprintf(textValue, 64, L"%d", (int)(unit * m_unitScale));
-							renderer->renderText(r, SizeNormal, CThemeConfig::DefaultTextColor, std::wstring(textValue));
+							renderer->renderText(r, SizeNormal, ThemeConfig::DefaultTextColor, std::wstring(textValue));
 						}
 
 						y = y + m_pixelPerUnit;
@@ -180,7 +180,7 @@ namespace Skylicht
 					if (m_drawCursorLine)
 					{
 						float y = m_beginOffset - m_position + m_cursorPosition;
-						renderer->drawLineX(0.0f, y, size4, CThemeConfig::RulerCursor);
+						renderer->drawLineX(0.0f, y, size4, ThemeConfig::RulerCursor);
 					}
 				}
 			}

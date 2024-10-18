@@ -58,7 +58,7 @@ namespace Skylicht
 			searchInfo->setHeight(20.0f);
 			searchInfo->dock(GUI::EPosition::Top);
 			searchInfo->enableRenderFillRect(true);
-			searchInfo->setFillRectColor(GUI::CThemeConfig::WindowInnerColor);
+			searchInfo->setFillRectColor(GUI::ThemeConfig::WindowInnerColor);
 			searchInfo->setHidden(true);
 
 			m_labelSearch = new GUI::CLabel(searchInfo);

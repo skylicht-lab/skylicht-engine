@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CInputResourceBox.h"
 #include "CCanvas.h"
-#include "GUI/CGUIContext.h"
+#include "GUI/GUIContext.h"
 
 namespace Skylicht
 {

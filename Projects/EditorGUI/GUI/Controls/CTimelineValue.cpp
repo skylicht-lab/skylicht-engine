@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CTimeline.h"
 #include "CTimelineValue.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 
 namespace Skylicht
 {
@@ -56,8 +56,8 @@ namespace Skylicht
 
 				SRect bound = getRenderBounds();
 
-				renderer->drawFillRect(bound, CThemeConfig::TimelineBG);
-				renderer->drawBorderRect(bound, CThemeConfig::TimelineItemBorder, false, true, false, true);
+				renderer->drawFillRect(bound, ThemeConfig::TimelineBG);
+				renderer->drawBorderRect(bound, ThemeConfig::TimelineItemBorder, false, true, false, true);
 			}
 
 			void CTimelineValue::layout()

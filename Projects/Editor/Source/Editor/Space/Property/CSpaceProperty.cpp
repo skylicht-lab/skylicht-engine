@@ -30,7 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Editor/SpaceController/CPropertyController.h"
 #include "Editor/SpaceController/CAssetPropertyController.h"
 #include "Editor/SpaceController/CSceneController.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 
 namespace Skylicht
 {
@@ -53,7 +53,7 @@ namespace Skylicht
 			titleBar->dock(GUI::EPosition::Top);
 			titleBar->setPadding(GUI::SPadding(5.0f, 3.0f, -5.0f, -3.0f));
 			titleBar->enableRenderFillRect(true);
-			titleBar->setFillRectColor(GUI::CThemeConfig::WindowBackgroundColor);
+			titleBar->setFillRectColor(GUI::ThemeConfig::WindowBackgroundColor);
 
 			m_icon = new GUI::CIcon(titleBar, GUI::ESystemIcon::None);
 			m_icon->dock(GUI::EPosition::Left);
@@ -383,7 +383,7 @@ namespace Skylicht
 			content->setHeight(45);
 			content->setMargin(GUI::SMargin(0.0f, 10.0f, 0.0f, 0.0f));
 			content->dock(GUI::EPosition::Top);
-			content->setFillRectColor(GUI::CThemeConfig::WindowBackgroundColor);
+			content->setFillRectColor(GUI::ThemeConfig::WindowBackgroundColor);
 			content->enableRenderFillRect(true);
 
 			GUI::CBase* line = new GUI::CBase(content);
@@ -462,7 +462,7 @@ namespace Skylicht
 						if (from != me)
 						{
 							CSubject<float>* value = (CSubject<float>*)subject;
-							if (GUI::CGUIContext::KeyboardFocus != target)
+							if (GUI::Context::KeyboardFocus != target)
 								target->setValue(value->get(), false);
 							ui->setHidden(!value->isEnable());
 						}
@@ -506,7 +506,7 @@ namespace Skylicht
 						if (from != me)
 						{
 							CSubject<int>* value = (CSubject<int>*)subject;
-							if (GUI::CGUIContext::KeyboardFocus != target)
+							if (GUI::Context::KeyboardFocus != target)
 								target->setValue((float)value->get(), false);
 							ui->setHidden(!value->isEnable());
 						}
@@ -550,7 +550,7 @@ namespace Skylicht
 						if (from != me)
 						{
 							CSubject<u32>* value = (CSubject<u32>*)subject;
-							if (GUI::CGUIContext::KeyboardFocus != target)
+							if (GUI::Context::KeyboardFocus != target)
 								target->setValue((float)value->get(), false);
 							ui->setHidden(!value->isEnable());
 						}
@@ -631,7 +631,7 @@ namespace Skylicht
 						if (from != me)
 						{
 							CSubject<std::wstring>* value = (CSubject<std::wstring>*)subject;
-							if (GUI::CGUIContext::KeyboardFocus != target)
+							if (GUI::Context::KeyboardFocus != target)
 								target->setString(value->get());
 							ui->setHidden(!value->isEnable());
 						}

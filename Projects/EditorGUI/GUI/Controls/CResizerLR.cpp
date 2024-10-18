@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CResizerLR.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 
 namespace Skylicht
 {
@@ -70,7 +70,7 @@ namespace Skylicht
 				border.Width = 1.0f;
 				border.Y = m_renderBorderPadding;
 				border.Height = border.Height - 2.0f * m_renderBorderPadding;
-				renderer->drawFillRect(border, CThemeConfig::HeaderBorder);
+				renderer->drawFillRect(border, ThemeConfig::HeaderBorder);
 			}
 
 			void CResizerLR::onMouseMoved(float x, float y, float deltaX, float deltaY)

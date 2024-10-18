@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CTabControl.h"
 #include "CCanvas.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 
 namespace Skylicht
 {
@@ -52,7 +52,7 @@ namespace Skylicht
 				m_innerPanel = new CBase(this);
 				m_innerPanel->dock(EPosition::Fill);
 				m_innerPanel->enableRenderFillRect(true);
-				m_innerPanel->setFillRectColor(CThemeConfig::WindowInnerColor);
+				m_innerPanel->setFillRectColor(ThemeConfig::WindowInnerColor);
 
 				m_dropDownMenu = new CMenu(getCanvas());
 				m_dropDownMenu->OnCommand = BIND_LISTENER(&CTabControl::onMenuItem, this);

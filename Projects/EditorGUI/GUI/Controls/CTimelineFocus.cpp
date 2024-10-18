@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CTimelineFocus.h"
 #include "CTimeline.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 
 namespace Skylicht
 {
@@ -41,7 +41,7 @@ namespace Skylicht
 				setTarget(this);
 
 				enableRenderFillRect(true);
-				setFillRectColor(CThemeConfig::White);
+				setFillRectColor(ThemeConfig::White);
 			}
 
 			CTimelineFocus::~CTimelineFocus()

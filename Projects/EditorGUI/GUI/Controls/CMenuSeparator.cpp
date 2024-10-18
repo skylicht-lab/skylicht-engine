@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CMenuSeparator.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 #include "GUI/Renderer/CRenderer.h"
 
 namespace Skylicht
@@ -57,7 +57,7 @@ namespace Skylicht
 				renderBounds.Height = 1.0f;
 				renderBounds.Width = renderBounds.Width - 2.0f;
 
-				CRenderer::getRenderer()->drawFillRect(renderBounds, CThemeConfig::MenuItemSeparatorColor);
+				CRenderer::getRenderer()->drawFillRect(renderBounds, ThemeConfig::MenuItemSeparatorColor);
 			}
 		}
 	}

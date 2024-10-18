@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CProgressBar.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 
 namespace Skylicht
 {
@@ -70,7 +70,7 @@ namespace Skylicht
 				CTheme* theme = CTheme::getTheme();
 				CRenderer* renderer = CRenderer::getRenderer();
 
-				theme->drawTextBox(getRenderBounds(), CThemeConfig::SliderColor);
+				theme->drawTextBox(getRenderBounds(), ThemeConfig::SliderColor);
 
 				SRect clip = m_bounds;
 				clip.Width = clip.Width * m_percent;
@@ -84,7 +84,7 @@ namespace Skylicht
 					renderer->enableClip(true);
 					renderer->startClip();
 
-					theme->drawTextBox(getRenderBounds(), CThemeConfig::SliderBarColor);
+					theme->drawTextBox(getRenderBounds(), ThemeConfig::SliderBarColor);
 
 					renderer->setClipRegion(oldClipRect);
 					renderer->enableClip(isEnableClip);

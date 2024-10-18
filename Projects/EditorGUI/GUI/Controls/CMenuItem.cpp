@@ -27,7 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CMenu.h"
 #include "CCanvas.h"
 #include "CIcon.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 #include "GUI/Renderer/CRenderer.h"
 
 namespace Skylicht
@@ -44,7 +44,7 @@ namespace Skylicht
 				m_inMenuBar(false),
 				m_isOpen(false)
 			{
-				setLabelColor(CThemeConfig::DefaultTextColor);
+				setLabelColor(ThemeConfig::DefaultTextColor);
 			}
 
 			CMenuItem::~CMenuItem()
@@ -80,7 +80,7 @@ namespace Skylicht
 				{
 					if (m_disabled)
 					{
-						setLabelColor(CThemeConfig::DisableTextColor);
+						setLabelColor(ThemeConfig::DisableTextColor);
 					}
 
 					return;
@@ -91,7 +91,7 @@ namespace Skylicht
 					SGUIColor c;
 					c = m_pressColor;
 
-					setLabelColor(CThemeConfig::ButtonTextColor);
+					setLabelColor(ThemeConfig::ButtonTextColor);
 
 					if (m_inMenuBar)
 						CTheme::getTheme()->drawButton(getRenderBounds(), c);
@@ -107,7 +107,7 @@ namespace Skylicht
 				}
 				else
 				{
-					setLabelColor(CThemeConfig::DefaultTextColor);
+					setLabelColor(ThemeConfig::DefaultTextColor);
 				}
 			}
 
@@ -125,7 +125,7 @@ namespace Skylicht
 				m_accelerator = new CTextContainer(this);
 				m_accelerator->dock(EPosition::Right);
 				m_accelerator->setMargin(SMargin(0.0f, 3.0f, 23.0f, 0.0f));
-				m_accelerator->setColor(CThemeConfig::MenuItemAcceleratorColor);
+				m_accelerator->setColor(ThemeConfig::MenuItemAcceleratorColor);
 				m_accelerator->setString(accelerator);
 				m_accelerator->sizeToContents();
 			}
@@ -140,7 +140,7 @@ namespace Skylicht
 					if (!m_inMenuBar)
 					{
 						m_submenuArrow = new CIcon(this, ESystemIcon::VRight);
-						m_submenuArrow->setColor(CThemeConfig::MenuItemAcceleratorColor);
+						m_submenuArrow->setColor(ThemeConfig::MenuItemAcceleratorColor);
 					}
 
 					invalidate();

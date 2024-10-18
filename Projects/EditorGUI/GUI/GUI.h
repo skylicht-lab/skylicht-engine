@@ -24,8 +24,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "GUI/CGUIContext.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/GUIContext.h"
+#include "GUI/Theme/ThemeConfig.h"
 
 #include "GUI/Controls/CCanvas.h"
 #include "GUI/Controls/CDialogWindow.h"

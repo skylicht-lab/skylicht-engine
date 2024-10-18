@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CSearchAssetController.h"
 #include "Utils/CPath.h"
 #include "Utils/CStringImp.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 #include "Editor/SpaceController/CAssetPropertyController.h"
 #include "Editor/CEditor.h"
 
@@ -237,7 +237,7 @@ namespace Skylicht
 				std::string parent = CPath::getFolderPath(currentFolder);
 				item->tagString(parent);
 				item->tagBool(true);
-				item->setIconColor(GUI::CThemeConfig::FolderColor);
+				item->setIconColor(GUI::ThemeConfig::FolderColor);
 				item->OnDoubleLeftMouseClick = BIND_LISTENER(&CListFSController::OnFileOpen, this);
 				item->OnPress = BIND_LISTENER(&CListFSController::OnPress, this);
 			}
@@ -249,7 +249,7 @@ namespace Skylicht
 				if (f.IsFolder)
 				{
 					item = m_listFS->addItem(f.NameW.c_str(), GUI::ESystemIcon::Folder);
-					item->setIconColor(GUI::CThemeConfig::FolderColor);
+					item->setIconColor(GUI::ThemeConfig::FolderColor);
 				}
 				else
 					item = m_listFS->addItem(f.NameW.c_str(), GUI::ESystemIcon::File);
@@ -374,7 +374,7 @@ namespace Skylicht
 			};
 
 			m_newFolderItem = m_listFS->addItem(CStringImp::convertUTF8ToUnicode(name.c_str()).c_str(), GUI::ESystemIcon::Folder);
-			m_newFolderItem->setIconColor(GUI::CThemeConfig::FolderColor);
+			m_newFolderItem->setIconColor(GUI::ThemeConfig::FolderColor);
 			m_newFolderItem->tagString(parent);
 
 			GUI::CListRowItem* next = m_listFS->getItemByLabel(L"..");

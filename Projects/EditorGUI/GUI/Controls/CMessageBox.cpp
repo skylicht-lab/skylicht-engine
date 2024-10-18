@@ -23,7 +23,7 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 #include "CMessageBox.h"
 
 namespace Skylicht
@@ -71,7 +71,7 @@ namespace Skylicht
 				m_message2 = new CLabel(content);
 				m_message2->dock(EPosition::Top);
 				m_message2->setMargin(SPadding(0.0f, 5.0f, 0.0f, 0.0f));
-				m_message2->setColor(CThemeConfig::ButtonTextDisableColor);
+				m_message2->setColor(ThemeConfig::ButtonTextDisableColor);
 				m_message2->setString(" ");
 				m_message2->setHeight(20.0f);
 

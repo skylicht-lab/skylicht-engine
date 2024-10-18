@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CSkylichtRenderer.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 #include "GUI/Theme/CSkylichtTheme.h"
 #include "Graphics2D/Glyph/CGlyphFreetype.h"
 
@@ -391,7 +391,7 @@ namespace Skylicht
 			void CSkylichtRenderer::initFont(CSpriteAtlas* atlas)
 			{
 				CGlyphFreetype* glyphFreetype = CGlyphFreetype::getInstance();
-				glyphFreetype->initFont(CThemeConfig::FontName.c_str(), CThemeConfig::FontPath.c_str());
+				glyphFreetype->initFont(ThemeConfig::FontName.c_str(), ThemeConfig::FontPath.c_str());
 
 				io::IReadFile* charlist = getIrrlichtDevice()->getFileSystem()->createAndOpenFile("BuiltIn/Fonts/character-list.txt");
 				u32 filesize = charlist->getSize();
@@ -406,15 +406,15 @@ namespace Skylicht
 				u32 unicodeSize = filesize / 2;
 				float advance = 0.0f, x = 0.0f, y = 0.0f, w = 0.0f, h = 0.0f, offsetX = 0, offsetY = 0;
 
-				float fontLarge = CThemeConfig::getFontSizePt(EFontSize::SizeLarge);
-				float fontNormal = CThemeConfig::getFontSizePt(EFontSize::SizeNormal);
+				float fontLarge = ThemeConfig::getFontSizePt(EFontSize::SizeLarge);
+				float fontNormal = ThemeConfig::getFontSizePt(EFontSize::SizeNormal);
 
 				// Cache character to sprite
 				for (u32 i = 0; i < unicodeSize; i++)
 				{
 					glyphFreetype->getCharImage(atlas,
 						unicode[i],
-						CThemeConfig::FontName.c_str(),
+						ThemeConfig::FontName.c_str(),
 						CGlyphFreetype::sizePtToPx(fontLarge),
 						&advance,
 						&x, &y, &w, &h,
@@ -422,7 +422,7 @@ namespace Skylicht
 
 					glyphFreetype->getCharImage(atlas,
 						unicode[i],
-						CThemeConfig::FontName.c_str(),
+						ThemeConfig::FontName.c_str(),
 						CGlyphFreetype::sizePtToPx(fontNormal),
 						&advance,
 						&x, &y, &w, &h,
@@ -430,8 +430,8 @@ namespace Skylicht
 				}
 				delete data;
 
-				m_fontLarge = new CGlyphFont(CThemeConfig::FontName.c_str(), fontLarge);
-				m_fontNormal = new CGlyphFont(CThemeConfig::FontName.c_str(), fontNormal);
+				m_fontLarge = new CGlyphFont(ThemeConfig::FontName.c_str(), fontLarge);
+				m_fontNormal = new CGlyphFont(ThemeConfig::FontName.c_str(), fontNormal);
 			}
 
 			core::rectf CSkylichtRenderer::getRect(const SRect& rect)

@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CComboBox.h"
 #include "CCanvas.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 
 namespace Skylicht
 {
@@ -57,8 +57,8 @@ namespace Skylicht
 
 				if (isDisabled())
 				{
-					m_label->setColor(CThemeConfig::ButtonTextDisableColor);
-					m_icon->setColor(CThemeConfig::ButtonTextDisableColor);
+					m_label->setColor(ThemeConfig::ButtonTextDisableColor);
+					m_icon->setColor(ThemeConfig::ButtonTextDisableColor);
 				}
 				else
 				{
@@ -66,19 +66,19 @@ namespace Skylicht
 					m_icon->setColor(m_iconColor);
 				}
 
-				theme->drawTextBox(r, CThemeConfig::TextBoxColor);
+				theme->drawTextBox(r, ThemeConfig::TextBoxColor);
 
 				if (m_menu->isOpen())
-					theme->drawTextBoxBorder(r, CThemeConfig::ButtonPressColor);
+					theme->drawTextBoxBorder(r, ThemeConfig::ButtonPressColor);
 				else if (isHovered())
-					theme->drawTextBoxBorder(r, CThemeConfig::ButtonHoverColor);
+					theme->drawTextBoxBorder(r, ThemeConfig::ButtonHoverColor);
 				else
-					theme->drawTextBoxBorder(r, CThemeConfig::TextBoxBorderColor);
+					theme->drawTextBoxBorder(r, ThemeConfig::TextBoxBorderColor);
 
 				if (m_menu->isOpen())
-					theme->drawComboBoxButton(r, CThemeConfig::ButtonPressColor, CThemeConfig::White);
+					theme->drawComboBoxButton(r, ThemeConfig::ButtonPressColor, ThemeConfig::White);
 				else
-					theme->drawComboBoxButton(r, CThemeConfig::TextBoxButtonColor, CThemeConfig::White);
+					theme->drawComboBoxButton(r, ThemeConfig::TextBoxButtonColor, ThemeConfig::White);
 			}
 
 			void CComboBox::setListValue(const std::vector<std::wstring>& list)

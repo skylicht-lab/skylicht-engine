@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/Controls/CDialogWindow.h"
 #include "GUI/Controls/CMenu.h"
 #include "GUI/Controls/CCanvas.h"
-#include "GUI/CGUIContext.h"
+#include "GUI/GUIContext.h"
 
 #include "GUI/Utils/CDragAndDrop.h"
 
@@ -71,24 +71,24 @@ namespace Skylicht
 
 			void CInput::update()
 			{
-				if (CGUIContext::MouseFocus && CGUIContext::MouseFocus->isHidden())
-					CGUIContext::MouseFocus = NULL;
+				if (Context::MouseFocus && Context::MouseFocus->isHidden())
+					Context::MouseFocus = NULL;
 
-				if (CGUIContext::KeyboardFocus
-					&& (CGUIContext::KeyboardFocus->isHidden() || !CGUIContext::KeyboardFocus->getKeyboardInputEnabled()))
+				if (Context::KeyboardFocus
+					&& (Context::KeyboardFocus->isHidden() || !Context::KeyboardFocus->getKeyboardInputEnabled()))
 				{
-					CGUIContext::KeyboardFocus = nullptr;
+					Context::KeyboardFocus = nullptr;
 				}
 
-				if (!CGUIContext::KeyboardFocus)
+				if (!Context::KeyboardFocus)
 					return;
 
-				float time = CGUIContext::getTime();
+				float time = Context::getTime();
 
 				// Simulate hold key-repeats
 				for (int i = 0; i < EKey::KEY_KEY_CODES_COUNT; i++)
 				{
-					if (KeyData.KeyState[i] && KeyData.Target != CGUIContext::KeyboardFocus)
+					if (KeyData.KeyState[i] && KeyData.Target != Context::KeyboardFocus)
 					{
 						KeyData.KeyState[i] = false;
 						continue;
@@ -97,8 +97,8 @@ namespace Skylicht
 					if (KeyData.KeyState[i] && time > KeyData.NextRepeat[i])
 					{
 						KeyData.NextRepeat[i] = time + m_keyRepeatDelay;
-						if (CGUIContext::KeyboardFocus)
-							CGUIContext::KeyboardFocus->onKeyPress((EKey)i, true);
+						if (Context::KeyboardFocus)
+							Context::KeyboardFocus->onKeyPress((EKey)i, true);
 					}
 				}
 			}
@@ -117,53 +117,53 @@ namespace Skylicht
 					return true;
 				}
 
-				CBase* hover = CGUIContext::getRoot()->getControlAt(x, y);
+				CBase* hover = Context::getRoot()->getControlAt(x, y);
 
-				if (CGUIContext::HoveredControl != hover)
+				if (Context::HoveredControl != hover)
 				{
-					if (CGUIContext::HoveredControl != NULL)
+					if (Context::HoveredControl != NULL)
 					{
-						CGUIContext::HoveredControl->onMouseLeave();
-						CGUIContext::HoveredControl = NULL;
+						Context::HoveredControl->onMouseLeave();
+						Context::HoveredControl = NULL;
 					}
 
-					CGUIContext::HoveredControl = hover;
+					Context::HoveredControl = hover;
 
-					if (CGUIContext::HoveredControl != NULL)
-						CGUIContext::HoveredControl->onMouseEnter();
+					if (Context::HoveredControl != NULL)
+						Context::HoveredControl->onMouseEnter();
 				}
 
-				if (CGUIContext::MouseFocus)
+				if (Context::MouseFocus)
 				{
-					if (CGUIContext::HoveredControl)
+					if (Context::HoveredControl)
 					{
-						CGUIContext::HoveredControl = NULL;
+						Context::HoveredControl = NULL;
 					}
 
-					CGUIContext::HoveredControl = CGUIContext::MouseFocus;
+					Context::HoveredControl = Context::MouseFocus;
 				}
 
-				if (!CGUIContext::HoveredControl)
+				if (!Context::HoveredControl)
 					return false;
 
-				if (CGUIContext::HoveredControl == CGUIContext::getRoot())
+				if (Context::HoveredControl == Context::getRoot())
 				{
-					CGUIContext::HoveredControl->updateCursor();
+					Context::HoveredControl->updateCursor();
 					return false;
 				}
 
-				CGUIContext::HoveredControl->onMouseMoved(x, y, deltaX, deltaY);
+				Context::HoveredControl->onMouseMoved(x, y, deltaX, deltaY);
 
-				if (CDragAndDrop::onMouseMoved(CGUIContext::HoveredControl, x, y) == false)
-					CGUIContext::HoveredControl->updateCursor();
+				if (CDragAndDrop::onMouseMoved(Context::HoveredControl, x, y) == false)
+					Context::HoveredControl->updateCursor();
 
 				return true;
 			}
 
 			bool CInput::inputMouseButton(int mouseButton, bool down)
 			{
-				if (down && (!CGUIContext::HoveredControl || !CGUIContext::HoveredControl->isMenuComponent()))
-					CGUIContext::getRoot()->closeMenu();
+				if (down && (!Context::HoveredControl || !Context::HoveredControl->isMenuComponent()))
+					Context::getRoot()->closeMenu();
 
 				bool isDoubleClick = false;
 				bool isTripleClick = false;
@@ -171,7 +171,7 @@ namespace Skylicht
 				if (down
 					&& m_lastClickPositionX == m_mousePositionX
 					&& m_lastClickPositionY == m_mousePositionY
-					&& (CGUIContext::getTime() - m_lastClickTime[mouseButton]) < 400.0f)
+					&& (Context::getTime() - m_lastClickTime[mouseButton]) < 400.0f)
 				{
 					m_fastClickCount++;
 
@@ -191,7 +191,7 @@ namespace Skylicht
 				else if (mouseButton == 1)
 					KeyData.RightMouseDown = down;
 
-				m_lastClickTime[mouseButton] = CGUIContext::getTime();
+				m_lastClickTime[mouseButton] = Context::getTime();
 
 				if (down && !isDoubleClick)
 				{
@@ -235,26 +235,26 @@ namespace Skylicht
 					return true;
 				}
 
-				if (!CGUIContext::HoveredControl)
+				if (!Context::HoveredControl)
 					return false;
 
-				if (!CGUIContext::HoveredControl->isVisible())
+				if (!Context::HoveredControl->isVisible())
 					return false;
 
-				CGUIContext::HoveredControl->updateCursor();
+				Context::HoveredControl->updateCursor();
 
 				// Check is topmost dialog enable
-				CDialogWindow* dialog = CGUIContext::getRoot()->getTopmostDialog();
+				CDialogWindow* dialog = Context::getRoot()->getTopmostDialog();
 				if (dialog != NULL)
 				{
-					if (!dialog->isChild(CGUIContext::HoveredControl, true) && !isControlInTopmostMenu(CGUIContext::HoveredControl))
+					if (!dialog->isChild(Context::HoveredControl, true) && !isControlInTopmostMenu(Context::HoveredControl))
 					{
 						bool dragActivate = CDragAndDrop::getPressedControl() != NULL;
 
 						// todo
 						// fix sometime double click on item and open dialog
 						// the drag/drop still activated
-						CDragAndDrop::onMouseButton(CGUIContext::HoveredControl, m_mousePositionX, m_mousePositionY, down);
+						CDragAndDrop::onMouseButton(Context::HoveredControl, m_mousePositionX, m_mousePositionY, down);
 
 						if (!dragActivate)
 							dialog->blinkCaption();
@@ -263,14 +263,14 @@ namespace Skylicht
 					}
 				}
 
-				if (CGUIContext::HoveredControl == CGUIContext::getRoot())
+				if (Context::HoveredControl == Context::getRoot())
 					return false;
 
 				// Do keyboard focus
-				if (!keyboardFocus(CGUIContext::HoveredControl))
+				if (!keyboardFocus(Context::HoveredControl))
 				{
-					if (CGUIContext::KeyboardFocus)
-						CGUIContext::KeyboardFocus->unfocus();
+					if (Context::KeyboardFocus)
+						Context::KeyboardFocus->unfocus();
 				}
 
 				// This tells the child it has been touched, which
@@ -278,39 +278,39 @@ namespace Skylicht
 				// This is basically so that Windows can pop themselves
 				// to the top when one of their children has been clicked.
 				if (down)
-					CGUIContext::HoveredControl->touch();
+					Context::HoveredControl->touch();
 
 				switch (mouseButton)
 				{
 				case 0:
-					if (CDragAndDrop::onMouseButton(CGUIContext::HoveredControl, m_mousePositionX, m_mousePositionY, down))
+					if (CDragAndDrop::onMouseButton(Context::HoveredControl, m_mousePositionX, m_mousePositionY, down))
 						return true;
 
 					if (isTripleClick)
-						CGUIContext::HoveredControl->onMouseTripleClickLeft(m_mousePositionX, m_mousePositionY);
+						Context::HoveredControl->onMouseTripleClickLeft(m_mousePositionX, m_mousePositionY);
 					else if (isDoubleClick)
-						CGUIContext::HoveredControl->onMouseDoubleClickLeft(m_mousePositionX, m_mousePositionY);
+						Context::HoveredControl->onMouseDoubleClickLeft(m_mousePositionX, m_mousePositionY);
 					else
-						CGUIContext::HoveredControl->onMouseClickLeft(m_mousePositionX, m_mousePositionY, down);
+						Context::HoveredControl->onMouseClickLeft(m_mousePositionX, m_mousePositionY, down);
 
 					return true;
 
 				case 1:
 					if (isTripleClick)
-						CGUIContext::HoveredControl->onMouseTripleClickRight(m_mousePositionX, m_mousePositionY);
+						Context::HoveredControl->onMouseTripleClickRight(m_mousePositionX, m_mousePositionY);
 					else if (isDoubleClick)
-						CGUIContext::HoveredControl->onMouseDoubleClickRight(m_mousePositionX, m_mousePositionY);
+						Context::HoveredControl->onMouseDoubleClickRight(m_mousePositionX, m_mousePositionY);
 					else
-						CGUIContext::HoveredControl->onMouseClickRight(m_mousePositionX, m_mousePositionY, down);
+						Context::HoveredControl->onMouseClickRight(m_mousePositionX, m_mousePositionY, down);
 
 					return true;
 				case 2:
 					if (isTripleClick)
-						CGUIContext::HoveredControl->onMouseTripleClickMiddle(m_mousePositionX, m_mousePositionY);
+						Context::HoveredControl->onMouseTripleClickMiddle(m_mousePositionX, m_mousePositionY);
 					if (isDoubleClick)
-						CGUIContext::HoveredControl->onMouseDoubleClickMiddle(m_mousePositionX, m_mousePositionY);
+						Context::HoveredControl->onMouseDoubleClickMiddle(m_mousePositionX, m_mousePositionY);
 					else
-						CGUIContext::HoveredControl->onMouseClickMiddle(m_mousePositionX, m_mousePositionY, down);
+						Context::HoveredControl->onMouseClickMiddle(m_mousePositionX, m_mousePositionY, down);
 
 					return true;
 				}
@@ -329,7 +329,7 @@ namespace Skylicht
 					// todo recursive
 					for (auto&& child : hoverControl->Children)
 					{
-						if (child == CGUIContext::KeyboardFocus)
+						if (child == Context::KeyboardFocus)
 							return false;
 					}
 
@@ -342,39 +342,39 @@ namespace Skylicht
 
 			bool CInput::inputMouseWheel(int wheel)
 			{
-				if (!CGUIContext::HoveredControl)
+				if (!Context::HoveredControl)
 					return false;
 
-				if (!CGUIContext::HoveredControl->isVisible())
+				if (!Context::HoveredControl->isVisible())
 					return false;
 
-				CGUIContext::HoveredControl->updateCursor();
+				Context::HoveredControl->updateCursor();
 
-				if (CGUIContext::HoveredControl == CGUIContext::getRoot())
+				if (Context::HoveredControl == Context::getRoot())
 					return false;
 
 				// Check is topmost dialog enable
-				CDialogWindow* dialog = CGUIContext::getRoot()->getTopmostDialog();
+				CDialogWindow* dialog = Context::getRoot()->getTopmostDialog();
 				if (dialog != NULL)
 				{
-					if (!dialog->isChild(CGUIContext::HoveredControl, true) && !isControlInTopmostMenu(CGUIContext::HoveredControl))
+					if (!dialog->isChild(Context::HoveredControl, true) && !isControlInTopmostMenu(Context::HoveredControl))
 					{
 						return false;
 					}
 				}
 
-				CGUIContext::HoveredControl->onMouseWheeled(wheel);
+				Context::HoveredControl->onMouseWheeled(wheel);
 				return true;
 			}
 
 			bool CInput::inputKeyEvent(EKey key, bool down)
 			{
-				CBase* target = CGUIContext::KeyboardFocus;
+				CBase* target = Context::KeyboardFocus;
 				if (target && target->isHidden())
 					target = NULL;
 
 				// Check is topmost dialog enable
-				CDialogWindow* dialog = CGUIContext::getRoot()->getTopmostDialog();
+				CDialogWindow* dialog = Context::getRoot()->getTopmostDialog();
 				if (dialog != NULL)
 				{
 					if (!dialog->isChild(target, true) &&
@@ -390,7 +390,7 @@ namespace Skylicht
 					if (!KeyData.KeyState[key])
 					{
 						KeyData.KeyState[key] = true;
-						KeyData.NextRepeat[key] = CGUIContext::getTime() + m_firstKeyRepeatDelay;
+						KeyData.NextRepeat[key] = Context::getTime() + m_firstKeyRepeatDelay;
 						KeyData.Target = target;
 
 						if (target)
@@ -422,28 +422,28 @@ namespace Skylicht
 					return true;
 
 				// Handle characters
-				if (!CGUIContext::KeyboardFocus)
+				if (!Context::KeyboardFocus)
 					return false;
 
-				if (!CGUIContext::KeyboardFocus->isVisible())
+				if (!Context::KeyboardFocus->isVisible())
 					return false;
 
 				if (CInput::IsControlDown())
 					return false;
 
 				// Check is topmost dialog enable
-				CDialogWindow* dialog = CGUIContext::getRoot()->getTopmostDialog();
+				CDialogWindow* dialog = Context::getRoot()->getTopmostDialog();
 				if (dialog != NULL)
 				{
-					if (!dialog->isChild(CGUIContext::KeyboardFocus, true) &&
-						dialog != CGUIContext::KeyboardFocus &&
-						!isControlInTopmostMenu(CGUIContext::KeyboardFocus))
+					if (!dialog->isChild(Context::KeyboardFocus, true) &&
+						dialog != Context::KeyboardFocus &&
+						!isControlInTopmostMenu(Context::KeyboardFocus))
 					{
 						return false;
 					}
 				}
 
-				return CGUIContext::KeyboardFocus->onChar(character);
+				return Context::KeyboardFocus->onChar(character);
 			}
 
 			bool CInput::handleAccelerator(u32 character)
@@ -462,26 +462,26 @@ namespace Skylicht
 
 				accelString += toupper(character);
 
-				CDialogWindow* dialog = CGUIContext::getRoot()->getTopmostDialog();
+				CDialogWindow* dialog = Context::getRoot()->getTopmostDialog();
 				if (dialog != NULL)
 				{
-					if (CGUIContext::KeyboardFocus && dialog->isChild(CGUIContext::KeyboardFocus, true) && CGUIContext::KeyboardFocus->handleAccelerator(accelString))
+					if (Context::KeyboardFocus && dialog->isChild(Context::KeyboardFocus, true) && Context::KeyboardFocus->handleAccelerator(accelString))
 						return true;
 
-					if (CGUIContext::MouseFocus && dialog->isChild(CGUIContext::MouseFocus, true) && CGUIContext::MouseFocus->handleAccelerator(accelString))
+					if (Context::MouseFocus && dialog->isChild(Context::MouseFocus, true) && Context::MouseFocus->handleAccelerator(accelString))
 						return true;
 
 					return dialog->handleAccelerator(accelString);
 				}
 				else
 				{
-					if (CGUIContext::KeyboardFocus && CGUIContext::KeyboardFocus->handleAccelerator(accelString))
+					if (Context::KeyboardFocus && Context::KeyboardFocus->handleAccelerator(accelString))
 						return true;
 
-					if (CGUIContext::MouseFocus && CGUIContext::MouseFocus->handleAccelerator(accelString))
+					if (Context::MouseFocus && Context::MouseFocus->handleAccelerator(accelString))
 						return true;
 
-					if (CGUIContext::getRoot()->handleAccelerator(accelString))
+					if (Context::getRoot()->handleAccelerator(accelString))
 						return true;
 				}
 

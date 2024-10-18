@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CListRowItem.h"
 #include "CListBox.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 
 namespace Skylicht
 {
@@ -39,12 +39,12 @@ namespace Skylicht
 			{
 				setIsToggle(true);
 
-				setHoverColor(CThemeConfig::ListItemBackgroundHoverColor);
-				setPressColor(CThemeConfig::ListItemBackgroundFocusColor);
+				setHoverColor(ThemeConfig::ListItemBackgroundHoverColor);
+				setPressColor(ThemeConfig::ListItemBackgroundFocusColor);
 
 				m_icon->setMargin(SMargin(0.0f, 0.0f, 5.0f, 0.0f));
 				m_label->setMargin(SMargin(0.0f, 4.0f, 0.0f, 0.0f));
-				m_label->setColor(CThemeConfig::ButtonTextColor);
+				m_label->setColor(ThemeConfig::ButtonTextColor);
 
 				setSize(80.0f, 20.0f);
 				setMargin(SMargin(0.0f, 0.0f, 0.0f, 0.0f));
@@ -103,7 +103,7 @@ namespace Skylicht
 						if (m_owner->isKeyboardFocus() == true)
 							c = m_pressColor;
 						else
-							c = CThemeConfig::ListItemBackgroundUnfocusColor;
+							c = ThemeConfig::ListItemBackgroundUnfocusColor;
 					}
 				}
 

@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CSplitter.h"
 #include "GUI/Input/CInput.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 
 namespace Skylicht
 {
@@ -70,7 +70,7 @@ namespace Skylicht
 				}
 
 				enableRenderFillRect(true);
-				setFillRectColor(CThemeConfig::SpliterColor);
+				setFillRectColor(ThemeConfig::SpliterColor);
 			}
 
 			CSplitter::~CSplitter()

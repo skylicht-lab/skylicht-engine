@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CText.h"
 #include "GUI/Renderer/CRenderer.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 
 namespace Skylicht
 {
@@ -35,7 +35,7 @@ namespace Skylicht
 		{
 			CText::CText(CBase* parent) :
 				CBase(parent),
-				m_color(CThemeConfig::DefaultTextColor)
+				m_color(ThemeConfig::DefaultTextColor)
 			{
 				setMouseInputEnabled(false);
 				enableClip(true);

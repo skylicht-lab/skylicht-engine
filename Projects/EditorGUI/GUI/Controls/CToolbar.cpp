@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CToolbar.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 
 namespace Skylicht
 {
@@ -39,7 +39,7 @@ namespace Skylicht
 
 				setPadding(SPadding(1.0f, 2.0f, -1.0f, -3.0f));
 				enableRenderFillRect(true);
-				setFillRectColor(GUI::CThemeConfig::WindowBackgroundColor);
+				setFillRectColor(GUI::ThemeConfig::WindowBackgroundColor);
 
 				dock(EPosition::Top);
 			}

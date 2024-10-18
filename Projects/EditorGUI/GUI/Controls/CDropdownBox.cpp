@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CDropdownBox.h"
 #include "CCanvas.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 
 namespace Skylicht
 {
@@ -53,19 +53,19 @@ namespace Skylicht
 
 				const SRect& r = getRenderBounds();
 
-				theme->drawTextBox(r, CThemeConfig::TextBoxColor);
+				theme->drawTextBox(r, ThemeConfig::TextBoxColor);
 
 				if (m_menu->isOpen())
-					theme->drawTextBoxBorder(r, CThemeConfig::ButtonPressColor);
+					theme->drawTextBoxBorder(r, ThemeConfig::ButtonPressColor);
 				else if (isHovered())
-					theme->drawTextBoxBorder(r, CThemeConfig::ButtonHoverColor);
+					theme->drawTextBoxBorder(r, ThemeConfig::ButtonHoverColor);
 				else
-					theme->drawTextBoxBorder(r, CThemeConfig::TextBoxBorderColor);
+					theme->drawTextBoxBorder(r, ThemeConfig::TextBoxBorderColor);
 
 				if (m_menu->isOpen())
-					theme->drawComboBoxButton(r, CThemeConfig::ButtonPressColor, CThemeConfig::White);
+					theme->drawComboBoxButton(r, ThemeConfig::ButtonPressColor, ThemeConfig::White);
 				else
-					theme->drawComboBoxButton(r, CThemeConfig::TextBoxButtonColor, CThemeConfig::White);
+					theme->drawComboBoxButton(r, ThemeConfig::TextBoxButtonColor, ThemeConfig::White);
 			}
 
 			void CDropdownBox::onClickDown(CBase* sender)

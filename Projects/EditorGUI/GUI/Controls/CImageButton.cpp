@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CImageButton.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 
 namespace Skylicht
 {
@@ -35,8 +35,8 @@ namespace Skylicht
 			CImageButton::CImageButton(CBase* parent) :
 				CButton(parent),
 				m_drawHoverRectangle(true),
-				m_hoverRectangleColor(CThemeConfig::ButtonFocusColor),
-				m_borderColor(CThemeConfig::ButtonColor)
+				m_hoverRectangleColor(ThemeConfig::ButtonFocusColor),
+				m_borderColor(ThemeConfig::ButtonColor)
 			{
 				setSize(128.0f, 128.0f);
 				setPadding(SPadding(0.0f, 0.0f, 0.0f, 0.0f));

@@ -24,8 +24,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CDialogWindow.h"
-#include "GUI/CGUIContext.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/GUIContext.h"
+#include "GUI/Theme/ThemeConfig.h"
 
 namespace Skylicht
 {
@@ -70,7 +70,7 @@ namespace Skylicht
 			{
 				CWindow::think();
 
-				float dt = CGUIContext::getDeltaTime();
+				float dt = Context::getDeltaTime();
 				if (m_blink > 0)
 				{
 					m_blinkTime = m_blinkTime + dt;
@@ -84,11 +84,11 @@ namespace Skylicht
 					{
 						if (m_blink % 2 == 0)
 						{
-							m_title->setColor(CThemeConfig::DefaultTextColor);
+							m_title->setColor(ThemeConfig::DefaultTextColor);
 						}
 						else
 						{
-							m_title->setColor(CThemeConfig::DisableTextColor);
+							m_title->setColor(ThemeConfig::DisableTextColor);
 						}
 					}
 				}

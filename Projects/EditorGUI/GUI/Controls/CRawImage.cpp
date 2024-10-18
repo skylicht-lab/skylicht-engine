@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CRawImage.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 #include "GUI/Renderer/CRenderer.h"
 
 namespace Skylicht
@@ -35,7 +35,7 @@ namespace Skylicht
 		{
 			CRawImage::CRawImage(CBase* parent) :
 				CBase(parent),
-				m_color(CThemeConfig::White),
+				m_color(ThemeConfig::White),
 				m_image(NULL)
 			{
 				setMouseInputEnabled(false);
@@ -43,7 +43,7 @@ namespace Skylicht
 
 			CRawImage::CRawImage(CBase* parent, CGUIImage* image, const SRect& sourceRect) :
 				CBase(parent),
-				m_color(CThemeConfig::White),
+				m_color(ThemeConfig::White),
 				m_image(image),
 				m_sourceRect(sourceRect)
 			{

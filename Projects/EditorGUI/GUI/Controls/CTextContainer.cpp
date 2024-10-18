@@ -24,8 +24,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CTextContainer.h"
-#include "GUI/CGUIContext.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/GUIContext.h"
+#include "GUI/Theme/ThemeConfig.h"
 #include "GUI/Renderer/CRenderer.h"
 
 namespace Skylicht
@@ -39,7 +39,7 @@ namespace Skylicht
 				m_wrapMultiLine(false),
 				m_textChange(true),
 				m_fontSize(EFontSize::SizeNormal),
-				m_color(CThemeConfig::DefaultTextColor),
+				m_color(ThemeConfig::DefaultTextColor),
 				m_paddingRight(0.0f),
 				m_showCaret(false),
 				m_activate(false),
@@ -65,7 +65,7 @@ namespace Skylicht
 
 			void CTextContainer::renderUnder()
 			{
-				m_caretBlink = m_caretBlink + CGUIContext::getDeltaTime();
+				m_caretBlink = m_caretBlink + Context::getDeltaTime();
 				if (m_caretBlink > 2.0f * m_caretBlinkSpeed)
 					m_caretBlink = 0.0f;
 
@@ -129,7 +129,7 @@ namespace Skylicht
 							m_caretRect.Height = caretPosition.Height + 1.0f;
 
 							if (m_caretBlink < m_caretBlinkSpeed)
-								CRenderer::getRenderer()->drawFillRect(m_caretRect, CThemeConfig::CaretColor);
+								CRenderer::getRenderer()->drawFillRect(m_caretRect, ThemeConfig::CaretColor);
 						}
 					}
 
@@ -149,9 +149,9 @@ namespace Skylicht
 				selectRect.Height = selectBegin.Height + 1.0f;
 
 				if (m_activate)
-					CRenderer::getRenderer()->drawFillRect(selectRect, CThemeConfig::TextSelectColor);
+					CRenderer::getRenderer()->drawFillRect(selectRect, ThemeConfig::TextSelectColor);
 				else
-					CRenderer::getRenderer()->drawFillRect(selectRect, CThemeConfig::TextSelectUnfocusColor);
+					CRenderer::getRenderer()->drawFillRect(selectRect, ThemeConfig::TextSelectUnfocusColor);
 			}
 
 			void CTextContainer::setWrapMultiline(bool b)

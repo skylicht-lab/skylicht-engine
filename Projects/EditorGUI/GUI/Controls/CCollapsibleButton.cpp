@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CCollapsibleButton.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 
 namespace Skylicht
 {
@@ -40,8 +40,8 @@ namespace Skylicht
 				showIcon(true);
 				setIsToggle(true);
 
-				setColor(CThemeConfig::CollapsibleColor);
-				setHoverColor(CThemeConfig::ButtonColor);
+				setColor(ThemeConfig::CollapsibleColor);
+				setHoverColor(ThemeConfig::ButtonColor);
 			}
 
 			CCollapsibleButton::~CCollapsibleButton()
@@ -59,8 +59,8 @@ namespace Skylicht
 
 				if (disable)
 				{
-					m_label->setColor(CThemeConfig::ButtonTextDisableColor);
-					m_icon->setColor(CThemeConfig::ButtonTextDisableColor);
+					m_label->setColor(ThemeConfig::ButtonTextDisableColor);
+					m_icon->setColor(ThemeConfig::ButtonTextDisableColor);
 				}
 				else
 				{

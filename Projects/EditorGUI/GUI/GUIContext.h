@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "GUI/Controls/CBase.h"
+#include "EditorGUIAPI.h"
 
 namespace Skylicht
 {
@@ -33,31 +34,29 @@ namespace Skylicht
 		{
 			class CCanvas;
 
-			class CGUIContext
+			namespace Context
 			{
-			public:
-				static CBase* HoveredControl;
-				static CBase* MouseFocus;
-				static CBase* KeyboardFocus;
-			public:
+				EDITOR_GUI_API extern CBase* HoveredControl;
+				EDITOR_GUI_API extern CBase* MouseFocus;
+				EDITOR_GUI_API extern CBase* KeyboardFocus;
 
-				static void initGUI(float width, float height);
+				EDITOR_GUI_API void initGUI(float width, float height);
 
-				static void destroyGUI();
+				EDITOR_GUI_API void destroyGUI();
 
-				static void update(float time);
+				EDITOR_GUI_API void update(float time);
 
-				static float getTime();
+				EDITOR_GUI_API float getTime();
 
-				static float getDeltaTime();
+				EDITOR_GUI_API float getDeltaTime();
 
-				static void render();
+				EDITOR_GUI_API void render();
 
-				static void resize(float width, float height);
+				EDITOR_GUI_API void resize(float width, float height);
 
-				static CCanvas* getRoot();
+				EDITOR_GUI_API CCanvas* getRoot();
 
-				static CRenderer* getRenderer();
+				EDITOR_GUI_API CRenderer* getRenderer();
 			};
 		}
 	}

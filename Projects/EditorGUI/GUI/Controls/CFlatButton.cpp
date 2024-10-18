@@ -24,8 +24,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CFlatButton.h"
-#include "GUI/CGUIContext.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/GUIContext.h"
+#include "GUI/Theme/ThemeConfig.h"
 #include "GUI/Renderer/CRenderer.h"
 
 namespace Skylicht
@@ -40,7 +40,7 @@ namespace Skylicht
 				m_borderR(true),
 				m_borderT(true),
 				m_borderB(true),
-				m_borderColor(CThemeConfig::WindowInnerColor)
+				m_borderColor(ThemeConfig::WindowInnerColor)
 			{
 				setHeight(25.0f);
 				m_label->setMargin(SMargin(0.0f, 5.0f, 0.0f, 0.0f));
@@ -61,8 +61,8 @@ namespace Skylicht
 
 				if (disable)
 				{
-					m_label->setColor(CThemeConfig::ButtonTextDisableColor);
-					m_icon->setColor(CThemeConfig::ButtonTextDisableColor);
+					m_label->setColor(ThemeConfig::ButtonTextDisableColor);
+					m_icon->setColor(ThemeConfig::ButtonTextDisableColor);
 				}
 				else
 				{

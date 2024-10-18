@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CTimelineItem.h"
 #include "CTimeline.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 #include "GUI/Input/CInput.h"
 
 namespace Skylicht
@@ -89,12 +89,12 @@ namespace Skylicht
 				SRect bound = getRenderBounds();
 
 				bound.Width = m_contentSize;
-				renderer->drawFillRect(bound, CThemeConfig::TimelineItemBG);
-				renderer->drawBorderRect(bound, CThemeConfig::TimelineItemBorder, true, true, true, true);
+				renderer->drawFillRect(bound, ThemeConfig::TimelineItemBG);
+				renderer->drawBorderRect(bound, ThemeConfig::TimelineItemBorder, true, true, true, true);
 
 				for (float y : m_split)
 				{
-					renderer->drawLineX(0.0f, y, m_contentSize, CThemeConfig::TimelineItemBorder);
+					renderer->drawLineX(0.0f, y, m_contentSize, ThemeConfig::TimelineItemBorder);
 				}
 			}
 		}

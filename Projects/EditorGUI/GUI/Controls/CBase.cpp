@@ -25,8 +25,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CBase.h"
 #include "CCanvas.h"
-#include "GUI/CGUIContext.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/GUIContext.h"
+#include "GUI/Theme/ThemeConfig.h"
 #include "GUI/Input/CInput.h"
 
 #include "GUI/Utils/CDragAndDrop.h"
@@ -54,7 +54,7 @@ namespace Skylicht
 				m_shouldClip(false),
 				m_cursor(ECursorType::Normal),
 				m_renderFillRect(false),
-				m_fillRectColor(CThemeConfig::WindowInnerColor),
+				m_fillRectColor(ThemeConfig::WindowInnerColor),
 				m_accelOnlyFocus(true),
 				m_keyboardFocus(false),
 				m_debugValue(0),
@@ -90,14 +90,14 @@ namespace Skylicht
 
 				setParent(NULL);
 
-				if (CGUIContext::HoveredControl == this)
-					CGUIContext::HoveredControl = NULL;
+				if (Context::HoveredControl == this)
+					Context::HoveredControl = NULL;
 
-				if (CGUIContext::KeyboardFocus == this)
-					CGUIContext::KeyboardFocus = NULL;
+				if (Context::KeyboardFocus == this)
+					Context::KeyboardFocus = NULL;
 
-				if (CGUIContext::MouseFocus == this)
-					CGUIContext::MouseFocus = NULL;
+				if (Context::MouseFocus == this)
+					Context::MouseFocus = NULL;
 
 				CDragAndDrop::onControlDeleted(this);
 
@@ -421,7 +421,7 @@ namespace Skylicht
 
 			void CBase::moveTo(float x, float y)
 			{
-				if (m_parent && m_parent != CGUIContext::getRoot())
+				if (m_parent && m_parent != Context::getRoot())
 				{
 					if (x - m_margin.Left < m_parent->m_padding.Left)
 						x = m_parent->m_padding.Left + m_margin.Left;
@@ -571,12 +571,12 @@ namespace Skylicht
 
 			bool CBase::isHovered() const
 			{
-				return CGUIContext::HoveredControl == this;
+				return Context::HoveredControl == this;
 			}
 
 			bool CBase::shouldDrawHover() const
 			{
-				return CGUIContext::MouseFocus == this || CGUIContext::MouseFocus == NULL;
+				return Context::MouseFocus == this || Context::MouseFocus == NULL;
 			}
 
 			void CBase::touch()
@@ -606,27 +606,27 @@ namespace Skylicht
 
 			bool CBase::isFocussed()
 			{
-				return CGUIContext::KeyboardFocus == this;
+				return Context::KeyboardFocus == this;
 			}
 
 			void CBase::focus()
 			{
-				if (CGUIContext::KeyboardFocus == this)
+				if (Context::KeyboardFocus == this)
 					return;
 
-				if (CGUIContext::KeyboardFocus)
-					CGUIContext::KeyboardFocus->onLostKeyboardFocus();
+				if (Context::KeyboardFocus)
+					Context::KeyboardFocus->onLostKeyboardFocus();
 
-				CGUIContext::KeyboardFocus = this;
+				Context::KeyboardFocus = this;
 				onKeyboardFocus();
 			}
 
 			void CBase::unfocus()
 			{
-				if (CGUIContext::KeyboardFocus != this)
+				if (Context::KeyboardFocus != this)
 					return;
 
-				CGUIContext::KeyboardFocus = NULL;
+				Context::KeyboardFocus = NULL;
 				onLostKeyboardFocus();
 			}
 
@@ -994,7 +994,7 @@ namespace Skylicht
 				{
 					getCanvas()->TabableGroup.setEnableControl(this);
 
-					if (CGUIContext::KeyboardFocus == this)
+					if (Context::KeyboardFocus == this)
 						getCanvas()->TabableGroup.CurrentTab = this;
 				}
 			}
@@ -1021,7 +1021,7 @@ namespace Skylicht
 
 			bool CBase::handleAccelerator(const std::string& accelerator)
 			{
-				if (CGUIContext::KeyboardFocus == this || !accelOnlyFocus())
+				if (Context::KeyboardFocus == this || !accelOnlyFocus())
 				{
 					AccelMap::iterator iter = m_accelerators.find(accelerator);
 

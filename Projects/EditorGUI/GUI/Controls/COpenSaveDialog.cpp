@@ -27,7 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "COpenSaveDialog.h"
 #include "CMessageBox.h"
 #include "CTextBox.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 
 #include <filesystem>
 #include <chrono>
@@ -86,7 +86,7 @@ namespace Skylicht
 				topPanel->setHeight(42.0f);
 				topPanel->dock(EPosition::Top);
 				topPanel->enableRenderFillRect(true);
-				topPanel->setFillRectColor(CThemeConfig::OpenSaveDialogTop);
+				topPanel->setFillRectColor(ThemeConfig::OpenSaveDialogTop);
 
 				CToolbar* toolbar = new CToolbar(topPanel);
 				toolbar->setMargin(SMargin(0.0f, 8.0f, 0.0f, 0.0f));
@@ -183,7 +183,7 @@ namespace Skylicht
 				bottomPanel->setHeight(40.0f);
 				bottomPanel->dock(EPosition::Bottom);
 				bottomPanel->enableRenderFillRect(true);
-				bottomPanel->setFillRectColor(CThemeConfig::OpenSaveDialogBottom);
+				bottomPanel->setFillRectColor(ThemeConfig::OpenSaveDialogBottom);
 
 				CBase* bottom = new CBase(bottomPanel);
 				bottom->dock(EPosition::Top);
@@ -386,7 +386,7 @@ namespace Skylicht
 					if (file.is_directory())
 					{
 						row = m_files->addItem(CStringImp::convertUTF8ToUnicode(fileName.c_str()).c_str(), ESystemIcon::Folder);
-						row->setIconColor(CThemeConfig::FolderColor);
+						row->setIconColor(ThemeConfig::FolderColor);
 					}
 					else
 					{

@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CScrollControl.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 
 namespace Skylicht
 {
@@ -55,7 +55,7 @@ namespace Skylicht
 				m_innerPanel->sendToBack();
 
 				enableRenderFillRect(true);
-				setFillRectColor(CThemeConfig::ScrollControlBackgroundColor);
+				setFillRectColor(ThemeConfig::ScrollControlBackgroundColor);
 				enableClip(true);
 			}
 

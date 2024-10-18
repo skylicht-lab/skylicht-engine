@@ -24,5 +24,6 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "EditorGUIAPI.h"
 #include "SkylichtConfig.h"
 #include "SkylichtHeader.h"

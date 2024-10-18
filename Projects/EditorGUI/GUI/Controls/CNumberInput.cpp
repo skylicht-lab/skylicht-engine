@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 
 #include "CNumberInput.h"
-#include "GUI/Theme/CThemeConfig.h"
+#include "GUI/Theme/ThemeConfig.h"
 #include "GUI/Input/CInput.h"
 
 #include "Utils/CStringImp.h"
@@ -93,7 +93,7 @@ namespace Skylicht
 					CTheme* theme = CTheme::getTheme();
 					const SRect& r = getRenderBounds();
 
-					theme->drawTextBoxButton(r, CThemeConfig::TextBoxButtonColor, CThemeConfig::White, true, true);
+					theme->drawTextBoxButton(r, ThemeConfig::TextBoxButtonColor, ThemeConfig::White, true, true);
 				}
 			}
 
