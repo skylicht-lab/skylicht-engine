@@ -302,10 +302,10 @@ endif()
 
 subdirs (Projects/Skylicht/Client)
 
-if (NOT INSTALL_LIBS)
-
-if (BUILD_ENGINE_TOOL)
 subdirs (Projects/EditorGUI)
+
+if (NOT INSTALL_LIBS)
+if (BUILD_ENGINE_TOOL)
 subdirs (Projects/Editor)
 endif()
 

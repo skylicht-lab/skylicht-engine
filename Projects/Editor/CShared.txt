@@ -246,7 +246,7 @@ else()
 	target_link_libraries(SkylichtEditor Skylicht::Client)
 endif()
 
-target_link_libraries(SkylichtEditor EditorGUI)
+target_link_libraries(SkylichtEditor Skylicht::EditorGUI)
 
 if (BUILD_SKYLICHT_NETWORK)
 # Crypto
