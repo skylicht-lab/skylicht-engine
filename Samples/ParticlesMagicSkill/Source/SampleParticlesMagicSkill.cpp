@@ -262,7 +262,7 @@ void SampleParticlesMagicSkill::initProjectiles(Particle::CParticleComponent* ps
 	Particle::CFactory* factory = ps->getParticleFactory();
 
 	Particle::CPoint* point = factory->createPointZone();
-	Particle::CCylinder* trailCylinder = factory->createCylinderZone(core::vector3df(0.0f, -0.3f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f), 0.2, 0.4f);
+	Particle::CCylinder* trailCylinder = factory->createCylinderZone(core::vector3df(0.0f, -0.3f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f), 0.2f, 0.4f);
 
 	// GROUP: PROJECTILE
 	Particle::CGroup* projectileGroup = ps->createParticleGroup();
