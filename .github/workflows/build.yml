@@ -125,7 +125,6 @@ jobs:
           version=$(cat "Version.txt")
           file_version=${version//./_}
           output=../Build/SkylichtDemo_${file_version}_Linux.zip
-          ls -l Bin
     #- name: Result
     #  uses: actions/upload-artifact@v1
     #  with:
@@ -266,7 +265,7 @@ jobs:
           cd Assets
           python BuildAssetBundles.py
           cd ..
-          cmake -S . -B ./PrjVisualStudio -G "Visual Studio 17 2022" -A x64 -DBUILD_SHARED_LIBS=ON -DBUILD_IMGUI=OFF -DBUILD_FREETYPE=OFF -DBUILD_SKYLICHT_AUDIO=OFF -DBUILD_SKYLICHT_COMPONENTS=OFF -DBUILD_SKYLICHT_COLLISION=OFF -DBUILD_SKYLICHT_UI=OFF -DBUILD_SKYLICHT_CRYPTO=OFF -DBUILD_SKYLICHT_NETWORK=OFF -DBUILD_SKYLICHT_PHYSIC=OFF -DBUILD_SPINE_RUNTIMES=OFF -DBUILD_EXAMPLES=OFF -DBUILD_ENGINE_TOOL=OFF
+          cmake -S . -B ./PrjVisualStudio -G "Visual Studio 17 2022" -A x64 -DBUILD_SHARED_LIBS=ON -DBUILD_IMGUI=OFF -DBUILD_FREETYPE=OFF -DBUILD_SKYLICHT_AUDIO=OFF -DBUILD_SKYLICHT_COMPONENTS=OFF -DBUILD_SKYLICHT_COLLISION=OFF -DBUILD_SKYLICHT_UI=OFF -DBUILD_SKYLICHT_CRYPTO=OFF -DBUILD_SKYLICHT_NETWORK=OFF -DBUILD_SKYLICHT_PHYSIC=OFF -DBUILD_SPINE_RUNTIMES=OFF -DBUILD_EXAMPLES=OFF -DBUILD_EDITOR_TOOL=OFF
           cmake --build ./PrjVisualStudio --config "Release"
       - name: Unit Test
         run: |
