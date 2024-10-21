@@ -55,7 +55,7 @@ option(INSTALL_LIBS "Install library" OFF)
 option(USE_MSVC_RUNTIME_LIBRARY_DLL "Use MSVC Runtime Library DLL (/MD or /MDd)" ON)
 
 # build skylicht engine tool on Windows
-option(BUILD_ENGINE_TOOL "Build with scene editor" ON)
+option(BUILD_EDITOR_TOOL "Build with scene editor" ON)
 
 # skylicht engine option
 option(BUILD_DEBUG_VLD "Build with debug visual leak detector" OFF)
@@ -165,13 +165,15 @@ add_definitions(-DUNICODE -D_UNICODE)
 if (CYGWIN)
 	add_definitions(-DCYGWIN)
 	# gcc7 not support std::filesystem so we disable
-	set(BUILD_ENGINE_TOOL OFF)
+	set(BUILD_EDITOR_TOOL OFF)
+	set(BUILD_EDITOR_GUI_LIB OFF)
 endif()
 
 if (MINGW)
 	add_definitions(-DMINGW)
 	# gcc7 not support std::filesystem so we disable
-	set(BUILD_ENGINE_TOOL OFF)
+	set(BUILD_EDITOR_TOOL OFF)
+	set(BUILD_EDITOR_GUI_LIB OFF)
 endif()
 
 # android
@@ -302,10 +304,12 @@ endif()
 
 subdirs (Projects/Skylicht/Client)
 
+if (BUILD_EDITOR_GUI_LIB)
 subdirs (Projects/EditorGUI)
+endif()
 
 if (NOT INSTALL_LIBS)
-if (BUILD_ENGINE_TOOL)
+if (BUILD_EDITOR_TOOL AND BUILD_EDITOR_GUI_LIB)
 subdirs (Projects/Editor)
 endif()
 
