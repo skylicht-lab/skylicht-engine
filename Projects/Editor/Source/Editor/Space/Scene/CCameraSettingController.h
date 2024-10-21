@@ -43,6 +43,8 @@ namespace Skylicht
 			GUI::CSlider* m_near;
 			GUI::CSlider* m_far;
 
+			GUI::CCheckBox* m_grid;
+
 		public:
 			CCameraSettingController(CEditor* editor, GUI::CMenu* menu);
 

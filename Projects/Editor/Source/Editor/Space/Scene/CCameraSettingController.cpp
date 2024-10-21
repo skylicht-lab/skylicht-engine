@@ -105,6 +105,19 @@ namespace Skylicht
 			boxLayout->addSpace(20.0f);
 
 			layout = boxLayout->beginVertical();
+			label = new GUI::CLabel(layout);
+			label->setPadding(GUI::SMargin(0.0f, 2.0, 0.0f, 0.0f));
+			label->setString("Draw grid");
+			label->setTextAlignment(GUI::TextRight);
+
+			GUI::CBase* parentCB = new GUI::CBase(layout);
+			m_grid = new GUI::CCheckBox(parentCB);
+			m_grid->OnChanged = BIND_LISTENER(&CCameraSettingController::onChanged, this);
+			boxLayout->endVertical();
+
+			boxLayout->addSpace(20.0f);
+
+			layout = boxLayout->beginVertical();
 			GUI::CButton* defaultBtn = new GUI::CButton(layout);
 			defaultBtn->setLabel(L"Default");
 			defaultBtn->setTextAlignment(GUI::TextCenter);
@@ -139,6 +152,8 @@ namespace Skylicht
 			m_fov->setValue(camera->getFOV(), false);
 			m_near->setValue(camera->getNearValue(), false);
 			m_far->setValue(camera->getFarValue(), false);
+
+			m_grid->setToggle(spaceScene->isEnableRenderGrid());
 		}
 
 		void CCameraSettingController::onDefault(GUI::CBase* base)
@@ -175,12 +190,13 @@ namespace Skylicht
 			CCamera* camera = spaceScene->getEditorCamera();
 			CEditorCamera* editorCamera = camera->getGameObject()->getComponent<CEditorCamera>();
 
-			// default value
 			editorCamera->setMoveSpeed(m_moveSpeed->getValue());
 			editorCamera->setRotateSpeed(m_rotSpeed->getValue());
 			camera->setFOV(m_fov->getValue());
 			camera->setNearValue(m_near->getValue());
 			camera->setFarValue(m_far->getValue());
+
+			spaceScene->enableRenderGrid(m_grid->getToggle());
 		}
 	}
 }

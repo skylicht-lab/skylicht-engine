@@ -74,7 +74,8 @@ namespace Skylicht
 			m_handlesRenderer(NULL),
 			m_gizmosRenderer(NULL),
 			m_selectObjectSystem(NULL),
-			m_enableRender(true)
+			m_enableRender(true),
+			m_enableRenderGrid(true)
 		{
 			CScene* currentScene = CSceneController::getInstance()->getScene();
 			if (currentScene == NULL)
@@ -1056,6 +1057,13 @@ namespace Skylicht
 			}
 
 			return false;
+		}
+
+		void CSpaceScene::enableRenderGrid(bool b)
+		{
+			m_enableRenderGrid = b;
+			if (m_gridPlane)
+				m_gridPlane->setVisible(b);
 		}
 	}
 }

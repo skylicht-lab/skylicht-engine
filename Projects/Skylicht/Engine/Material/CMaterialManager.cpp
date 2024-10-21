@@ -443,7 +443,7 @@ namespace Skylicht
 				buffer += "\t\t<Extras>\n";
 				for (CMaterial::SExtraParams* e : extras)
 				{
-					sprintf(data, "\t\t\t<Extra name='%s'/>\n", e->ShaderPath.c_str());
+					sprintf(data, "\t\t\t<Extra name='%s'>\n", e->ShaderPath.c_str());
 					buffer += data;
 
 					if (e->UniformTextures.size() > 0)
