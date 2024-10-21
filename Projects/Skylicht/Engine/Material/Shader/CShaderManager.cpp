@@ -200,9 +200,13 @@ namespace Skylicht
 	{
 		loadShader("BuiltIn/Shader/PBR/Forward/PBR.xml");
 		loadShader("BuiltIn/Shader/PBR/Forward/PBRNoEmissive.xml");
-		loadShader("BuiltIn/Shader/PBR/Forward/PBRSkin.xml");
 		loadShader("BuiltIn/Shader/PBR/Forward/PBRNoNormalMap.xml");
 		loadShader("BuiltIn/Shader/PBR/Forward/PBRNoNormalMapNoEmissve.xml");
+
+		loadShader("BuiltIn/Shader/PBR/Forward/PBRSkin.xml");
+		loadShader("BuiltIn/Shader/PBR/Forward/PBRSkinNoEmissive.xml");
+		loadShader("BuiltIn/Shader/PBR/Forward/PBRSkinNoNormal.xml");
+		loadShader("BuiltIn/Shader/PBR/Forward/PBRSkinNoNormalNoEmissive.xml");
 	}
 
 	void CShaderManager::initSkylichtEngineShader()
