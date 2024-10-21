@@ -2,8 +2,10 @@
 Texture2D uTexDiffuse : register(t0);
 SamplerState uTexDiffuseSampler : register(s0);
 
+#ifndef NO_NORMAL_MAP
 Texture2D uTexNormalMap : register(t1);
 SamplerState uTexNormalMapSampler : register(s1);
+#endif
 
 Texture2D uTexSpecularMap : register(t2);
 SamplerState uTexSpecularMapSampler : register(s2);

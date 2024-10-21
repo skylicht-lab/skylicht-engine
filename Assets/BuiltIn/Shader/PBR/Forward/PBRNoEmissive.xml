@@ -28,7 +28,6 @@
 			<ui control="UITexture" name="uTexAlbedo" autoReplace="albedo.;_Albedo.;_A."/>
 			<ui control="UITexture" name="uTexNormal" autoReplace="_norm.;_Normal.;_N."/>
 			<ui control="UITexture" name="uTexRMA" autoReplace="_rma.;_RMA."/>
-			<ui control="UITexture" name="uTexEmissive" autoReplace="_emissive.;_E."/>
 		</ui>
 		<ui control="UIGroup" name="Customize">
 			<ui control="UIColor" name="uColor"/>
