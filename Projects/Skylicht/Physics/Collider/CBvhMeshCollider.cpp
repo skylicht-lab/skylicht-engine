@@ -36,6 +36,7 @@ namespace Skylicht
 		CBvhMeshCollider::CBvhMeshCollider()
 		{
 			m_colliderType = CCollider::BvhMesh;
+			m_dynamicSupport = false;
 		}
 
 		CBvhMeshCollider::~CBvhMeshCollider()

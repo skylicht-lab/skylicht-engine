@@ -33,7 +33,8 @@ namespace Skylicht
 	namespace Physics
 	{
 		CCollider::CCollider() :
-			m_colliderType(Unknown)
+			m_colliderType(Unknown),
+			m_dynamicSupport(true)
 #ifdef USE_BULLET_PHYSIC_ENGINE
 			, m_shape(NULL)
 #endif

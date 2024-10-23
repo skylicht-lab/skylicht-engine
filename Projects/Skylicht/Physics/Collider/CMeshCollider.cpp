@@ -64,6 +64,7 @@ namespace Skylicht
 		void CMeshCollider::loadSerializable(CObjectSerializable* object)
 		{
 			CComponentSystem::loadSerializable(object);
+			m_source = object->get<std::string>("source", std::string());
 		}
 
 		CEntityPrefab* CMeshCollider::getMeshPrefab()

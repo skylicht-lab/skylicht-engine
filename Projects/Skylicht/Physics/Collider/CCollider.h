@@ -55,6 +55,8 @@ namespace Skylicht
 
 			core::vector3df m_offset;
 
+			bool m_dynamicSupport;
+
 #ifdef USE_BULLET_PHYSIC_ENGINE
 			btCollisionShape* m_shape;
 #endif
@@ -81,6 +83,10 @@ namespace Skylicht
 
 			void clampSize(core::vector3df& size);
 
+			inline bool isDynamicSupport()
+			{
+				return m_dynamicSupport;
+			}
 		};
 	}
 }

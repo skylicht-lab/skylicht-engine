@@ -175,7 +175,7 @@ namespace Skylicht
 			btVector3 localInertia(0, 0, 0);
 			float mass = m_mass;
 
-			if (m_isDynamic)
+			if (m_isDynamic && collider->isDynamicSupport())
 				m_shape->calculateLocalInertia(m_mass, localInertia);
 			else
 				mass = 0.0f;
