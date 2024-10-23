@@ -6,21 +6,36 @@
 #include "Context/CContext.h"
 #include "Transform/CWorldTransformSystem.h"
 
-#include "SkySun/CSkySun.h"
-
-#include "LightProbes/CLightProbeRender.h"
+#include "Scene/CSceneImporter.h"
 
 #include "PhysicsEngine/CPhysicsEngine.h"
-#include "Collider/CBvhMeshCollider.h"
-#include "Camera/C3rdCamera.h"
+using namespace Physics;
+
+#include "IndirectLighting/CIndirectLighting.h"
+#include "LightProbes/CLightProbes.h"
+#include "Primitive/CCube.h"
+#include "Primitive/CPlane.h"
+#include "SkySun/CSkySun.h"
+#include "Collider/CBoxCollider.h"
+#include "Collider/CStaticPlaneCollider.h"
+#include "Collider/CCapsuleCollider.h"
+#include "RigidBody/CRigidbody.h"
+
+#include "Primitive/CCapsule.h"
+#include "CharacterController/CCharacterController.h"
+#include "DirectionalInput/CDirectionalInput.h"
 
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
 	m_getFile(NULL),
 	m_downloaded(0),
-	m_bakeSHLighting(true)
+	m_bakeSHLighting(true),
+	m_loadScene(NULL),
+	m_guiObject(NULL),
+	m_textInfo(NULL),
+	m_font(NULL)
 {
-	// CLightProbeRender::showProbe(true);
+
 }
 
 CViewInit::~CViewInit()
@@ -72,75 +87,51 @@ void CViewInit::initScene()
 {
 	CBaseApp* app = getApplication();
 
-	// create a scene
-	CScene* scene = CContext::getInstance()->getScene();
+	CScene* scene = m_loadScene;
 	CZone* zone = scene->getZone(0);
 
-	// init physics engine
-	Physics::CPhysicsEngine::getInstance()->initPhysics();
 
-	// camera
-	CGameObject* camObj = zone->createEmptyObject();
-	camObj->addComponent<CCamera>();
-	camObj->addComponent<C3rdCamera>();
+	// init player controller
+	float capsuleRadius = 0.5f;
+	float capsuleHeight = 1.2f;
 
-	CCamera* camera = camObj->getComponent<CCamera>();
-	camera->setPosition(core::vector3df(0.0f, 5.0f, 10.0f));
-	camera->lookAt(core::vector3df(0.0f, 1.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
+	CGameObject* capsuleObj = zone->createEmptyObject();
+
+	// renderer
+	CCapsule* capsule = capsuleObj->addComponent<CCapsule>();
+	capsule->setRadius(capsuleRadius);
+	capsule->setHeight(capsuleHeight);
+	capsule->init();
+
+	// indirect lighting
+	capsuleObj->addComponent<CIndirectLighting>();
+
+	// collider & character
+	Physics::CCapsuleCollider* capsuleCollider = capsuleObj->addComponent<Physics::CCapsuleCollider>();
+	capsuleCollider->setCapsule(capsuleRadius, capsuleHeight);
+	CCharacterController* m_player = capsuleObj->addComponent<Physics::CCharacterController>();
+	m_player->initCharacter(capsuleRadius);
+	m_player->setPosition(core::vector3df(0.0f, 5.0f, 0.0f));
+	m_player->setRotation(core::vector3df(0.0f, 0.0f, 0.0f));
+	m_player->syncTransform();
+
+	// input to control capsule
+	capsuleObj->addComponent<CDirectionalInput>();
+
+	// follow camera
+	CGameObject* cameraObj = zone->createEmptyObject();
+	CCamera* camera = cameraObj->addComponent<CCamera>();
+	C3rdCamera* followCamera = cameraObj->addComponent<C3rdCamera>();
+	if (followCamera)
+	{
+		followCamera->setFollowTarget(capsuleObj);
+		followCamera->setTargetDistance(5.0f);
+	}
 
 	// gui camera
 	CGameObject* guiCameraObject = zone->createEmptyObject();
 	CCamera* guiCamera = guiCameraObject->addComponent<CCamera>();
 	guiCamera->setProjectionType(CCamera::OrthoUI);
-
-	// sky
-	CSkySun* skySun = zone->createEmptyObject()->addComponent<CSkySun>();
-
-	// reflection probe
-	CGameObject* reflectionProbeObj = zone->createEmptyObject();
-	CReflectionProbe* reflection = reflectionProbeObj->addComponent<CReflectionProbe>();
-	reflection->loadStaticTexture("Common/Textures/Sky/PaperMill");
-
-	// lighting
-	CGameObject* lightObj = zone->createEmptyObject();
-	CDirectionalLight* directionalLight = lightObj->addComponent<CDirectionalLight>();
-	SColor c(255, 255, 244, 214);
-	directionalLight->setColor(SColorf(c));
-
-	CTransformEuler* lightTransform = lightObj->getTransformEuler();
-	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
-
-	core::vector3df direction = core::vector3df(4.0f, -6.0f, -4.5f);
-	lightTransform->setOrientation(direction, Transform::Oy);
-
-	CMeshManager* meshManager = CMeshManager::getInstance();
-
-	CEntityPrefab* prefab = meshManager->loadModel("SampleModels/TestScene/TestScene.dae", NULL, true);
-	if (prefab != NULL)
-	{
-		// load material
-		std::vector<std::string> textureFolders;
-		ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial("SampleModels/TestScene/TestScene.mat", true, textureFolders);
-
-		// create render mesh object
-		CGameObject* testScene = zone->createEmptyObject();
-		testScene->setStatic(true);
-
-		// render mesh & init material
-		CRenderMesh* renderer = testScene->addComponent<CRenderMesh>();
-		renderer->initFromPrefab(prefab);
-		renderer->initMaterial(materials);
-
-		// physics & collider
-		Physics::CBvhMeshCollider* collider = testScene->addComponent<Physics::CBvhMeshCollider>();
-		collider->setMeshSource("SampleModels/TestScene/TestScene.dae");
-
-		Physics::CRigidbody* rigidBody = testScene->addComponent<Physics::CRigidbody>();
-		rigidBody->setDynamic(false);
-		rigidBody->initRigidbody();
-
-		CIndirectLighting* indirectLighting = testScene->addComponent<CIndirectLighting>();
-	}
 
 	// rendering
 	u32 w = app->getWidth();
@@ -149,15 +140,17 @@ void CViewInit::initScene()
 	CContext* context = CContext::getInstance();
 
 	context->initRenderPipeline(w, h);
+
+	context->releaseScene();
+	context->initScene(scene);
+
 	context->setActiveZone(zone);
 	context->setActiveCamera(camera);
 	context->setGUICamera(guiCamera);
-	context->setDirectionalLight(directionalLight);
 }
 
 void CViewInit::onDestroy()
 {
-	m_guiObject->remove();
 	delete m_font;
 }
 
@@ -173,10 +166,8 @@ void CViewInit::onUpdate()
 
 		std::vector<std::string> listBundles;
 		listBundles.push_back("Common.zip");
-		listBundles.push_back("SampleMaterials.zip");
-		listBundles.push_back("SampleModels.zip");
-		listBundles.push_back("SampleModelsResource.zip");
-		listBundles.push_back(getApplication()->getTexturePackageName("SampleModels.zip"));
+		listBundles.push_back("SampleScene.zip");
+		listBundles.push_back("SampleSceneResource.zip");
 
 #ifdef __EMSCRIPTEN__
 		const char* filename = listBundles[m_downloaded].c_str();
@@ -224,8 +215,51 @@ void CViewInit::onUpdate()
 			fileSystem->addFileArchive(getBuiltInPath(r), false, false);
 		}
 
-		m_initState = CViewInit::InitScene;
+		m_initState = CViewInit::LoadScene;
 #endif
+	}
+	break;
+	case CViewInit::LoadScene:
+	{
+		// init physics engine
+		Physics::CPhysicsEngine* engine = Physics::CPhysicsEngine::getInstance();
+		engine->initPhysics();
+		// engine->enableDrawDebug(true, true);
+
+		m_loadScene = new CScene();
+
+		// declare component used in scene
+		// see: SampleScene/Demo.txt
+		USE_COMPONENT(CBoxCollider);
+		USE_COMPONENT(CCube);
+		USE_COMPONENT(CDirectionalLight);
+		USE_COMPONENT(CIndirectLighting);
+		USE_COMPONENT(CLightProbes);
+		USE_COMPONENT(CPlane);
+		USE_COMPONENT(CReflectionProbe);
+		USE_COMPONENT(CRenderMesh);
+		USE_COMPONENT(CRigidbody);
+		USE_COMPONENT(CSkySun);
+		USE_COMPONENT(CStaticPlaneCollider);
+		USE_COMPONENT(CTransformEuler);
+
+		// load scene
+		CSceneImporter::beginImportScene(m_loadScene, "SampleScene/Demo.scene");
+		m_initState = CViewInit::Loading;
+
+		m_textInfo->setText("Loading");
+	}
+	break;
+	case CViewInit::Loading:
+	{
+		if (CSceneImporter::updateLoadScene())
+		{
+			m_initState = CViewInit::InitScene;
+		}
+
+		char log[512];
+		sprintf(log, "Loading: %d%%", (int)(CSceneImporter::getLoadingPercent() * 100.0f));
+		os::Printer::log(log);
 	}
 	break;
 	case CViewInit::InitScene:
@@ -255,34 +289,7 @@ void CViewInit::onRender()
 {
 	if (m_initState == CViewInit::Finished)
 	{
-		CContext* context = CContext::getInstance();
-		CScene* scene = CContext::getInstance()->getScene();
-		CBaseRP* rp = CContext::getInstance()->getRenderPipeline();
 
-		if (m_bakeSHLighting == true)
-		{
-			m_bakeSHLighting = false;
-
-			CZone* zone = scene->getZone(0);
-
-			// light probe
-			CGameObject* lightProbeObj = zone->createEmptyObject();
-			CLightProbe* lightProbe = lightProbeObj->addComponent<CLightProbe>();
-			lightProbeObj->getTransformEuler()->setPosition(core::vector3df(0.0f, 5.0f, 0.0f));
-
-			CGameObject* bakeCameraObj = scene->getZone(0)->createEmptyObject();
-			CCamera* bakeCamera = bakeCameraObj->addComponent<CCamera>();
-			scene->updateAddRemoveObject();
-
-			// bake light probe
-			Lightmapper::CLightmapper* lm = Lightmapper::CLightmapper::getInstance();
-			lm->initBaker(64);
-
-			std::vector<CLightProbe*> probes;
-			probes.push_back(lightProbe);
-
-			lm->bakeProbes(probes, bakeCamera, rp, scene->getEntityManager());
-		}
 	}
 	else
 	{

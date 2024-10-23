@@ -73,7 +73,7 @@ namespace Skylicht
 		{
 #ifdef USE_BULLET_PHYSIC_ENGINE
 			CPhysicsEngine* engine = CPhysicsEngine::getInstance();
-			if (engine == NULL)
+			if (engine == NULL || !engine->isInitialized())
 			{
 				os::Printer::log("[CCharacterController] initCharacter failed because Physics engine is not init");
 				return false;

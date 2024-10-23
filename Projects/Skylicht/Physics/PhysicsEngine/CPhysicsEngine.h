@@ -97,13 +97,15 @@ namespace Skylicht
 
 			void exitPhysics();
 
+			bool isInitialized();
+
 			void updatePhysics(float timestepSec);
 
 			void syncTransformToPhysics();
 
 			void debugDrawWorld();
 
-			void enableDrawDebug(bool b);
+			void enableDrawDebug(bool b, bool alwayDraw = false);
 
 			inline float getGravity()
 			{

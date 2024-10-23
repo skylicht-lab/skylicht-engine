@@ -131,7 +131,7 @@ namespace Skylicht
 		{
 #ifdef USE_BULLET_PHYSIC_ENGINE
 			CPhysicsEngine* engine = CPhysicsEngine::getInstance();
-			if (engine == NULL)
+			if (engine == NULL || !engine->isInitialized())
 			{
 				os::Printer::log("[CRigidbody] initRigidbody failed because Physics engine is not init");
 				return false;
@@ -163,7 +163,13 @@ namespace Skylicht
 
 			btTransform startTransform;
 
-			const f32* matrix = transform->calcWorldTransform().pointer();
+			const f32* matrix = NULL;
+
+			if (engine->IsInEditor)
+				matrix = transform->calcWorldTransform().pointer();
+			else
+				matrix = transform->getRelativeTransform().pointer();
+
 			startTransform.setFromOpenGLMatrix(matrix);
 
 			btVector3 localInertia(0, 0, 0);

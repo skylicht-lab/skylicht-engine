@@ -121,9 +121,10 @@ namespace Skylicht
 
 		bool forceUpdateMaterial = false;
 		bool useMaterial = !m_materialPath.empty();
+		bool useCustom = m_useCustomMaterial;
 
 		m_instancing = object->get<bool>("instancing", false);
-		bool useCustom = object->get<bool>("custom material", false);
+		m_useCustomMaterial = object->get<bool>("custom material", false);
 		m_useNormalMap = object->get<bool>("normal map", false);
 		m_color = object->get<SColor>("color", SColor(255, 180, 180, 180));
 		m_materialPath = object->get<std::string>("material", std::string());
@@ -131,13 +132,13 @@ namespace Skylicht
 		if (!m_materialPath.empty() && !useMaterial)
 		{
 			// force enable material while update new material in editor
-			useCustom = true;
+			m_useCustomMaterial = true;
 			forceUpdateMaterial = true;
 		}
 
 		if (forceUpdateMaterial || m_useCustomMaterial != useCustom)
 		{
-			if (useCustom == true && !m_materialPath.empty())
+			if (m_useCustomMaterial == true && !m_materialPath.empty())
 			{
 				m_customMaterial = NULL;
 
@@ -145,8 +146,6 @@ namespace Skylicht
 				if (loadMaterials.size() > 0)
 					m_customMaterial = loadMaterials[0];
 			}
-
-			m_useCustomMaterial = useCustom;
 		}
 
 		m_material->setUniform4("uColor", m_color);

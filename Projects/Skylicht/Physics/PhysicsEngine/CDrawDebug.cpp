@@ -35,7 +35,8 @@ namespace Skylicht
 	{
 		CDrawDebug::CDrawDebug() :
 			m_debugMode(0),
-			m_enableDraw(false)
+			m_enableDraw(false),
+			m_alwayDraw(false)
 		{
 			m_debugMode |= btIDebugDraw::DBG_DrawWireframe;
 			m_debugMode |= btIDebugDraw::DBG_DrawConstraints;
@@ -62,8 +63,10 @@ namespace Skylicht
 
 		void CDrawDebug::drawLine(const btVector3& from, const btVector3& to, const btVector3& color)
 		{
-			if (!m_enableDraw)
+			if (!m_alwayDraw && !m_enableDraw)
+			{
 				return;
+			}
 
 			CSceneDebug* debug = CSceneDebug::getInstance()->getNoZDebug();
 			debug->addLine(

@@ -7,7 +7,7 @@
 
 #include "DirectionalInput/CDirectionalInput.h"
 #include "Camera/C3rdCamera.h"
-#include "CapsuleMesh/CCapsuleComponent.h"
+#include "Primitive/CCapsule.h"
 #include "Primitive/CCube.h"
 
 #include "Context/CContext.h"
@@ -47,12 +47,12 @@ void CViewDemo::initObjects()
 	CGameObject* capsuleObj = zone->createEmptyObject();
 
 	// renderer
-	CCapsuleComponent* capsule = capsuleObj->addComponent<CCapsuleComponent>();
-	capsule->init(capsuleRadius, capsuleHeight);
-	CMaterial* capsuleMaterial = capsule->getMaterial();
-	capsuleMaterial->changeShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");
-	capsuleMaterial->setUniform4("uColor", SColor(255, 200, 200, 200));
-	capsuleMaterial->updateShaderParams();
+	CCapsule* capsule = capsuleObj->addComponent<CCapsule>();
+	capsule->setRadius(capsuleRadius);
+	capsule->setHeight(capsuleHeight);
+	capsule->init();
+
+	// indirect lighting
 	capsuleObj->addComponent<CIndirectLighting>();
 
 	// collider & character

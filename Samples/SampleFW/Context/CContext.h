@@ -49,6 +49,8 @@ public:
 
 	CScene* initScene();
 
+	CScene* initScene(CScene* scene);
+
 	CBaseRP* initRenderPipeline(int w, int h, bool postEffect = true, bool enableSSR = false);
 
 	CBaseRP* initShadowForwarderPipeline(int w, int h, bool postEffect = true);

@@ -98,6 +98,15 @@ namespace Skylicht
 #endif
 		}
 
+		bool CPhysicsEngine::isInitialized()
+		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			return m_dynamicsWorld != NULL;
+#else
+			return false;
+#endif
+		}
+
 		void CPhysicsEngine::exitPhysics()
 		{
 #ifdef USE_BULLET_PHYSIC_ENGINE
@@ -220,11 +229,13 @@ namespace Skylicht
 #endif
 		}
 
-		void CPhysicsEngine::enableDrawDebug(bool b)
+		void CPhysicsEngine::enableDrawDebug(bool b, bool alwayDraw)
 		{
 			m_enableDrawDebug = b;
 
 #ifdef USE_BULLET_PHYSIC_ENGINE
+			m_drawDebug->setAlwayDraw(alwayDraw);
+
 			if (m_enableDrawDebug)
 				m_dynamicsWorld->setDebugDrawer(m_drawDebug);
 			else

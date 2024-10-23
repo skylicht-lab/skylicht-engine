@@ -39,6 +39,7 @@ namespace Skylicht
 			Cube,
 			Sphere,
 			Plane,
+			Capsule,
 			Count
 		};
 

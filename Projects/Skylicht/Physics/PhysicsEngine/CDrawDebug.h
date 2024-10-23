@@ -40,11 +40,17 @@ namespace Skylicht
 		protected:
 			int m_debugMode;
 			bool m_enableDraw;
+			bool m_alwayDraw;
 
 		public:
 			CDrawDebug();
 
 			virtual ~CDrawDebug();
+
+			inline void setAlwayDraw(bool b)
+			{
+				m_alwayDraw = b;
+			}
 
 			virtual void drawCurrentObject(btCollisionObject* obj);
 

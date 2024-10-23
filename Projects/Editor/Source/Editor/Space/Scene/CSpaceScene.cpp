@@ -912,11 +912,6 @@ namespace Skylicht
 			m_middleMouseDown = down;
 			GUI::SPoint local = m_view->canvasPosToLocal(GUI::SPoint(x, y));
 
-			if (m_viewpointRect.isPointInside(core::vector2df(local.X, local.Y)))
-			{
-				// viewpoint
-			}
-			else
 			{
 				// scene
 				if (down)

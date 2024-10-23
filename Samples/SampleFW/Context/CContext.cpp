@@ -37,6 +37,15 @@ CScene* CContext::initScene()
 	return m_scene;
 }
 
+CScene* CContext::initScene(CScene* scene)
+{
+	m_scene = scene;
+#ifdef BUILD_SKYLICHT_COLLISION
+	m_collisionMgr = new CCollisionManager();
+#endif
+	return m_scene;
+}
+
 void CContext::releaseScene()
 {
 	if (m_scene != NULL)
