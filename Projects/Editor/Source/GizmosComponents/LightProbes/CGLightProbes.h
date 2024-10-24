@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2022 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
@@ -24,39 +24,33 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Tween/CTweenManager.h"
-#include "GizmosComponents/Viewpoint/CViewpoint.h"
+#include "GizmosComponents/CGizmosComponent.h"
+#include "GizmosComponents/SelectObject/CSelectObjectData.h"
+
+#include "LightProbes/CLightProbes.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CViewpointController
+		class CGLightProbes : public CGizmosComponent
 		{
 		protected:
-			CCamera* m_editorCamera;
-			CCamera* m_viewpointCamera;
+			CLightProbes* m_lightProbes;
 
 		public:
-			CViewpointController();
+			CGLightProbes();
 
-			virtual ~CViewpointController();
+			virtual ~CGLightProbes();
 
-			void update();
+			virtual void initComponent();
 
-			void setCameraLook(CViewpointData::EAxis axis);
-
-			inline void setCamera(CCamera* editorCamera, CCamera* viewpointCamera)
-			{
-				m_editorCamera = editorCamera;
-				m_viewpointCamera = viewpointCamera;
-			}
+			virtual void updateComponent();
 
 		protected:
 
-			void updateViewpoint();
+			void updateSelectBBox();
 
-			void setupCameraTween(CTweenVector3df* look, CTweenVector3df* up);
 		};
 	}
 }

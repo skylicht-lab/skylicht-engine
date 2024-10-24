@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2022 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
@@ -24,25 +24,32 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "EditorComponents/CGizmosComponent.h"
-#include "CViewpointData.h"
+#include "GizmosComponents/CGizmosComponent.h"
+#include "GizmosComponents/SelectObject/CSelectObjectData.h"
+#include "ReflectionProbe/CReflectionProbe.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CViewpoint : public CGizmosComponent
+		class CGReflectionProbe : public CGizmosComponent
 		{
-		public:
-			CViewpoint();
+		protected:
+			CReflectionProbe* m_reflectionProbe;
 
-			virtual ~CViewpoint();
+		public:
+			CGReflectionProbe();
+
+			virtual ~CGReflectionProbe();
 
 			virtual void initComponent();
 
 			virtual void updateComponent();
 
-			CViewpointData* getViewpointData();
+		protected:
+
+			void updateSelectBBox();
+
 		};
 	}
 }

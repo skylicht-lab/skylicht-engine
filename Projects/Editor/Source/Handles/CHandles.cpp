@@ -25,8 +25,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CHandles.h"
 #include "Scene/CScene.h"
-#include "EditorComponents/Handles/CHandlesRenderer.h"
-#include "EditorComponents/Gizmos/CGizmosRenderer.h"
+#include "GizmosComponents/Handles/CHandlesRenderer.h"
+#include "GizmosComponents/Gizmos/CGizmosRenderer.h"
 #include "Editor/SpaceController/CSceneController.h"
 
 namespace Skylicht

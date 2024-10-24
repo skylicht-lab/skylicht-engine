@@ -24,32 +24,32 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "EditorComponents/CGizmosComponent.h"
-#include "EditorComponents/SelectObject/CSelectObjectData.h"
-#include "RenderMesh/CRenderMesh.h"
+#include "GizmosComponents/CGizmosComponent.h"
+#include "Lighting/CSpotLight.h"
+#include "SpriteDraw/CSprite.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CGRenderMesh : public CGizmosComponent
+		class CGSpotLight : public CGizmosComponent
 		{
 		protected:
-			CRenderMesh* m_renderMesh;
+			core::aabbox3df m_defaultBBox;
+
+			CSpotLight* m_spotLight;
+			CSprite* m_sprite;
+
+			core::vector3df* m_circlePos;
 
 		public:
-			CGRenderMesh();
+			CGSpotLight();
 
-			virtual ~CGRenderMesh();
+			virtual ~CGSpotLight();
 
 			virtual void initComponent();
 
 			virtual void updateComponent();
-
-		protected:
-
-			void updateSelectBBox();
-
 		};
 	}
 }

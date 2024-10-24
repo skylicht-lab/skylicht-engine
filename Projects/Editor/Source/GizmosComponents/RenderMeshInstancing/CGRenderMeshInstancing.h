@@ -24,39 +24,32 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Tween/CTweenManager.h"
-#include "GizmosComponents/Viewpoint/CViewpoint.h"
+#include "GizmosComponents/CGizmosComponent.h"
+#include "GizmosComponents/SelectObject/CSelectObjectData.h"
+#include "RenderMesh/CRenderMeshInstancing.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CViewpointController
+		class CGRenderMeshInstancing : public CGizmosComponent
 		{
 		protected:
-			CCamera* m_editorCamera;
-			CCamera* m_viewpointCamera;
+			CRenderMeshInstancing* m_renderMeshInstancing;
 
 		public:
-			CViewpointController();
+			CGRenderMeshInstancing();
 
-			virtual ~CViewpointController();
+			virtual ~CGRenderMeshInstancing();
 
-			void update();
+			virtual void initComponent();
 
-			void setCameraLook(CViewpointData::EAxis axis);
-
-			inline void setCamera(CCamera* editorCamera, CCamera* viewpointCamera)
-			{
-				m_editorCamera = editorCamera;
-				m_viewpointCamera = viewpointCamera;
-			}
+			virtual void updateComponent();
 
 		protected:
 
-			void updateViewpoint();
+			void updateSelectBBox();
 
-			void setupCameraTween(CTweenVector3df* look, CTweenVector3df* up);
 		};
 	}
 }

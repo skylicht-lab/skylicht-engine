@@ -26,9 +26,9 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "SkylichtEngine.h"
 #include "Editor/Space/CSpace.h"
-#include "EditorComponents/Handles/CHandlesRenderer.h"
-#include "EditorComponents/Gizmos/CGizmosRenderer.h"
-#include "EditorComponents/SelectObject/CSelectObjectSystem.h"
+#include "GizmosComponents/Handles/CHandlesRenderer.h"
+#include "GizmosComponents/Gizmos/CGizmosRenderer.h"
+#include "GizmosComponents/SelectObject/CSelectObjectSystem.h"
 
 #include "CViewpointController.h"
 #include "CCameraSettingController.h"

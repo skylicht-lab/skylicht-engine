@@ -23,7 +23,7 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CGDirectionLight.h"
+#include "CGPointLight.h"
 
 #include "Utils/CActivator.h"
 #include "Components/CDependentComponent.h"
@@ -34,33 +34,35 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Editor/CEditor.h"
 #include "Handles/CHandles.h"
 
-#include "EditorComponents/SelectObject/CSelectObjectData.h"
+#include "GizmosComponents/SelectObject/CSelectObjectData.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		ACTIVATOR_REGISTER(CGDirectionLight);
+		ACTIVATOR_REGISTER(CGPointLight);
 
-		DEPENDENT_COMPONENT(CDirectionalLight, CGDirectionLight);
+		DEPENDENT_COMPONENT(CPointLight, CGPointLight);
 
-		CGDirectionLight::CGDirectionLight() :
-			m_directionLight(NULL)
+		const int CircleSegmentCount = 128;
+
+		CGPointLight::CGPointLight() :
+			m_pointLight(NULL)
 		{
-
+			m_circlePos = new core::vector3df[CircleSegmentCount + 1];
 		}
 
-		CGDirectionLight::~CGDirectionLight()
+		CGPointLight::~CGPointLight()
 		{
-
+			delete[]m_circlePos;
 		}
 
-		void CGDirectionLight::initComponent()
+		void CGPointLight::initComponent()
 		{
-			m_directionLight = m_gameObject->getComponent<CDirectionalLight>();
+			m_pointLight = m_gameObject->getComponent<CPointLight>();
 
 			m_sprite = m_gameObject->addComponent<CSprite>();
-			m_sprite->setFrame(CEditor::getInstance()->getSpriteIcon()->getFrameByName("light"), 1.0f, m_directionLight->getColor().toSColor());
+			m_sprite->setFrame(CEditor::getInstance()->getSpriteIcon()->getFrameByName("light"), 1.0f, m_pointLight->getColor().toSColor());
 			m_sprite->setCenter(true);
 			m_sprite->setBillboard(true);
 			m_sprite->setAutoScaleInViewSpace(true);
@@ -80,15 +82,29 @@ namespace Skylicht
 			selectObject->BBox = m_defaultBBox;
 		}
 
-		void CGDirectionLight::updateComponent()
+		void CGPointLight::updateComponent()
 		{
 			// update color of light
-			SColor lightColor = m_directionLight->getColor().toSColor();
+			SColor lightColor = m_pointLight->getColor().toSColor();
 			m_sprite->setColor(lightColor);
 
-			// draw light direction arrow
-			core::matrix4 world = m_gameObject->getTransformEuler()->calcWorldTransform();
-			CHandles::getInstance()->drawArrowInViewSpace(world.getTranslation(), m_directionLight->getDirection(), 0.5f, 0.05f, lightColor);
+			const core::vector3df& position = m_gameObject->getTransformEuler()->getPosition();
+			float radius = m_pointLight->getRadius();
+
+			// draw radius point light
+			for (int i = 0; i < CircleSegmentCount; i++)
+			{
+				float ng = 2 * core::PI * ((float)i / (float)CircleSegmentCount);
+
+				core::vector3df axisPos = core::vector3df(cosf(ng), sinf(ng), 0.f);
+				float* p = &axisPos.X;
+
+				int axis = 1;
+				core::vector3df r = core::vector3df(p[axis], p[(axis + 1) % 3], p[(axis + 2) % 3]);
+
+				m_circlePos[i] = position + r * radius;
+			}
+			CHandles::getInstance()->drawPolyline(m_circlePos, CircleSegmentCount, true, lightColor);
 
 			// update collision bbox
 			float boxScale = m_sprite->getViewScale() * 10.0f;

@@ -34,7 +34,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Editor/Space/GUIDesign/CSpaceGUIDesign.h"
 
 #include "Editor/Gizmos/CGizmos.h"
-#include "EditorComponents/SelectObject/CSelectObjectSystem.h"
+#include "GizmosComponents/SelectObject/CSelectObjectSystem.h"
 
 #include "CContextMenuScene.h"
 

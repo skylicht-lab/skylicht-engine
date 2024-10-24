@@ -485,7 +485,7 @@ namespace Skylicht
 		core::matrix4 projection;
 		projection.buildProjectionMatrixPerspectiveFovLH(90.0f * core::DEGTORAD, 1.0f, camera->getNearValue(), camera->getFarValue());
 
-		core::vector3df targetDirectX[] = {
+		core::vector3df target[] = {
 			core::vector3df(1.0f, 0.0f, 0.0f),	// right
 			core::vector3df(-1.0f, 0.0f, 0.0f),	// left
 
@@ -494,18 +494,6 @@ namespace Skylicht
 
 			core::vector3df(0.0f, 0.0f, 1.0f),	// front
 			core::vector3df(0.0f, 0.0f,-1.0f),	// back
-		};
-
-		// todo: FBO OpenGL is invertY
-		core::vector3df targetOpenGL[] = {
-			core::vector3df(1.0f, 0.0f, 0.0f),	// right
-			core::vector3df(-1.0f, 0.0f, 0.0f),	// left
-
-			core::vector3df(0.0f, 1.0f, 0.0f),	// up
-			core::vector3df(0.0f,-1.0f, 0.0f),	// down
-
-			core::vector3df(0.0f, 0.0f,-1.0f),	// front
-			core::vector3df(0.0f, 0.0f, 1.0f),	// back
 		};
 
 		core::vector3df up[] = {
@@ -518,11 +506,6 @@ namespace Skylicht
 			core::vector3df(0.0f, 1.0f, 0.0f),
 			core::vector3df(0.0f, 1.0f, 0.0f),
 		};
-
-		core::vector3df* target = targetDirectX;
-
-		if (driver->getDriverType() != video::EDT_DIRECT3D11)
-			target = targetOpenGL;
 
 		core::matrix4 view;
 
@@ -561,12 +544,11 @@ namespace Skylicht
 
 				if (tempFBO)
 				{
-					// todo: Dont flip TOP & BOTTOM
 					drawSceneToTexture(tempFBO, camera, entityMgr, true);
 
 					driver->setRenderTarget(texture[i], true, true);
 					beginRender2D(sizeW, sizeH);
-					renderBufferToTarget(0, 0, sizeW, sizeH, material, false);
+					renderBufferToTarget(0, 0, sizeW, sizeH, material, true);
 				}
 				else
 				{
@@ -592,12 +574,11 @@ namespace Skylicht
 
 				if (tempFBO)
 				{
-					// todo: Dont flip TOP & BOTTOM
 					drawSceneToTexture(tempFBO, camera, entityMgr, true);
 
 					driver->setRenderTarget(texture[i], true, true);
 					beginRender2D(sizeW, sizeH);
-					renderBufferToTarget(0, 0, sizeW, sizeH, material, false);
+					renderBufferToTarget(0, 0, sizeW, sizeH, material, true);
 				}
 				else
 				{

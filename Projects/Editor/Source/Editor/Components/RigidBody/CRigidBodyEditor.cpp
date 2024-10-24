@@ -22,32 +22,54 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
+#include "pch.h"
 
-#include "EditorComponents/CGizmosComponent.h"
-#include "Lighting/CDirectionalLight.h"
-#include "SpriteDraw/CSprite.h"
+#ifdef BUILD_SKYLICHT_PHYSIC
+
+#include "CRigidBodyEditor.h"
+#include "Editor/Space/Property/CSpaceProperty.h"
+#include "Editor/SpaceController/CSceneController.h"
+
+#include "RigidBody/CRigidbody.h"
+using namespace Skylicht::Physics;
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CGDirectionLight : public CGizmosComponent
+		EDITOR_REGISTER(CRigidBodyEditor, CRigidbody);
+
+		CRigidBodyEditor::CRigidBodyEditor()
 		{
-		protected:
-			core::aabbox3df m_defaultBBox;
 
-			CDirectionalLight* m_directionLight;
-			CSprite* m_sprite;
+		}
 
-		public:
-			CGDirectionLight();
+		CRigidBodyEditor::~CRigidBodyEditor()
+		{
 
-			virtual ~CGDirectionLight();
+		}
 
-			virtual void initComponent();
+		void CRigidBodyEditor::initGUI(CComponentSystem* target, CSpaceProperty* ui)
+		{
+			CDefaultEditor::initGUI(target, ui);
+		}
 
-			virtual void updateComponent();
-		};
+		void CRigidBodyEditor::initCustomGUI(GUI::CBoxLayout* layout, CSpaceProperty* ui)
+		{
+			layout->addSpace(5.0f);
+
+			ui->addButton(layout, L"Refresh Rigidbody")->OnPress = [&](GUI::CBase* button)
+				{
+					CRigidbody* rigidBody = (CRigidbody*)m_component;
+					rigidBody->initRigidbody();
+				};
+		}
+
+		void CRigidBodyEditor::update()
+		{
+
+		}
 	}
 }
+
+#endif

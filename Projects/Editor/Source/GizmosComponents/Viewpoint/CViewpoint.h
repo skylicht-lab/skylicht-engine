@@ -24,32 +24,25 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "EditorComponents/CGizmosComponent.h"
-#include "Lighting/CSpotLight.h"
-#include "SpriteDraw/CSprite.h"
+#include "GizmosComponents/CGizmosComponent.h"
+#include "CViewpointData.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CGSpotLight : public CGizmosComponent
+		class CViewpoint : public CGizmosComponent
 		{
-		protected:
-			core::aabbox3df m_defaultBBox;
-
-			CSpotLight* m_spotLight;
-			CSprite* m_sprite;
-
-			core::vector3df* m_circlePos;
-
 		public:
-			CGSpotLight();
+			CViewpoint();
 
-			virtual ~CGSpotLight();
+			virtual ~CViewpoint();
 
 			virtual void initComponent();
 
 			virtual void updateComponent();
+
+			CViewpointData* getViewpointData();
 		};
 	}
 }

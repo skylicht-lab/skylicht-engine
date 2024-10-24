@@ -1,12 +1,15 @@
 #include "pch.h"
 #include "CCapsule.h"
-#include "CapsuleMesh/CCapsuleMesh.h"
+#include "LatheMesh/CCapsuleMesh.h"
 #include "RenderMesh/CRenderMeshData.h"
 #include "Culling/CCullingData.h"
 #include "Material/CMaterialManager.h"
 
 namespace Skylicht
 {
+	ACTIVATOR_REGISTER(CCapsule);
+
+	CATEGORY_COMPONENT(CCapsule, "Capsule", "Renderer/Primitive");
 
 	CCapsule::CCapsule() :
 		m_material(NULL),

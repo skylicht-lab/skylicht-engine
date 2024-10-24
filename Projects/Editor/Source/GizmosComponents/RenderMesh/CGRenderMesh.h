@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2022 Skylicht Technology CO., LTD
+Copyright (c) 2021 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
@@ -24,24 +24,23 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "EditorComponents/CGizmosComponent.h"
-#include "EditorComponents/SelectObject/CSelectObjectData.h"
-
-#include "LightProbes/CLightProbes.h"
+#include "GizmosComponents/CGizmosComponent.h"
+#include "GizmosComponents/SelectObject/CSelectObjectData.h"
+#include "RenderMesh/CRenderMesh.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CGLightProbes : public CGizmosComponent
+		class CGRenderMesh : public CGizmosComponent
 		{
 		protected:
-			CLightProbes* m_lightProbes;
+			CRenderMesh* m_renderMesh;
 
 		public:
-			CGLightProbes();
+			CGRenderMesh();
 
-			virtual ~CGLightProbes();
+			virtual ~CGRenderMesh();
 
 			virtual void initComponent();
 

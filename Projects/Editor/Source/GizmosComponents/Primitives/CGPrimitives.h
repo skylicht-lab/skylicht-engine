@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2022 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
@@ -24,32 +24,34 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "EditorComponents/CGizmosComponent.h"
-#include "Lighting/CPointLight.h"
-#include "SpriteDraw/CSprite.h"
+#include "GizmosComponents/CGizmosComponent.h"
+#include "GizmosComponents/SelectObject/CSelectObjectData.h"
+#include "Primitive/CCube.h"
+#include "Primitive/CSphere.h"
+#include "Primitive/CPlane.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CGPointLight : public CGizmosComponent
+		class CGPrimitives : public CGizmosComponent
 		{
 		protected:
-			core::aabbox3df m_defaultBBox;
-
-			CPointLight* m_pointLight;
-			CSprite* m_sprite;
-
-			core::vector3df* m_circlePos;
+			CPrimitive* m_primitive;
 
 		public:
-			CGPointLight();
+			CGPrimitives();
 
-			virtual ~CGPointLight();
+			virtual ~CGPrimitives();
 
 			virtual void initComponent();
 
 			virtual void updateComponent();
+
+		protected:
+
+			void updateSelectBBox();
+
 		};
 	}
 }

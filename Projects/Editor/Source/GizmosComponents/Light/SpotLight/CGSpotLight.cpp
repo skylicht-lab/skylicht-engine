@@ -23,7 +23,7 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CGPointLight.h"
+#include "CGSpotLight.h"
 
 #include "Utils/CActivator.h"
 #include "Components/CDependentComponent.h"
@@ -34,35 +34,35 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Editor/CEditor.h"
 #include "Handles/CHandles.h"
 
-#include "EditorComponents/SelectObject/CSelectObjectData.h"
+#include "GizmosComponents/SelectObject/CSelectObjectData.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		ACTIVATOR_REGISTER(CGPointLight);
+		ACTIVATOR_REGISTER(CGSpotLight);
 
-		DEPENDENT_COMPONENT(CPointLight, CGPointLight);
+		DEPENDENT_COMPONENT(CSpotLight, CGSpotLight);
 
-		const int CircleSegmentCount = 128;
+		int CircleSegmentCount = 64;
 
-		CGPointLight::CGPointLight() :
-			m_pointLight(NULL)
+		CGSpotLight::CGSpotLight() :
+			m_spotLight(NULL)
 		{
 			m_circlePos = new core::vector3df[CircleSegmentCount + 1];
 		}
 
-		CGPointLight::~CGPointLight()
+		CGSpotLight::~CGSpotLight()
 		{
 			delete[]m_circlePos;
 		}
 
-		void CGPointLight::initComponent()
+		void CGSpotLight::initComponent()
 		{
-			m_pointLight = m_gameObject->getComponent<CPointLight>();
+			m_spotLight = m_gameObject->getComponent<CSpotLight>();
 
 			m_sprite = m_gameObject->addComponent<CSprite>();
-			m_sprite->setFrame(CEditor::getInstance()->getSpriteIcon()->getFrameByName("light"), 1.0f, m_pointLight->getColor().toSColor());
+			m_sprite->setFrame(CEditor::getInstance()->getSpriteIcon()->getFrameByName("light"), 1.0f, m_spotLight->getColor().toSColor());
 			m_sprite->setCenter(true);
 			m_sprite->setBillboard(true);
 			m_sprite->setAutoScaleInViewSpace(true);
@@ -82,16 +82,32 @@ namespace Skylicht
 			selectObject->BBox = m_defaultBBox;
 		}
 
-		void CGPointLight::updateComponent()
+		void CGSpotLight::updateComponent()
 		{
 			// update color of light
-			SColor lightColor = m_pointLight->getColor().toSColor();
+			SColor lightColor = m_spotLight->getColor().toSColor();
 			m_sprite->setColor(lightColor);
 
-			const core::vector3df& position = m_gameObject->getTransformEuler()->getPosition();
-			float radius = m_pointLight->getRadius();
+			// draw light direction arrow
+			core::matrix4 world = m_gameObject->getTransformEuler()->calcWorldTransform();
 
-			// draw radius point light
+			float radius = m_spotLight->getRadius();
+			float outner = m_spotLight->getSplotCutoff() * 0.5f;
+			float maxOuterEdge = tanf(outner * core::DEGTORAD) * radius;
+
+			const core::vector3df& position = world.getTranslation();
+			const core::vector3df& direction = m_spotLight->getDirection();
+			core::vector3df end = position + direction * radius;
+
+			CHandles::getInstance()->drawLine(position, end, lightColor);
+
+			core::quaternion q;
+			q.rotationFromTo(core::vector3df(0.0f, 1.0f, 0.0f), direction);
+
+			std::vector<core::vector3df> bounds;
+
+			int count = CircleSegmentCount / 5;
+
 			for (int i = 0; i < CircleSegmentCount; i++)
 			{
 				float ng = 2 * core::PI * ((float)i / (float)CircleSegmentCount);
@@ -102,9 +118,21 @@ namespace Skylicht
 				int axis = 1;
 				core::vector3df r = core::vector3df(p[axis], p[(axis + 1) % 3], p[(axis + 2) % 3]);
 
-				m_circlePos[i] = position + r * radius;
+				core::vector3df worldR = q * r;
+				worldR.normalize();
+
+				if (i % count == 0)
+					bounds.push_back(worldR);
+
+				m_circlePos[i] = end + worldR * maxOuterEdge;
 			}
+
+			// draw circle
 			CHandles::getInstance()->drawPolyline(m_circlePos, CircleSegmentCount, true, lightColor);
+
+			// draw border edge
+			for (int i = 0, n = (int)bounds.size(); i < n; i++)
+				CHandles::getInstance()->drawLine(position, end + bounds[i] * maxOuterEdge, lightColor);
 
 			// update collision bbox
 			float boxScale = m_sprite->getViewScale() * 10.0f;

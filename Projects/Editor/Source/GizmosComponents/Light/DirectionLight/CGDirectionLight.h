@@ -24,32 +24,30 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "EditorComponents/CGizmosComponent.h"
-#include "EditorComponents/SelectObject/CSelectObjectData.h"
-#include "RenderMesh/CRenderMeshInstancing.h"
+#include "GizmosComponents/CGizmosComponent.h"
+#include "Lighting/CDirectionalLight.h"
+#include "SpriteDraw/CSprite.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CGRenderMeshInstancing : public CGizmosComponent
+		class CGDirectionLight : public CGizmosComponent
 		{
 		protected:
-			CRenderMeshInstancing* m_renderMeshInstancing;
+			core::aabbox3df m_defaultBBox;
+
+			CDirectionalLight* m_directionLight;
+			CSprite* m_sprite;
 
 		public:
-			CGRenderMeshInstancing();
+			CGDirectionLight();
 
-			virtual ~CGRenderMeshInstancing();
+			virtual ~CGDirectionLight();
 
 			virtual void initComponent();
 
 			virtual void updateComponent();
-
-		protected:
-
-			void updateSelectBBox();
-
 		};
 	}
 }

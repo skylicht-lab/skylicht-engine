@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2022 Skylicht Technology CO., LTD
+Copyright (c) 2021 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
@@ -24,32 +24,30 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "EditorComponents/CGizmosComponent.h"
-#include "EditorComponents/SelectObject/CSelectObjectData.h"
-#include "ReflectionProbe/CReflectionProbe.h"
+#ifdef BUILD_SKYLICHT_PHYSIC
+#include "Serializable/CObjectSerializable.h"
+#include "Editor/Components/CComponentEditor.h"
+#include "Editor/Components/Default/CDefaultEditor.h"
+#include "Activator/CEditorActivator.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CGReflectionProbe : public CGizmosComponent
+		class CRigidBodyEditor : public CDefaultEditor
 		{
-		protected:
-			CReflectionProbe* m_reflectionProbe;
-
 		public:
-			CGReflectionProbe();
+			CRigidBodyEditor();
 
-			virtual ~CGReflectionProbe();
+			virtual ~CRigidBodyEditor();
 
-			virtual void initComponent();
+			virtual void initGUI(CComponentSystem* target, CSpaceProperty* spaceProperty);
 
-			virtual void updateComponent();
+			virtual void initCustomGUI(GUI::CBoxLayout* layout, CSpaceProperty* ui);
 
-		protected:
-
-			void updateSelectBBox();
-
+			virtual void update();
 		};
 	}
 }
+
+#endif
