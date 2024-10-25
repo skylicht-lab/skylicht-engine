@@ -49,9 +49,7 @@ namespace Skylicht
 			GUI::CIconTextItem* m_status;
 
 			GUI::CDialogWindow* m_importDialog;
-			GUI::CDialogWindow* m_loadSceneDialog;
-			GUI::CDialogWindow* m_exportGMapDialog;
-			GUI::CDialogWindow* m_exportSpriteDialog;
+			GUI::CDialogWindow* m_waitingDialog;
 
 			std::list<CSpace*> m_workspaces;
 
@@ -75,6 +73,8 @@ namespace Skylicht
 
 			void initLoadSceneGUI(const char* path);
 
+			void initApplyTemplateGUI(const char* path);
+
 			void initEditorGUI();
 
 			bool isUIInitiate()
@@ -85,12 +85,6 @@ namespace Skylicht
 			bool isImportFinish();
 
 			void closeImportDialog();
-
-			void closeLoadSceneDialog();
-
-			void closeExportGMapDialog();
-
-			void closeExportSpriteDialog();
 
 			void closeProperty();
 

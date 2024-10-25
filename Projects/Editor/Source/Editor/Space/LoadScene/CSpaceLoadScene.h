@@ -25,17 +25,15 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "SkylichtEngine.h"
-#include "Editor/Space/CSpace.h"
+#include "Editor/Space/CSpaceLoading.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSpaceLoadScene : public CSpace
+		class CSpaceLoadScene : public CSpaceLoading
 		{
 		protected:
-			bool m_finished;
-			
 			std::string m_scenePath;
 			bool m_startLoading;
 
@@ -53,9 +51,7 @@ namespace Skylicht
 
 			virtual void onDestroy(GUI::CBase* base);
 
-			void loadScene(const char *path);
-
-			bool isFinish();
+			void loadScene(const char* path);
 		};
 	}
 }

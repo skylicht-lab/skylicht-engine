@@ -43,7 +43,7 @@ namespace Skylicht
 	namespace Editor
 	{
 		CSpaceExportSprite::CSpaceExportSprite(GUI::CWindow* window, CEditor* editor) :
-			CSpace(window, editor),
+			CSpaceLoading(window, editor),
 			m_progressBar(NULL),
 			m_statusText(NULL),
 			m_width(2048),
@@ -176,6 +176,7 @@ namespace Skylicht
 				// done!
 				importer.importAll();
 				CEditor::getInstance()->refresh();
+				m_finished = true;
 			}
 
 			CSpace::update();
@@ -300,11 +301,6 @@ namespace Skylicht
 		void CSpaceExportSprite::onDestroy(GUI::CBase* base)
 		{
 			CSpace::onDestroy(base);
-		}
-
-		bool CSpaceExportSprite::isFinish()
-		{
-			return m_state == Finish;
 		}
 
 		void CSpaceExportSprite::exportSprite(const char* id, const char* path, const std::vector<std::string>& pngs, int width, int height, bool alpha)

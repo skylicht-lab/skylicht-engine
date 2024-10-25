@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CWindowConfig.h"
 #include "Utils/CStringImp.h"
 
+#include "Space/ApplyTemplate/CSpaceApplyTemplate.h"
 #include "Space/Import/CSpaceImport.h"
 #include "Space/Scene/CSpaceScene.h"
 #include "Space/Assets/CSpaceAssets.h"
@@ -69,9 +70,7 @@ namespace Skylicht
 			m_statusInfo(NULL),
 			m_status(NULL),
 			m_importDialog(NULL),
-			m_loadSceneDialog(NULL),
-			m_exportGMapDialog(NULL),
-			m_exportSpriteDialog(NULL),
+			m_waitingDialog(NULL),
 			m_uiInitiate(false),
 			m_confirmQuit(false),
 			m_assetWatcher(NULL)
@@ -133,42 +132,14 @@ namespace Skylicht
 			for (CSpace* s : m_workspaces)
 				s->update();
 
-			if (m_loadSceneDialog != NULL)
+			CSpace* space = getWorkspace(m_waitingDialog);
+			if (space != NULL)
 			{
-				CSpace* space = getWorkspace(m_loadSceneDialog);
-				if (space != NULL)
+				CSpaceLoading* spaceLoadScene = dynamic_cast<CSpaceLoading*>(space);
+				if (spaceLoadScene != NULL && spaceLoadScene->isFinished())
 				{
-					CSpaceLoadScene* spaceLoadScene = dynamic_cast<CSpaceLoadScene*>(space);
-					if (spaceLoadScene != NULL && spaceLoadScene->isFinish())
-					{
-						closeLoadSceneDialog();
-					}
-				}
-			}
-
-			if (m_exportGMapDialog != NULL)
-			{
-				CSpace* space = getWorkspace(m_exportGMapDialog);
-				if (space != NULL)
-				{
-					CSpaceExportGMap* spaceExportGMap = dynamic_cast<CSpaceExportGMap*>(space);
-					if (spaceExportGMap != NULL && spaceExportGMap->isFinish())
-					{
-						closeExportGMapDialog();
-					}
-				}
-			}
-
-			if (m_exportSpriteDialog != NULL)
-			{
-				CSpace* space = getWorkspace(m_exportSpriteDialog);
-				if (space != NULL)
-				{
-					CSpaceExportSprite* spaceExportSprite = dynamic_cast<CSpaceExportSprite*>(space);
-					if (spaceExportSprite != NULL && spaceExportSprite->isFinish())
-					{
-						closeExportSpriteDialog();
-					}
+					m_waitingDialog->remove();
+					m_waitingDialog = NULL;
 				}
 			}
 		}
@@ -225,7 +196,7 @@ namespace Skylicht
 			{
 				CSpaceImport* spaceImport = dynamic_cast<CSpaceImport*>(space);
 				if (spaceImport != NULL)
-					return spaceImport->isFinish();
+					return spaceImport->isFinished();
 			}
 
 			return false;
@@ -238,24 +209,6 @@ namespace Skylicht
 
 			if (m_assetWatcher->needReImport())
 				m_assetWatcher->unlock();
-		}
-
-		void CEditor::closeLoadSceneDialog()
-		{
-			m_loadSceneDialog->remove();
-			m_loadSceneDialog = NULL;
-		}
-
-		void CEditor::closeExportGMapDialog()
-		{
-			m_exportGMapDialog->remove();
-			m_exportGMapDialog = NULL;
-		}
-
-		void CEditor::closeExportSpriteDialog()
-		{
-			m_exportSpriteDialog->remove();
-			m_exportSpriteDialog = NULL;
 		}
 
 		void CEditor::closeProperty()
@@ -294,18 +247,34 @@ namespace Skylicht
 
 		void CEditor::initLoadSceneGUI(const char* path)
 		{
-			m_loadSceneDialog = new GUI::CDialogWindow(m_canvas, 0.0f, 0.0f, 600.0f, 120.0f);
-			m_loadSceneDialog->setCaption(L"Load Scene");
-			m_loadSceneDialog->showCloseButton(false);
-			m_loadSceneDialog->setCenterPosition();
-			m_loadSceneDialog->bringToFront();
+			m_waitingDialog = new GUI::CDialogWindow(m_canvas, 0.0f, 0.0f, 600.0f, 120.0f);
+			m_waitingDialog->setCaption(L"Load Scene");
+			m_waitingDialog->showCloseButton(false);
+			m_waitingDialog->setCenterPosition();
+			m_waitingDialog->bringToFront();
 
-			initWorkspace(m_loadSceneDialog, m_loadSceneDialog->getCaption());
+			initWorkspace(m_waitingDialog, m_waitingDialog->getCaption());
 
-			CSpace* space = getWorkspace(m_loadSceneDialog);
+			CSpace* space = getWorkspace(m_waitingDialog);
+
 			CSpaceLoadScene* spaceLoadScene = dynamic_cast<CSpaceLoadScene*>(space);
-
 			spaceLoadScene->loadScene(path);
+		}
+
+		void CEditor::initApplyTemplateGUI(const char* path)
+		{
+			m_waitingDialog = new GUI::CDialogWindow(m_canvas, 0.0f, 0.0f, 600.0f, 120.0f);
+			m_waitingDialog->setCaption(L"Apply Template");
+			m_waitingDialog->showCloseButton(false);
+			m_waitingDialog->setCenterPosition();
+			m_waitingDialog->bringToFront();
+
+			initWorkspace(m_waitingDialog, m_waitingDialog->getCaption());
+
+			CSpace* space = getWorkspace(m_waitingDialog);
+
+			CSpaceApplyTemplate* spaceApplyTemplate = dynamic_cast<CSpaceApplyTemplate*>(space);
+			spaceApplyTemplate->applyTemplate(path);
 		}
 
 		void CEditor::initEditorGUI()
@@ -595,6 +564,10 @@ namespace Skylicht
 			else if (workspace == L"GUI Hierarchy")
 			{
 				ret = new CSpaceGUIHierarchy(window, this);
+			}
+			else if (workspace == L"Apply Template")
+			{
+				ret = new CSpaceApplyTemplate(window, this);
 			}
 			else if (workspace == L"Animation")
 			{
@@ -1425,30 +1398,30 @@ namespace Skylicht
 
 		void CEditor::exportGMap(const char* path, long x1, long y1, long x2, long y2, int zoom, int type, int gridSize)
 		{
-			m_exportGMapDialog = new GUI::CDialogWindow(m_canvas, 0.0f, 0.0f, 600.0f, 120.0f);
-			m_exportGMapDialog->setCaption(L"Export GMap");
-			m_exportGMapDialog->showCloseButton(false);
-			m_exportGMapDialog->setCenterPosition();
-			m_exportGMapDialog->bringToFront();
+			m_waitingDialog = new GUI::CDialogWindow(m_canvas, 0.0f, 0.0f, 600.0f, 120.0f);
+			m_waitingDialog->setCaption(L"Export GMap");
+			m_waitingDialog->showCloseButton(false);
+			m_waitingDialog->setCenterPosition();
+			m_waitingDialog->bringToFront();
 
-			initWorkspace(m_exportGMapDialog, m_exportGMapDialog->getCaption());
+			initWorkspace(m_waitingDialog, m_waitingDialog->getCaption());
 
-			CSpace* space = getWorkspace(m_exportGMapDialog);
+			CSpace* space = getWorkspace(m_waitingDialog);
 			CSpaceExportGMap* spaceExport = dynamic_cast<CSpaceExportGMap*>(space);
 			spaceExport->exportMap(path, x1, y1, x2, y2, zoom, type, gridSize);
 		}
 
 		void CEditor::exportSprite(const char* id, const char* path, const std::vector<std::string>& pngs, int width, int height, bool alpha)
 		{
-			m_exportSpriteDialog = new GUI::CDialogWindow(m_canvas, 0.0f, 0.0f, 600.0f, 120.0f);
-			m_exportSpriteDialog->setCaption(L"Export Sprite");
-			m_exportSpriteDialog->showCloseButton(false);
-			m_exportSpriteDialog->setCenterPosition();
-			m_exportSpriteDialog->bringToFront();
+			m_waitingDialog = new GUI::CDialogWindow(m_canvas, 0.0f, 0.0f, 600.0f, 120.0f);
+			m_waitingDialog->setCaption(L"Export Sprite");
+			m_waitingDialog->showCloseButton(false);
+			m_waitingDialog->setCenterPosition();
+			m_waitingDialog->bringToFront();
 
-			initWorkspace(m_exportSpriteDialog, m_exportSpriteDialog->getCaption());
+			initWorkspace(m_waitingDialog, m_waitingDialog->getCaption());
 
-			CSpace* space = getWorkspace(m_exportSpriteDialog);
+			CSpace* space = getWorkspace(m_waitingDialog);
 			CSpaceExportSprite* spaceExport = dynamic_cast<CSpaceExportSprite*>(space);
 			spaceExport->exportSprite(id, path, pngs, width, height, alpha);
 		}

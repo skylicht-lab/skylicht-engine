@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2020 Skylicht Technology CO., LTD
+Copyright (c) 2024 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "GUI/GUIContext.h"
-#include "CSpaceLoadScene.h"
+#include "CSpaceApplyTemplate.h"
 #include "Scene/CSceneImporter.h"
 #include "Editor/SpaceController/CSceneController.h"
 
@@ -32,11 +32,12 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		CSpaceLoadScene::CSpaceLoadScene(GUI::CWindow* window, CEditor* editor) :
+		CSpaceApplyTemplate::CSpaceApplyTemplate(GUI::CWindow* window, CEditor* editor) :
 			CSpaceLoading(window, editor),
+			m_startLoading(false),
 			m_progressBar(NULL),
 			m_statusText(NULL),
-			m_startLoading(false)
+			m_data(NULL)
 		{
 			m_progressBar = new GUI::CProgressBar(window);
 			m_progressBar->dock(GUI::EPosition::Top);
@@ -46,50 +47,59 @@ namespace Skylicht
 			m_statusText->dock(GUI::EPosition::Fill);
 			m_statusText->setMargin(GUI::SMargin(14.0f, 5.0, 14.0, 0.0f));
 			m_statusText->setWrapMultiline(true);
-			m_statusText->setString(L"Open Scene...");
+			m_statusText->setString(L"Apply Template...");
 		}
 
-		CSpaceLoadScene::~CSpaceLoadScene()
+		CSpaceApplyTemplate::~CSpaceApplyTemplate()
 		{
 
 		}
 
-		void CSpaceLoadScene::update()
+		void CSpaceApplyTemplate::update()
 		{
 			CSpace::update();
 
 			if (m_startLoading)
 			{
-				if (!CSceneImporter::beginImportScene(CSceneController::getInstance()->getScene(), m_scenePath.c_str()))
+				int numObject = CSceneImporter::beginReloadTemplate(CSceneController::getInstance()->getScene(), m_data);
+				if (numObject == 0)
 				{
-					// load scene fail
 					m_finished = true;
 				}
 				m_startLoading = false;
 			}
 
-			m_progressBar->setPercent(CSceneImporter::getLoadingPercent());
+			m_progressBar->setPercent(0.0f);
 
 			if (m_finished == false)
 			{
-				m_finished = CSceneImporter::updateLoadScene();
+				m_finished = CSceneImporter::reloadTemplate();
 			}
 
 			if (m_finished == true)
 			{
-				CSceneController::getInstance()->doFinishLoadScene();
+				CSceneController::getInstance()->doFinishApplyTemplate(CSceneImporter::getObjects());
 			}
 		}
 
-		void CSpaceLoadScene::onDestroy(GUI::CBase* base)
+		void CSpaceApplyTemplate::onDestroy(GUI::CBase* base)
 		{
 			CSpace::onDestroy(base);
 		}
 
-		void CSpaceLoadScene::loadScene(const char* path)
+		void CSpaceApplyTemplate::applyTemplate(const char* path)
 		{
-			m_startLoading = true;
-			m_scenePath = path;
+			CSceneController* sceneController = CSceneController::getInstance();
+
+			m_data = CSceneImporter::importTemplateToObject(sceneController->getZone(), path);
+			if (m_data)
+			{
+				m_startLoading = true;
+			}
+			else
+			{
+				m_finished = true;
+			}
 		}
 	}
 }

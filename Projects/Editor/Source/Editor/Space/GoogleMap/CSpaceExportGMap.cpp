@@ -42,7 +42,7 @@ namespace Skylicht
 	namespace Editor
 	{
 		CSpaceExportGMap::CSpaceExportGMap(GUI::CWindow* window, CEditor* editor) :
-			CSpace(window, editor),
+			CSpaceLoading(window, editor),
 			m_progressBar(NULL),
 			m_statusText(NULL),
 			m_image(NULL),
@@ -154,18 +154,15 @@ namespace Skylicht
 			else if (m_state == Finish)
 			{
 				// done!
+				m_finished = true;
 			}
+
 			CSpace::update();
 		}
 
 		void CSpaceExportGMap::onDestroy(GUI::CBase* base)
 		{
 			CSpace::onDestroy(base);
-		}
-
-		bool CSpaceExportGMap::isFinish()
-		{
-			return m_state == Finish;
 		}
 
 		void CSpaceExportGMap::exportMap(const char* path, long x1, long y1, long x2, long y2, int zoom, int type, int gridSize)

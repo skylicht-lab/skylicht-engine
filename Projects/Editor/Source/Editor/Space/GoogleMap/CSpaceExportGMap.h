@@ -26,7 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "SkylichtEngine.h"
 
-#include "Editor/Space/CSpace.h"
+#include "Editor/Space/CSpaceLoading.h"
 #include "AssetManager/CAssetImporter.h"
 
 #include "CDownloadGMapThread.h"
@@ -35,7 +35,7 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSpaceExportGMap : public CSpace
+		class CSpaceExportGMap : public CSpaceLoading
 		{
 		protected:
 			enum EImportState
@@ -80,8 +80,6 @@ namespace Skylicht
 			virtual void update();
 
 			virtual void onDestroy(GUI::CBase* base);
-
-			bool isFinish();
 
 			void exportMap(const char* path, long x1, long y1, long x2, long y2, int zoom, int type, int gridSize);
 		};

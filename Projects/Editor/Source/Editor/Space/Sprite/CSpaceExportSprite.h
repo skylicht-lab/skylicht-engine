@@ -26,7 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "SkylichtEngine.h"
 
-#include "Editor/Space/CSpace.h"
+#include "Editor/Space/CSpaceLoading.h"
 #include "AssetManager/CAssetImporter.h"
 #include "AssetManager/CAssetManager.h"
 
@@ -36,7 +36,7 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSpaceExportSprite : public CSpace
+		class CSpaceExportSprite : public CSpaceLoading
 		{
 		protected:
 			enum EImportState
@@ -85,8 +85,6 @@ namespace Skylicht
 			virtual void update();
 
 			virtual void onDestroy(GUI::CBase* base);
-
-			bool isFinish();
 
 			void exportSprite(const char* id, const char* path, const std::vector<std::string>& pngs, int width, int height, bool alpha);
 

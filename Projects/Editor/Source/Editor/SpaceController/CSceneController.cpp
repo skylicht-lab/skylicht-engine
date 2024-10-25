@@ -1423,6 +1423,25 @@ namespace Skylicht
 		void CSceneController::onApplyTemplate(CGameObject* object)
 		{
 			CAssetCreateController::getInstance()->applyTemplate(object);
+
+			if (object->isTemplateAsset())
+				m_spaceScene->getEditor()->initApplyTemplateGUI(object->getTemplateAsset());
+		}
+
+		void CSceneController::doFinishApplyTemplate(std::list<CGameObject*>& objects)
+		{
+			m_scene->updateAddRemoveObject();
+
+			for (CGameObject* obj : objects)
+			{
+				rebuildHierarchyData(obj);
+
+				if (m_spaceHierarchy)
+					m_spaceHierarchy->getController()->updateTreeNode(obj, true);
+			}
+
+			CSelectObject* selectObject = CSelection::getInstance()->getLastSelected();
+			CPropertyController::getInstance()->setProperty(selectObject);
 		}
 
 		void CSceneController::onRevertTemplate(CGameObject* object)

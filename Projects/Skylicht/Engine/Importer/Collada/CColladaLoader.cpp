@@ -83,7 +83,7 @@ namespace Skylicht
 		io::IXMLReader* xmlRead = fs->createXMLReader(fileName);
 		if (xmlRead == NULL)
 		{
-			char log[64];
+			char log[1024];
 			sprintf(log, "Can not load: %s\n", fileName);
 			os::Printer::log(log);
 			return false;

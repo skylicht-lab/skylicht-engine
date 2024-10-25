@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2020 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
@@ -22,49 +22,23 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "SkylichtEngine.h"
-
-#include "Editor/Space/CSpaceLoading.h"
-#include "AssetManager/CAssetImporter.h"
+#include "pch.h"
+#include "CSpaceLoading.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSpaceImport : public CSpaceLoading
+		CSpaceLoading::CSpaceLoading(GUI::CWindow* window, CEditor* editor) :
+			CSpace(window, editor),
+			m_finished(false)
 		{
-		protected:
-			enum EImportState
-			{
-				None = 0,
-				ImportAsset,
-				DeleteAsset,
-				Finish
-			};
 
-		protected:
-			GUI::CProgressBar* m_progressBar;
+		}
 
-			GUI::CLabel* m_statusText;
+		CSpaceLoading::~CSpaceLoading()
+		{
 
-			CAssetImporter* m_importer;
-
-			EImportState m_state;
-
-		public:
-			CSpaceImport(GUI::CWindow* window, CEditor* editor);
-
-			virtual ~CSpaceImport();
-
-			void initImportAll();
-
-			void initImportFiles(std::list<SFileNode*>& files, std::list<std::string>& deleted);
-
-			virtual void update();
-
-			virtual void onDestroy(GUI::CBase* base);
-		};
+		}
 	}
 }

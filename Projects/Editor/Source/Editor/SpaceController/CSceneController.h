@@ -261,6 +261,8 @@ namespace Skylicht
 
 			void onApplyTemplate(CGameObject* object);
 
+			void doFinishApplyTemplate(std::list<CGameObject*>& objects);
+
 			void onRevertTemplate(CGameObject* object);
 
 			void onUnpackTemplate(CGameObject* object);

@@ -52,7 +52,7 @@ namespace Skylicht
 		io::IReadFile* file = fs->createAndOpenFile(resource);
 		if (file == NULL)
 		{
-			char log[64];
+			char log[1024];
 			sprintf(log, "Can not load: %s\n", resource);
 			os::Printer::log(log);
 			return false;

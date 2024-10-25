@@ -32,7 +32,7 @@ namespace Skylicht
 	namespace Editor
 	{
 		CSpaceImport::CSpaceImport(GUI::CWindow* window, CEditor* editor) :
-			CSpace(window, editor),
+			CSpaceLoading(window, editor),
 			m_progressBar(NULL),
 			m_statusText(NULL),
 			m_importer(NULL),
@@ -123,17 +123,13 @@ namespace Skylicht
 					m_state = Finish;
 			}
 
+			m_finished = m_importer->isFinish();
 			CSpace::update();
 		}
 
 		void CSpaceImport::onDestroy(GUI::CBase* base)
 		{
 			CSpace::onDestroy(base);
-		}
-
-		bool CSpaceImport::isFinish()
-		{
-			return m_importer->isFinish();
 		}
 	}
 }

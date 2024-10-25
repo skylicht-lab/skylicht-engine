@@ -60,5 +60,7 @@ namespace Skylicht
 		static int beginReloadTemplate(CScene* scene, CObjectSerializable* templateData);
 
 		static bool reloadTemplate();
+
+		static std::list<CGameObject*>& getObjects();
 	};
 }

@@ -542,4 +542,9 @@ namespace Skylicht
 
 		return false;
 	}
+
+	std::list<CGameObject*>& CSceneImporter::getObjects()
+	{
+		return g_listGameObject;
+	}
 }
