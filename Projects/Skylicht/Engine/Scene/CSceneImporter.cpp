@@ -486,6 +486,8 @@ namespace Skylicht
 				}
 			}
 
+			container->updateAddRemoveObject();
+
 			if (objectOrder.size() > 0)
 				container->sortChildsByTemplateOrder(objectOrder);
 		}

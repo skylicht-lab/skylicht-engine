@@ -192,7 +192,12 @@ namespace Skylicht
 		}
 
 		if (generateNewID)
+		{
 			id->set(saveId);
+
+			if (!m_templateObjectId.empty())
+				ret->setTemplateObjectID(ret->getID().c_str());
+		}
 
 		if (ret != NULL)
 			updateIndexSearchObject();
@@ -211,6 +216,9 @@ namespace Skylicht
 		p->setID(CRandomID::generate().c_str());
 		p->setName(name.c_str());
 
+		if (!m_templateObjectId.empty())
+			p->setTemplateObjectID(p->getID().c_str());
+
 		addChild(p);
 
 		p->createEntity();
@@ -227,6 +235,9 @@ namespace Skylicht
 
 		container->setID(CRandomID::generate().c_str());
 		container->setParent(this);
+
+		if (!m_templateObjectId.empty())
+			container->setTemplateObjectID(container->getID().c_str());
 
 		container->setName(name.c_str());
 		addChild(container);

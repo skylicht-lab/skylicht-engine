@@ -69,12 +69,12 @@ namespace Skylicht
 				m_startLoading = false;
 			}
 
-			m_progressBar->setPercent(0.0f);
-
 			if (m_finished == false)
 			{
 				m_finished = CSceneImporter::reloadTemplate();
 			}
+
+			m_progressBar->setPercent(CSceneImporter::getLoadingPercent());
 
 			if (m_finished == true)
 			{
