@@ -42,6 +42,8 @@ namespace Skylicht
 
 	enum class EReflectionSize
 	{
+		X64,
+		X128,
 		X256,
 		X512,
 		X1024,

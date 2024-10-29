@@ -43,8 +43,8 @@ namespace Skylicht
 	CReflectionProbe::CReflectionProbe() :
 		m_staticTexture(NULL),
 		m_bakedTexture(NULL),
-		m_size(EReflectionSize::X512),
-		m_bakeSize(512, 512),
+		m_size(EReflectionSize::X128),
+		m_bakeSize(128, 128),
 		m_probeData(NULL),
 		m_type(EReflectionType::Baked)
 	{
@@ -115,6 +115,9 @@ namespace Skylicht
 
 		CEnumProperty<EReflectionSize>* bakeSizeType = new CEnumProperty<EReflectionSize>(object, "size", m_size);
 		bakeSizeType->setUIHeader("Bake Probe");
+		bakeSizeType->addEnumString("64", EReflectionSize::X64);
+		bakeSizeType->addEnumString("128", EReflectionSize::X128);
+		bakeSizeType->addEnumString("256", EReflectionSize::X256);
 		bakeSizeType->addEnumString("256", EReflectionSize::X256);
 		bakeSizeType->addEnumString("512", EReflectionSize::X512);
 		bakeSizeType->addEnumString("1024", EReflectionSize::X1024);
@@ -133,7 +136,7 @@ namespace Skylicht
 		CComponentSystem::loadSerializable(object);
 
 		m_type = object->get<EReflectionType>("type", EReflectionType::Baked);
-		m_size = object->get<EReflectionSize>("size", EReflectionSize::X512);
+		m_size = object->get<EReflectionSize>("size", EReflectionSize::X128);
 
 		std::string staticPath = object->get<std::string>("static", "");
 		if (!staticPath.empty() && m_staticPath != staticPath)
@@ -158,6 +161,12 @@ namespace Skylicht
 		core::dimension2du targetSize;
 		switch (m_size)
 		{
+		case EReflectionSize::X64:
+			targetSize.set(64, 64);
+			break;
+		case EReflectionSize::X128:
+			targetSize.set(128, 128);
+			break;
 		case EReflectionSize::X256:
 			targetSize.set(256, 256);
 			break;
@@ -204,6 +213,12 @@ namespace Skylicht
 		core::dimension2du targetSize;
 		switch (m_size)
 		{
+		case EReflectionSize::X64:
+			targetSize.set(64, 64);
+			break;
+		case EReflectionSize::X128:
+			targetSize.set(128, 128);
+			break;
 		case EReflectionSize::X256:
 			targetSize.set(256, 256);
 			break;

@@ -101,7 +101,7 @@ void main(void)
 {
 #ifdef NO_TEXTURE
 	vec4 albedoMap = uColor;
-	vec3 rmaMap = vec3(uRoughnessMetal, 1.0, 1.0);
+	vec3 rmaMap = vec3(uRoughnessMetal, 1.0);
 #else
 	vec4 albedoMap = texture(uTexAlbedo, vTexCoord0.xy) * uColor;
 	vec3 rmaMap = texture(uTexRMA, vTexCoord0.xy).xyz;
@@ -160,7 +160,9 @@ void main(void)
 
 	// IBL reflection
 	vec3 reflection = -normalize(reflect(vWorldViewDir, n));
-	vec3 prefilteredColor = sRGB(textureLod(uTexReflect, reflection, roughness * 8.0).xyz);
+	
+	// reflection should be the size: 128x128
+	vec3 prefilteredColor = sRGB(textureLod(uTexReflect, reflection, roughness * 4.9).xyz);
 
 	// Get F scale and bias from the LUT
 	vec2 envBRDF = texture(uTexBRDF, vec2(VdotN, roughness)).rg;

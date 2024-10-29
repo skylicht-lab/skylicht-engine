@@ -31,6 +31,7 @@ struct PS_INPUT
 	float3 worldViewDir: WORLDVIEWDIR;
 	float3 worldLightDir: WORLDLIGHTDIR;
 	float4 viewPosition: VIEWPOSITION;
+	float3 worldPosition: WORLDPOSITION;
 };
 #else
 struct PS_INPUT
@@ -44,6 +45,7 @@ struct PS_INPUT
 	float3 worldBinormal: WORLDBINORMAL;
 	float tangentw : TANGENTW;
 	float4 viewPosition: VIEWPOSITION;
+	float3 worldPosition: WORLDPOSITION;
 };
 #endif
 
@@ -116,7 +118,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 {
 #ifdef NO_TEXTURE
 	float4 albedoMap = uColor;
-	float3 rmaMap = float3(uRoughnessMetal, 1.0, 0.0);
+	float3 rmaMap = float3(uRoughnessMetal, 1.0);
 #else
 	float4 albedoMap = uTexAlbedo.Sample(uTexAlbedoSampler, input.tex0) * uColor;
 	float3 rmaMap = uTexRMA.Sample(uTexRMASampler, input.tex0).xyz;
@@ -175,7 +177,9 @@ float4 main(PS_INPUT input) : SV_TARGET
 
 	// IBL reflection
 	float3 reflection = -normalize(reflect(input.worldViewDir, n));
-	float3 prefilteredColor = sRGB(uTexReflect.SampleLevel(uTexReflectSampler, reflection, roughness * 8).xyz);
+	
+	// reflection should be the size: 128x128
+	float3 prefilteredColor = sRGB(uTexReflect.SampleLevel(uTexReflectSampler, reflection, roughness * 4.9).xyz);
 	
 	// Get F scale and bias from the LUT
 	float2 envBRDF = uTexBRDF.Sample(uTexBRDFSampler, float2(VdotN, roughness)).rg;

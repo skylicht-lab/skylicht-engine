@@ -6,7 +6,7 @@
 #include "Context/CContext.h"
 
 #include "Primitive/CPlane.h"
-#include "Primitive/CCube.h"
+#include "Primitive/CSphere.h"
 #include "SkyDome/CSkyDome.h"
 
 CViewInit::CViewInit() :
@@ -100,32 +100,64 @@ void CViewInit::initScene()
 	reflection->loadStaticTexture("Common/Textures/Sky/PaperMill");
 
 	// helmet
-	m_helmet = zone->createEmptyObject();
-	m_helmet->setName("helmet");
+	{
+		m_helmet = zone->createEmptyObject();
+		m_helmet->setName("helmet");
 
-	// render mesh & init material
-	std::vector<std::string> searchTextureFolders;
-	CEntityPrefab* modelPrefab = CMeshManager::getInstance()->loadModel("SampleModels/DamagedHelmet/DamagedHelmet.dae", NULL, true, false);
+		// render mesh & init material
+		std::vector<std::string> searchTextureFolders;
+		CEntityPrefab* modelPrefab = CMeshManager::getInstance()->loadModel("SampleModels/DamagedHelmet/DamagedHelmet.dae", NULL, true, false);
 
-	CRenderMesh* characterRenderer = m_helmet->addComponent<CRenderMesh>();
-	characterRenderer->initFromPrefab(modelPrefab);
+		CRenderMesh* characterRenderer = m_helmet->addComponent<CRenderMesh>();
+		characterRenderer->initFromPrefab(modelPrefab);
 
-	ArrayMaterial materials = CMaterialManager::getInstance()->initDefaultMaterial(modelPrefab);
-	materials[0]->changeShader("BuiltIn/Shader/PBR/Forward/PBR.xml");
+		ArrayMaterial materials = CMaterialManager::getInstance()->initDefaultMaterial(modelPrefab);
+		materials[0]->changeShader("BuiltIn/Shader/PBR/Forward/PBR.xml");
 
-	CTextureManager* textureManager = CTextureManager::getInstance();
-	ITexture* albedoMap = textureManager->getTexture("SampleModels/DamagedHelmet/Default_albedo.jpg");
-	ITexture* normalMap = textureManager->getTexture("SampleModels/DamagedHelmet/Default_normal.jpg");
-	ITexture* rmaMap = textureManager->getTexture("SampleModels/DamagedHelmet/Default_metalRoughness.jpg");
-	ITexture* emissiveMap = textureManager->getTexture("SampleModels/DamagedHelmet/Default_emissive.jpg");
-	materials[0]->setUniformTexture("uTexAlbedo", albedoMap);
-	materials[0]->setUniformTexture("uTexNormal", normalMap);
-	materials[0]->setUniformTexture("uTexRMA", rmaMap);
-	materials[0]->setUniformTexture("uTexEmissive", emissiveMap);
-	characterRenderer->initMaterial(materials);
+		CTextureManager* textureManager = CTextureManager::getInstance();
+		ITexture* albedoMap = textureManager->getTexture("SampleModels/DamagedHelmet/Default_albedo.jpg");
+		ITexture* normalMap = textureManager->getTexture("SampleModels/DamagedHelmet/Default_normal.jpg");
+		ITexture* rmaMap = textureManager->getTexture("SampleModels/DamagedHelmet/Default_metalRoughness.jpg");
+		ITexture* emissiveMap = textureManager->getTexture("SampleModels/DamagedHelmet/Default_emissive.jpg");
+		materials[0]->setUniformTexture("uTexAlbedo", albedoMap);
+		materials[0]->setUniformTexture("uTexNormal", normalMap);
+		materials[0]->setUniformTexture("uTexRMA", rmaMap);
+		materials[0]->setUniformTexture("uTexEmissive", emissiveMap);
+		characterRenderer->initMaterial(materials);
 
-	// indirect lighting
-	m_helmet->addComponent<CIndirectLighting>();
+		// indirect lighting
+		m_helmet->addComponent<CIndirectLighting>();
+	}
+
+	{
+		core::vector3df offset(2.0f, 0.0f, -5.0f);
+		float distance = 1.0f;
+
+		for (int i = 0; i <= 10; i++)
+		{
+			for (int j = 0; j <= 10; j++)
+			{
+				CGameObject* sphereObj = zone->createEmptyObject();
+
+				CSphere* sphere = sphereObj->addComponent<CSphere>();
+
+				CMaterial* material = sphere->getMaterial();
+				material->changeShader("BuiltIn/Shader/PBR/Forward/PBRNoTexture.xml");
+
+				float roughnessMetal[2];
+				roughnessMetal[0] = (float)i / 10.0f;
+				roughnessMetal[1] = (float)j / 10.0f;
+				material->setUniform2("uRoughnessMetal", roughnessMetal);
+				material->applyMaterial();
+
+				CTransformEuler* t = sphereObj->getTransformEuler();
+				t->setPosition(offset + core::vector3df(i * distance, 0.0f, j * distance));
+				t->setScale(core::vector3df(0.5f, 0.5f, 0.5f));
+
+				m_spheres.push_back(sphereObj);
+			}
+		}
+	}
 
 	// lighting
 	CGameObject* lightObj = zone->createEmptyObject();
@@ -260,6 +292,8 @@ void CViewInit::onRender()
 			m_bakeSHLighting = false;
 
 			m_helmet->setVisible(false);
+			for (CGameObject* obj : m_spheres)
+				obj->setVisible(false);
 
 			// light probe
 			CGameObject* lightProbeObj = zone->createEmptyObject();
@@ -280,6 +314,8 @@ void CViewInit::onRender()
 			lm->bakeProbes(probes, bakeCamera, rp, scene->getEntityManager());
 
 			m_helmet->setVisible(true);
+			for (CGameObject* obj : m_spheres)
+				obj->setVisible(true);
 		}
 	}
 	else

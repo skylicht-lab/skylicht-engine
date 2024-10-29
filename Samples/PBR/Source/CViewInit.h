@@ -16,7 +16,7 @@ public:
 	};
 
 protected:
-	CGetFileURL *m_getFile;
+	CGetFileURL* m_getFile;
 
 	bool m_bakeSHLighting;
 
@@ -24,13 +24,14 @@ protected:
 	unsigned int m_downloaded;
 
 	CGameObject* m_helmet;
+	std::vector<CGameObject*> m_spheres;
 
 	CGameObject* m_guiObject;
 	CGUIText* m_textInfo;
 	CGlyphFont* m_font;
 
 protected:
-	io::path getBuiltInPath(const char *name);
+	io::path getBuiltInPath(const char* name);
 
 public:
 	CViewInit();

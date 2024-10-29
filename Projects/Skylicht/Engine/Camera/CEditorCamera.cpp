@@ -195,7 +195,7 @@ namespace Skylicht
 	void CEditorCamera::updateInputZoom(f32 timeDiff, core::vector3df& pos, const core::vector3df& moveDir)
 	{
 		float zoomX = (m_cursorPos.X - m_centerCursor.X) * m_zoomSpeed * timeDiff;
-		float zoomY = (m_centerCursor.Y - m_cursorPos.Y) * m_zoomSpeed * timeDiff;
+		float zoomY = (m_cursorPos.Y - m_centerCursor.Y) * m_zoomSpeed * timeDiff;
 
 		core::vector2df delta(zoomX, zoomY);
 		float length = delta.getLength();
