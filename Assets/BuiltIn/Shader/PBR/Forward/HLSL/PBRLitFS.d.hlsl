@@ -168,7 +168,8 @@ float4 main(PS_INPUT input) : SV_TARGET
 
 	// IBL diffuse
 	float3 F = fresnelSchlick(input.worldViewDir, n, F0);
-	float3 kd = lerp(float3(1.0, 1.0, 1.0) - F, float3(0.0, 0.0, 0.0), metalness);
+	float3 kd = float3(1.0, 1.0, 1.0) - F;
+	kd *= (1.0 - metalness);
 
 	float3 indirectDiffuse = ambientLighting * lambert;
 
@@ -178,7 +179,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 	
 	// Get F scale and bias from the LUT
 	float2 envBRDF = uTexBRDF.Sample(uTexBRDFSampler, float2(VdotN, roughness)).rg;
-	F = F0 * envBRDF.x + envBRDF.y;
+	F = F * envBRDF.x + envBRDF.y;
 	float3 indirectSpecular = prefilteredColor * F;
 
 	float3 indirectLight = (kd * indirectDiffuse + indirectSpecular);

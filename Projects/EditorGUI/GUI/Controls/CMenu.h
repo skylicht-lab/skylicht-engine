@@ -39,8 +39,10 @@ namespace Skylicht
 				bool m_isOpenSubMenu;
 				bool m_isOpenPopup;
 
+				bool m_closeAllMenuWhenClicked;
+
 			public:
-				CMenu(CBase *parent);
+				CMenu(CBase* parent);
 				virtual ~CMenu();
 
 				virtual void layout();
@@ -69,9 +71,9 @@ namespace Skylicht
 
 				virtual void close();
 
-				virtual void onMenuItemHover(CBase *item);
+				virtual void onMenuItemHover(CBase* item);
 
-				virtual void openMenu(CMenuItem *item);
+				virtual void openMenu(CMenuItem* item);
 
 				virtual void closeMenu();
 
@@ -82,11 +84,16 @@ namespace Skylicht
 					return true;
 				}
 
-				virtual void onMenuItemPress(CBase *item);
+				virtual void onMenuItemPress(CBase* item);
 
 				inline bool isOpen()
 				{
 					return m_isOpenPopup;
+				}
+
+				inline void closeAllMenuWhenClicked(bool b)
+				{
+					m_closeAllMenuWhenClicked = b;
 				}
 
 			public:
@@ -96,7 +103,7 @@ namespace Skylicht
 
 			protected:
 
-				virtual void onAddItem(CMenuItem *item);
+				virtual void onAddItem(CMenuItem* item);
 			};
 		}
 	}

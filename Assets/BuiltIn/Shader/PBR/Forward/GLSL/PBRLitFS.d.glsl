@@ -153,7 +153,8 @@ void main(void)
 
 	// IBL diffuse
 	vec3 F = fresnelSchlick(vWorldViewDir, n, F0);
-	vec3 kd = mix(vec3(1.0) - F, vec3(0.0), metalness);
+	vec3 kd = vec3(1.0) - F;
+	kd *= (1.0 - metalness);
 
 	vec3 indirectDiffuse = ambientLighting * lambert;
 
@@ -163,7 +164,7 @@ void main(void)
 
 	// Get F scale and bias from the LUT
 	vec2 envBRDF = texture(uTexBRDF, vec2(VdotN, roughness)).rg;
-	F = F0 * envBRDF.x + envBRDF.y;
+	F = F * envBRDF.x + envBRDF.y;
 	vec3 indirectSpecular = prefilteredColor * F;
 
 	vec3 indirectLight = (kd * indirectDiffuse + indirectSpecular);

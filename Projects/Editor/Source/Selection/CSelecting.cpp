@@ -37,7 +37,8 @@ namespace Skylicht
 	{
 		IMPLEMENT_SINGLETON(CSelecting);
 
-		CSelecting::CSelecting()
+		CSelecting::CSelecting() :
+			m_altPressed(false)
 		{
 
 		}
@@ -58,6 +59,13 @@ namespace Skylicht
 			if (handle->isHoverOnAxisOrPlane() || handle->isUsing())
 				return false;
 
+			if (event.EventType == EET_KEY_INPUT_EVENT)
+			{
+				if (event.KeyInput.Key == irr::KEY_MENU ||
+					event.KeyInput.Key == irr::KEY_LMENU ||
+					event.KeyInput.Key == irr::KEY_RMENU)
+					m_altPressed = event.KeyInput.PressedDown;
+			}
 			if (event.EventType == EET_MOUSE_INPUT_EVENT)
 			{
 				int mouseX = event.MouseInput.X;
@@ -73,74 +81,77 @@ namespace Skylicht
 				}
 				else if (event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
 				{
-					CSceneController* sceneController = CSceneController::getInstance();
-					CSelectObjectSystem* selectSystem = sceneController->getSelectObjectSystem();
-
-					core::line3df ray = CProjective::getViewRay(selectSystem->getCamera(), (float)mouseX, (float)mouseY, selectSystem->getViewportWidth(), selectSystem->getViewportHeight());
-
-					float maxDistanceSQ = 500.0f * 500.0f;
-
-					CGameObject* object = NULL;
-					CEntity* entity = NULL;
-					getObjectWithRay(ray, maxDistanceSQ, object, entity);
-
-					CSelection* selection = CSelection::getInstance();
-
-					if (entity != NULL)
+					if (!m_altPressed)
 					{
-						if (!GUI::CInput::getInput()->isKeyDown(GUI::EKey::KEY_CONTROL))
+						CSceneController* sceneController = CSceneController::getInstance();
+						CSelectObjectSystem* selectSystem = sceneController->getSelectObjectSystem();
+
+						core::line3df ray = CProjective::getViewRay(selectSystem->getCamera(), (float)mouseX, (float)mouseY, selectSystem->getViewportWidth(), selectSystem->getViewportHeight());
+
+						float maxDistanceSQ = 500.0f * 500.0f;
+
+						CGameObject* object = NULL;
+						CEntity* entity = NULL;
+						getObjectWithRay(ray, maxDistanceSQ, object, entity);
+
+						CSelection* selection = CSelection::getInstance();
+
+						if (entity != NULL)
 						{
-							// need clear current selection
-							if (selection->getSelected(entity) == NULL)
+							if (!GUI::CInput::getInput()->isKeyDown(GUI::EKey::KEY_CONTROL))
 							{
-								sceneController->deselectAllOnHierachy();
-								selection->clear();
-							}
-							sceneController->selectOnHierachy(entity);
-						}
-						else
-						{
-							// hold control && re-pick this object
-							if (selection->getSelected(object) != NULL)
-							{
-								sceneController->deselectOnHierachy(object);
+								// need clear current selection
+								if (selection->getSelected(entity) == NULL)
+								{
+									sceneController->deselectAllOnHierachy();
+									selection->clear();
+								}
+								sceneController->selectOnHierachy(entity);
 							}
 							else
 							{
+								// hold control && re-pick this object
+								if (selection->getSelected(object) != NULL)
+								{
+									sceneController->deselectOnHierachy(object);
+								}
+								else
+								{
+									sceneController->selectOnHierachy(object);
+								}
+							}
+						}
+						else if (object != NULL)
+						{
+							if (!GUI::CInput::getInput()->isKeyDown(GUI::EKey::KEY_CONTROL))
+							{
+								// need clear current selection
+								if (selection->getSelected(object) == NULL)
+								{
+									sceneController->deselectAllOnHierachy();
+									selection->clear();
+								}
 								sceneController->selectOnHierachy(object);
-							}
-						}
-					}
-					else if (object != NULL)
-					{
-						if (!GUI::CInput::getInput()->isKeyDown(GUI::EKey::KEY_CONTROL))
-						{
-							// need clear current selection
-							if (selection->getSelected(object) == NULL)
-							{
-								sceneController->deselectAllOnHierachy();
-								selection->clear();
-							}
-							sceneController->selectOnHierachy(object);
-						}
-						else
-						{
-							// hold control && re-pick this object
-							if (selection->getSelected(object) != NULL)
-							{
-								sceneController->deselectOnHierachy(object);
 							}
 							else
 							{
-								sceneController->selectOnHierachy(object);
+								// hold control && re-pick this object
+								if (selection->getSelected(object) != NULL)
+								{
+									sceneController->deselectOnHierachy(object);
+								}
+								else
+								{
+									sceneController->selectOnHierachy(object);
+								}
 							}
 						}
-					}
-					else
-					{
-						// clear selection
-						sceneController->deselectAllOnHierachy();
-						selection->clear();
+						else
+						{
+							// clear selection
+							sceneController->deselectAllOnHierachy();
+							selection->clear();
+						}
 					}
 				}
 

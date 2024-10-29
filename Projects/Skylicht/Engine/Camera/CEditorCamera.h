@@ -34,16 +34,28 @@ namespace Skylicht
 		public CComponentSystem,
 		public IEventReceiver
 	{
+	public:
+		enum EControlStyle
+		{
+			Default,
+			Maya,
+			Blender
+		};
+
 	protected:
 		CCamera* m_camera;
 
 		f32 m_moveSpeed;
 		f32 m_rotateSpeed;
+		f32 m_zoomSpeed;
+
 		gui::ICursorControl* m_cursorControl;
 
 		core::position2df m_centerCursor;
 		core::position2df m_cursorPos;
 
+		bool m_altKeyDown;
+		bool m_shiftKeyDown;
 		bool m_leftMousePress;
 		bool m_rightMousePress;
 		bool m_midMousePress;
@@ -51,6 +63,7 @@ namespace Skylicht
 		bool m_mouseWhell;
 		float m_wheel;
 
+		EControlStyle m_controlStyle;
 	public:
 		CEditorCamera();
 
@@ -87,9 +100,29 @@ namespace Skylicht
 			return m_rotateSpeed;
 		}
 
+		inline float getZoomSpeed()
+		{
+			return m_zoomSpeed;
+		}
+
+		inline void setZoomSpeed(float z)
+		{
+			m_zoomSpeed = z;
+		}
+
 		inline CCamera* getCamera()
 		{
 			return m_camera;
+		}
+
+		inline void setControlStyle(EControlStyle style)
+		{
+			m_controlStyle = style;
+		}
+
+		inline EControlStyle getControlStyle()
+		{
+			return m_controlStyle;
 		}
 
 	protected:
@@ -97,5 +130,7 @@ namespace Skylicht
 		void updateInputRotate(core::vector3df& relativeRotation, f32 timeDiff);
 
 		void updateInputOffset(core::vector3df& offsetPosition, f32 timeDiff);
+
+		void updateInputZoom(f32 timeDiff, core::vector3df& pos, const core::vector3df& moveDir);
 	};
 }

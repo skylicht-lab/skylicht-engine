@@ -103,8 +103,9 @@ namespace Skylicht
 
 			void CComboBox::setSelectIndex(u32 index, bool invokeEvent)
 			{
-				if (m_selectIndex < m_list.size())
+				if (index < m_list.size())
 				{
+					m_selectIndex = index;
 					setLabel(m_list[m_selectIndex]);
 
 					if (invokeEvent && OnChanged != nullptr)
@@ -156,15 +157,18 @@ namespace Skylicht
 
 			void CComboBox::openMenu()
 			{
-				getCanvas()->closeMenu();
+				// getCanvas()->closeMenu();
 
 				m_menu->open(this);
+				m_menu->closeAllMenuWhenClicked(false);
 				m_menu->setWidth(width());
 			}
 
 			void CComboBox::closeMenu()
 			{
-				getCanvas()->closeMenu();
+				// getCanvas()->closeMenu();
+
+				m_menu->close();
 			}
 		}
 	}

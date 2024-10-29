@@ -38,6 +38,8 @@ namespace Skylicht
 		protected:
 			core::triangle3df m_triangles[12];
 
+			bool m_altPressed;
+
 		public:
 			CSelecting();
 
@@ -47,7 +49,7 @@ namespace Skylicht
 
 			virtual bool OnEvent(const SEvent& event);
 
-			void getObjectWithRay(const core::line3d<f32>& ray, f32& outBestDistanceSquared, CGameObject* &object, CEntity* &entity);
+			void getObjectWithRay(const core::line3d<f32>& ray, f32& outBestDistanceSquared, CGameObject*& object, CEntity*& entity);
 		};
 	}
 }

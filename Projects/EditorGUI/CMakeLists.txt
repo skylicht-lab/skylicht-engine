@@ -17,7 +17,6 @@ add_library(EditorGUI ${ENGINE_SHARED_OR_STATIC_LIB} ${editorui_source})
 
 target_precompiled_header(EditorGUI ./pch.cpp ${editorui_source})
 
-# Irrlicht shared
 if (BUILD_SHARED_LIBS)
 	set_target_properties(EditorGUI PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS true)
 	add_definitions(-DEDITOR_GUI_EXPORTS)

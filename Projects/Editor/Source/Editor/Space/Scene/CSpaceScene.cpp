@@ -32,6 +32,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "ReflectionProbe/CReflectionProbe.h"
 
 #include "Editor/CEditor.h"
+#include "Editor/CEditorSetting.h"
 #include "Handles/CHandles.h"
 #include "Selection/CSelection.h"
 #include "Selection/CSelecting.h"
@@ -352,10 +353,23 @@ namespace Skylicht
 			CGameObject* camObj = zone->createEmptyObject();
 			camObj->setName(L"EditorCamera");
 			camObj->setEditorObject(true);
-			camObj->addComponent<CCamera>();
-			camObj->addComponent<CEditorCamera>()->setMoveSpeed(1.0f);
+			m_editorCamera = camObj->addComponent<CCamera>();
 
-			m_editorCamera = camObj->getComponent<CCamera>();
+			// editor camera setting
+			CEditorCamera* editorCamera = camObj->addComponent<CEditorCamera>();
+			CEditorSetting* editorSetting = CEditorSetting::getInstance();
+			int cameraStyle = editorSetting->CameraNavigation.get();
+			if (cameraStyle == 1)
+				editorCamera->setControlStyle(CEditorCamera::Maya);
+			else if (cameraStyle == 1)
+				editorCamera->setControlStyle(CEditorCamera::Blender);
+			else
+				editorCamera->setControlStyle(CEditorCamera::Default);
+			editorCamera->setMoveSpeed(editorSetting->CameraMoveSpeed.get());
+			editorCamera->setZoomSpeed(editorSetting->CameraZoomSpeed.get());
+			editorCamera->setRotateSpeed(editorSetting->CameraRotateSpeed.get());
+
+			// position
 			m_editorCamera->setPosition(core::vector3df(-2.0f, 1.5f, -2.0f));
 			m_editorCamera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
 
@@ -1029,12 +1043,10 @@ namespace Skylicht
 
 			m_scene->OnEvent(event);
 
-			if (down == true)
+			if (key == GUI::KEY_DELETE)
 			{
-				if (key == GUI::KEY_DELETE)
-				{
+				if (down == true)
 					CSceneController::getInstance()->onDelete();
-				}
 			}
 		}
 

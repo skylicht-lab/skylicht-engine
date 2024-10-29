@@ -49,7 +49,8 @@ namespace Skylicht
 			m_snapRotate(false),
 			m_snapDistanceXZ(1.0f),
 			m_snapDistanceY(1.0f),
-			m_snapRotateDeg(10.0f)
+			m_snapRotateDeg(10.0f),
+			m_isAltPressed(false)
 		{
 
 		}
@@ -152,7 +153,7 @@ namespace Skylicht
 				int mouseX = event.MouseInput.X;
 				int mouseY = event.MouseInput.Y;
 
-				if (m_handlesRenderer != NULL)
+				if (m_handlesRenderer != NULL && !m_isAltPressed)
 				{
 					if (event.MouseInput.Event == EMIE_MOUSE_MOVED)
 					{
@@ -170,22 +171,35 @@ namespace Skylicht
 						m_mouseState = 2;
 						m_handlesRenderer->onMouseEvent(mouseX, mouseY, m_mouseState);
 					}
-
 					return true;
 				}
 			}
 			else if (event.EventType == EET_KEY_INPUT_EVENT)
 			{
-				if (event.KeyInput.PressedDown && event.KeyInput.Key == irr::KEY_ESCAPE)
+				if (event.KeyInput.Key == irr::KEY_MENU ||
+					event.KeyInput.Key == irr::KEY_LMENU ||
+					event.KeyInput.Key == irr::KEY_RMENU)
 				{
-					if (m_mouseState == 1)
+					m_isAltPressed = event.KeyInput.PressedDown;
+					if (m_isAltPressed)
 					{
-						m_handlesRenderer->cancel();
+						m_handlesRenderer->skip();
+						m_mouseState = 0;
 					}
 					return true;
 				}
+				else if (event.KeyInput.Key == irr::KEY_ESCAPE)
+				{
+					if (event.KeyInput.PressedDown)
+					{
+						if (m_mouseState == 1)
+						{
+							m_handlesRenderer->cancel();
+						}
+						return true;
+					}
+				}
 			}
-
 			return false;
 		}
 

@@ -522,9 +522,9 @@ namespace Skylicht
 				bool allowFlip = m_allowAxisFlip && camera->getProjectionType() == CCamera::Perspective;
 				const float epsilon = 0.001f;
 
-				float mulAxis = (allowFlip && lenDir < lenDirMinus&& fabsf(lenDir - lenDirMinus) > epsilon) ? -1.f : 1.f;
-				float mulAxisX = (allowFlip && lenDirPlaneX < lenDirMinusPlaneX&& fabsf(lenDirPlaneX - lenDirMinusPlaneX) > epsilon) ? -1.f : 1.f;
-				float mulAxisY = (allowFlip && lenDirPlaneY < lenDirMinusPlaneY&& fabsf(lenDirPlaneY - lenDirMinusPlaneY) > epsilon) ? -1.f : 1.f;
+				float mulAxis = (allowFlip && lenDir < lenDirMinus && fabsf(lenDir - lenDirMinus) > epsilon) ? -1.f : 1.f;
+				float mulAxisX = (allowFlip && lenDirPlaneX < lenDirMinusPlaneX && fabsf(lenDirPlaneX - lenDirMinusPlaneX) > epsilon) ? -1.f : 1.f;
+				float mulAxisY = (allowFlip && lenDirPlaneY < lenDirMinusPlaneY && fabsf(lenDirPlaneY - lenDirMinusPlaneY) > epsilon) ? -1.f : 1.f;
 
 				dirAxis *= mulAxis;
 				dirPlaneX *= mulAxisX;
@@ -1189,7 +1189,7 @@ namespace Skylicht
 						}
 					}
 				} // mouse down
-			} // cancel			
+			} // cancel
 		}
 
 		void CHandlesRenderer::cancel()
@@ -1223,6 +1223,26 @@ namespace Skylicht
 					m_hoverOnPlane[i] = false;
 				}
 				handles->setTargetRotation(m_lastScale);
+			}
+		}
+
+		void CHandlesRenderer::skip()
+		{
+			if (m_using)
+			{
+				m_mouseState = 0;
+				m_mouseDown = false;
+				m_using = false;
+
+				for (int i = 0; i < 3; i++)
+				{
+					m_hoverOnAxis[i] = false;
+					m_hoverOnPlane[i] = false;
+				}
+
+				CHandles* handles = CHandles::getInstance();
+				handles->end();
+				handles->setEndCheck(true);
 			}
 		}
 	}

@@ -37,7 +37,8 @@ namespace Skylicht
 			CMenu::CMenu(CBase* parent) :
 				CBase(parent),
 				m_isOpenSubMenu(false),
-				m_isOpenPopup(false)
+				m_isOpenPopup(false),
+				m_closeAllMenuWhenClicked(true)
 			{
 				setBounds(0.0f, 0.0f, 210, 24.0f);
 				setHidden(true);
@@ -268,11 +269,15 @@ namespace Skylicht
 				if (menuItem != NULL)
 				{
 					if (menuItem->haveSubMenu() == false)
-						getCanvas()->closeMenu();
+					{
+						if (m_closeAllMenuWhenClicked)
+							getCanvas()->closeMenu();
+						else
+							closeMenu();
+					}
 
 					if (OnCommand != nullptr)
 					{
-
 						OnCommand(menuItem);
 					}
 				}

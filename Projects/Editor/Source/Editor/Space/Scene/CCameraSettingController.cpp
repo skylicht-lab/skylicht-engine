@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CCameraSettingController.h"
+#include "Editor/CEditorSetting.h"
 #include "Editor/SpaceController/CSceneController.h"
 
 namespace Skylicht
@@ -50,12 +51,36 @@ namespace Skylicht
 			layout = boxLayout->beginVertical();
 			label = new GUI::CLabel(layout);
 			label->setPadding(GUI::SMargin(0.0f, 2.0, 0.0f, 0.0f));
+			label->setString("3D navigation");
+			label->setTextAlignment(GUI::TextRight);
+
+			m_navigation = new GUI::CComboBox(layout);
+			m_navigation->addItem(std::wstring(L"Default"));
+			m_navigation->addItem(std::wstring(L"Maya"));
+			m_navigation->addItem(std::wstring(L"Blender"));
+			m_navigation->OnChanged = BIND_LISTENER(&CCameraSettingController::onChanged, this);
+			boxLayout->endVertical();
+
+			layout = boxLayout->beginVertical();
+			label = new GUI::CLabel(layout);
+			label->setPadding(GUI::SMargin(0.0f, 2.0, 0.0f, 0.0f));
 			label->setString("Move speed");
 			label->setTextAlignment(GUI::TextRight);
 
 			m_moveSpeed = new GUI::CSlider(layout);
 			m_moveSpeed->setValue(1.0f, 0.1f, 5.0f, false);
 			m_moveSpeed->OnTextChanged = BIND_LISTENER(&CCameraSettingController::onChanged, this);
+			boxLayout->endVertical();
+
+			layout = boxLayout->beginVertical();
+			label = new GUI::CLabel(layout);
+			label->setPadding(GUI::SMargin(0.0f, 2.0, 0.0f, 0.0f));
+			label->setString("Zoom speed");
+			label->setTextAlignment(GUI::TextRight);
+
+			m_zoomSpeed = new GUI::CSlider(layout);
+			m_zoomSpeed->setValue(1.0f, 0.1f, 5.0f, false);
+			m_zoomSpeed->OnTextChanged = BIND_LISTENER(&CCameraSettingController::onChanged, this);
 			boxLayout->endVertical();
 
 			layout = boxLayout->beginVertical();
@@ -146,6 +171,14 @@ namespace Skylicht
 			CCamera* camera = spaceScene->getEditorCamera();
 			CEditorCamera* editorCamera = camera->getGameObject()->getComponent<CEditorCamera>();
 
+			CEditorCamera::EControlStyle style = editorCamera->getControlStyle();
+			if (style == CEditorCamera::Maya)
+				m_navigation->setSelectIndex(1, false);
+			else if (style == CEditorCamera::Blender)
+				m_navigation->setSelectIndex(2, false);
+			else
+				m_navigation->setSelectIndex(0, false);
+
 			// setup value
 			m_moveSpeed->setValue(editorCamera->getMoveSpeed(), false);
 			m_rotSpeed->setValue(editorCamera->getRotateSpeed(), false);
@@ -163,24 +196,30 @@ namespace Skylicht
 			CEditorCamera* editorCamera = camera->getGameObject()->getComponent<CEditorCamera>();
 
 			// default value
+			editorCamera->setControlStyle(CEditorCamera::Default);
 			editorCamera->setMoveSpeed(1.0f);
+			editorCamera->setZoomSpeed(1.0f);
 			editorCamera->setRotateSpeed(16.0f);
 			camera->setFOV(60.0f);
 			camera->setNearValue(0.05f);
 			camera->setFarValue(1500.0f);
 
 			// ui value
+			m_navigation->setSelectIndex(0, false);
 			m_moveSpeed->setValue(editorCamera->getMoveSpeed(), false);
+			m_zoomSpeed->setValue(editorCamera->getZoomSpeed(), false);
 			m_rotSpeed->setValue(editorCamera->getRotateSpeed(), false);
 			m_fov->setValue(camera->getFOV(), false);
 			m_near->setValue(camera->getNearValue(), false);
 			m_far->setValue(camera->getFarValue(), false);
 
+			saveSetting();
 			m_menu->close();
 		}
 
 		void CCameraSettingController::onOK(GUI::CBase* base)
 		{
+			saveSetting();
 			m_menu->close();
 		}
 
@@ -190,13 +229,32 @@ namespace Skylicht
 			CCamera* camera = spaceScene->getEditorCamera();
 			CEditorCamera* editorCamera = camera->getGameObject()->getComponent<CEditorCamera>();
 
+			u32 style = m_navigation->getSelectIndex();
+			if (style == 1)
+				editorCamera->setControlStyle(CEditorCamera::Maya);
+			else if (style == 2)
+				editorCamera->setControlStyle(CEditorCamera::Blender);
+			else
+				editorCamera->setControlStyle(CEditorCamera::Default);
+
 			editorCamera->setMoveSpeed(m_moveSpeed->getValue());
+			editorCamera->setZoomSpeed(m_zoomSpeed->getValue());
 			editorCamera->setRotateSpeed(m_rotSpeed->getValue());
 			camera->setFOV(m_fov->getValue());
 			camera->setNearValue(m_near->getValue());
 			camera->setFarValue(m_far->getValue());
 
 			spaceScene->enableRenderGrid(m_grid->getToggle());
+		}
+
+		void CCameraSettingController::saveSetting()
+		{
+			CEditorSetting* editorSetting = CEditorSetting::getInstance();
+			editorSetting->CameraNavigation.set(m_navigation->getSelectIndex());
+			editorSetting->CameraMoveSpeed.set(m_moveSpeed->getValue());
+			editorSetting->CameraZoomSpeed.set(m_zoomSpeed->getValue());
+			editorSetting->CameraRotateSpeed.set(m_rotSpeed->getValue());
+			editorSetting->save();
 		}
 	}
 }

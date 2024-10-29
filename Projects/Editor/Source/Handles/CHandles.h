@@ -37,7 +37,7 @@ namespace Skylicht
 		class CHandles : public IEventReceiver
 		{
 		public:
-			DECLARE_SINGLETON(CHandles);
+			DECLARE_SINGLETON(CHandles)
 
 		protected:
 			core::matrix4 m_world;
@@ -66,6 +66,8 @@ namespace Skylicht
 			float m_snapDistanceXZ;
 			float m_snapDistanceY;
 			float m_snapRotateDeg;
+
+			bool m_isAltPressed;
 
 			CHandlesRenderer* m_handlesRenderer;
 			CGizmosRenderer* m_gizmosRenderer;

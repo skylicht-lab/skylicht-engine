@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CEditor.h"
 #include "CWindowConfig.h"
+#include "CEditorSetting.h"
 #include "Utils/CStringImp.h"
 
 #include "Space/ApplyTemplate/CSpaceApplyTemplate.h"
@@ -314,6 +315,9 @@ namespace Skylicht
 
 			// calculate layout
 			m_canvas->recurseLayout();
+
+			// init setting
+			CEditorSetting::createGetInstance()->load();
 
 			u32 x, y, w, h;
 			bool maximize = false;

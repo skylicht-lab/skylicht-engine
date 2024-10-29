@@ -137,6 +137,8 @@ namespace Skylicht
 
 			void cancel();
 
+			void skip();
+
 		protected:
 
 			void drawRotationGizmo(const core::vector3df& pos, const core::vector3df& cameraPos, const core::quaternion& rot);

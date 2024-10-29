@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2022 Skylicht Technology CO., LTD
+Copyright (c) 2024 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
@@ -22,48 +22,36 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
+#include "pch.h"
+#include "CEditorSetting.h"
 
-#include "GUI/GUI.h"
-#include "Editor/CEditor.h"
+IMPLEMENT_SINGLETON(CEditorSetting);
 
-namespace Skylicht
+CEditorSetting::CEditorSetting() :
+	CObjectSerializable("EditorSetting"),
+	CameraNavigation(this, "cameraNavigation"),
+	CameraMoveSpeed(this, "cameraMoveSpeed"),
+	CameraZoomSpeed(this, "cameraZoomSpeed"),
+	CameraRotateSpeed(this, "cameraRotateSpeed")
 {
-	namespace Editor
-	{
-		class CCameraSettingController
-		{
-		protected:
-			GUI::CMenu* m_menu;
-			CEditor* m_editor;
+	// default value
+	CameraNavigation.set(0);
+	CameraMoveSpeed.set(1.0f);
+	CameraZoomSpeed.set(1.0f);
+	CameraRotateSpeed.set(16.0f);
+}
 
-			GUI::CComboBox* m_navigation;
+CEditorSetting::~CEditorSetting()
+{
 
-			GUI::CSlider* m_moveSpeed;
-			GUI::CSlider* m_zoomSpeed;
-			GUI::CSlider* m_rotSpeed;
-			GUI::CSlider* m_fov;
-			GUI::CSlider* m_near;
-			GUI::CSlider* m_far;
+}
 
-			GUI::CCheckBox* m_grid;
+void CEditorSetting::save()
+{
+	CObjectSerializable::save("EditorSetting.xml");
+}
 
-		public:
-			CCameraSettingController(CEditor* editor, GUI::CMenu* menu);
-
-			virtual ~CCameraSettingController();
-
-			void update();
-
-			void onShow();
-
-			void onDefault(GUI::CBase* base);
-
-			void onOK(GUI::CBase* base);
-
-			void onChanged(GUI::CBase* base);
-
-			void saveSetting();
-		};
-	}
+void CEditorSetting::load()
+{
+	CObjectSerializable::load("EditorSetting.xml");
 }
