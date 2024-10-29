@@ -130,12 +130,13 @@ void CViewInit::initScene()
 	}
 
 	{
-		core::vector3df offset(2.0f, 0.0f, -5.0f);
+		int n = 5;
+		core::vector3df offset(2.0f, 0.0f, -n / 2.0f);
 		float distance = 1.0f;
 
-		for (int i = 0; i <= 10; i++)
+		for (int i = 0; i <= n; i++)
 		{
-			for (int j = 0; j <= 10; j++)
+			for (int j = 0; j <= n; j++)
 			{
 				CGameObject* sphereObj = zone->createEmptyObject();
 
@@ -145,8 +146,8 @@ void CViewInit::initScene()
 				material->changeShader("BuiltIn/Shader/PBR/Forward/PBRNoTexture.xml");
 
 				float roughnessMetal[2];
-				roughnessMetal[0] = (float)i / 10.0f;
-				roughnessMetal[1] = (float)j / 10.0f;
+				roughnessMetal[0] = (float)i / (float)n;
+				roughnessMetal[1] = (float)j / (float)n;
 				material->setUniform2("uRoughnessMetal", roughnessMetal);
 				material->applyMaterial();
 
@@ -180,6 +181,8 @@ void CViewInit::initScene()
 	context->setActiveCamera(camera);
 	context->setGUICamera(guiCamera);
 	context->setDirectionalLight(directionalLight);
+
+	// context->getPostProcessorPipeline()->enableAutoExposure(false);
 }
 
 void CViewInit::onDestroy()

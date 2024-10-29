@@ -107,10 +107,10 @@ float4 main(PS_INPUT input) : SV_TARGET
 	kd *= (1.0 - metalness);
 	float3 indirectDiffuse = ambientLighting * lambert;
 	float3 reflection = -normalize(reflect(input.worldViewDir, n));
-	float3 prefilteredColor = sRGB(uTexReflect.SampleLevel(uTexReflectSampler, reflection, roughness * 4.9).xyz);
+	float3 prefilteredColor = sRGB(uTexReflect.SampleLevel(uTexReflectSampler, reflection, roughness * 7).xyz);
 	float2 envBRDF = uTexBRDF.Sample(uTexBRDFSampler, float2(VdotN, roughness)).rg;
-	F = F * envBRDF.x + envBRDF.y;
-	float3 indirectSpecular = prefilteredColor * F;
-	float3 indirectLight = (kd * indirectDiffuse + indirectSpecular);
+	float3 indirectSpecular = prefilteredColor * (F0 * envBRDF.x + envBRDF.y);
+	float grey = (0.4 + (1.0 - roughness) * 2.6);
+	float3 indirectLight = (kd * indirectDiffuse + indirectSpecular * grey);
 	return float4((lightContribution + indirectLight) * ao, albedoMap.a);
 }

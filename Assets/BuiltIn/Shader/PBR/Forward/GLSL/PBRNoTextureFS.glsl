@@ -87,10 +87,10 @@ void main(void)
 	kd *= (1.0 - metalness);
 	vec3 indirectDiffuse = ambientLighting * lambert;
 	vec3 reflection = -normalize(reflect(vWorldViewDir, n));
-	vec3 prefilteredColor = sRGB(textureLod(uTexReflect, reflection, roughness * 4.9).xyz);
+	vec3 prefilteredColor = sRGB(textureLod(uTexReflect, reflection, roughness * 7).xyz);
 	vec2 envBRDF = texture(uTexBRDF, vec2(VdotN, roughness)).rg;
-	F = F * envBRDF.x + envBRDF.y;
-	vec3 indirectSpecular = prefilteredColor * F;
-	vec3 indirectLight = (kd * indirectDiffuse + indirectSpecular);
+	vec3 indirectSpecular = prefilteredColor * (F0 * envBRDF.x + envBRDF.y);
+	float grey = (0.4 + (1.0 - roughness) * 2.6);
+	vec3 indirectLight = (kd * indirectDiffuse + indirectSpecular * grey);
 	FragColor = vec4((lightContribution + indirectLight) * ao, albedoMap.a);
 }

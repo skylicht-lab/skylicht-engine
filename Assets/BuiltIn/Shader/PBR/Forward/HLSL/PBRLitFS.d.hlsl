@@ -179,14 +179,14 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 reflection = -normalize(reflect(input.worldViewDir, n));
 	
 	// reflection should be the size: 128x128
-	float3 prefilteredColor = sRGB(uTexReflect.SampleLevel(uTexReflectSampler, reflection, roughness * 4.9).xyz);
+	float3 prefilteredColor = sRGB(uTexReflect.SampleLevel(uTexReflectSampler, reflection, roughness * 7).xyz);
 	
 	// Get F scale and bias from the LUT
 	float2 envBRDF = uTexBRDF.Sample(uTexBRDFSampler, float2(VdotN, roughness)).rg;
-	F = F * envBRDF.x + envBRDF.y;
-	float3 indirectSpecular = prefilteredColor * F;
+	float3 indirectSpecular = prefilteredColor * (F0 * envBRDF.x + envBRDF.y);
 
-	float3 indirectLight = (kd * indirectDiffuse + indirectSpecular);
+	float grey = (0.4 + (1.0 - roughness) * 2.6);
+	float3 indirectLight = (kd * indirectDiffuse + indirectSpecular * grey);
 
 #ifdef EMISSIVE
 	lightContribution += sRGB(emissiveMap);

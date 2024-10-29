@@ -162,14 +162,14 @@ void main(void)
 	vec3 reflection = -normalize(reflect(vWorldViewDir, n));
 	
 	// reflection should be the size: 128x128
-	vec3 prefilteredColor = sRGB(textureLod(uTexReflect, reflection, roughness * 4.9).xyz);
+	vec3 prefilteredColor = sRGB(textureLod(uTexReflect, reflection, roughness * 7).xyz);
 
 	// Get F scale and bias from the LUT
 	vec2 envBRDF = texture(uTexBRDF, vec2(VdotN, roughness)).rg;
-	F = F * envBRDF.x + envBRDF.y;
-	vec3 indirectSpecular = prefilteredColor * F;
+	vec3 indirectSpecular = prefilteredColor * (F0 * envBRDF.x + envBRDF.y);
 
-	vec3 indirectLight = (kd * indirectDiffuse + indirectSpecular);
+	float grey = (0.4 + (1.0 - roughness) * 2.6);
+	vec3 indirectLight = (kd * indirectDiffuse + indirectSpecular * grey);
 
 #ifdef EMISSIVE
 	lightContribution += sRGB(emissiveMap);
