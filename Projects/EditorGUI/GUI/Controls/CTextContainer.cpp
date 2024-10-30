@@ -60,7 +60,7 @@ namespace Skylicht
 
 			CTextContainer::~CTextContainer()
 			{
-
+				removeAllLines();
 			}
 
 			void CTextContainer::renderUnder()

@@ -280,7 +280,7 @@ namespace Skylicht
 			GUI::CListRowItem* rowNode = dynamic_cast<GUI::CListRowItem*>(node);
 			if (rowNode != NULL)
 			{
-				const std::string& fullPath = rowNode->getTagString();
+				std::string fullPath = rowNode->getTagString();
 
 				bool isFolder = rowNode->getTagBool();
 				if (isFolder == true)

@@ -19,6 +19,12 @@ struct PS_INPUT
 };
 
 static const float PI = 3.1415926;
+static const float gamma = 2.2;
+
+float3 sRGB(float3 color)
+{
+	return pow(color, gamma);
+}
 
 float4 main(PS_INPUT input) : SV_TARGET
 {
@@ -41,7 +47,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 
 	// Reflection
 	float3 reflection = -normalize(reflect(input.worldViewDir, n));
-	color += uTexReflect.SampleLevel(uTexReflectSampler, reflection, 0).xyz;
+	color += sRGB(uTexReflect.SampleLevel(uTexReflectSampler, reflection, 0).xyz);
 
 	return float4(color, 1.0);
 }

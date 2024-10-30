@@ -107,23 +107,11 @@ void CLegController::projectOnGround(core::vector3df& position)
 
 void CLegController::resetFootPosition()
 {
-	core::vector3df up = m_gameObject->getUp();
-
-	core::vector3df legPosition, targetPosition, footTarget;
-	core::matrix4 worldTransform = m_gameObject->calcWorldTransform();
-	core::vector3df objectPosition = m_gameObject->getPosition();
-	core::quaternion objectRotation = m_gameObject->getRotation();
+	core::vector3df targetPosition;
 
 	for (CLeg* leg : m_legs)
 	{
-		const core::vector3df& footTarget = leg->getFootTargetPosition();
-
-		core::vector3df targetVector = leg->getTargetVector();
-		worldTransform.rotateVect(targetVector);
-		CVector::projectOnPlane(targetVector, up);
-		targetVector.normalize();
-
-		targetPosition = objectPosition + targetVector * m_targetDistance;
+		targetPosition = getStandFootPosition(leg);
 		projectOnGround(targetPosition);
 
 		// balanced standing
@@ -143,12 +131,13 @@ void CLegController::lateUpdate()
 	if (m_gameObject->isVisible() == false)
 		return;
 
-	core::vector3df legPosition, targetPosition, footTarget;
-	core::vector3df objectPosition = m_gameObject->getPosition();
-	core::quaternion objectRotation = m_gameObject->getRotation();
+	core::vector3df targetPosition;
 	core::vector3df up = m_gameObject->getUp();
 
 	const core::matrix4& worldTransform = m_gameObject->getWorldTransform();
+
+	core::vector3df objectPosition = worldTransform.getTranslation();
+	core::quaternion objectRotation = worldTransform.getRotationDegrees();
 
 	float timestepSec = getTimeStep() / 1000.0f;
 	float balanceStandingStep2 = 0.1f * 0.1f;
@@ -216,15 +205,10 @@ void CLegController::lateUpdate()
 
 		if (allowStep || m_drawDebug)
 		{
-			// find the target foot step
 			const core::vector3df& footTarget = leg->getFootTargetPosition();
 
-			core::vector3df targetVector = leg->getTargetVector();
-			worldTransform.rotateVect(targetVector);
-			CVector::projectOnPlane(targetVector, up);
-			targetVector.normalize();
-
-			targetPosition = objectPosition + targetVector * m_targetDistance;
+			// find the target foot step
+			targetPosition = getStandFootPosition(leg);
 			targetPosition += moveVector * (m_moveTime / 0.1f) * m_moveStepDistance;
 
 			if (m_drawDebug)
@@ -253,7 +237,7 @@ void CLegController::lateUpdate()
 					{
 						// just rotate
 						core::vector3df test = targetPosition - footTarget;
-						core::vector3df cross = targetVector.crossProduct(up);
+						core::vector3df cross = leg->getTargetVector().crossProduct(up);
 
 						m_rotDirection = test.dotProduct(cross);
 						if (m_rotDirection < 0.0f)
@@ -279,4 +263,20 @@ void CLegController::lateUpdate()
 
 	m_lastPosition = objectPosition;
 	m_lastRotation = objectRotation;
+}
+
+
+core::vector3df CLegController::getStandFootPosition(CLeg* leg)
+{
+	core::vector3df targetVector = leg->getTargetVector();
+	const core::matrix4& worldTransform = m_gameObject->getWorldTransform();
+	worldTransform.rotateVect(targetVector);
+
+	CVector::projectOnPlane(targetVector, Transform::Oy);
+	targetVector.normalize();
+
+	core::vector3df targetPosition = worldTransform.getTranslation() + targetVector * m_targetDistance;
+	projectOnGround(targetPosition);
+
+	return targetPosition;
 }

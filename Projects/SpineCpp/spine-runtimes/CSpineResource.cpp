@@ -192,10 +192,14 @@ namespace spine
 		if (m_drawable)
 			delete m_drawable;
 
+		if (m_skeletonData)
+			delete m_skeletonData;
+
 		m_skeletonJson = NULL;
 		m_attachmentLoader = NULL;
 		m_atlas = NULL;
 		m_textureLoader = NULL;
 		m_drawable = NULL;
+		m_skeletonData = NULL;
 	}
 }

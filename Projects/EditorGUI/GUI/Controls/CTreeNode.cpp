@@ -173,7 +173,7 @@ namespace Skylicht
 
 			void CTreeNode::removeAllTreeNode()
 			{
-				m_innerPanel->removeAllChildren();
+				m_innerPanel->releaseChildren();
 			}
 
 			std::list<CTreeNode*> CTreeNode::getChildNodes()

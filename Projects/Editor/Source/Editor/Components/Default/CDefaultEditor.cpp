@@ -459,9 +459,9 @@ namespace Skylicht
 										if (arrayObject->resize(numElement))
 										{
 											// remove old ui
-											objectLayout->getChild(0)->removeAllChildren();
+											objectLayout->getChild(0)->releaseChildren();
 
-											// re-init ui									
+											// re-init ui
 											initDataGUI(arrayObject, objectLayout, ui);
 
 											// update object data

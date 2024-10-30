@@ -53,6 +53,7 @@ namespace Skylicht
 			CCanvas::~CCanvas()
 			{
 				saveDockLayoutToFile();
+				processDelayedDeletes();
 			}
 
 			void CCanvas::initialize()

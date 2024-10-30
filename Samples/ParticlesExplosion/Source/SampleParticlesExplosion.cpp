@@ -28,6 +28,7 @@ SampleParticlesExplosion::~SampleParticlesExplosion()
 	CEventManager::getInstance()->unRegisterEvent(this);
 
 	delete m_scene;
+	delete m_font;
 	CImguiManager::releaseInstance();
 
 	delete m_forwardRP;

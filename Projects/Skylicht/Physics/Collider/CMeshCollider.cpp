@@ -40,13 +40,19 @@ namespace Skylicht
 		CATEGORY_COMPONENT(CMeshCollider, "Mesh Collider", "Physics/Collider");
 
 		CMeshCollider::CMeshCollider()
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			:m_mesh(NULL)
+#endif
 		{
 			m_colliderType = CCollider::Mesh;
 		}
 
 		CMeshCollider::~CMeshCollider()
 		{
-
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_mesh)
+				delete m_mesh;
+#endif
 		}
 
 		void CMeshCollider::updateComponent()
@@ -84,9 +90,9 @@ namespace Skylicht
 			if (prefab == NULL)
 				return NULL;
 
-			btTriangleMesh* triangleMesh = new btTriangleMesh();
+			m_mesh = new btTriangleMesh();
 
-			initFromPrefab(prefab, [triangleMesh](const core::matrix4& transform, CMesh* mesh) {
+			initFromPrefab(prefab, [&](const core::matrix4& transform, CMesh* mesh) {
 
 				int numMeshBuffer = mesh->getMeshBufferCount();
 
@@ -133,17 +139,17 @@ namespace Skylicht
 							vertices[k] = btVector3(v.X, v.Y, v.Z);
 						}
 
-						int v1 = triangleMesh->findOrAddVertex(vertices[0], true);
-						int v2 = triangleMesh->findOrAddVertex(vertices[1], true);
-						int v3 = triangleMesh->findOrAddVertex(vertices[2], true);
+						int v1 = m_mesh->findOrAddVertex(vertices[0], true);
+						int v2 = m_mesh->findOrAddVertex(vertices[1], true);
+						int v3 = m_mesh->findOrAddVertex(vertices[2], true);
 
-						triangleMesh->addTriangleIndices(v1, v2, v3);
+						m_mesh->addTriangleIndices(v1, v2, v3);
 					}
 				}
 
 				});
 
-			btGImpactMeshShape* meshShape = new btGImpactMeshShape(triangleMesh);
+			btGImpactMeshShape* meshShape = new btGImpactMeshShape(m_mesh);
 			meshShape->updateBound();
 
 			m_shape = meshShape;

@@ -46,8 +46,9 @@ void CLeg::update()
 	if (m_waiting)
 		m_waitingTime = m_waitingTime + dt;
 
-	float animTime = core::clamp(m_animTime, 0.0f, m_stepTime);
-	float t = animTime / m_stepTime;
+	float t = m_animTime / m_stepTime;
+	t = core::clamp(t, 0.0f, 1.0f);
+
 	m_footPosition = CVector::lerp(m_lastFootPosition, m_footTargetPosition, t);
 	m_footPosition += Transform::Oy * sinf(t * core::PI) * m_stepHeight;
 

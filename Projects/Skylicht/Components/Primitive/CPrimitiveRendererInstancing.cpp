@@ -142,6 +142,7 @@ namespace Skylicht
 						{
 							IMeshBuffer* lightingMeshBuffer = instancing->createLinkMeshBuffer(mesh->getMeshBuffer(i));
 							indirectLightingMesh->addMeshBuffer(lightingMeshBuffer, "", NULL);
+							lightingMeshBuffer->drop();
 						}
 
 						mesh->IndirectLightingMesh = indirectLightingMesh;

@@ -113,7 +113,6 @@ namespace Skylicht
 			public:
 				List Children;
 
-				virtual void removeAllChildren();
 				virtual void releaseChildren();
 				virtual void sendToBack(void);
 				virtual void bringToFront(void);

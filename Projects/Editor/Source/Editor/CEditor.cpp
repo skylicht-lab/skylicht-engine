@@ -119,6 +119,7 @@ namespace Skylicht
 			CGUIDesignController::releaseInstance();
 
 			CProjectSettings::releaseInstance();
+			CEditorSetting::releaseInstance();
 
 			delete m_spriteIcon;
 			delete m_assetWatcher;

@@ -25,6 +25,8 @@ SampleParticlesVortex::~SampleParticlesVortex()
 {
 	delete m_vortexSystem;
 	delete m_scene;
+	delete m_forwardRP;
+
 	CImguiManager::releaseInstance();
 }
 

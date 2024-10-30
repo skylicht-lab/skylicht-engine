@@ -17,6 +17,12 @@ in vec3 vWorldPosition;
 out vec4 FragColor;
 
 const float PI = 3.1415926;
+const float gamma = 2.2;
+
+vec3 sRGB(vec3 color)
+{
+	return pow(color, gamma);
+}
 
 void main(void)
 {
@@ -39,7 +45,7 @@ void main(void)
 	
 	// Reflection
 	vec3 reflection = -normalize(reflect(vWorldViewDir, n));
-	color += textureLod(uTexReflect, reflection, 0.0).xyz;
+	color += sRGB(textureLod(uTexReflect, reflection, 0.0).xyz);
 	
 	FragColor = vec4(color, 1.0);
 }

@@ -78,11 +78,10 @@ SkylichtEditor::~SkylichtEditor()
 	Lightmapper::CLightmapper::releaseInstance();
 
 	Editor::GUI::Context::destroyGUI();
-
 	Editor::CEditor::releaseInstance();
 
 #ifdef BUILD_SKYLICHT_PHYSIC
-	Physics::CPhysicsEngine::getInstance()->exitPhysics();
+	Physics::CPhysicsEngine::releaseInstance();
 #endif
 
 	Editor::CCopyPasteUI::releaseInstance();

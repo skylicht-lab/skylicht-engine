@@ -36,6 +36,7 @@ SampleParticlesMagicSkill::~SampleParticlesMagicSkill()
 	delete m_target;
 	delete m_vortexSystem;
 	delete m_scene;
+	delete m_font;
 
 	delete m_forwardRP;
 	delete m_postProcessorRP;

@@ -51,9 +51,9 @@ namespace Skylicht
 			if (prefab == NULL)
 				return NULL;
 
-			btTriangleMesh* triangleMesh = new btTriangleMesh();
+			m_mesh = new btTriangleMesh();
 
-			initFromPrefab(prefab, [triangleMesh](const core::matrix4& transform, CMesh* mesh) {
+			initFromPrefab(prefab, [&](const core::matrix4& transform, CMesh* mesh) {
 
 				int numMeshBuffer = mesh->getMeshBufferCount();
 
@@ -100,17 +100,17 @@ namespace Skylicht
 							vertices[k] = btVector3(v.X, v.Y, v.Z);
 						}
 
-						int v1 = triangleMesh->findOrAddVertex(vertices[0], true);
-						int v2 = triangleMesh->findOrAddVertex(vertices[1], true);
-						int v3 = triangleMesh->findOrAddVertex(vertices[2], true);
+						int v1 = m_mesh->findOrAddVertex(vertices[0], true);
+						int v2 = m_mesh->findOrAddVertex(vertices[1], true);
+						int v3 = m_mesh->findOrAddVertex(vertices[2], true);
 
-						triangleMesh->addTriangleIndices(v1, v2, v3);
+						m_mesh->addTriangleIndices(v1, v2, v3);
 					}
 				}
 
 				});
 
-			btBvhTriangleMeshShape* bvhMeshShape = new btBvhTriangleMeshShape(triangleMesh, true, true);
+			btBvhTriangleMeshShape* bvhMeshShape = new btBvhTriangleMeshShape(m_mesh, true, true);
 			m_shape = bvhMeshShape;
 			m_shape->setUserPointer(this);
 			return m_shape;

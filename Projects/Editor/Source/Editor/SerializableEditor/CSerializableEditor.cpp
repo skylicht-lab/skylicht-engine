@@ -595,7 +595,7 @@ namespace Skylicht
 										if (arrayObject->resize(numElement))
 										{
 											// remove old ui
-											objectLayout->getChild(0)->removeAllChildren();
+											objectLayout->getChild(0)->releaseChildren();
 
 											// re-init ui
 											serializableToControl(arrayObject, ui, objectLayout);
@@ -791,7 +791,7 @@ namespace Skylicht
 										if (arrayObject->resize(numElement))
 										{
 											// remove old ui
-											objectLayout->getChild(0)->removeAllChildren();
+											objectLayout->getChild(0)->releaseChildren();
 
 											// re-init ui
 											serializableToControl(arrayObject, ui, objectLayout);

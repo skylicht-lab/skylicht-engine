@@ -47,6 +47,11 @@ public:
 		m_waitingTime = 0.0f;
 	}
 
+	inline void changeTargetPosition(const core::vector3df& pos)
+	{
+		m_footTargetPosition = pos;
+	}
+
 	inline void forceFootPosition(const core::vector3df& pos)
 	{
 		m_lastFootPosition = pos;

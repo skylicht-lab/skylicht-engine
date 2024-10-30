@@ -170,14 +170,6 @@ namespace Skylicht
 				onChildRemoved(child);
 			}
 
-			void CBase::removeAllChildren()
-			{
-				while (Children.size() > 0)
-				{
-					removeChild(*Children.begin());
-				}
-			}
-
 			void CBase::releaseChildren()
 			{
 				List::iterator iter = Children.begin();

@@ -162,6 +162,8 @@ namespace Skylicht
 			delete m_handlesRenderer;
 			delete m_gizmos;
 
+			delete m_canvasSettingController;
+
 			CGUIDesignController* controller = CGUIDesignController::getInstance();
 			if (controller->getSpaceDesign() == this)
 				controller->setSpaceDesign(NULL);

@@ -299,6 +299,8 @@ namespace Skylicht
 			if (m_scene)
 				delete m_scene;
 
+			removeAllHierarchyNodes();
+
 			m_scene = NULL;
 		}
 
@@ -334,6 +336,9 @@ namespace Skylicht
 
 		void CSceneController::reinitHierachyData()
 		{
+			if (m_hierachyNode)
+				removeAllHierarchyNodes();
+
 			m_hierachyNode = new CHierachyNode(NULL);
 			m_hierachyNode->setName(m_scene->getName());
 			m_hierachyNode->setIcon(GUI::ESystemIcon::Collection);

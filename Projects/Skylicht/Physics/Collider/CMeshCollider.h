@@ -37,6 +37,10 @@ namespace Skylicht
 		protected:
 			std::string m_source;
 
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			btTriangleMesh* m_mesh;
+#endif
+
 		public:
 			CMeshCollider();
 

@@ -86,7 +86,7 @@ namespace Skylicht
 				m_list.clear();
 				m_menuItems.clear();
 
-				m_menu->removeAllChildren();
+				m_menu->releaseChildren();
 
 				m_selectIndex = 0;
 

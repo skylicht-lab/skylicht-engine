@@ -17,6 +17,8 @@ void installApplication(const std::vector<std::string>& argv)
 SampleParticles::SampleParticles() :
 	m_scene(NULL),
 	m_label(NULL),
+	m_font(NULL),
+	m_forwardRP(NULL),
 	m_currentParticleObj(NULL),
 	m_particleZone(NULL),
 	m_particleEmitter(NULL)
@@ -28,6 +30,7 @@ SampleParticles::~SampleParticles()
 {
 	delete m_scene;
 	delete m_font;
+	delete m_forwardRP;
 
 	CImguiManager::releaseInstance();
 }

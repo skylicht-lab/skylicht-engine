@@ -53,11 +53,26 @@ public:
 		m_footStepLength = length;
 	}
 
+	inline float getFootStepLength()
+	{
+		return m_footStepLength;
+	}
+
 	void setStepHeight(float height);
+
+	inline float getStepHeight()
+	{
+		return m_stepHeight;
+	}
 
 	inline void setMoveStepDistance(float length)
 	{
 		m_moveStepDistance = length;
+	}
+
+	inline float getMoveStepDistance()
+	{
+		return m_moveStepDistance;
 	}
 
 	inline CWorldTransformData* getRoot()
@@ -79,6 +94,8 @@ public:
 	{
 		return m_targetDistance;
 	}
+
+	core::vector3df getStandFootPosition(CLeg* leg);
 
 	virtual void lateUpdate();
 };

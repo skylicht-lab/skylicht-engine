@@ -79,7 +79,7 @@ namespace Skylicht
 
 			void CListBox::removeAllItem()
 			{
-				m_innerPanel->removeAllChildren();
+				m_innerPanel->releaseChildren();
 			}
 
 			CListRowItem* CListBox::getItemByLabel(const std::wstring& label)

@@ -27,7 +27,8 @@ namespace Skylicht
 
 	CCapsule::~CCapsule()
 	{
-
+		m_material->drop();
+		m_material = NULL;
 	}
 
 	void CCapsule::initComponent()

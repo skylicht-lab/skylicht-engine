@@ -93,6 +93,9 @@ namespace Skylicht
 #ifdef USE_CRASHHANDLER
 		CCrashHandler::releaseInstance();
 #endif
+
+		Skylicht::CBuildConfig::releaseInstance();
+		g_config = NULL;
 	}
 
 	bool CApplication::OnEvent(const SEvent& event)
