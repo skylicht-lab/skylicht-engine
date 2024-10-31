@@ -54,6 +54,8 @@ namespace Skylicht
 
 		CMaterial* createMaterial(ArrayMaterial& materials);
 
+		void replaceTexture(ITexture* oldTexture, ITexture* newTexture);
+
 		void deleteMaterial(ArrayMaterial& materials, CMaterial* material);
 
 		void saveMaterial(const ArrayMaterial& materials, const char* filename);

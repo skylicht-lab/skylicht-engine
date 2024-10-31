@@ -67,7 +67,7 @@ namespace Skylicht
 		}
 
 		deleteAllParams();
-		deleteExtramParams();
+		deleteExtraParams();
 	}
 
 	CMaterial* CMaterial::clone()
@@ -132,11 +132,15 @@ namespace Skylicht
 		m_uniformParams.clear();
 
 		for (SUniformTexture*& uniform : m_uniformTextures)
+		{
+			if (uniform->Texture)
+				uniform->Texture->drop();
 			delete uniform;
+		}
 		m_uniformTextures.clear();
 	}
 
-	void CMaterial::deleteExtramParams()
+	void CMaterial::deleteExtraParams()
 	{
 		for (SExtraParams*& e : m_extras)
 		{
@@ -145,7 +149,11 @@ namespace Skylicht
 			e->UniformParams.clear();
 
 			for (SUniformTexture*& uniform : e->UniformTextures)
+			{
+				if (uniform->Texture)
+					uniform->Texture->drop();
 				delete uniform;
+			}
 			e->UniformTextures.clear();
 
 			delete e;
@@ -213,7 +221,10 @@ namespace Skylicht
 		SUniformTexture* p = getUniformTexture(name);
 		if (p != NULL && texture != NULL)
 		{
+			if (p->Texture)
+				p->Texture->drop();
 			p->Texture = texture;
+			p->Texture->grab();
 		}
 	}
 
@@ -243,7 +254,13 @@ namespace Skylicht
 			p->Path = path;
 
 			if (loadTexture == true)
+			{
+				if (p->Texture)
+					p->Texture->drop();
 				p->Texture = CTextureManager::getInstance()->getTexture(path);
+				if (p->Texture)
+					p->Texture->grab();
+			}
 		}
 	}
 
@@ -259,7 +276,13 @@ namespace Skylicht
 			if (textureManager->existTexture(path) == true)
 			{
 				if (loadTexture == true)
+				{
+					if (p->Texture)
+						p->Texture->drop();
 					p->Texture = CTextureManager::getInstance()->getTexture(path);
+					if (p->Texture)
+						p->Texture->grab();
+				}
 			}
 			else
 			{
@@ -273,7 +296,13 @@ namespace Skylicht
 					if (textureManager->existTexture(s.c_str()) == true)
 					{
 						if (loadTexture == true)
+						{
+							if (p->Texture)
+								p->Texture->drop();
 							p->Texture = CTextureManager::getInstance()->getTexture(s.c_str());
+							if (p->Texture)
+								p->Texture->grab();
+						}
 						break;
 					}
 				}
@@ -489,6 +518,8 @@ namespace Skylicht
 						ITexture* texture = textureManager->getTexture(textureUI->Path.c_str());
 						m_textures[textureSlot] = texture;
 						textureUI->Texture = texture;
+						if (texture)
+							texture->grab();
 					}
 				}
 			}
@@ -570,14 +601,6 @@ namespace Skylicht
 					if (texture != NULL)
 					{
 						texture->drop();
-						if (r->Type == CShader::Texture)
-						{
-							textureManager->removeTexture(texture);
-						}
-						else if (r->Type == CShader::CubeTexture)
-						{
-							// texture = textureManager->getCubeTexture( ... );
-						}
 						texture = NULL;
 					}
 				}
@@ -590,8 +613,6 @@ namespace Skylicht
 		if (m_shader == NULL)
 			return;
 
-		CTextureManager* textureManager = CTextureManager::getInstance();
-
 		for (int i = 0, n = (int)m_uniformTextures.size(); i < n; i++)
 		{
 			SUniformTexture* textureUI = m_uniformTextures[i];
@@ -602,7 +623,7 @@ namespace Skylicht
 				int textureSlot = (int)uniform->Value[0];
 				if (textureSlot < MATERIAL_MAX_TEXTURES && m_textures[textureSlot])
 				{
-					textureManager->removeTexture(m_textures[textureSlot]);
+					m_textures[textureSlot]->drop();
 					m_textures[textureSlot] = NULL;
 					textureUI->Texture = NULL;
 				}
@@ -615,8 +636,7 @@ namespace Skylicht
 		SUniformTexture* p = getUniformTexture(name);
 		if (p != NULL && p->Texture)
 		{
-			CTextureManager* textureManager = CTextureManager::getInstance();
-			textureManager->removeTexture(p->Texture);
+			p->Texture->drop();
 			p->Texture = NULL;
 			m_textures[p->TextureSlot] = NULL;
 		}
@@ -824,9 +844,7 @@ namespace Skylicht
 						{
 							ITexture* texture = textureManager->getTexture(foundPath.c_str());
 							if (texture != NULL)
-							{
 								setUniformTexture(ui->Name.c_str(), texture);
-							}
 						}
 						else
 						{
@@ -900,15 +918,6 @@ namespace Skylicht
 						SUniformValue* v = getUniform(u->Name.c_str());
 						setDefaultValue(v, u);
 					}
-					/*
-					else
-					{
-						// revert default value
-						SUniformValue* v = getUniform(u->Name.c_str());
-						if (v->ShaderDefaultValue == true)
-							setDefaultValue(v, u);
-					}
-					*/
 				}
 			}
 		}
@@ -1027,6 +1036,45 @@ namespace Skylicht
 					mat.TextureLayer[textureSlot].BilinearFilter = uniformTexture->Bilinear;
 					mat.TextureLayer[textureSlot].TrilinearFilter = uniformTexture->Trilinear;
 					mat.TextureLayer[textureSlot].AnisotropicFilter = uniformTexture->Anisotropic;
+				}
+			}
+		}
+	}
+
+	void CMaterial::replaceTexture(ITexture* oldTexture, ITexture* newTexture)
+	{
+		for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
+		{
+			if (m_resourceTexture[i] == oldTexture)
+			{
+				m_resourceTexture[i]->drop();
+				m_resourceTexture[i] = newTexture;
+				m_resourceTexture[i]->grab();
+			}
+
+			if (m_textures[i] == oldTexture)
+				m_textures[i] = newTexture;
+		}
+
+		for (SUniformTexture*& uniform : m_uniformTextures)
+		{
+			if (uniform->Texture == oldTexture)
+			{
+				uniform->Texture->drop();
+				uniform->Texture = newTexture;
+				uniform->Texture->grab();
+			}
+		}
+
+		for (SExtraParams*& e : m_extras)
+		{
+			for (SUniformTexture*& uniform : e->UniformTextures)
+			{
+				if (uniform->Texture == oldTexture)
+				{
+					uniform->Texture->drop();
+					uniform->Texture = newTexture;
+					uniform->Texture->grab();
 				}
 			}
 		}
@@ -1264,6 +1312,9 @@ namespace Skylicht
 					if (t->Texture == NULL && !t->Path.empty())
 						t->Texture = CTextureManager::getInstance()->getTexture(t->Path.c_str());
 
+					if (t->Texture)
+						t->Texture->grab();
+
 					break;
 				}
 			}
@@ -1294,7 +1345,11 @@ namespace Skylicht
 				if (t->Name == name)
 				{
 					if (t->Texture == NULL && !t->Path.empty())
+					{
 						t->Texture = CTextureManager::getInstance()->getTexture(t->Path.c_str());
+						if (t->Texture)
+							t->Texture->grab();
+					}
 
 					if (t->Texture != NULL)
 						return t;

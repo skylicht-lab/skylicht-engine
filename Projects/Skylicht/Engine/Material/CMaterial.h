@@ -190,7 +190,7 @@ namespace Skylicht
 		void copyTo(CMaterial* mat);
 
 		void deleteAllParams();
-		void deleteExtramParams();
+		void deleteExtraParams();
 
 		void setUniform(const char* name, float f);
 		void setUniform2(const char* name, float* f);
@@ -301,7 +301,7 @@ namespace Skylicht
 
 		void unloadUniformTexture();
 
-		void unloadUniformTexture(const char *name);
+		void unloadUniformTexture(const char* name);
 
 		void setOverrideResource(ITexture* texture, CShader::EResourceType type)
 		{
@@ -321,6 +321,8 @@ namespace Skylicht
 		void applyMaterial(SMaterial& mat);
 
 		void updateTexture(SMaterial& mat);
+
+		void replaceTexture(ITexture* oldTexture, ITexture* newTexture);
 
 		void updateShaderParams();
 

@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/GUIContext.h"
 #include "CSpaceImport.h"
 #include "AssetManager/CAssetManager.h"
+#include "Editor/SpaceController/CPropertyController.h"
 
 namespace Skylicht
 {
@@ -47,6 +48,8 @@ namespace Skylicht
 			m_statusText->setMargin(GUI::SMargin(14.0f, 5.0, 14.0, 0.0f));
 			m_statusText->setWrapMultiline(true);
 			m_statusText->setString(L"Importing...");
+
+			CPropertyController::getInstance()->setProperty(NULL);
 		}
 
 		CSpaceImport::~CSpaceImport()

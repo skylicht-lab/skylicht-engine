@@ -54,7 +54,7 @@ namespace Skylicht
 		return false;
 	}
 
-	void CTextureManager::registerTexture(ITexture* tex)
+	void CTextureManager::registerTexture(ITexture* tex, const char* path)
 	{
 		if (tex == NULL)
 			return;
@@ -62,7 +62,7 @@ namespace Skylicht
 		std::vector<STexturePackage*>::iterator i = m_textureList.begin(), end = m_textureList.end();
 		while (i != end)
 		{
-			if ((*i)->texture == tex)
+			if ((*i)->Texture == tex)
 				return;
 
 			i++;
@@ -71,8 +71,9 @@ namespace Skylicht
 		m_textureList.push_back(new STexturePackage());
 
 		STexturePackage* package = m_textureList.back();
-		package->package = m_currentPackage;
-		package->texture = tex;
+		package->Package = m_currentPackage;
+		package->Texture = tex;
+		package->Path = path;
 	}
 
 	void CTextureManager::removeAllTexture()
@@ -82,11 +83,16 @@ namespace Skylicht
 		std::vector<STexturePackage*>::iterator i = m_textureList.begin(), end = m_textureList.end();
 		while (i != end)
 		{
-			char log[512];
-			sprintf(log, "Remove texture: %s", (*i)->texture->getName().getPath().c_str());
+			ITexture* texture = (*i)->Texture;
+
+			char log[1024];
+			sprintf(log, "Remove texture: %s - refCount: %d",
+				texture->getName().getPath().c_str(),
+				texture->getReferenceCount()
+			);
 			os::Printer::log(log);
 
-			driver->removeTexture((*i)->texture);
+			driver->removeTexture(texture);
 			delete (*i);
 			i++;
 		}
@@ -100,13 +106,17 @@ namespace Skylicht
 		std::vector<STexturePackage*>::iterator i = m_textureList.begin(), end = m_textureList.end();
 		while (i != end)
 		{
-			if ((*i)->texture == tex)
+			ITexture* texture = (*i)->Texture;
+
+			if (texture == tex)
 			{
-				char log[512];
-				sprintf(log, "Remove texture: %s", (*i)->texture->getName().getPath().c_str());
+				char log[1024];
+				sprintf(log, "Remove texture: %s - refCount: %d",
+					texture->getName().getPath().c_str(),
+					texture->getReferenceCount());
 				os::Printer::log(log);
 
-				driver->removeTexture((*i)->texture);
+				driver->removeTexture(texture);
 				delete (*i);
 
 				m_textureList.erase(i);
@@ -127,13 +137,17 @@ namespace Skylicht
 			std::vector<STexturePackage*>::iterator i = m_textureList.begin(), end = m_textureList.end();
 			while (i != end)
 			{
-				if ((*i)->package == namePackage)
+				if ((*i)->Package == namePackage)
 				{
-					char log[512];
-					sprintf(log, "Remove Texture: %s", (*i)->texture->getName().getPath().c_str());
+					ITexture* texture = (*i)->Texture;
+
+					char log[1024];
+					sprintf(log, "Remove Texture: %s - refCount: %d",
+						texture->getName().getPath().c_str(),
+						texture->getReferenceCount());
 					os::Printer::log(log);
 
-					driver->removeTexture((*i)->texture);
+					driver->removeTexture(texture);
 					delete (*i);
 
 					m_textureList.erase(i);
@@ -155,7 +169,7 @@ namespace Skylicht
 		texture = driver->getTexture(path);
 
 		if (texture)
-			registerTexture(texture);
+			registerTexture(texture, path);
 		else
 		{
 			char errorLog[512];
@@ -168,74 +182,13 @@ namespace Skylicht
 
 	bool CTextureManager::existTexture(const char* path)
 	{
-		char ansiPath[512];
+		std::string realPath;
 
-		IVideoDriver* driver = getVideoDriver();
-		io::IFileSystem* fs = getIrrlichtDevice()->getFileSystem();
-
-		std::string fixPath = CPath::normalizePath(path);
-		strcpy(ansiPath, fixPath.c_str());
-
-		// try to load compress texture
-		if (driver->getDriverType() == video::EDT_OPENGLES)
-		{
-#if defined(ANDROID)
-			// etc compress
-			CStringImp::replacePathExt(ansiPath, ".etc2");
-#elif defined(IOS)
-#if defined(USE_ETC_TEXTURE)
-			CStringImp::replacePathExt(ansiPath, ".etc2");
-#else
-			CStringImp::replacePathExt(ansiPath, ".pvr");
-#endif
-#elif defined(MACOS)
-			// dxt compress
-			CStringImp::replacePathExt(ansiPath, ".dds");
-#elif defined(__EMSCRIPTEN__)
-			if (driver->queryFeature(EVDF_TEXTURE_COMPRESSED_DXT) == true)
-				CStringImp::replacePathExt(ansiPath, ".dds");
-			else
-				CStringImp::replacePathExt(ansiPath, ".etc2");
-#else
-			CStringImp::replacePathExt(ansiPath, ".tga");
-#endif
-	}
-		else if (driver->getDriverType() == video::EDT_DIRECT3D11 || driver->getDriverType() == video::EDT_OPENGL)
-		{
-			CStringImp::replacePathExt(ansiPath, ".dds");
-		}
-
-		if (fs->existFile(ansiPath) == false)
-		{
-			CStringImp::replacePathExt(ansiPath, ".tga");
-
-			if (fs->existFile(ansiPath) == false)
-			{
-				CStringImp::replacePathExt(ansiPath, ".bmp");
-
-				if (fs->existFile(ansiPath) == false)
-				{
-					CStringImp::replacePathExt(ansiPath, ".png");
-
-					if (fs->existFile(ansiPath) == false)
-					{
-						CStringImp::replacePathExt(ansiPath, ".jpeg");
-
-						if (fs->existFile(ansiPath) == false)
-						{
-							CStringImp::replacePathExt(ansiPath, ".jpg");
-							if (fs->existFile(ansiPath) == false)
-							{
-								return false;
-							}
-						}
-					}
-				}
-			}
-		}
+		if (!findRealTexturePath(path, realPath))
+			return false;
 
 		return true;
-}
+	}
 
 	ITexture* CTextureManager::getTexture(const char* filename, const std::vector<std::string>& textureFolder)
 	{
@@ -282,9 +235,25 @@ namespace Skylicht
 		return NULL;
 	}
 
-	ITexture* CTextureManager::getTexture(const char* path)
+	bool CTextureManager::isTextureLoaded(const char* path)
 	{
-		char ansiPath[512];
+		std::string realPath;
+		if (!findRealTexturePath(path, realPath))
+			return false;
+
+		for (STexturePackage* t : m_textureList)
+		{
+			if (t->Texture && t->Path == realPath.c_str())
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	bool CTextureManager::findRealTexturePath(const char* path, std::string& result)
+	{
+		char ansiPath[1024];
 
 		std::string fixPath = CPath::normalizePath(path);
 		strcpy(ansiPath, fixPath.c_str());
@@ -315,7 +284,7 @@ namespace Skylicht
 #else
 			CStringImp::replacePathExt(ansiPath, ".tga");
 #endif
-	}
+		}
 		else if (driver->getDriverType() == video::EDT_DIRECT3D11 || driver->getDriverType() == video::EDT_OPENGL)
 		{
 			CStringImp::replacePathExt(ansiPath, ".dds");
@@ -343,9 +312,9 @@ namespace Skylicht
 							if (fs->existFile(ansiPath) == false)
 							{
 								char errorLog[512];
-								sprintf(errorLog, "Can not load texture (file not found): %s", path);
+								sprintf(errorLog, "Texture file not found: %s", path);
 								os::Printer::log(errorLog);
-								return NULL;
+								return false;
 							}
 						}
 					}
@@ -353,12 +322,22 @@ namespace Skylicht
 			}
 		}
 
-		ITexture* texture = NULL;
-		texture = driver->getTexture(ansiPath);
+		result = ansiPath;
+		return true;
+	}
+
+	ITexture* CTextureManager::getTexture(const char* path)
+	{
+		std::string realPath;
+		if (!findRealTexturePath(path, realPath))
+			return NULL;
+
+		IVideoDriver* driver = getVideoDriver();
+		ITexture* texture = driver->getTexture(realPath.c_str());
 
 		// register the texture
 		if (texture)
-			registerTexture(texture);
+			registerTexture(texture, realPath.c_str());
 		else
 		{
 			char errorLog[512];
@@ -397,79 +376,18 @@ namespace Skylicht
 
 		for (u32 i = 0, n = paths.size(); i < n; i++)
 		{
-			char ansiPath[512];
-			strcpy(ansiPath, paths[i].c_str());
-
-			// try to load compress texture
-			if (driver->getDriverType() == video::EDT_OPENGLES)
-			{
-#if defined(ANDROID)
-				// etc compress
-				CStringImp::replacePathExt(ansiPath, ".etc2");
-#elif defined(IOS)
-#if defined(USE_ETC_TEXTURE)
-				CStringImp::replacePathExt(ansiPath, ".etc2");
-#else
-				CStringImp::replacePathExt(ansiPath, ".pvr");
-#endif
-#elif defined(MACOS)
-				CStringImp::replacePathExt(ansiPath, ".dds");
-#elif defined(__EMSCRIPTEN__)
-				if (driver->queryFeature(EVDF_TEXTURE_COMPRESSED_DXT) == true)
-					CStringImp::replacePathExt(ansiPath, ".dds");
-				else
-					CStringImp::replacePathExt(ansiPath, ".etc2");
-#else
-				CStringImp::replacePathExt(ansiPath, ".tga");
-#endif
-		}
-			else if (driver->getDriverType() == video::EDT_DIRECT3D11 || driver->getDriverType() == video::EDT_OPENGL)
-				CStringImp::replacePathExt(ansiPath, ".dds");
-
-			bool loadImage = true;
-
-			if (fs->existFile(ansiPath) == false)
-			{
-				CStringImp::replacePathExt(ansiPath, ".tga");
-
-				if (fs->existFile(ansiPath) == false)
-				{
-					CStringImp::replacePathExt(ansiPath, ".bmp");
-
-					if (fs->existFile(ansiPath) == false)
-					{
-						CStringImp::replacePathExt(ansiPath, ".png");
-
-						if (fs->existFile(ansiPath) == false)
-						{
-							CStringImp::replacePathExt(ansiPath, ".jpeg");
-
-							if (fs->existFile(ansiPath) == false)
-							{
-								CStringImp::replacePathExt(ansiPath, ".jpg");
-
-								if (fs->existFile(ansiPath) == false)
-								{
-									char errorLog[512];
-									sprintf(errorLog, "Can not load array texture (file not found): %s", paths[i].c_str());
-									os::Printer::log(errorLog);
-									loadImage = false;
-								}
-							}
-						}
-					}
-				}
-			}
-
+			std::string realPath;
 			IImage* image = NULL;
+
+			bool loadImage = findRealTexturePath(paths[i].c_str(), realPath);
 
 			if (loadImage == true)
 			{
 				char log[1024];
-				sprintf(log, "Load array texture: %s", ansiPath);
+				sprintf(log, "Load array texture: %s", realPath.c_str());
 				os::Printer::log(log);
 
-				io::IReadFile* file = fs->createAndOpenFile(ansiPath);
+				io::IReadFile* file = fs->createAndOpenFile(realPath.c_str());
 				if (file != NULL)
 				{
 					image = driver->createImageFromFile(file);
@@ -495,7 +413,7 @@ namespace Skylicht
 					if (w != imageW || h != imageH)
 					{
 						char errorLog[1024];
-						sprintf(errorLog, "Error: Texture size is not equal %d-%d: %s", w, h, ansiPath);
+						sprintf(errorLog, "Error: Texture size is not equal %d-%d: %s", w, h, realPath.c_str());
 						os::Printer::log(errorLog);
 
 						image->drop();
@@ -507,7 +425,7 @@ namespace Skylicht
 			}
 
 			listImage.push_back(image);
-	}
+		}
 
 		ITexture* texture = NULL;
 
@@ -523,7 +441,7 @@ namespace Skylicht
 
 			// register the texture
 			if (texture)
-				registerTexture(texture);
+				registerTexture(texture, paths[0].c_str());
 			else
 			{
 				char errorLog[512];
@@ -583,7 +501,7 @@ namespace Skylicht
 
 		// register the texture
 		if (texture)
-			registerTexture(texture);
+			registerTexture(texture, pathX1);
 		else
 		{
 			char errorLog[512];
@@ -627,7 +545,7 @@ namespace Skylicht
 		delete[]color;
 
 		if (transformTexture)
-			registerTexture(transformTexture);
+			registerTexture(transformTexture, name);
 
 		return transformTexture;
 	}
@@ -669,7 +587,7 @@ namespace Skylicht
 		delete[]color;
 
 		if (transformTexture)
-			registerTexture(transformTexture);
+			registerTexture(transformTexture, name);
 
 		return transformTexture;
 	}

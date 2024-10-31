@@ -312,6 +312,17 @@ namespace Skylicht
 		return material;
 	}
 
+	void CMaterialManager::replaceTexture(ITexture* oldTexture, ITexture* newTexture)
+	{
+		for (auto it : m_materials)
+		{
+			for (CMaterial* mat : it.second)
+			{
+				mat->replaceTexture(oldTexture, newTexture);
+			}
+		}
+	}
+
 	void CMaterialManager::deleteMaterial(ArrayMaterial& materials, CMaterial* material)
 	{
 		std::string cachePath = material->getMaterialPath();

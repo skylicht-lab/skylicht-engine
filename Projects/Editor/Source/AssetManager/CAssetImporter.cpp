@@ -33,6 +33,10 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Utils/CPath.h"
 #include "Utils/CStringImp.h"
 
+#include "TextureManager/CTextureManager.h"
+#include "Material/CMaterialManager.h"
+#include "MeshManager/CMeshManager.h"
+
 #if defined(__APPLE_CC__)
 namespace fs = std::__fs::filesystem;
 #else
@@ -94,13 +98,38 @@ namespace Skylicht
 			{
 				SFileNode* node = (*m_fileIterator);
 
-				std::string path = node->FullPath;
+				std::string path = node->Path;
 
 				if (fs::exists(path))
 				{
-					// todo
-					// import {path}
+					std::string ext = CPath::getFileNameExt(path);
+					ext = CStringImp::toLower(ext);
 
+					if (CTextureManager::isTextureExt(ext.c_str()))
+					{
+						CTextureManager* textureMgr = CTextureManager::getInstance();
+
+						if (textureMgr->isTextureLoaded(path.c_str()))
+						{
+							// get old texture
+							ITexture* oldTexture = textureMgr->getTexture(path.c_str());
+							oldTexture->grab();
+
+							// reload texture
+							textureMgr->removeTexture(oldTexture);
+							ITexture* newTexture = textureMgr->getTexture(path.c_str());
+
+							// update for all materials
+							CMaterialManager::getInstance()->replaceTexture(oldTexture, newTexture);
+
+							oldTexture->drop();
+						}
+					}
+					else if (CMeshManager::isMeshExt(ext.c_str()))
+					{
+						// hot reload mesh
+
+					}
 				}
 
 				m_lastFile = node->Path;

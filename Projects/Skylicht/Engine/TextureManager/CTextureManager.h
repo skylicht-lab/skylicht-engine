@@ -41,8 +41,14 @@ namespace Skylicht
 	protected:
 		struct STexturePackage
 		{
-			std::string package;
-			ITexture* texture;
+			std::string Package;
+			std::string Path;
+			ITexture* Texture;
+
+			STexturePackage()
+			{
+				Texture = NULL;
+			}
 		};
 
 		std::string m_currentPackage;
@@ -63,17 +69,17 @@ namespace Skylicht
 
 		static bool isTextureExt(const char* ext);
 
-		void setCurrentPackage(const char* name)
+		inline void setCurrentPackage(const char* name)
 		{
 			m_currentPackage = name;
 		}
 
-		const char* getCurrentPackage()
+		inline const char* getCurrentPackage()
 		{
 			return m_currentPackage.c_str();
 		}
 
-		void registerTexture(ITexture* tex);
+		void registerTexture(ITexture* tex, const char *path);
 
 		void removeAllTexture();
 
@@ -82,6 +88,10 @@ namespace Skylicht
 		void removeTexture(ITexture* tex);
 
 		bool existTexture(const char* path);
+
+		bool findRealTexturePath(const char* path, std::string& result);
+
+		bool isTextureLoaded(const char* path);
 
 		ITexture* getTexture(const char* path);
 

@@ -39,6 +39,15 @@ namespace Skylicht
 		return meshExts;
 	}
 
+	bool CMeshManager::isMeshExt(const char* ext)
+	{
+		std::vector<std::string> listExt = getMeshExts();
+		for (auto s : listExt)
+			if (s == ext)
+				return true;
+		return false;
+	}
+
 	void CMeshManager::releasePrefab(CEntityPrefab* prefab)
 	{
 		std::map<std::string, CEntityPrefab*>::iterator i = m_meshPrefabs.begin(), end = m_meshPrefabs.end();
