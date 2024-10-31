@@ -406,6 +406,9 @@ namespace Skylicht
 			{
 				m_onCharEvent = true;
 
+				bool invokeEnterEvent = false;
+				bool invokeESCEvent = false;
+
 				if (m_editable)
 				{
 					if (c == 27)
@@ -413,8 +416,7 @@ namespace Skylicht
 						// press ESC
 						unfocus();
 
-						if (OnESC != nullptr)
-							OnESC(this);
+						invokeESCEvent = true;
 					}
 					else if (c == 127)
 					{
@@ -432,8 +434,7 @@ namespace Skylicht
 						else
 							unfocus();
 
-						if (OnEnter != nullptr)
-							OnEnter(this);
+						invokeEnterEvent = true;
 					}
 					else if (c == '\t')
 					{
@@ -455,19 +456,33 @@ namespace Skylicht
 					onValidateValue();
 				}
 
+				m_onCharEvent = false;
+
 				if (OnChar != nullptr)
 					OnChar(this, c);
 
 				if (OnTextChanged != nullptr)
 					OnTextChanged(this);
 
-				m_onCharEvent = false;
+				if (invokeEnterEvent)
+				{
+					if (OnEnter != nullptr)
+						OnEnter(this);
+				}
+				else if (invokeESCEvent)
+				{
+					if (OnESC != nullptr)
+						OnESC(this);
+				}
+
 				return true;
 			}
 
 			void CTextBox::scrollToLine(u32 line, u32 pos)
 			{
 				CText* text = m_textContainer->getLine(line);
+				if (text == NULL)
+					return;
 
 				SDimension s = text->getCharacterPosition(pos);
 				SPoint localCaretPosition(s.Width, 0.0f);

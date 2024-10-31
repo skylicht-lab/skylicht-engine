@@ -324,6 +324,12 @@ namespace Skylicht
 			}
 		}
 
+		void CListFSController::browse(const char* folder)
+		{
+			m_currentFolder = folder;
+			refresh();
+		}
+
 		void CListFSController::refresh()
 		{
 			std::vector<SFileInfo> files;
@@ -335,7 +341,7 @@ namespace Skylicht
 			}
 
 			if (m_currentFolder.empty())
-				m_assetManager->getRoot(files);
+				m_listFS->removeAllItem();
 			else
 				m_assetManager->getFolder(m_currentFolder.c_str(), files);
 

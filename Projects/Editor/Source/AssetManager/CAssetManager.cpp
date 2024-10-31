@@ -368,7 +368,6 @@ namespace Skylicht
 			{
 				SFileNode* node = it->second;
 
-				m_pathToFile.erase(node->Path);
 				m_files.remove(node);
 
 				std::string path = node->FullPath;
@@ -377,6 +376,8 @@ namespace Skylicht
 					fs::remove_all(path);
 				else
 					fs::remove(path);
+
+				m_pathToFile.erase(it);
 
 				delete node;
 				return true;

@@ -77,6 +77,8 @@ namespace Skylicht
 
 			void refresh();
 
+			void browse(const char* folder);
+
 			void setTreeController(CTreeFSController* treeController)
 			{
 				m_treeController = treeController;

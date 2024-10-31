@@ -29,6 +29,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/Input/CInput.h"
 #include "GUI/Clipboard/CClipboard.h"
 
+#include "Editor/SpaceController/CPropertyController.h"
+
 namespace Skylicht
 {
 	namespace Editor
@@ -57,7 +59,7 @@ namespace Skylicht
 			m_delete = m_contextMenu->addItem(L"Delete", GUI::ESystemIcon::Trash);
 			m_rename = m_contextMenu->addItem(L"Rename", L"F2");
 			m_copyPath = m_contextMenu->addItem(L"Copy path", GUI::ESystemIcon::Copy, L"SHIFT + C");
-			m_duplicate = m_contextMenu->addItem(L"Duplicate", GUI::ESystemIcon::Duplicate, L"CTRL + D");
+			// m_duplicate = m_contextMenu->addItem(L"Duplicate", GUI::ESystemIcon::Duplicate, L"CTRL + D");
 
 			m_treeFS->addAccelerator("SHIFT + C", BIND_LISTENER(&CContextMenuFS::OnCopyPath, this));
 			m_listFS->addAccelerator("SHIFT + C", BIND_LISTENER(&CContextMenuFS::OnCopyPath, this));
@@ -94,13 +96,13 @@ namespace Skylicht
 					{
 						m_delete->setHidden(true);
 						m_rename->setHidden(true);
-						m_duplicate->setHidden(true);
+						// m_duplicate->setHidden(true);
 					}
 					else
 					{
 						m_delete->setHidden(false);
 						m_rename->setHidden(false);
-						m_duplicate->setHidden(false);
+						// m_duplicate->setHidden(false);
 					}
 
 					m_contextMenu->open(GUI::CInput::getInput()->getMousePosition());
@@ -132,10 +134,12 @@ namespace Skylicht
 					m_copyPath->setHidden(false);
 				}
 
+				/*
 				if (m_assetManager->isFolder(m_selectedPath.c_str()))
 					m_duplicate->setHidden(true);
 				else
 					m_duplicate->setHidden(false);
+				*/
 
 				m_space1->setHidden(true);
 				m_newFolder->setHidden(true);
@@ -186,9 +190,20 @@ namespace Skylicht
 				m_msgBox->getMessageIcon()->setIcon(GUI::ESystemIcon::Alert);
 				m_msgBox->OnYes = [asset = m_assetManager, path = m_selectedPath, listController = m_listFSController, treeController = m_treeFSController](GUI::CBase* dialog)
 					{
+						CPropertyController::getInstance()->setProperty(NULL);
+
+						bool isFolder = asset->isFolder(path.c_str());
+
 						if (asset->deleteAsset(path.c_str()))
 						{
-							listController->removePath(path.c_str());
+							if (isFolder)
+							{
+								std::string parent = CPath::getParentFolderPath(path);
+								listController->browse(parent.c_str());
+							}
+							else
+								listController->removePath(path.c_str());
+
 							treeController->removePath(path.c_str());
 						}
 					};
@@ -197,6 +212,8 @@ namespace Skylicht
 			{
 				if (m_selected != NULL)
 				{
+					CPropertyController::getInstance()->setProperty(NULL);
+
 					GUI::CListRowItem* rowItem = dynamic_cast<GUI::CListRowItem*>(m_selected);
 					if (rowItem != NULL)
 					{
@@ -217,10 +234,12 @@ namespace Skylicht
 				GUI::CClipboard::get()->copyTextToClipboard(text);
 				delete[]text;
 			}
+			/*
 			else if (label == L"Duplicate")
 			{
 
 			}
+			*/
 			else if (label == L"New folder")
 			{
 				m_listFSController->newFolder(m_selectedPath.c_str());
