@@ -1297,7 +1297,11 @@ namespace Skylicht
 				if (uniform != NULL)
 				{
 					t->Path = uniform->Path;
+					if (t->Texture)
+						t->Texture->drop();
 					t->Texture = uniform->Texture;
+					if (t->Texture)
+						t->Texture->grab();
 					break;
 				}
 			}
@@ -1314,44 +1318,45 @@ namespace Skylicht
 					break;
 				}
 			}
-
-			return;
 		}
-
-		for (SUniformTexture*& t : m_uniformTextures)
+		else
 		{
-			if (t->Texture != NULL)
-				continue;
-
-			for (SUniformTexture*& uniform : e->UniformTextures)
+			// copy from extra data
+			for (SUniformTexture*& t : m_uniformTextures)
 			{
-				if (t->Name == uniform->Name)
+				if (t->Texture != NULL)
+					continue;
+
+				for (SUniformTexture*& uniform : e->UniformTextures)
 				{
-					t->Path = uniform->Path;
-					t->Texture = uniform->Texture;
+					if (t->Name == uniform->Name)
+					{
+						t->Path = uniform->Path;
+						t->Texture = uniform->Texture;
 
-					if (t->Texture == NULL && !t->Path.empty())
-						t->Texture = CTextureManager::getInstance()->getTexture(t->Path.c_str());
+						if (t->Texture == NULL && !t->Path.empty())
+							t->Texture = CTextureManager::getInstance()->getTexture(t->Path.c_str());
 
-					if (t->Texture)
-						t->Texture->grab();
+						if (t->Texture)
+							t->Texture->grab();
 
-					break;
+						break;
+					}
 				}
 			}
-		}
 
-		for (SUniformValue*& v : m_uniformParams)
-		{
-			for (SUniformValue*& uniform : e->UniformParams)
+			for (SUniformValue*& v : m_uniformParams)
 			{
-				if (v->Name == uniform->Name && v->FloatSize == uniform->FloatSize)
+				for (SUniformValue*& uniform : e->UniformParams)
 				{
-					v->FloatValue[0] = uniform->FloatValue[0];
-					v->FloatValue[1] = uniform->FloatValue[1];
-					v->FloatValue[2] = uniform->FloatValue[2];
-					v->FloatValue[3] = uniform->FloatValue[3];
-					break;
+					if (v->Name == uniform->Name && v->FloatSize == uniform->FloatSize)
+					{
+						v->FloatValue[0] = uniform->FloatValue[0];
+						v->FloatValue[1] = uniform->FloatValue[1];
+						v->FloatValue[2] = uniform->FloatValue[2];
+						v->FloatValue[3] = uniform->FloatValue[3];
+						break;
+					}
 				}
 			}
 		}
