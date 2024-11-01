@@ -66,6 +66,8 @@ namespace Skylicht
 			return (int)m_entities.size();
 		}
 
+		void getEntitiesTransforms(core::array<core::matrix4>& result);
+
 	protected:
 
 		void setEntities(CEntity** entities, u32 count);

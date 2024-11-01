@@ -37,7 +37,8 @@ namespace Skylicht
 			m_progressBar(NULL),
 			m_statusText(NULL),
 			m_importer(NULL),
-			m_state(None)
+			m_state(None),
+			m_loadStepCount(10)
 		{
 			m_progressBar = new GUI::CProgressBar(window);
 			m_progressBar->dock(GUI::EPosition::Top);
@@ -91,7 +92,7 @@ namespace Skylicht
 				float percent = 0.0f;
 				std::string last;
 
-				bool finish = m_importer->load(10);
+				bool finish = m_importer->load(m_loadStepCount);
 				m_importer->getImportStatus(percent, last);
 
 				m_progressBar->setPercent(percent);
@@ -113,7 +114,7 @@ namespace Skylicht
 				float percent = 0.0f;
 				std::string last;
 
-				bool finish = m_importer->deleteAsset(10);
+				bool finish = m_importer->deleteAsset(m_loadStepCount);
 				m_importer->getDeleteStatus(percent, last);
 
 				m_progressBar->setPercent(percent);
@@ -133,6 +134,12 @@ namespace Skylicht
 		void CSpaceImport::onDestroy(GUI::CBase* base)
 		{
 			CSpace::onDestroy(base);
+		}
+
+		void CSpaceImport::setLoadStepCount(int count)
+		{
+			m_loadStepCount = count;
+			m_loadStepCount = core::clamp(m_loadStepCount, 1, 20);
 		}
 	}
 }

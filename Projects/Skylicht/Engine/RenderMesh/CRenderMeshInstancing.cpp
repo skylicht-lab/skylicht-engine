@@ -85,6 +85,8 @@ namespace Skylicht
 
 		m_baseEntities.clear();
 		m_renderers.clear();
+		m_renderTransforms.clear();
+		m_transforms.clear();
 		m_entities.clear();
 
 		if (m_instancingMaterials)
@@ -200,7 +202,7 @@ namespace Skylicht
 				// also add transform
 				m_renderTransforms.push_back(transform);
 
-				// also check add indirect lighting to hold ReflectionTexture for intacing
+				// also check add indirect lighting to hold ReflectionTexture for instancing
 				CIndirectLightingData* indirectLighting = spawnEntity->addData<CIndirectLightingData>();
 				indirectLighting->initSH();
 			}
@@ -458,6 +460,17 @@ namespace Skylicht
 		{
 			addRendererInstancing(createEntity(entity), m_renderers[i], m_renderTransforms[i]);
 		}
+
+		return entity;
+	}
+
+	CEntity* CRenderMeshInstancing::spawn(const core::matrix4& transform)
+	{
+		CEntity* entity = spawn();
+
+		// set transform
+		CWorldTransformData* world = GET_ENTITY_DATA(entity, CWorldTransformData);
+		world->Relative = transform;
 
 		return entity;
 	}

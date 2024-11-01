@@ -46,6 +46,10 @@ namespace Skylicht
 
 		static std::vector<std::string> getMaterialExts();
 
+		static bool isMaterialExt(const char* ext);
+
+		bool isMaterialLoaded(const char* filename);
+
 		void releaseAllMaterials();
 
 		ArrayMaterial& loadMaterial(const char* filename, bool loadTexture, const std::vector<std::string>& textureFolders);

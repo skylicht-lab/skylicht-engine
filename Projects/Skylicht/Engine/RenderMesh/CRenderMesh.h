@@ -100,6 +100,16 @@ namespace Skylicht
 			return (int)m_materials.size();
 		}
 
+		const std::string& getMeshResource()
+		{
+			return m_meshFile;
+		}
+
+		const std::string& getMaterialResource()
+		{
+			return m_materialFile;
+		}
+
 		CMaterial* getMaterial(int i)
 		{
 			return m_materials[i];

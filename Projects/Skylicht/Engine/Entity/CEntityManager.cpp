@@ -242,6 +242,23 @@ namespace Skylicht
 		notifyUpdateSortEntities();
 	}
 
+	int CEntityManager::getDepth(CWorldTransformData* t)
+	{
+		if (t->Parent == NULL)
+		{
+			t->Depth = 0;
+			return t->Depth;
+		}
+		else
+		{
+			if (t->Parent && t->Parent->Depth == -1)
+				t->Depth = getDepth(t->Parent) + 1;
+			else
+				t->Depth = t->Parent->Depth + 1;
+		}
+		return t->Depth;
+	}
+
 	void CEntityManager::sortAliveEntities()
 	{
 		CEntity** entities = m_entities.pointer();
@@ -254,6 +271,8 @@ namespace Skylicht
 			m_sortDepth[i].reset();
 		}
 
+		// step 1:
+		// Link parent
 		for (u32 i = 0; i < numEntity; i++)
 		{
 			CEntity* entity = entities[i];
@@ -265,20 +284,27 @@ namespace Skylicht
 				if (world->AttachParentIndex >= 0)
 				{
 					CEntity* parent = m_entities[world->AttachParentIndex];
-					CWorldTransformData* parentWorld = GET_ENTITY_DATA(parent, CWorldTransformData);
-					world->Depth = parentWorld->Depth + 1;
+					world->Parent = GET_ENTITY_DATA(parent, CWorldTransformData);
 				}
 				else
 				{
 					if (world->ParentIndex >= 0)
 						world->Parent = GET_ENTITY_DATA(m_entities[world->ParentIndex], CWorldTransformData);
-
-					if (world->Parent)
-						world->Depth = world->Parent->Depth + 1;
-					else
-						world->Depth = 0;
 				}
+				world->Depth = -1;
+			}
+		}
 
+		// step 2
+		// Calc the depth
+		for (u32 i = 0; i < numEntity; i++)
+		{
+			CEntity* entity = entities[i];
+
+			if (entity->isAlive())
+			{
+				CWorldTransformData* world = GET_ENTITY_DATA(entity, CWorldTransformData);
+				getDepth(world);
 				m_sortDepth[world->Depth].push(entity);
 
 				if (maxDepth < world->Depth)
@@ -286,10 +312,11 @@ namespace Skylicht
 			}
 		}
 
+		// Step 3
+		// copy and sort the alives by depth
 		m_alives.set_used(numEntity);
 		CEntity** alives = m_alives.pointer();
 
-		// copy and sort the alives by depth
 		int count = 0;
 		for (int i = 0; i <= maxDepth; i++)
 		{

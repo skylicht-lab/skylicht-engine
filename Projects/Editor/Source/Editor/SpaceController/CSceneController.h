@@ -151,6 +151,10 @@ namespace Skylicht
 
 			void doFinishLoadScene();
 
+			void doMeshChange(const char* resource);
+
+			void doMaterialChange(const char* resource);
+
 			const std::string& getScenePath()
 			{
 				return m_scenePath;

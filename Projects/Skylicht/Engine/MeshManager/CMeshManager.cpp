@@ -48,14 +48,24 @@ namespace Skylicht
 		return false;
 	}
 
+	void CMeshManager::releaseResource(const char* resource)
+	{
+		std::map<std::string, CEntityPrefab*>::iterator it = m_meshPrefabs.find(resource);
+		if (it != m_meshPrefabs.end())
+		{
+			delete it->second;
+			m_meshPrefabs.erase(it);
+		}
+	}
+
 	void CMeshManager::releasePrefab(CEntityPrefab* prefab)
 	{
 		std::map<std::string, CEntityPrefab*>::iterator i = m_meshPrefabs.begin(), end = m_meshPrefabs.end();
 		while (i != end)
 		{
-			if ((*i).second == prefab)
+			if (i->second == prefab)
 			{
-				delete (*i).second;
+				delete i->second;
 				m_meshPrefabs.erase(i);
 				return;
 			}
@@ -102,6 +112,16 @@ namespace Skylicht
 			delete data;
 		}
 		m_instancingData.clear();
+	}
+
+	bool CMeshManager::isMeshLoaded(const char* resource)
+	{
+		std::map<std::string, CEntityPrefab*>::iterator it = m_meshPrefabs.find(resource);
+		if (it != m_meshPrefabs.end())
+		{
+			return true;
+		}
+		return false;
 	}
 
 	CEntityPrefab* CMeshManager::loadModel(const char* resource, const char* texturePath, bool loadNormalMap, bool flipNormalMap, bool loadTexcoord2, bool createBatching)

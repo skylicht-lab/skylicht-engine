@@ -193,4 +193,18 @@ namespace Skylicht
 			m_entities.push_back(entity);
 		}
 	}
+
+	void CEntityHandler::getEntitiesTransforms(core::array<core::matrix4>& result)
+	{
+		u32 n = m_entities.size();
+		result.set_used(n);
+
+		for (u32 i = 0; i < n; i++)
+		{
+			CEntity* entity = m_entities[i];
+
+			CWorldTransformData* transformData = GET_ENTITY_DATA(entity, CWorldTransformData);
+			result[i] = transformData->Relative;
+		}
+	}
 }

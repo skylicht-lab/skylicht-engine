@@ -29,6 +29,8 @@ namespace Skylicht
 
 		static bool isMeshExt(const char* ext);
 
+		bool isMeshLoaded(const char* resource);
+
 		CEntityPrefab* loadModel(const char* resource, const char* texturePath, bool loadNormalMap = true, bool flipNormalMap = true, bool loadTexcoord2 = false, bool createBatching = false);
 
 		CEntityPrefab* loadModel(const char* resource, const char* texturePath, IMeshImporter* importer, bool loadNormalMap = true, bool flipNormalMap = true, bool loadTexcoord2 = false, bool createBatching = false);
@@ -36,6 +38,8 @@ namespace Skylicht
 		bool exportModel(CEntity** entities, u32 count, const char* output);
 
 		bool exportModel(CEntity** entities, u32 count, const char* output, IMeshExporter* exporter);
+
+		void releaseResource(const char* resource);
 
 		void releasePrefab(CEntityPrefab* prefab);
 

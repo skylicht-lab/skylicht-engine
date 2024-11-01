@@ -49,6 +49,26 @@ namespace Skylicht
 		return materialExts;
 	}
 
+	bool CMaterialManager::isMaterialExt(const char* ext)
+	{
+		std::vector<std::string> listExt = getMaterialExts();
+		for (auto s : listExt)
+			if (s == ext)
+				return true;
+		return false;
+	}
+
+	bool CMaterialManager::isMaterialLoaded(const char* filename)
+	{
+		std::map<std::string, ArrayMaterial>::iterator it = m_materials.find(filename);
+		if (it != m_materials.end())
+		{
+			return true;
+		}
+
+		return false;
+	}
+
 	void CMaterialManager::releaseAllMaterials()
 	{
 		std::map<std::string, ArrayMaterial>::iterator i = m_materials.begin(), end = m_materials.end();

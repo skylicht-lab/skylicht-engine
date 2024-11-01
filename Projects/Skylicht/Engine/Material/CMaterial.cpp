@@ -100,6 +100,10 @@ namespace Skylicht
 		for (SUniformTexture*& u : m_uniformTextures)
 		{
 			SUniformTexture* t = u->clone();
+
+			if (t->Texture)
+				t->Texture->grab();
+
 			mat->m_uniformTextures.push_back(t);
 		}
 
@@ -224,7 +228,8 @@ namespace Skylicht
 			if (p->Texture)
 				p->Texture->drop();
 			p->Texture = texture;
-			p->Texture->grab();
+			if (p->Texture)
+				p->Texture->grab();
 		}
 	}
 
@@ -505,19 +510,19 @@ namespace Skylicht
 
 		for (int i = 0, n = (int)m_uniformTextures.size(); i < n; i++)
 		{
-			SUniformTexture* textureUI = m_uniformTextures[i];
-			SUniform* uniform = m_shader->getFSUniform(textureUI->Name.c_str());
+			SUniformTexture* uniformTexture = m_uniformTextures[i];
+			SUniform* uniform = m_shader->getFSUniform(uniformTexture->Name.c_str());
 
 			if (uniform != NULL)
 			{
 				int textureSlot = (int)uniform->Value[0];
 				if (textureSlot < MATERIAL_MAX_TEXTURES)
 				{
-					if (textureUI->Path.empty() == false)
+					if (uniformTexture->Path.empty() == false)
 					{
-						ITexture* texture = textureManager->getTexture(textureUI->Path.c_str());
+						ITexture* texture = textureManager->getTexture(uniformTexture->Path.c_str());
 						m_textures[textureSlot] = texture;
-						textureUI->Texture = texture;
+						uniformTexture->Texture = texture;
 						if (texture)
 							texture->grab();
 					}
@@ -615,8 +620,8 @@ namespace Skylicht
 
 		for (int i = 0, n = (int)m_uniformTextures.size(); i < n; i++)
 		{
-			SUniformTexture* textureUI = m_uniformTextures[i];
-			SUniform* uniform = m_shader->getFSUniform(textureUI->Name.c_str());
+			SUniformTexture* uniformTexture = m_uniformTextures[i];
+			SUniform* uniform = m_shader->getFSUniform(uniformTexture->Name.c_str());
 
 			if (uniform != NULL)
 			{
@@ -625,7 +630,7 @@ namespace Skylicht
 				{
 					m_textures[textureSlot]->drop();
 					m_textures[textureSlot] = NULL;
-					textureUI->Texture = NULL;
+					uniformTexture->Texture = NULL;
 				}
 			}
 		}
@@ -1043,6 +1048,9 @@ namespace Skylicht
 
 	void CMaterial::replaceTexture(ITexture* oldTexture, ITexture* newTexture)
 	{
+		if (oldTexture == NULL || newTexture == NULL)
+			return;
+
 		for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
 		{
 			if (m_resourceTexture[i] == oldTexture)
@@ -1136,7 +1144,13 @@ namespace Skylicht
 				ITexture* texture = m_textures[uniformTexture->TextureSlot];
 				if (texture)
 				{
+					if (uniformTexture->Texture)
+						uniformTexture->Texture->drop();
+
 					uniformTexture->Texture = texture;
+
+					if (uniformTexture->Texture)
+						uniformTexture->Texture->grab();
 				}
 			}
 		}
@@ -1245,13 +1259,20 @@ namespace Skylicht
 		e->UniformParams.clear();
 
 		for (SUniformTexture*& uniform : e->UniformTextures)
+		{
+			if (uniform->Texture)
+				uniform->Texture->drop();
 			delete uniform;
+		}
 		e->UniformTextures.clear();
 
 		// add current params
 		for (SUniformTexture*& t : m_uniformTextures)
 		{
-			e->UniformTextures.push_back(t->clone());
+			SUniformTexture* uniform = t->clone();
+			if (uniform->Texture)
+				uniform->Texture->grab();
+			e->UniformTextures.push_back(uniform);
 		}
 
 		for (SUniformValue*& v : m_uniformParams)

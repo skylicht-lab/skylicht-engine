@@ -37,6 +37,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Material/CMaterialManager.h"
 #include "MeshManager/CMeshManager.h"
 
+#include "Editor/SpaceController/CSceneController.h"
+
 #if defined(__APPLE_CC__)
 namespace fs = std::__fs::filesystem;
 #else
@@ -100,37 +102,7 @@ namespace Skylicht
 
 				std::string path = node->Path;
 
-				if (fs::exists(path))
-				{
-					std::string ext = CPath::getFileNameExt(path);
-					ext = CStringImp::toLower(ext);
-
-					if (CTextureManager::isTextureExt(ext.c_str()))
-					{
-						CTextureManager* textureMgr = CTextureManager::getInstance();
-
-						if (textureMgr->isTextureLoaded(path.c_str()))
-						{
-							// get old texture
-							ITexture* oldTexture = textureMgr->getTexture(path.c_str());
-							oldTexture->grab();
-
-							// reload texture
-							textureMgr->removeTexture(oldTexture);
-							ITexture* newTexture = textureMgr->getTexture(path.c_str());
-
-							// update for all materials
-							CMaterialManager::getInstance()->replaceTexture(oldTexture, newTexture);
-
-							oldTexture->drop();
-						}
-					}
-					else if (CMeshManager::isMeshExt(ext.c_str()))
-					{
-						// hot reload mesh
-
-					}
-				}
+				importPath(path);
 
 				m_lastFile = node->Path;
 
@@ -209,15 +181,66 @@ namespace Skylicht
 			{
 				SFileNode* node = (*m_fileIterator);
 
-				std::string path = node->FullPath;
+				std::string path = node->Path;
 
-				// todo: import {path}
-
+				importPath(path);
 
 				m_lastFile = node->Path;
 
 				++m_fileIterator;
 				++m_fileID;
+			}
+		}
+
+		void CAssetImporter::importPath(const std::string& path)
+		{
+			if (fs::exists(path))
+			{
+				std::string ext = CPath::getFileNameExt(path);
+				ext = CStringImp::toLower(ext);
+
+				if (CTextureManager::isTextureExt(ext.c_str()))
+				{
+					CTextureManager* textureMgr = CTextureManager::getInstance();
+
+					if (textureMgr->isTextureLoaded(path.c_str()))
+					{
+						// get old texture
+						ITexture* oldTexture = textureMgr->getTexture(path.c_str());
+						oldTexture->grab();
+
+						// reload texture
+						textureMgr->removeTexture(oldTexture);
+						ITexture* newTexture = textureMgr->getTexture(path.c_str());
+
+						// update for all materials
+						CMaterialManager::getInstance()->replaceTexture(oldTexture, newTexture);
+
+						oldTexture->drop();
+					}
+				}
+				else if (CMeshManager::isMeshExt(ext.c_str()))
+				{
+					CMeshManager* meshMgr = CMeshManager::getInstance();
+
+					if (meshMgr->isMeshLoaded(path.c_str()))
+					{
+						// unload mesh & reload
+						meshMgr->releaseResource(path.c_str());
+						CSceneController::getInstance()->doMeshChange(path.c_str());
+					}
+				}
+				else if (CMaterialManager::isMaterialExt(ext.c_str()))
+				{
+					CMaterialManager* materialMgr = CMaterialManager::getInstance();
+
+					if (materialMgr->isMaterialLoaded(path.c_str()))
+					{
+						// unload material & reload
+						materialMgr->unloadMaterial(path.c_str());
+						CSceneController::getInstance()->doMaterialChange(path.c_str());
+					}
+				}
 			}
 		}
 	}

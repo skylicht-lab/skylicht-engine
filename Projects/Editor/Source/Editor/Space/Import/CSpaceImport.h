@@ -53,6 +53,8 @@ namespace Skylicht
 
 			EImportState m_state;
 
+			int m_loadStepCount;
+
 		public:
 			CSpaceImport(GUI::CWindow* window, CEditor* editor);
 
@@ -65,6 +67,8 @@ namespace Skylicht
 			virtual void update();
 
 			virtual void onDestroy(GUI::CBase* base);
+
+			void setLoadStepCount(int count);
 		};
 	}
 }

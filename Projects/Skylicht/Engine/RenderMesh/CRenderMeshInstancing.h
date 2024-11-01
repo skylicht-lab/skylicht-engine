@@ -77,6 +77,18 @@ namespace Skylicht
 
 		virtual CEntity* spawn();
 
+		CEntity* spawn(const core::matrix4& transform);
+
+		const std::string& getMeshResource()
+		{
+			return m_meshFile;
+		}
+
+		const std::string& getMaterialResource()
+		{
+			return m_materialFile;
+		}
+
 		void initFromMeshFile(const char* path);
 
 		void initMaterialFromFile(const char* material);

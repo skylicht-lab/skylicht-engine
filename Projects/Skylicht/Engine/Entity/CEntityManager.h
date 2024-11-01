@@ -31,6 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "GameObject/CGameObject.h"
 #include "Camera/CCamera.h"
+#include "Transform/CWorldTransformData.h"
 
 #define MAX_ENTITY_DEPTH 256
 
@@ -74,6 +75,8 @@ namespace Skylicht
 		void cullingAndRender();
 
 	protected:
+
+		int getDepth(CWorldTransformData* t);
 
 		void sortAliveEntities();
 

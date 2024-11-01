@@ -242,7 +242,10 @@ namespace Skylicht
 			CSpaceImport* spaceImport = dynamic_cast<CSpaceImport*>(space);
 
 			if (fromWatcher == true)
+			{
 				spaceImport->initImportFiles(m_assetWatcher->getFiles(), m_assetWatcher->getDeletedFiles());
+				spaceImport->setLoadStepCount(1);
+			}
 			else
 				spaceImport->initImportAll();
 		}
@@ -413,6 +416,7 @@ namespace Skylicht
 			submenu->addSeparator();
 
 			submenu->addItem(L"Mesh");
+			submenu->addItem(L"Mesh Instancing");
 			/*
 			submenu->addSeparator();
 

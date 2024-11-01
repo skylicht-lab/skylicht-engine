@@ -294,6 +294,63 @@ namespace Skylicht
 			m_spaceScene->enableRender(true);
 		}
 
+		void CSceneController::doMeshChange(const char* resource)
+		{
+			CZone* zone = m_scene->getZone(0);
+
+			CHierarchyController* hierachyController = NULL;
+			if (m_spaceHierarchy)
+				hierachyController = m_spaceHierarchy->getController();
+
+			std::vector<CRenderMesh*> listMesh = zone->getComponentsInChild<CRenderMesh>(false);
+			for (CRenderMesh* render : listMesh)
+			{
+				if (render->getMeshResource() == resource)
+				{
+					render->initFromMeshFile(resource);
+
+					if (hierachyController)
+						hierachyController->updateTreeNode(render->getGameObject());
+				}
+			}
+
+			core::array<core::matrix4> instancingTransform;
+
+			std::vector<CRenderMeshInstancing*> listMeshInstancing = zone->getComponentsInChild<CRenderMeshInstancing>(false);
+			for (CRenderMeshInstancing* render : listMeshInstancing)
+			{
+				if (render->getMeshResource() == resource)
+				{
+					render->getEntitiesTransforms(instancingTransform);
+					render->initFromMeshFile(resource);
+					for (u32 i = 0, n = instancingTransform.size(); i < n; i++)
+						render->spawn(instancingTransform[i]);
+
+					if (hierachyController)
+						hierachyController->updateTreeNode(render->getGameObject());
+				}
+			}
+		}
+
+		void CSceneController::doMaterialChange(const char* resource)
+		{
+			CZone* zone = m_scene->getZone(0);
+
+			std::vector<CRenderMesh*> listRenderMesh = zone->getComponentsInChild<CRenderMesh>(false);
+			for (CRenderMesh* render : listRenderMesh)
+			{
+				if (render->getMaterialResource() == resource)
+					render->initMaterialFromFile(resource);
+			}
+
+			std::vector<CRenderMeshInstancing*> listMeshInstancing = zone->getComponentsInChild<CRenderMeshInstancing>(false);
+			for (CRenderMeshInstancing* render : listMeshInstancing)
+			{
+				if (render->getMaterialResource() == resource)
+					render->initMaterialFromFile(resource);
+			}
+		}
+
 		void CSceneController::deleteScene()
 		{
 			if (m_scene)
@@ -642,6 +699,11 @@ namespace Skylicht
 			{
 				std::vector<std::string> components = { "CRenderMesh", "CIndirectLighting" };
 				createComponentObject("Mesh", components, NULL);
+			}
+			else if (objectType == L"Mesh Instancing")
+			{
+				std::vector<std::string> components = { "CRenderMeshInstancing", "CIndirectLighting" };
+				createComponentObject("Mesh Instancing", components, NULL);
 			}
 			else if (objectType == L"Direction Light")
 			{

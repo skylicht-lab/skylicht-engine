@@ -78,6 +78,11 @@ namespace Skylicht
 			void add(const char* path);
 
 			void importAll();
+
+		protected:
+
+			void importPath(const std::string& path);
+
 		};
 	}
 }
