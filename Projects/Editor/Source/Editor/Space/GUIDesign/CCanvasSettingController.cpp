@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CCanvasSettingController.h"
-#include "Editor/SpaceController/CSceneController.h"
+#include "Editor/SpaceController/CGUIDesignController.h"
 #include "GUI/Utils/CTabableGroup.h"
 
 namespace Skylicht
@@ -112,7 +112,7 @@ namespace Skylicht
 
 		void CCanvasSettingController::onShow()
 		{
-			CScene* scene = CSceneController::getInstance()->getScene();
+			CScene* scene = CGUIDesignController::getInstance()->getScene();
 			CGameObject* canvasObj = scene->searchObjectInChild(L"GUICanvas");
 			if (canvasObj)
 			{
@@ -156,13 +156,15 @@ namespace Skylicht
 			float w = m_inputWidth->getValue();
 			float h = m_inputHeight->getValue();
 
-			CScene* scene = CSceneController::getInstance()->getScene();
+			CScene* scene = CGUIDesignController::getInstance()->getScene();
 			CGameObject* canvasObj = scene->searchObjectInChild(L"GUICanvas");
+			if (canvasObj)
+			{
+				CCanvas* canvas = canvasObj->getComponent<CCanvas>();
+				CGUIElement* root = canvas->getRootElement();
 
-			CCanvas* canvas = canvasObj->getComponent<CCanvas>();
-			CGUIElement* root = canvas->getRootElement();
-
-			root->setRect(core::rectf(0.0f, 0.0f, w, h));
+				root->setRect(core::rectf(0.0f, 0.0f, w, h));
+			}
 
 			m_menu->close();
 			clearTabGroup();
@@ -170,15 +172,12 @@ namespace Skylicht
 
 		void CCanvasSettingController::onChanged(GUI::CBase* base)
 		{
-			CScene* scene = CSceneController::getInstance()->getScene();
-			CGameObject* canvasObj = scene->searchObjectInChild(L"GUICanvas");
 
-			CCanvas* canvas = canvasObj->getComponent<CCanvas>();
 		}
 
 		void CCanvasSettingController::onCheckBoxOutline(GUI::CBase* base)
 		{
-			CScene* scene = CSceneController::getInstance()->getScene();
+			CScene* scene = CGUIDesignController::getInstance()->getScene();
 			CGameObject* canvasObj = scene->searchObjectInChild(L"GUICanvas");
 			if (canvasObj)
 			{

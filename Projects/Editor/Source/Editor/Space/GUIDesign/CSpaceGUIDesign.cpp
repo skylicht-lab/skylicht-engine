@@ -47,6 +47,8 @@ namespace Skylicht
 			m_guiScale(1.0f),
 			m_viewX(0.0f),
 			m_viewY(0.0f),
+			m_mouseX(0.0f),
+			m_mouseY(0.0f),
 			m_pressX(0.0f),
 			m_pressY(0.0f),
 			m_mouseGUIX(0.0f),

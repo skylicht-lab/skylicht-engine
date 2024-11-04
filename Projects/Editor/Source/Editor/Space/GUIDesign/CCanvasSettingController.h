@@ -31,6 +31,8 @@ namespace Skylicht
 {
 	namespace Editor
 	{
+		class CSpaceGUIDesign;
+
 		class CCanvasSettingController
 		{
 		protected:
