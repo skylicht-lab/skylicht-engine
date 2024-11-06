@@ -279,7 +279,7 @@ CRenderMesh* CViewInit::initRobotRenderer(CGameObject* obj)
 	CTextureManager* textureManager = CTextureManager::getInstance();
 
 	ArrayMaterial materials = CMaterialManager::getInstance()->initDefaultMaterial(modelPrefab);
-	materials[0]->changeShader("BuiltIn/Shader/PBR/Forward/PBRSkin.xml");
+	materials[0]->changeShader("BuiltIn/Shader/PBR/Forward/PBRSkinNoEmissive.xml");
 
 #ifdef USE_SCORPION_MODEL
 	ITexture* albedoMap = textureManager->getTexture("SampleModels/Robot/scorpion_a.png");

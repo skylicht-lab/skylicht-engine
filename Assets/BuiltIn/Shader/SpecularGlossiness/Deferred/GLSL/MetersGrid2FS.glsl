@@ -36,9 +36,9 @@ void main(void)
 	vec3 pos = vWorldPosition.xyz;
 	vec3 uv = pos / gridSize;
 	float grid = gridBorder(uv, border, 1.0);
-	pos.x = pos.x + gridSize / 2;
-	pos.z = pos.z + gridSize / 2;
-	uv = pos / (gridSize * 2);
+	pos.x = pos.x + gridSize / 2.0;
+	pos.z = pos.z + gridSize / 2.0;
+	uv = pos / (gridSize * 2.0);
 	float checkerBoard = gridBorder(uv, 0.5, 1.5);
 	vec3 col = mix(uLightColor.rgb, uDarkColor.rgb, vec3(checkerBoard, checkerBoard, checkerBoard));
 	col = mix(col, uBorderColor.rgb, vec3(grid, grid, grid));

@@ -97,7 +97,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 prefilteredColor = sRGB(uTexReflect.SampleLevel(uTexReflectSampler, reflection, roughness * 7).xyz);
 	float2 envBRDF = uTexBRDF.Sample(uTexBRDFSampler, float2(VdotN, roughness)).rg;
 	float3 indirectSpecular = prefilteredColor * (F0 * envBRDF.x + envBRDF.y);
-	float grey = (0.4 + (1.0 - roughness) * 2.6);
-	float3 indirectLight = (kd * indirectDiffuse + indirectSpecular * grey);
+	float brightness = (0.8 + (1.0 - roughness) * 2.2);
+	float3 indirectLight = (kd * indirectDiffuse + indirectSpecular * brightness);
 	return float4((lightContribution + indirectLight) * ao, albedoMap.a);
 }
