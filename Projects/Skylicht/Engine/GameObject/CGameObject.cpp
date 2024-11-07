@@ -54,6 +54,7 @@ namespace Skylicht
 		m_enable = true;
 		m_visible = true;
 		m_static = false;
+		m_lock = false;
 		m_isContainer = false;
 
 		m_editorObject = false;
@@ -513,6 +514,8 @@ namespace Skylicht
 		object->autoRelease(new CBoolProperty(object, "enable", isEnable()));
 		object->autoRelease(new CBoolProperty(object, "visible", isVisible()));
 		object->autoRelease(new CBoolProperty(object, "static", isStatic()));
+		object->autoRelease(new CBoolProperty(object, "lock", isLock()));
+
 		object->autoRelease(new CUIntProperty(object, "culling", getCullingLayer()));
 
 		CObjectSerializable* coms = new CObjectSerializable("Components");
@@ -557,6 +560,8 @@ namespace Skylicht
 		setEnable(object->get("enable", true));
 		setVisible(object->get("visible", true));
 		setStatic(object->get("static", true));
+		setLock(object->get("lock", false));
+
 		setCullingLayer(object->get<u32>("culling", 1));
 
 		CObjectSerializable* coms = object->getProperty<CObjectSerializable>("Components");

@@ -31,13 +31,16 @@ namespace Skylicht
 	{
 		CHierachyNode::CHierachyNode(CHierachyNode* parent) :
 			m_icon(GUI::ESystemIcon::None),
+			m_subIcon(GUI::ESystemIcon::None),
 			m_tagData(NULL),
 			m_guiNode(NULL),
 			m_parent(parent),
 			m_dataType(Unknown),
 			m_color(false),
+			m_haveSubIcon(false),
 			m_bgColor(255, 45, 140, 95),
-			m_iconColor(255, 200, 200, 200)
+			m_iconColor(255, 200, 200, 200),
+			m_textColor(255, 255, 255, 255)
 		{
 
 		}
@@ -66,12 +69,31 @@ namespace Skylicht
 				m_guiNode->setIcon(icon);
 		}
 
+		void CHierachyNode::setSubIcon(GUI::ESystemIcon icon)
+		{
+			m_subIcon = icon;
+
+			if (m_guiNode != NULL)
+			{
+				m_guiNode->setSubIcon(icon);
+				m_guiNode->getTextItem()->showSubIcon(m_haveSubIcon);
+			}
+		}
+
 		void CHierachyNode::setIconColor(const GUI::SGUIColor& c)
 		{
 			m_iconColor = c;
 
 			if (m_guiNode != NULL)
 				m_guiNode->setIconColor(c);
+		}
+
+		void CHierachyNode::setTextColor(const GUI::SGUIColor& c)
+		{
+			m_textColor = c;
+
+			if (m_guiNode != NULL)
+				m_guiNode->setLabelColor(c);
 		}
 
 		CHierachyNode* CHierachyNode::addChild()
@@ -234,6 +256,8 @@ namespace Skylicht
 				// update text & icon
 				m_guiNode->setText(m_name);
 				m_guiNode->setIcon(m_icon);
+				m_guiNode->setSubIcon(m_subIcon);
+				m_guiNode->setLabelColor(m_textColor);
 
 				// update background color
 				if (m_color)

@@ -94,7 +94,6 @@ namespace Skylicht
 #endif
 
 			GUI::CToolbar* toolbar = new GUI::CToolbar(window);
-			m_groupEditor = new GUI::CToggleGroup();
 			m_groupTransform = new GUI::CToggleGroup();
 			m_groupCameraView = new GUI::CToggleGroup();
 
@@ -102,9 +101,9 @@ namespace Skylicht
 
 			// select & hand
 			button = toolbar->addButton(L"Select", GUI::ESystemIcon::ViewSelect);
-			button->OnPress = BIND_LISTENER(&CSpaceScene::onEditorSelect, this);
+			button->OnPress = BIND_LISTENER(&CSpaceScene::onToolbarTransform, this);
 			m_toolbarButton[ESceneToolBar::Select] = button;
-			m_groupEditor->addButton(button);
+			m_groupTransform->addButton(button);
 
 			toolbar->addSpace();
 
@@ -175,9 +174,6 @@ namespace Skylicht
 			button->OnPress = BIND_LISTENER(&CSpaceScene::onCameraSetting, this);
 
 			// init group
-			m_groupEditor->enable(true);
-			m_groupEditor->selectButton(m_toolbarButton[ESceneToolBar::Select]);
-
 			m_groupCameraView->enable(true);
 			m_groupCameraView->selectButton(m_toolbarButton[ESceneToolBar::Perspective]);
 
@@ -203,6 +199,7 @@ namespace Skylicht
 			m_view->addAccelerator("G", [&](GUI::CBase* base) {this->onHotkey(base, "G"); });
 			m_view->addAccelerator("R", [&](GUI::CBase* base) {this->onHotkey(base, "R"); });
 			m_view->addAccelerator("S", [&](GUI::CBase* base) {this->onHotkey(base, "S"); });
+			m_view->addAccelerator("Q", [&](GUI::CBase* base) {this->onHotkey(base, "Q"); });
 			m_view->addAccelerator("W", [&](GUI::CBase* base) {this->onHotkey(base, "W"); });
 			m_view->addAccelerator("E", [&](GUI::CBase* base) {this->onHotkey(base, "E"); });
 
@@ -333,7 +330,6 @@ namespace Skylicht
 			if (m_viewpointController != NULL)
 				delete m_viewpointController;
 
-			delete m_groupEditor;
 			delete m_groupTransform;
 			delete m_groupCameraView;
 
@@ -553,22 +549,12 @@ namespace Skylicht
 				m_editorCamera->setProjectionType(CCamera::Ortho);
 		}
 
-		void CSpaceScene::onEditorSelect(GUI::CBase* base)
-		{
-			m_enableHandles = !m_enableHandles;
-
-			if (m_enableHandles)
-				m_groupEditor->selectButton(m_toolbarButton[ESceneToolBar::Select]);
-			else
-				m_groupEditor->selectButton(NULL);
-
-			m_view->setCursor(GUI::ECursorType::Normal);
-		}
-
 		void CSpaceScene::onToolbarTransform(GUI::CBase* base)
 		{
 			CSubject<ETransformGizmo>& gizmos = getSubjectTransformGizmos();
 			ETransformGizmo type = gizmos.get();
+
+			m_enableHandles = true;
 
 			if (base == m_toolbarButton[ESceneToolBar::Move] && type != ETransformGizmo::Translate)
 			{
@@ -585,8 +571,14 @@ namespace Skylicht
 				gizmos.set(ETransformGizmo::Scale);
 				gizmos.notify(this);
 			}
+			else if (base == m_toolbarButton[ESceneToolBar::Select])
+			{
+				m_enableHandles = false;
+			}
 
 			m_groupTransform->selectButton(dynamic_cast<GUI::CButton*>(base));
+
+			m_view->setCursor(GUI::ECursorType::Normal);
 		}
 
 		void CSpaceScene::onToolbarWorldSpace(GUI::CBase* base)
@@ -612,23 +604,12 @@ namespace Skylicht
 				switch (type)
 				{
 				case ETransformGizmo::None:
-					m_groupTransform->enable(false);
-					m_toolbarButton[World]->setDisabled(true);
 					break;
 				case ETransformGizmo::Translate:
-					m_groupTransform->selectButton(m_toolbarButton[ESceneToolBar::Move]);
-					m_groupTransform->enable(true);
-					m_toolbarButton[World]->setDisabled(false);
 					break;
 				case ETransformGizmo::Rotate:
-					m_groupTransform->selectButton(m_toolbarButton[ESceneToolBar::Rotate]);
-					m_groupTransform->enable(true);
-					m_toolbarButton[World]->setDisabled(false);
 					break;
 				case ETransformGizmo::Scale:
-					m_groupTransform->selectButton(m_toolbarButton[ESceneToolBar::Scale]);
-					m_groupTransform->enable(true);
-					m_toolbarButton[World]->setDisabled(false);
 					break;
 				default:
 					break;
@@ -966,6 +947,8 @@ namespace Skylicht
 					onToolbarTransform(m_toolbarButton[ESceneToolBar::Rotate]);
 				else if (hotkey == "R")
 					onToolbarTransform(m_toolbarButton[ESceneToolBar::Scale]);
+				else if (hotkey == "Q")
+					onToolbarTransform(m_toolbarButton[ESceneToolBar::Select]);
 			}
 			else
 			{
@@ -976,6 +959,8 @@ namespace Skylicht
 					onToolbarTransform(m_toolbarButton[ESceneToolBar::Rotate]);
 				else if (hotkey == "S")
 					onToolbarTransform(m_toolbarButton[ESceneToolBar::Scale]);
+				else if (hotkey == "Q")
+					onToolbarTransform(m_toolbarButton[ESceneToolBar::Select]);
 			}
 
 			if (hotkey == "Ctrl + C")
@@ -1019,13 +1004,6 @@ namespace Skylicht
 			{
 				if (down == true)
 					CSceneController::getInstance()->onDelete();
-			}
-			else if (key == GUI::KEY_KEY_Q)
-			{
-				if (down == true)
-				{
-					onEditorSelect(NULL);
-				}
 			}
 		}
 

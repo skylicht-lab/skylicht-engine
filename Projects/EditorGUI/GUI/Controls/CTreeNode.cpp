@@ -53,7 +53,7 @@ namespace Skylicht
 				m_row->OnDoubleLeftMouseClick = BIND_LISTENER(&CTreeNode::onDoubleClick, this);
 
 				m_title = new CIconTextItem(this);
-				m_title->setMargin(SMargin(16.0f, 0.0f, 0.0f, 0.0f));
+				m_title->setMargin(SMargin(5.0f, 0.0f, 0.0f, 0.0f));
 				m_title->dock(EPosition::Top);
 
 				m_textEditHelper = new CTextEditHelper(m_row, new CTextBox(m_title), m_title->getTextContainer());
@@ -227,6 +227,33 @@ namespace Skylicht
 			void CTreeNode::setIconColor(const SGUIColor& color)
 			{
 				m_title->setIconColor(color);
+			}
+
+			void CTreeNode::setLabelColor(const SGUIColor& color)
+			{
+				m_title->setLabelColor(color);
+			}
+
+			void CTreeNode::setSubIcon(ESystemIcon icon)
+			{
+				if (m_title == NULL)
+				{
+					// skip at root
+					return;
+				}
+
+				m_title->setSubIcon(icon);
+				if (icon != ESystemIcon::None)
+					m_title->showSubIcon(true);
+				else
+					m_title->showSubIcon(false);
+
+				invalidate();
+			}
+
+			void CTreeNode::setSubIconColor(const SGUIColor& color)
+			{
+				m_title->setSubIconColor(color);
 			}
 
 			void CTreeNode::onExpand(CBase* base)

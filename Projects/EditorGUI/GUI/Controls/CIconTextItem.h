@@ -36,11 +36,12 @@ namespace Skylicht
 			class CIconTextItem : public CBase
 			{
 			protected:
-				CIcon *m_icon;
-				CTextContainer *m_label;
+				CIcon* m_icon;
+				CIcon* m_subIcon;
+				CTextContainer* m_label;
 
 			public:
-				CIconTextItem(CBase *base);
+				CIconTextItem(CBase* base);
 
 				virtual ~CIconTextItem();
 
@@ -104,6 +105,31 @@ namespace Skylicht
 				inline const SGUIColor& getIconColor()
 				{
 					return m_icon->getColor();
+				}
+
+				inline void showSubIcon(bool b)
+				{
+					m_subIcon->setHidden(!b);
+				}
+
+				inline void setSubIcon(ESystemIcon icon)
+				{
+					m_subIcon->setIcon(icon);
+				}
+
+				inline ESystemIcon getSubIcon()
+				{
+					return m_subIcon->getIcon();
+				}
+
+				inline void setSubIconColor(const SGUIColor& c)
+				{
+					m_subIcon->setColor(c);
+				}
+
+				inline const SGUIColor& getSubIconColor()
+				{
+					return m_subIcon->getColor();
 				}
 			};
 		}

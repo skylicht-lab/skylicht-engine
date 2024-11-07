@@ -43,6 +43,7 @@ namespace Skylicht
 			CSubject<bool> Enable;
 			CSubject<bool> Visible;
 			CSubject<bool> Static;
+			CSubject<bool> Lock;
 
 		public:
 			CGameObjectEditor();

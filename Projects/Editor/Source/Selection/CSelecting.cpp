@@ -56,8 +56,11 @@ namespace Skylicht
 		bool CSelecting::OnEvent(const SEvent& event)
 		{
 			CHandles* handle = CHandles::getInstance();
-			if (handle->isHoverOnAxisOrPlane() || handle->isUsing())
-				return false;
+			if (handle->isEnable())
+			{
+				if (handle->isHoverOnAxisOrPlane() || handle->isUsing())
+					return false;
+			}
 
 			if (event.EventType == EET_KEY_INPUT_EVENT)
 			{
@@ -176,6 +179,10 @@ namespace Skylicht
 			for (u32 i = 0, n = selectObjectData.size(); i < n; i++)
 			{
 				CSelectObjectData* data = selectObjectData[i];
+
+				// skip lock object
+				if (data->GameObject && data->GameObject->isLock())
+					continue;
 
 				// if ray hit this object
 				if (data->TransformBBox.intersectsWithLine(ray))

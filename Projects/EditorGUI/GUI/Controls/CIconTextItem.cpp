@@ -37,6 +37,15 @@ namespace Skylicht
 			{
 				setMouseInputEnabled(false);
 
+				CBase* padding = new CBase(this);
+				padding->dock(EPosition::Left);
+				padding->setWidth(10.0f);
+
+				m_subIcon = new CIcon(this, ESystemIcon::Lock);
+				m_subIcon->dock(EPosition::Left);
+				m_subIcon->setMargin(SPadding(0.0f, 0.0f, -2.0f, 0.0f));
+				m_subIcon->setHidden(true);
+
 				m_icon = new CIcon(this, ESystemIcon::None);
 				m_icon->dock(EPosition::Left);
 				m_icon->setMargin(SMargin(0.0f, 0.0f, 5.0f, 0.0f));

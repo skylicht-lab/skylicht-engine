@@ -77,6 +77,8 @@ namespace Skylicht
 
 			virtual ~CHandles();
 
+			bool isEnable();
+
 			bool endCheck();
 
 			void end();
