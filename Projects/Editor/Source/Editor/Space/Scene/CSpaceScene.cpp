@@ -76,7 +76,8 @@ namespace Skylicht
 			m_gizmosRenderer(NULL),
 			m_selectObjectSystem(NULL),
 			m_enableRender(true),
-			m_enableRenderGrid(true)
+			m_enableRenderGrid(true),
+			m_enableHandles(true)
 		{
 			CScene* currentScene = CSceneController::getInstance()->getScene();
 			if (currentScene == NULL)
@@ -103,11 +104,6 @@ namespace Skylicht
 			button = toolbar->addButton(L"Select", GUI::ESystemIcon::ViewSelect);
 			button->OnPress = BIND_LISTENER(&CSpaceScene::onEditorSelect, this);
 			m_toolbarButton[ESceneToolBar::Select] = button;
-			m_groupEditor->addButton(button);
-
-			button = toolbar->addButton(L"Hand", GUI::ESystemIcon::ViewHand);
-			button->OnPress = BIND_LISTENER(&CSpaceScene::onEditorHand, this);
-			m_toolbarButton[ESceneToolBar::Hand] = button;
 			m_groupEditor->addButton(button);
 
 			toolbar->addSpace();
@@ -186,7 +182,7 @@ namespace Skylicht
 			m_groupCameraView->selectButton(m_toolbarButton[ESceneToolBar::Perspective]);
 
 			m_groupTransform->selectButton(m_toolbarButton[ESceneToolBar::Move]);
-			m_groupTransform->enable(false);
+			m_groupTransform->enable(true);
 
 			// 3d view
 			m_view = new GUI::CBase(window);
@@ -207,6 +203,9 @@ namespace Skylicht
 			m_view->addAccelerator("G", [&](GUI::CBase* base) {this->onHotkey(base, "G"); });
 			m_view->addAccelerator("R", [&](GUI::CBase* base) {this->onHotkey(base, "R"); });
 			m_view->addAccelerator("S", [&](GUI::CBase* base) {this->onHotkey(base, "S"); });
+			m_view->addAccelerator("W", [&](GUI::CBase* base) {this->onHotkey(base, "W"); });
+			m_view->addAccelerator("E", [&](GUI::CBase* base) {this->onHotkey(base, "E"); });
+
 			m_view->addAccelerator("Ctrl + C", [&](GUI::CBase* base) {this->onHotkey(base, "Ctrl + C"); });
 			m_view->addAccelerator("Ctrl + V", [&](GUI::CBase* base) {this->onHotkey(base, "Ctrl + V"); });
 			m_view->addAccelerator("Ctrl + D", [&](GUI::CBase* base) {this->onHotkey(base, "Ctrl + D"); });
@@ -556,45 +555,14 @@ namespace Skylicht
 
 		void CSpaceScene::onEditorSelect(GUI::CBase* base)
 		{
-			if (CSelection::getInstance()->getAllSelected().size() == 0)
-			{
-				m_groupTransform->enable(false);
-				m_toolbarButton[World]->setDisabled(true);
-			}
+			m_enableHandles = !m_enableHandles;
+
+			if (m_enableHandles)
+				m_groupEditor->selectButton(m_toolbarButton[ESceneToolBar::Select]);
 			else
-			{
-				m_groupTransform->enable(true);
-				m_toolbarButton[World]->setDisabled(false);
+				m_groupEditor->selectButton(NULL);
 
-				GUI::CButton* button = m_groupTransform->getSelectButton();
-				if (button != NULL)
-				{
-					CSubject<ETransformGizmo>& gizmos = getSubjectTransformGizmos();
-					if (button == m_toolbarButton[ESceneToolBar::Move])
-						gizmos.set(ETransformGizmo::Translate);
-					else if (button == m_toolbarButton[ESceneToolBar::Rotate])
-						gizmos.set(ETransformGizmo::Rotate);
-					else if (button == m_toolbarButton[ESceneToolBar::Scale])
-						gizmos.set(ETransformGizmo::Scale);
-					gizmos.notify(this);
-				}
-			}
-
-			m_groupEditor->selectButton(m_toolbarButton[ESceneToolBar::Select]);
 			m_view->setCursor(GUI::ECursorType::Normal);
-		}
-
-		void CSpaceScene::onEditorHand(GUI::CBase* base)
-		{
-			m_groupTransform->enable(false);
-			m_toolbarButton[World]->setDisabled(true);
-
-			CSubject<ETransformGizmo>& gizmos = getSubjectTransformGizmos();
-			gizmos.set(ETransformGizmo::None);
-			gizmos.notify(this);
-
-			m_groupEditor->selectButton(m_toolbarButton[ESceneToolBar::Hand]);
-			m_view->setCursor(GUI::ECursorType::Finger);
 		}
 
 		void CSpaceScene::onToolbarTransform(GUI::CBase* base)
@@ -800,7 +768,7 @@ namespace Skylicht
 					m_viewpointZone->setVisible(false);
 
 					// render handles
-					m_handlesRenderer->setEnable(true);
+					m_handlesRenderer->setEnable(m_enableHandles);
 					m_handlesRenderer->setCameraAndViewport(m_editorCamera, viewport);
 
 					// update select object system
@@ -839,11 +807,7 @@ namespace Skylicht
 					// disable viewpoint
 					m_scene->setVisibleAllZone(true);
 					m_viewpointZone->setVisible(false);
-					m_handlesRenderer->setEnable(true);
-				}
-				else
-				{
-
+					m_handlesRenderer->setEnable(m_enableHandles);
 				}
 
 				// resume gui render
@@ -991,22 +955,30 @@ namespace Skylicht
 
 		void CSpaceScene::onHotkey(GUI::CBase* base, const std::string& hotkey)
 		{
-			if (hotkey == "G")
+			CEditorSetting* editorSetting = CEditorSetting::getInstance();
+
+			if (editorSetting->CameraNavigation.get() == 1)
 			{
-				onToolbarTransform(m_toolbarButton[ESceneToolBar::Move]);
-				onEditorSelect(m_toolbarButton[ESceneToolBar::Scale]);
+				// maya
+				if (hotkey == "W")
+					onToolbarTransform(m_toolbarButton[ESceneToolBar::Move]);
+				else if (hotkey == "E")
+					onToolbarTransform(m_toolbarButton[ESceneToolBar::Rotate]);
+				else if (hotkey == "R")
+					onToolbarTransform(m_toolbarButton[ESceneToolBar::Scale]);
 			}
-			else if (hotkey == "R")
+			else
 			{
-				onToolbarTransform(m_toolbarButton[ESceneToolBar::Rotate]);
-				onEditorSelect(m_toolbarButton[ESceneToolBar::Scale]);
+				// default & blender
+				if (hotkey == "G")
+					onToolbarTransform(m_toolbarButton[ESceneToolBar::Move]);
+				else if (hotkey == "R")
+					onToolbarTransform(m_toolbarButton[ESceneToolBar::Rotate]);
+				else if (hotkey == "S")
+					onToolbarTransform(m_toolbarButton[ESceneToolBar::Scale]);
 			}
-			else if (hotkey == "S")
-			{
-				onToolbarTransform(m_toolbarButton[ESceneToolBar::Scale]);
-				onEditorSelect(m_toolbarButton[ESceneToolBar::Scale]);
-			}
-			else if (hotkey == "Ctrl + C")
+
+			if (hotkey == "Ctrl + C")
 			{
 				CSceneController::getInstance()->onCopy();
 			}
@@ -1047,6 +1019,13 @@ namespace Skylicht
 			{
 				if (down == true)
 					CSceneController::getInstance()->onDelete();
+			}
+			else if (key == GUI::KEY_KEY_Q)
+			{
+				if (down == true)
+				{
+					onEditorSelect(NULL);
+				}
 			}
 		}
 
