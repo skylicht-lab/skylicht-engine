@@ -116,7 +116,7 @@ namespace Skylicht
 
 				const SGUIColor FolderColor = SGUIColor(255, 190, 160, 95);
 
-				const float TreeIndentationSize = 25.0f;
+				const float TreeIndentationSize = 15.0f;
 
 				float getFontSizePt(EFontSize size)
 				{

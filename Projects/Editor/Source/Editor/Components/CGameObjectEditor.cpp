@@ -42,7 +42,8 @@ namespace Skylicht
 			Name(L""),
 			Enable(true),
 			Visible(true),
-			Static(false)
+			Static(false),
+			Lock(false)
 		{
 
 		}
@@ -60,11 +61,13 @@ namespace Skylicht
 			Enable.removeAllObserver();
 			Visible.removeAllObserver();
 			Static.removeAllObserver();
+			Lock.removeAllObserver();
 
 			Name = object->getName();
 			Enable = object->isEnable();
 			Visible = object->isVisible();
 			Static = object->isStatic();
+			Lock = object->isLock();
 
 			GUI::CCollapsibleGroup* group = ui->addGroup("GameObject", this);
 			GUI::CBoxLayout* layout = ui->createBoxLayout(group);
@@ -76,6 +79,7 @@ namespace Skylicht
 			ui->addCheckBox(layout, L"Enable", &Enable);
 			ui->addCheckBox(layout, L"Visible", &Visible);
 			ui->addCheckBox(layout, L"Static", &Static);
+			ui->addCheckBox(layout, L"Lock", &Lock);
 
 			Name.addObserver(new CObserver([&, target = object](ISubject* subject, IObserver* from)
 				{
@@ -115,6 +119,13 @@ namespace Skylicht
 				{
 					CSubject<bool>* value = (CSubject<bool>*) subject;
 					target->setStatic(value->get());
+					CSelection::getInstance()->notify(target, this);
+				}), true);
+
+			Lock.addObserver(new CObserver([&, target = object](ISubject* subject, IObserver* from)
+				{
+					CSubject<bool>* value = (CSubject<bool>*) subject;
+					target->setLock(value->get());
 					CSelection::getInstance()->notify(target, this);
 				}), true);
 
@@ -166,36 +177,36 @@ namespace Skylicht
 				}
 
 				item->OnPress = [object, item, value, dropDown, ui](GUI::CBase* base)
-				{
-					// uncheck all menu item
-					GUI::CMenu* menu = dropDown->getMenu();
-					for (GUI::CBase* childMenu : menu->getChildren())
 					{
-						GUI::CMenuItem* item = dynamic_cast<GUI::CMenuItem*>(childMenu);
-						if (item != NULL)
-							item->setIcon(GUI::ESystemIcon::None);
-					}
+						// uncheck all menu item
+						GUI::CMenu* menu = dropDown->getMenu();
+						for (GUI::CBase* childMenu : menu->getChildren())
+						{
+							GUI::CMenuItem* item = dynamic_cast<GUI::CMenuItem*>(childMenu);
+							if (item != NULL)
+								item->setIcon(GUI::ESystemIcon::None);
+						}
 
-					// check this item
-					item->setIcon(GUI::ESystemIcon::Check);
+						// check this item
+						item->setIcon(GUI::ESystemIcon::Check);
 
-					// apply culling
-					object->setCullingLayer(value);
+						// apply culling
+						object->setCullingLayer(value);
 
-					// apply value
-					dropDown->setLabel(item->getLabel());
+						// apply value
+						dropDown->setLabel(item->getLabel());
 
-					// close menu
-					ui->getWindow()->getCanvas()->closeMenu();
-				};
+						// close menu
+						ui->getWindow()->getCanvas()->closeMenu();
+					};
 			}
 
 			menu->addSeparator();
 			menu->addItem(L"Edit layer")->OnPress = [ui](GUI::CBase* base)
-			{
-				ui->getWindow()->getCanvas()->closeMenu();
-				ui->getEditor()->showProjectSetting();
-			};
+				{
+					ui->getWindow()->getCanvas()->closeMenu();
+					ui->getEditor()->showProjectSetting();
+				};
 		}
 	}
 }

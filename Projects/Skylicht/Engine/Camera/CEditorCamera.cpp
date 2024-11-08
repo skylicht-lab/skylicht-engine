@@ -229,8 +229,16 @@ namespace Skylicht
 			return false;
 
 		bool acceptMouseEvent = true;
+		bool pointerPress = false;
+
 		if (m_controlStyle == Maya && !m_altKeyDown)
 			acceptMouseEvent = false;
+
+		if (m_leftMousePress || m_rightMousePress || m_midMousePress)
+		{
+			acceptMouseEvent = true;
+			pointerPress = true;
+		}
 
 		switch (evt.EventType)
 		{
@@ -239,6 +247,13 @@ namespace Skylicht
 				evt.KeyInput.Key == KEY_LMENU ||
 				evt.KeyInput.Key == KEY_RMENU)
 			{
+				if (!m_altKeyDown && pointerPress)
+				{
+					// when resume alt after release
+					m_centerCursor = m_cursorControl->getRelativePosition();
+					m_cursorPos = m_centerCursor;
+				}
+
 				m_altKeyDown = evt.KeyInput.PressedDown;
 			}
 			else if (evt.KeyInput.Key == KEY_SHIFT ||

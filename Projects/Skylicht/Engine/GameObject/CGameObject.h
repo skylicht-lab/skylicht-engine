@@ -53,6 +53,7 @@ namespace Skylicht
 		bool m_static;
 		bool m_enable;
 		bool m_visible;
+		bool m_lock;
 		bool m_isContainer;
 
 		bool m_editorObject;
@@ -238,6 +239,11 @@ namespace Skylicht
 			return m_visible;
 		}
 
+		inline bool isLock()
+		{
+			return m_lock;
+		}
+
 		virtual void setEnable(bool b)
 		{
 			m_enable = b;
@@ -256,6 +262,11 @@ namespace Skylicht
 		virtual bool isStatic()
 		{
 			return m_static;
+		}
+
+		inline void setLock(bool b)
+		{
+			m_lock = b;
 		}
 
 		virtual void setVisible(bool b);

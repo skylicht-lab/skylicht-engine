@@ -60,6 +60,13 @@ namespace Skylicht
 
 		}
 
+		bool CHandles::isEnable()
+		{
+			if (m_handlesRenderer)
+				return m_handlesRenderer->isEnable();
+			return false;
+		}
+
 		void CHandles::setNullRenderer()
 		{
 			m_handlesRenderer = NULL;

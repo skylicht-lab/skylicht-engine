@@ -60,10 +60,13 @@ namespace Skylicht
 			bool m_color;
 
 			GUI::SGUIColor m_bgColor;
-
+			GUI::SGUIColor m_textColor;
 			GUI::SGUIColor m_iconColor;
 
 			GUI::ESystemIcon m_icon;
+
+			bool m_haveSubIcon;
+			GUI::ESystemIcon m_subIcon;
 
 			CHierachyNode* m_parent;
 
@@ -136,7 +139,11 @@ namespace Skylicht
 
 			void setIcon(GUI::ESystemIcon icon);
 
+			void setSubIcon(GUI::ESystemIcon icon);
+
 			void setIconColor(const GUI::SGUIColor& c);
+
+			void setTextColor(const GUI::SGUIColor& c);
 
 			inline const std::wstring& getName()
 			{
@@ -148,9 +155,24 @@ namespace Skylicht
 				return m_icon;
 			}
 
+			inline const GUI::ESystemIcon getSubIcon()
+			{
+				return m_subIcon;
+			}
+
 			inline bool haveColor()
 			{
 				return m_color;
+			}
+
+			inline bool haveSubIcon()
+			{
+				return m_haveSubIcon;
+			}
+
+			inline void showSubIcon(bool b)
+			{
+				m_haveSubIcon = b;
 			}
 
 			inline void enableColor(bool b)

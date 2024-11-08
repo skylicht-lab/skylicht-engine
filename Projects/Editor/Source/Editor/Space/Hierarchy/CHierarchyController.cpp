@@ -183,6 +183,26 @@ namespace Skylicht
 			// update node name
 			node->setName(object->getName());
 
+			// visible
+			if (object->isVisible())
+				node->setTextColor(GUI::SGUIColor(255, 250, 250, 250));
+			else
+				node->setTextColor(GUI::SGUIColor(255, 150, 150, 150));
+
+			// show subicon?
+			if (node->getTagDataType() == CHierachyNode::Scene ||
+				node->getTagDataType() == CHierachyNode::Zone ||
+				node->getTagDataType() == CHierachyNode::Entity)
+				node->showSubIcon(false);
+			else
+				node->showSubIcon(true);
+
+			// lock
+			if (object->isLock())
+				node->setSubIcon(GUI::ESystemIcon::Lock);
+			else
+				node->setSubIcon(GUI::ESystemIcon::None);
+
 			// template object
 			if (object->isTemplateAsset())
 			{
@@ -247,6 +267,10 @@ namespace Skylicht
 
 			// set icon color
 			guiNode->setIconColor(node->getIconColor());
+
+			// show sub icon
+			guiNode->setSubIcon(node->getSubIcon());
+			guiNode->getTextItem()->showSubIcon(node->haveSubIcon());
 
 			// apply active color
 			if (node->haveColor())

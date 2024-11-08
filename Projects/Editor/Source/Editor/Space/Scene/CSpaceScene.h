@@ -102,11 +102,12 @@ namespace Skylicht
 			CHandlesRenderer* m_handlesRenderer;
 			CGizmosRenderer* m_gizmosRenderer;
 
+			bool m_enableHandles;
+
 			CSelectObjectSystem* m_selectObjectSystem;
 
 			GUI::CButton* m_toolbarButton[ToolbarCount];
 
-			GUI::CToggleGroup* m_groupEditor;
 			GUI::CToggleGroup* m_groupTransform;
 			GUI::CToggleGroup* m_groupCameraView;
 
@@ -159,10 +160,6 @@ namespace Skylicht
 			void onCameraPerspective(GUI::CBase* base);
 
 			void onCameraOrtho(GUI::CBase* base);
-
-			void onEditorSelect(GUI::CBase* base);
-
-			void onEditorHand(GUI::CBase* base);
 
 			virtual void update();
 

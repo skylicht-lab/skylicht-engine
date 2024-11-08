@@ -1199,10 +1199,12 @@ namespace Skylicht
 				node = m_focusNode;
 
 			if (node == NULL)
-				m_hierachyNode->getNodeByTag(object);
+				node = m_hierachyNode->getNodeByTag(object);
 
-			if (node != NULL)
-				node->getGUINode()->setText(object->getName());
+			if (node != NULL && m_spaceHierarchy != NULL)
+			{
+				m_spaceHierarchy->getController()->updateObjectToUI(object, node);
+			}
 		}
 
 		void CSceneController::onHistoryModifyObject(CGameObject* object)

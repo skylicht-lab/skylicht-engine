@@ -109,6 +109,12 @@ namespace Skylicht
 
 				void setIconColor(const SGUIColor& color);
 
+				void setSubIcon(ESystemIcon icon);
+
+				void setSubIconColor(const SGUIColor& color);
+
+				void setLabelColor(const SGUIColor& color);
+
 				inline void setAlwayShowExpandButton(bool b)
 				{
 					m_alwayShowExpandButton = b;
