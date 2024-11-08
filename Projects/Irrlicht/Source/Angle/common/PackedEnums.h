@@ -12,8 +12,6 @@
 #include "common/PackedEGLEnums_autogen.h"
 #include "common/PackedGLEnums_autogen.h"
 
-#include "common/debug.h"
-
 #include <array>
 #include <bitset>
 #include <cstddef>
@@ -125,13 +123,11 @@ class PackedEnumMap
     // element access:
     reference operator[](E n)
     {
-        ASSERT(static_cast<size_t>(n) < mPrivateData.size());
         return mPrivateData[static_cast<UnderlyingType>(n)];
     }
 
     constexpr const_reference operator[](E n) const
     {
-        ASSERT(static_cast<size_t>(n) < mPrivateData.size());
         return mPrivateData[static_cast<UnderlyingType>(n)];
     }
 
@@ -231,6 +227,7 @@ TextureType ImageTypeToTextureType(GLenum imageType);
 
 bool IsMultisampled(gl::TextureType type);
 bool IsArrayTextureType(gl::TextureType type);
+bool IsLayeredTextureType(gl::TextureType type);
 
 bool IsStaticBufferUsage(BufferUsage useage);
 
@@ -773,12 +770,6 @@ typename std::enable_if<IsResourceIDType<T>::value, bool>::type operator<(const 
 // Used to unbox typed values.
 template <typename ResourceIDType>
 GLuint GetIDValue(ResourceIDType id);
-
-template <>
-inline GLuint GetIDValue(GLuint id)
-{
-    return id;
-}
 
 template <typename ResourceIDType>
 inline GLuint GetIDValue(ResourceIDType id)

@@ -48,7 +48,7 @@ AngleApplication::AngleApplication(std::string name,
     mOSWindow = OSWindow::New();
 
     // Load EGL library so we can initialize the display.
-    mGLWindow = mEGLWindow = EGLWindow::New(EGL_OPENGL_ES_API, glesMajorVersion, glesMinorVersion, 0);
+    mGLWindow = mEGLWindow = EGLWindow::New(glesMajorVersion, glesMinorVersion);
     mEntryPointsLib.reset(angle::OpenSharedLibrary(ANGLE_EGL_LIBRARY_NAME, angle::SearchType::SystemDir));
 }
 

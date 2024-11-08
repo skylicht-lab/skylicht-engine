@@ -45,7 +45,6 @@ TextureType TextureTargetToType(TextureTarget target)
         case TextureTarget::InvalidEnum:
             return TextureType::InvalidEnum;
         default:
-            UNREACHABLE();
             return TextureType::InvalidEnum;
     }
 }
@@ -80,7 +79,6 @@ TextureTarget NonCubeTextureTypeToTarget(TextureType type)
         case TextureType::Buffer:
             return TextureTarget::Buffer;
         default:
-            UNREACHABLE();
             return TextureTarget::InvalidEnum;
     }
 }
@@ -109,13 +107,11 @@ static_assert(static_cast<uint8_t>(TextureTarget::CubeMapNegativeZ) -
 
 TextureTarget CubeFaceIndexToTextureTarget(size_t face)
 {
-    ASSERT(face < 6u);
     return static_cast<TextureTarget>(static_cast<uint8_t>(TextureTarget::CubeMapPositiveX) + face);
 }
 
 size_t CubeMapTextureTargetToFaceIndex(TextureTarget target)
 {
-    ASSERT(IsCubeMapFaceTarget(target));
     return static_cast<uint8_t>(target) - static_cast<uint8_t>(TextureTarget::CubeMapPositiveX);
 }
 
@@ -178,7 +174,6 @@ TextureType SamplerTypeToTextureType(GLenum samplerType)
             return TextureType::VideoImage;
 
         default:
-            UNREACHABLE();
             return TextureType::InvalidEnum;
     }
 }
@@ -218,7 +213,6 @@ TextureType ImageTypeToTextureType(GLenum imageType)
             return TextureType::Buffer;
 
         default:
-            UNREACHABLE();
             return TextureType::InvalidEnum;
     }
 }
@@ -241,6 +235,21 @@ bool IsArrayTextureType(TextureType type)
     {
         case TextureType::_2DArray:
         case TextureType::_2DMultisampleArray:
+        case TextureType::CubeMapArray:
+            return true;
+        default:
+            return false;
+    }
+}
+
+bool IsLayeredTextureType(TextureType type)
+{
+    switch (type)
+    {
+        case TextureType::_2DArray:
+        case TextureType::_2DMultisampleArray:
+        case TextureType::_3D:
+        case TextureType::CubeMap:
         case TextureType::CubeMapArray:
             return true;
         default:
@@ -580,7 +589,8 @@ bool operator<(const UniformLocation &lhs, const UniformLocation &rhs)
 
 bool IsEmulatedCompressedFormat(GLenum format)
 {
-    // TODO(anglebug.com/6177): Check for all formats ANGLE will use to emulate a compressed texture
+    // TODO(anglebug.com/42264702): Check for all formats ANGLE will use to emulate a compressed
+    // texture
     return format == GL_RGBA || format == GL_RG || format == GL_RED;
 }
 }  // namespace gl
@@ -614,7 +624,6 @@ MessageType ErrorCodeToMessageType(EGLint errorCode)
 
         case EGL_SUCCESS:
         default:
-            UNREACHABLE();
             return MessageType::InvalidEnum;
     }
 }
