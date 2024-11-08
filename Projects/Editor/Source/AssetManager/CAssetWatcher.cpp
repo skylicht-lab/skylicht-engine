@@ -125,6 +125,7 @@ namespace Skylicht
 				// log += "Modified: ";
 				// log += path;
 				// os::Printer::log(log.c_str());
+				m_modify.push_back(path);
 			}
 			break;
 			default:
@@ -143,6 +144,36 @@ namespace Skylicht
 				m_files.push_back(m_assetManager->addFileNode(bundle, path));
 			}
 
+			for (std::string& path : m_modify)
+			{
+				bool addFile = true;
+				for (auto i : m_delete)
+				{
+					if (i == path)
+					{
+						addFile = false;
+						break;
+					}
+				}
+
+				bool fileAdded = false;
+				for (auto i : m_add)
+				{
+					if (i == path)
+					{
+						addFile = false;
+						break;
+					}
+				}
+
+				if (addFile)
+				{
+					SFileNode* node = m_assetManager->getFileNodeByPath(path.c_str());
+					if (node)
+						m_files.push_back(node);
+				}
+			}
+
 			m_add.clear();
 		}
 
@@ -150,6 +181,7 @@ namespace Skylicht
 		{
 			m_files.clear();
 			m_delete.clear();
+			m_modify.clear();
 		}
 	}
 }

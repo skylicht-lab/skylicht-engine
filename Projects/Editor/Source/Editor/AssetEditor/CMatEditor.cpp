@@ -243,6 +243,47 @@ namespace Skylicht
 
 			GUI::CCollapsibleGroup* group = ui->addGroup("Functions", this);
 			GUI::CBoxLayout* layout = ui->createBoxLayout(group);
+			ui->addButton(layout, L"Reload textures")->OnPress = [&](GUI::CBase* button)
+				{
+					CTextureManager* textureManager = CTextureManager::getInstance();
+					CAssetManager* assetManager = CAssetManager::getInstance();
+
+					std::vector<std::string> paths;
+
+					for (CMaterial* m : m_materials)
+					{
+						const std::vector<CMaterial::SUniformTexture*>& uniforms = m->getUniformTexture();
+						for (CMaterial::SUniformTexture* u : uniforms)
+						{
+							if (u->Texture)
+							{
+								const char* path = textureManager->getTexturePath(u->Texture);
+								if (path)
+								{
+									paths.push_back(path);
+								}
+							}
+						}
+					}
+
+					std::list<SFileNode*> nodes;
+
+					if (paths.size() > 0)
+					{
+						for (std::string& p : paths)
+						{
+							SFileNode* node = assetManager->getFileNode(p.c_str());
+							if (node)
+								nodes.push_back(node);
+						}
+
+						if (nodes.size() > 0)
+						{
+							CEditor::getInstance()->initImportGUI(nodes);
+						}
+					}
+				};
+
 			ui->addButton(layout, L"Rebuild shader")->OnPress = [&](GUI::CBase* button)
 				{
 					CShaderManager* shaderMgr = CShaderManager::getInstance();

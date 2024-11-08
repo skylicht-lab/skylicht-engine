@@ -79,13 +79,15 @@ namespace Skylicht
 			return m_currentPackage.c_str();
 		}
 
-		void registerTexture(ITexture* tex, const char *path);
+		void registerTexture(ITexture* tex, const char* path);
 
 		void removeAllTexture();
 
 		void removeTexture(const char* namePackage);
 
 		void removeTexture(ITexture* tex);
+
+		const char* getTexturePath(ITexture* tex);
 
 		bool existTexture(const char* path);
 

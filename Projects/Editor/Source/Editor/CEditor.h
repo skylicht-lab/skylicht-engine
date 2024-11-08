@@ -71,6 +71,8 @@ namespace Skylicht
 
 			void initImportGUI(bool fromWatcher = false);
 
+			void initImportGUI(std::list<SFileNode*> files);
+
 			void initLoadSceneGUI(const char* path);
 
 			void initApplyTemplateGUI(const char* path);

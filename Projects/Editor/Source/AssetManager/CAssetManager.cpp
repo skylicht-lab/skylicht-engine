@@ -118,6 +118,14 @@ namespace Skylicht
 
 		}
 
+		SFileNode* CAssetManager::getFileNode(const char* path)
+		{
+			auto it = m_pathToFile.find(std::string(path));
+			if (it != m_pathToFile.end())
+				return it->second;
+			return NULL;
+		}
+
 		SFileNode* CAssetManager::addFileNode(const std::string& bundle, const std::string& path)
 		{
 			std::string assetPath = m_assetFolder + "/";

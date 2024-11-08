@@ -129,6 +129,8 @@ namespace Skylicht
 				return m_files;
 			}
 
+			SFileNode* getFileNode(const char* path);
+
 			void update();
 
 			void discoveryAssetFolder();

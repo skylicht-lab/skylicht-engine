@@ -250,6 +250,25 @@ namespace Skylicht
 				spaceImport->initImportAll();
 		}
 
+		void CEditor::initImportGUI(std::list<SFileNode*> files)
+		{
+			m_waitingDialog = new GUI::CDialogWindow(m_canvas, 0.0f, 0.0f, 600.0f, 120.0f);
+			m_waitingDialog->setCaption(L"Import Assets");
+			m_waitingDialog->showCloseButton(false);
+			m_waitingDialog->setCenterPosition();
+			m_waitingDialog->bringToFront();
+
+			initWorkspace(m_waitingDialog, m_waitingDialog->getCaption());
+
+			CSpace* space = getWorkspace(m_waitingDialog);
+			CSpaceImport* spaceImport = dynamic_cast<CSpaceImport*>(space);
+
+			std::list<std::string> deletes;
+
+			spaceImport->initImportFiles(files, deletes);
+			spaceImport->setLoadStepCount(1);
+		}
+
 		void CEditor::initLoadSceneGUI(const char* path)
 		{
 			m_waitingDialog = new GUI::CDialogWindow(m_canvas, 0.0f, 0.0f, 600.0f, 120.0f);

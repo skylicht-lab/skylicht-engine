@@ -39,6 +39,7 @@ namespace Skylicht
 
 			std::list<std::string> m_add;
 			std::list<std::string> m_delete;
+			std::list<std::string> m_modify;
 
 			std::list<SFileNode*> m_files;
 

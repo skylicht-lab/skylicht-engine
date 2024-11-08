@@ -56,9 +56,10 @@ namespace Skylicht
 		{
 			m_assetManager = CAssetManager::getInstance();
 
-			m_total = (u32)listFiles.size();
-			m_fileIterator = listFiles.begin();
-			m_fileIteratorEnd = listFiles.end();
+			m_files = listFiles;
+			m_total = (u32)m_files.size();
+			m_fileIterator = m_files.begin();
+			m_fileIteratorEnd = m_files.end();
 
 			m_deleteIterator = m_fileDeleted.begin();
 			m_deleteIteratorEnd = m_fileDeleted.end();

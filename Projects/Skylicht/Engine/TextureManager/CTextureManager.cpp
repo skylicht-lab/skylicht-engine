@@ -88,7 +88,7 @@ namespace Skylicht
 			char log[1024];
 			sprintf(log, "Remove texture: %s - refCount: %d",
 				texture->getName().getPath().c_str(),
-				texture->getReferenceCount()
+				texture->getReferenceCount() - 1
 			);
 			os::Printer::log(log);
 
@@ -113,7 +113,7 @@ namespace Skylicht
 				char log[1024];
 				sprintf(log, "Remove texture: %s - refCount: %d",
 					texture->getName().getPath().c_str(),
-					texture->getReferenceCount());
+					texture->getReferenceCount() - 1);
 				os::Printer::log(log);
 
 				driver->removeTexture(texture);
@@ -144,7 +144,7 @@ namespace Skylicht
 					char log[1024];
 					sprintf(log, "Remove Texture: %s - refCount: %d",
 						texture->getName().getPath().c_str(),
-						texture->getReferenceCount());
+						texture->getReferenceCount() - 1);
 					os::Printer::log(log);
 
 					driver->removeTexture(texture);
@@ -159,6 +159,18 @@ namespace Skylicht
 
 		} while (needContinue);
 
+	}
+
+	const char* CTextureManager::getTexturePath(ITexture* tex)
+	{
+		for (auto i : m_textureList)
+		{
+			if (i->Texture == tex)
+			{
+				return i->Path.c_str();
+			}
+		}
+		return NULL;
 	}
 
 	ITexture* CTextureManager::getTextureFromRealPath(const char* path)
