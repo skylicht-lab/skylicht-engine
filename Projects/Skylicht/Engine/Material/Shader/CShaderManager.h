@@ -92,6 +92,8 @@ namespace Skylicht
 
 		void initSGForwarderShader();
 
+		void initMobileSGShader();
+
 		void initPBRForwarderShader();
 
 		void initSkylichtEngineShader();

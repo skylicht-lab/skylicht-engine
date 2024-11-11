@@ -210,10 +210,14 @@ void CViewInit::initScene()
 		// body
 		material[1]->changeShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGSkinInstaning.xml");
 		material[1]->autoDetectLoadTexture();
+		material[1]->setUniform4("uColor", SColor(255, 200, 200, 200));
+		material[1]->updateShaderParams();
 
 		// hair
 		material[0]->changeShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGSkinInstaningAlpha.xml");
 		material[0]->autoDetectLoadTexture();
+		material[0]->setUniform4("uColor", SColor(255, 200, 200, 200));
+		material[0]->updateShaderParams();
 
 		crowdSkinnedMesh->initMaterial(material);
 

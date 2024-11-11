@@ -49,9 +49,9 @@ float shadow(const float4 shadowCoord[3], const float shadowDistance[3], const f
 {
 	int id = 0;
 	float visible = 1.0;
-	const float bias[3] = {0.0001, 0.0002, 0.0006};
 	float depth = 0.0;
 	float result = 0.0;
+	const float bias[3] = {0.0001, 0.0002, 0.0006};
 	if (farDistance < shadowDistance[0])
 		id = 0;
 	else if (farDistance < shadowDistance[1])

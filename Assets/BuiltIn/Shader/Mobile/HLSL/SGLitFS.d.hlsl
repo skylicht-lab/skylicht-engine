@@ -11,10 +11,8 @@ SamplerState uTexNormalMapSampler : register(s1);
 Texture2D uTexSpecularMap : register(t2);
 SamplerState uTexSpecularMapSampler : register(s2);
 #endif
-#endif
 
-TextureCube uTexReflect : register(t3);
-SamplerState uTexReflectSampler : register(s3);
+#endif
 
 #if defined(NO_NORMAL_MAP) || defined(NO_TEXTURE)
 struct PS_INPUT
@@ -51,29 +49,10 @@ cbuffer cbPerFrame
 	float4 uSHConst[4];
 };
 
-#include "../../../PostProcessing/HLSL/LibToneMapping.hlsl"
-#include "../../../SHAmbient/HLSL/SHAmbient.hlsl"
+#include "../../PostProcessing/HLSL/LibToneMapping.hlsl"
+#include "../../SHAmbient/HLSL/SHAmbient.hlsl"
 
 static const float PI = 3.1415926;
-static const float MinReflectance = 0.04;
-
-float getPerceivedBrightness(float3 color)
-{
-	return sqrt(0.299 * color.r * color.r + 0.587 * color.g * color.g + 0.114 * color.b * color.b);
-}
-
-float solveMetallic(float3 diffuse, float3 specular, float oneMinusSpecularStrength)
-{
-	float specularBrightness = getPerceivedBrightness(specular);
-	float diffuseBrightness = getPerceivedBrightness(diffuse);
-
-	float a = MinReflectance;
-	float b = diffuseBrightness * oneMinusSpecularStrength / (1.0 - MinReflectance) + specularBrightness - 2.0 * MinReflectance;
-	float c = MinReflectance - specularBrightness;
-	float D = b * b - 4.0 * a * c;
-
-	return clamp((-b + sqrt(D)) / (2.0 * a), 0.0, 1.0);
-}
 
 float4 main(PS_INPUT input) : SV_TARGET
 {
@@ -82,7 +61,6 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 specMap = float3(uSpecGloss, 0.0);
 #else
 	float4 diffuseMap = uTexDiffuse.Sample(uTexDiffuseSampler, input.tex0) * uColor;
-
 	#ifdef NO_SPECGLOSS
 	float3 specMap = float3(uSpecGloss, 0.0);
 	#else
@@ -101,25 +79,12 @@ float4 main(PS_INPUT input) : SV_TARGET
 	n = normalize(n);
 #endif
 
-	// Solver metallic
-	float roughness = 1.0 - specMap.g;
-
-	float3 f0 = specMap.r;
-	float3 specularColor = f0;
-	float oneMinusSpecularStrength = 1.0 - specMap.r;
-	float metallic = solveMetallic(diffuseMap.rgb, specularColor, oneMinusSpecularStrength);
-
-	f0 = float3(0.04, 0.04, 0.04);
-	float3 diffuseColor = diffuseMap.rgb;
-	specularColor = lerp(f0, diffuseMap.rgb, metallic);
-
 	// SH4 Ambient
 	float3 ambientLighting = shAmbient(n);
 
 	// Tone Mapping
 	ambientLighting = sRGB(ambientLighting);
-	diffuseColor = sRGB(diffuseColor);
-	specularColor = sRGB(specularColor);
+	float3 diffuseColor = sRGB(diffuseMap.rgb);	
 	float3 lightColor = sRGB(uLightColor.rgb);
 
 	// Lighting
@@ -131,14 +96,10 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 H = normalize(input.worldLightDir + input.worldViewDir);
 	float NdotE = max(0.0,dot(n, H));
 	float specular = pow(NdotE, 100.0f * specMap.g) * specMap.r;
-	color += specular * specularColor;
+	color += specular * diffuseColor;
 
 	// IBL lighting
 	color += ambientLighting * diffuseColor / PI;
-	
-	// IBL reflection
-	float3 reflection = -normalize(reflect(input.worldViewDir, n));
-	color += sRGB(uTexReflect.SampleLevel(uTexReflectSampler, reflection, roughness * 8).xyz) * specularColor * metallic;
 	
 	return float4(color, diffuseMap.a);
 }

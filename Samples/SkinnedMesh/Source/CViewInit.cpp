@@ -8,6 +8,8 @@
 #include "GridPlane/CGridPlane.h"
 #include "SkyDome/CSkyDome.h"
 
+// #define USE_MOBILE_SHADER
+
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
 	m_getFile(NULL),
@@ -37,7 +39,12 @@ void CViewInit::onInit()
 
 	CShaderManager* shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
+
+#ifdef USE_MOBILE_SHADER
+	shaderMgr->initMobileSGShader();
+#else
 	shaderMgr->initSGForwarderShader();
+#endif
 
 	CGlyphFreetype* freetypeFont = CGlyphFreetype::getInstance();
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
@@ -134,12 +141,24 @@ void CViewInit::initScene()
 		if (material.size() == 2)
 		{
 			// body
+#ifdef USE_MOBILE_SHADER
+			material[1]->changeShader("BuiltIn/Shader/Mobile/MobileSGSkin.xml");
+#else
 			material[1]->changeShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGSkin.xml");
+#endif
 			material[1]->autoDetectLoadTexture();
+			material[1]->setUniform4("uColor", SColor(255, 200, 200, 200));
+			material[1]->updateShaderParams();
 
 			// hair
+#ifdef USE_MOBILE_SHADER
+			material[0]->changeShader("BuiltIn/Shader/Mobile/MobileSGSkinAlpha.xml");
+#else
 			material[0]->changeShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGSkinAlpha.xml");
+#endif
 			material[0]->autoDetectLoadTexture();
+			material[0]->setUniform4("uColor", SColor(255, 200, 200, 200));
+			material[0]->updateShaderParams();
 		}
 
 		// CHARACTER 01

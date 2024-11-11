@@ -2,8 +2,12 @@
 #define RAND(co) (vec2(fract(sin(dot(co.xy, kRandom1)) * kRandom2), fract(sin(dot(co.yx, kRandom1)) * kRandom2)) * kRandom3)
 #define COMPARE(uv, compare) (step(compare, textureLod(uShadowMap, uv, 0.0).r))
 
-// #define HARD_SHADOW
-#define PCF_NOISE
+#ifdef OPTIMIZE_SHADOW
+	#define HARD_SHADOW
+#else
+	#define PCF_NOISE
+	#define CASCADED_SHADOW	
+#endif
 
 #if defined(PCF_NOISE)
 #define SHADOW_SAMPLE(x, y) {\
@@ -16,15 +20,20 @@ result += COMPARE(vec3(rand, id), depth);\
 #define SHADOW_SAMPLE(x, y) result += COMPARE(vec3(uv + vec2(x, y) * size, id), depth);
 #endif
 
+#ifdef CASCADED_SHADOW
 float shadow(const vec4 shadowCoord[3], const float shadowDistance[3], const float farDistance)
+#else
+float shadow(const vec4 shadowCoord, const float farDistance)
+#endif
 {
 	int id = 0;
 	float visible = 1.0;
-	const float bias[3] = float[3](0.0001, 0.0002, 0.0006);
 	float depth = 0.0;
-
 	float result = 0.0;
 
+#ifdef CASCADED_SHADOW
+	const float bias[3] = float[3](0.0001, 0.0002, 0.0006);
+	
 	if (farDistance < shadowDistance[0])
 		id = 0;
 	else if (farDistance < shadowDistance[1])
@@ -35,9 +44,15 @@ float shadow(const vec4 shadowCoord[3], const float shadowDistance[3], const flo
 		return 1.0;
 
 	vec3 shadowUV = shadowCoord[id].xyz / shadowCoord[id].w;
-
 	depth = shadowUV.z;
 	depth -= bias[id];
+#else
+	const float bias = 0.0001;
+
+	float3 shadowUV = shadowCoord.xyz / shadowCoord.w;
+	depth = shadowUV.z;
+	depth -= bias;
+#endif
 	
 	vec2 uv = shadowUV.xy;
 	

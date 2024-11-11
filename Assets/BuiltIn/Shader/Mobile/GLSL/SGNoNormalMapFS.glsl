@@ -2,7 +2,6 @@
 precision mediump float;
 uniform sampler2D uTexDiffuse;
 uniform sampler2D uTexSpecular;
-uniform samplerCube uTexReflect;
 uniform vec4 uLightColor;
 uniform vec4 uColor;
 uniform vec4 uSHConst[4];
@@ -32,38 +31,14 @@ vec3 shAmbient(vec3 n)
 	return ambientLighting * 0.9;
 }
 const float PI = 3.1415926;
-const float MinReflectance = 0.04;
-float getPerceivedBrightness(vec3 color)
-{
-	return sqrt(0.299 * color.r * color.r + 0.587 * color.g * color.g + 0.114 * color.b * color.b);
-}
-float solveMetallic(vec3 diffuse, vec3 specular, float oneMinusSpecularStrength)
-{
-	float specularBrightness = getPerceivedBrightness(specular);
-	float diffuseBrightness = getPerceivedBrightness(diffuse);
-	float a = MinReflectance;
-	float b = diffuseBrightness * oneMinusSpecularStrength / (1.0 - MinReflectance) + specularBrightness - 2.0 * MinReflectance;
-	float c = MinReflectance - specularBrightness;
-	float D = b * b - 4.0 * a * c;
-	return clamp((-b + sqrt(D)) / (2.0 * a), 0.0, 1.0);
-}
 void main(void)
 {
 	vec4 diffuseMap = texture(uTexDiffuse, vTexCoord0.xy) * uColor;
 	vec3 specMap = texture(uTexSpecular, vTexCoord0.xy).xyz;
 	vec3 n = vWorldNormal;
-	float roughness = 1.0 - specMap.g;
-	vec3 f0 = vec3(specMap.r, specMap.r, specMap.r);
-	vec3 specularColor = f0;
-	float oneMinusSpecularStrength = 1.0 - specMap.r;
-	float metallic = solveMetallic(diffuseMap.rgb, specularColor, oneMinusSpecularStrength);
-	f0 = vec3(0.04, 0.04, 0.04);
-	vec3 diffuseColor = diffuseMap.rgb;
-	specularColor = mix(f0, diffuseMap.rgb, metallic);
 	vec3 ambientLighting = shAmbient(n);
 	ambientLighting = sRGB(ambientLighting);
-	diffuseColor = sRGB(diffuseColor);
-	specularColor = sRGB(specularColor);
+	vec3 diffuseColor = sRGB(diffuseMap.rgb);
 	vec3 lightColor = sRGB(uLightColor.rgb);
 	float NdotL = max(dot(n, vWorldLightDir), 0.0);
 	vec3 directionalLight = NdotL * lightColor;
@@ -71,9 +46,7 @@ void main(void)
 	vec3 H = normalize(vWorldLightDir + vWorldViewDir);
 	float NdotE = max(0.0, dot(n, H));
 	float specular = pow(NdotE, 100.0f * specMap.g) * specMap.r;
-	color += specular * specularColor;
+	color += specular * diffuseColor;
 	color += ambientLighting * diffuseColor / PI;
-	vec3 reflection = -normalize(reflect(vWorldViewDir, n));
-	color += sRGB(textureLod(uTexReflect, reflection, roughness * 8.0).xyz) * specularColor * metallic;
 	FragColor = vec4(color, diffuseMap.a);
 }

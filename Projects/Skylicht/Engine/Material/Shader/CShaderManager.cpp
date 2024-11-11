@@ -191,9 +191,20 @@ namespace Skylicht
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/ReflectionProbe.xml");
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/SG.xml");
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGColor.xml");
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGDiffuse.xml");
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGNoNormalMap.xml");
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGSkin.xml");
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGSkinAlpha.xml");
+	}
+
+	void CShaderManager::initMobileSGShader()
+	{
+		loadShader("BuiltIn/Shader/Mobile/MobileSG.xml");
+		loadShader("BuiltIn/Shader/Mobile/MobileSGColor.xml");
+		loadShader("BuiltIn/Shader/Mobile/MobileSGDiffuse.xml");
+		loadShader("BuiltIn/Shader/Mobile/MobileSGNoNormalMap.xml");
+		loadShader("BuiltIn/Shader/Mobile/MobileSGSkin.xml");
+		loadShader("BuiltIn/Shader/Mobile/MobileSGSkinAlpha.xml");
 	}
 
 	void CShaderManager::initPBRForwarderShader()

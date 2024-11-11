@@ -70,7 +70,8 @@ void main(void)
 	
 #if defined(SHADOW)
 	float depth = length(vDepth);
-
+	
+#if defined(CASCADED_SHADOW)
 	vec4 shadowCoord[3];
 	shadowCoord[0] = uShadowMatrix[0] * vec4(vWorldPosition, 1.0);
 	shadowCoord[1] = uShadowMatrix[1] * vec4(vWorldPosition, 1.0);
@@ -82,7 +83,12 @@ void main(void)
 	shadowDistance[2] = uShadowDistance.z;
 
 	visibility = shadow(shadowCoord, shadowDistance, depth);
-#endif
+#else
+	vec4 shadowCoord = uShadowMatrix[0] * vec4(vWorldPosition, 1.0)
+	visibility = shadow(shadowCoord, depth);
+#endif // CASCADED_SHADOW
+
+#endif // SHADOW
 
 	// SH Ambient
 	vec3 ambientLighting = shAmbient(vWorldNormal);
