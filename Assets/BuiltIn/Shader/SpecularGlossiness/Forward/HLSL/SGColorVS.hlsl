@@ -14,7 +14,6 @@ struct VS_OUTPUT
 	float3 worldViewDir: WORLDVIEWDIR;
 	float3 worldLightDir: WORLDLIGHTDIR;
 	float4 viewPosition: VIEWPOSITION;
-	float3 worldPosition: WORLDPOSITION;
 };
 cbuffer cbPerObject
 {
@@ -32,7 +31,6 @@ VS_OUTPUT main(VS_INPUT input)
 	float4 worldPos = mul(input.pos, uWorldMatrix);
 	float4 worldViewDir = normalize(uCameraPosition - worldPos);
 	float4 worldNormal = mul(float4(input.norm.xyz, 0.0), uWorldMatrix);
-	output.worldPosition = worldPos.xyz;
 	output.worldNormal = normalize(worldNormal.xyz);
 	output.worldViewDir = worldViewDir.xyz;
 	output.worldLightDir = normalize(uLightDirection.xyz);

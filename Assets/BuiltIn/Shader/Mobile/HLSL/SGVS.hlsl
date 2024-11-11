@@ -20,7 +20,6 @@ struct VS_OUTPUT
 	float3 worldBinormal: WORLDBINORMAL;
 	float tangentw : TANGENTW;
 	float4 viewPosition: VIEWPOSITION;
-	float3 worldPosition: WORLDPOSITION;
 };
 cbuffer cbPerObject
 {
@@ -40,7 +39,6 @@ VS_OUTPUT main(VS_INPUT input)
 	float4 worldViewDir = normalize(uCameraPosition - worldPos);
 	float4 worldNormal = mul(float4(input.norm.xyz, 0.0), uWorldMatrix);
 	float4 worldTangent = mul(float4(input.tangent.xyz, 0.0), uWorldMatrix);
-	output.worldPosition = worldPos.xyz;
 	output.worldNormal = normalize(worldNormal.xyz);
 	output.worldTangent = normalize(worldTangent.xyz);
 	output.worldBinormal = normalize(cross(worldNormal.xyz, worldTangent.xyz));

@@ -24,7 +24,6 @@ out vec3 vWorldBinormal;
 out float vTangentW;
 #endif
 out vec4 vViewPosition;
-out vec3 vWorldPosition;
 
 void main(void)
 {
@@ -43,7 +42,6 @@ void main(void)
 	vec4 worldTangent = uWorldMatrix * vec4(inTangent.xyz, 0.0);
 #endif
 
-	vWorldPosition = worldPos.xyz;
 	vWorldNormal = normalize(worldNormal.xyz);
 
 #if !defined(NO_NORMAL_MAP) && !defined(NO_TEXTURE)

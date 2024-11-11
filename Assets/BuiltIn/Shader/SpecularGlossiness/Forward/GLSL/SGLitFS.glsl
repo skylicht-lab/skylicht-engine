@@ -15,7 +15,6 @@ in vec3 vWorldTangent;
 in vec3 vWorldBinormal;
 in float vTangentW;
 in vec4 vViewPosition;
-in vec3 vWorldPosition;
 out vec4 FragColor;
 const float gamma = 2.2;
 const float invGamma = 1.0 / 2.2;

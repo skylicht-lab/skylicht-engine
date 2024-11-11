@@ -19,7 +19,6 @@ out vec3 vWorldTangent;
 out vec3 vWorldBinormal;
 out float vTangentW;
 out vec4 vViewPosition;
-out vec3 vWorldPosition;
 void main(void)
 {
 	vTexCoord0 = inTexCoord0 * uUVScale.xy + uUVScale.zw;
@@ -28,7 +27,6 @@ void main(void)
 	vec4 worldViewDir = normalize(uCameraPosition - worldPos);
 	vec4 worldNormal = uWorldMatrix * vec4(inNormal.xyz, 0.0);
 	vec4 worldTangent = uWorldMatrix * vec4(inTangent.xyz, 0.0);
-	vWorldPosition = worldPos.xyz;
 	vWorldNormal = normalize(worldNormal.xyz);
 	vWorldTangent = normalize(worldTangent.xyz);
 	vWorldBinormal = normalize(cross(worldNormal.xyz, worldTangent.xyz));

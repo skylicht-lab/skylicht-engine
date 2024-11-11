@@ -13,14 +13,12 @@ out vec3 vWorldNormal;
 out vec3 vWorldViewDir;
 out vec3 vWorldLightDir;
 out vec4 vViewPosition;
-out vec3 vWorldPosition;
 void main(void)
 {
 	vTexCoord0 = inTexCoord0 * uUVScale.xy + uUVScale.zw;
 	vec4 worldPos = uWorldMatrix * inPosition;
 	vec4 worldViewDir = normalize(uCameraPosition - worldPos);
 	vec4 worldNormal = uWorldMatrix * vec4(inNormal.xyz, 0.0);
-	vWorldPosition = worldPos.xyz;
 	vWorldNormal = normalize(worldNormal.xyz);
 	vWorldViewDir = worldViewDir.xyz;
 	vWorldLightDir = normalize(uLightDirection.xyz);

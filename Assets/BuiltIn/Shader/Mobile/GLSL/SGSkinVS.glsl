@@ -23,7 +23,6 @@ out vec3 vWorldTangent;
 out vec3 vWorldBinormal;
 out float vTangentW;
 out vec4 vViewPosition;
-out vec3 vWorldPosition;
 
 void main(void)
 {
@@ -56,8 +55,6 @@ void main(void)
 
 	vec4 worldNormal = uWorldMatrix * vec4(skinNormal.xyz, 0.0);
 	vec4 worldTangent = uWorldMatrix * vec4(skinTangent.xyz, 0.0);
-
-	vWorldPosition = worldPos.xyz;
 
 	vWorldNormal = normalize(worldNormal.xyz);
 	vWorldTangent = normalize(worldTangent.xyz);

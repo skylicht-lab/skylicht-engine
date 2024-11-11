@@ -49,7 +49,7 @@ float shadow(const vec4 shadowCoord, const float farDistance)
 #else
 	const float bias = 0.0001;
 
-	float3 shadowUV = shadowCoord.xyz / shadowCoord.w;
+	vec3 shadowUV = shadowCoord.xyz / shadowCoord.w;
 	depth = shadowUV.z;
 	depth -= bias;
 #endif

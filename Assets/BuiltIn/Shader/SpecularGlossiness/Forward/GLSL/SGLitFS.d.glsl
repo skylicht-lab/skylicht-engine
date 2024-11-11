@@ -33,7 +33,6 @@ in float vTangentW;
 #endif
 
 in vec4 vViewPosition;
-in vec3 vWorldPosition;
 
 out vec4 FragColor;
 

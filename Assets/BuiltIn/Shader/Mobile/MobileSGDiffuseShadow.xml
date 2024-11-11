@@ -1,4 +1,4 @@
-<shaderConfig name="MobileSGDiffuse" baseShader="SOLID">
+<shaderConfig name="MobileSGDiffuseShadow" baseShader="SOLID">
 	<uniforms>
 		<vs>
 			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
@@ -6,6 +6,7 @@
 			<uniform name="uCameraPosition" type="WORLD_CAMERA_POSITION" value="0" float="4"/>
 			<uniform name="uLightDirection" type="WORLD_LIGHT_DIRECTION" value="0" float="4"/>
 			<uniform name="uUVScale" type="MATERIAL_PARAM" valueIndex="0" value="1.0, 1.0, 0.0, 0.0" float="4"/>
+			<uniform name="uShadowMatrix" type="SHADOW_MAP_MATRIX" value="0" float="16" array="1" matrix="true"/>
 		</vs>
 		<fs>
 			<uniform name="uTexDiffuse" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
@@ -15,6 +16,9 @@
 			<uniform name="uSHConst" type="SH_CONST" value="0" float="4" array="4"/>
 		</fs>
 	</uniforms>
+	<resources>
+		<resource name="uShadowMap" type="ShadowMap"/>
+	</resources>
 	<customUI>
 		<ui control="UIGroup" name="Texture">
 			<ui control="UITexture" name="uTexDiffuse" autoReplace="_diff.;_Diffuse.;_D."/>
@@ -24,6 +28,6 @@
 			<ui control="UIFloat2" name="uSpecGloss" elementName="Specular;Glossiness" min="0" max="1"/>
 		</ui>
 	</customUI>
-	<shader type="GLSL" vs="GLSL/SGDiffuseVS.glsl" fs="GLSL/SGNoSpecGlossFS.glsl" vs_source="GLSL/SGVS.d.glsl" fs_source="GLSL/SGLitFS.d.glsl" define="NO_NORMAL_MAP;NO_SPECGLOSS"/>
-	<shader type="HLSL" vs="HLSL/SGDiffuseVS.hlsl" fs="HLSL/SGNoSpecGlossFS.hlsl" vs_source="HLSL/SGVS.d.hlsl" fs_source="HLSL/SGLitFS.d.hlsl" define="NO_NORMAL_MAP;NO_SPECGLOSS"/>
+	<shader type="GLSL" vs="GLSL/SGShadowVS.glsl" fs="GLSL/SGNoSpecGlossFS.glsl" fs_source="GLSL/SGLitFS.d.glsl" define="NO_NORMAL_MAP;NO_SPECGLOSS;SHADOW;OPTIMIZE_SHADOW"/>
+	<shader type="HLSL" vs="HLSL/SGShadowVS.hlsl" fs="HLSL/SGNoSpecGlossFS.hlsl" fs_source="HLSL/SGLitFS.d.hlsl" define="NO_NORMAL_MAP;NO_SPECGLOSS;SHADOW;OPTIMIZE_SHADOW"/>
 </shaderConfig>
