@@ -30,6 +30,14 @@ float3 linearRGB(float3 color)
 {
 	return pow(color, invGamma);
 }
+float3 shAmbient(float3 n)
+{
+	float3 ambientLighting = uSHConst[0].xyz +
+		uSHConst[1].xyz * n.y +
+		uSHConst[2].xyz * n.z +
+		uSHConst[3].xyz * n.x;
+	return ambientLighting * 0.9;
+}
 static const float PI = 3.1415926;
 static const float MinReflectance = 0.04;
 float getPerceivedBrightness(float3 color)
@@ -59,11 +67,8 @@ float4 main(PS_INPUT input) : SV_TARGET
 	f0 = float3(0.04, 0.04, 0.04);
 	float3 diffuseColor = diffuseMap.rgb;
 	specularColor = lerp(f0, diffuseMap.rgb, metallic);
-	float3 ambientLighting = uSHConst[0].xyz +
-		uSHConst[1].xyz * n.y +
-		uSHConst[2].xyz * n.z +
-		uSHConst[3].xyz * n.x;
-	ambientLighting = sRGB(ambientLighting * 0.9);
+	float3 ambientLighting = shAmbient(n);
+	ambientLighting = sRGB(ambientLighting);
 	diffuseColor = sRGB(diffuseColor);
 	specularColor = sRGB(specularColor);
 	float3 lightColor = sRGB(uLightColor.rgb);

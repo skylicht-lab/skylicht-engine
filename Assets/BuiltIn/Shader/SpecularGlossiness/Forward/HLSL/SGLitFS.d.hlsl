@@ -50,6 +50,7 @@ cbuffer cbPerFrame
 };
 
 #include "../../../PostProcessing/HLSL/LibToneMapping.hlsl"
+#include "../../../SHAmbient/HLSL/SHAmbient.hlsl"
 
 static const float PI = 3.1415926;
 static const float MinReflectance = 0.04;
@@ -102,17 +103,14 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float metallic = solveMetallic(diffuseMap.rgb, specularColor, oneMinusSpecularStrength);
 
 	f0 = float3(0.04, 0.04, 0.04);
-	float3 diffuseColor = diffuseMap.rgb;// * (float3(1.0, 1.0, 1.0) - f0) * (1.0 - metallic);
+	float3 diffuseColor = diffuseMap.rgb;
 	specularColor = lerp(f0, diffuseMap.rgb, metallic);
 
 	// SH4 Ambient
-	float3 ambientLighting = uSHConst[0].xyz +
-		uSHConst[1].xyz * n.y +
-		uSHConst[2].xyz * n.z +
-		uSHConst[3].xyz * n.x;
+	float3 ambientLighting = shAmbient(n);
 
 	// Tone Mapping
-	ambientLighting = sRGB(ambientLighting * 0.9); // fix for SH4
+	ambientLighting = sRGB(ambientLighting);
 	diffuseColor = sRGB(diffuseColor);
 	specularColor = sRGB(specularColor);
 	float3 lightColor = sRGB(uLightColor.rgb);

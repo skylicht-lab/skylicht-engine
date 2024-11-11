@@ -33,6 +33,14 @@ float3 linearRGB(float3 color)
 {
 	return pow(color, invGamma);
 }
+float3 shAmbient(float3 n)
+{
+	float3 ambientLighting = uSHConst[0].xyz +
+		uSHConst[1].xyz * n.y +
+		uSHConst[2].xyz * n.z +
+		uSHConst[3].xyz * n.x;
+	return ambientLighting * 0.9;
+}
 static const float PI = 3.1415926;
 float4 main(PS_INPUT input) : SV_TARGET
 {
@@ -43,10 +51,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 shadowColor = sRGB(uShadowColor.rgb);
 	float3 lightColor = sRGB(uLightColor.rgb);
 	float visibility = 1.0;
-	float3 ambientLighting = uSHConst[0].xyz +
-		uSHConst[1].xyz * input.worldNormal.y +
-		uSHConst[2].xyz * input.worldNormal.z +
-		uSHConst[3].xyz * input.worldNormal.x;
+	float3 ambientLighting = shAmbient(input.worldNormal);
 	ambientLighting = sRGB(ambientLighting * 0.9);
 	float NdotL = max((dot(input.worldNormal, uLightDirection.xyz) + uWrapFactor.x) / (1.0 + uWrapFactor.x), 0.0);
 	float3 rampMap = uTexRamp.Sample(uTexRampSampler, float2(NdotL, NdotL)).rgb;

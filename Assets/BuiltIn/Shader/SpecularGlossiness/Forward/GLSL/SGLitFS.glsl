@@ -27,6 +27,14 @@ vec3 linearRGB(vec3 color)
 {
 	return pow(color, vec3(invGamma));
 }
+vec3 shAmbient(vec3 n)
+{
+	vec3 ambientLighting = uSHConst[0].xyz +
+		uSHConst[1].xyz * n.y +
+		uSHConst[2].xyz * n.z +
+		uSHConst[3].xyz * n.x;
+	return ambientLighting * 0.9;
+}
 const float PI = 3.1415926;
 const float MinReflectance = 0.04;
 float getPerceivedBrightness(vec3 color)
@@ -61,11 +69,8 @@ void main(void)
 	f0 = vec3(0.04, 0.04, 0.04);
 	vec3 diffuseColor = diffuseMap.rgb;
 	specularColor = mix(f0, diffuseMap.rgb, metallic);
-	vec3 ambientLighting = uSHConst[0].xyz +
-		uSHConst[1].xyz * n.y +
-		uSHConst[2].xyz * n.z +
-		uSHConst[3].xyz * n.x;
-	ambientLighting = sRGB(ambientLighting * 0.9);
+	vec3 ambientLighting = shAmbient(n);
+	ambientLighting = sRGB(ambientLighting);
 	diffuseColor = sRGB(diffuseColor);
 	specularColor = sRGB(specularColor);
 	vec3 lightColor = sRGB(uLightColor.rgb);

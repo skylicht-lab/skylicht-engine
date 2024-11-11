@@ -37,6 +37,7 @@ in vec4 vColor;
 out vec4 FragColor;
 
 #include "../../PostProcessing/GLSL/LibToneMapping.glsl"
+#include "../../SHAmbient/GLSL/SHAmbient.glsl"
 
 #if defined(SHADOW)
 #include "../../Shadow/GLSL/LibShadow.glsl"
@@ -84,11 +85,8 @@ void main(void)
 #endif
 
 	// SH Ambient
-	vec3 ambientLighting = uSHConst[0].xyz +
-		uSHConst[1].xyz * vWorldNormal.y +
-		uSHConst[2].xyz * vWorldNormal.z +
-		uSHConst[3].xyz * vWorldNormal.x;
-	ambientLighting = sRGB(ambientLighting * 0.9);	// fix for SH4
+	vec3 ambientLighting = shAmbient(vWorldNormal);
+	ambientLighting = sRGB(ambientLighting);
 	
 	// Shadows intensity through alpha
 	vec3 ramp = mix(color, shadowColor, shadowIntensity * (1.0 - visibility));

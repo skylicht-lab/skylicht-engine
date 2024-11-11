@@ -39,6 +39,7 @@ in vec3 vWorldPosition;
 out vec4 FragColor;
 
 #include "../../../PostProcessing/GLSL/LibToneMapping.glsl"
+#include "../../../SHAmbient/GLSL/SHAmbient.glsl"
 
 const float PI = 3.1415926;
 
@@ -128,13 +129,10 @@ void main(void)
 	float ao = rmaMap.b;
 
 	// SH Ambient
-	vec3 ambientLighting = uSHConst[0].xyz +
-		uSHConst[1].xyz * n.y +
-		uSHConst[2].xyz * n.z +
-		uSHConst[3].xyz * n.x;
+	vec3 ambientLighting = shAmbient(n);
 
 	// Tone Mapping
-	ambientLighting = sRGB(ambientLighting * 0.9); // fix for SH4
+	ambientLighting = sRGB(ambientLighting);
 	
 	vec3 albedo = sRGB(albedoMap.rgb);
 	

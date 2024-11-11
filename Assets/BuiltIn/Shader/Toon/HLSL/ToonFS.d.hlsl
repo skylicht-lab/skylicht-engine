@@ -36,6 +36,7 @@ cbuffer cbPerFrame
 };
 
 #include "../../PostProcessing/HLSL/LibToneMapping.hlsl"
+#include "../../SHAmbient/HLSL/SHAmbient.hlsl"
 
 #if defined(SHADOW)
 #include "../../Shadow/HLSL/LibShadow.hlsl"
@@ -78,13 +79,10 @@ float4 main(PS_INPUT input) : SV_TARGET
 #endif
 
 	// SH4 Ambient
-	float3 ambientLighting = uSHConst[0].xyz +
-		uSHConst[1].xyz * input.worldNormal.y +
-		uSHConst[2].xyz * input.worldNormal.z +
-		uSHConst[3].xyz * input.worldNormal.x;
-
+	float3 ambientLighting = shAmbient(input.worldNormal);
+	
 	// Tone Mapping
-	ambientLighting = sRGB(ambientLighting * 0.9); // fix for SH4
+	ambientLighting = sRGB(ambientLighting * 0.9);
 	
 	float NdotL = max((dot(input.worldNormal, uLightDirection.xyz) + uWrapFactor.x) / (1.0 + uWrapFactor.x), 0.0);
 	float3 rampMap = uTexRamp.Sample(uTexRampSampler, float2(NdotL, NdotL)).rgb;

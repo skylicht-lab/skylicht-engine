@@ -27,6 +27,14 @@ vec3 linearRGB(vec3 color)
 {
 	return pow(color, vec3(invGamma));
 }
+vec3 shAmbient(vec3 n)
+{
+	vec3 ambientLighting = uSHConst[0].xyz +
+		uSHConst[1].xyz * n.y +
+		uSHConst[2].xyz * n.z +
+		uSHConst[3].xyz * n.x;
+	return ambientLighting * 0.9;
+}
 const float PI = 3.1415926;
 void main(void)
 {
@@ -40,11 +48,8 @@ void main(void)
 	vec3 shadowColor = sRGB(uShadowColor.rgb);
 	vec3 lightColor = sRGB(uLightColor.rgb);
 	float visibility = 1.0;
-	vec3 ambientLighting = uSHConst[0].xyz +
-		uSHConst[1].xyz * vWorldNormal.y +
-		uSHConst[2].xyz * vWorldNormal.z +
-		uSHConst[3].xyz * vWorldNormal.x;
-	ambientLighting = sRGB(ambientLighting * 0.9);
+	vec3 ambientLighting = shAmbient(vWorldNormal);
+	ambientLighting = sRGB(ambientLighting);
 	vec3 ramp = mix(color, shadowColor, shadowIntensity * (1.0 - visibility));
 	ramp = mix(ramp, color, rampMap);
 	vec3 h = normalize(uLightDirection.xyz + vWorldViewDir);
