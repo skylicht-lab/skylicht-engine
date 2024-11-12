@@ -113,6 +113,7 @@ namespace video
 			TrilinearFilter = other.TrilinearFilter;
 			AnisotropicFilter = other.AnisotropicFilter;
 			LODBias = other.LODBias;
+			BorderColor = other.BorderColor;
 
 			return *this;
 		}

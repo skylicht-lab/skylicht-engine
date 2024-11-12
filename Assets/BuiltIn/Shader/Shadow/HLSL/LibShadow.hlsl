@@ -27,11 +27,10 @@ float shadow(const float4 shadowCoord, const float farDistance)
 #endif
 {
 	int id = 0;
-	float visible = 1.0;
 	float depth = 0.0;
-	float result = 0.0;
 	
 #ifdef CASCADED_SHADOW	
+	float result = 0.0;
 	const float bias[3] = {0.0001, 0.0002, 0.0006};
 		
 	if (farDistance < shadowDistance[0])
@@ -47,9 +46,13 @@ float shadow(const float4 shadowCoord, const float farDistance)
 	depth = shadowUV.z;
 	depth -= bias[id];
 #else
-	const float bias = 0.0001;
+	const float bias = 0.0002;
 
 	float3 shadowUV = shadowCoord.xyz / shadowCoord.w;
+	
+	if (shadowUV.z > 1.0)
+		return 1.0;
+	
 	depth = shadowUV.z;
 	depth -= bias;
 #endif	

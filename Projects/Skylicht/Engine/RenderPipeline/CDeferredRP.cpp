@@ -207,7 +207,7 @@ namespace Skylicht
 		m_directionalLightPass.TextureLayer[6].AnisotropicFilter = 0;
 		m_directionalLightPass.TextureLayer[6].TextureWrapU = video::ETC_CLAMP_TO_BORDER;
 		m_directionalLightPass.TextureLayer[6].TextureWrapV = video::ETC_CLAMP_TO_BORDER;
-		m_directionalLightPass.TextureLayer[6].BorderColor.set(0.0f, 0.0f, 0.0f, 0.0f);
+		m_directionalLightPass.TextureLayer[6].BorderColor.set(1.0f, 1.0f, 1.0f, 1.0f);
 
 		// disable Z
 		m_directionalLightPass.ZBuffer = video::ECFN_DISABLED;

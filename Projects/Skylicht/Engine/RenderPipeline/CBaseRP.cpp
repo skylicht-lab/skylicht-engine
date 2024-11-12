@@ -205,7 +205,7 @@ namespace Skylicht
 
 						irrMaterial.TextureLayer[textureID].TextureWrapU = video::ETC_CLAMP_TO_BORDER;
 						irrMaterial.TextureLayer[textureID].TextureWrapV = video::ETC_CLAMP_TO_BORDER;
-						irrMaterial.TextureLayer[textureID].BorderColor.set(0.0f, 0.0f, 0.0f, 0.0f);
+						irrMaterial.TextureLayer[textureID].BorderColor.set(1.0f, 1.0f, 1.0f, 1.0f);
 					}
 				}
 			}
