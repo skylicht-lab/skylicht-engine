@@ -28,7 +28,9 @@
   <array>
     <string>fetch</string>
     <string>remote-notification</string>
-  </array>  
+  </array>
+  <key>UIRequiresFullScreen</key>
+  <true/>
   <key>UISupportedInterfaceOrientations</key>
   <array>
     <string>UIInterfaceOrientationPortrait</string>
