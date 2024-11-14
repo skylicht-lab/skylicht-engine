@@ -10,6 +10,7 @@ include_directories(
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Client
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Lightmapper
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Audio
+	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty
 	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/freetype2/include
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Bullet3/src
 )
@@ -22,6 +23,13 @@ if (BUILD_SPINE_RUNTIMES)
 	include_directories(
 		${SKYLICHT_ENGINE_PROJECT_DIR}/SpineCpp/spine-cpp/include
 		${SKYLICHT_ENGINE_PROJECT_DIR}/SpineCpp/spine-runtimes
+	)
+endif()
+
+if (BUILD_SKYLICHT_NETWORK)
+	include_directories(
+		${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Crypto
+		${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Network
 	)
 endif()
 
@@ -146,7 +154,19 @@ if (BUILD_SDL AND MSVC)
 	endif()	
 	link_directories(${sdl_lib_path})
 endif()	
-	
+
+
+if (BUILD_OPENSSL AND MSVC)
+	if (CMAKE_CL_64)
+		set(openssl_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/x64")
+		set(openssl_dll_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/x64/*.dll")
+	else()
+		set(openssl_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/x86")
+		set(openssl_dll_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/x86/*.dll")
+	endif()	
+	link_directories(${openssl_lib_path})
+endif()
+
 if (MINGW OR CYGWIN)
 	# .rc build
 	set(CMAKE_RC_COMPILER_INIT windres)
@@ -313,6 +333,11 @@ endif()
 # Spine runtimes
 if (BUILD_SPINE_RUNTIMES)
 	target_link_libraries(SampleLightmap SpineRuntimes)
+endif()
+
+# OpenSSL
+if (BUILD_OPENSSL AND MSVC)
+	target_link_libraries(SampleLightmap crypto.lib decrepit.lib ssl.lib Crypt32.lib)
 endif()
 
 # Emscripten
