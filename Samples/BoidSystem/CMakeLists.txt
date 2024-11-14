@@ -26,6 +26,10 @@ if (BUILD_SPINE_RUNTIMES)
 	)
 endif()
 
+if (BUILD_SKYLICHT_UI)
+	include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/UserInterface)
+endif()
+
 if (BUILD_SKYLICHT_NETWORK)
 	include_directories(
 		${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Crypto
