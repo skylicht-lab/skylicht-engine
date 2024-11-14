@@ -27,7 +27,7 @@ namespace irr
 	#ifdef _IRR_COMPILE_WITH_WINDOWS_DEVICE_
 	#include <EGL/egl.h>
 	#endif
-	#include <GLES3/gl3.h>
+	#include <GLES3/gl32.h>
 #endif
 
 #ifdef _MSC_VER
