@@ -10,12 +10,19 @@ include_directories(
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Client
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Lightmapper
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Audio
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Physics
 	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/freetype2/include
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Bullet3/src
 )
 
 if (BUILD_IMGUI)
 	include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/Imgui)
+endif()
+
+if (BUILD_SPINE_RUNTIMES)
+	include_directories(
+		${SKYLICHT_ENGINE_PROJECT_DIR}/SpineCpp/spine-cpp/include
+		${SKYLICHT_ENGINE_PROJECT_DIR}/SpineCpp/spine-runtimes
+	)
 endif()
 
 set(template_path ${SKYLICHT_ENGINE_PROJECT_DIR}/Main)
@@ -24,6 +31,9 @@ file(GLOB_RECURSE application_source
 	./Source/**.cpp 
 	./Source/**.c 
 	./Source/**.h)
+
+# Custom additional sources
+include(CMakeProject.cmake)
 
 setup_project_group("${application_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -125,7 +135,7 @@ if (BUILD_DEBUG_VLD)
 		set(vld_dll_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/Vld/bin/Win32/*.*")
 	endif()
 endif()
-
+	
 if (BUILD_SDL AND MSVC)
 	if (CMAKE_CL_64)
 		set(sdl_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/SDL/lib/x64")
@@ -135,8 +145,8 @@ if (BUILD_SDL AND MSVC)
 		set(sdl_dll_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/SDL/lib/x86/*.dll")
 	endif()	
 	link_directories(${sdl_lib_path})
-endif()
-
+endif()	
+	
 if (MINGW OR CYGWIN)
 	# .rc build
 	set(CMAKE_RC_COMPILER_INIT windres)
@@ -155,7 +165,7 @@ elseif(BUILD_SDL)
 		${template_path}/Platforms/SDL2/MainSDL.cpp
 	)
 elseif(BUILD_LINUX)
-	add_executable(SampleParticlesExplosion
+	add_executable(SampleParticlesExplosion 
 		${application_source}
 		${template_path}/Platforms/Linux/MainLinux.cpp
 	)
@@ -218,11 +228,13 @@ elseif (BUILD_MACOS)
 		BUILD_WITH_INSTALL_RPATH 1
 		INSTALL_RPATH "@executable_path/../Frameworks"
 	)
+	
+	set_target_properties(SampleParticlesExplosion PROPERTIES XCODE_ATTRIBUTE_INSTALL_PATH $(LOCAL_APPS_DIR))
 elseif (BUILD_IOS)
 	set(MACOSX_BUNDLE_EXECUTABLE_NAME SampleParticlesExplosion)
 
 	set(APP_NAME "SampleParticlesExplosion")
-	set(APP_BUNDLE_IDENTIFIER "com.skylicht.sampleparticlesexplosion")
+	set(APP_BUNDLE_IDENTIFIER "com.team_name.project_name")
 	set(CODE_SIGN_IDENTITY "iPhone Developer")
 
 	set(PRODUCT_NAME ${APP_NAME})
@@ -262,12 +274,15 @@ elseif (BUILD_IOS)
 	set_target_properties(SampleParticlesExplosion PROPERTIES XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY ${CODE_SIGN_IDENTITY})
 	set_target_properties(SampleParticlesExplosion PROPERTIES XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY ${DEVICE_FAMILY})
 	set_target_properties(SampleParticlesExplosion PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${template_path}/Platforms/IOS/plist.in")
-	
+	set_target_properties(SampleParticlesExplosion PROPERTIES XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_APPICON_NAME AppIcon)
+	set_target_properties(SampleParticlesExplosion PROPERTIES XCODE_ATTRIBUTE_INSTALL_PATH $(LOCAL_APPS_DIR))
+
 	# add assets icon
 	target_sources(SampleParticlesExplosion PRIVATE "${template_path}/Platforms/IOS/Assets.xcassets")
-
+	
 	list (APPEND platform_ios_resources "${template_path}/Platforms/IOS/Assets.xcassets")
-	set_target_properties(SampleParticlesExplosion PROPERTIES RESOURCE "${resources_files} ${platform_ios_resources}")
+	list (APPEND platform_ios_resources "${resources_files}")
+	set_target_properties(SampleParticlesExplosion PROPERTIES RESOURCE "${platform_ios_resources}")
 
 	# link framework
 	target_link_libraries(SampleParticlesExplosion "-framework Foundation")
@@ -295,6 +310,11 @@ if (BUILD_IMGUI)
 	target_link_libraries(SampleParticlesExplosion Imgui)
 endif()
 
+# Spine runtimes
+if (BUILD_SPINE_RUNTIMES)
+	target_link_libraries(SampleParticlesExplosion SpineRuntimes)
+endif()
+
 # Emscripten
 if (BUILD_EMSCRIPTEN)
 	message(STATUS "Setting build in data: ${CMAKE_CURRENT_BINARY_DIR}")
@@ -314,6 +334,14 @@ if (BUILD_DEBUG_VLD)
 	file(GLOB_RECURSE vld_bin_files ${vld_dll_path})
 	foreach(vld_bin ${vld_bin_files})
 		add_custom_command(TARGET SampleParticlesExplosion POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${vld_bin} $<TARGET_FILE_DIR:SampleParticlesExplosion>)
+	endforeach()
+endif()
+
+#SDL
+if (BUILD_SDL AND MSVC)
+	file(GLOB_RECURSE sdl_bin_files ${sdl_dll_path})
+	foreach(sdl_bin ${sdl_bin_files})
+		add_custom_command(TARGET SampleParticlesExplosion POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${sdl_bin} $<TARGET_FILE_DIR:SampleParticlesExplosion>)
 	endforeach()
 endif()
 

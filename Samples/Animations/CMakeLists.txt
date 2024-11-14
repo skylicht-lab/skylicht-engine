@@ -1,6 +1,5 @@
 include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Samples/Animations/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Samples/SampleFW
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Main
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Include
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System
@@ -19,14 +18,22 @@ if (BUILD_IMGUI)
 	include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/Imgui)
 endif()
 
+if (BUILD_SPINE_RUNTIMES)
+	include_directories(
+		${SKYLICHT_ENGINE_PROJECT_DIR}/SpineCpp/spine-cpp/include
+		${SKYLICHT_ENGINE_PROJECT_DIR}/SpineCpp/spine-runtimes
+	)
+endif()
+
 set(template_path ${SKYLICHT_ENGINE_PROJECT_DIR}/Main)
 
 file(GLOB_RECURSE application_source 
 	./Source/**.cpp 
 	./Source/**.c 
-	./Source/**.h
-	../SampleFW/**.cpp
-	../SampleFW/**.h)
+	./Source/**.h)
+
+# Custom additional sources
+include(CMakeProject.cmake)
 
 setup_project_group("${application_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -125,17 +132,19 @@ if (BUILD_DEBUG_VLD)
 	if (CMAKE_CL_64)
 		set(vld_dll_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/Vld/bin/Win64/*.*")
 	else()
-		set(vld_dll_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/Vld/Vld/bin/Win32/*.*")
-	endif()	
-	link_directories(${vld_lib_path})
+		set(vld_dll_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/Vld/bin/Win32/*.*")
+	endif()
 endif()
 	
 if (BUILD_SDL AND MSVC)
 	if (CMAKE_CL_64)
+		set(sdl_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/SDL/lib/x64")
 		set(sdl_dll_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/SDL/lib/x64/*.dll")
 	else()
+		set(sdl_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/SDL/lib/x86")
 		set(sdl_dll_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/SDL/lib/x86/*.dll")
-	endif()
+	endif()	
+	link_directories(${sdl_lib_path})
 endif()	
 	
 if (MINGW OR CYGWIN)
@@ -219,6 +228,8 @@ elseif (BUILD_MACOS)
 		BUILD_WITH_INSTALL_RPATH 1
 		INSTALL_RPATH "@executable_path/../Frameworks"
 	)
+	
+	set_target_properties(SampleAnimations PROPERTIES XCODE_ATTRIBUTE_INSTALL_PATH $(LOCAL_APPS_DIR))
 elseif (BUILD_IOS)
 	set(MACOSX_BUNDLE_EXECUTABLE_NAME SampleAnimations)
 
@@ -263,12 +274,15 @@ elseif (BUILD_IOS)
 	set_target_properties(SampleAnimations PROPERTIES XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY ${CODE_SIGN_IDENTITY})
 	set_target_properties(SampleAnimations PROPERTIES XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY ${DEVICE_FAMILY})
 	set_target_properties(SampleAnimations PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${template_path}/Platforms/IOS/plist.in")
-	
+	set_target_properties(SampleAnimations PROPERTIES XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_APPICON_NAME AppIcon)
+	set_target_properties(SampleAnimations PROPERTIES XCODE_ATTRIBUTE_INSTALL_PATH $(LOCAL_APPS_DIR))
+
 	# add assets icon
 	target_sources(SampleAnimations PRIVATE "${template_path}/Platforms/IOS/Assets.xcassets")
 	
 	list (APPEND platform_ios_resources "${template_path}/Platforms/IOS/Assets.xcassets")
-	set_target_properties(SampleAnimations PROPERTIES RESOURCE "${resources_files} ${platform_ios_resources}")
+	list (APPEND platform_ios_resources "${resources_files}")
+	set_target_properties(SampleAnimations PROPERTIES RESOURCE "${platform_ios_resources}")
 
 	# link framework
 	target_link_libraries(SampleAnimations "-framework Foundation")
@@ -294,6 +308,11 @@ endif()
 # Imgui
 if (BUILD_IMGUI)
 	target_link_libraries(SampleAnimations Imgui)
+endif()
+
+# Spine runtimes
+if (BUILD_SPINE_RUNTIMES)
+	target_link_libraries(SampleAnimations SpineRuntimes)
 endif()
 
 # Emscripten

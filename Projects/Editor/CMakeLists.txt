@@ -233,6 +233,8 @@ elseif (BUILD_MACOS)
   		BUILD_WITH_INSTALL_RPATH 1
 		INSTALL_RPATH "@executable_path/../Frameworks"
 	)
+	
+	set_target_properties(SkylichtEditor PROPERTIES XCODE_ATTRIBUTE_INSTALL_PATH $(LOCAL_APPS_DIR))
 else()
 	add_executable(SkylichtEditor ${application_source})
 endif()

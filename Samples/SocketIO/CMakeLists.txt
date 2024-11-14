@@ -10,15 +10,19 @@ include_directories(
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Client
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Lightmapper
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Audio
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Crypto
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Network
-	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty
-	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/curl/include
 	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/freetype2/include
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Bullet3/src
 )
 
 if (BUILD_IMGUI)
 	include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/Imgui)
+endif()
+
+if (BUILD_SPINE_RUNTIMES)
+	include_directories(
+		${SKYLICHT_ENGINE_PROJECT_DIR}/SpineCpp/spine-cpp/include
+		${SKYLICHT_ENGINE_PROJECT_DIR}/SpineCpp/spine-runtimes
+	)
 endif()
 
 set(template_path ${SKYLICHT_ENGINE_PROJECT_DIR}/Main)
@@ -27,6 +31,9 @@ file(GLOB_RECURSE application_source
 	./Source/**.cpp 
 	./Source/**.c 
 	./Source/**.h)
+
+# Custom additional sources
+include(CMakeProject.cmake)
 
 setup_project_group("${application_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -139,19 +146,7 @@ if (BUILD_SDL AND MSVC)
 	endif()	
 	link_directories(${sdl_lib_path})
 endif()	
-
-if (BUILD_OPENSSL AND MSVC)
-	if (CMAKE_CL_64)
-		set(openssl_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/x64")
-		set(openssl_dll_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/x64/*.dll")
-	else()
-		set(openssl_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/x86")
-		set(openssl_dll_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/x86/*.dll")
-	endif()	
-	link_directories(${openssl_lib_path})
-	message(STATUS "! link openssl ${openssl_lib_path}")
-endif()
-
+	
 if (MINGW OR CYGWIN)
 	# .rc build
 	set(CMAKE_RC_COMPILER_INIT windres)
@@ -233,11 +228,13 @@ elseif (BUILD_MACOS)
 		BUILD_WITH_INSTALL_RPATH 1
 		INSTALL_RPATH "@executable_path/../Frameworks"
 	)
+	
+	set_target_properties(SampleSocketIO PROPERTIES XCODE_ATTRIBUTE_INSTALL_PATH $(LOCAL_APPS_DIR))
 elseif (BUILD_IOS)
 	set(MACOSX_BUNDLE_EXECUTABLE_NAME SampleSocketIO)
 
 	set(APP_NAME "SampleSocketIO")
-	set(APP_BUNDLE_IDENTIFIER "com.skylicht.samplesocketio")
+	set(APP_BUNDLE_IDENTIFIER "com.team_name.project_name")
 	set(CODE_SIGN_IDENTITY "iPhone Developer")
 
 	set(PRODUCT_NAME ${APP_NAME})
@@ -277,12 +274,15 @@ elseif (BUILD_IOS)
 	set_target_properties(SampleSocketIO PROPERTIES XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY ${CODE_SIGN_IDENTITY})
 	set_target_properties(SampleSocketIO PROPERTIES XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY ${DEVICE_FAMILY})
 	set_target_properties(SampleSocketIO PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${template_path}/Platforms/IOS/plist.in")
-	
+	set_target_properties(SampleSocketIO PROPERTIES XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_APPICON_NAME AppIcon)
+	set_target_properties(SampleSocketIO PROPERTIES XCODE_ATTRIBUTE_INSTALL_PATH $(LOCAL_APPS_DIR))
+
 	# add assets icon
 	target_sources(SampleSocketIO PRIVATE "${template_path}/Platforms/IOS/Assets.xcassets")
-
+	
 	list (APPEND platform_ios_resources "${template_path}/Platforms/IOS/Assets.xcassets")
-	set_target_properties(SampleSocketIO PROPERTIES RESOURCE "${resources_files} ${platform_ios_resources}")
+	list (APPEND platform_ios_resources "${resources_files}")
+	set_target_properties(SampleSocketIO PROPERTIES RESOURCE "${platform_ios_resources}")
 
 	# link framework
 	target_link_libraries(SampleSocketIO "-framework Foundation")
@@ -310,9 +310,9 @@ if (BUILD_IMGUI)
 	target_link_libraries(SampleSocketIO Imgui)
 endif()
 
-# OpenSSL
-if (BUILD_OPENSSL AND MSVC)
-	target_link_libraries(SampleSocketIO crypto.lib decrepit.lib ssl.lib Crypt32.lib)
+# Spine runtimes
+if (BUILD_SPINE_RUNTIMES)
+	target_link_libraries(SampleSocketIO SpineRuntimes)
 endif()
 
 # Emscripten
@@ -342,14 +342,6 @@ if (BUILD_SDL AND MSVC)
 	file(GLOB_RECURSE sdl_bin_files ${sdl_dll_path})
 	foreach(sdl_bin ${sdl_bin_files})
 		add_custom_command(TARGET SampleSocketIO POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${sdl_bin} $<TARGET_FILE_DIR:SampleSocketIO>)
-	endforeach()
-endif()
-
-#OPENSSL
-if (BUILD_OPENSSL AND MSVC)
-	file(GLOB_RECURSE openssl_bin_files ${openssl_dll_path})
-	foreach(openssl_bin ${openssl_bin_files})
-		add_custom_command(TARGET SampleSocketIO POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different ${openssl_bin} $<TARGET_FILE_DIR:SkylichtEditor>)
 	endforeach()
 endif()
 

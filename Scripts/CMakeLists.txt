@@ -32,6 +32,9 @@ file(GLOB_RECURSE application_source
 	./Source/**.c 
 	./Source/**.h)
 
+# Custom additional sources
+include(CMakeProject.cmake)
+
 setup_project_group("${application_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 
 list (APPEND application_source ${template_path}/pch.cpp)

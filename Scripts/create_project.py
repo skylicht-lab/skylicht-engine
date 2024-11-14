@@ -38,7 +38,7 @@ def main():
 
     # Create Project folder
     if (os.path.exists(project_path) is True):
-        print("Warning: Project %s is exits" % (project_path))
+        print("Warning: Project %s is exist" % (project_path))
         answer = raw_input(
             "Do use want override CMakeLists.txt - Yes[y] or No[n]: ")
         if answer != "y":
@@ -53,7 +53,10 @@ def main():
     shutil.copy("Scripts/CMakeLists.txt", target_cmake)
     replace_text(target_cmake, "@project_path@", project_path)
     replace_text(target_cmake, "@project_name@", project_name)
-
+    
+    target_cmake = project_path + "/CMakeProject.cmake"
+    shutil.copy("Scripts/CMakeProject.cmake", target_cmake)
+    
     if copy_source == True:
         source_h = project_path + "/Source/" + project_name + ".h"
         source_cpp = project_path + "/Source/" + project_name + ".cpp"

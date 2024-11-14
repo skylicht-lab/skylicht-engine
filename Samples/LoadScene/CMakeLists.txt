@@ -1,6 +1,5 @@
 include_directories(
 	${SKYLICHT_ENGINE_SOURCE_DIR}/Samples/LoadScene/Source
-	${SKYLICHT_ENGINE_SOURCE_DIR}/Samples/SampleFW
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Main
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Include
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System
@@ -31,9 +30,10 @@ set(template_path ${SKYLICHT_ENGINE_PROJECT_DIR}/Main)
 file(GLOB_RECURSE application_source 
 	./Source/**.cpp 
 	./Source/**.c 
-	./Source/**.h
-	../SampleFW/**.cpp
-	../SampleFW/**.h)
+	./Source/**.h)
+
+# Custom additional sources
+include(CMakeProject.cmake)
 
 setup_project_group("${application_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -228,6 +228,8 @@ elseif (BUILD_MACOS)
 		BUILD_WITH_INSTALL_RPATH 1
 		INSTALL_RPATH "@executable_path/../Frameworks"
 	)
+	
+	set_target_properties(SampleLoadScene PROPERTIES XCODE_ATTRIBUTE_INSTALL_PATH $(LOCAL_APPS_DIR))
 elseif (BUILD_IOS)
 	set(MACOSX_BUNDLE_EXECUTABLE_NAME SampleLoadScene)
 
@@ -272,12 +274,15 @@ elseif (BUILD_IOS)
 	set_target_properties(SampleLoadScene PROPERTIES XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY ${CODE_SIGN_IDENTITY})
 	set_target_properties(SampleLoadScene PROPERTIES XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY ${DEVICE_FAMILY})
 	set_target_properties(SampleLoadScene PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${template_path}/Platforms/IOS/plist.in")
-	
+	set_target_properties(SampleLoadScene PROPERTIES XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_APPICON_NAME AppIcon)
+	set_target_properties(SampleLoadScene PROPERTIES XCODE_ATTRIBUTE_INSTALL_PATH $(LOCAL_APPS_DIR))
+
 	# add assets icon
 	target_sources(SampleLoadScene PRIVATE "${template_path}/Platforms/IOS/Assets.xcassets")
 	
 	list (APPEND platform_ios_resources "${template_path}/Platforms/IOS/Assets.xcassets")
-	set_target_properties(SampleLoadScene PROPERTIES RESOURCE "${resources_files} ${platform_ios_resources}")
+	list (APPEND platform_ios_resources "${resources_files}")
+	set_target_properties(SampleLoadScene PROPERTIES RESOURCE "${platform_ios_resources}")
 
 	# link framework
 	target_link_libraries(SampleLoadScene "-framework Foundation")
