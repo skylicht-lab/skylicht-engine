@@ -43,9 +43,6 @@ def main():
     shutil.copy("Scripts/CMakeLists.txt", target_cmake)
     replace_text(target_cmake, "@project_path@", project_path)
     replace_text(target_cmake, "@project_name@", project_name)
-    
-    target_cmake = project_path + "/CMakeProject.cmake"
-    shutil.copy("Scripts/CMakeProject.cmake", target_cmake)
 
 if __name__ == '__main__':
     main()
