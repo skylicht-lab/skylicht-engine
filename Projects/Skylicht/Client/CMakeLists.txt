@@ -69,6 +69,10 @@ if (BUILD_SKYLICHT_NETWORK)
 	target_link_libraries(Client Network)
 endif()
 
+if (BUILD_RECAST_GRAPH)
+	target_link_libraries(Client Graph)
+endif()
+
 if (BUILD_DEBUG_VLD)
 	target_link_libraries(Client vld)
 	target_link_directories(Client PUBLIC ${vld_lib_path})

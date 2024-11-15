@@ -18,6 +18,10 @@ if (BUILD_EXAMPLES AND BUILD_SKYLICHT_LIGHMAPPER)
 	
 	subdirs(Samples/DrawPrimitives)
 
+	if (BUILD_RECAST_GRAPH)
+	subdirs(Samples/Graph)
+	endif()
+	
 	if (BUILD_SKYLICHT_UI)
 	subdirs(Samples/GUI)
 	endif()

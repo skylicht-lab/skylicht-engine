@@ -2,7 +2,7 @@ include_directories(
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Include	
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Engine
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Recast
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Recast/Include
 )
 
 file(GLOB_RECURSE skylicht_graph_source 

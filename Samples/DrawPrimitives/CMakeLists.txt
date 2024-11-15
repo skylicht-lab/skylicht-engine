@@ -31,8 +31,8 @@ endif()
 
 if (BUILD_SKYLICHT_PHYSIC)
 	include_directories(
-		${SKYLICHT_ENGINE_PROJECT_DIR}/Physics
 		${SKYLICHT_ENGINE_PROJECT_DIR}/Bullet3/src
+		${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Physics
 	)
 endif()
 
