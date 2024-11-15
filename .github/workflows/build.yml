@@ -259,13 +259,35 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Build
+      - name: Build Bundles
         shell: cmd
         run: |
           cd Assets
           python BuildAssetBundles.py
           cd ..
-          cmake -S . -B ./PrjVisualStudio -G "Visual Studio 17 2022" -A x64 -DBUILD_SHARED_LIBS=ON -DBUILD_IMGUI=OFF -DBUILD_FREETYPE=OFF -DBUILD_SKYLICHT_AUDIO=OFF -DBUILD_SKYLICHT_COMPONENTS=OFF -DBUILD_SKYLICHT_COLLISION=OFF -DBUILD_SKYLICHT_UI=OFF -DBUILD_SKYLICHT_CRYPTO=OFF -DBUILD_SKYLICHT_NETWORK=OFF -DBUILD_SKYLICHT_PHYSIC=OFF -DBUILD_SPINE_RUNTIMES=OFF -DBUILD_EXAMPLES=OFF -DBUILD_EDITOR_TOOL=OFF
+      - name: Generate Project
+        run: >-
+          cmake 
+          -S . 
+          -B ./PrjVisualStudio 
+          -G "Visual Studio 17 2022" 
+          -A x64 
+          -DBUILD_SHARED_LIBS=ON 
+          -DBUILD_IMGUI=OFF 
+          -DBUILD_FREETYPE=OFF 
+          -DBUILD_SKYLICHT_AUDIO=OFF 
+          -DBUILD_SKYLICHT_COMPONENTS=OFF 
+          -DBUILD_SKYLICHT_COLLISION=OFF 
+          -DBUILD_SKYLICHT_UI=OFF 
+          -DBUILD_SKYLICHT_CRYPTO=OFF 
+          -DBUILD_SKYLICHT_NETWORK=OFF 
+          -DBUILD_SKYLICHT_PHYSIC=OFF 
+          -DBUILD_SPINE_RUNTIMES=OFF 
+          -DBUILD_RECAST_GRAPH=OFF 
+          -DBUILD_EXAMPLES=OFF 
+          -DBUILD_EDITOR_TOOL=OFF
+      - name: Build Project
+        run: |
           cmake --build ./PrjVisualStudio --config "Release"
       - name: Unit Test
         run: |
