@@ -4,19 +4,36 @@ include_directories(
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Include
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Engine
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Components
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Collision
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Physics
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Client
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Lightmapper
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Audio
 	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty
 	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/freetype2/include
-	${SKYLICHT_ENGINE_PROJECT_DIR}/Bullet3/src
 )
+
+if (BUILD_SKYLICHT_AUDIO)
+	include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Audio)
+endif()
+
+if (BUILD_SKYLICHT_LIGHMAPPER)
+	include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Lightmapper)
+endif()
+
+if (BUILD_SKYLICHT_COMPONENTS)
+	include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Components)
+endif()
+
+if (BUILD_SKYLICHT_COLLISION)
+	include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Collision)
+endif()
 
 if (BUILD_IMGUI)
 	include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/Imgui)
+endif()
+
+if (BUILD_SKYLICHT_PHYSIC)
+	include_directories(
+		${SKYLICHT_ENGINE_PROJECT_DIR}/Bullet3/src
+		${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Physics
+	)
 endif()
 
 if (BUILD_SPINE_RUNTIMES)

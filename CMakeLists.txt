@@ -269,6 +269,12 @@ if (BUILD_SPINE_RUNTIMES)
 subdirs (Projects/SpineCpp)
 endif()
 
+# recast & graph
+if (BUILD_RECAST_GRAPH)
+subdirs (Projects/Recast)
+subdirs (Projects/Skylicht/Graph)
+endif()
+
 # skylicht components
 if (BUILD_SKYLICHT_COMPONENTS)
 add_definitions(-DBUILD_SKYLICHT_COMPONENTS)
