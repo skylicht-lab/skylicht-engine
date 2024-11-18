@@ -6,6 +6,7 @@ python Scripts\update_cmake.py SampleBoidSystemVAT Samples\BoidSystemVAT
 python Scripts\update_cmake.py SampleCharacterController Samples\CharacterController
 python Scripts\update_cmake.py SampleCollision Samples\Collision
 python Scripts\update_cmake.py SampleDrawPrimitives Samples\DrawPrimitives
+python Scripts\update_cmake.py SampleGraph Samples\Graph
 python Scripts\update_cmake.py SampleGUI Samples\GUI
 python Scripts\update_cmake.py SampleHelloWorld Samples\HelloWorld
 python Scripts\update_cmake.py SampleInstancing Samples\Instancing
