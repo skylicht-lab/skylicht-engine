@@ -1,10 +1,18 @@
 #pragma once
 
 #include "ViewManager/CView.h"
+#include "CDemo.h"
 
-class CViewDemo : public CView
+class CViewDemo :
+	public CView,
+	public IEventReceiver
 {
 protected:
+
+	CDemo* m_demo[2];
+	int m_demoId;
+
+	bool m_holdShift;
 
 public:
 	CViewDemo();
@@ -20,4 +28,10 @@ public:
 	virtual void onRender();
 
 	virtual void onPostRender();
+
+	void onGUI();
+
+	void initDemo();
+
+	virtual bool OnEvent(const SEvent& event);
 };

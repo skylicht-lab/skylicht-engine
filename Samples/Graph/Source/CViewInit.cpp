@@ -7,8 +7,6 @@
 #include "Transform/CWorldTransformSystem.h"
 
 #include "Primitive/CPlane.h"
-#include "Primitive/CCube.h"
-#include "Primitive/CSphere.h"
 #include "SkySun/CSkySun.h"
 
 
@@ -112,7 +110,7 @@ void CViewInit::initScene()
 	// plane
 	CGameObject* grid = zone->createEmptyObject();
 	grid->setName("Plane");
-	grid->getTransformEuler()->setScale(core::vector3df(10.0f, 1.0f, 10.0f));
+	grid->getTransformEuler()->setScale(core::vector3df(100.0f, 1.0f, 100.0f));
 
 	CPlane* plane = grid->addComponent<CPlane>();
 	plane->getMaterial()->changeShader("BuiltIn/Shader/SpecularGlossiness/Deferred/MetersGrid.xml");
@@ -221,8 +219,8 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-		}
 	}
+}
 
 void CViewInit::onRender()
 {
