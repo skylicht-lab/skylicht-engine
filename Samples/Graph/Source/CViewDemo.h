@@ -12,6 +12,8 @@ protected:
 	CDemo* m_demo[2];
 	int m_demoId;
 
+	bool m_holdShift;
+
 public:
 	CViewDemo();
 

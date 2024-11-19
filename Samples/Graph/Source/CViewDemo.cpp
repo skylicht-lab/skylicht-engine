@@ -10,7 +10,8 @@
 #include "Projective/CProjective.h"
 
 CViewDemo::CViewDemo() :
-	m_demoId(0)
+	m_demoId(0),
+	m_holdShift(false)
 {
 	m_demo[0] = NULL;
 	m_demo[1] = NULL;
@@ -145,7 +146,11 @@ void CViewDemo::initDemo()
 
 bool CViewDemo::OnEvent(const SEvent& event)
 {
-	if (event.EventType == EET_MOUSE_INPUT_EVENT)
+	if (event.EventType == EET_KEY_INPUT_EVENT)
+	{
+		m_holdShift = event.KeyInput.Shift;
+	}
+	else if (event.EventType == EET_MOUSE_INPUT_EVENT)
 	{
 		float mouseX = (float)event.MouseInput.X;
 		float mouseY = (float)event.MouseInput.Y;
@@ -168,7 +173,7 @@ bool CViewDemo::OnEvent(const SEvent& event)
 			if (hitCollide == true)
 			{
 				if (m_demo[m_demoId])
-					m_demo[m_demoId]->onLeftClickPosition(collide);
+					m_demo[m_demoId]->onLeftClickPosition(m_holdShift, collide);
 			}
 
 			return true;

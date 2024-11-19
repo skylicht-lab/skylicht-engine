@@ -18,6 +18,6 @@ public:
 
 	virtual void onGUI() = 0;
 
-	virtual void onLeftClickPosition(const core::vector3df& pos);
+	virtual void onLeftClickPosition(bool holdShift, const core::vector3df& pos);
 
 };

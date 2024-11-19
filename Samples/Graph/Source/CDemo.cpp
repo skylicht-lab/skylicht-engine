@@ -12,7 +12,7 @@ CDemo::~CDemo()
 
 }
 
-void CDemo::onLeftClickPosition(const core::vector3df& pos)
+void CDemo::onLeftClickPosition(bool holdShift, const core::vector3df& pos)
 {
 
 }

@@ -28,12 +28,50 @@ namespace Skylicht
 {
 	namespace Graph
 	{
+		struct SObstacleCircle
+		{
+			core::vector3df Center;
+			float Radius;
+		};
+
+		struct SObstacleSegment
+		{
+			core::vector3df Begin;
+			core::vector3df End;
+		};
+
 		class CObstacleAvoidance
 		{
+		protected:
+			core::array<SObstacleCircle> m_circles;
+			core::array<SObstacleSegment> m_segments;
+
 		public:
 			CObstacleAvoidance();
 
 			virtual ~CObstacleAvoidance();
+
+			void addCircle(const core::vector3df& center, float radius);
+
+			void addSegment(const core::vector3df& begin, const core::vector3df& end);
+
+			void clearCircle();
+
+			void clearSegment();
+
+			void clear();
+
+			inline core::array<SObstacleCircle>& getCircles()
+			{
+				return m_circles;
+			}
+
+			inline core::array<SObstacleSegment>& getSegments()
+			{
+				return m_segments;
+			}
+
+			core::vector3df collide(const core::vector3df& position, const core::vector3df& vel, float radius, int recursionDepth = 0);
 		};
 	}
 }
