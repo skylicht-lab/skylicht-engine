@@ -43,7 +43,6 @@ namespace Skylicht
 		class CObstacleAvoidance
 		{
 		protected:
-			core::array<SObstacleCircle> m_circles;
 			core::array<SObstacleSegment> m_segments;
 
 		public:
@@ -51,20 +50,9 @@ namespace Skylicht
 
 			virtual ~CObstacleAvoidance();
 
-			void addCircle(const core::vector3df& center, float radius);
-
 			void addSegment(const core::vector3df& begin, const core::vector3df& end);
 
-			void clearCircle();
-
-			void clearSegment();
-
 			void clear();
-
-			inline core::array<SObstacleCircle>& getCircles()
-			{
-				return m_circles;
-			}
 
 			inline core::array<SObstacleSegment>& getSegments()
 			{

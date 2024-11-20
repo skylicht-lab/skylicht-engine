@@ -41,14 +41,6 @@ namespace Skylicht
 
 		}
 
-		void CObstacleAvoidance::addCircle(const core::vector3df& center, float radius)
-		{
-			m_circles.push_back(SObstacleCircle());
-			SObstacleCircle& circle = m_circles.getLast();
-			circle.Center = center;
-			circle.Radius = radius;
-		}
-
 		void CObstacleAvoidance::addSegment(const core::vector3df& begin, const core::vector3df& end)
 		{
 			m_segments.push_back(SObstacleSegment());
@@ -57,19 +49,8 @@ namespace Skylicht
 			segment.End = end;
 		}
 
-		void CObstacleAvoidance::clearCircle()
-		{
-			m_circles.set_used(0);
-		}
-
-		void CObstacleAvoidance::clearSegment()
-		{
-			m_segments.set_used(0);
-		}
-
 		void CObstacleAvoidance::clear()
 		{
-			m_circles.set_used(0);
 			m_segments.set_used(0);
 		}
 
@@ -107,9 +88,6 @@ namespace Skylicht
 			return 1;
 		}
 
-		core::vector3df intersectionPoint;
-		core::vector3df intersectionNormal;
-
 		core::vector3df CObstacleAvoidance::collide(const core::vector3df& position, const core::vector3df& vel, float radius, int recursionDepth)
 		{
 			if (recursionDepth >= 2)
@@ -119,6 +97,9 @@ namespace Skylicht
 			}
 
 			SObstacleSegment* segs = m_segments.pointer();
+
+			core::vector3df intersectionPoint;
+			core::vector3df intersectionNormal;
 
 			SObstacleSegment* intersectionSeg = NULL;
 			float tmin = 2.0f;

@@ -18,6 +18,7 @@ public:
 
 	virtual void onGUI() = 0;
 
-	virtual void onLeftClickPosition(bool holdShift, const core::vector3df& pos);
+	virtual void close() = 0;
 
+	virtual void onViewRayClick(const core::line3df& ray, bool holdShift);
 };

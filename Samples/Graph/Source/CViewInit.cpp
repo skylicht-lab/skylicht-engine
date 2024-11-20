@@ -14,7 +14,9 @@ CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
 	m_getFile(NULL),
 	m_downloaded(0),
-	m_bakeSHLighting(true)
+	m_bakeSHLighting(true),
+	m_plane(NULL),
+	m_map(NULL)
 {
 
 }
@@ -108,14 +110,33 @@ void CViewInit::initScene()
 	lightTransform->setOrientation(direction, Transform::Oy);
 
 	// plane
-	CGameObject* grid = zone->createEmptyObject();
-	grid->setName("Plane");
-	grid->getTransformEuler()->setScale(core::vector3df(100.0f, 1.0f, 100.0f));
+	m_plane = zone->createEmptyObject();
+	m_plane->setName("Plane");
+	m_plane->getTransformEuler()->setScale(core::vector3df(100.0f, 1.0f, 100.0f));
 
-	CPlane* plane = grid->addComponent<CPlane>();
+	CPlane* plane = m_plane->addComponent<CPlane>();
 	plane->getMaterial()->changeShader("BuiltIn/Shader/SpecularGlossiness/Deferred/MetersGrid.xml");
 
+	// map
+	CEntityPrefab* mapPrefab = CMeshManager::getInstance()->loadModel("SampleGraph/nav_test.obj", "SampleGraph");
+	if (mapPrefab)
+	{
+		m_map = zone->createEmptyObject();
+		m_map->setName("Map");
 
+		CRenderMesh* renderMesh = m_map->addComponent<CRenderMesh>();
+		renderMesh->initFromPrefab(mapPrefab);
+
+		ArrayMaterial materials = CMaterialManager::getInstance()->initDefaultMaterial(mapPrefab);
+		for (CMaterial* mat : materials)
+		{
+			mat->changeShader("BuiltIn/Shader/SpecularGlossiness/Deferred/MetersGrid.xml");
+		}
+		renderMesh->initMaterial(materials);
+
+		m_map->addComponent<CIndirectLighting>();
+		m_map->setVisible(false);
+	}
 
 	// rendering
 	u32 w = app->getWidth();
@@ -148,6 +169,7 @@ void CViewInit::onUpdate()
 
 		std::vector<std::string> listBundles;
 		listBundles.push_back("Common.zip");
+		listBundles.push_back("SampleGraphResource.zip");
 
 #ifdef __EMSCRIPTEN__
 		const char* filename = listBundles[m_downloaded].c_str();
@@ -185,8 +207,8 @@ void CViewInit::onUpdate()
 				// retry download
 				delete m_getFile;
 				m_getFile = NULL;
-			}
-		}
+	}
+	}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -197,7 +219,7 @@ void CViewInit::onUpdate()
 
 		m_initState = CViewInit::InitScene;
 #endif
-	}
+}
 	break;
 	case CViewInit::InitScene:
 	{
@@ -219,7 +241,7 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-	}
+}
 }
 
 void CViewInit::onRender()
@@ -253,6 +275,9 @@ void CViewInit::onRender()
 			probes.push_back(lightProbe);
 
 			lm->bakeProbes(probes, bakeCamera, rp, scene->getEntityManager());
+
+			m_plane->setVisible(false);
+			m_map->setVisible(false);
 		}
 	}
 	else

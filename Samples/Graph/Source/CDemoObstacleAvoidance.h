@@ -10,6 +10,7 @@ protected:
 
 	Graph::CObstacleAvoidance* m_obstacle;
 
+	CGameObject* m_map;
 	CGameObject* m_agent;
 
 	core::vector3df m_lastClickPosition;
@@ -25,9 +26,13 @@ public:
 
 	virtual void init();
 
+	virtual void close();
+
 	virtual void update();
 
 	virtual void onGUI();
 
-	virtual void onLeftClickPosition(bool holdShift, const core::vector3df& pos);
+	virtual void onViewRayClick(const core::line3df& ray, bool holdShift);
+
+	virtual void onLeftClickPosition(const core::vector3df& pos, bool holdShift);
 };

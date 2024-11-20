@@ -12,7 +12,7 @@ CDemo::~CDemo()
 
 }
 
-void CDemo::onLeftClickPosition(bool holdShift, const core::vector3df& pos)
+void CDemo::onViewRayClick(const core::line3df& ray, bool holdShift)
 {
 
 }

@@ -6,6 +6,7 @@
 #include "imgui.h"
 
 #include "CDemoObstacleAvoidance.h"
+#include "CDemoNavMesh.h"
 
 #include "Projective/CProjective.h"
 
@@ -20,6 +21,7 @@ CViewDemo::CViewDemo() :
 CViewDemo::~CViewDemo()
 {
 	delete m_demo[0];
+	delete m_demo[1];
 
 	CContext* context = CContext::getInstance();
 	CScene* scene = context->getScene();
@@ -37,8 +39,8 @@ void CViewDemo::onInit()
 
 	CZone* zone = context->getActiveZone();
 
-	m_demo[0] = new CDemoObstacleAvoidance(zone);
-	m_demo[1] = NULL;
+	m_demo[0] = new CDemoNavMesh(zone);
+	m_demo[1] = new CDemoObstacleAvoidance(zone);
 
 	initDemo();
 }
@@ -114,16 +116,21 @@ void CViewDemo::onGUI()
 	// BEGIN WINDOW
 	{
 		const char* demoName[] = {
+			"Recash Navmesh",
 			"Obstacle Avoidance",
-			"Recast mesh",
 		};
+
+		int oldDemo = m_demoId;
 
 		if (ImGui::Combo("Demo", &m_demoId, demoName, IM_ARRAYSIZE(demoName)))
 		{
+			if (m_demo[oldDemo])
+				m_demo[oldDemo]->close();
+
 			initDemo();
 		}
 
-		if (ImGui::CollapsingHeader("Demo", ImGuiTreeNodeFlags_DefaultOpen))
+		if (ImGui::CollapsingHeader("Demo Task", ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			if (m_demo[m_demoId])
 				m_demo[m_demoId]->onGUI();
@@ -159,22 +166,11 @@ bool CViewDemo::OnEvent(const SEvent& event)
 		{
 			CCamera* camera = CContext::getInstance()->getActiveCamera();
 
-			core::vector3df projectilePosition(0.0f, 1.0f, 0.0f);
-			core::vector3df collide;
-
 			const core::recti& vp = getVideoDriver()->getViewPort();
-
 			core::line3df viewRay = CProjective::getViewRay(camera, mouseX, mouseY, vp.getWidth(), vp.getHeight());
 
-			// plane test
-			core::plane3df p(0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-			bool hitCollide = p.getIntersectionWithLimitedLine(viewRay.start, viewRay.end, collide);
-
-			if (hitCollide == true)
-			{
-				if (m_demo[m_demoId])
-					m_demo[m_demoId]->onLeftClickPosition(m_holdShift, collide);
-			}
+			if (m_demo[m_demoId])
+				m_demo[m_demoId]->onViewRayClick(viewRay, m_holdShift);
 
 			return true;
 		}

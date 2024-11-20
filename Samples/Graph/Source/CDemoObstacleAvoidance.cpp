@@ -14,6 +14,7 @@ CDemoObstacleAvoidance::CDemoObstacleAvoidance(CZone* zone) :
 	CDemo(zone),
 	m_state(0),
 	m_agent(NULL),
+	m_map(NULL),
 	m_obstacle(NULL),
 	m_clickCount(0),
 	m_circleRadius(1.0f)
@@ -28,6 +29,9 @@ CDemoObstacleAvoidance::~CDemoObstacleAvoidance()
 
 void CDemoObstacleAvoidance::init()
 {
+	if (m_map == NULL)
+		m_map = m_zone->searchObjectInChild(L"Plane");
+
 	if (m_agent == NULL)
 	{
 		m_agent = m_zone->createEmptyObject();
@@ -41,12 +45,25 @@ void CDemoObstacleAvoidance::init()
 		m_agent->addComponent<CMoveAgent>();
 	}
 
+	m_agent->setVisible(true);
 	m_agent->getTransformEuler()->setPosition(core::vector3df(0.0f, 1.0f, 0.0f));
+	m_agent->getComponent<CMoveAgent>()->setTargetPosition(core::vector3df());
+
+	if (m_map)
+		m_map->setVisible(true);
 
 	m_clickPosition.set(0.0f, 0.0f, 0.0f);
 	m_lastClickPosition.set(0.0f, 0.0f, 0.0f);
 	m_clickCount = 0;
 	m_obstacle->clear();
+}
+
+void CDemoObstacleAvoidance::close()
+{
+	m_agent->setVisible(false);
+
+	if (m_map)
+		m_map->setVisible(false);
 }
 
 void CDemoObstacleAvoidance::update()
@@ -65,12 +82,6 @@ void CDemoObstacleAvoidance::update()
 	{
 		debug->addLine(segments[i].Begin, segments[i].End, red);
 	}
-
-	core::array<Graph::SObstacleCircle>& circles = m_obstacle->getCircles();
-	for (u32 i = 0, n = circles.size(); i < n; i++)
-	{
-		debug->addCircle(circles[i].Center, circles[i].Radius, Transform::Oy, red);
-	}
 }
 
 void CDemoObstacleAvoidance::onGUI()
@@ -79,8 +90,7 @@ void CDemoObstacleAvoidance::onGUI()
 
 	ImGui::RadioButton("Do Nothing", &m_state, 0);
 	ImGui::RadioButton("Create Wall", &m_state, 1);
-	ImGui::RadioButton("Create Circle", &m_state, 2);
-	ImGui::RadioButton("Move Agent", &m_state, 3);
+	ImGui::RadioButton("Move Agent", &m_state, 2);
 
 	if (lastState != m_state)
 	{
@@ -97,12 +107,6 @@ void CDemoObstacleAvoidance::onGUI()
 	}
 	else if (m_state == 2)
 	{
-		ImGui::Text("Create Circle");
-		ImGui::Text("Left Click on scene to add Circle");
-		ImGui::SliderFloat("Radius", &m_circleRadius, 0.5f, 3.0f);
-	}
-	else if (m_state == 3)
-	{
 		ImGui::Text("Move Agent");
 		ImGui::Text("Left Click on scene to move Agent");
 	}
@@ -111,7 +115,19 @@ void CDemoObstacleAvoidance::onGUI()
 	ImGui::Spacing();
 }
 
-void CDemoObstacleAvoidance::onLeftClickPosition(bool holdShift, const core::vector3df& pos)
+void CDemoObstacleAvoidance::onViewRayClick(const core::line3df& ray, bool holdShift)
+{
+	core::vector3df collide;
+
+	// plane test
+	core::plane3df p(0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+	if (p.getIntersectionWithLimitedLine(ray.start, ray.end, collide))
+	{
+		onLeftClickPosition(collide, holdShift);
+	}
+}
+
+void CDemoObstacleAvoidance::onLeftClickPosition(const core::vector3df& pos, bool holdShift)
 {
 	m_lastClickPosition = m_clickPosition;
 	m_clickPosition = pos;
@@ -133,12 +149,7 @@ void CDemoObstacleAvoidance::onLeftClickPosition(bool holdShift, const core::vec
 
 		m_clickCount++;
 	}
-	else if (m_state == 2)
-	{
-		// Add Circle
-		m_obstacle->addCircle(m_clickPosition, m_circleRadius);
-	}
-	else if (m_state == 3)
+	if (m_state == 2)
 	{
 		// Move Agent
 		CMoveAgent* move = m_agent->getComponent<CMoveAgent>();
