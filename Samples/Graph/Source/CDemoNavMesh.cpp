@@ -5,7 +5,7 @@
 
 #include "Primitive/CCapsule.h"
 #include "IndirectLighting/CIndirectLighting.h"
-
+#include "MeshManager/CMeshManager.h"
 #include "Debug/CSceneDebug.h"
 
 #include "CMoveAgent.h"
@@ -14,14 +14,21 @@ CDemoNavMesh::CDemoNavMesh(CZone* zone) :
 	CDemo(zone),
 	m_state(0),
 	m_agent(NULL),
-	m_map(NULL)
+	m_map(NULL),
+	m_recastMesh(NULL)
 {
-
+	m_builder = new Graph::CRecastBuilder();
+	m_obstacle = new Graph::CObstacleAvoidance();
+	m_outputMesh = new CMesh();
 }
 
 CDemoNavMesh::~CDemoNavMesh()
 {
-
+	if (m_recastMesh)
+		delete m_recastMesh;
+	delete m_builder;
+	delete m_obstacle;
+	delete m_outputMesh;
 }
 
 void CDemoNavMesh::init()
@@ -40,6 +47,15 @@ void CDemoNavMesh::init()
 
 		m_agent->addComponent<CIndirectLighting>();
 		m_agent->addComponent<CMoveAgent>();
+	}
+
+	if (m_recastMesh == NULL)
+	{
+		m_recastMesh = new Graph::CRecastMesh();
+
+		CEntityPrefab* mapPrefab = CMeshManager::getInstance()->loadModel("SampleGraph/nav_test.obj", "SampleGraph");
+		if (mapPrefab)
+			m_recastMesh->addMeshPrefab(mapPrefab, core::IdentityMatrix);
 	}
 
 	m_agent->setVisible(true);
@@ -61,11 +77,44 @@ void CDemoNavMesh::close()
 
 void CDemoNavMesh::update()
 {
-	CSceneDebug* debug = CSceneDebug::getInstance()->getNoZDebug();
+	CSceneDebug* debug = CSceneDebug::getInstance();
 
 	if (m_clickPosition.getLength() > 0.0f)
 	{
 		debug->addPosition(m_clickPosition, 0.25f, SColor(255, 0, 200, 0));
+	}
+
+	SColor red(255, 255, 0, 0);
+	SColor white(255, 100, 100, 100);
+
+	// draw recast polymesh
+	for (u32 i = 0, n = m_outputMesh->getMeshBufferCount(); i < n; i++)
+	{
+		IMeshBuffer* mb = m_outputMesh->getMeshBuffer(i);
+		IVertexBuffer* vb = mb->getVertexBuffer();
+		IIndexBuffer* ib = mb->getIndexBuffer();
+
+		for (u32 i = 0, n = ib->getIndexCount(); i < n; i += 3)
+		{
+			u32 a = ib->getIndex(i);
+			u32 b = ib->getIndex(i + 1);
+			u32 c = ib->getIndex(i + 2);
+
+			S3DVertex* p1 = (S3DVertex*)vb->getVertex(a);
+			S3DVertex* p2 = (S3DVertex*)vb->getVertex(b);
+			S3DVertex* p3 = (S3DVertex*)vb->getVertex(c);
+
+			debug->addLine(p1->Pos, p2->Pos, white);
+			debug->addLine(p2->Pos, p3->Pos, white);
+			debug->addLine(p3->Pos, p1->Pos, white);
+		}
+	}
+
+	// draw bound obstacle
+	core::array<Graph::SObstacleSegment>& segments = m_obstacle->getSegments();
+	for (u32 i = 0, n = segments.size(); i < n; i++)
+	{
+		debug->addLine(segments[i].Begin, segments[i].End, red);
 	}
 }
 
@@ -73,7 +122,7 @@ void CDemoNavMesh::onGUI()
 {
 	if (ImGui::Button("Build NavMesh"))
 	{
-
+		buildNavMesh();
 	}
 
 	ImGui::Spacing();
@@ -83,4 +132,9 @@ void CDemoNavMesh::onGUI()
 void CDemoNavMesh::onLeftClickPosition(bool holdShift, const core::vector3df& pos)
 {
 	m_clickPosition = pos;
+}
+
+void CDemoNavMesh::buildNavMesh()
+{
+	m_builder->build(m_recastMesh, m_outputMesh, m_obstacle);
 }

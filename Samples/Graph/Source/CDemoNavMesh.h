@@ -2,6 +2,8 @@
 
 #include "CDemo.h"
 #include "ObstacleAvoidance/CObstacleAvoidance.h"
+#include "RecastMesh/CRecastMesh.h"
+#include "RecastMesh/CRecastBuilder.h"
 
 class CDemoNavMesh : public CDemo
 {
@@ -11,6 +13,12 @@ protected:
 	CGameObject* m_map;
 	CGameObject* m_agent;
 	core::vector3df m_clickPosition;
+
+	Graph::CRecastMesh* m_recastMesh;
+	Graph::CRecastBuilder* m_builder;
+	Graph::CObstacleAvoidance* m_obstacle;
+
+	CMesh* m_outputMesh;
 
 public:
 	CDemoNavMesh(CZone* zone);
@@ -26,4 +34,6 @@ public:
 	virtual void onGUI();
 
 	virtual void onLeftClickPosition(bool holdShift, const core::vector3df& pos);
+
+	void buildNavMesh();
 };
