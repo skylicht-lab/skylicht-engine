@@ -54,6 +54,8 @@ namespace Skylicht
 			int nX = (int)ceilf(size.X / tileWidth);
 			int nZ = (int)ceilf(size.Z / tileWidth);
 
+			core::vector3df boxSize(tileWidth, tileHeight, tileWidth);
+			
 			for (int y = 0; y <= nY; y++)
 			{
 				for (int z = 0; z <= nZ; z++)
@@ -64,13 +66,60 @@ namespace Skylicht
 						tile->X = x;
 						tile->Y = y;
 						tile->Z = z;
-						tile->Position = bbox.MinEdge + core::vector3df(x * tileWidth, y * tileHeight, z * tileWidth);
+						tile->BBox.MinEdge = bbox.MinEdge + core::vector3df(x * tileWidth, y * tileHeight, z * tileWidth);
+						tile->BBox.MaxEdge = tile->BBox.MinEdge + boxSize;
+						tile->Position = tile->BBox.getCenter();
 						m_tiles.push_back(tile);
 					}
 				}
 			}
 		}
 
+		void CTileMap::generate(float tileWidth, float tileHeight, CMesh* recastMesh)
+	{
+			generate(tileWidth, tileHeight, recastMesh->getBoundingBox());
+			
+			// check used tile
+			IMeshBuffer* mb = recastMesh->getMeshBuffer(0);
+			IVertexBuffer* vb = mb->getVertexBuffer();
+			IIndexBuffer* ib = mb->getIndexBuffer();
+			
+			for (u32 i = 0, n = ib->getIndexCount(); i < n; i += 3)
+			{
+				u32 ixA = ib->getIndex(i);
+				u32 ixB = ib->getIndex(i + 1);
+				u32 ixC = ib->getIndex(i + 2);
+				
+				S3DVertex *a = (S3DVertex*)vb->getVertex(ixA);
+				S3DVertex *b = (S3DVertex*)vb->getVertex(ixB);
+				S3DVertex *c = (S3DVertex*)vb->getVertex(ixC);
+				
+				core::aabbox3df box;
+				box.reset(a->Pos);
+				box.addInternalPoint(b->Pos);
+				box.addInternalPoint(c->Pos);
+				
+				core::triangle3df tri(a->Pos, b->Pos, c->Pos);
+				
+				for (u32 j = 0, m = m_tiles.size(); j < m; j++)
+				{
+					if (m_tiles[j]->BBox.intersectsWithBox(box))
+					{
+						m_tiles[j]->Tris.push_back(tri);
+					}
+				}
+			}
+			
+			for (int i = (int)m_tiles.size() - 1; i >= 0; i--)
+			{
+				if (m_tiles[i]->Tris.size() == 0)
+				{
+					delete m_tiles[i];
+					m_tiles.erase(i);
+				}
+			}
+		}
+	
 		void CTileMap::release()
 		{
 			for (u32 i = 0, n = m_tiles.size(); i < n; i++)

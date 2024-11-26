@@ -39,6 +39,7 @@ namespace Skylicht
 			int Y;
 			int Z;
 			core::vector3df Position;
+			core::aabbox3df BBox;
 			core::array<SObstacleSegment> Cols;
 			core::array<core::triangle3df> Tris;
 
@@ -67,8 +68,8 @@ namespace Skylicht
 
 			virtual ~CTileMap();
 
-			void generate(float tileWidth, float tileHeight, const core::aabbox3df& bbox);
-
+			void generate(float tileWidth, float tileHeight, CMesh* recastMesh);
+			
 			void release();
 
 			inline float getTileWidth()
@@ -85,6 +86,11 @@ namespace Skylicht
 			{
 				return m_tiles;
 			}
+			
+		protected:
+			
+			void generate(float tileWidth, float tileHeight, const core::aabbox3df& bbox);
+			
 		};
 	}
 }

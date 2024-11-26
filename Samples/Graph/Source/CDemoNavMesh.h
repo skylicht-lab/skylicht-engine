@@ -4,6 +4,7 @@
 #include "ObstacleAvoidance/CObstacleAvoidance.h"
 #include "RecastMesh/CRecastMesh.h"
 #include "RecastMesh/CRecastBuilder.h"
+#include "TileMap/CTileMap.h"
 
 class CDemoNavMesh : public CDemo
 {
@@ -17,7 +18,8 @@ protected:
 	Graph::CRecastMesh* m_recastMesh;
 	Graph::CRecastBuilder* m_builder;
 	Graph::CObstacleAvoidance* m_obstacle;
-
+	Graph::CTileMap* m_tileMap;
+	
 	CMesh* m_outputMesh;
 
 public:
@@ -36,4 +38,6 @@ public:
 	virtual void onLeftClickPosition(bool holdShift, const core::vector3df& pos);
 
 	void buildNavMesh();
+	
+	void buildTileMap();
 };

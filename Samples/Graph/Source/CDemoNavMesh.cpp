@@ -19,6 +19,7 @@ CDemoNavMesh::CDemoNavMesh(CZone* zone) :
 {
 	m_builder = new Graph::CRecastBuilder();
 	m_obstacle = new Graph::CObstacleAvoidance();
+	m_tileMap = new Graph::CTileMap();
 	m_outputMesh = new CMesh();
 }
 
@@ -29,6 +30,7 @@ CDemoNavMesh::~CDemoNavMesh()
 	delete m_builder;
 	delete m_obstacle;
 	delete m_outputMesh;
+	delete m_tileMap;
 }
 
 void CDemoNavMesh::init()
@@ -86,6 +88,7 @@ void CDemoNavMesh::update()
 
 	SColor red(255, 255, 0, 0);
 	SColor white(255, 100, 100, 100);
+	SColor green(255, 0,255,0);
 
 	// draw recast polymesh
 	for (u32 i = 0, n = m_outputMesh->getMeshBufferCount(); i < n; i++)
@@ -116,6 +119,14 @@ void CDemoNavMesh::update()
 	{
 		debug->addLine(segments[i].Begin, segments[i].End, red);
 	}
+	
+	// draw tilemap
+	core::array<Graph::STile*>& tiles = m_tileMap->getTiles();
+	for (u32 i = 0, n = tiles.size(); i < n; i++)
+	{
+		Graph::STile* t = tiles[i];
+		debug->addPosition(t->Position, 0.2f, green);
+	}
 }
 
 void CDemoNavMesh::onGUI()
@@ -125,6 +136,11 @@ void CDemoNavMesh::onGUI()
 		buildNavMesh();
 	}
 
+	if (ImGui::Button("Build TileMap"))
+	{
+		buildTileMap();
+	}
+	
 	ImGui::Spacing();
 	ImGui::Spacing();
 }
@@ -137,4 +153,9 @@ void CDemoNavMesh::onLeftClickPosition(bool holdShift, const core::vector3df& po
 void CDemoNavMesh::buildNavMesh()
 {
 	m_builder->build(m_recastMesh, m_outputMesh, m_obstacle);
+}
+
+void CDemoNavMesh::buildTileMap()
+{
+	m_tileMap->generate(4.0, 4.0, m_outputMesh);
 }

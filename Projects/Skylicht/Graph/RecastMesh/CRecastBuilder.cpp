@@ -268,10 +268,14 @@ namespace Skylicht
 					}
 				}
 			}
-
+			
+			buffer->recalculateBoundingBox();
+			
 			output->addMeshBuffer(buffer, "default");
+			output->recalculateBoundingBox();
+			
 			buffer->drop();
-
+			
 			obstacle->clear();
 			core::vector3df seg[2];
 
