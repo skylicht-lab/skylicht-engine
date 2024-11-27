@@ -2,6 +2,8 @@
 
 #include "GameObject/CZone.h"
 
+#define COLLISION_MODEL "SampleGraph/nav_test.obj"
+
 class CDemo
 {
 protected:

@@ -83,10 +83,10 @@ namespace Skylicht
 
 			const core::aabbox3df& box = mesh->getBBox();
 			m_cfg.bmin[0] = box.MinEdge.X;
-			m_cfg.bmin[1] = box.MinEdge.Y;
+			m_cfg.bmin[1] = box.MinEdge.Y - 0.2f;
 			m_cfg.bmin[2] = box.MinEdge.Z;
 			m_cfg.bmax[0] = box.MaxEdge.X;
-			m_cfg.bmax[1] = box.MaxEdge.Y;
+			m_cfg.bmax[1] = box.MaxEdge.Y + 0.2f;
 			m_cfg.bmax[2] = box.MaxEdge.Z;
 			rcCalcGridSize(m_cfg.bmin, m_cfg.bmax, m_cfg.cs, &m_cfg.width, &m_cfg.height);
 

@@ -55,7 +55,7 @@ void CDemoNavMesh::init()
 	{
 		m_recastMesh = new Graph::CRecastMesh();
 
-		CEntityPrefab* mapPrefab = CMeshManager::getInstance()->loadModel("SampleGraph/nav_test.obj", "SampleGraph");
+		CEntityPrefab* mapPrefab = CMeshManager::getInstance()->loadModel(COLLISION_MODEL, "");
 		if (mapPrefab)
 			m_recastMesh->addMeshPrefab(mapPrefab, core::IdentityMatrix);
 	}
@@ -131,12 +131,12 @@ void CDemoNavMesh::update()
 
 void CDemoNavMesh::onGUI()
 {
-	if (ImGui::Button("Build NavMesh"))
+	if (ImGui::Button("Step 1 - Build NavMesh"))
 	{
 		buildNavMesh();
 	}
 
-	if (ImGui::Button("Build TileMap"))
+	if (ImGui::Button("Step 2 - Build TileMap"))
 	{
 		buildTileMap();
 	}
@@ -157,5 +157,5 @@ void CDemoNavMesh::buildNavMesh()
 
 void CDemoNavMesh::buildTileMap()
 {
-	m_tileMap->generate(4.0, 4.0, m_outputMesh);
+	m_tileMap->generate(1.0, 1.0, m_outputMesh);
 }

@@ -8,12 +8,6 @@ include_directories(${Recast_INCLUDE_DIR})
 
 set_target_properties(Recast PROPERTIES VERSION ${SKYLICHT_VERSION})
 
-if (BUILD_SHARED_LIBS)
-if (BUILD_LINUX OR BUILD_MACOS)
-add_compile_options(-fpic)
-endif()
-endif()
-
 if (INSTALL_LIBS)
 install(TARGETS Recast
 			EXPORT RecastTargets

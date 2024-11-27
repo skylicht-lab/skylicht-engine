@@ -16,6 +16,11 @@ setup_project_group("${skylicht_graph_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 add_library(Graph ${ENGINE_SHARED_OR_STATIC_LIB} ${skylicht_graph_source})
 
 if (BUILD_SHARED_LIBS)
+
+if (BUILD_LINUX OR BUILD_MACOS)
+add_compile_options(-fpic)
+endif()
+
 set_target_properties(Graph PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS true)
 endif()
 

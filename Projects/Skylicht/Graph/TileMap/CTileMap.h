@@ -91,6 +91,7 @@ namespace Skylicht
 			
 			void generate(float tileWidth, float tileHeight, const core::aabbox3df& bbox);
 			
+			bool hitTris(const core::line3df& line, core::array<core::triangle3df>& tris, core::vector3df& outPoint);
 		};
 	}
 }

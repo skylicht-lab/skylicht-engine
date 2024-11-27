@@ -118,7 +118,7 @@ void CViewInit::initScene()
 	plane->getMaterial()->changeShader("BuiltIn/Shader/SpecularGlossiness/Deferred/MetersGrid.xml");
 
 	// map
-	CEntityPrefab* mapPrefab = CMeshManager::getInstance()->loadModel("SampleGraph/nav_test.obj", "SampleGraph");
+	CEntityPrefab* mapPrefab = CMeshManager::getInstance()->loadModel(COLLISION_MODEL, "");
 	if (mapPrefab)
 	{
 		m_map = zone->createEmptyObject();

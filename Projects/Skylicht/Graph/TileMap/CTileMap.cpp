@@ -68,7 +68,6 @@ namespace Skylicht
 						tile->Z = z;
 						tile->BBox.MinEdge = bbox.MinEdge + core::vector3df(x * tileWidth, y * tileHeight, z * tileWidth);
 						tile->BBox.MaxEdge = tile->BBox.MinEdge + boxSize;
-						tile->Position = tile->BBox.getCenter();
 						m_tiles.push_back(tile);
 					}
 				}
@@ -110,6 +109,9 @@ namespace Skylicht
 				}
 			}
 			
+			core::vector3df edges[8];
+			core::line3df lines[4];
+			
 			for (int i = (int)m_tiles.size() - 1; i >= 0; i--)
 			{
 				if (m_tiles[i]->Tris.size() == 0)
@@ -117,7 +119,56 @@ namespace Skylicht
 					delete m_tiles[i];
 					m_tiles.erase(i);
 				}
+				else
+				{
+					const core::aabbox3df& bbox = m_tiles[i]->BBox;
+					bbox.getEdges(edges);
+					
+					lines[0].setLine(edges[1], edges[0]);
+					lines[1].setLine(edges[3], edges[2]);
+					lines[2].setLine(edges[5], edges[4]);
+					lines[3].setLine(edges[7], edges[6]);
+					
+					core::vector3df center = bbox.getCenter();
+					core::vector3df centerTop = center;
+					core::vector3df centerBottom = center;
+					centerTop.Y = bbox.MaxEdge.Y;
+					centerBottom.Y = bbox.MinEdge.Y;
+					lines[4].setLine(centerTop, centerBottom);
+					
+					bool allHit = true;
+					
+					for (int j = 0; j < 4; j++)
+					{
+						if (!hitTris(lines[j], m_tiles[i]->Tris, m_tiles[i]->Position))
+						{
+							allHit = false;
+							break;
+						}
+					}
+					
+					if (!allHit)
+					{
+						delete m_tiles[i];
+						m_tiles.erase(i);
+					}
+				}
 			}
+		}
+		
+		bool CTileMap::hitTris(const core::line3df& line, core::array<core::triangle3df>& tris, core::vector3df& outPoint)
+		{
+			bool hit = false;
+			for (int i = 0, n = tris.size(); i < n; i++)
+			{
+				core::triangle3df& t = tris[i];
+				if (t.getIntersectionWithLimitedLine(line, outPoint))
+				{
+					hit = true;
+					break;;
+				}
+			}
+			return hit;
 		}
 	
 		void CTileMap::release()
