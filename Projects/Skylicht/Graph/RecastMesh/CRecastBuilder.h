@@ -32,22 +32,44 @@ namespace Skylicht
 {
 	namespace Graph
 	{
+		struct SBuilderConfig
+		{
+			float CellSize;
+			float CellHeight;
+			float AgentHeight;
+			float AgentRadius;
+			float AgentMaxClimb;
+			float AgentMaxSlope;
+			float RegionMinSize;
+			float RegionMergeSize;
+			float EdgeMaxLen;
+			float EdgeMaxError;
+			int VertsPerPoly;
+			float DetailSampleDist;
+			float DetailSampleMaxError;
+
+			SBuilderConfig()
+			{
+				CellSize = 0.3f;
+				CellHeight = 0.2f;
+				AgentHeight = 2.0f;
+				AgentRadius = 0.6f;
+				AgentMaxClimb = 0.9f;
+				AgentMaxSlope = 45.0f;
+				RegionMinSize = 8;
+				RegionMergeSize = 20;
+				EdgeMaxLen = 12.0f;
+				EdgeMaxError = 1.3f;
+				VertsPerPoly = 6;
+				DetailSampleDist = 6.0f;
+				DetailSampleMaxError = 1.0f;
+			}
+		};
+
 		class CRecastBuilder
 		{
 		protected:
-			float m_cellSize;
-			float m_cellHeight;
-			float m_agentHeight;
-			float m_agentRadius;
-			float m_agentMaxClimb;
-			float m_agentMaxSlope;
-			float m_regionMinSize;
-			float m_regionMergeSize;
-			float m_edgeMaxLen;
-			float m_edgeMaxError;
-			float m_vertsPerPoly;
-			float m_detailSampleDist;
-			float m_detailSampleMaxError;
+			SBuilderConfig m_config;
 
 		public:
 			CRecastBuilder();
@@ -55,6 +77,16 @@ namespace Skylicht
 			virtual ~CRecastBuilder();
 
 			bool build(CRecastMesh* mesh, CMesh* output, CObstacleAvoidance* obstacle);
+
+			inline const SBuilderConfig& getConfig()
+			{
+				return m_config;
+			}
+
+			inline void setConfig(const SBuilderConfig& config)
+			{
+				m_config = config;
+			}
 		};
 	}
 }

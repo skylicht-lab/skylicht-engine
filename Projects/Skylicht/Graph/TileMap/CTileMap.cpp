@@ -55,7 +55,7 @@ namespace Skylicht
 			int nZ = (int)ceilf(size.Z / tileWidth);
 
 			core::vector3df boxSize(tileWidth, tileHeight, tileWidth);
-			
+
 			for (int y = 0; y <= nY; y++)
 			{
 				for (int z = 0; z <= nZ; z++)
@@ -75,31 +75,31 @@ namespace Skylicht
 		}
 
 		void CTileMap::generate(float tileWidth, float tileHeight, CMesh* recastMesh)
-	{
+		{
 			generate(tileWidth, tileHeight, recastMesh->getBoundingBox());
-			
+
 			// check used tile
 			IMeshBuffer* mb = recastMesh->getMeshBuffer(0);
 			IVertexBuffer* vb = mb->getVertexBuffer();
 			IIndexBuffer* ib = mb->getIndexBuffer();
-			
+
 			for (u32 i = 0, n = ib->getIndexCount(); i < n; i += 3)
 			{
 				u32 ixA = ib->getIndex(i);
 				u32 ixB = ib->getIndex(i + 1);
 				u32 ixC = ib->getIndex(i + 2);
-				
-				S3DVertex *a = (S3DVertex*)vb->getVertex(ixA);
-				S3DVertex *b = (S3DVertex*)vb->getVertex(ixB);
-				S3DVertex *c = (S3DVertex*)vb->getVertex(ixC);
-				
+
+				S3DVertex* a = (S3DVertex*)vb->getVertex(ixA);
+				S3DVertex* b = (S3DVertex*)vb->getVertex(ixB);
+				S3DVertex* c = (S3DVertex*)vb->getVertex(ixC);
+
 				core::aabbox3df box;
 				box.reset(a->Pos);
 				box.addInternalPoint(b->Pos);
 				box.addInternalPoint(c->Pos);
-				
+
 				core::triangle3df tri(a->Pos, b->Pos, c->Pos);
-				
+
 				for (u32 j = 0, m = m_tiles.size(); j < m; j++)
 				{
 					if (m_tiles[j]->BBox.intersectsWithBox(box))
@@ -108,10 +108,10 @@ namespace Skylicht
 					}
 				}
 			}
-			
-			core::vector3df edges[8];
-			core::line3df lines[4];
-			
+
+			// core::vector3df edges[8];
+			core::line3df centerLine;
+
 			for (int i = (int)m_tiles.size() - 1; i >= 0; i--)
 			{
 				if (m_tiles[i]->Tris.size() == 0)
@@ -122,23 +122,29 @@ namespace Skylicht
 				else
 				{
 					const core::aabbox3df& bbox = m_tiles[i]->BBox;
+
+					/*
 					bbox.getEdges(edges);
-					
+
 					lines[0].setLine(edges[1], edges[0]);
 					lines[1].setLine(edges[3], edges[2]);
 					lines[2].setLine(edges[5], edges[4]);
 					lines[3].setLine(edges[7], edges[6]);
-					
+					*/
+
 					core::vector3df center = bbox.getCenter();
 					core::vector3df centerTop = center;
 					core::vector3df centerBottom = center;
 					centerTop.Y = bbox.MaxEdge.Y;
 					centerBottom.Y = bbox.MinEdge.Y;
-					lines[4].setLine(centerTop, centerBottom);
-					
+					centerLine.setLine(centerTop, centerBottom);
+
+					// lines[4].setLine(centerTop, centerBottom);
+
 					bool allHit = true;
-					
-					for (int j = 0; j < 4; j++)
+
+					/*
+					for (int j = 0; j < 5; j++)
 					{
 						if (!hitTris(lines[j], m_tiles[i]->Tris, m_tiles[i]->Position))
 						{
@@ -146,7 +152,10 @@ namespace Skylicht
 							break;
 						}
 					}
-					
+					*/
+
+					allHit = hitTris(centerLine, m_tiles[i]->Tris, m_tiles[i]->Position);
+
 					if (!allHit)
 					{
 						delete m_tiles[i];
@@ -154,8 +163,51 @@ namespace Skylicht
 					}
 				}
 			}
+
+			for (u32 i = 0, n = m_tiles.size(); i < n; i++)
+			{
+				STile* t = m_tiles[i];
+				t->Id = i;
+
+				STileXYZ tile(t->X, t->Y, t->Z);
+				m_hashTiles[tile] = t;
+			}
+
+			// link Neighbour
+			for (u32 i = 0, n = m_tiles.size(); i < n; i++)
+			{
+				STile* t = m_tiles[i];
+
+				for (int y = -1; y <= 1; y++)
+				{
+					for (int x = -1; x <= 1; x++)
+					{
+						for (int z = -1; z <= 1; z++)
+						{
+							if (x == 0 && y == 0 && z == 0)
+								continue;
+
+							STile* nei = getTile(
+								t->X + x,
+								t->Y + y,
+								t->Z + z);
+							if (nei)
+								t->Neighbours.push_back(nei);
+						}
+					}
+				}
+			}
 		}
-		
+
+		STile* CTileMap::getTile(int x, int y, int z)
+		{
+			STileXYZ tile(x, y, z);
+			auto it = m_hashTiles.find(tile);
+			if (it == m_hashTiles.end())
+				return NULL;
+			return it->second;
+		}
+
 		bool CTileMap::hitTris(const core::line3df& line, core::array<core::triangle3df>& tris, core::vector3df& outPoint)
 		{
 			bool hit = false;
@@ -170,7 +222,7 @@ namespace Skylicht
 			}
 			return hit;
 		}
-	
+
 		void CTileMap::release()
 		{
 			for (u32 i = 0, n = m_tiles.size(); i < n; i++)
@@ -178,6 +230,15 @@ namespace Skylicht
 				delete m_tiles[i];
 			}
 			m_tiles.clear();
+			m_hashTiles.clear();
+		}
+
+		void CTileMap::resetVisit()
+		{
+			for (u32 i = 0, n = m_tiles.size(); i < n; i++)
+			{
+				m_tiles[i]->Visit = false;
+			}
 		}
 	}
 }

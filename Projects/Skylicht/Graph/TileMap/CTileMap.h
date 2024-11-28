@@ -42,8 +42,8 @@ namespace Skylicht
 			core::aabbox3df BBox;
 			core::array<SObstacleSegment> Cols;
 			core::array<core::triangle3df> Tris;
-
-			STile* Neighbour[8];
+			core::array<STile*> Neighbours;
+			bool Visit;
 
 			STile()
 			{
@@ -51,15 +51,54 @@ namespace Skylicht
 				X = 0;
 				Y = 0;
 				Z = 0;
-				for (int i = 0; i < 8; i++)
-					Neighbour[i] = NULL;
+				Visit = false;
 			}
 		};
+
+		struct STileXYZ
+		{
+			int X;
+			int Y;
+			int Z;
+
+			STileXYZ(int x, int y, int z)
+			{
+				X = x;
+				Y = y;
+				Z = z;
+			}
+		};
+
+		struct CompareTile
+		{
+			bool operator()(const STileXYZ& a, const STileXYZ& b) const
+			{
+				if (a.Z < b.Z)
+					return true;
+				else if (a.Z > b.Z)
+					return false;
+
+				if (a.Y < b.Y)
+					return true;
+				else if (a.Y > b.Y)
+					return false;
+
+				if (a.X < b.X)
+					return true;
+
+				return false;
+			}
+		};
+
+		typedef std::map<STileXYZ, STile*, CompareTile> TileValueMap;
 
 		class CTileMap
 		{
 		protected:
 			core::array<STile*> m_tiles;
+
+			TileValueMap m_hashTiles;
+
 			float m_tileWidth;
 			float m_tileHeight;
 
@@ -69,8 +108,12 @@ namespace Skylicht
 			virtual ~CTileMap();
 
 			void generate(float tileWidth, float tileHeight, CMesh* recastMesh);
-			
+
 			void release();
+
+			void resetVisit();
+
+			STile* getTile(int x, int y, int z);
 
 			inline float getTileWidth()
 			{
@@ -86,11 +129,11 @@ namespace Skylicht
 			{
 				return m_tiles;
 			}
-			
+
 		protected:
-			
+
 			void generate(float tileWidth, float tileHeight, const core::aabbox3df& bbox);
-			
+
 			bool hitTris(const core::line3df& line, core::array<core::triangle3df>& tris, core::vector3df& outPoint);
 		};
 	}

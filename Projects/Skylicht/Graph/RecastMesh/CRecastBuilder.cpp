@@ -32,20 +32,7 @@ namespace Skylicht
 {
 	namespace Graph
 	{
-		CRecastBuilder::CRecastBuilder() :
-			m_cellSize(0.3f),
-			m_cellHeight(0.2f),
-			m_agentHeight(2.0f),
-			m_agentRadius(0.6f),
-			m_agentMaxClimb(0.9f),
-			m_agentMaxSlope(45.0f),
-			m_regionMinSize(8),
-			m_regionMergeSize(20),
-			m_edgeMaxLen(12.0f),
-			m_edgeMaxError(1.3f),
-			m_vertsPerPoly(6.0f),
-			m_detailSampleDist(6.0f),
-			m_detailSampleMaxError(1.0f)
+		CRecastBuilder::CRecastBuilder()
 		{
 
 		}
@@ -67,19 +54,24 @@ namespace Skylicht
 			// Step 1. Initialize build config.
 			rcConfig m_cfg;
 			memset(&m_cfg, 0, sizeof(m_cfg));
-			m_cfg.cs = m_cellSize;
-			m_cfg.ch = m_cellHeight;
-			m_cfg.walkableSlopeAngle = m_agentMaxSlope;
-			m_cfg.walkableHeight = (int)ceilf(m_agentHeight / m_cfg.ch);
-			m_cfg.walkableClimb = (int)floorf(m_agentMaxClimb / m_cfg.ch);
-			m_cfg.walkableRadius = (int)ceilf(m_agentRadius / m_cfg.cs);
-			m_cfg.maxEdgeLen = (int)(m_edgeMaxLen / m_cellSize);
-			m_cfg.maxSimplificationError = m_edgeMaxError;
-			m_cfg.minRegionArea = (int)rcSqr(m_regionMinSize); // Note: area = size*size
-			m_cfg.mergeRegionArea = (int)rcSqr(m_regionMergeSize); // Note: area = size*size
-			m_cfg.maxVertsPerPoly = (int)m_vertsPerPoly;
-			m_cfg.detailSampleDist = m_detailSampleDist < 0.9f ? 0 : m_cellSize * m_detailSampleDist;
-			m_cfg.detailSampleMaxError = m_cellHeight * m_detailSampleMaxError;
+			m_cfg.cs = m_config.CellSize;
+			m_cfg.ch = m_config.CellHeight;
+			m_cfg.walkableSlopeAngle = m_config.AgentMaxSlope;
+
+			m_cfg.walkableHeight = (int)ceilf(m_config.AgentHeight / m_cfg.ch);
+			m_cfg.walkableClimb = (int)floorf(m_config.AgentMaxClimb / m_cfg.ch);
+			m_cfg.walkableRadius = (int)ceilf(m_config.AgentRadius / m_cfg.cs);
+
+			m_cfg.maxEdgeLen = (int)(m_config.EdgeMaxLen / m_config.CellSize);
+			m_cfg.maxSimplificationError = m_config.EdgeMaxError;
+
+			m_cfg.minRegionArea = (int)rcSqr(m_config.RegionMinSize); // Note: area = size*size
+			m_cfg.mergeRegionArea = (int)rcSqr(m_config.RegionMergeSize); // Note: area = size*size
+
+			m_cfg.maxVertsPerPoly = m_config.VertsPerPoly;
+
+			m_cfg.detailSampleDist = m_config.DetailSampleDist < 0.9f ? 0 : m_config.CellSize * m_config.DetailSampleDist;
+			m_cfg.detailSampleMaxError = m_config.CellHeight * m_config.DetailSampleMaxError;
 
 			const core::aabbox3df& box = mesh->getBBox();
 			m_cfg.bmin[0] = box.MinEdge.X;
@@ -268,14 +260,14 @@ namespace Skylicht
 					}
 				}
 			}
-			
+
 			buffer->recalculateBoundingBox();
-			
+
 			output->addMeshBuffer(buffer, "default");
 			output->recalculateBoundingBox();
-			
+
 			buffer->drop();
-			
+
 			obstacle->clear();
 			core::vector3df seg[2];
 

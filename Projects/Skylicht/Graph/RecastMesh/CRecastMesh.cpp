@@ -121,8 +121,6 @@ namespace Skylicht
 			u16* indexBuffer16 = NULL;
 			u32* indexBuffer32 = NULL;
 
-			u32 batchVtx = m_verts.size() / 3;
-
 			for (int i = 0; i < numMeshBuffer; i++)
 			{
 				IMeshBuffer* meshBuffer = mesh->getMeshBuffer(i);
@@ -140,6 +138,8 @@ namespace Skylicht
 					indexBuffer16 = (u16*)indexBuffer->getIndices();
 				else
 					indexBuffer32 = (u32*)indexBuffer->getIndices();
+
+				u32 batchVtx = m_verts.size() / 3;
 
 				for (int j = 0; j < numVertex; j++)
 				{

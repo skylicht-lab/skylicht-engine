@@ -15,7 +15,9 @@ CDemoNavMesh::CDemoNavMesh(CZone* zone) :
 	m_state(0),
 	m_agent(NULL),
 	m_map(NULL),
-	m_recastMesh(NULL)
+	m_recastMesh(NULL),
+	m_tileWidth(2.0f),
+	m_tileHeight(2.0f)
 {
 	m_builder = new Graph::CRecastBuilder();
 	m_obstacle = new Graph::CObstacleAvoidance();
@@ -60,6 +62,10 @@ void CDemoNavMesh::init()
 			m_recastMesh->addMeshPrefab(mapPrefab, core::IdentityMatrix);
 	}
 
+	m_tileMap->release();
+	m_outputMesh->removeAllMeshBuffer();
+	m_obstacle->clear();
+
 	m_agent->setVisible(true);
 	m_agent->getTransformEuler()->setPosition(core::vector3df(0.0f, 1.0f, 0.0f));
 
@@ -86,9 +92,30 @@ void CDemoNavMesh::update()
 		debug->addPosition(m_clickPosition, 0.25f, SColor(255, 0, 200, 0));
 	}
 
-	SColor red(255, 255, 0, 0);
+	SColor red(255, 100, 0, 0);
 	SColor white(255, 100, 100, 100);
-	SColor green(255, 0,255,0);
+	SColor green(255, 0, 100, 0);
+
+	// draw debug recastmesh
+	/*
+	int* tris = m_recastMesh->getTris();
+	float* verts = m_recastMesh->getVerts();
+
+	for (u32 i = 0, n = m_recastMesh->getTriCount(); i < n; i++)
+	{
+		int a = tris[i * 3];
+		int b = tris[i * 3 + 1];
+		int c = tris[i * 3 + 2];
+
+		core::vector3df va(verts[a * 3], verts[a * 3 + 1], verts[a * 3 + 2]);
+		core::vector3df vb(verts[b * 3], verts[b * 3 + 1], verts[b * 3 + 2]);
+		core::vector3df vc(verts[c * 3], verts[c * 3 + 1], verts[c * 3 + 2]);
+
+		debug->addLine(va, vb, white);
+		debug->addLine(vb, vc, white);
+		debug->addLine(vc, va, white);
+	}
+	*/
 
 	// draw recast polymesh
 	for (u32 i = 0, n = m_outputMesh->getMeshBufferCount(); i < n; i++)
@@ -119,28 +146,66 @@ void CDemoNavMesh::update()
 	{
 		debug->addLine(segments[i].Begin, segments[i].End, red);
 	}
-	
+
+	m_tileMap->resetVisit();
+
 	// draw tilemap
 	core::array<Graph::STile*>& tiles = m_tileMap->getTiles();
 	for (u32 i = 0, n = tiles.size(); i < n; i++)
 	{
-		Graph::STile* t = tiles[i];
-		debug->addPosition(t->Position, 0.2f, green);
+		Graph::STile* tile = tiles[i];
+
+		for (u32 j = 0, n = tile->Neighbours.size(); j < n; j++)
+		{
+			Graph::STile* nei = tile->Neighbours[j];
+			if (nei->Visit == false)
+			{
+				debug->addLine(tile->Position, nei->Position, green);
+			}
+		}
+
+		tile->Visit = true;
 	}
+
+	m_tileMap->resetVisit();
 }
 
 void CDemoNavMesh::onGUI()
 {
-	if (ImGui::Button("Step 1 - Build NavMesh"))
+	ImGui::Text("Step 1");
+
+	if (ImGui::CollapsingHeader("Config NavMesh"))
+	{
+		Graph::SBuilderConfig config = m_builder->getConfig();
+		ImGui::SliderFloat("CellSize", &config.CellSize, 0.2f, 1.0f);
+		ImGui::SliderFloat("CellHeight", &config.CellHeight, 0.2f, 1.0f);
+		ImGui::SliderFloat("AgentHeight", &config.AgentHeight, 0.5f, 2.0f);
+		ImGui::SliderFloat("AgentRadius", &config.AgentRadius, 0.1f, 1.0f);
+		ImGui::SliderFloat("AgentMaxClimb", &config.AgentMaxClimb, 0.1f, 1.0f);
+		ImGui::SliderFloat("AgentMaxSlope", &config.AgentMaxClimb, 5.0f, 60.0f);
+		m_builder->setConfig(config);
+	}
+
+	if (ImGui::Button("Build NavMesh"))
 	{
 		buildNavMesh();
 	}
 
-	if (ImGui::Button("Step 2 - Build TileMap"))
+	ImGui::Spacing();
+
+	ImGui::Text("Step 2");
+
+	if (ImGui::CollapsingHeader("Config Tile"))
+	{
+		ImGui::SliderFloat("TileWidth", &m_tileWidth, 0.5f, 4.0f);
+		ImGui::SliderFloat("TileHeight", &m_tileHeight, 0.5f, 4.0f);
+	}
+
+	if (ImGui::Button("Build TileMap"))
 	{
 		buildTileMap();
 	}
-	
+
 	ImGui::Spacing();
 	ImGui::Spacing();
 }
@@ -157,5 +222,5 @@ void CDemoNavMesh::buildNavMesh()
 
 void CDemoNavMesh::buildTileMap()
 {
-	m_tileMap->generate(1.0, 1.0, m_outputMesh);
+	m_tileMap->generate(m_tileWidth, m_tileHeight, m_outputMesh);
 }

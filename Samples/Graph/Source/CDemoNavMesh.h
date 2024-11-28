@@ -19,7 +19,10 @@ protected:
 	Graph::CRecastBuilder* m_builder;
 	Graph::CObstacleAvoidance* m_obstacle;
 	Graph::CTileMap* m_tileMap;
-	
+
+	float m_tileWidth;
+	float m_tileHeight;
+
 	CMesh* m_outputMesh;
 
 public:
@@ -38,6 +41,6 @@ public:
 	virtual void onLeftClickPosition(bool holdShift, const core::vector3df& pos);
 
 	void buildNavMesh();
-	
+
 	void buildTileMap();
 };
