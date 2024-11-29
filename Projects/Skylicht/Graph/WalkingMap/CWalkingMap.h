@@ -92,7 +92,7 @@ namespace Skylicht
 
 		typedef std::map<STileXYZ, STile*, CompareTile> TileValueMap;
 
-		class CTileMap
+		class CWalkingMap
 		{
 		protected:
 			core::array<STile*> m_tiles;
@@ -103,9 +103,9 @@ namespace Skylicht
 			float m_tileHeight;
 
 		public:
-			CTileMap();
+			CWalkingMap();
 
-			virtual ~CTileMap();
+			virtual ~CWalkingMap();
 
 			void generate(float tileWidth, float tileHeight, CMesh* recastMesh);
 

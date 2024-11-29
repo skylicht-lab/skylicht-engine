@@ -23,25 +23,25 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CTileMap.h"
+#include "CWalkingMap.h"
 
 namespace Skylicht
 {
 	namespace Graph
 	{
-		CTileMap::CTileMap() :
+		CWalkingMap::CWalkingMap() :
 			m_tileWidth(0.0f),
 			m_tileHeight(0.0f)
 		{
 
 		}
 
-		CTileMap::~CTileMap()
+		CWalkingMap::~CWalkingMap()
 		{
 			release();
 		}
 
-		void CTileMap::generate(float tileWidth, float tileHeight, const core::aabbox3df& bbox)
+		void CWalkingMap::generate(float tileWidth, float tileHeight, const core::aabbox3df& bbox)
 		{
 			release();
 
@@ -74,7 +74,7 @@ namespace Skylicht
 			}
 		}
 
-		void CTileMap::generate(float tileWidth, float tileHeight, CMesh* recastMesh)
+		void CWalkingMap::generate(float tileWidth, float tileHeight, CMesh* recastMesh)
 		{
 			generate(tileWidth, tileHeight, recastMesh->getBoundingBox());
 
@@ -199,7 +199,7 @@ namespace Skylicht
 			}
 		}
 
-		STile* CTileMap::getTile(int x, int y, int z)
+		STile* CWalkingMap::getTile(int x, int y, int z)
 		{
 			STileXYZ tile(x, y, z);
 			auto it = m_hashTiles.find(tile);
@@ -208,7 +208,7 @@ namespace Skylicht
 			return it->second;
 		}
 
-		bool CTileMap::hitTris(const core::line3df& line, core::array<core::triangle3df>& tris, core::vector3df& outPoint)
+		bool CWalkingMap::hitTris(const core::line3df& line, core::array<core::triangle3df>& tris, core::vector3df& outPoint)
 		{
 			bool hit = false;
 			for (int i = 0, n = tris.size(); i < n; i++)
@@ -223,7 +223,7 @@ namespace Skylicht
 			return hit;
 		}
 
-		void CTileMap::release()
+		void CWalkingMap::release()
 		{
 			for (u32 i = 0, n = m_tiles.size(); i < n; i++)
 			{
@@ -233,7 +233,7 @@ namespace Skylicht
 			m_hashTiles.clear();
 		}
 
-		void CTileMap::resetVisit()
+		void CWalkingMap::resetVisit()
 		{
 			for (u32 i = 0, n = m_tiles.size(); i < n; i++)
 			{
