@@ -88,6 +88,44 @@ namespace Skylicht
 			return 1;
 		}
 
+		bool CObstacleAvoidance::isLineHit(const core::vector3df& a, const core::vector3df& b, float h)
+		{
+			SObstacleSegment* segs = m_segments.pointer();
+			core::vector3df v = b - a;
+			float t = 0.0f;
+
+			for (u32 i = 0, n = m_segments.size(); i < n; i++)
+			{
+				SObstacleSegment& s = segs[i];
+
+				if (fabs(s.Begin.Y - a.Y) < h && fabs(s.End.Y - a.Y) < h)
+				{
+					int intersection = isectRaySeg(a, v, s.Begin, s.End, t);
+					if (intersection)
+					{
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+
+		void CObstacleAvoidance::copySegments(CObstacleAvoidance* toTarget, const core::aabbox3df& box)
+		{
+			SObstacleSegment* segs = m_segments.pointer();
+			core::line3df line;
+
+			for (u32 i = 0, n = m_segments.size(); i < n; i++)
+			{
+				SObstacleSegment& s = segs[i];
+				line.setLine(s.Begin, s.End);
+				if (box.intersectsWithLine(line))
+				{
+					toTarget->addSegment(s.Begin, s.End);
+				}
+			}
+		}
+
 		core::vector3df CObstacleAvoidance::collide(const core::vector3df& position, const core::vector3df& vel, float radius, int recursionDepth)
 		{
 			if (recursionDepth >= 2)

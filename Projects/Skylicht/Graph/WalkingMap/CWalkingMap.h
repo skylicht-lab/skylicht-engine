@@ -40,7 +40,7 @@ namespace Skylicht
 			int Z;
 			core::vector3df Position;
 			core::aabbox3df BBox;
-			core::array<SObstacleSegment> Cols;
+			CObstacleAvoidance Obstacle;
 			core::array<core::triangle3df> Tris;
 			core::array<STile*> Neighbours;
 			bool Visit;
@@ -107,7 +107,7 @@ namespace Skylicht
 
 			virtual ~CWalkingMap();
 
-			void generate(float tileWidth, float tileHeight, CMesh* recastMesh);
+			void generate(float tileWidth, float tileHeight, CMesh* recastMesh, CObstacleAvoidance* obstacle);
 
 			void release();
 

@@ -74,7 +74,7 @@ namespace Skylicht
 			}
 		}
 
-		void CWalkingMap::generate(float tileWidth, float tileHeight, CMesh* recastMesh)
+		void CWalkingMap::generate(float tileWidth, float tileHeight, CMesh* recastMesh, CObstacleAvoidance* obstacle)
 		{
 			generate(tileWidth, tileHeight, recastMesh->getBoundingBox());
 
@@ -171,6 +171,8 @@ namespace Skylicht
 
 				STileXYZ tile(t->X, t->Y, t->Z);
 				m_hashTiles[tile] = t;
+
+				obstacle->copySegments(&t->Obstacle, t->BBox);
 			}
 
 			// link Neighbour
@@ -192,7 +194,13 @@ namespace Skylicht
 								t->Y + y,
 								t->Z + z);
 							if (nei)
-								t->Neighbours.push_back(nei);
+							{
+								if (!t->Obstacle.isLineHit(t->Position, nei->Position, tileHeight) &&
+									!nei->Obstacle.isLineHit(t->Position, nei->Position, tileHeight))
+								{
+									t->Neighbours.push_back(nei);
+								}
+							}
 						}
 					}
 				}

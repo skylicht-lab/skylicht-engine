@@ -54,10 +54,19 @@ namespace Skylicht
 
 			void clear();
 
+			void copySegments(CObstacleAvoidance* toTarget, const core::aabbox3df& box);
+
 			inline core::array<SObstacleSegment>& getSegments()
 			{
 				return m_segments;
 			}
+
+			inline bool isLineHit(const core::line3df& line, float h = 1.0f)
+			{
+				return isLineHit(line.start, line.end, h);
+			}
+
+			bool isLineHit(const core::vector3df& a, const core::vector3df& b, float h = 1.0f);
 
 			core::vector3df collide(const core::vector3df& position, const core::vector3df& vel, float radius, int recursionDepth = 0);
 		};

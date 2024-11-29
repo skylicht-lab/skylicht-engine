@@ -95,6 +95,7 @@ void CDemoNavMesh::update()
 	SColor red(255, 100, 0, 0);
 	SColor white(255, 100, 100, 100);
 	SColor green(255, 0, 100, 0);
+	SColor yellow(255, 100, 100, 0);
 
 	// draw debug recastmesh
 	/*
@@ -161,6 +162,7 @@ void CDemoNavMesh::update()
 			if (nei->Visit == false)
 			{
 				debug->addLine(tile->Position, nei->Position, green);
+				debug->addPosition(tile->Position, m_tileHeight * 0.1f, yellow);
 			}
 		}
 
@@ -222,5 +224,5 @@ void CDemoNavMesh::buildNavMesh()
 
 void CDemoNavMesh::buildWalkingMap()
 {
-	m_walkingMap->generate(m_tileWidth, m_tileHeight, m_outputMesh);
+	m_walkingMap->generate(m_tileWidth, m_tileHeight, m_outputMesh, m_obstacle);
 }
