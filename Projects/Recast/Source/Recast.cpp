@@ -55,6 +55,17 @@ float rcSqrt(float x)
 	return sqrtf(x);
 }
 
+rcContext::rcContext(bool state) :
+	m_logEnabled(state), 
+	m_timerEnabled(state)
+{
+
+}
+
+rcContext::~rcContext() 
+{
+}
+
 void rcContext::log(const rcLogCategory category, const char* format, ...)
 {
 	if (!m_logEnabled)

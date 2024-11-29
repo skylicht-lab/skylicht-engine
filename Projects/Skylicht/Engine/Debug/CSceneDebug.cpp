@@ -30,25 +30,12 @@ namespace Skylicht
 	IMPLEMENT_SINGLETON(CSceneDebug);
 
 	CSceneDebug::CSceneDebug() :
-		m_nLine(0),
-		m_nLineStrip(0),
-		m_nBox(0),
-		m_nTri(0),
 		m_noZDebug(NULL)
 	{
-		m_lines = new SLineDebug[MAX_DEBUGGEOMETRY];
-		m_linestrip = new SLineStripDebug[MAX_DEBUGGEOMETRY];
-		m_boxs = new SBoxDebug[MAX_DEBUGGEOMETRY];
-		m_tri = new STriDebug[MAX_DEBUGGEOMETRY];
 	}
 
 	CSceneDebug::~CSceneDebug()
 	{
-		delete[] m_lines;
-		delete[] m_linestrip;
-		delete[] m_boxs;
-		delete[] m_tri;
-
 		if (m_noZDebug)
 			delete m_noZDebug;
 	}
@@ -62,9 +49,6 @@ namespace Skylicht
 
 	void CSceneDebug::addCircle(const core::vector3df& pos, float radius, const core::vector3df& normal, const SColor& color)
 	{
-		if (m_nLineStrip >= MAX_DEBUGGEOMETRY)
-			return;
-
 		core::quaternion q;
 		core::vector3df up(0.0f, 1.0f, 0.0f);
 		core::vector3df n = normal;
@@ -78,8 +62,11 @@ namespace Skylicht
 		core::vector3df	point;
 
 		// clear point list
-		m_linestrip[m_nLineStrip].point.set_used(0);
-		m_linestrip[m_nLineStrip].color = color;
+		m_linestrip.push_back(SLineStripDebug());
+		SLineStripDebug& line = m_linestrip.getLast();
+
+		line.point.set_used(0);
+		line.color = color;
 
 		for (int i = 0; i <= step; i++)
 		{
@@ -94,20 +81,15 @@ namespace Skylicht
 			point += pos;
 
 			// add point
-			m_linestrip[m_nLineStrip].point.push_back(point);
+			line.point.push_back(point);
 
 			// inc rad
 			rad = rad + radInc;
 		}
-
-		m_nLineStrip++;
 	}
 
 	void CSceneDebug::addEclipse(const core::vector3df& pos, float radiusZ, float radiusX, const core::vector3df& normal, const SColor& color)
 	{
-		if (m_nLineStrip >= MAX_DEBUGGEOMETRY)
-			return;
-
 		core::quaternion q;
 		core::vector3df up(0.0f, 1.0f, 0.0f);
 		core::vector3df n = normal;
@@ -121,8 +103,10 @@ namespace Skylicht
 		core::vector3df	point;
 
 		// clear point list
-		m_linestrip[m_nLineStrip].point.set_used(0);
-		m_linestrip[m_nLineStrip].color = color;
+		m_linestrip.push_back(SLineStripDebug());
+		SLineStripDebug& line = m_linestrip.getLast();
+		line.point.set_used(0);
+		line.color = color;
 
 		for (int i = 0; i <= step; i++)
 		{
@@ -137,13 +121,11 @@ namespace Skylicht
 			point += pos;
 
 			// add point
-			m_linestrip[m_nLineStrip].point.push_back(point);
+			line.point.push_back(point);
 
 			// inc rad
 			rad = rad + radInc;
 		}
-
-		m_nLineStrip++;
 	}
 
 	void CSceneDebug::addSphere(const core::vector3df& pos, float radius, const SColor& color)
@@ -170,66 +152,53 @@ namespace Skylicht
 
 	void CSceneDebug::addTri(const core::triangle3df& tri, const SColor& color)
 	{
-		if (m_nTri >= MAX_DEBUGGEOMETRY)
-			return;
-
-		m_tri[m_nTri].tri = tri;
-		m_tri[m_nTri].color = color;
-		m_nTri++;
+		m_tri.push_back(STriDebug());
+		STriDebug& t = m_tri.getLast();
+		t.tri = tri;
+		t.color = color;
 	}
 
 	void CSceneDebug::addLine(const core::vector3df& v1, const core::vector3df& v2, const SColor& color)
 	{
-		if (m_nLine >= MAX_DEBUGGEOMETRY)
-			return;
-
-		core::line3df line(v1, v2);
-		m_lines[m_nLine].line = line;
-		m_lines[m_nLine].color = color;
-		m_nLine++;
+		m_lines.push_back(SLineDebug());
+		SLineDebug& line = m_lines.getLast();
+		line.line.setLine(v1, v2);
+		line.color = color;
 	}
 
 	void CSceneDebug::addLine(const core::line3df& line, const SColor& color)
 	{
-		if (m_nLine >= MAX_DEBUGGEOMETRY)
-			return;
-
-		m_lines[m_nLine].line = line;
-		m_lines[m_nLine].color = color;
-		m_nLine++;
+		m_lines.push_back(SLineDebug());
+		SLineDebug& l = m_lines.getLast();
+		l.line = line;
+		l.color = color;
 	}
 
 	void CSceneDebug::addLinestrip(const std::vector<core::vector3df>& point, const SColor& color)
 	{
-		if (m_nLineStrip >= MAX_DEBUGGEOMETRY)
-			return;
+		m_linestrip.push_back(SLineStripDebug());
+		SLineStripDebug& l = m_linestrip.getLast();
 
-		m_linestrip[m_nLineStrip].point.set_used(0);
+		l.point.set_used(0);
 		for (int i = 0, n = (int)point.size(); i < n; i++)
-			m_linestrip[m_nLineStrip].point.push_back(point[i]);
-
-		m_linestrip[m_nLineStrip].color = color;
-		m_nLineStrip++;
+			l.point.push_back(point[i]);
+		l.color = color;
 	}
 
 	void CSceneDebug::addLinestrip(const core::array<core::vector3df>& point, const SColor& color)
 	{
-		if (m_nLineStrip >= MAX_DEBUGGEOMETRY)
-			return;
-
-		m_linestrip[m_nLineStrip].point = point;
-		m_linestrip[m_nLineStrip].color = color;
-		m_nLineStrip++;
+		m_linestrip.push_back(SLineStripDebug());
+		SLineStripDebug& l = m_linestrip.getLast();
+		l.point = point;
+		l.color = color;
 	}
 
 	void CSceneDebug::addBoudingBox(const core::aabbox3df& box, const SColor& color)
 	{
-		if (m_nBox >= MAX_DEBUGGEOMETRY)
-			return;
-
-		m_boxs[m_nBox].box = box;
-		m_boxs[m_nBox].color = color;
-		m_nBox++;
+		m_boxs.push_back(SBoxDebug());
+		SBoxDebug& b = m_boxs.getLast();
+		b.box = box;
+		b.color = color;
 	}
 
 	void CSceneDebug::addTransformBBox(const core::aabbox3df& box, const SColor& color, const core::matrix4& mat)

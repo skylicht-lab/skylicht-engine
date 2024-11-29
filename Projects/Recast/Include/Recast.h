@@ -116,8 +116,8 @@ class rcContext
 public:
 	/// Constructor.
 	///  @param[in]		state	TRUE if the logging and performance timers should be enabled.  [Default: true]
-	inline rcContext(bool state = true) : m_logEnabled(state), m_timerEnabled(state) {}
-	virtual ~rcContext() {}
+	rcContext(bool state = true);
+	virtual ~rcContext();
 
 	/// Enables or disables logging.
 	///  @param[in]		state	TRUE if logging should be enabled.

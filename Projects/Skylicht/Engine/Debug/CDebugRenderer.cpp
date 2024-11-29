@@ -76,29 +76,29 @@ namespace Skylicht
 		m_drawData->clearBuffer();
 		m_drawNoZData->clearBuffer();
 
-		for (int i = 0, n = debug->getLinesCount(); i < n; i++)
+		for (u32 i = 0, n = debug->getLinesCount(); i < n; i++)
 		{
 			const SLineDebug& line = debug->getLine(i);
 			m_drawData->addLine(line.line.start, line.line.end, line.color);
 		}
 
-		for (int i = 0, n = noZDebug->getLinesCount(); i < n; i++)
+		for (u32 i = 0, n = noZDebug->getLinesCount(); i < n; i++)
 		{
 			const SLineDebug& line = noZDebug->getLine(i);
 			m_drawNoZData->addLine(line.line.start, line.line.end, line.color);
 		}
 
-		for (int i = 0, n = debug->getBoxCount(); i < n; i++)
+		for (u32 i = 0, n = debug->getBoxCount(); i < n; i++)
 		{
 			m_drawData->add3DBox(debug->getBox(i).box, debug->getBox(i).color);
 		}
 
-		for (int i = 0, n = noZDebug->getBoxCount(); i < n; i++)
+		for (u32 i = 0, n = noZDebug->getBoxCount(); i < n; i++)
 		{
 			m_drawNoZData->add3DBox(noZDebug->getBox(i).box, noZDebug->getBox(i).color);
 		}
 
-		for (int i = 0, n = debug->getTriCount(); i < n; i++)
+		for (u32 i = 0, n = debug->getTriCount(); i < n; i++)
 		{
 			core::vector3df normal = debug->getTri(i).tri.getNormal();
 			normal.normalize();
@@ -115,7 +115,7 @@ namespace Skylicht
 			m_drawData->addLine(c, a, color);
 		}
 
-		for (int i = 0, n = noZDebug->getTriCount(); i < n; i++)
+		for (u32 i = 0, n = noZDebug->getTriCount(); i < n; i++)
 		{
 			core::vector3df normal = noZDebug->getTri(i).tri.getNormal();
 			normal.normalize();
@@ -132,13 +132,13 @@ namespace Skylicht
 			m_drawNoZData->addLine(c, a, color);
 		}
 
-		for (int i = 0; i < debug->getLineStripCount(); i++)
+		for (u32 i = 0; i < debug->getLineStripCount(); i++)
 		{
 			const core::array<core::vector3df>& listPoint = debug->getLineStrip(i).point;
 			m_drawData->addPolyline(listPoint.const_pointer(), listPoint.size(), false, debug->getLineStrip(i).color);
 		}
 
-		for (int i = 0; i < noZDebug->getLineStripCount(); i++)
+		for (u32 i = 0; i < noZDebug->getLineStripCount(); i++)
 		{
 			const core::array<core::vector3df>& listPoint = noZDebug->getLineStrip(i).point;
 			m_drawNoZData->addPolyline(listPoint.const_pointer(), listPoint.size(), false, noZDebug->getLineStrip(i).color);

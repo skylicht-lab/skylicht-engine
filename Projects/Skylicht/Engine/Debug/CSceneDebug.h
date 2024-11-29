@@ -26,8 +26,6 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Utils/CSingleton.h"
 
-#define MAX_DEBUGGEOMETRY 20000
-
 namespace Skylicht
 {
 	struct SLineDebug
@@ -67,16 +65,10 @@ namespace Skylicht
 		DECLARE_SINGLETON(CSceneDebug)
 
 	protected:
-		SLineDebug* m_lines;
-		SLineStripDebug* m_linestrip;
-
-		SBoxDebug* m_boxs;
-		STriDebug* m_tri;
-
-		int m_nLine;
-		int m_nLineStrip;
-		int m_nBox;
-		int m_nTri;
+		core::array<SLineDebug> m_lines;
+		core::array<SLineStripDebug> m_linestrip;
+		core::array<SBoxDebug> m_boxs;
+		core::array<STriDebug> m_tri;
 
 		CSceneDebug* m_noZDebug;
 
@@ -111,42 +103,42 @@ namespace Skylicht
 
 		inline void clearLines()
 		{
-			m_nLine = 0;
+			m_lines.set_used(0);
 		}
 
 		inline void clearLineStrip()
 		{
-			m_nLineStrip = 0;
+			m_linestrip.set_used(0);
 		}
 
 		inline void clearBoxs()
 		{
-			m_nBox = 0;
+			m_boxs.set_used(0);
 		}
 
 		inline void clearTri()
 		{
-			m_nTri = 0;
+			m_tri.set_used(0);
 		}
 
-		inline int getLinesCount()
+		inline u32 getLinesCount()
 		{
-			return m_nLine;
+			return m_lines.size();
 		}
 
-		inline int getLineStripCount()
+		inline u32 getLineStripCount()
 		{
-			return m_nLineStrip;
+			return m_linestrip.size();
 		}
 
-		inline int getBoxCount()
+		inline u32 getBoxCount()
 		{
-			return m_nBox;
+			return m_boxs.size();
 		}
 
-		inline int getTriCount()
+		inline u32 getTriCount()
 		{
-			return m_nTri;
+			return m_tri.size();
 		}
 
 		inline const SLineDebug& getLine(int i)
