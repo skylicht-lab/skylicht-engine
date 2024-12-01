@@ -160,10 +160,8 @@ void CDemoNavMesh::update()
 		{
 			Graph::STile* nei = tile->Neighbours[j];
 			if (nei->Visit == false)
-			{
 				debug->addLine(tile->Position, nei->Position, green);
-				debug->addPosition(tile->Position, m_tileHeight * 0.1f, yellow);
-			}
+			debug->addPosition(tile->Position, m_tileHeight * 0.1f, yellow);
 		}
 
 		tile->Visit = true;

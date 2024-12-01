@@ -55,10 +55,7 @@ if (BUILD_SKYLICHT_NETWORK)
 endif()
 
 if (BUILD_RECAST_GRAPH)
-	include_directories(
-		${SKYLICHT_ENGINE_PROJECT_DIR}/Recast/Include
-		${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Graph
-	)
+	include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Graph)
 endif()
 
 set(template_path ${SKYLICHT_ENGINE_PROJECT_DIR}/Main)

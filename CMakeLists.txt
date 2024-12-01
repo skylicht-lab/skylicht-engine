@@ -271,7 +271,6 @@ endif()
 
 # recast & graph
 if (BUILD_RECAST_GRAPH)
-subdirs (Projects/Recast)
 subdirs (Projects/Skylicht/Graph)
 endif()
 
