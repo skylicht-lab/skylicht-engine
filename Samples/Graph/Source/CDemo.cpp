@@ -12,7 +12,7 @@ CDemo::~CDemo()
 
 }
 
-void CDemo::onViewRayClick(const core::line3df& ray, bool holdShift)
+void CDemo::onViewRayClick(const core::line3df& ray, int button, bool holdShift)
 {
 
 }

@@ -95,6 +95,7 @@ void CDemoNavMesh::update()
 	}
 
 	SColor red(255, 100, 0, 0);
+	SColor grey(255, 20, 20, 20);
 	SColor white(255, 100, 100, 100);
 	SColor green(255, 0, 100, 0);
 	SColor yellow(255, 100, 100, 0);
@@ -150,10 +151,25 @@ void CDemoNavMesh::update()
 		debug->addLine(segments[i].Begin, segments[i].End, red);
 	}
 
-	// draw bbox
+	// draw query box
 	if (m_query->getRootNode())
 	{
-		debug->addBoudingBox(m_query->getRootNode()->Box, red);
+		std::queue<Graph::COctreeNode*> nodes;
+		nodes.push(m_query->getRootNode());
+
+		while (nodes.size() > 0)
+		{
+			Graph::COctreeNode* node = nodes.front();
+			nodes.pop();
+
+			debug->addBoudingBox(node->Box, grey);
+
+			for (int i = 0; i < 8; i++)
+			{
+				if (node->Childs[i])
+					nodes.push(node->Childs[i]);
+			}
+		}
 	}
 
 	// draw tilemap
@@ -216,9 +232,21 @@ void CDemoNavMesh::onGUI()
 	ImGui::Spacing();
 }
 
+void CDemoNavMesh::onViewRayClick(const core::line3df& ray, int button, bool holdShift)
+{
+	core::vector3df outIntersection;
+	core::triangle3df outTriangle;
+	float rayDistance = 10000.0f;
+
+	if (m_query->getCollisionPoint(ray, rayDistance, outIntersection, outTriangle) == true)
+	{
+		m_clickPosition = outIntersection;
+	}
+}
+
 void CDemoNavMesh::onLeftClickPosition(bool holdShift, const core::vector3df& pos)
 {
-	m_clickPosition = pos;
+
 }
 
 void CDemoNavMesh::buildNavMesh()

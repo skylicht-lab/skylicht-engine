@@ -32,7 +32,7 @@ public:
 
 	virtual void onGUI();
 
-	virtual void onViewRayClick(const core::line3df& ray, bool holdShift);
+	virtual void onViewRayClick(const core::line3df& ray, int button, bool holdShift);
 
 	virtual void onLeftClickPosition(const core::vector3df& pos, bool holdShift);
 };

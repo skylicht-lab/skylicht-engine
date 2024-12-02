@@ -22,5 +22,5 @@ public:
 
 	virtual void close() = 0;
 
-	virtual void onViewRayClick(const core::line3df& ray, bool holdShift);
+	virtual void onViewRayClick(const core::line3df& ray, int button, bool holdShift);
 };

@@ -115,7 +115,7 @@ void CDemoObstacleAvoidance::onGUI()
 	ImGui::Spacing();
 }
 
-void CDemoObstacleAvoidance::onViewRayClick(const core::line3df& ray, bool holdShift)
+void CDemoObstacleAvoidance::onViewRayClick(const core::line3df& ray, int button, bool holdShift)
 {
 	core::vector3df collide;
 

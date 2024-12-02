@@ -35,6 +35,9 @@ namespace Skylicht
 		{
 		public:
 			core::aabbox3df Box;
+			core::aabbox3df OctreeBox;
+
+			int Level;
 
 			COctreeNode* Parent;
 			COctreeNode* Childs[8];
@@ -52,6 +55,10 @@ namespace Skylicht
 		protected:
 			COctreeNode* m_root;
 
+			u32 m_minimalPolysPerNode;
+
+			core::array<core::triangle3df*> m_triangles;
+
 		public:
 			CGraphQuery();
 
@@ -59,17 +66,29 @@ namespace Skylicht
 
 			void release();
 
-			void buildIndexNavMesh(CMesh* navMesh, CObstacleAvoidance* obstacle, float minCellSize = 1.0f);
+			void buildIndexNavMesh(CMesh* navMesh, CObstacleAvoidance* obstacle);
 
 			inline COctreeNode* getRootNode()
 			{
 				return m_root;
 			}
 
+			virtual bool getCollisionPoint(
+				const core::line3d<f32>& ray,
+				f32& outBestDistanceSquared,
+				core::vector3df& outIntersection,
+				core::triangle3df& outTriangle);
+
 		protected:
 
 			void constructOctree(COctreeNode* node);
 
+			void getTrianglesFromOctree(
+				core::array<core::triangle3df*>& listTriangle,
+				COctreeNode* node,
+				const core::vector3df& midLine,
+				const core::vector3df& lineVect,
+				float halfLength);
 		};
 	}
 }

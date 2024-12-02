@@ -162,7 +162,8 @@ bool CViewDemo::OnEvent(const SEvent& event)
 		float mouseX = (float)event.MouseInput.X;
 		float mouseY = (float)event.MouseInput.Y;
 
-		if (event.MouseInput.Event == EMIE_LMOUSE_PRESSED_DOWN)
+		if (event.MouseInput.Event == EMIE_LMOUSE_PRESSED_DOWN ||
+			event.MouseInput.Event == EMIE_RMOUSE_PRESSED_DOWN)
 		{
 			CCamera* camera = CContext::getInstance()->getActiveCamera();
 
@@ -170,7 +171,7 @@ bool CViewDemo::OnEvent(const SEvent& event)
 			core::line3df viewRay = CProjective::getViewRay(camera, mouseX, mouseY, vp.getWidth(), vp.getHeight());
 
 			if (m_demo[m_demoId])
-				m_demo[m_demoId]->onViewRayClick(viewRay, m_holdShift);
+				m_demo[m_demoId]->onViewRayClick(viewRay, event.MouseInput.Event == EMIE_LMOUSE_PRESSED_DOWN ? 0 : 1, m_holdShift);
 
 			return true;
 		}
