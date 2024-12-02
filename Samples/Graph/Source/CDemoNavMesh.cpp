@@ -21,8 +21,9 @@ CDemoNavMesh::CDemoNavMesh(CZone* zone) :
 {
 	m_builder = new Graph::CRecastBuilder();
 	m_obstacle = new Graph::CObstacleAvoidance();
-	m_walkingMap = new Graph::CWalkingMap();
-	m_outputMesh = new CMesh();
+	m_walkingTileMap = new Graph::CWalkingTileMap();
+	m_query = new Graph::CGraphQuery();
+	m_outputNavMesh = new CMesh();
 }
 
 CDemoNavMesh::~CDemoNavMesh()
@@ -31,8 +32,9 @@ CDemoNavMesh::~CDemoNavMesh()
 		delete m_recastMesh;
 	delete m_builder;
 	delete m_obstacle;
-	delete m_outputMesh;
-	delete m_walkingMap;
+	delete m_outputNavMesh;
+	delete m_walkingTileMap;
+	delete m_query;
 }
 
 void CDemoNavMesh::init()
@@ -62,8 +64,8 @@ void CDemoNavMesh::init()
 			m_recastMesh->addMeshPrefab(mapPrefab, core::IdentityMatrix);
 	}
 
-	m_walkingMap->release();
-	m_outputMesh->removeAllMeshBuffer();
+	m_walkingTileMap->release();
+	m_outputNavMesh->removeAllMeshBuffer();
 	m_obstacle->clear();
 
 	m_agent->setVisible(true);
@@ -119,9 +121,9 @@ void CDemoNavMesh::update()
 	*/
 
 	// draw recast polymesh
-	for (u32 i = 0, n = m_outputMesh->getMeshBufferCount(); i < n; i++)
+	for (u32 i = 0, n = m_outputNavMesh->getMeshBufferCount(); i < n; i++)
 	{
-		IMeshBuffer* mb = m_outputMesh->getMeshBuffer(i);
+		IMeshBuffer* mb = m_outputNavMesh->getMeshBuffer(i);
 		IVertexBuffer* vb = mb->getVertexBuffer();
 		IIndexBuffer* ib = mb->getIndexBuffer();
 
@@ -148,10 +150,15 @@ void CDemoNavMesh::update()
 		debug->addLine(segments[i].Begin, segments[i].End, red);
 	}
 
-	m_walkingMap->resetVisit();
+	// draw bbox
+	if (m_query->getRootNode())
+	{
+		debug->addBoudingBox(m_query->getRootNode()->Box, red);
+	}
 
 	// draw tilemap
-	core::array<Graph::STile*>& tiles = m_walkingMap->getTiles();
+	m_walkingTileMap->resetVisit();
+	core::array<Graph::STile*>& tiles = m_walkingTileMap->getTiles();
 	for (u32 i = 0, n = tiles.size(); i < n; i++)
 	{
 		Graph::STile* tile = tiles[i];
@@ -166,8 +173,7 @@ void CDemoNavMesh::update()
 
 		tile->Visit = true;
 	}
-
-	m_walkingMap->resetVisit();
+	m_walkingTileMap->resetVisit();
 }
 
 void CDemoNavMesh::onGUI()
@@ -201,7 +207,7 @@ void CDemoNavMesh::onGUI()
 		ImGui::SliderFloat("TileHeight", &m_tileHeight, 0.5f, 4.0f);
 	}
 
-	if (ImGui::Button("Build WalkingMap"))
+	if (ImGui::Button("Build Walking TileMap"))
 	{
 		buildWalkingMap();
 	}
@@ -217,10 +223,11 @@ void CDemoNavMesh::onLeftClickPosition(bool holdShift, const core::vector3df& po
 
 void CDemoNavMesh::buildNavMesh()
 {
-	m_builder->build(m_recastMesh, m_outputMesh, m_obstacle);
+	m_builder->build(m_recastMesh, m_outputNavMesh, m_obstacle);
+	m_query->buildIndexNavMesh(m_outputNavMesh, m_obstacle);
 }
 
 void CDemoNavMesh::buildWalkingMap()
 {
-	m_walkingMap->generate(m_tileWidth, m_tileHeight, m_outputMesh, m_obstacle);
+	m_walkingTileMap->generate(m_tileWidth, m_tileHeight, m_outputNavMesh, m_obstacle);
 }

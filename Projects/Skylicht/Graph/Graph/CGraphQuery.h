@@ -2,10 +2,10 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2024 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -22,25 +22,54 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "COctreeNode.h"
+#pragma once
+
+#include "RenderMesh/CRenderMeshData.h"
+#include "ObstacleAvoidance/CObstacleAvoidance.h"
 
 namespace Skylicht
 {
-	COctreeNode::COctreeNode() :
-		Parent(NULL),
-		Level(0)
+	namespace Graph
 	{
-		for (u32 i = 0; i != 8; ++i)
-			Childs[i] = 0;
-	}
-
-	COctreeNode::~COctreeNode()
-	{
-		for (u32 i = 0; i != 8; ++i)
+		class COctreeNode
 		{
-			if (Childs[i])
-				delete Childs[i];
-		}
+		public:
+			core::aabbox3df Box;
+
+			COctreeNode* Parent;
+			COctreeNode* Childs[8];
+
+			core::array<core::triangle3df> Triangles;
+			CObstacleAvoidance Obstacle;
+
+			COctreeNode();
+
+			virtual ~COctreeNode();
+		};
+
+		class CGraphQuery
+		{
+		protected:
+			COctreeNode* m_root;
+
+		public:
+			CGraphQuery();
+
+			virtual ~CGraphQuery();
+
+			void release();
+
+			void buildIndexNavMesh(CMesh* navMesh, CObstacleAvoidance* obstacle, float minCellSize = 1.0f);
+
+			inline COctreeNode* getRootNode()
+			{
+				return m_root;
+			}
+
+		protected:
+
+			void constructOctree(COctreeNode* node);
+
+		};
 	}
 }

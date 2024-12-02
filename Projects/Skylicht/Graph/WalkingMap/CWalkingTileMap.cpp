@@ -23,25 +23,25 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CWalkingMap.h"
+#include "CWalkingTileMap.h"
 
 namespace Skylicht
 {
 	namespace Graph
 	{
-		CWalkingMap::CWalkingMap() :
+		CWalkingTileMap::CWalkingTileMap() :
 			m_tileWidth(0.0f),
 			m_tileHeight(0.0f)
 		{
 
 		}
 
-		CWalkingMap::~CWalkingMap()
+		CWalkingTileMap::~CWalkingTileMap()
 		{
 			release();
 		}
 
-		void CWalkingMap::generate(float tileWidth, float tileHeight, const core::aabbox3df& bbox)
+		void CWalkingTileMap::generate(float tileWidth, float tileHeight, const core::aabbox3df& bbox)
 		{
 			release();
 
@@ -74,12 +74,12 @@ namespace Skylicht
 			}
 		}
 
-		void CWalkingMap::generate(float tileWidth, float tileHeight, CMesh* recastMesh, CObstacleAvoidance* obstacle)
+		void CWalkingTileMap::generate(float tileWidth, float tileHeight, CMesh* navMesh, CObstacleAvoidance* obstacle)
 		{
-			generate(tileWidth, tileHeight, recastMesh->getBoundingBox());
+			generate(tileWidth, tileHeight, navMesh->getBoundingBox());
 
 			// check used tile
-			IMeshBuffer* mb = recastMesh->getMeshBuffer(0);
+			IMeshBuffer* mb = navMesh->getMeshBuffer(0);
 			IVertexBuffer* vb = mb->getVertexBuffer();
 			IIndexBuffer* ib = mb->getIndexBuffer();
 
@@ -171,8 +171,6 @@ namespace Skylicht
 
 				STileXYZ tile(t->X, t->Y, t->Z);
 				m_hashTiles[tile] = t;
-
-				obstacle->copySegments(&t->Obstacle, t->BBox);
 			}
 
 			// link Neighbour
@@ -195,8 +193,7 @@ namespace Skylicht
 								t->Z + z);
 							if (nei)
 							{
-								if (!t->Obstacle.isLineHit(t->Position, nei->Position, tileHeight) &&
-									!nei->Obstacle.isLineHit(t->Position, nei->Position, tileHeight))
+								if (!obstacle->isLineHit(t->Position, nei->Position, tileHeight))
 								{
 									t->Neighbours.push_back(nei);
 								}
@@ -207,7 +204,7 @@ namespace Skylicht
 			}
 		}
 
-		STile* CWalkingMap::getTile(int x, int y, int z)
+		STile* CWalkingTileMap::getTile(int x, int y, int z)
 		{
 			STileXYZ tile(x, y, z);
 			auto it = m_hashTiles.find(tile);
@@ -216,7 +213,7 @@ namespace Skylicht
 			return it->second;
 		}
 
-		bool CWalkingMap::hitTris(const core::line3df& line, core::array<core::triangle3df>& tris, core::vector3df& outPoint)
+		bool CWalkingTileMap::hitTris(const core::line3df& line, core::array<core::triangle3df>& tris, core::vector3df& outPoint)
 		{
 			bool hit = false;
 			for (int i = 0, n = tris.size(); i < n; i++)
@@ -231,7 +228,7 @@ namespace Skylicht
 			return hit;
 		}
 
-		void CWalkingMap::release()
+		void CWalkingTileMap::release()
 		{
 			for (u32 i = 0, n = m_tiles.size(); i < n; i++)
 			{
@@ -241,7 +238,7 @@ namespace Skylicht
 			m_hashTiles.clear();
 		}
 
-		void CWalkingMap::resetVisit()
+		void CWalkingTileMap::resetVisit()
 		{
 			for (u32 i = 0, n = m_tiles.size(); i < n; i++)
 			{

@@ -4,7 +4,8 @@
 #include "ObstacleAvoidance/CObstacleAvoidance.h"
 #include "RecastMesh/CRecastMesh.h"
 #include "RecastMesh/CRecastBuilder.h"
-#include "WalkingMap/CWalkingMap.h"
+#include "WalkingMap/CWalkingTileMap.h"
+#include "Graph/CGraphQuery.h"
 
 class CDemoNavMesh : public CDemo
 {
@@ -18,12 +19,14 @@ protected:
 	Graph::CRecastMesh* m_recastMesh;
 	Graph::CRecastBuilder* m_builder;
 	Graph::CObstacleAvoidance* m_obstacle;
-	Graph::CWalkingMap* m_walkingMap;
+	Graph::CWalkingTileMap* m_walkingTileMap;
+
+	Graph::CGraphQuery* m_query;
 
 	float m_tileWidth;
 	float m_tileHeight;
 
-	CMesh* m_outputMesh;
+	CMesh* m_outputNavMesh;
 
 public:
 	CDemoNavMesh(CZone* zone);
