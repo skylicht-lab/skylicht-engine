@@ -52,6 +52,8 @@ namespace Skylicht
 
 			void addSegment(const core::vector3df& begin, const core::vector3df& end);
 
+			void addSegments(const core::array<SObstacleSegment>& segments);
+
 			void clear();
 
 			void copySegments(CObstacleAvoidance* toTarget, const core::aabbox3df& box);
@@ -61,6 +63,11 @@ namespace Skylicht
 				return m_segments;
 			}
 
+			inline bool empty()
+			{
+				return m_segments.empty();
+			}
+
 			inline bool isLineHit(const core::line3df& line, float h = 1.0f)
 			{
 				return isLineHit(line.start, line.end, h);
@@ -68,7 +75,7 @@ namespace Skylicht
 
 			bool isLineHit(const core::vector3df& a, const core::vector3df& b, float h = 1.0f);
 
-			core::vector3df collide(const core::vector3df& position, const core::vector3df& vel, float radius, int recursionDepth = 0);
+			core::vector3df collide(const core::vector3df& position, const core::vector3df& vel, float stepHeight = 0.3f, int recursionDepth = 0);
 		};
 	}
 }

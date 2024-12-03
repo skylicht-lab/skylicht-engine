@@ -101,6 +101,8 @@ namespace Skylicht
 			float m_tileWidth;
 			float m_tileHeight;
 
+			core::aabbox3df m_bbox;
+
 		public:
 			CWalkingTileMap();
 
@@ -113,6 +115,8 @@ namespace Skylicht
 			void resetVisit();
 
 			STile* getTile(int x, int y, int z);
+
+			STile* getTileByPosition(const core::vector3df& pos);
 
 			inline float getTileWidth()
 			{

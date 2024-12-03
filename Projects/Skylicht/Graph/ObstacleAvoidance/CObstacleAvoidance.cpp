@@ -49,6 +49,17 @@ namespace Skylicht
 			segment.End = end;
 		}
 
+		void CObstacleAvoidance::addSegments(const core::array<SObstacleSegment>& segments)
+		{
+			for (u32 i = 0, n = segments.size(); i < n; i++)
+			{
+				m_segments.push_back(SObstacleSegment());
+				SObstacleSegment& segment = m_segments.getLast();
+				segment.Begin = segments[i].Begin;
+				segment.End = segments[i].End;
+			}
+		}
+
 		void CObstacleAvoidance::clear()
 		{
 			m_segments.set_used(0);
@@ -126,7 +137,7 @@ namespace Skylicht
 			}
 		}
 
-		core::vector3df CObstacleAvoidance::collide(const core::vector3df& position, const core::vector3df& vel, float radius, int recursionDepth)
+		core::vector3df CObstacleAvoidance::collide(const core::vector3df& position, const core::vector3df& vel, float stepHeight, int recursionDepth)
 		{
 			if (recursionDepth >= 2)
 			{
@@ -147,14 +158,22 @@ namespace Skylicht
 
 			for (u32 i = 0, n = m_segments.size(); i < n; i++)
 			{
+				SObstacleSegment& s = segs[i];
+
+				float bY = fabsf(s.Begin.Y - position.Y);
+				float eY = fabsf(s.End.Y - position.Y);
+
+				if (bY > stepHeight && eY > stepHeight)
+					continue;
+
 				float t = 0.0f;
-				int intersection = isectRaySeg(position, vel, segs[i].Begin, segs[i].End, t);
+				int intersection = isectRaySeg(position, vel, s.Begin, s.End, t);
 				if (intersection)
 				{
 					if (t < tmin)
 					{
 						intersectionPoint = position + vel * t;
-						intersectionSeg = &segs[i];
+						intersectionSeg = &s;
 						tmin = t;
 					}
 				}
@@ -177,7 +196,7 @@ namespace Skylicht
 				newDestinationPoint = destinationPoint - (intersectionNormal * vel.getLength() * (1.0f - tmin));
 
 				core::vector3df newVel = newDestinationPoint - intersectionPoint;
-				newDestinationPoint = collide(intersectionPoint - r * 0.01f, newVel, radius, recursionDepth + 1);
+				newDestinationPoint = collide(intersectionPoint - r * 0.01f, newVel, stepHeight, recursionDepth + 1);
 			}
 			else
 			{

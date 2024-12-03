@@ -82,6 +82,8 @@ namespace Skylicht
 				m_root->Triangles.push_back(tri);
 			}
 
+			m_root->Obstacle.addSegments(obstacle->getSegments());
+
 			m_root->OctreeBox = m_root->Box;
 
 			constructOctree(m_root);
@@ -95,6 +97,7 @@ namespace Skylicht
 
 			core::aabbox3d<f32> childOctreeBox;
 			core::array<core::triangle3df> keepTriangles;
+			core::array<Graph::SObstacleSegment> keepSegments;
 
 			// calculate children
 			if (!node->Box.isEmpty() && node->Triangles.size() > m_minimalPolysPerNode)
@@ -150,15 +153,38 @@ namespace Skylicht
 					// update current triangles
 					node->Triangles.clear();
 					node->Triangles.set_used(keepTriangles.size());
-
-					for (int i = 0, n = (int)keepTriangles.size(); i < n; i++)
+					for (u32 i = 0, n = keepTriangles.size(); i < n; i++)
 					{
 						node->Triangles[i] = keepTriangles[i];
 					}
 
 					keepTriangles.clear();
 
-					if (childNode->Triangles.empty())
+					// step 3: collect obstacle segment
+					core::array<SObstacleSegment>& segs = node->Obstacle.getSegments();
+					for (u32 i = 0, n = segs.size(); i < n; i++)
+					{
+						SObstacleSegment& s = segs[i];
+
+						if (childNode->OctreeBox.isPointInside(s.Begin) && childNode->OctreeBox.isPointInside(s.End))
+						{
+							childNode->Obstacle.addSegment(s.Begin, s.End);
+
+							childNode->Box.addInternalPoint(s.Begin);
+							childNode->Box.addInternalPoint(s.End);
+						}
+						else
+						{
+							keepSegments.push_back(s);
+						}
+					}
+
+					// update current obstacle
+					node->Obstacle.clear();
+					node->Obstacle.addSegments(keepSegments);
+					keepSegments.clear();
+
+					if (childNode->Triangles.empty() && childNode->Obstacle.empty())
 					{
 						// if no triangle
 						delete node->Childs[ch];
@@ -187,14 +213,14 @@ namespace Skylicht
 
 			float halfLength = ray.getLength() * 0.5f;
 
-			m_triangles.set_used(0);
+			core::array<core::triangle3df*> triangles;
 
 			// step 1: get list triangle collide with ray
-			getTrianglesFromOctree(m_triangles, m_root, mid, vec, halfLength);
+			getTrianglesFromOctree(triangles, m_root, mid, vec, halfLength);
 
 			// step 2: find nearest triangle
-			s32 cnt = (s32)m_triangles.size();
-			core::triangle3df** listTris = m_triangles.pointer();
+			s32 cnt = (s32)triangles.size();
+			core::triangle3df** listTris = triangles.pointer();
 
 			core::vector3df intersection;
 			f32 nearest = outBestDistanceSquared;
@@ -247,6 +273,16 @@ namespace Skylicht
 			return found;
 		}
 
+		void CGraphQuery::getTriangles(const core::aabbox3df& box, core::array<core::triangle3df*>& result)
+		{
+			getTrianglesFromOctree(result, m_root, box);
+		}
+
+		void CGraphQuery::getObstacles(const core::aabbox3df& box, CObstacleAvoidance& obstacle)
+		{
+			getObstacleFromOctree(obstacle, m_root, box);
+		}
+
 		void CGraphQuery::getTrianglesFromOctree(
 			core::array<core::triangle3df*>& listTriangle,
 			COctreeNode* node,
@@ -275,6 +311,68 @@ namespace Skylicht
 			{
 				if (node->Childs[i] && node->Childs[i]->Box.intersectsWithLine(midLine, lineVect, halfLength) == true)
 					getTrianglesFromOctree(listTriangle, node->Childs[i], midLine, lineVect, halfLength);
+			}
+		}
+
+		void CGraphQuery::getTrianglesFromOctree(
+			core::array<core::triangle3df*>& listTriangle,
+			COctreeNode* node,
+			const core::aabbox3df& box)
+		{
+			u32 cnt = node->Triangles.size();
+			u32 i = 0;
+
+			core::triangle3df* listTriID = node->Triangles.pointer();
+
+			// optimize function core::array::insert
+			int n = listTriangle.size();
+			listTriangle.set_used(n + cnt);
+			int used = 0;
+
+			core::triangle3df** p = listTriangle.pointer();
+
+			// list triangles
+			for (i = 0; i < cnt; ++i)
+			{
+				core::triangle3df* triangle = &listTriID[i];
+
+				// if triangle collide the bbox
+				if (!triangle->isTotalOutsideBox(box))
+				{
+					p[n + used] = triangle;
+					used++;
+				}
+			}
+
+			// update the used
+			listTriangle.set_used(n + used);
+
+			for (i = 0; i < 8; ++i)
+			{
+				if (node->Childs[i] && node->Childs[i]->Box.intersectsWithBox(box))
+					getTrianglesFromOctree(listTriangle, node->Childs[i], box);
+			}
+		}
+
+		void CGraphQuery::getObstacleFromOctree(
+			CObstacleAvoidance& obstacle,
+			COctreeNode* node,
+			const core::aabbox3df& box)
+		{
+			core::array<SObstacleSegment>& segs = node->Obstacle.getSegments();
+			for (u32 i = 0, n = segs.size(); i < n; i++)
+			{
+				SObstacleSegment& s = segs[i];
+				if (box.isPointInside(s.Begin) || box.isPointInside(s.End))
+				{
+					obstacle.addSegment(s.Begin, s.End);
+				}
+			}
+
+			for (u32 i = 0; i < 8; ++i)
+			{
+				if (node->Childs[i] && node->Childs[i]->Box.intersectsWithBox(box))
+					getObstacleFromOctree(obstacle, node->Childs[i], box);
 			}
 		}
 	}

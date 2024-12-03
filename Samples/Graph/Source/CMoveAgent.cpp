@@ -33,8 +33,15 @@ void CMoveAgent::updateComponent()
 	if (m_obstacle)
 	{
 		core::vector3df velocity = newPosition - position;
-		newPosition = m_obstacle->collide(position, velocity, m_agentRadius);
+		newPosition = m_obstacle->collide(position, velocity);
 	}
 
 	transform->setPosition(newPosition + heightOffset);
+}
+
+void CMoveAgent::setPosition(const core::vector3df& position)
+{
+	core::vector3df heightOffset(0.0f, 1.0f, 0.0f);
+	CTransformEuler* transform = m_gameObject->getTransformEuler();
+	transform->setPosition(position + heightOffset);
 }

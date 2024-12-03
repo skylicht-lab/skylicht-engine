@@ -17,7 +17,13 @@ CDemoNavMesh::CDemoNavMesh(CZone* zone) :
 	m_map(NULL),
 	m_recastMesh(NULL),
 	m_tileWidth(2.0f),
-	m_tileHeight(2.0f)
+	m_tileHeight(2.0f),
+	m_pickTile(NULL),
+	m_drawDebugRecastMesh(false),
+	m_drawDebugNavMesh(true),
+	m_drawDebugObstacle(true),
+	m_drawDebugQueryBox(false),
+	m_drawDebugTileMap(true)
 {
 	m_builder = new Graph::CRecastBuilder();
 	m_obstacle = new Graph::CObstacleAvoidance();
@@ -91,110 +97,140 @@ void CDemoNavMesh::update()
 
 	if (m_clickPosition.getLength() > 0.0f)
 	{
-		debug->addPosition(m_clickPosition, 0.25f, SColor(255, 0, 200, 0));
+		debug->getNoZDebug()->addPosition(m_clickPosition, 0.25f, SColor(255, 0, 200, 0));
 	}
 
 	SColor red(255, 100, 0, 0);
 	SColor grey(255, 20, 20, 20);
 	SColor white(255, 100, 100, 100);
-	SColor green(255, 0, 100, 0);
+	SColor green(255, 0, 10, 0);
+	SColor greenL(255, 0, 100, 0);
 	SColor yellow(255, 100, 100, 0);
 
 	// draw debug recastmesh
-	/*
-	int* tris = m_recastMesh->getTris();
-	float* verts = m_recastMesh->getVerts();
-
-	for (u32 i = 0, n = m_recastMesh->getTriCount(); i < n; i++)
+	if (m_drawDebugRecastMesh)
 	{
-		int a = tris[i * 3];
-		int b = tris[i * 3 + 1];
-		int c = tris[i * 3 + 2];
+		int* tris = m_recastMesh->getTris();
+		float* verts = m_recastMesh->getVerts();
 
-		core::vector3df va(verts[a * 3], verts[a * 3 + 1], verts[a * 3 + 2]);
-		core::vector3df vb(verts[b * 3], verts[b * 3 + 1], verts[b * 3 + 2]);
-		core::vector3df vc(verts[c * 3], verts[c * 3 + 1], verts[c * 3 + 2]);
-
-		debug->addLine(va, vb, white);
-		debug->addLine(vb, vc, white);
-		debug->addLine(vc, va, white);
-	}
-	*/
-
-	// draw recast polymesh
-	for (u32 i = 0, n = m_outputNavMesh->getMeshBufferCount(); i < n; i++)
-	{
-		IMeshBuffer* mb = m_outputNavMesh->getMeshBuffer(i);
-		IVertexBuffer* vb = mb->getVertexBuffer();
-		IIndexBuffer* ib = mb->getIndexBuffer();
-
-		for (u32 i = 0, n = ib->getIndexCount(); i < n; i += 3)
+		for (u32 i = 0, n = m_recastMesh->getTriCount(); i < n; i++)
 		{
-			u32 a = ib->getIndex(i);
-			u32 b = ib->getIndex(i + 1);
-			u32 c = ib->getIndex(i + 2);
+			int a = tris[i * 3];
+			int b = tris[i * 3 + 1];
+			int c = tris[i * 3 + 2];
 
-			S3DVertex* p1 = (S3DVertex*)vb->getVertex(a);
-			S3DVertex* p2 = (S3DVertex*)vb->getVertex(b);
-			S3DVertex* p3 = (S3DVertex*)vb->getVertex(c);
+			core::vector3df va(verts[a * 3], verts[a * 3 + 1], verts[a * 3 + 2]);
+			core::vector3df vb(verts[b * 3], verts[b * 3 + 1], verts[b * 3 + 2]);
+			core::vector3df vc(verts[c * 3], verts[c * 3 + 1], verts[c * 3 + 2]);
 
-			debug->addLine(p1->Pos, p2->Pos, white);
-			debug->addLine(p2->Pos, p3->Pos, white);
-			debug->addLine(p3->Pos, p1->Pos, white);
+			debug->addLine(va, vb, white);
+			debug->addLine(vb, vc, white);
+			debug->addLine(vc, va, white);
+		}
+	}
+
+	// draw nav polymesh
+	if (m_drawDebugNavMesh)
+	{
+		for (u32 i = 0, n = m_outputNavMesh->getMeshBufferCount(); i < n; i++)
+		{
+			IMeshBuffer* mb = m_outputNavMesh->getMeshBuffer(i);
+			IVertexBuffer* vb = mb->getVertexBuffer();
+			IIndexBuffer* ib = mb->getIndexBuffer();
+
+			for (u32 i = 0, n = ib->getIndexCount(); i < n; i += 3)
+			{
+				u32 a = ib->getIndex(i);
+				u32 b = ib->getIndex(i + 1);
+				u32 c = ib->getIndex(i + 2);
+
+				S3DVertex* p1 = (S3DVertex*)vb->getVertex(a);
+				S3DVertex* p2 = (S3DVertex*)vb->getVertex(b);
+				S3DVertex* p3 = (S3DVertex*)vb->getVertex(c);
+
+				debug->addLine(p1->Pos, p2->Pos, white);
+				debug->addLine(p2->Pos, p3->Pos, white);
+				debug->addLine(p3->Pos, p1->Pos, white);
+			}
 		}
 	}
 
 	// draw bound obstacle
-	core::array<Graph::SObstacleSegment>& segments = m_obstacle->getSegments();
-	for (u32 i = 0, n = segments.size(); i < n; i++)
+	if (m_drawDebugObstacle)
 	{
-		debug->addLine(segments[i].Begin, segments[i].End, red);
+		core::array<Graph::SObstacleSegment>& segments = m_obstacle->getSegments();
+		for (u32 i = 0, n = segments.size(); i < n; i++)
+		{
+			debug->addLine(segments[i].Begin, segments[i].End, red);
+		}
 	}
 
 	// draw query box
-	if (m_query->getRootNode())
+	if (m_drawDebugQueryBox)
 	{
-		std::queue<Graph::COctreeNode*> nodes;
-		nodes.push(m_query->getRootNode());
-
-		while (nodes.size() > 0)
+		if (m_query->getRootNode())
 		{
-			Graph::COctreeNode* node = nodes.front();
-			nodes.pop();
+			std::queue<Graph::COctreeNode*> nodes;
+			nodes.push(m_query->getRootNode());
 
-			debug->addBoudingBox(node->Box, grey);
-
-			for (int i = 0; i < 8; i++)
+			while (nodes.size() > 0)
 			{
-				if (node->Childs[i])
-					nodes.push(node->Childs[i]);
+				Graph::COctreeNode* node = nodes.front();
+				nodes.pop();
+
+				debug->addBoudingBox(node->Box, grey);
+
+				for (int i = 0; i < 8; i++)
+				{
+					if (node->Childs[i])
+						nodes.push(node->Childs[i]);
+				}
 			}
 		}
 	}
 
 	// draw tilemap
-	m_walkingTileMap->resetVisit();
-	core::array<Graph::STile*>& tiles = m_walkingTileMap->getTiles();
-	for (u32 i = 0, n = tiles.size(); i < n; i++)
+	if (m_drawDebugTileMap)
 	{
-		Graph::STile* tile = tiles[i];
-
-		for (u32 j = 0, n = tile->Neighbours.size(); j < n; j++)
+		core::vector3df halfHeight(0.0f, 0.2f, 0.0f);
+		m_walkingTileMap->resetVisit();
+		core::array<Graph::STile*>& tiles = m_walkingTileMap->getTiles();
+		for (u32 i = 0, n = tiles.size(); i < n; i++)
 		{
-			Graph::STile* nei = tile->Neighbours[j];
-			if (nei->Visit == false)
-				debug->addLine(tile->Position, nei->Position, green);
-			debug->addPosition(tile->Position, m_tileHeight * 0.1f, yellow);
-		}
+			Graph::STile* tile = tiles[i];
+			debug->addLine(tile->Position, tile->Position + halfHeight, yellow);
 
-		tile->Visit = true;
+			for (u32 j = 0, n = tile->Neighbours.size(); j < n; j++)
+			{
+				Graph::STile* nei = tile->Neighbours[j];
+				if (nei->Visit == false)
+					debug->addLine(tile->Position, nei->Position, green);
+			}
+
+			tile->Visit = true;
+		}
+		m_walkingTileMap->resetVisit();
 	}
-	m_walkingTileMap->resetVisit();
+
+	if (m_pickTile)
+	{
+		debug->addBoudingBox(m_pickTile->BBox, greenL);
+		debug->addLine(m_clickPosition, m_pickTile->Position, red);
+	}
 }
 
 void CDemoNavMesh::onGUI()
 {
-	ImGui::Text("Step 1");
+	if (ImGui::CollapsingHeader("Draw Debug"))
+	{
+		ImGui::Checkbox("Recast mesh", &m_drawDebugRecastMesh);
+		ImGui::Checkbox("Navmesh", &m_drawDebugNavMesh);
+		ImGui::Checkbox("Obstacle", &m_drawDebugObstacle);
+		ImGui::Checkbox("Query box", &m_drawDebugQueryBox);
+		ImGui::Checkbox("Walk tilemap", &m_drawDebugTileMap);
+	}
+
+	ImGui::Text("Build step 1");
 
 	if (ImGui::CollapsingHeader("Config NavMesh"))
 	{
@@ -215,7 +251,7 @@ void CDemoNavMesh::onGUI()
 
 	ImGui::Spacing();
 
-	ImGui::Text("Step 2");
+	ImGui::Text("Build step 2");
 
 	if (ImGui::CollapsingHeader("Config Tile"))
 	{
@@ -241,6 +277,14 @@ void CDemoNavMesh::onViewRayClick(const core::line3df& ray, int button, bool hol
 	if (m_query->getCollisionPoint(ray, rayDistance, outIntersection, outTriangle) == true)
 	{
 		m_clickPosition = outIntersection;
+		m_pickTile = m_walkingTileMap->getTileByPosition(m_clickPosition);
+
+		if (button == 0)
+		{
+			CMoveAgent* moveAgent = m_agent->getComponent<CMoveAgent>();
+			moveAgent->setPosition(m_clickPosition);
+			moveAgent->setTargetPosition(m_clickPosition);
+		}
 	}
 }
 

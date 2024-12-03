@@ -21,6 +21,8 @@ public:
 
 	virtual void updateComponent();
 
+	void setPosition(const core::vector3df& position);
+
 	inline void setTargetPosition(const core::vector3df& position)
 	{
 		m_targetPosition = position;

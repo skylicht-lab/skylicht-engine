@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "RenderMesh/CRenderMeshData.h"
 #include "ObstacleAvoidance/CObstacleAvoidance.h"
+#include "WalkingMap/CWalkingTileMap.h"
 
 namespace Skylicht
 {
@@ -57,8 +58,6 @@ namespace Skylicht
 
 			u32 m_minimalPolysPerNode;
 
-			core::array<core::triangle3df*> m_triangles;
-
 		public:
 			CGraphQuery();
 
@@ -79,6 +78,10 @@ namespace Skylicht
 				core::vector3df& outIntersection,
 				core::triangle3df& outTriangle);
 
+			virtual void getTriangles(const core::aabbox3df& box, core::array<core::triangle3df*>& result);
+
+			virtual void getObstacles(const core::aabbox3df& box, CObstacleAvoidance& obstacle);
+
 		protected:
 
 			void constructOctree(COctreeNode* node);
@@ -89,6 +92,16 @@ namespace Skylicht
 				const core::vector3df& midLine,
 				const core::vector3df& lineVect,
 				float halfLength);
+
+			void getTrianglesFromOctree(
+				core::array<core::triangle3df*>& listTriangle,
+				COctreeNode* node,
+				const core::aabbox3df& box);
+
+			void getObstacleFromOctree(
+				CObstacleAvoidance& obstacle,
+				COctreeNode* node,
+				const core::aabbox3df& box);
 		};
 	}
 }
