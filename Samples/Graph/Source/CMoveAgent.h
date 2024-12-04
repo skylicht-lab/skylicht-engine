@@ -2,11 +2,13 @@
 
 #include "Components/CComponentSystem.h"
 #include "ObstacleAvoidance/CObstacleAvoidance.h"
+#include "Graph/CGraphQuery.h"
 
 class CMoveAgent : public CComponentSystem
 {
 protected:
 	Graph::CObstacleAvoidance* m_obstacle;
+	Graph::CGraphQuery* m_graphQuery;
 
 	core::vector3df m_targetPosition;
 
@@ -23,6 +25,11 @@ public:
 
 	void setPosition(const core::vector3df& position);
 
+	inline void setGraphQuery(Graph::CGraphQuery* query)
+	{
+		m_graphQuery = query;
+	}
+
 	inline void setTargetPosition(const core::vector3df& position)
 	{
 		m_targetPosition = position;
@@ -30,7 +37,11 @@ public:
 
 	inline void setObstacle(Graph::CObstacleAvoidance* obstacle)
 	{
-		m_obstacle = obstacle;
+		if (m_obstacle)
+		{
+			m_obstacle->clear();
+			m_obstacle->addSegments(obstacle->getSegments());
+		}
 	}
 
 	inline void setAgentRadius(float radius)

@@ -34,16 +34,10 @@ namespace Skylicht
 			float Radius;
 		};
 
-		struct SObstacleSegment
-		{
-			core::vector3df Begin;
-			core::vector3df End;
-		};
-
 		class CObstacleAvoidance
 		{
 		protected:
-			core::array<SObstacleSegment> m_segments;
+			core::array<core::line3df> m_segments;
 
 		public:
 			CObstacleAvoidance();
@@ -52,13 +46,13 @@ namespace Skylicht
 
 			void addSegment(const core::vector3df& begin, const core::vector3df& end);
 
-			void addSegments(const core::array<SObstacleSegment>& segments);
+			void addSegments(const core::array<core::line3df>& segments);
 
 			void clear();
 
 			void copySegments(CObstacleAvoidance* toTarget, const core::aabbox3df& box);
 
-			inline core::array<SObstacleSegment>& getSegments()
+			inline core::array<core::line3df>& getSegments()
 			{
 				return m_segments;
 			}

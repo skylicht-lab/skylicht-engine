@@ -51,8 +51,6 @@ public:
 
 	virtual void onViewRayClick(const core::line3df& ray, int button, bool holdShift);
 
-	virtual void onLeftClickPosition(bool holdShift, const core::vector3df& pos);
-
 	void buildNavMesh();
 
 	void buildWalkingMap();

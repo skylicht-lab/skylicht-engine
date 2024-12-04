@@ -77,10 +77,10 @@ void CDemoObstacleAvoidance::update()
 
 	SColor red(255, 200, 0, 0);
 
-	core::array<Graph::SObstacleSegment>& segments = m_obstacle->getSegments();
+	core::array<core::line3df>& segments = m_obstacle->getSegments();
 	for (u32 i = 0, n = segments.size(); i < n; i++)
 	{
-		debug->addLine(segments[i].Begin, segments[i].End, red);
+		debug->addLine(segments[i], red);
 	}
 }
 

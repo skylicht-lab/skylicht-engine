@@ -97,7 +97,7 @@ namespace Skylicht
 
 			core::aabbox3d<f32> childOctreeBox;
 			core::array<core::triangle3df> keepTriangles;
-			core::array<Graph::SObstacleSegment> keepSegments;
+			core::array<core::line3df> keepSegments;
 
 			// calculate children
 			if (!node->Box.isEmpty() && node->Triangles.size() > m_minimalPolysPerNode)
@@ -161,17 +161,17 @@ namespace Skylicht
 					keepTriangles.clear();
 
 					// step 3: collect obstacle segment
-					core::array<SObstacleSegment>& segs = node->Obstacle.getSegments();
+					core::array<core::line3df>& segs = node->Obstacle.getSegments();
 					for (u32 i = 0, n = segs.size(); i < n; i++)
 					{
-						SObstacleSegment& s = segs[i];
+						core::line3df& s = segs[i];
 
-						if (childNode->OctreeBox.isPointInside(s.Begin) && childNode->OctreeBox.isPointInside(s.End))
+						if (childNode->OctreeBox.isPointInside(s.start) && childNode->OctreeBox.isPointInside(s.end))
 						{
-							childNode->Obstacle.addSegment(s.Begin, s.End);
+							childNode->Obstacle.addSegment(s.start, s.end);
 
-							childNode->Box.addInternalPoint(s.Begin);
-							childNode->Box.addInternalPoint(s.End);
+							childNode->Box.addInternalPoint(s.start);
+							childNode->Box.addInternalPoint(s.end);
 						}
 						else
 						{
@@ -275,11 +275,17 @@ namespace Skylicht
 
 		void CGraphQuery::getTriangles(const core::aabbox3df& box, core::array<core::triangle3df*>& result)
 		{
+			if (m_root == NULL)
+				return;
+
 			getTrianglesFromOctree(result, m_root, box);
 		}
 
 		void CGraphQuery::getObstacles(const core::aabbox3df& box, CObstacleAvoidance& obstacle)
 		{
+			if (m_root == NULL)
+				return;
+
 			getObstacleFromOctree(obstacle, m_root, box);
 		}
 
@@ -359,13 +365,13 @@ namespace Skylicht
 			COctreeNode* node,
 			const core::aabbox3df& box)
 		{
-			core::array<SObstacleSegment>& segs = node->Obstacle.getSegments();
+			core::array<core::line3df>& segs = node->Obstacle.getSegments();
 			for (u32 i = 0, n = segs.size(); i < n; i++)
 			{
-				SObstacleSegment& s = segs[i];
-				if (box.isPointInside(s.Begin) || box.isPointInside(s.End))
+				core::line3df& s = segs[i];
+				if (box.intersectsWithLine(s))
 				{
-					obstacle.addSegment(s.Begin, s.End);
+					obstacle.addSegment(s.start, s.end);
 				}
 			}
 

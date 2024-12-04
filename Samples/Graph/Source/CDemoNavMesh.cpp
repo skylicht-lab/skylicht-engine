@@ -80,6 +80,8 @@ void CDemoNavMesh::init()
 	if (m_map)
 		m_map->setVisible(true);
 
+	m_agent->getComponent<CMoveAgent>()->setGraphQuery(m_query);
+
 	m_clickPosition.set(0.0f, 0.0f, 0.0f);
 }
 
@@ -158,10 +160,10 @@ void CDemoNavMesh::update()
 	// draw bound obstacle
 	if (m_drawDebugObstacle)
 	{
-		core::array<Graph::SObstacleSegment>& segments = m_obstacle->getSegments();
+		core::array<core::line3df>& segments = m_obstacle->getSegments();
 		for (u32 i = 0, n = segments.size(); i < n; i++)
 		{
-			debug->addLine(segments[i].Begin, segments[i].End, red);
+			debug->addLine(segments[i], red);
 		}
 	}
 
@@ -221,6 +223,11 @@ void CDemoNavMesh::update()
 
 void CDemoNavMesh::onGUI()
 {
+	ImGui::Text("Demo NavMesh");
+	ImGui::Text("After build NavMesh");
+	ImGui::Text("- Left mouse to set Agent position");
+	ImGui::Text("- Right mouse to move Agent");
+
 	if (ImGui::CollapsingHeader("Draw Debug"))
 	{
 		ImGui::Checkbox("Recast mesh", &m_drawDebugRecastMesh);
@@ -279,18 +286,20 @@ void CDemoNavMesh::onViewRayClick(const core::line3df& ray, int button, bool hol
 		m_clickPosition = outIntersection;
 		m_pickTile = m_walkingTileMap->getTileByPosition(m_clickPosition);
 
+		CMoveAgent* moveAgent = m_agent->getComponent<CMoveAgent>();
+
 		if (button == 0)
 		{
-			CMoveAgent* moveAgent = m_agent->getComponent<CMoveAgent>();
+			// left click
 			moveAgent->setPosition(m_clickPosition);
 			moveAgent->setTargetPosition(m_clickPosition);
 		}
+		else
+		{
+			// right click
+			moveAgent->setTargetPosition(m_clickPosition);
+		}
 	}
-}
-
-void CDemoNavMesh::onLeftClickPosition(bool holdShift, const core::vector3df& pos)
-{
-
 }
 
 void CDemoNavMesh::buildNavMesh()

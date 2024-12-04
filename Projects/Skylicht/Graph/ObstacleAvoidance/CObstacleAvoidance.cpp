@@ -43,20 +43,20 @@ namespace Skylicht
 
 		void CObstacleAvoidance::addSegment(const core::vector3df& begin, const core::vector3df& end)
 		{
-			m_segments.push_back(SObstacleSegment());
-			SObstacleSegment& segment = m_segments.getLast();
-			segment.Begin = begin;
-			segment.End = end;
+			m_segments.push_back(core::line3df());
+			core::line3df& segment = m_segments.getLast();
+			segment.start = begin;
+			segment.end = end;
 		}
 
-		void CObstacleAvoidance::addSegments(const core::array<SObstacleSegment>& segments)
+		void CObstacleAvoidance::addSegments(const core::array<core::line3df>& segments)
 		{
 			for (u32 i = 0, n = segments.size(); i < n; i++)
 			{
-				m_segments.push_back(SObstacleSegment());
-				SObstacleSegment& segment = m_segments.getLast();
-				segment.Begin = segments[i].Begin;
-				segment.End = segments[i].End;
+				m_segments.push_back(core::line3df());
+				core::line3df& segment = m_segments.getLast();
+				segment.start = segments[i].start;
+				segment.end = segments[i].end;
 			}
 		}
 
@@ -101,17 +101,17 @@ namespace Skylicht
 
 		bool CObstacleAvoidance::isLineHit(const core::vector3df& a, const core::vector3df& b, float h)
 		{
-			SObstacleSegment* segs = m_segments.pointer();
+			core::line3df* segs = m_segments.pointer();
 			core::vector3df v = b - a;
 			float t = 0.0f;
 
 			for (u32 i = 0, n = m_segments.size(); i < n; i++)
 			{
-				SObstacleSegment& s = segs[i];
+				core::line3df& s = segs[i];
 
-				if (fabs(s.Begin.Y - a.Y) < h && fabs(s.End.Y - a.Y) < h)
+				if (fabs(s.start.Y - a.Y) < h && fabs(s.end.Y - a.Y) < h)
 				{
-					int intersection = isectRaySeg(a, v, s.Begin, s.End, t);
+					int intersection = isectRaySeg(a, v, s.start, s.end, t);
 					if (intersection)
 					{
 						return true;
@@ -123,16 +123,16 @@ namespace Skylicht
 
 		void CObstacleAvoidance::copySegments(CObstacleAvoidance* toTarget, const core::aabbox3df& box)
 		{
-			SObstacleSegment* segs = m_segments.pointer();
+			core::line3df* segs = m_segments.pointer();
 			core::line3df line;
 
 			for (u32 i = 0, n = m_segments.size(); i < n; i++)
 			{
-				SObstacleSegment& s = segs[i];
-				line.setLine(s.Begin, s.End);
+				core::line3df& s = segs[i];
+				line.setLine(s.start, s.end);
 				if (box.intersectsWithLine(line))
 				{
-					toTarget->addSegment(s.Begin, s.End);
+					toTarget->addSegment(s.start, s.end);
 				}
 			}
 		}
@@ -145,12 +145,12 @@ namespace Skylicht
 				return position;
 			}
 
-			SObstacleSegment* segs = m_segments.pointer();
+			core::line3df* segs = m_segments.pointer();
 
 			core::vector3df intersectionPoint;
 			core::vector3df intersectionNormal;
 
-			SObstacleSegment* intersectionSeg = NULL;
+			core::line3df* intersectionSeg = NULL;
 			float tmin = 2.0f;
 
 			core::vector3df r = vel;
@@ -158,16 +158,16 @@ namespace Skylicht
 
 			for (u32 i = 0, n = m_segments.size(); i < n; i++)
 			{
-				SObstacleSegment& s = segs[i];
+				core::line3df& s = segs[i];
 
-				float bY = fabsf(s.Begin.Y - position.Y);
-				float eY = fabsf(s.End.Y - position.Y);
+				float bY = fabsf(s.start.Y - position.Y);
+				float eY = fabsf(s.end.Y - position.Y);
 
 				if (bY > stepHeight && eY > stepHeight)
 					continue;
 
 				float t = 0.0f;
-				int intersection = isectRaySeg(position, vel, s.Begin, s.End, t);
+				int intersection = isectRaySeg(position, vel, s.start, s.end, t);
 				if (intersection)
 				{
 					if (t < tmin)
@@ -183,7 +183,7 @@ namespace Skylicht
 
 			if (intersectionSeg)
 			{
-				core::vector3df v = intersectionSeg->End - intersectionSeg->Begin;
+				core::vector3df v = intersectionSeg->end - intersectionSeg->start;
 
 				intersectionNormal = v.crossProduct(core::vector3df(0.0f, 1.0f, 0.0f));
 				intersectionNormal.normalize();
