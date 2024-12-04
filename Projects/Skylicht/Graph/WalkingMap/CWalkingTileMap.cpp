@@ -175,7 +175,6 @@ namespace Skylicht
 			for (u32 i = 0, n = m_tiles.size(); i < n; i++)
 			{
 				STile* t = m_tiles[i];
-				t->Id = i;
 
 				STileXYZ tile(t->X, t->Y, t->Z);
 				m_hashTiles[tile] = t;
@@ -226,6 +225,13 @@ namespace Skylicht
 					delete m_tiles[i];
 					m_tiles.erase(i);
 				}
+			}
+
+			// sort id
+			for (u32 i = 0, n = m_tiles.size(); i < n; i++)
+			{
+				STile* t = m_tiles[i];
+				t->Id = i;
 			}
 		}
 

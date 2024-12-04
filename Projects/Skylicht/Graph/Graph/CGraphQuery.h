@@ -51,6 +51,17 @@ namespace Skylicht
 			virtual ~COctreeNode();
 		};
 
+		struct SDistanceTile
+		{
+			float Distance;
+			STile* Tile;
+
+			bool operator<(const SDistanceTile& c) const
+			{
+				return Distance < c.Distance;
+			}
+		};
+
 		class CGraphQuery
 		{
 		protected:
@@ -72,15 +83,17 @@ namespace Skylicht
 				return m_root;
 			}
 
-			virtual bool getCollisionPoint(
+			bool getCollisionPoint(
 				const core::line3d<f32>& ray,
 				f32& outBestDistanceSquared,
 				core::vector3df& outIntersection,
 				core::triangle3df& outTriangle);
 
-			virtual void getTriangles(const core::aabbox3df& box, core::array<core::triangle3df*>& result);
+			void getTriangles(const core::aabbox3df& box, core::array<core::triangle3df*>& result);
 
-			virtual void getObstacles(const core::aabbox3df& box, CObstacleAvoidance& obstacle);
+			void getObstacles(const core::aabbox3df& box, CObstacleAvoidance& obstacle);
+
+			bool findPath(CWalkingTileMap* map, STile* from, STile* to, core::array<STile*>& result);
 
 		protected:
 

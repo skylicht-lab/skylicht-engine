@@ -133,6 +133,11 @@ namespace Skylicht
 				return m_tiles;
 			}
 
+			inline u32 getNumTile()
+			{
+				return m_tiles.size();
+			}
+
 		protected:
 
 			void generate(float tileWidth, float tileHeight, const core::aabbox3df& bbox);

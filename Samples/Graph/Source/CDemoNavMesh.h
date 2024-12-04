@@ -16,7 +16,10 @@ protected:
 	CGameObject* m_agent;
 
 	core::vector3df m_clickPosition;
-	Graph::STile* m_pickTile;
+
+	Graph::STile* m_fromTile;
+	Graph::STile* m_toTile;
+	core::array<Graph::STile*> m_path;
 
 	Graph::CRecastMesh* m_recastMesh;
 	Graph::CRecastBuilder* m_builder;

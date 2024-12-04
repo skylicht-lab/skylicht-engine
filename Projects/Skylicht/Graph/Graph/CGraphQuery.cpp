@@ -381,5 +381,82 @@ namespace Skylicht
 					getObstacleFromOctree(obstacle, node->Childs[i], box);
 			}
 		}
+
+		bool CGraphQuery::findPath(CWalkingTileMap* map, STile* from, STile* to, core::array<STile*>& result)
+		{
+			result.clear();
+			u32 numTile = map->getNumTile();
+
+			std::priority_queue<SDistanceTile> queue;
+
+			std::vector<STile*> prev(numTile, NULL);
+			std::vector<float> dist(numTile, -1.0);
+
+			float length = (to->Position - from->Position).getLengthSQ();
+			queue.push({ -length, from });
+
+			dist[from->Id] = 0.0f;
+
+			map->resetVisit();
+
+			while (!queue.empty())
+			{
+				const SDistanceTile& t = queue.top();
+
+				STile* tile = t.Tile;
+				float d = t.Distance;
+
+				queue.pop();
+
+				if (tile->Visit)
+					continue;
+
+				tile->Visit = true;
+				if (tile == to)
+					break;
+
+				for (u32 i = 0, n = tile->Neighbours.size(); i < n; i++)
+				{
+					STile* nei = tile->Neighbours[i];
+					float currentDist = dist[tile->Id] + (nei->Position - tile->Position).getLengthSQ();
+
+					if (dist[nei->Id] < 0 || dist[nei->Id] > currentDist)
+					{
+						// if not yet calc dist of nei
+						// or have another link shorter
+						dist[nei->Id] = currentDist;
+
+						float length = currentDist + (to->Position - nei->Position).getLengthSQ();
+						queue.push({ -length, nei });
+
+						prev[nei->Id] = tile;
+					}
+				}
+			}
+
+			map->resetVisit();
+
+			if (prev[to->Id] == NULL)
+				return false;
+
+			STile* u = to;
+			result.push_back(u);
+			while (u != from) {
+				result.push_back(prev[u->Id]);
+				u = prev[u->Id];
+			}
+			result.push_back(from);
+
+			// reverse result
+			u32 count = result.size();
+			for (u32 i = 0, n = count / 2; i < n; i++)
+			{
+				STile* temp = result[count - i - 1];
+				result[count - i - 1] = result[i];
+				result[i] = temp;
+			}
+
+			return true;
+		}
 	}
 }

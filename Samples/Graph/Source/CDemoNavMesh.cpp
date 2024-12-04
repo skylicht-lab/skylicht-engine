@@ -18,7 +18,8 @@ CDemoNavMesh::CDemoNavMesh(CZone* zone) :
 	m_recastMesh(NULL),
 	m_tileWidth(2.0f),
 	m_tileHeight(2.0f),
-	m_pickTile(NULL),
+	m_fromTile(NULL),
+	m_toTile(NULL),
 	m_drawDebugRecastMesh(false),
 	m_drawDebugNavMesh(true),
 	m_drawDebugObstacle(true),
@@ -69,6 +70,9 @@ void CDemoNavMesh::init()
 		if (mapPrefab)
 			m_recastMesh->addMeshPrefab(mapPrefab, core::IdentityMatrix);
 	}
+
+	m_fromTile = NULL;
+	m_toTile = NULL;
 
 	m_walkingTileMap->release();
 	m_outputNavMesh->removeAllMeshBuffer();
@@ -214,10 +218,17 @@ void CDemoNavMesh::update()
 		m_walkingTileMap->resetVisit();
 	}
 
-	if (m_pickTile)
+	if (m_fromTile)
+		debug->addBoudingBox(m_fromTile->BBox, greenL);
+	if (m_toTile)
+		debug->addBoudingBox(m_toTile->BBox, greenL);
+
+	for (int i = 0, n = (int)m_path.size() - 1; i < n; i++)
 	{
-		debug->addBoudingBox(m_pickTile->BBox, greenL);
-		debug->addLine(m_clickPosition, m_pickTile->Position, red);
+		Graph::STile* tile1 = m_path[i];
+		Graph::STile* tile2 = m_path[i + 1];
+
+		debug->addLine(tile1->Position, tile2->Position, red);
 	}
 }
 
@@ -284,20 +295,28 @@ void CDemoNavMesh::onViewRayClick(const core::line3df& ray, int button, bool hol
 	if (m_query->getCollisionPoint(ray, rayDistance, outIntersection, outTriangle) == true)
 	{
 		m_clickPosition = outIntersection;
-		m_pickTile = m_walkingTileMap->getTileByPosition(m_clickPosition);
 
 		CMoveAgent* moveAgent = m_agent->getComponent<CMoveAgent>();
 
 		if (button == 0)
 		{
+			m_fromTile = m_walkingTileMap->getTileByPosition(m_clickPosition);
+
 			// left click
 			moveAgent->setPosition(m_clickPosition);
 			moveAgent->setTargetPosition(m_clickPosition);
 		}
 		else
 		{
+			m_toTile = m_walkingTileMap->getTileByPosition(m_clickPosition);
+
 			// right click
 			moveAgent->setTargetPosition(m_clickPosition);
+		}
+
+		if (m_fromTile && m_toTile)
+		{
+			m_query->findPath(m_walkingTileMap, m_fromTile, m_toTile, m_path);
 		}
 	}
 }
