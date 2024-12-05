@@ -59,6 +59,9 @@ namespace Skylicht
 			m_bbox.MinEdge = bbox.MinEdge;
 			m_bbox.MaxEdge = bbox.MinEdge + core::vector3df(nX * tileWidth, nY * tileHeight, nZ * tileWidth);
 
+			m_bbox.MinEdge.Y = m_bbox.MinEdge.Y - 0.1f;
+			m_bbox.MaxEdge.Y = m_bbox.MaxEdge.Y + 0.1f;
+
 			for (int y = 0; y <= nY; y++)
 			{
 				for (int z = 0; z <= nZ; z++)
@@ -112,8 +115,6 @@ namespace Skylicht
 				}
 			}
 
-			core::vector3df edges[8];
-			core::line3df lines[4];
 			core::line3df centerLine;
 
 			for (int i = (int)m_tiles.size() - 1; i >= 0; i--)
@@ -126,48 +127,27 @@ namespace Skylicht
 				else
 				{
 					const core::aabbox3df& bbox = m_tiles[i]->BBox;
-					bbox.getEdges(edges);
-
-					lines[0].setLine(edges[1], edges[0]);
-					lines[1].setLine(edges[3], edges[2]);
-					lines[2].setLine(edges[5], edges[4]);
-					lines[3].setLine(edges[7], edges[6]);
-
-					core::vector3df center = bbox.getCenter();
-					core::vector3df centerTop = center;
-					core::vector3df centerBottom = center;
-					centerTop.Y = bbox.MaxEdge.Y;
-					centerBottom.Y = bbox.MinEdge.Y;
-					centerLine.setLine(centerTop, centerBottom);
-
-					bool hit = false;
-
-					core::vector3df p;
-					int nHit = 0;
-
-					for (int j = 0; j < 4; j++)
 					{
-						if (hitTris(lines[j], m_tiles[i]->Tris, m_tiles[i]->Position))
+						// try get position is center
+						core::vector3df center = bbox.getCenter();
+						core::vector3df centerTop = center;
+						core::vector3df centerBottom = center;
+						centerTop.Y = bbox.MaxEdge.Y;
+						centerBottom.Y = bbox.MinEdge.Y;
+						centerLine.setLine(centerTop, centerBottom);
+
+						bool hit = false;
+
+						if (hitTris(centerLine, m_tiles[i]->Tris, m_tiles[i]->Position))
 						{
-							p += m_tiles[i]->Position;
-							nHit++;
 							hit = true;
 						}
-					}
 
-					if (hitTris(centerLine, m_tiles[i]->Tris, m_tiles[i]->Position))
-					{
-						hit = true;
-					}
-					else if (hit)
-					{
-						m_tiles[i]->Position = p / (float)nHit;
-					}
-
-					if (!hit)
-					{
-						delete m_tiles[i];
-						m_tiles.erase(i);
+						if (!hit)
+						{
+							delete m_tiles[i];
+							m_tiles.erase(i);
+						}
 					}
 				}
 			}
@@ -181,6 +161,7 @@ namespace Skylicht
 			}
 
 			// link Neighbour
+			/*
 			for (u32 i = 0, n = m_tiles.size(); i < n; i++)
 			{
 				STile* t = m_tiles[i];
@@ -191,6 +172,9 @@ namespace Skylicht
 					{
 						for (int z = -1; z <= 1; z++)
 						{
+							//if (abs(x) == abs(z))
+							//	continue;
+
 							if (x == 0 && y == 0 && z == 0)
 								continue;
 
@@ -206,6 +190,26 @@ namespace Skylicht
 								}
 							}
 						}
+					}
+				}
+			}
+			*/
+
+			float t = 0.0f;
+			for (u32 i = 0, n = m_tiles.size() - 1; i < n; i++)
+			{
+				for (u32 j = i + 1, m = m_tiles.size(); j < m; j++)
+				{
+					STile* a = m_tiles[i];
+					STile* b = m_tiles[j];
+
+					if (abs(a->Y - b->Y) > 1)
+						continue;
+
+					if (!obstacle->isLineHit(a->Position, b->Position, tileHeight, t))
+					{
+						a->Neighbours.push_back(b);
+						b->Neighbours.push_back(a);
 					}
 				}
 			}

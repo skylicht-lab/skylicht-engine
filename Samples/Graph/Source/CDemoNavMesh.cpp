@@ -73,6 +73,7 @@ void CDemoNavMesh::init()
 
 	m_fromTile = NULL;
 	m_toTile = NULL;
+	m_path.clear();
 
 	m_walkingTileMap->release();
 	m_outputNavMesh->removeAllMeshBuffer();
@@ -84,7 +85,9 @@ void CDemoNavMesh::init()
 	if (m_map)
 		m_map->setVisible(true);
 
-	m_agent->getComponent<CMoveAgent>()->setGraphQuery(m_query);
+	CMoveAgent* moveAgent = m_agent->getComponent<CMoveAgent>();
+	moveAgent->setGraphQuery(m_query);
+	moveAgent->clearPath();
 
 	m_clickPosition.set(0.0f, 0.0f, 0.0f);
 }
@@ -107,6 +110,7 @@ void CDemoNavMesh::update()
 	}
 
 	SColor red(255, 100, 0, 0);
+	SColor blue(255, 0, 0, 100);
 	SColor grey(255, 20, 20, 20);
 	SColor white(255, 100, 100, 100);
 	SColor green(255, 0, 10, 0);
@@ -206,18 +210,23 @@ void CDemoNavMesh::update()
 			Graph::STile* tile = tiles[i];
 			debug->addLine(tile->Position, tile->Position + halfHeight, yellow);
 
-			for (u32 j = 0, n = tile->Neighbours.size(); j < n; j++)
+			/*
+			if (tile == m_fromTile)
 			{
-				Graph::STile* nei = tile->Neighbours[j];
-				if (nei->Visit == false)
+				for (u32 j = 0, n = tile->Neighbours.size(); j < n; j++)
+				{
+					Graph::STile* nei = tile->Neighbours[j];
 					debug->addLine(tile->Position, nei->Position, green);
+				}
 			}
+			*/
 
 			tile->Visit = true;
 		}
 		m_walkingTileMap->resetVisit();
 	}
 
+	// draw path
 	if (m_fromTile)
 		debug->addBoudingBox(m_fromTile->BBox, greenL);
 	if (m_toTile)
@@ -227,8 +236,7 @@ void CDemoNavMesh::update()
 	{
 		Graph::STile* tile1 = m_path[i];
 		Graph::STile* tile2 = m_path[i + 1];
-
-		debug->addLine(tile1->Position, tile2->Position, red);
+		debug->addLine(tile1->Position, tile2->Position, blue);
 	}
 }
 
@@ -273,8 +281,8 @@ void CDemoNavMesh::onGUI()
 
 	if (ImGui::CollapsingHeader("Config Tile"))
 	{
-		ImGui::SliderFloat("TileWidth", &m_tileWidth, 0.5f, 4.0f);
-		ImGui::SliderFloat("TileHeight", &m_tileHeight, 0.5f, 4.0f);
+		ImGui::SliderFloat("TileWidth", &m_tileWidth, 1.0f, 4.0f);
+		ImGui::SliderFloat("TileHeight", &m_tileHeight, 1.0f, 4.0f);
 	}
 
 	if (ImGui::Button("Build Walking TileMap"))
@@ -308,6 +316,7 @@ void CDemoNavMesh::onViewRayClick(const core::line3df& ray, int button, bool hol
 		}
 		else
 		{
+			m_fromTile = m_walkingTileMap->getTileByPosition(moveAgent->getPosition());
 			m_toTile = m_walkingTileMap->getTileByPosition(m_clickPosition);
 
 			// right click
@@ -316,7 +325,10 @@ void CDemoNavMesh::onViewRayClick(const core::line3df& ray, int button, bool hol
 
 		if (m_fromTile && m_toTile)
 		{
-			m_query->findPath(m_walkingTileMap, m_fromTile, m_toTile, m_path);
+			if (m_query->findPath(m_walkingTileMap, m_fromTile, m_toTile, m_path))
+			{
+				moveAgent->setPath(m_path, m_clickPosition);
+			}
 		}
 	}
 }
@@ -329,5 +341,12 @@ void CDemoNavMesh::buildNavMesh()
 
 void CDemoNavMesh::buildWalkingMap()
 {
+	m_fromTile = NULL;
+	m_toTile = NULL;
+	m_path.clear();
+
+	CMoveAgent* moveAgent = m_agent->getComponent<CMoveAgent>();
+	moveAgent->clearPath();
+
 	m_walkingTileMap->generate(m_tileWidth, m_tileHeight, m_outputNavMesh, m_obstacle);
 }

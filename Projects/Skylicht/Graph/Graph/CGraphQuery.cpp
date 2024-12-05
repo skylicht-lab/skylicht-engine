@@ -22,6 +22,58 @@ namespace Skylicht
 			}
 		}
 
+		CDistancePriorityQueue::CDistancePriorityQueue()
+		{
+
+		}
+
+		CDistancePriorityQueue::~CDistancePriorityQueue()
+		{
+
+		}
+
+		void CDistancePriorityQueue::push(const SDistanceTile& d)
+		{
+			SDistanceTile* a = m_queue.pointer();
+
+			// find position
+			int pos = -1;
+			for (u32 i = 0, n = m_queue.size(); i < n; i++)
+			{
+				if (m_queue[i].Distance < d.Distance)
+				{
+					pos = i;
+					break;
+				}
+			}
+
+			if (pos == -1)
+				pos = m_queue.size();
+
+			// insert empty at last
+			m_queue.push_back(SDistanceTile());
+
+			// swap
+			for (int i = m_queue.size() - 1; i > pos; i--)
+			{
+				SDistanceTile t = m_queue[i];
+				m_queue[i] = m_queue[i - 1];
+				m_queue[i - 1] = t;
+			}
+
+			m_queue[pos] = d;
+		}
+
+		void CDistancePriorityQueue::pop()
+		{
+			m_queue.set_used(m_queue.size() - 1);
+		}
+
+		const SDistanceTile& CDistancePriorityQueue::top()
+		{
+			return m_queue.getLast();
+		}
+
 
 		CGraphQuery::CGraphQuery() :
 			m_root(NULL),
@@ -387,13 +439,13 @@ namespace Skylicht
 			result.clear();
 			u32 numTile = map->getNumTile();
 
-			std::priority_queue<SDistanceTile> queue;
+			CDistancePriorityQueue queue;
 
 			std::vector<STile*> prev(numTile, NULL);
 			std::vector<float> dist(numTile, -1.0);
 
 			float length = (to->Position - from->Position).getLengthSQ();
-			queue.push({ -length, from });
+			queue.push({ length, from });
 
 			dist[from->Id] = 0.0f;
 
@@ -404,8 +456,6 @@ namespace Skylicht
 				const SDistanceTile& t = queue.top();
 
 				STile* tile = t.Tile;
-				float d = t.Distance;
-
 				queue.pop();
 
 				if (tile->Visit)
@@ -415,10 +465,14 @@ namespace Skylicht
 				if (tile == to)
 					break;
 
+				float walkDistance = dist[tile->Id];
+
 				for (u32 i = 0, n = tile->Neighbours.size(); i < n; i++)
 				{
 					STile* nei = tile->Neighbours[i];
-					float currentDist = dist[tile->Id] + (nei->Position - tile->Position).getLengthSQ();
+
+					float neiDist = (nei->Position - tile->Position).getLength();
+					float currentDist = walkDistance + neiDist;
 
 					if (dist[nei->Id] < 0 || dist[nei->Id] > currentDist)
 					{
@@ -426,8 +480,8 @@ namespace Skylicht
 						// or have another link shorter
 						dist[nei->Id] = currentDist;
 
-						float length = currentDist + (to->Position - nei->Position).getLengthSQ();
-						queue.push({ -length, nei });
+						float length = currentDist + (to->Position - nei->Position).getLength();
+						queue.push({ length, nei });
 
 						prev[nei->Id] = tile;
 					}
@@ -445,7 +499,6 @@ namespace Skylicht
 				result.push_back(prev[u->Id]);
 				u = prev[u->Id];
 			}
-			result.push_back(from);
 
 			// reverse result
 			u32 count = result.size();

@@ -55,11 +55,28 @@ namespace Skylicht
 		{
 			float Distance;
 			STile* Tile;
+		};
 
-			bool operator<(const SDistanceTile& c) const
+		class CDistancePriorityQueue
+		{
+		protected:
+			core::array<SDistanceTile> m_queue;
+
+		public:
+			CDistancePriorityQueue();
+
+			virtual ~CDistancePriorityQueue();
+
+			void push(const SDistanceTile& d);
+
+			void pop();
+
+			inline bool empty()
 			{
-				return Distance < c.Distance;
+				return m_queue.empty();
 			}
+
+			const SDistanceTile& top();
 		};
 
 		class CGraphQuery

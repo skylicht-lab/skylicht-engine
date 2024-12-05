@@ -99,11 +99,11 @@ namespace Skylicht
 			return 1;
 		}
 
-		bool CObstacleAvoidance::isLineHit(const core::vector3df& a, const core::vector3df& b, float h)
+		bool CObstacleAvoidance::isLineHit(const core::vector3df& a, const core::vector3df& b, float h, float& outT)
 		{
 			core::line3df* segs = m_segments.pointer();
 			core::vector3df v = b - a;
-			float t = 0.0f;
+			outT = 0.0f;
 
 			for (u32 i = 0, n = m_segments.size(); i < n; i++)
 			{
@@ -111,7 +111,7 @@ namespace Skylicht
 
 				if (fabs(s.start.Y - a.Y) < h && fabs(s.end.Y - a.Y) < h)
 				{
-					int intersection = isectRaySeg(a, v, s.start, s.end, t);
+					int intersection = isectRaySeg(a, v, s.start, s.end, outT);
 					if (intersection)
 					{
 						return true;

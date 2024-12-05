@@ -10,6 +10,11 @@ protected:
 	Graph::CObstacleAvoidance* m_obstacle;
 	Graph::CGraphQuery* m_graphQuery;
 
+	core::array<core::vector3df> m_points;
+
+	float m_distance;
+	float m_moveTime;
+
 	core::vector3df m_targetPosition;
 
 	float m_agentRadius;
@@ -24,6 +29,8 @@ public:
 	virtual void updateComponent();
 
 	void setPosition(const core::vector3df& position);
+
+	core::vector3df getPosition();
 
 	inline void setGraphQuery(Graph::CGraphQuery* query)
 	{
@@ -48,4 +55,18 @@ public:
 	{
 		m_agentRadius = radius;
 	}
+
+	void setPath(const core::array<Graph::STile*>& path, const core::vector3df& target);
+
+	inline void clearPath()
+	{
+		m_points.clear();
+		m_distance = 0.0f;
+		m_moveTime = 0.0f;
+	}
+
+protected:
+
+	core::vector3df folowPath();
+
 };

@@ -62,12 +62,12 @@ namespace Skylicht
 				return m_segments.empty();
 			}
 
-			inline bool isLineHit(const core::line3df& line, float h = 1.0f)
+			inline bool isLineHit(const core::line3df& line, float h, float& outT)
 			{
-				return isLineHit(line.start, line.end, h);
+				return isLineHit(line.start, line.end, h, outT);
 			}
 
-			bool isLineHit(const core::vector3df& a, const core::vector3df& b, float h = 1.0f);
+			bool isLineHit(const core::vector3df& a, const core::vector3df& b, float h, float& outT);
 
 			core::vector3df collide(const core::vector3df& position, const core::vector3df& vel, float stepHeight = 0.3f, int recursionDepth = 0);
 		};
