@@ -106,38 +106,44 @@ void CMoveAgent::setPath(const core::array<Graph::STile*>& path, const core::vec
 	}
 }
 
-inline s32 clamp(s32 idx, s32 size)
-{
-	return (idx < 0 ? size + idx : (idx >= size ? idx - size : idx));
-}
-
 core::vector3df CMoveAgent::folowPath()
 {
 	// see Irrlicht source: CSceneNodeAnimatorFollowSpline::animateNode
-	const float Speed = 0.5f;
-	const bool PingPong = true;
-	const float Tightness = 0.4f;
+	const float Speed = 4.0f;
+	const float Tightness = 0.1f;
 
 	m_moveTime = m_moveTime + getTimeStep();
 
-	const u32 pSize = m_points.size();
-	const f32 dt = (m_moveTime * Speed * 0.001f);
+	u32 idx = 0;
+	f32 u = 0.0f;
 
-	const s32 unwrappedIdx = core::floor32(dt);
-	if (unwrappedIdx >= (s32)pSize - 1)
+	f32 distance = (m_moveTime * Speed * 0.001f);
+	if (distance >= m_distance)
 	{
-		return m_points[pSize - 1];
+		// finish
+		idx = m_points.size() - 1;
+	}
+	else
+	{
+		float d1 = 0.0f, d2 = 0.0f;
+		for (u32 i = 0, n = m_points.size() - 1; i < n; i++)
+		{
+			d1 = d1 + m_points[i].getDistanceFrom(m_points[i + 1]);
+			if (d1 > distance)
+			{
+				idx = i;
+				u = (distance - d2) / (d1 - d2);
+				break;
+			}
+			d2 = d1;
+		}
 	}
 
-	const bool pong = PingPong && (unwrappedIdx / (pSize - 1)) % 2;
-	const f32 u = pong ? 1.f - core::fract(dt) : core::fract(dt);
-	const s32 idx = pong ? (pSize - 2) - (unwrappedIdx % (pSize - 1)) : (PingPong ? unwrappedIdx % (pSize - 1) : unwrappedIdx % pSize);
-	//const f32 u = 0.001f * fmodf( dt, 1000.0f );
-
-	const core::vector3df& p0 = m_points[clamp(idx - 1, pSize)];
-	const core::vector3df& p1 = m_points[clamp(idx + 0, pSize)]; // starting point
-	const core::vector3df& p2 = m_points[clamp(idx + 1, pSize)]; // end point
-	const core::vector3df& p3 = m_points[clamp(idx + 2, pSize)];
+	u32 nPoint = m_points.size() - 1;
+	const core::vector3df& p0 = m_points[core::clamp<u32>(idx - 1, 0, nPoint)];
+	const core::vector3df& p1 = m_points[core::clamp<u32>(idx + 0, 0, nPoint)]; // starting point
+	const core::vector3df& p2 = m_points[core::clamp<u32>(idx + 1, 0, nPoint)]; // end point
+	const core::vector3df& p3 = m_points[core::clamp<u32>(idx + 2, 0, nPoint)];
 
 	// hermite polynomials
 	const f32 h1 = 2.0f * u * u * u - 3.0f * u * u + 1.0f;

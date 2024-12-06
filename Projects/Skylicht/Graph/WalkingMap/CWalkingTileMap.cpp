@@ -206,6 +206,9 @@ namespace Skylicht
 					if (abs(a->Y - b->Y) > 1)
 						continue;
 
+					if (a->Position.getDistanceFromSQ(b->Position) > 400.0f)
+						continue;
+
 					if (!obstacle->isLineHit(a->Position, b->Position, tileHeight, t))
 					{
 						a->Neighbours.push_back(b);
