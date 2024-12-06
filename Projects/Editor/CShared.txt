@@ -13,6 +13,7 @@ include_directories(
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Audio
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Crypto
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Network
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Graph
 	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/curl/include
 	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/freetype2/include
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Bullet3

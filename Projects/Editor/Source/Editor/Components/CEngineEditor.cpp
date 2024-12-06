@@ -54,6 +54,11 @@ https://github.com/skylicht-lab/skylicht-engine
 using namespace Physics;
 #endif
 
+#ifdef BUILD_SKYLICHT_GRAPH
+#include "Graph/CGraphComponent.h"
+using namespace Graph;
+#endif
+
 namespace Skylicht
 {
 	namespace Editor
@@ -87,6 +92,10 @@ namespace Skylicht
 		USE_COMPONENT(CCylinderCollider);
 		USE_COMPONENT(CCapsuleCollider);
 		USE_COMPONENT(CSphereCollider);
+#endif
+
+#ifdef BUILD_SKYLICHT_GRAPH
+		USE_COMPONENT(CGraphComponent);
 #endif
 		// END DECLARE COMPONENT
 	}
