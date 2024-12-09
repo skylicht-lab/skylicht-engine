@@ -478,6 +478,8 @@ namespace Skylicht
 
 					m_subjects.push_back(subject);
 				}
+
+				initCustomDataGUI(data, valueProperty, layout, ui);
 			}
 		}
 
@@ -489,6 +491,11 @@ namespace Skylicht
 
 		void CDefaultEditor::initCustomGUI(GUI::CBoxLayout* layout, CSpaceProperty* ui)
 		{
+		}
+
+		void CDefaultEditor::initCustomDataGUI(CObjectSerializable* obj, CValueProperty* data, GUI::CBoxLayout* layout, CSpaceProperty* ui)
+		{
+
 		}
 
 		void CDefaultEditor::update()

@@ -47,6 +47,7 @@ namespace Skylicht
 
 			std::function<void(CHierachyNode*)> OnUpdate;
 			std::function<void(CHierachyNode*, bool)> OnSelected;
+			std::function<void(CHierachyNode*)> OnDoubleClick;
 
 		protected:
 			std::wstring m_name;

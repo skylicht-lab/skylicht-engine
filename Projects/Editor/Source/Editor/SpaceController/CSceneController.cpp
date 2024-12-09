@@ -1096,6 +1096,7 @@ namespace Skylicht
 		{
 			node->OnUpdate = std::bind(&CSceneController::onUpdateNode, this, std::placeholders::_1);
 			node->OnSelected = std::bind(&CSceneController::onSelectNode, this, std::placeholders::_1, std::placeholders::_2);
+			node->OnDoubleClick = std::bind(&CSceneController::onDoubleClickNode, this, std::placeholders::_1);
 		}
 
 		void CSceneController::onUpdateNode(CHierachyNode* node)
@@ -1189,6 +1190,44 @@ namespace Skylicht
 				CSelectObject* selectedObject = selection->getLastSelected();
 				if (selectedObject != NULL)
 					selectedObject->removeAllObserver();
+			}
+		}
+
+		void CSceneController::onDoubleClickNode(CHierachyNode* node)
+		{
+			if (node->isTagGameObject())
+			{
+				CGameObject* obj = (CGameObject*)node->getTagData();
+				focusCameraToEntity(obj->getEntity());
+			}
+			else if (node->isTagEntity())
+			{
+				CEntity* entity = (CEntity*)node->getTagData();
+				focusCameraToEntity(entity);
+			}
+		}
+
+		void CSceneController::focusCameraToSelectObject()
+		{
+			CSelectObject* selectedObject = CSelection::getInstance()->getLastSelected();
+			if (selectedObject != NULL)
+			{
+				if (selectedObject->getType() == CSelectObject::GameObject)
+				{
+					CGameObject* obj = m_scene->searchObjectInChildByID(selectedObject->getID().c_str());
+					if (obj != NULL)
+					{
+						focusCameraToEntity(obj->getEntity());
+					}
+				}
+				else if (selectedObject->getType() == CSelectObject::Entity)
+				{
+					CEntity* entity = m_scene->getEntityManager()->getEntityByID(selectedObject->getID().c_str());
+					if (entity != NULL)
+					{
+						focusCameraToEntity(entity);
+					}
+				}
 			}
 		}
 
@@ -1544,6 +1583,19 @@ namespace Skylicht
 
 			if (m_spaceHierarchy)
 				m_spaceHierarchy->getController()->updateTreeNode(object);
+		}
+
+		void CSceneController::focusCameraToEntity(CEntity* entity)
+		{
+			CSelectObjectData* selectObjectData = GET_ENTITY_DATA(entity, CSelectObjectData);
+			if (selectObjectData)
+			{
+				core::vector3df center = selectObjectData->TransformBBox.getCenter();
+				core::vector3df pos = center + selectObjectData->TransformBBox.getExtent() * 2.0f;
+
+				CCamera* camera = m_spaceScene->getEditorCamera();
+				camera->lookAt(pos, center, Transform::Oy);
+			}
 		}
 	}
 }

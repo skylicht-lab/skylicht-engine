@@ -193,6 +193,10 @@ namespace Skylicht
 
 			void onSelectNode(CHierachyNode* node, bool selected);
 
+			void onDoubleClickNode(CHierachyNode* node);
+
+			void focusCameraToSelectObject();
+
 			void onObjectChange(CGameObject* object);
 
 			void onHistoryModifyObject(CGameObject* object);
@@ -270,6 +274,8 @@ namespace Skylicht
 			void onRevertTemplate(CGameObject* object);
 
 			void onUnpackTemplate(CGameObject* object);
+
+			void focusCameraToEntity(CEntity* entity);
 
 		protected:
 

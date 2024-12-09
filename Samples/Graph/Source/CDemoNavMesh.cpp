@@ -30,7 +30,7 @@ CDemoNavMesh::CDemoNavMesh(CZone* zone) :
 	m_obstacle = new Graph::CObstacleAvoidance();
 	m_walkingTileMap = new Graph::CWalkingTileMap();
 	m_query = new Graph::CGraphQuery();
-	m_outputNavMesh = new CMesh();
+	m_navMesh = new CMesh();
 }
 
 CDemoNavMesh::~CDemoNavMesh()
@@ -39,7 +39,7 @@ CDemoNavMesh::~CDemoNavMesh()
 		delete m_recastMesh;
 	delete m_builder;
 	delete m_obstacle;
-	delete m_outputNavMesh;
+	delete m_navMesh;
 	delete m_walkingTileMap;
 	delete m_query;
 }
@@ -76,7 +76,7 @@ void CDemoNavMesh::init()
 	m_path.clear();
 
 	m_walkingTileMap->release();
-	m_outputNavMesh->removeAllMeshBuffer();
+	m_navMesh->removeAllMeshBuffer();
 	m_obstacle->clear();
 
 	m_agent->setVisible(true);
@@ -142,9 +142,9 @@ void CDemoNavMesh::update()
 	// draw nav polymesh
 	if (m_drawDebugNavMesh)
 	{
-		for (u32 i = 0, n = m_outputNavMesh->getMeshBufferCount(); i < n; i++)
+		for (u32 i = 0, n = m_navMesh->getMeshBufferCount(); i < n; i++)
 		{
-			IMeshBuffer* mb = m_outputNavMesh->getMeshBuffer(i);
+			IMeshBuffer* mb = m_navMesh->getMeshBuffer(i);
 			IVertexBuffer* vb = mb->getVertexBuffer();
 			IIndexBuffer* ib = mb->getIndexBuffer();
 
@@ -335,8 +335,8 @@ void CDemoNavMesh::onViewRayClick(const core::line3df& ray, int button, bool hol
 
 void CDemoNavMesh::buildNavMesh()
 {
-	m_builder->build(m_recastMesh, m_outputNavMesh, m_obstacle);
-	m_query->buildIndexNavMesh(m_outputNavMesh, m_obstacle);
+	m_builder->build(m_recastMesh, m_navMesh, m_obstacle);
+	m_query->buildIndexNavMesh(m_navMesh, m_obstacle);
 }
 
 void CDemoNavMesh::buildWalkingMap()
@@ -348,5 +348,5 @@ void CDemoNavMesh::buildWalkingMap()
 	CMoveAgent* moveAgent = m_agent->getComponent<CMoveAgent>();
 	moveAgent->clearPath();
 
-	m_walkingTileMap->generate(m_tileWidth, m_tileHeight, m_outputNavMesh, m_obstacle);
+	m_walkingTileMap->generate(m_tileWidth, m_tileHeight, m_navMesh, m_obstacle);
 }

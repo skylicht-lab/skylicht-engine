@@ -24,54 +24,28 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Serializable/CObjectSerializable.h"
-#include "Reactive/IObserver.h"
-#include "Reactive/ISubject.h"
-#include "Editor/Components/CComponentEditor.h"
-#include "Activator/CEditorActivator.h"
-#include "GUI/GUI.h"
+#include "GizmosComponents/CGizmosComponent.h"
+
+#include "Graph/CGraphComponent.h"
+using namespace Graph;
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CDefaultEditor : public CComponentEditor
+		class CGGraph : public CGizmosComponent
 		{
-		public:
-
 		protected:
-			CObjectSerializable* m_data;
-
-			std::string m_name;
-
-			std::vector<ISubject*> m_subjects;
+			CGraphComponent* m_graph;
 
 		public:
-			CDefaultEditor();
+			CGGraph();
 
-			virtual ~CDefaultEditor();
+			virtual ~CGGraph();
 
-			virtual void initGUI(CComponentSystem* target, CSpaceProperty* ui);
+			virtual void initComponent();
 
-			void initDataGUI(CObjectSerializable* data, GUI::CBoxLayout* layout, CSpaceProperty* ui);
-
-			virtual void closeGUI();
-
-			virtual void update();
-
-			virtual void initCustomGUI(GUI::CBoxLayout* layout, CSpaceProperty* ui);
-
-			virtual void initCustomDataGUI(CObjectSerializable* obj, CValueProperty* data, GUI::CBoxLayout* layout, CSpaceProperty* ui);
-
-			void setName(const char* name)
-			{
-				m_name = name;
-			}
-
-		protected:
-
-			void updateData();
-
+			virtual void updateComponent();
 		};
 	}
 }

@@ -202,6 +202,7 @@ namespace Skylicht
 			m_view->addAccelerator("Q", [&](GUI::CBase* base) {this->onHotkey(base, "Q"); });
 			m_view->addAccelerator("W", [&](GUI::CBase* base) {this->onHotkey(base, "W"); });
 			m_view->addAccelerator("E", [&](GUI::CBase* base) {this->onHotkey(base, "E"); });
+			m_view->addAccelerator("F", [&](GUI::CBase* base) {this->onHotkey(base, "F"); });
 
 			m_view->addAccelerator("Ctrl + C", [&](GUI::CBase* base) {this->onHotkey(base, "Ctrl + C"); });
 			m_view->addAccelerator("Ctrl + V", [&](GUI::CBase* base) {this->onHotkey(base, "Ctrl + V"); });
@@ -963,6 +964,10 @@ namespace Skylicht
 					onToolbarTransform(m_toolbarButton[ESceneToolBar::Select]);
 			}
 
+			if (hotkey == "F")
+			{
+				CSceneController::getInstance()->focusCameraToSelectObject();
+			}
 			if (hotkey == "Ctrl + C")
 			{
 				CSceneController::getInstance()->onCopy();

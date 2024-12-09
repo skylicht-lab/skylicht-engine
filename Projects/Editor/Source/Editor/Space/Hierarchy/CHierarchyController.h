@@ -75,6 +75,8 @@ namespace Skylicht
 
 			void OnSelectChange(GUI::CBase* control);
 
+			void OnDoubleClick(GUI::CBase* control);
+
 			GUI::CTreeNode* buildTreeNode(GUI::CTreeNode* parentGuiNode, CHierachyNode* node);
 
 			void initDragDrop(GUI::CTreeNode* guiNode, CHierachyNode* node);

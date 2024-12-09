@@ -57,6 +57,7 @@ namespace Skylicht
 			std::string m_inputRecastMesh;
 			std::string m_inputObstacle;
 
+			CMesh* m_navMesh;
 		public:
 			CGraphComponent();
 
@@ -101,6 +102,15 @@ namespace Skylicht
 			{
 				return m_inputObstacle.c_str();
 			}
+
+			inline CMesh* getNavMesh()
+			{
+				return m_navMesh;
+			}
+
+			bool buildRecastMesh();
+
+			DECLARE_GETTYPENAME(CGraphComponent)
 		};
 	}
 }

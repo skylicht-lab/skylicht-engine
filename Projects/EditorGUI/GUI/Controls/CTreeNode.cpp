@@ -301,6 +301,9 @@ namespace Skylicht
 
 			void CTreeNode::onDoubleClick(CBase* base)
 			{
+				if (OnDoubleClick != nullptr)
+					OnDoubleClick(this);
+
 				onExpand(base);
 			}
 

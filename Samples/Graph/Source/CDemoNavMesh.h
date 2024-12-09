@@ -31,7 +31,7 @@ protected:
 	float m_tileWidth;
 	float m_tileHeight;
 
-	CMesh* m_outputNavMesh;
+	CMesh* m_navMesh;
 
 	bool m_drawDebugRecastMesh;
 	bool m_drawDebugNavMesh;

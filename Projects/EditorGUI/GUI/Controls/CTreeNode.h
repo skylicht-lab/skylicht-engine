@@ -58,6 +58,7 @@ namespace Skylicht
 				Listener OnSelected;
 				Listener OnUnselected;
 				Listener OnSelectChange;
+				Listener OnDoubleClick;
 				Listener OnItemContextMenu;
 				Listener OnExpand;
 				Listener OnCollapse;

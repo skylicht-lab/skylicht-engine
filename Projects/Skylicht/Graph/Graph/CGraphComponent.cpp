@@ -50,6 +50,8 @@ namespace Skylicht
 			m_recastMesh = new CRecastMesh();
 			m_obstacle = new CObstacleAvoidance();
 			m_walkingTileMap = new CWalkingTileMap();
+
+			m_navMesh = new CMesh();
 		}
 
 		CGraphComponent::~CGraphComponent()
@@ -59,6 +61,8 @@ namespace Skylicht
 			delete m_recastMesh;
 			delete m_obstacle;
 			delete m_walkingTileMap;
+
+			m_navMesh->drop();
 		}
 
 		void CGraphComponent::initComponent()
@@ -85,6 +89,11 @@ namespace Skylicht
 			value = new CFloatProperty(obj, "cellSize", m_cellSize, 0.2f, 1.0f);
 			value->setUIHeader("Recast mesh params");
 			obj->autoRelease(value);
+
+			value = new CFilePathProperty(obj, "collisionMesh", m_inputCollision.c_str(), CMeshManager::getMeshExts());
+			value->setUIHeader("Input model");
+			obj->autoRelease(value);
+
 			obj->autoRelease(new CFloatProperty(obj, "cellHeight", m_cellHeight, 0.2f, 1.0f));
 			obj->autoRelease(new CFloatProperty(obj, "agentHeight", m_agentHeight, 0.5f, 10.0f));
 			obj->autoRelease(new CFloatProperty(obj, "agentRadius", m_agentRadius, 0.1f, 10.0f));
@@ -96,12 +105,8 @@ namespace Skylicht
 			obj->autoRelease(value);
 			obj->autoRelease(new CFloatProperty(obj, "walkTileHeight", m_walkTileHeight, 1.0f, 10.0f));
 
-			value = new CFilePathProperty(obj, "collisionMesh", m_inputCollision.c_str(), CMeshManager::getMeshExts());
-			value->setUIHeader("Input model");
-			obj->autoRelease(value);
-
 			value = new CFilePathProperty(obj, "recastMesh", m_inputRecastMesh.c_str(), CMeshManager::getMeshExts());
-			value->setUIHeader("Built model");
+			value->setUIHeader("Built model (custom, optional)");
 			obj->autoRelease(value);
 
 			std::vector<std::string> obstacleExts = {
@@ -116,6 +121,7 @@ namespace Skylicht
 		{
 			CComponentSystem::loadSerializable(obj);
 
+			m_inputCollision = obj->get<std::string>("collisionMesh", std::string());
 			m_cellSize = obj->get<float>("cellSize", 0.2f);
 			m_cellHeight = obj->get<float>("cellHeight", 0.3f);
 			m_agentHeight = obj->get<float>("agentHeight", 2.0f);
@@ -126,10 +132,27 @@ namespace Skylicht
 			m_walkTileWidth = obj->get<float>("walkTileWidth", 2.0f);
 			m_walkTileHeight = obj->get<float>("walkTileHeight", 2.0f);
 
-			m_inputCollision = obj->get<std::string>("collisionMesh", std::string());
-
 			m_inputRecastMesh = obj->get<std::string>("recastMesh", std::string());
 			m_inputObstacle = obj->get<std::string>("inputObstacle", std::string());
+		}
+
+		bool CGraphComponent::buildRecastMesh()
+		{
+			m_recastMesh->release();
+
+			if (m_inputCollision.empty())
+				return false;
+
+			core::matrix4 transform = m_gameObject->calcWorldTransform();
+
+			CEntityPrefab* mapPrefab = CMeshManager::getInstance()->loadModel(m_inputCollision.c_str(), "");
+			if (mapPrefab)
+				m_recastMesh->addMeshPrefab(mapPrefab, transform);
+
+			m_builder->build(m_recastMesh, m_navMesh, m_obstacle);
+			m_query->buildIndexNavMesh(m_navMesh, m_obstacle);
+
+			return true;
 		}
 	}
 }

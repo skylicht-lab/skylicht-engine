@@ -58,6 +58,8 @@ namespace Skylicht
 			m_tree->addAccelerator("Ctrl + Z", [&](GUI::CBase* base) {this->OnHotkey(base, "Ctrl + Z"); });
 			m_tree->addAccelerator("Ctrl + Y", [&](GUI::CBase* base) {this->OnHotkey(base, "Ctrl + Y"); });
 
+			m_tree->addAccelerator("F", [&](GUI::CBase* base) {this->OnHotkey(base, "F"); });
+
 			tree->getInnerPanel()->OnAcceptDragDrop = [](GUI::SDragDropPackage* data)
 				{
 					if (data->Name == "ListFSItem")
@@ -255,6 +257,7 @@ namespace Skylicht
 
 			// apply select event
 			guiNode->OnSelectChange = BIND_LISTENER(&CHierarchyController::OnSelectChange, this);
+			guiNode->OnDoubleClick = BIND_LISTENER(&CHierarchyController::OnDoubleClick, this);
 
 			// link data gui to node
 			guiNode->tagData(node);
@@ -331,6 +334,10 @@ namespace Skylicht
 			{
 				CSceneController::getInstance()->onRedo();
 			}
+			else if (hotkey == "F")
+			{
+				CSceneController::getInstance()->focusCameraToSelectObject();
+			}
 		}
 
 		void CHierarchyController::OnKeyPress(GUI::CBase* control, int key, bool press)
@@ -394,6 +401,17 @@ namespace Skylicht
 				CHierachyNode* node = (CHierachyNode*)treeNode->getTagData();
 				if (node->OnSelected != nullptr)
 					node->OnSelected(node, treeNode->isSelected());
+			}
+		}
+
+		void CHierarchyController::OnDoubleClick(GUI::CBase* control)
+		{
+			GUI::CTreeNode* treeNode = dynamic_cast<GUI::CTreeNode*>(control);
+			if (treeNode != NULL)
+			{
+				CHierachyNode* node = (CHierachyNode*)treeNode->getTagData();
+				if (node->OnDoubleClick != nullptr)
+					node->OnDoubleClick(node);
 			}
 		}
 
