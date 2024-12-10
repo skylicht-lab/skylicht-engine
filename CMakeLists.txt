@@ -270,7 +270,7 @@ subdirs (Projects/SpineCpp)
 endif()
 
 # recast & graph
-if (BUILD_RECAST_GRAPH)
+if (BUILD_SKYLICHT_GRAPH)
 add_definitions(-DBUILD_SKYLICHT_GRAPH)
 subdirs (Projects/Skylicht/Graph)
 endif()
