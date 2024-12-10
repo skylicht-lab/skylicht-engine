@@ -34,6 +34,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Editor/CEditor.h"
 #include "Handles/CHandles.h"
 
+#ifdef BUILD_SKYLICHT_GRAPH
+
 using namespace Graph;
 
 namespace Skylicht
@@ -93,3 +95,5 @@ namespace Skylicht
 		}
 	}
 }
+
+#endif

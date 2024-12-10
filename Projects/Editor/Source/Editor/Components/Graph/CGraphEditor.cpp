@@ -73,8 +73,20 @@ namespace Skylicht
 							"obj;*"
 						);
 
-						dialog->OnSave = [controller](std::string path)
+						dialog->OnSave = [&, controller](std::string path)
 							{
+								CGraphComponent* graph = (CGraphComponent*)m_component;
+								graph->buildRecastMesh();
+
+								CEntityPrefab prefab;
+								CEntity* entity = prefab.createEntity();
+
+								prefab.addTransformData(entity, NULL, core::IdentityMatrix, "NavMesh");
+								CRenderMeshData* renderMesh = entity->addData<CRenderMeshData>();
+								renderMesh->setMesh(graph->getNavMesh());
+
+								CMeshManager::getInstance()->exportModel(prefab.getEntities(), prefab.getNumEntities(), path.c_str());
+
 								CEditor::getInstance()->refresh();
 							};
 					};

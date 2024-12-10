@@ -2,10 +2,10 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2024 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -24,32 +24,27 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#ifdef BUILD_SKYLICHT_GRAPH
-
-#include "GizmosComponents/CGizmosComponent.h"
-
-#include "Graph/CGraphComponent.h"
-using namespace Graph;
+#include "Exporter/IMeshExporter.h"
+#include "RenderMesh/CRenderMeshData.h"
 
 namespace Skylicht
 {
-	namespace Editor
+	class SKYLICHT_API COBJMeshFileExporter : public IMeshExporter
 	{
-		class CGGraph : public CGizmosComponent
-		{
-		protected:
-			CGraphComponent* m_graph;
+	public:
+		COBJMeshFileExporter();
 
-		public:
-			CGGraph();
+		virtual ~COBJMeshFileExporter();
 
-			virtual ~CGGraph();
+		virtual bool exportModel(CEntity** entities, u32 count, const char* output);
 
-			virtual void initComponent();
+	protected:
+		u32 writeMesh(io::IWriteFile* file, CMesh* mesh, core::matrix4& transform, u32 allVertexCount);
 
-			virtual void updateComponent();
-		};
-	}
+		void getVectorAsStringLine(const core::vector3df& v, core::stringc& s) const;
+
+		void getVectorAsStringLine(const core::vector2df& v, core::stringc& s) const;
+
+		void getColorAsStringLine(const video::SColor& color, const c8* const prefix, core::stringc& s) const;
+	};
 }
-
-#endif

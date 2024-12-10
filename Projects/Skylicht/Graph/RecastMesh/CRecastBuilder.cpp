@@ -261,6 +261,9 @@ namespace Skylicht
 				}
 			}
 
+			IMeshManipulator* meshManipulator = getIrrlichtDevice()->getSceneManager()->getMeshManipulator();
+			meshManipulator->recalculateNormals(buffer, true);
+
 			buffer->recalculateBoundingBox();
 
 			output->addMeshBuffer(buffer, "default");

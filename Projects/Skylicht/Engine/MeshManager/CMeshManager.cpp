@@ -8,6 +8,7 @@
 #include "Importer/FBX/CFBXMeshLoader.h"
 
 #include "Exporter/Skylicht/CSkylichtMeshExporter.h"
+#include "Exporter/WavefrontOBJ/COBJMeshFileExporter.h"
 
 #include "RenderMesh/CRenderMeshData.h"
 #include "Material/Shader/CShaderManager.h"
@@ -197,6 +198,8 @@ namespace Skylicht
 		std::string ext = CPath::getFileNameExt(output);
 		if (ext == "smesh")
 			exporter = new CSkylichtMeshExporter();
+		else if (ext == "obj")
+			exporter = new COBJMeshFileExporter();
 
 		if (exporter != NULL)
 		{
