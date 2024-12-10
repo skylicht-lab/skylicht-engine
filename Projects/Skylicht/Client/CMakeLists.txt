@@ -69,7 +69,7 @@ if (BUILD_SKYLICHT_NETWORK)
 	target_link_libraries(Client Network)
 endif()
 
-if (BUILD_RECAST_GRAPH)
+if (BUILD_SKYLICHT_GRAPH)
 	target_link_libraries(Client Graph)
 endif()
 

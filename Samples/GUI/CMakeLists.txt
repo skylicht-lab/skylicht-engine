@@ -54,7 +54,7 @@ if (BUILD_SKYLICHT_NETWORK)
 	)
 endif()
 
-if (BUILD_RECAST_GRAPH)
+if (BUILD_SKYLICHT_GRAPH)
 	include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Graph)
 endif()
 
