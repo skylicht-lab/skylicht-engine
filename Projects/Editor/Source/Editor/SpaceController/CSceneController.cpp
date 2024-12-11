@@ -898,6 +898,7 @@ namespace Skylicht
 				node->setTagData(newObject, CHierachyNode::GameObject);
 
 				setNodeEvent(node);
+				CHierarchyController::updateObjectToUI(newObject, node);
 
 				if (m_spaceHierarchy != NULL)
 					m_spaceHierarchy->addToTreeNode(node);
@@ -928,6 +929,7 @@ namespace Skylicht
 				node->setTagData(newObject, CHierachyNode::Container);
 
 				setNodeEvent(node);
+				CHierarchyController::updateObjectToUI(newObject, node);
 
 				if (m_spaceHierarchy != NULL)
 					m_spaceHierarchy->addToTreeNode(node);
@@ -966,6 +968,7 @@ namespace Skylicht
 				node->setTagData(newObject, CHierachyNode::GameObject);
 
 				setNodeEvent(node);
+				CHierarchyController::updateObjectToUI(newObject, node);
 
 				rebuildHierarchyEntityData(newObject, node);
 

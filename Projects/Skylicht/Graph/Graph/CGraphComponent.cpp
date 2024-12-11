@@ -109,11 +109,6 @@ namespace Skylicht
 			value->setUIHeader("Built model (custom, optional)");
 			obj->autoRelease(value);
 
-			std::vector<std::string> obstacleExts = {
-				"obs"
-			};
-			obj->autoRelease(new CFilePathProperty(obj, "inputObstacle", m_inputObstacle.c_str(), obstacleExts));
-
 			return obj;
 		}
 
@@ -133,7 +128,24 @@ namespace Skylicht
 			m_walkTileHeight = obj->get<float>("walkTileHeight", 2.0f);
 
 			m_inputRecastMesh = obj->get<std::string>("recastMesh", std::string());
-			m_inputObstacle = obj->get<std::string>("inputObstacle", std::string());
+		}
+
+		bool CGraphComponent::loadRecastMesh()
+		{
+			if (m_inputRecastMesh.empty())
+				return false;
+
+			CEntityPrefab* model = CMeshManager::getInstance()->loadModel(m_inputRecastMesh.c_str(), "");
+			if (!model)
+				return false;
+
+			core::matrix4 transform = m_gameObject->calcWorldTransform();
+
+			if (!m_builder->load(model, transform, m_navMesh, m_obstacle))
+				return false;
+
+			m_query->buildIndexNavMesh(m_navMesh, m_obstacle);
+			return true;
 		}
 
 		bool CGraphComponent::buildRecastMesh()
@@ -149,10 +161,38 @@ namespace Skylicht
 			if (mapPrefab)
 				m_recastMesh->addMeshPrefab(mapPrefab, transform);
 
-			m_builder->build(m_recastMesh, m_navMesh, m_obstacle);
-			m_query->buildIndexNavMesh(m_navMesh, m_obstacle);
+			if (!m_builder->build(m_recastMesh, m_navMesh, m_obstacle))
+				return false;
 
+			m_query->buildIndexNavMesh(m_navMesh, m_obstacle);
 			return true;
+		}
+
+		bool CGraphComponent::beginBuildWalkingMap()
+		{
+			if (m_navMesh->getMeshBufferCount() == 0)
+				return false;
+
+			m_walkingTileMap->beginGenerate(m_walkTileWidth, m_walkTileHeight, m_navMesh, m_obstacle);
+			return true;
+		}
+
+		bool CGraphComponent::updateBuildWalkingMap()
+		{
+			return m_walkingTileMap->updateGenerate();
+		}
+
+		float CGraphComponent::getBuildPercent()
+		{
+			return m_walkingTileMap->getGeneratePercent();
+		}
+
+		void CGraphComponent::release()
+		{
+			m_navMesh->removeAllMeshBuffer();
+			m_recastMesh->release();
+			m_obstacle->clear();
+			m_walkingTileMap->release();
 		}
 	}
 }

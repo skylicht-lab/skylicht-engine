@@ -30,6 +30,10 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Graphics2D/SpriteFrame/CSpriteAtlas.h"
 #include "Utils/CSingleton.h"
 
+#ifdef BUILD_SKYLICHT_GRAPH
+#include "Graph/CGraphComponent.h"
+#endif
+
 namespace Skylicht
 {
 	namespace Editor
@@ -76,6 +80,10 @@ namespace Skylicht
 			void initLoadSceneGUI(const char* path);
 
 			void initApplyTemplateGUI(const char* path);
+
+#ifdef BUILD_SKYLICHT_GRAPH
+			void initBuildWalkMap(Graph::CGraphComponent* component);
+#endif
 
 			void initEditorGUI();
 

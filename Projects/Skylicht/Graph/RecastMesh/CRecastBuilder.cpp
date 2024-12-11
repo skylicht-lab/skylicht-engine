@@ -310,5 +310,220 @@ namespace Skylicht
 			m_pmesh = 0;
 			return true;
 		}
+
+		bool CRecastBuilder::load(CEntityPrefab* prefab, const core::matrix4& world, CMesh* output, CObstacleAvoidance* obstacle)
+		{
+			output->removeAllMeshBuffer();
+			IVideoDriver* driver = getVideoDriver();
+
+			// we just find the renderer entity
+			core::array<CEntity*> renderEntities;
+			for (u32 i = 0, n = prefab->getNumEntities(); i < n; i++)
+			{
+				CEntity* srcEntity = prefab->getEntity(i);
+				CRenderMeshData* srcRender = srcEntity->getData<CRenderMeshData>();
+				if (srcRender != NULL && srcRender->getMesh() != NULL)
+				{
+					if (!srcRender->isSkinnedMesh())
+					{
+						// just add static mesh
+						renderEntities.push_back(srcEntity);
+					}
+				}
+			}
+
+			u32 numEntities = renderEntities.size();
+
+			core::array<core::matrix4> m_transforms;
+			core::array<CMesh*> m_meshs;
+
+			for (u32 i = 0; i < numEntities; i++)
+			{
+				CEntity* srcEntity = renderEntities[i];
+
+				// get transform data
+				CWorldTransformData* srcTransform = srcEntity->getData<CWorldTransformData>();
+				if (srcTransform != NULL)
+				{
+					// get the world matrix
+					core::matrix4 m = srcTransform->Relative;
+					int parentID = srcTransform->ParentIndex;
+					while (parentID != -1)
+					{
+						CEntity* parent = prefab->getEntity(parentID);
+						CWorldTransformData* parentTransform = parent->getData<CWorldTransformData>();
+
+						m = parentTransform->Relative * m;
+						parentID = parentTransform->ParentIndex;
+					}
+
+					m_transforms.push_back(m);
+				}
+
+				// get render data
+				CRenderMeshData* srcRender = srcEntity->getData<CRenderMeshData>();
+				if (srcRender != NULL)
+				{
+					m_meshs.push_back(srcRender->getMesh());
+				}
+			}
+
+			// add output mesh buffer
+			CMeshBuffer<S3DVertex>* buffer = new CMeshBuffer<S3DVertex>(driver->getVertexDescriptor(EVT_STANDARD), video::EIT_16BIT);
+			output->addMeshBuffer(buffer);
+			
+			// apply transform
+			core::matrix4 m;
+			for (u32 i = 0; i < numEntities; i++)
+			{
+				m = world * m_transforms[i];
+				addMesh(m_meshs[i], m, output);
+			}
+
+			buffer->recalculateBoundingBox();
+			output->recalculateBoundingBox();
+
+			buffer->drop();
+
+			// load obstacle
+			loadObstacle(output, obstacle);
+			return true;
+		}
+
+		void CRecastBuilder::addMesh(CMesh* mesh, const core::matrix4& transform, CMesh* output)
+		{
+			int numMeshBuffer = mesh->getMeshBufferCount();
+
+			core::vector3df v, n;
+			int a = 0, b = 0, c = 0;
+
+			IMeshBuffer* outMeshBuffer = output->getMeshBuffer(0);
+			IVertexBuffer* outVB = outMeshBuffer->getVertexBuffer();
+			IIndexBuffer* outIB = outMeshBuffer->getIndexBuffer();
+
+			for (int i = 0; i < numMeshBuffer; i++)
+			{
+				IMeshBuffer* meshBuffer = mesh->getMeshBuffer(i);
+
+				IVertexBuffer* vertexBuffer = meshBuffer->getVertexBuffer();
+				IIndexBuffer* indexBuffer = meshBuffer->getIndexBuffer();
+
+				unsigned char* vertex = (unsigned char*)vertexBuffer->getVertices();
+				int vertexSize = vertexBuffer->getVertexSize();
+
+				int numIndex = indexBuffer->getIndexCount();
+				int numVertex = vertexBuffer->getVertexCount();
+
+				video::S3DVertex v;
+				u32 batchVtx = outVB->getVertexCount();
+
+				for (int j = 0; j < numVertex; j++)
+				{
+					unsigned char* vPos = vertex + j * vertexSize;
+					video::S3DVertex* vtx = (video::S3DVertex*)vPos;
+
+					v.Pos = vtx->Pos;
+					transform.transformVect(v.Pos);
+
+					v.Normal = vtx->Normal;
+					transform.rotateVect(v.Normal);
+					v.Normal.normalize();
+
+					outVB->addVertex(&v);
+				}
+
+				for (int j = 0; j < numIndex; j++)
+				{
+					outIB->addIndex(batchVtx + indexBuffer->getIndex(j));
+				}
+			}
+		}
+
+		void CRecastBuilder::loadObstacle(CMesh* navMesh, CObstacleAvoidance* obstacle)
+		{
+			obstacle->clear();
+
+			struct SEdge
+			{
+				int A;
+				int B;
+				int PolyRefCount;
+			};
+			std::vector<SEdge> edges;
+
+			IMeshBuffer* meshBuffer = navMesh->getMeshBuffer(0);
+			IVertexBuffer* vertexBuffer = meshBuffer->getVertexBuffer();
+			IIndexBuffer* indexBuffer = meshBuffer->getIndexBuffer();
+
+			int numIndex = indexBuffer->getIndexCount();
+			for (int i = 0; i < numIndex; i += 3)
+			{
+				int a = indexBuffer->getIndex(i);
+				int b = indexBuffer->getIndex(i + 1);
+				int c = indexBuffer->getIndex(i + 2);
+
+				bool foundAB = false;
+				bool foundBC = false;
+				bool foundAC = false;
+
+				for (SEdge& e : edges)
+				{
+					if ((e.A == a && e.B == b) || (e.A == b && e.B == a))
+					{
+						e.PolyRefCount++;
+						foundAB = true;
+					}
+
+					if ((e.A == b && e.B == c) || (e.A == c && e.B == b))
+					{
+						e.PolyRefCount++;
+						foundBC = true;
+					}
+
+					if ((e.A == a && e.B == c) || (e.A == c && e.B == a))
+					{
+						e.PolyRefCount++;
+						foundAC = true;
+					}
+				}
+
+				if (!foundAB)
+				{
+					edges.push_back(SEdge());
+					SEdge& e = edges.back();
+					e.A = a;
+					e.B = b;
+					e.PolyRefCount = 1;
+				}
+
+				if (!foundBC)
+				{
+					edges.push_back(SEdge());
+					SEdge& e = edges.back();
+					e.A = b;
+					e.B = c;
+					e.PolyRefCount = 1;
+				}
+
+				if (!foundAC)
+				{
+					edges.push_back(SEdge());
+					SEdge& e = edges.back();
+					e.A = a;
+					e.B = c;
+					e.PolyRefCount = 1;
+				}
+			}
+
+			for (SEdge& e : edges)
+			{
+				if (e.PolyRefCount == 1)
+				{
+					S3DVertex* a = (S3DVertex*)vertexBuffer->getVertex(e.A);
+					S3DVertex* b = (S3DVertex*)vertexBuffer->getVertex(e.B);
+					obstacle->addSegment(a->Pos, b->Pos);
+				}
+			}
+		}
 	}
 }

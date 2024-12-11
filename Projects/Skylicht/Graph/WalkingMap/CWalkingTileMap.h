@@ -94,6 +94,16 @@ namespace Skylicht
 		class CWalkingTileMap
 		{
 		protected:
+			enum EGenerateStep
+			{
+				None = 0,
+				CollectTile,
+				RemoveEmptyTile,
+				LinkNeighbours,
+				Finish
+			};
+
+		protected:
 			core::array<STile*> m_tiles;
 
 			TileValueMap m_hashTiles;
@@ -103,12 +113,26 @@ namespace Skylicht
 
 			core::aabbox3df m_bbox;
 
+			CMesh* m_navMesh;
+			CObstacleAvoidance* m_obstacle;
+
+			EGenerateStep m_generateStep;
+			float m_generatePercent;
+			int m_generateId;
+			int m_generateMax;
+
 		public:
 			CWalkingTileMap();
 
 			virtual ~CWalkingTileMap();
 
 			void generate(float tileWidth, float tileHeight, CMesh* navMesh, CObstacleAvoidance* obstacle);
+
+			void beginGenerate(float tileWidth, float tileHeight, CMesh* navMesh, CObstacleAvoidance* obstacle);
+
+			bool updateGenerate();
+
+			float getGeneratePercent();
 
 			void release();
 
@@ -141,6 +165,12 @@ namespace Skylicht
 		protected:
 
 			void generate(float tileWidth, float tileHeight, const core::aabbox3df& bbox);
+
+			void updateGenerateTile();
+
+			void updateGenerateRemoveEmptyTile();
+
+			void updateGenerateNeighbours();
 
 			bool hitTris(const core::line3df& line, core::array<core::triangle3df>& tris, core::vector3df& outPoint);
 		};

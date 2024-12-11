@@ -68,6 +68,9 @@ namespace Skylicht
 				CMesh* mesh = m_graph->getNavMesh();
 
 				SColor white(255, 255, 255, 255);
+				SColor red(255, 255, 0, 0);
+				SColor yellow(255, 255, 255, 0);
+
 				CHandles* handles = CHandles::getInstance();
 
 				for (u32 i = 0, n = mesh->getMeshBufferCount(); i < n; i++)
@@ -91,6 +94,26 @@ namespace Skylicht
 						handles->drawLine(p3->Pos, p1->Pos, white);
 					}
 				}
+
+				Graph::CObstacleAvoidance* obstacle = m_graph->getObstacle();
+				core::array<core::line3df>& segments = obstacle->getSegments();
+				for (u32 i = 0, n = segments.size(); i < n; i++)
+				{
+					handles->drawLine(segments[i].start, segments[i].end, red);
+				}
+
+				core::vector3df halfHeight(0.0f, 0.2f, 0.0f);
+				Graph::CWalkingTileMap* walkMap = m_graph->getWalkingMap();
+
+				walkMap->resetVisit();
+				core::array<Graph::STile*>& tiles = walkMap->getTiles();
+				for (u32 i = 0, n = tiles.size(); i < n; i++)
+				{
+					Graph::STile* tile = tiles[i];
+					handles->drawLine(tile->Position, tile->Position + halfHeight, yellow);
+					tile->Visit = true;
+				}
+				walkMap->resetVisit();
 			}
 		}
 	}

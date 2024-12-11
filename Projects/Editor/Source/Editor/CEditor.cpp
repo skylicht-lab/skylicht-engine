@@ -58,6 +58,10 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Activator/CEditorActivator.h"
 #include "ProjectSettings/CProjectSettings.h"
 
+#ifdef BUILD_SKYLICHT_GRAPH
+#include "Space/BuildWalkingMap/CSpaceBuildWalkingMap.h"
+#endif
+
 namespace Skylicht
 {
 	namespace Editor
@@ -300,6 +304,24 @@ namespace Skylicht
 			CSpaceApplyTemplate* spaceApplyTemplate = dynamic_cast<CSpaceApplyTemplate*>(space);
 			spaceApplyTemplate->applyTemplate(path);
 		}
+
+#ifdef BUILD_SKYLICHT_GRAPH
+		void CEditor::initBuildWalkMap(Graph::CGraphComponent* component)
+		{
+			m_waitingDialog = new GUI::CDialogWindow(m_canvas, 0.0f, 0.0f, 600.0f, 120.0f);
+			m_waitingDialog->setCaption(L"Build walking map");
+			m_waitingDialog->showCloseButton(false);
+			m_waitingDialog->setCenterPosition();
+			m_waitingDialog->bringToFront();
+
+			initWorkspace(m_waitingDialog, m_waitingDialog->getCaption());
+
+			CSpace* space = getWorkspace(m_waitingDialog);
+
+			CSpaceBuildWalkingMap* spaceBuild = dynamic_cast<CSpaceBuildWalkingMap*>(space);
+			spaceBuild->build(component);
+		}
+#endif
 
 		void CEditor::initEditorGUI()
 		{
@@ -641,6 +663,12 @@ namespace Skylicht
 			{
 				ret = new CSpaceLoadScene(window, this);
 			}
+#ifdef BUILD_SKYLICHT_GRAPH
+			else if (workspace == L"Build walking map")
+			{
+				ret = new CSpaceBuildWalkingMap(window, this);
+			}
+#endif
 
 			if (ret)
 				m_workspaces.push_back(ret);

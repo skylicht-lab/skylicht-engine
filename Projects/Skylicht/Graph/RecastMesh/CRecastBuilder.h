@@ -78,6 +78,8 @@ namespace Skylicht
 
 			bool build(CRecastMesh* mesh, CMesh* output, CObstacleAvoidance* obstacle);
 
+			bool load(CEntityPrefab* prefab, const core::matrix4& transform, CMesh* output, CObstacleAvoidance* obstacle);
+
 			inline const SBuilderConfig& getConfig()
 			{
 				return m_config;
@@ -87,6 +89,12 @@ namespace Skylicht
 			{
 				m_config = config;
 			}
+
+		protected:
+
+			void addMesh(CMesh* inputMesh, const core::matrix4& transform, CMesh* output);
+
+			void loadObstacle(CMesh* navMesh, CObstacleAvoidance* obstacle);
 		};
 	}
 }

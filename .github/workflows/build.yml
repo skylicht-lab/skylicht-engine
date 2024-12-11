@@ -283,7 +283,7 @@ jobs:
           -DBUILD_SKYLICHT_NETWORK=OFF 
           -DBUILD_SKYLICHT_PHYSIC=OFF 
           -DBUILD_SPINE_RUNTIMES=OFF 
-          -DBUILD_RECAST_GRAPH=OFF 
+          -DBUILD_SKYLICHT_GRAPH=OFF 
           -DBUILD_EXAMPLES=OFF 
           -DBUILD_EDITOR_TOOL=OFF
       - name: Build Project

@@ -59,7 +59,6 @@ namespace Skylicht
 						CGraphComponent* graph = (CGraphComponent*)m_component;
 						graph->buildRecastMesh();
 					};
-
 				ui->addButton(layout, L"Save RecastMesh")->OnPress = [&](GUI::CBase* button)
 					{
 						CSceneController* controller = CSceneController::getInstance();
@@ -92,12 +91,35 @@ namespace Skylicht
 					};
 				layout->addSpace(5.0f);
 			}
-			else if (data->Name == "inputObstacle")
+			else if (data->Name == "recastMesh")
 			{
 				layout->addSpace(5.0f);
+				ui->addButton(layout, L"Load RecastMesh")->OnPress = [&](GUI::CBase* button)
+					{
+						CGraphComponent* graph = (CGraphComponent*)m_component;
+						graph->loadRecastMesh();
+					};
 				ui->addButton(layout, L"Build WalkingTilemap")->OnPress = [&](GUI::CBase* button)
 					{
 						CGraphComponent* graph = (CGraphComponent*)m_component;
+						CEditor::getInstance()->initBuildWalkMap(graph);
+					};
+				layout->addSpace(5.0f);
+				ui->addButton(layout, L"Save WalkingTilemap")->OnPress = [&](GUI::CBase* button)
+					{
+						CGraphComponent* graph = (CGraphComponent*)m_component;
+
+					};
+				ui->addButton(layout, L"Load WalkingTilemap")->OnPress = [&](GUI::CBase* button)
+					{
+						CGraphComponent* graph = (CGraphComponent*)m_component;
+
+					};
+				layout->addSpace(5.0f);
+				ui->addButton(layout, L"Release")->OnPress = [&](GUI::CBase* button)
+					{
+						CGraphComponent* graph = (CGraphComponent*)m_component;
+						graph->release();
 					};
 				layout->addSpace(5.0f);
 			}
