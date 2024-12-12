@@ -186,6 +186,11 @@ namespace Skylicht
 				return m_iconColor;
 			}
 
+			inline GUI::SGUIColor& getTextColor()
+			{
+				return m_textColor;
+			}
+
 			inline GUI::SGUIColor& getBGColor()
 			{
 				return m_bgColor;
