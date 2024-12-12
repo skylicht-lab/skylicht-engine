@@ -55,6 +55,7 @@ namespace Skylicht
 
 			std::string m_inputCollision;
 			std::string m_inputRecastMesh;
+			std::string m_inputWalkingTileMap;
 
 			CMesh* m_navMesh;
 		public:
@@ -121,6 +122,10 @@ namespace Skylicht
 			bool updateBuildWalkingMap();
 
 			float getBuildPercent();
+
+			bool saveWalkMap(const char* output);
+
+			bool loadWalkMap();
 
 			void release();
 

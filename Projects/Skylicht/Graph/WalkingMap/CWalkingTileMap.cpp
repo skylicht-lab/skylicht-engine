@@ -211,6 +211,7 @@ namespace Skylicht
 			{
 				STile* t = m_tiles[i];
 				t->Id = i;
+				t->Tris.clear();
 			}
 		}
 
@@ -430,6 +431,7 @@ namespace Skylicht
 				{
 					STile* t = m_tiles[i];
 					t->Id = i;
+					t->Tris.clear();
 				}
 
 				m_generateStep = Finish;
@@ -514,6 +516,167 @@ namespace Skylicht
 			{
 				m_tiles[i]->Visit = false;
 			}
+		}
+
+		bool CWalkingTileMap::save(const char* output)
+		{
+			io::IXMLWriter* xmlWriter = getIrrlichtDevice()->getFileSystem()->createXMLWriter(output);
+			if (!xmlWriter)
+				return false;
+
+			xmlWriter->writeXMLHeader();
+
+			io::IAttributes* attrib = getIrrlichtDevice()->getFileSystem()->createEmptyAttributes();
+
+			xmlWriter->writeElement(L"walkmap", false);
+			xmlWriter->writeLineBreak();
+
+			attrib->clear();
+			attrib->addFloat("tileWidth", m_tileWidth);
+			attrib->addFloat("tileHeight", m_tileHeight);
+			attrib->addBox3d("bbox", m_bbox);
+			attrib->write(xmlWriter);
+
+			// <tiles>
+			xmlWriter->writeElement(L"tiles", false);
+			xmlWriter->writeLineBreak();
+
+			for (u32 i = 0, n = m_tiles.size(); i < n; i++)
+			{
+				STile* tile = m_tiles[i];
+				core::stringw id = core::stringw(tile->Id);
+				core::stringw x = core::stringw(tile->X);
+				core::stringw y = core::stringw(tile->Y);
+				core::stringw z = core::stringw(tile->Z);
+
+				// <tile>
+				xmlWriter->writeElement(L"tile", false,
+					L"id", id.c_str(),
+					L"x", x.c_str(),
+					L"y", y.c_str(),
+					L"z", z.c_str());
+				xmlWriter->writeLineBreak();
+
+				attrib->clear();
+				attrib->addVector3d("position", tile->Position);
+				attrib->addBox3d("bbox", tile->BBox);
+				attrib->write(xmlWriter);
+
+				// </tile>
+				xmlWriter->writeClosingTag(L"tile");
+				xmlWriter->writeLineBreak();
+			}
+
+			// </tiles>
+			xmlWriter->writeClosingTag(L"tiles");
+			xmlWriter->writeLineBreak();
+
+			// <neighbours>
+			xmlWriter->writeElement(L"neighbours", false);
+			xmlWriter->writeLineBreak();
+
+			std::vector<std::pair<int, int>> links;
+			for (u32 i = 0, n = m_tiles.size(); i < n; i++)
+			{
+				STile* tile = m_tiles[i];
+				for (u32 j = 0, m = tile->Neighbours.size(); j < m; j++)
+				{
+					if (tile->Neighbours[j]->Id > (int)i)
+					{
+						links.push_back(std::make_pair(tile->Id, tile->Neighbours[j]->Id));
+					}
+				}
+			}
+
+			for (auto i : links)
+			{
+				core::stringw a = core::stringw(i.first);
+				core::stringw b = core::stringw(i.second);
+				xmlWriter->writeElement(L"link", true, L"a", a.c_str(), L"b", b.c_str());
+				xmlWriter->writeLineBreak();
+			}
+
+			// </neighbours>
+			xmlWriter->writeClosingTag(L"neighbours");
+			xmlWriter->writeLineBreak();
+
+			xmlWriter->writeClosingTag(L"walkmap");
+			xmlWriter->writeLineBreak();
+
+			xmlWriter->drop();
+			attrib->drop();
+			return true;
+		}
+
+		bool CWalkingTileMap::load(const char* input)
+		{
+			io::IXMLReader* xmlReader = getIrrlichtDevice()->getFileSystem()->createXMLReader(input);
+			if (!xmlReader)
+				return false;
+
+			release();
+
+			io::IAttributes* attrib = getIrrlichtDevice()->getFileSystem()->createEmptyAttributes();
+
+			while (xmlReader->read())
+			{
+				switch (xmlReader->getNodeType())
+				{
+				case io::EXN_ELEMENT:
+				{
+					std::wstring nodeName = xmlReader->getNodeName();
+					if (nodeName == L"walkmap")
+					{
+						attrib->clear();
+						attrib->read(xmlReader);
+						m_tileWidth = attrib->getAttributeAsFloat("tileWidth");
+						m_tileHeight = attrib->getAttributeAsFloat("tileHeight");
+						m_bbox = attrib->getAttributeAsBox3d("bbox");
+					}
+					else if (nodeName == L"tile")
+					{
+						STile* tile = new STile();
+
+						tile->Id = xmlReader->getAttributeValueAsInt(L"id");
+						tile->X = xmlReader->getAttributeValueAsInt(L"x");
+						tile->Y = xmlReader->getAttributeValueAsInt(L"y");
+						tile->Z = xmlReader->getAttributeValueAsInt(L"z");
+
+						attrib->clear();
+						attrib->read(xmlReader);
+
+						tile->Position = attrib->getAttributeAsVector3d("position");
+						tile->BBox = attrib->getAttributeAsBox3d("bbox");
+
+						m_tiles.push_back(tile);
+					}
+					else if (nodeName == L"link")
+					{
+						int a = xmlReader->getAttributeValueAsInt(L"a");
+						int b = xmlReader->getAttributeValueAsInt(L"b");
+
+						m_tiles[a]->Neighbours.push_back(m_tiles[b]);
+						m_tiles[b]->Neighbours.push_back(m_tiles[a]);
+					}
+					break;
+				}
+				default:
+					break;
+				}
+			}
+
+			for (u32 i = 0, n = m_tiles.size(); i < n; i++)
+			{
+				STile* t = m_tiles[i];
+
+				STileXYZ tile(t->X, t->Y, t->Z);
+				m_hashTiles[tile] = t;
+			}
+
+			xmlReader->drop();
+			attrib->drop();
+
+			return true;
 		}
 	}
 }

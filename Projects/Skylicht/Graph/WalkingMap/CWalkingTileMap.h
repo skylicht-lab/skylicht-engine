@@ -162,6 +162,10 @@ namespace Skylicht
 				return m_tiles.size();
 			}
 
+			bool save(const char* output);
+
+			bool load(const char* input);
+
 		protected:
 
 			void generate(float tileWidth, float tileHeight, const core::aabbox3df& bbox);

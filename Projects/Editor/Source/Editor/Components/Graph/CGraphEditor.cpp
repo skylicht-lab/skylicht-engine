@@ -107,16 +107,35 @@ namespace Skylicht
 				layout->addSpace(5.0f);
 				ui->addButton(layout, L"Save WalkingTilemap")->OnPress = [&](GUI::CBase* button)
 					{
-						CGraphComponent* graph = (CGraphComponent*)m_component;
+						CSceneController* controller = CSceneController::getInstance();
+						std::string assetFolder = CAssetManager::getInstance()->getAssetFolder();
 
+						GUI::COpenSaveDialog* dialog = new GUI::COpenSaveDialog(
+							GUI::Context::getRoot(),
+							GUI::COpenSaveDialog::Save,
+							assetFolder.c_str(),
+							assetFolder.c_str(),
+							"wtm;*"
+						);
+
+						dialog->OnSave = [&, controller](std::string path)
+							{
+								CGraphComponent* graph = (CGraphComponent*)m_component;
+								graph->saveWalkMap(path.c_str());
+								CEditor::getInstance()->refresh();
+							};
 					};
+				layout->addSpace(5.0f);
+			}
+			else if (data->Name == "walkingTileMap")
+			{
 				ui->addButton(layout, L"Load WalkingTilemap")->OnPress = [&](GUI::CBase* button)
 					{
 						CGraphComponent* graph = (CGraphComponent*)m_component;
-
+						graph->loadWalkMap();
 					};
-				layout->addSpace(5.0f);
-				ui->addButton(layout, L"Release")->OnPress = [&](GUI::CBase* button)
+				layout->addSpace(10.0f);
+				ui->addButton(layout, L"Release all")->OnPress = [&](GUI::CBase* button)
 					{
 						CGraphComponent* graph = (CGraphComponent*)m_component;
 						graph->release();

@@ -109,6 +109,11 @@ namespace Skylicht
 			value->setUIHeader("Built model (custom, optional)");
 			obj->autoRelease(value);
 
+			std::vector<std::string> wtmExts = { "wtm", };
+			value = new CFilePathProperty(obj, "walkingTileMap", m_inputWalkingTileMap.c_str(), wtmExts);
+			value->setUIHeader("Built walking map (use for load)");
+			obj->autoRelease(value);
+
 			return obj;
 		}
 
@@ -128,6 +133,7 @@ namespace Skylicht
 			m_walkTileHeight = obj->get<float>("walkTileHeight", 2.0f);
 
 			m_inputRecastMesh = obj->get<std::string>("recastMesh", std::string());
+			m_inputWalkingTileMap = obj->get<std::string>("walkingTileMap", std::string());
 		}
 
 		bool CGraphComponent::loadRecastMesh()
@@ -185,6 +191,19 @@ namespace Skylicht
 		float CGraphComponent::getBuildPercent()
 		{
 			return m_walkingTileMap->getGeneratePercent();
+		}
+
+		bool CGraphComponent::saveWalkMap(const char* output)
+		{
+			return m_walkingTileMap->save(output);
+		}
+
+		bool CGraphComponent::loadWalkMap()
+		{
+			if (m_inputWalkingTileMap.empty())
+				return false;
+
+			return m_walkingTileMap->load(m_inputWalkingTileMap.c_str());
 		}
 
 		void CGraphComponent::release()
