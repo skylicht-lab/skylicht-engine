@@ -271,6 +271,9 @@ namespace Skylicht
 			// set icon color
 			guiNode->setIconColor(node->getIconColor());
 
+			// text color
+			guiNode->setLabelColor(node->getTextColor());
+
 			// show sub icon
 			guiNode->setSubIcon(node->getSubIcon());
 			guiNode->getTextItem()->showSubIcon(node->haveSubIcon());

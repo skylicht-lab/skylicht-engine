@@ -911,6 +911,7 @@ namespace Skylicht
 								CMaterial::SUniformTexture* uniform = material->getUniformTexture(uniformName.c_str());
 								uniform->Path = shortPath;
 								uniform->Texture = texture;
+								uniform->Texture->grab();
 								material->autoDetectLoadTexture();
 								material->applyMaterial();
 
@@ -956,6 +957,8 @@ namespace Skylicht
 								// clear texture
 								CMaterial::SUniformTexture* uniform = material->getUniformTexture(name.c_str());
 								uniform->Path = "";
+								if (uniform->Texture)
+									uniform->Texture->drop();
 								uniform->Texture = NULL;
 
 								// clear gui

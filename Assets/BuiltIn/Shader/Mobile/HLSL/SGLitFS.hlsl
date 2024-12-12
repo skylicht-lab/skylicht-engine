@@ -62,7 +62,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 H = normalize(input.worldLightDir + input.worldViewDir);
 	float NdotE = max(0.0,dot(n, H));
 	float specular = pow(NdotE, 100.0f * specMap.g) * specMap.r;
-	color += specular * diffuseColor;
+	color += specular;
 	color += ambientLighting * diffuseColor / PI;
 	return float4(color, diffuseMap.a);
 }

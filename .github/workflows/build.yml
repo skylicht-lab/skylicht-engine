@@ -286,6 +286,7 @@ jobs:
           -DBUILD_SKYLICHT_GRAPH=OFF 
           -DBUILD_EXAMPLES=OFF 
           -DBUILD_EDITOR_TOOL=OFF
+          -DBUILD_EDITOR_GUI_LIB=OFF
       - name: Build Project
         run: |
           cmake --build ./PrjVisualStudio --config "Release"

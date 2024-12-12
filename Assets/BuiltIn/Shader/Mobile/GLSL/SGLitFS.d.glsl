@@ -109,7 +109,7 @@ void main(void)
 	vec3 H = normalize(vWorldLightDir + vWorldViewDir);
 	float NdotE = max(0.0, dot(n, H));
 	float specular = pow(NdotE, 100.0f * specMap.g) * specMap.r;
-	color += specular * diffuseColor;
+	color += specular;// * diffuseColor;
 
 #if defined(SHADOW)
 	color *= visibility;
