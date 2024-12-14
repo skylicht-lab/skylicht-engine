@@ -38,6 +38,7 @@ namespace Skylicht
 			int X;
 			int Y;
 			int Z;
+			int AreaId;
 			core::vector3df Position;
 			core::aabbox3df BBox;
 			core::array<core::triangle3df> Tris;
@@ -50,8 +51,18 @@ namespace Skylicht
 				X = 0;
 				Y = 0;
 				Z = 0;
+				AreaId = 0;
 				Visit = false;
 			}
+		};
+
+		struct STriArea
+		{
+			int AreaId;
+			u32 A;
+			u32 B;
+			u32 C;
+			core::array<int> Neighbours;
 		};
 
 		struct STileXYZ
@@ -105,6 +116,7 @@ namespace Skylicht
 
 		protected:
 			core::array<STile*> m_tiles;
+			core::array<STriArea*> m_tris;
 
 			TileValueMap m_hashTiles;
 
@@ -177,6 +189,8 @@ namespace Skylicht
 			void updateGenerateNeighbours();
 
 			bool hitTris(const core::line3df& line, core::array<core::triangle3df>& tris, core::vector3df& outPoint);
+
+			void fillArea();
 		};
 	}
 }

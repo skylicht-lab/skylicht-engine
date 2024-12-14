@@ -113,6 +113,11 @@ namespace Skylicht
 				return m_walkingTileMap;
 			}
 
+			inline CGraphQuery* getQuery()
+			{
+				return m_query;
+			}
+
 			bool loadRecastMesh();
 
 			bool buildRecastMesh();

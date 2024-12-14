@@ -60,6 +60,19 @@ namespace Skylicht
 			m_graph = m_gameObject->getComponent<CGraphComponent>();
 		}
 
+		inline int bit(int a, int b)
+		{
+			return (a & (1 << b)) >> b;
+		}
+
+		void intToCol(int i, int a, SColor& c)
+		{
+			int	r = bit(i, 1) + bit(i, 3) * 2 + 1;
+			int	g = bit(i, 2) + bit(i, 4) * 2 + 1;
+			int	b = bit(i, 0) + bit(i, 5) * 2 + 1;
+			c.set(a, r * 120, g * 120, b * 120);
+		}
+
 		void CGGraph::updateComponent()
 		{
 			CSelectObject* selectObject = CSelection::getInstance()->getLastSelected();
@@ -69,7 +82,6 @@ namespace Skylicht
 
 				SColor white(255, 255, 255, 255);
 				SColor red(255, 255, 0, 0);
-				SColor yellow(255, 255, 255, 0);
 
 				CHandles* handles = CHandles::getInstance();
 
@@ -103,6 +115,7 @@ namespace Skylicht
 				}
 
 				core::vector3df halfHeight(0.0f, 0.2f, 0.0f);
+				SColor color;
 				Graph::CWalkingTileMap* walkMap = m_graph->getWalkingMap();
 
 				walkMap->resetVisit();
@@ -110,7 +123,8 @@ namespace Skylicht
 				for (u32 i = 0, n = tiles.size(); i < n; i++)
 				{
 					Graph::STile* tile = tiles[i];
-					handles->drawLine(tile->Position, tile->Position + halfHeight, yellow);
+					intToCol(tile->AreaId, 255, color);
+					handles->drawLine(tile->Position, tile->Position + halfHeight, color);
 					tile->Visit = true;
 				}
 				walkMap->resetVisit();

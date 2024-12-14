@@ -100,6 +100,19 @@ void CDemoNavMesh::close()
 		m_map->setVisible(false);
 }
 
+inline int bit(int a, int b)
+{
+	return (a & (1 << b)) >> b;
+}
+
+void intToCol(int i, int a, SColor& c)
+{
+	int	r = bit(i, 1) + bit(i, 3) * 2 + 1;
+	int	g = bit(i, 2) + bit(i, 4) * 2 + 1;
+	int	b = bit(i, 0) + bit(i, 5) * 2 + 1;
+	c.set(a, r * 120, g * 120, b * 120);
+}
+
 void CDemoNavMesh::update()
 {
 	CSceneDebug* debug = CSceneDebug::getInstance();
@@ -115,7 +128,6 @@ void CDemoNavMesh::update()
 	SColor white(255, 100, 100, 100);
 	SColor green(255, 0, 10, 0);
 	SColor greenL(255, 0, 100, 0);
-	SColor yellow(255, 100, 100, 0);
 
 	// draw debug recastmesh
 	if (m_drawDebugRecastMesh)
@@ -205,10 +217,16 @@ void CDemoNavMesh::update()
 		core::vector3df halfHeight(0.0f, 0.2f, 0.0f);
 		m_walkingTileMap->resetVisit();
 		core::array<Graph::STile*>& tiles = m_walkingTileMap->getTiles();
+
+		SColor c;
+
 		for (u32 i = 0, n = tiles.size(); i < n; i++)
 		{
 			Graph::STile* tile = tiles[i];
-			debug->addLine(tile->Position, tile->Position + halfHeight, yellow);
+
+			intToCol(tile->AreaId, 255, c);
+
+			debug->addLine(tile->Position, tile->Position + halfHeight, c);
 
 			/*
 			if (tile == m_fromTile)

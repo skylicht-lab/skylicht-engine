@@ -399,6 +399,7 @@ namespace Skylicht
 
 		// apply new scale
 		m_root->setScale(core::vector3df(scale, scale, 1.0f));
+		updateEntities();
 	}
 
 	void CCanvas::resetScaleGUI()
@@ -411,6 +412,7 @@ namespace Skylicht
 		m_rect = core::rectf(0.0f, 0.0f, w, h);
 		m_root->setRect(m_rect);
 		m_root->setScale(core::vector3df(1.0f, 1.0f, 1.0f));
+		updateEntities();
 	}
 
 	const core::vector3df& CCanvas::getRootScale()

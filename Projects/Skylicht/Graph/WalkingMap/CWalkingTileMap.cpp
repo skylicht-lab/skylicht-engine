@@ -25,6 +25,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CWalkingTileMap.h"
 
+#include "Utils/CStringImp.h"
+
 namespace Skylicht
 {
 	namespace Graph
@@ -95,15 +97,28 @@ namespace Skylicht
 			IVertexBuffer* vb = mb->getVertexBuffer();
 			IIndexBuffer* ib = mb->getIndexBuffer();
 
-			for (u32 i = 0, n = ib->getIndexCount(); i < n; i += 3)
-			{
-				u32 ixA = ib->getIndex(i);
-				u32 ixB = ib->getIndex(i + 1);
-				u32 ixC = ib->getIndex(i + 2);
+			u32 numTris = ib->getIndexCount() / 3;
 
-				S3DVertex* a = (S3DVertex*)vb->getVertex(ixA);
-				S3DVertex* b = (S3DVertex*)vb->getVertex(ixB);
-				S3DVertex* c = (S3DVertex*)vb->getVertex(ixC);
+			for (u32 i = 0; i < numTris; i++)
+			{
+				m_tris.push_back(new STriArea());
+
+				STriArea* t = m_tris.getLast();
+				t->AreaId = 0;
+				t->A = ib->getIndex(i * 3);
+				t->B = ib->getIndex(i * 3 + 1);
+				t->C = ib->getIndex(i * 3 + 2);
+			}
+
+			fillArea();
+
+			for (u32 i = 0; i < numTris; i++)
+			{
+				STriArea* t = m_tris[i];
+
+				S3DVertex* a = (S3DVertex*)vb->getVertex(t->A);
+				S3DVertex* b = (S3DVertex*)vb->getVertex(t->B);
+				S3DVertex* c = (S3DVertex*)vb->getVertex(t->C);
 
 				core::aabbox3df box;
 				box.reset(a->Pos);
@@ -117,6 +132,7 @@ namespace Skylicht
 					if (m_tiles[j]->BBox.intersectsWithBox(box))
 					{
 						m_tiles[j]->Tris.push_back(tri);
+						m_tiles[j]->AreaId = t->AreaId;
 					}
 				}
 			}
@@ -178,6 +194,9 @@ namespace Skylicht
 					if (abs(a->Y - b->Y) > 1)
 						continue;
 
+					if (a->AreaId != b->AreaId)
+						continue;
+
 					// if (a->Position.getDistanceFromSQ(b->Position) > 400.0f)
 					//	continue;
 
@@ -213,11 +232,93 @@ namespace Skylicht
 				t->Id = i;
 				t->Tris.clear();
 			}
+
+			// free data
+			for (u32 i = 0, n = m_tris.size(); i < n; i++)
+				delete m_tris[i];
+			m_tris.clear();
+		}
+
+		void CWalkingTileMap::fillArea()
+		{
+			for (u32 i = 0, n = m_tris.size(); i < n; i++)
+			{
+				STriArea* t1 = m_tris[i];
+				for (u32 j = i + 1; j < n; j++)
+				{
+					STriArea* t2 = m_tris[j];
+					int p = 0;
+
+					if (t1->A == t2->A || t1->A == t2->B || t1->A == t2->C)
+						p++;
+					if (t1->B == t2->A || t1->B == t2->B || t1->B == t2->C)
+						p++;
+					if (t1->C == t2->A || t1->C == t2->B || t1->C == t2->C)
+						p++;
+
+					if (p >= 2)
+					{
+						t1->Neighbours.push_back(j);
+						t2->Neighbours.push_back(i);
+					}
+				}
+			}
+
+			int areaId = 1;
+			std::stack<STriArea*> stack;
+
+			for (u32 i = 0, n = m_tris.size(); i < n; i++)
+			{
+				if (m_tris[i]->AreaId == 0)
+				{
+					m_tris[i]->AreaId = areaId;
+
+					stack.push(m_tris[i]);
+					while (!stack.empty())
+					{
+						STriArea* t = stack.top();
+						stack.pop();
+
+						t->AreaId = areaId;
+
+						for (u32 j = 0, m = t->Neighbours.size(); j < m; j++)
+						{
+							int tid = t->Neighbours[j];
+
+							if (m_tris[tid]->AreaId == 0)
+							{
+								stack.push(m_tris[tid]);
+							}
+						}
+					}
+
+					areaId++;
+				}
+			}
 		}
 
 		void CWalkingTileMap::beginGenerate(float tileWidth, float tileHeight, CMesh* navMesh, CObstacleAvoidance* obstacle)
 		{
 			generate(tileWidth, tileHeight, navMesh->getBoundingBox());
+
+			IMeshBuffer* mb = navMesh->getMeshBuffer(0);
+			IVertexBuffer* vb = mb->getVertexBuffer();
+			IIndexBuffer* ib = mb->getIndexBuffer();
+
+			u32 numTris = ib->getIndexCount() / 3;
+
+			for (u32 i = 0; i < numTris; i++)
+			{
+				m_tris.push_back(new STriArea());
+
+				STriArea* t = m_tris.getLast();
+				t->AreaId = 0;
+				t->A = ib->getIndex(i * 3);
+				t->B = ib->getIndex(i * 3 + 1);
+				t->C = ib->getIndex(i * 3 + 2);
+			}
+
+			fillArea();
 
 			m_navMesh = navMesh;
 			m_obstacle = obstacle;
@@ -255,18 +356,16 @@ namespace Skylicht
 			IIndexBuffer* ib = mb->getIndexBuffer();
 
 			int t = 10;
-			int n = ib->getIndexCount();
+			int n = (int)m_tris.size();
 
-			for (; m_generateId < n; m_generateId += 3)
+			for (; m_generateId < n; m_generateId++)
 			{
 				u32 i = (u32)m_generateId;
-				u32 ixA = ib->getIndex(i);
-				u32 ixB = ib->getIndex(i + 1);
-				u32 ixC = ib->getIndex(i + 2);
+				STriArea* t = m_tris[i];
 
-				S3DVertex* a = (S3DVertex*)vb->getVertex(ixA);
-				S3DVertex* b = (S3DVertex*)vb->getVertex(ixB);
-				S3DVertex* c = (S3DVertex*)vb->getVertex(ixC);
+				S3DVertex* a = (S3DVertex*)vb->getVertex(t->A);
+				S3DVertex* b = (S3DVertex*)vb->getVertex(t->B);
+				S3DVertex* c = (S3DVertex*)vb->getVertex(t->C);
 
 				core::aabbox3df box;
 				box.reset(a->Pos);
@@ -280,13 +379,14 @@ namespace Skylicht
 					if (m_tiles[j]->BBox.intersectsWithBox(box))
 					{
 						m_tiles[j]->Tris.push_back(tri);
+						m_tiles[j]->AreaId = t->AreaId;
 					}
 				}
 
 				if (--t <= 0)
 				{
 					// skip for next update
-					m_generateId += 3;
+					m_generateId++;
 					break;
 				}
 			}
@@ -387,6 +487,9 @@ namespace Skylicht
 					if (abs(a->Y - b->Y) > 1)
 						continue;
 
+					if (a->AreaId != b->AreaId)
+						continue;
+
 					// if (a->Position.getDistanceFromSQ(b->Position) > 400.0f)
 					//	continue;
 
@@ -433,6 +536,11 @@ namespace Skylicht
 					t->Id = i;
 					t->Tris.clear();
 				}
+
+				// free data
+				for (u32 i = 0, n = m_tris.size(); i < n; i++)
+					delete m_tris[i];
+				m_tris.clear();
 
 				m_generateStep = Finish;
 				m_generatePercent = 0.0f;
@@ -506,7 +614,14 @@ namespace Skylicht
 			{
 				delete m_tiles[i];
 			}
+
+			for (u32 i = 0, n = m_tris.size(); i < n; i++)
+			{
+				delete m_tris[i];
+
+			}
 			m_tiles.clear();
+			m_tris.clear();
 			m_hashTiles.clear();
 		}
 
@@ -548,13 +663,15 @@ namespace Skylicht
 				core::stringw x = core::stringw(tile->X);
 				core::stringw y = core::stringw(tile->Y);
 				core::stringw z = core::stringw(tile->Z);
+				core::stringw areaId = core::stringw(tile->AreaId);
 
 				// <tile>
 				xmlWriter->writeElement(L"tile", false,
 					L"id", id.c_str(),
 					L"x", x.c_str(),
 					L"y", y.c_str(),
-					L"z", z.c_str());
+					L"z", z.c_str(),
+					L"area", areaId.c_str());
 				xmlWriter->writeLineBreak();
 
 				attrib->clear();
@@ -575,24 +692,31 @@ namespace Skylicht
 			xmlWriter->writeElement(L"neighbours", false);
 			xmlWriter->writeLineBreak();
 
-			std::vector<std::pair<int, int>> links;
 			for (u32 i = 0, n = m_tiles.size(); i < n; i++)
 			{
 				STile* tile = m_tiles[i];
+
+				// <link>
+				xmlWriter->writeElement(L"link", false, L"id", core::stringw(i).c_str());
+
+				core::stringw text;
+
 				for (u32 j = 0, m = tile->Neighbours.size(); j < m; j++)
 				{
 					if (tile->Neighbours[j]->Id > (int)i)
 					{
-						links.push_back(std::make_pair(tile->Id, tile->Neighbours[j]->Id));
+						text += core::stringw(tile->Neighbours[j]->Id);
+
+						if (j < m - 1)
+							text += L" ";
 					}
 				}
-			}
 
-			for (auto i : links)
-			{
-				core::stringw a = core::stringw(i.first);
-				core::stringw b = core::stringw(i.second);
-				xmlWriter->writeElement(L"link", true, L"a", a.c_str(), L"b", b.c_str());
+				// write list neighbours
+				xmlWriter->writeText(text.c_str());
+
+				// </link>
+				xmlWriter->writeClosingTag(L"link");
 				xmlWriter->writeLineBreak();
 			}
 
@@ -618,6 +742,8 @@ namespace Skylicht
 
 			io::IAttributes* attrib = getIrrlichtDevice()->getFileSystem()->createEmptyAttributes();
 
+			STile* currentTile = NULL;
+
 			while (xmlReader->read())
 			{
 				switch (xmlReader->getNodeType())
@@ -641,6 +767,7 @@ namespace Skylicht
 						tile->X = xmlReader->getAttributeValueAsInt(L"x");
 						tile->Y = xmlReader->getAttributeValueAsInt(L"y");
 						tile->Z = xmlReader->getAttributeValueAsInt(L"z");
+						tile->AreaId = xmlReader->getAttributeValueAsInt(L"area");
 
 						attrib->clear();
 						attrib->read(xmlReader);
@@ -653,10 +780,62 @@ namespace Skylicht
 					else if (nodeName == L"link")
 					{
 						int a = xmlReader->getAttributeValueAsInt(L"a");
-						int b = xmlReader->getAttributeValueAsInt(L"b");
+						currentTile = m_tiles[a];
+					}
+					break;
+				}
+				case io::EXN_ELEMENT_END:
+				{
+					std::wstring nodeName = xmlReader->getNodeName();
+					if (nodeName == L"link")
+					{
+						currentTile = NULL;
+					}
+					break;
+				}
+				case io::EXN_TEXT:
+				{
+					if (currentTile)
+					{
+						const wchar_t* data = xmlReader->getNodeData();
 
-						m_tiles[a]->Neighbours.push_back(m_tiles[b]);
-						m_tiles[b]->Neighbours.push_back(m_tiles[a]);
+						wchar_t* p = (wchar_t*)data;
+						wchar_t* begin = (wchar_t*)data;
+
+						int value = 0;
+						int numTiles = (int)m_tiles.size();
+
+						int numArrayTime = 0;
+						int numArray = 0;
+
+						int len = CStringImp::length<const wchar_t>(data);
+						while (*p && len > 0)
+						{
+							while (*p && !(*p == L' ' || *p == L'\n' || *p == L'\r' || *p == L'\t'))
+							{
+								++p;
+								len--;
+							}
+
+							*p = 0;
+
+							if (*begin)
+							{
+								value = -1;
+								swscanf(begin, L"%d", &value);
+								if (value >= 0 && value < numTiles)
+								{
+									STile* tile = m_tiles[value];
+
+									currentTile->Neighbours.push_back(tile);
+									tile->Neighbours.push_back(currentTile);
+								}
+							}
+
+							p++;
+							len--;
+							begin = p;
+						}
 					}
 					break;
 				}
