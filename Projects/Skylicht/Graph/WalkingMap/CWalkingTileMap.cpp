@@ -361,25 +361,25 @@ namespace Skylicht
 			for (; m_generateId < n; m_generateId++)
 			{
 				u32 i = (u32)m_generateId;
-				STriArea* t = m_tris[i];
+				STriArea* tri = m_tris[i];
 
-				S3DVertex* a = (S3DVertex*)vb->getVertex(t->A);
-				S3DVertex* b = (S3DVertex*)vb->getVertex(t->B);
-				S3DVertex* c = (S3DVertex*)vb->getVertex(t->C);
+				S3DVertex* a = (S3DVertex*)vb->getVertex(tri->A);
+				S3DVertex* b = (S3DVertex*)vb->getVertex(tri->B);
+				S3DVertex* c = (S3DVertex*)vb->getVertex(tri->C);
 
 				core::aabbox3df box;
 				box.reset(a->Pos);
 				box.addInternalPoint(b->Pos);
 				box.addInternalPoint(c->Pos);
 
-				core::triangle3df tri(a->Pos, b->Pos, c->Pos);
+				core::triangle3df triangle(a->Pos, b->Pos, c->Pos);
 
 				for (u32 j = 0, m = m_tiles.size(); j < m; j++)
 				{
 					if (m_tiles[j]->BBox.intersectsWithBox(box))
 					{
-						m_tiles[j]->Tris.push_back(tri);
-						m_tiles[j]->AreaId = t->AreaId;
+						m_tiles[j]->Tris.push_back(triangle);
+						m_tiles[j]->AreaId = tri->AreaId;
 					}
 				}
 
