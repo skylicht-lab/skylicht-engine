@@ -1590,15 +1590,26 @@ namespace Skylicht
 
 		void CSceneController::focusCameraToEntity(CEntity* entity)
 		{
-			CSelectObjectData* selectObjectData = GET_ENTITY_DATA(entity, CSelectObjectData);
-			if (selectObjectData)
-			{
-				core::vector3df center = selectObjectData->TransformBBox.getCenter();
-				core::vector3df pos = center + selectObjectData->TransformBBox.getExtent() * 2.0f;
+			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+			core::vector3df objectPosition = transform->World.getTranslation();
 
-				CCamera* camera = m_spaceScene->getEditorCamera();
-				camera->lookAt(pos, center, Transform::Oy);
+			CCamera* camera = m_spaceScene->getEditorCamera();
+			core::vector3df look = -camera->getLookVector();
+			core::vector3df cameraPosition = camera->getPosition();
+
+			float cos = look.dotProduct(Transform::Oy);
+
+			float yDistance = fabsf(cameraPosition.Y - objectPosition.Y);
+			float d = yDistance;
+			const float maxDistance = 20.0f;
+			if (cos != 0)
+			{
+				d = yDistance / cos;
+				d = core::clamp(d, -maxDistance, maxDistance);
 			}
+
+			core::vector3df newPosition = objectPosition + look * d;
+			camera->lookAt(newPosition, objectPosition, Transform::Oy);
 		}
 	}
 }
