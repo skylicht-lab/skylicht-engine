@@ -130,7 +130,6 @@ namespace Skylicht
 			worldSpaceDropDown->addItem(L"Local space");
 			worldSpaceDropDown->addItem(L"World space");
 			worldSpaceDropDown->setSelectIndex(0, false);
-			worldSpaceDropDown->setDisabled(true);
 			worldSpaceDropDown->OnChanged = BIND_LISTENER(&CSpaceScene::onToolbarWorldSpace, this);
 			m_toolbarButton[World] = worldSpaceDropDown;
 
