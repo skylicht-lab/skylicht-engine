@@ -29,7 +29,6 @@ struct PS_INPUT
 	float2 tex0 : TEXCOORD0;
 	float3 worldNormal: WORLDNORMAL;
 	float3 worldViewDir: WORLDVIEWDIR;
-	float3 worldLightDir: WORLDLIGHTDIR;
 	float4 viewPosition: VIEWPOSITION;
 	float3 worldPosition: WORLDPOSITION;
 };
@@ -40,7 +39,6 @@ struct PS_INPUT
 	float2 tex0 : TEXCOORD0;
 	float3 worldNormal: WORLDNORMAL;
 	float3 worldViewDir: WORLDVIEWDIR;
-	float3 worldLightDir: WORLDLIGHTDIR;
 	float3 worldTangent: WORLDTANGENT;
 	float3 worldBinormal: WORLDBINORMAL;
 	float tangentw : TANGENTW;
@@ -51,6 +49,7 @@ struct PS_INPUT
 
 cbuffer cbPerFrame
 {
+	float4 uLightDirection;
 	float4 uLightColor;
 	float4 uColor;
 #ifdef NO_TEXTURE
@@ -164,7 +163,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 lambert = albedo / PI;
 	
 	// Lighting
-	float3 lightContribution = computeLightContribution(n, input.worldLightDir, input.worldViewDir, F0, lambert, sRGB(uLightColor.rgb), VdotN, roughness, metalness);
+	float3 lightContribution = computeLightContribution(n, uLightDirection.xyz, input.worldViewDir, F0, lambert, sRGB(uLightColor.rgb), VdotN, roughness, metalness);
 
 	// IBL diffuse
 	float3 F = fresnelSchlick(input.worldViewDir, n, F0);

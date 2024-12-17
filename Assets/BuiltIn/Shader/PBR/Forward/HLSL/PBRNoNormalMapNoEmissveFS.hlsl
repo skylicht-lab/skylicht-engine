@@ -13,12 +13,12 @@ struct PS_INPUT
 	float2 tex0 : TEXCOORD0;
 	float3 worldNormal: WORLDNORMAL;
 	float3 worldViewDir: WORLDVIEWDIR;
-	float3 worldLightDir: WORLDLIGHTDIR;
 	float4 viewPosition: VIEWPOSITION;
 	float3 worldPosition: WORLDPOSITION;
 };
 cbuffer cbPerFrame
 {
+	float4 uLightDirection;
 	float4 uLightColor;
 	float4 uColor;
 	float4 uSHConst[4];
@@ -96,7 +96,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 	F0 = lerp(F0, albedo, metalness);
 	float VdotN = max(dot(input.worldViewDir, n), 0.0);
 	float3 lambert = albedo / PI;
-	float3 lightContribution = computeLightContribution(n, input.worldLightDir, input.worldViewDir, F0, lambert, sRGB(uLightColor.rgb), VdotN, roughness, metalness);
+	float3 lightContribution = computeLightContribution(n, uLightDirection.xyz, input.worldViewDir, F0, lambert, sRGB(uLightColor.rgb), VdotN, roughness, metalness);
 	float3 F = fresnelSchlick(input.worldViewDir, n, F0);
 	float3 kd = float3(1.0, 1.0, 1.0) - F;
 	kd *= (1.0 - metalness);

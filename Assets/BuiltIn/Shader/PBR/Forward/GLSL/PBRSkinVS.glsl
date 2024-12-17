@@ -11,13 +11,11 @@ in vec4 inBlendWeight;
 uniform mat4 uMvpMatrix;
 uniform mat4 uWorldMatrix;
 uniform vec4 uCameraPosition;
-uniform vec4 uLightDirection;
 uniform vec4 uUVScale;
 uniform mat4 uBoneMatrix[64];
 out vec2 vTexCoord0;
 out vec3 vWorldNormal;
 out vec3 vWorldViewDir;
-out vec3 vWorldLightDir;
 out vec3 vWorldTangent;
 out vec3 vWorldBinormal;
 out float vTangentW;
@@ -51,7 +49,6 @@ void main(void)
 	vWorldTangent = normalize(worldTangent.xyz);
 	vWorldBinormal = normalize(cross(worldNormal.xyz, worldTangent.xyz));
 	vWorldViewDir = worldViewDir.xyz;
-	vWorldLightDir = normalize(uLightDirection.xyz);
 	vViewPosition = uMvpMatrix * skinPosition;
 	gl_Position = vViewPosition;
 }

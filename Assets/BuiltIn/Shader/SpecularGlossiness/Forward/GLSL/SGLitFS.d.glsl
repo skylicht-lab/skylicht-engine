@@ -94,7 +94,7 @@ void main(void)
 	float oneMinusSpecularStrength = 1.0 - specMap.r;
 	float metallic = solveMetallic(diffuseMap.rgb, specularColor, oneMinusSpecularStrength);
 
-	f0 = vec3(0.04, 0.04, 0.04);
+	f0 = vec3(0.1, 0.1, 0.1);
 	vec3 diffuseColor = diffuseMap.rgb;
 	specularColor = mix(f0, diffuseMap.rgb, metallic);
 
@@ -115,7 +115,7 @@ void main(void)
 	// Specular
 	vec3 H = normalize(vWorldLightDir + vWorldViewDir);
 	float NdotE = max(0.0, dot(n, H));
-	float specular = pow(NdotE, 100.0f * specMap.g) * specMap.r;
+	float specular = pow(NdotE, 10.0 + 100.0 * specMap.g) * specMap.r;
 	color += specular * specularColor;
 
 	// IBL lighting (2 bounce)

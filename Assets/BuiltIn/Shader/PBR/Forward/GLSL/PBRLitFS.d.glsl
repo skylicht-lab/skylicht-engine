@@ -15,6 +15,7 @@ uniform sampler2D uTexBRDF;
 uniform sampler2D uTexEmissive;
 #endif
 
+uniform vec4 uLightDirection;
 uniform vec4 uLightColor;
 uniform vec4 uColor;
 #ifdef NO_TEXTURE
@@ -25,7 +26,6 @@ uniform vec4 uSHConst[4];
 in vec2 vTexCoord0;
 in vec3 vWorldNormal;
 in vec3 vWorldViewDir;
-in vec3 vWorldLightDir;
 
 #if !defined(NO_NORMAL_MAP) && !defined(NO_TEXTURE)
 in vec3 vWorldTangent;
@@ -147,7 +147,7 @@ void main(void)
 	vec3 lambert = albedo / PI;
 	
 	// Lighting
-	vec3 lightContribution = computeLightContribution(n, vWorldLightDir, vWorldViewDir, F0, lambert, sRGB(uLightColor.rgb), VdotN, roughness, metalness);
+	vec3 lightContribution = computeLightContribution(n, uLightDirection.xyz, vWorldViewDir, F0, lambert, sRGB(uLightColor.rgb), VdotN, roughness, metalness);
 
 	// IBL diffuse
 	vec3 F = fresnelSchlick(vWorldViewDir, n, F0);

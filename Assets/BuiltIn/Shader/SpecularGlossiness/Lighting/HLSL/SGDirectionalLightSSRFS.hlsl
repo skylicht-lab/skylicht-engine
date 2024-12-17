@@ -156,7 +156,7 @@ float3 SG(
 	float3 specularColor = f0;
 	float oneMinusSpecularStrength = 1.0 - spec;
 	float metallic = solveMetallic(baseColor.rgb, specularColor, oneMinusSpecularStrength);
-	f0 = float3(0.04, 0.04, 0.04);
+	f0 = float3(0.1, 0.1, 0.1);
 	float3 diffuseColor = baseColor.rgb;
 	specularColor = lerp(f0, baseColor.rgb, metallic);
 	specularColor = sRGB(specularColor);
@@ -168,7 +168,7 @@ float3 SG(
 	NdotL = min(NdotL, 1.0);
 	float3 H = normalize(worldLightDir + worldViewDir);
 	float NdotE = max(0.0, dot(worldNormal, H));
-	float specular = pow(NdotE, 100.0f * glossiness) * spec;
+	float specular = pow(NdotE, 10.0 + 100.0 * glossiness) * spec;
 	float3 envSpecColor = lerp(indirectColor, float3(1.0, 1.0, 1.0), visibility);
 	float3 directionalLight = NdotL * directionLightColor * visibility;
 	float3 color = (directionalLight * directMultiplier + pointLightColor * lightMultiplier) * diffuseColor;

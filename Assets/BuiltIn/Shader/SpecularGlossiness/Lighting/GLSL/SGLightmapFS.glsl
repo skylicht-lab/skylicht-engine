@@ -61,7 +61,7 @@ vec3 SGLM(
 	vec3 specularColor = f0;
 	float oneMinusSpecularStrength = 1.0 - spec;
 	float metallic = solveMetallic(baseColor.rgb, specularColor, oneMinusSpecularStrength);
-	f0 = vec3(0.04, 0.04, 0.04);
+	f0 = vec3(0.1, 0.1, 0.1);
 	vec3 diffuseColor = baseColor.rgb;
 	specularColor = mix(f0, baseColor.rgb, metallic);
 	specularColor = sRGB(specularColor);
@@ -70,7 +70,7 @@ vec3 SGLM(
 	vec3 indirectColor = sRGB(indirect.rgb);
 	vec3 H = normalize(worldLightDir + worldViewDir);
 	float NdotE = max(0.0, dot(worldNormal, H));
-	float specular = pow(NdotE, 100.0f * glossiness) * spec;
+	float specular = pow(NdotE, 10.0 + 100.0 * glossiness) * spec;
 	vec3 color = (directionColor * lightMultiplier) * diffuseColor;
 	float visibility = light.a;
 	vec3 envSpecColor = mix(indirectColor, vec3(1.0, 1.0, 1.0), visibility);

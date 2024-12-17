@@ -133,7 +133,7 @@ CBaseRP* CContext::initShadowForwarderPipeline(int w, int h, bool postEffect)
 	{
 		// post processor
 		m_postProcessor = new CPostProcessorRP();
-		m_postProcessor->enableAutoExposure(false);
+		m_postProcessor->enableAutoExposure(true);
 		m_postProcessor->enableBloomEffect(true);
 		m_postProcessor->enableFXAA(true);
 		m_postProcessor->enableScreenSpaceReflection(false);

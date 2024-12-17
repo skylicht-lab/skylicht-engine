@@ -19,14 +19,14 @@ uniform sampler2D uVertexNormalTexture;
 
 uniform mat4 uVpMatrix;
 uniform vec4 uCameraPosition;
+uniform vec4 uUVScale;
 uniform vec2 uTextureSize;
 
 out vec2 vTexCoord0;
 out vec3 vWorldNormal;
 out vec3 vWorldViewDir;
+out vec4 vViewPosition;
 out vec3 vWorldPosition;
-out vec3 vDepth;
-out vec4 vColor;
 
 void main(void)
 {
@@ -34,7 +34,7 @@ void main(void)
 	
 	// Vertex id
 	uv.x = (inData.y + 0.5) / uTextureSize.x;
-	
+
 	// ANIMATION 1
 	uv.y = (uBoneLocation.x + uBoneLocation.y + 0.5) / uTextureSize.y;
 	vec4 skinPosition1 = textureLod(uVertexPositionTexture, uv, 0.0);
@@ -48,19 +48,18 @@ void main(void)
 	// blend animations
 	vec4 skinPosition = mix(skinPosition1, skinPosition2, uBlendAnimation.x);
 	vec4 skinNormal = mix(skinNormal1, skinNormal2, uBlendAnimation.x);
-	
-	vTexCoord0 = inTexCoord0;
-	
-	vec4 worldPos = uWorldMatrix * vec4(skinPosition.xyz, 1.0);
+
+	vTexCoord0 = inTexCoord0 * uUVScale.xy + uUVScale.zw;
+
+	vec4 worldPos = uWorldMatrix * skinPosition;	
 	vec4 worldNormal = uWorldMatrix * vec4(skinNormal.xyz, 0.0);
-	
+	vec4 worldViewDir = normalize(uCameraPosition - worldPos);
+
 	vWorldPosition = worldPos.xyz;
-	vDepth = uCameraPosition.xyz - vWorldPosition;
-	
+
 	vWorldNormal = normalize(worldNormal.xyz);
-	vWorldViewDir = normalize(vDepth);
-	
-	vColor = uColor * inColor / 255.0;
-	
-	gl_Position = uVpMatrix * worldPos;
+	vWorldViewDir = worldViewDir.xyz;
+	vViewPosition = uVpMatrix * worldPos;
+
+	gl_Position = vViewPosition;
 }

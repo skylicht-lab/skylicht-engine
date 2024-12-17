@@ -12,7 +12,6 @@ struct VS_OUTPUT
 	float2 tex0 : TEXCOORD0;
 	float3 worldNormal: WORLDNORMAL;
 	float3 worldViewDir: WORLDVIEWDIR;
-	float3 worldLightDir: WORLDLIGHTDIR;
 	float4 viewPosition: VIEWPOSITION;
 	float3 worldPosition: WORLDPOSITION;
 };
@@ -21,7 +20,6 @@ cbuffer cbPerObject
 	float4x4 uMvpMatrix;
 	float4x4 uWorldMatrix;
 	float4 uCameraPosition;
-	float4 uLightDirection;
 	float4 uUVScale;
 };
 VS_OUTPUT main(VS_INPUT input)
@@ -35,7 +33,6 @@ VS_OUTPUT main(VS_INPUT input)
 	output.worldPosition = worldPos.xyz;
 	output.worldNormal = normalize(worldNormal.xyz);
 	output.worldViewDir = worldViewDir.xyz;
-	output.worldLightDir = normalize(uLightDirection.xyz);
 	output.viewPosition = output.pos;
 	return output;
 }

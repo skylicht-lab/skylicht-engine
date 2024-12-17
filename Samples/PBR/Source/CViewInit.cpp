@@ -36,7 +36,7 @@ void CViewInit::onInit()
 
 	CShaderManager* shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
-	shaderMgr->initSGDeferredShader();
+	shaderMgr->initSGForwarderShader();
 	shaderMgr->initPBRForwarderShader();
 
 	CGlyphFreetype* freetypeFont = CGlyphFreetype::getInstance();
@@ -130,6 +130,7 @@ void CViewInit::initScene()
 	}
 
 	{
+		// PBR spheres
 		int n = 5;
 		core::vector3df offset(2.0f, 0.0f, -n / 2.0f);
 		float distance = 1.0f;
@@ -160,6 +161,40 @@ void CViewInit::initScene()
 		}
 	}
 
+	{
+		// SpecGloss spheres
+		int n = 5;
+		core::vector3df offset(-12.0f, 0.0f, -n / 2.0f);
+		float distance = 1.0f;
+
+		for (int i = 0; i <= n; i++)
+		{
+			// for (int j = 0; j <= n; j++)
+			int j = 0;
+			{
+				CGameObject* sphereObj = zone->createEmptyObject();
+
+				CSphere* sphere = sphereObj->addComponent<CSphere>();
+
+				CMaterial* material = sphere->getMaterial();
+				material->changeShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGColor.xml");
+
+				float specGloss[2];
+				specGloss[0] = (float)i / (float)n;
+				specGloss[1] = (float)j / (float)n;
+				material->setUniform2("uSpecGloss", specGloss);
+				material->setUniform4("uColor", SColor(255, 100, 100, 100));
+				material->applyMaterial();
+
+				CTransformEuler* t = sphereObj->getTransformEuler();
+				t->setPosition(offset + core::vector3df(i * distance, 0.0f, j * distance));
+				t->setScale(core::vector3df(0.5f, 0.5f, 0.5f));
+
+				m_spheres.push_back(sphereObj);
+			}
+		}
+	}
+
 	// lighting
 	CGameObject* lightObj = zone->createEmptyObject();
 	CDirectionalLight* directionalLight = lightObj->addComponent<CDirectionalLight>();
@@ -176,13 +211,13 @@ void CViewInit::initScene()
 
 	CContext* context = CContext::getInstance();
 
-	context->initRenderPipeline(w, h);
+	context->initShadowForwarderPipeline(w, h);
 	context->setActiveZone(zone);
 	context->setActiveCamera(camera);
 	context->setGUICamera(guiCamera);
 	context->setDirectionalLight(directionalLight);
 
-	// context->getPostProcessorPipeline()->enableAutoExposure(false);
+	// context->getPostProcessorPipeline()->enableAutoExposure(true);
 }
 
 void CViewInit::onDestroy()

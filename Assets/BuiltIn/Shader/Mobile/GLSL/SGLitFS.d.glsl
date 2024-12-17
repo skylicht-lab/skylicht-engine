@@ -108,7 +108,7 @@ void main(void)
 	// Specular
 	vec3 H = normalize(vWorldLightDir + vWorldViewDir);
 	float NdotE = max(0.0, dot(n, H));
-	float specular = pow(NdotE, 100.0f * specMap.g) * specMap.r;
+	float specular = pow(NdotE, 10.0 + 100.0 * specMap.g) * specMap.r;
 	color += specular;// * diffuseColor;
 
 #if defined(SHADOW)

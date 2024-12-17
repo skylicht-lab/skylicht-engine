@@ -2,6 +2,7 @@
 precision mediump float;
 uniform samplerCube uTexReflect;
 uniform sampler2D uTexBRDF;
+uniform vec4 uLightDirection;
 uniform vec4 uLightColor;
 uniform vec4 uColor;
 uniform vec2 uRoughnessMetal;
@@ -9,7 +10,6 @@ uniform vec4 uSHConst[4];
 in vec2 vTexCoord0;
 in vec3 vWorldNormal;
 in vec3 vWorldViewDir;
-in vec3 vWorldLightDir;
 in vec4 vViewPosition;
 in vec3 vWorldPosition;
 out vec4 FragColor;
@@ -86,7 +86,7 @@ void main(void)
 	F0 = mix(F0, albedo, metalness);
 	float VdotN = max(dot(vWorldViewDir, n), 0.0);
 	vec3 lambert = albedo / PI;
-	vec3 lightContribution = computeLightContribution(n, vWorldLightDir, vWorldViewDir, F0, lambert, sRGB(uLightColor.rgb), VdotN, roughness, metalness);
+	vec3 lightContribution = computeLightContribution(n, uLightDirection.xyz, vWorldViewDir, F0, lambert, sRGB(uLightColor.rgb), VdotN, roughness, metalness);
 	vec3 F = fresnelSchlick(vWorldViewDir, n, F0);
 	vec3 kd = vec3(1.0) - F;
 	kd *= (1.0 - metalness);

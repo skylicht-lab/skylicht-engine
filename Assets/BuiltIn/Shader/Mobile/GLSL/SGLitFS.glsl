@@ -55,7 +55,7 @@ void main(void)
 	vec3 color = directionalLight * diffuseColor;
 	vec3 H = normalize(vWorldLightDir + vWorldViewDir);
 	float NdotE = max(0.0, dot(n, H));
-	float specular = pow(NdotE, 100.0f * specMap.g) * specMap.r;
+	float specular = pow(NdotE, 10.0 + 100.0 * specMap.g) * specMap.r;
 	color += specular;
 	color += ambientLighting * diffuseColor / PI;
 	FragColor = vec4(color, diffuseMap.a);

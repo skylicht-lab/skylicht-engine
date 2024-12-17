@@ -1,17 +1,20 @@
-<shaderConfig name="PBRSkinNoNormalNoEmissive" baseShader="SOLID" softwareSkinning="PBR">
+<shaderConfig name="PBRSkinVATInstancing2" baseShader="SOLID" shadowDepth="SDWSkinVATInstancing2">
+	<dependent shader="../../ShadowDepthWrite/SDWSkinVATInstancing2.xml"/>
 	<uniforms>
 		<vs>
-			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
-			<uniform name="uWorldMatrix" type="WORLD" value="0" float="16" matrix="true"/>
+			<uniform name="uVpMatrix" type="VIEW_PROJECTION" value="0" float="16" matrix="true"/>
 			<uniform name="uCameraPosition" type="WORLD_CAMERA_POSITION" value="0" float="4"/>
 			<uniform name="uUVScale" type="MATERIAL_PARAM" valueIndex="0" value="1.0, 1.0, 0.0, 0.0" float="4"/>
-			<uniform name="uBoneMatrix" type="BONE_MATRIX" value="0" float="16" array="64" matrix="true"/>
+			<uniform name="uVertexPositionTexture" type="DEFAULT_VALUE" value="6" float="1" directX="false"/>
+			<uniform name="uVertexNormalTexture" type="DEFAULT_VALUE" value="7" float="1" directX="false"/>
+			<uniform name="uTextureSize" type="TEXTURE_WIDTH_HEIGHT" valueIndex="6" value="1.0, 1.0" float="2"/>
 		</vs>
 		<fs>
 			<uniform name="uTexAlbedo" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
 			<uniform name="uTexRMA" type="DEFAULT_VALUE" value="2" float="1" directX="false"/>
 			<uniform name="uTexReflect" type="DEFAULT_VALUE" value="3" float="1" directX="false"/>
 			<uniform name="uTexBRDF" type="DEFAULT_VALUE" value="4" float="1" directX="false"/>
+			<uniform name="uTexEmissive" type="DEFAULT_VALUE" value="5" float="1" directX="false"/>
 			<uniform name="uLightDirection" type="WORLD_LIGHT_DIRECTION" value="0" float="4"/>
 			<uniform name="uLightColor" type="LIGHT_COLOR" value="1.0,1.0,1.0,1.0" float="4"/>
 			<uniform name="uColor" type="MATERIAL_PARAM" valueIndex="1" value="1.0, 1.0, 1.0, 1.0" float="4"/>
@@ -21,17 +24,20 @@
 	<resources>
 		<resource name="uTexReflect" type="ReflectionProbe"/>
 		<resource name="uTexBRDF" type="Texture" path="BuiltIn/Textures/BRDF.png"/>
+		<resource name="uVertexPositionTexture" type="VertexPositionTexture"/>
+		<resource name="uVertexNormalTexture" type="VertexNormalTexture"/>
 	</resources>
 	<customUI>
 		<ui control="UIGroup" name="Texture">
 			<ui control="UITexture" name="uTexAlbedo" autoReplace="albedo.;_Albedo.;_A."/>
 			<ui control="UITexture" name="uTexRMA" autoReplace="_rma.;_RMA."/>
+			<ui control="UITexture" name="uTexEmissive" autoReplace="_emissive.;_E."/>
 		</ui>
 		<ui control="UIGroup" name="Customize">
 			<ui control="UIColor" name="uColor"/>
 			<ui control="UIFloat4" name="uUVScale" elementName="UV ScaleX;UV ScaleY;UV OffsetX;UV OffsetY"/>
 		</ui>
 	</customUI>
-	<shader type="GLSL" vs="GLSL/PBRSkinNoNormalVS.glsl" vs_source="GLSL/PBRSkinVS.d.glsl" fs="GLSL/PBRNoNormalMapNoEmissveFS.glsl" define="NO_NORMAL_MAP"/>
-	<shader type="HLSL" vs="HLSL/PBRSkinNoNormalVS.hlsl" vs_source="HLSL/PBRSkinVS.d.hlsl" fs="HLSL/PBRNoNormalMapNoEmissveFS.hlsl" define="NO_NORMAL_MAP"/>
+	<shader type="GLSL" vs="GLSL/PBRSkinVATInstancing2VS.glsl" fs="GLSL/PBRNoNormalMapFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/PBRSkinVATInstancing2VS.hlsl" fs="HLSL/PBRNoNormalMapFS.hlsl"/>
 </shaderConfig>
