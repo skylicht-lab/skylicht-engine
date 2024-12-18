@@ -441,8 +441,6 @@ void CViewInit::initVATCrowd(CGameObject* crowd, CEntityPrefab* modelPrefab, std
 	CSkeleton* skeleton = animController->createSkeleton(crowdMesh->getBaseEntities());
 
 	int totalFrames = 0;
-	float maxDuration = 0.0f;
-
 	for (CAnimationClip* clip : clips)
 	{
 		totalFrames += (int)(clip->Duration * fps);

@@ -1302,7 +1302,6 @@ namespace Skylicht
 					t->Texture = uniform->Texture;
 					if (t->Texture)
 						t->Texture->grab();
-					break;
 				}
 			}
 
@@ -1315,7 +1314,6 @@ namespace Skylicht
 					v->FloatValue[1] = uniform->FloatValue[1];
 					v->FloatValue[2] = uniform->FloatValue[2];
 					v->FloatValue[3] = uniform->FloatValue[3];
-					break;
 				}
 			}
 		}
