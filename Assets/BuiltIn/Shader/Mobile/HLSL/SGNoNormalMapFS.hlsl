@@ -46,13 +46,17 @@ float4 main(PS_INPUT input) : SV_TARGET
 	ambientLighting = sRGB(ambientLighting);
 	float3 diffuseColor = sRGB(diffuseMap.rgb);
 	float3 lightColor = sRGB(uLightColor.rgb);
+	float spec = specMap.r;
+	float gloss = specMap.g;
 	float NdotL = max(dot(n, input.worldLightDir), 0.0);
 	float3 directionalLight = NdotL * lightColor;
-	float3 color = directionalLight * diffuseColor;
+	float3 color = directionalLight * diffuseColor * 0.3;
+	float3 f0 = float3(0.1, 0.1, 0.1);
+	float3 specularColor = lerp(f0, diffuseColor, 1.0 - gloss);
 	float3 H = normalize(input.worldLightDir + input.worldViewDir);
 	float NdotE = max(0.0,dot(n, H));
-	float specular = pow(NdotE, 10.0 + 100.0 * specMap.g) * specMap.r;
-	color += specular;
+	float specular = pow(NdotE, 10.0 + 100.0 * gloss) * spec;
+	color += specular * specularColor;
 	color += ambientLighting * diffuseColor / PI;
 	return float4(color, diffuseMap.a);
 }

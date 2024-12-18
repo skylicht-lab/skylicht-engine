@@ -104,31 +104,30 @@ float3 SG(
 	const float indirectMultiplier,
 	const float lightMultiplier)
 {
-	float glossiness = max(gloss, 0.01);
-	float roughness = 1.0 - glossiness;
-	float3 f0 = spec;
-	float3 specularColor = f0;
-	float oneMinusSpecularStrength = 1.0 - spec;
-	float metallic = solveMetallic(baseColor.rgb, specularColor, oneMinusSpecularStrength);
-	f0 = float3(0.1, 0.1, 0.1);
+	float roughness = 1.0 - gloss;
 	float3 diffuseColor = baseColor.rgb;
-	specularColor = lerp(f0, baseColor.rgb, metallic);
+	float3 f0 = spec;
+	float oneMinusSpecularStrength = 1.0 - spec;
+	float metallic = solveMetallic(diffuseColor, f0, oneMinusSpecularStrength);
+	f0 = float3(0.1, 0.1, 0.1);
+	float3 specularColor = lerp(f0, diffuseColor, metallic);
 	specularColor = sRGB(specularColor);
 	diffuseColor = sRGB(diffuseColor);
 	float3 directionLightColor = sRGB(lightColor);
 	float3 pointLightColor = sRGB(light.rgb);
 	float3 indirectColor = sRGB(indirect.rgb);
+	float c = (1.0 - spec * gloss);
 	float NdotL = max(dot(worldNormal, worldLightDir), 0.0);
 	NdotL = min(NdotL, 1.0);
 	float3 H = normalize(worldLightDir + worldViewDir);
 	float NdotE = max(0.0, dot(worldNormal, H));
-	float specular = pow(NdotE, 10.0 + 100.0 * glossiness) * spec;
+	float specular = pow(NdotE, 10.0 + 100.0 * gloss) * spec;
 	float3 envSpecColor = lerp(indirectColor, float3(1.0, 1.0, 1.0), visibility);
 	float3 directionalLight = NdotL * directionLightColor * visibility;
-	float3 color = (directionalLight * directMultiplier + pointLightColor * lightMultiplier) * diffuseColor;
+	float3 color = (directionalLight * directMultiplier + pointLightColor * lightMultiplier) * diffuseColor * (0.1 + roughness * 0.3) * c;
 	color += specular * specularColor * envSpecColor;
 	color += light.a * specularColor;
-	color += indirectColor * diffuseColor * indirectMultiplier / PI;
+	color += indirectColor * diffuseColor * indirectMultiplier * (0.1 + c * 0.9) / PI;
 	return color;
 }
 float4 main(PS_INPUT input) : SV_TARGET

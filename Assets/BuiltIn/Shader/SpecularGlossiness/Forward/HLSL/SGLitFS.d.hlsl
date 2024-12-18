@@ -102,16 +102,18 @@ float4 main(PS_INPUT input) : SV_TARGET
 #endif
 
 	// Solver metallic
-	float roughness = 1.0 - specMap.g;
+	float spec = specMap.r;
+	float gloss = specMap.g;
+	float roughness = 1.0 - gloss;
 
-	float3 f0 = specMap.r;
-	float3 specularColor = f0;
-	float oneMinusSpecularStrength = 1.0 - specMap.r;
-	float metallic = solveMetallic(diffuseMap.rgb, specularColor, oneMinusSpecularStrength);
-
-	f0 = float3(0.1, 0.1, 0.1);
 	float3 diffuseColor = diffuseMap.rgb;
-	specularColor = lerp(f0, diffuseMap.rgb, metallic);
+
+	float3 f0 = spec;
+	float oneMinusSpecularStrength = 1.0 - spec;
+	float metallic = solveMetallic(diffuseColor, f0, oneMinusSpecularStrength);
+
+	f0 = float3(0.1, 0.1, 0.1);	
+	float3 specularColor = lerp(f0, diffuseColor, metallic);
 
 	// SH4 Ambient
 	float3 ambientLighting = shAmbient(n);
@@ -122,23 +124,27 @@ float4 main(PS_INPUT input) : SV_TARGET
 	specularColor = sRGB(specularColor);
 	float3 lightColor = sRGB(uLightColor.rgb);
 
+	float c = (1.0 - spec * gloss);
+
 	// Lighting
 	float NdotL = max(dot(n, input.worldLightDir), 0.0);
 	float3 directionalLight = NdotL * lightColor;
-	float3 color = directionalLight * diffuseColor;
+	float3 color = (directionalLight * diffuseColor) * (0.1 + roughness * 0.3) * c;
 
 	// Specular
 	float3 H = normalize(input.worldLightDir + input.worldViewDir);
 	float NdotE = max(0.0,dot(n, H));
-	float specular = pow(NdotE, 10.0 + 100.0 * specMap.g) * specMap.r;
+	float specular = pow(NdotE, 10.0 + 100.0 * gloss) * spec;
 	color += specular * specularColor;
 
 	// IBL lighting
-	color += ambientLighting * diffuseColor / PI;
+	color += ambientLighting * diffuseColor * (0.1 + c * 0.9) / PI;
 	
 	// IBL reflection
 	float3 reflection = -normalize(reflect(input.worldViewDir, n));
-	color += sRGB(uTexReflect.SampleLevel(uTexReflectSampler, reflection, roughness * 8).xyz) * specularColor * metallic;
+	
+	float brightness = (0.8 + gloss * 1.8);
+	color += sRGB(uTexReflect.SampleLevel(uTexReflectSampler, reflection, roughness * 7).xyz) * brightness * specularColor;
 	
 	return float4(color, diffuseMap.a);
 }

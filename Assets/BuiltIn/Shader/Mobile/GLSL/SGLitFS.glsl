@@ -50,13 +50,17 @@ void main(void)
 	ambientLighting = sRGB(ambientLighting);
 	vec3 diffuseColor = sRGB(diffuseMap.rgb);
 	vec3 lightColor = sRGB(uLightColor.rgb);
+	float spec = specMap.r;
+	float gloss = specMap.g;
 	float NdotL = max(dot(n, vWorldLightDir), 0.0);
 	vec3 directionalLight = NdotL * lightColor;
-	vec3 color = directionalLight * diffuseColor;
+	vec3 color = directionalLight * diffuseColor * 0.3;
+	vec3 f0 = vec3(0.1, 0.1, 0.1);
+	vec3 specularColor = mix(f0, diffuseColor, 1.0 - gloss);
 	vec3 H = normalize(vWorldLightDir + vWorldViewDir);
 	float NdotE = max(0.0, dot(n, H));
-	float specular = pow(NdotE, 10.0 + 100.0 * specMap.g) * specMap.r;
-	color += specular;
+	float specular = pow(NdotE, 10.0 + 100.0 * gloss) * spec;
+	color += specular * specularColor;
 	color += ambientLighting * diffuseColor / PI;
 	FragColor = vec4(color, diffuseMap.a);
 }

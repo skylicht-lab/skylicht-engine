@@ -23,19 +23,18 @@ float3 SG(
 	const float lightMultiplier)
 {
 	// Roughness
-	float glossiness = max(gloss, 0.01);
-	float roughness = 1.0 - glossiness;
+	float roughness = 1.0 - gloss;
+	
+	float3 diffuseColor = baseColor.rgb;
 
 	// Metallic
 	float3 f0 = spec;
-	float3 specularColor = f0;
 	float oneMinusSpecularStrength = 1.0 - spec;
-	float metallic = solveMetallic(baseColor.rgb, specularColor, oneMinusSpecularStrength);
+	float metallic = solveMetallic(diffuseColor, f0, oneMinusSpecularStrength);
 
 	// Color
-	f0 = float3(0.1, 0.1, 0.1);
-	float3 diffuseColor = baseColor.rgb;
-	specularColor = lerp(f0, baseColor.rgb, metallic);
+	f0 = float3(0.1, 0.1, 0.1);	
+	float3 specularColor = lerp(f0, diffuseColor, metallic);
 
 	// Tone mapping
 	specularColor = sRGB(specularColor);
@@ -44,6 +43,8 @@ float3 SG(
 	float3 pointLightColor = sRGB(light.rgb);
 	float3 indirectColor = sRGB(indirect.rgb);
 
+	float c = (1.0 - spec * gloss);
+
 	// Lighting
 	float NdotL = max(dot(worldNormal, worldLightDir), 0.0);
 	NdotL = min(NdotL, 1.0);
@@ -51,13 +52,13 @@ float3 SG(
 	// Specular
 	float3 H = normalize(worldLightDir + worldViewDir);
 	float NdotE = max(0.0, dot(worldNormal, H));
-	float specular = pow(NdotE, 10.0 + 100.0 * glossiness) * spec;
+	float specular = pow(NdotE, 10.0 + 100.0 * gloss) * spec;
 
 	float3 envSpecColor = lerp(indirectColor, float3(1.0, 1.0, 1.0), visibility);
 	float3 directionalLight = NdotL * directionLightColor * visibility;
 	
 	// Direction lighting
-	float3 color = (directionalLight * directMultiplier + pointLightColor * lightMultiplier) * diffuseColor;
+	float3 color = (directionalLight * directMultiplier + pointLightColor * lightMultiplier) * diffuseColor * (0.1 + roughness * 0.3) * c;
 	
 	// Direction specular
 	color += specular * specularColor * envSpecColor;
@@ -66,12 +67,13 @@ float3 SG(
 	color += light.a * specularColor;
 
 	// IBL Ambient
-	color += indirectColor * diffuseColor * indirectMultiplier / PI;
+	color += indirectColor * diffuseColor * indirectMultiplier * (0.1 + c * 0.9) / PI;
 
 	// IBL reflection
-#if defined(ENABLE_SSR)	
+#if defined(ENABLE_SSR)
+	float brightness = (0.8 + gloss * 1.8);
 	float3 reflection = -normalize(reflect(worldViewDir, worldNormal));
-	color += sRGB(SSR(linearRGB(color), position, reflection, roughness)) * metallic * specularColor;
+	color += sRGB(SSR(linearRGB(color), position, reflection, roughness)) * brightness * specularColor;
 #endif
 
 	return color;

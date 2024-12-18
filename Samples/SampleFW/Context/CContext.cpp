@@ -224,6 +224,7 @@ void CContext::releaseRenderPipeline()
 {
 	if (m_beginRP != m_rendering &&
 		m_beginRP != m_forwardRP &&
+		m_beginRP != m_lightmapRP &&
 		m_beginRP != m_shadowMapRendering)
 	{
 		// delete customRP

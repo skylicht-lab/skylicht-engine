@@ -87,16 +87,18 @@ void main(void)
 #endif
 
 	// Solver metallic
-	float roughness = 1.0 - specMap.g;
+	float spec = specMap.r;
+	float gloss = specMap.g;
+	float roughness = 1.0 - gloss;
 
-	vec3 f0 = vec3(specMap.r, specMap.r, specMap.r);
-	vec3 specularColor = f0;
-	float oneMinusSpecularStrength = 1.0 - specMap.r;
-	float metallic = solveMetallic(diffuseMap.rgb, specularColor, oneMinusSpecularStrength);
-
-	f0 = vec3(0.1, 0.1, 0.1);
 	vec3 diffuseColor = diffuseMap.rgb;
-	specularColor = mix(f0, diffuseMap.rgb, metallic);
+
+	vec3 f0 = vec3(spec, spec, spec);
+	float oneMinusSpecularStrength = 1.0 - spec;
+	float metallic = solveMetallic(diffuseColor, f0, oneMinusSpecularStrength);
+
+	f0 = vec3(0.1, 0.1, 0.1);	
+	vec3 specularColor = mix(f0, diffuseColor, metallic);
 
 	// SH Ambient
 	vec3 ambientLighting = shAmbient(n);
@@ -107,23 +109,27 @@ void main(void)
 	specularColor = sRGB(specularColor);
 	vec3 lightColor = sRGB(uLightColor.rgb);
 
+	float c = (1.0 - spec * gloss);
+
 	// Lighting
 	float NdotL = max(dot(n, vWorldLightDir), 0.0);
 	vec3 directionalLight = NdotL * lightColor;
-	vec3 color = directionalLight * diffuseColor;
+	vec3 color = (directionalLight * diffuseColor) * (0.1 + roughness * 0.3) * c;
 
 	// Specular
 	vec3 H = normalize(vWorldLightDir + vWorldViewDir);
 	float NdotE = max(0.0, dot(n, H));
-	float specular = pow(NdotE, 10.0 + 100.0 * specMap.g) * specMap.r;
+	float specular = pow(NdotE, 10.0 + 100.0 * gloss) * spec;
 	color += specular * specularColor;
 
-	// IBL lighting (2 bounce)
-	color += ambientLighting * diffuseColor / PI;
+	// IBL lighting
+	color += ambientLighting * diffuseColor * (0.1 + c * 0.9) / PI;
 
 	// IBL reflection
 	vec3 reflection = -normalize(reflect(vWorldViewDir, n));
-	color += sRGB(textureLod(uTexReflect, reflection, roughness * 8.0).xyz) * specularColor * metallic;
+	
+	float brightness = (0.8 + gloss * 1.8);
+	color += sRGB(textureLod(uTexReflect, reflection, roughness * 7.0).xyz) * brightness * specularColor;
 
 	FragColor = vec4(color, diffuseMap.a);
 }

@@ -9,6 +9,10 @@
 #include "Primitive/CSphere.h"
 #include "SkyDome/CSkyDome.h"
 
+#define TEST_PBR
+#define TEST_SG
+#define TEST_MOBILE_SG
+
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
 	m_getFile(NULL),
@@ -36,8 +40,9 @@ void CViewInit::onInit()
 
 	CShaderManager* shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
-	shaderMgr->initSGForwarderShader();
 	shaderMgr->initPBRForwarderShader();
+	shaderMgr->initSGForwarderShader();
+	shaderMgr->initMobileSGShader();
 
 	CGlyphFreetype* freetypeFont = CGlyphFreetype::getInstance();
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
@@ -129,6 +134,7 @@ void CViewInit::initScene()
 		m_helmet->addComponent<CIndirectLighting>();
 	}
 
+#ifdef TEST_PBR
 	{
 		// PBR spheres
 		int n = 5;
@@ -160,7 +166,9 @@ void CViewInit::initScene()
 			}
 		}
 	}
+#endif
 
+#ifdef TEST_SG
 	{
 		// SpecGloss spheres
 		int n = 5;
@@ -169,8 +177,7 @@ void CViewInit::initScene()
 
 		for (int i = 0; i <= n; i++)
 		{
-			// for (int j = 0; j <= n; j++)
-			int j = 0;
+			for (int j = 0; j <= n; j++)
 			{
 				CGameObject* sphereObj = zone->createEmptyObject();
 
@@ -183,7 +190,7 @@ void CViewInit::initScene()
 				specGloss[0] = (float)i / (float)n;
 				specGloss[1] = (float)j / (float)n;
 				material->setUniform2("uSpecGloss", specGloss);
-				material->setUniform4("uColor", SColor(255, 100, 100, 100));
+				material->setUniform4("uColor", SColor(255, 150, 150, 150));
 				material->applyMaterial();
 
 				CTransformEuler* t = sphereObj->getTransformEuler();
@@ -194,6 +201,42 @@ void CViewInit::initScene()
 			}
 		}
 	}
+#endif
+
+#ifdef TEST_MOBILE_SG
+	{
+		// SpecGloss spheres
+		int n = 5;
+		core::vector3df offset(-24.0f, 0.0f, -n / 2.0f);
+		float distance = 1.0f;
+
+		for (int i = 0; i <= n; i++)
+		{
+			for (int j = 0; j <= n; j++)
+			{
+				CGameObject* sphereObj = zone->createEmptyObject();
+
+				CSphere* sphere = sphereObj->addComponent<CSphere>();
+
+				CMaterial* material = sphere->getMaterial();
+				material->changeShader("BuiltIn/Shader/Mobile/MobileSGColor.xml");
+
+				float specGloss[2];
+				specGloss[0] = (float)i / (float)n;
+				specGloss[1] = (float)j / (float)n;
+				material->setUniform2("uSpecGloss", specGloss);
+				material->setUniform4("uColor", SColor(255, 150, 150, 150));
+				material->applyMaterial();
+
+				CTransformEuler* t = sphereObj->getTransformEuler();
+				t->setPosition(offset + core::vector3df(i * distance, 0.0f, j * distance));
+				t->setScale(core::vector3df(0.5f, 0.5f, 0.5f));
+
+				m_spheres.push_back(sphereObj);
+			}
+		}
+	}
+#endif
 
 	// lighting
 	CGameObject* lightObj = zone->createEmptyObject();
@@ -217,7 +260,8 @@ void CViewInit::initScene()
 	context->setGUICamera(guiCamera);
 	context->setDirectionalLight(directionalLight);
 
-	// context->getPostProcessorPipeline()->enableAutoExposure(true);
+	if (context->getPostProcessorPipeline())
+		context->getPostProcessorPipeline()->enableAutoExposure(true);
 }
 
 void CViewInit::onDestroy()

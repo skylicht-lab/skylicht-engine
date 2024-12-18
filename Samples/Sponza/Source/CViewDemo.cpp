@@ -110,50 +110,52 @@ void CViewDemo::onGUI()
 		ImGui::Separator();
 
 		CPostProcessorRP* rp = CContext::getInstance()->getPostProcessorPipeline();
-
-		bool bloom = rp->isEnableBloomEffect();
-		ImGui::Checkbox("Bloom", &bloom);
-		rp->enableBloomEffect(bloom);
-		if (bloom)
+		if (rp)
 		{
-			float threshold = rp->getBloomThreshold();
-			ImGui::SliderFloat("Bloom Threadhold", &threshold, 0.0f, 1.0f);
-			rp->setBloomThreshold(threshold);
+			bool bloom = rp->isEnableBloomEffect();
+			ImGui::Checkbox("Bloom", &bloom);
+			rp->enableBloomEffect(bloom);
+			if (bloom)
+			{
+				float threshold = rp->getBloomThreshold();
+				ImGui::SliderFloat("Bloom Threadhold", &threshold, 0.0f, 1.0f);
+				rp->setBloomThreshold(threshold);
 
-			float intensity = rp->getBloomIntensity();
-			ImGui::SliderFloat("Bloom Intensity", &intensity, 0.0f, 4.0f);
-			rp->setBloomIntensity(intensity);
+				float intensity = rp->getBloomIntensity();
+				ImGui::SliderFloat("Bloom Intensity", &intensity, 0.0f, 4.0f);
+				rp->setBloomIntensity(intensity);
+			}
+
+			ImGui::Separator();
+
+			bool autoExposure = rp->isEnableAutoExposure();
+			ImGui::Checkbox("Auto Exposure", &autoExposure);
+
+			if (!autoExposure)
+			{
+				float exposure = rp->getManualExposure();
+				ImGui::SliderFloat("Exposure", &exposure, 0.0f, 5.0f);
+
+				rp->enableAutoExposure(false);
+				rp->setManualExposure(exposure);
+			}
+			else
+			{
+				rp->enableAutoExposure(true);
+			}
+
+			ImGui::Separator();
+
+			bool aa = rp->isEnableFXAA();
+			ImGui::Checkbox("Enable AA", &aa);
+			rp->enableFXAA(aa);
+
+			ImGui::Separator();
+
+			bool reflection = rp->isEnableScreenSpaceReflection();
+			ImGui::Checkbox("Enable Reflection", &reflection);
+			rp->enableScreenSpaceReflection(reflection);
 		}
-
-		ImGui::Separator();
-
-		bool autoExposure = rp->isEnableAutoExposure();
-		ImGui::Checkbox("Auto Exposure", &autoExposure);
-
-		if (!autoExposure)
-		{
-			float exposure = rp->getManualExposure();
-			ImGui::SliderFloat("Exposure", &exposure, 0.0f, 5.0f);
-
-			rp->enableAutoExposure(false);
-			rp->setManualExposure(exposure);
-		}
-		else
-		{
-			rp->enableAutoExposure(true);
-		}
-
-		ImGui::Separator();
-
-		bool aa = rp->isEnableFXAA();
-		ImGui::Checkbox("Enable AA", &aa);
-		rp->enableFXAA(aa);
-
-		ImGui::Separator();
-
-		bool reflection = rp->isEnableScreenSpaceReflection();
-		ImGui::Checkbox("Enable Reflection", &reflection);
-		rp->enableScreenSpaceReflection(reflection);
 
 		ImGui::End();
 	}

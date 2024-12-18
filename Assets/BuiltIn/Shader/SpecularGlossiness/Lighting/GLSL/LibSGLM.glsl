@@ -22,19 +22,18 @@ vec3 SGLM(
 	const float lightMultiplier)
 {
 	// Roughness
-	float glossiness = max(gloss, 0.01);
-	float roughness = 1.0 - glossiness;
+	float roughness = 1.0 - gloss;
+
+	vec3 diffuseColor = baseColor.rgb;
 
 	// Metallic
 	vec3 f0 = vec3(spec, spec, spec);
-	vec3 specularColor = f0;
 	float oneMinusSpecularStrength = 1.0 - spec;
-	float metallic = solveMetallic(baseColor.rgb, specularColor, oneMinusSpecularStrength);
+	float metallic = solveMetallic(baseColor.rgb, f0, oneMinusSpecularStrength);
 
 	// Color
 	f0 = vec3(0.1, 0.1, 0.1);
-	vec3 diffuseColor = baseColor.rgb;
-	specularColor = mix(f0, baseColor.rgb, metallic);
+	vec3 specularColor = mix(f0, baseColor.rgb, metallic);
 
 	// Tone mapping
 	specularColor = sRGB(specularColor);
@@ -45,7 +44,7 @@ vec3 SGLM(
 	// Specular
 	vec3 H = normalize(worldLightDir + worldViewDir);
 	float NdotE = max(0.0, dot(worldNormal, H));
-	float specular = pow(NdotE, 10.0 + 100.0 * glossiness) * spec;
+	float specular = pow(NdotE, 10.0 + 100.0 * gloss) * spec;
 	
 	// Direction lighting
 	vec3 color = (directionColor * lightMultiplier) * diffuseColor;
@@ -59,9 +58,10 @@ vec3 SGLM(
 	color += indirectColor * diffuseColor * indirectMultiplier / PI;
 
 	// IBL reflection
-#if defined(ENABLE_SSR)	
+#if defined(ENABLE_SSR)
+	float brightness = (0.8 + gloss * 1.8);
 	vec3 reflection = -normalize(reflect(worldViewDir, worldNormal));
-	color += sRGB(SSR(linearRGB(color), position, reflection, roughness)) * metallic * specularColor;
+	color += sRGB(SSR(linearRGB(color), position, reflection, roughness)) * brightness * specularColor;
 #endif
 
 	return color;

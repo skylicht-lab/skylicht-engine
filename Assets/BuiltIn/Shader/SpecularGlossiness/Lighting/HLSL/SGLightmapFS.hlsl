@@ -64,22 +64,20 @@ float3 SGLM(
 	const float indirectMultiplier,
 	const float lightMultiplier)
 {
-	float glossiness = max(gloss, 0.01);
-	float roughness = 1.0 - glossiness;
-	float3 f0 = spec;
-	float3 specularColor = f0;
-	float oneMinusSpecularStrength = 1.0 - spec;
-	float metallic = solveMetallic(baseColor.rgb, specularColor, oneMinusSpecularStrength);
-	f0 = float3(0.1, 0.1, 0.1);
+	float roughness = 1.0 - gloss;
 	float3 diffuseColor = baseColor.rgb;
-	specularColor = lerp(f0, baseColor.rgb, metallic);
+	float3 f0 = spec;
+	float oneMinusSpecularStrength = 1.0 - spec;
+	float metallic = solveMetallic(diffuseColor, f0, oneMinusSpecularStrength);
+	f0 = float3(0.1, 0.1, 0.1);
+	float3 specularColor = lerp(f0, diffuseColor, metallic);
 	specularColor = sRGB(specularColor);
 	diffuseColor = sRGB(diffuseColor);
 	float3 directionColor = sRGB(light.rgb);
 	float3 indirectColor = sRGB(indirect.rgb);
 	float3 H = normalize(worldLightDir + worldViewDir);
 	float NdotE = max(0.0, dot(worldNormal, H));
-	float specular = pow(NdotE, 10.0 + 100.0 * glossiness) * spec;
+	float specular = pow(NdotE, 10.0 + 100.0 * gloss) * spec;
 	float3 color = (directionColor * lightMultiplier) * diffuseColor;
 	float visibility = light.a;
 	float3 envSpecColor = lerp(indirectColor, float3(1.0, 1.0, 1.0), visibility);
