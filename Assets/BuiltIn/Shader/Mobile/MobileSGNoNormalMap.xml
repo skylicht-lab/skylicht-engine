@@ -12,6 +12,7 @@
 			<uniform name="uTexSpecular" type="DEFAULT_VALUE" value="2" float="1" directX="false"/>
 			<uniform name="uLightColor" type="LIGHT_COLOR" value="1.0,1.0,1.0,1.0" float="4"/>
 			<uniform name="uColor" type="MATERIAL_PARAM" valueIndex="1" value="1.0, 1.0, 1.0, 1.0" float="4"/>
+			<uniform name="uLightMul" type="MATERIAL_PARAM" valueIndex="2" value="1.0, 1.0" float="2"/>
 			<uniform name="uSHConst" type="SH_CONST" value="0" float="4" array="4"/>
 		</fs>
 	</uniforms>
@@ -25,6 +26,7 @@
 		<ui control="UIGroup" name="Customize">
 			<ui control="UIColor" name="uColor"/>
 			<ui control="UIFloat4" name="uUVScale" elementName="UV ScaleX;UV ScaleY;UV OffsetX;UV OffsetY"/>
+			<ui control="UIFloat2" name="uLightMul" elementName="SpecMul;LightMul" min="0" max="2"/>
 		</ui>
 	</customUI>
 	<shader type="GLSL" vs="GLSL/SGNoNormalMapVS.glsl" fs="GLSL/SGNoNormalMapFS.glsl" vs_source="GLSL/SGVS.d.glsl" fs_source="GLSL/SGLitFS.d.glsl" define="NO_NORMAL_MAP"/>

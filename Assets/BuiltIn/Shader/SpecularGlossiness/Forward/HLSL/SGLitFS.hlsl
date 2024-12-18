@@ -23,6 +23,7 @@ cbuffer cbPerFrame
 {
 	float4 uLightColor;
 	float4 uColor;
+	float2 uLightMul;
 	float4 uSHConst[4];
 };
 static const float gamma = 2.2;
@@ -86,11 +87,11 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float c = (1.0 - spec * gloss);
 	float NdotL = max(dot(n, input.worldLightDir), 0.0);
 	float3 directionalLight = NdotL * lightColor;
-	float3 color = (directionalLight * diffuseColor) * (0.1 + roughness * 0.3) * c;
+	float3 color = (directionalLight * diffuseColor) * (0.1 + roughness * 0.3) * c * uLightMul.y;
 	float3 H = normalize(input.worldLightDir + input.worldViewDir);
 	float NdotE = max(0.0,dot(n, H));
 	float specular = pow(NdotE, 10.0 + 100.0 * gloss) * spec;
-	color += specular * specularColor;
+	color += specular * specularColor * uLightMul.x;
 	color += ambientLighting * diffuseColor * (0.1 + c * 0.9) / PI;
 	float3 reflection = -normalize(reflect(input.worldViewDir, n));
 	float brightness = (0.8 + gloss * 1.8);

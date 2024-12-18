@@ -19,6 +19,7 @@ uniform vec4 uColor;
 #if defined(NO_TEXTURE) || defined(NO_SPECGLOSS)
 uniform vec2 uSpecGloss;
 #endif
+uniform vec2 uLightMul;
 uniform vec4 uSHConst[4];
 
 in vec2 vTexCoord0;
@@ -114,13 +115,13 @@ void main(void)
 	// Lighting
 	float NdotL = max(dot(n, vWorldLightDir), 0.0);
 	vec3 directionalLight = NdotL * lightColor;
-	vec3 color = (directionalLight * diffuseColor) * (0.1 + roughness * 0.3) * c;
+	vec3 color = (directionalLight * diffuseColor) * (0.1 + roughness * 0.3) * c * uLightMul.y;
 
 	// Specular
 	vec3 H = normalize(vWorldLightDir + vWorldViewDir);
 	float NdotE = max(0.0, dot(n, H));
 	float specular = pow(NdotE, 10.0 + 100.0 * gloss) * spec;
-	color += specular * specularColor;
+	color += specular * specularColor * uLightMul.x;
 
 	// IBL lighting
 	color += ambientLighting * diffuseColor * (0.1 + c * 0.9) / PI;

@@ -25,6 +25,8 @@ uniform sampler2DArray uShadowMap;
 
 uniform vec4 uLightColor;
 uniform vec4 uColor;
+uniform vec2 uLightMul;
+
 #if defined(NO_TEXTURE) || defined(NO_SPECGLOSS)
 uniform vec2 uSpecGloss;
 #endif
@@ -106,7 +108,7 @@ void main(void)
 	// Lighting
 	float NdotL = max(dot(n, vWorldLightDir), 0.0);
 	vec3 directionalLight = NdotL * lightColor;
-	vec3 color = directionalLight * diffuseColor * 0.3;
+	vec3 color = directionalLight * diffuseColor * 0.3 * uLightMul.y;
 
 	// Specular
 	vec3 f0 = vec3(0.1, 0.1, 0.1);
@@ -115,7 +117,7 @@ void main(void)
 	vec3 H = normalize(vWorldLightDir + vWorldViewDir);
 	float NdotE = max(0.0, dot(n, H));
 	float specular = pow(NdotE, 10.0 + 100.0 * gloss) * spec;
-	color += specular * specularColor;
+	color += specular * specularColor * uLightMul.x;
 
 #if defined(SHADOW)
 	color *= visibility;
