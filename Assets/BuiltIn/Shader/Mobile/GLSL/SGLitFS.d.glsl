@@ -110,9 +110,8 @@ void main(void)
 	vec3 directionalLight = NdotL * lightColor;
 	vec3 color = directionalLight * diffuseColor * 0.3 * uLightMul.y;
 
-	// Specular
-	vec3 f0 = vec3(0.1, 0.1, 0.1);
-	vec3 specularColor = mix(f0, diffuseColor, 1.0 - gloss);
+	// Specular	
+	vec3 specularColor = vec3(0.5, 0.5, 0.5);
 	
 	vec3 H = normalize(vWorldLightDir + vWorldViewDir);
 	float NdotE = max(0.0, dot(n, H));

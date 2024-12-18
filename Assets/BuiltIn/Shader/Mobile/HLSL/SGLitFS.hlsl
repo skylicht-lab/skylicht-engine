@@ -62,8 +62,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float NdotL = max(dot(n, input.worldLightDir), 0.0);
 	float3 directionalLight = NdotL * lightColor;
 	float3 color = directionalLight * diffuseColor * 0.3 * uLightMul.y;
-	float3 f0 = float3(0.1, 0.1, 0.1);
-	float3 specularColor = lerp(f0, diffuseColor, 1.0 - gloss);
+	float3 specularColor = float3(0.5, 0.5, 0.5);
 	float3 H = normalize(input.worldLightDir + input.worldViewDir);
 	float NdotE = max(0.0,dot(n, H));
 	float specular = pow(NdotE, 10.0 + 100.0 * gloss) * spec;
