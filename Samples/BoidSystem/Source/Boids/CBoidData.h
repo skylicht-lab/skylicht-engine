@@ -3,7 +3,7 @@
 #include "Entity/IEntityData.h"
 #include "Entity/CArrayUtils.h"
 
-class CBoldData : public Skylicht::IEntityData
+class CBoidData : public Skylicht::IEntityData
 {
 public:
 	core::vector3df Location;
@@ -15,10 +15,10 @@ public:
 	float MaxForce;
 	bool Alive;
 
-	CFastArray<CBoldData*> Neighbor;
+	CFastArray<CBoidData*> Neighbor;
 
-	CBoldData();
-	~CBoldData();
+	CBoidData();
+	~CBoidData();
 };
 
-DECLARE_PRIVATE_DATA_TYPE_INDEX(CBoldData);
+DECLARE_PRIVATE_DATA_TYPE_INDEX(CBoidData);

@@ -40,7 +40,7 @@ void CNeighbor::init(float minX, float maxX, float minZ, float maxZ, float cells
 		if (m_buckets)
 			delete[]m_buckets;
 
-		m_buckets = new CFastArray<CBoldData*>[m_bucketSizeX * m_bucketSizeZ];
+		m_buckets = new CFastArray<CBoidData*>[m_bucketSizeX * m_bucketSizeZ];
 		for (int x = 0; x < m_bucketSizeX; x++)
 		{
 			for (int z = 0; z < m_bucketSizeZ; z++)
@@ -59,11 +59,11 @@ void CNeighbor::clear()
 		m_buckets[i].reset();
 }
 
-void CNeighbor::add(CBoldData** bolds, int count)
+void CNeighbor::add(CBoidData** bolds, int count)
 {
 	if (m_cellSize > 0)
 	{
-		CBoldData* bold;
+		CBoidData* bold;
 		float x, z;
 		int cx, cz, id;
 
@@ -91,7 +91,7 @@ void CNeighbor::add(CBoldData** bolds, int count)
 	}
 }
 
-void CNeighbor::queryNeighbor(const core::vector3df& position, CFastArray<CBoldData*>& result)
+void CNeighbor::queryNeighbor(const core::vector3df& position, CFastArray<CBoidData*>& result)
 {
 	float px = position.X - m_minX;
 	float pz = position.Z - m_minZ;
@@ -101,8 +101,8 @@ void CNeighbor::queryNeighbor(const core::vector3df& position, CFastArray<CBoldD
 		int cx = (int)floorf(px / m_cellSize);
 		int cz = (int)floorf(pz / m_cellSize);
 
-		CFastArray<CBoldData*>* bucket;
-		CBoldData** src;
+		CFastArray<CBoidData*>* bucket;
+		CBoidData** src;
 		int x, z, id, n, i, j;
 
 		for (i = -1; i <= 1; i++)

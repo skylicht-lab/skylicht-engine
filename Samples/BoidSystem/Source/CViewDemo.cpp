@@ -5,9 +5,9 @@
 #include "imgui.h"
 #include "CImguiManager.h"
 
-#include "Boids/CBoldData.h"
-#include "Boids/CBoldSystem.h"
-#include "Boids/CBoldAnimationSystem.h"
+#include "Boids/CBoidData.h"
+#include "Boids/CBoidSystem.h"
+#include "Boids/CBoidAnimationSystem.h"
 
 #include "SkinnedInstancing/CSkinnedInstanceData.h"
 
@@ -154,12 +154,12 @@ void CViewDemo::testSpawnEntity(int count)
 	// get bound random
 	CContext* context = CContext::getInstance();
 	CScene* scene = context->getScene();
-	CBoldSystem* boldSystem = scene->getEntityManager()->getSystem<CBoldSystem>();
-	CBoldAnimationSystem* boldAnimationSystem = scene->getEntityManager()->getSystem<CBoldAnimationSystem>();
+	CBoidSystem* boldSystem = scene->getEntityManager()->getSystem<CBoidSystem>();
+	CBoidAnimationSystem* boldAnimationSystem = scene->getEntityManager()->getSystem<CBoidAnimationSystem>();
 
 	// spawn new entity (count)
 	CEntity* entity;
-	CBoldData* bold;
+	CBoidData* bold;
 	CWorldTransformData* transform;
 	CSkinnedInstanceData* skinnedInstance;
 	core::vector3df position;
@@ -198,7 +198,7 @@ void CViewDemo::testSpawnEntity(int count)
 			transform->Relative.setTranslation(position);
 
 			// add bold data
-			bold = entity->addData<CBoldData>();
+			bold = entity->addData<CBoidData>();
 			bold->Location = position;
 
 
@@ -223,7 +223,7 @@ void CViewDemo::testSpawnEntity(int count)
 			transform->Relative.setTranslation(position);
 
 			// add bold data
-			bold = entity->addData<CBoldData>();
+			bold = entity->addData<CBoidData>();
 			bold->Location = position;
 		}
 	}
@@ -257,7 +257,7 @@ void CViewDemo::onRender()
 
 	if (m_debugNeighbor)
 	{
-		CBoldData* bold = GET_ENTITY_DATA(m_followEntity, CBoldData);
+		CBoidData* bold = GET_ENTITY_DATA(m_followEntity, CBoidData);
 
 		float radius = 0.25f;
 
@@ -266,11 +266,11 @@ void CViewDemo::onRender()
 		noZDebug->addCircle(bold->Location, radius, Transform::Oy, SColor(255, 0, 255, 0));
 
 		// draw red circle in neighbor
-		CBoldData** neighbor = bold->Neighbor.pointer();
+		CBoidData** neighbor = bold->Neighbor.pointer();
 		int numNeighbor = bold->Neighbor.count();
 		for (int i = 0; i < numNeighbor; i++)
 		{
-			CBoldData* b = neighbor[i];
+			CBoidData* b = neighbor[i];
 			if (b != bold)
 			{
 				noZDebug->addCircle(b->Location, radius, Transform::Oy, SColor(255, 255, 0, 0));

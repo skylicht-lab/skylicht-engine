@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CBoldData.h"
+#include "CBoidData.h"
 #include "Animation/CAnimationClip.h"
 #include "Entity/IEntitySystem.h"
 #include "Entity/CEntityGroup.h"
@@ -17,20 +17,20 @@ struct SMovingAnimation
 };
 
 
-class CBoldAnimationSystem : public Skylicht::IEntitySystem
+class CBoidAnimationSystem : public Skylicht::IEntitySystem
 {
 protected:
 	Skylicht::CEntityGroup* m_group;
 
 	core::array<SMovingAnimation> m_clips;
 
-	CFastArray<CBoldData*> m_bolds;
+	CFastArray<CBoidData*> m_bolds;
 	CFastArray<CSkinnedInstanceData*> m_skinnedInstances;
 
 public:
-	CBoldAnimationSystem();
+	CBoidAnimationSystem();
 
-	virtual ~CBoldAnimationSystem();
+	virtual ~CBoidAnimationSystem();
 
 	virtual void beginQuery(CEntityManager* entityManager);
 

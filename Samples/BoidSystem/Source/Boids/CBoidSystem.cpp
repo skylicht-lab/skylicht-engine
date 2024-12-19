@@ -1,7 +1,7 @@
 #include "pch.h"
-#include "CBoldSystem.h"
+#include "CBoidSystem.h"
 
-CBoldSystem::CBoldSystem() :
+CBoidSystem::CBoidSystem() :
 	m_group(NULL),
 	m_minX(-25.0f),
 	m_maxX(25.0f),
@@ -11,23 +11,23 @@ CBoldSystem::CBoldSystem() :
 
 }
 
-CBoldSystem::~CBoldSystem()
+CBoidSystem::~CBoidSystem()
 {
 
 }
 
-void CBoldSystem::beginQuery(CEntityManager* entityManager)
+void CBoidSystem::beginQuery(CEntityManager* entityManager)
 {
 	if (m_group == NULL)
 	{
-		const u32 boldType[] = GET_LIST_ENTITY_DATA(CBoldData);
+		const u32 boldType[] = GET_LIST_ENTITY_DATA(CBoidData);
 		m_group = entityManager->findGroup(boldType, 1);
 		if (m_group == NULL)
 			m_group = entityManager->createGroupFromVisible(boldType, 1);
 	}
 }
 
-void CBoldSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int count)
+void CBoidSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int count)
 {
 	entities = m_group->getEntities();
 	count = m_group->getEntityCount();
@@ -39,7 +39,7 @@ void CBoldSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int
 	{
 		CEntity* entity = entities[i];
 
-		CBoldData* bold = GET_ENTITY_DATA(entity, CBoldData);
+		CBoidData* bold = GET_ENTITY_DATA(entity, CBoidData);
 		if (bold->Alive)
 		{
 			m_bolds.push(bold);
@@ -50,14 +50,14 @@ void CBoldSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int
 	m_neighbor.clear();
 }
 
-void CBoldSystem::init(CEntityManager* entityManager)
+void CBoidSystem::init(CEntityManager* entityManager)
 {
 
 }
 
-void CBoldSystem::update(CEntityManager* entityManager)
+void CBoidSystem::update(CEntityManager* entityManager)
 {
-	CBoldData** bolds = m_bolds.pointer();
+	CBoidData** bolds = m_bolds.pointer();
 	CWorldTransformData** transforms = m_transforms.pointer();
 	int numEntity = m_bolds.count();
 
@@ -69,11 +69,11 @@ void CBoldSystem::update(CEntityManager* entityManager)
 	updateTransform(bolds, transforms, numEntity);
 }
 
-void CBoldSystem::neighbor(CBoldData** bolds, CWorldTransformData** transforms, int numEntity)
+void CBoidSystem::neighbor(CBoidData** bolds, CWorldTransformData** transforms, int numEntity)
 {
 	m_neighbor.add(bolds, numEntity);
 
-	CBoldData* bold;
+	CBoidData* bold;
 	for (int i = 0; i < numEntity; i++)
 	{
 		bold = bolds[i];
@@ -83,7 +83,7 @@ void CBoldSystem::neighbor(CBoldData** bolds, CWorldTransformData** transforms, 
 	}
 }
 
-void CBoldSystem::separation(CBoldData** bolds, CWorldTransformData** transforms, int numEntity)
+void CBoidSystem::separation(CBoidData** bolds, CWorldTransformData** transforms, int numEntity)
 {
 	// That will fix the collision each bold
 	// Distance of field of vision for separation between boids
@@ -94,9 +94,9 @@ void CBoldSystem::separation(CBoldData** bolds, CWorldTransformData** transforms
 	float timestepSec = getTimeStep() * 0.001f;
 	float weight = 2.5f;
 
-	CBoldData** neighbor;
-	CBoldData* boldI;
-	CBoldData* boldJ;
+	CBoidData** neighbor;
+	CBoidData* boldI;
+	CBoidData* boldJ;
 	int numNeighbor;
 
 	for (int i = 0; i < numEntity; i++)
@@ -149,7 +149,7 @@ void CBoldSystem::separation(CBoldData** bolds, CWorldTransformData** transforms
 	}
 }
 
-void CBoldSystem::alignment(CBoldData** bolds, CWorldTransformData** transforms, int numEntity)
+void CBoidSystem::alignment(CBoidData** bolds, CWorldTransformData** transforms, int numEntity)
 {
 	// That will follow the moving at 5m
 	// Distance of field of vision for separation between boids
@@ -161,9 +161,9 @@ void CBoldSystem::alignment(CBoldData** bolds, CWorldTransformData** transforms,
 	float timestepSec = getTimeStep() * 0.001f;
 	float weight = 0.3f;
 
-	CBoldData** neighbor;
-	CBoldData* boldI;
-	CBoldData* boldJ;
+	CBoidData** neighbor;
+	CBoidData* boldI;
+	CBoidData* boldJ;
 	int numNeighbor;
 
 	for (int i = 0; i < numEntity; i++)
@@ -214,7 +214,7 @@ void CBoldSystem::alignment(CBoldData** bolds, CWorldTransformData** transforms,
 	}
 }
 
-void CBoldSystem::cohesion(CBoldData** bolds, CWorldTransformData** transforms, int numEntity)
+void CBoidSystem::cohesion(CBoidData** bolds, CWorldTransformData** transforms, int numEntity)
 {
 	// That will group the small team 0.5m
 	// Distance of field of vision for separation between boids
@@ -226,9 +226,9 @@ void CBoldSystem::cohesion(CBoldData** bolds, CWorldTransformData** transforms, 
 	float timestepSec = getTimeStep() * 0.001f;
 	float weight = 0.2f;
 
-	CBoldData** neighbor;
-	CBoldData* boldI;
-	CBoldData* boldJ;
+	CBoidData** neighbor;
+	CBoidData* boldI;
+	CBoidData* boldJ;
 	int numNeighbor;
 
 	for (int i = 0; i < numEntity; i++)
@@ -280,11 +280,11 @@ void CBoldSystem::cohesion(CBoldData** bolds, CWorldTransformData** transforms, 
 	}
 }
 
-void CBoldSystem::borders(CBoldData** bolds, CWorldTransformData** transforms, int numEntity)
+void CBoidSystem::borders(CBoidData** bolds, CWorldTransformData** transforms, int numEntity)
 {
 	// That will turn when near the border
 	core::vector3df center, steer;
-	CBoldData* bold;
+	CBoidData* bold;
 
 	for (int i = 0; i < numEntity; i++)
 	{
@@ -305,7 +305,7 @@ void CBoldSystem::borders(CBoldData** bolds, CWorldTransformData** transforms, i
 	}
 }
 
-void CBoldSystem::updateTransform(CBoldData** bolds, CWorldTransformData** transforms, int numEntity)
+void CBoidSystem::updateTransform(CBoidData** bolds, CWorldTransformData** transforms, int numEntity)
 {
 	core::vector3df up(0.0f, 1.0f, 0.0f);
 	core::vector3df right;
@@ -314,7 +314,7 @@ void CBoldSystem::updateTransform(CBoldData** bolds, CWorldTransformData** trans
 	float timestepSec = getTimeStep() * 0.001f;
 
 	float speed;
-	CBoldData* bold;
+	CBoidData* bold;
 	CWorldTransformData* transform;
 	f32* matData;
 

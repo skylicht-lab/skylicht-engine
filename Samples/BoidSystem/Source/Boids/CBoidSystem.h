@@ -1,18 +1,18 @@
 #pragma once
 
-#include "CBoldData.h"
+#include "CBoidData.h"
 #include "CNeighbor.h"
 #include "Entity/IEntitySystem.h"
 #include "Entity/CEntityGroup.h"
 #include "Entity/CEntityManager.h"
 #include "Transform/CWorldTransformData.h"
 
-class CBoldSystem : public Skylicht::IEntitySystem
+class CBoidSystem : public Skylicht::IEntitySystem
 {
 protected:
 	Skylicht::CEntityGroup* m_group;
 
-	CFastArray<CBoldData*> m_bolds;
+	CFastArray<CBoidData*> m_bolds;
 	CFastArray<CWorldTransformData*> m_transforms;
 
 	float m_minX;
@@ -24,9 +24,9 @@ protected:
 	CNeighbor m_neighbor;
 
 public:
-	CBoldSystem();
+	CBoidSystem();
 
-	virtual ~CBoldSystem();
+	virtual ~CBoidSystem();
 
 	virtual void beginQuery(CEntityManager* entityManager);
 
@@ -56,15 +56,15 @@ public:
 
 private:
 
-	void neighbor(CBoldData** bolds, CWorldTransformData** transforms, int numEntity);
+	void neighbor(CBoidData** bolds, CWorldTransformData** transforms, int numEntity);
 
-	void separation(CBoldData** bolds, CWorldTransformData** transforms, int numEntity);
+	void separation(CBoidData** bolds, CWorldTransformData** transforms, int numEntity);
 
-	void alignment(CBoldData** bolds, CWorldTransformData** transforms, int numEntity);
+	void alignment(CBoidData** bolds, CWorldTransformData** transforms, int numEntity);
 
-	void cohesion(CBoldData** bolds, CWorldTransformData** transforms, int numEntity);
+	void cohesion(CBoidData** bolds, CWorldTransformData** transforms, int numEntity);
 
-	void borders(CBoldData** bolds, CWorldTransformData** transforms, int numEntity);
+	void borders(CBoidData** bolds, CWorldTransformData** transforms, int numEntity);
 
-	void updateTransform(CBoldData** bolds, CWorldTransformData** transforms, int numEntity);
+	void updateTransform(CBoidData** bolds, CWorldTransformData** transforms, int numEntity);
 };

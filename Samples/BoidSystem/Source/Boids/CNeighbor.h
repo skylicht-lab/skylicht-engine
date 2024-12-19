@@ -1,7 +1,7 @@
 #pragma once
 #pragma once
 
-#include "CBoldData.h"
+#include "CBoidData.h"
 #include "Entity/CArrayUtils.h"
 
 class CNeighbor
@@ -16,7 +16,7 @@ protected:
 	int m_poolSize;
 	int m_bucketSizeX;
 	int m_bucketSizeZ;
-	CFastArray<CBoldData*>* m_buckets;
+	CFastArray<CBoidData*>* m_buckets;
 
 public:
 	CNeighbor();
@@ -27,7 +27,7 @@ public:
 
 	void clear();
 
-	void add(CBoldData** bolds, int count);
+	void add(CBoidData** bolds, int count);
 
-	void queryNeighbor(const core::vector3df& position, CFastArray<CBoldData*>& result);
+	void queryNeighbor(const core::vector3df& position, CFastArray<CBoidData*>& result);
 };

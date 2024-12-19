@@ -1,9 +1,9 @@
 #include "pch.h"
-#include "CBoldData.h"
+#include "CBoidData.h"
 
-IMPLEMENT_DATA_TYPE_INDEX(CBoldData);
+IMPLEMENT_DATA_TYPE_INDEX(CBoidData);
 
-CBoldData::CBoldData() :
+CBoidData::CBoidData() :
 	MaxSpeed(0.0f),
 	MaxForce(0.0f),
 	Alive(true)
@@ -20,7 +20,7 @@ CBoldData::CBoldData() :
 	Front.normalize();
 }
 
-CBoldData::~CBoldData()
+CBoidData::~CBoidData()
 {
 
 }

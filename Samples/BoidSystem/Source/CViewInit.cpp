@@ -9,8 +9,8 @@
 #include "Primitive/CCube.h"
 #include "SkySun/CSkySun.h"
 
-#include "Boids/CBoldSystem.h"
-#include "Boids/CBoldAnimationSystem.h"
+#include "Boids/CBoidSystem.h"
+#include "Boids/CBoidAnimationSystem.h"
 
 #include "Material/Shader/Instancing/CTBNSGInstancing.h"
 
@@ -131,9 +131,9 @@ void CViewInit::initScene()
 	// init bold system
 	CEntityManager* entityManager = scene->getEntityManager();
 
-	// add bold system (that will update moving for CBoldData)
+	// add bold system (that will update moving for CBoidData)
 	float wallDepth = 0.5f;
-	CBoldSystem* boldSystem = entityManager->addSystem<CBoldSystem>();
+	CBoidSystem* boldSystem = entityManager->addSystem<CBoidSystem>();
 	boldSystem->setBounds(
 		envMin + wallDepth, // min x
 		envMax - wallDepth, // max x
@@ -142,13 +142,13 @@ void CViewInit::initScene()
 		2.5f // distance near wall, that bold will begin turn
 	);
 
-	// that let CBoldSystem will update before CWorldTransformSystem
+	// that let CBoidSystem will update before CWorldTransformSystem
 	int worldTransformOrder = entityManager->getSystem<CWorldTransformSystem>()->getSystemOrder();
 	boldSystem->setSystemOrder(worldTransformOrder - 1);
 	entityManager->notifySystemOrderChanged();
 
 	// add bold system (that will update animation clip)
-	CBoldAnimationSystem* animSystem = entityManager->addSystem<CBoldAnimationSystem>();
+	CBoidAnimationSystem* animSystem = entityManager->addSystem<CBoidAnimationSystem>();
 	animSystem->addClip(animIdle, 0, fps, 0.0f);
 	animSystem->addClip(animWalk, 1, fps, 0.01f);
 	animSystem->addClip(animRun, 2, fps, 0.03f);
@@ -439,7 +439,7 @@ void CViewInit::initCrowdByAnimTexture(CZone* zone, float envMin, float envMax, 
 		float offset = space * 0.5f;
 		float time = 0.0f;
 
-		CBoldData* bold;
+		CBoidData* bold;
 		CWorldTransformData* transform;
 		core::vector3df position;
 
@@ -473,7 +473,7 @@ void CViewInit::initCrowdByAnimTexture(CZone* zone, float envMin, float envMax, 
 			transform->Relative.setTranslation(position);
 
 			// add bold data
-			bold = entity->addData<CBoldData>();
+			bold = entity->addData<CBoidData>();
 			bold->Location = position;
 
 
@@ -500,7 +500,7 @@ void CViewInit::initCrowdByAnimTexture(CZone* zone, float envMin, float envMax, 
 			transform->Relative.setTranslation(position);
 
 			// add bold data
-			bold = entity->addData<CBoldData>();
+			bold = entity->addData<CBoidData>();
 			bold->Location = position;
 		}
 

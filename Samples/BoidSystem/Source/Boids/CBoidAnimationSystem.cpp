@@ -1,29 +1,29 @@
 #include "pch.h"
-#include "CBoldAnimationSystem.h"
+#include "CBoidAnimationSystem.h"
 
-CBoldAnimationSystem::CBoldAnimationSystem() :
+CBoidAnimationSystem::CBoidAnimationSystem() :
 	m_group(NULL)
 {
 
 }
 
-CBoldAnimationSystem::~CBoldAnimationSystem()
+CBoidAnimationSystem::~CBoidAnimationSystem()
 {
 
 }
 
-void CBoldAnimationSystem::beginQuery(CEntityManager* entityManager)
+void CBoidAnimationSystem::beginQuery(CEntityManager* entityManager)
 {
 	if (m_group == NULL)
 	{
-		const u32 boldType[] = GET_LIST_ENTITY_DATA(CBoldData);
+		const u32 boldType[] = GET_LIST_ENTITY_DATA(CBoidData);
 		m_group = entityManager->findGroup(boldType, 1);
 		if (m_group == NULL)
 			m_group = entityManager->createGroupFromVisible(boldType, 1);
 	}
 }
 
-void CBoldAnimationSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int count)
+void CBoidAnimationSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int count)
 {
 	entities = m_group->getEntities();
 	count = m_group->getEntityCount();
@@ -35,7 +35,7 @@ void CBoldAnimationSystem::onQuery(CEntityManager* entityManager, CEntity** enti
 	{
 		CEntity* entity = entities[i];
 
-		CBoldData* bold = GET_ENTITY_DATA(entity, CBoldData);
+		CBoidData* bold = GET_ENTITY_DATA(entity, CBoidData);
 		if (bold->Alive)
 		{
 			CSkinnedInstanceData* skinnedInstance = GET_ENTITY_DATA(entity, CSkinnedInstanceData);
@@ -48,12 +48,12 @@ void CBoldAnimationSystem::onQuery(CEntityManager* entityManager, CEntity** enti
 	}
 }
 
-void CBoldAnimationSystem::init(CEntityManager* entityManager)
+void CBoidAnimationSystem::init(CEntityManager* entityManager)
 {
 
 }
 
-void CBoldAnimationSystem::addClip(CAnimationClip* clip, int clipId, int fps, float runSpeed)
+void CBoidAnimationSystem::addClip(CAnimationClip* clip, int clipId, int fps, float runSpeed)
 {
 	m_clips.push_back(SMovingAnimation());
 
@@ -64,12 +64,12 @@ void CBoldAnimationSystem::addClip(CAnimationClip* clip, int clipId, int fps, fl
 	a.Speed = runSpeed;
 }
 
-void CBoldAnimationSystem::update(CEntityManager* entityManager)
+void CBoidAnimationSystem::update(CEntityManager* entityManager)
 {
 	SMovingAnimation* clips = m_clips.pointer();
 	int numClip = (int)m_clips.size();
 
-	CBoldData** bolds = m_bolds.pointer();
+	CBoidData** bolds = m_bolds.pointer();
 	CSkinnedInstanceData** skinnedIntances = m_skinnedInstances.pointer();
 
 	int numEntity = m_bolds.count();
@@ -87,7 +87,7 @@ void CBoldAnimationSystem::update(CEntityManager* entityManager)
 
 	for (int i = 0; i < numEntity; i++)
 	{
-		CBoldData* bold = bolds[i];
+		CBoidData* bold = bolds[i];
 		CSkinnedInstanceData* instance = skinnedIntances[i];
 
 		speed = bold->Velocity.getLength();
