@@ -24,7 +24,7 @@ protected:
 
 	core::array<SMovingAnimation> m_clips;
 
-	CFastArray<CBoidData*> m_bolds;
+	CFastArray<CBoidData*> m_boids;
 	CFastArray<CSkinnedInstanceData*> m_skinnedInstances;
 
 public:

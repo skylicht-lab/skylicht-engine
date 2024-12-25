@@ -59,20 +59,20 @@ void CNeighbor::clear()
 		m_buckets[i].reset();
 }
 
-void CNeighbor::add(CBoidData** bolds, int count)
+void CNeighbor::add(CBoidData** boids, int count)
 {
 	if (m_cellSize > 0)
 	{
-		CBoidData* bold;
+		CBoidData* boid;
 		float x, z;
 		int cx, cz, id;
 
 		for (int i = 0; i < count; i++)
 		{
-			bold = bolds[i];
+			boid = boids[i];
 
-			x = bold->Location.X - m_minX;
-			z = bold->Location.Z - m_minZ;
+			x = boid->Location.X - m_minX;
+			z = boid->Location.Z - m_minZ;
 
 			cx = (int)floorf(x / m_cellSize);
 			cz = (int)floorf(z / m_cellSize);
@@ -84,7 +84,7 @@ void CNeighbor::add(CBoidData** bolds, int count)
 
 				if (m_buckets[id].count() < m_poolSize)
 				{
-					m_buckets[id].push(bold);
+					m_buckets[id].push(boid);
 				}
 			}
 		}

@@ -27,7 +27,7 @@ public:
 
 	void clear();
 
-	void add(CBoidData** bolds, int count);
+	void add(CBoidData** boids, int count);
 
 	void queryNeighbor(const core::vector3df& position, CFastArray<CBoidData*>& result);
 };

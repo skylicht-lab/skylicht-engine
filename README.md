@@ -386,10 +386,6 @@ This is example code. How to render character model with animation, models are d
 - AnimationController
 <img src="Documents/Media/Samples/sample_skinned_mesh.jpg"/>
 
-Live demo: [Emscripten](http://34.149.122.230/SampleSkinnedMesh.html)
-
-Blendshape live demo: [Emscripten](http://34.149.122.230/SampleBlendShape.html)
-
 ### Samples\LightmapUV
 This is a demo how to use UnwrapUV tool to create Lightmap UV. 
 [Library xatlas](https://github.com/jpcy/xatlas) is integrated to Skylicht Engine.
@@ -432,8 +428,6 @@ This scene uses basic diffuse bump specular shader.
 Run on Ubuntu 20.04
 <img src="Documents/Media/Samples/sponza/sponza_ubuntu.jpg"/>
 
-Live demo: (Web PC Only) [Emscripten](http://34.149.122.230/SampleSponza.html)
-
 ### Samples\LightmappingVertex
 This is a demo to use lightmapper to set indirect lighting color on vertex color.
 
@@ -464,12 +458,8 @@ And how to query all triangles inside a Box
 And how to use the decal projector feature
 <img src="Documents/Media/Samples/sample_collision_decal.jpg"/>
 
-Live demo: (Web PC Only) [Emscripten](http://34.149.122.230/SampleCollision.html)
-
 ### Samples\Instancing
 This is demo setup render many mesh instancing to optimize draw call and render performance.
-
-Live demo: [Emscripten](http://34.149.122.230/SampleInstancing.html)
 
 ### Samples\SkinnedMeshInstancing
 This is a demo of drawing many characters and animations, that use GPU Instancing technique.

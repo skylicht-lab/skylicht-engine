@@ -16,10 +16,10 @@ void CBoidAnimationSystem::beginQuery(CEntityManager* entityManager)
 {
 	if (m_group == NULL)
 	{
-		const u32 boldType[] = GET_LIST_ENTITY_DATA(CBoidData);
-		m_group = entityManager->findGroup(boldType, 1);
+		const u32 boidType[] = GET_LIST_ENTITY_DATA(CBoidData);
+		m_group = entityManager->findGroup(boidType, 1);
 		if (m_group == NULL)
-			m_group = entityManager->createGroupFromVisible(boldType, 1);
+			m_group = entityManager->createGroupFromVisible(boidType, 1);
 	}
 }
 
@@ -28,20 +28,20 @@ void CBoidAnimationSystem::onQuery(CEntityManager* entityManager, CEntity** enti
 	entities = m_group->getEntities();
 	count = m_group->getEntityCount();
 
-	m_bolds.reset();
+	m_boids.reset();
 	m_skinnedInstances.reset();
 
 	for (int i = 0; i < count; i++)
 	{
 		CEntity* entity = entities[i];
 
-		CBoidData* bold = GET_ENTITY_DATA(entity, CBoidData);
-		if (bold->Alive)
+		CBoidData* boid = GET_ENTITY_DATA(entity, CBoidData);
+		if (boid->Alive)
 		{
 			CSkinnedInstanceData* skinnedInstance = GET_ENTITY_DATA(entity, CSkinnedInstanceData);
 			if (skinnedInstance)
 			{
-				m_bolds.push(bold);
+				m_boids.push(boid);
 				m_skinnedInstances.push(skinnedInstance);
 			}
 		}
@@ -69,10 +69,10 @@ void CBoidAnimationSystem::update(CEntityManager* entityManager)
 	SMovingAnimation* clips = m_clips.pointer();
 	int numClip = (int)m_clips.size();
 
-	CBoidData** bolds = m_bolds.pointer();
+	CBoidData** boids = m_boids.pointer();
 	CSkinnedInstanceData** skinnedIntances = m_skinnedInstances.pointer();
 
-	int numEntity = m_bolds.count();
+	int numEntity = m_boids.count();
 
 	float speed = 0.0f;
 	float maxWeight = 0.0f;
@@ -87,10 +87,10 @@ void CBoidAnimationSystem::update(CEntityManager* entityManager)
 
 	for (int i = 0; i < numEntity; i++)
 	{
-		CBoidData* bold = bolds[i];
+		CBoidData* boid = boids[i];
 		CSkinnedInstanceData* instance = skinnedIntances[i];
 
-		speed = bold->Velocity.getLength();
+		speed = boid->Velocity.getLength();
 		speed = core::clamp(speed, minAnimSpeed, maxAnimSpeed);
 
 		maxWeight = 0.0f;

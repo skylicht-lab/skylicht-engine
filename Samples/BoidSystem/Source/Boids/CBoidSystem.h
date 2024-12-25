@@ -12,7 +12,7 @@ class CBoidSystem : public Skylicht::IEntitySystem
 protected:
 	Skylicht::CEntityGroup* m_group;
 
-	CFastArray<CBoidData*> m_bolds;
+	CFastArray<CBoidData*> m_boids;
 	CFastArray<CWorldTransformData*> m_transforms;
 
 	float m_minX;
@@ -56,15 +56,15 @@ public:
 
 private:
 
-	void neighbor(CBoidData** bolds, CWorldTransformData** transforms, int numEntity);
+	void neighbor(CBoidData** boids, CWorldTransformData** transforms, int numEntity);
 
-	void separation(CBoidData** bolds, CWorldTransformData** transforms, int numEntity);
+	void separation(CBoidData** boids, CWorldTransformData** transforms, int numEntity);
 
-	void alignment(CBoidData** bolds, CWorldTransformData** transforms, int numEntity);
+	void alignment(CBoidData** boids, CWorldTransformData** transforms, int numEntity);
 
-	void cohesion(CBoidData** bolds, CWorldTransformData** transforms, int numEntity);
+	void cohesion(CBoidData** boids, CWorldTransformData** transforms, int numEntity);
 
-	void borders(CBoidData** bolds, CWorldTransformData** transforms, int numEntity);
+	void borders(CBoidData** boids, CWorldTransformData** transforms, int numEntity);
 
-	void updateTransform(CBoidData** bolds, CWorldTransformData** transforms, int numEntity);
+	void updateTransform(CBoidData** boids, CWorldTransformData** transforms, int numEntity);
 };
