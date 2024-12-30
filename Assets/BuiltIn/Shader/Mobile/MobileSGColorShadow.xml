@@ -1,4 +1,4 @@
-<shaderConfig name="MobileSGColor" baseShader="SOLID">
+<shaderConfig name="MobileSGColorShadow" baseShader="SOLID">
 	<uniforms>
 		<vs>
 			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
@@ -17,6 +17,9 @@
 			<uniform name="uSHConst" type="SH_CONST" value="0" float="4" array="4"/>
 		</fs>
 	</uniforms>
+	<resources>
+		<resource name="uShadowMap" type="ShadowMap"/>
+	</resources>
 	<customUI>		
 		<ui control="UIGroup" name="Customize">
 			<ui control="UIColor" name="uColor"/>
