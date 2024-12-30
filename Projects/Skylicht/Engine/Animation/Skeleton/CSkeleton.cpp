@@ -27,8 +27,51 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Debug/CSceneDebug.h"
 
+#include "Transform/CTransform.h"
+
 #define COPY_VECTOR3DF(dest, src)	dest.X = src.X; dest.Y = src.Y; dest.Z = src.Z
 #define COPY_QUATERNION(dest, src)	dest.X = src.X; dest.Y = src.Y; dest.Z = src.Z; dest.W = src.W
+
+core::quaternion getQuaternionFromAxes(const core::vector3df& xAxis, const core::vector3df& yAxis, const core::vector3df& zAxis)
+{
+	// copilot
+	// Can you write function get quaternion from 3 vector axis 3d in C
+	core::quaternion q;
+
+	// Compute the trace of the matrix
+	float trace = xAxis.X + yAxis.Y + zAxis.Z;
+
+	if (trace > 0.0f) {
+		float s = sqrtf(trace + 1.0f) * 2.0f;
+		q.W = 0.25f * s;
+		q.X = (yAxis.Z - zAxis.Y) / s;
+		q.Y = (zAxis.X - xAxis.Z) / s;
+		q.Z = (xAxis.Y - yAxis.X) / s;
+	}
+	else if ((xAxis.X > yAxis.Y) && (xAxis.X > zAxis.Z)) {
+		float s = sqrtf(1.0f + xAxis.X - yAxis.Y - zAxis.Z) * 2.0f;
+		q.W = (yAxis.Z - zAxis.Y) / s;
+		q.X = 0.25f * s;
+		q.Y = (yAxis.X + xAxis.Y) / s;
+		q.Z = (zAxis.X + xAxis.Z) / s;
+	}
+	else if (yAxis.Y > zAxis.Z) {
+		float s = sqrtf(1.0f + yAxis.Y - xAxis.X - zAxis.Z) * 2.0f;
+		q.W = (zAxis.X - xAxis.Z) / s;
+		q.X = (yAxis.X + xAxis.Y) / s;
+		q.Y = 0.25f * s;
+		q.Z = (zAxis.Y + yAxis.Z) / s;
+	}
+	else {
+		float s = sqrtf(1.0f + zAxis.Z - xAxis.X - yAxis.Y) * 2.0f;
+		q.W = (xAxis.Y - yAxis.X) / s;
+		q.X = (zAxis.X + xAxis.Z) / s;
+		q.Y = (zAxis.Y + yAxis.Z) / s;
+		q.Z = 0.25f * s;
+	}
+
+	return q;
+}
 
 namespace Skylicht
 {
@@ -59,6 +102,12 @@ namespace Skylicht
 
 		// we clone skeleton entities struct from render mesh entities
 		CEntity** worldEntities = entities.pointer();
+
+		core::matrix4 rotationMatrix;
+		core::vector3df up;
+		core::vector3df right;
+		core::vector3df front;
+		core::quaternion q;
 
 		for (u32 i = 0, n = entities.size(); i < n; i++)
 		{
@@ -107,10 +156,29 @@ namespace Skylicht
 				animationData->Depth = 0;
 			}
 
-			// default pos, scale, rot
+			// default pos, scale
 			animationData->DefaultPosition = worldTransform->Relative.getTranslation();
 			animationData->DefaultScale = worldTransform->Relative.getScale();
-			animationData->DefaultRotation = core::quaternion(worldTransform->Relative);
+
+			// get default rotation
+			q = worldTransform->Relative;
+			up = Transform::Oy;
+			right = Transform::Ox;
+			front = Transform::Oz;
+
+			up.X = up.X * animationData->DefaultScale.X;
+			up.Y = up.Y * animationData->DefaultScale.Y;
+			up.Z = up.Z * animationData->DefaultScale.Z;
+
+			up = q * up;
+			right = q * right;
+			front = q * front;
+
+			up.normalize();
+			right.normalize();
+			front.normalize();
+
+			animationData->DefaultRotation = getQuaternionFromAxes(right, up, front);
 
 			// default anim pos, scale, rot
 			COPY_VECTOR3DF(animationData->AnimPosition, animationData->DefaultPosition);
@@ -321,7 +389,7 @@ namespace Skylicht
 			// rotation
 			entity->AnimRotation.getMatrix(relativeMatrix);
 
-			// position	
+			// position
 			f32* m1 = relativeMatrix.pointer();
 
 			m1[12] = entity->AnimPosition.X;
@@ -761,6 +829,64 @@ namespace Skylicht
 				m1[10] *= entity->AnimScale.Z;
 				m1[11] *= entity->AnimScale.Z;
 			}
+
+			if (entity->ParentID < 0)
+			{
+				worlds[id] = transform * relative;
+			}
+			else
+			{
+				worlds[id] = worlds[entity->ParentID] * relative;
+
+				// draw skeleton line
+				debug->addLine(worlds[id].getTranslation(), worlds[entity->ParentID].getTranslation(), c);
+			}
+
+			id++;
+		}
+	}
+
+	void CSkeleton::drawDebugDefaultSkeleton(const core::matrix4& transform, const SColor& c)
+	{
+		CSceneDebug* debug = CSceneDebug::getInstance()->getNoZDebug();
+
+		core::matrix4 relative;
+
+		core::array<core::matrix4> worlds;
+		worlds.set_used((u32)m_entitiesData.size());
+
+		int id = 0;
+
+		for (CAnimationTransformData*& entity : m_entitiesData)
+		{
+			relative.makeIdentity();
+
+			// calc relative matrix & position
+			// rotation
+			entity->DefaultRotation.getMatrix(relative);
+
+			// position	
+			f32* m1 = relative.pointer();
+
+			m1[12] = entity->DefaultPosition.X;
+			m1[13] = entity->DefaultPosition.Y;
+			m1[14] = entity->DefaultPosition.Z;
+
+			// scale
+			m1[0] *= entity->DefaultScale.X;
+			m1[1] *= entity->DefaultScale.X;
+			m1[2] *= entity->DefaultScale.X;
+			m1[3] *= entity->DefaultScale.X;
+
+			m1[4] *= entity->DefaultScale.Y;
+			m1[5] *= entity->DefaultScale.Y;
+			m1[6] *= entity->DefaultScale.Y;
+			m1[7] *= entity->DefaultScale.Y;
+
+			m1[8] *= entity->DefaultScale.Z;
+			m1[9] *= entity->DefaultScale.Z;
+			m1[10] *= entity->DefaultScale.Z;
+			m1[11] *= entity->DefaultScale.Z;
 
 			if (entity->ParentID < 0)
 			{

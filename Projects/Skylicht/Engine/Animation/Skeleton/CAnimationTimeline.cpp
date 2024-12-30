@@ -30,10 +30,12 @@ namespace Skylicht
 
 	CAnimationTimeline::CAnimationTimeline() :
 		From(0.0f),
+		To(0.0f),
 		Frame(0.0f),
 		Duration(0.0f),
 		Speed(1.0f),
 		Weight(1.0f),
+		Loop(true),
 		Pause(false)
 	{
 

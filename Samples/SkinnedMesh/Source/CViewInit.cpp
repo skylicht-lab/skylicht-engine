@@ -242,6 +242,7 @@ void CViewInit::onUpdate()
 
 		std::vector<std::string> listBundles;
 		listBundles.push_back("Common.zip");
+		listBundles.push_back("SampleModels.zip");
 		listBundles.push_back("SampleModelsResource.zip");
 		listBundles.push_back(getApplication()->getTexturePackageName("SampleModels").c_str());
 
