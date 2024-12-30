@@ -1,0 +1,29 @@
+<shaderConfig name="MobileSGColor" baseShader="SOLID">
+	<uniforms>
+		<vs>
+			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+			<uniform name="uWorldMatrix" type="WORLD" value="0" float="16" matrix="true"/>
+			<uniform name="uCameraPosition" type="WORLD_CAMERA_POSITION" value="0" float="4"/>
+			<uniform name="uLightDirection" type="WORLD_LIGHT_DIRECTION" value="0" float="4"/>
+			<uniform name="uUVScale" type="MATERIAL_PARAM" valueIndex="0" value="1.0, 1.0, 0.0, 0.0" float="4"/>
+			<uniform name="uShadowMatrix" type="SHADOW_MAP_MATRIX" value="0" float="16" array="1" matrix="true"/>
+		</vs>
+		<fs>
+			<uniform name="uShadowMap" type="DEFAULT_VALUE" value="6" float="1" directX="false"/>
+			<uniform name="uLightColor" type="LIGHT_COLOR" value="1.0,1.0,1.0,1.0" float="4"/>
+			<uniform name="uColor" type="MATERIAL_PARAM" valueIndex="1" value="1.0, 1.0, 1.0, 1.0" float="4"/>
+			<uniform name="uSpecGloss" type="MATERIAL_PARAM" valueIndex="2" value="0.4, 0.3, 0.0, 1.0" float="2"/>
+			<uniform name="uLightMul" type="MATERIAL_PARAM" valueIndex="3" value="1.0, 1.0" float="2"/>
+			<uniform name="uSHConst" type="SH_CONST" value="0" float="4" array="4"/>
+		</fs>
+	</uniforms>
+	<customUI>		
+		<ui control="UIGroup" name="Customize">
+			<ui control="UIColor" name="uColor"/>
+			<ui control="UIFloat2" name="uSpecGloss" elementName="Specular;Glossiness" min="0" max="1"/>
+			<ui control="UIFloat2" name="uLightMul" elementName="SpecMul;LightMul" min="0" max="2"/>
+		</ui>
+	</customUI>
+	<shader type="GLSL" vs="GLSL/SGColorShadowVS.glsl" fs="GLSL/SGNoTextureShadowFS.glsl" vs_source="GLSL/SGVS.d.glsl" fs_source="GLSL/SGLitFS.d.glsl" define="NO_NORMAL_MAP; NO_TEXTURE;SHADOW;OPTIMIZE_SHADOW"/>
+	<shader type="HLSL" vs="HLSL/SGColorShadowVS.hlsl" fs="HLSL/SGNoTextureShadowFS.hlsl" vs_source="HLSL/SGVS.d.hlsl" fs_source="HLSL/SGLitFS.d.hlsl" define="NO_NORMAL_MAP; NO_TEXTURE;SHADOW;OPTIMIZE_SHADOW"/>
+</shaderConfig>

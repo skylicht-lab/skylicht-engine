@@ -51,7 +51,7 @@ void main(void)
 
 	vTexCoord0 = inTexCoord0 * uUVScale.xy + uUVScale.zw;
 
-	vec4 worldPos = uWorldMatrix * skinPosition;	
+	vec4 worldPos = uWorldMatrix * vec4(skinPosition.xyz, 1.0);	
 	vec4 worldNormal = uWorldMatrix * vec4(skinNormal.xyz, 0.0);
 	vec4 worldViewDir = normalize(uCameraPosition - worldPos);
 
