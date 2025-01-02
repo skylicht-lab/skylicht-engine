@@ -144,7 +144,7 @@ namespace Skylicht
 
 		IVideoDriver* driver = getVideoDriver();
 
-		// set projection & view			
+		// set projection & view
 		const SViewFrustum& viewArea = camera->getViewFrustum();
 		driver->setTransform(video::ETS_PROJECTION, viewArea.getTransform(video::ETS_PROJECTION));
 		driver->setTransform(video::ETS_VIEW, viewArea.getTransform(video::ETS_VIEW));

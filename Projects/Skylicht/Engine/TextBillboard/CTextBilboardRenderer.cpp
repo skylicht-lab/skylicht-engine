@@ -1,0 +1,190 @@
+/*
+!@
+MIT License
+
+Copyright (c) 2025 Skylicht Technology CO., LTD
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
+(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
+merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+This file is part of the "Skylicht Engine".
+https://github.com/skylicht-lab/skylicht-engine
+!#
+*/
+
+#include "pch.h"
+#include "CTextBilboardRenderer.h"
+
+#include "Graphics2D/CGraphics2D.h"
+
+namespace Skylicht
+{
+	CTextBilboardRenderer::CTextBilboardRenderer()
+	{
+
+	}
+
+	CTextBilboardRenderer::~CTextBilboardRenderer()
+	{
+
+	}
+
+	void CTextBilboardRenderer::beginQuery(CEntityManager* entityManager)
+	{
+
+	}
+
+	void CTextBilboardRenderer::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
+	{
+
+	}
+
+	void CTextBilboardRenderer::init(CEntityManager* entityManager)
+	{
+
+	}
+
+	void CTextBilboardRenderer::update(CEntityManager* entityManager)
+	{
+
+	}
+
+	void CTextBilboardRenderer::render(CEntityManager* entityManager)
+	{
+
+	}
+
+	void CTextBilboardRenderer::postRender(CEntityManager* entityManager)
+	{
+		CTextBillboardManager* textMgr = CTextBillboardManager::getInstance();
+
+		IVideoDriver* driver = getVideoDriver();
+		core::recti viewport = driver->getViewPort();
+		int viewportW = viewport.getWidth();
+		int viewportH = viewport.getHeight();
+
+		core::matrix4 oldProjection = driver->getTransform(video::ETS_PROJECTION);
+		core::matrix4 oldView = driver->getTransform(video::ETS_VIEW);
+
+		core::matrix4 orthoMatrix;
+		orthoMatrix.buildProjectionMatrixOrthoLH((f32)viewportW, -(f32)(viewportH), -1.0f, 1.0f);
+		orthoMatrix.setTranslation(core::vector3df(-1, 1, 0));
+
+		driver->setTransform(video::ETS_PROJECTION, orthoMatrix);
+		driver->setTransform(video::ETS_VIEW, core::IdentityMatrix);
+		driver->setTransform(video::ETS_WORLD, core::IdentityMatrix);
+
+		CCamera* camera = entityManager->getCamera();
+
+		float x, y;
+		float transformedPos[4];
+
+		core::dimension2d<f32> dim(
+			(f32)viewportW * 0.5f,
+			(f32)viewportH * 0.5f
+		);
+
+		core::matrix4 trans = camera->getProjectionMatrix();
+		trans *= camera->getViewMatrix();
+
+		const core::array<CRenderTextData*>& texts = textMgr->getRenderTexts();
+
+		for (u32 i = 0, n = texts.size(); i < n; i++)
+		{
+			CRenderTextData* text = texts[i];
+			if (!text->Visible)
+				continue;
+
+			std::vector<std::vector<SModuleOffset*>>& modules = text->getModules();
+			if (modules.size() == 0)
+				continue;
+
+			if (modules.size() == 1 && modules[0].size() == 0)
+				continue;
+
+			// convert 3d to 2d
+			transformedPos[0] = text->Position.X;
+			transformedPos[1] = text->Position.Y;
+			transformedPos[2] = text->Position.Z;
+			transformedPos[3] = 1.0f;
+
+			trans.multiplyWith1x4Matrix(transformedPos);
+			f32 zDiv = transformedPos[3] == 0.0f ? 1.0f : core::reciprocal(transformedPos[3]);
+			if (zDiv < 0)
+				zDiv = -zDiv;
+
+			x = dim.Width + dim.Width * transformedPos[0] * zDiv;
+			y = dim.Height - dim.Height * transformedPos[1] * zDiv;
+
+			if (transformedPos[3] >= 0)
+			{
+				renderText(x, y, text);
+			}
+		}
+
+		CGraphics2D::getInstance()->flush();
+
+		driver->setTransform(video::ETS_PROJECTION, oldProjection);
+		driver->setTransform(video::ETS_VIEW, oldView);
+	}
+
+	void CTextBilboardRenderer::renderText(float x, float y, CRenderTextData* renderTextData)
+	{
+		std::vector<std::vector<SModuleOffset*>>& lines = renderTextData->getModules();
+
+		float textHeight = renderTextData->getTextHeight();
+		float linePadding = renderTextData->getLinePadding();
+
+		float beginX = x;
+
+		for (int i = 0, n = (int)lines.size(); i < n; i++)
+		{
+			// render text
+			renderText(x, y, renderTextData, lines[i], i);
+
+			// new line
+			x = beginX;
+			y += (textHeight + linePadding);
+		}
+	}
+
+	void CTextBilboardRenderer::renderText(float x, float y, CRenderTextData* renderTextData, std::vector<SModuleOffset*>& modules, int line)
+	{
+		int numCharacter = (int)modules.size();
+
+		float stringWidth = 0;
+		float charPadding = renderTextData->getSpacePadding();
+
+		for (int i = 0; i < numCharacter; i++)
+		{
+			SModuleOffset* moduleOffset = modules[i];
+			stringWidth = stringWidth + moduleOffset->XAdvance + charPadding;
+		}
+
+		CGraphics2D* g = CGraphics2D::getInstance();
+
+		for (int i = 0; i < numCharacter; i++)
+		{
+			SModuleOffset* moduleOffset = modules[i];
+
+			g->addModuleBatch(moduleOffset,
+				renderTextData->Color,
+				core::IdentityMatrix,
+				x, y,
+				renderTextData->ShaderID,
+				renderTextData->Material);
+
+			x = x + moduleOffset->XAdvance + charPadding;
+		}
+	}
+}

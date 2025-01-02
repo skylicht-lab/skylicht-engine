@@ -92,7 +92,6 @@ namespace Skylicht
 	{
 		m_textOffsetY = 0;
 		m_textHeight = 50;
-		m_textSpaceWidth = 20;
 
 #ifdef HAVE_CARET
 		m_caretShader = CShaderManager::getInstance()->getShaderIDByName("VertexColorAlpha");
@@ -116,11 +115,6 @@ namespace Skylicht
 			m_textHeight = (int)moduleCharA->OffsetY + (int)moduleCharA->Module->H;
 			m_textOffsetY = (int)moduleCharA->OffsetY;
 		}
-
-		// get space width
-		SModuleOffset* moduleCharSpace = font->getCharacterModule((int)' ');
-		if (moduleCharSpace)
-			m_textSpaceWidth = (int)moduleCharSpace->XAdvance;
 	}
 
 	IFont* CGUIText::getCurrentFont()

@@ -40,6 +40,14 @@ namespace Skylicht
 
 	CSpriteFont::~CSpriteFont()
 	{
+		for (SImage* img : m_images)
+		{
+			if (img->Texture)
+			{
+				CTextureManager::getInstance()->removeTexture(img->Texture);
+			}
+		}
+
 		if (m_moduleMap != NULL)
 		{
 			delete m_moduleMap;

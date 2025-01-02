@@ -46,6 +46,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Graphics2D/SpriteFrame/CSpriteManager.h"
 #include "Graphics2D/SpriteFrame/CFontManager.h"
 #include "Debug/CSceneDebug.h"
+#include "TextBillboard/CTextBillboardManager.h"
 
 // Tween
 #include "Tween/CTweenManager.h"
@@ -99,6 +100,7 @@ namespace Skylicht
 		CComponentCategory::createGetInstance();
 
 		CSceneDebug::createGetInstance();
+		CTextBillboardManager::createGetInstance();
 
 		// alway use HW
 		g_video->setMinHardwareBufferVertexCount(0);
@@ -112,6 +114,7 @@ namespace Skylicht
 		os::Printer::log("Close skylicht core");
 
 		CSceneDebug::releaseInstance();
+		CTextBillboardManager::releaseInstance();
 
 		CComponentCategory::releaseInstance();
 		CDependentComponent::releaseInstance();

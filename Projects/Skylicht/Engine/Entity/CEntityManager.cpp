@@ -43,6 +43,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "ReflectionProbe/CReflectionProbeSystem.h"
 #include "IndirectLighting/CIndirectLightingSystem.h"
 #include "Debug/CDebugRenderer.h"
+#include "TextBillboard/CTextBilboardRenderer.h"
 
 namespace Skylicht
 {
@@ -74,6 +75,7 @@ namespace Skylicht
 		addRenderSystem<CSkinnedMeshRenderer>();
 		addRenderSystem<CMeshRendererInstancing>();
 		addRenderSystem<COcclusionQueryRenderer>();
+		addRenderSystem<CTextBilboardRenderer>();
 		addRenderSystem<CDebugRenderer>();
 	}
 

@@ -8,7 +8,7 @@ compressExt = ["xml", "ttf", "otf", "txt",
                "png", "jpg",
                "smesh", "sanim",
                "mp3", "wav",
-               "font",
+               "font","fnt",
                "atlas","json",
                "template",
                "scene"]
