@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Utils/CSingleton.h"
+#include "TextBillboard/CTextBillboardManager.h"
 
 namespace Skylicht
 {
@@ -69,6 +70,7 @@ namespace Skylicht
 		core::array<SLineStripDebug> m_linestrip;
 		core::array<SBoxDebug> m_boxs;
 		core::array<STriDebug> m_tri;
+		core::array<CRenderTextData*> m_texts;
 
 		CSceneDebug* m_noZDebug;
 
@@ -91,7 +93,8 @@ namespace Skylicht
 		void addSphere(const core::vector3df& pos, float radius, const SColor& color);
 		void addPosition(const core::vector3df& pos, float length, const SColor& color);
 		void addTransform(const core::matrix4& mat, float vectorLength);
-
+		void addText(const core::vector3df& pos, const char* string, const SColor& color);
+		void clearText();
 
 		void clear()
 		{
@@ -99,6 +102,7 @@ namespace Skylicht
 			clearLineStrip();
 			clearBoxs();
 			clearTri();
+			clearText();
 		}
 
 		inline void clearLines()

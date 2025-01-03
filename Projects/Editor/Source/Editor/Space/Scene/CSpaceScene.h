@@ -114,6 +114,7 @@ namespace Skylicht
 			bool m_enableRender;
 			bool m_enableRenderGrid;
 
+			bool m_waitHotKeyRelease;
 		public:
 			CSpaceScene(GUI::CWindow* window, CEditor* editor);
 

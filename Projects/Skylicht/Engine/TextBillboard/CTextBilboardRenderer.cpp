@@ -69,15 +69,22 @@ namespace Skylicht
 		CTextBillboardManager* textMgr = CTextBillboardManager::getInstance();
 
 		IVideoDriver* driver = getVideoDriver();
-		core::recti viewport = driver->getViewPort();
-		int viewportW = viewport.getWidth();
-		int viewportH = viewport.getHeight();
+
+		float viewportW = textMgr->getViewportWidth();
+		float viewportH = textMgr->getViewportHeight();
+
+		if (viewportW <= 0.0f || viewportH <= 0.0f)
+		{
+			core::recti viewport = driver->getViewPort();
+			viewportW = (float)viewport.getWidth();
+			viewportH = (float)viewport.getHeight();
+		}
 
 		core::matrix4 oldProjection = driver->getTransform(video::ETS_PROJECTION);
 		core::matrix4 oldView = driver->getTransform(video::ETS_VIEW);
 
 		core::matrix4 orthoMatrix;
-		orthoMatrix.buildProjectionMatrixOrthoLH((f32)viewportW, -(f32)(viewportH), -1.0f, 1.0f);
+		orthoMatrix.buildProjectionMatrixOrthoLH(viewportW, -viewportH, -1.0f, 1.0f);
 		orthoMatrix.setTranslation(core::vector3df(-1, 1, 0));
 
 		driver->setTransform(video::ETS_PROJECTION, orthoMatrix);
@@ -147,6 +154,13 @@ namespace Skylicht
 
 		float beginX = x;
 
+		float renderHeight = ((int)lines.size() * (textHeight + linePadding)) - linePadding;
+
+		if (renderTextData->VAlign == CRenderTextData::Middle)
+			y = y - (renderHeight + renderTextData->getTextOffsetY()) / 2;
+		else if (renderTextData->VAlign == CRenderTextData::Bottom)
+			y = y - renderHeight;
+
 		for (int i = 0, n = (int)lines.size(); i < n; i++)
 		{
 			// render text
@@ -171,6 +185,11 @@ namespace Skylicht
 			stringWidth = stringWidth + moduleOffset->XAdvance + charPadding;
 		}
 
+		if (renderTextData->HAlign == CRenderTextData::Center)
+			x = x - stringWidth / 2;
+		else if (renderTextData->HAlign == CRenderTextData::Right)
+			x = x - stringWidth;
+
 		CGraphics2D* g = CGraphics2D::getInstance();
 
 		for (int i = 0; i < numCharacter; i++)
@@ -179,7 +198,7 @@ namespace Skylicht
 
 			g->addModuleBatch(moduleOffset,
 				renderTextData->Color,
-				core::IdentityMatrix,
+				renderTextData->Transform,
 				x, y,
 				renderTextData->ShaderID,
 				renderTextData->Material);

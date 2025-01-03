@@ -97,6 +97,7 @@ namespace Skylicht
 
 		m_entities.set_used(0);
 		m_unused.set_used(0);
+		m_delayRemove.set_used(0);
 
 		notifyUpdateSortEntities();
 	}
@@ -229,19 +230,30 @@ namespace Skylicht
 	{
 		CEntity* entity = m_entities[index];
 		entity->setAlive(false);
-		entity->removeAllData();
-		m_unused.push_back(entity);
-
-		notifyUpdateSortEntities();
+		m_delayRemove.push_back(entity);
 	}
 
 	void CEntityManager::removeEntity(CEntity* entity)
 	{
 		entity->setAlive(false);
-		entity->removeAllData();
-		m_unused.push_back(entity);
+		m_delayRemove.push_back(entity);
+	}
 
-		notifyUpdateSortEntities();
+	void CEntityManager::updateRemoveEntity()
+	{
+		u32 n = m_delayRemove.size();
+		for (u32 i = 0; i < n; i++)
+		{
+			CEntity* entity = m_delayRemove[i];
+			entity->removeAllData();
+			m_unused.push_back(entity);
+		}
+
+		if (n > 0)
+		{
+			notifyUpdateSortEntities();
+			m_delayRemove.set_used(0);
+		}
 	}
 
 	int CEntityManager::getDepth(CWorldTransformData* t)
@@ -354,6 +366,8 @@ namespace Skylicht
 
 	void CEntityManager::update()
 	{
+		updateRemoveEntity();
+
 		if (m_systemChanged == true)
 		{
 			sortSystem();

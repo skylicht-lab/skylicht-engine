@@ -43,6 +43,7 @@ namespace Skylicht
 		core::array<CEntity*> m_alives;
 		core::array<CEntity*> m_entities;
 		core::array<CEntity*> m_unused;
+		core::array<CEntity*> m_delayRemove;
 
 		core::array<CEntityGroup*> m_groups;
 
@@ -132,6 +133,8 @@ namespace Skylicht
 		void removeEntity(int index);
 
 		void removeEntity(CEntity* entity);
+
+		void updateRemoveEntity();
 
 		template<class T>
 		T* addSystem();

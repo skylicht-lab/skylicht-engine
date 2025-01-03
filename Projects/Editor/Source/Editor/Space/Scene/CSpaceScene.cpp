@@ -30,6 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "SkySun/CSkySun.h"
 #include "LightProbes/CLightProbes.h"
 #include "ReflectionProbe/CReflectionProbe.h"
+#include "Camera/CEditorMoveCamera.h"
 
 #include "Editor/CEditor.h"
 #include "Editor/CEditorSetting.h"
@@ -77,7 +78,8 @@ namespace Skylicht
 			m_selectObjectSystem(NULL),
 			m_enableRender(true),
 			m_enableRenderGrid(true),
-			m_enableHandles(true)
+			m_enableHandles(true),
+			m_waitHotKeyRelease(false)
 		{
 			CScene* currentScene = CSceneController::getInstance()->getScene();
 			if (currentScene == NULL)
@@ -363,6 +365,10 @@ namespace Skylicht
 			editorCamera->setMoveSpeed(editorSetting->CameraMoveSpeed.get());
 			editorCamera->setZoomSpeed(editorSetting->CameraZoomSpeed.get());
 			editorCamera->setRotateSpeed(editorSetting->CameraRotateSpeed.get());
+
+			// update for wads move
+			CEditorMoveCamera* editorMove = camObj->addComponent<CEditorMoveCamera>();
+			editorMove->setMoveSpeed(editorSetting->CameraMoveSpeed.get());
 
 			// position
 			m_editorCamera->setPosition(core::vector3df(-2.0f, 1.5f, -2.0f));
@@ -938,29 +944,46 @@ namespace Skylicht
 		{
 			CEditorSetting* editorSetting = CEditorSetting::getInstance();
 
-			if (editorSetting->CameraNavigation.get() == 1)
+			CEditorCamera* cameraBehavior = m_editorCamera->getGameObject()->getComponent<CEditorCamera>();
+			if (cameraBehavior->isLeftMousePressed() ||
+				cameraBehavior->isRightMousePressed())
 			{
-				// maya
-				if (hotkey == "W")
-					onToolbarTransform(m_toolbarButton[ESceneToolBar::Move]);
-				else if (hotkey == "E")
-					onToolbarTransform(m_toolbarButton[ESceneToolBar::Rotate]);
-				else if (hotkey == "R")
-					onToolbarTransform(m_toolbarButton[ESceneToolBar::Scale]);
-				else if (hotkey == "Q")
-					onToolbarTransform(m_toolbarButton[ESceneToolBar::Select]);
+				// skip hotkey (move) when dragging
+				if (hotkey == "W" ||
+					hotkey == "A" ||
+					hotkey == "S" ||
+					hotkey == "D")
+				{
+					m_waitHotKeyRelease = true;
+				}
 			}
-			else
+
+			if (!m_waitHotKeyRelease)
 			{
-				// default & blender
-				if (hotkey == "G")
-					onToolbarTransform(m_toolbarButton[ESceneToolBar::Move]);
-				else if (hotkey == "R")
-					onToolbarTransform(m_toolbarButton[ESceneToolBar::Rotate]);
-				else if (hotkey == "S")
-					onToolbarTransform(m_toolbarButton[ESceneToolBar::Scale]);
-				else if (hotkey == "Q")
-					onToolbarTransform(m_toolbarButton[ESceneToolBar::Select]);
+				if (editorSetting->CameraNavigation.get() == 1)
+				{
+					// maya
+					if (hotkey == "W")
+						onToolbarTransform(m_toolbarButton[ESceneToolBar::Move]);
+					else if (hotkey == "E")
+						onToolbarTransform(m_toolbarButton[ESceneToolBar::Rotate]);
+					else if (hotkey == "R")
+						onToolbarTransform(m_toolbarButton[ESceneToolBar::Scale]);
+					else if (hotkey == "Q")
+						onToolbarTransform(m_toolbarButton[ESceneToolBar::Select]);
+				}
+				else
+				{
+					// default & blender
+					if (hotkey == "G")
+						onToolbarTransform(m_toolbarButton[ESceneToolBar::Move]);
+					else if (hotkey == "R")
+						onToolbarTransform(m_toolbarButton[ESceneToolBar::Rotate]);
+					else if (hotkey == "S")
+						onToolbarTransform(m_toolbarButton[ESceneToolBar::Scale]);
+					else if (hotkey == "Q")
+						onToolbarTransform(m_toolbarButton[ESceneToolBar::Select]);
+				}
 			}
 
 			if (hotkey == "F")
@@ -1006,8 +1029,17 @@ namespace Skylicht
 
 			if (key == GUI::KEY_DELETE)
 			{
-				if (down == true)
+				if (down)
 					CSceneController::getInstance()->onDelete();
+			}
+
+			if (!down && m_waitHotKeyRelease)
+			{
+				std::string s;
+				s += toupper(key);
+
+				if (s == "W" || s == "A" || s == "S" || s == "D")
+					m_waitHotKeyRelease = false;
 			}
 		}
 

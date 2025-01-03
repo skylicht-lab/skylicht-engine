@@ -10,6 +10,8 @@
 
 #include "Projective/CProjective.h"
 
+#include "Debug/CSceneDebug.h"
+
 void installApplication(const std::vector<std::string>& argv)
 {
 	SampleParticlesMagicSkill* app = new SampleParticlesMagicSkill();

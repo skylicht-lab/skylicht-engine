@@ -239,4 +239,26 @@ namespace Skylicht
 		addLine(pos, pos + y * vectorLength, SColor(255, 0, 255, 0));
 		addLine(pos, pos + z * vectorLength, SColor(255, 0, 0, 255));
 	}
+
+	void CSceneDebug::addText(const core::vector3df& pos, const char* string, const SColor& color)
+	{
+		CTextBillboardManager* textMgr = CTextBillboardManager::getInstance();
+
+		CRenderTextData* textData = textMgr->addText(pos, string);
+		if (textData)
+		{
+			textData->Color = color;
+			textData->VAlign = CRenderTextData::Middle;
+			textData->HAlign = CRenderTextData::Center;
+			m_texts.push_back(textData);
+		}
+	}
+
+	void CSceneDebug::clearText()
+	{
+		CTextBillboardManager* textMgr = CTextBillboardManager::getInstance();
+
+		for (u32 i = 0, n = m_texts.size(); i < n; i++)
+			textMgr->remove(m_texts[i]);
+	}
 }

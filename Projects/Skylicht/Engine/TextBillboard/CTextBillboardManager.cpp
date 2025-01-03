@@ -39,7 +39,9 @@ namespace Skylicht
 		m_spacePadding(0.0f),
 		ShaderID(0),
 		Material(NULL),
-		Visible(true)
+		Visible(true),
+		VAlign(CRenderTextData::Top),
+		HAlign(CRenderTextData::Left)
 
 	{
 
@@ -132,7 +134,9 @@ namespace Skylicht
 
 	CTextBillboardManager::CTextBillboardManager() :
 		m_defaultFont(NULL),
-		m_defaultShader(0)
+		m_defaultShader(0),
+		m_viewportWidth(0),
+		m_viewportHeight(0)
 	{
 
 	}
@@ -150,6 +154,19 @@ namespace Skylicht
 			delete m_texts[i];
 		}
 		m_texts.set_used(0);
+	}
+
+	void CTextBillboardManager::remove(CRenderTextData* text)
+	{
+		for (u32 i = 0, n = m_texts.size(); i < n; i++)
+		{
+			if (m_texts[i] == text)
+			{
+				delete m_texts[i];
+				m_texts.erase(i);
+				return;
+			}
+		}
 	}
 
 	void CTextBillboardManager::initDefaultFont()
@@ -171,17 +188,7 @@ namespace Skylicht
 		if (!m_defaultFont)
 			return NULL;
 
-		if (m_defaultShader == 0)
-			m_defaultShader = CShaderManager::getInstance()->getShaderIDByName("TextureColorAlpha");
-
-		CRenderTextData* t = new CRenderTextData();
-		m_texts.push_back(t);
-
-		t->Position = position;
-		t->ShaderID = m_defaultShader;
-		t->setText(m_defaultFont, text);
-
-		return t;
+		return addText(position, text, m_defaultFont);
 	}
 
 	CRenderTextData* CTextBillboardManager::addText(const core::vector3df& position, const wchar_t* text)
@@ -192,6 +199,14 @@ namespace Skylicht
 		if (!m_defaultFont)
 			return NULL;
 
+		return addText(position, text, m_defaultFont);
+	}
+
+	CRenderTextData* CTextBillboardManager::addText(const core::vector3df& position, const char* text, IFont* font)
+	{
+		if (font == NULL)
+			return NULL;
+
 		if (m_defaultShader == 0)
 			m_defaultShader = CShaderManager::getInstance()->getShaderIDByName("TextureColorAlpha");
 
@@ -199,9 +214,25 @@ namespace Skylicht
 		m_texts.push_back(t);
 
 		t->Position = position;
-		t->ShaderID = CShaderManager::getInstance()->getShaderIDByName("TextureColorAlpha");
-		t->setText(m_defaultFont, text);
+		t->ShaderID = m_defaultShader;
+		t->setText(font, text);
 
 		return t;
+	}
+
+	CRenderTextData* CTextBillboardManager::addText(const core::vector3df& position, const wchar_t* text, IFont* font)
+	{
+		if (font == NULL)
+			return NULL;
+
+		if (m_defaultShader == 0)
+			m_defaultShader = CShaderManager::getInstance()->getShaderIDByName("TextureColorAlpha");
+
+		CRenderTextData* t = new CRenderTextData();
+		m_texts.push_back(t);
+
+		t->Position = position;
+		t->ShaderID = m_defaultShader;
+		t->setText(font, text);
 	}
 }

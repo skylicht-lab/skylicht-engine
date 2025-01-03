@@ -34,11 +34,29 @@ namespace Skylicht
 	class SKYLICHT_API CRenderTextData
 	{
 	public:
+		enum EVerticalAlign
+		{
+			Top,
+			Middle,
+			Bottom
+		};
+
+		enum EHorizontalAlign
+		{
+			Left,
+			Center,
+			Right
+		};
+
+	public:
 		core::vector3df Position;
 		SColor Color;
 		int ShaderID;
 		CMaterial* Material;
 		bool Visible;
+		core::matrix4 Transform;
+		EVerticalAlign VAlign;
+		EHorizontalAlign HAlign;
 
 	protected:
 		std::wstring m_text;
@@ -114,6 +132,9 @@ namespace Skylicht
 
 		int m_defaultShader;
 
+		float m_viewportWidth;
+		float m_viewportHeight;
+
 	public:
 
 		CTextBillboardManager();
@@ -122,15 +143,37 @@ namespace Skylicht
 
 		void clear();
 
+		void remove(CRenderTextData* text);
+
 		CRenderTextData* addText(const core::vector3df& position, const char* text);
 
 		CRenderTextData* addText(const core::vector3df& position, const wchar_t* text);
+
+		CRenderTextData* addText(const core::vector3df& position, const char* text, IFont* font);
+
+		CRenderTextData* addText(const core::vector3df& position, const wchar_t* text, IFont* font);
 
 		void initDefaultFont();
 
 		const core::array<CRenderTextData*>& getRenderTexts()
 		{
 			return m_texts;
+		}
+
+		inline float getViewportWidth()
+		{
+			return m_viewportWidth;
+		}
+
+		inline float getViewportHeight()
+		{
+			return m_viewportHeight;
+		}
+
+		inline void setViewport(float w, float h)
+		{
+			m_viewportWidth = w;
+			m_viewportHeight = h;
 		}
 	};
 

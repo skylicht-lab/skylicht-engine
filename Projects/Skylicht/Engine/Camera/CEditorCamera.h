@@ -125,6 +125,16 @@ namespace Skylicht
 			return m_controlStyle;
 		}
 
+		inline bool isRightMousePressed()
+		{
+			return m_rightMousePress;
+		}
+
+		inline bool isLeftMousePressed()
+		{
+			return m_leftMousePress;
+		}
+
 	protected:
 
 		void updateInputRotate(core::vector3df& relativeRotation, f32 timeDiff);

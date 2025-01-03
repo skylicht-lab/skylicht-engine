@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CCameraSettingController.h"
 #include "Editor/CEditorSetting.h"
 #include "Editor/SpaceController/CSceneController.h"
+#include "Camera/CEditorMoveCamera.h"
 
 namespace Skylicht
 {
@@ -228,6 +229,7 @@ namespace Skylicht
 			CSpaceScene* spaceScene = CSceneController::getInstance()->getSpaceScene();
 			CCamera* camera = spaceScene->getEditorCamera();
 			CEditorCamera* editorCamera = camera->getGameObject()->getComponent<CEditorCamera>();
+			CEditorMoveCamera* editorMove = camera->getGameObject()->addComponent<CEditorMoveCamera>();
 
 			u32 style = m_navigation->getSelectIndex();
 			if (style == 1)
@@ -237,6 +239,7 @@ namespace Skylicht
 			else
 				editorCamera->setControlStyle(CEditorCamera::Default);
 
+			editorMove->setMoveSpeed(m_moveSpeed->getValue());
 			editorCamera->setMoveSpeed(m_moveSpeed->getValue());
 			editorCamera->setZoomSpeed(m_zoomSpeed->getValue());
 			editorCamera->setRotateSpeed(m_rotSpeed->getValue());
