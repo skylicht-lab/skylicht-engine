@@ -260,6 +260,7 @@ namespace Skylicht
 
 				initParticleModel(*p);
 
+				p->LastPosition = position;
 				p->Position = position;
 				p->SubEmitterDirection = subEmitterDirection;
 			}
@@ -279,6 +280,7 @@ namespace Skylicht
 
 				initParticleModel(*p);
 
+				p->LastPosition = position;
 				p->Position = position;
 				p->Velocity = velocity;
 			}

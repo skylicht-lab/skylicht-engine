@@ -138,6 +138,7 @@ namespace Skylicht
 		{
 			zone->generatePosition(particle, m_emitFullZone, group);
 			generateVelocity(particle, zone, group);
+			particle.LastPosition = particle.Position;
 		}
 
 		u32 CEmitter::addBornData()
