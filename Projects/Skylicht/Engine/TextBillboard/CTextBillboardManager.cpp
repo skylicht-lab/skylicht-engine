@@ -234,5 +234,7 @@ namespace Skylicht
 		t->Position = position;
 		t->ShaderID = m_defaultShader;
 		t->setText(font, text);
+
+		return t;
 	}
 }
