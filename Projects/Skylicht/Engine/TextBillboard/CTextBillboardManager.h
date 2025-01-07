@@ -58,6 +58,8 @@ namespace Skylicht
 		EVerticalAlign VAlign;
 		EHorizontalAlign HAlign;
 
+		std::function<void(CRenderTextData*)> UpdateTransformCallback;
+
 	protected:
 		std::wstring m_text;
 

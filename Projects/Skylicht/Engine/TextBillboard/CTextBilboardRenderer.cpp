@@ -135,7 +135,13 @@ namespace Skylicht
 
 			if (transformedPos[3] >= 0)
 			{
-				renderText(x, y, text);
+				// update transform
+				text->Transform.setTranslation(core::vector3df(x, y, 0.0f));
+				if (text->UpdateTransformCallback != nullptr)
+					text->UpdateTransformCallback(text);
+
+				// render text to screen
+				renderText(text);
 			}
 		}
 
@@ -145,14 +151,15 @@ namespace Skylicht
 		driver->setTransform(video::ETS_VIEW, oldView);
 	}
 
-	void CTextBilboardRenderer::renderText(float x, float y, CRenderTextData* renderTextData)
+	void CTextBilboardRenderer::renderText(CRenderTextData* renderTextData)
 	{
 		std::vector<std::vector<SModuleOffset*>>& lines = renderTextData->getModules();
 
 		float textHeight = renderTextData->getTextHeight();
 		float linePadding = renderTextData->getLinePadding();
 
-		float beginX = x;
+		float x = 0.0f;
+		float y = 0.0f;
 
 		float renderHeight = ((int)lines.size() * (textHeight + linePadding)) - linePadding;
 
@@ -167,7 +174,7 @@ namespace Skylicht
 			renderText(x, y, renderTextData, lines[i], i);
 
 			// new line
-			x = beginX;
+			x = 0.0f;
 			y += (textHeight + linePadding);
 		}
 	}

@@ -53,7 +53,7 @@ namespace Skylicht
 
 	protected:
 
-		void renderText(float x, float y, CRenderTextData* renderTextData);
+		void renderText(CRenderTextData* renderTextData);
 
 		void renderText(float x, float y, CRenderTextData* renderTextData, std::vector<SModuleOffset*>& modules, int line);
 	};
