@@ -21,6 +21,7 @@ CViewDemo::CViewDemo() :
 
 CViewDemo::~CViewDemo()
 {
+	Audio::CAudioEngine::getSoundEngine()->destroyAllEmitter();
 	Audio::CAudioEngine::getSoundEngine()->unRegisterStreamFactory(m_streamFactory);
 	delete m_streamFactory;
 
