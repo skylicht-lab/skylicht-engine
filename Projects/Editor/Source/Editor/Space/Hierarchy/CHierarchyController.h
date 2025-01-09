@@ -59,6 +59,8 @@ namespace Skylicht
 
 			void updateTreeNode(CGameObject* object, bool rebuildAllTree = false);
 
+			void updateNodeToHierarchy(CHierachyNode* node, bool rebuildAllTree = false);
+
 			static void updateObjectToUI(CGameObject* object, CHierachyNode* node);
 
 			CHierachyNode* getNodeByObject(CGameObject* object);

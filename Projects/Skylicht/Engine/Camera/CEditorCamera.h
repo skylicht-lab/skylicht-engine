@@ -60,6 +60,9 @@ namespace Skylicht
 		bool m_rightMousePress;
 		bool m_midMousePress;
 
+		bool m_mayaLeftMousePress;
+		bool m_mayaRightMousePress;
+
 		bool m_mouseWhell;
 		float m_wheel;
 

@@ -234,18 +234,23 @@ namespace Skylicht
 					node->OnUpdate(node);
 
 				// rebuild-gui child of entity
-				std::vector<CHierachyNode*>& childs = node->getChilds();
-				for (CHierachyNode* child : childs)
+				updateNodeToHierarchy(node, rebuildAllTree);
+			}
+		}
+
+		void CHierarchyController::updateNodeToHierarchy(CHierachyNode* node, bool rebuildAllTree)
+		{
+			std::vector<CHierachyNode*>& childs = node->getChilds();
+			for (CHierachyNode* child : childs)
+			{
+				if (rebuildAllTree)
 				{
-					if (rebuildAllTree)
-					{
+					buildTreeNode(node->getGUINode(), child);
+				}
+				else
+				{
+					if (child->getTagDataType() == CHierachyNode::Entity)
 						buildTreeNode(node->getGUINode(), child);
-					}
-					else
-					{
-						if (child->getTagDataType() == CHierachyNode::Entity)
-							buildTreeNode(node->getGUINode(), child);
-					}
 				}
 			}
 		}
@@ -387,6 +392,9 @@ namespace Skylicht
 
 			if (node->OnUpdate != nullptr)
 				node->OnUpdate(node);
+
+			// rebuild-gui child of entity
+			updateNodeToHierarchy(node, false);
 
 			m_tree->focus();
 		}

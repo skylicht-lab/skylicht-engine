@@ -195,12 +195,14 @@ namespace Skylicht
 			CSpaceScene* spaceScene = CSceneController::getInstance()->getSpaceScene();
 			CCamera* camera = spaceScene->getEditorCamera();
 			CEditorCamera* editorCamera = camera->getGameObject()->getComponent<CEditorCamera>();
+			CEditorMoveCamera* editorMove = camera->getGameObject()->getComponent<CEditorMoveCamera>();
 
 			// default value
 			editorCamera->setControlStyle(CEditorCamera::Default);
 			editorCamera->setMoveSpeed(1.0f);
 			editorCamera->setZoomSpeed(1.0f);
 			editorCamera->setRotateSpeed(16.0f);
+			editorMove->setMoveSpeed(1.0f * 5.0f);
 			camera->setFOV(60.0f);
 			camera->setNearValue(0.05f);
 			camera->setFarValue(1500.0f);
@@ -229,7 +231,7 @@ namespace Skylicht
 			CSpaceScene* spaceScene = CSceneController::getInstance()->getSpaceScene();
 			CCamera* camera = spaceScene->getEditorCamera();
 			CEditorCamera* editorCamera = camera->getGameObject()->getComponent<CEditorCamera>();
-			CEditorMoveCamera* editorMove = camera->getGameObject()->addComponent<CEditorMoveCamera>();
+			CEditorMoveCamera* editorMove = camera->getGameObject()->getComponent<CEditorMoveCamera>();
 
 			u32 style = m_navigation->getSelectIndex();
 			if (style == 1)
@@ -239,7 +241,7 @@ namespace Skylicht
 			else
 				editorCamera->setControlStyle(CEditorCamera::Default);
 
-			editorMove->setMoveSpeed(m_moveSpeed->getValue());
+			editorMove->setMoveSpeed(m_moveSpeed->getValue() * 5.0f);
 			editorCamera->setMoveSpeed(m_moveSpeed->getValue());
 			editorCamera->setZoomSpeed(m_zoomSpeed->getValue());
 			editorCamera->setRotateSpeed(m_rotSpeed->getValue());
