@@ -149,6 +149,26 @@ namespace Skylicht
 			m_entity->setVisible(b);
 	}
 
+	CGameObject* CGameObject::getParentPrefab()
+	{
+		CGameObject* obj = this;
+
+		if (!m_templateId.empty())
+		{
+			CGameObject* parent = obj;
+			std::string parentPrefabId;
+			do
+			{
+				parent = parent->getParent();
+				parentPrefabId = parent->getTemplateID();
+				if (parentPrefabId == m_templateId)
+					obj = parent;
+			} while (parentPrefabId == m_templateId);
+		}
+
+		return obj;
+	}
+
 	void CGameObject::setCullingLayer(u32 layer)
 	{
 		m_cullingLayer = layer;

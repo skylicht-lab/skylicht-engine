@@ -169,6 +169,8 @@ namespace Skylicht
 			m_templateObjectId = id;
 		}
 
+		CGameObject* getParentPrefab();
+
 		inline CGameObject* getParent()
 		{
 			return m_parent;

@@ -99,6 +99,16 @@ namespace Skylicht
 
 						CSelection* selection = CSelection::getInstance();
 
+						if (entity && object)
+						{
+							// force to select parent prefab
+							std::string prefabId = object->getTemplateID();
+							if (!prefabId.empty())
+							{
+								entity = NULL;
+							}
+						}
+
 						if (entity != NULL)
 						{
 							if (!GUI::CInput::getInput()->isKeyDown(GUI::EKey::KEY_CONTROL))
@@ -126,6 +136,9 @@ namespace Skylicht
 						}
 						else if (object != NULL)
 						{
+							// try to select the parent prefab
+							object = object->getParentPrefab();
+
 							if (!GUI::CInput::getInput()->isKeyDown(GUI::EKey::KEY_CONTROL))
 							{
 								// need clear current selection

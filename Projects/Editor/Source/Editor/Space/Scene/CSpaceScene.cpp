@@ -368,7 +368,7 @@ namespace Skylicht
 
 			// update for wads move
 			CEditorMoveCamera* editorMove = camObj->addComponent<CEditorMoveCamera>();
-			editorMove->setMoveSpeed(editorSetting->CameraMoveSpeed.get());
+			editorMove->setMoveSpeed(editorSetting->CameraMoveSpeed.get() * 5.0f);
 
 			// position
 			m_editorCamera->setPosition(core::vector3df(-2.0f, 1.5f, -2.0f));
