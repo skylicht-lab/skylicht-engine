@@ -80,17 +80,8 @@ namespace Skylicht
 			viewportH = (float)viewport.getHeight();
 		}
 
-		core::matrix4 oldProjection = driver->getTransform(video::ETS_PROJECTION);
-		core::matrix4 oldView = driver->getTransform(video::ETS_VIEW);
-
-		core::matrix4 orthoMatrix;
-		orthoMatrix.buildProjectionMatrixOrthoLH(viewportW, -viewportH, -1.0f, 1.0f);
-		orthoMatrix.setTranslation(core::vector3df(-1, 1, 0));
-
-		driver->setTransform(video::ETS_PROJECTION, orthoMatrix);
-		driver->setTransform(video::ETS_VIEW, core::IdentityMatrix);
-		driver->setTransform(video::ETS_WORLD, core::IdentityMatrix);
-
+		beginRender2D(viewportW, viewportH);
+		
 		CCamera* camera = entityManager->getCamera();
 
 		float x, y;
@@ -145,10 +136,7 @@ namespace Skylicht
 			}
 		}
 
-		CGraphics2D::getInstance()->flush();
-
-		driver->setTransform(video::ETS_PROJECTION, oldProjection);
-		driver->setTransform(video::ETS_VIEW, oldView);
+		endRender2D();
 	}
 
 	void CTextBilboardRenderer::renderText(CRenderTextData* renderTextData)

@@ -82,8 +82,8 @@ namespace Skylicht
 
 			float s = 0.8f;
 			addLine(zero, Position[0] * s, red);
-			addLine(zero, Position[2] * s, blue);
-			addLine(zero, Position[4] * s, green);
+			addLine(zero, Position[2] * s, green);
+			addLine(zero, Position[4] * s, blue);
 		}
 
 		CViewpointData::~CViewpointData()

@@ -41,7 +41,8 @@ namespace Skylicht
 		Material(NULL),
 		Visible(true),
 		VAlign(CRenderTextData::Top),
-		HAlign(CRenderTextData::Left)
+		HAlign(CRenderTextData::Left),
+		UserData(NULL)
 
 	{
 

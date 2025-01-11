@@ -5,7 +5,7 @@ MIT License
 Copyright (c) 2025 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -24,37 +24,40 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CTextBillboardManager.h"
 #include "Graphics2D/CGraphic2DRenderer.h"
-#include "Graphics2D/SpriteFrame/IFont.h"
 
 namespace Skylicht
 {
-	class SKYLICHT_API CTextBilboardRenderer : public CGraphic2DRenderer
+	namespace Editor
 	{
-	protected:
 
-	public:
-		CTextBilboardRenderer();
+		class CSelectingRenderer : public CGraphic2DRenderer
+		{
+		protected:
+			bool m_enable;
 
-		virtual ~CTextBilboardRenderer();
+		public:
+			CSelectingRenderer();
 
-		virtual void beginQuery(CEntityManager* entityManager);
+			virtual ~CSelectingRenderer();
 
-		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity);
+			virtual void beginQuery(CEntityManager* entityManager);
 
-		virtual void init(CEntityManager* entityManager);
+			virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity);
 
-		virtual void update(CEntityManager* entityManager);
+			virtual void init(CEntityManager* entityManager);
 
-		virtual void render(CEntityManager* entityManager);
+			virtual void update(CEntityManager* entityManager);
 
-		virtual void postRender(CEntityManager* entityManager);
+			virtual void render(CEntityManager* entityManager);
 
-	protected:
+			virtual void postRender(CEntityManager* entityManager);
 
-		void renderText(CRenderTextData* renderTextData);
+			inline void setEnable(bool b)
+			{
+				m_enable = b;
+			}
+		};
 
-		void renderText(float x, float y, CRenderTextData* renderTextData, std::vector<SModuleOffset*>& modules, int line);
-	};
+	}
 }

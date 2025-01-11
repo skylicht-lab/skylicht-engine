@@ -29,6 +29,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GizmosComponents/Gizmos/CGizmosRenderer.h"
 #include "Editor/SpaceController/CSceneController.h"
 
+#include "Selection/CSelecting.h"
+
 namespace Skylicht
 {
 	namespace Editor
@@ -160,7 +162,14 @@ namespace Skylicht
 				int mouseX = event.MouseInput.X;
 				int mouseY = event.MouseInput.Y;
 
-				if (m_handlesRenderer != NULL && !m_isAltPressed)
+				bool isDragSelect = CSelecting::getInstance()->isDragSelect();
+				if (isDragSelect)
+				{
+					m_handlesRenderer->cancel();
+					m_mouseState = 0;
+				}
+
+				if (m_handlesRenderer != NULL && !m_isAltPressed && !isDragSelect)
 				{
 					if (event.MouseInput.Event == EMIE_MOUSE_MOVED)
 					{

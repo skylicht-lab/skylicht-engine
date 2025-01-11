@@ -40,6 +40,9 @@ namespace Skylicht
 
 			bool m_altPressed;
 
+			bool m_leftMousePressed;
+			core::vector2di m_mouseBegin;
+			core::vector2di m_mousePosition;
 		public:
 			CSelecting();
 
@@ -50,6 +53,24 @@ namespace Skylicht
 			virtual bool OnEvent(const SEvent& event);
 
 			void getObjectWithRay(const core::line3d<f32>& ray, f32& outBestDistanceSquared, CGameObject*& object, CEntity*& entity);
+
+			void getObjectInRect(const core::rectf& r, std::vector<CGameObject*>& objects, std::vector<CEntity*>& entities);
+
+			bool isDragSelect(core::vector2di& from, core::vector2di& to);
+
+			bool isDragSelect();
+
+		protected:
+
+			void doSingleSelect();
+
+			void doMultiSelect();
+
+			void doSelect(CGameObject* object, CEntity* entity);
+
+			void addSelect(CGameObject* object, CEntity* entity);
+
+			bool project3Dto2D(const core::vector3df& pos, core::matrix4& transform, core::dimension2df& dim, core::vector2df& out);
 		};
 	}
 }

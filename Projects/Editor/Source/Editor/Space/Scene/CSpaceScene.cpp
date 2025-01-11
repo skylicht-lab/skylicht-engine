@@ -31,6 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "LightProbes/CLightProbes.h"
 #include "ReflectionProbe/CReflectionProbe.h"
 #include "Camera/CEditorMoveCamera.h"
+#include "Graphics2D/CGraphics2D.h"
 
 #include "Editor/CEditor.h"
 #include "Editor/CEditorSetting.h"
@@ -75,6 +76,7 @@ namespace Skylicht
 			m_view(NULL),
 			m_handlesRenderer(NULL),
 			m_gizmosRenderer(NULL),
+			m_selectingRenderer(NULL),
 			m_selectObjectSystem(NULL),
 			m_enableRender(true),
 			m_enableRenderGrid(true),
@@ -413,7 +415,7 @@ namespace Skylicht
 			CEntityManager* entityMgr = m_scene->getEntityManager();
 
 			m_selectObjectSystem = entityMgr->addSystem<CSelectObjectSystem>();
-
+			m_selectingRenderer = entityMgr->addRenderSystem<CSelectingRenderer>();
 			m_handlesRenderer = entityMgr->addRenderSystem<CHandlesRenderer>();
 			m_gizmosRenderer = entityMgr->addRenderSystem<CGizmosRenderer>();
 
@@ -451,6 +453,7 @@ namespace Skylicht
 
 			CEntityManager* entityMgr = m_scene->getEntityManager();
 			m_selectObjectSystem = entityMgr->getSystem<CSelectObjectSystem>();
+			m_selectingRenderer = entityMgr->getSystem<CSelectingRenderer>();
 			m_handlesRenderer = entityMgr->getSystem<CHandlesRenderer>();
 			m_gizmosRenderer = entityMgr->getSystem<CGizmosRenderer>();
 		}
@@ -763,6 +766,7 @@ namespace Skylicht
 
 					// render gizmos
 					m_gizmosRenderer->setEnable(true);
+					m_selectingRenderer->setEnable(true);
 
 					// render scene
 					m_renderRP->render(NULL, m_editorCamera, m_scene->getEntityManager(), viewport);
@@ -786,6 +790,8 @@ namespace Skylicht
 					// draw viewpoint
 					m_scene->setVisibleAllZone(false);
 					m_viewpointZone->setVisible(true);
+
+					m_selectingRenderer->setEnable(false);
 					m_handlesRenderer->setEnable(false);
 					m_gizmosRenderer->setEnable(false);
 
@@ -1041,17 +1047,6 @@ namespace Skylicht
 				if (s == "W" || s == "A" || s == "S" || s == "D")
 					m_waitHotKeyRelease = false;
 			}
-		}
-
-		bool CSpaceScene::isEditorObject(CGameObject* object)
-		{
-			if (m_editorCamera->getGameObject() == object ||
-				m_gridPlane == object)
-			{
-				return true;
-			}
-
-			return false;
 		}
 
 		void CSpaceScene::enableRenderGrid(bool b)

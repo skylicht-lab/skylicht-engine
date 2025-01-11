@@ -38,7 +38,8 @@ namespace Skylicht
 		IMPLEMENT_SINGLETON(CSelecting);
 
 		CSelecting::CSelecting() :
-			m_altPressed(false)
+			m_altPressed(false),
+			m_leftMousePressed(false)
 		{
 
 		}
@@ -50,7 +51,8 @@ namespace Skylicht
 
 		void CSelecting::end()
 		{
-
+			m_altPressed = false;
+			m_leftMousePressed = false;
 		}
 
 		bool CSelecting::OnEvent(const SEvent& event)
@@ -74,107 +76,194 @@ namespace Skylicht
 				int mouseX = event.MouseInput.X;
 				int mouseY = event.MouseInput.Y;
 
+				m_mousePosition.set(mouseX, mouseY);
 				if (event.MouseInput.Event == EMIE_MOUSE_MOVED)
 				{
 
 				}
 				else if (event.MouseInput.Event == EMIE_LMOUSE_PRESSED_DOWN)
 				{
-
+					m_leftMousePressed = true;
+					m_mouseBegin = m_mousePosition;
 				}
 				else if (event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
 				{
 					if (!m_altPressed)
 					{
-						CSceneController* sceneController = CSceneController::getInstance();
-						CSelectObjectSystem* selectSystem = sceneController->getSelectObjectSystem();
-
-						core::line3df ray = CProjective::getViewRay(selectSystem->getCamera(), (float)mouseX, (float)mouseY, selectSystem->getViewportWidth(), selectSystem->getViewportHeight());
-
-						float maxDistanceSQ = 500.0f * 500.0f;
-
-						CGameObject* object = NULL;
-						CEntity* entity = NULL;
-						getObjectWithRay(ray, maxDistanceSQ, object, entity);
-
-						CSelection* selection = CSelection::getInstance();
-
-						if (entity && object)
+						if (isDragSelect())
 						{
-							// force to select parent prefab
-							std::string prefabId = object->getTemplateID();
-							if (!prefabId.empty())
-							{
-								entity = NULL;
-							}
-						}
-
-						if (entity != NULL)
-						{
-							if (!GUI::CInput::getInput()->isKeyDown(GUI::EKey::KEY_CONTROL))
-							{
-								// need clear current selection
-								if (selection->getSelected(entity) == NULL)
-								{
-									sceneController->deselectAllOnHierachy();
-									selection->clear();
-								}
-								sceneController->selectOnHierachy(entity);
-							}
-							else
-							{
-								// hold control && re-pick this object
-								if (selection->getSelected(object) != NULL)
-								{
-									sceneController->deselectOnHierachy(object);
-								}
-								else
-								{
-									sceneController->selectOnHierachy(object);
-								}
-							}
-						}
-						else if (object != NULL)
-						{
-							// try to select the parent prefab
-							object = object->getParentPrefab();
-
-							if (!GUI::CInput::getInput()->isKeyDown(GUI::EKey::KEY_CONTROL))
-							{
-								// need clear current selection
-								if (selection->getSelected(object) == NULL)
-								{
-									sceneController->deselectAllOnHierachy();
-									selection->clear();
-								}
-								sceneController->selectOnHierachy(object);
-							}
-							else
-							{
-								// hold control && re-pick this object
-								if (selection->getSelected(object) != NULL)
-								{
-									sceneController->deselectOnHierachy(object);
-								}
-								else
-								{
-									sceneController->selectOnHierachy(object);
-								}
-							}
+							doMultiSelect();
 						}
 						else
 						{
-							// clear selection
-							sceneController->deselectAllOnHierachy();
-							selection->clear();
+							doSingleSelect();
 						}
 					}
+
+					m_leftMousePressed = false;
 				}
 
 				return true;
 			}
 
 			return false;
+		}
+
+		void CSelecting::doSingleSelect()
+		{
+			CSceneController* sceneController = CSceneController::getInstance();
+			CSelectObjectSystem* selectSystem = sceneController->getSelectObjectSystem();
+
+			core::line3df ray = CProjective::getViewRay(selectSystem->getCamera(), (float)m_mousePosition.X, (float)m_mousePosition.Y, selectSystem->getViewportWidth(), selectSystem->getViewportHeight());
+
+			float maxDistanceSQ = 500.0f * 500.0f;
+
+			CGameObject* object = NULL;
+			CEntity* entity = NULL;
+			getObjectWithRay(ray, maxDistanceSQ, object, entity);
+
+			CSelection* selection = CSelection::getInstance();
+
+			if (object || entity)
+			{
+				doSelect(object, entity);
+			}
+			else
+			{
+				if (!GUI::CInput::getInput()->isKeyDown(GUI::EKey::KEY_CONTROL))
+				{
+					// clear selection
+					sceneController->deselectAllOnHierachy();
+					selection->clear();
+				}
+			}
+		}
+
+		void CSelecting::doSelect(CGameObject* object, CEntity* entity)
+		{
+			CSceneController* sceneController = CSceneController::getInstance();
+			CSelection* selection = CSelection::getInstance();
+
+			if (entity && object)
+			{
+				// force to select parent prefab
+				std::string prefabId = object->getTemplateID();
+				if (!prefabId.empty())
+				{
+					entity = NULL;
+				}
+			}
+
+			if (entity != NULL)
+			{
+				if (!GUI::CInput::getInput()->isKeyDown(GUI::EKey::KEY_CONTROL))
+				{
+					// need clear current selection
+					if (selection->getSelected(entity) == NULL)
+					{
+						sceneController->deselectAllOnHierachy();
+						selection->clear();
+					}
+					sceneController->selectOnHierachy(entity);
+				}
+				else
+				{
+					// hold control && re-pick this entity
+					if (selection->getSelected(entity) != NULL)
+					{
+						sceneController->deselectOnHierachy(entity);
+					}
+					else
+					{
+						sceneController->selectOnHierachy(entity);
+					}
+				}
+			}
+			else if (object != NULL)
+			{
+				// try to select the parent prefab
+				object = object->getParentTemplate();
+
+				if (!GUI::CInput::getInput()->isKeyDown(GUI::EKey::KEY_CONTROL))
+				{
+					// need clear current selection
+					if (selection->getSelected(object) == NULL)
+					{
+						sceneController->deselectAllOnHierachy();
+						selection->clear();
+					}
+					sceneController->selectOnHierachy(object);
+				}
+				else
+				{
+					// hold control && re-pick this object
+					if (selection->getSelected(object) != NULL)
+					{
+						sceneController->deselectOnHierachy(object);
+					}
+					else
+					{
+						sceneController->selectOnHierachy(object);
+					}
+				}
+			}
+		}
+
+		void CSelecting::addSelect(CGameObject* object, CEntity* entity)
+		{
+			CSceneController* sceneController = CSceneController::getInstance();
+			CSelection* selection = CSelection::getInstance();
+
+			if (entity && object)
+			{
+				// force to select parent prefab
+				std::string prefabId = object->getTemplateID();
+				if (!prefabId.empty())
+				{
+					entity = NULL;
+				}
+			}
+
+			if (entity != NULL)
+			{
+				sceneController->selectOnHierachy(entity);
+			}
+			else if (object != NULL)
+			{
+				// try to select the parent prefab
+				object = object->getParentTemplate();
+				sceneController->selectOnHierachy(object);
+			}
+		}
+
+		void CSelecting::doMultiSelect()
+		{
+			core::rectf selectRect;
+			selectRect.UpperLeftCorner.X = (float)core::min_(m_mouseBegin.X, m_mousePosition.X);
+			selectRect.UpperLeftCorner.Y = (float)core::min_(m_mouseBegin.Y, m_mousePosition.Y);
+			selectRect.LowerRightCorner.X = (float)core::max_(m_mouseBegin.X, m_mousePosition.X);
+			selectRect.LowerRightCorner.Y = (float)core::max_(m_mouseBegin.Y, m_mousePosition.Y);
+
+			std::vector<CGameObject*> objects;
+			std::vector<CEntity*> entites;
+
+			getObjectInRect(selectRect, objects, entites);
+
+			CSelection* selection = CSelection::getInstance();
+			CSceneController* sceneController = CSceneController::getInstance();
+
+			if (!GUI::CInput::getInput()->isKeyDown(GUI::EKey::KEY_CONTROL))
+			{
+				// clear selection
+				sceneController->deselectAllOnHierachy();
+				selection->clear();
+			}
+
+			int numObject = (int)objects.size();
+			for (int i = 0; i < numObject; i++)
+			{
+				addSelect(objects[i], entites[i]);
+			}
 		}
 
 		void CSelecting::getObjectWithRay(const core::line3d<f32>& ray, f32& outBestDistanceSquared, CGameObject*& object, CEntity*& entity)
@@ -240,6 +329,96 @@ namespace Skylicht
 					}
 				}
 			}
+		}
+
+		void CSelecting::getObjectInRect(const core::rectf& r, std::vector<CGameObject*>& objects, std::vector<CEntity*>& entities)
+		{
+			CSelectObjectSystem* selectSystem = CSceneController::getInstance()->getSelectObjectSystem();
+			core::array<CSelectObjectData*>& selectObjectData = selectSystem->getCulledCollision();
+
+			CCamera* camera = selectSystem->getCamera();
+			core::dimension2df dim(
+				(f32)selectSystem->getViewportWidth() * 0.5f,
+				(f32)selectSystem->getViewportHeight() * 0.5f
+			);
+
+			core::matrix4 trans = camera->getProjectionMatrix();
+			trans *= camera->getViewMatrix();
+
+			core::vector2df min2d, max2d;
+
+			for (u32 i = 0, n = selectObjectData.size(); i < n; i++)
+			{
+				CSelectObjectData* data = selectObjectData[i];
+
+				// skip lock object
+				if (data->GameObject && data->GameObject->isLock())
+					continue;
+
+				// convert 3d to 2d
+				if (project3Dto2D(data->TransformBBox.MinEdge, trans, dim, min2d))
+				{
+					if (project3Dto2D(data->TransformBBox.MaxEdge, trans, dim, max2d))
+					{
+						if (r.isPointInside(min2d) && r.isPointInside(max2d))
+						{
+							objects.push_back(data->GameObject);
+							entities.push_back(data->Entity);
+						}
+					}
+				}
+			}
+		}
+
+		bool CSelecting::project3Dto2D(const core::vector3df& pos, core::matrix4& transform, core::dimension2df& dim, core::vector2df& out)
+		{
+			float transformedPos[4];
+
+			transformedPos[0] = pos.X;
+			transformedPos[1] = pos.Y;
+			transformedPos[2] = pos.Z;
+			transformedPos[3] = 1.0f;
+
+			transform.multiplyWith1x4Matrix(transformedPos);
+			f32 zDiv = transformedPos[3] == 0.0f ? 1.0f : core::reciprocal(transformedPos[3]);
+			if (zDiv < 0)
+				zDiv = -zDiv;
+
+			out.X = dim.Width + dim.Width * transformedPos[0] * zDiv;
+			out.Y = dim.Height - dim.Height * transformedPos[1] * zDiv;
+
+			return transformedPos[3] >= 0;
+		}
+
+		bool CSelecting::isDragSelect(core::vector2di& from, core::vector2di& to)
+		{
+			if (!m_leftMousePressed)
+				return false;
+
+			if (abs(m_mouseBegin.X - m_mousePosition.X) > 2 || abs(m_mouseBegin.Y - m_mousePosition.Y) > 2)
+			{
+				from.X = core::min_(m_mouseBegin.X, m_mousePosition.X);
+				from.Y = core::min_(m_mouseBegin.Y, m_mousePosition.Y);
+				to.X = core::max_(m_mouseBegin.X, m_mousePosition.X);
+				to.Y = core::max_(m_mouseBegin.Y, m_mousePosition.Y);
+
+				return true;
+			}
+
+			return false;
+		}
+
+		bool CSelecting::isDragSelect()
+		{
+			if (!m_leftMousePressed)
+				return false;
+
+			if (abs(m_mouseBegin.X - m_mousePosition.X) > 2 || abs(m_mouseBegin.Y - m_mousePosition.Y) > 2)
+			{
+				return true;
+			}
+
+			return false;
 		}
 	}
 }

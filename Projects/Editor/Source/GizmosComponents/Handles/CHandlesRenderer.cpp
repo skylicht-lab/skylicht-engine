@@ -56,8 +56,8 @@ namespace Skylicht
 			m_directionUnary[2] = core::vector3df(0.f, 0.f, 1.f);
 
 			m_directionColor[0].set(0xFF0000AA);
-			m_directionColor[1].set(0xFFAA0000);
-			m_directionColor[2].set(0xFF00AA00);
+			m_directionColor[1].set(0xFF00AA00);
+			m_directionColor[2].set(0xFFAA0000);
 
 			m_selectionColor.set(0xFF1080FF);
 
@@ -436,7 +436,7 @@ namespace Skylicht
 
 				if (fabsf(d.Y) > min)
 				{
-					color.set(100, 0, 0, 50);
+					color.set(100, 0, 50, 0);
 					p = lastPosition;
 					p.Y += d.Y;
 					m_data->addLine(lastPosition, p, color);
@@ -445,7 +445,7 @@ namespace Skylicht
 
 				if (fabsf(d.Z) > min)
 				{
-					color.set(100, 0, 50, 0);
+					color.set(100, 0, 0, 50);
 					p = lastPosition;
 					p.Z += d.Z;
 					m_data->addLine(lastPosition, p, color);
@@ -846,7 +846,7 @@ namespace Skylicht
 						}
 					}
 				} // mouse down
-			} // cancel			
+			} // cancel
 		}
 
 		void CHandlesRenderer::handleRotation(int x, int y, int state)

@@ -22,39 +22,47 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
+#include "pch.h"
+#include "CGraphic2DRenderer.h"
 
-#include "CTextBillboardManager.h"
-#include "Graphics2D/CGraphic2DRenderer.h"
-#include "Graphics2D/SpriteFrame/IFont.h"
+#include "Graphics2D/CGraphics2D.h"
 
 namespace Skylicht
 {
-	class SKYLICHT_API CTextBilboardRenderer : public CGraphic2DRenderer
+	CGraphic2DRenderer::CGraphic2DRenderer()
 	{
-	protected:
 
-	public:
-		CTextBilboardRenderer();
+	}
 
-		virtual ~CTextBilboardRenderer();
+	CGraphic2DRenderer::~CGraphic2DRenderer()
+	{
 
-		virtual void beginQuery(CEntityManager* entityManager);
+	}
 
-		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity);
+	void CGraphic2DRenderer::beginRender2D(float width, float height)
+	{
+		IVideoDriver* driver = getVideoDriver();
 
-		virtual void init(CEntityManager* entityManager);
+		m_saveProjection = driver->getTransform(video::ETS_PROJECTION);
+		m_saveView = driver->getTransform(video::ETS_VIEW);
 
-		virtual void update(CEntityManager* entityManager);
+		core::matrix4 orthoMatrix;
+		orthoMatrix.buildProjectionMatrixOrthoLH(width, -height, -1.0f, 1.0f);
+		orthoMatrix.setTranslation(core::vector3df(-1, 1, 0));
 
-		virtual void render(CEntityManager* entityManager);
+		driver->setTransform(video::ETS_PROJECTION, orthoMatrix);
+		driver->setTransform(video::ETS_VIEW, core::IdentityMatrix);
+		driver->setTransform(video::ETS_WORLD, core::IdentityMatrix);
 
-		virtual void postRender(CEntityManager* entityManager);
+	}
 
-	protected:
+	void CGraphic2DRenderer::endRender2D()
+	{
+		IVideoDriver* driver = getVideoDriver();
 
-		void renderText(CRenderTextData* renderTextData);
+		CGraphics2D::getInstance()->flush();
 
-		void renderText(float x, float y, CRenderTextData* renderTextData, std::vector<SModuleOffset*>& modules, int line);
-	};
+		driver->setTransform(video::ETS_PROJECTION, m_saveProjection);
+		driver->setTransform(video::ETS_VIEW, m_saveView);
+	}
 }

@@ -30,6 +30,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GizmosComponents/Gizmos/CGizmosRenderer.h"
 #include "GizmosComponents/SelectObject/CSelectObjectSystem.h"
 
+#include "Selection/CSelectingRenderer.h"
+
 #include "CViewpointController.h"
 #include "CCameraSettingController.h"
 #include "CSnapSettingController.h"
@@ -101,6 +103,7 @@ namespace Skylicht
 
 			CHandlesRenderer* m_handlesRenderer;
 			CGizmosRenderer* m_gizmosRenderer;
+			CSelectingRenderer* m_selectingRenderer;
 
 			bool m_enableHandles;
 
@@ -165,8 +168,6 @@ namespace Skylicht
 			virtual void update();
 
 			virtual void refresh();
-
-			bool isEditorObject(CGameObject* object);
 
 			inline void enableRender(bool b)
 			{

@@ -24,37 +24,26 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CTextBillboardManager.h"
-#include "Graphics2D/CGraphic2DRenderer.h"
-#include "Graphics2D/SpriteFrame/IFont.h"
+#include "Entity/CEntityManager.h"
 
 namespace Skylicht
 {
-	class SKYLICHT_API CTextBilboardRenderer : public CGraphic2DRenderer
+	class SKYLICHT_API CGraphic2DRenderer : public IRenderSystem
 	{
-	protected:
+		// see CTextBilboardRenderer for more details
+	private:
+		core::matrix4 m_saveProjection;
+		core::matrix4 m_saveView;
 
 	public:
-		CTextBilboardRenderer();
 
-		virtual ~CTextBilboardRenderer();
+		CGraphic2DRenderer();
 
-		virtual void beginQuery(CEntityManager* entityManager);
+		virtual ~CGraphic2DRenderer();
 
-		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity);
+		void beginRender2D(float width, float height);
 
-		virtual void init(CEntityManager* entityManager);
+		void endRender2D();
 
-		virtual void update(CEntityManager* entityManager);
-
-		virtual void render(CEntityManager* entityManager);
-
-		virtual void postRender(CEntityManager* entityManager);
-
-	protected:
-
-		void renderText(CRenderTextData* renderTextData);
-
-		void renderText(float x, float y, CRenderTextData* renderTextData, std::vector<SModuleOffset*>& modules, int line);
 	};
 }

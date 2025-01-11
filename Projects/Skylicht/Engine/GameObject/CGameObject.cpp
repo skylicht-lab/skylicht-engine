@@ -149,7 +149,7 @@ namespace Skylicht
 			m_entity->setVisible(b);
 	}
 
-	CGameObject* CGameObject::getParentPrefab()
+	CGameObject* CGameObject::getParentTemplate()
 	{
 		CGameObject* obj = this;
 

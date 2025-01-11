@@ -57,6 +57,7 @@ namespace Skylicht
 		core::matrix4 Transform;
 		EVerticalAlign VAlign;
 		EHorizontalAlign HAlign;
+		void* UserData;
 
 		std::function<void(CRenderTextData*)> UpdateTransformCallback;
 
