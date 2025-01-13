@@ -41,6 +41,8 @@ namespace Skylicht
 			bool m_altPressed;
 
 			bool m_leftMousePressed;
+			bool m_allowDragSelect;
+
 			core::vector2di m_mouseBegin;
 			core::vector2di m_mousePosition;
 		public:

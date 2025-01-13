@@ -39,7 +39,8 @@ namespace Skylicht
 
 		CSelecting::CSelecting() :
 			m_altPressed(false),
-			m_leftMousePressed(false)
+			m_leftMousePressed(false),
+			m_allowDragSelect(true)
 		{
 
 		}
@@ -69,7 +70,10 @@ namespace Skylicht
 				if (event.KeyInput.Key == irr::KEY_MENU ||
 					event.KeyInput.Key == irr::KEY_LMENU ||
 					event.KeyInput.Key == irr::KEY_RMENU)
+				{
 					m_altPressed = event.KeyInput.PressedDown;
+					m_allowDragSelect = !m_altPressed;
+				}
 			}
 			if (event.EventType == EET_MOUSE_INPUT_EVENT)
 			{
@@ -88,19 +92,17 @@ namespace Skylicht
 				}
 				else if (event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
 				{
-					if (!m_altPressed)
+					if (isDragSelect())
 					{
-						if (isDragSelect())
-						{
-							doMultiSelect();
-						}
-						else
-						{
-							doSingleSelect();
-						}
+						doMultiSelect();
+					}
+					else
+					{
+						doSingleSelect();
 					}
 
 					m_leftMousePressed = false;
+					m_allowDragSelect = true;
 				}
 
 				return true;
@@ -392,7 +394,7 @@ namespace Skylicht
 
 		bool CSelecting::isDragSelect(core::vector2di& from, core::vector2di& to)
 		{
-			if (!m_leftMousePressed)
+			if (!m_leftMousePressed || !m_allowDragSelect)
 				return false;
 
 			if (abs(m_mouseBegin.X - m_mousePosition.X) > 2 || abs(m_mouseBegin.Y - m_mousePosition.Y) > 2)
@@ -410,7 +412,7 @@ namespace Skylicht
 
 		bool CSelecting::isDragSelect()
 		{
-			if (!m_leftMousePressed)
+			if (!m_leftMousePressed || !m_allowDragSelect)
 				return false;
 
 			if (abs(m_mouseBegin.X - m_mousePosition.X) > 2 || abs(m_mouseBegin.Y - m_mousePosition.Y) > 2)
