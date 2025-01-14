@@ -92,13 +92,16 @@ namespace Skylicht
 				}
 				else if (event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
 				{
-					if (isDragSelect())
+					if (!m_altPressed)
 					{
-						doMultiSelect();
-					}
-					else
-					{
-						doSingleSelect();
+						if (isDragSelect())
+						{
+							doMultiSelect();
+						}
+						else
+						{
+							doSingleSelect();
+						}
 					}
 
 					m_leftMousePressed = false;

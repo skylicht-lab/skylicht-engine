@@ -140,13 +140,13 @@ namespace Skylicht
 				{
 					// -y
 					uvOffset.set(0.5f, 0.5f);
-					color.set(255, 52, 100, 154);
+					color.set(255, 98, 138, 34);
 				}
 				else if (id == 5)
 				{
 					// -z
 					uvOffset.set(0.5f, 0.5f);
-					color.set(255, 98, 138, 34);
+					color.set(255, 52, 100, 154);
 				}
 				else if (id == 0)
 				{

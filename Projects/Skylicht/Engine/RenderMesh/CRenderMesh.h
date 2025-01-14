@@ -150,6 +150,6 @@ namespace Skylicht
 
 		void releaseEntities();
 
-		void addMaterial(CMaterial* material);
+		bool addMaterial(CMaterial* material);
 	};
 }
