@@ -269,7 +269,7 @@ namespace Skylicht
 		case EET_MOUSE_INPUT_EVENT:
 			if (evt.MouseInput.Event == EMIE_LMOUSE_PRESSED_DOWN)
 				m_leftMousePress = true;
-			if (evt.MouseInput.Event == EMIE_RMOUSE_LEFT_UP)
+			if (evt.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
 				m_leftMousePress = false;
 			if (evt.MouseInput.Event == EMIE_RMOUSE_PRESSED_DOWN)
 				m_rightMousePress = true;

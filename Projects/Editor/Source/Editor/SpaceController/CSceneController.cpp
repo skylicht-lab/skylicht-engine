@@ -639,6 +639,8 @@ namespace Skylicht
 			if (m_gizmos)
 				m_gizmos->refresh();
 
+			CHandles::getInstance()->reset();
+
 			// Set property & event
 			CPropertyController* propertyController = CPropertyController::getInstance();
 

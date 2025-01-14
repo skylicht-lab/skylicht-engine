@@ -83,6 +83,8 @@ namespace Skylicht
 
 			void end();
 
+			void reset();
+
 			void refresh();
 
 			void setNullRenderer();

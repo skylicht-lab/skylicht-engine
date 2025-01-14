@@ -51,9 +51,14 @@ namespace Skylicht
 			CSearchAssetController* m_searchController;
 
 			GUI::CButton* m_btnAdd;
+			GUI::CButton* m_btnNewWin;
+			GUI::CButton* m_btnLockUnlock;
+
 			GUI::CTextBox* m_inputSearch;
 			GUI::CLabel* m_labelSearch;
 			GUI::CIconButton* m_buttonCancelSearch;
+
+			bool m_isLock;
 
 		public:
 			CSpaceAssets(GUI::CWindow* window, CEditor* editor);
@@ -73,7 +78,17 @@ namespace Skylicht
 			{
 				return m_listFSController;
 			}
+
+			inline bool isLock()
+			{
+				return m_isLock;
+			}
+
 		protected:
+
+			void onNewWindow(GUI::CBase* base);
+
+			void onLockUnLock(GUI::CBase* lock);
 
 		};
 	}

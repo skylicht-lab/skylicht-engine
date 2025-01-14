@@ -38,13 +38,6 @@ namespace Skylicht
 			m_contextMenu->OnCommand = BIND_LISTENER(&CContextMenuAdd::OnCommand, this);
 
 			m_contextMenu->addItem(L"Folder");
-			m_contextMenu->addSeparator();
-			m_contextMenu->addItem(L"Scene");
-			m_contextMenu->addItem(L"Material");
-			m_contextMenu->addItem(L"Shader");
-			m_contextMenu->addItem(L"GUI");
-			m_contextMenu->addItem(L"Sprite");
-			m_contextMenu->addItem(L"Animation");
 		}
 
 		CContextMenuAdd::~CContextMenuAdd()

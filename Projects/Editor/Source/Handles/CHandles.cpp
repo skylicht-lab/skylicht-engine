@@ -89,6 +89,13 @@ namespace Skylicht
 			m_handleScale = false;
 		}
 
+		void CHandles::reset()
+		{
+			end();
+			m_handlesRenderer->cancel();
+			m_mouseState = 0;
+		}
+
 		bool CHandles::endCheck()
 		{
 			bool ret = m_endCheck;
