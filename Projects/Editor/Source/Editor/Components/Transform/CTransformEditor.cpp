@@ -121,7 +121,7 @@ namespace Skylicht
 				Y = pos.Y;
 				Z = pos.Z;
 
-				m_gizmos->getPosition().addObserver(new CObserver([x = &X, y = &Y, z = &Z, t = m_transform](ISubject* subject, IObserver* from)
+				m_gizmos->getPosition().addObserver(new CObserver([x = &X, y = &Y, z = &Z, t = m_transform, changed = &m_changed](ISubject* subject, IObserver* from)
 					{
 						CSubject<core::vector3df>* value = (CSubject<core::vector3df>*)subject;
 						const core::vector3df& pos = value->get();
@@ -135,6 +135,7 @@ namespace Skylicht
 						z->notify(from);
 
 						t->setPosition(pos);
+						*changed = true;
 					}), true);
 
 				ui->addNumberInput(layout, L"Position X", &X, 0.01f);
@@ -190,7 +191,7 @@ namespace Skylicht
 				ui->addNumberInput(layout, L"Y", &RotateY, 0.1f);
 				ui->addNumberInput(layout, L"Z", &RotateZ, 0.1f);
 
-				m_gizmos->getRotation().addObserver(new CObserver([x = &RotateX, y = &RotateY, z = &RotateZ, t = m_transform](ISubject* subject, IObserver* from)
+				m_gizmos->getRotation().addObserver(new CObserver([x = &RotateX, y = &RotateY, z = &RotateZ, t = m_transform, changed = &m_changed](ISubject* subject, IObserver* from)
 					{
 						CSubject<core::quaternion>* value = (CSubject<core::quaternion>*)subject;
 
@@ -206,6 +207,7 @@ namespace Skylicht
 						z->notify(from);
 
 						t->setRotation(rot * core::RADTODEG);
+						*changed = true;
 					}), true);
 
 				RotateX.addObserver(new CObserver([t = m_transform, g = m_gizmos, changed = &m_changed](ISubject* subject, IObserver* from)
@@ -259,7 +261,7 @@ namespace Skylicht
 				ui->addNumberInput(layout, L"Y", &ScaleY, 0.01f);
 				ui->addNumberInput(layout, L"Z", &ScaleZ, 0.01f);
 
-				m_gizmos->getScale().addObserver(new CObserver([x = &ScaleX, y = &ScaleY, z = &ScaleZ, t = m_transform](ISubject* subject, IObserver* from)
+				m_gizmos->getScale().addObserver(new CObserver([x = &ScaleX, y = &ScaleY, z = &ScaleZ, t = m_transform, changed = &m_changed](ISubject* subject, IObserver* from)
 					{
 						CSubject<core::vector3df>* value = (CSubject<core::vector3df>*)subject;
 						const core::vector3df& scale = value->get();
@@ -273,6 +275,7 @@ namespace Skylicht
 						z->notify(from);
 
 						t->setScale(scale);
+						*changed = true;
 					}), true);
 
 				ScaleX.addObserver(new CObserver([t = m_transform, g = m_gizmos, changed = &m_changed](ISubject* subject, IObserver* from)

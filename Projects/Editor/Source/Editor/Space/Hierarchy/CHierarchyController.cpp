@@ -209,7 +209,12 @@ namespace Skylicht
 			if (object->isTemplateAsset())
 			{
 				if (CAssetManager::getInstance()->isExist(object->getTemplateAsset()))
+				{
 					node->setIconColor(GUI::SGUIColor(255, 110, 170, 255));
+
+					if (object->isTemplateChanged())
+						node->setIconColor(GUI::SGUIColor(255, 170, 110, 255));
+				}
 				else
 					node->setIconColor(GUI::SGUIColor(255, 255, 170, 110));
 			}

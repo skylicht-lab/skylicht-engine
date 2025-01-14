@@ -65,6 +65,7 @@ namespace Skylicht
 			m_component = target;
 			m_gameObject = target->getGameObject();
 			m_data = target->createSerializable();
+			m_changed = false;
 
 			if (m_gameObject->isEnableEditorChange() && m_component != NULL)
 			{
@@ -485,6 +486,7 @@ namespace Skylicht
 
 		void CDefaultEditor::updateData()
 		{
+			m_changed = true;
 			m_component->loadSerializable(m_data);
 			CSceneController::getInstance()->updateTreeNode(m_component->getGameObject());
 		}

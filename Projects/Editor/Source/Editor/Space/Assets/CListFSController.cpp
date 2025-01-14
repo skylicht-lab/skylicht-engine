@@ -252,7 +252,11 @@ namespace Skylicht
 					item->setIconColor(GUI::ThemeConfig::FolderColor);
 				}
 				else
-					item = m_listFS->addItem(f.NameW.c_str(), GUI::ESystemIcon::File);
+				{
+					GUI::SGUIColor color;
+					item = m_listFS->addItem(f.NameW.c_str(), getFileIcon(f.Name, color));
+					item->setIconColor(color);
+				}
 
 				item->tagString(f.FullPath);
 				item->tagBool(f.IsFolder);
@@ -264,9 +268,41 @@ namespace Skylicht
 
 			m_listFS->setScrollVertical(0.0f);
 
-			m_currentFolder = currentFolder;
-			if (m_currentFolder.empty())
-				m_currentFolder = m_assetManager->getAssetFolder();
+			std::string folder = currentFolder;
+			if (folder.empty())
+				folder = m_assetManager->getAssetFolder();
+
+			if (m_currentFolder != folder)
+				os::Printer::log(folder.c_str());
+
+			m_currentFolder = folder;
+		}
+
+		GUI::ESystemIcon CListFSController::getFileIcon(const std::string& name, GUI::SGUIColor& color)
+		{
+			std::string ext = CPath::getFileNameExt(name);
+
+			color = GUI::SGUIColor(255, 255, 255, 255);
+
+			if (ext == "template")
+			{
+				color = GUI::SGUIColor(255, 110, 170, 255);
+				return GUI::ESystemIcon::ObjectBox;
+			}
+			else if (CMeshManager::isMeshExt(ext.c_str()))
+			{
+				return GUI::ESystemIcon::Res3D;
+			}
+			else if (ext == "mat")
+			{
+				return GUI::ESystemIcon::Material;
+			}
+			else if (CTextureManager::isTextureExt(ext.c_str()))
+			{
+				return GUI::ESystemIcon::ResImage;
+			}
+
+			return GUI::ESystemIcon::File;
 		}
 
 		void CListFSController::initDragDrop(GUI::CListRowItem* item)

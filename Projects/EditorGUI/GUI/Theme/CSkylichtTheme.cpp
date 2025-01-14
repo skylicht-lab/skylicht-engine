@@ -210,6 +210,7 @@ namespace Skylicht
 				addEditorIcon(ESystemIcon::LightPoint, "light_point.png");
 				addEditorIcon(ESystemIcon::LightSpot, "light_spot.png");
 				addEditorIcon(ESystemIcon::ObjectBox, "obj_box.png");
+				addEditorIcon(ESystemIcon::Material, "material.png");
 				addEditorIcon(ESystemIcon::ObjectCamera, "obj_camera.png");
 				addEditorIcon(ESystemIcon::ObjectCapsule, "obj_capsule.png");
 				addEditorIcon(ESystemIcon::ObjectCircle, "obj_circle.png");

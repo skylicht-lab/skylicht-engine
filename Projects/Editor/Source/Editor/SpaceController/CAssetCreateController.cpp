@@ -208,6 +208,7 @@ namespace Skylicht
 			obj->setTemplateAsset(shortPath.c_str());
 			obj->setTemplateID(id.c_str());
 			obj->setTemplateObjectID(obj->getID().c_str());
+			obj->setTemplateChanged(false);
 
 			// sync template id to all childs
 			CContainerObject* container = dynamic_cast<CContainerObject*>(obj);
@@ -241,6 +242,9 @@ namespace Skylicht
 			data->save(fullPath.c_str());
 			delete data;
 
+			// log the path of template
+			os::Printer::log(fullPath.c_str());
+
 			// import to editor
 			importAndSelect(shortPath.c_str());
 		}
@@ -250,6 +254,7 @@ namespace Skylicht
 			CAssetManager* assetMgr = CAssetManager::getInstance();
 
 			std::string assetPath = obj->getTemplateAsset();
+			obj->setTemplateChanged(false);
 
 			// save .template
 			CObjectSerializable* data = CSceneExporter::exportGameObject(obj);

@@ -31,6 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Editor/SpaceController/CAssetPropertyController.h"
 #include "Editor/SpaceController/CSceneController.h"
 #include "GUI/Theme/ThemeConfig.h"
+#include "Editor/Components/Transform/CTransformEditor.h"
 
 namespace Skylicht
 {
@@ -142,6 +143,8 @@ namespace Skylicht
 		void CSpaceProperty::clearAllGroup()
 		{
 			bool changed = false;
+			bool notifyTemplateChange = false;
+
 			std::vector<CGameObject*> objs;
 
 			for (SGroup* group : m_groups)
@@ -158,6 +161,11 @@ namespace Skylicht
 						if (std::find(objs.begin(), objs.end(), obj) == objs.end())
 							objs.push_back(obj);
 						changed = true;
+
+						// check component (that is not transform) is changed
+						CTransformEditor* transformEditor = dynamic_cast<CTransformEditor*>(group->Owner);
+						if (transformEditor == NULL)
+							notifyTemplateChange = true;
 					}
 
 					group->Owner->closeGUI();
@@ -174,7 +182,31 @@ namespace Skylicht
 
 			// save modify history
 			if (changed && objs.size() > 0)
+			{
 				CSceneController::getInstance()->getHistory()->saveModifyHistory(objs);
+
+				// notify the current template is changed
+				for (CGameObject* gameObject : objs)
+				{
+					CGameObject* parent = gameObject->getParentTemplate();
+					if (parent == gameObject)
+					{
+						// note: if template just change transform, we do not set modify
+						if (notifyTemplateChange)
+							parent->setTemplateChanged(true);
+					}
+					else
+					{
+						// note: if child is changed, we set modify
+						parent->setTemplateChanged(true);
+					}
+
+					// update on hierachy
+					CSpaceHierarchy* hierachy = CSceneController::getInstance()->getSpaceHierarchy();
+					if (hierachy)
+						hierachy->getController()->updateTreeNode(parent);
+				}
+			}
 
 			// delete editor components
 			for (CComponentEditor* editor : m_releaseComponents)

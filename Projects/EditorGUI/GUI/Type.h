@@ -488,6 +488,7 @@ namespace Skylicht
 				LightDirection,
 				LightPoint,
 				LightSpot,
+				Material,
 				ObjectBox,
 				ObjectCamera,
 				ObjectCapsule,

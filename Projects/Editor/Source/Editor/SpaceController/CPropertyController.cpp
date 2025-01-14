@@ -154,7 +154,7 @@ namespace Skylicht
 			if (editor != NULL)
 				space->addComponent(editor, obj);
 
-			// Component property					
+			// Component property
 			ArrayComponent& listComponents = obj->getListComponent();
 			for (CComponentSystem* component : listComponents)
 			{
