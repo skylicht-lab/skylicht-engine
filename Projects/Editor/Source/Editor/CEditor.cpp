@@ -706,6 +706,19 @@ namespace Skylicht
 			return NULL;
 		}
 
+		std::vector<CSpace*> CEditor::getAllWorkspaceByName(const std::wstring& name)
+		{
+			std::vector<CSpace*> results;
+
+			for (CSpace* s : m_workspaces)
+			{
+				if (s->getWindow()->getCaption() == name)
+					results.push_back(s);
+			}
+
+			return results;
+		}
+
 		void CEditor::initSessionLayout(const std::string& data)
 		{
 			io::IFileSystem* fs = getIrrlichtDevice()->getFileSystem();

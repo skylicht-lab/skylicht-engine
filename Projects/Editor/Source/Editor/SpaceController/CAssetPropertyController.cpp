@@ -84,22 +84,30 @@ namespace Skylicht
 
 		void CAssetPropertyController::browseAsset(const char* path)
 		{
-			CSpaceAssets* spaceAssets = (CSpaceAssets*)CEditor::getInstance()->getWorkspaceByName(L"Assets");
+			std::vector<CSpace*> spaceAssets = CEditor::getInstance()->getAllWorkspaceByName(L"Assets");
 
-			if (spaceAssets == NULL)
+			if (spaceAssets.size() == 0)
 				return;
 
-			std::string assetFolder = CAssetManager::getInstance()->getAssetFolder();
-			std::string fullPath = assetFolder + "/" + path;
+			for (CSpace* s : spaceAssets)
+			{
+				CSpaceAssets* spaceAsset = dynamic_cast<CSpaceAssets*>(s);
 
-			std::string folder = CPath::getFolderPath(fullPath);
+				if (spaceAsset && !spaceAsset->isLock())
+				{
+					std::string assetFolder = CAssetManager::getInstance()->getAssetFolder();
+					std::string fullPath = assetFolder + "/" + path;
 
-			GUI::CTreeNode* node = spaceAssets->getTreeController()->expand(folder);
-			if (node != NULL)
-				spaceAssets->getTreeController()->selectNode(node);
+					std::string folder = CPath::getFolderPath(fullPath);
 
-			spaceAssets->getListController()->scrollAndSelectPath(fullPath.c_str());
-			spaceAssets->getWindow()->forceUpdateLayout();
+					GUI::CTreeNode* node = spaceAsset->getTreeController()->expand(folder);
+					if (node != NULL)
+						spaceAsset->getTreeController()->selectNode(node);
+
+					spaceAsset->getListController()->scrollAndSelectPath(fullPath.c_str());
+					spaceAsset->getWindow()->forceUpdateLayout();
+				}
+			}
 		}
 	}
 }

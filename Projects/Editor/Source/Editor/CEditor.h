@@ -128,6 +128,8 @@ namespace Skylicht
 
 			CSpace* getWorkspaceByName(const std::wstring& name);
 
+			std::vector<CSpace*> getAllWorkspaceByName(const std::wstring& name);
+
 			CSpace* openWorkspace(const std::wstring& name);
 
 		protected:

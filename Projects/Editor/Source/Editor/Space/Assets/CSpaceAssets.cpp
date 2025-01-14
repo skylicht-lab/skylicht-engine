@@ -27,17 +27,26 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Utils/CStringImp.h"
 
 #include "Editor/SpaceController/CAssetPropertyController.h"
+#include "Editor/CEditor.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
 		CSpaceAssets::CSpaceAssets(GUI::CWindow* window, CEditor* editor) :
+			m_isLock(false),
 			CSpace(window, editor)
 		{
 			GUI::CToolbar* toolbar = new GUI::CToolbar(window);
 
 			m_btnAdd = toolbar->addButton(L"Add", GUI::ESystemIcon::Plus);
+
+			m_btnNewWin = toolbar->addButton(L"", GUI::ESystemIcon::Windows, true);
+			m_btnNewWin->OnPress = BIND_LISTENER(&CSpaceAssets::onNewWindow, this);
+
+			m_btnLockUnlock = toolbar->addButton(L"", GUI::ESystemIcon::Unlock, true);
+			m_btnLockUnlock->setIsToggle(true);
+			m_btnLockUnlock->OnPress = BIND_LISTENER(&CSpaceAssets::onLockUnLock, this);
 
 			m_inputSearch = new GUI::CTextBox(toolbar);
 			m_inputSearch->setWidth(200.0f);
@@ -96,9 +105,9 @@ namespace Skylicht
 			m_contextMenuAdd = new CContextMenuAdd(window->getCanvas(), m_listFSController);
 
 			m_btnAdd->OnDown = [contextMenu = m_contextMenuAdd](GUI::CBase* sender)
-			{
-				contextMenu->popupMenu((GUI::CButton*)sender);
-			};
+				{
+					contextMenu->popupMenu((GUI::CButton*)sender);
+				};
 		}
 
 		CSpaceAssets::~CSpaceAssets()
@@ -119,6 +128,18 @@ namespace Skylicht
 		{
 			m_listFSController->refresh();
 			m_treeFSController->refresh();
+		}
+
+		void CSpaceAssets::onNewWindow(GUI::CBase* base)
+		{
+			CEditor::getInstance()->openWorkspace(L"Assets");
+		}
+
+		void CSpaceAssets::onLockUnLock(GUI::CBase* lock)
+		{
+			m_isLock = !m_isLock;
+			m_btnLockUnlock->setToggle(m_isLock);
+			m_btnLockUnlock->setIcon(m_isLock ? GUI::ESystemIcon::Lock : GUI::ESystemIcon::Unlock);
 		}
 	}
 }

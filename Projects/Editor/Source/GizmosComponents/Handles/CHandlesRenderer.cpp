@@ -1196,6 +1196,7 @@ namespace Skylicht
 		{
 			m_mouseDown = false;
 			m_using = false;
+			m_usingEvent = false;
 
 			CHandles* handles = CHandles::getInstance();
 			if (handles->isHandlePosition())
