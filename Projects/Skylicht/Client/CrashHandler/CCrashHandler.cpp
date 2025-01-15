@@ -48,24 +48,25 @@ namespace Skylicht
 		if (SymFromAddr(g_process, (DWORD64)addr, &disp, &symbol) == false)
 			return false;
 
-		IMAGEHLP_LINE line;
-		memset(&line, 0, sizeof(IMAGEHLP_LINE));
-		line.SizeOfStruct = sizeof(IMAGEHLP_LINE);
-
-		PDWORD dispw = 0;
-		if (SymGetLineFromAddr(g_process, (DWORD64)addr, (PDWORD)&dispw, &line) == false)
-			return false;
+		functionName = symbol.Name;
 
 		char undecoratedName[MAX_UNDECORATEDNAME_LENGTH];
 		memset(undecoratedName, 0, MAX_UNDECORATEDNAME_LENGTH);
 		DWORD UNDECORATE_FLAGS = UNDNAME_NO_ACCESS_SPECIFIERS | UNDNAME_NO_MEMBER_TYPE | UNDNAME_NO_MS_KEYWORDS | UNDNAME_NO_LEADING_UNDERSCORES;
 
 		if (UnDecorateSymbolName(symbol.Name, (LPSTR)undecoratedName, MAX_UNDECORATEDNAME_LENGTH, UNDECORATE_FLAGS) == false)
-		{
-			return false;
-		}
+			return true;
 
 		functionName = undecoratedName;
+
+		IMAGEHLP_LINE line;
+		memset(&line, 0, sizeof(IMAGEHLP_LINE));
+		line.SizeOfStruct = sizeof(IMAGEHLP_LINE);
+
+		PDWORD dispw = 0;
+		if (SymGetLineFromAddr(g_process, (DWORD64)addr, (PDWORD)&dispw, &line) == false)
+			return true;
+
 		functionName += "\n    - File: ";
 		functionName += line.FileName;
 		functionName += "\n    - Line: ";

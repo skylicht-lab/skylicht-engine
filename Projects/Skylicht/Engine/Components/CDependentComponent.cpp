@@ -54,9 +54,14 @@ namespace Skylicht
 
 	bool CDependentComponent::isDependentComponent(const char* componentName)
 	{
-		std::map<std::string, std::vector<std::string>>::iterator it = m_dependent.find(componentName);
-		if (it != m_dependent.end())
-			return true;
+		for (auto i : m_dependent)
+		{
+			for (auto s : i.second)
+			{
+				if (s == componentName)
+					return true;
+			}
+		}
 
 		return false;
 	}

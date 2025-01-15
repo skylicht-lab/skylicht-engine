@@ -48,6 +48,8 @@ namespace Skylicht
 			virtual void initComponent();
 
 			virtual void updateComponent();
+
+			DECLARE_GETTYPENAME(CGDirectionLight)
 		};
 	}
 }

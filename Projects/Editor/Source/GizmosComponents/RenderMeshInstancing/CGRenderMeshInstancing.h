@@ -46,6 +46,8 @@ namespace Skylicht
 
 			virtual void updateComponent();
 
+			DECLARE_GETTYPENAME(CGRenderMeshInstancing)
+
 		protected:
 
 			void updateSelectBBox();

@@ -47,6 +47,8 @@ namespace Skylicht
 
 			virtual void updateComponent();
 
+			DECLARE_GETTYPENAME(CGLightProbes)
+
 		protected:
 
 			void updateSelectBBox();

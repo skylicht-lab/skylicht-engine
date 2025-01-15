@@ -48,6 +48,8 @@ namespace Skylicht
 
 			virtual void updateComponent();
 
+			DECLARE_GETTYPENAME(CGPrimitives)
+
 		protected:
 
 			void updateSelectBBox();

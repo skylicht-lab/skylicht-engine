@@ -145,6 +145,9 @@ namespace Skylicht
 								selectedBox[collision->GameObject].addInternalBox(collision->TransformBBox);
 						}
 					}
+
+					// debug draw all box
+					// CHandles::getInstance()->draw3DBox(collision->TransformBBox, SColor(200, 255, 255, 0));
 				}
 			}
 

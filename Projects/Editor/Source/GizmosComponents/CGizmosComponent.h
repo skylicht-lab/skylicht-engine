@@ -36,6 +36,8 @@ namespace Skylicht
 			CGizmosComponent();
 
 			virtual ~CGizmosComponent();
+
+			DECLARE_GETTYPENAME(CGizmosComponent);
 		};
 	}
 }
