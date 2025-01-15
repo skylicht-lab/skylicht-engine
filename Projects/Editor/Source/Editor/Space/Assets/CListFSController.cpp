@@ -36,7 +36,8 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		CListFSController::CListFSController(GUI::CCanvas* canvas, GUI::CListBox* list) :
+		CListFSController::CListFSController(GUI::CCanvas* canvas, CSpace* space, GUI::CListBox* list) :
+			m_space(space),
 			m_renameItem(NULL),
 			m_treeController(NULL),
 			m_canvas(canvas),
@@ -215,6 +216,8 @@ namespace Skylicht
 			{
 				refresh();
 			}
+
+			CEditor::getInstance()->refreshAssetSpace(m_space);
 
 			m_listFS->focus();
 		}
@@ -440,6 +443,8 @@ namespace Skylicht
 
 		void CListFSController::OnRenameFolder(GUI::CBase* control)
 		{
+			CEditor* editor = CEditor::getInstance();
+
 			GUI::CTextBox* textbox = dynamic_cast<GUI::CTextBox*>(control);
 
 			std::wstring newNameW = textbox->getString();
@@ -463,6 +468,8 @@ namespace Skylicht
 
 				m_newFolderItem->remove();
 				m_newFolderItem = NULL;
+
+				editor->refreshAssetSpace(m_space);
 				return;
 			}
 
@@ -483,6 +490,8 @@ namespace Skylicht
 			}
 
 			m_listFS->focus();
+
+			editor->refreshAssetSpace(m_space);
 		}
 
 		void CListFSController::OnCancelRenameFolder(GUI::CBase* control)

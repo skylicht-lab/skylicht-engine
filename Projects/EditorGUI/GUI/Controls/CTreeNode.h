@@ -189,6 +189,8 @@ namespace Skylicht
 
 				void onDown(CBase* base);
 
+				void onPress(CBase* base);
+
 				virtual void onNodeClick(CBase* base);
 			};
 		}

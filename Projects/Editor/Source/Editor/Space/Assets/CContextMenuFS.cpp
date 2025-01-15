@@ -24,28 +24,35 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CContextMenuFS.h"
+#include "CSpaceAssets.h"
 #include "Utils/CStringImp.h"
 #include "Utils/CPath.h"
 #include "GUI/Input/CInput.h"
 #include "GUI/Clipboard/CClipboard.h"
 
 #include "Editor/SpaceController/CPropertyController.h"
+#include "Editor/CEditor.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
 		CContextMenuFS::CContextMenuFS(GUI::CCanvas* canvas,
+			CSpace* space,
 			GUI::CTreeControl* tree,
 			CTreeFSController* treeFSController,
 			GUI::CListBox* list,
 			CListFSController* listFSController) :
+			m_space(space),
 			m_canvas(canvas),
 			m_treeFS(tree),
 			m_treeFSController(treeFSController),
 			m_listFS(list),
 			m_listFSController(listFSController),
-			m_msgBox(NULL)
+			m_msgBox(NULL),
+			m_duplicate(NULL),
+			m_ownerControl(NULL),
+			m_selected(NULL)
 		{
 			m_contextMenu = new GUI::CMenu(canvas);
 			m_contextMenu->setHidden(true);
@@ -188,23 +195,27 @@ namespace Skylicht
 				m_msgBox = new GUI::CMessageBox(m_canvas, GUI::CMessageBox::YesNo);
 				m_msgBox->setMessage("Delete selected asset?\nYou can't undo this action", shortPath.c_str());
 				m_msgBox->getMessageIcon()->setIcon(GUI::ESystemIcon::Alert);
-				m_msgBox->OnYes = [asset = m_assetManager, path = m_selectedPath, listController = m_listFSController, treeController = m_treeFSController](GUI::CBase* dialog)
+				m_msgBox->OnYes = [&, path = m_selectedPath](GUI::CBase* dialog)
 					{
 						CPropertyController::getInstance()->setProperty(NULL);
 
-						bool isFolder = asset->isFolder(path.c_str());
+						bool isFolder = m_assetManager->isFolder(path.c_str());
 
-						if (asset->deleteAsset(path.c_str()))
+						if (m_assetManager->deleteAsset(path.c_str()))
 						{
 							if (isFolder)
 							{
 								std::string parent = CPath::getParentFolderPath(path);
-								listController->browse(parent.c_str());
+								m_listFSController->browse(parent.c_str());
 							}
 							else
-								listController->removePath(path.c_str());
+							{
+								m_listFSController->removePath(path.c_str());
+							}
 
-							treeController->removePath(path.c_str());
+							m_treeFSController->removePath(path.c_str());
+
+							CEditor::getInstance()->refreshAssetSpace(m_space);
 						}
 					};
 			}

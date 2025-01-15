@@ -136,9 +136,7 @@ namespace Skylicht
 				if (Context::MouseFocus)
 				{
 					if (Context::HoveredControl)
-					{
 						Context::HoveredControl = NULL;
-					}
 
 					Context::HoveredControl = Context::MouseFocus;
 				}

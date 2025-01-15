@@ -719,6 +719,19 @@ namespace Skylicht
 			return results;
 		}
 
+		void CEditor::refreshAssetSpace(CSpace* skip)
+		{
+			for (CSpace* s : m_workspaces)
+			{
+				if (s == skip)
+					continue;
+
+				CSpaceAssets* asset = dynamic_cast<CSpaceAssets*>(s);
+				if (asset)
+					asset->refresh();
+			}
+		}
+
 		void CEditor::initSessionLayout(const std::string& data)
 		{
 			io::IFileSystem* fs = getIrrlichtDevice()->getFileSystem();

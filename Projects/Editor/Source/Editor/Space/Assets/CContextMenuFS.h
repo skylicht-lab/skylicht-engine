@@ -33,9 +33,12 @@ namespace Skylicht
 {
 	namespace Editor
 	{
+		class CSpace;
 		class CContextMenuFS
 		{
 		protected:
+			CSpace* m_space;
+
 			GUI::CCanvas* m_canvas;
 
 			GUI::CTreeControl* m_treeFS;
@@ -65,6 +68,7 @@ namespace Skylicht
 
 		public:
 			CContextMenuFS(GUI::CCanvas* canvas,
+				CSpace* space,
 				GUI::CTreeControl* tree,
 				CTreeFSController* treeFSController,
 				GUI::CListBox* list,

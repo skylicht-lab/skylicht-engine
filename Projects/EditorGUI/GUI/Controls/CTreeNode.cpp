@@ -50,6 +50,7 @@ namespace Skylicht
 
 				m_row = new CTreeRowItem(this, root);
 				m_row->OnDown = BIND_LISTENER(&CTreeNode::onDown, this);
+				m_row->OnPress = BIND_LISTENER(&CTreeNode::onPress, this);
 				m_row->OnDoubleLeftMouseClick = BIND_LISTENER(&CTreeNode::onDoubleClick, this);
 
 				m_title = new CIconTextItem(this);
@@ -354,6 +355,17 @@ namespace Skylicht
 					treeControl->setLastSelected(lastHit);
 				}
 				else
+				{
+					if (!input->isKeyDown(GUI::EKey::KEY_CONTROL))
+					{
+						setSelected(!m_selected);
+					}
+				}
+			}
+
+			void CTreeNode::onPress(CBase* base)
+			{
+				if (CInput::getInput()->isKeyDown(GUI::EKey::KEY_CONTROL))
 				{
 					setSelected(!m_selected);
 				}

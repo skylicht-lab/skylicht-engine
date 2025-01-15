@@ -85,7 +85,7 @@ namespace Skylicht
 			m_listFS = new GUI::CListBox(listContainer);
 			m_listFS->dock(GUI::EPosition::Fill);
 
-			m_listFSController = new CListFSController(window->getCanvas(), m_listFS);
+			m_listFSController = new CListFSController(window->getCanvas(), this, m_listFS);
 			m_listFSController->setTreeController(m_treeFSController);
 
 			m_searchController = new CSearchAssetController(m_inputSearch, searchInfo, m_labelSearch, m_buttonCancelSearch, m_listFSController);
@@ -101,7 +101,7 @@ namespace Skylicht
 			spliter->setColWidth(0, 300.0f);
 			spliter->setWeakCol(1);
 
-			m_contextMenuFS = new CContextMenuFS(window->getCanvas(), m_treeFS, m_treeFSController, m_listFS, m_listFSController);
+			m_contextMenuFS = new CContextMenuFS(window->getCanvas(), this, m_treeFS, m_treeFSController, m_listFS, m_listFSController);
 			m_contextMenuAdd = new CContextMenuAdd(window->getCanvas(), m_listFSController);
 
 			m_btnAdd->OnDown = [contextMenu = m_contextMenuAdd](GUI::CBase* sender)
