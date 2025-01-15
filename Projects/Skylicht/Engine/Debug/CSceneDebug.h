@@ -66,10 +66,10 @@ namespace Skylicht
 		DECLARE_SINGLETON(CSceneDebug)
 
 	protected:
-		core::array<SLineDebug> m_lines;
-		core::array<SLineStripDebug> m_linestrip;
-		core::array<SBoxDebug> m_boxs;
-		core::array<STriDebug> m_tri;
+		core::array<SLineDebug*> m_lines;
+		core::array<SLineStripDebug*> m_linestrip;
+		core::array<SBoxDebug*> m_boxs;
+		core::array<STriDebug*> m_tri;
 		core::array<CRenderTextData*> m_texts;
 
 		CSceneDebug* m_noZDebug;
@@ -105,25 +105,13 @@ namespace Skylicht
 			clearText();
 		}
 
-		inline void clearLines()
-		{
-			m_lines.set_used(0);
-		}
+		void clearLines();
 
-		inline void clearLineStrip()
-		{
-			m_linestrip.set_used(0);
-		}
+		void clearLineStrip();
 
-		inline void clearBoxs()
-		{
-			m_boxs.set_used(0);
-		}
+		void clearBoxs();
 
-		inline void clearTri()
-		{
-			m_tri.set_used(0);
-		}
+		void clearTri();
 
 		inline u32 getLinesCount()
 		{
@@ -147,22 +135,22 @@ namespace Skylicht
 
 		inline const SLineDebug& getLine(int i)
 		{
-			return m_lines[i];
+			return *m_lines[i];
 		}
 
 		inline const SLineStripDebug& getLineStrip(int i)
 		{
-			return m_linestrip[i];
+			return *m_linestrip[i];
 		}
 
 		inline const SBoxDebug& getBox(int i)
 		{
-			return m_boxs[i];
+			return *m_boxs[i];
 		}
 
 		inline const STriDebug& getTri(int i)
 		{
-			return m_tri[i];
+			return *m_tri[i];
 		}
 	};
 }

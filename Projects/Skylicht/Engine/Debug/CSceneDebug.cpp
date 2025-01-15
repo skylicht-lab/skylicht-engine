@@ -62,11 +62,10 @@ namespace Skylicht
 		core::vector3df	point;
 
 		// clear point list
-		m_linestrip.push_back(SLineStripDebug());
-		SLineStripDebug& line = m_linestrip.getLast();
+		m_linestrip.push_back(new SLineStripDebug());
 
-		line.point.set_used(0);
-		line.color = color;
+		SLineStripDebug* line = m_linestrip.getLast();
+		line->color = color;
 
 		for (int i = 0; i <= step; i++)
 		{
@@ -81,7 +80,7 @@ namespace Skylicht
 			point += pos;
 
 			// add point
-			line.point.push_back(point);
+			line->point.push_back(point);
 
 			// inc rad
 			rad = rad + radInc;
@@ -103,10 +102,10 @@ namespace Skylicht
 		core::vector3df	point;
 
 		// clear point list
-		m_linestrip.push_back(SLineStripDebug());
-		SLineStripDebug& line = m_linestrip.getLast();
-		line.point.set_used(0);
-		line.color = color;
+		m_linestrip.push_back(new SLineStripDebug());
+
+		SLineStripDebug* line = m_linestrip.getLast();
+		line->color = color;
 
 		for (int i = 0; i <= step; i++)
 		{
@@ -121,7 +120,7 @@ namespace Skylicht
 			point += pos;
 
 			// add point
-			line.point.push_back(point);
+			line->point.push_back(point);
 
 			// inc rad
 			rad = rad + radInc;
@@ -152,53 +151,51 @@ namespace Skylicht
 
 	void CSceneDebug::addTri(const core::triangle3df& tri, const SColor& color)
 	{
-		m_tri.push_back(STriDebug());
-		STriDebug& t = m_tri.getLast();
-		t.tri = tri;
-		t.color = color;
+		m_tri.push_back(new STriDebug());
+		STriDebug* t = m_tri.getLast();
+		t->tri = tri;
+		t->color = color;
 	}
 
 	void CSceneDebug::addLine(const core::vector3df& v1, const core::vector3df& v2, const SColor& color)
 	{
-		m_lines.push_back(SLineDebug());
-		SLineDebug& line = m_lines.getLast();
-		line.line.setLine(v1, v2);
-		line.color = color;
+		m_lines.push_back(new SLineDebug());
+		SLineDebug* line = m_lines.getLast();
+		line->line.setLine(v1, v2);
+		line->color = color;
 	}
 
 	void CSceneDebug::addLine(const core::line3df& line, const SColor& color)
 	{
-		m_lines.push_back(SLineDebug());
-		SLineDebug& l = m_lines.getLast();
-		l.line = line;
-		l.color = color;
+		m_lines.push_back(new SLineDebug());
+		SLineDebug* l = m_lines.getLast();
+		l->line = line;
+		l->color = color;
 	}
 
 	void CSceneDebug::addLinestrip(const std::vector<core::vector3df>& point, const SColor& color)
 	{
-		m_linestrip.push_back(SLineStripDebug());
-		SLineStripDebug& l = m_linestrip.getLast();
-
-		l.point.set_used(0);
+		m_linestrip.push_back(new SLineStripDebug());
+		SLineStripDebug* l = m_linestrip.getLast();
 		for (int i = 0, n = (int)point.size(); i < n; i++)
-			l.point.push_back(point[i]);
-		l.color = color;
+			l->point.push_back(point[i]);
+		l->color = color;
 	}
 
 	void CSceneDebug::addLinestrip(const core::array<core::vector3df>& point, const SColor& color)
 	{
-		m_linestrip.push_back(SLineStripDebug());
-		SLineStripDebug& l = m_linestrip.getLast();
-		l.point = point;
-		l.color = color;
+		m_linestrip.push_back(new SLineStripDebug());
+		SLineStripDebug* l = m_linestrip.getLast();
+		l->point = point;
+		l->color = color;
 	}
 
 	void CSceneDebug::addBoudingBox(const core::aabbox3df& box, const SColor& color)
 	{
-		m_boxs.push_back(SBoxDebug());
-		SBoxDebug& b = m_boxs.getLast();
-		b.box = box;
-		b.color = color;
+		m_boxs.push_back(new SBoxDebug());
+		SBoxDebug* b = m_boxs.getLast();
+		b->box = box;
+		b->color = color;
 	}
 
 	void CSceneDebug::addTransformBBox(const core::aabbox3df& box, const SColor& color, const core::matrix4& mat)
@@ -260,5 +257,35 @@ namespace Skylicht
 
 		for (u32 i = 0, n = m_texts.size(); i < n; i++)
 			textMgr->remove(m_texts[i]);
+
+		m_texts.set_used(0);
+	}
+
+	void CSceneDebug::clearLines()
+	{
+		for (u32 i = 0, n = m_lines.size(); i < n; i++)
+			delete m_lines[i];
+		m_lines.set_used(0);
+	}
+
+	void CSceneDebug::clearLineStrip()
+	{
+		for (u32 i = 0, n = m_linestrip.size(); i < n; i++)
+			delete m_linestrip[i];
+		m_linestrip.set_used(0);
+	}
+
+	void CSceneDebug::clearBoxs()
+	{
+		for (u32 i = 0, n = m_boxs.size(); i < n; i++)
+			delete m_boxs[i];
+		m_boxs.set_used(0);
+	}
+
+	void CSceneDebug::clearTri()
+	{
+		for (u32 i = 0, n = m_tri.size(); i < n; i++)
+			delete m_tri[i];
+		m_tri.set_used(0);
 	}
 }
