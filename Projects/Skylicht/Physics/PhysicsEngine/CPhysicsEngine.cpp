@@ -48,6 +48,7 @@ namespace Skylicht
 			IsInEditor(false)
 #ifdef USE_BULLET_PHYSIC_ENGINE
 			, m_broadphase(NULL),
+			m_overlapCB(NULL),
 			m_dispatcher(NULL),
 			m_solver(NULL),
 			m_collisionConfiguration(NULL),
@@ -82,7 +83,8 @@ namespace Skylicht
 			m_broadphase = new btDbvtBroadphase();
 
 			// for ghost object
-			m_broadphase->getOverlappingPairCache()->setInternalGhostPairCallback(new btGhostPairCallback());
+			m_overlapCB = new btGhostPairCallback();
+			m_broadphase->getOverlappingPairCache()->setInternalGhostPairCallback(m_overlapCB);
 
 			// the default constraint solver. 
 			// For parallel processing you can use a different solver (see Extras/BulletMultiThreaded)
@@ -115,6 +117,7 @@ namespace Skylicht
 				delete m_dynamicsWorld;
 				delete m_solver;
 				delete m_broadphase;
+				delete m_overlapCB;
 				delete m_dispatcher;
 				delete m_collisionConfiguration;
 				delete m_drawDebug;
@@ -122,6 +125,7 @@ namespace Skylicht
 				m_dynamicsWorld = NULL;
 				m_solver = NULL;
 				m_broadphase = NULL;
+				m_overlapCB = NULL;
 				m_dispatcher = NULL;
 				m_collisionConfiguration = NULL;
 			}
@@ -306,7 +310,7 @@ namespace Skylicht
 #endif
 
 				bodies[i]->Transform->setWorldMatrix(world);
-			}
+				}
 
 			// CHARACTER
 			SCharacterData** characters = m_characters.pointer();
@@ -334,7 +338,7 @@ namespace Skylicht
 				characters[i]->Transform->setWorldMatrix(world);
 			}
 #endif
-		}
+			}
 
 		void CPhysicsEngine::syncTransformToPhysics()
 		{
@@ -506,5 +510,5 @@ namespace Skylicht
 #endif
 			return ret;
 		}
+		}
 	}
-}

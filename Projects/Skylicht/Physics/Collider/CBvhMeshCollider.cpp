@@ -51,6 +51,7 @@ namespace Skylicht
 			if (prefab == NULL)
 				return NULL;
 
+			releaseMesh();
 			m_mesh = new btTriangleMesh();
 
 			initFromPrefab(prefab, [&](const core::matrix4& transform, CMesh* mesh) {

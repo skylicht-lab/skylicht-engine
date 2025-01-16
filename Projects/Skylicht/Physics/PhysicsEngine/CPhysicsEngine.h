@@ -73,6 +73,7 @@ namespace Skylicht
 
 		protected:
 #ifdef USE_BULLET_PHYSIC_ENGINE
+			btOverlappingPairCallback* m_overlapCB;
 			btBroadphaseInterface* m_broadphase;
 			btCollisionDispatcher* m_dispatcher;
 			btConstraintSolver* m_solver;
