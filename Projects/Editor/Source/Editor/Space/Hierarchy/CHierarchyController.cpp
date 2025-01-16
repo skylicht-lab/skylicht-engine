@@ -32,6 +32,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Editor/SpaceController/CSceneController.h"
 #include "AssetManager/CAssetManager.h"
+#include "Selection/CSelection.h"
 
 namespace Skylicht
 {
@@ -562,46 +563,54 @@ namespace Skylicht
 				{
 					if (data->Name == "HierarchyNode")
 					{
-						CHierachyNode* dragNode = (CHierachyNode*)data->UserData;
-						if (node->getTagDataType() == CHierachyNode::Zone)
+						std::vector<CHierachyNode*> affectNodes;
+						std::list<GUI::CTreeNode*> selectNodes = m_tree->getSelectedNodes();
+						for (GUI::CTreeNode* node : selectNodes)
 						{
-							if (dragNode->getTagDataType() == CHierachyNode::Zone)
+							CHierachyNode* tagData = (CHierachyNode*)node->getTagData();
+							if (tagData)
+								affectNodes.push_back(tagData);
+						}
+
+						for (CHierachyNode* dragNode : affectNodes)
+						{
+							if (node->getTagDataType() == CHierachyNode::Zone)
 							{
-								GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
-								if (local.Y < rowItem->height() * 0.5f)
+								if (dragNode->getTagDataType() == CHierachyNode::Zone)
 								{
-									move(dragNode, node, false);
+									GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
+									if (local.Y < rowItem->height() * 0.5f)
+										move(dragNode, node, false);
+									else
+										move(dragNode, node, true);
 								}
 								else
 								{
-									move(dragNode, node, true);
+									moveToChild(dragNode, node);
 								}
+								dragNode->getGUINode()->setSelected(true);
 							}
-							else
+							else if (node->getTagDataType() == CHierachyNode::Container)
 							{
-								moveToChild(dragNode, node);
+								GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
+								if (local.Y < rowItem->height() * 0.25f)
+									move(dragNode, node, false);
+								else if (local.Y > rowItem->height() * 0.75f)
+									move(dragNode, node, true);
+								else
+									moveToChild(dragNode, node);
+
+								dragNode->getGUINode()->setSelected(true);
 							}
-							dragNode->getGUINode()->setSelected(true);
-						}
-						else if (node->getTagDataType() == CHierachyNode::Container)
-						{
-							GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
-							if (local.Y < rowItem->height() * 0.25f)
-								move(dragNode, node, false);
-							else if (local.Y > rowItem->height() * 0.75f)
-								move(dragNode, node, true);
-							else
-								moveToChild(dragNode, node);
-							dragNode->getGUINode()->setSelected(true);
-						}
-						else if (node->getTagDataType() == CHierachyNode::GameObject)
-						{
-							GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
-							if (local.Y < rowItem->height() * 0.5f)
-								move(dragNode, node, false);
-							else
-								move(dragNode, node, true);
-							dragNode->getGUINode()->setSelected(true);
+							else if (node->getTagDataType() == CHierachyNode::GameObject)
+							{
+								GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
+								if (local.Y < rowItem->height() * 0.5f)
+									move(dragNode, node, false);
+								else
+									move(dragNode, node, true);
+								dragNode->getGUINode()->setSelected(true);
+							}
 						}
 					}
 					else if (data->Name == "ListFSItem")

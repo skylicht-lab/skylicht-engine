@@ -65,6 +65,29 @@ namespace Skylicht
 
 			}
 
+			std::list<CTreeNode*> CTreeControl::getSelectedNodes()
+			{
+				std::list<CTreeNode*> results;
+
+				std::stack<CTreeNode*> stack;
+				stack.push(this);
+
+				while (stack.size() > 0)
+				{
+					CTreeNode* node = stack.top();
+					stack.pop();
+
+					if (node->isSelected())
+						results.push_back(node);
+
+					std::list<CTreeNode*> childs = node->getChildNodes();
+					for (CTreeNode* it : childs)
+						stack.push(it);
+				}
+
+				return results;
+			}
+
 			void CTreeControl::layout()
 			{
 				CBase::layout();

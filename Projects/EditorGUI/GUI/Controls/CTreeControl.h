@@ -47,6 +47,8 @@ namespace Skylicht
 
 				~CTreeControl();
 
+				std::list<CTreeNode*> getSelectedNodes();
+
 				inline CScrollControl* getScrollControl()
 				{
 					return m_scrollControl;

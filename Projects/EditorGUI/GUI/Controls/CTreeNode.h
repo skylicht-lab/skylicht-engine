@@ -50,6 +50,7 @@ namespace Skylicht
 
 				bool m_expand;
 				bool m_selected;
+				bool m_doPress;
 
 				bool m_alwayShowExpandButton;
 

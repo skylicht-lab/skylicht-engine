@@ -47,7 +47,8 @@ namespace Skylicht
 
 		void CRigidbody::startComponent()
 		{
-			initRigidbody();
+			if (!m_rigidBody)
+				initRigidbody();
 		}
 
 		void CRigidbody::updateComponent()
