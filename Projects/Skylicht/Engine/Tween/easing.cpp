@@ -185,45 +185,58 @@ double easeInOutBounce(double t) {
 	}
 }
 
+EasingFunction* easingFunctions = NULL;
+
+void initEasing()
+{
+	if (!easingFunctions)
+	{
+		easingFunctions = new EasingFunction[EaseCount];
+
+		easingFunctions[EaseLinear] = linear;
+		easingFunctions[EaseInSine] = easeInSine;
+		easingFunctions[EaseOutSine] = easeOutSine;
+		easingFunctions[EaseInOutSine] = easeInOutSine;
+		easingFunctions[EaseInQuad] = easeInQuad;
+		easingFunctions[EaseOutQuad] = easeOutQuad;
+		easingFunctions[EaseInOutQuad] = easeInOutQuad;
+		easingFunctions[EaseInCubic] = easeInCubic;
+		easingFunctions[EaseOutCubic] = easeOutCubic;
+		easingFunctions[EaseInOutCubic] = easeInOutCubic;
+		easingFunctions[EaseInQuart] = easeInQuart;
+		easingFunctions[EaseOutQuart] = easeOutQuart;
+		easingFunctions[EaseInOutQuart] = easeInOutQuart;
+		easingFunctions[EaseInQuint] = easeInQuint;
+		easingFunctions[EaseOutQuint] = easeOutQuint;
+		easingFunctions[EaseInOutQuint] = easeInOutQuint;
+		easingFunctions[EaseInExpo] = easeInExpo;
+		easingFunctions[EaseOutExpo] = easeOutExpo;
+		easingFunctions[EaseInOutExpo] = easeInOutExpo;
+		easingFunctions[EaseInCirc] = easeInCirc;
+		easingFunctions[EaseOutCirc] = easeOutCirc;
+		easingFunctions[EaseInOutCirc] = easeInOutCirc;
+		easingFunctions[EaseInBack] = easeInBack;
+		easingFunctions[EaseOutBack] = easeOutBack;
+		easingFunctions[EaseInOutBack] = easeInOutBack;
+		easingFunctions[EaseInElastic] = easeInElastic;
+		easingFunctions[EaseOutElastic] = easeOutElastic;
+		easingFunctions[EaseInOutElastic] = easeInOutElastic;
+		easingFunctions[EaseInBounce] = easeInBounce;
+		easingFunctions[EaseOutBounce] = easeOutBounce;
+		easingFunctions[EaseInOutBounce] = easeInOutBounce;
+	}
+}
+
+void releaseEasing()
+{
+	if (easingFunctions)
+	{
+		delete easingFunctions;
+		easingFunctions = NULL;
+	}
+}
+
 EasingFunction getEasingFunction(EEasingFunctions function)
 {
-	static std::map< EEasingFunctions, EasingFunction > easingFunctions;
-	if (easingFunctions.empty())
-	{
-		easingFunctions.insert(std::make_pair(EaseLinear, linear));
-		easingFunctions.insert(std::make_pair(EaseInSine, easeInSine));
-		easingFunctions.insert(std::make_pair(EaseOutSine, easeOutSine));
-		easingFunctions.insert(std::make_pair(EaseInOutSine, easeInOutSine));
-		easingFunctions.insert(std::make_pair(EaseInQuad, easeInQuad));
-		easingFunctions.insert(std::make_pair(EaseOutQuad, easeOutQuad));
-		easingFunctions.insert(std::make_pair(EaseInOutQuad, easeInOutQuad));
-		easingFunctions.insert(std::make_pair(EaseInCubic, easeInCubic));
-		easingFunctions.insert(std::make_pair(EaseOutCubic, easeOutCubic));
-		easingFunctions.insert(std::make_pair(EaseInOutCubic, easeInOutCubic));
-		easingFunctions.insert(std::make_pair(EaseInQuart, easeInQuart));
-		easingFunctions.insert(std::make_pair(EaseOutQuart, easeOutQuart));
-		easingFunctions.insert(std::make_pair(EaseInOutQuart, easeInOutQuart));
-		easingFunctions.insert(std::make_pair(EaseInQuint, easeInQuint));
-		easingFunctions.insert(std::make_pair(EaseOutQuint, easeOutQuint));
-		easingFunctions.insert(std::make_pair(EaseInOutQuint, easeInOutQuint));
-		easingFunctions.insert(std::make_pair(EaseInExpo, easeInExpo));
-		easingFunctions.insert(std::make_pair(EaseOutExpo, easeOutExpo));
-		easingFunctions.insert(std::make_pair(EaseInOutExpo, easeInOutExpo));
-		easingFunctions.insert(std::make_pair(EaseInCirc, easeInCirc));
-		easingFunctions.insert(std::make_pair(EaseOutCirc, easeOutCirc));
-		easingFunctions.insert(std::make_pair(EaseInOutCirc, easeInOutCirc));
-		easingFunctions.insert(std::make_pair(EaseInBack, easeInBack));
-		easingFunctions.insert(std::make_pair(EaseOutBack, easeOutBack));
-		easingFunctions.insert(std::make_pair(EaseInOutBack, easeInOutBack));
-		easingFunctions.insert(std::make_pair(EaseInElastic, easeInElastic));
-		easingFunctions.insert(std::make_pair(EaseOutElastic, easeOutElastic));
-		easingFunctions.insert(std::make_pair(EaseInOutElastic, easeInOutElastic));
-		easingFunctions.insert(std::make_pair(EaseInBounce, easeInBounce));
-		easingFunctions.insert(std::make_pair(EaseOutBounce, easeOutBounce));
-		easingFunctions.insert(std::make_pair(EaseInOutBounce, easeInOutBounce));
-
-	}
-
-	auto it = easingFunctions.find(function);
-	return it == easingFunctions.end() ? nullptr : it->second;
+	return easingFunctions[function];
 }

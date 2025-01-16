@@ -2,7 +2,7 @@
 
 enum EEasingFunctions
 {
-	EaseLinear,
+	EaseLinear = 0,
 	EaseInSine,
 	EaseOutSine,
 	EaseInOutSine,
@@ -32,10 +32,15 @@ enum EEasingFunctions
 	EaseInOutElastic,
 	EaseInBounce,
 	EaseOutBounce,
-	EaseInOutBounce
+	EaseInOutBounce,
+	EaseCount
 };
 
 typedef double(*EasingFunction)(double);
 
 EasingFunction getEasingFunction(EEasingFunctions function);
+
+void initEasing();
+
+void releaseEasing();
 

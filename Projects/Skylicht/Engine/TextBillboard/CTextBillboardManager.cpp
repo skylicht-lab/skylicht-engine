@@ -146,6 +146,8 @@ namespace Skylicht
 	{
 		if (m_defaultFont)
 			m_defaultFont->dropFont();
+
+		clear();
 	}
 
 	void CTextBillboardManager::clear()

@@ -427,12 +427,14 @@ namespace Skylicht
 		if (target->getParent() != this)
 			return;
 
+		bool updateTransform = false;
 		core::matrix4 world = object->getAbsoluteTransform();
 
 		if (object->getParent() != this)
 		{
 			// set new parent
 			object->setParent(this);
+			updateTransform = true;
 		}
 
 		// remove the current position
@@ -448,7 +450,8 @@ namespace Skylicht
 
 		m_childs.insert(pos, object);
 
-		object->setWorldTransform(world);
+		if (updateTransform)
+			object->setWorldTransform(world);
 	}
 
 	void CGUIElement::bringToChild(CGUIElement* object)

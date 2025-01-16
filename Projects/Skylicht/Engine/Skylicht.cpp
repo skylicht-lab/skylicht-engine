@@ -49,6 +49,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "TextBillboard/CTextBillboardManager.h"
 
 // Tween
+#include "Tween/easing.h"
 #include "Tween/CTweenManager.h"
 
 // Activator
@@ -93,7 +94,9 @@ namespace Skylicht
 
 		CShadowRTTManager::createGetInstance();
 
+		initEasing();
 		CTweenManager::createGetInstance();
+
 		CActivator::createGetInstance();
 		CSerializableActivator::createGetInstance();
 		CDependentComponent::createGetInstance();
@@ -120,7 +123,9 @@ namespace Skylicht
 		CDependentComponent::releaseInstance();
 		CActivator::releaseInstance();
 		CSerializableActivator::releaseInstance();
+
 		CTweenManager::releaseInstance();
+		releaseEasing();
 
 		CShadowRTTManager::releaseInstance();
 

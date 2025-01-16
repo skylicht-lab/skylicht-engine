@@ -38,6 +38,7 @@ namespace Skylicht
 	{
 		if (m_noZDebug)
 			delete m_noZDebug;
+		clear();
 	}
 
 	CSceneDebug* CSceneDebug::getNoZDebug()
