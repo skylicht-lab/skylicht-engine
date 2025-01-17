@@ -95,6 +95,7 @@ void CViewInit::initScene()
 	CDirectionalLight* directionalLight = lightObj->addComponent<CDirectionalLight>();
 	SColor c(255, 255, 244, 214);
 	directionalLight->setColor(SColorf(c));
+	directionalLight->setIntensity(1.2f);
 
 	CTransformEuler* lightTransform = lightObj->getTransformEuler();
 	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
@@ -562,7 +563,7 @@ void CViewInit::onUpdate()
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-		}
+	}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -595,7 +596,7 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-	}
+}
 }
 
 void CViewInit::onRender()

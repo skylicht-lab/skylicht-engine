@@ -30,7 +30,7 @@ vec3 shAmbient(vec3 n)
 		uSHConst[1].xyz * n.y +
 		uSHConst[2].xyz * n.z +
 		uSHConst[3].xyz * n.x;
-	return ambientLighting * 0.9;
+	return ambientLighting * 0.75;
 }
 const float PI = 3.1415926;
 vec3 fresnelSchlick(vec3 V, vec3 H, vec3 F0)

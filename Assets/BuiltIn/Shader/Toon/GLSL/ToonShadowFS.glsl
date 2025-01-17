@@ -37,7 +37,7 @@ vec3 shAmbient(vec3 n)
 		uSHConst[1].xyz * n.y +
 		uSHConst[2].xyz * n.z +
 		uSHConst[3].xyz * n.x;
-	return ambientLighting * 0.9;
+	return ambientLighting * 0.75;
 }
 float shadow(const vec4 shadowCoord[3], const float shadowDistance[3], const float farDistance)
 {

@@ -44,7 +44,7 @@ float3 shAmbient(float3 n)
 		uSHConst[1].xyz * n.y +
 		uSHConst[2].xyz * n.z +
 		uSHConst[3].xyz * n.x;
-	return ambientLighting * 0.9;
+	return ambientLighting * 0.75;
 }
 static const float PI = 3.1415926;
 float3 fresnelSchlick(float3 V, float3 H, float3 F0)

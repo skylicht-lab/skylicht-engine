@@ -35,7 +35,7 @@ float3 shAmbient(float3 n)
 		uSHConst[1].xyz * n.y +
 		uSHConst[2].xyz * n.z +
 		uSHConst[3].xyz * n.x;
-	return ambientLighting * 0.9;
+	return ambientLighting * 0.75;
 }
 static const float PI = 3.1415926;
 float4 main(PS_INPUT input) : SV_TARGET

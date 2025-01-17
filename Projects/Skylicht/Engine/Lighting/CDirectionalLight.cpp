@@ -41,6 +41,8 @@ namespace Skylicht
 		// default 2 bounce
 		m_bakeBounce = 2;
 		m_castShadow = true;
+
+		setIntensity(1.5f);
 	}
 
 	CDirectionalLight::~CDirectionalLight()

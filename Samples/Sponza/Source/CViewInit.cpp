@@ -15,9 +15,9 @@
 
 #include "Lightmap/CLightmap.h"
 
-// #if defined(ANDROID) || defined(IOS) || defined(__EMSCRIPTEN__)
+#if defined(ANDROID) || defined(IOS) || defined(__EMSCRIPTEN__)
 #define USE_LIGHTMAP_DIRECTIONAL
-// #endif
+#endif
 
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
