@@ -1,5 +1,5 @@
 # Skylicht Engine
-Skylicht Engine, which is an evolution of the [Irrlicht Project](http://irrlicht.sourceforge.net). We have upgraded more features: Sound Engine, Physics Engine, Particle Engine...
+Skylicht Engine, which is an evolution of the [Irrlicht Project](http://irrlicht.sourceforge.net). We have upgraded many features: Sound Engine, Physics Engine, Particle Engine...
 
 -   Core functionality: Direct3D11, OpenGL 4+, OpenGLES 3+, Google Angle GLES video driver backends.
 
