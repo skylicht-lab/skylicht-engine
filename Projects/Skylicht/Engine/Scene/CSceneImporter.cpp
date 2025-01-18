@@ -518,6 +518,10 @@ namespace Skylicht
 				{
 					g_listGameObject.push_back(child);
 				}
+
+				CContainerObject* childContainer = dynamic_cast<CContainerObject*>(child);
+				if (childContainer)
+					stack.push(childContainer);
 			}
 		}
 

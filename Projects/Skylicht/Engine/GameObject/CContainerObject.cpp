@@ -397,8 +397,14 @@ namespace Skylicht
 	{
 		CGameObject::setTemplateChanged(b);
 
-		for (u32 i = 0, n = m_arrayChildObjects.size(); i < n; i++)
-			m_arrayChildObjects[i]->setTemplateChanged(b);
+		if (b == false)
+		{
+			for (u32 i = 0, n = m_arrayChildObjects.size(); i < n; i++)
+			{
+				if (m_templateId == m_arrayChildObjects[i]->getTemplateID())
+					m_arrayChildObjects[i]->setTemplateChanged(b);
+			}
+		}
 	}
 
 	CGameObject* CContainerObject::searchObject(const wchar_t* objectName)
