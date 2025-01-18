@@ -83,6 +83,8 @@ namespace Skylicht
 
 			void browse(const char* folder);
 
+			void setCurrentFolder(const char* folder);
+
 			inline void setTreeController(CTreeFSController* treeController)
 			{
 				m_treeController = treeController;

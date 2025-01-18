@@ -30,6 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Utils/CStringImp.h"
 #include "GUI/Theme/ThemeConfig.h"
 #include "Editor/SpaceController/CAssetPropertyController.h"
+#include "Editor/SpaceController/CAssetCreateController.h"
 #include "Editor/CEditor.h"
 
 namespace Skylicht
@@ -134,12 +135,14 @@ namespace Skylicht
 				const std::string& fullPath = rowItem->getTagString();
 
 				bool isFolder = rowItem->getTagBool();
+				std::string folder;
+
 				if (isFolder == true)
 				{
 					if (m_treeController != NULL)
 						m_treeController->expand(fullPath);
 
-					m_currentFolder = fullPath;
+					folder = fullPath;
 				}
 				else
 				{
@@ -147,10 +150,11 @@ namespace Skylicht
 					if (m_treeController != NULL)
 						m_treeController->expand(folderPath);
 
-					m_currentFolder = folderPath;
+					folder = folderPath;
 				}
 
 				m_selectSearchPath = fullPath;
+				setCurrentFolder(folder.c_str());
 			}
 		}
 
@@ -275,10 +279,7 @@ namespace Skylicht
 			if (folder.empty())
 				folder = m_assetManager->getAssetFolder();
 
-			if (m_currentFolder != folder)
-				os::Printer::log(folder.c_str());
-
-			m_currentFolder = folder;
+			setCurrentFolder(folder.c_str());
 		}
 
 		GUI::ESystemIcon CListFSController::getFileIcon(const std::string& name, GUI::SGUIColor& color)
@@ -319,6 +320,8 @@ namespace Skylicht
 			GUI::CListRowItem* rowNode = dynamic_cast<GUI::CListRowItem*>(node);
 			if (rowNode != NULL)
 			{
+				CAssetCreateController::getInstance()->setActivateSpace(m_space);
+
 				std::string fullPath = rowNode->getTagString();
 
 				bool isFolder = rowNode->getTagBool();
@@ -365,8 +368,14 @@ namespace Skylicht
 
 		void CListFSController::browse(const char* folder)
 		{
-			m_currentFolder = folder;
+			setCurrentFolder(folder);
 			refresh();
+		}
+
+		void CListFSController::setCurrentFolder(const char* folder)
+		{
+			m_currentFolder = folder;
+			CAssetCreateController::getInstance()->setCurrentFolder(m_space, folder);
 		}
 
 		void CListFSController::refresh()

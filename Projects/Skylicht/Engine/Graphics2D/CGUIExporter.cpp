@@ -75,48 +75,51 @@ namespace Skylicht
 
 		// skip root element
 		CObjectSerializable* childs = data->getProperty<CObjectSerializable>("Childs");
-		CObjectSerializable* canvas = (CObjectSerializable*)childs->getPropertyID(0);
-
-		std::queue<CObjectSerializable*> queue;
-		std::queue<std::wstring> queuePath;
-
-		queue.push(canvas);
-		queuePath.push(L"");
-
-		std::wstring path, name;
-
-		while (queue.size() > 0)
+		if (childs)
 		{
-			CObjectSerializable* obj = queue.front();
-			queue.pop();
+			CObjectSerializable* canvas = (CObjectSerializable*)childs->getPropertyID(0);
 
-			std::wstring parentPath = queuePath.front();
-			queuePath.pop();
+			std::queue<CObjectSerializable*> queue;
+			std::queue<std::wstring> queuePath;
 
-			std::string objName = obj->get("name", std::string("No name")).c_str();
-			std::wstring name = CStringImp::convertUTF8ToUnicode(objName.c_str());
+			queue.push(canvas);
+			queuePath.push(L"");
 
-			path = parentPath + name;
+			std::wstring path, name;
 
-			writeFileInfo->writeElement(
-				L"node", true,
-				L"name", name.c_str(),
-				L"path", path.c_str()
-			);
-
-			writeFileInfo->writeLineBreak();
-
-			path += L"/";
-
-			CObjectSerializable* childs = obj->getProperty<CObjectSerializable>("Childs");
-			if (childs)
+			while (queue.size() > 0)
 			{
-				u32 numChild = childs->getNumProperty();
-				for (u32 i = 0; i < numChild; i++)
+				CObjectSerializable* obj = queue.front();
+				queue.pop();
+
+				std::wstring parentPath = queuePath.front();
+				queuePath.pop();
+
+				std::string objName = obj->get("name", std::string("No name")).c_str();
+				std::wstring name = CStringImp::convertUTF8ToUnicode(objName.c_str());
+
+				path = parentPath + name;
+
+				writeFileInfo->writeElement(
+					L"node", true,
+					L"name", name.c_str(),
+					L"path", path.c_str()
+				);
+
+				writeFileInfo->writeLineBreak();
+
+				path += L"/";
+
+				CObjectSerializable* childs = obj->getProperty<CObjectSerializable>("Childs");
+				if (childs)
 				{
-					CObjectSerializable* child = (CObjectSerializable*)childs->getPropertyID(i);
-					queue.push(child);
-					queuePath.push(path);
+					u32 numChild = childs->getNumProperty();
+					for (u32 i = 0; i < numChild; i++)
+					{
+						CObjectSerializable* child = (CObjectSerializable*)childs->getPropertyID(i);
+						queue.push(child);
+						queuePath.push(path);
+					}
 				}
 			}
 		}

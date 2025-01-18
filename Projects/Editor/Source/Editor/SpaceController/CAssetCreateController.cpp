@@ -46,9 +46,10 @@ namespace Skylicht
 	{
 		IMPLEMENT_SINGLETON(CAssetCreateController);
 
-		CAssetCreateController::CAssetCreateController()
+		CAssetCreateController::CAssetCreateController() :
+			m_lastSpace(NULL)
 		{
-
+			m_currentFolder = CAssetManager::getInstance()->getAssetFolder();
 		}
 
 		CAssetCreateController::~CAssetCreateController()
@@ -56,15 +57,32 @@ namespace Skylicht
 
 		}
 
-		void CAssetCreateController::createEmptyMaterial()
+		void CAssetCreateController::setActivateSpace(CSpace* space)
+		{
+			m_lastSpace = space;
+		}
+
+		void CAssetCreateController::setCurrentFolder(CSpace* space, const char* path)
+		{
+			if (m_lastSpace == NULL || m_lastSpace == space)
+				m_currentFolder = path;
+		}
+
+		const std::string& CAssetCreateController::getCurrentFolder()
 		{
 			CSpaceAssets* spaceAssets = (CSpaceAssets*)CEditor::getInstance()->getWorkspaceByName(L"Assets");
+			if (spaceAssets == NULL)
+			{
+				os::Printer::log("[CAssetCreateController] Warning create asset with no Assets windows");
+				return CAssetManager::getInstance()->getAssetFolder();
+			}
+			return m_currentFolder;
+		}
 
+		void CAssetCreateController::createEmptyMaterial()
+		{
 			CAssetManager* assetMgr = CAssetManager::getInstance();
-
-			std::string currentFolder = assetMgr->getAssetFolder();
-			if (spaceAssets != NULL)
-				currentFolder = spaceAssets->getListController()->getCurrentFolder();
+			std::string currentFolder = getCurrentFolder();
 
 			std::string fullPath = assetMgr->generateAssetPath("/Material%02d.mat", currentFolder.c_str());
 
@@ -123,13 +141,8 @@ namespace Skylicht
 
 		void CAssetCreateController::createEmptySprite()
 		{
-			CSpaceAssets* spaceAssets = (CSpaceAssets*)CEditor::getInstance()->getWorkspaceByName(L"Assets");
-
 			CAssetManager* assetMgr = CAssetManager::getInstance();
-
-			std::string currentFolder = assetMgr->getAssetFolder();
-			if (spaceAssets != NULL)
-				currentFolder = spaceAssets->getListController()->getCurrentFolder();
+			std::string currentFolder = getCurrentFolder();
 
 			std::string fullPath = assetMgr->generateAssetPath("/Sprite%02d.sprite", currentFolder.c_str());
 
@@ -141,13 +154,8 @@ namespace Skylicht
 
 		void CAssetCreateController::createEmptyFont()
 		{
-			CSpaceAssets* spaceAssets = (CSpaceAssets*)CEditor::getInstance()->getWorkspaceByName(L"Assets");
-
 			CAssetManager* assetMgr = CAssetManager::getInstance();
-
-			std::string currentFolder = assetMgr->getAssetFolder();
-			if (spaceAssets != NULL)
-				currentFolder = spaceAssets->getListController()->getCurrentFolder();
+			std::string currentFolder = getCurrentFolder();
 
 			std::string fullPath = assetMgr->generateAssetPath("/Font%02d.font", currentFolder.c_str());
 
@@ -159,13 +167,8 @@ namespace Skylicht
 
 		void CAssetCreateController::createEmptyGUI()
 		{
-			CSpaceAssets* spaceAssets = (CSpaceAssets*)CEditor::getInstance()->getWorkspaceByName(L"Assets");
-
 			CAssetManager* assetMgr = CAssetManager::getInstance();
-
-			std::string currentFolder = assetMgr->getAssetFolder();
-			if (spaceAssets != NULL)
-				currentFolder = spaceAssets->getListController()->getCurrentFolder();
+			std::string currentFolder = getCurrentFolder();
 
 			std::string fullPath = assetMgr->generateAssetPath("/GUI%02d.gui", currentFolder.c_str());
 
@@ -182,12 +185,8 @@ namespace Skylicht
 
 		void CAssetCreateController::createTemplate(CGameObject* obj)
 		{
-			CSpaceAssets* spaceAssets = (CSpaceAssets*)CEditor::getInstance()->getWorkspaceByName(L"Assets");
 			CAssetManager* assetMgr = CAssetManager::getInstance();
-
-			std::string currentFolder = assetMgr->getAssetFolder();
-			if (spaceAssets != NULL)
-				currentFolder = spaceAssets->getListController()->getCurrentFolder();
+			std::string currentFolder = getCurrentFolder();
 
 			std::string ext = ".template";
 			std::string fileName;

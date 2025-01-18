@@ -35,10 +35,14 @@ namespace Skylicht
 
 		class CSearchAssetController;
 
+		class CSpaceAssets;
+
 		class CTreeFSController
 		{
 		protected:
 			GUI::CCanvas* m_canvas;
+
+			CSpaceAssets* m_space;
 
 			GUI::CTreeControl* m_treeFS;
 
@@ -56,7 +60,7 @@ namespace Skylicht
 
 			GUI::CMessageBox* m_msgBox;
 		public:
-			CTreeFSController(GUI::CCanvas* canvas, GUI::CTreeControl* treeFS);
+			CTreeFSController(GUI::CCanvas* canvas, CSpaceAssets* space, GUI::CTreeControl* treeFS);
 
 			virtual ~CTreeFSController();
 

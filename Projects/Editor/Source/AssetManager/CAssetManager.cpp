@@ -375,20 +375,30 @@ namespace Skylicht
 			if (it != m_pathToFile.end())
 			{
 				SFileNode* node = it->second;
+				if (node)
+				{
+					m_files.remove(node);
 
-				m_files.remove(node);
+					std::string path = node->FullPath;
 
-				std::string path = node->FullPath;
+					if (fs::is_directory(path))
+						fs::remove_all(path);
+					else
+						fs::remove(path);
 
-				if (fs::is_directory(path))
-					fs::remove_all(path);
+					m_pathToFile.erase(it);
+
+					delete node;
+					return true;
+				}
 				else
-					fs::remove(path);
-
-				m_pathToFile.erase(it);
-
-				delete node;
-				return true;
+				{
+					char log[512];
+					sprintf(log, "[CAssetManager] Delete %s with null infomation", shortPath.c_str());
+					os::Printer::log(log);
+					m_pathToFile.erase(it);
+					return true;
+				}
 			}
 
 			return false;

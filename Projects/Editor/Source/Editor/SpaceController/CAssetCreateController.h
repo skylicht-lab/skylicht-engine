@@ -36,6 +36,10 @@ namespace Skylicht
 		public:
 			DECLARE_SINGLETON(CAssetCreateController)
 
+			std::string m_currentFolder;
+
+			CSpace* m_lastSpace;
+
 		public:
 			CAssetCreateController();
 
@@ -54,6 +58,12 @@ namespace Skylicht
 			void createTemplate(CGameObject* obj);
 
 			void applyTemplate(CGameObject* obj);
+
+			void setActivateSpace(CSpace* space);
+
+			void setCurrentFolder(CSpace* space, const char* path);
+
+			const std::string& getCurrentFolder();
 
 		protected:
 

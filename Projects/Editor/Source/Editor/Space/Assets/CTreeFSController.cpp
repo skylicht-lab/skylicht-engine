@@ -26,11 +26,13 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CTreeFSController.h"
 #include "CListFSController.h"
 #include "CSearchAssetController.h"
+#include "CSpaceAssets.h"
 
 #include "Utils/CPath.h"
 #include "Utils/CStringImp.h"
 
 #include "Editor/Space/Hierarchy/CHierachyNode.h"
+#include "Editor/SpaceController/CAssetCreateController.h"
 
 #include "AssetManager/CAssetImporter.h"
 #include "Scene/CSceneExporter.h"
@@ -39,8 +41,9 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		CTreeFSController::CTreeFSController(GUI::CCanvas* canvas, GUI::CTreeControl* treeFS) :
+		CTreeFSController::CTreeFSController(GUI::CCanvas* canvas, CSpaceAssets* space, GUI::CTreeControl* treeFS) :
 			m_canvas(canvas),
+			m_space(space),
 			m_treeFS(treeFS),
 			m_renameNode(NULL),
 			m_nodeAssets(NULL),
@@ -143,6 +146,8 @@ namespace Skylicht
 
 				if (m_searchController != NULL)
 					m_searchController->hideSearchUI();
+
+				CAssetCreateController::getInstance()->setActivateSpace(m_space);
 
 				if (m_listController != NULL)
 					m_listController->add(fullPath, files);
