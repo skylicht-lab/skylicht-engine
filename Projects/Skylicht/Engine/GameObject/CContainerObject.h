@@ -73,6 +73,8 @@ namespace Skylicht
 
 		void sortChildsByTemplateOrder(std::vector<std::string>& order);
 
+		virtual void setTemplateChanged(bool b);
+
 		virtual CGameObject* searchObject(const wchar_t* objectName);
 
 		virtual CGameObject* searchObjectInChild(const wchar_t* objectName);

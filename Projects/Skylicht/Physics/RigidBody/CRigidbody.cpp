@@ -47,8 +47,10 @@ namespace Skylicht
 
 		void CRigidbody::startComponent()
 		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
 			if (!m_rigidBody)
 				initRigidbody();
+#endif
 		}
 
 		void CRigidbody::updateComponent()

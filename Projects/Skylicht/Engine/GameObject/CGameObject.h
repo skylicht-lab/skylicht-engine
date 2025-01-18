@@ -177,10 +177,7 @@ namespace Skylicht
 
 		CGameObject* getParentTemplate();
 
-		inline void setTemplateChanged(bool b)
-		{
-			m_templateChanged = b;
-		}
+		virtual void setTemplateChanged(bool b);
 
 		inline bool isTemplateChanged()
 		{

@@ -393,6 +393,14 @@ namespace Skylicht
 		}
 	}
 
+	void CContainerObject::setTemplateChanged(bool b)
+	{
+		CGameObject::setTemplateChanged(b);
+
+		for (u32 i = 0, n = m_arrayChildObjects.size(); i < n; i++)
+			m_arrayChildObjects[i]->setTemplateChanged(b);
+	}
+
 	CGameObject* CContainerObject::searchObject(const wchar_t* objectName)
 	{
 		core::map<std::wstring, CGameObject*>::Node* node = m_objectByName.find(std::wstring(objectName));

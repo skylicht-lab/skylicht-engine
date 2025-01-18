@@ -171,6 +171,11 @@ namespace Skylicht
 		return obj;
 	}
 
+	void CGameObject::setTemplateChanged(bool b)
+	{
+		m_templateChanged = b;
+	}
+
 	void CGameObject::setCullingLayer(u32 layer)
 	{
 		m_cullingLayer = layer;
