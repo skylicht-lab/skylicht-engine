@@ -1207,8 +1207,9 @@ namespace Skylicht
 					m_hoverOnPlane[i] = false;
 				}
 
-				handles->getWorldInv().transformVect(m_lastTranslatePosition);
-				handles->setTargetPosition(m_lastTranslatePosition);
+				core::vector3df pos = m_lastTranslatePosition;
+				handles->getWorldInv().transformVect(pos);
+				handles->setTargetPosition(pos);
 			}
 			else if (handles->isHandleRotation())
 			{
