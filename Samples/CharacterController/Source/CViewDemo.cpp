@@ -124,10 +124,13 @@ void CViewDemo::initObjects()
 		float randomZ = -30.0f + os::Randomizer::frand() * 60.0f;
 		float ramdonRot = os::Randomizer::frand() * 90.0f;
 
+		float randomScale = 1.0f + os::Randomizer::frand() * 2.0f;
+
 		Physics::CRigidbody* body = cubeObj->addComponent<Physics::CRigidbody>();
 		body->initRigidbody();
 		body->setPosition(core::vector3df(randomX, 20.0f, randomZ));
 		body->setRotation(core::vector3df(ramdonRot, ramdonRot, ramdonRot));
+		body->setLocalScale(core::vector3df(randomScale, randomScale, randomScale));
 		body->syncTransform();
 
 		m_boxs.push_back(body);

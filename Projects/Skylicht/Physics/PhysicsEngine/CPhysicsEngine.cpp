@@ -277,7 +277,8 @@ namespace Skylicht
 #ifdef USE_BULLET_PHYSIC_ENGINE
 			SRigidbodyData** bodies = m_bodies.pointer();
 			int used = (int)m_bodies.size();
-			core::matrix4 world;
+
+			core::matrix4 world, scale, result;
 
 #ifdef BT_USE_NEON
 			float ptr[16] __attribute__((aligned(16)));
@@ -309,8 +310,11 @@ namespace Skylicht
 				transform.getOpenGLMatrix(ptr);
 #endif
 
-				bodies[i]->Transform->setWorldMatrix(world);
-				}
+				scale.setScale(engineBody->getLocalScale());
+				result.setbyproduct_nocheck(world, scale);
+
+				bodies[i]->Transform->setWorldMatrix(result);
+			}
 
 			// CHARACTER
 			SCharacterData** characters = m_characters.pointer();
@@ -338,7 +342,7 @@ namespace Skylicht
 				characters[i]->Transform->setWorldMatrix(world);
 			}
 #endif
-			}
+		}
 
 		void CPhysicsEngine::syncTransformToPhysics()
 		{
@@ -357,7 +361,13 @@ namespace Skylicht
 				CWorldTransformData* transform = GET_ENTITY_DATA(go->getEntity(), CWorldTransformData);
 
 				const core::matrix4& world = transform->World;
-				body->getWorldTransform().setFromOpenGLMatrix(world.pointer());
+
+				core::matrix4 nonScale;
+				Transform::getNonScaleTransform(world, nonScale);
+
+				engineBody->setLocalScale(world.getScale());
+
+				body->getWorldTransform().setFromOpenGLMatrix(nonScale.pointer());
 			}
 #endif
 		}
@@ -510,5 +520,5 @@ namespace Skylicht
 #endif
 			return ret;
 		}
-		}
 	}
+}

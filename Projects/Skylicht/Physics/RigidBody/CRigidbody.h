@@ -122,6 +122,10 @@ namespace Skylicht
 
 			void releaseRigidbody();
 
+			void setLocalScale(const core::vector3df& scale);
+
+			core::vector3df getLocalScale();
+
 			core::vector3df getPosition();
 
 			void setPosition(const core::vector3df& pos);

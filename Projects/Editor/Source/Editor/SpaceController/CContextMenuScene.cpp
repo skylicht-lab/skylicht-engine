@@ -54,6 +54,7 @@ namespace Skylicht
 			m_contextMenuGameObject->OnCommand = BIND_LISTENER(&CContextMenuScene::OnContextMenuCommand, this);
 
 			addTemplateItem(m_contextMenuGameObject);
+			addExportItem(m_contextMenuGameObject);
 			m_contextMenuGameObject->addSeparator();
 			m_contextMenuGameObject->addItem(L"Rename", L"F2");
 			m_contextMenuGameObject->addSeparator();
@@ -85,6 +86,7 @@ namespace Skylicht
 			submenu->OnCommand = BIND_LISTENER(&CContextMenuScene::OnContextMenuCommand, this);
 
 			addTemplateItem(m_contextMenuContainer);
+			addExportItem(m_contextMenuContainer);
 			m_contextMenuContainer->addSeparator();
 			m_contextMenuContainer->addItem(L"Rename", L"F2");
 			m_contextMenuContainer->addSeparator();
@@ -110,6 +112,16 @@ namespace Skylicht
 			submenu->addItem(L"Apply");
 			submenu->addItem(L"Unpack");
 			submenu->OnCommand = BIND_LISTENER(&CContextMenuScene::OnContextMenuTemplateCommand, this);
+		}
+
+		void CContextMenuScene::addExportItem(GUI::CMenu* menu)
+		{
+			GUI::CMenuItem* templateMenu = menu->addItem(L"Export");
+
+			GUI::CMenu* submenu = templateMenu->getMenu();
+			submenu->addItem(L"Render Mesh to .OBJ", GUI::ESystemIcon::Export);
+			submenu->addItem(L"Collider to .OBJ", GUI::ESystemIcon::Export);
+			submenu->OnCommand = BIND_LISTENER(&CContextMenuScene::OnContextMenuExportCommand, this);
 		}
 
 		bool CContextMenuScene::onContextMenu(CSpaceHierarchy* spaceHierachy, CHierachyNode* node, CScene* scene, CZone* zone)
@@ -355,6 +367,24 @@ namespace Skylicht
 				sceneController->onRevertTemplate(contextObject);
 			else if (command == L"Unpack")
 				sceneController->onUnpackTemplate(contextObject);
+		}
+
+		void CContextMenuScene::OnContextMenuExportCommand(GUI::CBase* sender)
+		{
+			GUI::CMenuItem* menuItem = dynamic_cast<GUI::CMenuItem*>(sender);
+			if (menuItem == NULL)
+				return;
+
+			const std::wstring& command = menuItem->getLabel();
+
+			if (command == L"Render Mesh to .OBJ")
+			{
+
+			}
+			else if (command == L"Collider to .OBJ")
+			{
+
+			}
 		}
 	}
 }

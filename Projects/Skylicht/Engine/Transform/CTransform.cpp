@@ -40,6 +40,42 @@ namespace Skylicht
 		core::vector3df Ox = core::vector3df(1.0f, 0.0f, 0.0f);
 		core::vector3df Oy = core::vector3df(0.0f, 1.0f, 0.0f);
 		core::vector3df Oz = core::vector3df(0.0f, 0.0f, 1.0f);
+
+		void getNonScaleTransform(const core::matrix4& src, core::matrix4& dst)
+		{
+			core::vector3df pos = src.getTranslation();
+			core::vector3df x = Transform::Ox;
+			core::vector3df y = Transform::Oy;
+			core::vector3df z = Transform::Oz;
+			src.rotateVect(x);
+			src.rotateVect(y);
+			src.rotateVect(z);
+			x.normalize();
+			y.normalize();
+			z.normalize();
+
+			f32* matData = dst.pointer();
+
+			matData[0] = x.X;
+			matData[1] = x.Y;
+			matData[2] = x.Z;
+			matData[3] = 0.0f;
+
+			matData[4] = y.X;
+			matData[5] = y.Y;
+			matData[6] = y.Z;
+			matData[7] = 0.0f;
+
+			matData[8] = z.X;
+			matData[9] = z.Y;
+			matData[10] = z.Z;
+			matData[11] = 0.0f;
+
+			matData[12] = pos.X;
+			matData[13] = pos.Y;
+			matData[14] = pos.Z;
+			matData[15] = 1.0f;
+		}
 	}
 
 	CTransform::CTransform() :

@@ -35,6 +35,8 @@ namespace Skylicht
 		SKYLICHT_EXPORT extern core::vector3df Ox;
 		SKYLICHT_EXPORT extern core::vector3df Oy;
 		SKYLICHT_EXPORT extern core::vector3df Oz;
+
+		SKYLICHT_EXPORT void getNonScaleTransform(const core::matrix4& src, core::matrix4& dst);
 	}
 
 	class SKYLICHT_API CTransform : public CComponentSystem

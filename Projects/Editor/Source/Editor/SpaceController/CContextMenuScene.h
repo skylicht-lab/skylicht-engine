@@ -68,7 +68,11 @@ namespace Skylicht
 
 			void OnContextMenuTemplateCommand(GUI::CBase* sender);
 
+			void OnContextMenuExportCommand(GUI::CBase* sender);
+
 			void addTemplateItem(GUI::CMenu* menu);
+
+			void addExportItem(GUI::CMenu* menu);
 
 			void showHideTemplateItem(GUI::CMenu* menu, CGameObject* go);
 		};
