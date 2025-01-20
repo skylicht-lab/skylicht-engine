@@ -1206,6 +1206,8 @@ namespace Skylicht
 					m_hoverOnAxis[i] = false;
 					m_hoverOnPlane[i] = false;
 				}
+
+				handles->getWorldInv().transformVect(m_lastTranslatePosition);
 				handles->setTargetPosition(m_lastTranslatePosition);
 			}
 			else if (handles->isHandleRotation())
@@ -1214,6 +1216,10 @@ namespace Skylicht
 				{
 					m_hoverOnAxis[i] = false;
 				}
+
+				core::quaternion q(handles->getWorld());
+				q.makeInverse();
+				q.normalize();
 				handles->setTargetRotation(m_lastRotation);
 			}
 			else if (handles->isHandleScale())
@@ -1223,7 +1229,7 @@ namespace Skylicht
 					m_hoverOnAxis[i] = false;
 					m_hoverOnPlane[i] = false;
 				}
-				handles->setTargetRotation(m_lastScale);
+				handles->setTargetScale(m_lastScale);
 			}
 		}
 
