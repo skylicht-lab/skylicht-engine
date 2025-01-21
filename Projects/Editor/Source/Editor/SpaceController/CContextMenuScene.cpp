@@ -24,12 +24,16 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CContextMenuScene.h"
+#include "CAssetCreateController.h"
 #include "CSceneController.h"
 #include "Selection/CSelection.h"
 #include "Editor/SpaceController/CPropertyController.h"
 #include "Editor/SpaceController/CAssetPropertyController.h"
 #include "GUI/Input/CInput.h"
 #include "Entity/CEntityHandleData.h"
+
+#include "SceneExporter/CExportRenderMesh.h"
+#include "SceneExporter/CExportCollider.h"
 
 namespace Skylicht
 {
@@ -120,7 +124,7 @@ namespace Skylicht
 
 			GUI::CMenu* submenu = templateMenu->getMenu();
 			submenu->addItem(L"Render Mesh to .OBJ", GUI::ESystemIcon::Export);
-			submenu->addItem(L"Collider to .OBJ", GUI::ESystemIcon::Export);
+			// submenu->addItem(L"Collider to .OBJ", GUI::ESystemIcon::Export);
 			submenu->OnCommand = BIND_LISTENER(&CContextMenuScene::OnContextMenuExportCommand, this);
 		}
 
@@ -375,11 +379,33 @@ namespace Skylicht
 			if (menuItem == NULL)
 				return;
 
+			if (!m_contextNode->isTagGameObject())
+				return;
+
+			CGameObject* gameObject = (CGameObject*)m_contextNode->getTagData();
+			if (!gameObject)
+				return;
+
 			const std::wstring& command = menuItem->getLabel();
 
 			if (command == L"Render Mesh to .OBJ")
 			{
+				CExportRenderMesh exporter;
+				exporter.addGameObject(gameObject);
 
+				CEntity** entities = exporter.getPrefab()->getEntities();
+				u32 numEntity = exporter.getPrefab()->getNumEntities();
+
+				CAssetManager* assetMgr = CAssetManager::getInstance();
+				CAssetCreateController* assetCreate = CAssetCreateController::getInstance();
+
+				std::string pattern = std::string("/") + std::string(gameObject->getNameA());
+				pattern += "_%02d.obj";
+
+				std::string output = assetMgr->generateAssetPath(pattern.c_str(), assetCreate->getCurrentFolder().c_str());
+
+				if (CMeshManager::getInstance()->exportModel(entities, numEntity, output.c_str()))
+					assetCreate->importAndSelect(output.c_str());
 			}
 			else if (command == L"Collider to .OBJ")
 			{

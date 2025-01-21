@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2025 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
@@ -24,49 +24,32 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CSingleton.h"
-#include "Editor/Space/Assets/CSpaceAssets.h"
+#include "RenderMesh/CRenderMesh.h"
+#include "Entity/CEntityPrefab.h"
+
+#include "GameObject/CGameObject.h"
+#include "GameObject/CContainerObject.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CAssetCreateController
+		class CExportRenderMesh
 		{
-		public:
-			DECLARE_SINGLETON(CAssetCreateController)
-
-			std::string m_currentFolder;
-
-			CSpace* m_lastSpace;
+		protected:
+			CEntityPrefab* m_prefab;
 
 		public:
-			CAssetCreateController();
+			CExportRenderMesh();
 
-			virtual ~CAssetCreateController();
+			~CExportRenderMesh();
 
-			void createEmptyMaterial();
+			void addGameObject(CGameObject* object);
 
-			void createEmptyScene();
-
-			void createEmptyFont();
-
-			void createEmptySprite();
-
-			void createEmptyGUI();
-
-			void createTemplate(CGameObject* obj);
-
-			void applyTemplate(CGameObject* obj);
-
-			void setActivateSpace(CSpace* space);
-
-			void setCurrentFolder(CSpace* space, const char* path);
-
-			const std::string& getCurrentFolder();
-
-			void importAndSelect(const char* path);
-
+			inline CEntityPrefab* getPrefab()
+			{
+				return m_prefab;
+			}
 		};
 	}
 }

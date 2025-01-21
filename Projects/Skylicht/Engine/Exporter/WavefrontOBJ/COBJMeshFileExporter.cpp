@@ -78,7 +78,6 @@ namespace Skylicht
 				file->write(objName.c_str(), objName.size());
 
 				allVertexCount = writeMesh(file, mesh, transform->World, allVertexCount);
-				break;
 			}
 		}
 

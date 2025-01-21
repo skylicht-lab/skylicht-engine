@@ -77,6 +77,7 @@ namespace Skylicht
 		removeAllEntities();
 
 		m_renderers.clear();
+		m_renderTransforms.clear();
 		m_entities.clear();
 	}
 
