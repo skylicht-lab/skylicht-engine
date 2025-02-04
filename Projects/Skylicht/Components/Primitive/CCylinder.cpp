@@ -1,17 +1,17 @@
 #include "pch.h"
-#include "CCapsule.h"
-#include "LatheMesh/CCapsuleMesh.h"
+#include "CCylinder.h"
+#include "LatheMesh/CCylinderMesh.h"
 #include "RenderMesh/CRenderMeshData.h"
 #include "Culling/CCullingData.h"
 #include "Material/CMaterialManager.h"
 
 namespace Skylicht
 {
-	ACTIVATOR_REGISTER(CCapsule);
+	ACTIVATOR_REGISTER(CCylinder);
 
-	CATEGORY_COMPONENT(CCapsule, "Capsule", "Renderer/Primitive");
+	CATEGORY_COMPONENT(CCylinder, "Cylinder", "Renderer/Primitive");
 
-	CCapsule::CCapsule() :
+	CCylinder::CCylinder() :
 		m_material(NULL),
 		m_customMaterial(NULL),
 		m_useNormalMap(true),
@@ -23,7 +23,7 @@ namespace Skylicht
 
 	}
 
-	CCapsule::~CCapsule()
+	CCylinder::~CCylinder()
 	{
 		if (m_material)
 		{
@@ -32,7 +32,7 @@ namespace Skylicht
 		}
 	}
 
-	void CCapsule::initComponent()
+	void CCylinder::initComponent()
 	{
 		m_material = new CMaterial("Capsule", "BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");
 		m_material->setUniform4("uColor", m_color);
@@ -41,12 +41,12 @@ namespace Skylicht
 		init();
 	}
 
-	void CCapsule::updateComponent()
+	void CCylinder::updateComponent()
 	{
 
 	}
 
-	CObjectSerializable* CCapsule::createSerializable()
+	CObjectSerializable* CCylinder::createSerializable()
 	{
 		CObjectSerializable* object = CComponentSystem::createSerializable();
 
@@ -70,7 +70,7 @@ namespace Skylicht
 		return object;
 	}
 
-	void CCapsule::loadSerializable(CObjectSerializable* object)
+	void CCylinder::loadSerializable(CObjectSerializable* object)
 	{
 		CComponentSystem::loadSerializable(object);
 
@@ -128,13 +128,13 @@ namespace Skylicht
 		}
 	}
 
-	void CCapsule::init()
+	void CCylinder::init()
 	{
 		CEntity* entity = m_gameObject->getEntity();
 
 		// init capsule mesh
-		CCapsuleMesh capsuleMesh;
-		capsuleMesh.init(
+		CCylinderMesh cylinderMesh;
+		cylinderMesh.init(
 			m_radius,
 			m_height,
 			m_useCustomMaterial && m_customMaterial ? m_customMaterial : m_material,
@@ -146,7 +146,7 @@ namespace Skylicht
 		if (renderMesh == NULL)
 			renderMesh = entity->addData<CRenderMeshData>();
 
-		renderMesh->setShareMesh(capsuleMesh.getMesh());
+		renderMesh->setShareMesh(cylinderMesh.getMesh());
 
 		// add culling
 		CCullingData* culling = entity->getData<CCullingData>();

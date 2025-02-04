@@ -59,8 +59,6 @@ namespace Skylicht
 
 		void CGPrimitives::updateSelectBBox()
 		{
-			CEntityManager* entityMgr = m_gameObject->getEntityManager();
-
 			core::array<CEntity*>& entities = m_primitive->getEntities();
 			for (u32 i = 0, n = entities.size(); i < n; i++)
 			{

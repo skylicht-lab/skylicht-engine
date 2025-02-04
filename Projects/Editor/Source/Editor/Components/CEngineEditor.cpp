@@ -40,6 +40,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Primitive/CCube.h"
 #include "Primitive/CSphere.h"
 #include "Primitive/CPlane.h"
+#include "Primitive/CCapsule.h"
+#include "Primitive/CCylinder.h"
 
 #ifdef BUILD_SKYLICHT_PHYSIC
 #include "Collider/CBoxCollider.h"
@@ -81,6 +83,8 @@ namespace Skylicht
 		USE_COMPONENT(CCube);
 		USE_COMPONENT(CSphere);
 		USE_COMPONENT(CPlane);
+		USE_COMPONENT(CCapsule);
+		USE_COMPONENT(CCylinder);
 
 #ifdef BUILD_SKYLICHT_PHYSIC
 		USE_COMPONENT(CRigidbody);

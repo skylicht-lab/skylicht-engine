@@ -4,7 +4,7 @@
 
 namespace Skylicht
 {
-	class COMPONENT_API CCapsule : public CComponentSystem
+	class COMPONENT_API CCylinder : public CComponentSystem
 	{
 	protected:
 		float m_radius;
@@ -20,9 +20,9 @@ namespace Skylicht
 		SColor m_color;
 
 	public:
-		CCapsule();
+		CCylinder();
 
-		virtual ~CCapsule();
+		virtual ~CCylinder();
 
 		virtual void initComponent();
 
@@ -59,6 +59,6 @@ namespace Skylicht
 
 		virtual void loadSerializable(CObjectSerializable* object);
 
-		DECLARE_GETTYPENAME(CCapsule)
+		DECLARE_GETTYPENAME(CCylinder)
 	};
 }
