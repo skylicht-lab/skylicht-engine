@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ComponentsConfig.h"
 #include "CLine3D.h"
 #include "RenderMesh/CMesh.h"
 #include "Material/CMaterial.h"

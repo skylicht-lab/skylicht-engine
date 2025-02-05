@@ -24,10 +24,32 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "RenderMesh/CRenderMesh.h"
+#include "Entity/CEntityPrefab.h"
+
+#include "GameObject/CGameObject.h"
+#include "GameObject/CContainerObject.h"
+
 namespace Skylicht
 {
 	namespace Editor
 	{
+		class CExportCollider
+		{
+		protected:
+			CEntityPrefab* m_prefab;
 
+		public:
+			CExportCollider();
+
+			~CExportCollider();
+
+			void addGameObject(CGameObject* object);
+
+			inline CEntityPrefab* getPrefab()
+			{
+				return m_prefab;
+			}
+		};
 	}
 }
