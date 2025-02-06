@@ -41,6 +41,9 @@ namespace Skylicht
 
 		void CExportRenderMesh::addGameObject(CGameObject* object)
 		{
+			if (!object->isVisible())
+				return;
+
 			CRenderMesh* renderMesh = object->getComponent<CRenderMesh>();
 			if (renderMesh)
 			{

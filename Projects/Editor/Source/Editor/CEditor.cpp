@@ -445,10 +445,9 @@ namespace Skylicht
 			submenu->addItem(L"Cube");
 			submenu->addItem(L"Sphere");
 			submenu->addItem(L"Plane");
-			/*
 			submenu->addItem(L"Capsule");
 			submenu->addItem(L"Cylinder");
-			*/
+
 			submenu->addSeparator();
 
 			submenu->addItem(L"Skydome");

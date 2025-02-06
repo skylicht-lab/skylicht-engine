@@ -10,6 +10,10 @@ if (BUILD_BULLET_PHYSIC_LIB)
 include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/Bullet3/src)
 endif()
 
+if (BUILD_SKYLICHT_COMPONENTS)
+include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Components)
+endif()
+
 file(GLOB_RECURSE skylicht_physics 
 	./*.cpp 
 	./*.hpp 
@@ -30,6 +34,10 @@ target_precompiled_header(Physics ./pch.cpp ${skylicht_physics})
 set_target_properties(Physics PROPERTIES VERSION ${SKYLICHT_VERSION})
 
 target_link_libraries(Physics PRIVATE Engine System)
+
+if (BUILD_SKYLICHT_COMPONENTS)
+target_link_libraries(Physics PRIVATE Components)
+endif()
 
 if (BUILD_BULLET_PHYSIC_LIB)
 target_link_libraries(Physics PRIVATE LinearMath Bullet3Common BulletCollision BulletDynamics BulletInverseDynamics BulletSoftBody)

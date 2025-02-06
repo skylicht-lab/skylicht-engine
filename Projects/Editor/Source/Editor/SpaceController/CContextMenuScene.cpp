@@ -124,7 +124,7 @@ namespace Skylicht
 
 			GUI::CMenu* submenu = templateMenu->getMenu();
 			submenu->addItem(L"Render Mesh to .OBJ", GUI::ESystemIcon::Export);
-			// submenu->addItem(L"Collider to .OBJ", GUI::ESystemIcon::Export);
+			submenu->addItem(L"Collider to .OBJ", GUI::ESystemIcon::Export);
 			submenu->OnCommand = BIND_LISTENER(&CContextMenuScene::OnContextMenuExportCommand, this);
 		}
 
@@ -409,7 +409,22 @@ namespace Skylicht
 			}
 			else if (command == L"Collider to .OBJ")
 			{
+				CExportCollider exporter;
+				exporter.addGameObject(gameObject);
 
+				CEntity** entities = exporter.getPrefab()->getEntities();
+				u32 numEntity = exporter.getPrefab()->getNumEntities();
+
+				CAssetManager* assetMgr = CAssetManager::getInstance();
+				CAssetCreateController* assetCreate = CAssetCreateController::getInstance();
+
+				std::string pattern = std::string("/") + std::string(gameObject->getNameA());
+				pattern += "_%02d.obj";
+
+				std::string output = assetMgr->generateAssetPath(pattern.c_str(), assetCreate->getCurrentFolder().c_str());
+
+				if (CMeshManager::getInstance()->exportModel(entities, numEntity, output.c_str()))
+					assetCreate->importAndSelect(output.c_str());
 			}
 		}
 	}

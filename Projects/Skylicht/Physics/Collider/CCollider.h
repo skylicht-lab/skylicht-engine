@@ -30,6 +30,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include <btBulletCollisionCommon.h>
 #endif
 
+#include "RenderMesh/CMesh.h"
+
 namespace Skylicht
 {
 	namespace Physics
@@ -87,6 +89,13 @@ namespace Skylicht
 			{
 				return m_dynamicSupport;
 			}
+
+			CMesh* generateMesh();
+
+		protected:
+
+			CMesh* generateMesh(IMesh* primitive, bool tangent);
+
 		};
 	}
 }

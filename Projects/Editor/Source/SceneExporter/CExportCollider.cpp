@@ -25,10 +25,67 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CExportCollider.h"
 
+#ifdef BUILD_SKYLICHT_PHYSIC
+#include "Collider/CCollider.h"
+#endif
+
 namespace Skylicht
 {
 	namespace Editor
 	{
+		CExportCollider::CExportCollider()
+		{
+			m_prefab = new CEntityPrefab();
+		}
 
+		CExportCollider::~CExportCollider()
+		{
+			delete m_prefab;
+		}
+
+		void CExportCollider::addGameObject(CGameObject* object)
+		{
+#ifdef BUILD_SKYLICHT_PHYSIC
+			if (!object->isVisible())
+				return;
+
+			Physics::CCollider* collider = object->getComponent<Physics::CCollider>();
+			if (collider)
+			{
+				CMesh* mesh = collider->generateMesh();
+				if (mesh)
+				{
+					std::string objName = object->getNameA();
+
+					CWorldTransformData* transform = GET_ENTITY_DATA(object->getEntity(), CWorldTransformData);
+
+					CEntity* entity = m_prefab->createEntity();
+					CRenderMeshData* renderData = entity->addData<CRenderMeshData>();
+					renderData->setMesh(mesh);
+
+					std::string renderName = objName;
+					renderName += "_";
+					renderName += transform->Name;
+
+					m_prefab->addTransformData(entity, NULL, transform->World, renderName.c_str());
+
+					CWorldTransformData* transformData = entity->getData<CWorldTransformData>();
+					transformData->World = transform->World;
+
+					mesh->drop();
+				}
+			}
+
+			CContainerObject* container = dynamic_cast<CContainerObject*>(object);
+			if (container)
+			{
+				ArrayGameObject* childs = container->getChilds();
+				for (CGameObject* go : *childs)
+				{
+					addGameObject(go);
+				}
+			}
+#endif
+		}
 	}
 }
