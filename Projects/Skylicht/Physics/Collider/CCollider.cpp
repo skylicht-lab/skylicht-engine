@@ -42,6 +42,134 @@ namespace Skylicht
 {
 	namespace Physics
 	{
+
+#ifdef USE_BULLET_PHYSIC_ENGINE
+		class TrangleDrawcallback : public btTriangleCallback, public btInternalTriangleIndexCallback
+		{
+		protected:
+			core::array<core::vector3df> m_vertices;
+			core::array<core::vector3df> m_normals;
+			core::array<u32> m_n;
+			core::array<u32> m_indices;
+
+			std::map<core::vector3df, u32> m_vid;
+		public:
+			TrangleDrawcallback()
+			{
+
+			}
+
+			virtual void internalProcessTriangleIndex(btVector3* triangle, int partId, int triangleIndex)
+			{
+				processTriangle(triangle, partId, triangleIndex);
+			}
+
+			virtual void processTriangle(btVector3* triangle, int partId, int triangleIndex)
+			{
+				(void)partId;
+				(void)triangleIndex;
+
+				core::vector3df a, b, c;
+				a.set(triangle[0].x(), triangle[0].y(), triangle[0].z());
+				b.set(triangle[1].x(), triangle[1].y(), triangle[1].z());
+				c.set(triangle[2].x(), triangle[2].y(), triangle[2].z());
+
+				core::vector3df normal = (b - a).crossProduct(c - a);
+				normal.normalize();
+
+				u32 ia, ib, ic;
+
+				// A
+				auto it = m_vid.find(a);
+				if (it == m_vid.end())
+				{
+					ia = m_vertices.size();
+					m_vid[a] = ia;
+					m_vertices.push_back(a);
+					m_normals.push_back(normal);
+					m_n.push_back(1);
+				}
+				else
+				{
+					ia = it->second;
+					m_normals[ia] += normal;
+					m_n[ia]++;
+				}
+
+				// B
+				it = m_vid.find(b);
+				if (it == m_vid.end())
+				{
+					ib = m_vertices.size();
+					m_vid[b] = ib;
+					m_vertices.push_back(b);
+					m_normals.push_back(normal);
+					m_n.push_back(1);
+				}
+				else
+				{
+					ib = it->second;
+					m_normals[ib] += normal;
+					m_n[ib]++;
+				}
+
+				// C
+				it = m_vid.find(c);
+				if (it == m_vid.end())
+				{
+					ic = m_vertices.size();
+					m_vid[c] = ic;
+					m_vertices.push_back(c);
+					m_normals.push_back(normal);
+					m_n.push_back(1);
+				}
+				else
+				{
+					ic = it->second;
+					m_normals[ic] += normal;
+					m_n[ic]++;
+				}
+
+				m_indices.push_back(ia);
+				m_indices.push_back(ib);
+				m_indices.push_back(ic);
+			}
+
+			CMesh* getMesh()
+			{
+				IVideoDriver* driver = getVideoDriver();
+				CMesh* mesh = new CMesh();
+
+				IMeshBuffer* meshBuffer = new CMeshBuffer<S3DVertex>(driver->getVertexDescriptor(EVT_STANDARD), EIT_16BIT);
+				IIndexBuffer* ib = meshBuffer->getIndexBuffer();
+				IVertexBuffer* vb = meshBuffer->getVertexBuffer();
+
+				for (u32 i = 0, n = m_vertices.size(); i < n; i++)
+				{
+					S3DVertex v;
+					v.Pos = m_vertices[i];
+					v.Normal = m_normals[i] / (float)m_n[i];
+					v.Normal.normalize();
+					vb->addVertex(&v);
+				}
+
+				for (u32 i = 0, n = m_indices.size(); i < n; i++)
+				{
+					ib->addIndex(m_indices[i]);
+				}
+
+				mesh->addMeshBuffer(meshBuffer);
+				meshBuffer->recalculateBoundingBox();
+
+				mesh->recalculateBoundingBox();
+				mesh->setHardwareMappingHint(EHM_STATIC);
+
+				meshBuffer->drop();
+				return mesh;
+			}
+		};
+#endif
+
 		CCollider::CCollider() :
 			m_colliderType(Unknown),
 			m_dynamicSupport(true)
@@ -145,7 +273,10 @@ namespace Skylicht
 					btScalar radius = capsuleShape->getRadius();
 					btScalar halfHeight = capsuleShape->getHalfHeight();
 
-
+					CCapsuleMesh capsuleMesh;
+					capsuleMesh.init(radius, halfHeight * 2.0f, NULL, false);
+					mesh = capsuleMesh.getMesh();
+					mesh->grab();
 
 					break;
 				}
@@ -161,7 +292,10 @@ namespace Skylicht
 					btScalar radius = cylinder->getRadius();
 					btScalar halfHeight = cylinder->getHalfExtentsWithMargin()[upAxis];
 
-
+					CCylinderMesh cylinderMesh;
+					cylinderMesh.init(radius, halfHeight * 2.0f, NULL, false);
+					mesh = cylinderMesh.getMesh();
+					mesh->grab();
 
 					break;
 				}
@@ -176,24 +310,33 @@ namespace Skylicht
 				}
 				default:
 				{
-					/// for polyhedral shapes
 					if (m_shape->isPolyhedral())
 					{
-
+						return NULL;
 					}
-
-					if (m_shape->isConcave())
+					else if (m_shape->isConcave())
 					{
+						btConcaveShape* concaveMesh = (btConcaveShape*)m_shape;
 
+						btVector3 aabbMax(btScalar(BT_LARGE_FLOAT), btScalar(BT_LARGE_FLOAT), btScalar(BT_LARGE_FLOAT));
+						btVector3 aabbMin(btScalar(-BT_LARGE_FLOAT), btScalar(-BT_LARGE_FLOAT), btScalar(-BT_LARGE_FLOAT));
+
+						TrangleDrawcallback triangleCallback;
+						concaveMesh->processAllTriangles(&triangleCallback, aabbMin, aabbMax);
+						mesh = triangleCallback.getMesh();
 					}
-
-					if (m_shape->getShapeType() == CONVEX_TRIANGLEMESH_SHAPE_PROXYTYPE)
+					else if (m_shape->getShapeType() == CONVEX_TRIANGLEMESH_SHAPE_PROXYTYPE)
 					{
+						btConvexTriangleMeshShape* convexMesh = (btConvexTriangleMeshShape*)m_shape;
 
+						btVector3 aabbMax(btScalar(BT_LARGE_FLOAT), btScalar(BT_LARGE_FLOAT), btScalar(BT_LARGE_FLOAT));
+						btVector3 aabbMin(btScalar(-BT_LARGE_FLOAT), btScalar(-BT_LARGE_FLOAT), btScalar(-BT_LARGE_FLOAT));
+
+						TrangleDrawcallback triangleCallback;
+						convexMesh->getMeshInterface()->InternalProcessAllTriangles(&triangleCallback, aabbMin, aabbMax);
+						mesh = triangleCallback.getMesh();
 					}
 
-					// todo later
-					return NULL;
 				} // default
 				}
 			}
@@ -204,7 +347,6 @@ namespace Skylicht
 #endif
 		}
 
-#ifdef USE_BULLET_PHYSIC_ENGINE
 		CMesh* CCollider::generateMesh(IMesh* primitive, bool tangent)
 		{
 			CMesh* mesh = new CMesh();
@@ -222,7 +364,6 @@ namespace Skylicht
 
 			return mesh;
 		}
-#endif
 
+		}
 	}
-}

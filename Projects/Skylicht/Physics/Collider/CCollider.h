@@ -94,9 +94,8 @@ namespace Skylicht
 
 		protected:
 
-#ifdef USE_BULLET_PHYSIC_ENGINE
 			CMesh* generateMesh(IMesh* primitive, bool tangent);
-#endif
+
 		};
 	}
 }
