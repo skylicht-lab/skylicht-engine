@@ -78,6 +78,8 @@ namespace Skylicht
 			CComponentSystem::loadSerializable(object);
 			m_normal = object->get<core::vector3df>("normal", core::vector3df(0.0f, 1.0f, 0.0f));
 			m_d = object->get<float>("d", 0.0f);
+
+			initRigidbody();
 		}
 
 #ifdef USE_BULLET_PHYSIC_ENGINE

@@ -43,7 +43,7 @@ namespace Skylicht
 			delete m_prefab;
 		}
 
-		void CExportCollider::addGameObject(CGameObject* object)
+		void CExportCollider::getBBox(CGameObject* object, core::aabbox3df& box, bool setBBox)
 		{
 #ifdef BUILD_SKYLICHT_PHYSIC
 			if (!object->isVisible())
@@ -52,7 +52,39 @@ namespace Skylicht
 			Physics::CCollider* collider = object->getComponent<Physics::CCollider>();
 			if (collider)
 			{
-				CMesh* mesh = collider->generateMesh();
+				if (setBBox)
+				{
+					box = collider->getBBox();
+					setBBox = false;
+				}
+				else
+				{
+					box.addInternalBox(collider->getBBox());
+				}
+			}
+
+			CContainerObject* container = dynamic_cast<CContainerObject*>(object);
+			if (container)
+			{
+				ArrayGameObject* childs = container->getChilds();
+				for (CGameObject* go : *childs)
+				{
+					getBBox(go, box, false);
+				}
+			}
+#endif
+		}
+
+		void CExportCollider::addGameObject(CGameObject* object, const core::aabbox3df& maxBbox)
+		{
+#ifdef BUILD_SKYLICHT_PHYSIC
+			if (!object->isVisible())
+				return;
+
+			Physics::CCollider* collider = object->getComponent<Physics::CCollider>();
+			if (collider)
+			{
+				CMesh* mesh = collider->generateMesh(maxBbox);
 				if (mesh)
 				{
 					std::string objName = object->getNameA();
@@ -82,7 +114,7 @@ namespace Skylicht
 				ArrayGameObject* childs = container->getChilds();
 				for (CGameObject* go : *childs)
 				{
-					addGameObject(go);
+					addGameObject(go, maxBbox);
 				}
 			}
 #endif

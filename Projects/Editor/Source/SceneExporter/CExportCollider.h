@@ -44,7 +44,9 @@ namespace Skylicht
 
 			~CExportCollider();
 
-			void addGameObject(CGameObject* object);
+			void getBBox(CGameObject* object, core::aabbox3df& box, bool setBBox = true);
+
+			void addGameObject(CGameObject* object, const core::aabbox3df& maxBbox);
 
 			inline CEntityPrefab* getPrefab()
 			{

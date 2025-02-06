@@ -217,9 +217,39 @@ namespace Skylicht
 			size.Z = core::max_(size.Z, 0.0f);
 		}
 
-		CMesh* CCollider::generateMesh()
+		core::aabbox3df CCollider::getBBox()
 		{
-#if defined(USE_BULLET_PHYSIC_ENGINE) && defined(BUILD_SKYLICHT_COMPONENTS)
+			core::aabbox3df box;
+
+#if defined(USE_BULLET_PHYSIC_ENGINE)
+			if (m_shape == NULL)
+				return box;
+
+			if (m_shape->getShapeType() == STATIC_PLANE_PROXYTYPE)
+				return box;
+
+			CRigidbody* rigidBody = m_gameObject->getComponent<CRigidbody>();
+			if (!rigidBody)
+				return box;
+
+			btRigidBody* btBody = rigidBody->getBody();
+			if (btBody == NULL)
+				return box;
+
+			btVector3 min, max;
+			m_shape->getAabb(btBody->getWorldTransform(), min, max);
+
+			box.MinEdge.set(min.x(), min.y(), min.z());
+			box.MaxEdge.set(max.x(), max.y(), max.z());
+#endif
+
+			return box;
+
+		}
+
+		CMesh* CCollider::generateMesh(const core::aabbox3df& maxBBox)
+		{
+#if defined(USE_BULLET_PHYSIC_ENGINE)
 			if (m_shape == NULL)
 				return NULL;
 
@@ -232,7 +262,6 @@ namespace Skylicht
 			if (m_shape->getShapeType() == COMPOUND_SHAPE_PROXYTYPE)
 			{
 				// todo later
-				return NULL;
 			}
 			else
 			{
@@ -263,11 +292,11 @@ namespace Skylicht
 				}
 				case MULTI_SPHERE_SHAPE_PROXYTYPE:
 				{
-					// later
-					return NULL;
+					break;
 				}
 				case CAPSULE_SHAPE_PROXYTYPE:
 				{
+#ifdef BUILD_SKYLICHT_COMPONENTS
 					const btCapsuleShape* capsuleShape = static_cast<const btCapsuleShape*>(m_shape);
 
 					btScalar radius = capsuleShape->getRadius();
@@ -277,16 +306,16 @@ namespace Skylicht
 					capsuleMesh.init(radius, halfHeight * 2.0f, NULL, false);
 					mesh = capsuleMesh.getMesh();
 					mesh->grab();
-
+#endif;
 					break;
 				}
 				case CONE_SHAPE_PROXYTYPE:
 				{
-					// later
-					return NULL;
+					break;
 				}
 				case CYLINDER_SHAPE_PROXYTYPE:
 				{
+#ifdef BUILD_SKYLICHT_COMPONENTS
 					const btCylinderShape* cylinder = static_cast<const btCylinderShape*>(m_shape);
 					int upAxis = cylinder->getUpAxis();
 					btScalar radius = cylinder->getRadius();
@@ -296,15 +325,22 @@ namespace Skylicht
 					cylinderMesh.init(radius, halfHeight * 2.0f, NULL, false);
 					mesh = cylinderMesh.getMesh();
 					mesh->grab();
-
+#endif
 					break;
 				}
 
 				case STATIC_PLANE_PROXYTYPE:
 				{
 					const btStaticPlaneShape* staticPlaneShape = static_cast<const btStaticPlaneShape*>(m_shape);
-					btScalar planeConst = staticPlaneShape->getPlaneConstant();
+					const btScalar planeConst = staticPlaneShape->getPlaneConstant();
 					const btVector3& planeNormal = staticPlaneShape->getPlaneNormal();
+
+					core::vector3df size = maxBBox.getExtent();
+					size.X = core::max_(size.X, 10.0f);
+					size.Z = core::max_(size.Z, 10.0f);
+
+					core::plane3df p(Bullet::bulletVectorToIrrVector(planeNormal), planeConst);
+					mesh = getPlane(p, size.X, size.Z);
 
 					break;
 				}
@@ -365,5 +401,97 @@ namespace Skylicht
 			return mesh;
 		}
 
+		CMesh* CCollider::getPlane(const core::plane3df& plane, float sizeX, float sizeZ)
+		{
+			// Copilot: Can you write a C language function convert a plane 3D (D, Normal) to OpenGL vertex, indices, plane have size param X, Z
+			core::vector3df normal = plane.Normal;
+			normal.normalize();
+
+			// Find a point on the plane using the distance from the origin
+			core::vector3df pointOnPlane(
+				plane.D * normal.X,
+				plane.D * normal.Y,
+				plane.D * normal.Z
+			);
+
+			// Generate two perpendicular vectors on the plane
+			core::vector3df tangent(1.0f, 0.0f, 0.0f);
+			if (fabs(normal.X) > 0.9f)
+				tangent.set(0.0f, 1.0f, 0.0f);
+
+			core::vector3df bitangent = normal.crossProduct(tangent);
+			tangent = bitangent.crossProduct(normal);
+
+			// Normalize the tangent and bitangent
+			tangent.normalize();
+			bitangent.normalize();
+
+			// Allocate memory for vertices and indices
+			IVideoDriver* driver = getVideoDriver();
+			CMesh* mesh = new CMesh();
+
+			IMeshBuffer* meshBuffer = new CMeshBuffer<S3DVertex>(driver->getVertexDescriptor(EVT_STANDARD), EIT_16BIT);
+			IIndexBuffer* ib = meshBuffer->getIndexBuffer();
+			IVertexBuffer* vb = meshBuffer->getVertexBuffer();
+
+			S3DVertex v;
+			v.Normal = normal;
+
+			{
+				// Calculate the plane's vertices
+				v.Pos = core::vector3df(
+					pointOnPlane.X + (-sizeX / 2) * tangent.X + (-sizeZ / 2) * bitangent.X,
+					pointOnPlane.Y + (-sizeX / 2) * tangent.Y + (-sizeZ / 2) * bitangent.Y,
+					pointOnPlane.Z + (-sizeX / 2) * tangent.Z + (-sizeZ / 2) * bitangent.Z
+				);
+				vb->addVertex(&v);
+			}
+
+			{
+				v.Pos = core::vector3df(
+					pointOnPlane.X + (sizeX / 2) * tangent.X + (-sizeZ / 2) * bitangent.X,
+					pointOnPlane.Y + (sizeX / 2) * tangent.Y + (-sizeZ / 2) * bitangent.Y,
+					pointOnPlane.Z + (sizeX / 2) * tangent.Z + (-sizeZ / 2) * bitangent.Z
+				);
+				vb->addVertex(&v);
+			}
+
+			{
+				v.Pos = core::vector3df(
+					pointOnPlane.X + (sizeX / 2) * tangent.X + (sizeZ / 2) * bitangent.X,
+					pointOnPlane.Y + (sizeX / 2) * tangent.Y + (sizeZ / 2) * bitangent.Y,
+					pointOnPlane.Z + (sizeX / 2) * tangent.Z + (sizeZ / 2) * bitangent.Z
+				);
+				vb->addVertex(&v);
+			}
+
+			{
+				v.Pos = core::vector3df(
+					pointOnPlane.X + (-sizeX / 2) * tangent.X + (sizeZ / 2) * bitangent.X,
+					pointOnPlane.Y + (-sizeX / 2) * tangent.Y + (sizeZ / 2) * bitangent.Y,
+					pointOnPlane.Z + (-sizeX / 2) * tangent.Z + (sizeZ / 2) * bitangent.Z
+				);
+				vb->addVertex(&v);
+			}
+
+			// Define the indices for the plane's two triangles
+			ib->addIndex(0);
+			ib->addIndex(1);
+			ib->addIndex(2);
+
+			ib->addIndex(2);
+			ib->addIndex(3);
+			ib->addIndex(0);
+
+
+			mesh->addMeshBuffer(meshBuffer);
+			meshBuffer->recalculateBoundingBox();
+
+			mesh->recalculateBoundingBox();
+			mesh->setHardwareMappingHint(EHM_STATIC);
+
+			meshBuffer->drop();
+			return mesh;
 		}
 	}
+}

@@ -410,7 +410,10 @@ namespace Skylicht
 			else if (command == L"Collider to .OBJ")
 			{
 				CExportCollider exporter;
-				exporter.addGameObject(gameObject);
+
+				core::aabbox3df bbox;
+				exporter.getBBox(gameObject, bbox);
+				exporter.addGameObject(gameObject, bbox);
 
 				CEntity** entities = exporter.getPrefab()->getEntities();
 				u32 numEntity = exporter.getPrefab()->getNumEntities();

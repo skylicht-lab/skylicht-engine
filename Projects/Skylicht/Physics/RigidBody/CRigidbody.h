@@ -188,8 +188,6 @@ namespace Skylicht
 				return m_drawDebug;
 			}
 
-		private:
-
 #ifdef USE_BULLET_PHYSIC_ENGINE
 			inline btRigidBody* getBody()
 			{
