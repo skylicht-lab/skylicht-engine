@@ -164,6 +164,7 @@ namespace Skylicht
 							indirectData->SH[j].set(probe->SH[j]);
 						}
 
+						*indirectData->Intensity = probe->Intensity;
 						indirectData->InvalidateProbe = false;
 					}
 

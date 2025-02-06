@@ -114,7 +114,7 @@ namespace Skylicht
 			for (u32 j = 0; j < ProbeMesh->getMeshBufferCount(); j++)
 			{
 				// Pass current sh const to shader callback
-				CShaderSH::setSH9(probes[i]->SH);
+				CShaderSH::setSH9(probes[i]->SH, probes[i]->Intensity);
 
 				IMeshBuffer* buffer = ProbeMesh->getMeshBuffer(j);
 				driver->setMaterial(buffer->getMaterial());

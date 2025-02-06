@@ -50,6 +50,7 @@ namespace Skylicht
 		std::vector<CIndirectLightingData*> m_data;
 
 		core::vector3df m_sh[9];
+		float m_intensity;
 
 		std::vector<std::string> m_indirectLMPaths;
 		ITexture* m_indirectLM;

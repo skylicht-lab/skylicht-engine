@@ -348,7 +348,7 @@ namespace Skylicht
 			}
 			else if (indirectData->Type == CIndirectLightingData::SH9 && indirectData->SH)
 			{
-				CShaderSH::setSH9(indirectData->SH);
+				CShaderSH::setSH9(indirectData->SH, *indirectData->Intensity);
 
 				// change shader to vertex color
 				SMaterial shMaterial;

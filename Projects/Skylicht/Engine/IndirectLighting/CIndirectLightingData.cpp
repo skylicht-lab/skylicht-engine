@@ -38,6 +38,7 @@ namespace Skylicht
 		AutoSH(NULL),
 		InvalidateProbe(true),
 		InvalidateReflection(true),
+		Intensity(NULL),
 		ReleaseSH(false)
 	{
 
@@ -51,10 +52,16 @@ namespace Skylicht
 	void CIndirectLightingData::initSH()
 	{
 		Type = CIndirectLightingData::SH9;
-		AutoSH = new bool();
+
 		SH = new core::vector3df[9];
-		ReleaseSH = true;
+
+		AutoSH = new bool();
+		Intensity = new float();
+
 		*AutoSH = true;
+		*Intensity = 1.0f;
+
+		ReleaseSH = true;
 	}
 
 	void CIndirectLightingData::releaseSH()
@@ -70,6 +77,11 @@ namespace Skylicht
 			{
 				delete AutoSH;
 				AutoSH = NULL;
+			}
+			if (Intensity)
+			{
+				delete Intensity;
+				Intensity = NULL;
 			}
 			ReleaseSH = false;
 		}

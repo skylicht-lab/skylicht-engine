@@ -41,7 +41,8 @@ namespace Skylicht
 		m_type(SH9),
 		m_autoSH(true),
 		m_internalIndirectLM(false),
-		m_indirectLM(NULL)
+		m_indirectLM(NULL),
+		m_intensity(1.0f)
 	{
 
 	}
@@ -108,6 +109,7 @@ namespace Skylicht
 		data->Type = (CIndirectLightingData::EType)m_type;
 		data->SH = m_sh;
 		data->AutoSH = &m_autoSH;
+		data->Intensity = &m_intensity;
 		data->ReleaseSH = false;
 
 		if (std::find(m_data.begin(), m_data.end(), data) == m_data.end())

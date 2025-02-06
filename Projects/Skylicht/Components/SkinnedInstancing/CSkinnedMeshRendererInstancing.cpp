@@ -336,7 +336,7 @@ namespace Skylicht
 			if (indirectLighting != NULL && indirectLighting->SH != NULL)
 			{
 				// apply sh
-				CShaderSH::setSH9(indirectLighting->SH);
+				CShaderSH::setSH9(indirectLighting->SH, *indirectLighting->Intensity);
 			}
 
 			int materialCount = group->Materials.count();

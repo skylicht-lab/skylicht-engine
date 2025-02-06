@@ -32,6 +32,7 @@ namespace Skylicht
 	{
 	public:
 		core::vector3df SH[9];
+		float Intensity;
 
 		bool NeedValidate;
 

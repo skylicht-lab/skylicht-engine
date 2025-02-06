@@ -45,6 +45,8 @@ namespace Skylicht
 		bool* AutoSH;
 		core::vector3df* SH;
 
+		float* Intensity;
+
 		SColor Color;
 
 		ITexture* IndirectTexture;

@@ -38,7 +38,8 @@ namespace Skylicht
 
 	CATEGORY_COMPONENT(CLightProbes, "Light Probes", "Indirect Lighting");
 
-	CLightProbes::CLightProbes()
+	CLightProbes::CLightProbes() :
+		m_intensity(1.0f)
 	{
 	}
 
@@ -75,6 +76,8 @@ namespace Skylicht
 	{
 		CObjectSerializable* object = CComponentSystem::createSerializable();
 
+		object->autoRelease(new CFloatProperty(object, "Intensity", m_intensity, 0.0f, 2.0f));
+
 		CArraySerializable* probes = new CArraySerializable("Probes");
 		object->addProperty(probes);
 		object->autoRelease(probes);
@@ -103,6 +106,8 @@ namespace Skylicht
 	{
 		CComponentSystem::loadSerializable(object);
 
+		m_intensity = object->get<float>("Intensity", 1.0f);
+
 		CArraySerializable* probes = (CArraySerializable*)object->getProperty("Probes");
 		if (probes == NULL)
 			return;
@@ -127,6 +132,9 @@ namespace Skylicht
 			// set sh data
 			for (int j = 0; j < 9; j++)
 				light->SH[j] = shData->SH[j]->get();
+
+			// intensity
+			light->Intensity = m_intensity;
 		}
 	}
 

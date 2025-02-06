@@ -54,5 +54,10 @@ namespace Skylicht
 		{
 			m_probeData->NeedValidate = true;
 		}
+
+		inline void setIntensity(float intensity)
+		{
+			m_probeData->Intensity = intensity;
+		}
 	};
 }

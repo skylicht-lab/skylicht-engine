@@ -33,6 +33,7 @@ namespace Skylicht
 	class SKYLICHT_API CLightProbes : public CEntityHandler
 	{
 	protected:
+		float m_intensity;
 
 	public:
 		CLightProbes();
