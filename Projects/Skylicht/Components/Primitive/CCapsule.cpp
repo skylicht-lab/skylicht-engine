@@ -3,6 +3,7 @@
 #include "LatheMesh/CCapsuleMesh.h"
 #include "RenderMesh/CRenderMeshData.h"
 #include "Culling/CCullingData.h"
+#include "Transform/CWorldInverseTransformData.h"
 #include "Material/CMaterialManager.h"
 
 namespace Skylicht
@@ -149,6 +150,9 @@ namespace Skylicht
 		renderMesh->setShareMesh(capsuleMesh.getMesh());
 
 		// add culling
+		if (entity->getData<CWorldInverseTransformData>())
+			entity->addData<CWorldInverseTransformData>();
+
 		CCullingData* culling = entity->getData<CCullingData>();
 		if (culling == NULL)
 			culling = entity->addData<CCullingData>();

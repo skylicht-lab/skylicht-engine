@@ -67,6 +67,10 @@ namespace Skylicht
 
 			void importAndSelect(const char* path);
 
+		protected:
+
+			void syncTemplateIdToAllChild(CGameObject* gameObject);
+
 		};
 	}
 }

@@ -183,6 +183,37 @@ namespace Skylicht
 			canvas->remove();
 		}
 
+		void CAssetCreateController::syncTemplateIdToAllChild(CGameObject* obj)
+		{
+			std::string id = obj->getTemplateID();
+
+			CContainerObject* container = dynamic_cast<CContainerObject*>(obj);
+			if (container)
+			{
+				std::stack<CContainerObject*> stack;
+				stack.push(container);
+
+				while (!stack.empty())
+				{
+					CContainerObject* container = stack.top();
+					stack.pop();
+
+					ArrayGameObject* childs = container->getChilds();
+					for (CGameObject* child : *childs)
+					{
+						if (!child->isTemplateAsset())
+						{
+							child->setTemplateID(id.c_str());
+							child->setTemplateObjectID(child->getID().c_str());
+						}
+						CContainerObject* c = dynamic_cast<CContainerObject*>(child);
+						if (c)
+							stack.push(c);
+					}
+				}
+			}
+		}
+
 		void CAssetCreateController::createTemplate(CGameObject* obj)
 		{
 			CAssetManager* assetMgr = CAssetManager::getInstance();
@@ -210,31 +241,7 @@ namespace Skylicht
 			obj->setTemplateChanged(false);
 
 			// sync template id to all childs
-			CContainerObject* container = dynamic_cast<CContainerObject*>(obj);
-			if (container)
-			{
-				std::stack<CContainerObject*> stack;
-				stack.push(container);
-
-				while (!stack.empty())
-				{
-					CContainerObject* container = stack.top();
-					stack.pop();
-
-					ArrayGameObject* childs = container->getChilds();
-					for (CGameObject* child : *childs)
-					{
-						if (!child->isTemplateAsset())
-						{
-							child->setTemplateID(id.c_str());
-							child->setTemplateObjectID(child->getID().c_str());
-						}
-						CContainerObject* c = dynamic_cast<CContainerObject*>(child);
-						if (c)
-							stack.push(c);
-					}
-				}
-			}
+			syncTemplateIdToAllChild(obj);
 
 			// save .template
 			CObjectSerializable* data = CSceneExporter::exportGameObject(obj);
@@ -254,6 +261,9 @@ namespace Skylicht
 
 			std::string assetPath = obj->getTemplateAsset();
 			obj->setTemplateChanged(false);
+
+			// sync template id to all childs
+			syncTemplateIdToAllChild(obj);
 
 			// save .template
 			CObjectSerializable* data = CSceneExporter::exportGameObject(obj);

@@ -670,99 +670,115 @@ namespace Skylicht
 			if (m_scene == NULL || m_zone == NULL)
 				return;
 
+			CContainerObject* parent = NULL;
+			CSelectObject* selectedObject = CSelection::getInstance()->getLastSelected();
+			if (selectedObject)
+			{
+				if (selectedObject->getType() == CSelectObject::GameObject)
+				{
+					CGameObject* obj = m_scene->searchObjectInChildByID(selectedObject->getID().c_str());
+					if (obj != NULL)
+					{
+						parent = dynamic_cast<CContainerObject*>(obj);
+						if (parent == NULL)
+							parent = dynamic_cast<CContainerObject*>(obj->getParent());
+					}
+				}
+			}
+
 			if (objectType == L"Zone")
 			{
 				createZone();
 			}
 			if (objectType == L"Empty Object")
 			{
-				createEmptyObject(NULL);
+				createEmptyObject(parent);
 			}
 			else if (objectType == L"Container Object")
 			{
-				createContainerObject(NULL);
+				createContainerObject(parent);
 			}
 			else if (objectType == L"Skydome")
 			{
 				std::vector<std::string> components = { "CSkyDome" };
-				createComponentObject("Skydome", components, NULL);
+				createComponentObject("Skydome", components, parent);
 			}
 			else if (objectType == L"Skybox")
 			{
 				std::vector<std::string> components = { "CSkyBox" };
-				createComponentObject("Skybox", components, NULL);
+				createComponentObject("Skybox", components, parent);
 			}
 			else if (objectType == L"Sky")
 			{
 				std::vector<std::string> components = { "CSkySun" };
-				createComponentObject("Sky", components, NULL);
+				createComponentObject("Sky", components, parent);
 			}
 			else if (objectType == L"Mesh")
 			{
 				std::vector<std::string> components = { "CRenderMesh", "CIndirectLighting" };
-				createComponentObject("Mesh", components, NULL);
+				createComponentObject("Mesh", components, parent);
 			}
 			else if (objectType == L"Mesh Instancing")
 			{
 				std::vector<std::string> components = { "CRenderMeshInstancing", "CIndirectLighting" };
-				createComponentObject("Mesh Instancing", components, NULL);
+				createComponentObject("Mesh Instancing", components, parent);
 			}
 			else if (objectType == L"Direction Light")
 			{
 				std::vector<std::string> components = { "CDirectionalLight" };
-				CGameObject* go = createComponentObject("Direction Light", components, NULL);
+				CGameObject* go = createComponentObject("Direction Light", components, parent);
 				go->getTransformEuler()->setRotation(core::vector3df(90.0f, 0.0f, 0.0f));
 			}
 			else if (objectType == L"Point Light")
 			{
 				std::vector<std::string> components = { "CPointLight" };
-				createComponentObject("Point Light", components, NULL);
+				createComponentObject("Point Light", components, parent);
 			}
 			else if (objectType == L"Spot Light")
 			{
 				std::vector<std::string> components = { "CSpotLight" };
-				CGameObject* go = createComponentObject("Spotlight", components, NULL);
+				CGameObject* go = createComponentObject("Spotlight", components, parent);
 				go->getTransformEuler()->setRotation(core::vector3df(90.0f, 0.0f, 0.0f));
 			}
 			else if (objectType == L"Reflection Probe")
 			{
 				std::vector<std::string> components = { "CReflectionProbe" };
-				createComponentObject("Reflection Probe", components, NULL);
+				createComponentObject("Reflection Probe", components, parent);
 			}
 			else if (objectType == L"Light Probes")
 			{
 				std::vector<std::string> components = { "CLightProbes" };
-				createComponentObject("Light Probes", components, NULL);
+				createComponentObject("Light Probes", components, parent);
 			}
 			else if (objectType == L"Cube")
 			{
 				std::vector<std::string> components = { "CCube" };
-				createComponentObject("Cube", components, NULL);
+				createComponentObject("Cube", components, parent);
 			}
 			else if (objectType == L"Sphere")
 			{
 				std::vector<std::string> components = { "CSphere" };
-				createComponentObject("Sphere", components, NULL);
+				createComponentObject("Sphere", components, parent);
 			}
 			else if (objectType == L"Plane")
 			{
 				std::vector<std::string> components = { "CPlane" };
-				createComponentObject("Plane", components, NULL);
+				createComponentObject("Plane", components, parent);
 			}
 			else if (objectType == L"Plane")
 			{
 				std::vector<std::string> components = { "CPlane" };
-				createComponentObject("Plane", components, NULL);
+				createComponentObject("Plane", components, parent);
 			}
 			else if (objectType == L"Capsule")
 			{
 				std::vector<std::string> components = { "CCapsule", "CIndirectLighting" };
-				createComponentObject("Capsule", components, NULL);
+				createComponentObject("Capsule", components, parent);
 			}
 			else if (objectType == L"Cylinder")
 			{
 				std::vector<std::string> components = { "CCylinder", "CIndirectLighting" };
-				createComponentObject("Cylinder", components, NULL);
+				createComponentObject("Cylinder", components, parent);
 			}
 		}
 
