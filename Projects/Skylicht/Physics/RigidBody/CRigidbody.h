@@ -199,6 +199,7 @@ namespace Skylicht
 				return m_shape;
 			}
 #endif
+			core::matrix4 getWorldTransform();
 
 			DECLARE_GETTYPENAME(CRigidbody)
 		};

@@ -545,5 +545,28 @@ namespace Skylicht
 			}
 #endif
 		}
+
+		core::matrix4 CRigidbody::getWorldTransform()
+		{
+			core::matrix4 world;
+
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_rigidBody)
+			{
+				btTransform& transform = m_rigidBody->getWorldTransform();
+#ifdef BT_USE_NEON
+				transform.getOpenGLMatrix(ptr);
+
+				float* m = world.pointer();
+				for (int i = 0; i < 16; i++)
+					m[i] = ptr[i];
+#else
+				f32* ptr = world.pointer();
+				transform.getOpenGLMatrix(ptr);
+#endif
+			}
+#endif
+			return world;
+		}
 	}
 }

@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #ifdef BUILD_SKYLICHT_PHYSIC
 #include "Collider/CCollider.h"
+#include "RigidBody/CRigidbody.h"
 #endif
 
 namespace Skylicht
@@ -82,16 +83,21 @@ namespace Skylicht
 				return;
 
 			Physics::CCollider* collider = object->getComponent<Physics::CCollider>();
-			if (collider)
+			Physics::CRigidbody* body = object->getComponent<Physics::CRigidbody>();
+
+			if (collider && body)
 			{
 				CMesh* mesh = collider->generateMesh(maxBbox);
 				if (mesh)
 				{
+					core::matrix4 world = body->getWorldTransform();
+
 					std::string objName = object->getNameA();
 
 					CWorldTransformData* transform = GET_ENTITY_DATA(object->getEntity(), CWorldTransformData);
 
 					CEntity* entity = m_prefab->createEntity();
+
 					CRenderMeshData* renderData = entity->addData<CRenderMeshData>();
 					renderData->setMesh(mesh);
 
@@ -99,10 +105,10 @@ namespace Skylicht
 					renderName += "_";
 					renderName += transform->Name;
 
-					m_prefab->addTransformData(entity, NULL, transform->World, renderName.c_str());
+					m_prefab->addTransformData(entity, NULL, world, renderName.c_str());
 
 					CWorldTransformData* transformData = entity->getData<CWorldTransformData>();
-					transformData->World = transform->World;
+					transformData->World = world;
 
 					mesh->drop();
 				}

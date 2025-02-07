@@ -107,6 +107,8 @@ namespace Skylicht
 			vId += c1;
 		}
 
+		meshBuffer->recalculateBoundingBox();
+
 		if (tangent)
 			CMeshUtils::convertToTangentVertices(meshBuffer);
 
