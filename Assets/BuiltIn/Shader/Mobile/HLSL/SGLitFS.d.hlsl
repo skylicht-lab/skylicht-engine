@@ -133,6 +133,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float specular = pow(NdotE, 10.0 + 100.0 * gloss) * spec;
 #if defined(AO)
 	specular *= ao;
+	ambientLighting *= ao;
 #endif		
 	color += specular * specularColor * uLightMul.x;
 

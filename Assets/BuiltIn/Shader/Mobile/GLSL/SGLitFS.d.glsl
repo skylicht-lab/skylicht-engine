@@ -125,6 +125,7 @@ void main(void)
 	float specular = pow(NdotE, 10.0 + 100.0 * gloss) * spec;
 #if defined(AO)
 	specular *= ao;
+	ambientLighting *= ao;
 #endif
 	color += specular * specularColor * uLightMul.x;
 

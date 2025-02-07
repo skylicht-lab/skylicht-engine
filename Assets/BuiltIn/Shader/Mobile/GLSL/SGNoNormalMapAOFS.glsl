@@ -54,6 +54,7 @@ void main(void)
 	float NdotE = max(0.0, dot(n, H));
 	float specular = pow(NdotE, 10.0 + 100.0 * gloss) * spec;
 	specular *= ao;
+	ambientLighting *= ao;
 	color += specular * specularColor * uLightMul.x;
 	color += ambientLighting * diffuseColor / PI;
 	FragColor = vec4(color, diffuseMap.a);

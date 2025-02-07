@@ -59,6 +59,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float NdotE = max(0.0,dot(n, H));
 	float specular = pow(NdotE, 10.0 + 100.0 * gloss) * spec;
 	specular *= ao;
+	ambientLighting *= ao;
 	color += specular * specularColor * uLightMul.x;
 	color += ambientLighting * diffuseColor / PI;
 	return float4(color, diffuseMap.a);
