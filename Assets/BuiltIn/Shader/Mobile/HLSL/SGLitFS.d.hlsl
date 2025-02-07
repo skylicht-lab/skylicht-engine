@@ -75,11 +75,11 @@ float4 main(PS_INPUT input) : SV_TARGET
 {
 #ifdef NO_TEXTURE
 	float4 diffuseMap = uColor;
-	float3 specMap = float3(uSpecGloss, 0.0);
+	float3 specMap = float3(uSpecGloss, 1.0);
 #else
 	float4 diffuseMap = uTexDiffuse.Sample(uTexDiffuseSampler, input.tex0) * uColor;
 	#ifdef NO_SPECGLOSS
-	float3 specMap = float3(uSpecGloss, 0.0);
+	float3 specMap = float3(uSpecGloss, 1.0);
 	#else
 	float3 specMap = uTexSpecularMap.Sample(uTexSpecularMapSampler, input.tex0).xyz;
 	#endif
@@ -113,9 +113,16 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float spec = specMap.r;
 	float gloss = specMap.g;
 
+#if defined(AO)
+	float ao = specMap.b;
+#endif
+
 	// Lighting
 	float NdotL = max(dot(n, input.worldLightDir), 0.0);
 	float3 directionalLight = NdotL * lightColor;
+#if defined(AO)
+	directionalLight *= ao;
+#endif	
 	float3 color = directionalLight * diffuseColor * 0.3 * uLightMul.y;
 
 	// Specular
@@ -124,6 +131,9 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 H = normalize(input.worldLightDir + input.worldViewDir);
 	float NdotE = max(0.0,dot(n, H));
 	float specular = pow(NdotE, 10.0 + 100.0 * gloss) * spec;
+#if defined(AO)
+	specular *= ao;
+#endif		
 	color += specular * specularColor * uLightMul.x;
 
 #if defined(SHADOW)

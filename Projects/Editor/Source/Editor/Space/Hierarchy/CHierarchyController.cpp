@@ -188,7 +188,13 @@ namespace Skylicht
 
 			// visible
 			if (object->isVisible())
-				node->setTextColor(GUI::SGUIColor(255, 250, 250, 250));
+			{
+				// enable
+				if (object->isEnable())
+					node->setTextColor(GUI::SGUIColor(255, 250, 250, 250));
+				else
+					node->setTextColor(GUI::SGUIColor(255, 150, 150, 200));
+			}
 			else
 				node->setTextColor(GUI::SGUIColor(255, 150, 150, 150));
 

@@ -294,6 +294,22 @@ namespace Skylicht
 		return front;
 	}
 
+	bool CGameObject::isLock()
+	{
+		if (m_lock)
+			return true;
+
+		CGameObject* parent = m_parent;
+		while (parent != NULL)
+		{
+			if (parent->m_lock)
+				return true;
+			parent = parent->m_parent;
+		}
+
+		return false;
+	}
+
 	void CGameObject::releaseAllComponent()
 	{
 		for (CComponentSystem*& comp : m_components)

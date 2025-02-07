@@ -254,10 +254,7 @@ namespace Skylicht
 			return m_visible;
 		}
 
-		inline bool isLock()
-		{
-			return m_lock;
-		}
+		bool isLock();
 
 		virtual void setEnable(bool b)
 		{

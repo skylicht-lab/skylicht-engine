@@ -65,12 +65,12 @@ void main(void)
 {
 #ifdef NO_TEXTURE
 	vec4 diffuseMap = uColor;
-	vec3 specMap = vec3(uSpecGloss, 0.0);
+	vec3 specMap = vec3(uSpecGloss, 1.0);
 #else
 	vec4 diffuseMap = texture(uTexDiffuse, vTexCoord0.xy) * uColor;
 
 	#ifdef NO_SPECGLOSS
-	vec3 specMap = vec3(uSpecGloss, 0.0);
+	vec3 specMap = vec3(uSpecGloss, 1.0);
 	#else
 	vec3 specMap = texture(uTexSpecular, vTexCoord0.xy).xyz;
 	#endif
@@ -105,9 +105,16 @@ void main(void)
 	float spec = specMap.r;
 	float gloss = specMap.g;
 
+#if defined(AO)
+	float ao = specMap.b;
+#endif
+
 	// Lighting
 	float NdotL = max(dot(n, vWorldLightDir), 0.0);
 	vec3 directionalLight = NdotL * lightColor;
+#if defined(AO)
+	directionalLight *= ao;
+#endif		
 	vec3 color = directionalLight * diffuseColor * 0.3 * uLightMul.y;
 
 	// Specular	
@@ -116,6 +123,9 @@ void main(void)
 	vec3 H = normalize(vWorldLightDir + vWorldViewDir);
 	float NdotE = max(0.0, dot(n, H));
 	float specular = pow(NdotE, 10.0 + 100.0 * gloss) * spec;
+#if defined(AO)
+	specular *= ao;
+#endif
 	color += specular * specularColor * uLightMul.x;
 
 #if defined(SHADOW)

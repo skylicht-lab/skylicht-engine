@@ -52,7 +52,7 @@ const float PI = 3.1415926;
 void main(void)
 {
 	vec4 diffuseMap = texture(uTexDiffuse, vTexCoord0.xy) * uColor;
-	vec3 specMap = vec3(uSpecGloss, 0.0);
+	vec3 specMap = vec3(uSpecGloss, 1.0);
 	vec3 n = vWorldNormal;
 	float depth = length(vDepth);
 	float visibility = shadow(vShadowCoord, depth);

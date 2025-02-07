@@ -57,7 +57,7 @@ static const float PI = 3.1415926;
 float4 main(PS_INPUT input) : SV_TARGET
 {
 	float4 diffuseMap = uTexDiffuse.Sample(uTexDiffuseSampler, input.tex0) * uColor;
-	float3 specMap = float3(uSpecGloss, 0.0);
+	float3 specMap = float3(uSpecGloss, 1.0);
 	float3 n = input.worldNormal;
 	float depth = length(input.depth);
 	float visibility = shadow(input.shadowCoord, depth);
