@@ -555,6 +555,7 @@ namespace Skylicht
 			{
 				btTransform& transform = m_rigidBody->getWorldTransform();
 #ifdef BT_USE_NEON
+				float ptr[16] __attribute__((aligned(16)));
 				transform.getOpenGLMatrix(ptr);
 
 				float* m = world.pointer();
