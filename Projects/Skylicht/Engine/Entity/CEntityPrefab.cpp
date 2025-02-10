@@ -64,16 +64,22 @@ namespace Skylicht
 	void CEntityPrefab::removeEntity(u32 index)
 	{
 		CEntity* entity = m_entities[index];
-		entity->setAlive(false);
-		entity->removeAllData();
-		m_unused.push_back(entity);
+		if (entity->isAlive())
+		{
+			entity->setAlive(false);
+			entity->removeAllData();
+			m_unused.push_back(entity);
+		}
 	}
 
 	void CEntityPrefab::removeEntity(CEntity* entity)
 	{
-		entity->setAlive(false);
-		entity->removeAllData();
-		m_unused.push_back(entity);
+		if (entity->isAlive())
+		{
+			entity->setAlive(false);
+			entity->removeAllData();
+			m_unused.push_back(entity);
+		}
 	}
 
 	void CEntityPrefab::addTransformData(CEntity* entity, CEntity* parent, const core::matrix4& transform, const char* name)

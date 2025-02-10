@@ -110,6 +110,7 @@ namespace Skylicht
 
 	void CEntity::removeAllData()
 	{
+		m_alive = false;
 		for (u32 i = 0; i < MAX_ENTITY_DATA; i++)
 		{
 			if (Data[i])

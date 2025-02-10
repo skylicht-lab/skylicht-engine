@@ -229,14 +229,20 @@ namespace Skylicht
 	void CEntityManager::removeEntity(int index)
 	{
 		CEntity* entity = m_entities[index];
-		entity->setAlive(false);
-		m_delayRemove.push_back(entity);
+		if (entity->isAlive())
+		{
+			entity->setAlive(false);
+			m_delayRemove.push_back(entity);
+		}
 	}
 
 	void CEntityManager::removeEntity(CEntity* entity)
 	{
-		entity->setAlive(false);
-		m_delayRemove.push_back(entity);
+		if (entity->isAlive())
+		{
+			entity->setAlive(false);
+			m_delayRemove.push_back(entity);
+		}
 	}
 
 	void CEntityManager::updateRemoveEntity()
@@ -369,17 +375,15 @@ namespace Skylicht
 		updateRemoveEntity();
 
 		if (m_systemChanged == true)
-		{
 			sortSystem();
-		}
+
+		if (m_needSortEntities)
+			sortAliveEntities();
 
 		for (IEntitySystem*& s : m_sortUpdate)
 		{
 			s->beginQuery(this);
 		}
-
-		if (m_needSortEntities)
-			sortAliveEntities();
 
 		CEntity** entities = m_alives.pointer();
 		int numEntity = (int)m_alives.size();

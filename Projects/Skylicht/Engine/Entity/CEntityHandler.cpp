@@ -158,8 +158,28 @@ namespace Skylicht
 	void CEntityHandler::removeChilds(CEntity* entity)
 	{
 		CEntityManager* entityManager = m_gameObject->getEntityManager();
-		CEntityChildsData* childs = GET_ENTITY_DATA(entity, CEntityChildsData);
 
+		CEntityChildsData* childs = NULL;
+		CWorldTransformData* transformData = entity->getData<CWorldTransformData>();
+		if (transformData->ParentIndex >= 0)
+		{
+			CEntity* parent = entityManager->getEntity(transformData->ParentIndex);
+			childs = GET_ENTITY_DATA(parent, CEntityChildsData);
+			if (childs)
+			{
+				u32 childCount = childs->Childs.size();
+				for (u32 i = 0; i < childCount; i++)
+				{
+					if (childs->Childs[i] == entity)
+					{
+						childs->Childs.erase(i);
+						break;
+					}
+				}
+			}
+		}
+
+		childs = GET_ENTITY_DATA(entity, CEntityChildsData);
 		if (childs)
 		{
 			u32 childCount = childs->Childs.size();
