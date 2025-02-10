@@ -127,10 +127,12 @@ namespace Skylicht
 		{
 			if (m_entities[i] == entity)
 			{
-				removeChilds(entity);
-
+				if (entity->isAlive())
+				{
+					removeChilds(entity);
+					entityManager->removeEntity(entity);
+				}
 				m_entities.erase(i);
-				entityManager->removeEntity(entity);
 			}
 		}
 	}
@@ -147,9 +149,11 @@ namespace Skylicht
 		for (int i = (int)m_entities.size() - 1; i >= 0; i--)
 		{
 			CEntity* entity = m_entities[i];
-
-			removeChilds(entity);
-			entityManager->removeEntity(entity);
+			if (entity->isAlive())
+			{
+				removeChilds(entity);
+				entityManager->removeEntity(entity);
+			}
 		}
 
 		m_entities.clear();
