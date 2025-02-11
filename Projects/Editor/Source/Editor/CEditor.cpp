@@ -43,6 +43,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Space/GoogleMap/CSpaceExportGMap.h"
 #include "Space/Sprite/CSpaceExportSprite.h"
 #include "Space/Sprite/CSpaceSprite.h"
+#include "Space/Particle/CSpaceParticle.h"
 
 #include "SpaceController/CSceneController.h"
 #include "SpaceController/CPropertyController.h"
@@ -506,6 +507,7 @@ namespace Skylicht
 			m_menuWindowItems.push_back(submenu->addItem(L"Console"));
 			m_menuWindowItems.push_back(submenu->addItem(L"GUI Design"));
 			m_menuWindowItems.push_back(submenu->addItem(L"GUI Hierarchy"));
+			m_menuWindowItems.push_back(submenu->addItem(L"Particle"));
 			submenu->addSeparator();
 			m_menuWindowItems.push_back(submenu->addItem(L"Google Map"));
 			submenu->addSeparator();
@@ -668,6 +670,10 @@ namespace Skylicht
 				ret = new CSpaceBuildWalkingMap(window, this);
 			}
 #endif
+			else if (workspace == L"Particle")
+			{
+				ret = new CSpaceParticle(window, this);
+			}
 
 			if (ret)
 				m_workspaces.push_back(ret);
