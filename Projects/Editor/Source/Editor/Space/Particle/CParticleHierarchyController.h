@@ -47,6 +47,12 @@ namespace Skylicht
 
 			virtual ~CParticleHierarchyController();
 
+			void setTreeNode(CParticleHierachyNode* node);
+
+			GUI::CTreeNode* buildTreeNode(GUI::CTreeNode* parentGuiNode, CParticleHierachyNode* node);
+
+			void OnSelectChange(GUI::CBase* control);
+
 		};
 	}
 }

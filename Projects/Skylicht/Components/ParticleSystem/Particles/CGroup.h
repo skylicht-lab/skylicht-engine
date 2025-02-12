@@ -130,6 +130,8 @@ namespace Skylicht
 			core::vector3df OrientationNormal;
 			core::vector3df OrientationUp;
 
+			std::string Name;
+
 		protected:
 			core::matrix4 m_world;
 			core::aabbox3df m_bbox;

@@ -24,38 +24,43 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "SkylichtEngine.h"
-#include "Editor/Space/CSpace.h"
-
-#include "CParticleHierarchyController.h"
-#include "CParticleHierachyContextMenu.h"
-
+#include "Utils/CSingleton.h"
+#include "GameObject/CGameObject.h"
 #include "ParticleSystem/CParticleComponent.h"
+#include "Editor/Space/Particle/CParticleHierachyNode.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSpaceParticle : public CSpace
+		class CParticleController
 		{
 		protected:
-			GUI::CTreeControl* m_tree;
+			CParticleHierachyNode* m_hierachyNode;
+			CParticleHierachyNode* m_contextNode;
 
-			CParticleHierarchyController* m_hierarchyController;
-			CParticleHierachyContextMenu* m_hierarchyContextMenu;
-
-			Particle::CParticleComponent* m_particle;
+			GUI::CCanvas* m_canvas;
 
 		public:
-			CSpaceParticle(GUI::CWindow* window, CEditor* editor);
+			DECLARE_SINGLETON(CParticleController)
 
-			virtual ~CSpaceParticle();
+			CParticleController();
 
-			void setParticle(Particle::CParticleComponent* particle);
+			virtual ~CParticleController();
 
-			void setNull();
+			void initContextMenu(GUI::CCanvas* canvas);
 
-			void onSave(GUI::CBase* base);
+			void setGameObject(CGameObject* obj);
+
+			CParticleHierachyNode* buildNode(Particle::CParticleComponent* particle);
+
+			void buildHierarchyData(Particle::CParticleComponent* particle);
+
+			void setNodeEvent(CParticleHierachyNode* node);
+
+			void onSelectNode(CParticleHierachyNode* node, bool selected);
+
+			void onContextMenu(CParticleHierachyNode* node);
 		};
 	}
 }

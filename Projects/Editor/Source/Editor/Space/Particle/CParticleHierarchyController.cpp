@@ -41,5 +41,84 @@ namespace Skylicht
 		{
 
 		}
+
+		void CParticleHierarchyController::setTreeNode(CParticleHierachyNode* node)
+		{
+			if (m_node != node)
+			{
+				if (m_node != NULL)
+					m_node->nullGUI();
+			}
+
+			m_node = node;
+
+			// remove all node
+			m_tree->removeAllTreeNode();
+
+			if (!m_node)
+				return;
+
+			// add child nodes
+			GUI::CTreeNode* root0 = buildTreeNode(m_tree, m_node);
+
+			// expand tree
+			root0->expand(false);
+			for (GUI::CTreeNode* root1 : root0->getChildNodes())
+				root1->expand(false);
+		}
+
+		GUI::CTreeNode* CParticleHierarchyController::buildTreeNode(GUI::CTreeNode* parentGuiNode, CParticleHierachyNode* node)
+		{
+			// add node
+			GUI::CTreeNode* guiNode = parentGuiNode->addNode(node->getName(), node->getIcon());
+
+			// apply select event
+			guiNode->OnSelectChange = BIND_LISTENER(&CParticleHierarchyController::OnSelectChange, this);
+
+			// link data gui to node
+			guiNode->tagData(node);
+
+			// set drag drop data
+			// initDragDrop(guiNode, node);
+
+			// link data node to gui
+			node->setGUINode(guiNode);
+
+			// apply active color
+			if (node->haveColor())
+			{
+				guiNode->getRowItem()->setColor(node->getBGColor());
+				guiNode->getRowItem()->enableDrawBackground(true);
+			}
+			else
+			{
+				guiNode->getRowItem()->enableDrawBackground(false);
+			}
+
+			// loop all childs
+			std::vector<CParticleHierachyNode*>& childs = node->getChilds();
+			for (CParticleHierachyNode* child : childs)
+			{
+				buildTreeNode(guiNode, child);
+			}
+
+			// expand
+			parentGuiNode->expand(false);
+
+			return guiNode;
+		}
+
+		void CParticleHierarchyController::OnSelectChange(GUI::CBase* control)
+		{
+			GUI::CTreeNode* treeNode = dynamic_cast<GUI::CTreeNode*>(control);
+			if (treeNode != NULL)
+			{
+				CParticleHierachyNode* node = (CParticleHierachyNode*)treeNode->getTagData();
+				if (node->OnSelected != nullptr)
+				{
+					node->OnSelected(node, treeNode->isSelected());
+				}
+			}
+		}
 	}
 }

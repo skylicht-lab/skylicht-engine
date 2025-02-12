@@ -35,7 +35,7 @@ namespace Skylicht
 		class COMPONENT_API CParticleComponent : public CComponentSystem
 		{
 		protected:
-			CParticleBufferData *m_data;
+			CParticleBufferData* m_data;
 
 			CFactory m_factory;
 
@@ -47,6 +47,10 @@ namespace Skylicht
 			virtual void initComponent();
 
 			virtual void updateComponent();
+
+			virtual CObjectSerializable* createSerializable();
+
+			virtual void loadSerializable(CObjectSerializable* object);
 
 		public:
 
@@ -64,7 +68,7 @@ namespace Skylicht
 
 			CGroup* createParticleGroup();
 
-			CSubGroup* createParticleSubGroup(CGroup *group);
+			CSubGroup* createParticleSubGroup(CGroup* group);
 
 			inline u32 getNumOfGroup()
 			{
@@ -85,6 +89,8 @@ namespace Skylicht
 			bool IsPlaying();
 
 			u32 getTotalParticle();
+
+			DECLARE_GETTYPENAME(CParticleComponent)
 		};
 	}
 }

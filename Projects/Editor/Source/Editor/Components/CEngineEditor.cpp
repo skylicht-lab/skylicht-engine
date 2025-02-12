@@ -43,6 +43,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Primitive/CCapsule.h"
 #include "Primitive/CCylinder.h"
 
+#include "ParticleSystem/CParticleComponent.h"
+using namespace Particle;
+
 #ifdef BUILD_SKYLICHT_PHYSIC
 #include "Collider/CBoxCollider.h"
 #include "Collider/CStaticPlaneCollider.h"
@@ -85,6 +88,8 @@ namespace Skylicht
 		USE_COMPONENT(CPlane);
 		USE_COMPONENT(CCapsule);
 		USE_COMPONENT(CCylinder);
+
+		USE_COMPONENT(CParticleComponent);
 
 #ifdef BUILD_SKYLICHT_PHYSIC
 		USE_COMPONENT(CRigidbody);

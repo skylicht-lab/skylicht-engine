@@ -513,6 +513,7 @@ namespace Skylicht
 				MagnetOff,
 				MagnetOn,
 				AppIcon,
+				ParticleSystem,
 				// End
 				NumSystemIcon
 			};

@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CSceneController.h"
 #include "CPropertyController.h"
 #include "CAssetCreateController.h"
+#include "CParticleController.h"
 
 #include "Selection/CSelection.h"
 
@@ -1191,6 +1192,9 @@ namespace Skylicht
 					propertyController->setProperty(NULL);
 					selection->unSelect(obj);
 				}
+
+				// particle controller
+				CParticleController::getInstance()->setGameObject(obj);
 			}
 			else if (node->isTagEntity())
 			{

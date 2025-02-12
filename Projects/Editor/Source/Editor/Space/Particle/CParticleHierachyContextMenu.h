@@ -25,37 +25,24 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "SkylichtEngine.h"
+
 #include "Editor/Space/CSpace.h"
-
 #include "CParticleHierarchyController.h"
-#include "CParticleHierachyContextMenu.h"
-
-#include "ParticleSystem/CParticleComponent.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSpaceParticle : public CSpace
+		class CParticleHierachyContextMenu
 		{
-		protected:
-			GUI::CTreeControl* m_tree;
+		public:
+			CParticleHierachyContextMenu(GUI::CTreeControl* tree);
 
-			CParticleHierarchyController* m_hierarchyController;
-			CParticleHierachyContextMenu* m_hierarchyContextMenu;
-
-			Particle::CParticleComponent* m_particle;
+			virtual ~CParticleHierachyContextMenu();
 
 		public:
-			CSpaceParticle(GUI::CWindow* window, CEditor* editor);
 
-			virtual ~CSpaceParticle();
-
-			void setParticle(Particle::CParticleComponent* particle);
-
-			void setNull();
-
-			void onSave(GUI::CBase* base);
+			void OnTreeContextMenu(GUI::CBase* row);
 		};
 	}
 }

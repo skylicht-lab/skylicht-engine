@@ -22,40 +22,35 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "SkylichtEngine.h"
-#include "Editor/Space/CSpace.h"
-
-#include "CParticleHierarchyController.h"
+#include "pch.h"
 #include "CParticleHierachyContextMenu.h"
-
-#include "ParticleSystem/CParticleComponent.h"
+#include "Editor/SpaceController/CParticleController.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSpaceParticle : public CSpace
+		CParticleHierachyContextMenu::CParticleHierachyContextMenu(GUI::CTreeControl* tree)
 		{
-		protected:
-			GUI::CTreeControl* m_tree;
+			tree->OnItemContextMenu = BIND_LISTENER(&CParticleHierachyContextMenu::OnTreeContextMenu, this);
+		}
 
-			CParticleHierarchyController* m_hierarchyController;
-			CParticleHierachyContextMenu* m_hierarchyContextMenu;
+		CParticleHierachyContextMenu::~CParticleHierachyContextMenu()
+		{
 
-			Particle::CParticleComponent* m_particle;
+		}
 
-		public:
-			CSpaceParticle(GUI::CWindow* window, CEditor* editor);
-
-			virtual ~CSpaceParticle();
-
-			void setParticle(Particle::CParticleComponent* particle);
-
-			void setNull();
-
-			void onSave(GUI::CBase* base);
-		};
+		void CParticleHierachyContextMenu::OnTreeContextMenu(GUI::CBase* row)
+		{
+			GUI::CTreeRowItem* rowItem = dynamic_cast<GUI::CTreeRowItem*>(row);
+			if (rowItem != NULL)
+			{
+				CParticleHierachyNode* node = (CParticleHierachyNode*)rowItem->getNode()->getTagData();
+				if (node != NULL)
+				{
+					CParticleController::getInstance()->onContextMenu(node);
+				}
+			}
+		}
 	}
 }

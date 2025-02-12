@@ -25,18 +25,22 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CSpaceParticle.h"
 
+#include "Selection/CSelection.h"
+
+#include "Editor/SpaceController/CParticleController.h"
+#include "Editor/SpaceController/CSceneController.h"
+
+
 namespace Skylicht
 {
 	namespace Editor
 	{
 		CSpaceParticle::CSpaceParticle(GUI::CWindow* window, CEditor* editor) :
-			CSpace(window, editor)
+			CSpace(window, editor),
+			m_particle(NULL)
 		{
 			GUI::CToolbar* toolbar = new GUI::CToolbar(window);
 			GUI::CButton* btn;
-
-			btn = toolbar->addButton(L"New", GUI::ESystemIcon::NewFile);
-			btn->OnPress = BIND_LISTENER(&CSpaceParticle::onNew, this);
 
 			btn = toolbar->addButton(L"Save", GUI::ESystemIcon::Save);
 			btn->OnPress = BIND_LISTENER(&CSpaceParticle::onSave, this);
@@ -50,16 +54,45 @@ namespace Skylicht
 			m_tree->dock(GUI::EPosition::Fill);
 
 			m_hierarchyController = new CParticleHierarchyController(window->getCanvas(), m_tree, m_editor);
+			m_hierarchyContextMenu = new CParticleHierachyContextMenu(m_tree);
+
+			CSelectObject* selectObject = CSelection::getInstance()->getLastSelected();
+			if (selectObject)
+			{
+				CScene* scene = CSceneController::getInstance()->getScene();
+				CGameObject* obj = scene->searchObjectInChildByID(selectObject->getID().c_str());
+				if (obj != NULL)
+				{
+					Particle::CParticleComponent* particle = obj->getComponent<Particle::CParticleComponent>();
+					if (particle)
+						setParticle(particle);
+					else
+						setNull();
+				}
+			}
 		}
 
 		CSpaceParticle::~CSpaceParticle()
 		{
 			delete m_hierarchyController;
+			delete m_hierarchyContextMenu;
 		}
 
-		void CSpaceParticle::onNew(GUI::CBase* base)
+		void CSpaceParticle::setParticle(Particle::CParticleComponent* particle)
 		{
+			m_particle = particle;
+			if (m_particle)
+			{
+				CParticleHierachyNode* node = CParticleController::getInstance()->buildNode(particle);
+				if (node)
+					m_hierarchyController->setTreeNode(node);
+			}
+		}
 
+		void CSpaceParticle::setNull()
+		{
+			m_particle = NULL;
+			m_hierarchyController->setTreeNode(NULL);
 		}
 
 		void CSpaceParticle::onSave(GUI::CBase* base)

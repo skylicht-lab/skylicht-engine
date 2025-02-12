@@ -51,6 +51,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "SpaceController/CAssetCreateController.h"
 #include "SpaceController/CSpriteController.h"
 #include "SpaceController/CGUIDesignController.h"
+#include "SpaceController/CParticleController.h"
 
 #include "Handles/CHandles.h"
 
@@ -97,11 +98,14 @@ namespace Skylicht
 			CSceneController::createGetInstance()->initContextMenu(m_canvas);
 			CSpriteController::createGetInstance()->initContextMenu(m_canvas);
 			CGUIDesignController::createGetInstance()->initContextMenu(m_canvas);
+			CParticleController::createGetInstance()->initContextMenu(m_canvas);
 
 			CPropertyController::createGetInstance();
 			CAssetPropertyController::createGetInstance();
 			CAssetCreateController::createGetInstance();
+
 			CSelection::createGetInstance();
+
 			CEditorActivator::createGetInstance();
 			CProjectSettings::createGetInstance();
 		}
@@ -117,8 +121,10 @@ namespace Skylicht
 			CAssetPropertyController::releaseInstance();
 			CAssetCreateController::releaseInstance();
 			CPropertyController::releaseInstance();
+
 			CSelection::releaseInstance();
 
+			CParticleController::releaseInstance();
 			CSceneController::releaseInstance();
 			CSpriteController::releaseInstance();
 			CGUIDesignController::releaseInstance();

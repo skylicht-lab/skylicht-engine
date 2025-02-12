@@ -36,6 +36,7 @@ namespace Skylicht
 			enum EDataType
 			{
 				Unknown,
+				Particle,
 				Group,
 				Zone,
 				Emitter,
