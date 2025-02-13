@@ -35,7 +35,6 @@ namespace Skylicht
 		CRandomEmitter::CRandomEmitter() :
 			CEmitter(Random)
 		{
-
 		}
 
 		CRandomEmitter::~CRandomEmitter()

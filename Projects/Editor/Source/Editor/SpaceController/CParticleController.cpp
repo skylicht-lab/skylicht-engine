@@ -24,7 +24,6 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CParticleController.h"
-
 #include "Editor/Space/Particle/CSpaceParticle.h"
 
 #include "ParticleSystem/CParticleComponent.h"
@@ -36,9 +35,12 @@ namespace Skylicht
 		IMPLEMENT_SINGLETON(CParticleController);
 
 		CParticleController::CParticleController() :
+			m_particle(NULL),
 			m_hierachyNode(NULL),
 			m_contextNode(NULL),
-			m_canvas(NULL)
+			m_canvas(NULL),
+			m_contextMenuParticle(NULL),
+			m_spaceParticle(NULL)
 		{
 
 		}
@@ -48,22 +50,33 @@ namespace Skylicht
 
 		}
 
+		void CParticleController::setSpaceParticle(CSpaceParticle* space)
+		{
+			m_spaceParticle = space;
+		}
+
+		void CParticleController::closeSpaceParticle(CSpaceParticle* space)
+		{
+			if (m_spaceParticle == space)
+				m_spaceParticle = NULL;
+		}
+
 		void CParticleController::initContextMenu(GUI::CCanvas* canvas)
 		{
 			m_canvas = canvas;
+			m_contextMenuParticle = new CContextMenuParticle(canvas);
 		}
 
 		void CParticleController::setGameObject(CGameObject* obj)
 		{
-			CSpaceParticle* spaceParticle = (CSpaceParticle*)CEditor::getInstance()->getWorkspaceByName(L"Particle");
-			if (spaceParticle == NULL)
+			if (m_spaceParticle == NULL)
 				return;
 
 			Particle::CParticleComponent* particle = obj->getComponent<Particle::CParticleComponent>();
 			if (particle)
-				spaceParticle->setParticle(particle);
+				m_spaceParticle->setParticle(particle);
 			else
-				spaceParticle->setNull();
+				m_spaceParticle->setNull();
 		}
 
 		CParticleHierachyNode* CParticleController::buildNode(Particle::CParticleComponent* particle)
@@ -75,6 +88,8 @@ namespace Skylicht
 			m_hierachyNode->setName(L"Particle System");
 			m_hierachyNode->setIcon(GUI::ESystemIcon::ParticleSystem);
 			m_hierachyNode->setTagData(particle, CParticleHierachyNode::Particle);
+
+			m_particle = particle;
 
 			setNodeEvent(m_hierachyNode);
 
@@ -92,6 +107,7 @@ namespace Skylicht
 				CParticleHierachyNode* node = m_hierachyNode->addChild();
 				node->setTagData(group, CParticleHierachyNode::Group);
 				node->setIcon(GUI::ESystemIcon::Folder);
+				node->setName(group->Name.c_str());
 			}
 		}
 
@@ -110,8 +126,78 @@ namespace Skylicht
 			if (m_canvas == NULL)
 				return;
 
-			// if (m_contextMenuScene->onContextMenu(m_spaceHierarchy, node, m_scene, m_zone))
-			m_contextNode = node;
+			if (m_contextMenuParticle->onContextMenu(node, m_particle))
+				m_contextNode = node;
+		}
+
+		void CParticleController::createGroup(Particle::CParticleComponent* particle)
+		{
+			Particle::CFactory* factory = particle->getParticleFactory();
+
+			// Group
+			Particle::CGroup* group = particle->createParticleGroup();
+			CParticleHierachyNode* node = m_hierachyNode->addChild();
+			node->setTagData(group, CParticleHierachyNode::Group);
+			node->setIcon(GUI::ESystemIcon::Folder);
+			node->setName(group->Name.c_str());
+			setNodeEvent(node);
+
+			// Emitter
+			CParticleHierachyNode* nodeEmitters = node->addChild();
+			nodeEmitters->setTagData(NULL, CParticleHierachyNode::Emitters);
+			nodeEmitters->setIcon(GUI::ESystemIcon::Folder);
+			nodeEmitters->setName(L"Emitters");
+			setNodeEvent(nodeEmitters);
+
+			Particle::CStraightEmitter* emitter = factory->createStraightEmitter(Transform::Oy);
+			emitter->setFlow(10.0f);
+			group->addEmitter(emitter);
+
+			CParticleHierachyNode* nodeEmitter = nodeEmitters->addChild();
+			nodeEmitter->setTagData(emitter, CParticleHierachyNode::Emitter);
+			nodeEmitter->setIcon(GUI::ESystemIcon::ParticleEmitter);
+			nodeEmitter->setName(emitter->getName());
+			setNodeEvent(nodeEmitter);
+
+			// Zone
+			Particle::CAABox* zone = factory->createAABoxZone(core::vector3df(), core::vector3df(0.5f, 0.5f, 0.5f));
+			emitter->setZone(zone);
+
+			CParticleHierachyNode* nodeZone = nodeEmitter->addChild();
+			nodeZone->setTagData(zone, CParticleHierachyNode::Emitter);
+			nodeZone->setIcon(GUI::ESystemIcon::ObjectBox);
+			nodeZone->setName(zone->getName());
+			setNodeEvent(nodeZone);
+
+			// Models
+			CParticleHierachyNode* nodeModels = node->addChild();
+			nodeModels->setTagData(NULL, CParticleHierachyNode::Models);
+			nodeModels->setIcon(GUI::ESystemIcon::Folder);
+			nodeModels->setName(L"Models");
+			setNodeEvent(nodeModels);
+
+			Particle::CModel* model = group->createModel(Particle::ColorA);
+			model->setStart(1.0f)->setEnd(0.0f);
+			CParticleHierachyNode* nodeModel = nodeModels->addChild();
+			nodeModel->setTagData(model, CParticleHierachyNode::Model);
+			nodeModel->setIcon(GUI::ESystemIcon::ParticleModel);
+			nodeModel->setName(model->getName());
+			setNodeEvent(nodeModel);
+
+			// Renderer
+			Particle::CQuadRenderer* renderer = factory->createQuadRenderer();
+			group->setRenderer(renderer);
+
+			CParticleHierachyNode* nodeRenderer = node->addChild();
+			nodeRenderer->setTagData(renderer, CParticleHierachyNode::Renderer);
+			nodeRenderer->setIcon(GUI::ESystemIcon::ParticleRenderer);
+			nodeRenderer->setName(renderer->getName());
+			setNodeEvent(nodeEmitters);
+
+			m_particle->Play();
+
+			if (m_spaceParticle)
+				m_spaceParticle->addToTreeNode(node);
 		}
 	}
 }

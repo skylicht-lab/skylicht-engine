@@ -40,7 +40,7 @@ namespace Skylicht
 		s32 particle_rand()
 		{
 			// (a*seed)%m with Schrage's method
-			seed = a * (seed%q) - r * (seed / q);
+			seed = a * (seed % q) - r * (seed / q);
 			if (seed < 0)
 				seed += m;
 
@@ -49,7 +49,7 @@ namespace Skylicht
 
 		f32 particle_frand()
 		{
-			return particle_rand()*(1.f / rMax);
+			return particle_rand() * (1.f / rMax);
 		}
 
 		s32 particle_rand_max()
@@ -82,6 +82,23 @@ namespace Skylicht
 		CZone::~CZone()
 		{
 
+		}
+
+		const wchar_t* g_zoneName[] =
+		{
+			L"Point",
+			L"Sphere",
+			L"AABox",
+			L"Cylinder",
+			L"Line",
+			L"PolyLine",
+			L"Ring",
+			L"NumOfZone"
+		};
+
+		const wchar_t* CZone::getName()
+		{
+			return g_zoneName[(int)m_type];
 		}
 
 		void CZone::normalizeOrRandomize(core::vector3df& v)

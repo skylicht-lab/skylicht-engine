@@ -54,6 +54,20 @@ namespace Skylicht
 
 		}
 
+		const wchar_t* g_emitterName[] =
+		{
+			L"Random",
+			L"Straight",
+			L"Spheric",
+			L"Normal",
+			L"NumOfEmitter",
+		};
+
+		const wchar_t* CEmitter::getName()
+		{
+			return g_emitterName[(int)m_type];
+		}
+
 		u32 CEmitter::updateNumber(float deltaTime)
 		{
 			if (m_waitDelay > 0.0f)

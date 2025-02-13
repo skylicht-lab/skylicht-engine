@@ -39,7 +39,10 @@ namespace Skylicht
 				Particle,
 				Group,
 				Zone,
+				Emitters,
 				Emitter,
+				Renderer,
+				Models,
 				Model
 			};
 

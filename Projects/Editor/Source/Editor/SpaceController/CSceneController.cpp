@@ -781,6 +781,11 @@ namespace Skylicht
 				std::vector<std::string> components = { "CCylinder", "CIndirectLighting" };
 				createComponentObject("Cylinder", components, parent);
 			}
+			else if (objectType == L"Particle")
+			{
+				std::vector<std::string> components = { "CParticleComponent" };
+				createComponentObject("Particle", components, parent);
+			}
 		}
 
 		void CSceneController::onContextMenu(CHierachyNode* node)

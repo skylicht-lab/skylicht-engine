@@ -47,6 +47,12 @@ namespace Skylicht
 
 			toolbar->addSpace();
 
+			btn = toolbar->addButton(L"Play", GUI::ESystemIcon::PlayerPlay);
+			btn->OnPress = BIND_LISTENER(&CSpaceParticle::onPlay, this);
+
+			btn = toolbar->addButton(L"Stop", GUI::ESystemIcon::PlayerPause);
+			btn->OnPress = BIND_LISTENER(&CSpaceParticle::onStop, this);
+
 			GUI::CBase* treeContainer = new GUI::CBase(window);
 			treeContainer->dock(GUI::EPosition::Fill);
 
@@ -55,6 +61,8 @@ namespace Skylicht
 
 			m_hierarchyController = new CParticleHierarchyController(window->getCanvas(), m_tree, m_editor);
 			m_hierarchyContextMenu = new CParticleHierachyContextMenu(m_tree);
+
+			CParticleController::getInstance()->setSpaceParticle(this);
 
 			CSelectObject* selectObject = CSelection::getInstance()->getLastSelected();
 			if (selectObject)
@@ -76,6 +84,8 @@ namespace Skylicht
 		{
 			delete m_hierarchyController;
 			delete m_hierarchyContextMenu;
+
+			CParticleController::getInstance()->closeSpaceParticle(this);
 		}
 
 		void CSpaceParticle::setParticle(Particle::CParticleComponent* particle)
@@ -98,6 +108,23 @@ namespace Skylicht
 		void CSpaceParticle::onSave(GUI::CBase* base)
 		{
 
+		}
+
+		void CSpaceParticle::onPlay(GUI::CBase* base)
+		{
+			if (m_particle)
+				m_particle->Play();
+		}
+
+		void CSpaceParticle::onStop(GUI::CBase* base)
+		{
+			if (m_particle)
+				m_particle->Stop();
+		}
+
+		void CSpaceParticle::addToTreeNode(CParticleHierachyNode* node)
+		{
+			m_hierarchyController->addToTreeNode(node);
 		}
 	}
 }

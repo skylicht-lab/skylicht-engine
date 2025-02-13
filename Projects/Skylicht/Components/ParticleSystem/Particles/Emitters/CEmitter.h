@@ -184,6 +184,8 @@ namespace Skylicht
 				return m_type;
 			}
 
+			const wchar_t* getName();
+
 			virtual u32 updateNumber(float deltaTime);
 
 			virtual void setBornData(SBornData& data);

@@ -24,6 +24,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "CContextMenuParticle.h"
+
 #include "Utils/CSingleton.h"
 #include "GameObject/CGameObject.h"
 #include "ParticleSystem/CParticleComponent.h"
@@ -33,6 +35,8 @@ namespace Skylicht
 {
 	namespace Editor
 	{
+		class CSpaceParticle;
+
 		class CParticleController
 		{
 		protected:
@@ -40,6 +44,11 @@ namespace Skylicht
 			CParticleHierachyNode* m_contextNode;
 
 			GUI::CCanvas* m_canvas;
+			CContextMenuParticle* m_contextMenuParticle;
+
+			CSpaceParticle* m_spaceParticle;
+
+			Particle::CParticleComponent* m_particle;
 
 		public:
 			DECLARE_SINGLETON(CParticleController)
@@ -47,6 +56,10 @@ namespace Skylicht
 			CParticleController();
 
 			virtual ~CParticleController();
+
+			void setSpaceParticle(CSpaceParticle* space);
+
+			void closeSpaceParticle(CSpaceParticle* space);
 
 			void initContextMenu(GUI::CCanvas* canvas);
 
@@ -61,6 +74,8 @@ namespace Skylicht
 			void onSelectNode(CParticleHierachyNode* node, bool selected);
 
 			void onContextMenu(CParticleHierachyNode* node);
+
+			void createGroup(Particle::CParticleComponent* particle);
 		};
 	}
 }

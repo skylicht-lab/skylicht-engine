@@ -235,7 +235,16 @@ namespace Skylicht
 				addEditorIcon(ESystemIcon::MagnetOn, "magnet_on.png");
 				addEditorIcon(ESystemIcon::AppIcon, "app_icon.png");
 				addEditorIcon(ESystemIcon::ParticleSystem, "particle_system.png");
-
+				addEditorIcon(ESystemIcon::ParticleEmitter, "particle_emitter.png");
+				addEditorIcon(ESystemIcon::ParticleRenderer, "particle_renderer.png");
+				addEditorIcon(ESystemIcon::ParticleModel, "particle_model.png");
+				addEditorIcon(ESystemIcon::PlayerBegin, "player_begin.png");
+				addEditorIcon(ESystemIcon::PlayerEnd, "player_end.png");
+				addEditorIcon(ESystemIcon::PlayerNext, "player_next.png");
+				addEditorIcon(ESystemIcon::PlayerPrev, "player_prev.png");
+				addEditorIcon(ESystemIcon::PlayerPlay, "player_play.png");
+				addEditorIcon(ESystemIcon::PlayerRecord, "player_record.png");
+				addEditorIcon(ESystemIcon::PlayerPause, "player_pause.png");
 			}
 
 			void CSkylichtTheme::addSystemIcon(ESystemIcon type, const char* name)

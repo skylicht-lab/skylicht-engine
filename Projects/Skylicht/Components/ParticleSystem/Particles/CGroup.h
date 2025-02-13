@@ -47,7 +47,7 @@ namespace Skylicht
 	{
 		struct SLaunchParticle
 		{
-			CEmitter *Emitter;
+			CEmitter* Emitter;
 			u32 Number;
 			s32 Parent;
 
@@ -72,22 +72,22 @@ namespace Skylicht
 
 			}
 
-			virtual void OnParticleUpdate(CParticle *particles, int num, CGroup *group, float dt)
+			virtual void OnParticleUpdate(CParticle* particles, int num, CGroup* group, float dt)
 			{
 
 			}
 
-			virtual void OnParticleBorn(CParticle &p)
+			virtual void OnParticleBorn(CParticle& p)
 			{
 
 			}
 
-			virtual void OnParticleDead(CParticle &p)
+			virtual void OnParticleDead(CParticle& p)
 			{
 
 			}
 
-			virtual void OnSwapParticleData(CParticle &p1, CParticle &p2)
+			virtual void OnSwapParticleData(CParticle& p1, CParticle& p2)
 			{
 
 			}
@@ -109,15 +109,15 @@ namespace Skylicht
 			std::vector<CModel*> m_models;
 			std::vector<CInterpolator*> m_interpolators;
 
-			CParticleSystem *m_particleSystem;
+			CParticleSystem* m_particleSystem;
 
-			CParticleInstancingSystem *m_instancingSystem;
-			CParticleCPUBufferSystem *m_cpuBufferSystem;
+			CParticleInstancingSystem* m_instancingSystem;
+			CParticleCPUBufferSystem* m_cpuBufferSystem;
 
 			IRenderer* m_renderer;
 
-			CParticleInstancing *m_instancing;
-			CParticleCPUBuffer *m_cpuBuffer;
+			CParticleInstancing* m_instancing;
+			CParticleCPUBuffer* m_cpuBuffer;
 
 			std::vector<IParticleCallback*> m_callback;
 
@@ -130,7 +130,7 @@ namespace Skylicht
 			core::vector3df OrientationNormal;
 			core::vector3df OrientationUp;
 
-			std::string Name;
+			std::wstring Name;
 
 		protected:
 			core::matrix4 m_world;
@@ -172,7 +172,7 @@ namespace Skylicht
 				return m_particles.pointer();
 			}
 
-			inline CEmitter* addEmitter(CEmitter *e)
+			inline CEmitter* addEmitter(CEmitter* e)
 			{
 				m_emitters.push_back(e);
 				return e;
@@ -183,21 +183,21 @@ namespace Skylicht
 				return m_emitters;
 			}
 
-			void removeEmitter(CEmitter *e)
+			void removeEmitter(CEmitter* e)
 			{
 				std::vector<CEmitter*>::iterator i = std::find(m_emitters.begin(), m_emitters.end(), e);
 				if (i != m_emitters.end())
 					m_emitters.erase(i);
 			}
 
-			void addCallback(IParticleCallback *cb)
+			void addCallback(IParticleCallback* cb)
 			{
 				std::vector<IParticleCallback*>::iterator i = std::find(m_callback.begin(), m_callback.end(), cb);
 				if (i == m_callback.end())
 					m_callback.push_back(cb);
 			}
 
-			void removeCallback(IParticleCallback *cb)
+			void removeCallback(IParticleCallback* cb)
 			{
 				std::vector<IParticleCallback*>::iterator i = std::find(m_callback.begin(), m_callback.end(), cb);
 				if (i != m_callback.end())
@@ -209,7 +209,7 @@ namespace Skylicht
 				return m_callback;
 			}
 
-			inline void addSystem(ISystem *s)
+			inline void addSystem(ISystem* s)
 			{
 				m_systems.push_back(s);
 			}
@@ -219,7 +219,7 @@ namespace Skylicht
 				return m_systems;
 			}
 
-			void removeSystem(ISystem *s)
+			void removeSystem(ISystem* s)
 			{
 				std::vector<ISystem*>::iterator i = std::find(m_systems.begin(), m_systems.end(), s);
 				if (i != m_systems.end())
@@ -246,11 +246,11 @@ namespace Skylicht
 				return -1;
 			}
 
-			int addParticleByEmitter(CEmitter *emitter, const core::vector3df& position, const core::vector3df& subEmitterDirection);
+			int addParticleByEmitter(CEmitter* emitter, const core::vector3df& position, const core::vector3df& subEmitterDirection);
 
-			int addParticleVelocityByEmitter(CEmitter *emitter, const core::vector3df& position, const core::vector3df& velocity);
+			int addParticleVelocityByEmitter(CEmitter* emitter, const core::vector3df& position, const core::vector3df& velocity);
 
-			IRenderer* setRenderer(IRenderer *r);
+			IRenderer* setRenderer(IRenderer* r);
 
 			inline IRenderer* getRenderer()
 			{

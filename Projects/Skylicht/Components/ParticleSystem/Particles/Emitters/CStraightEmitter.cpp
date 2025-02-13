@@ -35,7 +35,6 @@ namespace Skylicht
 			CEmitter(Straight),
 			m_direction(0.0f, 1.0f, 0.0f)
 		{
-
 		}
 
 		CStraightEmitter::~CStraightEmitter()

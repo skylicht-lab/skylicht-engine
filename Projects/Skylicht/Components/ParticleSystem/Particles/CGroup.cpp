@@ -40,7 +40,7 @@ namespace Skylicht
 			LifeMax(2.0f),
 			OrientationNormal(1.0f, 0.0f, 0.0f),
 			OrientationUp(0.0f, 1.0f, 0.0f),
-			Name("Group")
+			Name(L"Group")
 		{
 			m_particleSystem = new CParticleSystem();
 

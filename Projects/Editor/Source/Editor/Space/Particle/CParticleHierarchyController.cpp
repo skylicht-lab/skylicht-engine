@@ -108,6 +108,19 @@ namespace Skylicht
 			return guiNode;
 		}
 
+		GUI::CTreeNode* CParticleHierarchyController::addToTreeNode(CParticleHierachyNode* node)
+		{
+			CParticleHierachyNode* parent = node->getParent();
+			GUI::CTreeNode* parentGuiNode = parent->getGUINode();
+
+			GUI::CTreeNode* ret = buildTreeNode(parentGuiNode, node);
+			m_tree->deselectAll();
+			m_tree->getScrollControl()->scrollToItem(ret);
+
+			ret->setSelected(true);
+			return ret;
+		}
+
 		void CParticleHierarchyController::OnSelectChange(GUI::CBase* control)
 		{
 			GUI::CTreeNode* treeNode = dynamic_cast<GUI::CTreeNode*>(control);

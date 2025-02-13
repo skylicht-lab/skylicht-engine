@@ -464,6 +464,10 @@ namespace Skylicht
 
 			submenu->addItem(L"Mesh");
 			submenu->addItem(L"Mesh Instancing");
+
+			submenu->addSeparator();
+			submenu->addItem(L"Particle");
+
 			/*
 			submenu->addSeparator();
 

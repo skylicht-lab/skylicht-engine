@@ -51,6 +51,8 @@ namespace Skylicht
 
 			GUI::CTreeNode* buildTreeNode(GUI::CTreeNode* parentGuiNode, CParticleHierachyNode* node);
 
+			GUI::CTreeNode* addToTreeNode(CParticleHierachyNode* node);
+
 			void OnSelectChange(GUI::CBase* control);
 
 		};

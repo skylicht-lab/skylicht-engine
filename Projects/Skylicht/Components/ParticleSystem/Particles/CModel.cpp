@@ -30,6 +30,26 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		const wchar_t* g_modelName[] = {
+			L"Scale",
+			L"ScaleX",
+			L"ScaleY",
+			L"ScaleZ",
+			L"RotateX",
+			L"RotateY",
+			L"RotateZ",
+			L"ColorR",
+			L"ColorG",
+			L"ColorB",
+			L"ColorA",
+			L"Mass",
+			L"FrameIndex",
+			L"RotateSpeedX",
+			L"RotateSpeedY",
+			L"RotateSpeedZ",
+			L"NumParams"
+		};
+
 		CModel::CModel(EParticleParams type) :
 			m_type(type),
 			m_start1(0),
@@ -45,6 +65,11 @@ namespace Skylicht
 
 		CModel::~CModel()
 		{
+		}
+
+		const wchar_t* CModel::getName()
+		{
+			return g_modelName[(int)m_type];
 		}
 
 		float CModel::getRandomStart()
