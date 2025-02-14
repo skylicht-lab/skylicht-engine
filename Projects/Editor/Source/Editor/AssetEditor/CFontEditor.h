@@ -49,8 +49,6 @@ namespace Skylicht
 
 			virtual void onUpdateValue(CObjectSerializable* object);
 
-			void initFont();
-
 			void onRenderPreview(GUI::CBase* base);
 
 			void renderString(const wchar_t* text, float& px, float& py, float x, float w);

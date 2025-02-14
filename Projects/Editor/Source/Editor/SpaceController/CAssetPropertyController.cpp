@@ -76,7 +76,7 @@ namespace Skylicht
 			{
 				CAssetEditor* assetEditor = CEditorActivator::getInstance()->getAssetEditorInstance(ext.c_str());
 				if (assetEditor != NULL)
-					spaceProperty->addAsset(assetEditor, assetPath.c_str());
+					assetEditor->initGUI(assetPath.c_str(), spaceProperty);
 			}
 
 			spaceProperty->getWindow()->forceUpdateLayout();

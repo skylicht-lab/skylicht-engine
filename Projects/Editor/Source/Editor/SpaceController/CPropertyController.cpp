@@ -215,9 +215,7 @@ namespace Skylicht
 				// GameObject property
 				CEntityDataEditor* editor = activator->getEntityDataEditorInstance(data->getTypeName().c_str());
 				if (editor != NULL)
-				{
-					space->addEntityData(editor, data);
-				}
+					editor->initGUI(data, space);
 			}
 		}
 
@@ -229,9 +227,7 @@ namespace Skylicht
 			// GUI property
 			CGUIEditor* editor = activator->getGUIEditorInstance(gui->getTypeName().c_str());
 			if (editor != NULL)
-			{
-				space->addGUIEditor(editor, gui);
-			}
+				editor->initGUI(gui, space);
 		}
 	}
 }

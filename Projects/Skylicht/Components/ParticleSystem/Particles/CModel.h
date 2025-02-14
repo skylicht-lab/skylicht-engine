@@ -44,12 +44,14 @@ namespace Skylicht
 			float m_end1;
 			float m_end2;
 
-			CInterpolator *m_interpolator;
+			CInterpolator* m_interpolator;
 
 		public:
 			CModel(EParticleParams type);
 
 			virtual ~CModel();
+
+			const wchar_t* getName();
 
 			inline EParticleParams getType()
 			{
@@ -124,7 +126,7 @@ namespace Skylicht
 
 			float getRandomEnd();
 
-			inline void setInterpolator(CInterpolator *interpolate)
+			inline void setInterpolator(CInterpolator* interpolate)
 			{
 				m_interpolator = interpolate;
 			}

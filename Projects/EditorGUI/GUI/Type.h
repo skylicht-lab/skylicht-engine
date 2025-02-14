@@ -513,6 +513,17 @@ namespace Skylicht
 				MagnetOff,
 				MagnetOn,
 				AppIcon,
+				ParticleSystem,
+				ParticleEmitter,
+				ParticleRenderer,
+				ParticleModel,
+				PlayerBegin,
+				PlayerEnd,
+				PlayerNext,
+				PlayerPrev,
+				PlayerPlay,
+				PlayerRecord,
+				PlayerPause,
 				// End
 				NumSystemIcon
 			};

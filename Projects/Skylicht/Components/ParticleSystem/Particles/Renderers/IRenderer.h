@@ -41,7 +41,7 @@ namespace Skylicht
 		{
 		protected:
 			ERenderer m_type;
-			CMaterial *m_material;
+			CMaterial* m_material;
 
 			bool m_useInstancing;
 			bool m_emission;
@@ -94,7 +94,15 @@ namespace Skylicht
 				return m_useInstancing;
 			}
 
-			virtual void getParticleBuffer(IMeshBuffer *buffer) = 0;
+			inline const wchar_t* getName()
+			{
+				if (m_type == Quad)
+					return L"Quad (Instancing)";
+				else
+					return L"Billboard";
+			}
+
+			virtual void getParticleBuffer(IMeshBuffer* buffer) = 0;
 
 			virtual u32 getTotalFrames()
 			{

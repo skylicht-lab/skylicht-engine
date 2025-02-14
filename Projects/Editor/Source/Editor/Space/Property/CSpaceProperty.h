@@ -27,9 +27,12 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "SkylichtEngine.h"
 #include "Editor/Space/CSpace.h"
 
+#include "IPropertyEditor.h"
+
 #include "Editor/Components/CComponentEditor.h"
 #include "Editor/AssetEditor/CAssetEditor.h"
 #include "Editor/EntityData/CEntityDataEditor.h"
+
 #include "Editor/GUIEditor/CGUIEditor.h"
 
 #include "Reactive/CSubject.h"
@@ -46,20 +49,14 @@ namespace Skylicht
 		public:
 			struct SGroup
 			{
-				CComponentEditor* Owner;
-				CAssetEditor* AssetOwner;
-				CEntityDataEditor* EntityDataOwner;
-				CGUIEditor* GUIEditorOwner;
+				IPropertyEditor* Owner;
 
 				GUI::CBase* GroupUI;
 
 				SGroup()
 				{
 					Owner = NULL;
-					AssetOwner = NULL;
 					GroupUI = NULL;
-					EntityDataOwner = NULL;
-					GUIEditorOwner = NULL;
 				}
 			};
 
@@ -151,22 +148,9 @@ namespace Skylicht
 				m_icon->setHidden(false);
 			}
 
-			GUI::CCollapsibleGroup* addGroup(const wchar_t* label, CComponentEditor* editor);
+			GUI::CCollapsibleGroup* addGroup(const wchar_t* label, IPropertyEditor* editor);
 
-			GUI::CCollapsibleGroup* addGroup(const wchar_t* label, CAssetEditor* editor);
-
-			GUI::CCollapsibleGroup* addGroup(const wchar_t* label, CEntityDataEditor* editor);
-
-			GUI::CCollapsibleGroup* addGroup(const wchar_t* label, CGUIEditor* editor);
-
-
-			GUI::CCollapsibleGroup* addGroup(const char* label, CComponentEditor* editor);
-
-			GUI::CCollapsibleGroup* addGroup(const char* label, CAssetEditor* editor);
-
-			GUI::CCollapsibleGroup* addGroup(const char* label, CEntityDataEditor* editor);
-
-			GUI::CCollapsibleGroup* addGroup(const char* label, CGUIEditor* editor);
+			GUI::CCollapsibleGroup* addGroup(const char* label, IPropertyEditor* editor);
 
 			GUI::CButton* addButton(const wchar_t* label);
 
@@ -175,12 +159,6 @@ namespace Skylicht
 			void addComponent(CComponentEditor* editor, CComponentSystem* component, bool autoRelease = false);
 
 			void addComponent(CComponentEditor* editor, CGameObject* gameobject);
-
-			void addAsset(CAssetEditor* editor, const char* path);
-
-			void addEntityData(CEntityDataEditor* editor, IEntityData* entityData);
-
-			void addGUIEditor(CGUIEditor* editor, CGUIElement* gui);
 
 			void clearAllGroup();
 

@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Components/CComponentSystem.h"
+#include "Editor/Space/Property/IPropertyEditor.h"
 
 namespace Skylicht
 {
@@ -32,7 +33,7 @@ namespace Skylicht
 	{
 		class CSpaceProperty;
 
-		class CComponentEditor
+		class CComponentEditor : public IPropertyEditor
 		{
 		protected:
 			CComponentSystem* m_component;
@@ -55,8 +56,6 @@ namespace Skylicht
 			virtual void initGUI(CGameObject* object, CSpaceProperty* ui)
 			{
 			}
-
-			virtual void update() = 0;
 
 			bool isChanged()
 			{

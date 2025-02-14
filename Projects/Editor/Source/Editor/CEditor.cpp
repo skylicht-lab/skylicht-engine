@@ -43,6 +43,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Space/GoogleMap/CSpaceExportGMap.h"
 #include "Space/Sprite/CSpaceExportSprite.h"
 #include "Space/Sprite/CSpaceSprite.h"
+#include "Space/Particle/CSpaceParticle.h"
 
 #include "SpaceController/CSceneController.h"
 #include "SpaceController/CPropertyController.h"
@@ -50,6 +51,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "SpaceController/CAssetCreateController.h"
 #include "SpaceController/CSpriteController.h"
 #include "SpaceController/CGUIDesignController.h"
+#include "SpaceController/CParticleController.h"
 
 #include "Handles/CHandles.h"
 
@@ -96,11 +98,14 @@ namespace Skylicht
 			CSceneController::createGetInstance()->initContextMenu(m_canvas);
 			CSpriteController::createGetInstance()->initContextMenu(m_canvas);
 			CGUIDesignController::createGetInstance()->initContextMenu(m_canvas);
+			CParticleController::createGetInstance()->initContextMenu(m_canvas);
 
 			CPropertyController::createGetInstance();
 			CAssetPropertyController::createGetInstance();
 			CAssetCreateController::createGetInstance();
+
 			CSelection::createGetInstance();
+
 			CEditorActivator::createGetInstance();
 			CProjectSettings::createGetInstance();
 		}
@@ -116,8 +121,10 @@ namespace Skylicht
 			CAssetPropertyController::releaseInstance();
 			CAssetCreateController::releaseInstance();
 			CPropertyController::releaseInstance();
+
 			CSelection::releaseInstance();
 
+			CParticleController::releaseInstance();
 			CSceneController::releaseInstance();
 			CSpriteController::releaseInstance();
 			CGUIDesignController::releaseInstance();
@@ -457,6 +464,10 @@ namespace Skylicht
 
 			submenu->addItem(L"Mesh");
 			submenu->addItem(L"Mesh Instancing");
+
+			submenu->addSeparator();
+			submenu->addItem(L"Particle");
+
 			/*
 			submenu->addSeparator();
 
@@ -506,6 +517,7 @@ namespace Skylicht
 			m_menuWindowItems.push_back(submenu->addItem(L"Console"));
 			m_menuWindowItems.push_back(submenu->addItem(L"GUI Design"));
 			m_menuWindowItems.push_back(submenu->addItem(L"GUI Hierarchy"));
+			m_menuWindowItems.push_back(submenu->addItem(L"Particle"));
 			submenu->addSeparator();
 			m_menuWindowItems.push_back(submenu->addItem(L"Google Map"));
 			submenu->addSeparator();
@@ -668,6 +680,10 @@ namespace Skylicht
 				ret = new CSpaceBuildWalkingMap(window, this);
 			}
 #endif
+			else if (workspace == L"Particle")
+			{
+				ret = new CSpaceParticle(window, this);
+			}
 
 			if (ret)
 				m_workspaces.push_back(ret);

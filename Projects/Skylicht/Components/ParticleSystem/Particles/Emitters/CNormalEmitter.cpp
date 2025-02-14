@@ -36,7 +36,6 @@ namespace Skylicht
 			CEmitter(Normal),
 			m_inverted(false)
 		{
-
 		}
 
 		CNormalEmitter::~CNormalEmitter()
@@ -44,7 +43,7 @@ namespace Skylicht
 
 		}
 
-		void CNormalEmitter::generateVelocity(CParticle& particle, float speed, CZone* zone, CGroup *group)
+		void CNormalEmitter::generateVelocity(CParticle& particle, float speed, CZone* zone, CGroup* group)
 		{
 			if (m_inverted)
 				speed = -speed;

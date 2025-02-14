@@ -37,6 +37,7 @@ namespace Skylicht
 			m_tank(-1),
 			m_lastTank(-1),
 			m_flow(0.0f),
+			m_lastFlow(0.0f),
 			m_forceMin(0.0f),
 			m_forceMax(1.0f),
 			m_active(true),
@@ -52,6 +53,20 @@ namespace Skylicht
 		CEmitter::~CEmitter()
 		{
 
+		}
+
+		const wchar_t* g_emitterName[] =
+		{
+			L"Random",
+			L"Straight",
+			L"Spheric",
+			L"Normal",
+			L"NumOfEmitter",
+		};
+
+		const wchar_t* CEmitter::getName()
+		{
+			return g_emitterName[(int)m_type];
 		}
 
 		u32 CEmitter::updateNumber(float deltaTime)

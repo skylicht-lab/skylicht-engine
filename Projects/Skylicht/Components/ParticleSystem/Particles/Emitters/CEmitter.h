@@ -59,6 +59,7 @@ namespace Skylicht
 			int m_lastTank;
 			int m_tank;
 			float m_flow;
+			float m_lastFlow;
 			float m_forceMin;
 			float m_forceMax;
 			float m_fraction;
@@ -108,7 +109,7 @@ namespace Skylicht
 			inline void resetTank()
 			{
 				setTank(m_lastTank);
-
+				setFlow(m_lastFlow);
 				m_waitDelay = m_delay;
 			}
 
@@ -122,6 +123,7 @@ namespace Skylicht
 				m_flow = flow;
 				if (m_flow <= 0)
 					m_flow = 0;
+				m_lastFlow = flow;
 			}
 
 			inline float getFlow()
@@ -183,6 +185,8 @@ namespace Skylicht
 			{
 				return m_type;
 			}
+
+			const wchar_t* getName();
 
 			virtual u32 updateNumber(float deltaTime);
 

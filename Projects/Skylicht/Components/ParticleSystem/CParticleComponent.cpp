@@ -38,6 +38,10 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		ACTIVATOR_REGISTER(CParticleComponent);
+
+		CATEGORY_COMPONENT(CParticleComponent, "Particle", "Particle");
+
 		CParticleComponent::CParticleComponent() :
 			m_data(NULL)
 		{
@@ -68,6 +72,17 @@ namespace Skylicht
 		void CParticleComponent::updateComponent()
 		{
 
+		}
+
+		CObjectSerializable* CParticleComponent::createSerializable()
+		{
+			CObjectSerializable* object = CComponentSystem::createSerializable();
+			return object;
+		}
+
+		void CParticleComponent::loadSerializable(CObjectSerializable* object)
+		{
+			CComponentSystem::loadSerializable(object);
 		}
 
 		void CParticleComponent::setGroupTransform(const core::matrix4& world)

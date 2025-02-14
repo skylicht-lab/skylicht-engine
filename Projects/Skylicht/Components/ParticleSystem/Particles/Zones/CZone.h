@@ -61,6 +61,8 @@ namespace Skylicht
 
 			virtual ~CZone();
 
+			const wchar_t* getName();
+
 			inline void setPosition(const core::vector3df& pos)
 			{
 				m_position = pos;

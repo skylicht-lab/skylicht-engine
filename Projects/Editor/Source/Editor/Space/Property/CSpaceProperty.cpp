@@ -150,14 +150,14 @@ namespace Skylicht
 			for (SGroup* group : m_groups)
 			{
 				group->GroupUI->remove();
-				if (group->AssetOwner)
-					group->AssetOwner->closeGUI();
+
 				if (group->Owner)
 				{
-					if (group->Owner->isChanged())
+					CComponentEditor* componentEditor = dynamic_cast<CComponentEditor*>(group->Owner);
+					if (componentEditor && componentEditor->isChanged())
 					{
 						// need save history
-						CGameObject* obj = group->Owner->getGameObject();
+						CGameObject* obj = componentEditor->getGameObject();
 						if (std::find(objs.begin(), objs.end(), obj) == objs.end())
 							objs.push_back(obj);
 						changed = true;
@@ -170,12 +170,6 @@ namespace Skylicht
 
 					group->Owner->closeGUI();
 				}
-
-				if (group->EntityDataOwner)
-					group->EntityDataOwner->closeGUI();
-
-				if (group->GUIEditorOwner)
-					group->GUIEditorOwner->closeGUI();
 
 				delete group;
 			}
@@ -245,36 +239,7 @@ namespace Skylicht
 			editor->initGUI(gameobject, this);
 		}
 
-		void CSpaceProperty::addAsset(CAssetEditor* editor, const char* path)
-		{
-			editor->initGUI(path, this);
-		}
-
-		void CSpaceProperty::addEntityData(CEntityDataEditor* editor, IEntityData* entityData)
-		{
-			editor->initGUI(entityData, this);
-		}
-
-		void CSpaceProperty::addGUIEditor(CGUIEditor* editor, CGUIElement* gui)
-		{
-			editor->initGUI(gui, this);
-		}
-
-		GUI::CCollapsibleGroup* CSpaceProperty::addGroup(const wchar_t* label, CAssetEditor* editor)
-		{
-			GUI::CCollapsibleGroup* colapsible = new GUI::CCollapsibleGroup(m_content);
-			colapsible->dock(GUI::EPosition::Top);
-			colapsible->getHeader()->setLabel(label);
-
-			SGroup* g = new SGroup();
-			g->AssetOwner = editor;
-			g->GroupUI = colapsible;
-
-			m_groups.push_back(g);
-			return colapsible;
-		}
-
-		GUI::CCollapsibleGroup* CSpaceProperty::addGroup(const wchar_t* label, CComponentEditor* editor)
+		GUI::CCollapsibleGroup* CSpaceProperty::addGroup(const wchar_t* label, IPropertyEditor* editor)
 		{
 			GUI::CCollapsibleGroup* colapsible = new GUI::CCollapsibleGroup(m_content);
 			colapsible->dock(GUI::EPosition::Top);
@@ -284,7 +249,8 @@ namespace Skylicht
 			g->Owner = editor;
 			g->GroupUI = colapsible;
 
-			if (editor != NULL && editor->getComponent() != NULL)
+			CComponentEditor* componentEditor = dynamic_cast<CComponentEditor*>(editor);
+			if (componentEditor != NULL && componentEditor->getComponent() != NULL)
 			{
 				// add setting button on component group
 				GUI::CButton* btn = new GUI::CButton(colapsible->getHeader());
@@ -298,8 +264,8 @@ namespace Skylicht
 				btn->tagData(editor);
 				btn->OnPress = [&, editor](GUI::CBase* button)
 					{
-						CGameObject* object = editor->getGameObject();
-						CComponentSystem* component = editor->getComponent();
+						CGameObject* object = componentEditor->getGameObject();
+						CComponentSystem* component = componentEditor->getComponent();
 
 						if (dynamic_cast<CTransformEuler*>(component) != NULL)
 						{
@@ -324,7 +290,7 @@ namespace Skylicht
 							m_menuRemove->setDisabled(false);
 						}
 
-						m_menuContextEditor = editor;
+						m_menuContextEditor = componentEditor;
 						m_componentContextMenu->open(button);
 					};
 			}
@@ -333,53 +299,7 @@ namespace Skylicht
 			return colapsible;
 		}
 
-		GUI::CCollapsibleGroup* CSpaceProperty::addGroup(const wchar_t* label, CEntityDataEditor* editor)
-		{
-			GUI::CCollapsibleGroup* colapsible = new GUI::CCollapsibleGroup(m_content);
-			colapsible->dock(GUI::EPosition::Top);
-			colapsible->getHeader()->setLabel(label);
-
-			SGroup* g = new SGroup();
-			g->EntityDataOwner = editor;
-			g->GroupUI = colapsible;
-
-			m_groups.push_back(g);
-			return colapsible;
-		}
-
-		GUI::CCollapsibleGroup* CSpaceProperty::addGroup(const wchar_t* label, CGUIEditor* editor)
-		{
-			GUI::CCollapsibleGroup* colapsible = new GUI::CCollapsibleGroup(m_content);
-			colapsible->dock(GUI::EPosition::Top);
-			colapsible->getHeader()->setLabel(label);
-
-			SGroup* g = new SGroup();
-			g->GUIEditorOwner = editor;
-			g->GroupUI = colapsible;
-
-			m_groups.push_back(g);
-			return colapsible;
-		}
-
-		GUI::CCollapsibleGroup* CSpaceProperty::addGroup(const char* label, CComponentEditor* editor)
-		{
-			std::wstring wlabel = CStringImp::convertUTF8ToUnicode(label);
-			return addGroup(wlabel.c_str(), editor);
-		}
-
-		GUI::CCollapsibleGroup* CSpaceProperty::addGroup(const char* label, CAssetEditor* editor)
-		{
-			std::wstring wlabel = CStringImp::convertUTF8ToUnicode(label);
-			return addGroup(wlabel.c_str(), editor);
-		}
-
-		GUI::CCollapsibleGroup* CSpaceProperty::addGroup(const char* label, CEntityDataEditor* editor)
-		{
-			std::wstring wlabel = CStringImp::convertUTF8ToUnicode(label);
-			return addGroup(wlabel.c_str(), editor);
-		}
-
-		GUI::CCollapsibleGroup* CSpaceProperty::addGroup(const char* label, CGUIEditor* editor)
+		GUI::CCollapsibleGroup* CSpaceProperty::addGroup(const char* label, IPropertyEditor* editor)
 		{
 			std::wstring wlabel = CStringImp::convertUTF8ToUnicode(label);
 			return addGroup(wlabel.c_str(), editor);
