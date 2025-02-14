@@ -45,7 +45,11 @@ namespace Skylicht
 
 		void CParticleEditor::closeGUI()
 		{
+			if (m_data)
+				delete m_data;
 
+			m_data = NULL;
+			m_ps = NULL;
 		}
 
 		void CParticleEditor::initGUI(Particle::CParticleSerializable* ps, CSpaceProperty* ui)
@@ -53,7 +57,7 @@ namespace Skylicht
 			m_ps = ps;
 			m_data = ps->createSerializable();
 
-			std::string name = m_data->get("name", std::string("Particle"));
+			std::string name = m_data->get("name", std::string());
 
 			GUI::CCollapsibleGroup* group = ui->addGroup(name.c_str(), this);
 			GUI::CBoxLayout* layout = ui->createBoxLayout(group);

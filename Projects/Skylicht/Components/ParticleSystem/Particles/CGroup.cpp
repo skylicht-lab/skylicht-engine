@@ -78,12 +78,20 @@ namespace Skylicht
 		{
 			CObjectSerializable* object = CParticleSerializable::createSerializable();
 			object->autoRelease(new CStringProperty(object, "name", CStringImp::convertUnicodeToUTF8(Name.c_str()).c_str()));
+			object->autoRelease(new CFloatProperty(object, "friction", Friction, 0.0f));
+			object->autoRelease(new CFloatProperty(object, "lifeMin", LifeMin, 0.0f));
+			object->autoRelease(new CFloatProperty(object, "lifeMax", LifeMax, 0.0f));
 			return object;
 		}
 
 		void CGroup::loadSerializable(CObjectSerializable* object)
 		{
+			CParticleSerializable::loadSerializable(object);
+
 			Name = CStringImp::convertUTF8ToUnicode(object->get("name", std::string()).c_str());
+			Friction = object->get("friction", 0.0f);
+			LifeMin = object->get("lifeMin", 1.0f);
+			LifeMax = object->get("lifeMax", 2.0f);
 		}
 
 		IRenderer* CGroup::setRenderer(IRenderer* r)

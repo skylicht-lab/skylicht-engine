@@ -28,6 +28,12 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Selection/CSelectObject.h"
 #include "Editor/Space/Property/CSpaceProperty.h"
 
+#include "ParticleSystem/Particles/CParticleSerializable.h"
+#include "ParticleSystem/CParticleComponent.h"
+
+#include "Editor/ParticleEditor/CParticleEditor.h"
+
+
 namespace Skylicht
 {
 	namespace Editor
@@ -37,12 +43,18 @@ namespace Skylicht
 		public:
 			DECLARE_SINGLETON(CPropertyController)
 
+		protected:
+
+			CParticleEditor* m_particleEditor;
+
 		public:
 			CPropertyController();
 
 			virtual ~CPropertyController();
 
 			void setProperty(CSelectObject* object);
+
+			void setParticleProperty(CSpaceProperty* space, Particle::CParticleSerializable* ps, Particle::CParticleComponent* psComponent);
 
 		protected:
 

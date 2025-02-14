@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CParticleController.h"
+#include "CPropertyController.h"
 #include "Editor/Space/Particle/CSpaceParticle.h"
 
 #include "ParticleSystem/CParticleComponent.h"
@@ -174,7 +175,22 @@ namespace Skylicht
 
 		void CParticleController::onSelectNode(CParticleHierachyNode* node, bool selected)
 		{
-
+			CSpaceProperty* spaceProperty = (CSpaceProperty*)CEditor::getInstance()->getWorkspaceByName(L"Property");
+			if (spaceProperty)
+			{
+				CParticleHierachyNode::EDataType type = node->getTagDataType();
+				switch (type)
+				{
+				case CParticleHierachyNode::Group:
+				{
+					Particle::CGroup* group = (Particle::CGroup*)node->getTagData();
+					CPropertyController::getInstance()->setParticleProperty(spaceProperty, group, m_particle);
+				}
+				break;
+				default:
+					break;
+				}
+			}
 		}
 
 		void CParticleController::onContextMenu(CParticleHierachyNode* node)

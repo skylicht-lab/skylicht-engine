@@ -41,12 +41,12 @@ namespace Skylicht
 
 		CPropertyController::CPropertyController()
 		{
-
+			m_particleEditor = new CParticleEditor();
 		}
 
 		CPropertyController::~CPropertyController()
 		{
-
+			delete m_particleEditor;
 		}
 
 		void CPropertyController::setProperty(CSelectObject* object)
@@ -228,6 +228,20 @@ namespace Skylicht
 			CGUIEditor* editor = activator->getGUIEditorInstance(gui->getTypeName().c_str());
 			if (editor != NULL)
 				editor->initGUI(gui, space);
+		}
+
+		void CPropertyController::setParticleProperty(CSpaceProperty* spaceProperty, Particle::CParticleSerializable* ps, Particle::CParticleComponent* psComponent)
+		{
+			clearProperty();
+
+			// Set icon & name object
+			spaceProperty->setIcon(GUI::ESystemIcon::ParticleSystem);
+
+			std::wstring label = psComponent->getGameObject()->getName();
+			spaceProperty->setLabel(label.c_str());
+
+			// Particle editor property
+			m_particleEditor->initGUI(ps, spaceProperty);
 		}
 	}
 }
