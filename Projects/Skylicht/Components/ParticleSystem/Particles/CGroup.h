@@ -41,6 +41,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CModel.h"
 
+#include "CParticleSerializable.h"
+
 namespace Skylicht
 {
 	namespace Particle
@@ -98,7 +100,7 @@ namespace Skylicht
 			}
 		};
 
-		class COMPONENT_API CGroup
+		class COMPONENT_API CGroup : public CParticleSerializable
 		{
 		protected:
 			core::array<CParticle> m_particles;
@@ -291,6 +293,12 @@ namespace Skylicht
 			{
 				return m_interpolators;
 			}
+
+			DECLARE_GETTYPENAME(CGroup)
+
+			virtual CObjectSerializable* createSerializable();
+
+			virtual void loadSerializable(CObjectSerializable* object);
 
 		protected:
 

@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2025 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
@@ -24,53 +24,26 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Components/CComponentSystem.h"
-#include "Editor/Space/Property/IPropertyEditor.h"
-
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSpaceProperty;
-
-		class CComponentEditor : public IPropertyEditor
+		class IPropertyEditor
 		{
-		protected:
-			CComponentSystem* m_component;
-			CGameObject* m_gameObject;
-			bool m_changed;
-
 		public:
-			CComponentEditor();
-
-			virtual ~CComponentEditor();
-
-			virtual void closeGUI()
+			IPropertyEditor()
 			{
+
 			}
 
-			virtual void initGUI(CComponentSystem* target, CSpaceProperty* ui)
+			virtual ~IPropertyEditor()
 			{
+
 			}
 
-			virtual void initGUI(CGameObject* object, CSpaceProperty* ui)
-			{
-			}
+			virtual void closeGUI() = 0;
 
-			bool isChanged()
-			{
-				return m_changed;
-			}
-
-			CComponentSystem* getComponent()
-			{
-				return m_component;
-			}
-
-			CGameObject* getGameObject()
-			{
-				return m_gameObject;
-			}
+			virtual void update() = 0;
 		};
 	}
 }

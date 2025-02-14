@@ -30,6 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Reactive/CSubject.h"
 
 #include "Serializable/CObjectSerializable.h"
+#include "Editor/Space/Property/IPropertyEditor.h"
 
 #include "GUI/GUI.h"
 
@@ -39,7 +40,9 @@ namespace Skylicht
 	{
 		class CSpaceProperty;
 
-		class CSerializableEditor : public IActivatorObject
+		class CSerializableEditor :
+			public IPropertyEditor,
+			public IActivatorObject
 		{
 		protected:
 			std::vector<ISubject*> m_subjects;
@@ -50,6 +53,11 @@ namespace Skylicht
 			virtual ~CSerializableEditor();
 
 			virtual void closeGUI();
+
+			virtual void update()
+			{
+
+			}
 
 			virtual void initGUI(const char* path, CSpaceProperty* ui)
 			{

@@ -41,6 +41,7 @@ namespace Skylicht
 		// font source
 		Source.Exts.push_back("ttf");
 		Source.Exts.push_back("otf");
+		Source.Exts.push_back("fnt");
 		Source.Exts.push_back("xml");
 
 		FontSizePt.ClampMin = true;
@@ -61,7 +62,7 @@ namespace Skylicht
 	IFont* CFontSource::initFont()
 	{
 		m_revision++;
-		
+
 		const std::string& fontPath = Source.get();
 		if (fontPath.empty())
 		{

@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CGroup.h"
 
 #include "Systems/CParticleSystem.h"
+#include "Utils/CStringImp.h"
 
 namespace Skylicht
 {
@@ -71,6 +72,18 @@ namespace Skylicht
 
 			delete m_instancing;
 			delete m_cpuBuffer;
+		}
+
+		CObjectSerializable* CGroup::createSerializable()
+		{
+			CObjectSerializable* object = CParticleSerializable::createSerializable();
+			object->autoRelease(new CStringProperty(object, "name", CStringImp::convertUnicodeToUTF8(Name.c_str()).c_str()));
+			return object;
+		}
+
+		void CGroup::loadSerializable(CObjectSerializable* object)
+		{
+			Name = CStringImp::convertUTF8ToUnicode(object->get("name", std::string()).c_str());
 		}
 
 		IRenderer* CGroup::setRenderer(IRenderer* r)

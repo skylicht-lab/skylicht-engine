@@ -24,8 +24,17 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Components/CComponentSystem.h"
-#include "Editor/Space/Property/IPropertyEditor.h"
+#include "Utils/CActivator.h"
+
+#include "Reactive/CObserver.h"
+#include "Reactive/CSubject.h"
+
+#include "Serializable/CObjectSerializable.h"
+#include "Editor/SerializableEditor/CSerializableEditor.h"
+
+#include "GUI/GUI.h"
+
+#include "ParticleSystem/Particles/CParticleSerializable.h"
 
 namespace Skylicht
 {
@@ -33,44 +42,24 @@ namespace Skylicht
 	{
 		class CSpaceProperty;
 
-		class CComponentEditor : public IPropertyEditor
+		class CParticleEditor : public CSerializableEditor
 		{
 		protected:
-			CComponentSystem* m_component;
-			CGameObject* m_gameObject;
-			bool m_changed;
+			Particle::CParticleSerializable* m_ps;
+			CObjectSerializable* m_data;
+
+			bool m_isChanged;
 
 		public:
-			CComponentEditor();
+			CParticleEditor();
 
-			virtual ~CComponentEditor();
+			virtual ~CParticleEditor();
 
-			virtual void closeGUI()
-			{
-			}
+			virtual void closeGUI();
 
-			virtual void initGUI(CComponentSystem* target, CSpaceProperty* ui)
-			{
-			}
+			virtual void initGUI(Particle::CParticleSerializable* ps, CSpaceProperty* ui);
 
-			virtual void initGUI(CGameObject* object, CSpaceProperty* ui)
-			{
-			}
-
-			bool isChanged()
-			{
-				return m_changed;
-			}
-
-			CComponentSystem* getComponent()
-			{
-				return m_component;
-			}
-
-			CGameObject* getGameObject()
-			{
-				return m_gameObject;
-			}
+			virtual void onUpdateValue(CObjectSerializable* object);
 		};
 	}
 }

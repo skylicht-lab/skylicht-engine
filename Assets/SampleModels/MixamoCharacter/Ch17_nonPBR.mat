@@ -10,6 +10,7 @@
         <Params>
             <Param name='uColor' floatSize='4' floatValue='1.000000,1.000000,1.000000,1.000000'/>
             <Param name='uUVScale' floatSize='4' floatValue='1.000000,1.000000,0.000000,0.000000'/>
+            <Param name='uLightMul' floatSize='4' floatValue='1.000000,1.000000,0.000000,0.000000'/>
         </Params>
         <Properties>
             <Property name='ZBuffer' value='LessEqual'/>
@@ -34,6 +35,7 @@
         <Params>
             <Param name='uColor' floatSize='4' floatValue='1.000000,1.000000,1.000000,1.000000'/>
             <Param name='uUVScale' floatSize='4' floatValue='1.000000,1.000000,0.000000,0.000000'/>
+            <Param name='uLightMul' floatSize='4' floatValue='1.000000,1.000000,0.000000,0.000000'/>
         </Params>
         <Properties>
             <Property name='ZBuffer' value='LessEqual'/>

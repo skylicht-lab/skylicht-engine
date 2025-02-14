@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "Editor/Space/Property/IPropertyEditor.h"
 #include "Graphics2D/GUI/CGUIElement.h"
 #include "Editor/SerializableEditor/CSerializableEditor.h"
 
@@ -53,8 +54,6 @@ namespace Skylicht
 			virtual void initGUI(CGUIElement* gui, CSpaceProperty* ui);
 
 			virtual void onUpdateValue(CObjectSerializable* object);
-
-			virtual void update() = 0;
 
 			virtual void onNotify(ISubject* subject, IObserver* from)
 			{

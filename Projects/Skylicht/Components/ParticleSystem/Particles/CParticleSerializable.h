@@ -2,10 +2,10 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2025 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -24,53 +24,24 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Components/CComponentSystem.h"
-#include "Editor/Space/Property/IPropertyEditor.h"
+#include "Serializable/CObjectSerializable.h"
 
 namespace Skylicht
 {
-	namespace Editor
+	namespace Particle
 	{
-		class CSpaceProperty;
-
-		class CComponentEditor : public IPropertyEditor
+		class CParticleSerializable
 		{
-		protected:
-			CComponentSystem* m_component;
-			CGameObject* m_gameObject;
-			bool m_changed;
-
 		public:
-			CComponentEditor();
+			CParticleSerializable();
 
-			virtual ~CComponentEditor();
+			virtual ~CParticleSerializable();
 
-			virtual void closeGUI()
-			{
-			}
+			virtual CObjectSerializable* createSerializable();
 
-			virtual void initGUI(CComponentSystem* target, CSpaceProperty* ui)
-			{
-			}
+			virtual void loadSerializable(CObjectSerializable* object);
 
-			virtual void initGUI(CGameObject* object, CSpaceProperty* ui)
-			{
-			}
-
-			bool isChanged()
-			{
-				return m_changed;
-			}
-
-			CComponentSystem* getComponent()
-			{
-				return m_component;
-			}
-
-			CGameObject* getGameObject()
-			{
-				return m_gameObject;
-			}
+			DECLARE_GETTYPENAME(CParticleSerializable)
 		};
 	}
 }

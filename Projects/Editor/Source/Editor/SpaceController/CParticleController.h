@@ -69,6 +69,8 @@ namespace Skylicht
 
 			void buildHierarchyData(Particle::CParticleComponent* particle);
 
+			CParticleHierachyNode* buildGroupHierachy(Particle::CGroup* group);
+
 			void setNodeEvent(CParticleHierachyNode* node);
 
 			void onSelectNode(CParticleHierachyNode* node, bool selected);

@@ -2,10 +2,10 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2025 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -22,55 +22,32 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "Components/CComponentSystem.h"
-#include "Editor/Space/Property/IPropertyEditor.h"
+#include "pch.h"
+#include "CParticleSerializable.h"
 
 namespace Skylicht
 {
-	namespace Editor
+	namespace Particle
 	{
-		class CSpaceProperty;
-
-		class CComponentEditor : public IPropertyEditor
+		CParticleSerializable::CParticleSerializable()
 		{
-		protected:
-			CComponentSystem* m_component;
-			CGameObject* m_gameObject;
-			bool m_changed;
 
-		public:
-			CComponentEditor();
+		}
 
-			virtual ~CComponentEditor();
+		CParticleSerializable::~CParticleSerializable()
+		{
 
-			virtual void closeGUI()
-			{
-			}
+		}
 
-			virtual void initGUI(CComponentSystem* target, CSpaceProperty* ui)
-			{
-			}
+		CObjectSerializable* CParticleSerializable::createSerializable()
+		{
+			CObjectSerializable* object = new CObjectSerializable(getTypeName().c_str());
+			return object;
+		}
 
-			virtual void initGUI(CGameObject* object, CSpaceProperty* ui)
-			{
-			}
+		void CParticleSerializable::loadSerializable(CObjectSerializable* object)
+		{
 
-			bool isChanged()
-			{
-				return m_changed;
-			}
-
-			CComponentSystem* getComponent()
-			{
-				return m_component;
-			}
-
-			CGameObject* getGameObject()
-			{
-				return m_gameObject;
-			}
-		};
+		}
 	}
 }

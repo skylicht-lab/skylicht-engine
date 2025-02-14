@@ -22,55 +22,49 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "Components/CComponentSystem.h"
-#include "Editor/Space/Property/IPropertyEditor.h"
+#include "pch.h"
+#include "CParticleEditor.h"
+#include "Editor/Space/Property/CSpaceProperty.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSpaceProperty;
-
-		class CComponentEditor : public IPropertyEditor
+		CParticleEditor::CParticleEditor() :
+			m_ps(NULL),
+			m_data(NULL),
+			m_isChanged(false)
 		{
-		protected:
-			CComponentSystem* m_component;
-			CGameObject* m_gameObject;
-			bool m_changed;
 
-		public:
-			CComponentEditor();
+		}
 
-			virtual ~CComponentEditor();
+		CParticleEditor::~CParticleEditor()
+		{
+			closeGUI();
+		}
 
-			virtual void closeGUI()
-			{
-			}
+		void CParticleEditor::closeGUI()
+		{
 
-			virtual void initGUI(CComponentSystem* target, CSpaceProperty* ui)
-			{
-			}
+		}
 
-			virtual void initGUI(CGameObject* object, CSpaceProperty* ui)
-			{
-			}
+		void CParticleEditor::initGUI(Particle::CParticleSerializable* ps, CSpaceProperty* ui)
+		{
+			m_ps = ps;
+			m_data = ps->createSerializable();
 
-			bool isChanged()
-			{
-				return m_changed;
-			}
+			std::string name = m_data->get("name", std::string("Particle"));
 
-			CComponentSystem* getComponent()
-			{
-				return m_component;
-			}
+			GUI::CCollapsibleGroup* group = ui->addGroup(name.c_str(), this);
+			GUI::CBoxLayout* layout = ui->createBoxLayout(group);
+			serializableToControl(m_data, ui, layout);
+			group->setExpand(true);
+		}
 
-			CGameObject* getGameObject()
-			{
-				return m_gameObject;
-			}
-		};
+		void CParticleEditor::onUpdateValue(CObjectSerializable* object)
+		{
+			m_isChanged = true;
+			m_ps->loadSerializable(m_data);
+		}
 	}
 }

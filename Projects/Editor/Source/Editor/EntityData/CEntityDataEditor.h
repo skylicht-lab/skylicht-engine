@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Entity/CEntity.h"
+#include "Editor/Space/Property/IPropertyEditor.h"
 
 namespace Skylicht
 {
@@ -32,7 +33,7 @@ namespace Skylicht
 	{
 		class CSpaceProperty;
 
-		class CEntityDataEditor
+		class CEntityDataEditor : public IPropertyEditor
 		{
 		protected:
 			IEntityData* m_data;
@@ -49,8 +50,6 @@ namespace Skylicht
 			virtual void initGUI(IEntityData* entityData, CSpaceProperty* ui)
 			{
 			}
-
-			virtual void update() = 0;
 
 			IEntityData* getEntityData()
 			{

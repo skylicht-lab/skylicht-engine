@@ -37,6 +37,7 @@ namespace Skylicht
 			m_tank(-1),
 			m_lastTank(-1),
 			m_flow(0.0f),
+			m_lastFlow(0.0f),
 			m_forceMin(0.0f),
 			m_forceMax(1.0f),
 			m_active(true),
