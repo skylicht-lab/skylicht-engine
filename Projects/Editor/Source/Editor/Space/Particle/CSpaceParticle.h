@@ -64,6 +64,8 @@ namespace Skylicht
 			void onStop(GUI::CBase* base);
 
 			void addToTreeNode(CParticleHierachyNode* node);
+
+			void updateTreeNode(CParticleHierachyNode* node);
 		};
 	}
 }

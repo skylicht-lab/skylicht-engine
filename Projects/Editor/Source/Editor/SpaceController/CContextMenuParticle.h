@@ -39,10 +39,11 @@ namespace Skylicht
 			GUI::CCanvas* m_canvas;
 
 			GUI::CMenu* m_menuParticle;
+			GUI::CMenu* m_menuGroup;
 
 			CParticleHierachyNode* m_contextNode;
 			Particle::CParticleComponent* m_particle;
-
+			Particle::CGroup* m_group;
 		public:
 			CContextMenuParticle(GUI::CCanvas* canvas);
 
@@ -51,6 +52,8 @@ namespace Skylicht
 			bool onContextMenu(CParticleHierachyNode* node, Particle::CParticleComponent* particle);
 
 			void OnContextMenuCommand(GUI::CBase* sender);
+
+			void OnContextMenuGroupCommand(GUI::CBase* sender);
 		};
 	}
 }

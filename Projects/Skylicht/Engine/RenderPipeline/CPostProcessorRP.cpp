@@ -416,6 +416,7 @@ namespace Skylicht
 
 		material->setTexture(0, fromTarget);
 		material->applyMaterial(m_effectPass);
+		material->updateShaderParams();
 
 		for (int i = 0; i < 2; i++)
 		{

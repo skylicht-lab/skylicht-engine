@@ -71,6 +71,14 @@ namespace Skylicht
 
 			CParticleHierachyNode* buildGroupHierachy(Particle::CGroup* group);
 
+			void removeGroup(Particle::CGroup* group);
+
+			void updateGroupHierachy(Particle::CGroup* group);
+
+			void updateGroupHierachy(CParticleHierachyNode* node, Particle::CGroup* group);
+
+			void updateGroupName();
+
 			void setNodeEvent(CParticleHierachyNode* node);
 
 			void onSelectNode(CParticleHierachyNode* node, bool selected);

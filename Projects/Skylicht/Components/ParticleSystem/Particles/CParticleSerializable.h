@@ -30,7 +30,7 @@ namespace Skylicht
 {
 	namespace Particle
 	{
-		class CParticleSerializable
+		class COMPONENT_API CParticleSerializable
 		{
 		public:
 			CParticleSerializable();

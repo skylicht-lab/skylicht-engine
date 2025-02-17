@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CParticleEditor.h"
 #include "Editor/Space/Property/CSpaceProperty.h"
+#include "Editor/SpaceController/CParticleController.h"
 
 namespace Skylicht
 {
@@ -69,6 +70,8 @@ namespace Skylicht
 		{
 			m_isChanged = true;
 			m_ps->loadSerializable(m_data);
+
+			CParticleController::getInstance()->updateGroupName();
 		}
 	}
 }

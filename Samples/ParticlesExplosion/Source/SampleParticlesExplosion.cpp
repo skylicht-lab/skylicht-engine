@@ -243,6 +243,7 @@ void SampleParticlesExplosion::initParticleSystem(Particle::CParticleComponent* 
 	flame->setAtlas(2, 2);
 	flame->getMaterial()->setTexture(0, texture);
 	flame->getMaterial()->applyMaterial();
+	flame->setEmission(true);
 
 	flameGroup->createModel(Particle::ColorR)->setStart(1.0f)->setEnd(0.2f);
 	flameGroup->createModel(Particle::ColorG)->setStart(0.6f)->setEnd(0.2f);

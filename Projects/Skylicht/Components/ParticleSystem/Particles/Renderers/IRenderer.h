@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "ComponentsConfig.h"
 #include "Material/CMaterial.h"
+#include "ParticleSystem/Particles/CParticleSerializable.h"
 
 namespace Skylicht
 {
@@ -37,14 +38,25 @@ namespace Skylicht
 			BillboardAddtive
 		};
 
-		class COMPONENT_API IRenderer
+		class COMPONENT_API IRenderer : public CParticleSerializable
 		{
 		protected:
 			ERenderer m_type;
-			CMaterial* m_material;
 
+			CMaterial* m_material;
+			CMaterial* m_customMaterial;
+
+			bool m_useCustomMaterial;
 			bool m_useInstancing;
 			bool m_emission;
+
+			std::string m_texturePath;
+			ITexture* m_texture;
+
+			u32 m_atlasNx;
+			u32 m_atlasNy;
+
+			std::string m_materialPath;
 
 		public:
 			float SizeX;
@@ -52,32 +64,18 @@ namespace Skylicht
 			float SizeZ;
 
 		public:
-			IRenderer(ERenderer type) :
-				m_type(type),
-				m_material(NULL),
-				SizeX(1.0f),
-				SizeY(1.0f),
-				SizeZ(1.0f),
-				m_useInstancing(true),
-				m_emission(false)
-			{
+			IRenderer(ERenderer type);
 
-			}
-
-			virtual ~IRenderer()
-			{
-
-			}
+			virtual ~IRenderer();
 
 			inline ERenderer getType()
 			{
 				return m_type;
 			}
 
-			inline CMaterial* getMaterial()
-			{
-				return m_material;
-			}
+			CMaterial* getMaterial();
+
+			void setTexture(int slot, ITexture* texture);
 
 			inline void setEmission(bool b)
 			{
@@ -99,14 +97,40 @@ namespace Skylicht
 				if (m_type == Quad)
 					return L"Quad (Instancing)";
 				else
-					return L"Billboard";
+					return L"CPU Billboard";
 			}
+
+			virtual CObjectSerializable* createSerializable();
+
+			virtual void loadSerializable(CObjectSerializable* object);
 
 			virtual void getParticleBuffer(IMeshBuffer* buffer) = 0;
 
-			virtual u32 getTotalFrames()
+			void setAtlas(u32 x, u32 y);
+
+			inline u32 getAtlasX()
 			{
-				return 1;
+				return m_atlasNx;
+			}
+
+			inline u32 getAtlasY()
+			{
+				return m_atlasNy;
+			}
+
+			inline u32 getTotalFrames()
+			{
+				return m_atlasNx * m_atlasNy;
+			}
+
+			inline float getFrameWidth()
+			{
+				return 1.0f / m_atlasNx;
+			}
+
+			inline float getFrameHeight()
+			{
+				return 1.0f / m_atlasNy;
 			}
 		};
 	}

@@ -42,19 +42,19 @@ namespace Skylicht
 
 #define EDITOR_REGISTER(type, componentType)  \
 		CComponentEditor* type##componentType##CreateFunc() { return new type(); } \
-		bool type##componentType##Activator = CEditorActivator::createGetInstance()->registerEditor(#componentType, &type##componentType##CreateFunc);
+		bool type##componentType##Activator = CEditorActivator::createGetInstance()->registerEditor(#componentType, &type##componentType##CreateFunc)
 
 #define ASSET_EDITOR_REGISTER(type, ext)  \
 		CAssetEditor* type##ext##CreateFunc() { return new type(); } \
-		bool type##ext##Activator = CEditorActivator::createGetInstance()->registerAssetEditor(#ext, &type##ext##CreateFunc);
+		bool type##ext##Activator = CEditorActivator::createGetInstance()->registerAssetEditor(#ext, &type##ext##CreateFunc)
 
 #define ENTITYDATA_EDITOR_REGISTER(type, ext)  \
 		CEntityDataEditor* type##ext##CreateFunc() { return new type(); } \
-		bool type##ext##Activator = CEditorActivator::createGetInstance()->registerEntityDataEditor(#ext, &type##ext##CreateFunc);
+		bool type##ext##Activator = CEditorActivator::createGetInstance()->registerEntityDataEditor(#ext, &type##ext##CreateFunc)
 
 #define GUI_EDITOR_REGISTER(type, ext)  \
 		CGUIEditor* type##ext##CreateFunc() { return new type(); } \
-		bool type##ext##Activator = CEditorActivator::createGetInstance()->registerGUIEditor(#ext, &type##ext##CreateFunc);
+		bool type##ext##Activator = CEditorActivator::createGetInstance()->registerGUIEditor(#ext, &type##ext##CreateFunc)
 
 		class CEditorActivator
 		{

@@ -79,6 +79,22 @@ namespace Skylicht
 				if (valueProperty->isHidden())
 					continue;
 
+				// add ui space
+				if (valueProperty->getUISpace() > 0)
+				{
+					float space = valueProperty->getUISpace();
+					if (space > 100.0f)
+						space = 100.0f;
+					layout->addSpace(space);
+				}
+
+				// add ui header
+				if (valueProperty->getUIHeader().size() > 0)
+				{
+					std::wstring label = CStringImp::convertUTF8ToUnicode(valueProperty->getUIHeader().c_str());
+					ui->addLabel(layout, label.c_str(), GUI::TextLeft);
+				}
+
 				if (valueProperty->getType() == EPropertyDataType::Vector3)
 				{
 					CVector3Property* value = dynamic_cast<CVector3Property*>(valueProperty);

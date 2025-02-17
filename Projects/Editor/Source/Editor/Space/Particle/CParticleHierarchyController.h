@@ -53,6 +53,12 @@ namespace Skylicht
 
 			GUI::CTreeNode* addToTreeNode(CParticleHierachyNode* node);
 
+			void updateTreeNode(CParticleHierachyNode* node);
+
+			void initDragDrop(GUI::CTreeNode* guiNode, CParticleHierachyNode* node);
+
+			void move(CParticleHierachyNode* from, CParticleHierachyNode* target, bool behind);
+
 			void OnSelectChange(GUI::CBase* control);
 
 		};

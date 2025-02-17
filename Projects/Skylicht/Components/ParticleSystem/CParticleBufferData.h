@@ -48,6 +48,8 @@ namespace Skylicht
 			CSubGroup* createSubGroup(CGroup* group);
 
 			void removeGroup(CGroup* group);
+
+			void bringToNext(CGroup* group, CGroup* target, bool behind);
 		};
 
 		DECLARE_COMPONENT_DATA_TYPE_INDEX(CParticleBufferData);

@@ -60,11 +60,32 @@ namespace Skylicht
 		void CParticleBufferData::removeGroup(CGroup* group)
 		{
 			int index = Groups.linear_search(group);
-			if (index > 0)
+			if (index >= 0)
 			{
 				Groups.erase(index);
 				delete group;
 			}
+		}
+
+		void CParticleBufferData::bringToNext(CGroup* group, CGroup* target, bool behind)
+		{
+			int index = Groups.linear_search(group);
+			if (index == -1)
+				return;
+
+			Groups.erase(index);
+
+			int newIndex = Groups.linear_search(target);
+			if (newIndex == -1)
+			{
+				Groups.push_back(group);
+				return;
+			}
+
+			if (behind)
+				++newIndex;
+
+			Groups.insert(group, newIndex);
 		}
 	}
 }

@@ -31,9 +31,7 @@ namespace Skylicht
 	namespace Particle
 	{
 		CBillboardAdditiveRenderer::CBillboardAdditiveRenderer() :
-			IRenderer(BillboardAddtive),
-			m_atlasNx(1),
-			m_atlasNy(1)
+			IRenderer(BillboardAddtive)
 		{
 			m_useInstancing = false;
 
@@ -45,12 +43,6 @@ namespace Skylicht
 		CBillboardAdditiveRenderer::~CBillboardAdditiveRenderer()
 		{
 			m_material->drop();
-		}
-
-		void CBillboardAdditiveRenderer::setTexture(int slot, ITexture* texture)
-		{
-			m_material->setTexture(slot, texture);
-			m_material->setManualInitTexture(true);
 		}
 
 		void CBillboardAdditiveRenderer::getParticleBuffer(IMeshBuffer* buffer)
@@ -91,8 +83,8 @@ namespace Skylicht
 				p = particles + i;
 				params = p->Params;
 
-				float sx = SizeX * params[ScaleX];
-				float sy = SizeY * params[ScaleY];
+				float sx = SizeX * params[ScaleX] * 0.5f;
+				float sy = SizeY * params[ScaleY] * 0.5f;
 
 				float rotation = p->Rotation.Z;
 

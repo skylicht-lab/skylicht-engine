@@ -126,5 +126,10 @@ namespace Skylicht
 		{
 			m_hierarchyController->addToTreeNode(node);
 		}
+
+		void CSpaceParticle::updateTreeNode(CParticleHierachyNode* node)
+		{
+			m_hierarchyController->updateTreeNode(node);
+		}
 	}
 }

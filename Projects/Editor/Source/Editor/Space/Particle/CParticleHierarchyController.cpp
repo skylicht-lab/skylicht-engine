@@ -25,6 +25,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CParticleHierarchyController.h"
 
+#include "ParticleSystem/CParticleComponent.h"
+#include "ParticleSystem/Particles/CGroup.h"
+
 namespace Skylicht
 {
 	namespace Editor
@@ -79,7 +82,7 @@ namespace Skylicht
 			guiNode->tagData(node);
 
 			// set drag drop data
-			// initDragDrop(guiNode, node);
+			initDragDrop(guiNode, node);
 
 			// link data node to gui
 			node->setGUINode(guiNode);
@@ -119,6 +122,127 @@ namespace Skylicht
 
 			ret->setSelected(true);
 			return ret;
+		}
+
+		void CParticleHierarchyController::updateTreeNode(CParticleHierachyNode* node)
+		{
+			if (!node->getGUINode())
+				return;
+
+			node->getGUINode()->removeAllTreeNode();
+
+			std::vector<CParticleHierachyNode*>& childs = node->getChilds();
+			for (CParticleHierachyNode* child : childs)
+			{
+				buildTreeNode(node->getGUINode(), child);
+			}
+		}
+
+		void CParticleHierarchyController::initDragDrop(GUI::CTreeNode* guiNode, CParticleHierachyNode* node)
+		{
+			GUI::CTreeRowItem* rowItem = guiNode->getRowItem();
+
+			bool allowDrag = true;
+
+			if (node == m_node)
+				allowDrag = false;
+
+			if (node->getTagDataType() != CParticleHierachyNode::Group)
+				allowDrag = false;
+
+			if (allowDrag)
+			{
+				GUI::SDragDropPackage* dragDrop = rowItem->setDragDropPackage("ParticleHierachyNode", node);
+				dragDrop->DrawControl = guiNode->getTextItem();
+			}
+
+			rowItem->OnAcceptDragDrop = [node](GUI::SDragDropPackage* data)
+				{
+					if (node->getTagDataType() == CParticleHierachyNode::Group)
+					{
+						if (data->Name == "ParticleHierachyNode")
+						{
+							return true;
+						}
+					}
+					return false;
+				};
+
+			rowItem->OnDragDropHover = [rowItem, node](GUI::SDragDropPackage* data, float mouseX, float mouseY)
+				{
+					GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
+					if (local.Y < rowItem->height() * 0.5f)
+					{
+						rowItem->enableDrawLine(true, false);
+					}
+					else
+					{
+						rowItem->enableDrawLine(false, true);
+					}
+				};
+
+			rowItem->OnDragDropOut = [rowItem, node](GUI::SDragDropPackage* data, float mouseX, float mouseY)
+				{
+					rowItem->enableDrawLine(false, false);
+				};
+
+			rowItem->OnDrop = [&, editor = m_editor, rowItem, node](GUI::SDragDropPackage* data, float mouseX, float mouseY)
+				{
+					if (data->Name == "ParticleHierachyNode")
+					{
+						CParticleHierachyNode* dragNode = (CParticleHierachyNode*)data->UserData;
+
+						// this is child node
+						GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
+						if (local.Y < rowItem->height() * 0.5f)
+						{
+							move(dragNode, node, false);
+						}
+						else
+						{
+							move(dragNode, node, true);
+						}
+
+						dragNode->getGUINode()->setSelected(true);
+					}
+
+					rowItem->enableDrawLine(false, false);
+					editor->refresh();
+				};
+		}
+
+		void CParticleHierarchyController::move(CParticleHierachyNode* from, CParticleHierachyNode* target, bool behind)
+		{
+			if (from->getTagDataType() != CParticleHierachyNode::Group ||
+				target->getTagDataType() != CParticleHierachyNode::Group)
+				return;
+
+			// remove parent gui
+			bool isExpand = from->getGUINode()->isExpand();
+
+			from->removeGUI();
+			from->nullGUI();
+
+			// update position
+			from->bringNextNode(target, behind);
+
+			// add new tree gui at new position
+			GUI::CTreeNode* gui = buildTreeNode(target->getParent()->getGUINode(), from);
+
+			// move gui to near target
+			gui->bringNextToControl(target->getGUINode(), behind);
+
+			if (isExpand)
+				gui->expand(false);
+			else
+				gui->collapse(false);
+
+			// move game object
+			Particle::CParticleComponent* ps = (Particle::CParticleComponent*)m_node->getTagData();
+			Particle::CGroup* fromObject = (Particle::CGroup*)from->getTagData();
+			Particle::CGroup* targetObject = (Particle::CGroup*)target->getTagData();
+
+			ps->getData()->bringToNext(fromObject, targetObject, behind);
 		}
 
 		void CParticleHierarchyController::OnSelectChange(GUI::CBase* control)

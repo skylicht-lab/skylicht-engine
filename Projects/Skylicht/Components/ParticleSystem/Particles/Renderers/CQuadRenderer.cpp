@@ -31,8 +31,6 @@ namespace Skylicht
 	{
 		CQuadRenderer::CQuadRenderer() :
 			IRenderer(Quad),
-			m_atlasNx(1),
-			m_atlasNy(1),
 			m_billboardType(Camera),
 			m_baseShaderType(Additive)
 		{
@@ -46,12 +44,6 @@ namespace Skylicht
 		CQuadRenderer::~CQuadRenderer()
 		{
 			m_material->drop();
-		}
-
-		void CQuadRenderer::setTexture(int slot, ITexture* texture)
-		{
-			m_material->setTexture(slot, texture);
-			m_material->setManualInitTexture(true);
 		}
 
 		void CQuadRenderer::setMaterialType(EBaseShaderType shader, EBillboardType billboard)

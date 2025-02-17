@@ -49,9 +49,6 @@ namespace Skylicht
 		class COMPONENT_API CQuadRenderer : public IRenderer
 		{
 		protected:
-			u32 m_atlasNx;
-			u32 m_atlasNy;
-
 			static const u32 NB_INDICES_PER_QUAD = 6;
 			static const u32 NB_VERTICES_PER_QUAD = 4;
 
@@ -63,31 +60,7 @@ namespace Skylicht
 
 			virtual ~CQuadRenderer();
 
-			virtual void getParticleBuffer(IMeshBuffer *buffer);
-
-			void setAtlas(u32 x, u32 y)
-			{
-				m_atlasNx = x;
-				m_atlasNy = y;
-
-				if (m_atlasNx < 1)
-					m_atlasNx = 1;
-
-				if (m_atlasNy < 1)
-					m_atlasNy = 1;
-			}
-
-			inline u32 getAtlasX()
-			{
-				return m_atlasNx;
-			}
-
-			inline u32 getAtlasY()
-			{
-				return m_atlasNy;
-			}
-
-			void setTexture(int slot, ITexture *texture);
+			virtual void getParticleBuffer(IMeshBuffer* buffer);
 
 			void setMaterialType(EBaseShaderType shader, EBillboardType billboard);
 
@@ -101,20 +74,7 @@ namespace Skylicht
 				return m_baseShaderType;
 			}
 
-			virtual u32 getTotalFrames()
-			{
-				return m_atlasNx * m_atlasNy;
-			}
-
-			inline float getFrameWidth()
-			{
-				return 1.0f / m_atlasNx;
-			}
-
-			inline float getFrameHeight()
-			{
-				return 1.0f / m_atlasNy;
-			}
+			DECLARE_GETTYPENAME(CQuadRenderer)
 		};
 	}
 }
