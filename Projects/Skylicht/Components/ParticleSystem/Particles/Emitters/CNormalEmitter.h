@@ -40,6 +40,10 @@ namespace Skylicht
 
 			virtual ~CNormalEmitter();
 
+			virtual CObjectSerializable* createSerializable();
+
+			virtual void loadSerializable(CObjectSerializable* object);
+
 			inline void setInverted(bool b)
 			{
 				m_inverted = b;
@@ -50,7 +54,9 @@ namespace Skylicht
 				return m_inverted;
 			}
 
-			virtual void generateVelocity(CParticle& particle, float speed, CZone* zone, CGroup *group);
+			virtual void generateVelocity(CParticle& particle, float speed, CZone* zone, CGroup* group);
+
+			DECLARE_GETTYPENAME(CNormalEmitter)
 		};
 	}
 }

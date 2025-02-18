@@ -24,6 +24,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "ParticleSystem/Particles/CParticleSerializable.h"
+
 namespace Skylicht
 {
 	namespace Particle
@@ -53,7 +55,7 @@ namespace Skylicht
 			}
 		};
 
-		class COMPONENT_API CEmitter
+		class COMPONENT_API CEmitter : public CParticleSerializable
 		{
 		protected:
 			int m_lastTank;
@@ -82,6 +84,10 @@ namespace Skylicht
 			CEmitter(EEmitter type);
 
 			virtual ~CEmitter();
+
+			virtual CObjectSerializable* createSerializable();
+
+			virtual void loadSerializable(CObjectSerializable* object);
 
 			inline CZone* setZone(CZone* z)
 			{
@@ -210,6 +216,8 @@ namespace Skylicht
 			void swapBornData(int index1, int index2);
 
 			void deleteBornData();
+
+			DECLARE_GETTYPENAME(CEmitter)
 		};
 	}
 }

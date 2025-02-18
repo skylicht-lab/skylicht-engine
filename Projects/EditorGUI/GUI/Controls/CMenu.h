@@ -51,6 +51,7 @@ namespace Skylicht
 
 				CMenuItem* getItemByPath(const std::wstring& path);
 				CMenuItem* getItemByLabel(const std::wstring& label);
+				CMenuItem* searchItemByLabel(const std::wstring& label);
 
 				CMenuItem* addItemByPath(const std::wstring& path);
 				CMenuItem* addItemByPath(const std::wstring& path, const std::wstring& accelerator);

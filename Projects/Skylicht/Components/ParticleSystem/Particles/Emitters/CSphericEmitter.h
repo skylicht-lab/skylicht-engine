@@ -46,6 +46,10 @@ namespace Skylicht
 
 			virtual ~CSphericEmitter();
 
+			virtual CObjectSerializable* createSerializable();
+
+			virtual void loadSerializable(CObjectSerializable* object);
+
 			void setDirection(const core::vector3df& d);
 
 			void setAngles(float a, float b);
@@ -66,6 +70,8 @@ namespace Skylicht
 			}
 
 			virtual void generateVelocity(CParticle& particle, float speed, CZone* zone, CGroup *group);
+
+			DECLARE_GETTYPENAME(CSphericEmitter)
 		};
 	}
 }

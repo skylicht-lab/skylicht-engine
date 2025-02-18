@@ -74,6 +74,10 @@ namespace Skylicht
 				return m_baseShaderType;
 			}
 
+			virtual CObjectSerializable* createSerializable();
+
+			virtual void loadSerializable(CObjectSerializable* object);
+
 			DECLARE_GETTYPENAME(CQuadRenderer)
 		};
 	}

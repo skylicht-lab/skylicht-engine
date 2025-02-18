@@ -146,6 +146,26 @@ namespace Skylicht
 				return NULL;
 			}
 
+			CMenuItem* CMenu::searchItemByLabel(const std::wstring& label)
+			{
+				for (CBase* child : Children)
+				{
+					CMenuItem* item = dynamic_cast<CMenuItem*>(child);
+					if (item != NULL && item->getLabel() == label)
+					{
+						return item;
+					}
+
+					if (item->haveSubMenu())
+					{
+						CMenuItem* result = item->getMenu()->searchItemByLabel(label);
+						if (result)
+							return result;
+					}
+				}
+				return NULL;
+			}
+
 			CMenuItem* CMenu::addItemByPath(const std::wstring& path)
 			{
 				return addItemByPath(path, ESystemIcon::None, L"");

@@ -43,6 +43,23 @@ namespace Skylicht
 
 		}
 
+		CObjectSerializable* CNormalEmitter::createSerializable()
+		{
+			CObjectSerializable* object = CEmitter::createSerializable();
+
+			CBoolProperty* inverted = new CBoolProperty(object, "inverted", m_inverted);
+			inverted->setUIHeader("Normal Emitter");
+			object->autoRelease(inverted);
+
+			return object;
+		}
+
+		void CNormalEmitter::loadSerializable(CObjectSerializable* object)
+		{
+			CEmitter::loadSerializable(object);
+			m_inverted = object->get<bool>("inverted", false);
+		}
+
 		void CNormalEmitter::generateVelocity(CParticle& particle, float speed, CZone* zone, CGroup* group)
 		{
 			if (m_inverted)

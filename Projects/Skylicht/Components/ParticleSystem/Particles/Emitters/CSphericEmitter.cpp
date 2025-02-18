@@ -38,7 +38,8 @@ namespace Skylicht
 			m_angleA(0.0f),
 			m_angleB(0.0f),
 			m_cosAngleMin(0.0f),
-			m_cosAngleMax(0.0f)
+			m_cosAngleMax(0.0f),
+			m_direction(0.0f, 1.0f, 0.0f)
 		{
 			memset(m_matrix, 0, sizeof(float) * 9);
 		}
@@ -46,6 +47,34 @@ namespace Skylicht
 		CSphericEmitter::~CSphericEmitter()
 		{
 
+		}
+
+		CObjectSerializable* CSphericEmitter::createSerializable()
+		{
+			CObjectSerializable* object = CEmitter::createSerializable();
+
+			CFloatProperty* angleA = new CFloatProperty(object, "angleA", m_angleA * core::RADTODEG, 0.0f, 360.0f);
+			angleA->setUIHeader("Spheric Emitter");
+			object->autoRelease(angleA);
+
+			object->autoRelease(new CFloatProperty(object, "angleB", m_angleB * core::RADTODEG, 0.0f, 360.0f));
+
+			object->autoRelease(new CVector3Property(object, "direction", m_direction));
+
+			return object;
+		}
+
+		void CSphericEmitter::loadSerializable(CObjectSerializable* object)
+		{
+			CEmitter::loadSerializable(object);
+
+			float angleA = object->get<float>("angleA", 0.0f);
+			float angleB = object->get<float>("angleB", 0.0f);
+
+			setAngles(angleA * core::DEGTORAD, angleB * core::DEGTORAD);
+
+			core::vector3df direction = object->get<core::vector3df>("direction", Transform::Oy);
+			setDirection(direction);
 		}
 
 		void CSphericEmitter::setAngles(float angleA, float angleB)
@@ -106,7 +135,7 @@ namespace Skylicht
 			}
 		}
 
-		void CSphericEmitter::generateVelocity(CParticle& particle, float speed, CZone* zone, CGroup *group)
+		void CSphericEmitter::generateVelocity(CParticle& particle, float speed, CZone* zone, CGroup* group)
 		{
 			float a = random(m_cosAngleMax, m_cosAngleMin);
 			float theta = acosf(a);

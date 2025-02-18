@@ -55,7 +55,7 @@ namespace Skylicht
 
 			GUI::CMenuItem* subMenu = m_menuGroup->getItemByPath(L"Add/Emitter");
 			if (subMenu)
-				subMenu->getMenu()->OnCommand = BIND_LISTENER(&CContextMenuParticle::OnContextMenuGroupCommand, this);
+				subMenu->getMenu()->OnCommand = BIND_LISTENER(&CContextMenuParticle::OnContextMenuEmitterCommand, this);
 
 			m_menuGroup->addItemByPath(L"Add/Model/Scale");
 			m_menuGroup->addItemByPath(L"Add/Model/Scale X");
@@ -87,6 +87,28 @@ namespace Skylicht
 
 			m_menuGroup->addSeparator();
 			m_menuGroup->addItem(L"Delete", GUI::ESystemIcon::Trash);
+
+
+			m_menuRenderer = new GUI::CMenu(canvas);
+			m_menuRenderer->setHidden(true);
+			m_menuRenderer->OnCommand = BIND_LISTENER(&CContextMenuParticle::OnContextMenuGroupCommand, this);
+			m_menuRenderer->addItem(L"Quad (Instancing)");
+			m_menuRenderer->addItem(L"CPU Billboard");
+
+			m_menuEmitters = new GUI::CMenu(canvas);
+			m_menuEmitters->setHidden(true);
+			m_menuEmitters->addItemByPath(L"Add/Normal");
+			m_menuEmitters->addItemByPath(L"Add/Random");
+			m_menuEmitters->addItemByPath(L"Add/Spheric");
+			m_menuEmitters->addItemByPath(L"Add/Straight");
+			subMenu = m_menuEmitters->getItemByLabel(L"Add");
+			if (subMenu)
+				subMenu->getMenu()->OnCommand = BIND_LISTENER(&CContextMenuParticle::OnContextMenuEmitterCommand, this);
+
+			m_menuEmitter = new GUI::CMenu(canvas);
+			m_menuEmitter->setHidden(true);
+			m_menuEmitter->addItem(L"Delete");
+			m_menuEmitter->OnCommand = BIND_LISTENER(&CContextMenuParticle::OnContextMenuEmitterCommand, this);
 		}
 
 		CContextMenuParticle::~CContextMenuParticle()
@@ -102,39 +124,64 @@ namespace Skylicht
 			m_contextNode = node;
 			m_particle = particle;
 			m_group = NULL;
+			m_emitter = NULL;
 
-			if (node->getTagDataType() == CParticleHierachyNode::Particle)
+			CParticleHierachyNode::EDataType tagData = node->getTagDataType();
+
+			switch (tagData)
 			{
+			case CParticleHierachyNode::Particle:
 				m_canvas->closeMenu();
 				m_menuParticle->open(mousePos);
-				return true;
-			}
-			else if (node->getTagDataType() == CParticleHierachyNode::Group)
-			{
+				break;
+			case CParticleHierachyNode::Group:
 				m_group = (Particle::CGroup*)node->getTagData();
 				m_canvas->closeMenu();
-
-				Particle::IRenderer* renderer = m_group->getRenderer();
-				Particle::CQuadRenderer* quadRenderer = dynamic_cast<Particle::CQuadRenderer*>(renderer);
-
-				GUI::CMenuItem* r1 = m_menuGroup->getItemByPath(L"Renderer/Quad (Instancing)");
-				GUI::CMenuItem* r2 = m_menuGroup->getItemByPath(L"Renderer/CPU Billboard");
-
-				if (quadRenderer)
-				{
-					r1->setIcon(GUI::ESystemIcon::Check);
-					r2->setIcon(GUI::ESystemIcon::None);
-				}
-				else
-				{
-					r1->setIcon(GUI::ESystemIcon::None);
-					r2->setIcon(GUI::ESystemIcon::Check);
-				}
-
+				checkMenuRenderer(m_menuGroup);
 				m_menuGroup->open(mousePos);
+				break;
+			case CParticleHierachyNode::Renderer:
+				m_group = (Particle::CGroup*)node->getParentData();
+				m_canvas->closeMenu();
+				checkMenuRenderer(m_menuRenderer);
+				m_menuRenderer->open(mousePos);
+				break;
+			case CParticleHierachyNode::Emitters:
+				m_group = (Particle::CGroup*)node->getParentData();
+				m_canvas->closeMenu();
+				m_menuEmitters->open(mousePos);
+				break;
+			case CParticleHierachyNode::Emitter:
+				m_group = (Particle::CGroup*)node->getParentData();
+				m_emitter = (Particle::CEmitter*)node->getTagData();
+				m_canvas->closeMenu();
+				m_menuEmitter->open(mousePos);
+				break;
+			default:
+				break;
 			}
 
-			return false;
+			return true;
+		}
+
+		void CContextMenuParticle::checkMenuRenderer(GUI::CMenu* menu)
+		{
+			Particle::IRenderer* renderer = m_group->getRenderer();
+			Particle::CQuadRenderer* quadRenderer = dynamic_cast<Particle::CQuadRenderer*>(renderer);
+
+			GUI::CMenuItem* r1 = menu->searchItemByLabel(L"Quad (Instancing)");
+			GUI::CMenuItem* r2 = menu->searchItemByLabel(L"CPU Billboard");
+
+			if (quadRenderer)
+			{
+				r1->setIcon(GUI::ESystemIcon::Check);
+				r2->setIcon(GUI::ESystemIcon::None);
+			}
+			else
+			{
+				r1->setIcon(GUI::ESystemIcon::None);
+				r2->setIcon(GUI::ESystemIcon::Check);
+			}
 		}
 
 		void CContextMenuParticle::OnContextMenuCommand(GUI::CBase* sender)
@@ -146,9 +193,7 @@ namespace Skylicht
 			const std::wstring& command = menuItem->getLabel();
 
 			if (command == L"Add Group")
-			{
 				CParticleController::getInstance()->createGroup(m_particle);
-			}
 		}
 
 		void CContextMenuParticle::OnContextMenuGroupCommand(GUI::CBase* sender)
@@ -199,6 +244,48 @@ namespace Skylicht
 					factory->deleteRenderer(renderer);
 					m_group->setRenderer(factory->createBillboardAdditiveRenderer());
 				}
+			}
+
+			particleController->updateGroupHierachy(m_group);
+		}
+
+		void CContextMenuParticle::OnContextMenuEmitterCommand(GUI::CBase* sender)
+		{
+			GUI::CMenuItem* menuItem = dynamic_cast<GUI::CMenuItem*>(sender);
+			if (menuItem == NULL)
+				return;
+
+			const std::wstring& command = menuItem->getLabel();
+
+			Particle::CFactory* factory = m_particle->getParticleFactory();
+			CParticleController* particleController = CParticleController::getInstance();
+			CPropertyController* propretyController = CPropertyController::getInstance();
+
+			Particle::CEmitter* emitter = NULL;
+
+			if (command == L"Normal")
+				emitter = factory->createNormalEmitter(false);
+			else if (command == L"Random")
+				emitter = factory->createRandomEmitter();
+			else if (command == L"Spheric")
+				emitter = factory->createSphericEmitter(Transform::Oy, 0.0f, 45.0f * core::DEGTORAD);
+			else if (command == L"Straight")
+				emitter = factory->createStraightEmitter(Transform::Oy);
+			else if (command == L"Delete")
+			{
+				m_group->removeEmitter(m_emitter);
+				factory->deleteZone(m_emitter->getZone());
+				factory->deleteEmitter(m_emitter);
+
+				CPropertyController::getInstance()->setProperty(NULL);
+			}
+
+			if (emitter)
+			{
+				Particle::CAABox* zone = factory->createAABoxZone(core::vector3df(), core::vector3df(0.5f, 0.5f, 0.5f));
+				emitter->setZone(zone);
+
+				m_group->addEmitter(emitter);
 			}
 
 			particleController->updateGroupHierachy(m_group);

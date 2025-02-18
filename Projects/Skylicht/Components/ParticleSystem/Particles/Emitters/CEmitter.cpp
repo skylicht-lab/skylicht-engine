@@ -29,6 +29,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "ParticleSystem/Particles/CGroup.h"
 #include "ParticleSystem/Particles/Zones/CZone.h"
 
+#include "Utils/CStringImp.h"
+
 namespace Skylicht
 {
 	namespace Particle
@@ -36,8 +38,8 @@ namespace Skylicht
 		CEmitter::CEmitter(EEmitter type) :
 			m_tank(-1),
 			m_lastTank(-1),
-			m_flow(0.0f),
-			m_lastFlow(0.0f),
+			m_flow(10.0f),
+			m_lastFlow(10.0f),
 			m_forceMin(0.0f),
 			m_forceMax(1.0f),
 			m_active(true),
@@ -67,6 +69,48 @@ namespace Skylicht
 		const wchar_t* CEmitter::getName()
 		{
 			return g_emitterName[(int)m_type];
+		}
+
+		CObjectSerializable* CEmitter::createSerializable()
+		{
+			CObjectSerializable* object = CParticleSerializable::createSerializable();
+
+			CStringProperty* name = new CStringProperty(object, "name", CStringImp::convertUnicodeToUTF8(getName()).c_str());
+			name->setHidden(true);
+
+			object->autoRelease(new CBoolProperty(object, "active", m_active));
+			object->autoRelease(new CBoolProperty(object, "emitFullZone", m_emitFullZone));
+
+			CIntProperty* tank = new CIntProperty(object, "tank", m_lastTank);
+			tank->setUISpace(10.0f);
+			object->autoRelease(tank);
+			object->autoRelease(new CFloatProperty(object, "flow", m_lastFlow, 0.0f));
+			object->autoRelease(new CFloatProperty(object, "forceMin", m_forceMin, 0.0f));
+			object->autoRelease(new CFloatProperty(object, "forceMax", m_forceMax, 0.0f));
+
+			CFloatProperty* delay = new CFloatProperty(object, "delay", m_delay, 0.0f);
+			delay->setUISpace(10.0f);
+			object->autoRelease(delay);
+
+			return object;
+		}
+
+		void CEmitter::loadSerializable(CObjectSerializable* object)
+		{
+			CParticleSerializable::loadSerializable(object);
+
+			m_active = object->get<bool>("active", true);
+			m_emitFullZone = object->get<bool>("emitFullZone", true);
+
+			int tank = object->get<int>("tank", -1);
+			setTank(tank);
+
+			float flow = object->get<float>("flow", 0.0f);
+			setFlow(flow);
+
+			m_forceMin = object->get<float>("forceMin", 0.0f);
+			m_forceMax = object->get<float>("forceMax", 1.0f);
+			m_delay = object->get<float>("delay", 0.0f);
 		}
 
 		u32 CEmitter::updateNumber(float deltaTime)

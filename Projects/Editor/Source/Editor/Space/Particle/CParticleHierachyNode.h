@@ -56,6 +56,8 @@ namespace Skylicht
 
 			void* m_tagData;
 
+			void* m_parentData;
+
 			EDataType m_dataType;
 
 			bool m_color;
@@ -91,6 +93,16 @@ namespace Skylicht
 			inline void* getTagData()
 			{
 				return m_tagData;
+			}
+
+			inline void setParentData(void* data)
+			{
+				m_parentData = data;
+			}
+
+			inline void* getParentData()
+			{
+				return m_parentData;
 			}
 
 			inline EDataType getTagDataType()

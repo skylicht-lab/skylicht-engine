@@ -40,6 +40,10 @@ namespace Skylicht
 
 			virtual ~CStraightEmitter();
 
+			virtual CObjectSerializable* createSerializable();
+
+			virtual void loadSerializable(CObjectSerializable* object);
+
 			inline void setDirection(const core::vector3df& d)
 			{
 				m_direction = d;
@@ -52,6 +56,8 @@ namespace Skylicht
 			}
 
 			virtual void generateVelocity(CParticle& particle, float speed, CZone* zone, CGroup *group);
+
+			DECLARE_GETTYPENAME(CStraightEmitter)
 		};
 	}
 }

@@ -38,6 +38,8 @@ namespace Skylicht
 			virtual ~CRandomEmitter();
 
 			virtual void generateVelocity(CParticle& particle, float speed, CZone* zone, CGroup *group);
+
+			DECLARE_GETTYPENAME(CRandomEmitter)
 		};
 	}
 }

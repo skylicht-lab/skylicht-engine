@@ -112,6 +112,7 @@ namespace Skylicht
 		{
 			CParticleHierachyNode* node = m_hierachyNode->addChild();
 			node->setTagData(group, CParticleHierachyNode::Group);
+			node->setParentData(group);
 			node->setIcon(GUI::ESystemIcon::Folder);
 			node->setName(group->Name.c_str());
 			setNodeEvent(node);
@@ -179,6 +180,7 @@ namespace Skylicht
 		{
 			CParticleHierachyNode* nodeEmitters = node->addChild();
 			nodeEmitters->setTagData(NULL, CParticleHierachyNode::Emitters);
+			nodeEmitters->setParentData(group);
 			nodeEmitters->setIcon(GUI::ESystemIcon::Folder);
 			nodeEmitters->setName(L"Emitters");
 			setNodeEvent(nodeEmitters);
@@ -188,13 +190,15 @@ namespace Skylicht
 			{
 				CParticleHierachyNode* nodeEmitter = nodeEmitters->addChild();
 				nodeEmitter->setTagData(emitter, CParticleHierachyNode::Emitter);
+				nodeEmitter->setParentData(group);
 				nodeEmitter->setIcon(GUI::ESystemIcon::ParticleEmitter);
 				nodeEmitter->setName(emitter->getName());
 				setNodeEvent(nodeEmitter);
 
 				Particle::CZone* zone = emitter->getZone();
 				CParticleHierachyNode* nodeZone = nodeEmitter->addChild();
-				nodeZone->setTagData(zone, CParticleHierachyNode::Emitter);
+				nodeZone->setTagData(zone, CParticleHierachyNode::Zone);
+				nodeZone->setParentData(group);
 				nodeZone->setIcon(GUI::ESystemIcon::ObjectBox);
 				nodeZone->setName(zone->getName());
 				setNodeEvent(nodeZone);
@@ -202,6 +206,7 @@ namespace Skylicht
 
 			CParticleHierachyNode* nodeModels = node->addChild();
 			nodeModels->setTagData(NULL, CParticleHierachyNode::Models);
+			nodeModels->setParentData(group);
 			nodeModels->setIcon(GUI::ESystemIcon::Folder);
 			nodeModels->setName(L"Models");
 			setNodeEvent(nodeModels);
@@ -211,6 +216,7 @@ namespace Skylicht
 			{
 				CParticleHierachyNode* nodeModel = nodeModels->addChild();
 				nodeModel->setTagData(model, CParticleHierachyNode::Model);
+				nodeModel->setParentData(group);
 				nodeModel->setIcon(GUI::ESystemIcon::ParticleModel);
 				nodeModel->setName(model->getName());
 				setNodeEvent(nodeModel);
@@ -221,6 +227,7 @@ namespace Skylicht
 			{
 				CParticleHierachyNode* nodeRenderer = node->addChild();
 				nodeRenderer->setTagData(renderer, CParticleHierachyNode::Renderer);
+				nodeRenderer->setParentData(group);
 				nodeRenderer->setIcon(GUI::ESystemIcon::ParticleRenderer);
 				nodeRenderer->setName(renderer->getName());
 				setNodeEvent(nodeRenderer);
@@ -242,9 +249,10 @@ namespace Skylicht
 				{
 				case CParticleHierachyNode::Group:
 				case CParticleHierachyNode::Renderer:
+				case CParticleHierachyNode::Emitter:
 				{
-					Particle::CParticleSerializable* group = (Particle::CParticleSerializable*)node->getTagData();
-					CPropertyController::getInstance()->setParticleProperty(spaceProperty, group, m_particle);
+					Particle::CParticleSerializable* ps = (Particle::CParticleSerializable*)node->getTagData();
+					CPropertyController::getInstance()->setParticleProperty(spaceProperty, ps, m_particle);
 				}
 				break;
 				default:
