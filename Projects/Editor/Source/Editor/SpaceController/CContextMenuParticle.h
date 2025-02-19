@@ -44,12 +44,16 @@ namespace Skylicht
 			GUI::CMenu* m_menuEmitters;
 			GUI::CMenu* m_menuEmitter;
 			GUI::CMenu* m_menuZone;
+			GUI::CMenu* m_menuModels;
+			GUI::CMenu* m_menuModel;
 
 			CParticleHierachyNode* m_contextNode;
 			Particle::CParticleComponent* m_particle;
 			Particle::CGroup* m_group;
 			Particle::CEmitter* m_emitter;
 			Particle::CZone* m_zone;
+			Particle::CModel* m_model;
+
 		public:
 			CContextMenuParticle(GUI::CCanvas* canvas);
 
@@ -64,6 +68,8 @@ namespace Skylicht
 			void OnContextMenuEmitterCommand(GUI::CBase* sender);
 
 			void OnContextMenuZoneCommand(GUI::CBase* sender);
+
+			void OnContextMenuModelCommand(GUI::CBase* sender);
 
 		protected:
 

@@ -121,6 +121,7 @@ namespace Skylicht
 
 			CStringProperty* name = new CStringProperty(object, "name", CStringImp::convertUnicodeToUTF8(getName()).c_str());
 			name->setHidden(true);
+			object->autoRelease(name);
 
 			return object;
 		}

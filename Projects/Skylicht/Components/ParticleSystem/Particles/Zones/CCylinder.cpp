@@ -49,6 +49,28 @@ namespace Skylicht
 
 		}
 
+		CObjectSerializable* CCylinder::createSerializable()
+		{
+			CObjectSerializable* object = CZone::createSerializable();
+
+			object->autoRelease(new CVector3Property(object, "position", m_position));
+			object->autoRelease(new CVector3Property(object, "direction", m_direction));
+			object->autoRelease(new CFloatProperty(object, "radius", m_radius, 0.0f));
+			object->autoRelease(new CFloatProperty(object, "length", m_length, 0.0f));
+
+			return object;
+		}
+
+		void CCylinder::loadSerializable(CObjectSerializable* object)
+		{
+			CZone::loadSerializable(object);
+
+			m_position = object->get<core::vector3df>("position", core::vector3df());
+			m_direction = object->get<core::vector3df>("direction", core::vector3df(0.0f, 1.0f, 0.0f));
+			m_radius = object->get<float>("radius", 1.0f);
+			m_length = object->get<float>("length", 1.0f);
+		}
+
 		void CCylinder::generatePosition(CParticle& particle, bool full, CGroup* group)
 		{
 			float cLength = random(0.0f, m_length) - m_length * 0.5f;
@@ -92,7 +114,7 @@ namespace Skylicht
 			if (dist <= -m_length * 0.5f)
 				return -dir;
 
-			core::vector3df ext = point - (dir*dist + pos);
+			core::vector3df ext = point - (dir * dist + pos);
 			ext.normalize();
 
 			return ext;

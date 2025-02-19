@@ -44,6 +44,17 @@ namespace Skylicht
 
 		}
 
+		CObjectSerializable* CPolyLine::createSerializable()
+		{
+			CObjectSerializable* obj = CZone::createSerializable();
+			return obj;
+		}
+
+		void CPolyLine::loadSerializable(CObjectSerializable* object)
+		{
+			CZone::loadSerializable(object);
+		}
+
 		void CPolyLine::setLine(const core::array<core::vector3df>& point)
 		{
 			if (point.size() < 2)

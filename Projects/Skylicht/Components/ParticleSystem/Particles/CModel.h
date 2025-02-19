@@ -26,12 +26,13 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CInterpolator.h"
 #include "ParticleSystem/Particles/CParticle.h"
+#include "ParticleSystem/Particles/CParticleSerializable.h"
 
 namespace Skylicht
 {
 	namespace Particle
 	{
-		class COMPONENT_API CModel
+		class COMPONENT_API CModel : public CParticleSerializable
 		{
 		protected:
 			EParticleParams m_type;
@@ -50,6 +51,10 @@ namespace Skylicht
 			CModel(EParticleParams type);
 
 			virtual ~CModel();
+
+			virtual CObjectSerializable* createSerializable();
+
+			virtual void loadSerializable(CObjectSerializable* object);
 
 			const wchar_t* getName();
 
@@ -70,7 +75,6 @@ namespace Skylicht
 			{
 				m_start1 = f1;
 				m_start2 = f2;
-
 				m_haveStart = true;
 				return this;
 			}
@@ -87,7 +91,6 @@ namespace Skylicht
 			{
 				m_end1 = f1;
 				m_end2 = f2;
-
 				m_haveEnd = true;
 				return this;
 			}

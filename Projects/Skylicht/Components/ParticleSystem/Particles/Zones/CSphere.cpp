@@ -44,6 +44,24 @@ namespace Skylicht
 
 		}
 
+		CObjectSerializable* CSphere::createSerializable()
+		{
+			CObjectSerializable* object = CZone::createSerializable();
+
+			object->autoRelease(new CVector3Property(object, "position", m_position));
+			object->autoRelease(new CFloatProperty(object, "radius", m_radius, 0.0f));
+
+			return object;
+		}
+
+		void CSphere::loadSerializable(CObjectSerializable* object)
+		{
+			CZone::loadSerializable(object);
+
+			m_position = object->get<core::vector3df>("position", core::vector3df());
+			m_radius = object->get<float>("radius", 1.0f);
+		}
+
 		void CSphere::generatePosition(CParticle& particle, bool full, CGroup* group)
 		{
 			core::vector3df r;

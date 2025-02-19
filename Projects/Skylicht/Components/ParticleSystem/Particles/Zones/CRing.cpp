@@ -44,6 +44,30 @@ namespace Skylicht
 
 		}
 
+		CObjectSerializable* CRing::createSerializable()
+		{
+			CObjectSerializable* object = CZone::createSerializable();
+
+			object->autoRelease(new CVector3Property(object, "position", m_position));
+			object->autoRelease(new CVector3Property(object, "normal", m_normal));
+			object->autoRelease(new CFloatProperty(object, "minRadius", m_minRadius, 0.0f));
+			object->autoRelease(new CFloatProperty(object, "maxRadius", m_maxRadius, 0.0f));
+
+			return object;
+		}
+
+		void CRing::loadSerializable(CObjectSerializable* object)
+		{
+			CZone::loadSerializable(object);
+
+			m_position = object->get<core::vector3df>("position", core::vector3df());
+			m_normal = object->get<core::vector3df>("normal", core::vector3df());
+
+			float minRadius = object->get<float>("minRadius", 1.0f);
+			float maxRadius = object->get<float>("maxRadius", 1.0f);
+			setRadius(minRadius, maxRadius);
+		}
+
 		void CRing::setRadius(float minRadius, float maxRadius)
 		{
 			if (minRadius < 0.0f) minRadius = -minRadius;

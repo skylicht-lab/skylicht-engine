@@ -44,6 +44,10 @@ namespace Skylicht
 
 			virtual ~CPolyLine();
 
+			virtual CObjectSerializable* createSerializable();
+
+			virtual void loadSerializable(CObjectSerializable* object);
+
 			void setLine(const core::array<core::vector3df>& point);
 
 			inline void setNormal(const core::vector3df& normal)

@@ -77,6 +77,7 @@ namespace Skylicht
 
 			CStringProperty* name = new CStringProperty(object, "name", CStringImp::convertUnicodeToUTF8(getName()).c_str());
 			name->setHidden(true);
+			object->autoRelease(name);
 
 			object->autoRelease(new CBoolProperty(object, "active", m_active));
 			object->autoRelease(new CBoolProperty(object, "emitFullZone", m_emitFullZone));

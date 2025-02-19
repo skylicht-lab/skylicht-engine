@@ -42,6 +42,17 @@ namespace Skylicht
 
 		}
 
+		CObjectSerializable* CLine::createSerializable()
+		{
+			CObjectSerializable* obj = CZone::createSerializable();
+			return obj;
+		}
+
+		void CLine::loadSerializable(CObjectSerializable* object)
+		{
+			CZone::loadSerializable(object);
+		}
+
 		void CLine::setLine(const core::vector3df& p1, const core::vector3df& p2)
 		{
 			m_p1 = p1;

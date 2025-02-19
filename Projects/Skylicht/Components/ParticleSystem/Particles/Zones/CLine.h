@@ -41,6 +41,10 @@ namespace Skylicht
 
 			virtual ~CLine();
 
+			virtual CObjectSerializable* createSerializable();
+
+			virtual void loadSerializable(CObjectSerializable* object);
+
 			void setLine(const core::vector3df& p1, const core::vector3df& p2);
 
 			virtual void generatePosition(CParticle& particle, bool full, CGroup* group);

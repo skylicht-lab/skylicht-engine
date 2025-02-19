@@ -43,6 +43,10 @@ namespace Skylicht
 
 			virtual ~CRing();
 
+			virtual CObjectSerializable* createSerializable();
+
+			virtual void loadSerializable(CObjectSerializable* object);
+
 			inline void setPosition(const core::vector3df& pos)
 			{
 				m_position = pos;

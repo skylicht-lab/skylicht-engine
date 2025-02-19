@@ -42,6 +42,22 @@ namespace Skylicht
 
 		}
 
+		CObjectSerializable* CPoint::createSerializable()
+		{
+			CObjectSerializable* object = CZone::createSerializable();
+
+			object->autoRelease(new CVector3Property(object, "position", m_position));
+
+			return object;
+		}
+
+		void CPoint::loadSerializable(CObjectSerializable* object)
+		{
+			CZone::loadSerializable(object);
+
+			m_position = object->get<core::vector3df>("position", core::vector3df());
+		}
+
 		void CPoint::generatePosition(CParticle& particle, bool full, CGroup* group)
 		{
 			core::vector3df pos = group->getTransformPosition(m_position);

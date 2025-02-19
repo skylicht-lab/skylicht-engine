@@ -279,12 +279,14 @@ namespace Skylicht
 				case CParticleHierachyNode::Renderer:
 				case CParticleHierachyNode::Emitter:
 				case CParticleHierachyNode::Zone:
+				case CParticleHierachyNode::Model:
 				{
 					Particle::CParticleSerializable* ps = (Particle::CParticleSerializable*)node->getTagData();
 					CPropertyController::getInstance()->setParticleProperty(spaceProperty, ps, m_particle);
 				}
 				break;
 				default:
+					CPropertyController::getInstance()->setProperty(NULL);
 					break;
 				}
 			}
@@ -312,7 +314,7 @@ namespace Skylicht
 			group->addEmitter(emitter);
 
 			// Zone
-			Particle::CAABox* zone = factory->createAABoxZone(core::vector3df(), core::vector3df(0.5f, 0.5f, 0.5f));
+			Particle::CAABox* zone = factory->createAABoxZone(core::vector3df(), core::vector3df(1.0f, 1.0f, 1.0f));
 			emitter->setZone(zone);
 
 			// Models

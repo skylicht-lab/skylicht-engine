@@ -133,6 +133,34 @@ namespace Skylicht
 			m_menuZone->addItemByPath(L"PolyLine");
 			m_menuZone->addItemByPath(L"Ring");
 			m_menuZone->OnCommand = BIND_LISTENER(&CContextMenuParticle::OnContextMenuZoneCommand, this);
+
+			m_menuModels = new GUI::CMenu(canvas);
+			m_menuModels->setHidden(true);
+			m_menuModels->addItemByPath(L"Add/Scale");
+			m_menuModels->addItemByPath(L"Add/ScaleX");
+			m_menuModels->addItemByPath(L"Add/ScaleY");
+			m_menuModels->addItemByPath(L"Add/ScaleZ");
+			m_menuModels->addItemByPath(L"Add/RotateX");
+			m_menuModels->addItemByPath(L"Add/RotateY");
+			m_menuModels->addItemByPath(L"Add/RotateZ");
+			m_menuModels->addItemByPath(L"Add/ColorR");
+			m_menuModels->addItemByPath(L"Add/ColorG");
+			m_menuModels->addItemByPath(L"Add/ColorB");
+			m_menuModels->addItemByPath(L"Add/ColorA");
+			m_menuModels->addItemByPath(L"Add/Mass");
+			m_menuModels->addItemByPath(L"Add/FrameIndex");
+			m_menuModels->addItemByPath(L"Add/RotateSpeedX");
+			m_menuModels->addItemByPath(L"Add/RotateSpeedY");
+			m_menuModels->addItemByPath(L"Add/RotateSpeedZ");
+
+			subMenu = m_menuModels->getItemByLabel(L"Add");
+			if (subMenu)
+				subMenu->getMenu()->OnCommand = BIND_LISTENER(&CContextMenuParticle::OnContextMenuModelCommand, this);
+
+			m_menuModel = new GUI::CMenu(canvas);
+			m_menuModel->setHidden(true);
+			m_menuModel->addItem(L"Delete");
+			m_menuModel->OnCommand = BIND_LISTENER(&CContextMenuParticle::OnContextMenuModelCommand, this);
 		}
 
 		CContextMenuParticle::~CContextMenuParticle()
@@ -150,6 +178,7 @@ namespace Skylicht
 			m_group = NULL;
 			m_emitter = NULL;
 			m_zone = NULL;
+			m_model = NULL;
 
 			CParticleHierachyNode::EDataType tagData = node->getTagDataType();
 
@@ -200,6 +229,17 @@ namespace Skylicht
 
 				checkMenuZone(m_menuZone);
 				m_menuZone->open(mousePos);
+				break;
+			case CParticleHierachyNode::Models:
+				m_canvas->closeMenu();
+				m_group = (Particle::CGroup*)node->getParentData();
+				m_menuModels->open(mousePos);
+				break;
+			case CParticleHierachyNode::Model:
+				m_canvas->closeMenu();
+				m_group = (Particle::CGroup*)node->getParentData();
+				m_model = (Particle::CModel*)node->getTagData();
+				m_menuModel->open(mousePos);
 				break;
 			default:
 				break;
@@ -400,6 +440,11 @@ namespace Skylicht
 
 				particleController->updateGroupHierachy(m_group);
 			}
+		}
+
+		void CContextMenuParticle::OnContextMenuModelCommand(GUI::CBase* sender)
+		{
+
 		}
 	}
 }
