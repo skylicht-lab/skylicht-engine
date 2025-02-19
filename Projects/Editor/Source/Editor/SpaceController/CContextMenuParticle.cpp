@@ -38,6 +38,8 @@ namespace Skylicht
 			m_menuParticle(NULL),
 			m_particle(NULL),
 			m_group(NULL),
+			m_emitter(NULL),
+			m_zone(NULL),
 			m_contextNode(NULL)
 		{
 			m_menuParticle = new GUI::CMenu(canvas);
@@ -107,8 +109,30 @@ namespace Skylicht
 
 			m_menuEmitter = new GUI::CMenu(canvas);
 			m_menuEmitter->setHidden(true);
+			m_menuEmitter->addItemByPath(L"Zone/AABox");
+			m_menuEmitter->addItemByPath(L"Zone/Cylinder");
+			m_menuEmitter->addItemByPath(L"Zone/Sphere");
+			m_menuEmitter->addItemByPath(L"Zone/Point");
+			m_menuEmitter->addItemByPath(L"Zone/Line");
+			m_menuEmitter->addItemByPath(L"Zone/PolyLine");
+			m_menuEmitter->addItemByPath(L"Zone/Ring");
+			subMenu = m_menuEmitter->getItemByLabel(L"Zone");
+			if (subMenu)
+				subMenu->getMenu()->OnCommand = BIND_LISTENER(&CContextMenuParticle::OnContextMenuZoneCommand, this);
+			m_menuEmitter->addSeparator();
 			m_menuEmitter->addItem(L"Delete");
 			m_menuEmitter->OnCommand = BIND_LISTENER(&CContextMenuParticle::OnContextMenuEmitterCommand, this);
+
+			m_menuZone = new GUI::CMenu(canvas);
+			m_menuZone->setHidden(true);
+			m_menuZone->addItemByPath(L"AABox");
+			m_menuZone->addItemByPath(L"Cylinder");
+			m_menuZone->addItemByPath(L"Sphere");
+			m_menuZone->addItemByPath(L"Point");
+			m_menuZone->addItemByPath(L"Line");
+			m_menuZone->addItemByPath(L"PolyLine");
+			m_menuZone->addItemByPath(L"Ring");
+			m_menuZone->OnCommand = BIND_LISTENER(&CContextMenuParticle::OnContextMenuZoneCommand, this);
 		}
 
 		CContextMenuParticle::~CContextMenuParticle()
@@ -125,6 +149,7 @@ namespace Skylicht
 			m_particle = particle;
 			m_group = NULL;
 			m_emitter = NULL;
+			m_zone = NULL;
 
 			CParticleHierachyNode::EDataType tagData = node->getTagDataType();
 
@@ -154,8 +179,27 @@ namespace Skylicht
 			case CParticleHierachyNode::Emitter:
 				m_group = (Particle::CGroup*)node->getParentData();
 				m_emitter = (Particle::CEmitter*)node->getTagData();
+				m_zone = m_emitter->getZone();
 				m_canvas->closeMenu();
+				checkMenuZone(m_menuEmitter);
 				m_menuEmitter->open(mousePos);
+				break;
+			case CParticleHierachyNode::Zone:
+				m_canvas->closeMenu();
+				m_group = (Particle::CGroup*)node->getParentData();
+				m_zone = (Particle::CZone*)node->getTagData();
+
+				for (Particle::CEmitter* emitter : m_group->getEmitters())
+				{
+					if (emitter->getZone() == m_zone)
+					{
+						m_emitter = emitter;
+						break;
+					}
+				}
+
+				checkMenuZone(m_menuZone);
+				m_menuZone->open(mousePos);
 				break;
 			default:
 				break;
@@ -181,6 +225,30 @@ namespace Skylicht
 			{
 				r1->setIcon(GUI::ESystemIcon::None);
 				r2->setIcon(GUI::ESystemIcon::Check);
+			}
+		}
+
+		void CContextMenuParticle::checkMenuZone(GUI::CMenu* menu)
+		{
+			GUI::CMenuItem* items[Particle::EZone::NumOfZone];
+
+			items[Particle::EZone::AABox] = menu->searchItemByLabel(L"AABox");
+			items[Particle::EZone::Cylinder] = menu->searchItemByLabel(L"Cylinder");
+			items[Particle::EZone::Sphere] = menu->searchItemByLabel(L"Sphere");
+			items[Particle::EZone::Point] = menu->searchItemByLabel(L"Point");
+			items[Particle::EZone::Line] = menu->searchItemByLabel(L"Line");
+			items[Particle::EZone::PolyLine] = menu->searchItemByLabel(L"PolyLine");
+			items[Particle::EZone::Ring] = menu->searchItemByLabel(L"Ring");
+
+			for (int i = 0; i < (int)Particle::EZone::NumOfZone; i++)
+			{
+				if (items[i])
+				{
+					if (i == (int)m_zone->getType())
+						items[i]->setIcon(GUI::ESystemIcon::Check);
+					else
+						items[i]->setIcon(GUI::ESystemIcon::None);
+				}
 			}
 		}
 
@@ -289,6 +357,49 @@ namespace Skylicht
 			}
 
 			particleController->updateGroupHierachy(m_group);
+		}
+
+		void CContextMenuParticle::OnContextMenuZoneCommand(GUI::CBase* sender)
+		{
+			GUI::CMenuItem* menuItem = dynamic_cast<GUI::CMenuItem*>(sender);
+			if (menuItem == NULL)
+				return;
+
+			const std::wstring& command = menuItem->getLabel();
+
+			Particle::CFactory* factory = m_particle->getParticleFactory();
+			CParticleController* particleController = CParticleController::getInstance();
+			CPropertyController* propretyController = CPropertyController::getInstance();
+
+			Particle::EZone currentZone = m_emitter->getZone()->getType();
+			Particle::EZone createZone = currentZone;
+
+			if (command == L"AABox")
+				createZone = Particle::EZone::AABox;
+			else if (command == L"Cylinder")
+				createZone = Particle::EZone::Cylinder;
+			else if (command == L"Sphere")
+				createZone = Particle::EZone::Sphere;
+			else if (command == L"Point")
+				createZone = Particle::EZone::Point;
+			else if (command == L"Line")
+				createZone = Particle::EZone::Line;
+			else if (command == L"PolyLine")
+				createZone = Particle::EZone::PolyLine;
+			else if (command == L"Ring")
+				createZone = Particle::EZone::Ring;
+
+			if (currentZone != createZone)
+			{
+				Particle::CZone* zone = factory->createZone(createZone);
+				if (zone)
+				{
+					factory->deleteZone(m_emitter->getZone());
+					m_emitter->setZone(zone);
+				}
+
+				particleController->updateGroupHierachy(m_group);
+			}
 		}
 	}
 }

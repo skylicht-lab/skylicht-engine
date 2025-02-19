@@ -223,6 +223,9 @@ namespace Skylicht
 				addEditorIcon(ESystemIcon::ObjectRect, "obj_rect.png");
 				addEditorIcon(ESystemIcon::ObjectSphere, "obj_sphere.png");
 				addEditorIcon(ESystemIcon::ObjectTorus, "obj_torus.png");
+				addEditorIcon(ESystemIcon::ObjectLine, "obj_line.png");
+				addEditorIcon(ESystemIcon::ObjectPolyline, "obj_polyline.png");
+				addEditorIcon(ESystemIcon::ObjectPoint, "obj_point.png");
 				addEditorIcon(ESystemIcon::Move, "tool_move.png");
 				addEditorIcon(ESystemIcon::Rotate, "tool_rotate.png");
 				addEditorIcon(ESystemIcon::Scale, "tool_scale.png");

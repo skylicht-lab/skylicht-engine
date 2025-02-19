@@ -24,6 +24,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "ParticleSystem/Particles/CParticleSerializable.h"
+
 namespace Skylicht
 {
 	namespace Particle
@@ -49,11 +51,9 @@ namespace Skylicht
 			NumOfZone
 		};
 
-		class COMPONENT_API CZone
+		class COMPONENT_API CZone : public CParticleSerializable
 		{
 		protected:
-			core::vector3df m_position;
-
 			EZone m_type;
 
 		public:
@@ -61,18 +61,12 @@ namespace Skylicht
 
 			virtual ~CZone();
 
+			virtual CObjectSerializable* createSerializable();
+
+			virtual void loadSerializable(CObjectSerializable* object);
+
 			const wchar_t* getName();
-
-			inline void setPosition(const core::vector3df& pos)
-			{
-				m_position = pos;
-			}
-
-			const core::vector3df& getPosition()
-			{
-				return m_position;
-			}
-
+			
 			inline EZone getType()
 			{
 				return m_type;
@@ -83,6 +77,8 @@ namespace Skylicht
 			virtual void generatePosition(CParticle& particle, bool full, CGroup* group) = 0;
 
 			virtual core::vector3df computeNormal(const core::vector3df& point, CGroup* group) = 0;
+
+			DECLARE_GETTYPENAME(CZone)
 		};
 	}
 }

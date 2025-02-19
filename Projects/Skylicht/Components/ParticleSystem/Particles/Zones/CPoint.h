@@ -32,14 +32,29 @@ namespace Skylicht
 	{
 		class COMPONENT_API CPoint : public CZone
 		{
+		protected:
+			core::vector3df m_position;
+
 		public:
 			CPoint();
 
 			virtual ~CPoint();
 
+			inline void setPosition(const core::vector3df& pos)
+			{
+				m_position = pos;
+			}
+
+			const core::vector3df& getPosition()
+			{
+				return m_position;
+			}
+
 			virtual void generatePosition(CParticle& particle, bool full, CGroup* group);
 
 			virtual core::vector3df computeNormal(const core::vector3df& point, CGroup* group);
+
+			DECLARE_GETTYPENAME(CPoint)
 		};
 	}
 }

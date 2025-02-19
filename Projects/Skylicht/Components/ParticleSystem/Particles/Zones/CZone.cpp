@@ -25,6 +25,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CZone.h"
 
+#include "Utils/CStringImp.h"
+
 namespace Skylicht
 {
 	namespace Particle
@@ -111,6 +113,21 @@ namespace Skylicht
 			}
 
 			v.normalize();
+		}
+
+		CObjectSerializable* CZone::createSerializable()
+		{
+			CObjectSerializable* object = CParticleSerializable::createSerializable();
+
+			CStringProperty* name = new CStringProperty(object, "name", CStringImp::convertUnicodeToUTF8(getName()).c_str());
+			name->setHidden(true);
+
+			return object;
+		}
+
+		void CZone::loadSerializable(CObjectSerializable* object)
+		{
+			CParticleSerializable::loadSerializable(object);
 		}
 	}
 }

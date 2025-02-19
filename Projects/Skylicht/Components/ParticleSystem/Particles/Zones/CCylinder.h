@@ -90,6 +90,8 @@ namespace Skylicht
 			virtual void generatePosition(CParticle& particle, bool full, CGroup* group);
 
 			virtual core::vector3df computeNormal(const core::vector3df& point, CGroup* group);
+
+			DECLARE_GETTYPENAME(CCylinder)
 		};
 	}
 }

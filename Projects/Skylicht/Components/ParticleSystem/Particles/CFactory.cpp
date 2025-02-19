@@ -36,13 +36,13 @@ namespace Skylicht
 
 		CFactory::~CFactory()
 		{
-			for (IRenderer *r : m_renderers)
+			for (IRenderer* r : m_renderers)
 				delete r;
 
-			for (CZone *z : m_zones)
+			for (CZone* z : m_zones)
 				delete z;
 
-			for (CEmitter *e : m_emitters)
+			for (CEmitter* e : m_emitters)
 				delete e;
 
 			m_renderers.clear();
@@ -52,14 +52,14 @@ namespace Skylicht
 
 		CRandomEmitter* CFactory::createRandomEmitter()
 		{
-			CRandomEmitter *e = new CRandomEmitter();
+			CRandomEmitter* e = new CRandomEmitter();
 			m_emitters.push_back(e);
 			return e;
 		}
 
 		CStraightEmitter* CFactory::createStraightEmitter(const core::vector3df& direction)
 		{
-			CStraightEmitter *e = new CStraightEmitter();
+			CStraightEmitter* e = new CStraightEmitter();
 			e->setDirection(direction);
 			m_emitters.push_back(e);
 			return e;
@@ -67,7 +67,7 @@ namespace Skylicht
 
 		CSphericEmitter* CFactory::createSphericEmitter(const core::vector3df& direction, float angleA, float angleB)
 		{
-			CSphericEmitter *e = new CSphericEmitter();
+			CSphericEmitter* e = new CSphericEmitter();
 			e->setDirection(direction);
 			e->setAngles(angleA, angleB);
 			m_emitters.push_back(e);
@@ -76,13 +76,13 @@ namespace Skylicht
 
 		CNormalEmitter* CFactory::createNormalEmitter(bool inverted)
 		{
-			CNormalEmitter *e = new CNormalEmitter();
+			CNormalEmitter* e = new CNormalEmitter();
 			e->setInverted(inverted);
 			m_emitters.push_back(e);
 			return e;
 		}
 
-		void CFactory::deleteEmitter(CEmitter *e)
+		void CFactory::deleteEmitter(CEmitter* e)
 		{
 			std::vector<CEmitter*>::iterator i = std::find(m_emitters.begin(), m_emitters.end(), e);
 			if (i != m_emitters.end())
@@ -94,14 +94,14 @@ namespace Skylicht
 
 		CQuadRenderer* CFactory::createQuadRenderer()
 		{
-			CQuadRenderer *r = new CQuadRenderer();
+			CQuadRenderer* r = new CQuadRenderer();
 			m_renderers.push_back(r);
 			return r;
 		}
 
 		CBillboardAdditiveRenderer* CFactory::createBillboardAdditiveRenderer()
 		{
-			CBillboardAdditiveRenderer *r = new CBillboardAdditiveRenderer();
+			CBillboardAdditiveRenderer* r = new CBillboardAdditiveRenderer();
 			m_renderers.push_back(r);
 			return r;
 		}
@@ -116,16 +116,57 @@ namespace Skylicht
 			}
 		}
 
+		CZone* CFactory::createZone(EZone type)
+		{
+			CZone* zone = NULL;
+			switch (type)
+			{
+			case Particle::EZone::Point:
+				zone = createPointZone();
+				break;
+			case Particle::EZone::Sphere:
+				zone = createSphereZone(core::vector3df(), 1.0f);
+				break;
+			case Particle::EZone::AABox:
+				zone = createAABoxZone(core::vector3df(), core::vector3df(1.0f, 1.0f, 1.0f));
+				break;
+			case Particle::EZone::Cylinder:
+				zone = createCylinderZone(core::vector3df(), core::vector3df(0.0f, 1.0f, 0.0f), 1.0f, 1.0f);
+				break;
+			case Particle::EZone::Line:
+				zone = createLineZone(core::vector3df(0.0f, 0.0f, -1.0f), core::vector3df(0.0f, 0.0f, 1.0f));
+				break;
+			case Particle::EZone::PolyLine:
+			{
+				core::array<core::vector3df> points;
+				float size = 1.0f;
+				points.push_back(core::vector3df(-size, 0.0f, -size));
+				points.push_back(core::vector3df(size, 0.0f, -size));
+				points.push_back(core::vector3df(size, 0.0f, size));
+				points.push_back(core::vector3df(-size, 0.0f, size));
+				points.push_back(core::vector3df(-size, 0.0f, -size));
+				zone = createPolyLineZone(points);
+			}
+			break;
+			case Particle::EZone::Ring:
+				zone = createRingZone(core::vector3df(), core::vector3df(0.0f, 1.0f, 0.0f), 1.0f, 1.5f);
+				break;
+			default:
+				break;
+			}
+			return zone;
+		}
+
 		CPoint* CFactory::createPointZone()
 		{
-			CPoint *z = new CPoint();
+			CPoint* z = new CPoint();
 			m_zones.push_back(z);
 			return z;
 		}
 
 		CPoint* CFactory::createPointZone(const core::vector3df& pos)
 		{
-			CPoint *z = new CPoint();
+			CPoint* z = new CPoint();
 			z->setPosition(pos);
 			m_zones.push_back(z);
 			return z;
@@ -133,28 +174,28 @@ namespace Skylicht
 
 		CSphere* CFactory::createSphereZone(const core::vector3df& pos, float radius)
 		{
-			CSphere *z = new CSphere(pos, radius);
+			CSphere* z = new CSphere(pos, radius);
 			m_zones.push_back(z);
 			return z;
 		}
 
 		CAABox* CFactory::createAABoxZone(const core::vector3df& pos, const core::vector3df& dimension)
 		{
-			CAABox *z = new CAABox(pos, dimension);
+			CAABox* z = new CAABox(pos, dimension);
 			m_zones.push_back(z);
 			return z;
 		}
 
 		CCylinder* CFactory::createCylinderZone(const core::vector3df& pos, const core::vector3df& direction, float radius, float length)
 		{
-			CCylinder *z = new CCylinder(pos, direction, radius, length);
+			CCylinder* z = new CCylinder(pos, direction, radius, length);
 			m_zones.push_back(z);
 			return z;
 		}
 
 		CLine* CFactory::createLineZone(const core::vector3df& p1, const core::vector3df& p2)
 		{
-			CLine *z = new CLine(p1, p2);
+			CLine* z = new CLine(p1, p2);
 			m_zones.push_back(z);
 			return z;
 		}
@@ -164,19 +205,19 @@ namespace Skylicht
 			if (points.size() < 2)
 				return NULL;
 
-			CPolyLine *z = new CPolyLine(points);
+			CPolyLine* z = new CPolyLine(points);
 			m_zones.push_back(z);
 			return z;
 		}
 
 		CRing* CFactory::createRingZone(const core::vector3df& pos, const core::vector3df& normal, float minRadius, float maxRadius)
 		{
-			CRing *z = new CRing(pos, normal, minRadius, maxRadius);
+			CRing* z = new CRing(pos, normal, minRadius, maxRadius);
 			m_zones.push_back(z);
 			return z;
 		}
 
-		void CFactory::deleteZone(CZone *z)
+		void CFactory::deleteZone(CZone* z)
 		{
 			std::vector<CZone*>::iterator i = std::find(m_zones.begin(), m_zones.end(), z);
 			if (i != m_zones.end())

@@ -199,7 +199,35 @@ namespace Skylicht
 				CParticleHierachyNode* nodeZone = nodeEmitter->addChild();
 				nodeZone->setTagData(zone, CParticleHierachyNode::Zone);
 				nodeZone->setParentData(group);
-				nodeZone->setIcon(GUI::ESystemIcon::ObjectBox);
+
+				Particle::EZone zoneType = zone->getType();
+				switch (zoneType)
+				{
+				case Particle::EZone::Point:
+					nodeZone->setIcon(GUI::ESystemIcon::ObjectPoint);
+					break;
+				case Particle::EZone::Sphere:
+					nodeZone->setIcon(GUI::ESystemIcon::ObjectSphere);
+					break;
+				case Particle::EZone::AABox:
+					nodeZone->setIcon(GUI::ESystemIcon::ObjectBox);
+					break;
+				case Particle::EZone::Cylinder:
+					nodeZone->setIcon(GUI::ESystemIcon::ObjectCylinder);
+					break;
+				case Particle::EZone::Line:
+					nodeZone->setIcon(GUI::ESystemIcon::ObjectLine);
+					break;
+				case Particle::EZone::PolyLine:
+					nodeZone->setIcon(GUI::ESystemIcon::ObjectPolyline);
+					break;
+				case Particle::EZone::Ring:
+					nodeZone->setIcon(GUI::ESystemIcon::ObjectCircle);
+					break;
+				default:
+					break;
+				}
+
 				nodeZone->setName(zone->getName());
 				setNodeEvent(nodeZone);
 			}
@@ -250,6 +278,7 @@ namespace Skylicht
 				case CParticleHierachyNode::Group:
 				case CParticleHierachyNode::Renderer:
 				case CParticleHierachyNode::Emitter:
+				case CParticleHierachyNode::Zone:
 				{
 					Particle::CParticleSerializable* ps = (Particle::CParticleSerializable*)node->getTagData();
 					CPropertyController::getInstance()->setParticleProperty(spaceProperty, ps, m_particle);
