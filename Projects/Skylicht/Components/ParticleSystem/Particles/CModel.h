@@ -37,11 +37,11 @@ namespace Skylicht
 		protected:
 			EParticleParams m_type;
 
-			bool m_haveStart;
+			bool m_randomStart;
 			float m_start1;
 			float m_start2;
 
-			bool m_haveEnd;
+			bool m_randomEnd;
 			float m_end1;
 			float m_end2;
 
@@ -67,7 +67,7 @@ namespace Skylicht
 			{
 				m_start1 = f;
 				m_start2 = f;
-				m_haveStart = true;
+				m_randomStart = true;
 				return this;
 			}
 
@@ -75,7 +75,7 @@ namespace Skylicht
 			{
 				m_start1 = f1;
 				m_start2 = f2;
-				m_haveStart = true;
+				m_randomStart = true;
 				return this;
 			}
 
@@ -83,7 +83,7 @@ namespace Skylicht
 			{
 				m_end1 = f;
 				m_end2 = f;
-				m_haveEnd = true;
+				m_randomEnd = true;
 				return this;
 			}
 
@@ -91,18 +91,18 @@ namespace Skylicht
 			{
 				m_end1 = f1;
 				m_end2 = f2;
-				m_haveEnd = true;
+				m_randomEnd = true;
 				return this;
 			}
 
-			inline bool haveStart()
+			inline bool isRandomStart()
 			{
-				return m_haveStart;
+				return m_randomStart;
 			}
 
-			inline bool haveEnd()
+			inline bool isRandomEnd()
 			{
-				return m_haveEnd;
+				return m_randomEnd;
 			}
 
 			float getStartValue1()

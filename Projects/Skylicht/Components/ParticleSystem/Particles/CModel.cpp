@@ -53,12 +53,12 @@ namespace Skylicht
 
 		CModel::CModel(EParticleParams type) :
 			m_type(type),
-			m_start1(0),
-			m_start2(0),
-			m_end1(0),
-			m_end2(0),
-			m_haveStart(false),
-			m_haveEnd(false),
+			m_start1(1.0f),
+			m_start2(1.0f),
+			m_end1(0.0f),
+			m_end2(0.0f),
+			m_randomStart(false),
+			m_randomEnd(false),
 			m_interpolator(NULL)
 		{
 
@@ -76,14 +76,16 @@ namespace Skylicht
 			name->setHidden(true);
 			object->autoRelease(name);
 
-			CFloatProperty* randomStart = new CFloatProperty(object, "start1", m_start1);
-			randomStart->setUIHeader("Random start");
+			CBoolProperty* randomStart = new CBoolProperty(object, "randomStart", m_randomStart);
+			randomStart->setUIHeader("Start value");
 			object->autoRelease(randomStart);
+			object->autoRelease(new CFloatProperty(object, "start1", m_start1));
 			object->autoRelease(new CFloatProperty(object, "start2", m_start2));
 
-			CFloatProperty* randomEnd = new CFloatProperty(object, "end1", m_end1);
-			randomEnd->setUIHeader("Random end");
+			CBoolProperty* randomEnd = new CBoolProperty(object, "randomEnd", m_randomEnd);
+			randomEnd->setUIHeader("End value");
 			object->autoRelease(randomEnd);
+			object->autoRelease(new CFloatProperty(object, "end1", m_end1));
 			object->autoRelease(new CFloatProperty(object, "end2", m_end2));
 
 			return object;
@@ -93,15 +95,13 @@ namespace Skylicht
 		{
 			CParticleSerializable::loadSerializable(object);
 
+			m_randomStart = object->get<bool>("randomStart", false);
 			m_start1 = object->get<float>("start1", 0.0f);
 			m_start2 = object->get<float>("start2", 0.0f);
-			if (m_start1 != 0 || m_start2 != 0)
-				m_haveStart = true;
 
+			m_randomEnd = object->get<bool>("randomEnd", false);
 			m_end1 = object->get<float>("end1", 0.0f);
 			m_end2 = object->get<float>("end2", 0.0f);
-			if (m_end1 != 0 || m_end2 != 0)
-				m_haveEnd = true;
 		}
 
 		const wchar_t* CModel::getName()

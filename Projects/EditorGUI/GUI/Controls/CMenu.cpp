@@ -151,16 +151,19 @@ namespace Skylicht
 				for (CBase* child : Children)
 				{
 					CMenuItem* item = dynamic_cast<CMenuItem*>(child);
-					if (item != NULL && item->getLabel() == label)
+					if (item != NULL)
 					{
-						return item;
-					}
+						if (item->getLabel() == label)
+						{
+							return item;
+						}
 
-					if (item->haveSubMenu())
-					{
-						CMenuItem* result = item->getMenu()->searchItemByLabel(label);
-						if (result)
-							return result;
+						if (item->haveSubMenu())
+						{
+							CMenuItem* result = item->getMenu()->searchItemByLabel(label);
+							if (result)
+								return result;
+						}
 					}
 				}
 				return NULL;

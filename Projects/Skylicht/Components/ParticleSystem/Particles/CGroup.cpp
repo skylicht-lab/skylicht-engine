@@ -242,15 +242,15 @@ namespace Skylicht
 			{
 				EParticleParams t = m->getType();
 
-				if (m->haveStart() == true)
+				if (m->isRandomStart() == true)
 					p.StartValue[t] = m->getRandomStart();
 				else
-					p.StartValue[t] = 0.0f;
+					p.StartValue[t] = m->getStartValue1();
 
-				if (m->haveEnd() == true)
+				if (m->isRandomEnd() == true)
 					p.EndValue[t] = m->getRandomEnd();
 				else
-					p.EndValue[t] = p.StartValue[t];
+					p.EndValue[t] = m->getEndValue1();
 
 				if (t == Particle::RotateSpeedX ||
 					t == Particle::RotateSpeedY ||

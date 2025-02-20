@@ -63,22 +63,28 @@ namespace Skylicht
 			m_menuGroup->addItemByPath(L"Add/Model/Scale X");
 			m_menuGroup->addItemByPath(L"Add/Model/Scale Y");
 			m_menuGroup->addItemByPath(L"Add/Model/Scale Z");
+			subMenu = m_menuGroup->getItemByPath(L"Add/Model");
+			subMenu->getMenu()->addSeparator();
 			m_menuGroup->addItemByPath(L"Add/Model/Rotate X");
 			m_menuGroup->addItemByPath(L"Add/Model/Rotate Y");
 			m_menuGroup->addItemByPath(L"Add/Model/Rotate Z");
+			subMenu->getMenu()->addSeparator();
 			m_menuGroup->addItemByPath(L"Add/Model/Red");
 			m_menuGroup->addItemByPath(L"Add/Model/Green");
 			m_menuGroup->addItemByPath(L"Add/Model/Blue");
 			m_menuGroup->addItemByPath(L"Add/Model/Alpha");
+			subMenu->getMenu()->addSeparator();
 			m_menuGroup->addItemByPath(L"Add/Model/Mass");
+			subMenu->getMenu()->addSeparator();
 			m_menuGroup->addItemByPath(L"Add/Model/Frame Index");
+			subMenu->getMenu()->addSeparator();
 			m_menuGroup->addItemByPath(L"Add/Model/Rotate speed X");
 			m_menuGroup->addItemByPath(L"Add/Model/Rotate speed Y");
 			m_menuGroup->addItemByPath(L"Add/Model/Rotate speed Z");
 
 			subMenu = m_menuGroup->getItemByPath(L"Add/Model");
 			if (subMenu)
-				subMenu->getMenu()->OnCommand = BIND_LISTENER(&CContextMenuParticle::OnContextMenuGroupCommand, this);
+				subMenu->getMenu()->OnCommand = BIND_LISTENER(&CContextMenuParticle::OnContextMenuModelCommand, this);
 
 			m_menuGroup->addItemByPath(L"Renderer/Quad (Instancing)");
 			m_menuGroup->addItemByPath(L"Renderer/CPU Billboard");
@@ -140,15 +146,21 @@ namespace Skylicht
 			m_menuModels->addItemByPath(L"Add/ScaleX");
 			m_menuModels->addItemByPath(L"Add/ScaleY");
 			m_menuModels->addItemByPath(L"Add/ScaleZ");
+			subMenu = m_menuModels->getItemByLabel(L"Add");
+			subMenu->getMenu()->addSeparator();
 			m_menuModels->addItemByPath(L"Add/RotateX");
 			m_menuModels->addItemByPath(L"Add/RotateY");
 			m_menuModels->addItemByPath(L"Add/RotateZ");
+			subMenu->getMenu()->addSeparator();
 			m_menuModels->addItemByPath(L"Add/ColorR");
 			m_menuModels->addItemByPath(L"Add/ColorG");
 			m_menuModels->addItemByPath(L"Add/ColorB");
 			m_menuModels->addItemByPath(L"Add/ColorA");
+			subMenu->getMenu()->addSeparator();
 			m_menuModels->addItemByPath(L"Add/Mass");
+			subMenu->getMenu()->addSeparator();
 			m_menuModels->addItemByPath(L"Add/FrameIndex");
+			subMenu->getMenu()->addSeparator();
 			m_menuModels->addItemByPath(L"Add/RotateSpeedX");
 			m_menuModels->addItemByPath(L"Add/RotateSpeedY");
 			m_menuModels->addItemByPath(L"Add/RotateSpeedZ");
@@ -192,6 +204,7 @@ namespace Skylicht
 				m_group = (Particle::CGroup*)node->getTagData();
 				m_canvas->closeMenu();
 				checkMenuRenderer(m_menuGroup);
+				checkMenuModel(m_menuGroup);
 				m_menuGroup->open(mousePos);
 				break;
 			case CParticleHierachyNode::Renderer:
@@ -233,6 +246,7 @@ namespace Skylicht
 			case CParticleHierachyNode::Models:
 				m_canvas->closeMenu();
 				m_group = (Particle::CGroup*)node->getParentData();
+				checkMenuModel(m_menuModels);
 				m_menuModels->open(mousePos);
 				break;
 			case CParticleHierachyNode::Model:
@@ -285,6 +299,55 @@ namespace Skylicht
 				if (items[i])
 				{
 					if (i == (int)m_zone->getType())
+						items[i]->setIcon(GUI::ESystemIcon::Check);
+					else
+						items[i]->setIcon(GUI::ESystemIcon::None);
+				}
+			}
+		}
+
+		void CContextMenuParticle::checkMenuModel(GUI::CMenu* menu)
+		{
+			GUI::CMenuItem* items[Particle::EParticleParams::NumParams];
+
+			items[Particle::EParticleParams::Scale] = menu->searchItemByLabel(L"Scale");
+			items[Particle::EParticleParams::ScaleX] = menu->searchItemByLabel(L"ScaleX");
+			items[Particle::EParticleParams::ScaleY] = menu->searchItemByLabel(L"ScaleY");
+			items[Particle::EParticleParams::ScaleZ] = menu->searchItemByLabel(L"ScaleZ");
+
+			items[Particle::EParticleParams::RotateX] = menu->searchItemByLabel(L"RotateX");
+			items[Particle::EParticleParams::RotateY] = menu->searchItemByLabel(L"RotateY");
+			items[Particle::EParticleParams::RotateZ] = menu->searchItemByLabel(L"RotateZ");
+
+			items[Particle::EParticleParams::ColorR] = menu->searchItemByLabel(L"ColorR");
+			items[Particle::EParticleParams::ColorG] = menu->searchItemByLabel(L"ColorG");
+			items[Particle::EParticleParams::ColorB] = menu->searchItemByLabel(L"ColorB");
+			items[Particle::EParticleParams::ColorA] = menu->searchItemByLabel(L"ColorA");
+
+			items[Particle::EParticleParams::Mass] = menu->searchItemByLabel(L"Mass");
+			items[Particle::EParticleParams::FrameIndex] = menu->searchItemByLabel(L"FrameIndex");
+
+			items[Particle::EParticleParams::RotateSpeedX] = menu->searchItemByLabel(L"RotateSpeedX");
+			items[Particle::EParticleParams::RotateSpeedY] = menu->searchItemByLabel(L"RotateSpeedY");
+			items[Particle::EParticleParams::RotateSpeedZ] = menu->searchItemByLabel(L"RotateSpeedZ");
+
+			std::vector<Particle::CModel*>& models = m_group->getModels();
+
+			for (int i = 0; i < (int)Particle::EParticleParams::NumParams; i++)
+			{
+				if (items[i])
+				{
+					bool exist = false;
+
+					for (Particle::CModel* model : models)
+					{
+						if (i == (int)model->getType())
+						{
+							exist = true;
+						}
+					}
+
+					if (exist)
 						items[i]->setIcon(GUI::ESystemIcon::Check);
 					else
 						items[i]->setIcon(GUI::ESystemIcon::None);
@@ -444,7 +507,65 @@ namespace Skylicht
 
 		void CContextMenuParticle::OnContextMenuModelCommand(GUI::CBase* sender)
 		{
+			GUI::CMenuItem* menuItem = dynamic_cast<GUI::CMenuItem*>(sender);
+			if (menuItem == NULL)
+				return;
 
+			const std::wstring& command = menuItem->getLabel();
+
+			Particle::CFactory* factory = m_particle->getParticleFactory();
+			CParticleController* particleController = CParticleController::getInstance();
+			CPropertyController* propretyController = CPropertyController::getInstance();
+
+			Particle::EParticleParams createParam = Particle::EParticleParams::NumParams;
+
+			if (command == L"Delete")
+			{
+				m_group->deleteModel(m_model->getType());
+				m_model = NULL;
+
+				CPropertyController::getInstance()->setProperty(NULL);
+			}
+			else
+			{
+				if (command == L"Scale")
+					createParam = Particle::EParticleParams::Scale;
+				else if (command == L"ScaleX")
+					createParam = Particle::EParticleParams::ScaleX;
+				else if (command == L"ScaleY")
+					createParam = Particle::EParticleParams::ScaleY;
+				else if (command == L"ScaleZ")
+					createParam = Particle::EParticleParams::ScaleZ;
+				else if (command == L"RotateX")
+					createParam = Particle::EParticleParams::RotateX;
+				else if (command == L"RotateY")
+					createParam = Particle::EParticleParams::RotateY;
+				else if (command == L"RotateZ")
+					createParam = Particle::EParticleParams::RotateZ;
+				else if (command == L"ColorR")
+					createParam = Particle::EParticleParams::ColorR;
+				else if (command == L"ColorG")
+					createParam = Particle::EParticleParams::ColorG;
+				else if (command == L"ColorB")
+					createParam = Particle::EParticleParams::ColorB;
+				else if (command == L"ColorA")
+					createParam = Particle::EParticleParams::ColorA;
+				else if (command == L"Mass")
+					createParam = Particle::EParticleParams::Mass;
+				else if (command == L"FrameIndex")
+					createParam = Particle::EParticleParams::FrameIndex;
+				else if (command == L"RotateSpeedX")
+					createParam = Particle::EParticleParams::RotateSpeedX;
+				else if (command == L"RotateSpeedY")
+					createParam = Particle::EParticleParams::RotateSpeedY;
+				else if (command == L"RotateSpeedZ")
+					createParam = Particle::EParticleParams::RotateSpeedZ;
+
+				if (createParam != Particle::EParticleParams::NumParams)
+					m_group->createModel(createParam);
+			}
+
+			particleController->updateGroupHierachy(m_group);
 		}
 	}
 }

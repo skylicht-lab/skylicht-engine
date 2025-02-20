@@ -41,7 +41,7 @@ namespace Skylicht
 
 		struct STrailInfo
 		{
-			core::array<SParticlePosition> *Position;
+			core::array<SParticlePosition>* Position;
 			core::vector3df CurrentPosition;
 			core::vector3df LastPosition;
 			video::SColor CurrentColor;
@@ -50,6 +50,7 @@ namespace Skylicht
 			STrailInfo()
 			{
 				Flag = 0;
+				Position = NULL;
 			}
 
 			void InitData()
@@ -59,8 +60,11 @@ namespace Skylicht
 
 			void DeleteData()
 			{
-				delete Position;
-				Position = NULL;
+				if (Position)
+				{
+					delete Position;
+					Position = NULL;
+				}
 			}
 
 			void Copy(const STrailInfo& t)
@@ -76,12 +80,12 @@ namespace Skylicht
 		class COMPONENT_API CParticleTrail : public IParticleCallback
 		{
 		protected:
-			CGroup *m_group;
+			CGroup* m_group;
 
 			core::array<STrailInfo> m_trails;
 			core::array<STrailInfo> m_deadTrails;
 
-			IMeshBuffer *m_meshBuffer;
+			IMeshBuffer* m_meshBuffer;
 
 			float m_segmentLength;
 
@@ -97,22 +101,22 @@ namespace Skylicht
 
 			float m_deadAlphaReduction;
 
-			CMaterial *m_material;
+			CMaterial* m_material;
 
 		public:
-			CParticleTrail(CGroup *group);
+			CParticleTrail(CGroup* group);
 
 			virtual ~CParticleTrail();
 
-			virtual void update(CCamera *camera);
+			virtual void update(CCamera* camera);
 
-			virtual void OnParticleUpdate(CParticle *particles, int num, CGroup *group, float dt);
+			virtual void OnParticleUpdate(CParticle* particles, int num, CGroup* group, float dt);
 
-			virtual void OnParticleBorn(CParticle &p);
+			virtual void OnParticleBorn(CParticle& p);
 
-			virtual void OnParticleDead(CParticle &p);
+			virtual void OnParticleDead(CParticle& p);
 
-			virtual void OnSwapParticleData(CParticle &p1, CParticle &p2);
+			virtual void OnSwapParticleData(CParticle& p1, CParticle& p2);
 
 			virtual void OnGroupDestroy();
 

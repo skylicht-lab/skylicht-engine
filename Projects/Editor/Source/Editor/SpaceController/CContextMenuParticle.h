@@ -77,6 +77,8 @@ namespace Skylicht
 
 			void checkMenuZone(GUI::CMenu* menu);
 
+			void checkMenuModel(GUI::CMenu* menu);
+
 		};
 	}
 }

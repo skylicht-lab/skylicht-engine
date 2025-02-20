@@ -323,6 +323,7 @@ namespace Skylicht
 
 			// Renderer
 			Particle::CQuadRenderer* renderer = factory->createQuadRenderer();
+			renderer->setTexturePath("BuiltIn/Textures/NullTexture.png");
 			group->setRenderer(renderer);
 
 			m_particle->Play();

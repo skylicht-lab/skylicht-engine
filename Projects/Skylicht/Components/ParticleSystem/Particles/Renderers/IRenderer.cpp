@@ -142,10 +142,7 @@ namespace Skylicht
 				src = texturePath->get();
 
 			if (src != m_texturePath)
-			{
-				ITexture* t = CTextureManager::getInstance()->getTexture(src.c_str());
-				setTexture(0, t);
-			}
+				setTexturePath(src.c_str());
 
 			m_atlasNx = object->get<int>("atlasX", 1);
 			m_atlasNy = object->get<int>("atlasY", 1);
@@ -177,6 +174,13 @@ namespace Skylicht
 
 			if (m_customMaterial)
 				m_customMaterial->updateShaderParams();
+		}
+
+		void IRenderer::setTexturePath(const char* path)
+		{
+			m_texturePath = path;
+			ITexture* t = CTextureManager::getInstance()->getTexture(path);
+			setTexture(0, t);
 		}
 	}
 }

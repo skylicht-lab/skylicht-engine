@@ -75,6 +75,8 @@ namespace Skylicht
 
 			CMaterial* getMaterial();
 
+			void setTexturePath(const char* path);
+
 			void setTexture(int slot, ITexture* texture);
 
 			inline void setEmission(bool b)

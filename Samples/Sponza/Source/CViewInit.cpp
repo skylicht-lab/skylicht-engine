@@ -297,8 +297,8 @@ void CViewInit::initFireParticle(Particle::CParticleComponent* ps)
 
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/fire2.png");
 	fire->setAtlas(2, 2);
-	fire->SizeX = 0.4f;
-	fire->SizeY = 0.4f;
+	fire->SizeX = 0.8f;
+	fire->SizeY = 0.8f;
 	fire->getMaterial()->setTexture(0, texture);
 	fire->getMaterial()->applyMaterial();
 
@@ -388,8 +388,8 @@ void CViewInit::initFireParticle(Particle::CParticleComponent* ps)
 
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/explosion.png");
 	smoke->setAtlas(2, 2);
-	smoke->SizeX = 0.3f;
-	smoke->SizeY = 0.3f;
+	smoke->SizeX = 0.6f;
+	smoke->SizeY = 0.6f;
 	smoke->getMaterial()->setTexture(0, texture);
 	smoke->getMaterial()->applyMaterial();
 
