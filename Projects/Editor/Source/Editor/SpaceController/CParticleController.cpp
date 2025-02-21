@@ -25,9 +25,12 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CParticleController.h"
 #include "CPropertyController.h"
+#include "CSceneController.h"
+
 #include "Editor/Space/Particle/CSpaceParticle.h"
 
 #include "ParticleSystem/CParticleComponent.h"
+
 
 namespace Skylicht
 {
@@ -269,10 +272,46 @@ namespace Skylicht
 
 		void CParticleController::onSelectNode(CParticleHierachyNode* node, bool selected)
 		{
+			CParticleHierachyNode::EDataType type = node->getTagDataType();
+
+			CSceneController* sceneController = CSceneController::getInstance();
+			CParticleGizmos* particleGizmos = sceneController->getParticleGizmos();
+
+			if (type == CParticleHierachyNode::Emitter)
+			{
+				Particle::CEmitter* emitter = (Particle::CEmitter*)node->getTagData();
+				if (emitter->haveDirection())
+				{
+					particleGizmos->setEmitter((Particle::CDirectionEmitter*)emitter, m_particle->getGameObject()->calcWorldTransform());
+					sceneController->setGizmos(particleGizmos);
+				}
+				else
+				{
+					sceneController->setGizmos(sceneController->getTransformGizmos());
+				}
+			}
+			else if (type == CParticleHierachyNode::Zone)
+			{
+				Particle::CZone* zone = (Particle::CZone*)node->getTagData();
+				Particle::CPositionZone* positionZone = dynamic_cast<Particle::CPositionZone*>(zone);
+				if (positionZone)
+				{
+					particleGizmos->setZone(positionZone, m_particle->getGameObject()->calcWorldTransform());
+					sceneController->setGizmos(particleGizmos);
+				}
+				else
+				{
+					sceneController->setGizmos(sceneController->getTransformGizmos());
+				}
+			}
+			else
+			{
+				sceneController->setGizmos(sceneController->getTransformGizmos());
+			}
+
 			CSpaceProperty* spaceProperty = (CSpaceProperty*)CEditor::getInstance()->getWorkspaceByName(L"Property");
 			if (spaceProperty)
 			{
-				CParticleHierachyNode::EDataType type = node->getTagDataType();
 				switch (type)
 				{
 				case CParticleHierachyNode::Group:

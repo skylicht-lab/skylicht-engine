@@ -34,12 +34,11 @@ namespace Skylicht
 	namespace Particle
 	{
 		CSphericEmitter::CSphericEmitter() :
-			CEmitter(Spheric),
+			CDirectionEmitter(Spheric),
 			m_angleA(0.0f),
 			m_angleB(0.0f),
 			m_cosAngleMin(0.0f),
-			m_cosAngleMax(0.0f),
-			m_direction(0.0f, 1.0f, 0.0f)
+			m_cosAngleMax(0.0f)
 		{
 			memset(m_matrix, 0, sizeof(float) * 9);
 		}
@@ -74,7 +73,7 @@ namespace Skylicht
 			setAngles(angleA * core::DEGTORAD, angleB * core::DEGTORAD);
 
 			core::vector3df direction = object->get<core::vector3df>("direction", Transform::Oy);
-			setDirection(direction);
+			setDirection(direction, true);
 		}
 
 		void CSphericEmitter::setAngles(float angleA, float angleB)
@@ -92,14 +91,12 @@ namespace Skylicht
 			m_cosAngleMax = cosf(m_angleB * 0.5f);
 		}
 
-		void CSphericEmitter::setDirection(const core::vector3df& d)
+		void CSphericEmitter::setDirection(const core::vector3df& d, bool updateRotation)
 		{
-			m_direction = d;
-			m_direction.normalize();
+			CDirectionEmitter::setDirection(d, updateRotation);
 
 			if ((m_direction.X == 0.0f) && (m_direction.Y == 0.0f))
 			{
-
 				m_matrix[0] = m_direction.Z;
 				m_matrix[1] = 0.0f;
 				m_matrix[2] = 0.0f;

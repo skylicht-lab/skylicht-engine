@@ -23,50 +23,39 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CPoint.h"
-#include "ParticleSystem/Particles/CParticle.h"
-#include "ParticleSystem/Particles/CGroup.h"
+#include "CDirectionEmitter.h"
 
 namespace Skylicht
 {
 	namespace Particle
 	{
-		CPoint::CPoint() :
-			CPositionZone(Point)
+		CDirectionEmitter::CDirectionEmitter(EEmitter type) :
+			CEmitter(type),
+			m_direction(0.0f, 1.0f, 0.0f)
 		{
 
 		}
 
-		CPoint::~CPoint()
+		CDirectionEmitter::~CDirectionEmitter()
 		{
 
 		}
 
-		CObjectSerializable* CPoint::createSerializable()
+		void CDirectionEmitter::setRotation(const core::quaternion& rotation)
 		{
-			CObjectSerializable* object = CZone::createSerializable();
-			object->autoRelease(new CVector3Property(object, "position", m_position));
-			return object;
+			m_rotation = rotation;
+
+			core::vector3df d(0.0f, 1.0f, 0.0f);
+			setDirection(rotation * d, false);
 		}
 
-		void CPoint::loadSerializable(CObjectSerializable* object)
+		void CDirectionEmitter::setDirection(const core::vector3df& d, bool updateRotation)
 		{
-			CZone::loadSerializable(object);
-			m_position = object->get<core::vector3df>("position", core::vector3df());
-		}
+			m_direction = d;
+			m_direction.normalize();
 
-		void CPoint::generatePosition(CParticle& particle, bool full, CGroup* group)
-		{
-			core::vector3df pos = group->getTransformPosition(m_position);
-			particle.Position = pos;
-		}
-
-		core::vector3df CPoint::computeNormal(const core::vector3df& point, CGroup* group)
-		{
-			core::vector3df tpos = group->getTransformPosition(m_position);
-			core::vector3df v = point - tpos;
-			normalizeOrRandomize(v);
-			return v;
+			if (updateRotation)
+				m_rotation.rotationFromTo(core::vector3df(0.0f, 1.0f, 0.0f), m_direction);
 		}
 	}
 }

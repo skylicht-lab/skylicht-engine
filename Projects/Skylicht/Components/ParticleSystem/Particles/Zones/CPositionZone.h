@@ -22,51 +22,33 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CPoint.h"
-#include "ParticleSystem/Particles/CParticle.h"
-#include "ParticleSystem/Particles/CGroup.h"
+#pragma once
+
+#include "CZone.h"
 
 namespace Skylicht
 {
 	namespace Particle
 	{
-		CPoint::CPoint() :
-			CPositionZone(Point)
+		class COMPONENT_API CPositionZone : public CZone
 		{
+		protected:
+			core::vector3df m_position;
 
-		}
+		public:
+			CPositionZone(EZone type);
 
-		CPoint::~CPoint()
-		{
+			virtual ~CPositionZone();
 
-		}
+			inline void setPosition(const core::vector3df& pos)
+			{
+				m_position = pos;
+			}
 
-		CObjectSerializable* CPoint::createSerializable()
-		{
-			CObjectSerializable* object = CZone::createSerializable();
-			object->autoRelease(new CVector3Property(object, "position", m_position));
-			return object;
-		}
-
-		void CPoint::loadSerializable(CObjectSerializable* object)
-		{
-			CZone::loadSerializable(object);
-			m_position = object->get<core::vector3df>("position", core::vector3df());
-		}
-
-		void CPoint::generatePosition(CParticle& particle, bool full, CGroup* group)
-		{
-			core::vector3df pos = group->getTransformPosition(m_position);
-			particle.Position = pos;
-		}
-
-		core::vector3df CPoint::computeNormal(const core::vector3df& point, CGroup* group)
-		{
-			core::vector3df tpos = group->getTransformPosition(m_position);
-			core::vector3df v = point - tpos;
-			normalizeOrRandomize(v);
-			return v;
-		}
+			inline const core::vector3df& getPosition()
+			{
+				return m_position;
+			}
+		};
 	}
 }

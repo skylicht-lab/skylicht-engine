@@ -71,6 +71,7 @@ namespace Skylicht
 		{
 			m_transformGizmos = new CTransformGizmos();
 			m_worldTransformDataGizmos = new CWorldTransformDataGizmos();
+			m_particleGizmos = new CParticleGizmos();
 
 			CAssetManager::getInstance()->registerFileLoader("scene", this);
 		}
@@ -81,6 +82,7 @@ namespace Skylicht
 
 			delete m_transformGizmos;
 			delete m_worldTransformDataGizmos;
+			delete m_particleGizmos;
 
 			if (m_history)
 				delete m_history;
@@ -1183,11 +1185,11 @@ namespace Skylicht
 				CPropertyController* propertyController = CPropertyController::getInstance();
 				if (selected)
 				{
-					selectedObject = selection->addSelect(obj);
-					propertyController->setProperty(selectedObject);
-
 					// add gizmos
 					setGizmos(m_transformGizmos);
+
+					selectedObject = selection->addSelect(obj);
+					propertyController->setProperty(selectedObject);
 
 					// add new observer
 					selectedObject->addObserver(this);

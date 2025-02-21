@@ -32,9 +32,9 @@ namespace Skylicht
 	namespace Particle
 	{
 		CRing::CRing(const core::vector3df& position, const core::vector3df& normal, float minRadius, float maxRadius) :
-			CZone(Ring),
-			m_position(position)
+			CPositionZone(Ring)
 		{
+			m_position = position;
 			setNormal(normal);
 			setRadius(minRadius, maxRadius);
 		}

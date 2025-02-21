@@ -89,6 +89,11 @@ namespace Skylicht
 
 			virtual void loadSerializable(CObjectSerializable* object);
 
+			virtual bool haveDirection()
+			{
+				return false;
+			}
+
 			inline CZone* setZone(CZone* z)
 			{
 				m_zone = z;

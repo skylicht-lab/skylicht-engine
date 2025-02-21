@@ -26,6 +26,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CParticleEditor.h"
 #include "Editor/Space/Property/CSpaceProperty.h"
 #include "Editor/SpaceController/CParticleController.h"
+#include "Editor/SpaceController/CSceneController.h"
+
+#include "ParticleSystem/Particles/Emitters/CDirectionEmitter.h"
 
 namespace Skylicht
 {
@@ -72,6 +75,29 @@ namespace Skylicht
 			m_ps->loadSerializable(m_data);
 
 			CParticleController::getInstance()->updateGroupName();
+
+			CParticleGizmos* gizmos = CSceneController::getInstance()->getParticleGizmos();
+			CParticleGizmos::EState state = gizmos->getState();
+
+			switch (state)
+			{
+			case CParticleGizmos::Emitter:
+			{
+				Particle::CDirectionEmitter* directionEmitter = dynamic_cast<Particle::CDirectionEmitter*>(m_ps);
+				if (directionEmitter)
+					gizmos->setRotation(directionEmitter->getRotation());
+			}
+			break;
+			case CParticleGizmos::Zone:
+			{
+				Particle::CPositionZone* zone = dynamic_cast<Particle::CPositionZone*>(m_ps);
+				if (zone)
+					gizmos->setPosition(zone->getPosition());
+			}
+			break;
+			default:
+				break;
+			}
 		}
 	}
 }

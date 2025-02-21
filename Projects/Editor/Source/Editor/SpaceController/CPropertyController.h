@@ -56,6 +56,11 @@ namespace Skylicht
 
 			void setParticleProperty(CSpaceProperty* space, Particle::CParticleSerializable* ps, Particle::CParticleComponent* psComponent);
 
+			inline CParticleEditor* getParticleEditor()
+			{
+				return m_particleEditor;
+			}
+
 		protected:
 
 			void clearProperty();

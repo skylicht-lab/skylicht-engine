@@ -32,11 +32,10 @@ namespace Skylicht
 	namespace Particle
 	{
 		CAABox::CAABox(const core::vector3df& position, const core::vector3df& dimension) :
-			CZone(AABox),
-			m_position(position),
+			CPositionZone(AABox),
 			m_dimension(dimension)
 		{
-
+			m_position = position;
 		}
 
 		CAABox::~CAABox()

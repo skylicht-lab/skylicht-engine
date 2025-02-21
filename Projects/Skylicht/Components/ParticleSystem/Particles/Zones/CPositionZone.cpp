@@ -23,50 +23,21 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CPoint.h"
-#include "ParticleSystem/Particles/CParticle.h"
-#include "ParticleSystem/Particles/CGroup.h"
+#include "CPositionZone.h"
 
 namespace Skylicht
 {
 	namespace Particle
 	{
-		CPoint::CPoint() :
-			CPositionZone(Point)
+		CPositionZone::CPositionZone(EZone type) :
+			CZone(type)
 		{
 
 		}
 
-		CPoint::~CPoint()
+		CPositionZone::~CPositionZone()
 		{
 
-		}
-
-		CObjectSerializable* CPoint::createSerializable()
-		{
-			CObjectSerializable* object = CZone::createSerializable();
-			object->autoRelease(new CVector3Property(object, "position", m_position));
-			return object;
-		}
-
-		void CPoint::loadSerializable(CObjectSerializable* object)
-		{
-			CZone::loadSerializable(object);
-			m_position = object->get<core::vector3df>("position", core::vector3df());
-		}
-
-		void CPoint::generatePosition(CParticle& particle, bool full, CGroup* group)
-		{
-			core::vector3df pos = group->getTransformPosition(m_position);
-			particle.Position = pos;
-		}
-
-		core::vector3df CPoint::computeNormal(const core::vector3df& point, CGroup* group)
-		{
-			core::vector3df tpos = group->getTransformPosition(m_position);
-			core::vector3df v = point - tpos;
-			normalizeOrRandomize(v);
-			return v;
 		}
 	}
 }

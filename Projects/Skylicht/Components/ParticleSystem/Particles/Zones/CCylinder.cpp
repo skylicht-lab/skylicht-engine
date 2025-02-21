@@ -35,12 +35,12 @@ namespace Skylicht
 			const core::vector3df& direction,
 			float radius,
 			float length) :
-			CZone(Cylinder),
-			m_position(position),
+			CPositionZone(Cylinder),
 			m_direction(direction),
 			m_radius(radius),
 			m_length(length)
 		{
+			m_position = position;
 			m_direction.normalize();
 		}
 

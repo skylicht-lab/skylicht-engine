@@ -43,6 +43,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Editor/Gizmos/Transform/CTransformGizmos.h"
 #include "Editor/Gizmos/Transform/CWorldTransformDataGizmos.h"
+#include "Editor/Gizmos/Particle/CParticleGizmos.h"
 
 namespace Skylicht
 {
@@ -82,6 +83,8 @@ namespace Skylicht
 
 			CWorldTransformDataGizmos* m_worldTransformDataGizmos;
 
+			CParticleGizmos* m_particleGizmos;
+
 			std::string m_scenePath;
 
 		public:
@@ -103,6 +106,11 @@ namespace Skylicht
 			inline CWorldTransformDataGizmos* getWorldTransformDataGizmos()
 			{
 				return m_worldTransformDataGizmos;
+			}
+
+			inline CParticleGizmos* getParticleGizmos()
+			{
+				return m_particleGizmos;
 			}
 
 			void setGizmos(CGizmos* gizmos);

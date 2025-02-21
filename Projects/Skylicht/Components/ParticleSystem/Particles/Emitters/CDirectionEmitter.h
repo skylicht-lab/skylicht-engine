@@ -22,51 +22,43 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CPoint.h"
-#include "ParticleSystem/Particles/CParticle.h"
-#include "ParticleSystem/Particles/CGroup.h"
+#pragma once
+
+#include "CEmitter.h"
 
 namespace Skylicht
 {
 	namespace Particle
 	{
-		CPoint::CPoint() :
-			CPositionZone(Point)
+		class COMPONENT_API CDirectionEmitter : public CEmitter
 		{
+		protected:
+			core::quaternion m_rotation;
+			core::vector3df m_direction;
 
-		}
+		public:
+			CDirectionEmitter(EEmitter type);
 
-		CPoint::~CPoint()
-		{
+			virtual ~CDirectionEmitter();
 
-		}
+			virtual bool haveDirection()
+			{
+				return true;
+			}
 
-		CObjectSerializable* CPoint::createSerializable()
-		{
-			CObjectSerializable* object = CZone::createSerializable();
-			object->autoRelease(new CVector3Property(object, "position", m_position));
-			return object;
-		}
+			virtual void setRotation(const core::quaternion& rotation);
 
-		void CPoint::loadSerializable(CObjectSerializable* object)
-		{
-			CZone::loadSerializable(object);
-			m_position = object->get<core::vector3df>("position", core::vector3df());
-		}
+			virtual const core::quaternion& getRotation()
+			{
+				return m_rotation;
+			}
 
-		void CPoint::generatePosition(CParticle& particle, bool full, CGroup* group)
-		{
-			core::vector3df pos = group->getTransformPosition(m_position);
-			particle.Position = pos;
-		}
+			virtual void setDirection(const core::vector3df& d, bool updateRotation = true);
 
-		core::vector3df CPoint::computeNormal(const core::vector3df& point, CGroup* group)
-		{
-			core::vector3df tpos = group->getTransformPosition(m_position);
-			core::vector3df v = point - tpos;
-			normalizeOrRandomize(v);
-			return v;
-		}
+			inline const core::vector3df& getDirection()
+			{
+				return m_direction;
+			}
+		};
 	}
 }

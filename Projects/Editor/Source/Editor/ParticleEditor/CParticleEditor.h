@@ -60,6 +60,11 @@ namespace Skylicht
 			virtual void initGUI(Particle::CParticleSerializable* ps, CSpaceProperty* ui);
 
 			virtual void onUpdateValue(CObjectSerializable* object);
+
+			CObjectSerializable* getData()
+			{
+				return m_data;
+			}
 		};
 	}
 }

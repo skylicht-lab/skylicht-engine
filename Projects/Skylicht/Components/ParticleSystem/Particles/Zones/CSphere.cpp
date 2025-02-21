@@ -32,11 +32,10 @@ namespace Skylicht
 	namespace Particle
 	{
 		CSphere::CSphere(const core::vector3df& position, float radius) :
-			CZone(Sphere),
-			m_position(position),
+			CPositionZone(Sphere),
 			m_radius(radius)
 		{
-
+			m_position = position;
 		}
 
 		CSphere::~CSphere()

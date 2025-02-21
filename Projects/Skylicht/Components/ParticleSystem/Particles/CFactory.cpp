@@ -60,7 +60,7 @@ namespace Skylicht
 		CStraightEmitter* CFactory::createStraightEmitter(const core::vector3df& direction)
 		{
 			CStraightEmitter* e = new CStraightEmitter();
-			e->setDirection(direction);
+			e->setDirection(direction, true);
 			m_emitters.push_back(e);
 			return e;
 		}
@@ -68,7 +68,7 @@ namespace Skylicht
 		CSphericEmitter* CFactory::createSphericEmitter(const core::vector3df& direction, float angleA, float angleB)
 		{
 			CSphericEmitter* e = new CSphericEmitter();
-			e->setDirection(direction);
+			e->setDirection(direction, true);
 			e->setAngles(angleA, angleB);
 			m_emitters.push_back(e);
 			return e;

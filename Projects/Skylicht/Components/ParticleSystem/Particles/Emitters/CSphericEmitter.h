@@ -24,16 +24,15 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CEmitter.h"
+#include "CDirectionEmitter.h"
 
 namespace Skylicht
 {
 	namespace Particle
 	{
-		class COMPONENT_API CSphericEmitter : public CEmitter
+		class COMPONENT_API CSphericEmitter : public CDirectionEmitter
 		{
 		protected:
-			core::vector3df m_direction;
 			float m_angleA;
 			float m_angleB;
 			float m_cosAngleMin;
@@ -50,7 +49,7 @@ namespace Skylicht
 
 			virtual void loadSerializable(CObjectSerializable* object);
 
-			void setDirection(const core::vector3df& d);
+			virtual void setDirection(const core::vector3df& d, bool updateRotation = true);
 
 			void setAngles(float a, float b);
 
@@ -64,12 +63,7 @@ namespace Skylicht
 				return m_angleB;
 			}
 
-			inline const core::vector3df& getDirection()
-			{
-				return m_direction;
-			}
-
-			virtual void generateVelocity(CParticle& particle, float speed, CZone* zone, CGroup *group);
+			virtual void generateVelocity(CParticle& particle, float speed, CZone* zone, CGroup* group);
 
 			DECLARE_GETTYPENAME(CSphericEmitter)
 		};

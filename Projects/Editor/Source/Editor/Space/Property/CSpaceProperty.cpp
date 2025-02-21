@@ -262,7 +262,7 @@ namespace Skylicht
 				btn->showLabel(false);
 				btn->enableDrawBackground(false);
 				btn->tagData(editor);
-				btn->OnPress = [&, editor](GUI::CBase* button)
+				btn->OnPress = [&, componentEditor](GUI::CBase* button)
 					{
 						CGameObject* object = componentEditor->getGameObject();
 						CComponentSystem* component = componentEditor->getComponent();
