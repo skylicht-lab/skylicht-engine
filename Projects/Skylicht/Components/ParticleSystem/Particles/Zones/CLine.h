@@ -47,6 +47,16 @@ namespace Skylicht
 
 			void setLine(const core::vector3df& p1, const core::vector3df& p2);
 
+			void setLine(const core::line3df& line)
+			{
+				setLine(line.start, line.end);
+			}
+
+			core::line3df getLine()
+			{
+				return core::line3df(m_p1, m_p2);
+			}
+
 			virtual void generatePosition(CParticle& particle, bool full, CGroup* group);
 
 			virtual core::vector3df computeNormal(const core::vector3df& point, CGroup* group);

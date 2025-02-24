@@ -132,7 +132,6 @@ namespace Skylicht
 			if (bbox == NULL)
 				return;
 
-			// select bbox data
 			selectObjectData->GameObject = m_gameObject;
 			selectObjectData->Entity = NULL;
 			selectObjectData->BBox = bbox->BBox;
@@ -140,8 +139,83 @@ namespace Skylicht
 
 		void CGParticle::renderZone(const core::matrix4& world, Particle::CZone* zone)
 		{
-			EZone type = zone->getType();
+			CHandles* handle = CHandles::getInstance();
 
+			SColor color(255, 255, 255, 255);
+
+			EZone type = zone->getType();
+			switch (type)
+			{
+			case Particle::AABox:
+			{
+				Particle::CAABox* box = dynamic_cast<Particle::CAABox*>(zone);
+				const core::vector3df& d = box->getDimension();
+				const core::vector3df& p = box->getPosition();
+
+				core::aabbox3df bbox(p - d * 0.5f, p + d * 0.5f);
+				world.transformBox(bbox);
+				handle->draw3DBox(bbox, color);
+			}
+			break;
+			case Particle::Cylinder:
+			{
+				Particle::CCylinder* cylinder = dynamic_cast<Particle::CCylinder*>(zone);
+				core::vector3df n = cylinder->getDirection();
+				core::vector3df p = cylinder->getPosition();
+
+				world.transformVect(p);
+				world.rotateVect(n);
+				handle->drawCylinder(p, n.normalize(), cylinder->getLength(), cylinder->getRadius(), color);
+			}
+			break;
+			case Particle::Sphere:
+			{
+				Particle::CSphere* sphere = dynamic_cast<Particle::CSphere*>(zone);
+				core::vector3df p = sphere->getPosition();
+
+				world.transformVect(p);
+				handle->drawSphere(p, sphere->getRadius(), color);
+			}
+			break;
+			case Particle::Ring:
+			{
+				Particle::CRing* ring = dynamic_cast<Particle::CRing*>(zone);
+				core::vector3df p = ring->getPosition();
+				core::vector3df n = ring->getNormal();
+
+				world.transformVect(p);
+				world.rotateVect(n);
+				n.normalize();
+
+				handle->drawCircle(p, ring->getMinRadius(), n, color);
+				handle->drawCircle(p, ring->getMaxRadius(), n, color);
+			}
+			break;
+			case Particle::Line:
+			{
+				Particle::CLine* line = dynamic_cast<Particle::CLine*>(zone);
+				core::line3df l = line->getLine();
+
+				world.transformVect(l.start);
+				world.transformVect(l.end);
+
+				handle->drawLine(l.start, l.end, color);
+			}
+			break;
+			case Particle::PolyLine:
+			{
+				Particle::CPolyLine* line = dynamic_cast<Particle::CPolyLine*>(zone);
+				core::array<core::vector3df> points = line->getPoints();
+
+				for (u32 i = 0, n = points.size(); i < n; i++)
+					world.transformVect(points[i]);
+
+				handle->drawPolyline(points.const_pointer(), points.size(), false, color);
+			}
+			break;
+			default:
+				break;
+			};
 		}
 	}
 }

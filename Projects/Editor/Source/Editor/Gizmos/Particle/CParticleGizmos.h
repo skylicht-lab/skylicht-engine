@@ -77,6 +77,8 @@ namespace Skylicht
 
 			virtual void refresh();
 
+			void reset();
+
 			virtual void onNotify(ISubject* subject, IObserver* from);
 
 			CSubject<core::vector3df>& getPosition()

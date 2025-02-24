@@ -234,6 +234,50 @@ namespace Skylicht
 			m_gizmosRenderer->getLineData()->add3DBox(box, color);
 		}
 
+		void CHandles::drawCylinder(const core::vector3df& pos, const core::vector3df& direction, float length, float radius, const SColor& color)
+		{
+			if (m_gizmosRenderer == NULL)
+				return;
+
+			CLineDrawData* linedata = m_gizmosRenderer->getLineData();
+
+			core::quaternion q;
+			q.rotationFromTo(core::vector3df(0.0f, 1.0f, 0.0f), direction);
+
+			int numStep = 12;
+			float a = core::PI * 2.0f / (float)numStep;
+			for (int i = 0; i < numStep; i++)
+			{
+				float angle1 = i * a;
+				float angle2 = (i + 1) * a;
+
+				core::vector3df p1 = radius * core::vector3df(cosf(angle1), 0.0f, sinf(angle1));
+				core::vector3df p2 = radius * core::vector3df(cosf(angle2), 0.0f, sinf(angle2));
+				p1 = pos + q * p1;
+				p2 = pos + q * p2;
+
+				core::vector3df t = direction * length * 0.5f;
+
+				linedata->addLine(p1 + t, p2 + t, color);
+				linedata->addLine(p1 - t, p2 - t, color);
+				linedata->addLine(p1 + t, p1 - t, color);
+			}
+		}
+
+		void CHandles::drawSphere(const core::vector3df& pos, float radius, const SColor& color)
+		{
+			if (m_gizmosRenderer == NULL)
+				return;
+
+			core::vector3df normal;
+
+			normal = core::vector3df(0.0f, 1.0f, 0.0f);
+			drawCircle(pos, radius, normal, color);
+
+			normal = core::vector3df(0.0f, 0.0f, 1.0f);
+			drawCircle(pos, radius, normal, color);
+		}
+
 		void CHandles::drawLine(const core::vector3df& v1, const core::vector3df& v2, const SColor& color)
 		{
 			if (m_gizmosRenderer == NULL)
@@ -248,6 +292,46 @@ namespace Skylicht
 				return;
 
 			m_gizmosRenderer->getLineData()->addPolyline(points, count, close, color);
+		}
+
+		void CHandles::drawCircle(const core::vector3df& pos, float radius, const core::vector3df& normal, const SColor& color)
+		{
+			if (m_gizmosRenderer == NULL)
+				return;
+
+			core::quaternion q;
+			core::vector3df up(0.0f, 1.0f, 0.0f);
+			core::vector3df n = normal;
+			n.normalize();
+			q.rotationFromTo(up, n);
+
+			int step = 30;
+			float rad = 0;
+			float radInc = core::PI * 2 / step;
+
+			core::vector3df	point;
+			core::array<core::vector3df> points;
+
+			for (int i = 0; i <= step; i++)
+			{
+				point.Y = 0.0;
+				point.X = radius * sinf(rad);
+				point.Z = radius * cosf(rad);
+
+				// rotate
+				point = q * point;
+
+				// translate
+				point += pos;
+
+				// add point
+				points.push_back(point);
+
+				// inc rad
+				rad = rad + radInc;
+			}
+
+			m_gizmosRenderer->getLineData()->addPolyline(points.const_pointer(), points.size(), true, color);
 		}
 
 		void CHandles::drawRectBillboard(const core::vector3df& pos, float w, float h, const SColor& color)

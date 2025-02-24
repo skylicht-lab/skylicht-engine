@@ -50,6 +50,11 @@ namespace Skylicht
 
 			void setLine(const core::array<core::vector3df>& point);
 
+			core::array<core::vector3df>& getPoints()
+			{
+				return m_point;
+			}
+
 			inline void setNormal(const core::vector3df& normal)
 			{
 				m_normal = normal;

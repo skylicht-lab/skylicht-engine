@@ -194,6 +194,14 @@ namespace Skylicht
 			CHandles::getInstance()->end();
 		}
 
+		void CParticleGizmos::reset()
+		{
+			CHandles::getInstance()->end();
+			m_state = None;
+			m_emitter = NULL;
+			m_zone = NULL;
+		}
+
 		void CParticleGizmos::onNotify(ISubject* subject, IObserver* from)
 		{
 

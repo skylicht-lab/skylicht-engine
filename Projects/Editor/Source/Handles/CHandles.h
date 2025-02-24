@@ -243,9 +243,15 @@ namespace Skylicht
 
 			void draw3DBox(const core::aabbox3d<f32>& box, const SColor& color);
 
+			void drawCylinder(const core::vector3df& pos, const core::vector3df& direction, float length, float radius, const SColor& color);
+
+			void drawSphere(const core::vector3df& pos, float radius, const SColor& color);
+
 			void drawLine(const core::vector3df& v1, const core::vector3df& v2, const SColor& color);
 
 			void drawPolyline(const core::vector3df* points, u32 count, bool close, const SColor& color);
+
+			void drawCircle(const core::vector3df& pos, float radius, const core::vector3df& normal, const SColor& color);
 
 			void drawRectBillboard(const core::vector3df& pos, float w, float h, const SColor& color);
 

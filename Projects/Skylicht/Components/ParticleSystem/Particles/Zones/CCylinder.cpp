@@ -80,6 +80,11 @@ namespace Skylicht
 			core::vector3df pos = group->getTransformPosition(m_position);
 			core::vector3df dir = group->getTransformVector(m_direction);
 
+			if (dir.getLengthSQ() == 0.0f)
+				dir.set(0.0f, 1.0f, 0.0f);
+			else
+				dir.normalize();
+
 			// We need at least two points to compute a base
 			core::vector3df rPoint = pos + core::vector3df(10.0f, 10.0f, 10.0f);
 			float dist = dir.dotProduct(rPoint);

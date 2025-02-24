@@ -28,6 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/Input/CInput.h"
 #include "CParticleController.h"
 #include "CPropertyController.h"
+#include "CSceneController.h"
 
 namespace Skylicht
 {
@@ -449,6 +450,7 @@ namespace Skylicht
 				factory->deleteEmitter(m_emitter);
 
 				CPropertyController::getInstance()->setProperty(NULL);
+				CSceneController::getInstance()->getParticleGizmos()->reset();
 			}
 
 			if (emitter)
@@ -502,6 +504,10 @@ namespace Skylicht
 				}
 
 				particleController->updateGroupHierachy(m_group);
+
+				CParticleGizmos* particleGizmos = CSceneController::getInstance()->getParticleGizmos();
+				if (particleGizmos->getState() == CParticleGizmos::Zone)
+					particleGizmos->setZone(zone, m_particle->getGameObject()->calcWorldTransform());
 			}
 		}
 
