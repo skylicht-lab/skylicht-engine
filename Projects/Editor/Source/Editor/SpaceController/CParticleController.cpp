@@ -293,16 +293,9 @@ namespace Skylicht
 			else if (type == CParticleHierachyNode::Zone)
 			{
 				Particle::CZone* zone = (Particle::CZone*)node->getTagData();
-				Particle::CPositionZone* positionZone = dynamic_cast<Particle::CPositionZone*>(zone);
-				if (positionZone)
-				{
-					particleGizmos->setZone(positionZone, m_particle->getGameObject()->calcWorldTransform());
-					sceneController->setGizmos(particleGizmos);
-				}
-				else
-				{
-					sceneController->setGizmos(sceneController->getTransformGizmos());
-				}
+
+				particleGizmos->setZone(zone, m_particle->getGameObject()->calcWorldTransform());
+				sceneController->setGizmos(particleGizmos);
 			}
 			else
 			{

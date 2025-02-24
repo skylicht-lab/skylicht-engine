@@ -38,7 +38,9 @@ namespace Skylicht
 			m_rotation(core::quaternion()),
 			m_changed(false),
 			m_state(None),
-			m_emitter(NULL)
+			m_emitter(NULL),
+			m_zone(NULL),
+			m_positionZone(NULL)
 		{
 
 		}
@@ -52,6 +54,7 @@ namespace Skylicht
 		{
 			m_emitter = emitter;
 			m_state = Emitter;
+
 			m_parentWorld = world;
 
 			m_rotation = emitter->getRotation();
@@ -63,13 +66,18 @@ namespace Skylicht
 			handle->reset();
 		}
 
-		void CParticleGizmos::setZone(Particle::CPositionZone* zone, const core::matrix4& world)
+		void CParticleGizmos::setZone(Particle::CZone* zone, const core::matrix4& world)
 		{
 			m_zone = zone;
 			m_state = Zone;
 			m_parentWorld = world;
 
-			m_position = zone->getPosition();
+			m_positionZone = dynamic_cast<Particle::CPositionZone*>(zone);
+			if (m_positionZone)
+				m_position = m_positionZone->getPosition();
+			else
+				m_position.set(core::vector3df());
+
 			m_changed = false;
 
 			CHandles* handle = CHandles::getInstance();
@@ -91,7 +99,14 @@ namespace Skylicht
 			}
 			else if (m_state == Emitter)
 			{
-				core::quaternion newRot = handle->rotateHandle(*m_rotation, core::vector3df());
+				core::vector3df position(0.0f, 0.0f, 0.0f);
+
+				Particle::CZone* zone = m_emitter->getZone();
+				Particle::CPositionZone* positionZone = dynamic_cast<Particle::CPositionZone*>(zone);
+				if (positionZone)
+					position = positionZone->getPosition();
+
+				core::quaternion newRot = handle->rotateHandle(*m_rotation, position);
 				if (newRot != *m_rotation)
 				{
 					m_rotation = newRot;
@@ -107,34 +122,30 @@ namespace Skylicht
 					m_emitter->setRotation(*m_rotation);
 					handle->end();
 				}
-
-				// draw emitter direction
-				handle->drawArrowInViewSpace(
-					m_parentWorld.getTranslation(),
-					m_emitter->getDirection(),
-					0.4f, 0.1f,
-					SColor(255, 255, 255, 255));
 			}
 			else if (m_state == Zone)
 			{
-				core::vector3df newPos = CHandles::getInstance()->positionHandle(*m_position, core::quaternion());
-				core::vector3df delta;
-
-				if (newPos != *m_position)
+				if (m_positionZone)
 				{
-					m_position = newPos;
-					m_position.notify(this);
+					core::vector3df newPos = CHandles::getInstance()->positionHandle(*m_position, core::quaternion());
+					core::vector3df delta;
 
-					m_zone->setPosition(newPos);
+					if (newPos != *m_position)
+					{
+						m_position = newPos;
+						m_position.notify(this);
 
-					m_changed = true;
-					updateProperty();
-				}
+						m_positionZone->setPosition(newPos);
 
-				if (handle->endCheck())
-				{
-					m_zone->setPosition(*m_position);
-					handle->end();
+						m_changed = true;
+						updateProperty();
+					}
+
+					if (handle->endCheck())
+					{
+						m_positionZone->setPosition(*m_position);
+						handle->end();
+					}
 				}
 			}
 		}
@@ -155,11 +166,14 @@ namespace Skylicht
 			}
 			else if (m_state == Zone)
 			{
-				CVector3Property* p = dynamic_cast<CVector3Property*>(data->getProperty("position"));
-				if (p)
+				if (m_positionZone)
 				{
-					p->set(m_zone->getPosition());
-					p->OnChanged();
+					CVector3Property* p = dynamic_cast<CVector3Property*>(data->getProperty("position"));
+					if (p)
+					{
+						p->set(m_positionZone->getPosition());
+						p->OnChanged();
+					}
 				}
 			}
 		}

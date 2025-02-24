@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2025 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
@@ -24,30 +24,42 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Entity/IEntityData.h"
-#include "GameObject/CGameObject.h"
+#include "ParticleSystem/CParticleComponent.h"
+
+#include "GizmosComponents/CGizmosComponent.h"
+#include "GizmosComponents/SelectObject/CSelectObjectData.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSelectObjectData : public IEntityData
+
+		class CGParticle : public CGizmosComponent
 		{
-		public:
-			CGameObject* GameObject;
-			CEntity* Entity;
-
-			core::aabbox3df BBox;
-			core::aabbox3df TransformBBox;
-
-			bool DrawSelectionBox;
+		protected:
+			Particle::CParticleComponent* m_particle;
 
 		public:
-			CSelectObjectData();
 
-			virtual ~CSelectObjectData();
+			CGParticle();
+
+			virtual ~CGParticle();
+
+			virtual void initComponent();
+
+			virtual void updateComponent();
+
+			DECLARE_GETTYPENAME(CGParticle)
+
+		protected:
+
+			void updateSelectBBox();
+
+			void renderZone(const core::matrix4& world, Particle::CZone* zone);
+
+		public:
+
 		};
 
-		DECLARE_PRIVATE_DATA_TYPE_INDEX(CSelectObjectData);
 	}
 }

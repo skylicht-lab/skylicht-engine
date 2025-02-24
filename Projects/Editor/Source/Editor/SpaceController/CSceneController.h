@@ -113,6 +113,11 @@ namespace Skylicht
 				return m_particleGizmos;
 			}
 
+			inline CGizmos* getGizmos()
+			{
+				return m_gizmos;
+			}
+
 			void setGizmos(CGizmos* gizmos);
 
 			void initContextMenu(GUI::CCanvas* canvas);

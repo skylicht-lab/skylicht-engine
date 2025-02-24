@@ -109,6 +109,8 @@ namespace Skylicht
 
 			std::map<CGameObject*, core::aabbox3df> selectedBox;
 
+			CSelection* selection = CSelection::getInstance();
+
 			u32 numEntity = m_collision.size();
 			for (u32 i = 0; i < numEntity; i++)
 			{
@@ -127,22 +129,25 @@ namespace Skylicht
 					m_results.push_back(collision);
 
 					// select on game object
-					if (CSelection::getInstance()->getSelected(collision->GameObject))
+					if (collision->DrawSelectionBox)
 					{
-						if (selectedBox.find(collision->GameObject) == selectedBox.end())
-							selectedBox[collision->GameObject] = collision->TransformBBox;
-						else
-							selectedBox[collision->GameObject].addInternalBox(collision->TransformBBox);
-					}
-					else if (collision->Entity)
-					{
-						// select on entity
-						if (CSelection::getInstance()->getSelected(collision->Entity))
+						if (selection->getSelected(collision->GameObject))
 						{
 							if (selectedBox.find(collision->GameObject) == selectedBox.end())
 								selectedBox[collision->GameObject] = collision->TransformBBox;
 							else
 								selectedBox[collision->GameObject].addInternalBox(collision->TransformBBox);
+						}
+						else if (collision->Entity)
+						{
+							// select on entity
+							if (selection->getSelected(collision->Entity))
+							{
+								if (selectedBox.find(collision->GameObject) == selectedBox.end())
+									selectedBox[collision->GameObject] = collision->TransformBBox;
+								else
+									selectedBox[collision->GameObject].addInternalBox(collision->TransformBBox);
+							}
 						}
 					}
 

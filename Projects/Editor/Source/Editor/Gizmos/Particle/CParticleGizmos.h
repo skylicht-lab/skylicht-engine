@@ -57,7 +57,8 @@ namespace Skylicht
 			EState m_state;
 
 			Particle::CDirectionEmitter* m_emitter;
-			Particle::CPositionZone* m_zone;
+			Particle::CZone* m_zone;
+			Particle::CPositionZone* m_positionZone;
 
 		public:
 			CParticleGizmos();
@@ -66,7 +67,7 @@ namespace Skylicht
 
 			void setEmitter(Particle::CDirectionEmitter* emitter, const core::matrix4& world);
 
-			void setZone(Particle::CPositionZone* zone, const core::matrix4& world);
+			void setZone(Particle::CZone* zone, const core::matrix4& world);
 
 			virtual void onGizmos();
 
@@ -95,6 +96,16 @@ namespace Skylicht
 			inline EState getState()
 			{
 				return m_state;
+			}
+
+			inline Particle::CDirectionEmitter* getDirectionEmitter()
+			{
+				return m_emitter;
+			}
+
+			inline Particle::CZone* getZone()
+			{
+				return m_zone;
 			}
 
 		protected:

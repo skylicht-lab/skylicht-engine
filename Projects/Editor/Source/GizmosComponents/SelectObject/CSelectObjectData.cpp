@@ -33,7 +33,8 @@ namespace Skylicht
 
 		CSelectObjectData::CSelectObjectData() :
 			GameObject(NULL),
-			Entity(NULL)
+			Entity(NULL),
+			DrawSelectionBox(true)
 		{
 
 		}
