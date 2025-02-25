@@ -57,6 +57,7 @@ namespace Skylicht
 		CStringImp::copy(guiInfoFile, file);
 		CStringImp::replacePathExt(guiInfoFile, ".txt");
 		saveGUIPath(guiInfoFile, object);
+		delete object;
 		return true;
 	}
 

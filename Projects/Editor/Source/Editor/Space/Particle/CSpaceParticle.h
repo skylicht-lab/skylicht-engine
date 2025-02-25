@@ -41,6 +41,7 @@ namespace Skylicht
 		class CSpaceParticle : public CSpace
 		{
 		protected:
+			GUI::CCanvas* m_canvas;
 			GUI::CTreeControl* m_tree;
 
 			CParticleHierarchyController* m_hierarchyController;

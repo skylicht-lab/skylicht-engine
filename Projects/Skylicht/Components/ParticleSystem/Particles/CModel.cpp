@@ -68,6 +68,11 @@ namespace Skylicht
 		{
 		}
 
+		std::string CModel::getTypeName()
+		{
+			return CStringImp::convertUnicodeToUTF8(g_modelName[(int)m_type]);
+		}
+
 		CObjectSerializable* CModel::createSerializable()
 		{
 			CObjectSerializable* object = CParticleSerializable::createSerializable();

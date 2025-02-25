@@ -39,6 +39,8 @@ namespace Skylicht
 
 			CFactory m_factory;
 
+			std::string m_sourcePath;
+
 		public:
 			CParticleComponent();
 
@@ -90,7 +92,33 @@ namespace Skylicht
 
 			u32 getTotalParticle();
 
+			inline const char* getSourcePath()
+			{
+				return m_sourcePath.c_str();
+			}
+
+			inline void setSourcePath(const char* path)
+			{
+				m_sourcePath = path;
+			}
+
+			bool load();
+
+			bool save();
+
 			DECLARE_GETTYPENAME(CParticleComponent)
+
+		protected:
+
+			void saveGroups(CObjectSerializable* groups);
+
+			void saveGroup(Particle::CGroup* group, CObjectSerializable* object);
+
+			void loadEmitters(Particle::CGroup* group, io::IXMLReader* reader);
+
+			void loadModels(Particle::CGroup* group, io::IXMLReader* reader);
+
+			void loadRenderer(Particle::CGroup* group, io::IXMLReader* reader);
 		};
 	}
 }

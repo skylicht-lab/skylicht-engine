@@ -43,6 +43,8 @@ namespace Skylicht
 
 			virtual ~CParticleBufferData();
 
+			void clear();
+
 			CGroup* createGroup();
 
 			CSubGroup* createSubGroup(CGroup* group);

@@ -138,6 +138,8 @@ namespace Skylicht
 			{
 				return m_interpolator;
 			}
+
+			virtual std::string getTypeName();
 		};
 	}
 }

@@ -37,8 +37,14 @@ namespace Skylicht
 	{
 		CSpaceParticle::CSpaceParticle(GUI::CWindow* window, CEditor* editor) :
 			CSpace(window, editor),
-			m_particle(NULL)
+			m_particle(NULL),
+			m_canvas(NULL),
+			m_tree(NULL),
+			m_hierarchyController(NULL),
+			m_hierarchyContextMenu(NULL)
 		{
+			m_canvas = window->getCanvas();
+
 			GUI::CToolbar* toolbar = new GUI::CToolbar(window);
 			GUI::CButton* btn;
 
@@ -107,7 +113,25 @@ namespace Skylicht
 
 		void CSpaceParticle::onSave(GUI::CBase* base)
 		{
-
+			if (m_particle)
+			{
+				std::string file = m_particle->getSourcePath();
+				if (file.empty())
+				{
+					std::string assetFolder = CAssetManager::getInstance()->getAssetFolder();
+					GUI::COpenSaveDialog* dialog = new GUI::COpenSaveDialog(m_canvas, GUI::COpenSaveDialog::Save, assetFolder.c_str(), assetFolder.c_str(), "particle;*");
+					dialog->OnSave = [&, particle = m_particle](std::string path)
+						{
+							std::string shortPath = CAssetManager::getInstance()->getShortPath(path.c_str());
+							particle->setSourcePath(shortPath.c_str());
+							particle->save();
+						};
+				}
+				else
+				{
+					m_particle->save();
+				}
+			}
 		}
 
 		void CSpaceParticle::onPlay(GUI::CBase* base)

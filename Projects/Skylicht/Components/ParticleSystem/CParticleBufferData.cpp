@@ -38,6 +38,11 @@ namespace Skylicht
 
 		CParticleBufferData::~CParticleBufferData()
 		{
+			clear();
+		}
+
+		void CParticleBufferData::clear()
+		{
 			for (u32 i = 0, n = Groups.size(); i < n; i++)
 				delete Groups[i];
 			Groups.clear();

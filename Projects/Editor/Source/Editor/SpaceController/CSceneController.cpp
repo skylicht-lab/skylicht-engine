@@ -1058,6 +1058,12 @@ namespace Skylicht
 				indirectLighting->setAutoSH(true);
 				indirectLighting->setIndirectLightingType(CIndirectLighting::SH9);
 			}
+			else if (fileExt == "particle")
+			{
+				Particle::CParticleComponent* particle = gameObject->addComponent<Particle::CParticleComponent>();
+				particle->setSourcePath(shortPath.c_str());
+				particle->load();
+			}
 		}
 
 		CGameObject* CSceneController::createTemplateObject(const std::string& path, CContainerObject* container)

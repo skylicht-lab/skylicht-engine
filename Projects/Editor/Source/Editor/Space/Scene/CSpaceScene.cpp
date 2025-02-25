@@ -231,7 +231,8 @@ namespace Skylicht
 							fileExt == "obj" ||
 							fileExt == "fbx" ||
 							fileExt == "smesh" ||
-							fileExt == "template")
+							fileExt == "template" ||
+							fileExt == "particle")
 						{
 							return true;
 						}
