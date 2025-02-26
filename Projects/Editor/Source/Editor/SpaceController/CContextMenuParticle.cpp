@@ -505,9 +505,9 @@ namespace Skylicht
 
 				particleController->updateGroupHierachy(m_group);
 
-				CParticleGizmos* particleGizmos = CSceneController::getInstance()->getParticleGizmos();
-				if (particleGizmos->getState() == CParticleGizmos::Zone)
-					particleGizmos->setZone(zone, m_particle->getGameObject()->calcWorldTransform());
+				CParticleHierachyNode* node = particleController->getNodeByTagData(zone);
+				if (node && node->getGUINode())
+					node->getGUINode()->setSelected(true);
 			}
 		}
 

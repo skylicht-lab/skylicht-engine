@@ -214,6 +214,9 @@ namespace Skylicht
 			CParticleEditor* particleEditor = CPropertyController::getInstance()->getParticleEditor();
 			CObjectSerializable* data = particleEditor->getData();
 
+			if (!data)
+				return;
+
 			if (m_state == Emitter)
 			{
 				CVector3Property* p = dynamic_cast<CVector3Property*>(data->getProperty("direction"));
@@ -232,6 +235,49 @@ namespace Skylicht
 					{
 						p->set(m_positionZone->getPosition());
 						p->OnChanged();
+					}
+				}
+				else
+				{
+					Particle::CLine* line = dynamic_cast<Particle::CLine*>(m_zone);
+					if (line)
+					{
+						CVector3Property* p1 = dynamic_cast<CVector3Property*>(data->getProperty("p1"));
+						CVector3Property* p2 = dynamic_cast<CVector3Property*>(data->getProperty("p2"));
+
+						core::line3df l = line->getLine();
+						if (p1)
+						{
+							p1->set(l.start);
+							p1->OnChanged();
+						}
+						if (p2)
+						{
+							p2->set(l.end);
+							p2->OnChanged();
+						}
+					}
+					else
+					{
+						Particle::CPolyLine* polyline = dynamic_cast<Particle::CPolyLine*>(m_zone);
+						if (polyline)
+						{
+							CArraySerializable* points = (CArraySerializable*)data->getProperty("Points");
+							if (points)
+							{
+								core::array<core::vector3df>& listPoints = polyline->getPoints();
+								int numPoint = points->getElementCount();
+								for (int i = 0; i < numPoint; i++)
+								{
+									CVector3Property* pointData = (CVector3Property*)points->getElement(i);
+									if (pointData)
+									{
+										pointData->set(listPoints[i]);
+										pointData->OnChanged();
+									}
+								}
+							}
+						}
 					}
 				}
 			}

@@ -131,6 +131,14 @@ namespace Skylicht
 			return node;
 		}
 
+		CParticleHierachyNode* CParticleController::getNodeByTagData(void* data)
+		{
+			if (m_hierachyNode == NULL)
+				return NULL;
+
+			return m_hierachyNode->getNodeByTag(data);
+		}
+
 		void CParticleController::removeGroup(Particle::CGroup* group)
 		{
 			std::vector<CParticleHierachyNode*>& childs = m_hierachyNode->getChilds();

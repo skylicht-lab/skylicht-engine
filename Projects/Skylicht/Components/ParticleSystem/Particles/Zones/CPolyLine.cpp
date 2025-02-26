@@ -46,13 +46,42 @@ namespace Skylicht
 
 		CObjectSerializable* CPolyLine::createSerializable()
 		{
-			CObjectSerializable* obj = CZone::createSerializable();
-			return obj;
+			CObjectSerializable* object = CZone::createSerializable();
+
+			CArraySerializable* points = new CArraySerializable("Points");
+			object->addProperty(points);
+			object->autoRelease(points);
+
+			char name[32];
+			int numPoint = (int)m_point.size();
+			for (int i = 0; i < numPoint; i++)
+			{
+				sprintf(name, "[%d]", i);
+				CVector3Property* pointData = new CVector3Property(points, name, m_point[i]);
+				points->autoRelease(pointData);
+			}
+
+			return object;
 		}
 
 		void CPolyLine::loadSerializable(CObjectSerializable* object)
 		{
 			CZone::loadSerializable(object);
+
+			core::array<core::vector3df> listPoints;
+
+			CArraySerializable* points = (CArraySerializable*)object->getProperty("Points");
+			if (points)
+			{
+				int numPoint = points->getElementCount();
+				for (int i = 0; i < numPoint; i++)
+				{
+					CVector3Property* pointData = (CVector3Property*)points->getElement(i);
+					if (pointData)
+						listPoints.push_back(pointData->get());
+				}
+				setLine(listPoints);
+			}
 		}
 
 		void CPolyLine::setLine(const core::array<core::vector3df>& point)

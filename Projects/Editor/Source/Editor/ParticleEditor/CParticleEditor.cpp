@@ -90,9 +90,11 @@ namespace Skylicht
 			break;
 			case CParticleGizmos::Zone:
 			{
-				Particle::CPositionZone* zone = dynamic_cast<Particle::CPositionZone*>(m_ps);
-				if (zone)
-					gizmos->setPosition(zone->getPosition());
+				Particle::CPositionZone* positionZone = dynamic_cast<Particle::CPositionZone*>(m_ps);
+				if (positionZone)
+					gizmos->setPosition(positionZone->getPosition());
+				else
+					gizmos->refresh();
 			}
 			break;
 			default:
