@@ -64,6 +64,8 @@ namespace Skylicht
 			bool m_hoverOnAxis[3];
 			bool m_hoverOnPlane[3];
 
+			int m_hoverOnPointId;
+
 			core::line3df m_translateAxis[3];
 			SPlane m_translatePlane[3];
 			core::line3df m_scaleAxis[3];
@@ -117,6 +119,10 @@ namespace Skylicht
 					if (m_hoverOnAxis[i] || m_hoverOnPlane[i])
 						return true;
 				}
+
+				if (m_hoverOnPointId != -1)
+					return true;
+
 				return false;
 			}
 
@@ -147,6 +153,8 @@ namespace Skylicht
 
 			void drawTranslateGizmo(const core::vector3df& pos, const core::quaternion& rot, const core::vector3df& cameraPos, CCamera* camera);
 
+			void drawListPositionGizmo(std::vector<core::vector3df>& pos, int selectId, const core::quaternion& rot, const core::vector3df& cameraPos, const core::vector3df& cameraRight, CCamera* camera);
+
 			float getParallelogram(const core::vector3df& ptO, const core::vector3df& ptA, const core::vector3df& ptB, CCamera* camera);
 
 			void computeTripodAxisAndVisibility(int axisIndex, const core::vector3df& origin, core::vector3df& dirAxis, core::vector3df& dirPlaneX, core::vector3df& dirPlaneY, bool& belowAxisLimit, bool& belowPlaneLimit, CCamera* camera, const core::quaternion& rot);
@@ -160,6 +168,8 @@ namespace Skylicht
 			void handleRotation(int x, int y, int state);
 
 			void handleScale(int x, int y, int state);
+
+			void handleSelectPoint(int x, int y, int state);
 
 			float snap(float value, float d);
 

@@ -45,7 +45,8 @@ namespace Skylicht
 		DEPENDENT_COMPONENT(CDirectionalLight, CGDirectionLight);
 
 		CGDirectionLight::CGDirectionLight() :
-			m_directionLight(NULL)
+			m_directionLight(NULL),
+			m_sprite(NULL)
 		{
 
 		}

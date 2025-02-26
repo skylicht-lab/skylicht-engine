@@ -38,6 +38,7 @@ namespace Skylicht
 		IMPLEMENT_SINGLETON(CHandles);
 
 		CHandles::CHandles() :
+			m_handleListPosition(false),
 			m_handlePosition(false),
 			m_handleRotation(false),
 			m_handleScale(false),
@@ -52,7 +53,8 @@ namespace Skylicht
 			m_snapDistanceXZ(1.0f),
 			m_snapDistanceY(1.0f),
 			m_snapRotateDeg(10.0f),
-			m_isAltPressed(false)
+			m_isAltPressed(false),
+			m_selectId(0)
 		{
 
 		}
@@ -84,6 +86,7 @@ namespace Skylicht
 
 		void CHandles::end()
 		{
+			m_handleListPosition = false;
 			m_handlePosition = false;
 			m_handleRotation = false;
 			m_handleScale = false;
@@ -118,11 +121,46 @@ namespace Skylicht
 			return false;
 		}
 
+		const core::vector3df& CHandles::getHandlePosition()
+		{
+			if (m_handleListPosition)
+				return m_listPosition[m_selectId];
+			else
+				return m_position;
+		}
+
+		void CHandles::setTargetPosition(const core::vector3df& target)
+		{
+			m_targetPosition = target;
+			if (m_handleListPosition)
+				m_listPosition[m_selectId] = target;
+		}
+
+		bool CHandles::listPositionHandle(const std::vector<core::vector3df>& pos, int selectId, const core::quaternion& localRotation)
+		{
+			if (!m_handleListPosition)
+			{
+				m_listPosition = pos;
+				m_selectId = selectId;
+			}
+
+			m_handleListPosition = true;
+			m_handlePosition = false;
+			m_handleRotation = false;
+			m_handleScale = false;
+
+			m_position = m_listPosition[m_selectId];
+			m_rotation = localRotation;
+
+			return true;
+		}
+
 		core::vector3df CHandles::positionHandle(const core::vector3df& position, const core::quaternion& localRotation)
 		{
 			if (!m_handlePosition)
 				m_targetPosition = position;
 
+			m_handleListPosition = false;
 			m_handlePosition = true;
 			m_handleRotation = false;
 			m_handleScale = false;
@@ -138,6 +176,7 @@ namespace Skylicht
 			if (!m_handleScale)
 				m_targetScale = scale;
 
+			m_handleListPosition = false;
 			m_handleRotation = false;
 			m_handlePosition = false;
 			m_handleScale = true;
@@ -153,6 +192,7 @@ namespace Skylicht
 			if (!m_handleRotation)
 				m_targetRotation = rotate;
 
+			m_handleListPosition = false;
 			m_handleRotation = true;
 			m_handlePosition = false;
 			m_handleScale = false;

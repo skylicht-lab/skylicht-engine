@@ -174,6 +174,7 @@ namespace Skylicht
 			((CPolygonDrawData*)m_data)->updateBuffer();
 
 			m_arrows.set_used(0);
+			m_rectBillboard.set_used(0);
 		}
 
 		void CGizmosRenderer::render(CEntityManager* entityManager)

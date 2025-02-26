@@ -1313,6 +1313,9 @@ namespace Skylicht
 				CPropertyController::getInstance()->setProperty(NULL);
 			}
 
+			// clear particle
+			CParticleController::getInstance()->setGameObject(NULL);
+
 			if (m_zone == object)
 			{
 				CZone* defaultZone = m_scene->getZone(0);

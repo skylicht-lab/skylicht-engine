@@ -42,7 +42,8 @@ namespace Skylicht
 			m_using(false),
 			m_usingEvent(false),
 			m_rotationAngle(0.0f),
-			m_enable(true)
+			m_enable(true),
+			m_hoverOnPointId(-1)
 		{
 			m_data = new CHandlesData();
 			m_data->LineBuffer->getMaterial().ZBuffer = ECFN_DISABLED;
@@ -96,6 +97,9 @@ namespace Skylicht
 			if (m_enable == false)
 				return;
 
+			if (entityManager->getRenderPipeline()->getType() != IRenderPipeline::Forwarder)
+				return;
+
 			((CLineDrawData*)m_data)->clearBuffer();
 			((CPolygonDrawData*)m_data)->clearBuffer();
 
@@ -142,6 +146,14 @@ namespace Skylicht
 			else if (handles->isHandleScale())
 			{
 				drawScaleGizmo(pos, rot, cameraLook, cameraUp, camera);
+			}
+			else if (handles->isHandleListPosition())
+			{
+				drawListPositionGizmo(
+					handles->getListPosition(), handles->getSelectId(),
+					rot,
+					cameraPos, cameraRight, camera
+				);
 			}
 
 			((CLineDrawData*)m_data)->updateBuffer();
@@ -454,6 +466,27 @@ namespace Skylicht
 			}
 		}
 
+		void CHandlesRenderer::drawListPositionGizmo(std::vector<core::vector3df>& pos, int selectId, const core::quaternion& rot, const core::vector3df& cameraPos, const core::vector3df& cameraRight, CCamera* camera)
+		{
+			CHandles* handles = CHandles::getInstance();
+
+			int pointId = 0;
+
+			for (core::vector3df& p : pos)
+			{
+				float size = 0.01f / CProjective::getSegmentLengthClipSpace(camera, p, p + cameraRight);
+
+				if (pointId == m_hoverOnPointId)
+					handles->drawRectBillboard(p, size, size, m_selectionColor);
+				else
+					handles->drawRectBillboard(p, size, size, m_directionColor[1]);
+
+				pointId++;
+			}
+
+			drawTranslateGizmo(pos[selectId], rot, cameraPos, camera);
+		}
+
 		// References: https://github.com/CedricGuillemet/ImGuizmo/blob/master/ImGuizmo.cpp
 		float CHandlesRenderer::getParallelogram(const core::vector3df& ptO, const core::vector3df& ptA, const core::vector3df& ptB, CCamera* camera)
 		{
@@ -652,6 +685,70 @@ namespace Skylicht
 				handleRotation(x, y, state);
 			else if (handles->isHandleScale())
 				handleScale(x, y, state);
+			else if (handles->isHandleListPosition())
+			{
+				handleTranslate(x, y, state);
+				handleSelectPoint(x, y, state);
+			}
+		}
+
+		void CHandlesRenderer::handleSelectPoint(int x, int y, int state)
+		{
+			bool hoverOnAxisOrPlane = false;
+			for (int i = 0; i < 3; i++)
+			{
+				if (m_hoverOnAxis[i] || m_hoverOnPlane[i])
+				{
+					hoverOnAxisOrPlane = true;
+					break;
+				}
+			}
+
+			if (!hoverOnAxisOrPlane)
+			{
+				CHandles* handles = CHandles::getInstance();
+
+				core::vector3df mouse((float)x, (float)y, 0.0f);
+
+				if (m_mouseDown == false)
+				{
+					m_hoverOnPointId = -1;
+
+					int vpWidth = m_viewport.getWidth();
+					int vpHeight = m_viewport.getHeight();
+
+					core::vector3df look = m_camera->getLookVector();
+					core::vector3df up = m_camera->getUpVector();
+					core::vector3df right = up.crossProduct(look);
+					right.normalize();
+
+					std::vector<core::vector3df>& points = handles->getListPosition();
+					int pointId = 0;
+
+					for (core::vector3df& p : points)
+					{
+						core::vector3df projectPoint;
+						float size = 0.5f * (0.01f / CProjective::getSegmentLengthClipSpace(m_camera, p, p + right));
+						if (CProjective::getScreenCoordinatesFrom3DPosition(m_camera, p, projectPoint.X, projectPoint.Y, vpWidth, vpHeight))
+						{
+							if (mouse.getDistanceFromSQ(projectPoint) < size * size)
+							{
+								m_hoverOnPointId = pointId;
+								break;
+							}
+						}
+
+						pointId++;
+					}
+				}
+				else
+				{
+					if (m_hoverOnPointId != -1)
+					{
+						handles->setSelectId(m_hoverOnPointId);
+					}
+				}
+			}
 		}
 
 		void CHandlesRenderer::handleTranslate(int x, int y, int state)
@@ -681,7 +778,6 @@ namespace Skylicht
 					{
 						m_mouseDown = false;
 						m_using = false;
-
 						handles->setEndCheck(true);
 					}
 					m_cancel = false;
@@ -1247,6 +1343,8 @@ namespace Skylicht
 					m_hoverOnAxis[i] = false;
 					m_hoverOnPlane[i] = false;
 				}
+
+				m_hoverOnPointId = -1;
 
 				CHandles* handles = CHandles::getInstance();
 				handles->end();

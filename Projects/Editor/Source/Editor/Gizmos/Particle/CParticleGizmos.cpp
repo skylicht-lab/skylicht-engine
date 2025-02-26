@@ -78,6 +78,7 @@ namespace Skylicht
 			else
 				m_position.set(core::vector3df());
 
+			m_selectPointId = 0;
 			m_changed = false;
 
 			CHandles* handle = CHandles::getInstance();
@@ -145,6 +146,64 @@ namespace Skylicht
 					{
 						m_positionZone->setPosition(*m_position);
 						handle->end();
+					}
+				}
+				else
+				{
+					Particle::CPolyLine* polyline = dynamic_cast<Particle::CPolyLine*>(m_zone);
+					if (polyline)
+					{
+						std::vector<core::vector3df> points;
+						core::array<core::vector3df>& polyPoints = polyline->getPoints();
+
+						for (u32 i = 0, n = polyline->getNumPoint(); i < n; i++)
+							points.push_back(polyPoints[i]);
+
+						CHandles* handles = CHandles::getInstance();
+						handles->listPositionHandle(points, m_selectPointId, core::quaternion());
+						m_selectPointId = handles->getSelectId();
+
+						if (polyPoints[m_selectPointId] != handles->getHandlePosition())
+						{
+							polyPoints[m_selectPointId] = handles->getHandlePosition();
+							m_changed = true;
+							updateProperty();
+						}
+
+						if (handle->endCheck())
+						{
+							polyPoints[m_selectPointId] = handles->getHandlePosition();
+							handle->end();
+						}
+					}
+					else
+					{
+						Particle::CLine* line = dynamic_cast<Particle::CLine*>(m_zone);
+						if (line)
+						{
+							std::vector<core::vector3df> points;
+							points.push_back(line->getLine().start);
+							points.push_back(line->getLine().end);
+
+							CHandles* handles = CHandles::getInstance();
+							handles->listPositionHandle(points, m_selectPointId, core::quaternion());
+							m_selectPointId = handles->getSelectId();
+
+							std::vector<core::vector3df>& handlePoint = handles->getListPosition();
+
+							if (points[m_selectPointId] != handles->getHandlePosition())
+							{
+								line->setLine(handlePoint[0], handlePoint[1]);
+								m_changed = true;
+								updateProperty();
+							}
+
+							if (handle->endCheck())
+							{
+								line->setLine(handlePoint[0], handlePoint[1]);
+								handle->end();
+							}
+						}
 					}
 				}
 			}

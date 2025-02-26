@@ -52,6 +52,8 @@ namespace Skylicht
 			CSubject<core::vector3df> m_position;
 			CSubject<core::quaternion> m_rotation;
 
+			int m_selectPointId;
+
 			bool m_changed;
 
 			EState m_state;

@@ -47,9 +47,11 @@ namespace Skylicht
 			m_directionColor[1].set(0xFFAA0000);
 			m_directionColor[2].set(0xFF00AA00);
 
-			m_hoverOnAxis[0] = false;
-			m_hoverOnAxis[1] = false;
-			m_hoverOnAxis[2] = false;
+			for (int i = 0; i < 3; i++)
+				m_hoverOnAxis[i] = false;
+
+			for (int i = 0; i < 4; i++)
+				m_hoverOnRect[i] = false;
 
 			m_selectionColor.set(0xFF1080FF);
 		}

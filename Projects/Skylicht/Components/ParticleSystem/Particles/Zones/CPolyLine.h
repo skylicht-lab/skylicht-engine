@@ -55,6 +55,11 @@ namespace Skylicht
 				return m_point;
 			}
 
+			u32 getNumPoint()
+			{
+				return m_point.size();
+			}
+
 			inline void setNormal(const core::vector3df& normal)
 			{
 				m_normal = normal;

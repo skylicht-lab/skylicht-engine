@@ -47,6 +47,7 @@ namespace Skylicht
 			core::quaternion m_rotation;
 			core::vector3df m_scale;
 
+			bool m_handleListPosition;
 			bool m_handlePosition;
 			bool m_handleRotation;
 			bool m_handleScale;
@@ -54,6 +55,9 @@ namespace Skylicht
 			core::vector3df m_targetPosition;
 			core::quaternion m_targetRotation;
 			core::vector3df m_targetScale;
+
+			std::vector<core::vector3df> m_listPosition;
+			int m_selectId;
 
 			int m_mouseState;
 
@@ -89,11 +93,28 @@ namespace Skylicht
 
 			void setNullRenderer();
 
+			bool listPositionHandle(const std::vector<core::vector3df>& pos, int selectId, const core::quaternion& localRotation);
+
 			core::vector3df positionHandle(const core::vector3df& position, const core::quaternion& localRotation);
 
 			core::vector3df scaleHandle(const core::vector3df& scale, const core::vector3df& origin, const core::quaternion& localRotation);
 
 			core::quaternion rotateHandle(const core::quaternion& rotate, const core::vector3df& origin);
+
+			inline std::vector<core::vector3df>& getListPosition()
+			{
+				return m_listPosition;
+			}
+
+			inline int getSelectId()
+			{
+				return m_selectId;
+			}
+
+			inline void setSelectId(int id)
+			{
+				m_selectId = id;
+			}
 
 			inline void setUseLocalSpace(bool b)
 			{
@@ -184,15 +205,14 @@ namespace Skylicht
 				return m_handleScale;
 			}
 
-			inline const core::vector3df& getHandlePosition()
+			inline bool isHandleListPosition()
 			{
-				return m_position;
+				return m_handleListPosition;
 			}
 
-			inline void setTargetPosition(const core::vector3df& target)
-			{
-				m_targetPosition = target;
-			}
+			const core::vector3df& getHandlePosition();
+
+			void setTargetPosition(const core::vector3df& target);
 
 			inline const core::quaternion& getHandleRotation()
 			{

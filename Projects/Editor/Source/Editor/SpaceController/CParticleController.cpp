@@ -76,6 +76,12 @@ namespace Skylicht
 			if (m_spaceParticle == NULL)
 				return;
 
+			if (obj == NULL)
+			{
+				m_spaceParticle->setNull();
+				return;
+			}
+
 			Particle::CParticleComponent* particle = obj->getComponent<Particle::CParticleComponent>();
 			if (particle)
 				m_spaceParticle->setParticle(particle);
