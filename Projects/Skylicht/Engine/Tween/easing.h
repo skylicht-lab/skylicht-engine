@@ -40,6 +40,8 @@ typedef double(*EasingFunction)(double);
 
 EasingFunction getEasingFunction(EEasingFunctions function);
 
+const char* getEasingFunctionName(EEasingFunctions function);
+
 void initEasing();
 
 void releaseEasing();

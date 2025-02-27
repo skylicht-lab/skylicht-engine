@@ -22,56 +22,67 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CInterpolator.h"
+#pragma once
+
+#include <set>
 
 namespace Skylicht
 {
-	namespace Particle
+	struct SInterpolatorEntry
 	{
-		CInterpolator::CInterpolator()
-		{
+		float x;
+		float y;
 
-		}
+		SInterpolatorEntry() : x(0.0f), y(0.0f) {}
 
-		CInterpolator::~CInterpolator()
-		{
+		SInterpolatorEntry(float x, float y) : x(x), y(y) {}
+	};
 
-		}
-
-		float CInterpolator::interpolate(float x)
-		{
-			SInterpolatorEntry currentKey(x, 0.0f);
-
-			std::set<SInterpolatorEntry>::const_iterator nextIt = m_graph.upper_bound(currentKey);
-
-			if (nextIt == m_graph.end())
-			{
-				if (m_graph.empty())
-				{
-					// If the graph has no entry, sets the default value
-					return 0.0f;
-				}
-				else
-				{
-					// Else sets the value of the last entry
-					return (*(--nextIt)).y;
-				}
-			}
-			else if (nextIt == m_graph.begin())
-			{
-				// If the current X is lower than the first entry, sets the value to the first entry
-				return (*nextIt).y;
-			}
-
-			const SInterpolatorEntry& nextEntry = *nextIt;
-			const SInterpolatorEntry& previousEntry = *(--nextIt);
-
-			float y0 = previousEntry.y;
-			float y1 = nextEntry.y;
-
-			float ratioX = (x - previousEntry.x) / (nextEntry.x - previousEntry.x);
-			return y0 + ratioX * (y1 - y0);
-		}
+	inline bool operator<(const SInterpolatorEntry& entry0, const SInterpolatorEntry& entry1)
+	{
+		return entry0.x < entry1.x;
 	}
+
+	inline bool operator==(const SInterpolatorEntry& entry0, const SInterpolatorEntry& entry1)
+	{
+		return entry0.x == entry1.x;
+	}
+
+	class SKYLICHT_API CInterpolator
+	{
+	protected:
+		std::set<SInterpolatorEntry> m_graph;
+
+	public:
+		CInterpolator();
+
+		virtual ~CInterpolator();
+
+		float interpolate(float x);
+
+		inline std::set<SInterpolatorEntry>& getGraph()
+		{
+			return m_graph;
+		}
+
+		inline const std::set<SInterpolatorEntry>& getGraph() const
+		{
+			return m_graph;
+		}
+
+		inline bool addEntry(const SInterpolatorEntry& entry)
+		{
+			return m_graph.insert(entry).second;
+		}
+
+		inline bool addEntry(float x, float y)
+		{
+			return addEntry(SInterpolatorEntry(x, y));
+		}
+
+		inline void clearGraph()
+		{
+			m_graph.clear();
+		}
+	};
 }

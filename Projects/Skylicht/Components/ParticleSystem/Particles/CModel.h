@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CInterpolator.h"
+#include "Utils/CInterpolator.h"
 #include "ParticleSystem/Particles/CParticle.h"
 #include "ParticleSystem/Particles/CParticleSerializable.h"
 
