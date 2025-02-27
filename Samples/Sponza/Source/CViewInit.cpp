@@ -317,7 +317,7 @@ void CViewInit::initFireParticle(Particle::CParticleComponent* ps)
 	fireGroup->LifeMax = 1.5f;
 	fireGroup->Gravity.set(0.0f, 1.0f, 0.0f);
 
-	Particle::CInterpolator* fireSizeInterpolate = fireGroup->createInterpolator();
+	CInterpolator* fireSizeInterpolate = fireGroup->createInterpolator();
 	fireSizeInterpolate->addEntry(0.0f, 0.0f);
 	fireSizeInterpolate->addEntry(0.5f, 2.0f);
 	fireSizeInterpolate->addEntry(1.0f, 0.0f);
@@ -404,7 +404,7 @@ void CViewInit::initFireParticle(Particle::CParticleComponent* ps)
 	smokeGroup->LifeMax = 4.0f;
 	smokeGroup->Gravity.set(0.0f, 0.4f, 0.0f);
 
-	Particle::CInterpolator* smokeAlphaInterpolator = smokeGroup->createInterpolator();
+	CInterpolator* smokeAlphaInterpolator = smokeGroup->createInterpolator();
 	smokeAlphaInterpolator->addEntry(0.0f, 0.0f);
 	smokeAlphaInterpolator->addEntry(0.2f, 0.7f);
 	smokeAlphaInterpolator->addEntry(1.0f, 0.0f);
@@ -431,7 +431,7 @@ void CViewInit::initFireParticle(Particle::CParticleComponent* ps)
 	pointSpark->SizeY = 0.15f;
 	pointSpark->setEmission(true);
 
-	Particle::CInterpolator* sparkInterpolator = pointSparkGroup->createInterpolator();
+	CInterpolator* sparkInterpolator = pointSparkGroup->createInterpolator();
 	sparkInterpolator->addEntry(0.0f, 0.0f);
 	sparkInterpolator->addEntry(0.2f, 0.7f);
 	sparkInterpolator->addEntry(1.0f, 0.0f);
