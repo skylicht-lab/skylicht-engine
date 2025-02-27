@@ -105,7 +105,7 @@ namespace Skylicht
 			valueY->set(y);
 		}
 
-		void CInterpolateFloatSerializable::setInterpolator(std::vector<CInterpolator*>& interpolator)
+		virtual void CInterpolateFloatSerializable::setInterpolator(std::vector<CInterpolator*>& interpolator)
 		{
 			if (interpolator.size() == 0)
 				return;
