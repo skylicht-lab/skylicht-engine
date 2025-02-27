@@ -24,8 +24,11 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CModel.h"
+#include "CGroup.h"
 #include "ParticleSystem/Particles/Zones/CZone.h"
 #include "Utils/CStringImp.h"
+
+#include "Serializable/CInterpolateSerializable.h"
 
 namespace Skylicht
 {
@@ -51,7 +54,8 @@ namespace Skylicht
 			L"NumParams"
 		};
 
-		CModel::CModel(EParticleParams type) :
+		CModel::CModel(CGroup* group, EParticleParams type) :
+			m_group(group),
 			m_type(type),
 			m_start1(1.0f),
 			m_start2(1.0f),
@@ -93,6 +97,15 @@ namespace Skylicht
 			object->autoRelease(new CFloatProperty(object, "end1", m_end1));
 			object->autoRelease(new CFloatProperty(object, "end2", m_end2));
 
+			CInterpolateFloatSerializable* interpolate = new CInterpolateFloatSerializable("interpolate", object);
+			object->autoRelease(interpolate);
+			if (m_interpolator)
+			{
+				std::vector<CInterpolator*> list;
+				list.push_back(m_interpolator);
+				interpolate->setInterpolator(list);
+			}
+
 			return object;
 		}
 
@@ -107,6 +120,17 @@ namespace Skylicht
 			m_randomEnd = object->get<bool>("randomEnd", false);
 			m_end1 = object->get<float>("end1", 0.0f);
 			m_end2 = object->get<float>("end2", 0.0f);
+
+			CInterpolateFloatSerializable* interpolate = (CInterpolateFloatSerializable*)object->getProperty("interpolate");
+			if (interpolate && interpolate->count() > 0)
+			{
+				if (m_interpolator == NULL)
+					m_interpolator = m_group->createInterpolator();
+
+				std::vector<CInterpolator*> list;
+				list.push_back(m_interpolator);
+				interpolate->getInterpolator(list);
+			}
 		}
 
 		const wchar_t* CModel::getName()

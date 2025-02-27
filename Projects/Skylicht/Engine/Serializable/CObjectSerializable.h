@@ -137,7 +137,7 @@ namespace Skylicht
 
 #define SERIALIZABLE_REGISTER(type)  \
 	CObjectSerializable* type##CreateFunc() { return new type(); } \
-	bool type##_activator = CSerializableActivator::createGetInstance()->registerType(#type, &type##CreateFunc);
+	bool type##_activator = CSerializableActivator::createGetInstance()->registerType(#type, &type##CreateFunc)
 
 	typedef CObjectSerializable* (*SerializableCreateInstance)();
 

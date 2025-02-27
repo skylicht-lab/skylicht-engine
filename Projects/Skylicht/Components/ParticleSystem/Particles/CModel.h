@@ -32,6 +32,8 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		class CGroup;
+
 		class COMPONENT_API CModel : public CParticleSerializable
 		{
 		protected:
@@ -45,10 +47,12 @@ namespace Skylicht
 			float m_end1;
 			float m_end2;
 
+			CGroup* m_group;
+
 			CInterpolator* m_interpolator;
 
 		public:
-			CModel(EParticleParams type);
+			CModel(CGroup* group, EParticleParams type);
 
 			virtual ~CModel();
 

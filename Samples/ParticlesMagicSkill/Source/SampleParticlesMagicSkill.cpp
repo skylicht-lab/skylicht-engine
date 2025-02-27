@@ -169,7 +169,7 @@ void SampleParticlesMagicSkill::initTower(Particle::CParticleComponent* ps)
 	ringGroup->createModel(Particle::Scale)->setStart(0.0f)->setEnd(4.0f);
 	ringGroup->createModel(Particle::RotateZ)->setStart(0.0f, 2.0f * core::PI);
 
-	Particle::CInterpolator* alphaInterpolator = ringGroup->createInterpolator();
+	CInterpolator* alphaInterpolator = ringGroup->createInterpolator();
 	alphaInterpolator->addEntry(0.0f, 0.0f);
 	alphaInterpolator->addEntry(0.4f, 0.6f);
 	alphaInterpolator->addEntry(0.6f, 1.0f);

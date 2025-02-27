@@ -346,7 +346,7 @@ namespace Skylicht
 
 			if (m == NULL)
 			{
-				m = new CModel(param);
+				m = new CModel(this, param);
 				m_models.push_back(m);
 			}
 

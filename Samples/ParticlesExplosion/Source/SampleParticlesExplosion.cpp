@@ -179,7 +179,7 @@ void SampleParticlesExplosion::initParticleSystem(Particle::CParticleComponent* 
 	smokeGroup->Gravity.set(0.0f, 0.05f, 0.0f);
 
 	// alpha interpolator
-	Particle::CInterpolator* interpolatorSmokeAlpha = smokeGroup->createInterpolator();
+	CInterpolator* interpolatorSmokeAlpha = smokeGroup->createInterpolator();
 	interpolatorSmokeAlpha->addEntry(0.0f, 0.0f);
 	interpolatorSmokeAlpha->addEntry(0.4f, 0.6f);
 	interpolatorSmokeAlpha->addEntry(0.6f, 0.6f);
@@ -212,12 +212,12 @@ void SampleParticlesExplosion::initParticleSystem(Particle::CParticleComponent* 
 	flashGroup->LifeMin = 0.5f;
 	flashGroup->LifeMax = 0.5f;
 
-	Particle::CInterpolator* flashSizeInterpolator = flashGroup->createInterpolator();
+	CInterpolator* flashSizeInterpolator = flashGroup->createInterpolator();
 	flashSizeInterpolator->addEntry(0.0f, 0.25f);
 	flashSizeInterpolator->addEntry(0.1f, 1.5f);
 	flashGroup->createModel(Particle::Scale)->setInterpolator(flashSizeInterpolator);
 
-	Particle::CInterpolator* flashAlphaInterpolator = flashGroup->createInterpolator();
+	CInterpolator* flashAlphaInterpolator = flashGroup->createInterpolator();
 	flashAlphaInterpolator->addEntry(0.0f, 1.0f);
 	flashAlphaInterpolator->addEntry(0.4f, 0.0f);
 	flashGroup->createModel(Particle::ColorA)->setInterpolator(flashAlphaInterpolator);
@@ -254,13 +254,13 @@ void SampleParticlesExplosion::initParticleSystem(Particle::CParticleComponent* 
 	flameGroup->LifeMin = 1.5f;
 	flameGroup->LifeMax = 2.0f;
 
-	Particle::CInterpolator* flameSizeInterpolator = flameGroup->createInterpolator();
+	CInterpolator* flameSizeInterpolator = flameGroup->createInterpolator();
 	flameSizeInterpolator->addEntry(0.0f, 0.25f);
 	flameSizeInterpolator->addEntry(0.1f, 0.8f);
 	flameSizeInterpolator->addEntry(1.0f, 1.4f);
 	flameGroup->createModel(Particle::Scale)->setInterpolator(flameSizeInterpolator);
 
-	Particle::CInterpolator* flameAlphaInterpolator = flameGroup->createInterpolator();
+	CInterpolator* flameAlphaInterpolator = flameGroup->createInterpolator();
 	flameAlphaInterpolator->addEntry(0.0f, 0.0f);
 	flameAlphaInterpolator->addEntry(0.15f, 1.0f);
 	flameAlphaInterpolator->addEntry(0.5f, 1.0f);
