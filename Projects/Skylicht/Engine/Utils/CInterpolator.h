@@ -67,13 +67,33 @@ namespace Skylicht
 
 	class SKYLICHT_API CInterpolator
 	{
+	public:
+		enum EInterpolatorType
+		{
+			Float,
+			Vector2,
+			Vector3,
+			Color
+		};
+
 	protected:
 		std::set<SInterpolatorEntry> m_graph;
+		EInterpolatorType m_type;
 
 	public:
 		CInterpolator();
 
 		virtual ~CInterpolator();
+
+		inline EInterpolatorType getType()
+		{
+			return m_type;
+		}
+
+		inline void setType(EInterpolatorType type)
+		{
+			m_type = type;
+		}
 
 		void operator=(const CInterpolator& other)
 		{

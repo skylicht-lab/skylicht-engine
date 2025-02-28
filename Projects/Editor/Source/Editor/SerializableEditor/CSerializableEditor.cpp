@@ -578,15 +578,26 @@ namespace Skylicht
 					CObjectSerializable* object = (CObjectSerializable*)valueProperty;
 					CSubject<CObjectSerializable*>* subject = new CSubject<CObjectSerializable*>(object);
 
-					// header
-					GUI::CCollapsibleGroup* group = ui->addSubGroup(layout);
-					group->getHeader()->setLabel(ui->getPrettyName(valueProperty->Name));
-					GUI::CBoxLayout* objectLayout = ui->createBoxLayout(group);
+					bool haveChildGroup = true;
 
-					valueProperty->OnSetHidden = [group](bool hide)
-						{
-							group->setHidden(hide);
-						};
+					if (object->getObjectType() == ObjectInterpolate)
+						haveChildGroup = false;
+
+					GUI::CCollapsibleGroup* group = NULL;
+					GUI::CBoxLayout* objectLayout = NULL;
+
+					if (haveChildGroup)
+					{
+						// header
+						group = ui->addSubGroup(layout);
+						group->getHeader()->setLabel(ui->getPrettyName(valueProperty->Name));
+						objectLayout = ui->createBoxLayout(group);
+
+						valueProperty->OnSetHidden = [group](bool hide)
+							{
+								group->setHidden(hide);
+							};
+					}
 
 					if (object->getObjectType() == ObjectArray)
 					{
@@ -624,9 +635,47 @@ namespace Skylicht
 							count->addObserver(observer, true);
 						}
 					}
+					else if (object->getObjectType() == ObjectInterpolate)
+					{
+						CInterpolateFloatSerializable* value = (CInterpolateFloatSerializable*)valueProperty;
+
+						CInterpolator interpolator;
+						value->getInterpolator(&interpolator);
+
+						CSubject<CInterpolator>* subject = new CSubject<CInterpolator>(interpolator);
+						CObserver* observer = new CObserver();
+						observer->Notify = [&, object, value, s = subject, o = observer](ISubject* subject, IObserver* from)
+							{
+								if (from != o)
+								{
+									value->setInterpolator(&s->get());
+									onUpdateValue(object);
+								}
+							};
+						subject->addObserver(observer, true);
+
+						valueProperty->OnSetHidden = [s = subject, o = observer](bool hide)
+							{
+								s->setEnable(!hide);
+								s->notify(o);
+							};
+
+						ui->addInterpolateCurves(layout, ui->getPrettyName(value->Name), subject);
+
+						valueProperty->OnChanged = [value, subject, observer]()
+							{
+								CInterpolator v;
+								value->getInterpolator(&v);
+								subject->set(v);
+								subject->notify(observer);
+							};
+
+						m_subjects.push_back(subject);
+					}
 
 					// show child data
-					serializableToControl(object, ui, objectLayout);
+					if (haveChildGroup)
+						serializableToControl(object, ui, objectLayout);
 
 					m_subjects.push_back(subject);
 				}

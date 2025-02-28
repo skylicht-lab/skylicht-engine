@@ -30,6 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Reactive/CSubject.h"
 
 #include "Serializable/CObjectSerializable.h"
+#include "Serializable/CInterpolateSerializable.h"
 #include "Editor/Space/Property/IPropertyEditor.h"
 
 #include "GUI/GUI.h"

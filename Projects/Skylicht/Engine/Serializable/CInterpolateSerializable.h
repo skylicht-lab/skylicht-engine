@@ -70,7 +70,7 @@ namespace Skylicht
 			m_valueY.clear();
 		}
 
-		virtual void setInterpolator(CInterpolator* interpolator) = 0;
+		virtual void setInterpolator(const CInterpolator* interpolator) = 0;
 
 		virtual void getInterpolator(CInterpolator* interpolator) = 0;
 	};
@@ -105,7 +105,7 @@ namespace Skylicht
 			valueY->set(y);
 		}
 
-		virtual void setInterpolator(CInterpolator* interpolator)
+		virtual void setInterpolator(const CInterpolator* interpolator)
 		{
 			const std::set<SInterpolatorEntry>& graph = interpolator->getGraph();
 
@@ -127,6 +127,8 @@ namespace Skylicht
 
 				interpolator->addEntry(x, y);
 			}
+
+			interpolator->setType(CInterpolator::Float);
 		}
 
 		virtual CObjectSerializable* clone()

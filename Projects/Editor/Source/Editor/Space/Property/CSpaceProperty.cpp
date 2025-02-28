@@ -760,7 +760,7 @@ namespace Skylicht
 			label->setTextAlignment(GUI::TextRight);
 
 			CInterpolator interpolator = value->get();
-			GUI::CInterpolateCurvesButton* curvesBtn = new GUI::CInterpolateCurvesButton(layout, interpolator, GUI::CInterpolateCurvesButton::Float);
+			GUI::CInterpolateCurvesButton* curvesBtn = new GUI::CInterpolateCurvesButton(layout, interpolator);
 
 			// when check value change => update ui
 			CObserver* onChange = new CObserver();

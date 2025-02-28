@@ -98,6 +98,7 @@ namespace Skylicht
 			object->autoRelease(new CFloatProperty(object, "end2", m_end2));
 
 			CInterpolateFloatSerializable* interpolate = new CInterpolateFloatSerializable("interpolate", object);
+			interpolate->setUIHeader("Custom interpolate");
 			object->autoRelease(interpolate);
 			if (m_interpolator)
 				interpolate->setInterpolator(m_interpolator);

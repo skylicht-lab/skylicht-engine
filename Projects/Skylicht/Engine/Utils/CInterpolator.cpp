@@ -27,7 +27,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CInterpolator::CInterpolator()
+	CInterpolator::CInterpolator() :
+		m_type(CInterpolator::Float)
 	{
 
 	}

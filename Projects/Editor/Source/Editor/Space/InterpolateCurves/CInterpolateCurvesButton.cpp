@@ -31,10 +31,9 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CInterpolateCurvesButton::CInterpolateCurvesButton(CBase* parent, CInterpolator interpolation, ECurveType type) :
+			CInterpolateCurvesButton::CInterpolateCurvesButton(CBase* parent, CInterpolator interpolation) :
 				CCustomDrawButton(parent),
-				m_interpolation(interpolation),
-				m_curveType(type)
+				m_interpolation(interpolation)
 			{
 				OnCustomDraw = std::bind(&CInterpolateCurvesButton::renderUnderOverride, this, std::placeholders::_1, std::placeholders::_2);
 			}

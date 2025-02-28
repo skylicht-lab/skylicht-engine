@@ -36,24 +36,14 @@ namespace Skylicht
 			class CInterpolateCurvesButton : public CCustomDrawButton
 			{
 			public:
-				enum ECurveType
-				{
-					Float,
-					Vec2,
-					Vec3,
-					Color
-				};
-
 				Listener OnChanged;
 
 			protected:
 
 				CInterpolator m_interpolation;
 
-				ECurveType m_curveType;
-
 			public:
-				CInterpolateCurvesButton(CBase* parent, CInterpolator interpolation, ECurveType type);
+				CInterpolateCurvesButton(CBase* parent, CInterpolator interpolation);
 
 				virtual ~CInterpolateCurvesButton();
 
