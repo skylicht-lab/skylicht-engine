@@ -31,11 +31,13 @@ namespace Skylicht
 	CArraySerializable::CArraySerializable(const char* name) :
 		CObjectSerializable(name)
 	{
+		m_objectType = ObjectArray;
 	}
 
 	CArraySerializable::CArraySerializable(const char* name, CObjectSerializable* parent) :
 		CObjectSerializable(name, parent)
 	{
+		m_objectType = ObjectArray;
 	}
 
 	CArraySerializable::~CArraySerializable()

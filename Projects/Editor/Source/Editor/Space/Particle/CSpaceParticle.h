@@ -49,6 +49,8 @@ namespace Skylicht
 
 			Particle::CParticleComponent* m_particle;
 
+			std::vector<GUI::CButton*> m_toolbarBtns;
+
 		public:
 			CSpaceParticle(GUI::CWindow* window, CEditor* editor);
 

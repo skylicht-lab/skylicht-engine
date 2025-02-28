@@ -50,14 +50,17 @@ namespace Skylicht
 
 			btn = toolbar->addButton(L"Save", GUI::ESystemIcon::Save);
 			btn->OnPress = BIND_LISTENER(&CSpaceParticle::onSave, this);
+			m_toolbarBtns.push_back(btn);
 
 			toolbar->addSpace();
 
 			btn = toolbar->addButton(L"Play", GUI::ESystemIcon::PlayerPlay);
 			btn->OnPress = BIND_LISTENER(&CSpaceParticle::onPlay, this);
+			m_toolbarBtns.push_back(btn);
 
 			btn = toolbar->addButton(L"Stop", GUI::ESystemIcon::PlayerPause);
 			btn->OnPress = BIND_LISTENER(&CSpaceParticle::onStop, this);
+			m_toolbarBtns.push_back(btn);
 
 			GUI::CBase* treeContainer = new GUI::CBase(window);
 			treeContainer->dock(GUI::EPosition::Fill);
@@ -84,6 +87,10 @@ namespace Skylicht
 						setNull();
 				}
 			}
+			else
+			{
+				setNull();
+			}
 		}
 
 		CSpaceParticle::~CSpaceParticle()
@@ -103,12 +110,18 @@ namespace Skylicht
 				if (node)
 					m_hierarchyController->setTreeNode(node);
 			}
+
+			for (GUI::CButton* btn : m_toolbarBtns)
+				btn->setDisabled(false);
 		}
 
 		void CSpaceParticle::setNull()
 		{
 			m_particle = NULL;
 			m_hierarchyController->setTreeNode(NULL);
+
+			for (GUI::CButton* btn : m_toolbarBtns)
+				btn->setDisabled(true);
 		}
 
 		void CSpaceParticle::onSave(GUI::CBase* base)

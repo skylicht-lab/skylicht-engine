@@ -46,7 +46,7 @@ namespace Skylicht
 				object->deserialize(attr); // for SerializableActivator
 			else
 			{
-				if (object->isArray())
+				if (object->getObjectType() == ObjectArray)
 				{
 					CArraySerializable* arrayObject = dynamic_cast<CArraySerializable*>(object);
 					if (arrayObject->haveCreateElementFunction())

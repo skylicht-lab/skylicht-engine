@@ -49,13 +49,23 @@ namespace Skylicht
 		FolderPath,
 		ImageSource,
 		FrameSource,
-		Enum
+		Enum,
+		NumType
+	};
+
+	enum EPropertyObjectType
+	{
+		None,
+		ObjectArray,
+		ObjectInterpolate,
+		NumObjectType
 	};
 
 	class SKYLICHT_API CValueProperty
 	{
 	protected:
 		EPropertyDataType m_dataType;
+		EPropertyObjectType m_objectType;
 
 		CObjectSerializable* m_owner;
 
@@ -87,16 +97,16 @@ namespace Skylicht
 			return m_dataType;
 		}
 
+		EPropertyObjectType getObjectType()
+		{
+			return m_objectType;
+		}
+
 		virtual void serialize(io::IAttributes* io) = 0;
 
 		virtual void deserialize(io::IAttributes* io) = 0;
 
 		virtual CValueProperty* clone() = 0;
-
-		virtual bool isArray()
-		{
-			return false;
-		}
 
 		inline void setUIHeader(const char* header)
 		{

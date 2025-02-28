@@ -141,7 +141,7 @@ namespace Skylicht
 	{
 		char elementName[512];
 
-		if (!isArray())
+		if (m_objectType == ObjectArray)
 			sprintf(elementName, "node type=\"%s\"", Name.c_str());
 		else
 			sprintf(elementName, "node type=\"%s\" array=\"true\"", Name.c_str());

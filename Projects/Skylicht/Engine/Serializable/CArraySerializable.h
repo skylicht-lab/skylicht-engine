@@ -70,11 +70,6 @@ namespace Skylicht
 
 		bool resize(int count);
 
-		virtual bool isArray()
-		{
-			return true;
-		}
-
 	protected:
 
 		void autoName();

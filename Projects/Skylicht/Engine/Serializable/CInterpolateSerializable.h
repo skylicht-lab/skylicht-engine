@@ -43,7 +43,7 @@ namespace Skylicht
 			m_valueX("valueX", this),
 			m_valueY("valueY", this)
 		{
-
+			m_objectType = ObjectInterpolate;
 		}
 
 		CInterpolateSerializable(const char* name, CObjectSerializable* parent) :
@@ -51,7 +51,7 @@ namespace Skylicht
 			m_valueX("valueX", this),
 			m_valueY("valueY", this)
 		{
-
+			m_objectType = ObjectInterpolate;
 		}
 
 		virtual ~CInterpolateSerializable()

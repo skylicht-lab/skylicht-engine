@@ -88,6 +88,10 @@ namespace Skylicht
 
 				virtual void drawLineY(float x1, float y1, float height, const SGUIColor& color);
 
+				virtual void drawLine(float x1, float y1, float x2, float y2, const SGUIColor& color);
+
+				virtual void drawLines(const std::vector<SPoint>& points, const SGUIColor& color);
+
 				virtual void drawBorderRect(const SRect& r, const SGUIColor& color, bool left, bool top, bool right, bool bottom);
 
 				virtual void renderText(const SRect& r, EFontSize fontSize, const SGUIColor& textColor, const std::wstring& string);

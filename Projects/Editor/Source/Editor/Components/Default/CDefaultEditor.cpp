@@ -437,7 +437,7 @@ namespace Skylicht
 					group->getHeader()->setLabel(ui->getPrettyName(valueProperty->Name));
 					GUI::CBoxLayout* objectLayout = ui->createBoxLayout(group);
 
-					if (object->isArray())
+					if (object->getObjectType() == ObjectArray)
 					{
 						CArraySerializable* arrayObject = (CArraySerializable*)object;
 

@@ -33,7 +33,8 @@ namespace Skylicht
 		m_dataType(dataType),
 		m_uiSpace(0.0f),
 		m_hidden(false),
-		Name(name)
+		Name(name),
+		m_objectType(None)
 	{
 		if (owner != NULL)
 			owner->addProperty(this);

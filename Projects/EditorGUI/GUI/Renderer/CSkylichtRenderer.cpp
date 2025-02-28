@@ -222,6 +222,38 @@ namespace Skylicht
 				g->addRectangleBatch(r, uv, getColor(color), world, m_materialID, NULL);
 			}
 
+			void CSkylichtRenderer::drawLine(float x1, float y1, float x2, float y2, const SGUIColor& color)
+			{
+				CGraphics2D* g = CGraphics2D::getInstance();
+				const core::matrix4& world = getWorldTransform();
+
+				core::vector3df p1(x1, y1, 0.0f);
+				core::vector3df p2(x2, y2, 0.0f);
+
+				world.transformVect(p1);
+				world.transformVect(p2);
+
+				g->draw2DLine(core::position2df(p1.X, p1.Y), core::position2df(p2.X, p2.Y), getColor(color));
+			}
+
+			void CSkylichtRenderer::drawLines(const std::vector<SPoint>& points, const SGUIColor& color)
+			{
+				CGraphics2D* g = CGraphics2D::getInstance();
+				const core::matrix4& world = getWorldTransform();
+
+				std::vector<core::position2df> drawPoints;
+				core::vector3df temp;
+
+				for (const SPoint& p : points)
+				{
+					temp.set(p.X, p.Y, 0.0f);
+					world.transformVect(temp);
+					drawPoints.push_back(core::position2df(temp.X, temp.Y));
+				}
+
+				g->draw2DLines(drawPoints, getColor(color));
+			}
+
 			void CSkylichtRenderer::drawBorderRect(const SRect& r, const SGUIColor& color, bool left, bool top, bool right, bool bottom)
 			{
 				CGraphics2D* g = CGraphics2D::getInstance();
