@@ -30,22 +30,39 @@ namespace Skylicht
 {
 	struct SInterpolatorEntry
 	{
-		float x;
-		float y;
+		float X;
+		float Value[4];
 
-		SInterpolatorEntry() : x(0.0f), y(0.0f) {}
+		SInterpolatorEntry(float x)
+		{
+			X = x;
+			for (int i = 0; i < 4; i++)
+				Value[i] = 0.0f;
+		}
 
-		SInterpolatorEntry(float x, float y) : x(x), y(y) {}
+		SInterpolatorEntry()
+		{
+			X = 0.0f;
+			for (int i = 0; i < 4; i++)
+				Value[i] = 0.0f;
+		}
+
+		void operator=(const SInterpolatorEntry& entry)
+		{
+			X = entry.X;
+			for (int i = 0; i < 4; i++)
+				Value[i] = entry.Value[i];
+		}
 	};
 
 	inline bool operator<(const SInterpolatorEntry& entry0, const SInterpolatorEntry& entry1)
 	{
-		return entry0.x < entry1.x;
+		return entry0.X < entry1.X;
 	}
 
 	inline bool operator==(const SInterpolatorEntry& entry0, const SInterpolatorEntry& entry1)
 	{
-		return entry0.x == entry1.x;
+		return entry0.X == entry1.X;
 	}
 
 	class SKYLICHT_API CInterpolator
@@ -58,7 +75,18 @@ namespace Skylicht
 
 		virtual ~CInterpolator();
 
+		void operator=(const CInterpolator& other)
+		{
+			m_graph = other.m_graph;
+		}
+
 		float interpolate(float x);
+
+		core::vector2df interpolateVec2(float x);
+
+		core::vector3df interpolateVec3(float x);
+
+		SColorf interpolateColorf(float x);
 
 		inline std::set<SInterpolatorEntry>& getGraph()
 		{
@@ -77,7 +105,40 @@ namespace Skylicht
 
 		inline bool addEntry(float x, float y)
 		{
-			return addEntry(SInterpolatorEntry(x, y));
+			SInterpolatorEntry entry;
+			entry.X = x;
+			entry.Value[0] = y;
+			return addEntry(entry);
+		}
+
+		inline bool addEntry(float x, const core::vector2df& v)
+		{
+			SInterpolatorEntry entry;
+			entry.X = x;
+			entry.Value[0] = v.X;
+			entry.Value[1] = v.Y;
+			return addEntry(entry);
+		}
+
+		inline bool addEntry(float x, const core::vector3df& v)
+		{
+			SInterpolatorEntry entry;
+			entry.X = x;
+			entry.Value[0] = v.X;
+			entry.Value[1] = v.Y;
+			entry.Value[2] = v.Z;
+			return addEntry(entry);
+		}
+
+		inline bool addEntry(float x, const video::SColorf& c)
+		{
+			SInterpolatorEntry entry;
+			entry.X = x;
+			entry.Value[0] = c.r;
+			entry.Value[1] = c.g;
+			entry.Value[2] = c.b;
+			entry.Value[3] = c.a;
+			return addEntry(entry);
 		}
 
 		inline void clearGraph()

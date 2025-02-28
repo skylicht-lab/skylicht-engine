@@ -34,6 +34,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Editor/EntityData/CEntityDataEditor.h"
 
 #include "Editor/GUIEditor/CGUIEditor.h"
+#include "Editor/Space/InterpolateCurves/CInterpolateCurvesButton.h"
 
 #include "Reactive/CSubject.h"
 #include "Reactive/CObserver.h"
@@ -108,6 +109,8 @@ namespace Skylicht
 			void addSlider(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<float>* value, float min, float max);
 
 			void addColorPicker(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<SColor>* value);
+
+			void addInterpolateCurves(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<CInterpolator>* value);
 
 			GUI::CBoxLayout* addChildGroup(GUI::CBoxLayout* boxLayout, const wchar_t* name, bool defaultExpand = false);
 

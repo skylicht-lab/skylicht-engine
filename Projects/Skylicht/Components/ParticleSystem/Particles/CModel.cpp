@@ -100,11 +100,7 @@ namespace Skylicht
 			CInterpolateFloatSerializable* interpolate = new CInterpolateFloatSerializable("interpolate", object);
 			object->autoRelease(interpolate);
 			if (m_interpolator)
-			{
-				std::vector<CInterpolator*> list;
-				list.push_back(m_interpolator);
-				interpolate->setInterpolator(list);
-			}
+				interpolate->setInterpolator(m_interpolator);
 
 			return object;
 		}
@@ -127,9 +123,7 @@ namespace Skylicht
 				if (m_interpolator == NULL)
 					m_interpolator = m_group->createInterpolator();
 
-				std::vector<CInterpolator*> list;
-				list.push_back(m_interpolator);
-				interpolate->getInterpolator(list);
+				interpolate->getInterpolator(m_interpolator);
 			}
 		}
 

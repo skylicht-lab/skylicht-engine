@@ -750,6 +750,40 @@ namespace Skylicht
 			boxLayout->endVertical();
 		}
 
+		void CSpaceProperty::addInterpolateCurves(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<CInterpolator>* value)
+		{
+			GUI::CLayout* layout = boxLayout->beginVertical();
+
+			GUI::CLabel* label = new GUI::CLabel(layout);
+			label->setPadding(GUI::SMargin(0.0f, 2.0, 0.0f, 0.0f));
+			label->setString(name);
+			label->setTextAlignment(GUI::TextRight);
+
+			CInterpolator interpolator = value->get();
+			GUI::CInterpolateCurvesButton* curvesBtn = new GUI::CInterpolateCurvesButton(layout, interpolator, GUI::CInterpolateCurvesButton::Float);
+
+			// when check value change => update ui
+			CObserver* onChange = new CObserver();
+			onChange->Notify = [me = onChange, target = curvesBtn, ui = layout](ISubject* subject, IObserver* from)
+				{
+					if (from != me)
+					{
+						CSubject<CInterpolator>* value = (CSubject<CInterpolator>*)subject;
+						target->setInterpolator(value->get());
+						ui->setHidden(!value->isEnable());
+					}
+				};
+
+			// when update interpolate change => update value
+			value->addObserver(onChange, true);
+			curvesBtn->OnChanged = [value, curvesBtn, observer = onChange](GUI::CBase* base) {
+				value->set(curvesBtn->getInterpolator());
+				value->notify(observer);
+				};
+
+			boxLayout->endVertical();
+		}
+
 		GUI::CBoxLayout* CSpaceProperty::addChildGroup(GUI::CBoxLayout* boxLayout, const wchar_t* name, bool defaultExpand)
 		{
 			GUI::CLayout* layout = boxLayout->beginVertical();

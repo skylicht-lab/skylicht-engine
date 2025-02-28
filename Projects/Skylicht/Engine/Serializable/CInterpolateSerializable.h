@@ -70,9 +70,9 @@ namespace Skylicht
 			m_valueY.clear();
 		}
 
-		virtual void setInterpolator(std::vector<CInterpolator*>& interpolator) = 0;
+		virtual void setInterpolator(CInterpolator* interpolator) = 0;
 
-		virtual void getInterpolator(std::vector<CInterpolator*>& interpolator) = 0;
+		virtual void getInterpolator(CInterpolator* interpolator) = 0;
 	};
 
 
@@ -105,35 +105,27 @@ namespace Skylicht
 			valueY->set(y);
 		}
 
-		virtual void setInterpolator(std::vector<CInterpolator*>& interpolator)
+		virtual void setInterpolator(CInterpolator* interpolator)
 		{
-			if (interpolator.size() == 0)
-				return;
-
-			CInterpolator* value = interpolator[0];
-			const std::set<SInterpolatorEntry>& graph = value->getGraph();
+			const std::set<SInterpolatorEntry>& graph = interpolator->getGraph();
 
 			clear();
 			for (auto i : graph)
 			{
-				addEntry(i.x, i.y);
+				addEntry(i.X, i.Value[0]);
 			}
 		}
 
-		virtual void getInterpolator(std::vector<CInterpolator*>& interpolator)
+		virtual void getInterpolator(CInterpolator* interpolator)
 		{
-			if (interpolator.size() == 0)
-				return;
-
-			CInterpolator* value = interpolator[0];
-			value->clearGraph();
+			interpolator->clearGraph();
 
 			for (int i = 0, n = m_valueX.getElementCount(); i < n; i++)
 			{
 				float x = m_valueX.getElementValue(i, CFloatProperty()).get();
 				float y = m_valueY.getElementValue(i, CFloatProperty()).get();
 
-				value->addEntry(x, y);
+				interpolator->addEntry(x, y);
 			}
 		}
 
