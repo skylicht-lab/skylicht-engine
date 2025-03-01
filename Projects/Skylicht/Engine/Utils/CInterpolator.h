@@ -65,6 +65,13 @@ namespace Skylicht
 		return entry0.X == entry1.X;
 	}
 
+	struct SControlPoint
+	{
+		core::vector2df Position;
+		core::vector2df Left;
+		core::vector2df Right;
+	};
+
 	class SKYLICHT_API CInterpolator
 	{
 	public:
@@ -78,6 +85,8 @@ namespace Skylicht
 
 	protected:
 		std::set<SInterpolatorEntry> m_graph;
+		std::vector<SControlPoint> m_controls;
+
 		EInterpolatorType m_type;
 
 	public:
@@ -97,7 +106,9 @@ namespace Skylicht
 
 		void operator=(const CInterpolator& other)
 		{
+			m_type = other.m_type;
 			m_graph = other.m_graph;
+			m_controls = other.m_controls;
 		}
 
 		float interpolate(float x);
@@ -116,6 +127,11 @@ namespace Skylicht
 		inline const std::set<SInterpolatorEntry>& getGraph() const
 		{
 			return m_graph;
+		}
+
+		inline std::vector<SControlPoint>& getControlPoints()
+		{
+			return m_controls;
 		}
 
 		inline bool addEntry(const SInterpolatorEntry& entry)
@@ -164,6 +180,7 @@ namespace Skylicht
 		inline void clearGraph()
 		{
 			m_graph.clear();
+			m_controls.clear();
 		}
 	};
 }

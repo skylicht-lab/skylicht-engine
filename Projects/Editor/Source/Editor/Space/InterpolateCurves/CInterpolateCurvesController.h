@@ -24,46 +24,43 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "GUI/Controls/CCustomDrawButton.h"
 #include "Utils/CInterpolator.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		namespace GUI
+
+		class CSpaceInterpolateCurves;
+
+		class CInterpolateCurvesController
 		{
-			class CInterpolateCurvesButton : public CCustomDrawButton
+		public:
+			std::function<void()> OnChanged;
+
+			std::function<void()> OnClose;
+
+		protected:
+			CSpaceInterpolateCurves* m_space;
+
+			CInterpolator m_interpolation;
+
+		public:
+			CInterpolateCurvesController(CSpaceInterpolateCurves* space);
+
+			virtual ~CInterpolateCurvesController();
+
+			void onClosed();
+
+			inline void setInterpolator(const CInterpolator& i)
 			{
-			public:
-				Listener OnChanged;
+				m_interpolation = i;
+			}
 
-			protected:
-
-				CInterpolator m_interpolation;
-
-			public:
-				CInterpolateCurvesButton(CBase* parent, CInterpolator interpolation);
-
-				virtual ~CInterpolateCurvesButton();
-
-				inline void setInterpolator(const CInterpolator& i)
-				{
-					m_interpolation = i;
-				}
-
-				inline const CInterpolator& getInterpolator()
-				{
-					return m_interpolation;
-				}
-
-			protected:
-
-				void renderUnderOverride(CBase* base, const SRect& bounds);
-
-				void onButtonDown(CBase* base);
-
-			};
-		}
+			inline const CInterpolator& getInterpolator()
+			{
+				return m_interpolation;
+			}
+		};
 	}
 }

@@ -44,6 +44,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Space/Sprite/CSpaceExportSprite.h"
 #include "Space/Sprite/CSpaceSprite.h"
 #include "Space/Particle/CSpaceParticle.h"
+#include "Space/InterpolateCurves/CSpaceInterpolateCurves.h"
 
 #include "SpaceController/CSceneController.h"
 #include "SpaceController/CPropertyController.h"
@@ -433,7 +434,6 @@ namespace Skylicht
 			submenu->addItem(L"Font");
 			submenu->addItem(L"GUI");
 			submenu->addItem(L"Sprite");
-			submenu->addItem(L"Animation");
 			submenu->OnCommand = BIND_LISTENER(&CEditor::OnCommandAssetCreate, this);
 
 			GUI::CMenuItem* gameObject = m_menuBar->addItem(L"GameObject");
@@ -513,7 +513,6 @@ namespace Skylicht
 			m_menuWindowItems.push_back(submenu->addItem(L"Property"));
 			m_menuWindowItems.push_back(submenu->addItem(L"Scene"));
 			m_menuWindowItems.push_back(submenu->addItem(L"Hierarchy"));
-			m_menuWindowItems.push_back(submenu->addItem(L"Animation"));
 			m_menuWindowItems.push_back(submenu->addItem(L"Console"));
 			m_menuWindowItems.push_back(submenu->addItem(L"GUI Design"));
 			m_menuWindowItems.push_back(submenu->addItem(L"GUI Hierarchy"));
@@ -630,10 +629,6 @@ namespace Skylicht
 			{
 				ret = new CSpaceApplyTemplate(window, this);
 			}
-			else if (workspace == L"Animation")
-			{
-
-			}
 			else if (workspace == L"Sprite")
 			{
 				ret = new CSpaceSprite(window, this);
@@ -683,6 +678,10 @@ namespace Skylicht
 			else if (workspace == L"Particle")
 			{
 				ret = new CSpaceParticle(window, this);
+			}
+			else if (workspace == L"Interpolate Curves")
+			{
+				ret = new CSpaceInterpolateCurves(window, this);
 			}
 
 			if (ret)
@@ -1488,6 +1487,17 @@ namespace Skylicht
 			float h = 768.0f;
 			GUI::CWindow* window = new GUI::CWindow(m_canvas, 0.0f, 0.0f, w, h);
 			window->setCaption(L"Google Map");
+			window->setCenterPosition();
+			window->setResizable(true);
+			initWorkspace(window, window->getCaption());
+		}
+
+		void CEditor::showInterpolateCurves()
+		{
+			float w = 680.0f;
+			float h = 480.0f;
+			GUI::CWindow* window = new GUI::CWindow(m_canvas, 0.0f, 0.0f, w, h);
+			window->setCaption(L"Interpolate Curves");
 			window->setCenterPosition();
 			window->setResizable(true);
 			initWorkspace(window, window->getCaption());

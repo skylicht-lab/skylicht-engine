@@ -130,7 +130,7 @@ namespace Skylicht
 
 			std::vector<CSpace*> getAllWorkspaceByName(const std::wstring& name);
 
-			void refreshAssetSpace(CSpace *skip);
+			void refreshAssetSpace(CSpace* skip);
 
 			CSpace* openWorkspace(const std::wstring& name);
 
@@ -195,6 +195,8 @@ namespace Skylicht
 			void showProjectSetting();
 
 			void showGoogleMap();
+
+			void showInterpolateCurves();
 
 			void exportGMap(const char* path, long x1, long y1, long x2, long y2, int zoom, int type, int gridSize);
 
