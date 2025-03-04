@@ -527,6 +527,10 @@ namespace Skylicht
 				PlayerPlay,
 				PlayerRecord,
 				PlayerPause,
+				CurveLine,
+				CurveInOutCubic,
+				CurveClear,
+				CurveAutoZoom,
 				// End
 				NumSystemIcon
 			};

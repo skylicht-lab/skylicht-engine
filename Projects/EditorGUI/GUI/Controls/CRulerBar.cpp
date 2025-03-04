@@ -76,7 +76,7 @@ namespace Skylicht
 				float size3 = 15.0f;	// 5
 				float size4 = 30.0f;	// 10
 
-				// convert the position to unity
+				// convert the position to unit
 				int unit = (int)(m_position / m_pixelPerUnit);
 
 				// begin unit from m_position (round)

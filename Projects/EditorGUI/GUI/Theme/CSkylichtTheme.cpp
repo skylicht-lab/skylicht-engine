@@ -248,6 +248,10 @@ namespace Skylicht
 				addEditorIcon(ESystemIcon::PlayerPlay, "player_play.png");
 				addEditorIcon(ESystemIcon::PlayerRecord, "player_record.png");
 				addEditorIcon(ESystemIcon::PlayerPause, "player_pause.png");
+				addEditorIcon(ESystemIcon::CurveLine, "curve_line.png");
+				addEditorIcon(ESystemIcon::CurveInOutCubic, "curve_inoutcubic.png");
+				addEditorIcon(ESystemIcon::CurveClear, "curve_clear.png");
+				addEditorIcon(ESystemIcon::CurveAutoZoom, "curve_autozoom.png");
 			}
 
 			void CSkylichtTheme::addSystemIcon(ESystemIcon type, const char* name)

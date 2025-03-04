@@ -42,7 +42,7 @@ namespace Skylicht
 				m_enableClip(false)
 			{
 				m_projection.buildProjectionMatrixOrthoLH((f32)w, -(f32)h, -1.0f, 1.0f);
-				m_projection.setTranslation(core::vector3df(-1, 1, 0));
+				m_projection.setTranslation(core::vector3df(-1.0f, 1.0f, 0.0f));
 
 				m_materialID = CShaderManager::getInstance()->getShaderIDByName("TextureColorAlpha");
 			}
@@ -59,7 +59,7 @@ namespace Skylicht
 				m_height = h;
 
 				m_projection.buildProjectionMatrixOrthoLH((f32)w, -(f32)h, -1.0f, 1.0f);
-				m_projection.setTranslation(core::vector3df(-1.0f, 1.0f, 0));
+				m_projection.setTranslation(core::vector3df(-1.0f, 1.0f, 0.0f));
 			}
 
 			void CSkylichtRenderer::begin()

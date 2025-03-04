@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "SkylichtEngine.h"
 #include "Editor/Space/CSpace.h"
 #include "CInterpolateCurvesController.h"
+#include "CValueSettingController.h"
 
 namespace Skylicht
 {
@@ -38,9 +39,37 @@ namespace Skylicht
 
 		protected:
 			GUI::CBase* m_owner;
+			GUI::CBase* m_view;
+
+			GUI::CToolbar* m_toolBar;
+			GUI::CLabel* m_textMousePos;
 
 			CInterpolateCurvesController* m_controller;
 
+			core::vector2df m_guiScale;
+			float m_viewX;
+			float m_viewY;
+
+			core::vector2df m_gridSize;
+
+			float m_pressX;
+			float m_pressY;
+			float m_oldViewX;
+			float m_oldViewY;
+			bool m_middleDrag;
+
+			float m_mouseX;
+			float m_mouseY;
+			float m_mouseGUIX;
+			float m_mouseGUIY;
+			bool m_leftMouseDown;
+			bool m_rightMouseDown;
+
+			int m_hoverPoint;
+			int m_hoverState;
+
+			GUI::CMenu* m_valueSettingMenu;
+			CValueSettingController* m_valueSettingController;
 		public:
 			CSpaceInterpolateCurves(GUI::CWindow* window, CEditor* editor);
 
@@ -62,7 +91,50 @@ namespace Skylicht
 				return m_owner;
 			}
 
+			inline void autoZoom()
+			{
+				onAutoZoom(NULL);
+			}
+
 			void onOwnerClosed();
+
+		protected:
+
+			void onClear(GUI::CBase* base);
+
+			void onLinear(GUI::CBase* base);
+
+			void onInOutCubic(GUI::CBase* base);
+
+			void onAutoZoom(GUI::CBase* base);
+
+			void renderGrid();
+
+			void renderGraph();
+
+			void renderLine(const SControlPoint& p1, const SControlPoint& p2);
+
+			void onMiddleMouseClick(GUI::CBase* view, float x, float y, bool down);
+
+			void onMouseMoved(GUI::CBase* view, float x, float y, float deltaX, float deltaY);
+
+			void onMouseWheel(GUI::CBase* view, int delta);
+
+			void onLeftMouseClick(GUI::CBase* view, float x, float y, bool down);
+
+			void onRightMouseClick(GUI::CBase* view, float x, float y, bool down);
+
+			void ptToView(float& x, float& y);
+
+			void viewToPt(float& x, float& y);
+
+			void doZoomIn(float dx, float dy);
+
+			void doZoomOut(float dx, float dy);
+
+			void checkHoverPoint();
+
+			void doDragPoint();
 		};
 	}
 }

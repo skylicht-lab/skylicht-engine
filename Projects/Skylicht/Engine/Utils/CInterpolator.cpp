@@ -38,6 +38,12 @@ namespace Skylicht
 
 	}
 
+	SControlPoint& CInterpolator::addControlPoint()
+	{
+		m_controls.push_back(SControlPoint());
+		return m_controls.back();
+	}
+
 	float CInterpolator::interpolate(float x)
 	{
 		SInterpolatorEntry currentKey(x);

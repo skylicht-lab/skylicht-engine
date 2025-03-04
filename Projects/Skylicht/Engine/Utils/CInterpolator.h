@@ -67,9 +67,24 @@ namespace Skylicht
 
 	struct SControlPoint
 	{
+		enum EControlType
+		{
+			Auto,
+			Smooth,
+			Broken,
+			Linear,
+			Constant,
+		};
+
 		core::vector2df Position;
 		core::vector2df Left;
 		core::vector2df Right;
+		EControlType Type;
+
+		SControlPoint()
+		{
+			Type = Auto;
+		}
 	};
 
 	class SKYLICHT_API CInterpolator
@@ -111,6 +126,11 @@ namespace Skylicht
 			m_controls = other.m_controls;
 		}
 
+		inline bool empty()
+		{
+			return m_graph.empty();
+		}
+
 		float interpolate(float x);
 
 		core::vector2df interpolateVec2(float x);
@@ -133,6 +153,8 @@ namespace Skylicht
 		{
 			return m_controls;
 		}
+
+		SControlPoint& addControlPoint();
 
 		inline bool addEntry(const SInterpolatorEntry& entry)
 		{

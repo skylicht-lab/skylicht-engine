@@ -48,5 +48,53 @@ namespace Skylicht
 			OnChanged = nullptr;
 			OnClose = nullptr;
 		}
+
+		void CInterpolateCurvesController::getRangleMinMax(core::vector2df& min, core::vector2df& max)
+		{
+			min.set(0.0f, 0.0f);
+			max.set(0.0f, 0.0f);
+
+			int id = 0;
+			const std::vector<SControlPoint>& graph = m_interpolation.getControlPoints();
+			for (const auto& it : graph)
+			{
+				if (id++ == 0)
+				{
+					min.X = it.Position.X;
+					min.Y = it.Position.Y;
+
+					max.X = it.Position.X;
+					max.Y = it.Position.Y;
+				}
+
+				min.X = core::min_(min.X, it.Position.X);
+				max.X = core::max_(max.X, it.Position.X);
+
+				min.Y = core::min_(min.Y, it.Position.Y);
+				max.Y = core::max_(max.Y, it.Position.Y);
+			}
+		}
+
+		void CInterpolateCurvesController::setDefaultLinear()
+		{
+			m_interpolation.clearGraph();
+
+			SControlPoint& start = m_interpolation.addControlPoint();
+			start.Position.set(0.0f, 0.0f);
+			start.Type = SControlPoint::Linear;
+
+			SControlPoint& end = m_interpolation.addControlPoint();
+			end.Position.set(1.0f, 1.0f);
+			end.Type = SControlPoint::Linear;
+		}
+
+		void CInterpolateCurvesController::setDefaultInOutCubic()
+		{
+			SControlPoint& start = m_interpolation.addControlPoint();
+			start.Position.set(0.0f, 0.0f);
+
+			SControlPoint& end = m_interpolation.addControlPoint();
+			end.Position.set(1.0f, 1.0f);
+		}
 	}
 }

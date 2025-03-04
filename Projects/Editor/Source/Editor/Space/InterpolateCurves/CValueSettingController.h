@@ -24,54 +24,31 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "Editor/CEditor.h"
 #include "Utils/CInterpolator.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-
-		class CSpaceInterpolateCurves;
-
-		class CInterpolateCurvesController
+		class CValueSettingController
 		{
-		public:
-			std::function<void()> OnChanged;
-
-			std::function<void()> OnClose;
-
 		protected:
-			CSpaceInterpolateCurves* m_space;
+			CEditor* m_editor;
+			GUI::CMenu* m_menu;
 
-			CInterpolator m_interpolation;
+			GUI::CNumberInput* m_valueX;
+			GUI::CNumberInput* m_valueY;
 
+			SControlPoint* m_point;
 		public:
-			CInterpolateCurvesController(CSpaceInterpolateCurves* space);
+			CValueSettingController(CEditor* editor, GUI::CMenu* menu);
 
-			virtual ~CInterpolateCurvesController();
+			virtual ~CValueSettingController();
 
-			void onClosed();
+			void onShow(SControlPoint* controlPoint);
 
-			inline void setInterpolator(const CInterpolator& i)
-			{
-				m_interpolation = i;
-			}
-
-			inline CInterpolator& getInterpolator()
-			{
-				return m_interpolation;
-			}
-
-			void getRangleMinMax(core::vector2df& min, core::vector2df& max);
-
-			void setDefaultLinear();
-
-			void setDefaultInOutCubic();
-
-			inline void clearGraph()
-			{
-				m_interpolation.clearGraph();
-			}
+			void onChanged(GUI::CBase* base);
 		};
 	}
 }

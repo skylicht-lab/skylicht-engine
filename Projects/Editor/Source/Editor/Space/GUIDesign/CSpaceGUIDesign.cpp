@@ -38,8 +38,6 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		const float LeftOffset = 40.0f;// == size the height TOP Ruler
-
 		CSpaceGUIDesign::CSpaceGUIDesign(GUI::CWindow* window, CEditor* editor) :
 			CSpace(window, editor),
 			m_guiWidth(1920.0f),
@@ -112,7 +110,7 @@ namespace Skylicht
 			m_topRuler->setUnitScale(10.0f);
 
 			m_topRuler->setBeginOffset(0.0f);
-			m_leftRuler->setBeginOffset(LeftOffset);
+			m_leftRuler->setBeginOffset(40.0f); // size the height TOP Ruler
 
 			m_topRuler->enableDrawCursorline(true);
 			m_leftRuler->enableDrawCursorline(true);

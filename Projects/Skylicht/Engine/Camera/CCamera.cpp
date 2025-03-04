@@ -293,7 +293,7 @@ namespace Skylicht
 		{
 			core::matrix4 orthoMatrix;
 			orthoMatrix.buildProjectionMatrixOrthoLH((f32)screenSize.Width, -(f32)(screenSize.Height), -1.0f, 1.0f);
-			orthoMatrix.setTranslation(core::vector3df(-1, 1, 0));
+			orthoMatrix.setTranslation(core::vector3df(-1.0f, 1.0f, 0.0f));
 			m_viewArea.setTransform(video::ETS_PROJECTION, orthoMatrix);
 		}
 
