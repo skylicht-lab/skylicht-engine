@@ -54,6 +54,8 @@ namespace Skylicht
 
 			void onCancel(GUI::CBase* base);
 
+			void onMenuClose(GUI::CBase* base);
+
 			void onOK(GUI::CBase* base);
 
 			void onChanged(GUI::CBase* base);

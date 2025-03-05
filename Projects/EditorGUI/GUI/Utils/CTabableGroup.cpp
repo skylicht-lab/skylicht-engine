@@ -44,6 +44,21 @@ namespace Skylicht
 
 			}
 
+			void CTabableGroup::push()
+			{
+				m_saveStack.push(m_list);
+			}
+
+			void CTabableGroup::pop()
+			{
+				if (m_saveStack.size() > 0)
+				{
+					CurrentTab = NULL;
+					m_list = m_saveStack.top();
+					m_saveStack.pop();
+				}
+			}
+
 			void CTabableGroup::add(CBase* control)
 			{
 				std::list<SElement>::iterator i = m_list.begin(), end = m_list.end();
@@ -142,6 +157,7 @@ namespace Skylicht
 				}
 
 				m_list.clear();
+				CurrentTab = NULL;
 			}
 		}
 	}

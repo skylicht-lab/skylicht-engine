@@ -443,7 +443,7 @@ namespace Skylicht
 		{
 			m_rightMouseDown = down;
 
-			if (!down && m_hoverState != -1)
+			if (!down && m_hoverPoint != -1)
 			{
 				std::vector<SControlPoint>& points = m_controller->getInterpolator().getControlPoints();
 

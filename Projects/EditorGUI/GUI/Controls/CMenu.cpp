@@ -330,6 +330,9 @@ namespace Skylicht
 				{
 					m_isOpenPopup = false;
 					setHidden(true);
+
+					if (OnClose != nullptr)
+						OnClose(this);
 				}
 			}
 

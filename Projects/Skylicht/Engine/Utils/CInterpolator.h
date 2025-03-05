@@ -69,7 +69,7 @@ namespace Skylicht
 	{
 		enum EControlType
 		{
-			Auto,
+			Auto = 0,
 			Smooth,
 			Broken,
 			Linear,

@@ -48,7 +48,18 @@ namespace Skylicht
 
 			void onShow(SControlPoint* controlPoint);
 
+		protected:
+
+			void enableTabGroup();
+
+			void clearTabGroup();
+
+			void onCommand(GUI::CBase* base);
+
 			void onChanged(GUI::CBase* base);
+
+			void onClose(GUI::CBase* base);
+
 		};
 	}
 }

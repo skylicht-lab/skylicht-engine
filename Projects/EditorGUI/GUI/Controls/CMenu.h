@@ -101,6 +101,7 @@ namespace Skylicht
 
 				Listener OnCommand;
 				Listener OnOpen;
+				Listener OnClose;
 
 			protected:
 

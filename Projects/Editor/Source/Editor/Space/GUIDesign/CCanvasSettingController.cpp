@@ -98,6 +98,8 @@ namespace Skylicht
 			okBtn->setTextAlignment(GUI::TextCenter);
 			okBtn->OnPress = BIND_LISTENER(&CCanvasSettingController::onOK, this);
 			boxLayout->endVertical();
+
+			menu->OnClose = BIND_LISTENER(&CCanvasSettingController::onMenuClose, this);
 		}
 
 		CCanvasSettingController::~CCanvasSettingController()
@@ -134,6 +136,8 @@ namespace Skylicht
 		void CCanvasSettingController::enableTabGroup()
 		{
 			GUI::CTabableGroup& tabGroup = m_menu->getCanvas()->TabableGroup;
+			tabGroup.push();
+			tabGroup.clear();
 			tabGroup.add(m_inputWidth);
 			tabGroup.add(m_inputHeight);
 		}
@@ -141,13 +145,16 @@ namespace Skylicht
 		void CCanvasSettingController::clearTabGroup()
 		{
 			GUI::CTabableGroup& tabGroup = m_menu->getCanvas()->TabableGroup;
-			tabGroup.remove(m_inputWidth);
-			tabGroup.remove(m_inputHeight);
+			tabGroup.pop();
 		}
 
 		void CCanvasSettingController::onCancel(GUI::CBase* base)
 		{
 			m_menu->close();
+		}
+
+		void CCanvasSettingController::onMenuClose(GUI::CBase* base)
+		{
 			clearTabGroup();
 		}
 
