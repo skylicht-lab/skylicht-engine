@@ -53,7 +53,9 @@ namespace Skylicht
 			m_leftMouseDown(false),
 			m_rightMouseDown(false),
 			m_hoverPoint(-1),
-			m_hoverState(0)
+			m_hoverState(0),
+			m_hoverLine(-1),
+			m_insertId(-1)
 		{
 			m_controller = new CInterpolateCurvesController(this);
 
@@ -106,6 +108,10 @@ namespace Skylicht
 
 			m_valueSettingMenu = new GUI::CMenu(window->getCanvas());
 			m_valueSettingController = new CValueSettingController(editor, m_valueSettingMenu);
+
+			m_insertPointMenu = new GUI::CMenu(window->getCanvas());
+			m_insertPointMenu->addItem(L"Insert point");
+			m_insertPointMenu->OnCommand = BIND_LISTENER(&CSpaceInterpolateCurves::onInsertCommand, this);
 		}
 
 		CSpaceInterpolateCurves::~CSpaceInterpolateCurves()
@@ -164,11 +170,14 @@ namespace Skylicht
 				float dx = pMax.X - pMin.X;
 				float dy = pMax.Y - pMin.Y;
 
+				m_viewX = min.X * m_guiScale.X;
+				m_viewY = min.Y * m_guiScale.Y;
+
 				if (dx < width && dy < height)
 				{
 					// align center graph
-					m_viewX = -(width - dx) * 0.5f;
-					m_viewY = -(height - dy) * 0.5f;
+					m_viewX = m_viewX - (width - dx) * 0.5f;
+					m_viewY = m_viewY - (height - dy) * 0.5f;
 					break;
 				}
 
@@ -271,50 +280,140 @@ namespace Skylicht
 
 		void CSpaceInterpolateCurves::renderGraph()
 		{
+			CGraphics2D* g = CGraphics2D::getInstance();
+
 			std::vector<SControlPoint>& points = m_controller->getInterpolator().getControlPoints();
 			int n = (int)points.size();
 			if (n < 2)
 				return;
 
-			// draw line
-			for (int i = 0; i < n - 1; i++)
+			// compute all lines
+			m_controller->getInterpolator().computeLine(m_lines, 20);
+
+			// convert to view
+			for (u32 i = 0, n = (u32)m_lines.size(); i < n; i++)
 			{
-				SControlPoint& p1 = points[i];
-				SControlPoint& p2 = points[i + 1];
-				renderLine(p1, p2);
+				ArrayPoint2df& line = m_lines[i];
+				for (u32 j = 0, m = line.size(); j < m; j++)
+				{
+					core::vector2df& a = line[j];
+					ptToView(a.X, a.Y);
+				}
+			}
+
+			// draw line
+			SColor green(0xFF00AA00);
+			SColor hover(0xFF1080FF);
+
+			for (u32 i = 0, n = (u32)m_lines.size(); i < n; i++)
+			{
+				ArrayPoint2df& line = m_lines[i];
+				for (u32 j = 1, m = line.size(); j < m; j++)
+				{
+					core::vector2df& a = line[j - 1];
+					core::vector2df& b = line[j];
+
+					g->draw2DLine(a, b, i == m_hoverLine ? hover : green);
+				}
 			}
 
 			// draw control point
-			CGraphics2D* g = CGraphics2D::getInstance();
-			core::vector2df controlSize(6.0f, 6.0f);
+			core::vector2df pointSize(6.0f, 6.0f);
+			core::vector2df controlSize(4.0f, 4.0f);
+
 			SColor white(255, 200, 200, 200);
-			SColor red(255, 200, 100, 100);
+			SColor grey(255, 100, 100, 100);
+
+			core::rectf r;
+			core::vector2df pos, pos1, pos2;
 
 			for (int i = 0; i < n; i++)
 			{
 				SControlPoint& p = points[i];
-				core::vector2df pos = p.Position;
+
+				pos = p.Position;
 				ptToView(pos.X, pos.Y);
-				core::rectf r(pos - controlSize * 0.5f, pos + controlSize);
-				g->draw2DRectangle(r, i == m_hoverPoint ? red : white);
+
+				if (p.Type == SControlPoint::Auto ||
+					p.Type == SControlPoint::Smooth ||
+					p.Type == SControlPoint::Broken)
+				{
+					if (i == 0)
+					{
+						pos2 = p.Position + p.Right;
+						ptToView(pos2.X, pos2.Y);
+
+						g->draw2DLine(pos, pos2, grey);
+
+						r = core::rectf(pos2 - controlSize * 0.5f, pos2 + controlSize);
+						g->draw2DRectangle(r, (i == m_hoverPoint && m_hoverState == 2) ? hover : white);
+					}
+					else if (i == n - 1)
+					{
+						pos1 = p.Position + p.Left;
+						ptToView(pos1.X, pos1.Y);
+
+						g->draw2DLine(pos, pos1, grey);
+
+						r = core::rectf(pos1 - controlSize * 0.5f, pos1 + controlSize);
+						g->draw2DRectangle(r, (i == m_hoverPoint && m_hoverState == 1) ? hover : white);
+					}
+					else
+					{
+						pos1 = p.Position + p.Right;
+						ptToView(pos1.X, pos1.Y);
+
+						pos2 = p.Position + p.Left;
+						ptToView(pos2.X, pos2.Y);
+
+						g->draw2DLine(pos, pos1, grey);
+						g->draw2DLine(pos, pos2, grey);
+
+						r = core::rectf(pos1 - controlSize * 0.5f, pos1 + controlSize);
+						g->draw2DRectangle(r, (i == m_hoverPoint && m_hoverState == 2) ? hover : white);
+
+						r = core::rectf(pos2 - controlSize * 0.5f, pos2 + controlSize);
+						g->draw2DRectangle(r, (i == m_hoverPoint && m_hoverState == 1) ? hover : white);
+					}
+				}
+
+				core::rectf r(pos - pointSize * 0.5f, pos + pointSize);
+				g->draw2DRectangle(r, (i == m_hoverPoint && m_hoverState == 0) ? hover : white);
 			}
 		}
 
-		void CSpaceInterpolateCurves::renderLine(const SControlPoint& p1, const SControlPoint& p2)
+		float getPointToLineDistance(float x1, float y1, float x2, float y2, float px, float py)
 		{
-			CGraphics2D* g = CGraphics2D::getInstance();
+			float A = px - x1;
+			float B = py - y1;
+			float C = x2 - x1;
+			float D = y2 - y1;
 
-			core::position2df start, end;
+			float dot = A * C + B * D;
+			float len_sq = C * C + D * D;
+			float param = (len_sq != 0) ? dot / len_sq : -1;
 
-			start.X = p1.Position.X;
-			start.Y = p1.Position.Y;
-			end.X = p2.Position.X;
-			end.Y = p2.Position.Y;
+			float xx, yy;
 
-			ptToView(start.X, start.Y);
-			ptToView(end.X, end.Y);
+			if (param < 0)
+			{
+				xx = x1;
+				yy = y1;
+			}
+			else if (param > 0.0f && param < 1.0f)
+			{
+				xx = x1 + param * C;
+				yy = y1 + param * D;
+			}
+			else
+			{
+				xx = x2;
+				yy = y2;
+			}
 
-			g->draw2DLine(start, end, SColor(255, 0, 255, 0));
+			float dx = px - xx;
+			float dy = py - yy;
+			return sqrtf(dx * dx + dy * dy);
 		}
 
 		void CSpaceInterpolateCurves::setOwner(GUI::CBase* owner)
@@ -393,20 +492,43 @@ namespace Skylicht
 
 		void CSpaceInterpolateCurves::checkHoverPoint()
 		{
+			m_hoverLine = -1;
 			m_hoverPoint = -1;
 			m_hoverState = 0;
 
+			core::vector2df pos;
 			int i = 0;
+
 			std::vector<SControlPoint>& points = m_controller->getInterpolator().getControlPoints();
 			for (SControlPoint& p : points)
 			{
-				core::vector2df pos = p.Position;
+				pos = p.Position;
 				ptToView(pos.X, pos.Y);
 
 				if (core::abs_(m_mouseX - pos.X) < 8 && core::abs_(m_mouseY - pos.Y) < 8)
 				{
 					m_hoverPoint = i;
 					m_hoverState = 0;
+					break;
+				}
+
+				pos = p.Position + p.Left;
+				ptToView(pos.X, pos.Y);
+
+				if (core::abs_(m_mouseX - pos.X) < 8 && core::abs_(m_mouseY - pos.Y) < 8)
+				{
+					m_hoverPoint = i;
+					m_hoverState = 1;
+					break;
+				}
+
+				pos = p.Position + p.Right;
+				ptToView(pos.X, pos.Y);
+
+				if (core::abs_(m_mouseX - pos.X) < 8 && core::abs_(m_mouseY - pos.Y) < 8)
+				{
+					m_hoverPoint = i;
+					m_hoverState = 2;
 					break;
 				}
 
@@ -417,6 +539,31 @@ namespace Skylicht
 				m_view->setCursor(GUI::ECursorType::SizeAll);
 			else
 				m_view->setCursor(GUI::ECursorType::Normal);
+
+			if (m_hoverPoint == -1)
+			{
+				for (u32 i = 0, n = (u32)m_lines.size(); i < n; i++)
+				{
+					ArrayPoint2df& line = m_lines[i];
+					for (u32 j = 1, m = line.size(); j < m; j++)
+					{
+						float d = getPointToLineDistance(
+							line[j - 1].X,
+							line[j - 1].Y,
+							line[j].X,
+							line[j].Y,
+							(float)m_mouseX,
+							(float)m_mouseY
+						);
+
+						if (d < 8)
+						{
+							m_hoverLine = i;
+							break;
+						}
+					}
+				}
+			}
 		}
 
 		void CSpaceInterpolateCurves::doDragPoint()
@@ -426,7 +573,44 @@ namespace Skylicht
 			SControlPoint& dragPoint = points[m_hoverPoint];
 
 			if (m_hoverState == 0)
+			{
 				dragPoint.Position.set(m_mouseGUIX, m_mouseGUIY);
+				m_controller->updateValue();
+			}
+			else if (m_hoverState == 1)
+			{
+				core::vector2df p(m_mouseGUIX, m_mouseGUIY);
+				dragPoint.Left = p - dragPoint.Position;
+
+				if (dragPoint.Type == SControlPoint::Auto)
+				{
+					dragPoint.Right = -dragPoint.Left;
+				}
+				else if (dragPoint.Type == SControlPoint::Smooth)
+				{
+					core::vector2df n = -dragPoint.Left;
+					n.normalize();
+					dragPoint.Right = n * dragPoint.Right.getLength();
+				}
+				m_controller->updateValue();
+			}
+			else if (m_hoverState == 2)
+			{
+				core::vector2df p(m_mouseGUIX, m_mouseGUIY);
+				dragPoint.Right = p - dragPoint.Position;
+
+				if (dragPoint.Type == SControlPoint::Auto)
+				{
+					dragPoint.Left = -dragPoint.Right;
+				}
+				else if (dragPoint.Type == SControlPoint::Smooth)
+				{
+					core::vector2df n = -dragPoint.Right;
+					n.normalize();
+					dragPoint.Left = n * dragPoint.Left.getLength();
+				}
+				m_controller->updateValue();
+			}
 		}
 
 		void CSpaceInterpolateCurves::onLeftMouseClick(GUI::CBase* view, float x, float y, bool down)
@@ -443,12 +627,21 @@ namespace Skylicht
 		{
 			m_rightMouseDown = down;
 
-			if (!down && m_hoverPoint != -1)
+			if (!down)
 			{
-				std::vector<SControlPoint>& points = m_controller->getInterpolator().getControlPoints();
+				if (m_hoverPoint != -1)
+				{
+					std::vector<SControlPoint>& points = m_controller->getInterpolator().getControlPoints();
 
-				m_valueSettingMenu->open(GUI::SPoint(x, y));
-				m_valueSettingController->onShow(&points[m_hoverPoint]);
+					m_valueSettingMenu->open(GUI::SPoint(x, y));
+					m_valueSettingController->onShow(m_controller, &points[m_hoverPoint]);
+				}
+				else if (m_hoverLine != -1)
+				{
+					m_insertId = m_hoverLine;
+					m_insertPosition.set(m_mouseGUIX, m_mouseGUIY);
+					m_insertPointMenu->open(GUI::SPoint(x, y));
+				}
 			}
 		}
 
@@ -476,6 +669,12 @@ namespace Skylicht
 					doZoomOut(dx, dy);
 				}
 			}
+		}
+
+		void CSpaceInterpolateCurves::onInsertCommand(GUI::CBase* base)
+		{
+			std::vector<SControlPoint>& points = m_controller->getInterpolator().getControlPoints();
+			m_controller->insertPoint(&points[m_insertId], m_insertPosition);
 		}
 
 		void CSpaceInterpolateCurves::doZoomIn(float dx, float dy)

@@ -31,6 +31,8 @@ namespace Skylicht
 {
 	namespace Editor
 	{
+		class CInterpolateCurvesController;
+
 		class CValueSettingController
 		{
 		protected:
@@ -41,12 +43,14 @@ namespace Skylicht
 			GUI::CNumberInput* m_valueY;
 
 			SControlPoint* m_point;
+			CInterpolateCurvesController* m_controller;
+
 		public:
 			CValueSettingController(CEditor* editor, GUI::CMenu* menu);
 
 			virtual ~CValueSettingController();
 
-			void onShow(SControlPoint* controlPoint);
+			void onShow(CInterpolateCurvesController* controller, SControlPoint* controlPoint);
 
 		protected:
 

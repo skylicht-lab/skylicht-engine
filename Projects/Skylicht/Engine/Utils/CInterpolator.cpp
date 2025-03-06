@@ -215,4 +215,102 @@ namespace Skylicht
 
 		return result;
 	}
+
+	core::vector2df bezier(
+		const core::vector2df& p0,
+		const core::vector2df& p1,
+		const core::vector2df& p2,
+		const core::vector2df& p3,
+		float t)
+	{
+		// Copilot: Hi colilot, can you help me write the function draw Benzier (by 4 points) in C
+		core::vector2df result;
+		// Calculate the blending functions for each control point
+		float u = 1 - t;
+		result.X = u * u * u * p0.X + 3 * u * u * t * p1.X + 3 * u * t * t * p2.X + t * t * t * p3.X;
+		result.Y = u * u * u * p0.Y + 3 * u * u * t * p1.Y + 3 * u * t * t * p2.Y + t * t * t * p3.Y;
+		return result;
+	}
+
+	void CInterpolator::computeBezier(const SControlPoint& p1, const SControlPoint& p2, ArrayPoint2df& points, int bezierStep)
+	{
+		core::vector2df p1Right = p1.Right;
+		core::vector2df p2Left = p2.Left;
+
+		points.set_used(0);
+
+		if (p1.Type == SControlPoint::Linear && p2.Type == SControlPoint::Linear)
+		{
+			core::vector2df pt = p1.Position;
+			points.push_back(pt);
+
+			pt = p2.Position;
+			points.push_back(pt);
+			return;
+		}
+
+		if (p1.Type == SControlPoint::Linear)
+			p1Right.set(0.0f, 0.0f);
+
+		if (p2.Type == SControlPoint::Linear)
+			p2Left.set(0.0f, 0.0f);
+
+		core::vector2df p[4];
+		p[0] = p1.Position;
+		p[1] = p1.Position + p1Right;
+		p[2] = p2.Position + p2Left;
+		p[3] = p2.Position;
+
+		for (int i = 0; i <= bezierStep; i++)
+		{
+			float t = i / (float)bezierStep;
+			core::vector2df pt = bezier(p[0], p[1], p[2], p[3], t);
+			points.push_back(pt);
+		}
+	}
+
+	void CInterpolator::computeLine(std::vector<ArrayPoint2df>& lines, int bezierStep)
+	{
+		int n = (int)m_controls.size();
+		if (n < 2)
+			return;
+
+		lines.clear();
+
+		for (int i = 0; i < n - 1; i++)
+		{
+			SControlPoint& p1 = m_controls[i];
+			SControlPoint& p2 = m_controls[i + 1];
+
+			lines.push_back(ArrayPoint2df());
+			ArrayPoint2df& line = lines.back();
+
+			computeBezier(p1, p2, line, bezierStep);
+		}
+	}
+
+	void CInterpolator::generateGraph(int bezierStep)
+	{
+		std::vector<ArrayPoint2df> lines;
+		computeLine(lines, bezierStep);
+
+		m_graph.clear();
+
+		bool first = true;
+		core::vector2df last;
+
+		for (auto& it : lines)
+		{
+			for (u32 i = 0, n = it.size(); i < n; i++)
+			{
+				const core::vector2df& p = it[i];
+				if (first || p != last)
+				{
+					addEntry(p.X, p.Y);
+					last = p;
+					first = false;
+				}
+			}
+		}
+	}
 }

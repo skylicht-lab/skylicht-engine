@@ -65,11 +65,19 @@ namespace Skylicht
 			bool m_leftMouseDown;
 			bool m_rightMouseDown;
 
+			int m_hoverLine;
 			int m_hoverPoint;
 			int m_hoverState;
 
 			GUI::CMenu* m_valueSettingMenu;
 			CValueSettingController* m_valueSettingController;
+
+			GUI::CMenu* m_insertPointMenu;
+			int m_insertId;
+			core::vector2df m_insertPosition;
+
+			std::vector<ArrayPoint2df> m_lines;
+
 		public:
 			CSpaceInterpolateCurves(GUI::CWindow* window, CEditor* editor);
 
@@ -112,7 +120,7 @@ namespace Skylicht
 
 			void renderGraph();
 
-			void renderLine(const SControlPoint& p1, const SControlPoint& p2);
+			void computeBezier(const SControlPoint& p1, const SControlPoint& p2, core::array<core::vector2df>& lines);
 
 			void onMiddleMouseClick(GUI::CBase* view, float x, float y, bool down);
 
@@ -123,6 +131,8 @@ namespace Skylicht
 			void onLeftMouseClick(GUI::CBase* view, float x, float y, bool down);
 
 			void onRightMouseClick(GUI::CBase* view, float x, float y, bool down);
+
+			void onInsertCommand(GUI::CBase* base);
 
 			void ptToView(float& x, float& y);
 

@@ -52,6 +52,8 @@ namespace Skylicht
 
 			void onClosed();
 
+			void updateValue();
+
 			inline void setInterpolator(const CInterpolator& i)
 			{
 				m_interpolation = i;
@@ -68,10 +70,21 @@ namespace Skylicht
 
 			void setDefaultInOutCubic();
 
+			void onPointChangeType(SControlPoint* point);
+
+			void insertPoint(SControlPoint* after, core::vector2df& position);
+
+			void deletePoint(SControlPoint* point);
+
 			inline void clearGraph()
 			{
 				m_interpolation.clearGraph();
+				updateValue();
 			}
+
+		protected:
+
+			void convertPointAuto(int pointId, SControlPoint::EControlType type);
 		};
 	}
 }

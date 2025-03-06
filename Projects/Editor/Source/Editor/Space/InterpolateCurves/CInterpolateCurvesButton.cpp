@@ -53,7 +53,34 @@ namespace Skylicht
 
 			void CInterpolateCurvesButton::renderUnderOverride(CBase* base, const SRect& bounds)
 			{
+				CRenderer* renderer = CRenderer::getRenderer();
 
+				if (m_interpolation.empty())
+					return;
+
+				float x = 0.0f;
+				while (x < bounds.Width)
+				{
+					float fx1 = core::clamp(x / bounds.Width, 0.0f, 1.0f);
+					float x1 = x;
+					float y1 = core::clamp(m_interpolation.interpolate(fx1), 0.0f, 1.0f) * bounds.Height;
+
+					x = x + 5.0f;
+					if (x > bounds.Width)
+						x = bounds.Width;
+
+					float fx2 = core::clamp(x / bounds.Width, 0.0f, 1.0f);
+					float x2 = x;
+					float y2 = core::clamp(m_interpolation.interpolate(fx2), 0.0f, 1.0f) * bounds.Height;
+
+					renderer->drawLine(
+						bounds.X + x1,
+						bounds.Y + bounds.Height - y1,
+						bounds.X + x2,
+						bounds.Y + bounds.Height - y2,
+						SGUIColor(255, 0, 255, 0)
+					);
+				}
 			}
 
 			void CInterpolateCurvesButton::onButtonDown(CBase* base)

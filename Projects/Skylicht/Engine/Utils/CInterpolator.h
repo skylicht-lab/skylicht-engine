@@ -72,8 +72,7 @@ namespace Skylicht
 			Auto = 0,
 			Smooth,
 			Broken,
-			Linear,
-			Constant,
+			Linear
 		};
 
 		core::vector2df Position;
@@ -86,6 +85,8 @@ namespace Skylicht
 			Type = Auto;
 		}
 	};
+
+	typedef core::array<core::vector2df> ArrayPoint2df;
 
 	class SKYLICHT_API CInterpolator
 	{
@@ -100,6 +101,7 @@ namespace Skylicht
 
 	protected:
 		std::set<SInterpolatorEntry> m_graph;
+
 		std::vector<SControlPoint> m_controls;
 
 		EInterpolatorType m_type;
@@ -204,5 +206,11 @@ namespace Skylicht
 			m_graph.clear();
 			m_controls.clear();
 		}
+
+		void generateGraph(int bezierStep);
+
+		void computeLine(std::vector<ArrayPoint2df>& lines, int bezierStep);
+
+		void computeBezier(const SControlPoint& p1, const SControlPoint& p2, ArrayPoint2df& points, int bezierStep);
 	};
 }

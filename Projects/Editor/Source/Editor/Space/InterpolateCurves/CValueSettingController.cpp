@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "CValueSettingController.h"
+#include "CInterpolateCurvesController.h"
 
 namespace Skylicht
 {
@@ -8,7 +9,8 @@ namespace Skylicht
 		CValueSettingController::CValueSettingController(CEditor* editor, GUI::CMenu* menu) :
 			m_editor(editor),
 			m_menu(menu),
-			m_point(NULL)
+			m_point(NULL),
+			m_controller(NULL)
 		{
 			GUI::CBoxLayout* boxLayout = new GUI::CBoxLayout(menu);
 			boxLayout->setPadding(GUI::SPadding(5.0, 5.0, -5.0, 5.0));
@@ -44,7 +46,6 @@ namespace Skylicht
 			menu->addItem(L"Smooth");
 			menu->addItem(L"Broken");
 			menu->addItem(L"Linear");
-			menu->addItem(L"Constant");
 
 			menu->addSeparator();
 			menu->addItem(L"Delete");
@@ -58,22 +59,23 @@ namespace Skylicht
 
 		}
 
-		void CValueSettingController::onShow(SControlPoint* controlPoint)
+		void CValueSettingController::onShow(CInterpolateCurvesController* controller, SControlPoint* controlPoint)
 		{
+			m_controller = controller;
 			m_point = controlPoint;
+
 			m_valueX->setValue(m_point->Position.X, false);
 			m_valueY->setValue(m_point->Position.Y, false);
 
 			enableTabGroup();
 
-			GUI::CMenuItem* items[(int)SControlPoint::Constant + 1];
+			GUI::CMenuItem* items[(int)SControlPoint::Linear + 1];
 			items[SControlPoint::Auto] = m_menu->getItemByLabel(L"Auto");
 			items[SControlPoint::Smooth] = m_menu->getItemByLabel(L"Smooth");
 			items[SControlPoint::Broken] = m_menu->getItemByLabel(L"Broken");
 			items[SControlPoint::Linear] = m_menu->getItemByLabel(L"Linear");
-			items[SControlPoint::Constant] = m_menu->getItemByLabel(L"Constant");
 
-			for (int i = 0; i <= (SControlPoint::Constant); i++)
+			for (int i = 0; i <= (SControlPoint::Linear); i++)
 			{
 				if (items[i] != NULL)
 				{
@@ -104,6 +106,7 @@ namespace Skylicht
 		{
 			m_point->Position.X = m_valueX->getValue();
 			m_point->Position.Y = m_valueY->getValue();
+			m_controller->updateValue();
 		}
 
 		void CValueSettingController::onClose(GUI::CBase* base)
@@ -116,6 +119,8 @@ namespace Skylicht
 			GUI::CMenuItem* item = dynamic_cast<GUI::CMenuItem*>(base);
 			if (item != NULL)
 			{
+				SControlPoint::EControlType t = m_point->Type;
+
 				std::wstring label = item->getLabel();
 				if (label == L"Auto")
 					m_point->Type = SControlPoint::Auto;
@@ -125,8 +130,14 @@ namespace Skylicht
 					m_point->Type = SControlPoint::Broken;
 				else if (label == L"Linear")
 					m_point->Type = SControlPoint::Linear;
-				else if (label == L"Constant")
-					m_point->Type = SControlPoint::Constant;
+				else if (label == L"Delete")
+				{
+					m_controller->deletePoint(m_point);
+					return;
+				}
+
+				if (m_point->Type != t)
+					m_controller->onPointChangeType(m_point);
 			}
 		}
 	}
