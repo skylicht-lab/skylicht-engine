@@ -43,7 +43,9 @@ namespace Skylicht
 			{
 				None = 0,
 				Emitter,
-				Zone
+				Zone,
+				Gravity,
+				Orientation
 			};
 
 		protected:
@@ -58,6 +60,7 @@ namespace Skylicht
 
 			EState m_state;
 
+			Particle::CGroup* m_group;
 			Particle::CDirectionEmitter* m_emitter;
 			Particle::CZone* m_zone;
 			Particle::CPositionZone* m_positionZone;
@@ -66,6 +69,10 @@ namespace Skylicht
 			CParticleGizmos();
 
 			virtual ~CParticleGizmos();
+
+			void setGravity(Particle::CGroup* group, const core::matrix4& world);
+
+			void setOrientation(Particle::CGroup* group, const core::matrix4& world);
 
 			void setEmitter(Particle::CDirectionEmitter* emitter, const core::matrix4& world);
 

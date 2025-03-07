@@ -38,9 +38,11 @@ namespace Skylicht
 			m_rotation(core::quaternion()),
 			m_changed(false),
 			m_state(None),
+			m_group(NULL),
 			m_emitter(NULL),
 			m_zone(NULL),
-			m_positionZone(NULL)
+			m_positionZone(NULL),
+			m_selectPointId(0)
 		{
 
 		}
@@ -48,6 +50,38 @@ namespace Skylicht
 		CParticleGizmos::~CParticleGizmos()
 		{
 
+		}
+
+		void CParticleGizmos::setGravity(Particle::CGroup* group, const core::matrix4& world)
+		{
+			m_group = group;
+			m_state = Gravity;
+
+			m_parentWorld = world;
+
+			m_rotation = group->GravityOrientation;
+			m_changed = false;
+
+			CHandles* handle = CHandles::getInstance();
+			handle->setWorld(m_parentWorld);
+			handle->end();
+			handle->reset();
+		}
+
+		void CParticleGizmos::setOrientation(Particle::CGroup* group, const core::matrix4& world)
+		{
+			m_group = group;
+			m_state = Orientation;
+
+			m_parentWorld = world;
+
+			m_rotation = group->Orientation;
+			m_changed = false;
+
+			CHandles* handle = CHandles::getInstance();
+			handle->setWorld(m_parentWorld);
+			handle->end();
+			handle->reset();
 		}
 
 		void CParticleGizmos::setEmitter(Particle::CDirectionEmitter* emitter, const core::matrix4& world)
@@ -121,6 +155,48 @@ namespace Skylicht
 				if (handle->endCheck())
 				{
 					m_emitter->setRotation(*m_rotation);
+					handle->end();
+				}
+			}
+			else if (m_state == Gravity)
+			{
+				core::vector3df position(0.0f, 0.0f, 0.0f);
+
+				core::quaternion newRot = handle->rotateHandle(*m_rotation, position);
+				if (newRot != *m_rotation)
+				{
+					m_rotation = newRot;
+					m_rotation.notify(this);
+
+					m_group->setGravityOrientation(newRot);
+					m_changed = true;
+					updateProperty();
+				}
+
+				if (handle->endCheck())
+				{
+					m_group->setGravityOrientation(*m_rotation);
+					handle->end();
+				}
+			}
+			else if (m_state == Orientation)
+			{
+				core::vector3df position(0.0f, 0.0f, 0.0f);
+
+				core::quaternion newRot = handle->rotateHandle(*m_rotation, position);
+				if (newRot != *m_rotation)
+				{
+					m_rotation = newRot;
+					m_rotation.notify(this);
+
+					m_group->setOrientation(newRot);
+					m_changed = true;
+					updateProperty();
+				}
+
+				if (handle->endCheck())
+				{
+					m_group->setOrientation(*m_rotation);
 					handle->end();
 				}
 			}

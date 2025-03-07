@@ -39,6 +39,7 @@ namespace Skylicht
 			Friction(0.0f),
 			LifeMin(1.0f),
 			LifeMax(2.0f),
+			GravityValue(0.0f),
 			OrientationNormal(1.0f, 0.0f, 0.0f),
 			OrientationUp(0.0f, 1.0f, 0.0f),
 			Name(L"Group")
@@ -81,6 +82,17 @@ namespace Skylicht
 			object->autoRelease(new CFloatProperty(object, "friction", Friction, 0.0f));
 			object->autoRelease(new CFloatProperty(object, "lifeMin", LifeMin, 0.0f));
 			object->autoRelease(new CFloatProperty(object, "lifeMax", LifeMax, 0.0f));
+			object->autoRelease(new CFloatProperty(object, "gravityValue", GravityValue));
+
+			CQuaternionProperty* v;
+			v = new CQuaternionProperty(object, "gravityOrientation", GravityOrientation);
+			v->setHidden(true);
+			object->autoRelease(v);
+
+			v = new CQuaternionProperty(object, "orientation", Orientation);
+			v->setHidden(true);
+			object->autoRelease(v);
+
 			return object;
 		}
 
@@ -92,6 +104,37 @@ namespace Skylicht
 			Friction = object->get("friction", 0.0f);
 			LifeMin = object->get("lifeMin", 1.0f);
 			LifeMax = object->get("lifeMax", 2.0f);
+			GravityValue = object->get("gravityValue", 1.0f);
+
+			core::quaternion g = object->get("gravityOrientation", core::quaternion());
+			core::quaternion r = object->get("orientation", core::quaternion());
+
+			setGravityOrientation(g);
+			setOrientation(r);
+		}
+
+		void CGroup::setGravityOrientation(const core::quaternion& r)
+		{
+			GravityOrientation = r;
+			Gravity.set(0.0f, -1.0f, 0.0f);
+
+			Gravity = GravityOrientation * Gravity;
+			Gravity.normalize();
+			Gravity *= GravityValue;
+		}
+
+		void CGroup::setOrientation(const core::quaternion& r)
+		{
+			Orientation = r;
+
+			OrientationNormal.set(1.0f, 0.0f, 0.0f);
+			OrientationUp.set(0.0f, 1.0f, 0.0f);
+
+			OrientationNormal = Orientation * OrientationNormal;
+			OrientationNormal.normalize();
+
+			OrientationUp = Orientation * OrientationUp;
+			OrientationUp.normalize();
 		}
 
 		IRenderer* CGroup::setRenderer(IRenderer* r)

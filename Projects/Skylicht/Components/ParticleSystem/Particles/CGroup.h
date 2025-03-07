@@ -124,11 +124,15 @@ namespace Skylicht
 			std::vector<IParticleCallback*> m_callback;
 
 		public:
-			core::vector3df Gravity;
 			float Friction;
 			float LifeMin;
 			float LifeMax;
 
+			float GravityValue;
+			core::quaternion GravityOrientation;
+			core::quaternion Orientation;
+
+			core::vector3df Gravity;
 			core::vector3df OrientationNormal;
 			core::vector3df OrientationUp;
 
@@ -144,6 +148,10 @@ namespace Skylicht
 			virtual ~CGroup();
 
 			void update(bool visible);
+
+			void setGravityOrientation(const core::quaternion& r);
+
+			void setOrientation(const core::quaternion& r);
 
 			inline void setWorldMatrix(const core::matrix4& m)
 			{

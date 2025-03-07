@@ -277,6 +277,20 @@ namespace Skylicht
 				nodeRenderer->setName(renderer->getName());
 				setNodeEvent(nodeRenderer);
 			}
+
+			CParticleHierachyNode* gravity = node->addChild();
+			gravity->setTagData(group, CParticleHierachyNode::Gravity);
+			gravity->setParentData(group);
+			gravity->setIcon(GUI::ESystemIcon::Axis);
+			gravity->setName(L"Gravity");
+			setNodeEvent(gravity);
+
+			CParticleHierachyNode* orientation = node->addChild();
+			orientation->setTagData(group, CParticleHierachyNode::Orientation);
+			orientation->setParentData(group);
+			orientation->setIcon(GUI::ESystemIcon::Axis);
+			orientation->setName(L"Orientation");
+			setNodeEvent(orientation);
 		}
 
 		void CParticleController::setNodeEvent(CParticleHierachyNode* node)
@@ -309,6 +323,20 @@ namespace Skylicht
 				Particle::CZone* zone = (Particle::CZone*)node->getTagData();
 
 				particleGizmos->setZone(zone, m_particle->getGameObject()->calcWorldTransform());
+				sceneController->setGizmos(particleGizmos);
+			}
+			else if (type == CParticleHierachyNode::Gravity)
+			{
+				Particle::CGroup* group = (Particle::CGroup*)node->getTagData();
+
+				particleGizmos->setGravity(group, m_particle->getGameObject()->calcWorldTransform());
+				sceneController->setGizmos(particleGizmos);
+			}
+			else if (type == CParticleHierachyNode::Orientation)
+			{
+				Particle::CGroup* group = (Particle::CGroup*)node->getTagData();
+
+				particleGizmos->setOrientation(group, m_particle->getGameObject()->calcWorldTransform());
 				sceneController->setGizmos(particleGizmos);
 			}
 			else

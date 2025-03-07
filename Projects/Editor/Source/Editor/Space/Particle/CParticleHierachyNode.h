@@ -43,7 +43,9 @@ namespace Skylicht
 				Emitter,
 				Renderer,
 				Models,
-				Model
+				Model,
+				Gravity,
+				Orientation
 			};
 
 			std::function<void(CParticleHierachyNode*)> OnUpdate;
