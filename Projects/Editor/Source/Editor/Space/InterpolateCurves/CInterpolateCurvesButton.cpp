@@ -58,20 +58,34 @@ namespace Skylicht
 				if (m_interpolation.empty())
 					return;
 
+				core::vector2df min, max;
+				m_interpolation.getMinMaxXY(min, max);
+
+				float dx = max.X - min.X;
+				float dy = max.Y - min.Y;
+
 				float x = 0.0f;
 				while (x < bounds.Width)
 				{
-					float fx1 = core::clamp(x / bounds.Width, 0.0f, 1.0f);
+					float fx1 = min.X + core::clamp(x / bounds.Width, 0.0f, 1.0f) * dx;
+					float fy1 = m_interpolation.interpolate(fx1) - min.Y;
+					if (dy > 0)
+						fy1 = fy1 / dy;
+
 					float x1 = x;
-					float y1 = core::clamp(m_interpolation.interpolate(fx1), 0.0f, 1.0f) * bounds.Height;
+					float y1 = core::clamp(fy1, 0.0f, 1.0f) * bounds.Height;
 
 					x = x + 5.0f;
 					if (x > bounds.Width)
 						x = bounds.Width;
 
-					float fx2 = core::clamp(x / bounds.Width, 0.0f, 1.0f);
+					float fx2 = min.X + core::clamp(x / bounds.Width, 0.0f, 1.0f) * dx;
+					float fy2 = m_interpolation.interpolate(fx2) - min.Y;
+					if (dy > 0)
+						fy2 = fy2 / dy;
+
 					float x2 = x;
-					float y2 = core::clamp(m_interpolation.interpolate(fx2), 0.0f, 1.0f) * bounds.Height;
+					float y2 = core::clamp(fy2, 0.0f, 1.0f) * bounds.Height;
 
 					renderer->drawLine(
 						bounds.X + x1,

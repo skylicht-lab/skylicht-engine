@@ -126,6 +126,14 @@ namespace Skylicht
 
 				interpolate->getInterpolator(m_interpolator);
 			}
+			else
+			{
+				if (m_interpolator)
+				{
+					m_group->deleteInterpolator(m_interpolator);
+					m_interpolator = NULL;
+				}
+			}
 		}
 
 		const wchar_t* CModel::getName()

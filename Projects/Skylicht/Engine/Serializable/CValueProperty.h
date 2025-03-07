@@ -41,6 +41,7 @@ namespace Skylicht
 		DateTime,
 		Bool,
 		Vector3,
+		Vector2,
 		Quaternion,
 		Color,
 		Matrix4,

@@ -44,6 +44,41 @@ namespace Skylicht
 		return m_controls.back();
 	}
 
+	void CInterpolator::getMinMaxXY(core::vector2df& min, core::vector2df& max)
+	{
+		min.set(0.0f, 0.0f);
+		max.set(0.0f, 0.0f);
+
+		int id = 0;
+		for (const auto& it : m_graph)
+		{
+			float X = it.X;
+			float maxY = it.Value[0];
+			float minY = it.Value[0];
+
+			for (int i = 0; i < 4; i++)
+			{
+				maxY = core::max_(maxY, it.Value[i]);
+				minY = core::min_(minY, it.Value[i]);
+			}
+
+			if (id++ == 0)
+			{
+				min.X = X;
+				min.Y = minY;
+
+				max.X = X;
+				max.Y = maxY;
+			}
+
+			min.X = core::min_(min.X, X);
+			max.X = core::max_(max.X, X);
+
+			min.Y = core::min_(min.Y, minY);
+			max.Y = core::max_(max.Y, maxY);
+		}
+	}
+
 	float CInterpolator::interpolate(float x)
 	{
 		SInterpolatorEntry currentKey(x);

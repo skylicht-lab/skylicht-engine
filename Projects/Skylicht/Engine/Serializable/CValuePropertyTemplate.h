@@ -674,11 +674,49 @@ namespace Skylicht
 		}
 	};
 
+	class SKYLICHT_API CVector2Property : public CValuePropertyTemplate<core::vector2df>
+	{
+	public:
+		CVector2Property() :
+			CVector2Property(NULL, "CVector2Property")
+		{
+		}
+
+		CVector2Property(CObjectSerializable* owner, const char* name) :
+			CValuePropertyTemplate(owner, Vector2, name)
+		{
+			set(core::vector2df());
+		}
+
+		CVector2Property(CObjectSerializable* owner, const char* name, const core::vector2df& value) :
+			CValuePropertyTemplate(owner, Vector2, name)
+		{
+			set(value);
+		}
+
+		virtual void serialize(io::IAttributes* io)
+		{
+			io->addVector2d(Name.c_str(), m_value);
+		}
+
+		virtual void deserialize(io::IAttributes* io)
+		{
+			m_value = io->getAttributeAsVector2d(Name.c_str());
+		}
+
+		virtual CValueProperty* clone()
+		{
+			CVector2Property* value = new CVector2Property(NULL, Name.c_str());
+			value->m_value = m_value;
+			return value;
+		}
+	};
+
 	class SKYLICHT_API CQuaternionProperty : public CValuePropertyTemplate<core::quaternion>
 	{
 	public:
 		CQuaternionProperty() :
-			CQuaternionProperty(NULL, "CVector3Property")
+			CQuaternionProperty(NULL, "CQuaternionProperty")
 		{
 		}
 

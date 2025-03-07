@@ -42,11 +42,11 @@ namespace Skylicht
 
 		}
 
-		void CParticleSystem::updateLifeTime(CParticle *particles, int num, CGroup *group, float dt)
+		void CParticleSystem::updateLifeTime(CParticle* particles, int num, CGroup* group, float dt)
 		{
 			dt = dt * 0.001f;
 
-			CParticle *p;
+			CParticle* p;
 
 #pragma omp parallel for private(p)
 			for (int i = 0; i < num; i++)
@@ -61,7 +61,7 @@ namespace Skylicht
 			}
 		}
 
-		void CParticleSystem::update(CParticle *particles, int num, CGroup *group, float dt)
+		void CParticleSystem::update(CParticle* particles, int num, CGroup* group, float dt)
 		{
 			dt = dt * 0.001f;
 
@@ -70,8 +70,8 @@ namespace Skylicht
 
 			float friction = group->Friction * dt;
 
-			CParticle *p;
-			float *params;
+			CParticle* p;
+			float* params;
 
 			// model
 			std::vector<CModel*>& listModel = group->getModels();
@@ -79,10 +79,15 @@ namespace Skylicht
 			std::vector<EParticleParams> listParams;
 			std::vector<CInterpolator*> listModelInterpolators;
 
-			for (CModel *m : listModel)
+			for (CModel* m : listModel)
 			{
 				listParams.push_back(m->getType());
-				listModelInterpolators.push_back(m->getInterpolator());
+
+				CInterpolator* i = m->getInterpolator();
+				if (i && !i->empty())
+					listModelInterpolators.push_back(i);
+				else
+					listModelInterpolators.push_back(NULL);
 			}
 
 			// list model and param
@@ -91,9 +96,10 @@ namespace Skylicht
 			EParticleParams* paramTypes = listParams.data();
 			CInterpolator** modelInterpolators = listModelInterpolators.data();
 
-			float f, y;
+			float f, x, y;
+			EParticleParams t;
 
-#pragma omp parallel for private(p, params, f, y)
+#pragma omp parallel for private(p, params, f, x, y, t)
 			for (int i = 0; i < num; i++)
 			{
 				p = particles + i;
@@ -132,15 +138,15 @@ namespace Skylicht
 				}
 
 				// update interpolate parameters
-				float x = core::clamp(p->Age / p->LifeTime, 0.0f, 1.0f);
+				x = core::clamp(p->Age / p->LifeTime, 0.0f, 1.0f);
 
 				for (u32 j = 0; j < numModels; j++)
 				{
 					// linear
 					y = x;
-					EParticleParams t = paramTypes[j];
+					t = paramTypes[j];
 
-					if (modelInterpolators[j] != NULL)
+					if (modelInterpolators[j])
 					{
 						// interpolate
 						y = modelInterpolators[j]->interpolate(x);

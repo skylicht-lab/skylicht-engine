@@ -64,7 +64,7 @@ namespace Skylicht
 			return m_valueX.getElementCount();
 		}
 
-		inline void clear()
+		virtual void clear()
 		{
 			m_valueX.clear();
 			m_valueY.clear();
@@ -79,21 +79,43 @@ namespace Skylicht
 	class SKYLICHT_API CInterpolateFloatSerializable : public CInterpolateSerializable<CFloatProperty>
 	{
 	protected:
+		CArrayTypeSerializable<CVector2Property> m_control;
+		CArrayTypeSerializable<CVector2Property> m_controlL;
+		CArrayTypeSerializable<CVector2Property> m_controlR;
+		CArrayTypeSerializable<CIntProperty> m_controlType;
 
 	public:
 		CInterpolateFloatSerializable(const char* name) :
-			CInterpolateSerializable<CFloatProperty>(name)
+			CInterpolateSerializable<CFloatProperty>(name),
+			m_control("control", this),
+			m_controlL("controlLeft", this),
+			m_controlR("controlRight", this),
+			m_controlType("controlType", this)
 		{
 		}
 
 		CInterpolateFloatSerializable(const char* name, CObjectSerializable* parent) :
-			CInterpolateSerializable<CFloatProperty>(name, parent)
+			CInterpolateSerializable<CFloatProperty>(name, parent),
+			m_control("control", this),
+			m_controlL("controlLeft", this),
+			m_controlR("controlRight", this),
+			m_controlType("controlType", this)
 		{
 		}
 
 		virtual ~CInterpolateFloatSerializable()
 		{
 
+		}
+
+		virtual void clear()
+		{
+			m_valueX.clear();
+			m_valueY.clear();
+			m_control.clear();
+			m_controlL.clear();
+			m_controlR.clear();
+			m_controlType.clear();
 		}
 
 		inline void addEntry(float x, float y)
@@ -105,14 +127,35 @@ namespace Skylicht
 			valueY->set(y);
 		}
 
+		inline void addControl(const SControlPoint& p)
+		{
+			CVector2Property* control = (CVector2Property*)m_control.createElement();
+			control->set(p.Position);
+
+			CVector2Property* left = (CVector2Property*)m_controlL.createElement();
+			left->set(p.Left);
+
+			CVector2Property* right = (CVector2Property*)m_controlR.createElement();
+			right->set(p.Right);
+
+			CIntProperty* type = (CIntProperty*)m_controlType.createElement();
+			type->set(p.Type);
+		}
+
 		virtual void setInterpolator(const CInterpolator* interpolator)
 		{
 			const std::set<SInterpolatorEntry>& graph = interpolator->getGraph();
+			const std::vector<SControlPoint>& controls = interpolator->getControlPoints();
 
 			clear();
-			for (auto i : graph)
+			for (auto& i : graph)
 			{
 				addEntry(i.X, i.Value[0]);
+			}
+
+			for (auto& i : controls)
+			{
+				addControl(i);
 			}
 		}
 
@@ -126,6 +169,16 @@ namespace Skylicht
 				float y = m_valueY.getElementValue(i, CFloatProperty()).get();
 
 				interpolator->addEntry(x, y);
+			}
+
+			for (int i = 0, n = m_control.getElementCount(); i < n; i++)
+			{
+				SControlPoint& control = interpolator->addControlPoint();
+
+				control.Position = m_control.getElementValue(i, CVector2Property()).get();
+				control.Left = m_controlL.getElementValue(i, CVector2Property()).get();
+				control.Right = m_controlR.getElementValue(i, CVector2Property()).get();
+				control.Type = (SControlPoint::EControlType)m_controlType.getElementValue(i, CIntProperty()).get();
 			}
 
 			interpolator->setType(CInterpolator::Float);

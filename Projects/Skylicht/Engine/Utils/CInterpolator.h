@@ -133,6 +133,8 @@ namespace Skylicht
 			return m_graph.empty();
 		}
 
+		void getMinMaxXY(core::vector2df& min, core::vector2df& max);
+
 		float interpolate(float x);
 
 		core::vector2df interpolateVec2(float x);
@@ -152,6 +154,11 @@ namespace Skylicht
 		}
 
 		inline std::vector<SControlPoint>& getControlPoints()
+		{
+			return m_controls;
+		}
+
+		inline const std::vector<SControlPoint>& getControlPoints() const
 		{
 			return m_controls;
 		}

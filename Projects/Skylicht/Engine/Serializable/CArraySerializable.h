@@ -41,7 +41,10 @@ namespace Skylicht
 		template<class T>
 		T getElementValue(int i, T defaultValue)
 		{
-			return get<T>(getElement(i), defaultValue);
+			T* v = dynamic_cast<T*>(getElement(i));
+			if (v == NULL)
+				return defaultValue;
+			return *v;
 		}
 
 		int getElementCount()
