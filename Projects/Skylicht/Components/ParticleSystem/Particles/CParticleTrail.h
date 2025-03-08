@@ -82,7 +82,10 @@ namespace Skylicht
 		protected:
 			CGroup* m_group;
 
+			std::wstring m_name;
+
 			core::array<STrailInfo> m_trails;
+
 			core::array<STrailInfo> m_deadTrails;
 
 			IMeshBuffer* m_meshBuffer;
@@ -101,7 +104,13 @@ namespace Skylicht
 
 			float m_deadAlphaReduction;
 
+			std::string m_texturePath;
+
 			CMaterial* m_material;
+
+			CMaterial* m_customMaterial;
+
+			bool m_useCustomMaterial;
 
 		public:
 			CParticleTrail(CGroup* group);
@@ -150,7 +159,7 @@ namespace Skylicht
 				return m_segmentLength;
 			}
 
-			inline bool isDeadtroyWhenParticleDead()
+			inline bool isDestroyedWhenParticleDead()
 			{
 				return m_destroyWhenParticleDead;
 			}
@@ -170,9 +179,49 @@ namespace Skylicht
 				m_deadAlphaReduction = a;
 			}
 
+			inline void setCustomMaterial(CMaterial* material)
+			{
+				m_customMaterial = material;
+				if (material)
+					m_useCustomMaterial = true;
+				else
+					m_useCustomMaterial = false;
+			}
+
+			inline bool useCustomMaterial()
+			{
+				return m_useCustomMaterial;
+			}
+
+			inline const char* getCustomMaterial()
+			{
+				if (m_customMaterial)
+					return m_customMaterial->getMaterialPath();
+				return "";
+			}
+
+			inline const wchar_t* getGroupName()
+			{
+				if (m_group)
+					return m_group->Name.c_str();
+				return m_name.c_str();
+			}
+
 			void setLength(float l);
 
+			inline float getLength()
+			{
+				return m_length;
+			}
+
 			void applyMaterial();
+
+			void setTexturePath(const char* path);
+
+			inline const char* getTexturePath()
+			{
+				return m_texturePath.c_str();
+			}
 
 		protected:
 

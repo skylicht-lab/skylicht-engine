@@ -30,18 +30,22 @@ namespace Skylicht
 {
 	namespace Particle
 	{
-		CParticleTrail::CParticleTrail(CGroup *group) :
+		CParticleTrail::CParticleTrail(CGroup* group) :
 			m_group(group),
 			m_segmentLength(0.5f),
 			m_width(1.0f),
 			m_trailCount(0),
 			m_maxSegmentCount(0),
 			m_destroyWhenParticleDead(false),
-			m_deadAlphaReduction(0.01f)
+			m_deadAlphaReduction(0.01f),
+			m_customMaterial(NULL),
+			m_useCustomMaterial(false)
 		{
 			setLength(1.0f);
 
 			group->addCallback(this);
+
+			m_name = group->Name;
 
 			m_meshBuffer = new CMeshBuffer<video::S3DVertex>(getVideoDriver()->getVertexDescriptor(EVT_STANDARD), EIT_32BIT);
 			m_meshBuffer->setHardwareMappingHint(EHM_STREAM);
@@ -84,7 +88,15 @@ namespace Skylicht
 
 		void CParticleTrail::applyMaterial()
 		{
-			m_material->applyMaterial(m_meshBuffer->getMaterial());
+			if (m_useCustomMaterial && m_customMaterial)
+				m_customMaterial->applyMaterial(m_meshBuffer->getMaterial());
+			else
+				m_material->applyMaterial(m_meshBuffer->getMaterial());
+		}
+
+		void CParticleTrail::setTexturePath(const char* path)
+		{
+			m_texturePath = path;
 		}
 
 		void CParticleTrail::updateDeadTrail()
@@ -151,7 +163,7 @@ namespace Skylicht
 			m_deadTrails.set_used(numTrail);
 		}
 
-		void CParticleTrail::update(CCamera *camera)
+		void CParticleTrail::update(CCamera* camera)
 		{
 			if (m_group == NULL)
 				return;
@@ -160,8 +172,8 @@ namespace Skylicht
 			// we reduction alpha to zero and kill
 			updateDeadTrail();
 
-			IVertexBuffer *buffer = m_meshBuffer->getVertexBuffer(0);
-			IIndexBuffer *index = m_meshBuffer->getIndexBuffer();
+			IVertexBuffer* buffer = m_meshBuffer->getVertexBuffer(0);
+			IIndexBuffer* index = m_meshBuffer->getIndexBuffer();
 
 			int indexID = 0;
 			int vertexID = 0;
@@ -180,7 +192,7 @@ namespace Skylicht
 			index->set_used(numIndex);
 
 			S3DVertex* vertices = (S3DVertex*)buffer->getVertices();
-			u32 *indices = (u32*)index->getIndices();
+			u32* indices = (u32*)index->getIndices();
 
 			u32 totalSegDraw = 0;
 
@@ -207,13 +219,13 @@ namespace Skylicht
 				// compute trail length
 				for (int i = numSeg; i >= endSeg; i--)
 				{
-					core::vector3df *pos1;
-					core::vector3df *pos2;
+					core::vector3df* pos1;
+					core::vector3df* pos2;
 
 					if (i == numSeg)
 					{
 						// first segment
-						SParticlePosition &p = (*trail.Position)[i];
+						SParticlePosition& p = (*trail.Position)[i];
 						pos2 = &p.Position;
 						pos1 = &trail.CurrentPosition;
 					}
@@ -240,13 +252,13 @@ namespace Skylicht
 					float alpha1 = 1.0f;
 					float alpha2 = 1.0f;
 
-					const SColor &c = trail.CurrentColor;
+					const SColor& c = trail.CurrentColor;
 					float currentAlpha = c.getAlpha() / 255.0f;
 
 					if (i == numSeg)
 					{
 						// first segment
-						SParticlePosition &p = (*trail.Position)[i];
+						SParticlePosition& p = (*trail.Position)[i];
 						pos2 = p.Position;
 						thickness = p.Width;
 						alpha1 = p.Alpha;
@@ -313,22 +325,22 @@ namespace Skylicht
 						u32 index = totalSegDraw * 6;
 
 						// vertex buffer
-						vertices[vertex + 0].Pos = pos1 - updown * thickness*0.5f;
+						vertices[vertex + 0].Pos = pos1 - updown * thickness * 0.5f;
 						vertices[vertex + 0].Normal = updown;
 						vertices[vertex + 0].Color = c1;
 						vertices[vertex + 0].TCoords.set(0.0f, uv1);
 
-						vertices[vertex + 1].Pos = pos1 + updown * thickness*0.5f;
+						vertices[vertex + 1].Pos = pos1 + updown * thickness * 0.5f;
 						vertices[vertex + 1].Normal = updown;
 						vertices[vertex + 1].Color = c1;
 						vertices[vertex + 1].TCoords.set(1.0f, uv1);
 
-						vertices[vertex + 2].Pos = pos2 - updown * thickness*0.5f;
+						vertices[vertex + 2].Pos = pos2 - updown * thickness * 0.5f;
 						vertices[vertex + 2].Normal = updown;
 						vertices[vertex + 2].Color = c2;
 						vertices[vertex + 2].TCoords.set(0.0f, uv2);
 
-						vertices[vertex + 3].Pos = pos2 + updown * thickness*0.5f;
+						vertices[vertex + 3].Pos = pos2 + updown * thickness * 0.5f;
 						vertices[vertex + 3].Normal = updown;
 						vertices[vertex + 3].Color = c2;
 						vertices[vertex + 3].TCoords.set(1.0f, uv2);
@@ -372,7 +384,7 @@ namespace Skylicht
 			m_meshBuffer->setDirty(EBT_VERTEX_AND_INDEX);
 		}
 
-		void CParticleTrail::OnParticleUpdate(CParticle *particles, int num, CGroup *group, float dt)
+		void CParticleTrail::OnParticleUpdate(CParticle* particles, int num, CGroup* group, float dt)
 		{
 			float seg2 = m_segmentLength * m_segmentLength;
 
@@ -380,7 +392,7 @@ namespace Skylicht
 			{
 				CParticle& p = particles[i];
 
-				STrailInfo &trail = m_trails[p.Index];
+				STrailInfo& trail = m_trails[p.Index];
 
 				trail.CurrentPosition = p.Position;
 				trail.CurrentColor.set(
@@ -418,7 +430,7 @@ namespace Skylicht
 			}
 		}
 
-		void CParticleTrail::OnParticleBorn(CParticle &p)
+		void CParticleTrail::OnParticleBorn(CParticle& p)
 		{
 			m_trailCount++;
 
@@ -429,13 +441,13 @@ namespace Skylicht
 			// printf("New %d\n", p.Index);
 		}
 
-		void CParticleTrail::OnParticleDead(CParticle &p)
+		void CParticleTrail::OnParticleDead(CParticle& p)
 		{
 			if (m_destroyWhenParticleDead == false)
 			{
 				// add to list dead trail to update alpha reduction
 				m_deadTrails.push_back(STrailInfo());
-				STrailInfo &t = m_deadTrails.getLast();
+				STrailInfo& t = m_deadTrails.getLast();
 
 				t.InitData();
 				t.Copy(m_trails[p.Index]);
@@ -451,7 +463,7 @@ namespace Skylicht
 			m_trails.set_used(m_trailCount);
 		}
 
-		void CParticleTrail::OnSwapParticleData(CParticle &p1, CParticle &p2)
+		void CParticleTrail::OnSwapParticleData(CParticle& p1, CParticle& p2)
 		{
 			int index1 = p1.Index;
 			int index2 = p2.Index;

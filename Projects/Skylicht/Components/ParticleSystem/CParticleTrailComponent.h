@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Components/CComponentSystem.h"
 #include "CParticleTrailData.h"
+#include "CTrailSerializable.h"
 
 namespace Skylicht
 {
@@ -34,7 +35,7 @@ namespace Skylicht
 		class COMPONENT_API CParticleTrailComponent : public CComponentSystem
 		{
 		protected:
-			CParticleTrailData *m_data;
+			CParticleTrailData* m_data;
 
 		public:
 			CParticleTrailComponent();
@@ -45,7 +46,13 @@ namespace Skylicht
 
 			virtual void updateComponent();
 
-			CParticleTrail* addTrail(CGroup *group);
+			virtual CObjectSerializable* createSerializable();
+
+			virtual void loadSerializable(CObjectSerializable* object);
+
+			CParticleTrail* addTrail(CGroup* group);
+
+			DECLARE_GETTYPENAME(CParticleTrailComponent)
 		};
 	}
 }

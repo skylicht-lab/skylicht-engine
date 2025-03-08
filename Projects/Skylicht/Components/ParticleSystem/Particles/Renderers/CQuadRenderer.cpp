@@ -84,10 +84,6 @@ namespace Skylicht
 				else if (billboard == FixOrientation)
 					m_material->changeShader("BuiltIn/Shader/Particle/ParticleOrientationTransparentAlpha.xml");
 			}
-			else
-			{
-
-			}
 
 			m_billboardType = billboard;
 			m_baseShaderType = shader;
@@ -175,7 +171,6 @@ namespace Skylicht
 			shaderType->addEnumString("Transparent", EBaseShaderType::Transparent);
 			shaderType->addEnumString("Additive Alpha", EBaseShaderType::AdditiveAlpha);
 			shaderType->addEnumString("Transparent Alpha", EBaseShaderType::TransparentAlpha);
-			shaderType->addEnumString("Solid", EBaseShaderType::Solid);
 			object->autoRelease(shaderType);
 
 			CEnumProperty<EBillboardType>* billboardType = new CEnumProperty<EBillboardType>(object, "billboardType", m_billboardType);

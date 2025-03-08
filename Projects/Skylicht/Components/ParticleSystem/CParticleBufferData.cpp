@@ -55,6 +55,16 @@ namespace Skylicht
 			return g;
 		}
 
+		CGroup* CParticleBufferData::getGroupByName(const wchar_t* name)
+		{
+			for (u32 i = 0, n = Groups.size(); i < n; i++)
+			{
+				if (Groups[i]->Name == name)
+					return Groups[i];
+			}
+			return NULL;
+		}
+
 		CSubGroup* CParticleBufferData::createSubGroup(CGroup* group)
 		{
 			CSubGroup* g = new CSubGroup(group);

@@ -38,12 +38,7 @@ namespace Skylicht
 
 		CParticleTrailData::~CParticleTrailData()
 		{
-			for (u32 i = 0, n = Trails.size(); i < n; i++)
-			{
-				delete Trails[i];
-			}
-
-			Trails.clear();
+			removeAllTrail();
 		}
 
 		CParticleTrail* CParticleTrailData::addTrail(CGroup* group)
@@ -61,6 +56,13 @@ namespace Skylicht
 				delete Trails[index];
 				Trails.erase(index);
 			}
+		}
+
+		void CParticleTrailData::removeAllTrail()
+		{
+			for (u32 i = 0, n = Trails.size(); i < n; i++)
+				delete Trails[i];
+			Trails.clear();
 		}
 	}
 }

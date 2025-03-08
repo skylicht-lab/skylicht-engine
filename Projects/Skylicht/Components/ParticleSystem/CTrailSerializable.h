@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2020 Skylicht Technology CO., LTD
+Copyright (c) 2025 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,60 +24,32 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "IRenderer.h"
+#include "Serializable/CArraySerializable.h"
 
 namespace Skylicht
 {
-	namespace Particle
+	class SKYLICHT_API CTrailSerializable : public CObjectSerializable
 	{
-		enum EBillboardType
-		{
-			Camera,
-			Velocity,
-			FixOrientation
-		};
+	public:
+		CStringProperty Name;
+		CFloatProperty Width;
+		CFloatProperty Length;
+		CFloatProperty SegmentLength;
+		CBoolProperty DestroyWhenParticleDead;
+		CFloatProperty DeadAlphaReduction;
+		CImageSourceProperty Texture;
+		CBoolProperty UseCustomMaterial;
+		CFilePathProperty CustomMaterial;
 
-		enum EBaseShaderType
-		{
-			Additive,
-			Transparent,
-			AdditiveAlpha,
-			TransparentAlpha
-		};
+	public:
+		CTrailSerializable();
 
-		class COMPONENT_API CQuadRenderer : public IRenderer
-		{
-		protected:
-			static const u32 NB_INDICES_PER_QUAD = 6;
-			static const u32 NB_VERTICES_PER_QUAD = 4;
+		CTrailSerializable(CObjectSerializable* parent);
 
-			EBillboardType m_billboardType;
-			EBaseShaderType m_baseShaderType;
+		virtual ~CTrailSerializable();
 
-		public:
-			CQuadRenderer();
+		virtual CObjectSerializable* clone();
 
-			virtual ~CQuadRenderer();
-
-			virtual void getParticleBuffer(IMeshBuffer* buffer);
-
-			void setMaterialType(EBaseShaderType shader, EBillboardType billboard);
-
-			inline EBillboardType getBillboardType()
-			{
-				return m_billboardType;
-			}
-
-			inline EBaseShaderType getBaseShaderType()
-			{
-				return m_baseShaderType;
-			}
-
-			virtual CObjectSerializable* createSerializable();
-
-			virtual void loadSerializable(CObjectSerializable* object);
-
-			DECLARE_GETTYPENAME(CQuadRenderer)
-		};
-	}
+		DECLARE_GETTYPENAME(CTrailSerializable)
+	};
 }

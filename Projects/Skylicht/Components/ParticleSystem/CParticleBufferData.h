@@ -47,6 +47,8 @@ namespace Skylicht
 
 			CGroup* createGroup();
 
+			CGroup* getGroupByName(const wchar_t* name);
+
 			CSubGroup* createSubGroup(CGroup* group);
 
 			void removeGroup(CGroup* group);
