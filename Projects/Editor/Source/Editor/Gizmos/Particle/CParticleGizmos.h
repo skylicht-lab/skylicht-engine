@@ -109,6 +109,11 @@ namespace Skylicht
 				return m_state;
 			}
 
+			inline Particle::CGroup* getGroup()
+			{
+				return m_group;
+			}
+
 			inline Particle::CDirectionEmitter* getDirectionEmitter()
 			{
 				return m_emitter;

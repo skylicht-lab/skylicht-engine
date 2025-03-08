@@ -1014,6 +1014,9 @@ namespace Skylicht
 			core::vector3df out;
 			core::quaternion resultRotation;
 
+			core::vector3df viewVector = pos - m_camera->getPosition();
+			viewVector.normalize();
+
 			if (!m_cancel)
 			{
 				if (m_mouseDown == false)
@@ -1032,6 +1035,12 @@ namespace Skylicht
 						{
 							core::vector3df hitVector = out - pos;
 							hitVector.normalize();
+
+							if (viewVector.dotProduct(hitVector) > FLT_EPSILON)
+							{
+								// if hover in back circle
+								continue;
+							}
 
 							m_rotationVectorSource = hitVector;
 							m_rotationAngle = 0.0f;

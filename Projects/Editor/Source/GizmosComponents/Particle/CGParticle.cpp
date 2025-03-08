@@ -104,6 +104,46 @@ namespace Skylicht
 				selectObjectData->DrawSelectionBox = false;
 			}
 			break;
+			case CParticleGizmos::Gravity:
+			{
+				Particle::CGroup* group = gizmos->getGroup();
+
+				core::vector3df direction(0.0f, -1.0f, 0.0f);
+
+				core::matrix4 world = m_gameObject->calcWorldTransform();
+				core::vector3df position = world.getTranslation();
+
+				direction = group->GravityOrientation * direction;
+				direction.normalize();
+
+				handle->drawArrowInViewSpace(
+					position, direction,
+					0.3f, 0.1f,
+					SColor(255, 255, 255, 255));
+				selectObjectData->DrawSelectionBox = false;
+			}
+			break;
+			case CParticleGizmos::Orientation:
+			{
+				Particle::CGroup* group = gizmos->getGroup();
+
+				core::matrix4 world = m_gameObject->calcWorldTransform();
+				core::vector3df position = world.getTranslation();
+
+				core::vector3df ox = group->Orientation * Transform::Ox;
+				core::vector3df oy = group->Orientation * Transform::Oy;
+				core::vector3df oz = group->Orientation * Transform::Oz;
+				ox.normalize();
+				oy.normalize();
+				oz.normalize();
+
+				handle->drawLine(position, position + ox, SColor(255, 255, 0, 0));
+				handle->drawLine(position, position + oy, SColor(255, 0, 255, 0));
+				handle->drawLine(position, position + oz, SColor(255, 0, 0, 255));
+
+				selectObjectData->DrawSelectionBox = false;
+			}
+			break;
 			case CParticleGizmos::Zone:
 			{
 				renderZone(m_gameObject->calcWorldTransform(), gizmos->getZone());
