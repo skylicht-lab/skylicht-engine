@@ -44,6 +44,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Primitive/CCylinder.h"
 
 #include "ParticleSystem/CParticleComponent.h"
+#include "ParticleSystem/CParticleTrailComponent.h"
 using namespace Particle;
 
 #ifdef BUILD_SKYLICHT_PHYSIC
@@ -90,6 +91,7 @@ namespace Skylicht
 		USE_COMPONENT(CCylinder);
 
 		USE_COMPONENT(CParticleComponent);
+		USE_COMPONENT(CParticleTrailComponent);
 
 #ifdef BUILD_SKYLICHT_PHYSIC
 		USE_COMPONENT(CRigidbody);

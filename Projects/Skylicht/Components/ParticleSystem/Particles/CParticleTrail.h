@@ -32,6 +32,8 @@ namespace Skylicht
 
 	namespace Particle
 	{
+		class CParticleTrailComponent;
+
 		struct SParticlePosition
 		{
 			core::vector3df Position;
@@ -79,6 +81,8 @@ namespace Skylicht
 
 		class COMPONENT_API CParticleTrail : public IParticleCallback
 		{
+			friend class CParticleTrailComponent;
+
 		protected:
 			CGroup* m_group;
 
@@ -111,6 +115,8 @@ namespace Skylicht
 			CMaterial* m_customMaterial;
 
 			bool m_useCustomMaterial;
+
+			core::matrix4 m_world;
 
 		public:
 			CParticleTrail(CGroup* group);
@@ -179,13 +185,14 @@ namespace Skylicht
 				m_deadAlphaReduction = a;
 			}
 
+			inline void enableCustomMaterial(bool b)
+			{
+				m_useCustomMaterial = b;
+			}
+
 			inline void setCustomMaterial(CMaterial* material)
 			{
 				m_customMaterial = material;
-				if (material)
-					m_useCustomMaterial = true;
-				else
-					m_useCustomMaterial = false;
 			}
 
 			inline bool useCustomMaterial()
@@ -214,6 +221,8 @@ namespace Skylicht
 				return m_length;
 			}
 
+			void setTexture(ITexture* texture);
+
 			void applyMaterial();
 
 			void setTexturePath(const char* path);
@@ -226,6 +235,11 @@ namespace Skylicht
 		protected:
 
 			void updateDeadTrail();
+
+			void setWorld(const core::matrix4& world)
+			{
+				m_world = world;
+			}
 
 		};
 	}

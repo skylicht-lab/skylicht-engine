@@ -302,6 +302,11 @@ namespace Skylicht
 				return m_interpolators;
 			}
 
+			core::array<CParticle>& getParticles()
+			{
+				return m_particles;
+			}
+
 			DECLARE_GETTYPENAME(CGroup)
 
 			virtual CObjectSerializable* createSerializable();

@@ -26,6 +26,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CParticleTrail.h"
 #include "Camera/CCamera.h"
 
+#include "TextureManager/CTextureManager.h"
+
 namespace Skylicht
 {
 	namespace Particle
@@ -44,6 +46,10 @@ namespace Skylicht
 			setLength(1.0f);
 
 			group->addCallback(this);
+
+			core::array<CParticle>& particles = group->getParticles();
+			for (u32 i = 0, n = particles.size(); i < n; i++)
+				OnParticleBorn(particles[i]);
 
 			m_name = group->Name;
 
@@ -86,6 +92,12 @@ namespace Skylicht
 			m_length = l;
 		}
 
+		void CParticleTrail::setTexture(ITexture* texture)
+		{
+			m_material->setTexture(0, texture);
+			applyMaterial();
+		}
+
 		void CParticleTrail::applyMaterial()
 		{
 			if (m_useCustomMaterial && m_customMaterial)
@@ -97,6 +109,9 @@ namespace Skylicht
 		void CParticleTrail::setTexturePath(const char* path)
 		{
 			m_texturePath = path;
+
+			ITexture* t = CTextureManager::getInstance()->getTexture(path);
+			setTexture(t);
 		}
 
 		void CParticleTrail::updateDeadTrail()
@@ -388,13 +403,19 @@ namespace Skylicht
 		{
 			float seg2 = m_segmentLength * m_segmentLength;
 
+			core::vector3df position;
+
 			for (u32 i = 0; i < (u32)num; i++)
 			{
 				CParticle& p = particles[i];
 
 				STrailInfo& trail = m_trails[p.Index];
 
-				trail.CurrentPosition = p.Position;
+				position = p.Position;
+				m_world.transformVect(position);
+
+				trail.CurrentPosition = position;
+
 				trail.CurrentColor.set(
 					(u32)(p.Params[ColorA] * 255.0f),
 					(u32)(p.Params[ColorR] * 255.0f),
@@ -407,24 +428,24 @@ namespace Skylicht
 					SParticlePosition pos;
 					pos.Width = m_width;
 					pos.Alpha = 1.0f;
-					pos.Position = p.Position;
+					pos.Position = position;
 
 					trail.Position->push_back(pos);
 
-					trail.LastPosition = p.Position;
+					trail.LastPosition = position;
 				}
 				else
 				{
-					if (p.Position.getDistanceFromSQ(trail.LastPosition) >= seg2)
+					if (position.getDistanceFromSQ(trail.LastPosition) >= seg2)
 					{
 						trail.Position->push_back(SParticlePosition());
 
 						SParticlePosition& pos = trail.Position->getLast();
 						pos.Width = m_width;
 						pos.Alpha = 1.0f;
-						pos.Position = p.Position;
+						pos.Position = position;
 
-						trail.LastPosition = p.Position;
+						trail.LastPosition = position;
 					}
 				}
 			}
@@ -465,11 +486,10 @@ namespace Skylicht
 
 		void CParticleTrail::OnSwapParticleData(CParticle& p1, CParticle& p2)
 		{
-			int index1 = p1.Index;
-			int index2 = p2.Index;
+			u32 index1 = p1.Index;
+			u32 index2 = p2.Index;
 
 			STrailInfo t = m_trails[index1];
-
 			m_trails[index1] = m_trails[index2];
 			m_trails[index2] = t;
 		}

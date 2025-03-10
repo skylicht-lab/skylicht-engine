@@ -31,11 +31,16 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Entity/CEntityManager.h"
 
 #include "Utils/CStringImp.h"
+#include "Material/CMaterialManager.h"
 
 namespace Skylicht
 {
 	namespace Particle
 	{
+		ACTIVATOR_REGISTER(CParticleTrailComponent);
+
+		CATEGORY_COMPONENT(CParticleTrailComponent, "Particle Trail", "Particle");
+
 		CParticleTrailComponent::CParticleTrailComponent() :
 			m_data(NULL)
 		{
@@ -60,7 +65,13 @@ namespace Skylicht
 
 		void CParticleTrailComponent::updateComponent()
 		{
+			CWorldTransformData* transform = GET_ENTITY_DATA(m_gameObject->getEntity(), CWorldTransformData);
 
+			core::array<CParticleTrail*>& trails = m_data->Trails;
+			for (u32 i = 0; i < trails.size(); i++)
+			{
+				trails[i]->setWorld(transform->World);
+			}
 		}
 
 		CParticleTrail* CParticleTrailComponent::addTrail(CGroup* group)
@@ -72,7 +83,7 @@ namespace Skylicht
 		{
 			CObjectSerializable* object = CComponentSystem::createSerializable();
 
-			CArraySerializable* arrayTrailData = new CArraySerializable("Trails");
+			CArrayTypeSerializable<CTrailSerializable>* arrayTrailData = new CArrayTypeSerializable<CTrailSerializable>("Trails");
 			object->addProperty(arrayTrailData);
 			object->autoRelease(arrayTrailData);
 
@@ -80,7 +91,7 @@ namespace Skylicht
 			for (u32 i = 0; i < trails.size(); i++)
 			{
 				CParticleTrail* trail = trails[i];
-				CTrailSerializable* trailData = new CTrailSerializable(arrayTrailData);
+				CTrailSerializable* trailData = (CTrailSerializable*)arrayTrailData->createElement();
 
 				trailData->Name.set(CStringImp::convertUnicodeToUTF8(trail->getGroupName()));
 				trailData->Width.set(trail->getWidth());
@@ -130,6 +141,21 @@ namespace Skylicht
 					trail->enableDestroyWhenParticleDead(trailData->DestroyWhenParticleDead.get());
 					trail->setDeadAlphaReduction(trailData->DeadAlphaReduction.get());
 					trail->setTexturePath(trailData->Texture.get().c_str());
+
+					std::string materialPath = trailData->CustomMaterial.get();
+					if (!materialPath.empty())
+					{
+						ArrayMaterial& loadMaterials = CMaterialManager::getInstance()->loadMaterial(materialPath.c_str(), true, std::vector<std::string>());
+						if (loadMaterials.size() > 0)
+						{
+							trail->setCustomMaterial(loadMaterials[0]);
+							trail->enableCustomMaterial(trailData->UseCustomMaterial.get());
+						}
+						else
+						{
+							trail->enableCustomMaterial(false);
+						}
+					}
 				}
 			}
 		}
