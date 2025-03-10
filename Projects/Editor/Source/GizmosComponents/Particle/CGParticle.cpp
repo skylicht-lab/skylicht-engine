@@ -113,7 +113,7 @@ namespace Skylicht
 				core::matrix4 world = m_gameObject->calcWorldTransform();
 				core::vector3df position = world.getTranslation();
 
-				direction = group->GravityOrientation * direction;
+				direction = core::quaternion(group->GravityRotation) * direction;
 				direction.normalize();
 
 				handle->drawArrowInViewSpace(
@@ -130,9 +130,11 @@ namespace Skylicht
 				core::matrix4 world = m_gameObject->calcWorldTransform();
 				core::vector3df position = world.getTranslation();
 
-				core::vector3df ox = group->Orientation * Transform::Ox;
-				core::vector3df oy = group->Orientation * Transform::Oy;
-				core::vector3df oz = group->Orientation * Transform::Oz;
+				core::quaternion r(group->ParticleRotation);
+
+				core::vector3df ox = r * Transform::Ox;
+				core::vector3df oy = r * Transform::Oy;
+				core::vector3df oz = r * Transform::Oz;
 				ox.normalize();
 				oy.normalize();
 				oz.normalize();

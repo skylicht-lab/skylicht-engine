@@ -97,6 +97,23 @@ namespace Skylicht
 					gizmos->refresh();
 			}
 			break;
+			case CParticleGizmos::Gravity:
+			case CParticleGizmos::Orientation:
+			{
+				Particle::CGroup* group = dynamic_cast<Particle::CGroup*>(m_ps);
+				if (group)
+				{
+					if (state == CParticleGizmos::Gravity)
+						gizmos->setRotation(core::quaternion(group->GravityRotation));
+					else
+						gizmos->setRotation(core::quaternion(group->ParticleRotation));
+				}
+				else
+				{
+					gizmos->refresh();
+				}
+			}
+			break;
 			default:
 				break;
 			}

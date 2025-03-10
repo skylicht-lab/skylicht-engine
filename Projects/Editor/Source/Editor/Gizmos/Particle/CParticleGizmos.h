@@ -70,9 +70,9 @@ namespace Skylicht
 
 			virtual ~CParticleGizmos();
 
-			void setGravity(Particle::CGroup* group, const core::matrix4& world);
+			void setGravityRotation(Particle::CGroup* group, const core::matrix4& world);
 
-			void setOrientation(Particle::CGroup* group, const core::matrix4& world);
+			void setParticleRotation(Particle::CGroup* group, const core::matrix4& world);
 
 			void setEmitter(Particle::CDirectionEmitter* emitter, const core::matrix4& world);
 

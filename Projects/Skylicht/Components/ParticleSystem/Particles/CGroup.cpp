@@ -83,15 +83,8 @@ namespace Skylicht
 			object->autoRelease(new CFloatProperty(object, "lifeMin", LifeMin, 0.0f));
 			object->autoRelease(new CFloatProperty(object, "lifeMax", LifeMax, 0.0f));
 			object->autoRelease(new CFloatProperty(object, "gravityValue", GravityValue));
-
-			CQuaternionProperty* v;
-			v = new CQuaternionProperty(object, "gravityOrientation", GravityOrientation);
-			v->setHidden(true);
-			object->autoRelease(v);
-
-			v = new CQuaternionProperty(object, "orientation", Orientation);
-			v->setHidden(true);
-			object->autoRelease(v);
+			object->autoRelease(new CVector3Property(object, "gravityRotation", GravityRotation * core::RADTODEG));
+			object->autoRelease(new CVector3Property(object, "particleRotation", ParticleRotation * core::RADTODEG));
 
 			return object;
 		}
@@ -106,34 +99,36 @@ namespace Skylicht
 			LifeMax = object->get("lifeMax", 2.0f);
 			GravityValue = object->get("gravityValue", 1.0f);
 
-			core::quaternion g = object->get("gravityOrientation", core::quaternion());
-			core::quaternion r = object->get("orientation", core::quaternion());
+			core::vector3df g = object->get("gravityRotation", core::vector3df());
+			core::vector3df r = object->get("particleRotation", core::vector3df());
 
-			setGravityOrientation(g);
-			setOrientation(r);
+			setGravityRotation(g * core::DEGTORAD);
+			setParticleRotation(r * core::DEGTORAD);
 		}
 
-		void CGroup::setGravityOrientation(const core::quaternion& r)
+		void CGroup::setGravityRotation(const core::vector3df& euler)
 		{
-			GravityOrientation = r;
+			core::quaternion r(euler);
+			GravityRotation = euler;
 			Gravity.set(0.0f, -1.0f, 0.0f);
 
-			Gravity = GravityOrientation * Gravity;
+			Gravity = r * Gravity;
 			Gravity.normalize();
 			Gravity *= GravityValue;
 		}
 
-		void CGroup::setOrientation(const core::quaternion& r)
+		void CGroup::setParticleRotation(const core::vector3df& euler)
 		{
-			Orientation = r;
+			core::quaternion r(euler);
+			ParticleRotation = euler;
 
 			OrientationNormal.set(1.0f, 0.0f, 0.0f);
 			OrientationUp.set(0.0f, 1.0f, 0.0f);
 
-			OrientationNormal = Orientation * OrientationNormal;
+			OrientationNormal = r * OrientationNormal;
 			OrientationNormal.normalize();
 
-			OrientationUp = Orientation * OrientationUp;
+			OrientationUp = r * OrientationUp;
 			OrientationUp.normalize();
 		}
 

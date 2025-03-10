@@ -129,8 +129,8 @@ namespace Skylicht
 			float LifeMax;
 
 			float GravityValue;
-			core::quaternion GravityOrientation;
-			core::quaternion Orientation;
+			core::vector3df GravityRotation;
+			core::vector3df ParticleRotation;
 
 			core::vector3df Gravity;
 			core::vector3df OrientationNormal;
@@ -149,9 +149,9 @@ namespace Skylicht
 
 			void update(bool visible);
 
-			void setGravityOrientation(const core::quaternion& r);
+			void setGravityRotation(const core::vector3df& euler);
 
-			void setOrientation(const core::quaternion& r);
+			void setParticleRotation(const core::vector3df& euler);
 
 			inline void setWorldMatrix(const core::matrix4& m)
 			{

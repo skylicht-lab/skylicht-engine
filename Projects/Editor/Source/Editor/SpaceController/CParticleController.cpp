@@ -334,14 +334,14 @@ namespace Skylicht
 			{
 				Particle::CGroup* group = (Particle::CGroup*)node->getTagData();
 
-				particleGizmos->setGravity(group, m_particle->getGameObject()->calcWorldTransform());
+				particleGizmos->setGravityRotation(group, m_particle->getGameObject()->calcWorldTransform());
 				sceneController->setGizmos(particleGizmos);
 			}
 			else if (type == CParticleHierachyNode::Orientation)
 			{
 				Particle::CGroup* group = (Particle::CGroup*)node->getTagData();
 
-				particleGizmos->setOrientation(group, m_particle->getGameObject()->calcWorldTransform());
+				particleGizmos->setParticleRotation(group, m_particle->getGameObject()->calcWorldTransform());
 				sceneController->setGizmos(particleGizmos);
 			}
 			else
@@ -359,6 +359,8 @@ namespace Skylicht
 				case CParticleHierachyNode::Emitter:
 				case CParticleHierachyNode::Zone:
 				case CParticleHierachyNode::Model:
+				case CParticleHierachyNode::Gravity:
+				case CParticleHierachyNode::Orientation:
 				{
 					Particle::CParticleSerializable* ps = (Particle::CParticleSerializable*)node->getTagData();
 					CPropertyController::getInstance()->setParticleProperty(spaceProperty, ps, m_particle);

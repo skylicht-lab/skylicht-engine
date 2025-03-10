@@ -52,14 +52,14 @@ namespace Skylicht
 
 		}
 
-		void CParticleGizmos::setGravity(Particle::CGroup* group, const core::matrix4& world)
+		void CParticleGizmos::setGravityRotation(Particle::CGroup* group, const core::matrix4& world)
 		{
 			m_group = group;
 			m_state = Gravity;
 
 			m_parentWorld = world;
 
-			m_rotation = group->GravityOrientation;
+			m_rotation = core::quaternion(group->GravityRotation);
 			m_changed = false;
 
 			CHandles* handle = CHandles::getInstance();
@@ -68,14 +68,14 @@ namespace Skylicht
 			handle->reset();
 		}
 
-		void CParticleGizmos::setOrientation(Particle::CGroup* group, const core::matrix4& world)
+		void CParticleGizmos::setParticleRotation(Particle::CGroup* group, const core::matrix4& world)
 		{
 			m_group = group;
 			m_state = Orientation;
 
 			m_parentWorld = world;
 
-			m_rotation = group->Orientation;
+			m_rotation = core::quaternion(group->ParticleRotation);
 			m_changed = false;
 
 			CHandles* handle = CHandles::getInstance();
@@ -168,14 +168,20 @@ namespace Skylicht
 					m_rotation = newRot;
 					m_rotation.notify(this);
 
-					m_group->setGravityOrientation(newRot);
+					core::vector3df rot;
+					newRot.toEuler(rot);
+
+					m_group->setGravityRotation(rot);
 					m_changed = true;
 					updateProperty();
 				}
 
 				if (handle->endCheck())
 				{
-					m_group->setGravityOrientation(*m_rotation);
+					core::vector3df rot;
+					(*m_rotation).toEuler(rot);
+
+					m_group->setGravityRotation(rot);
 					handle->end();
 				}
 			}
@@ -189,14 +195,20 @@ namespace Skylicht
 					m_rotation = newRot;
 					m_rotation.notify(this);
 
-					m_group->setOrientation(newRot);
+					core::vector3df rot;
+					newRot.toEuler(rot);
+
+					m_group->setParticleRotation(rot);
 					m_changed = true;
 					updateProperty();
 				}
 
 				if (handle->endCheck())
 				{
-					m_group->setOrientation(*m_rotation);
+					core::vector3df rot;
+					(*m_rotation).toEuler(rot);
+
+					m_group->setParticleRotation(rot);
 					handle->end();
 				}
 			}
@@ -355,6 +367,24 @@ namespace Skylicht
 							}
 						}
 					}
+				}
+			}
+			else if (m_state == Gravity)
+			{
+				CVector3Property* p = dynamic_cast<CVector3Property*>(data->getProperty("gravityRotation"));
+				if (p)
+				{
+					p->set(m_group->GravityRotation * core::RADTODEG);
+					p->OnChanged();
+				}
+			}
+			else if (m_state == Orientation)
+			{
+				CVector3Property* p = dynamic_cast<CVector3Property*>(data->getProperty("particleRotation"));
+				if (p)
+				{
+					p->set(m_group->ParticleRotation * core::RADTODEG);
+					p->OnChanged();
 				}
 			}
 		}
