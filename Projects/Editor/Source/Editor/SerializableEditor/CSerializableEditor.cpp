@@ -1008,6 +1008,8 @@ namespace Skylicht
 								};
 						};
 				}
+
+				initCustomDataGUI(object, valueProperty, layout, ui);
 			}
 		}
 	}

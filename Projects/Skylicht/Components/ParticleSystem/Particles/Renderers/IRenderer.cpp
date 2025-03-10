@@ -47,15 +47,12 @@ namespace Skylicht
 			m_useInstancing(true),
 			m_emission(false)
 		{
-
+			
 		}
 
 		IRenderer::~IRenderer()
 		{
-			if (m_texture)
-			{
 
-			}
 		}
 
 		CMaterial* IRenderer::getMaterial()

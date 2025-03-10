@@ -58,6 +58,8 @@ namespace Skylicht
 
 			m_material = new CMaterial("TrailMaterial", "BuiltIn/Shader/Particle/ParticleTrailTurbulenceAdditive.xml");
 			m_material->setBackfaceCulling(false);
+
+			setTexturePath("BuiltIn/Textures/NullTexture.png");
 		}
 
 		CParticleTrail::~CParticleTrail()

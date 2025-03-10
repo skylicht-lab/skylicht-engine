@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CObjectSerializable.h"
 #include "CValueProperty.h"
+#include "CArraySerializable.h"
 #include "Utils/CStringImp.h"
 
 namespace Skylicht
@@ -225,6 +226,33 @@ namespace Skylicht
 				if (nodeName == reader->getNodeName() && attributeName == reader->getAttributeValue(L"type"))
 				{
 					attr->read(reader);
+
+					// try to load Array
+					if (attr->getAttributeCount() > 0 && m_value.size() == 0)
+					{
+						CArraySerializable* arrayData = dynamic_cast<CArraySerializable*>(this);
+						if (arrayData && arrayData->haveCreateElementFunction())
+						{
+							// create null data & deserialize later
+							for (u32 i = 0, n = attr->getAttributeCount(); i < n; i++)
+								arrayData->createElement();
+						}
+						else
+						{
+							char log[1024];
+							std::string name = CStringImp::convertUnicodeToUTF8(attributeName.c_str());
+							sprintf(log, "[CObjectSerializable::load] Can't load array '%s'", name.c_str());
+							os::Printer::log(log);
+						}
+					}
+					else
+					{
+						char log[1024];
+						std::string name = CStringImp::convertUnicodeToUTF8(attributeName.c_str());
+						sprintf(log, "[CObjectSerializable::load] Can't load object '%s'", name.c_str());
+						os::Printer::log(log);
+					}
+
 					deserialize(attr);
 					done = true;
 				}

@@ -118,5 +118,10 @@ namespace Skylicht
 				break;
 			}
 		}
+
+		void CParticleEditor::initCustomDataGUI(CObjectSerializable* object, CValueProperty* data, GUI::CBoxLayout* layout, CSpaceProperty* ui)
+		{
+
+		}
 	}
 }

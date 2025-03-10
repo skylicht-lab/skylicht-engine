@@ -69,6 +69,14 @@ namespace Skylicht
 			m_gameObject->getEntityManager()->addRenderSystem<CParticleRenderer>();
 		}
 
+		void CParticleComponent::startComponent()
+		{
+			if (!m_sourcePath.empty())
+			{
+				load();
+			}
+		}
+
 		void CParticleComponent::updateComponent()
 		{
 

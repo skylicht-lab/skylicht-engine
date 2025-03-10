@@ -38,6 +38,8 @@ namespace Skylicht
 			m_material = new CMaterial("Particle", "BuiltIn/Shader/Particle/ParticleAdditive.xml");
 			m_material->setBackfaceCulling(false);
 			m_material->setZWrite(false);
+
+			setTexturePath("BuiltIn/Textures/NullTexture.png");
 		}
 
 		CBillboardAdditiveRenderer::~CBillboardAdditiveRenderer()

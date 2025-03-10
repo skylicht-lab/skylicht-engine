@@ -282,19 +282,28 @@ namespace Skylicht
 				nodeRenderer->setName(renderer->getName());
 				setNodeEvent(nodeRenderer);
 			}
+			else
+			{
+				CParticleHierachyNode* nodeRenderer = node->addChild();
+				nodeRenderer->setTagData(NULL, CParticleHierachyNode::Renderer);
+				nodeRenderer->setParentData(group);
+				nodeRenderer->setIcon(GUI::ESystemIcon::ParticleRenderer);
+				nodeRenderer->setName(L"No Renderer");
+				setNodeEvent(nodeRenderer);
+			}
 
 			CParticleHierachyNode* gravity = node->addChild();
 			gravity->setTagData(group, CParticleHierachyNode::Gravity);
 			gravity->setParentData(group);
 			gravity->setIcon(GUI::ESystemIcon::Axis);
-			gravity->setName(L"Gravity");
+			gravity->setName(L"Gravity Rotation");
 			setNodeEvent(gravity);
 
 			CParticleHierachyNode* orientation = node->addChild();
 			orientation->setTagData(group, CParticleHierachyNode::Orientation);
 			orientation->setParentData(group);
 			orientation->setIcon(GUI::ESystemIcon::Axis);
-			orientation->setName(L"Orientation");
+			orientation->setName(L"Particle Rotation");
 			setNodeEvent(orientation);
 		}
 
@@ -363,7 +372,10 @@ namespace Skylicht
 				case CParticleHierachyNode::Orientation:
 				{
 					Particle::CParticleSerializable* ps = (Particle::CParticleSerializable*)node->getTagData();
-					CPropertyController::getInstance()->setParticleProperty(spaceProperty, ps, m_particle);
+					if (ps)
+						CPropertyController::getInstance()->setParticleProperty(spaceProperty, ps, m_particle);
+					else
+						CPropertyController::getInstance()->setProperty(NULL);
 				}
 				break;
 				default:
@@ -404,7 +416,6 @@ namespace Skylicht
 
 			// Renderer
 			Particle::CQuadRenderer* renderer = factory->createQuadRenderer();
-			renderer->setTexturePath("BuiltIn/Textures/NullTexture.png");
 			group->setRenderer(renderer);
 
 			m_particle->Play();

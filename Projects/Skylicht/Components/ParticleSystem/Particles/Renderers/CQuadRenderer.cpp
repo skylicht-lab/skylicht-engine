@@ -38,6 +38,8 @@ namespace Skylicht
 			m_material->setBackfaceCulling(false);
 			m_material->setZWrite(false);
 
+			setTexturePath("BuiltIn/Textures/NullTexture.png");
+
 			setMaterialType(m_baseShaderType, m_billboardType);
 		}
 

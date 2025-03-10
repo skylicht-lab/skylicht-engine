@@ -48,6 +48,8 @@ namespace Skylicht
 
 			virtual void initComponent();
 
+			virtual void startComponent();
+
 			virtual void updateComponent();
 
 			virtual CObjectSerializable* createSerializable();
