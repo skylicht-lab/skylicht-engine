@@ -102,7 +102,7 @@ namespace Skylicht
 	protected:
 		std::set<SInterpolatorEntry> m_graph;
 
-		std::vector<SControlPoint> m_controls;
+		std::vector<SControlPoint> m_controls[4];
 
 		EInterpolatorType m_type;
 
@@ -125,7 +125,8 @@ namespace Skylicht
 		{
 			m_type = other.m_type;
 			m_graph = other.m_graph;
-			m_controls = other.m_controls;
+			for (int i = 0; i < 4; i++)
+				m_controls[i] = other.m_controls[i];
 		}
 
 		inline bool empty()
@@ -153,17 +154,17 @@ namespace Skylicht
 			return m_graph;
 		}
 
-		inline std::vector<SControlPoint>& getControlPoints()
+		inline std::vector<SControlPoint>& getControlPoints(int layer)
 		{
-			return m_controls;
+			return m_controls[layer];
 		}
 
-		inline const std::vector<SControlPoint>& getControlPoints() const
+		inline const std::vector<SControlPoint>& getControlPoints(int layer) const
 		{
-			return m_controls;
+			return m_controls[layer];
 		}
 
-		SControlPoint& addControlPoint();
+		SControlPoint& addControlPoint(int layer = 0);
 
 		inline bool addEntry(const SInterpolatorEntry& entry)
 		{
@@ -175,6 +176,14 @@ namespace Skylicht
 			SInterpolatorEntry entry;
 			entry.X = x;
 			entry.Value[0] = y;
+			return addEntry(entry);
+		}
+
+		inline bool addEntry(int layer, float x, float y)
+		{
+			SInterpolatorEntry entry;
+			entry.X = x;
+			entry.Value[layer] = y;
 			return addEntry(entry);
 		}
 
@@ -211,12 +220,14 @@ namespace Skylicht
 		inline void clearGraph()
 		{
 			m_graph.clear();
-			m_controls.clear();
+
+			for (int i = 0; i < 4; i++)
+				m_controls[i].clear();
 		}
 
-		void generateGraph(int bezierStep);
+		void generateGraph(int layer, int bezierStep);
 
-		void computeLine(std::vector<ArrayPoint2df>& lines, int bezierStep);
+		void computeLine(int layer, std::vector<ArrayPoint2df>& lines, int bezierStep);
 
 		void computeBezier(const SControlPoint& p1, const SControlPoint& p2, ArrayPoint2df& points, int bezierStep);
 	};

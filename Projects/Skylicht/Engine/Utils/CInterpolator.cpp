@@ -38,10 +38,10 @@ namespace Skylicht
 
 	}
 
-	SControlPoint& CInterpolator::addControlPoint()
+	SControlPoint& CInterpolator::addControlPoint(int layer)
 	{
-		m_controls.push_back(SControlPoint());
-		return m_controls.back();
+		m_controls[layer].push_back(SControlPoint());
+		return m_controls[layer].back();
 	}
 
 	void CInterpolator::getMinMaxXY(core::vector2df& min, core::vector2df& max)
@@ -304,9 +304,10 @@ namespace Skylicht
 		}
 	}
 
-	void CInterpolator::computeLine(std::vector<ArrayPoint2df>& lines, int bezierStep)
+	void CInterpolator::computeLine(int layer, std::vector<ArrayPoint2df>& lines, int bezierStep)
 	{
-		int n = (int)m_controls.size();
+		std::vector<SControlPoint>& controls = m_controls[layer];
+		int n = (int)controls.size();
 		if (n < 2)
 			return;
 
@@ -314,8 +315,8 @@ namespace Skylicht
 
 		for (int i = 0; i < n - 1; i++)
 		{
-			SControlPoint& p1 = m_controls[i];
-			SControlPoint& p2 = m_controls[i + 1];
+			SControlPoint& p1 = controls[i];
+			SControlPoint& p2 = controls[i + 1];
 
 			lines.push_back(ArrayPoint2df());
 			ArrayPoint2df& line = lines.back();
@@ -324,10 +325,10 @@ namespace Skylicht
 		}
 	}
 
-	void CInterpolator::generateGraph(int bezierStep)
+	void CInterpolator::generateGraph(int layer, int bezierStep)
 	{
 		std::vector<ArrayPoint2df> lines;
-		computeLine(lines, bezierStep);
+		computeLine(layer, lines, bezierStep);
 
 		m_graph.clear();
 
@@ -341,7 +342,7 @@ namespace Skylicht
 				const core::vector2df& p = it[i];
 				if (first || p != last)
 				{
-					addEntry(p.X, p.Y);
+					addEntry(layer, p.X, p.Y);
 					last = p;
 					first = false;
 				}

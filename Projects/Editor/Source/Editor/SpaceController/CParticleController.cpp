@@ -62,7 +62,12 @@ namespace Skylicht
 		void CParticleController::closeSpaceParticle(CSpaceParticle* space)
 		{
 			if (m_spaceParticle == space)
+			{
 				m_spaceParticle = NULL;
+				m_hierachyNode = NULL;
+				m_contextNode = NULL;
+				m_particle = NULL;
+			}
 		}
 
 		void CParticleController::initContextMenu(GUI::CCanvas* canvas)

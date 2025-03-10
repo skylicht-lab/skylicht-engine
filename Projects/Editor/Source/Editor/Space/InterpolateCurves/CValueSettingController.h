@@ -45,12 +45,13 @@ namespace Skylicht
 			SControlPoint* m_point;
 			CInterpolateCurvesController* m_controller;
 
+			int m_currentLayer;
 		public:
 			CValueSettingController(CEditor* editor, GUI::CMenu* menu);
 
 			virtual ~CValueSettingController();
 
-			void onShow(CInterpolateCurvesController* controller, SControlPoint* controlPoint);
+			void onShow(int layer, CInterpolateCurvesController* controller, SControlPoint* controlPoint);
 
 		protected:
 

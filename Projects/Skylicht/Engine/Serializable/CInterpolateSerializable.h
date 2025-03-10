@@ -145,7 +145,7 @@ namespace Skylicht
 		virtual void setInterpolator(const CInterpolator* interpolator)
 		{
 			const std::set<SInterpolatorEntry>& graph = interpolator->getGraph();
-			const std::vector<SControlPoint>& controls = interpolator->getControlPoints();
+			const std::vector<SControlPoint>& controls = interpolator->getControlPoints(0);
 
 			clear();
 			for (auto& i : graph)

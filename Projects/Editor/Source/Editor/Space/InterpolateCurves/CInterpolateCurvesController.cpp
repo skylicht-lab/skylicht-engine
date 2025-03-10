@@ -51,18 +51,18 @@ namespace Skylicht
 
 		void CInterpolateCurvesController::updateValue()
 		{
-			m_interpolation.generateGraph(5);
+			m_interpolation.generateGraph(0, 5);
 			if (OnChanged != nullptr)
 				OnChanged();
 		}
 
-		void CInterpolateCurvesController::getRangleMinMax(core::vector2df& min, core::vector2df& max)
+		void CInterpolateCurvesController::getRangleMinMax(int layer, core::vector2df& min, core::vector2df& max)
 		{
 			min.set(0.0f, 0.0f);
 			max.set(0.0f, 0.0f);
 
 			int id = 0;
-			const std::vector<SControlPoint>& graph = m_interpolation.getControlPoints();
+			const std::vector<SControlPoint>& graph = m_interpolation.getControlPoints(layer);
 			for (const auto& it : graph)
 			{
 				const core::vector2df& pos = it.Position;
@@ -128,9 +128,9 @@ namespace Skylicht
 			updateValue();
 		}
 
-		void CInterpolateCurvesController::onPointChangeType(SControlPoint* point)
+		void CInterpolateCurvesController::onPointChangeType(int layer, SControlPoint* point)
 		{
-			const std::vector<SControlPoint>& graph = m_interpolation.getControlPoints();
+			const std::vector<SControlPoint>& graph = m_interpolation.getControlPoints(layer);
 
 			int id = -1;
 			for (int i = 0, n = (int)graph.size(); i < n; i++)
@@ -146,14 +146,14 @@ namespace Skylicht
 				return;
 
 			if (point->Type != SControlPoint::Linear)
-				convertPointAuto(id, point->Type);
+				convertPointAuto(layer, id, point->Type);
 
 			updateValue();
 		}
 
-		void CInterpolateCurvesController::convertPointAuto(int pointId, SControlPoint::EControlType type)
+		void CInterpolateCurvesController::convertPointAuto(int layer, int pointId, SControlPoint::EControlType type)
 		{
-			std::vector<SControlPoint>& graph = m_interpolation.getControlPoints();
+			std::vector<SControlPoint>& graph = m_interpolation.getControlPoints(layer);
 			SControlPoint& point = graph[pointId];
 
 			if (pointId == 0)
@@ -210,9 +210,9 @@ namespace Skylicht
 			}
 		}
 
-		void CInterpolateCurvesController::insertPoint(SControlPoint* after, core::vector2df& position)
+		void CInterpolateCurvesController::insertPoint(int layer, SControlPoint* after, core::vector2df& position)
 		{
-			std::vector<SControlPoint>& graph = m_interpolation.getControlPoints();
+			std::vector<SControlPoint>& graph = m_interpolation.getControlPoints(layer);
 
 			int id = -1;
 			for (int i = 0, n = (int)graph.size(); i < n; i++)
@@ -238,14 +238,14 @@ namespace Skylicht
 			point.Type = type;
 
 			if (type != SControlPoint::Linear)
-				convertPointAuto(id + 1, type);
+				convertPointAuto(layer, id + 1, type);
 
 			updateValue();
 		}
 
-		void CInterpolateCurvesController::deletePoint(SControlPoint* point)
+		void CInterpolateCurvesController::deletePoint(int layer, SControlPoint* point)
 		{
-			std::vector<SControlPoint>& graph = m_interpolation.getControlPoints();
+			std::vector<SControlPoint>& graph = m_interpolation.getControlPoints(layer);
 
 			int id = -1;
 			for (int i = 0, n = (int)graph.size(); i < n; i++)

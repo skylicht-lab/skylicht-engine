@@ -10,7 +10,8 @@ namespace Skylicht
 			m_editor(editor),
 			m_menu(menu),
 			m_point(NULL),
-			m_controller(NULL)
+			m_controller(NULL),
+			m_currentLayer(0)
 		{
 			GUI::CBoxLayout* boxLayout = new GUI::CBoxLayout(menu);
 			boxLayout->setPadding(GUI::SPadding(5.0, 5.0, -5.0, 5.0));
@@ -59,10 +60,11 @@ namespace Skylicht
 
 		}
 
-		void CValueSettingController::onShow(CInterpolateCurvesController* controller, SControlPoint* controlPoint)
+		void CValueSettingController::onShow(int layer, CInterpolateCurvesController* controller, SControlPoint* controlPoint)
 		{
 			m_controller = controller;
 			m_point = controlPoint;
+			m_currentLayer = layer;
 
 			m_valueX->setValue(m_point->Position.X, false);
 			m_valueY->setValue(m_point->Position.Y, false);
@@ -132,12 +134,12 @@ namespace Skylicht
 					m_point->Type = SControlPoint::Linear;
 				else if (label == L"Delete")
 				{
-					m_controller->deletePoint(m_point);
+					m_controller->deletePoint(m_currentLayer, m_point);
 					return;
 				}
 
 				if (m_point->Type != t)
-					m_controller->onPointChangeType(m_point);
+					m_controller->onPointChangeType(m_currentLayer, m_point);
 			}
 		}
 	}

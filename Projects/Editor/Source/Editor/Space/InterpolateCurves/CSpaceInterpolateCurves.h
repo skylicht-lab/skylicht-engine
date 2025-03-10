@@ -78,6 +78,8 @@ namespace Skylicht
 
 			std::vector<ArrayPoint2df> m_lines;
 
+			int m_currentLayer;
+
 		public:
 			CSpaceInterpolateCurves(GUI::CWindow* window, CEditor* editor);
 

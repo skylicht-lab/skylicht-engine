@@ -57,7 +57,7 @@ namespace Skylicht
 		GUI::CMenu* s_pickTextureMenu = NULL;
 		GUI::CMenu* s_pickFileMenu = NULL;
 
-		void CSerializableEditor::serializableToControl(CObjectSerializable* object, CSpaceProperty* ui, GUI::CBoxLayout* layout)
+		void initPickTextureMenu()
 		{
 			CEditor* editor = CEditor::getInstance();
 			if (s_pickTextureMenu == NULL)
@@ -71,6 +71,11 @@ namespace Skylicht
 				s_pickFileMenu = new GUI::CMenu(editor->getRootCanvas());
 				s_pickFileMenu->addItem(L"Clear Resource", GUI::ESystemIcon::Close);
 			}
+		}
+
+		void CSerializableEditor::serializableToControl(CObjectSerializable* object, CSpaceProperty* ui, GUI::CBoxLayout* layout)
+		{
+			initPickTextureMenu();
 
 			// add serializable data control
 			for (u32 i = 0, n = object->getNumProperty(); i < n; i++)

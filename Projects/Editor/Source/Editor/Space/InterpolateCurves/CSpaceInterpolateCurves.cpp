@@ -55,7 +55,8 @@ namespace Skylicht
 			m_hoverPoint(-1),
 			m_hoverState(0),
 			m_hoverLine(-1),
-			m_insertId(-1)
+			m_insertId(-1),
+			m_currentLayer(0)
 		{
 			m_controller = new CInterpolateCurvesController(this);
 
@@ -145,7 +146,7 @@ namespace Skylicht
 		void CSpaceInterpolateCurves::onAutoZoom(GUI::CBase* base)
 		{
 			core::vector2df min, max;
-			m_controller->getRangleMinMax(min, max);
+			m_controller->getRangleMinMax(m_currentLayer, min, max);
 
 			if (min == core::vector2df() && max == core::vector2df())
 				return;
@@ -282,13 +283,13 @@ namespace Skylicht
 		{
 			CGraphics2D* g = CGraphics2D::getInstance();
 
-			std::vector<SControlPoint>& points = m_controller->getInterpolator().getControlPoints();
+			std::vector<SControlPoint>& points = m_controller->getInterpolator().getControlPoints(m_currentLayer);
 			int n = (int)points.size();
 			if (n < 2)
 				return;
 
 			// compute all lines
-			m_controller->getInterpolator().computeLine(m_lines, 20);
+			m_controller->getInterpolator().computeLine(0, m_lines, 20);
 
 			// convert to view
 			for (u32 i = 0, n = (u32)m_lines.size(); i < n; i++)
@@ -499,7 +500,7 @@ namespace Skylicht
 			core::vector2df pos;
 			int i = 0;
 
-			std::vector<SControlPoint>& points = m_controller->getInterpolator().getControlPoints();
+			std::vector<SControlPoint>& points = m_controller->getInterpolator().getControlPoints(m_currentLayer);
 			for (SControlPoint& p : points)
 			{
 				pos = p.Position;
@@ -568,7 +569,7 @@ namespace Skylicht
 
 		void CSpaceInterpolateCurves::doDragPoint()
 		{
-			std::vector<SControlPoint>& points = m_controller->getInterpolator().getControlPoints();
+			std::vector<SControlPoint>& points = m_controller->getInterpolator().getControlPoints(m_currentLayer);
 
 			SControlPoint& dragPoint = points[m_hoverPoint];
 
@@ -631,10 +632,10 @@ namespace Skylicht
 			{
 				if (m_hoverPoint != -1)
 				{
-					std::vector<SControlPoint>& points = m_controller->getInterpolator().getControlPoints();
+					std::vector<SControlPoint>& points = m_controller->getInterpolator().getControlPoints(m_currentLayer);
 
 					m_valueSettingMenu->open(GUI::SPoint(x, y));
-					m_valueSettingController->onShow(m_controller, &points[m_hoverPoint]);
+					m_valueSettingController->onShow(m_currentLayer, m_controller, &points[m_hoverPoint]);
 				}
 				else if (m_hoverLine != -1)
 				{
@@ -673,8 +674,8 @@ namespace Skylicht
 
 		void CSpaceInterpolateCurves::onInsertCommand(GUI::CBase* base)
 		{
-			std::vector<SControlPoint>& points = m_controller->getInterpolator().getControlPoints();
-			m_controller->insertPoint(&points[m_insertId], m_insertPosition);
+			std::vector<SControlPoint>& points = m_controller->getInterpolator().getControlPoints(m_currentLayer);
+			m_controller->insertPoint(m_currentLayer, &points[m_insertId], m_insertPosition);
 		}
 
 		void CSpaceInterpolateCurves::doZoomIn(float dx, float dy)

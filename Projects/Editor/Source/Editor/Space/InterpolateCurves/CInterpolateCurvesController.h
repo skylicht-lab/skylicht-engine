@@ -64,17 +64,17 @@ namespace Skylicht
 				return m_interpolation;
 			}
 
-			void getRangleMinMax(core::vector2df& min, core::vector2df& max);
+			void getRangleMinMax(int layer, core::vector2df& min, core::vector2df& max);
 
 			void setDefaultLinear();
 
 			void setDefaultInOutCubic();
 
-			void onPointChangeType(SControlPoint* point);
+			void onPointChangeType(int layer, SControlPoint* point);
 
-			void insertPoint(SControlPoint* after, core::vector2df& position);
+			void insertPoint(int layer, SControlPoint* after, core::vector2df& position);
 
-			void deletePoint(SControlPoint* point);
+			void deletePoint(int layer, SControlPoint* point);
 
 			inline void clearGraph()
 			{
@@ -84,7 +84,7 @@ namespace Skylicht
 
 		protected:
 
-			void convertPointAuto(int pointId, SControlPoint::EControlType type);
+			void convertPointAuto(int layer, int pointId, SControlPoint::EControlType type);
 		};
 	}
 }
