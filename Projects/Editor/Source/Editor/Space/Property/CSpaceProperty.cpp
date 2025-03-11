@@ -329,6 +329,14 @@ namespace Skylicht
 			return button;
 		}
 
+		GUI::CButton* CSpaceProperty::addButton(GUI::CLayout* layout, const wchar_t* label)
+		{
+			GUI::CButton* button = new GUI::CButton(layout);
+			button->setLabel(label);
+			button->setTextAlignment(GUI::TextCenter);
+			return button;
+		}
+
 		GUI::CButton* CSpaceProperty::addButton(const wchar_t* label)
 		{
 			GUI::CBase* content = new GUI::CBase(m_content);

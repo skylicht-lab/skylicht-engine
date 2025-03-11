@@ -67,6 +67,11 @@ namespace Skylicht
 				return m_type;
 			}
 
+			inline CGroup* getGroup()
+			{
+				return m_group;
+			}
+
 			inline CModel* setStart(float f)
 			{
 				m_start1 = f;
@@ -114,9 +119,19 @@ namespace Skylicht
 				return m_start1;
 			}
 
+			void setStartValue1(float f)
+			{
+				m_start1 = f;
+			}
+
 			float getStartValue2()
 			{
 				return m_start2;
+			}
+
+			void setStartValue2(float f)
+			{
+				m_start2 = f;
 			}
 
 			float getEndValue1()
@@ -124,9 +139,19 @@ namespace Skylicht
 				return m_end1;
 			}
 
+			void setEndValue1(float f)
+			{
+				m_end1 = f;
+			}
+
 			float getEndValue2()
 			{
 				return m_end2;
+			}
+
+			void setEndValue2(float f)
+			{
+				m_end2 = f;
 			}
 
 			float getRandomStart();

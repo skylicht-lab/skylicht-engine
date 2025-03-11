@@ -124,6 +124,8 @@ namespace Skylicht
 
 			GUI::CButton* addButton(GUI::CBoxLayout* boxLayout, const wchar_t* label);
 
+			GUI::CButton* addButton(GUI::CLayout* layout, const wchar_t* label);
+
 			GUI::CDropdownBox* addDropBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, const std::wstring& value);
 
 			GUI::CCollapsibleGroup* addSubGroup(GUI::CBoxLayout* boxLayout);

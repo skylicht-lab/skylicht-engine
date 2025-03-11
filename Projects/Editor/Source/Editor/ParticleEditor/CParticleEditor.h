@@ -35,6 +35,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/GUI.h"
 
 #include "ParticleSystem/Particles/CParticleSerializable.h"
+#include "ParticleSystem/Particles/CModel.h"
 
 namespace Skylicht
 {
@@ -67,6 +68,10 @@ namespace Skylicht
 			{
 				return m_data;
 			}
+
+			SColor getColor(Particle::CModel* r, Particle::CModel* g, Particle::CModel* b, int state);
+
+			void setColor(const SColor& c, Particle::CModel* r, Particle::CModel* g, Particle::CModel* b, int state);
 		};
 	}
 }
