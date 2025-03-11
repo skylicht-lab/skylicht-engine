@@ -47,7 +47,7 @@ namespace Skylicht
 			m_useInstancing(true),
 			m_emission(false)
 		{
-			
+
 		}
 
 		IRenderer::~IRenderer()
@@ -130,8 +130,8 @@ namespace Skylicht
 			m_emission = object->get<bool>("emission", true);
 
 			SizeX = object->get<float>("sizeX", 1.0f);
-			SizeY = object->get<float>("SizeY", 1.0f);
-			SizeZ = object->get<float>("SizeZ", 1.0f);
+			SizeY = object->get<float>("sizeY", 1.0f);
+			SizeZ = object->get<float>("sizeZ", 1.0f);
 
 			CImageSourceProperty* texturePath = dynamic_cast<CImageSourceProperty*>(object->getProperty("texture"));
 			std::string src;

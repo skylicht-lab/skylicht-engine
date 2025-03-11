@@ -89,10 +89,14 @@ namespace Skylicht
 
 			m_menuGroup->addItemByPath(L"Renderer/Quad (Instancing)");
 			m_menuGroup->addItemByPath(L"Renderer/CPU Billboard");
+			m_menuGroup->addItemByPath(L"Renderer/No Renderer");
 
 			subMenu = m_menuGroup->getItemByPath(L"Renderer");
 			if (subMenu)
 				subMenu->getMenu()->OnCommand = BIND_LISTENER(&CContextMenuParticle::OnContextMenuGroupCommand, this);
+
+			m_menuGroup->addSeparator();
+			m_menuGroup->addItemByPath(L"Duplicate", GUI::ESystemIcon::Copy);
 
 			m_menuGroup->addSeparator();
 			m_menuGroup->addItem(L"Delete", GUI::ESystemIcon::Trash);
@@ -127,6 +131,8 @@ namespace Skylicht
 			subMenu = m_menuEmitter->getItemByLabel(L"Zone");
 			if (subMenu)
 				subMenu->getMenu()->OnCommand = BIND_LISTENER(&CContextMenuParticle::OnContextMenuZoneCommand, this);
+			m_menuEmitter->addSeparator();
+			m_menuEmitter->addItemByPath(L"Duplicate", GUI::ESystemIcon::Copy);
 			m_menuEmitter->addSeparator();
 			m_menuEmitter->addItem(L"Delete");
 			m_menuEmitter->OnCommand = BIND_LISTENER(&CContextMenuParticle::OnContextMenuEmitterCommand, this);
@@ -401,6 +407,12 @@ namespace Skylicht
 				m_group = NULL;
 				return;
 			}
+			else if (command == L"Duplicate")
+			{
+				Particle::CGroup* newGroup = m_particle->duplicateGroup(m_group);
+				CParticleController::getInstance()->onCreateGroup(newGroup);
+				return;
+			}
 
 			if (command == L"Quad (Instancing)")
 			{
@@ -481,6 +493,10 @@ namespace Skylicht
 
 				CPropertyController::getInstance()->setProperty(NULL);
 				CSceneController::getInstance()->getParticleGizmos()->reset();
+			}
+			else if (command == L"Duplicate")
+			{
+				m_particle->duplicateEmitter(m_group, m_emitter);
 			}
 
 			if (emitter)

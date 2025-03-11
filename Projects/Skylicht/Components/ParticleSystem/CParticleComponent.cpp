@@ -34,6 +34,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Culling/CCullingBBoxData.h"
 #include "Transform/CWorldInverseTransformData.h"
 
+#include "Utils/CStringImp.h"
+
 namespace Skylicht
 {
 	namespace Particle
@@ -93,6 +95,112 @@ namespace Skylicht
 		{
 			CComponentSystem::loadSerializable(object);
 			m_sourcePath = object->get<std::string>("source", "");
+		}
+
+		CGroup* CParticleComponent::duplicateGroup(CGroup* group)
+		{
+			CFactory* factory = getParticleFactory();
+
+			CObjectSerializable* object = group->createSerializable();
+			saveGroup(group, object);
+
+			CGroup* newGroup = m_data->createGroup();
+			newGroup->loadSerializable(object);
+
+			std::wstring name;
+
+			CObjectSerializable* emitters = (CObjectSerializable*)object->getProperty("Emitters");
+			if (emitters)
+			{
+				for (u32 i = 0, n = emitters->getNumProperty(); i < n; i++)
+				{
+					CObjectSerializable* emitterData = (CObjectSerializable*)emitters->getPropertyID(i);
+					name = CStringImp::convertUTF8ToUnicode(emitterData->Name.c_str());
+
+					CEmitter* emitter = factory->createEmitter(name);
+					if (emitter)
+					{
+						newGroup->addEmitter(emitter);
+						emitter->loadSerializable(emitterData);
+
+						CObjectSerializable* zoneData = (CObjectSerializable*)emitterData->getProperty("Zone");
+						if (zoneData && zoneData->getNumProperty() > 0)
+						{
+							zoneData = (CObjectSerializable*)zoneData->getPropertyID(0);
+							name = CStringImp::convertUTF8ToUnicode(zoneData->Name.c_str());
+							CZone* zone = factory->createZone(name);
+							if (zone)
+							{
+								emitter->setZone(zone);
+								zone->loadSerializable(zoneData);
+							}
+						}
+					}
+				}
+			}
+
+			CObjectSerializable* models = (CObjectSerializable*)object->getProperty("Models");
+			if (models)
+			{
+				for (u32 i = 0, n = models->getNumProperty(); i < n; i++)
+				{
+					CObjectSerializable* modelData = (CObjectSerializable*)models->getPropertyID(i);
+					name = CStringImp::convertUTF8ToUnicode(modelData->Name.c_str());
+
+					CModel* model = newGroup->createModel(name);
+					if (model)
+						model->loadSerializable(modelData);
+				}
+			}
+
+			CObjectSerializable* renderer = (CObjectSerializable*)object->getProperty("Renderer");
+			if (renderer && renderer->getNumProperty() > 0)
+			{
+				CObjectSerializable* rendererData = (CObjectSerializable*)renderer->getPropertyID(0);
+				if (rendererData)
+				{
+					name = CStringImp::convertUTF8ToUnicode(rendererData->Name.c_str());
+					IRenderer* renderer = factory->createRenderer(name);
+					if (renderer)
+					{
+						newGroup->setRenderer(renderer);
+						renderer->loadSerializable(rendererData);
+					}
+				}
+			}
+
+			delete object;
+			return newGroup;
+		}
+
+		CEmitter* CParticleComponent::duplicateEmitter(CGroup* group, CEmitter* emitter)
+		{
+			CFactory* factory = getParticleFactory();
+
+			CObjectSerializable* object = emitter->createSerializable();
+			std::wstring name = CStringImp::convertUTF8ToUnicode(object->Name.c_str());
+
+			CEmitter* newEmitter = factory->createEmitter(name);
+			if (newEmitter)
+			{
+				group->addEmitter(newEmitter);
+
+				newEmitter->loadSerializable(object);
+				if (emitter->getZone())
+				{
+					CObjectSerializable* zoneData = emitter->getZone()->createSerializable();
+					name = CStringImp::convertUTF8ToUnicode(zoneData->Name.c_str());
+
+					CZone* newZone = factory->createZone(name);
+					newEmitter->setZone(newZone);
+
+					newZone->loadSerializable(zoneData);
+					delete zoneData;
+				}
+			}
+
+			delete object;
+			return newEmitter;
 		}
 
 		bool CParticleComponent::save()
@@ -272,15 +380,7 @@ namespace Skylicht
 
 							if (!emitter)
 							{
-								if (attributeName == L"CNormalEmitter")
-									emitter = factory->createNormalEmitter(false);
-								else if (attributeName == L"CRandomEmitter")
-									emitter = factory->createRandomEmitter();
-								else if (attributeName == L"CSphericEmitter")
-									emitter = factory->createSphericEmitter(Transform::Oy, 0.0f, 45.0f * core::DEGTORAD);
-								else if (attributeName == L"CStraightEmitter")
-									emitter = factory->createStraightEmitter(Transform::Oy);
-
+								emitter = factory->createEmitter(attributeName);
 								if (emitter)
 								{
 									group->addEmitter(emitter);
@@ -293,21 +393,7 @@ namespace Skylicht
 							}
 							else
 							{
-								if (attributeName == L"CAABox")
-									zone = factory->createZone(AABox);
-								else if (attributeName == L"CCylinder")
-									zone = factory->createZone(Cylinder);
-								else if (attributeName == L"CLine")
-									zone = factory->createZone(Line);
-								else if (attributeName == L"CPoint")
-									zone = factory->createZone(Point);
-								else if (attributeName == L"CPolyLine")
-									zone = factory->createZone(PolyLine);
-								else if (attributeName == L"CRing")
-									zone = factory->createZone(Ring);
-								else if (attributeName == L"CSphere")
-									zone = factory->createZone(Sphere);
-
+								zone = factory->createZone(attributeName);
 								if (zone)
 								{
 									emitter->setZone(zone);
@@ -353,45 +439,9 @@ namespace Skylicht
 						{
 							attributeName = reader->getAttributeValue(L"type");
 
-							EParticleParams createParam = EParticleParams::NumParams;
-
-							if (attributeName == L"Scale")
-								createParam = EParticleParams::Scale;
-							else if (attributeName == L"ScaleX")
-								createParam = EParticleParams::ScaleX;
-							else if (attributeName == L"ScaleY")
-								createParam = EParticleParams::ScaleY;
-							else if (attributeName == L"ScaleZ")
-								createParam = EParticleParams::ScaleZ;
-							else if (attributeName == L"RotateX")
-								createParam = EParticleParams::RotateX;
-							else if (attributeName == L"RotateY")
-								createParam = EParticleParams::RotateY;
-							else if (attributeName == L"RotateZ")
-								createParam = EParticleParams::RotateZ;
-							else if (attributeName == L"ColorR")
-								createParam = EParticleParams::ColorR;
-							else if (attributeName == L"ColorG")
-								createParam = EParticleParams::ColorG;
-							else if (attributeName == L"ColorB")
-								createParam = EParticleParams::ColorB;
-							else if (attributeName == L"ColorA")
-								createParam = EParticleParams::ColorA;
-							else if (attributeName == L"Mass")
-								createParam = EParticleParams::Mass;
-							else if (attributeName == L"FrameIndex")
-								createParam = EParticleParams::FrameIndex;
-							else if (attributeName == L"RotateSpeedX")
-								createParam = EParticleParams::RotateSpeedX;
-							else if (attributeName == L"RotateSpeedY")
-								createParam = EParticleParams::RotateSpeedY;
-							else if (attributeName == L"RotateSpeedZ")
-								createParam = EParticleParams::RotateSpeedZ;
-
-							if (createParam != EParticleParams::NumParams)
+							CModel* model = group->createModel(attributeName);
+							if (model)
 							{
-								CModel* model = group->createModel(createParam);
-
 								CObjectSerializable* data = model->createSerializable();
 								data->parseSerializable(reader);
 								model->loadSerializable(data);
@@ -432,13 +482,7 @@ namespace Skylicht
 						{
 							attributeName = reader->getAttributeValue(L"type");
 
-							IRenderer* renderer = NULL;
-
-							if (attributeName == L"CQuadRenderer")
-								renderer = factory->createQuadRenderer();
-							else if (attributeName == L"CBillboardAdditiveRenderer")
-								renderer = factory->createBillboardAdditiveRenderer();
-
+							IRenderer* renderer = factory->createRenderer(attributeName);
 							if (renderer)
 							{
 								group->setRenderer(renderer);

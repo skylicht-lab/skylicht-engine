@@ -381,6 +381,50 @@ namespace Skylicht
 			m_particles.set_used(total - 1);
 		}
 
+		CModel* CGroup::createModel(const std::wstring& attributeName)
+		{
+			EParticleParams createParam = EParticleParams::NumParams;
+
+			if (attributeName == L"Scale")
+				createParam = EParticleParams::Scale;
+			else if (attributeName == L"ScaleX")
+				createParam = EParticleParams::ScaleX;
+			else if (attributeName == L"ScaleY")
+				createParam = EParticleParams::ScaleY;
+			else if (attributeName == L"ScaleZ")
+				createParam = EParticleParams::ScaleZ;
+			else if (attributeName == L"RotateX")
+				createParam = EParticleParams::RotateX;
+			else if (attributeName == L"RotateY")
+				createParam = EParticleParams::RotateY;
+			else if (attributeName == L"RotateZ")
+				createParam = EParticleParams::RotateZ;
+			else if (attributeName == L"ColorR")
+				createParam = EParticleParams::ColorR;
+			else if (attributeName == L"ColorG")
+				createParam = EParticleParams::ColorG;
+			else if (attributeName == L"ColorB")
+				createParam = EParticleParams::ColorB;
+			else if (attributeName == L"ColorA")
+				createParam = EParticleParams::ColorA;
+			else if (attributeName == L"Mass")
+				createParam = EParticleParams::Mass;
+			else if (attributeName == L"FrameIndex")
+				createParam = EParticleParams::FrameIndex;
+			else if (attributeName == L"RotateSpeedX")
+				createParam = EParticleParams::RotateSpeedX;
+			else if (attributeName == L"RotateSpeedY")
+				createParam = EParticleParams::RotateSpeedY;
+			else if (attributeName == L"RotateSpeedZ")
+				createParam = EParticleParams::RotateSpeedZ;
+
+			CModel* model = NULL;
+			if (createParam != EParticleParams::NumParams)
+				model = createModel(createParam);
+
+			return model;
+		}
+
 		CModel* CGroup::createModel(EParticleParams param)
 		{
 			CModel* m = getModel(param);

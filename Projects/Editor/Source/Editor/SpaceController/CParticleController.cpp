@@ -420,6 +420,11 @@ namespace Skylicht
 
 			m_particle->Play();
 
+			onCreateGroup(group);
+		}
+
+		void CParticleController::onCreateGroup(Particle::CGroup* group)
+		{
 			// Build hierachy node
 			CParticleHierachyNode* node = buildGroupHierachy(group);
 

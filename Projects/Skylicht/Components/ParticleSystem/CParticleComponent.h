@@ -108,6 +108,10 @@ namespace Skylicht
 
 			bool save();
 
+			CGroup* duplicateGroup(CGroup* group);
+
+			CEmitter* duplicateEmitter(CGroup* group, CEmitter* emitter);
+
 			DECLARE_GETTYPENAME(CParticleComponent)
 
 		protected:

@@ -88,6 +88,8 @@ namespace Skylicht
 			void onContextMenu(CParticleHierachyNode* node);
 
 			void createGroup(Particle::CParticleComponent* particle);
+
+			void onCreateGroup(Particle::CGroup* group);
 		};
 	}
 }

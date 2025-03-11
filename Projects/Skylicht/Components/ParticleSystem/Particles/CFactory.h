@@ -97,6 +97,12 @@ namespace Skylicht
 			CRing* createRingZone(const core::vector3df& pos, const core::vector3df& normal, float minRadius, float maxRadius);
 
 			void deleteZone(CZone* z);
+
+			CEmitter* createEmitter(const std::wstring& attributeName);
+
+			CZone* createZone(const std::wstring& attributeName);
+
+			IRenderer* createRenderer(const std::wstring& attributeName);
 		};
 	}
 }

@@ -282,6 +282,8 @@ namespace Skylicht
 				return m_particles.size();
 			}
 
+			CModel* createModel(const std::wstring& attributeName);
+
 			CModel* createModel(EParticleParams param);
 
 			CModel* getModel(EParticleParams param);

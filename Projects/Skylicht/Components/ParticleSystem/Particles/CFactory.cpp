@@ -226,5 +226,53 @@ namespace Skylicht
 				delete z;
 			}
 		}
+
+		CEmitter* CFactory::createEmitter(const std::wstring& attributeName)
+		{
+			CEmitter* emitter = NULL;
+
+			if (attributeName == L"CNormalEmitter")
+				emitter = createNormalEmitter(false);
+			else if (attributeName == L"CRandomEmitter")
+				emitter = createRandomEmitter();
+			else if (attributeName == L"CSphericEmitter")
+				emitter = createSphericEmitter(Transform::Oy, 0.0f, 45.0f * core::DEGTORAD);
+			else if (attributeName == L"CStraightEmitter")
+				emitter = createStraightEmitter(Transform::Oy);
+
+			return emitter;
+		}
+
+		CZone* CFactory::createZone(const std::wstring& attributeName)
+		{
+			CZone* zone = NULL;
+
+			if (attributeName == L"CAABox")
+				zone = createZone(AABox);
+			else if (attributeName == L"CCylinder")
+				zone = createZone(Cylinder);
+			else if (attributeName == L"CLine")
+				zone = createZone(Line);
+			else if (attributeName == L"CPoint")
+				zone = createZone(Point);
+			else if (attributeName == L"CPolyLine")
+				zone = createZone(PolyLine);
+			else if (attributeName == L"CRing")
+				zone = createZone(Ring);
+			else if (attributeName == L"CSphere")
+				zone = createZone(Sphere);
+
+			return zone;
+		}
+
+		IRenderer* CFactory::createRenderer(const std::wstring& attributeName)
+		{
+			IRenderer* renderer = NULL;
+			if (attributeName == L"CQuadRenderer")
+				renderer = createQuadRenderer();
+			else if (attributeName == L"CBillboardAdditiveRenderer")
+				renderer = createBillboardAdditiveRenderer();
+			return renderer;
+		}
 	}
 }
