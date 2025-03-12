@@ -143,9 +143,9 @@ namespace Skylicht
 		char elementName[512];
 
 		if (m_objectType == ObjectArray)
-			sprintf(elementName, "node type=\"%s\"", Name.c_str());
-		else
 			sprintf(elementName, "node type=\"%s\" array=\"true\"", Name.c_str());
+		else
+			sprintf(elementName, "node type=\"%s\"", Name.c_str());
 
 		writer->writeElement(CStringImp::convertUTF8ToUnicode(elementName).c_str(), false);
 		writer->writeLineBreak();

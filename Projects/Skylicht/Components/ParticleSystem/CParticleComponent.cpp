@@ -254,7 +254,6 @@ namespace Skylicht
 				emitters->addProperty(emitterData);
 				emitters->autoRelease(emitterData);
 
-
 				CObjectSerializable* zone = new CObjectSerializable("Zone");
 				emitterData->addProperty(zone);
 				emitterData->autoRelease(zone);
@@ -316,10 +315,12 @@ namespace Skylicht
 
 							if (attributeName == L"CParticleComponent")
 							{
+								std::string p = m_sourcePath;
 								CObjectSerializable* data = createSerializable();
 								data->parseSerializable(reader);
 								loadSerializable(data);
 								delete data;
+								m_sourcePath = p;
 							}
 							else if (attributeName == L"CGroup")
 							{
@@ -409,7 +410,14 @@ namespace Skylicht
 					break;
 				case io::EXN_ELEMENT_END:
 					if (nodeName == reader->getNodeName())
+					{
 						pos--;
+						if (pos == 1)
+						{
+							emitter = NULL;
+							zone = NULL;
+						}
+					}
 
 					if (pos == 0)
 						return;
