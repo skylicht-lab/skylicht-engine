@@ -245,13 +245,6 @@ namespace Skylicht
 							os::Printer::log(log);
 						}
 					}
-					else
-					{
-						char log[1024];
-						std::string name = CStringImp::convertUnicodeToUTF8(attributeName.c_str());
-						sprintf(log, "[CObjectSerializable::load] Can't load object '%s'", name.c_str());
-						os::Printer::log(log);
-					}
 
 					deserialize(attr);
 					done = true;
@@ -288,6 +281,28 @@ namespace Skylicht
 			{
 				((CObjectSerializable*)p)->load(reader);
 			}
+		}
+
+		done = false;
+
+		// read to end </node>
+		while (!done && reader->read())
+		{
+			switch (reader->getNodeType())
+			{
+			case io::EXN_ELEMENT_END:
+			{
+				if (nodeName == reader->getNodeName())
+					done = true;
+				break;
+			}
+			default:
+			{
+				os::Printer::log("[CObjectSerializable::load] not found '</node>'");
+				done = true;
+			}
+			break;
+			};
 		}
 
 		attr->drop();
