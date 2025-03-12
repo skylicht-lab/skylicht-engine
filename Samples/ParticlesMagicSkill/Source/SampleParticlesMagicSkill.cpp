@@ -157,7 +157,7 @@ void SampleParticlesMagicSkill::initTower(Particle::CParticleComponent* ps)
 	// FACTORY & ZONE
 	Particle::CFactory* factory = ps->getParticleFactory();
 
-	// GROUP: RING	
+	// GROUP: RING
 	Particle::CGroup* ringGroup = ps->createParticleGroup();
 
 	ringGroup->LifeMin = 3.0f;
@@ -183,6 +183,8 @@ void SampleParticlesMagicSkill::initTower(Particle::CParticleComponent* ps)
 	ring->SizeX = 2.0f;
 	ring->SizeY = 2.0f;
 	ring->SizeZ = 2.0f;
+	ring->setEmission(true);
+	ring->setEmissionIntensity(1.0f);
 	ringGroup->setRenderer(ring);
 
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/modular_aura06.png");
@@ -306,6 +308,8 @@ void SampleParticlesMagicSkill::initProjectiles(Particle::CParticleComponent* ps
 	arcane->SizeY = 0.4f;
 	arcane->SizeZ = 0.4f;
 	arcane->setEmission(true);
+	arcane->setEmissionIntensity(1.0f);
+
 	arcaneGroup->setRenderer(arcane);
 	arcaneGroup->setFollowParentTransform(true);
 	arcaneGroup->syncParentParams(true, true);
@@ -402,6 +406,7 @@ void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent* ps)
 	glow->SizeY = 1.2f;
 	glow->SizeZ = 1.2f;
 	glow->setEmission(true);
+	glow->setEmissionIntensity(1.0f);
 
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/Arcane/arcane_glow.png");
 	glow->setMaterialType(Particle::Additive, Particle::Camera);
@@ -454,6 +459,8 @@ void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent* ps)
 	sphere->SizeY = 0.3f;
 	sphere->SizeZ = 0.3f;
 	sphere->setEmission(true);
+	sphere->setEmissionIntensity(1.0f);
+
 	sphereGroup->setRenderer(sphere);
 	sphereGroup->Gravity.set(0.0f, 0.0f, 0.0f);
 
@@ -505,7 +512,7 @@ void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent* ps)
 	lingerGroup->addEmitter(lingerEmitter);
 	*/
 
-	// SUBGROUP: POINT	
+	// SUBGROUP: POINT
 	Particle::CSubGroup* pointGroup = ps->createParticleSubGroup(impactGroup);
 
 	Particle::CQuadRenderer* point = factory->createQuadRenderer();
@@ -513,6 +520,8 @@ void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent* ps)
 	point->SizeY = 0.2f;
 	point->SizeZ = 0.2f;
 	point->setEmission(true);
+	point->setEmissionIntensity(1.0f);
+
 	pointGroup->setRenderer(point);
 	pointGroup->Gravity.set(0.0f, -0.2f, 0.0f);
 

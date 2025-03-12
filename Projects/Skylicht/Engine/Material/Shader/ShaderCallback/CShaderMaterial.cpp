@@ -29,6 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	CMaterial* g_material = NULL;
+	SColorf g_colorIntensity(1.0f, 1.0f, 1.0f, 1.0f);
 
 	void CShaderMaterial::setMaterial(CMaterial* material)
 	{
@@ -38,6 +39,16 @@ namespace Skylicht
 	CMaterial* CShaderMaterial::getMaterial()
 	{
 		return g_material;
+	}
+
+	void CShaderMaterial::setColorIntensity(const SColorf& color)
+	{
+		g_colorIntensity = color;
+	}
+
+	SColorf CShaderMaterial::getColorIntensity()
+	{
+		return g_colorIntensity;
 	}
 
 	CShaderMaterial::CShaderMaterial()
@@ -64,6 +75,15 @@ namespace Skylicht
 				else
 					matRender->setShaderVariable(uniform->UniformShaderID, f, uniform->SizeOfUniform, video::EST_PIXEL_SHADER);
 			}
+		}
+		break;
+		case COLOR_INTENSITY:
+		{
+			float* f = &g_colorIntensity.r;
+			if (vertexShader == true)
+				matRender->setShaderVariable(uniform->UniformShaderID, f, uniform->SizeOfUniform, video::EST_VERTEX_SHADER);
+			else
+				matRender->setShaderVariable(uniform->UniformShaderID, f, uniform->SizeOfUniform, video::EST_PIXEL_SHADER);
 		}
 		break;
 		default:

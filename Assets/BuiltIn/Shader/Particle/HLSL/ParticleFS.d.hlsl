@@ -8,12 +8,18 @@ struct PS_INPUT
 	float2 tex0 : TEXCOORD0;
 };
 
+cbuffer cbPerFrame
+{
+	float4 uColorIntensity;
+};
+
+
 #include "../../PostProcessing/HLSL/LibToneMapping.hlsl"
 
 float4 main(PS_INPUT input) : SV_TARGET
 {
 	float4 color = uTexture.Sample(uTextureSampler, input.tex0);
-	float3 result = sRGB(color.rgb * input.color.rgb);
+	float3 result = sRGB(color.rgb * input.color.rgb * uColorIntensity.rgb);
 	
 	return float4(result, color.a * input.color.a);
 }

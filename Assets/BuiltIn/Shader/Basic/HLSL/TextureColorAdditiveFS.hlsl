@@ -8,8 +8,13 @@ struct PS_INPUT
 	float2 tex0 : TEXCOORD0;
 };
 
+cbuffer cbPerFrame
+{
+	float4 uColorIntensity;
+};
+
 float4 main(PS_INPUT input) : SV_TARGET
 {
-	float4 result = input.color * uTexDiffuse.Sample(uTexDiffuseSampler, input.tex0);
+	float4 result = input.color * uTexDiffuse.Sample(uTexDiffuseSampler, input.tex0) * uColorIntensity;
 	return result * input.color.a;
 }

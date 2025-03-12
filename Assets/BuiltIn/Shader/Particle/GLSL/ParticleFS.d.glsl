@@ -7,11 +7,13 @@ in vec4 varColor;
 
 out vec4 FragColor;
 
+uniform vec4 uColorIntensity;
+
 #include "../../PostProcessing/GLSL/LibToneMapping.glsl"
 
 void main(void)
 {
 	vec4 color = texture(uTexture, varTexCoord0.xy);
-	vec3 result = sRGB(color.rgb * varColor.rgb);
+	vec3 result = sRGB(color.rgb * varColor.rgb * uColorIntensity.rgb);
 	FragColor = vec4(result, color.a * varColor.a);
 }

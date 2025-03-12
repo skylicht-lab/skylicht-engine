@@ -45,7 +45,8 @@ namespace Skylicht
 			m_atlasNx(1),
 			m_atlasNy(1),
 			m_useInstancing(true),
-			m_emission(false)
+			m_emission(false),
+			m_emissionIntensity(1.0f)
 		{
 
 		}
@@ -96,6 +97,7 @@ namespace Skylicht
 			object->autoRelease(name);
 
 			object->autoRelease(new CBoolProperty(object, "emission", m_emission));
+			object->autoRelease(new CFloatProperty(object, "emissionIntensity", m_emissionIntensity, 0.0f, 10.0f));
 
 			object->autoRelease(new CFloatProperty(object, "sizeX", SizeX, 0.0f));
 			object->autoRelease(new CFloatProperty(object, "sizeY", SizeY, 0.0f));
@@ -128,6 +130,7 @@ namespace Skylicht
 			bool useCustom = m_useCustomMaterial;
 
 			m_emission = object->get<bool>("emission", true);
+			m_emissionIntensity = object->get<float>("emissionIntensity", 1.0f);
 
 			SizeX = object->get<float>("sizeX", 1.0f);
 			SizeY = object->get<float>("sizeY", 1.0f);

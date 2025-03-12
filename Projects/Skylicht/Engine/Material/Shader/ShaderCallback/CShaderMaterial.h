@@ -43,5 +43,9 @@ namespace Skylicht
 		static void setMaterial(CMaterial* material);
 
 		static CMaterial* getMaterial();
+
+		static void setColorIntensity(const SColorf& color);
+
+		static SColorf getColorIntensity();
 	};
 }

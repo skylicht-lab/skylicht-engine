@@ -42,7 +42,8 @@ namespace Skylicht
 			GravityValue(0.0f),
 			OrientationNormal(1.0f, 0.0f, 0.0f),
 			OrientationUp(0.0f, 1.0f, 0.0f),
-			Name(L"Group")
+			Name(L"Group"),
+			Visible(true)
 		{
 			m_particleSystem = new CParticleSystem();
 
@@ -79,6 +80,7 @@ namespace Skylicht
 		{
 			CObjectSerializable* object = CParticleSerializable::createSerializable();
 			object->autoRelease(new CStringProperty(object, "name", CStringImp::convertUnicodeToUTF8(Name.c_str()).c_str()));
+			object->autoRelease(new CBoolProperty(object, "visible", Visible));
 			object->autoRelease(new CFloatProperty(object, "friction", Friction, 0.0f));
 			object->autoRelease(new CFloatProperty(object, "lifeMin", LifeMin, 0.0f));
 			object->autoRelease(new CFloatProperty(object, "lifeMax", LifeMax, 0.0f));
@@ -94,6 +96,7 @@ namespace Skylicht
 			CParticleSerializable::loadSerializable(object);
 
 			Name = CStringImp::convertUTF8ToUnicode(object->get("name", std::string()).c_str());
+			Visible = object->get("visible", true);
 			Friction = object->get("friction", 0.0f);
 			LifeMin = object->get("lifeMin", 1.0f);
 			LifeMax = object->get("lifeMax", 2.0f);
@@ -161,6 +164,8 @@ namespace Skylicht
 
 		void CGroup::update(bool visible)
 		{
+			visible = visible && Visible;
+
 			float dt = getTimeStep();
 
 			updateLaunchEmitter();
@@ -305,6 +310,13 @@ namespace Skylicht
 					p.Rotation.Y = p.StartValue[t];
 				else if (t == Particle::RotateZ)
 					p.Rotation.Z = p.StartValue[t];
+				else if (t == Particle::FrameIndex)
+				{
+					if (!m->isRandomEnd())
+					{
+						p.EndValue[t] = p.StartValue[t];
+					}
+				}
 			}
 
 			for (IParticleCallback* cb : m_callback)

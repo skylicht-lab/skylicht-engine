@@ -49,6 +49,7 @@ namespace Skylicht
 			bool m_useCustomMaterial;
 			bool m_useInstancing;
 			bool m_emission;
+			float m_emissionIntensity;
 
 			std::string m_texturePath;
 			ITexture* m_texture;
@@ -89,9 +90,19 @@ namespace Skylicht
 				return m_emission;
 			}
 
-			bool useInstancing()
+			inline bool useInstancing()
 			{
 				return m_useInstancing;
+			}
+
+			inline void setEmissionIntensity(float b)
+			{
+				m_emissionIntensity = b;
+			}
+
+			inline float getEmissionIntensity()
+			{
+				return m_emissionIntensity;
 			}
 
 			inline const wchar_t* getName()

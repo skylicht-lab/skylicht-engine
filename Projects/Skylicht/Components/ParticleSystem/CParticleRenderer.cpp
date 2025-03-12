@@ -171,7 +171,7 @@ namespace Skylicht
 			for (u32 i = 0, n = data->Groups.size(); i < n; i++)
 			{
 				CGroup* g = groups[i];
-				if (g->getCurrentParticleCount() > 0)
+				if (g->getCurrentParticleCount() > 0 && g->Visible)
 				{
 					IRenderer* renderer = g->getRenderer();
 					if (renderer != NULL)
@@ -191,12 +191,19 @@ namespace Skylicht
 			for (u32 i = 0, n = data->Groups.size(); i < n; i++)
 			{
 				CGroup* g = groups[i];
-				if (g->getCurrentParticleCount() > 0)
+				if (g->getCurrentParticleCount() > 0 && g->Visible)
 				{
 					IRenderer* renderer = g->getRenderer();
 					if (renderer != NULL && renderer->isEmission())
 					{
+						SColorf color = CShaderMaterial::getColorIntensity();
+
+						float intensity = renderer->getEmissionIntensity();
+						CShaderMaterial::setColorIntensity(SColorf(intensity, intensity, intensity));
+
 						renderGroup(driver, g);
+
+						CShaderMaterial::setColorIntensity(color);
 					}
 				}
 			}

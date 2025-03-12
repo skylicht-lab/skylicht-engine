@@ -192,6 +192,7 @@ namespace Skylicht
 			"PARTICLE_ORIENTATION_NORMAL",
 			"LIGHTMAP_INDEX",
 			"TIME",
+			"COLOR_INTENSITY",
 			"NULL"
 		};
 

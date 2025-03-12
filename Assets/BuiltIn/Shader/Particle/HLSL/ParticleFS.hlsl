@@ -7,6 +7,10 @@ struct PS_INPUT
 	float4 color : COLOR0;
 	float2 tex0 : TEXCOORD0;
 };
+cbuffer cbPerFrame
+{
+	float4 uColorIntensity;
+};
 static const float gamma = 2.2;
 static const float invGamma = 1.0 / 2.2;
 float3 sRGB(float3 color)
@@ -20,6 +24,6 @@ float3 linearRGB(float3 color)
 float4 main(PS_INPUT input) : SV_TARGET
 {
 	float4 color = uTexture.Sample(uTextureSampler, input.tex0);
-	float3 result = sRGB(color.rgb * input.color.rgb);
+	float3 result = sRGB(color.rgb * input.color.rgb * uColorIntensity.rgb);
 	return float4(result, color.a * input.color.a);
 }

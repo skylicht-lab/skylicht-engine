@@ -137,6 +137,7 @@ namespace Skylicht
 			core::vector3df OrientationUp;
 
 			std::wstring Name;
+			bool Visible;
 
 		protected:
 			core::matrix4 m_world;

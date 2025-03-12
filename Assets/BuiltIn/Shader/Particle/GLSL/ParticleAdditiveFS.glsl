@@ -4,6 +4,7 @@ uniform sampler2D uTexture;
 in vec2 varTexCoord0;
 in vec4 varColor;
 out vec4 FragColor;
+uniform vec4 uColorIntensity;
 const float gamma = 2.2;
 const float invGamma = 1.0 / 2.2;
 vec3 sRGB(vec3 color)
@@ -18,6 +19,6 @@ void main(void)
 {
 	vec4 texColor = texture(uTexture, varTexCoord0.xy);
 	vec3 color = mix(vec3(0.0, 0.0, 0.0), texColor.rgb, texColor.a);
-	vec3 result = sRGB(color * varColor.rgb * varColor.a);
+	vec3 result = sRGB(color * varColor.rgb * varColor.a * uColorIntensity.rgb);
 	FragColor = vec4(result, 1.0);
 }

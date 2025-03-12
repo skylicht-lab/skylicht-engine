@@ -304,6 +304,7 @@ void CViewInit::initFireParticle(Particle::CParticleComponent* ps)
 
 	// enable render emission buffer
 	fire->setEmission(true);
+	fire->setEmissionIntensity(2.0f);
 
 	fireGroup->setRenderer(fire);
 	fireGroup->createModel(Particle::ColorR)->setStart(0.9f, 1.0f);
@@ -430,6 +431,7 @@ void CViewInit::initFireParticle(Particle::CParticleComponent* ps)
 	pointSpark->SizeX = 0.15f;
 	pointSpark->SizeY = 0.15f;
 	pointSpark->setEmission(true);
+	pointSpark->setEmissionIntensity(2.0f);
 
 	CInterpolator* sparkInterpolator = pointSparkGroup->createInterpolator();
 	sparkInterpolator->addEntry(0.0f, 0.0f);
@@ -514,8 +516,8 @@ void CViewInit::onUpdate()
 				// retry download
 				delete m_getFile;
 				m_getFile = NULL;
-			}
-		}
+	}
+	}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -527,7 +529,7 @@ void CViewInit::onUpdate()
 		m_initState = CViewInit::InitScene;
 		m_textInfo->setText("Init scene");
 #endif
-	}
+}
 	break;
 	case CViewInit::InitScene:
 	{
