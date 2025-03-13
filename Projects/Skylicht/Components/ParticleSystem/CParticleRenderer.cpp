@@ -217,8 +217,7 @@ namespace Skylicht
 			if (renderer->useInstancing() == true)
 			{
 				CParticleInstancing* instancing = group->getIntancing();
-				if (instancing->getInstanceBuffer() &&
-					instancing->getInstanceBuffer()->getVertexCount() > 1)
+				if (instancing->getInstanceBuffer())
 				{
 					buffer = group->getIntancing()->getMeshBuffer();
 				}
