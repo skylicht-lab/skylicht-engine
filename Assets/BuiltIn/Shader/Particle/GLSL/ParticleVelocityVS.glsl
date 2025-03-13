@@ -12,8 +12,8 @@ layout(location = 9) in vec4 inParticleRotation;
 layout(location = 10) in vec4 inParticleVelocity;
 
 uniform mat4 uMvpMatrix;
-uniform vec4 uViewUp;
-uniform vec4 uViewLook;
+uniform vec3 uViewUp;
+uniform vec3 uViewLook;
 
 out vec2 varTexCoord0;
 out vec4 varColor;

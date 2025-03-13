@@ -17,7 +17,7 @@ cbuffer cbPerObject
 {
 	float4x4 uMvpMatrix;
 	float4x4 uWorld;
-	float3 uNoiseParam;
+	float4 uNoiseParam;
 };
 
 #include "../../Noise/HLSL/LibNoise.hlsl"

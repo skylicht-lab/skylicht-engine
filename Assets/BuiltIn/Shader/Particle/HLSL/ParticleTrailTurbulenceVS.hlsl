@@ -16,7 +16,7 @@ cbuffer cbPerObject
 {
 	float4x4 uMvpMatrix;
 	float4x4 uWorld;
-	float3 uNoiseParam;
+	float4 uNoiseParam;
 };
 float hash(float3 p)
 {
