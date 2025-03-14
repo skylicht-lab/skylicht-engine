@@ -51,70 +51,74 @@ namespace Skylicht
 			layout->addSpace(5.0f);
 
 			ui->addButton(layout, L"Add Probe")->OnPress = [&](GUI::CBase* button)
-			{
-				CLightProbes* probes = (CLightProbes*)m_component;
-				CEntity* newProbe = probes->addLightProbe(core::vector3df());
+				{
+					CLightProbes* probes = (CLightProbes*)m_component;
+					CEntity* newProbe = probes->addLightProbe(core::vector3df());
 
-				CSceneController* sceneController = CSceneController::getInstance();
-				sceneController->updateTreeNode(m_gameObject);
-				sceneController->deselectAllOnHierachy();
-				sceneController->selectOnHierachy(newProbe);
-			};
+					CSceneController* sceneController = CSceneController::getInstance();
+					sceneController->updateTreeNode(m_gameObject);
+					sceneController->deselectAllOnHierachy();
+					sceneController->selectOnHierachy(newProbe);
+				};
 
 			layout->addSpace(5.0f);
 
 			ui->addButton(layout, L"Bake Lighting")->OnPress = [&](GUI::CBase* button)
-			{
-				CLightProbes* probesComponent = (CLightProbes*)m_component;
-
-				CSceneController* controller = CSceneController::getInstance();
-
-				CScene* scene = controller->getScene();
-				CZone* zone = controller->getZone();
-
-				IRenderPipeline* renderPipeline = controller->getRenderPipeLine();
-				if (renderPipeline == NULL)
-					return;
-
-				CGameObject* bakeCameraObj = zone->createEmptyObject();
-				CCamera* bakeCamera = bakeCameraObj->addComponent<CCamera>();
-				scene->updateAddRemoveObject();
-
-				std::vector<core::vector3df> positions;
-				std::vector<Lightmapper::CSH9> probes;
-				std::vector<core::vector3df> results;
-
-				CEntityManager* entityMgr = scene->getEntityManager();
-
-				if (probesComponent->getPositions(positions) > 0)
 				{
-					entityMgr->update();
+					CLightProbes* probesComponent = (CLightProbes*)m_component;
 
-					Lightmapper::CLightmapper::getInstance()->initBaker(32);
-					Lightmapper::CLightmapper::getInstance()->bakeProbes(
-						positions,
-						probes,
-						bakeCamera,
-						renderPipeline,
-						entityMgr
-					);
+					CSceneController* controller = CSceneController::getInstance();
 
-					for (Lightmapper::CSH9& sh : probes)
+					CScene* scene = controller->getScene();
+					CZone* zone = controller->getZone();
+
+					IRenderPipeline* renderPipeline = controller->getRenderPipeLine();
+					if (renderPipeline == NULL)
+						return;
+
+					controller->enablePostProcessing(false);
+
+					CGameObject* bakeCameraObj = zone->createEmptyObject();
+					CCamera* bakeCamera = bakeCameraObj->addComponent<CCamera>();
+					scene->updateAddRemoveObject();
+
+					std::vector<core::vector3df> positions;
+					std::vector<Lightmapper::CSH9> probes;
+					std::vector<core::vector3df> results;
+
+					CEntityManager* entityMgr = scene->getEntityManager();
+
+					if (probesComponent->getPositions(positions) > 0)
 					{
-						core::vector3df r[9];
-						sh.copyTo(r);
+						entityMgr->update();
 
-						for (int i = 0; i < 9; i++)
-							results.push_back(r[i]);
+						Lightmapper::CLightmapper::getInstance()->initBaker(32);
+						Lightmapper::CLightmapper::getInstance()->bakeProbes(
+							positions,
+							probes,
+							bakeCamera,
+							renderPipeline,
+							entityMgr
+						);
+
+						for (Lightmapper::CSH9& sh : probes)
+						{
+							core::vector3df r[9];
+							sh.copyTo(r);
+
+							for (int i = 0; i < 9; i++)
+								results.push_back(r[i]);
+						}
+
+						probesComponent->setSH(results);
+
+						entityMgr->setCamera(NULL);
 					}
 
-					probesComponent->setSH(results);
+					bakeCameraObj->remove();
 
-					entityMgr->setCamera(NULL);
-				}
-
-				bakeCameraObj->remove();
-			};
+					controller->enablePostProcessing(true);
+				};
 		}
 
 		void CLightProbesEditor::update()

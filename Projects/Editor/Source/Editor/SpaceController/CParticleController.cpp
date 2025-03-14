@@ -124,6 +124,9 @@ namespace Skylicht
 
 		CParticleHierachyNode* CParticleController::buildGroupHierachy(Particle::CGroup* group)
 		{
+			if (!m_hierachyNode)
+				return NULL;
+
 			CParticleHierachyNode* node = m_hierachyNode->addChild();
 			node->setTagData(group, CParticleHierachyNode::Group);
 			node->setParentData(group);
@@ -138,7 +141,7 @@ namespace Skylicht
 
 		CParticleHierachyNode* CParticleController::getNodeByTagData(void* data)
 		{
-			if (m_hierachyNode == NULL)
+			if (!m_hierachyNode)
 				return NULL;
 
 			return m_hierachyNode->getNodeByTag(data);
@@ -146,6 +149,9 @@ namespace Skylicht
 
 		void CParticleController::removeGroup(Particle::CGroup* group)
 		{
+			if (!m_hierachyNode)
+				return;
+
 			std::vector<CParticleHierachyNode*>& childs = m_hierachyNode->getChilds();
 			for (CParticleHierachyNode* child : childs)
 			{
@@ -159,6 +165,9 @@ namespace Skylicht
 
 		void CParticleController::updateGroupHierachy(Particle::CGroup* group)
 		{
+			if (!m_hierachyNode)
+				return;
+
 			CParticleHierachyNode* node = NULL;
 			std::vector<CParticleHierachyNode*> childs = m_hierachyNode->getChilds();
 			for (CParticleHierachyNode* child : childs)
@@ -187,6 +196,9 @@ namespace Skylicht
 
 		void CParticleController::updateGroupName()
 		{
+			if (!m_hierachyNode)
+				return;
+
 			std::vector<CParticleHierachyNode*>& childs = m_hierachyNode->getChilds();
 			for (CParticleHierachyNode* child : childs)
 			{

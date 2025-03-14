@@ -138,6 +138,12 @@ namespace Skylicht
 				return NULL;
 			}
 
+			inline void enablePostProcessing(bool b)
+			{
+				if (m_spaceScene)
+					return m_spaceScene->enablePostProcessing(b);
+			}
+
 			CSelectObjectSystem* getSelectObjectSystem()
 			{
 				return m_spaceScene->getSelectObjectSystem();

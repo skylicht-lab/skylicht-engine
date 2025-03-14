@@ -191,6 +191,12 @@ namespace Skylicht
 				return m_renderRP;
 			}
 
+			inline void enablePostProcessing(bool b)
+			{
+				if (m_rendering && m_postProcessor)
+					m_rendering->setPostProcessor(b ? m_postProcessor : NULL);
+			}
+
 			CCamera* getEditorCamera()
 			{
 				return m_editorCamera;
