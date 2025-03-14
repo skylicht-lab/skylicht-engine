@@ -47,8 +47,8 @@ namespace Skylicht
 		void CParticleInstancingSystem::update(CParticle* particles, int num, CGroup* group, float dt)
 		{
 			CVertexBuffer<SParticleInstance>* buffer = group->getIntancing()->getInstanceBuffer();
-
 			buffer->set_used(num);
+			buffer->setDirty();
 
 			if (num == 0)
 				return;
@@ -132,7 +132,7 @@ namespace Skylicht
 
 			if (num == 1)
 			{
-				// null particle, fix for AngleGLES
+				// null particle, fix for AngleGLES drawInstancing
 				data = vtx + 1;
 				data->Pos.X = 0.0f;
 				data->Pos.Y = 0.0f;
@@ -144,8 +144,6 @@ namespace Skylicht
 				data->UVScale.set(0.0f, 0.0f);
 				data->UVOffset.set(0.0f, 0.0f);
 			}
-
-			buffer->setDirty();
 		}
 	}
 }

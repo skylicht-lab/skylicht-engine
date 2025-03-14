@@ -66,55 +66,65 @@ namespace Skylicht
 
 		void CParticle::swap(CParticle& p)
 		{
-			float temp[NumParams];
-			u32 size = sizeof(float) * NumParams;
+			for (int i = 0; i < NumParams; i++)
+			{
+				float temp = Params[i];
+				Params[i] = p.Params[i];
+				p.Params[i] = temp;
 
-			memcpy(temp, Params, size);
-			memcpy(Params, p.Params, size);
-			memcpy(p.Params, temp, size);
+				temp = StartValue[i];
+				StartValue[i] = p.StartValue[i];
+				p.StartValue[i] = temp;
 
-			memcpy(temp, StartValue, size);
-			memcpy(StartValue, p.StartValue, size);
-			memcpy(p.StartValue, temp, size);
+				temp = EndValue[i];
+				EndValue[i] = p.EndValue[i];
+				p.EndValue[i] = temp;
+			}
 
-			memcpy(temp, EndValue, size);
-			memcpy(EndValue, p.EndValue, size);
-			memcpy(p.EndValue, temp, size);
+			int parentIndex = ParentIndex;
+			bool immortal = Immortal;
 
 			float age = Age;
 			float life = Life;
 			float lifeTime = LifeTime;
-			bool haveRotate = HaveRotate;
-			int parentIndex = ParentIndex;
 
-			core::vector3df lastPosition = LastPosition;
+			bool haveRotate = HaveRotate;
+			
 			core::vector3df position = Position;
 			core::vector3df rotation = Rotation;
 			core::vector3df velocity = Velocity;
+			core::vector3df lastPosition = LastPosition;
 			core::vector3df subEmitterDirection = SubEmitterDirection;
 
-			// note: 
-			// Dont swap [p.Index], just swap data
+			// note: dont swap [p.Index], just swap data
+			ParentIndex = p.ParentIndex;
 			Age = p.Age;
 			Life = p.Life;
 			LifeTime = p.LifeTime;
-			LastPosition = p.LastPosition;
+
+			HaveRotate = p.HaveRotate;
+
 			Position = p.Position;
 			Rotation = p.Rotation;
 			Velocity = p.Velocity;
-			HaveRotate = p.HaveRotate;
-			ParentIndex = p.ParentIndex;
+			LastPosition = p.LastPosition;
+
 			SubEmitterDirection = p.SubEmitterDirection;
+
+			p.ParentIndex = parentIndex;
+			p.Immortal = immortal;
 
 			p.Age = age;
 			p.Life = life;
 			p.LifeTime = lifeTime;
-			p.LastPosition = lastPosition;
+
+			p.HaveRotate = haveRotate;
+
 			p.Position = position;
 			p.Rotation = rotation;
 			p.Velocity = velocity;
-			p.HaveRotate = haveRotate;
-			p.ParentIndex = parentIndex;
+			p.LastPosition = lastPosition;
+
 			p.SubEmitterDirection = subEmitterDirection;
 		}
 	}

@@ -156,7 +156,6 @@ namespace Skylicht
 				CCullingData* culling = GET_ENTITY_DATA(entity, CCullingData);
 				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 
-				// render
 				if (culling->Visible == true)
 					renderParticleGroupEmission(data, transform->World);
 			}
@@ -217,7 +216,8 @@ namespace Skylicht
 			if (renderer->useInstancing() == true)
 			{
 				CParticleInstancing* instancing = group->getIntancing();
-				if (instancing->getInstanceBuffer())
+				if (instancing->getInstanceBuffer() &&
+					instancing->getInstanceBuffer()->getVertexCount() > 0)
 				{
 					buffer = group->getIntancing()->getMeshBuffer();
 				}
@@ -225,6 +225,8 @@ namespace Skylicht
 			else
 			{
 				buffer = group->getParticleBuffer()->getMeshBuffer();
+				if (buffer->getIndexBuffer()->getIndexCount() == 0)
+					buffer = NULL;
 			}
 
 			if (buffer)

@@ -27,11 +27,11 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	core::vector3df g_viewUp;
-	core::vector3df g_viewLook;
+	SVec4 g_viewUp;
+	SVec4 g_viewLook;
 
-	core::vector3df g_orientationNormal = core::vector3df(0.0f, 1.0f, 0.0f);
-	core::vector3df g_orientationUp = core::vector3df(1.0f, 0.0f, 0.0f);
+	SVec4 g_orientationNormal;
+	SVec4 g_orientationUp;
 
 	CShaderParticle::CShaderParticle()
 	{
@@ -45,32 +45,44 @@ namespace Skylicht
 
 	void CShaderParticle::setViewUp(const core::vector3df& up)
 	{
-		g_viewUp = up;
+		g_viewUp.X = up.X;
+		g_viewUp.Y = up.Y;
+		g_viewUp.Z = up.Z;
+		g_viewUp.W = 0.0f;
 	}
 
 	void CShaderParticle::setViewLook(const core::vector3df& look)
 	{
-		g_viewLook = look;
+		g_viewLook.X = look.X;
+		g_viewLook.Y = look.Y;
+		g_viewLook.Z = look.Z;
+		g_viewLook.W = 0.0f;
 	}
 
 	void CShaderParticle::setOrientationUp(const core::vector3df& up)
 	{
-		g_orientationUp = up;
+		g_orientationUp.X = up.X;
+		g_orientationUp.Y = up.Y;
+		g_orientationUp.Z = up.Z;
+		g_orientationUp.W = 0.0f;
 	}
 
 	void CShaderParticle::setOrientationNormal(const core::vector3df& normal)
 	{
-		g_orientationNormal = normal;
+		g_orientationNormal.X = normal.X;
+		g_orientationNormal.Y = normal.Y;
+		g_orientationNormal.Z = normal.Z;
+		g_orientationNormal.W = 0.0f;
 	}
 
 	core::vector3df CShaderParticle::getViewUp()
 	{
-		return g_viewUp;
+		return core::vector3df(g_viewUp.X, g_viewUp.Y, g_viewUp.Z);
 	}
 
 	core::vector3df CShaderParticle::getViewLook()
 	{
-		return g_viewLook;
+		return core::vector3df(g_viewLook.X, g_viewLook.Y, g_viewLook.Z);
 	}
 
 	void CShaderParticle::OnSetConstants(CShader* shader, SUniform* uniform, IMaterialRenderer* matRender, bool vertexShader)

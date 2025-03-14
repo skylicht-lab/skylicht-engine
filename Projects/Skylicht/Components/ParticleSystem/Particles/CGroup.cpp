@@ -215,7 +215,10 @@ namespace Skylicht
 				}
 			}
 
-			// update instancing buffer		
+			particles = m_particles.pointer();
+			numParticles = m_particles.size();
+
+			// update instancing buffer
 			if (visible == true && m_renderer != NULL)
 			{
 				if (m_renderer->useInstancing() == true)
@@ -317,6 +320,8 @@ namespace Skylicht
 						p.EndValue[t] = p.StartValue[t];
 					}
 				}
+
+				p.Params[t] = p.StartValue[t];
 			}
 
 			for (IParticleCallback* cb : m_callback)
@@ -379,7 +384,7 @@ namespace Skylicht
 			if (index >= total)
 				return;
 
-			if (index != total - 1)
+			if (total >= 2)
 			{
 				for (IParticleCallback* cb : m_callback)
 					cb->OnSwapParticleData(m_particles[index], m_particles.getLast());
