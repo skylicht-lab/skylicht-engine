@@ -43,7 +43,7 @@ namespace Skylicht
 
 #if defined(IOS) || defined(ANDROID)
 		// scale in the big screen size
-		style.ScaleAllSizes(2.0f);
+		style.ScaleAllSizes(4.0f);
 #endif
 
 		ImGui_Impl_Skylicht_Init();

@@ -101,8 +101,8 @@ namespace Skylicht
 			{
 				m_numTarget = 2;
 				core::dimension2du s = m_size;
-				do
-				{
+				// do
+				// {
 					s = s / 2;
 
 					// round for 4
@@ -110,7 +110,7 @@ namespace Skylicht
 					s.Height = (s.Height / 4) * 4;
 
 					m_rtt[m_numTarget++] = driver->addRenderTargetTexture(s, "rtt", ECF_A16B16G16R16F);
-				} while (s.Height > 512 && m_numTarget < 8);
+				// } while (s.Height > 512 && m_numTarget < 4);
 			}
 		}
 
@@ -271,17 +271,32 @@ namespace Skylicht
 		if (m_bloomEffect)
 		{
 			brightFilter(color, m_rtt[1], emission);
+			
 			blurDown(1, 2);
-
-			for (int i = 2; i < m_numTarget - 1; i++)
-				blurDown(i, i + 1);
-
-			for (int i = m_numTarget - 1; i > 2; i--)
-				blurUp(i, i - 1);
+			/*
+			if (m_numTarget > 4)
+			{
+				blurDown(2, 3);
+				blurDown(3, 4);
+				blurUp(4, 3);
+				blurUp(3, 2);
+				blurUp(2, 1);
+			}
+			else if (m_numTarget > 3)
+			{
+				blurDown(2, 3);
+				blurUp(3, 2);
+				blurUp(2, 1);
+			}
+			else
+			*/
+			{
+				blurUp(2, 1);
+			}
 
 			// bloom
 			m_bloomFilter->setTexture(0, color);
-			m_bloomFilter->setTexture(1, m_rtt[2]);
+			m_bloomFilter->setTexture(1, m_rtt[1]);
 			m_bloomFilter->applyMaterial(m_effectPass);
 
 			m_bloomFilter->setUniform("uBloomIntensity", m_bloomIntensity);
