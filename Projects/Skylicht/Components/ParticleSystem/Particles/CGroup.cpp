@@ -221,6 +221,14 @@ namespace Skylicht
 			// update instancing buffer
 			if (visible == true && m_renderer != NULL)
 			{
+				if (m_renderer->needUpdateMesh())
+				{
+					if (m_renderer->useInstancing() == true)
+						m_renderer->getParticleBuffer(m_instancing->getMeshBuffer());
+					else
+						m_renderer->getParticleBuffer(m_cpuBuffer->getMeshBuffer());
+				}
+
 				if (m_renderer->useInstancing() == true)
 					m_instancingSystem->update(particles, numParticles, this, dt);
 				else

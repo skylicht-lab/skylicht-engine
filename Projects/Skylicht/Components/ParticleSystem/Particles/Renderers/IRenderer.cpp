@@ -46,7 +46,8 @@ namespace Skylicht
 			m_atlasNy(1),
 			m_useInstancing(true),
 			m_emission(false),
-			m_emissionIntensity(1.0f)
+			m_emissionIntensity(1.0f),
+			m_needUpdateMesh(true)
 		{
 
 		}

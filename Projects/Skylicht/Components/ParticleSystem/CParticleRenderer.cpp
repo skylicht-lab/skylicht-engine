@@ -225,11 +225,9 @@ namespace Skylicht
 			else
 			{
 				buffer = group->getParticleBuffer()->getMeshBuffer();
-				if (buffer->getIndexBuffer()->getIndexCount() == 0)
-					buffer = NULL;
 			}
 
-			if (buffer)
+			if (buffer && buffer->getIndexBuffer()->getIndexCount() > 0)
 			{
 				CShaderParticle::setOrientationUp(group->OrientationUp);
 				CShaderParticle::setOrientationNormal(group->OrientationNormal);

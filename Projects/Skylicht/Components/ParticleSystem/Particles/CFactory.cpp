@@ -106,6 +106,13 @@ namespace Skylicht
 			return r;
 		}
 
+		CMeshParticleRenderer* CFactory::createMeshParticleRenderer()
+		{
+			CMeshParticleRenderer* r = new CMeshParticleRenderer();
+			m_renderers.push_back(r);
+			return r;
+		}
+
 		void CFactory::deleteRenderer(IRenderer* r)
 		{
 			std::vector<IRenderer*>::iterator i = std::find(m_renderers.begin(), m_renderers.end(), r);
@@ -272,6 +279,8 @@ namespace Skylicht
 				renderer = createQuadRenderer();
 			else if (attributeName == L"CBillboardAdditiveRenderer")
 				renderer = createBillboardAdditiveRenderer();
+			else if (attributeName == L"CMeshParticleRenderer")
+				renderer = createMeshParticleRenderer();
 			return renderer;
 		}
 	}

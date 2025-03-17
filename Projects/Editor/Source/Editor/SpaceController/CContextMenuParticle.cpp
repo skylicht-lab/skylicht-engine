@@ -89,6 +89,7 @@ namespace Skylicht
 
 			m_menuGroup->addItemByPath(L"Renderer/Quad (Instancing)");
 			m_menuGroup->addItemByPath(L"Renderer/CPU Billboard");
+			m_menuGroup->addItemByPath(L"Renderer/Mesh (Instancing)");
 			m_menuGroup->addItemByPath(L"Renderer/No Renderer");
 
 			subMenu = m_menuGroup->getItemByPath(L"Renderer");
@@ -107,6 +108,7 @@ namespace Skylicht
 			m_menuRenderer->OnCommand = BIND_LISTENER(&CContextMenuParticle::OnContextMenuGroupCommand, this);
 			m_menuRenderer->addItem(L"Quad (Instancing)");
 			m_menuRenderer->addItem(L"CPU Billboard");
+			m_menuRenderer->addItem(L"Mesh (Instancing)");
 			m_menuRenderer->addItem(L"No Renderer");
 
 			m_menuEmitters = new GUI::CMenu(canvas);
@@ -274,30 +276,28 @@ namespace Skylicht
 		{
 			Particle::IRenderer* renderer = m_group->getRenderer();
 
-			GUI::CMenuItem* r1 = menu->searchItemByLabel(L"Quad (Instancing)");
-			GUI::CMenuItem* r2 = menu->searchItemByLabel(L"CPU Billboard");
-			GUI::CMenuItem* r3 = menu->searchItemByLabel(L"No Renderer");
+			std::vector<GUI::CMenuItem*> items;
+			items.push_back(menu->searchItemByLabel(L"Quad (Instancing)"));
+			items.push_back(menu->searchItemByLabel(L"CPU Billboard"));
+			items.push_back(menu->searchItemByLabel(L"Mesh (Instancing)"));
+			items.push_back(menu->searchItemByLabel(L"No Renderer"));
 
-			if (renderer == NULL)
-			{
-				r1->setIcon(GUI::ESystemIcon::None);
-				r2->setIcon(GUI::ESystemIcon::None);
-				r3->setIcon(GUI::ESystemIcon::Check);
-			}
+			for (GUI::CMenuItem* i : items)
+				i->setIcon(GUI::ESystemIcon::None);
+
+			Particle::CQuadRenderer* quadRenderer = dynamic_cast<Particle::CQuadRenderer*>(renderer);
+			if (quadRenderer)
+				items[0]->setIcon(GUI::ESystemIcon::Check);
 			else
 			{
-				Particle::CQuadRenderer* quadRenderer = dynamic_cast<Particle::CQuadRenderer*>(renderer);
-				if (quadRenderer)
-				{
-					r1->setIcon(GUI::ESystemIcon::Check);
-					r2->setIcon(GUI::ESystemIcon::None);
-					r3->setIcon(GUI::ESystemIcon::None);
-				}
+				Particle::CBillboardAdditiveRenderer* billboardRenderer = dynamic_cast<Particle::CBillboardAdditiveRenderer*>(renderer);
+				if (billboardRenderer)
+					items[1]->setIcon(GUI::ESystemIcon::Check);
 				else
 				{
-					r1->setIcon(GUI::ESystemIcon::None);
-					r2->setIcon(GUI::ESystemIcon::Check);
-					r3->setIcon(GUI::ESystemIcon::None);
+					Particle::CMeshParticleRenderer* meshRenderer = dynamic_cast<Particle::CMeshParticleRenderer*>(renderer);
+					if (meshRenderer)
+						items[2]->setIcon(GUI::ESystemIcon::Check);
 				}
 			}
 		}
@@ -441,6 +441,21 @@ namespace Skylicht
 				{
 					factory->deleteRenderer(renderer);
 					m_group->setRenderer(factory->createBillboardAdditiveRenderer());
+					propretyController->setProperty(NULL);
+				}
+			}
+			else if (command == L"Mesh (Instancing)")
+			{
+				Particle::IRenderer* renderer = m_group->getRenderer();
+				Particle::CMeshParticleRenderer* meshRenderer = dynamic_cast<Particle::CMeshParticleRenderer*>(renderer);
+				if (meshRenderer)
+				{
+					return;
+				}
+				else
+				{
+					factory->deleteRenderer(renderer);
+					m_group->setRenderer(factory->createMeshParticleRenderer());
 					propretyController->setProperty(NULL);
 				}
 			}

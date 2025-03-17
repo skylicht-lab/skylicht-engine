@@ -160,7 +160,10 @@ namespace Skylicht
 				0.0f);
 			vertices[3].Color = white;
 
+			m_needUpdateMesh = false;
 			m_material->applyMaterial();
+
+			buffer->setDirty();
 		}
 
 		CObjectSerializable* CQuadRenderer::createSerializable()

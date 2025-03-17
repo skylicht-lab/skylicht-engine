@@ -50,6 +50,7 @@ namespace Skylicht
 		void CBillboardAdditiveRenderer::getParticleBuffer(IMeshBuffer* buffer)
 		{
 			// no need update buffer, just update material
+			m_needUpdateMesh = false;
 			m_material->applyMaterial();
 		}
 

@@ -1399,8 +1399,12 @@ namespace Skylicht
 				// Space is hide -> open
 				float w = 680.0f;
 				float h = 480.0f;
+
+				const std::wstring& label = item->getLabel();
+				getWorkspaceSize(label, w, h);
+
 				GUI::CDockableWindow* window = new GUI::CDockableWindow(m_dockPanel, 0.0f, 0.0f, w, h);
-				window->setCaption(item->getLabel());
+				window->setCaption(label);
 				window->setCenterPosition();
 				initWorkspace(window, window->getCaption());
 			}
@@ -1411,6 +1415,7 @@ namespace Skylicht
 			// Space is hide -> open
 			float w = 680.0f;
 			float h = 480.0f;
+			getWorkspaceSize(name, w, h);
 
 			GUI::CDockableWindow* window = new GUI::CDockableWindow(m_dockPanel, 0.0f, 0.0f, w, h);
 			window->setCaption(name);
@@ -1421,6 +1426,20 @@ namespace Skylicht
 				window->onCloseWindow();
 
 			return ret;
+		}
+
+		void CEditor::getWorkspaceSize(const std::wstring& name, float& w, float& h)
+		{
+			w = 680.0f;
+			h = 480.0f;
+
+			if (name == L"GUI Hierarchy" ||
+				name == L"Hierarchy" ||
+				name == L"Property" ||
+				name == L"Particle")
+			{
+				w = 300.0f;
+			}
 		}
 
 		void CEditor::OnCommandWindow(GUI::CBase* item)

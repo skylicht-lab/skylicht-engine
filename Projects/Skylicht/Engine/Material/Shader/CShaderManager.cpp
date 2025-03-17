@@ -152,6 +152,8 @@ namespace Skylicht
 		loadShader("BuiltIn/Shader/Particle/ParticleTrailTurbulenceAdditive.xml");
 		loadShader("BuiltIn/Shader/Particle/ParticleTrailTurbulenceAdditiveAlpha.xml");
 
+		loadShader("BuiltIn/Shader/Particle/ParticleMesh.xml");
+
 		loadShader("BuiltIn/Shader/SkySun/SkySun.xml");
 	}
 

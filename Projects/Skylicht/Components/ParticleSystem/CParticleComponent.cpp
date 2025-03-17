@@ -163,8 +163,8 @@ namespace Skylicht
 					IRenderer* renderer = factory->createRenderer(name);
 					if (renderer)
 					{
-						newGroup->setRenderer(renderer);
 						renderer->loadSerializable(rendererData);
+						newGroup->setRenderer(renderer);
 					}
 				}
 			}
@@ -493,12 +493,12 @@ namespace Skylicht
 							IRenderer* renderer = factory->createRenderer(attributeName);
 							if (renderer)
 							{
-								group->setRenderer(renderer);
-
 								CObjectSerializable* data = renderer->createSerializable();
 								data->parseSerializable(reader);
 								renderer->loadSerializable(data);
 								delete data;
+
+								group->setRenderer(renderer);
 							}
 						}
 					}

@@ -35,7 +35,8 @@ namespace Skylicht
 		enum ERenderer
 		{
 			Quad,
-			BillboardAddtive
+			BillboardAddtive,
+			MeshInstancing
 		};
 
 		class COMPONENT_API IRenderer : public CParticleSerializable
@@ -58,6 +59,8 @@ namespace Skylicht
 			u32 m_atlasNy;
 
 			std::string m_materialPath;
+
+			bool m_needUpdateMesh;
 
 		public:
 			float SizeX;
@@ -105,10 +108,17 @@ namespace Skylicht
 				return m_emissionIntensity;
 			}
 
+			inline bool needUpdateMesh()
+			{
+				return m_needUpdateMesh;
+			}
+
 			inline const wchar_t* getName()
 			{
 				if (m_type == Quad)
 					return L"Quad (Instancing)";
+				else if (m_type == MeshInstancing)
+					return L"Mesh (Instancing)";
 				else
 					return L"CPU Billboard";
 			}

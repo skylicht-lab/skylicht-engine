@@ -134,6 +134,8 @@ namespace Skylicht
 
 			CSpace* openWorkspace(const std::wstring& name);
 
+			void getWorkspaceSize(const std::wstring& name, float& w, float& h);
+
 		protected:
 
 			void initMenuBar();

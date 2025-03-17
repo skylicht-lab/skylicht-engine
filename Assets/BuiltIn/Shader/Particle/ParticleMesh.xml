@@ -1,0 +1,19 @@
+<shaderConfig name="ParticleMesh" baseShader="SOLID">
+	<uniforms>
+		<vs>
+			<uniform name="uVPMatrix" type="VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+			<uniform name="uWorld" type="WORLD" value="0" float="16" matrix="true"/>
+		</vs>
+		<fs>
+			<uniform name="uTexture" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
+			<uniform name="uColorIntensity" type="COLOR_INTENSITY" value="1.0, 1.0, 1.0, 1.0" float="4"/>
+		</fs>
+	</uniforms>
+	<customUI>
+		<ui control="UIGroup" name="Texture">
+			<ui control="UITexture" name="uTexture"/>
+		</ui>
+	</customUI>
+	<shader type="GLSL" vs="GLSL/ParticleMeshVS.glsl" fs="GLSL/ParticleFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/ParticleMeshVS.hlsl" fs="HLSL/ParticleFS.hlsl"/>
+</shaderConfig>

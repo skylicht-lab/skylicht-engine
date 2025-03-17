@@ -30,6 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Renderers/CQuadRenderer.h"
 #include "Renderers/CBillboardAdditiveRenderer.h"
+#include "Renderers/CMeshParticleRenderer.h"
 
 #include "Zones/CPoint.h"
 #include "Zones/CSphere.h"
@@ -75,6 +76,8 @@ namespace Skylicht
 			CQuadRenderer* createQuadRenderer();
 
 			CBillboardAdditiveRenderer* createBillboardAdditiveRenderer();
+
+			CMeshParticleRenderer* createMeshParticleRenderer();
 
 			void deleteRenderer(IRenderer* r);
 
