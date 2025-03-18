@@ -273,6 +273,7 @@ namespace Skylicht
 			brightFilter(color, m_rtt[1], emission);
 			
 			blurDown(1, 2);
+			
 			/*
 			if (m_numTarget > 4)
 			{
@@ -289,14 +290,14 @@ namespace Skylicht
 				blurUp(2, 1);
 			}
 			else
-			*/
 			{
 				blurUp(2, 1);
 			}
+			*/
 
 			// bloom
 			m_bloomFilter->setTexture(0, color);
-			m_bloomFilter->setTexture(1, m_rtt[1]);
+			m_bloomFilter->setTexture(1, m_rtt[2]);
 			m_bloomFilter->applyMaterial(m_effectPass);
 
 			m_bloomFilter->setUniform("uBloomIntensity", m_bloomIntensity);

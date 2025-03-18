@@ -28,6 +28,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Material/Shader/ShaderCallback/CShaderParticle.h"
 #include "Material/Shader/ShaderCallback/CShaderMaterial.h"
 
+#include "Material/Shader/ShaderCallback/CShaderSH.h"
+#include "Material/Shader/ShaderCallback/CShaderLighting.h"
+
 namespace Skylicht
 {
 	namespace Particle
@@ -136,7 +139,18 @@ namespace Skylicht
 
 				// render
 				if (culling->Visible == true)
+				{
+					CIndirectLightingData* lightingData = GET_ENTITY_DATA(entity, CIndirectLightingData);
+					if (lightingData != NULL)
+					{
+						if (lightingData->Type == CIndirectLightingData::SH9)
+							CShaderSH::setSH9(lightingData->SH, *lightingData->Intensity);
+						else if (lightingData->Type == CIndirectLightingData::AmbientColor)
+							CShaderLighting::setLightAmbient(lightingData->Color);
+					}
+
 					renderParticleGroup(data, transform->World);
+				}
 			}
 		}
 
@@ -157,7 +171,18 @@ namespace Skylicht
 				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 
 				if (culling->Visible == true)
+				{
+					CIndirectLightingData* lightingData = GET_ENTITY_DATA(entity, CIndirectLightingData);
+					if (lightingData != NULL)
+					{
+						if (lightingData->Type == CIndirectLightingData::SH9)
+							CShaderSH::setSH9(lightingData->SH, *lightingData->Intensity);
+						else if (lightingData->Type == CIndirectLightingData::AmbientColor)
+							CShaderLighting::setLightAmbient(lightingData->Color);
+					}
+
 					renderParticleGroupEmission(data, transform->World);
+				}
 			}
 		}
 

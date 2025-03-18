@@ -33,6 +33,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Culling/CCullingData.h"
 #include "Culling/CCullingBBoxData.h"
 #include "Transform/CWorldInverseTransformData.h"
+#include "IndirectLighting/CIndirectLightingData.h"
 
 #include "Utils/CStringImp.h"
 
@@ -62,6 +63,9 @@ namespace Skylicht
 
 			// add particle buffer data
 			m_data = entity->addData<CParticleBufferData>();
+
+			// indirect lighting (for CMeshParticleRenderer)
+			entity->addData<CIndirectLightingData>()->initSH();
 
 			// add culling
 			entity->addData<CCullingData>();

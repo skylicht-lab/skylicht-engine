@@ -207,6 +207,8 @@ namespace Skylicht
 
 					v = *vtx;
 					transform.transformVect(v.Pos);
+					transform.rotateVect(v.Normal);
+					v.Normal.normalize();
 
 					vb->addVertex(&v);
 				}
