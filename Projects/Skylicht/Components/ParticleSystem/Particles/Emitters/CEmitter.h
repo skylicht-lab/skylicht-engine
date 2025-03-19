@@ -62,6 +62,7 @@ namespace Skylicht
 			int m_tank;
 			float m_flow;
 			float m_lastFlow;
+			float m_flowLifeTime;
 			float m_forceMin;
 			float m_forceMax;
 			float m_fraction;
@@ -70,6 +71,7 @@ namespace Skylicht
 
 			float m_delay;
 			float m_waitDelay;
+			float m_lifeTime;
 
 			CZone* m_zone;
 
@@ -109,6 +111,7 @@ namespace Skylicht
 			{
 				m_tank = 0;
 				m_flow = 0;
+				m_lifeTime = 0.0f;
 			}
 
 			inline void setTank(int tank)
@@ -122,6 +125,7 @@ namespace Skylicht
 				setTank(m_lastTank);
 				setFlow(m_lastFlow);
 				m_waitDelay = m_delay;
+				m_lifeTime = 0.0f;
 			}
 
 			inline int getTank()

@@ -33,10 +33,24 @@ namespace Skylicht
 	{
 		class COMPONENT_API CMeshParticleRenderer : public IRenderer
 		{
+		public:
+			enum EBaseShaderType
+			{
+				Soild,
+				Additive,
+				Transparent
+			};
+
 		protected:
 			std::string m_meshFile;
 
 			IMeshBuffer* m_meshBuffer;
+
+			EBaseShaderType m_baseShaderType;
+
+			core::vector3df m_noiseScale;
+			SColor m_dissolveColor;
+			float m_dissolve;
 
 		public:
 			CMeshParticleRenderer();
@@ -52,6 +66,8 @@ namespace Skylicht
 			DECLARE_GETTYPENAME(CMeshParticleRenderer)
 
 			bool loadMesh(const char* meshFile);
+
+			void setMaterialType(EBaseShaderType shader);
 
 		protected:
 

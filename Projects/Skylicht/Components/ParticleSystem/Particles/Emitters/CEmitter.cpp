@@ -42,12 +42,14 @@ namespace Skylicht
 			m_lastFlow(10.0f),
 			m_forceMin(0.0f),
 			m_forceMax(1.0f),
+			m_flowLifeTime(0.0f),
 			m_active(true),
 			m_emitFullZone(true),
 			m_type(type),
 			m_zone(NULL),
 			m_delay(0.0f),
-			m_waitDelay(0.0f)
+			m_waitDelay(0.0f),
+			m_lifeTime(0.0f)
 		{
 			m_fraction = random(0.0f, 1.0f);
 		}
@@ -92,6 +94,7 @@ namespace Skylicht
 			CFloatProperty* delay = new CFloatProperty(object, "delay", m_delay, 0.0f);
 			delay->setUISpace(10.0f);
 			object->autoRelease(delay);
+			object->autoRelease(new CFloatProperty(object, "flowLifeTime", m_flowLifeTime, 0.0f));
 
 			return object;
 		}
@@ -112,6 +115,7 @@ namespace Skylicht
 			m_forceMin = object->get<float>("forceMin", 0.0f);
 			m_forceMax = object->get<float>("forceMax", 1.0f);
 			m_delay = object->get<float>("delay", 0.0f);
+			m_flowLifeTime = object->get<float>("flowLifeTime", 0.0f);
 		}
 
 		u32 CEmitter::updateNumber(float deltaTime)
@@ -123,6 +127,7 @@ namespace Skylicht
 			}
 
 			int nbBorn = 0;
+			m_lifeTime = m_lifeTime + deltaTime * 0.001f;
 
 			if (m_flow <= 0.0f)
 			{
@@ -131,14 +136,21 @@ namespace Skylicht
 			}
 			else if (m_tank != 0)
 			{
-				m_fraction += m_flow * deltaTime * 0.001f;
-				nbBorn = static_cast<int>(m_fraction);
-				if (m_tank > 0)
+				if (m_flowLifeTime > 0 && m_lifeTime > m_flowLifeTime)
 				{
-					nbBorn = core::min_(m_tank, nbBorn);
-					m_tank -= nbBorn;
+					nbBorn = 0;
 				}
-				m_fraction -= nbBorn;
+				else
+				{
+					m_fraction += m_flow * deltaTime * 0.001f;
+					nbBorn = static_cast<int>(m_fraction);
+					if (m_tank > 0)
+					{
+						nbBorn = core::min_(m_tank, nbBorn);
+						m_tank -= nbBorn;
+					}
+					m_fraction -= nbBorn;
+				}
 			}
 			else
 			{

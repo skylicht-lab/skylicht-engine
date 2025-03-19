@@ -1,4 +1,4 @@
-<shaderConfig name="ParticleMesh" baseShader="SOLID">
+<shaderConfig name="ParticleMeshTransparent" baseShader="TRANSPARENT_ALPHA_CHANNEL">
 	<uniforms>
 		<vs>
 			<uniform name="uVPMatrix" type="VIEW_PROJECTION" value="0" float="16" matrix="true"/>
@@ -7,8 +7,6 @@
 		<fs>
 			<uniform name="uTexture" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
 			<uniform name="uColorIntensity" type="COLOR_INTENSITY" value="1.0, 1.0, 1.0, 1.0" float="4"/>
-			<uniform name="uNoiseScale" type="MATERIAL_PARAM" valueIndex="0" value="5.0, 5.0, 5.0f, 0.04" float="4"/>
-			<uniform name="uDissolveColor" type="MATERIAL_PARAM" valueIndex="1" value="1.0, 0.6, 0.3, 0.0" float="4"/>
 			<uniform name="uLightColor" type="LIGHT_COLOR" value="1.0,1.0,1.0,1.0" float="4"/>
 			<uniform name="uLightDirection" type="WORLD_LIGHT_DIRECTION" value="0" float="4"/>
 			<uniform name="uSHConst" type="SH_CONST" value="0" float="4" array="4"/>
@@ -19,6 +17,6 @@
 			<ui control="UITexture" name="uTexture"/>
 		</ui>
 	</customUI>
-	<shader type="GLSL" vs="GLSL/ParticleMeshVS.glsl" fs="GLSL/ParticleMeshFS.glsl" fs_source="GLSL/ParticleMeshFS.d.glsl" define="SOILD;LIGHTING;DISSOLVE"/>
-	<shader type="HLSL" vs="HLSL/ParticleMeshVS.hlsl" fs="HLSL/ParticleMeshFS.hlsl" fs_source="HLSL/ParticleMeshFS.d.hlsl" define="SOILD;LIGHTING;DISSOLVE"/>
+	<shader type="GLSL" vs="GLSL/ParticleMeshVS.glsl" fs="GLSL/ParticleMeshAddtiveFS.glsl" fs_source="GLSL/ParticleMeshFS.d.glsl" define="LIGHTING"/>
+	<shader type="HLSL" vs="HLSL/ParticleMeshVS.hlsl" fs="HLSL/ParticleMeshAddtiveFS.hlsl" fs_source="HLSL/ParticleMeshFS.d.hlsl" define="LIGHTING"/>
 </shaderConfig>

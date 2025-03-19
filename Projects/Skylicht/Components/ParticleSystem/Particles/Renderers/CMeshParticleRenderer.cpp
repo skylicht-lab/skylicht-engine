@@ -32,11 +32,18 @@ namespace Skylicht
 	namespace Particle
 	{
 		CMeshParticleRenderer::CMeshParticleRenderer() :
-			IRenderer(MeshInstancing)
+			IRenderer(MeshInstancing),
+			m_baseShaderType(Soild),
+			m_dissolve(0.04),
+			m_noiseScale(5.0f, 5.0f, 5.0f),
+			m_dissolveColor(255, 255, 150, 75)
 		{
 			m_meshBuffer = new CMeshBuffer<S3DVertex>(getVideoDriver()->getVertexDescriptor(EVT_STANDARD), EIT_16BIT);
 
 			m_material = new CMaterial("Particle", "BuiltIn/Shader/Particle/ParticleMesh.xml");
+
+			setMaterialType(CMeshParticleRenderer::Soild);
+
 			setTexturePath("BuiltIn/Textures/NullTexture.png");
 		}
 
@@ -73,7 +80,22 @@ namespace Skylicht
 		{
 			CObjectSerializable* object = IRenderer::createSerializable();
 
-			object->autoRelease(new CFilePathProperty(object, "mesh", m_meshFile.c_str(), CMeshManager::getMeshExts()));
+			CEnumProperty<EBaseShaderType>* shaderType = new CEnumProperty<EBaseShaderType>(object, "shaderType", m_baseShaderType);
+			shaderType->setUIHeader("Default Material");
+			shaderType->addEnumString("Soild", EBaseShaderType::Soild);
+			shaderType->addEnumString("Additive", EBaseShaderType::Additive);
+			shaderType->addEnumString("Transparent", EBaseShaderType::Transparent);
+			object->autoRelease(shaderType);
+
+			CVector3Property* noiseScale = new CVector3Property(object, "noiseScale", m_noiseScale);
+			noiseScale->setUIHeader("Soild dissolver shader");
+			object->autoRelease(noiseScale);
+			object->autoRelease(new CFloatProperty(object, "dissolver", m_dissolve, 0.0f, 0.2f));
+			object->autoRelease(new CColorProperty(object, "dissolverColor", m_dissolveColor));
+
+			CFilePathProperty* mesh = new CFilePathProperty(object, "mesh", m_meshFile.c_str(), CMeshManager::getMeshExts());
+			mesh->setUIHeader("Mesh resource");
+			object->autoRelease(mesh);
 
 			return object;
 		}
@@ -82,13 +104,43 @@ namespace Skylicht
 		{
 			IRenderer::loadSerializable(object);
 
-			std::string meshFile = object->get<std::string>("mesh", "");
+			m_noiseScale = object->get<core::vector3df>("noiseScale", core::vector3df(10.0f, 10.0f, 10.0f));
+			m_dissolve = object->get<float>("dissolver", 0.04f);
+			m_dissolveColor = object->get<SColor>("dissolverColor", SColor(255, 255, 150, 75));
 
+			EBaseShaderType shaderType = object->get<EBaseShaderType>("shaderType", EBaseShaderType::Soild);
+			setMaterialType(shaderType);
+
+			std::string meshFile = object->get<std::string>("mesh", "");
 			if (meshFile != m_meshFile)
 			{
 				m_meshFile = meshFile;
 				if (!m_meshFile.empty())
 					loadMesh(m_meshFile.c_str());
+			}
+		}
+
+		void CMeshParticleRenderer::setMaterialType(EBaseShaderType shader)
+		{
+			m_baseShaderType = shader;
+
+			if (m_baseShaderType == Soild)
+				m_material->changeShader("BuiltIn/Shader/Particle/ParticleMesh.xml");
+			else if (m_baseShaderType == Additive)
+				m_material->changeShader("BuiltIn/Shader/Particle/ParticleMeshAddtive.xml");
+			else if (m_baseShaderType == Transparent)
+				m_material->changeShader("BuiltIn/Shader/Particle/ParticleMeshTransparent.xml");
+
+			if (m_baseShaderType == Soild)
+			{
+				float noiseScale[4];
+				noiseScale[0] = m_noiseScale.X;
+				noiseScale[1] = m_noiseScale.Y;
+				noiseScale[2] = m_noiseScale.Z;
+				noiseScale[3] = m_dissolve;
+				m_material->setUniform4("uNoiseScale", noiseScale);
+				m_material->setUniform4("uDissolveColor", m_dissolveColor);
+				m_material->updateShaderParams();
 			}
 		}
 
