@@ -20,6 +20,7 @@ struct VS_OUTPUT
 	float4 color : COLOR0;
 	float2 tex0 : TEXCOORD0;
 	float3 worldNormal: WORLDNORMAL;
+	float3 vertexPos: VERTEX_POSITION;
 };
 
 cbuffer cbPerObject
@@ -68,6 +69,7 @@ VS_OUTPUT main(VS_INPUT input)
 	float4 worldNormal = mul(float4(input.norm, 0.0), world);
 		
 	output.pos = mul(worldPos, uVPMatrix);
+	output.vertexPos = input.pos.xyz;
 	output.worldNormal = normalize(worldNormal.xyz);
 	output.color = input.particleColor;
 	output.tex0 = input.tex0 * input.particleUVScale + input.particleUVOffset;

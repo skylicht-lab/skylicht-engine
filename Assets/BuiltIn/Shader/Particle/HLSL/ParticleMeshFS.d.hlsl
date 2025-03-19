@@ -7,11 +7,16 @@ struct PS_INPUT
 	float4 color : COLOR0;
 	float2 tex0 : TEXCOORD0;
 	float3 worldNormal: WORLDNORMAL;
+	float3 vertexPos: VERTEX_POSITION;
 };
 
 cbuffer cbPerFrame
 {
 	float4 uColorIntensity;
+#ifdef DISSOLVE
+	float4 uNoiseScale;
+	float4 uDissolveColor;
+#endif	
 #ifdef LIGHTING
 	float4 uLightColor;
 	float4 uLightDirection;	
@@ -20,15 +25,32 @@ cbuffer cbPerFrame
 };
 
 #include "../../PostProcessing/HLSL/LibToneMapping.hlsl"
+
 #ifdef LIGHTING
 #include "../../SHAmbient/HLSL/SHAmbient.hlsl"
 static const float PI = 3.1415926;
+#endif
+
+#ifdef DISSOLVE
+#include "../../Noise/HLSL/LibNoise.hlsl"
 #endif
 
 float4 main(PS_INPUT input) : SV_TARGET
 {
 	float4 texColor = uTexture.Sample(uTextureSampler, input.tex0);
 	float3 color = sRGB(texColor.rgb * input.color.rgb * uColorIntensity.rgb);
+	float alpha = texColor.a * input.color.a;
+	
+#ifdef DISSOLVE
+	float n = pnoise(input.vertexPos * uNoiseScale.xyz);
+	n = 0.5 + 0.5*n;
+	
+	float dissolve = n - (1.0 - alpha);
+	if (dissolve <= 0.0)
+		discard;
+		
+	color += sRGB(uDissolveColor.rgb) * step(dissolve, uNoiseScale.w) * n;
+#endif
 	
 #ifdef LIGHTING
 	// Direction lighting
@@ -38,8 +60,8 @@ float4 main(PS_INPUT input) : SV_TARGET
 	
 	// SH4 Ambient
 	float3 ambientLighting = shAmbient(input.worldNormal);
-	color += sRGB(ambientLighting) * texColor.rgb / PI;
+	color += sRGB(ambientLighting) * color / PI;
 #endif
 	
-	return float4(color, texColor.a * input.color.a);
+	return float4(color, texColor.a * alpha);
 }

@@ -17,6 +17,7 @@ uniform mat4 uWorld;
 out vec2 varTexCoord0;
 out vec4 varColor;
 out vec3 varWorldNormal;
+out vec3 varVertexPos;
 
 // Copilot: can you help me write the code construct mat4 (GLSL) from position, scale
 // Can you help me write the code construct mat4 from rotation (yaw, pitch, roll)
@@ -57,5 +58,6 @@ void main(void)
 	vec4 worldNormal = world * vec4(inNormal, 1.0);
 	
 	varWorldNormal = normalize(worldNormal.xyz);
+	varVertexPos = inPosition.xyz;
 	gl_Position = uVPMatrix * worldPos;
 }

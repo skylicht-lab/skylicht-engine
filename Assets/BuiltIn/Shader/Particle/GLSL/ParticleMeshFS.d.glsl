@@ -5,10 +5,16 @@ uniform sampler2D uTexture;
 in vec2 varTexCoord0;
 in vec4 varColor;
 in vec3 varWorldNormal;
+in vec3 varVertexPos;
 
 out vec4 FragColor;
 
 uniform vec4 uColorIntensity;
+
+#ifdef DISSOLVE
+uniform vec4 uNoiseScale;
+unifrom vec4 uDissolveColor;
+#endif
 
 #ifdef LIGHTING
 uniform vec4 uLightColor;
@@ -20,14 +26,29 @@ uniform vec4 uSHConst[4];
 
 #ifdef LIGHTING
 #include "../../SHAmbient/GLSL/SHAmbient.glsl"
+const float PI = 3.1415926;
 #endif
 
-const float PI = 3.1415926;
+#ifdef DISSOLVE
+#include "../../Noise/GLSL/LibNoise.glsl"
+#endif
 
 void main(void)
 {
 	vec4 texColor = texture(uTexture, varTexCoord0.xy);
 	vec3 color = sRGB(texColor.rgb * varColor.rgb * uColorIntensity.rgb);
+	float alpha = texColor.a * varColor.a;
+	
+#ifdef DISSOLVE
+	float n = pnoise(varVertexPos * uNoiseScale.xyz);
+	n = 0.5 + 0.5*n;
+	
+	float dissolve = n - (1.0 - alpha);
+	if (dissolve <= 0.0)
+		discard;
+	
+	color += sRGB(uDissolveColor.rgb) * step(dissolve, uNoiseScale.w) * n;
+#endif
 	
 #ifdef LIGHTING
 	// Direction lighting
@@ -37,8 +58,8 @@ void main(void)
 	
 	// SH4 Ambient
 	vec3 ambientLighting = shAmbient(varWorldNormal);
-	color += sRGB(ambientLighting) * texColor.rgb / PI;
+	color += sRGB(ambientLighting) * color / PI;
 #endif	
 	
-	FragColor = vec4(color, texColor.a * varColor.a);
+	FragColor = vec4(color, alpha);
 }
