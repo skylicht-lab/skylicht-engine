@@ -83,6 +83,7 @@ namespace Skylicht
 			CEnumProperty<EBaseShaderType>* shaderType = new CEnumProperty<EBaseShaderType>(object, "shaderType", m_baseShaderType);
 			shaderType->setUIHeader("Default Material");
 			shaderType->addEnumString("Soild", EBaseShaderType::Soild);
+			shaderType->addEnumString("Color", EBaseShaderType::SoildColor);
 			shaderType->addEnumString("Additive", EBaseShaderType::Additive);
 			shaderType->addEnumString("Transparent", EBaseShaderType::Transparent);
 			object->autoRelease(shaderType);
@@ -126,12 +127,14 @@ namespace Skylicht
 
 			if (m_baseShaderType == Soild)
 				m_material->changeShader("BuiltIn/Shader/Particle/ParticleMesh.xml");
+			else if (m_baseShaderType == SoildColor)
+				m_material->changeShader("BuiltIn/Shader/Particle/ParticleMeshColor.xml");
 			else if (m_baseShaderType == Additive)
 				m_material->changeShader("BuiltIn/Shader/Particle/ParticleMeshAddtive.xml");
 			else if (m_baseShaderType == Transparent)
 				m_material->changeShader("BuiltIn/Shader/Particle/ParticleMeshTransparent.xml");
 
-			if (m_baseShaderType == Soild)
+			if (m_baseShaderType == Soild || m_baseShaderType == SoildColor)
 			{
 				float noiseScale[4];
 				noiseScale[0] = m_noiseScale.X;

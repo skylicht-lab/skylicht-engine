@@ -35,9 +35,16 @@ const float PI = 3.1415926;
 
 void main(void)
 {
+#ifdef SOILD_COLOR
+	vec4 texColor = vec4(varColor.rgb, 1.0f);
+#else
 	vec4 texColor = texture(uTexture, varTexCoord0.xy);
-#ifdef SOILD
+#endif
+
+#if defined(SOILD)
 	vec3 color = sRGB(texColor.rgb * varColor.rgb);
+#elif defined(SOILD_COLOR)
+	vec3 color = sRGB(texColor.rgb);
 #else
 	vec3 color = sRGB(texColor.rgb * varColor.rgb * uColorIntensity.rgb);
 #endif
@@ -61,7 +68,7 @@ void main(void)
 	color = directionalLight * color * 0.3;
 	
 	// SH4 Ambient
-	vec3 ambientLighting = shAmbient(varWorldNormal);
+	vec3 ambientLighting = shAmbient(varWorldNormal);	
 	color += sRGB(ambientLighting * texColor.rgb) / PI;
 #endif	
 	

@@ -37,6 +37,7 @@ namespace Skylicht
 			enum EBaseShaderType
 			{
 				Soild,
+				SoildColor,
 				Additive,
 				Transparent
 			};

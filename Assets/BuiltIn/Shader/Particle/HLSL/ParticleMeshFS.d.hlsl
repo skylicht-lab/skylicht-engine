@@ -37,13 +37,22 @@ static const float PI = 3.1415926;
 
 float4 main(PS_INPUT input) : SV_TARGET
 {
+#ifdef SOILD_COLOR
+	float4 texColor = float4(input.color.rgb, 1.0f);
+#else
 	float4 texColor = uTexture.Sample(uTextureSampler, input.tex0);
-#ifdef SOILD
+#endif
+
+#if defined(SOILD)
 	float3 color = sRGB(texColor.rgb * input.color.rgb);
+#elif defined(SOILD_COLOR)
+	float3 color = sRGB(texColor.rgb);
 #else	
 	float3 color = sRGB(texColor.rgb * input.color.rgb * uColorIntensity.rgb);
 #endif
+
 	float alpha = texColor.a * input.color.a;
+
 	
 #ifdef DISSOLVE
 	float n = pnoise(input.vertexPos * uNoiseScale.xyz);
