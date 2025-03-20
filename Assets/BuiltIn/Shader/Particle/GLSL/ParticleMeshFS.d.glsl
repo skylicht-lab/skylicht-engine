@@ -57,8 +57,6 @@ void main(void)
 	float dissolve = n - (1.0 - alpha);
 	if (dissolve <= 0.0)
 		discard;
-	
-	color += sRGB(uDissolveColor.rgb * uColorIntensity.rgb) * step(dissolve, uNoiseScale.w) * n;
 #endif
 	
 #ifdef LIGHTING
@@ -70,6 +68,10 @@ void main(void)
 	// SH4 Ambient
 	vec3 ambientLighting = shAmbient(varWorldNormal);	
 	color += sRGB(ambientLighting * texColor.rgb) / PI;
+#endif	
+	
+#ifdef DISSOLVE
+	color += sRGB(uDissolveColor.rgb * uColorIntensity.rgb) * step(dissolve, uNoiseScale.w) * n;
 #endif	
 	
 	FragColor = vec4(color, alpha);

@@ -61,8 +61,6 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float dissolve = n - (1.0 - alpha);
 	if (dissolve <= 0.0)
 		discard;
-		
-	color += sRGB(uDissolveColor.rgb * uColorIntensity.rgb) * step(dissolve, uNoiseScale.w) * n;
 #endif
 	
 #ifdef LIGHTING
@@ -75,6 +73,10 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 ambientLighting = shAmbient(input.worldNormal);
 	color += sRGB(ambientLighting * texColor.rgb) / PI;
 #endif
+	
+#ifdef DISSOLVE
+	color += sRGB(uDissolveColor.rgb * uColorIntensity.rgb) * step(dissolve, uNoiseScale.w) * n;
+#endif	
 	
 	return float4(color, texColor.a * alpha);
 }

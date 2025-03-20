@@ -43,6 +43,7 @@ namespace Skylicht
 			float m_start1;
 			float m_start2;
 
+			bool m_enableEndValue;
 			bool m_randomEnd;
 			float m_end1;
 			float m_end2;
@@ -102,6 +103,16 @@ namespace Skylicht
 				m_end2 = f2;
 				m_randomEnd = true;
 				return this;
+			}
+
+			inline bool isEnableEndValue()
+			{
+				return m_enableEndValue;
+			}
+
+			inline void enableEndValue(bool b)
+			{
+				m_enableEndValue = b;
 			}
 
 			inline bool isRandomStart()

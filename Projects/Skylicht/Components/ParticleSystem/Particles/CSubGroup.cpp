@@ -30,7 +30,7 @@ namespace Skylicht
 {
 	namespace Particle
 	{
-		CSubGroup::CSubGroup(CGroup *group) :
+		CSubGroup::CSubGroup(CGroup* group) :
 			m_parentGroup(group),
 			m_followParentTransform(false),
 			m_emitterWorldOrientation(false)
@@ -52,17 +52,17 @@ namespace Skylicht
 			delete m_parentSystem;
 		}
 
-		void CSubGroup::OnParticleBorn(CParticle &p)
+		void CSubGroup::OnParticleBorn(CParticle& p)
 		{
-			for (CEmitter *e : m_emitters)
+			for (CEmitter* e : m_emitters)
 			{
 				e->addBornData();
 			}
 		}
 
-		void CSubGroup::OnParticleDead(CParticle &p)
+		void CSubGroup::OnParticleDead(CParticle& p)
 		{
-			for (CEmitter *e : m_emitters)
+			for (CEmitter* e : m_emitters)
 			{
 				e->deleteBornData();
 			}
@@ -77,9 +77,9 @@ namespace Skylicht
 			}
 		}
 
-		void CSubGroup::OnSwapParticleData(CParticle &p1, CParticle &p2)
+		void CSubGroup::OnSwapParticleData(CParticle& p1, CParticle& p2)
 		{
-			for (CEmitter *e : m_emitters)
+			for (CEmitter* e : m_emitters)
 			{
 				e->swapBornData(p1.Index, p2.Index);
 			}
@@ -110,7 +110,7 @@ namespace Skylicht
 
 			// update emitter
 			m_launch.set_used(0);
-			for (CEmitter *e : m_emitters)
+			for (CEmitter* e : m_emitters)
 			{
 				for (u32 i = 0; i < numberParticles; i++)
 				{
@@ -136,7 +136,7 @@ namespace Skylicht
 
 			for (u32 i = emiterId; i < emiterLaunch; i++)
 			{
-				SLaunchParticle &launch = m_launch[i];
+				SLaunchParticle& launch = m_launch[i];
 				if (launch.Number > 0)
 				{
 					s32 parentIndex = launch.Parent;
@@ -158,7 +158,7 @@ namespace Skylicht
 
 					for (u32 j = 0, n = launch.Number; j < n; j++)
 					{
-						CParticle &p = newParticles[j];
+						CParticle& p = newParticles[j];
 						p.ParentIndex = parentIndex;
 						launchParticle(p, launch);
 					}
@@ -187,6 +187,21 @@ namespace Skylicht
 		void CSubGroup::syncParentParams(bool life, bool color)
 		{
 			((CParentRelativeSystem*)m_parentSystem)->syncParams(life, color);
+		}
+
+		CObjectSerializable* CSubGroup::createSerializable()
+		{
+			CObjectSerializable* object = CGroup::createSerializable();
+			object->autoRelease(new CBoolProperty(object, "followParentTransform", m_followParentTransform));
+			object->autoRelease(new CBoolProperty(object, "emitterWorldOrientation", m_emitterWorldOrientation));
+			return object;
+		}
+
+		void CSubGroup::loadSerializable(CObjectSerializable* object)
+		{
+			CGroup::loadSerializable(object);
+			m_followParentTransform = object->get<bool>("followParentTransform", false);
+			m_emitterWorldOrientation = object->get<bool>("emitterWorldOrientation", false);
 		}
 	}
 }

@@ -84,6 +84,12 @@ namespace Skylicht
 			{
 				return m_parentGroup;
 			}
+
+			DECLARE_GETTYPENAME(CSubGroup)
+
+			virtual CObjectSerializable* createSerializable();
+
+			virtual void loadSerializable(CObjectSerializable* object);
 		};
 	}
 }

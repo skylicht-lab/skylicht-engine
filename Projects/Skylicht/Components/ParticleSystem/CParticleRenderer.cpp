@@ -70,8 +70,8 @@ namespace Skylicht
 				// use last frame data
 				CCullingBBoxData* box = GET_ENTITY_DATA(entity, CCullingBBoxData);
 
-				CGroup** groups = particleData->Groups.pointer();
-				for (u32 i = 0, n = particleData->Groups.size(); i < n; i++)
+				CGroup** groups = particleData->AllGroups.pointer();
+				for (u32 i = 0, n = particleData->AllGroups.size(); i < n; i++)
 				{
 					CGroup* g = groups[i];
 					if (i == 0)
@@ -132,9 +132,9 @@ namespace Skylicht
 				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 
 				// update group before render
-				for (u32 j = 0, m = data->Groups.size(); j < m; j++)
+				for (u32 j = 0, m = data->AllGroups.size(); j < m; j++)
 				{
-					data->Groups[j]->update(culling->Visible);
+					data->AllGroups[j]->update(culling->Visible);
 				}
 
 				// render
@@ -191,8 +191,8 @@ namespace Skylicht
 			IVideoDriver* driver = getVideoDriver();
 			driver->setTransform(video::ETS_WORLD, world);
 
-			CGroup** groups = data->Groups.pointer();
-			for (u32 i = 0, n = data->Groups.size(); i < n; i++)
+			CGroup** groups = data->AllGroups.pointer();
+			for (u32 i = 0, n = data->AllGroups.size(); i < n; i++)
 			{
 				CGroup* g = groups[i];
 				if (g->getCurrentParticleCount() > 0 && g->Visible)
@@ -211,8 +211,8 @@ namespace Skylicht
 			IVideoDriver* driver = getVideoDriver();
 			driver->setTransform(video::ETS_WORLD, world);
 
-			CGroup** groups = data->Groups.pointer();
-			for (u32 i = 0, n = data->Groups.size(); i < n; i++)
+			CGroup** groups = data->AllGroups.pointer();
+			for (u32 i = 0, n = data->AllGroups.size(); i < n; i++)
 			{
 				CGroup* g = groups[i];
 				if (g->getCurrentParticleCount() > 0 && g->Visible)

@@ -84,11 +84,11 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float dissolve = n - (1.0 - alpha);
 	if (dissolve <= 0.0)
 		discard;
-	color += sRGB(uDissolveColor.rgb * uColorIntensity.rgb) * step(dissolve, uNoiseScale.w) * n;
 	float NdotL = max(dot(input.worldNormal, uLightDirection.xyz), 0.0);
 	float3 directionalLight = NdotL * sRGB(uLightColor.rgb);
 	color = directionalLight * color * 0.3;
 	float3 ambientLighting = shAmbient(input.worldNormal);
 	color += sRGB(ambientLighting * texColor.rgb) / PI;
+	color += sRGB(uDissolveColor.rgb * uColorIntensity.rgb) * step(dissolve, uNoiseScale.w) * n;
 	return float4(color, texColor.a * alpha);
 }

@@ -63,6 +63,7 @@ namespace Skylicht
 			m_end2(0.0f),
 			m_randomStart(false),
 			m_randomEnd(false),
+			m_enableEndValue(true),
 			m_interpolator(NULL)
 		{
 
@@ -91,9 +92,10 @@ namespace Skylicht
 			object->autoRelease(new CFloatProperty(object, "start1", m_start1));
 			object->autoRelease(new CFloatProperty(object, "start2", m_start2));
 
-			CBoolProperty* randomEnd = new CBoolProperty(object, "randomEnd", m_randomEnd);
-			randomEnd->setUIHeader("End value");
-			object->autoRelease(randomEnd);
+			CBoolProperty* endValue = new CBoolProperty(object, "enableEndValue", m_enableEndValue);
+			endValue->setUIHeader("End value");
+			object->autoRelease(endValue);
+			object->autoRelease(new CBoolProperty(object, "randomEnd", m_randomEnd));
 			object->autoRelease(new CFloatProperty(object, "end1", m_end1));
 			object->autoRelease(new CFloatProperty(object, "end2", m_end2));
 
@@ -114,6 +116,7 @@ namespace Skylicht
 			m_start1 = object->get<float>("start1", 0.0f);
 			m_start2 = object->get<float>("start2", 0.0f);
 
+			m_enableEndValue = object->get<bool>("enableEndValue", true);
 			m_randomEnd = object->get<bool>("randomEnd", false);
 			m_end1 = object->get<float>("end1", 0.0f);
 			m_end2 = object->get<float>("end2", 0.0f);

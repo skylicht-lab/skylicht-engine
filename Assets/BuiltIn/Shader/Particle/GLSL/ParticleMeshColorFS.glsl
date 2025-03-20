@@ -76,11 +76,11 @@ void main(void)
 	float dissolve = n - (1.0 - alpha);
 	if (dissolve <= 0.0)
 		discard;
-	color += sRGB(uDissolveColor.rgb * uColorIntensity.rgb) * step(dissolve, uNoiseScale.w) * n;
 	float NdotL = max(dot(varWorldNormal, uLightDirection.xyz), 0.0);
 	vec3 directionalLight = NdotL * sRGB(uLightColor.rgb);
 	color = directionalLight * color * 0.3;
 	vec3 ambientLighting = shAmbient(varWorldNormal);
 	color += sRGB(ambientLighting * texColor.rgb) / PI;
+	color += sRGB(uDissolveColor.rgb * uColorIntensity.rgb) * step(dissolve, uNoiseScale.w) * n;
 	FragColor = vec4(color, alpha);
 }

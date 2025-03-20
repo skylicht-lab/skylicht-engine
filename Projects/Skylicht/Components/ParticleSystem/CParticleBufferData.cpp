@@ -46,12 +46,30 @@ namespace Skylicht
 			for (u32 i = 0, n = Groups.size(); i < n; i++)
 				delete Groups[i];
 			Groups.clear();
+
+			for (u32 i = 0, n = SubGroups.size(); i < n; i++)
+				delete SubGroups[i];
+			SubGroups.clear();
+
+			AllGroups.clear();
+		}
+
+		void CParticleBufferData::updateListGroup()
+		{
+			AllGroups.clear();
+
+			for (u32 i = 0, n = Groups.size(); i < n; i++)
+				AllGroups.push_back(Groups[i]);
+
+			for (u32 i = 0, n = SubGroups.size(); i < n; i++)
+				AllGroups.push_back(SubGroups[i]);
 		}
 
 		CGroup* CParticleBufferData::createGroup()
 		{
 			CGroup* g = new CGroup();
 			Groups.push_back(g);
+			updateListGroup();
 			return g;
 		}
 
@@ -68,18 +86,51 @@ namespace Skylicht
 		CSubGroup* CParticleBufferData::createSubGroup(CGroup* group)
 		{
 			CSubGroup* g = new CSubGroup(group);
-			Groups.push_back(g);
+			SubGroups.push_back(g);
+			updateListGroup();
 			return g;
+		}
+
+		std::vector<CSubGroup*> CParticleBufferData::getSubGroup(CGroup* parent)
+		{
+			std::vector<CSubGroup*> result;
+			for (u32 i = 0, n = SubGroups.size(); i < n; i++)
+			{
+				CSubGroup* g = SubGroups[i];
+				if (g && g->getParentGroup() == parent)
+				{
+					result.push_back(g);
+				}
+			}
+			return result;
 		}
 
 		void CParticleBufferData::removeGroup(CGroup* group)
 		{
+			std::vector<CSubGroup*> subGroups = getSubGroup(group);
+			for (CSubGroup* g : subGroups)
+				removeSubGroup(g);
+
 			int index = Groups.linear_search(group);
 			if (index >= 0)
 			{
 				Groups.erase(index);
 				delete group;
+
+				updateListGroup();
 			}
+		}
+
+		void CParticleBufferData::removeSubGroup(CSubGroup* group)
+		{
+			int index = SubGroups.linear_search(group);
+			if (index >= 0)
+			{
+				SubGroups.erase(index);
+				delete group;
+			}
+
+			updateListGroup();
 		}
 
 		void CParticleBufferData::bringToNext(CGroup* group, CGroup* target, bool behind)
@@ -101,6 +152,8 @@ namespace Skylicht
 				++newIndex;
 
 			Groups.insert(group, newIndex);
+
+			updateListGroup();
 		}
 	}
 }

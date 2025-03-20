@@ -304,10 +304,17 @@ namespace Skylicht
 				else
 					p.StartValue[t] = m->getStartValue1();
 
-				if (m->isRandomEnd() == true)
-					p.EndValue[t] = m->getRandomEnd();
+				if (m->isEnableEndValue())
+				{
+					if (m->isRandomEnd() == true)
+						p.EndValue[t] = m->getRandomEnd();
+					else
+						p.EndValue[t] = m->getEndValue1();
+				}
 				else
-					p.EndValue[t] = m->getEndValue1();
+				{
+					p.EndValue[t] = p.StartValue[t];
+				}
 
 				if (t == Particle::RotateSpeedX ||
 					t == Particle::RotateSpeedY ||
