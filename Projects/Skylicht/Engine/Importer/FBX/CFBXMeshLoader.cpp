@@ -210,7 +210,6 @@ namespace Skylicht
 						float* w = &skin_vert->BoneWeight.X;
 						float* b = &skin_vert->BoneIndex.X;
 
-						uint32_t quantized_sum = 0;
 						for (size_t i = 0; i < 4; i++)
 						{
 							w[i] = weights[i] / total_weight;
@@ -316,8 +315,11 @@ namespace Skylicht
 						// [vid] for morph, blendshape data as vertex index
 						int vid = mesh->vertex_indices[ix];
 
+						// location may be uvId or vertexId
+						int locationId = haveUV ? mesh->vertex_uv.indices.data[ix] : vid;
+
 						u32 vertLocation;
-						core::map<uint32_t, u32>::Node* node = vertMap.find(ix);
+						core::map<uint32_t, u32>::Node* node = vertMap.find(locationId);
 
 						if (node)
 							vertLocation = node->getValue();
@@ -371,7 +373,7 @@ namespace Skylicht
 							}
 
 							vertLocation = vertexBuffer->getVertexCount() - 1;
-							vertMap.insert(ix, vertLocation);
+							vertMap.insert(locationId, vertLocation);
 						}
 
 						trisIndices[indexCount++] = vertLocation;
