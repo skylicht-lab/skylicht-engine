@@ -45,7 +45,8 @@ namespace Skylicht
 				Models,
 				Model,
 				Gravity,
-				Orientation
+				Orientation,
+				SubGroups,
 			};
 
 			std::function<void(CParticleHierachyNode*)> OnUpdate;

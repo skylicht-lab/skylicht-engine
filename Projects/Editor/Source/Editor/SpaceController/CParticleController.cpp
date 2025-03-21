@@ -180,7 +180,13 @@ namespace Skylicht
 			}
 
 			if (node == NULL)
+			{
+				// try to update from parent group
+				Particle::CSubGroup* subGroup = dynamic_cast<Particle::CSubGroup*>(group);
+				if (subGroup)
+					updateGroupHierachy(subGroup->getParentGroup());
 				return;
+			}
 
 			childs = node->getChilds();
 			for (CParticleHierachyNode* child : childs)
@@ -199,14 +205,22 @@ namespace Skylicht
 			if (!m_hierachyNode)
 				return;
 
-			std::vector<CParticleHierachyNode*>& childs = m_hierachyNode->getChilds();
-			for (CParticleHierachyNode* child : childs)
+			updateGroupName(m_hierachyNode->getChilds());
+		}
+
+		void CParticleController::updateGroupName(std::vector<CParticleHierachyNode*>& nodes)
+		{
+			for (CParticleHierachyNode* child : nodes)
 			{
 				if (child->getTagDataType() == CParticleHierachyNode::Group)
 				{
 					Particle::CGroup* group = (Particle::CGroup*)child->getTagData();
 					child->setName(group->Name.c_str());
 				}
+
+				std::vector<CParticleHierachyNode*>& childs = child->getChilds();
+				if (childs.size() > 0)
+					updateGroupName(childs);
 			}
 		}
 
@@ -317,6 +331,29 @@ namespace Skylicht
 			orientation->setIcon(GUI::ESystemIcon::Axis);
 			orientation->setName(L"Particle Rotation");
 			setNodeEvent(orientation);
+
+			std::vector<Particle::CSubGroup*> subGroups = m_particle->getData()->getSubGroup(group);
+			if (subGroups.size() > 0)
+			{
+				CParticleHierachyNode* nodeSubGroups = node->addChild();
+				nodeSubGroups->setTagData(NULL, CParticleHierachyNode::SubGroups);
+				nodeSubGroups->setParentData(group);
+				nodeSubGroups->setIcon(GUI::ESystemIcon::Folder);
+				nodeSubGroups->setName(L"SubGroups");
+				setNodeEvent(nodeSubGroups);
+
+				for (Particle::CSubGroup* g : subGroups)
+				{
+					CParticleHierachyNode* node = nodeSubGroups->addChild();
+					node->setTagData(g, CParticleHierachyNode::Group);
+					node->setParentData(g);
+					node->setIcon(GUI::ESystemIcon::Folder);
+					node->setName(g->Name.c_str());
+					setNodeEvent(node);
+
+					updateGroupHierachy(node, g);
+				}
+			}
 		}
 
 		void CParticleController::setNodeEvent(CParticleHierachyNode* node)
@@ -442,6 +479,38 @@ namespace Skylicht
 
 			if (m_spaceParticle)
 				m_spaceParticle->addToTreeNode(node);
+		}
+
+		void CParticleController::createSubGroup(Particle::CParticleComponent* particle, Particle::CGroup* group)
+		{
+			Particle::CSubGroup* newSubGroup = particle->createParticleSubGroup(group);
+			newSubGroup->Name = L"SubGroup";
+
+			// Emitter
+			Particle::CFactory* factory = particle->getParticleFactory();
+			Particle::CRandomEmitter* emitter = factory->createRandomEmitter();
+			emitter->setFlow(10.0f);
+			newSubGroup->addEmitter(emitter);
+
+			// Zone
+			Particle::CSphere* zone = factory->createSphereZone(core::vector3df(), 0.5f);
+			emitter->setZone(zone);
+
+			// Models
+			Particle::CModel* model = newSubGroup->createModel(Particle::ColorA);
+			model->setStart(1.0f)->setEnd(0.0f);
+
+			// Renderer
+			Particle::CQuadRenderer* renderer = factory->createQuadRenderer();
+			renderer->SizeX = 0.3f;
+			renderer->SizeY = 0.3f;
+			renderer->SizeZ = 0.3f;
+			newSubGroup->setRenderer(renderer);
+
+			// First init
+			newSubGroup->initParticles();
+
+			updateGroupHierachy(group);
 		}
 	}
 }

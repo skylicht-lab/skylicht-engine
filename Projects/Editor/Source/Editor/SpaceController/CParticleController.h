@@ -89,7 +89,14 @@ namespace Skylicht
 
 			void createGroup(Particle::CParticleComponent* particle);
 
+			void createSubGroup(Particle::CParticleComponent* particle, Particle::CGroup* group);
+
 			void onCreateGroup(Particle::CGroup* group);
+
+		protected:
+
+			void updateGroupName(std::vector<CParticleHierachyNode*>& nodes);
+
 		};
 	}
 }

@@ -214,6 +214,11 @@ namespace Skylicht
 
 			virtual u32 updateBornData(SBornData& data, float deltaTime);
 
+			inline void clearBornData()
+			{
+				m_bornData.clear();
+			}
+
 			void generateVelocity(CParticle& particle, CZone* zone, CGroup* group);
 
 			void emitParticle(CParticle& particle, CZone* zone, CGroup* group);

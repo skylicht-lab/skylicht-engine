@@ -103,14 +103,21 @@ namespace Skylicht
 
 		CGroup* CParticleComponent::duplicateGroup(CGroup* group)
 		{
-			CFactory* factory = getParticleFactory();
-
 			CObjectSerializable* object = group->createSerializable();
 			saveGroup(group, object);
 
 			CGroup* newGroup = m_data->createGroup();
-			newGroup->loadSerializable(object);
+			loadGroup(newGroup, object);
 
+			delete object;
+			return newGroup;
+		}
+
+		void CParticleComponent::loadGroup(Particle::CGroup* group, CObjectSerializable* object)
+		{
+			group->loadSerializable(object);
+
+			CFactory* factory = getParticleFactory();
 			std::wstring name;
 
 			CObjectSerializable* emitters = (CObjectSerializable*)object->getProperty("Emitters");
@@ -124,7 +131,7 @@ namespace Skylicht
 					CEmitter* emitter = factory->createEmitter(name);
 					if (emitter)
 					{
-						newGroup->addEmitter(emitter);
+						group->addEmitter(emitter);
 						emitter->loadSerializable(emitterData);
 
 						CObjectSerializable* zoneData = (CObjectSerializable*)emitterData->getProperty("Zone");
@@ -151,7 +158,7 @@ namespace Skylicht
 					CObjectSerializable* modelData = (CObjectSerializable*)models->getPropertyID(i);
 					name = CStringImp::convertUTF8ToUnicode(modelData->Name.c_str());
 
-					CModel* model = newGroup->createModel(name);
+					CModel* model = group->createModel(name);
 					if (model)
 						model->loadSerializable(modelData);
 				}
@@ -168,13 +175,24 @@ namespace Skylicht
 					if (renderer)
 					{
 						renderer->loadSerializable(rendererData);
-						newGroup->setRenderer(renderer);
+						group->setRenderer(renderer);
 					}
 				}
 			}
 
-			delete object;
-			return newGroup;
+			CObjectSerializable* subGroups = (CObjectSerializable*)object->getProperty("SubGroups");
+			if (subGroups && subGroups->getNumProperty() > 0)
+			{
+				for (u32 i = 0, n = subGroups->getNumProperty(); i < n; i++)
+				{
+					CObjectSerializable* groupData = (CObjectSerializable*)subGroups->getPropertyID(i);
+					if (groupData)
+					{
+						CSubGroup* subGroup = m_data->createSubGroup(group);
+						loadGroup(subGroup, groupData);
+					}
+				}
+			}
 		}
 
 		CEmitter* CParticleComponent::duplicateEmitter(CGroup* group, CEmitter* emitter)
@@ -291,6 +309,23 @@ namespace Skylicht
 				renderer->addProperty(rendererData);
 				renderer->autoRelease(rendererData);
 			}
+
+			std::vector<Particle::CSubGroup*> subGroups = m_data->getSubGroup(group);
+			if (subGroups.size() > 0)
+			{
+				CObjectSerializable* groups = new CObjectSerializable("SubGroups");
+				object->addProperty(groups);
+				object->autoRelease(groups);
+
+				for (Particle::CSubGroup* g : subGroups)
+				{
+					CObjectSerializable* groupData = g->createSerializable();
+					groups->addProperty(groupData);
+					groups->autoRelease(groupData);
+
+					saveGroup(g, groupData);
+				}
+			}
 		}
 
 		bool CParticleComponent::load()
@@ -333,21 +368,7 @@ namespace Skylicht
 								data->parseSerializable(reader);
 								group->loadSerializable(data);
 								delete data;
-							}
-							else if (attributeName == L"Emitters")
-							{
-								if (group)
-									loadEmitters(group, reader);
-							}
-							else if (attributeName == L"Models")
-							{
-								if (group)
-									loadModels(group, reader);
-							}
-							else if (attributeName == L"Renderer")
-							{
-								if (group)
-									loadRenderer(group, reader);
+								loadGroup(group, reader);
 							}
 						}
 					}
@@ -359,6 +380,50 @@ namespace Skylicht
 
 			reader->drop();
 			return false;
+		}
+
+		void CParticleComponent::loadGroup(Particle::CGroup* group, io::IXMLReader* reader)
+		{
+			std::wstring nodeName = L"node";
+			std::wstring attributeName;
+
+			while (reader->read())
+			{
+				switch (reader->getNodeType())
+				{
+				case io::EXN_ELEMENT:
+					if (nodeName == reader->getNodeName())
+					{
+						attributeName = reader->getAttributeValue(L"type");
+
+						if (attributeName == L"Emitters")
+						{
+							loadEmitters(group, reader);
+						}
+						else if (attributeName == L"Models")
+						{
+							loadModels(group, reader);
+						}
+						else if (attributeName == L"Renderer")
+						{
+							loadRenderer(group, reader);
+						}
+						else if (attributeName == L"SubGroups")
+						{
+							loadSubGroups(group, reader);
+						}
+					}
+					break;
+				case io::EXN_ELEMENT_END:
+				{
+					if (nodeName == reader->getNodeName())
+					{
+						return;
+					}
+				}
+				break;
+				}
+			}
 		}
 
 		void CParticleComponent::loadEmitters(CGroup* group, io::IXMLReader* reader)
@@ -503,6 +568,47 @@ namespace Skylicht
 								delete data;
 
 								group->setRenderer(renderer);
+							}
+						}
+					}
+					break;
+				case io::EXN_ELEMENT_END:
+					if (nodeName == reader->getNodeName())
+						pos--;
+
+					if (pos == 0)
+						return;
+
+					break;
+				}
+			}
+		}
+
+		void CParticleComponent::loadSubGroups(Particle::CGroup* group, io::IXMLReader* reader)
+		{
+			std::wstring nodeName = L"node";
+			std::wstring attributeName;
+			int pos = 1;
+
+			while (reader->read())
+			{
+				switch (reader->getNodeType())
+				{
+				case io::EXN_ELEMENT:
+					if (nodeName == reader->getNodeName())
+					{
+						pos++;
+						if (reader->getAttributeValue(L"type") != NULL)
+						{
+							attributeName = reader->getAttributeValue(L"type");
+							if (attributeName == L"CSubGroup")
+							{
+								CSubGroup* newGroup = m_data->createSubGroup(group);
+								CObjectSerializable* data = newGroup->createSerializable();
+								data->parseSerializable(reader);
+								newGroup->loadSerializable(data);
+								delete data;
+								loadGroup(newGroup, reader);
 							}
 						}
 					}

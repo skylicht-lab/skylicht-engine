@@ -52,6 +52,16 @@ namespace Skylicht
 			delete m_parentSystem;
 		}
 
+		void CSubGroup::initParticles()
+		{
+			for (CEmitter* e : m_emitters)
+				e->clearBornData();
+
+			core::array<CParticle>& particles = m_parentGroup->getParticles();
+			for (u32 i = 0, n = particles.size(); i < n; i++)
+				OnParticleBorn(particles[i]);
+		}
+
 		void CSubGroup::OnParticleBorn(CParticle& p)
 		{
 			for (CEmitter* e : m_emitters)

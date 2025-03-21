@@ -40,6 +40,7 @@ namespace Skylicht
 			m_particle(NULL),
 			m_group(NULL),
 			m_emitter(NULL),
+			m_model(NULL),
 			m_zone(NULL),
 			m_contextNode(NULL)
 		{
@@ -87,9 +88,14 @@ namespace Skylicht
 			if (subMenu)
 				subMenu->getMenu()->OnCommand = BIND_LISTENER(&CContextMenuParticle::OnContextMenuModelCommand, this);
 
+			m_menuGroup->addItemByPath(L"Add/SubGroup");
+			subMenu = m_menuGroup->getItemByPath(L"Add");
+			if (subMenu)
+				subMenu->getMenu()->OnCommand = BIND_LISTENER(&CContextMenuParticle::OnContextMenuAddSubGroupCommand, this);
+
 			m_menuGroup->addItemByPath(L"Renderer/Quad (Instancing)");
-			m_menuGroup->addItemByPath(L"Renderer/CPU Billboard");
 			m_menuGroup->addItemByPath(L"Renderer/Mesh (Instancing)");
+			m_menuGroup->addItemByPath(L"Renderer/CPU Billboard");
 			m_menuGroup->addItemByPath(L"Renderer/No Renderer");
 
 			subMenu = m_menuGroup->getItemByPath(L"Renderer");
@@ -107,8 +113,8 @@ namespace Skylicht
 			m_menuRenderer->setHidden(true);
 			m_menuRenderer->OnCommand = BIND_LISTENER(&CContextMenuParticle::OnContextMenuGroupCommand, this);
 			m_menuRenderer->addItem(L"Quad (Instancing)");
-			m_menuRenderer->addItem(L"CPU Billboard");
 			m_menuRenderer->addItem(L"Mesh (Instancing)");
+			m_menuRenderer->addItem(L"CPU Billboard");
 			m_menuRenderer->addItem(L"No Renderer");
 
 			m_menuEmitters = new GUI::CMenu(canvas);
@@ -213,6 +219,7 @@ namespace Skylicht
 			case CParticleHierachyNode::Group:
 				m_group = (Particle::CGroup*)node->getTagData();
 				m_canvas->closeMenu();
+				checkMenuGroup(m_menuGroup);
 				checkMenuRenderer(m_menuGroup);
 				checkMenuModel(m_menuGroup);
 				m_menuGroup->open(mousePos);
@@ -272,32 +279,50 @@ namespace Skylicht
 			return true;
 		}
 
+		void CContextMenuParticle::checkMenuGroup(GUI::CMenu* menu)
+		{
+			GUI::CMenuItem* duplicateItem = menu->searchItemByLabel(L"Duplicate");
+
+			Particle::CSubGroup* subGroup = dynamic_cast<Particle::CSubGroup*>(m_group);
+			if (subGroup)
+				duplicateItem->setHidden(true);
+			else
+				duplicateItem->setHidden(false);
+		}
+
 		void CContextMenuParticle::checkMenuRenderer(GUI::CMenu* menu)
 		{
 			Particle::IRenderer* renderer = m_group->getRenderer();
 
 			std::vector<GUI::CMenuItem*> items;
 			items.push_back(menu->searchItemByLabel(L"Quad (Instancing)"));
-			items.push_back(menu->searchItemByLabel(L"CPU Billboard"));
 			items.push_back(menu->searchItemByLabel(L"Mesh (Instancing)"));
+			items.push_back(menu->searchItemByLabel(L"CPU Billboard"));
 			items.push_back(menu->searchItemByLabel(L"No Renderer"));
 
 			for (GUI::CMenuItem* i : items)
 				i->setIcon(GUI::ESystemIcon::None);
 
-			Particle::CQuadRenderer* quadRenderer = dynamic_cast<Particle::CQuadRenderer*>(renderer);
-			if (quadRenderer)
-				items[0]->setIcon(GUI::ESystemIcon::Check);
+			if (!renderer)
+			{
+				items[3]->setIcon(GUI::ESystemIcon::Check);
+			}
 			else
 			{
-				Particle::CBillboardAdditiveRenderer* billboardRenderer = dynamic_cast<Particle::CBillboardAdditiveRenderer*>(renderer);
-				if (billboardRenderer)
-					items[1]->setIcon(GUI::ESystemIcon::Check);
+				Particle::CQuadRenderer* quadRenderer = dynamic_cast<Particle::CQuadRenderer*>(renderer);
+				if (quadRenderer)
+					items[0]->setIcon(GUI::ESystemIcon::Check);
 				else
 				{
 					Particle::CMeshParticleRenderer* meshRenderer = dynamic_cast<Particle::CMeshParticleRenderer*>(renderer);
 					if (meshRenderer)
-						items[2]->setIcon(GUI::ESystemIcon::Check);
+						items[1]->setIcon(GUI::ESystemIcon::Check);
+					else
+					{
+						Particle::CBillboardAdditiveRenderer* billboardRenderer = dynamic_cast<Particle::CBillboardAdditiveRenderer*>(renderer);
+						if (billboardRenderer)
+							items[2]->setIcon(GUI::ESystemIcon::Check);
+					}
 				}
 			}
 		}
@@ -401,9 +426,20 @@ namespace Skylicht
 
 			if (command == L"Delete")
 			{
-				particleController->removeGroup(m_group);
+				Particle::CSubGroup* subGroup = dynamic_cast<Particle::CSubGroup*>(m_group);
+				if (subGroup)
+				{
+					Particle::CGroup* parent = subGroup->getParentGroup();
+					m_particle->getData()->removeSubGroup(subGroup);
+					particleController->updateGroupHierachy(parent);
+				}
+				else
+				{
+					particleController->removeGroup(m_group);
+					m_particle->getData()->removeGroup(m_group);
+				}
+
 				propretyController->setProperty(NULL);
-				m_particle->getData()->removeGroup(m_group);
 				m_group = NULL;
 				return;
 			}
@@ -462,8 +498,7 @@ namespace Skylicht
 			else if (command == L"No Renderer")
 			{
 				Particle::IRenderer* renderer = m_group->getRenderer();
-				Particle::CBillboardAdditiveRenderer* billboardRenderer = dynamic_cast<Particle::CBillboardAdditiveRenderer*>(renderer);
-				if (billboardRenderer)
+				if (renderer == NULL)
 				{
 					return;
 				}
@@ -633,6 +668,14 @@ namespace Skylicht
 			}
 
 			particleController->updateGroupHierachy(m_group);
+		}
+
+		void CContextMenuParticle::OnContextMenuAddSubGroupCommand(GUI::CBase* sender)
+		{
+			if (m_group)
+			{
+				CParticleController::getInstance()->createSubGroup(m_particle, m_group);
+			}
 		}
 	}
 }

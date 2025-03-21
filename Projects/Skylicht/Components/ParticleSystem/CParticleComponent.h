@@ -120,11 +120,17 @@ namespace Skylicht
 
 			void saveGroup(Particle::CGroup* group, CObjectSerializable* object);
 
+			void loadGroup(Particle::CGroup* group, io::IXMLReader* reader);
+
+			void loadGroup(Particle::CGroup* group, CObjectSerializable* object);
+
 			void loadEmitters(Particle::CGroup* group, io::IXMLReader* reader);
 
 			void loadModels(Particle::CGroup* group, io::IXMLReader* reader);
 
 			void loadRenderer(Particle::CGroup* group, io::IXMLReader* reader);
+
+			void loadSubGroups(Particle::CGroup* group, io::IXMLReader* reader);
 		};
 	}
 }

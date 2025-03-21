@@ -71,7 +71,11 @@ namespace Skylicht
 
 			void OnContextMenuModelCommand(GUI::CBase* sender);
 
+			void OnContextMenuAddSubGroupCommand(GUI::CBase* sender);
+
 		protected:
+
+			void checkMenuGroup(GUI::CMenu* menu);
 
 			void checkMenuRenderer(GUI::CMenu* menu);
 
