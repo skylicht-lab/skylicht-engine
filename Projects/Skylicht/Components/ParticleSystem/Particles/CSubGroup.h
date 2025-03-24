@@ -45,6 +45,8 @@ namespace Skylicht
 
 			bool m_followParentTransform;
 			bool m_emitterWorldOrientation;
+			bool m_syncLife;
+			bool m_syncColor;
 
 		public:
 			CSubGroup(CGroup* group);

@@ -41,7 +41,7 @@ namespace Skylicht
 
 			virtual ~CParentRelativeSystem();
 
-			virtual void update(CParticle *particles, int num, CGroup *group, float dt);
+			virtual void update(CParticle* particles, int num, CGroup* group, float dt);
 
 			void syncParams(bool life, bool color)
 			{

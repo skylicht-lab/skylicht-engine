@@ -44,16 +44,16 @@ namespace Skylicht
 
 		}
 
-		void CParentRelativeSystem::update(CParticle *particles, int num, CGroup *group, float dt)
+		void CParentRelativeSystem::update(CParticle* particles, int num, CGroup* group, float dt)
 		{
-			CSubGroup *subGroup = dynamic_cast<CSubGroup*>(group);
+			CSubGroup* subGroup = dynamic_cast<CSubGroup*>(group);
 			if (subGroup == NULL)
 				return;
 
-			CGroup *parentGroup = subGroup->getParentGroup();
+			CGroup* parentGroup = subGroup->getParentGroup();
 
-			CParticle *baseParticles = parentGroup->getParticlePointer();
-			CParticle *p;
+			CParticle* baseParticles = parentGroup->getParticlePointer();
+			CParticle* p;
 
 #pragma omp parallel for private(p)
 			for (int i = 0; i < num; i++)
@@ -62,18 +62,18 @@ namespace Skylicht
 
 				if (p->ParentIndex >= 0)
 				{
-					CParticle &parent = baseParticles[p->ParentIndex];
+					CParticle& parent = baseParticles[p->ParentIndex];
 
-					p->Position = (p->Position - p->LastPosition) + parent.Position;
+					p->Position += (parent.Position - parent.LastPosition);
 
-					if (m_syncLife == true)
+					if (m_syncLife)
 					{
 						p->Age = parent.Age;
 						p->Life = parent.Life;
 						p->LifeTime = parent.LifeTime;
 					}
 
-					if (m_syncColor == true)
+					if (m_syncColor)
 					{
 						p->Params[ColorR] = parent.Params[ColorR];
 						p->Params[ColorG] = parent.Params[ColorG];
