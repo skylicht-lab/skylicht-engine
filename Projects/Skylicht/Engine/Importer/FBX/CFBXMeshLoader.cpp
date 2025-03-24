@@ -315,8 +315,12 @@ namespace Skylicht
 						// [vid] for morph, blendshape data as vertex index
 						int vid = mesh->vertex_indices[ix];
 
-						// location may be uvId or vertexId
-						int locationId = haveUV ? mesh->vertex_uv.indices.data[ix] : vid;
+						// use normal (float, smooth) is location
+						int locationId = mesh->vertex_normal.indices.data[ix];
+
+						// location may be uv coord id
+						if (haveUV && mesh->vertex_uv.indices.count > mesh->vertex_normal.indices.count)
+							locationId = mesh->vertex_uv.indices.data[ix];
 
 						u32 vertLocation;
 						core::map<uint32_t, u32>::Node* node = vertMap.find(locationId);
