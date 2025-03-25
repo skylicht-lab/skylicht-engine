@@ -650,8 +650,8 @@ namespace Skylicht
 
 		void CParticleComponent::Play()
 		{
-			CGroup** groups = m_data->Groups.pointer();
-			for (u32 i = 0, n = m_data->Groups.size(); i < n; i++)
+			CGroup** groups = m_data->AllGroups.pointer();
+			for (u32 i = 0, n = m_data->AllGroups.size(); i < n; i++)
 			{
 				std::vector<CEmitter*>& emitter = groups[i]->getEmitters();
 				for (CEmitter* e : emitter)
@@ -663,8 +663,8 @@ namespace Skylicht
 
 		void CParticleComponent::Stop()
 		{
-			CGroup** groups = m_data->Groups.pointer();
-			for (u32 i = 0, n = m_data->Groups.size(); i < n; i++)
+			CGroup** groups = m_data->AllGroups.pointer();
+			for (u32 i = 0, n = m_data->AllGroups.size(); i < n; i++)
 			{
 				std::vector<CEmitter*>& emitter = groups[i]->getEmitters();
 				for (CEmitter* e : emitter)

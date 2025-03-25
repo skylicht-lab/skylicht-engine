@@ -45,11 +45,17 @@ namespace Skylicht
 
 		struct SBornData
 		{
+			float LifeTime;
+			float FlowLifeTime;
+			float WaitDelay;
 			float Fraction;
 			s32 Tank;
 
 			SBornData()
 			{
+				LifeTime = 0.0f;
+				FlowLifeTime = 0.0f;
+				WaitDelay = 0.0f;
 				Fraction = 0.0f;
 				Tank = 0;
 			}

@@ -164,17 +164,21 @@ namespace Skylicht
 		{
 			data.Tank = m_tank;
 			data.Fraction = 0.0f;
+			data.LifeTime = 0.0f;
+			data.WaitDelay = m_waitDelay;
+			data.FlowLifeTime = m_flowLifeTime;
 		}
 
 		u32 CEmitter::updateBornData(SBornData& data, float deltaTime)
 		{
-			if (m_waitDelay > 0.0f)
+			if (data.WaitDelay > 0.0f)
 			{
-				m_waitDelay = m_waitDelay - deltaTime;
+				data.WaitDelay = data.WaitDelay - deltaTime * 0.001f;
 				return 0;
 			}
 
 			int nbBorn = 0;
+			data.LifeTime = data.LifeTime + deltaTime * 0.001f;
 
 			if (m_flow <= 0.0f)
 			{
@@ -183,14 +187,21 @@ namespace Skylicht
 			}
 			else if (data.Tank != 0)
 			{
-				data.Fraction += m_flow * deltaTime * 0.001f;
-				nbBorn = static_cast<int>(data.Fraction);
-				if (data.Tank > 0)
+				if (data.FlowLifeTime > 0 && data.LifeTime > data.FlowLifeTime)
 				{
-					nbBorn = core::min_(data.Tank, nbBorn);
-					data.Tank -= nbBorn;
+					nbBorn = 0;
 				}
-				data.Fraction -= nbBorn;
+				else
+				{
+					data.Fraction += m_flow * deltaTime * 0.001f;
+					nbBorn = static_cast<int>(data.Fraction);
+					if (data.Tank > 0)
+					{
+						nbBorn = core::min_(data.Tank, nbBorn);
+						data.Tank -= nbBorn;
+					}
+					data.Fraction -= nbBorn;
+				}
 			}
 			else
 			{
