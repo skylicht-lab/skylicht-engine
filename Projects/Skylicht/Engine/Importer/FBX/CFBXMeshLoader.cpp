@@ -287,7 +287,9 @@ namespace Skylicht
 				IVertexBuffer* vertexBuffer = mb->getVertexBuffer();
 				IIndexBuffer* indexBuffer = mb->getIndexBuffer();
 
-				core::map<uint32_t, u32> vertMap;
+				std::map<S3DVertexTangents, u32> mapVT;
+				std::map<S3DVertexSkinTangents, u32> mapVST;
+				std::map<S3DVertexSkin, u32> mapVS;
 
 				for (size_t fi = 0; fi < mesh_part->num_faces; fi++)
 				{
@@ -314,20 +316,8 @@ namespace Skylicht
 
 						// [vid] for morph, blendshape data as vertex index
 						int vid = mesh->vertex_indices[ix];
+						u32 vertLocation = 0;
 
-						// use normal (float, smooth) is location
-						int locationId = mesh->vertex_normal.indices.data[ix];
-
-						// location may be uv coord id
-						if (haveUV && mesh->vertex_uv.indices.count > mesh->vertex_normal.indices.count)
-							locationId = mesh->vertex_uv.indices.data[ix];
-
-						u32 vertLocation;
-						core::map<uint32_t, u32>::Node* node = vertMap.find(locationId);
-
-						if (node)
-							vertLocation = node->getValue();
-						else
 						{
 							if (isSkinnedMesh)
 							{
@@ -345,7 +335,17 @@ namespace Skylicht
 									v.BoneIndex = mesh_skin_vertices[vid].BoneIndex;
 									v.BoneWeight = mesh_skin_vertices[vid].BoneWeight;
 
-									vertexBuffer->addVertex(&v);
+									auto it = mapVST.find(v);
+									if (it == mapVST.end())
+									{
+										vertexBuffer->addVertex(&v);
+										vertLocation = vertexBuffer->getVertexCount() - 1;
+										mapVST[v] = vertLocation;
+									}
+									else
+									{
+										vertLocation = it->second;
+									}
 								}
 								else
 								{
@@ -358,7 +358,17 @@ namespace Skylicht
 									v.BoneIndex = mesh_skin_vertices[vid].BoneIndex;
 									v.BoneWeight = mesh_skin_vertices[vid].BoneWeight;
 
-									vertexBuffer->addVertex(&v);
+									auto it = mapVS.find(v);
+									if (it == mapVS.end())
+									{
+										vertexBuffer->addVertex(&v);
+										vertLocation = vertexBuffer->getVertexCount() - 1;
+										mapVS[v] = vertLocation;
+									}
+									else
+									{
+										vertLocation = it->second;
+									}
 								}
 							}
 							else
@@ -373,11 +383,18 @@ namespace Skylicht
 								v.Binormal = convertFBXVec3(binormal);
 								v.VertexData.set(1.f, (float)vid);
 
-								vertexBuffer->addVertex(&v);
+								auto it = mapVT.find(v);
+								if (it == mapVT.end())
+								{
+									vertexBuffer->addVertex(&v);
+									vertLocation = vertexBuffer->getVertexCount() - 1;
+									mapVT[v] = vertLocation;
+								}
+								else
+								{
+									vertLocation = it->second;
+								}
 							}
-
-							vertLocation = vertexBuffer->getVertexCount() - 1;
-							vertMap.insert(locationId, vertLocation);
 						}
 
 						trisIndices[indexCount++] = vertLocation;
@@ -614,21 +631,21 @@ namespace Skylicht
 
 						// need mode this mesh to to root
 						output->changeParent(entity, NULL);
-					}
+				}
 
 					// drop this mesh
 					resultMesh->drop();
 
 					// add culling data
 					entity->addData<CCullingData>();
-				}
 			}
+		}
 
 			delete[]tri_indices;
 
 			if (mesh_skin_vertices)
 				delete[]mesh_skin_vertices;
-		}
+	}
 
 		// free data
 		delete[]buf;
@@ -636,5 +653,5 @@ namespace Skylicht
 
 		ufbx_free_scene(scene);
 		return true;
-	}
+}
 }
