@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Selection/CSelection.h"
 #include "Editor/SpaceController/CSceneController.h"
 #include "Handles/CHandles.h"
+#include "Debug/CSceneDebug.h"
 
 namespace Skylicht
 {
@@ -230,6 +231,13 @@ namespace Skylicht
 				m_selectID = "";
 				return;
 			}
+
+			/*
+			if (m_transform)
+			{
+				CSceneDebug::getInstance()->getNoZDebug()->addTransform(m_transform->calcWorldTransform(), 2.0f);
+			}
+			*/
 
 			ETransformGizmo type = getSubjectTransformGizmos().get();
 

@@ -174,6 +174,8 @@ namespace Skylicht
 			float snap(float value, float d);
 
 			void snapVec3(core::vector3df& v);
+
+			core::quaternion getRotation(const core::matrix4& mat);
 		};
 	}
 }

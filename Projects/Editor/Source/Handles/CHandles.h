@@ -214,6 +214,8 @@ namespace Skylicht
 
 			void setTargetPosition(const core::vector3df& target);
 
+			core::matrix4 getRelativeTransform();
+
 			inline const core::quaternion& getHandleRotation()
 			{
 				return m_rotation;

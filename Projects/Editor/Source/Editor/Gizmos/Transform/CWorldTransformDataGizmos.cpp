@@ -28,6 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Editor/SpaceController/CSceneController.h"
 #include "Handles/CHandles.h"
 #include "Entity/CEntityHandleData.h"
+#include "Debug/CSceneDebug.h"
 
 namespace Skylicht
 {

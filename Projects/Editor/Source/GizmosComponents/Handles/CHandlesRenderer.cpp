@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Handles/CHandles.h"
 #include "Entity/CEntityManager.h"
 #include "Projective/CProjective.h"
+#include "Debug/CSceneDebug.h"
 
 namespace Skylicht
 {
@@ -127,11 +128,8 @@ namespace Skylicht
 			core::vector3df pos = handles->getHandlePosition();
 			handles->getWorld().transformVect(pos);
 
-			core::quaternion worldRot(handles->getWorld());
-			worldRot.normalize();
-
-			core::quaternion rot = worldRot * handles->getHandleRotation();
-			rot.normalize();
+			core::matrix4 worldRot = handles->getWorld() * handles->getRelativeTransform();
+			core::quaternion rot = getRotation(worldRot);
 
 			m_screenFactor = 0.2f / CProjective::getSegmentLengthClipSpace(camera, pos, pos + cameraRight);
 
@@ -957,11 +955,8 @@ namespace Skylicht
 			core::vector3df pos = handles->getHandlePosition();
 			handles->getWorld().transformVect(pos);
 
-			core::quaternion worldRot(handles->getWorld());
-			worldRot.normalize();
-
-			core::quaternion rot = worldRot * handles->getHandleRotation();
-			rot.normalize();
+			core::matrix4 worldRot = handles->getWorld() * handles->getRelativeTransform();
+			core::quaternion rot = getRotation(worldRot);
 
 			if (m_mouseState != state)
 			{
@@ -972,8 +967,7 @@ namespace Skylicht
 					m_usingEvent = false;
 					m_lastMouse = mouse;
 
-					m_lastRotation = worldRot * handles->getHandleRotation();
-					m_lastRotation.normalize();
+					m_lastRotation = handles->getHandleRotation();
 				}
 				else if (state == 2)
 				{
@@ -992,7 +986,13 @@ namespace Skylicht
 
 			core::line3df viewRay = CProjective::getViewRay(m_camera, mouse.X, mouse.Y, vpWidth, vpHeight);
 
-			core::vector3df normal[] = {
+			core::vector3df worldNormal[] = {
+				{0.0f, 0.0f, 1.0f},
+				{0.0f, 1.0f, 0.0f},
+				{1.0f, 0.0f, 0.0f}
+			};
+
+			core::vector3df localNormal[] = {
 				{0.0f, 0.0f, 1.0f},
 				{0.0f, 1.0f, 0.0f},
 				{1.0f, 0.0f, 0.0f}
@@ -1002,12 +1002,11 @@ namespace Skylicht
 			{
 				for (int i = 0; i < 3; i++)
 				{
-					if (m_mouseState == 0)
-						normal[i] = rot * normal[i];
-					else
-						normal[i] = m_lastRotation * normal[i];
+					worldNormal[i] = rot * worldNormal[i];
+					worldNormal[i].normalize();
 
-					normal[i].normalize();
+					localNormal[i] = handles->getHandleRotation() * localNormal[i];
+					localNormal[i].normalize();
 				}
 			}
 
@@ -1026,7 +1025,7 @@ namespace Skylicht
 
 					for (int i = 0; i < 3; i++)
 					{
-						core::plane3df p(pos, normal[i]);
+						core::plane3df p(pos, worldNormal[i]);
 
 						core::vector3df viewVector = viewRay.getVector();
 						viewVector.normalize();
@@ -1079,7 +1078,7 @@ namespace Skylicht
 							m_using = true;
 							m_usingEvent = true;
 
-							core::plane3df p(pos, normal[i]);
+							core::plane3df p(pos, worldNormal[i]);
 
 							core::vector3df viewVector = viewRay.getVector();
 							viewVector.normalize();
@@ -1089,7 +1088,7 @@ namespace Skylicht
 								core::vector3df hitVector = out - pos;
 								hitVector.normalize();
 
-								m_rotationAngle = computeAngleOnPlan(hitVector, normal[i]);
+								m_rotationAngle = computeAngleOnPlan(hitVector, worldNormal[i]);
 
 								if (handles->isSnapRotate())
 								{
@@ -1097,15 +1096,12 @@ namespace Skylicht
 								}
 
 								core::quaternion q;
-								q.fromAngleAxis(m_rotationAngle, normal[i]);
+								q.fromAngleAxis(m_rotationAngle, localNormal[i]);
 
 								resultRotation = m_lastRotation * q;
 								resultRotation.normalize();
 
-								q = worldRot;
-								q.makeInverse();
-
-								handles->setTargetRotation(q * resultRotation);
+								handles->setTargetRotation(resultRotation);
 								break;
 							}
 						}
@@ -1359,6 +1355,47 @@ namespace Skylicht
 				handles->end();
 				handles->setEndCheck(true);
 			}
+		}
+
+		core::quaternion CHandlesRenderer::getRotation(const core::matrix4& mat)
+		{
+			core::vector3df front(0.0f, 0.0f, 1.0f);
+			core::vector3df up(0.0f, 1.0f, 0.0f);
+
+			mat.rotateVect(front);
+			mat.rotateVect(up);
+
+			front.normalize();
+			up.normalize();
+
+			core::vector3df right = up.crossProduct(front);
+			right.normalize();
+
+			core::matrix4 rotationMatrix;
+			f32* matData = rotationMatrix.pointer();
+			matData[0] = right.X;
+			matData[1] = right.Y;
+			matData[2] = right.Z;
+			matData[3] = 0.0f;
+
+			matData[4] = up.X;
+			matData[5] = up.Y;
+			matData[6] = up.Z;
+			matData[7] = 0.0f;
+
+			matData[8] = front.X;
+			matData[9] = front.Y;
+			matData[10] = front.Z;
+			matData[11] = 0.0f;
+
+			matData[12] = 0.0f;
+			matData[13] = 0.0f;
+			matData[14] = 0.0f;
+			matData[15] = 1.0f;
+
+			core::quaternion q(rotationMatrix);
+			q.normalize();
+			return q;
 		}
 	}
 }
