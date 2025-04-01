@@ -67,7 +67,11 @@ namespace Skylicht
 			g_engine = NULL;
 		}
 
-		CAudioEngine::CAudioEngine()
+		CAudioEngine::CAudioEngine() :
+			m_pause(false),
+			m_defaultStreamFactory(NULL),
+			m_driver(NULL),
+			m_thread(NULL)
 		{
 			m_mutex = IMutex::createMutex();
 		}
@@ -80,22 +84,25 @@ namespace Skylicht
 
 		void CAudioEngine::init()
 		{
-			// sound driver
-			m_driver = ISoundDriver::createDriver();
+			if (!m_driver)
+			{
+				// sound driver
+				m_driver = ISoundDriver::createDriver();
 
-			// init stream factory
-			m_defaultStreamFactory = new CStreamFactory();
-			registerStreamFactory(m_defaultStreamFactory);
+				// init stream factory
+				m_defaultStreamFactory = new CStreamFactory();
+				registerStreamFactory(m_defaultStreamFactory);
 
-			// init mp3 library
-			mpg123_init();
+				// init mp3 library
+				mpg123_init();
 
-			// start thread
+				// start thread
 #ifdef USE_MULTITHREAD_UPDATE
-			m_thread = IThread::createThread(this);
+				m_thread = IThread::createThread(this);
 #else
-			m_thread = NULL;
+				m_thread = NULL;
 #endif
+			}
 		}
 
 		void CAudioEngine::shutdown()
@@ -105,6 +112,7 @@ namespace Skylicht
 			{
 				m_thread->stop();
 				delete m_thread;
+				m_thread = NULL;
 			}
 
 			// release emitter
@@ -116,9 +124,11 @@ namespace Skylicht
 			// release stream factory
 			unRegisterStreamFactory(m_defaultStreamFactory);
 			delete m_defaultStreamFactory;
+			m_defaultStreamFactory = NULL;
 
 			// delete driver
 			delete m_driver;
+			m_driver = NULL;
 
 			// todo: free mp3 library
 			mpg123_exit();
@@ -126,29 +136,39 @@ namespace Skylicht
 
 		void CAudioEngine::pauseEngine()
 		{
-			if (m_driver)
-				m_driver->suspend();
-
-			// stop thread
-			if (m_thread != NULL)
+			if (!m_pause)
 			{
-				m_thread->stop();
-				delete m_thread;
-				m_thread = NULL;
+				if (m_driver)
+					m_driver->suspend();
+
+				// stop thread
+				if (m_thread != NULL)
+				{
+					m_thread->stop();
+					delete m_thread;
+					m_thread = NULL;
+				}
+
+				m_pause = true;
 			}
 		}
 
 		void CAudioEngine::resumeEngine()
 		{
-			if (m_driver)
-				m_driver->resume();
+			if (m_pause)
+			{
+				if (m_driver)
+					m_driver->resume();
 
-			// start thread
+				// start thread
 #ifdef USE_MULTITHREAD_UPDATE
-			m_thread = IThread::createThread(this);
+				if (m_thread == NULL)
+					m_thread = IThread::createThread(this);
 #else
-			m_thread = NULL;
+				m_thread = NULL;
 #endif
+				m_pause = false;
+			}
 		}
 
 		void CAudioEngine::updateDriver()

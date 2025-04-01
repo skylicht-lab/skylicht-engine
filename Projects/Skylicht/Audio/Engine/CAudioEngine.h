@@ -71,6 +71,8 @@ namespace Skylicht
 			
 			SListener m_listener;
 			
+			bool m_pause;
+
 		public:
 			static CAudioEngine* getSoundEngine();
 			
