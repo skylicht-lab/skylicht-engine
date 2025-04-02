@@ -85,7 +85,7 @@ namespace Skylicht
 
 		void CParticleComponent::updateComponent()
 		{
-
+			m_data->RequestUpdate++;
 		}
 
 		CObjectSerializable* CParticleComponent::createSerializable()

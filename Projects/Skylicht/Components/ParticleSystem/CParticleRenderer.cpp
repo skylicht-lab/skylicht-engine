@@ -134,7 +134,11 @@ namespace Skylicht
 				// update group before render
 				for (u32 j = 0, m = data->AllGroups.size(); j < m; j++)
 				{
-					data->AllGroups[j]->update(culling->Visible);
+					if (data->Updated != data->RequestUpdate)
+					{
+						data->Updated = data->RequestUpdate;
+						data->AllGroups[j]->update(culling->Visible);
+					}
 				}
 
 				// render
