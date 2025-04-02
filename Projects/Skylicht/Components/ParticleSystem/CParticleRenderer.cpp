@@ -131,14 +131,14 @@ namespace Skylicht
 				CCullingData* culling = GET_ENTITY_DATA(entity, CCullingData);
 				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 
-				// update group before render
-				for (u32 j = 0, m = data->AllGroups.size(); j < m; j++)
+				if (data->Updated != data->RequestUpdate)
 				{
-					if (data->Updated != data->RequestUpdate)
-					{
-						data->Updated = data->RequestUpdate;
+					// todo: fix pause particle if the code don't call CParticleComponent::update function
+					data->Updated = data->RequestUpdate;
+
+					// update group before render
+					for (u32 j = 0, m = data->AllGroups.size(); j < m; j++)
 						data->AllGroups[j]->update(culling->Visible);
-					}
 				}
 
 				// render
