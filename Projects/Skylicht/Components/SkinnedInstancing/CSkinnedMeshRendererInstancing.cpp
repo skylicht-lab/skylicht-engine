@@ -49,7 +49,12 @@ namespace Skylicht
 	{
 		for (auto it : m_instancingGroups)
 		{
-			it.first->InstancingGroup = NULL;
+			SMeshInstancing* meshInstancing = it.first;
+			meshInstancing->InstancingGroup = NULL;
+			meshInstancing->UseShareTransformBuffer = false;
+			meshInstancing->UseShareMaterialsBuffer = false;
+			meshInstancing->ShareDataTransform = NULL;
+			meshInstancing->ShareDataMaterials = NULL;
 			delete it.second;
 		}
 		m_instancingGroups.clear();

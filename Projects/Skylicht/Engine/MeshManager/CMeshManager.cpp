@@ -310,7 +310,7 @@ namespace Skylicht
 
 			if (renderMeshBuffer && lightingMeshBuffer)
 			{
-				// INDIRECT LIGHTING MESH				
+				// INDIRECT LIGHTING MESH
 				lightingMeshBuffer->setHardwareMappingHint(EHM_STATIC);
 
 				instancingLightingMesh->addMeshBuffer(
@@ -466,8 +466,8 @@ namespace Skylicht
 			if (data->MeshBuffers[mbID] != mb)
 				return false;
 
-			if (data->Materials[mbID] != mesh->Materials[i])
-				return false;
+			//if (data->Materials[mbID] != mesh->Materials[i])
+			//	return false;
 
 			mbID++;
 		}
