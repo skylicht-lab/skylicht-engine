@@ -65,6 +65,10 @@ namespace Skylicht
 		CPhysicsEngine::~CPhysicsEngine()
 		{
 			exitPhysics();
+
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			delete m_drawDebug;
+#endif
 		}
 
 		void CPhysicsEngine::initPhysics()
@@ -120,7 +124,6 @@ namespace Skylicht
 				delete m_overlapCB;
 				delete m_dispatcher;
 				delete m_collisionConfiguration;
-				delete m_drawDebug;
 
 				m_dynamicsWorld = NULL;
 				m_solver = NULL;
