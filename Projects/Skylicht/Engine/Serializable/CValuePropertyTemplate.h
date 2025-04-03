@@ -122,7 +122,7 @@ namespace Skylicht
 
 		virtual void deserialize(io::IAttributes* io)
 		{
-			m_value = io->getAttributeAsInt(Name.c_str());
+			m_value = io->getAttributeAsInt(Name.c_str(), m_value);
 		}
 
 		virtual CValueProperty* clone()
@@ -180,7 +180,7 @@ namespace Skylicht
 
 		virtual void deserialize(io::IAttributes* io)
 		{
-			m_value = io->getAttributeAsInt(Name.c_str());
+			m_value = io->getAttributeAsInt(Name.c_str(), m_value);
 		}
 
 		virtual CValueProperty* clone()
@@ -254,7 +254,7 @@ namespace Skylicht
 
 		virtual void deserialize(io::IAttributes* io)
 		{
-			m_value = io->getAttributeAsFloat(Name.c_str());
+			m_value = io->getAttributeAsFloat(Name.c_str(), m_value);
 		}
 
 		virtual CValueProperty* clone()
@@ -300,7 +300,7 @@ namespace Skylicht
 
 		virtual void deserialize(io::IAttributes* io)
 		{
-			m_value = io->getAttributeAsString(Name.c_str()).c_str();
+			m_value = io->getAttributeAsString(Name.c_str(), m_value.c_str()).c_str();
 		}
 
 		virtual CValueProperty* clone()
@@ -342,7 +342,7 @@ namespace Skylicht
 
 		virtual void deserialize(io::IAttributes* io)
 		{
-			m_value = io->getAttributeAsString(Name.c_str()).c_str();
+			m_value = io->getAttributeAsString(Name.c_str(), m_value.c_str()).c_str();
 		}
 
 		virtual CValueProperty* clone()
@@ -395,7 +395,7 @@ namespace Skylicht
 
 		virtual void deserialize(io::IAttributes* io)
 		{
-			m_value = io->getAttributeAsString(Name.c_str()).c_str();
+			m_value = io->getAttributeAsString(Name.c_str(), m_value.c_str()).c_str();
 		}
 
 		virtual CValueProperty* clone()
@@ -435,7 +435,7 @@ namespace Skylicht
 
 		virtual void deserialize(io::IAttributes* io)
 		{
-			m_value = io->getAttributeAsString(Name.c_str()).c_str();
+			m_value = io->getAttributeAsString(Name.c_str(), m_value.c_str()).c_str();
 
 			std::string GUID = Name;
 			GUID += ".guid";
@@ -533,7 +533,7 @@ namespace Skylicht
 
 			std::string spriteName = Name;
 			spriteName += ".sprite";
-			m_sprite = io->getAttributeAsString(spriteName.c_str()).c_str();
+			m_sprite = io->getAttributeAsString(spriteName.c_str(), m_value.c_str()).c_str();
 
 			spriteName = Name;
 			spriteName += ".spriteGUID";
@@ -587,7 +587,7 @@ namespace Skylicht
 
 		virtual void deserialize(io::IAttributes* io)
 		{
-			m_value = io->getAttributeAsBool(Name.c_str());
+			m_value = io->getAttributeAsBool(Name.c_str(), m_value);
 		}
 
 		virtual CValueProperty* clone()
@@ -625,7 +625,7 @@ namespace Skylicht
 
 		virtual void deserialize(io::IAttributes* io)
 		{
-			m_value = (long)io->getAttributeAsFloat(Name.c_str());
+			m_value = (long)io->getAttributeAsFloat(Name.c_str(), (float)m_value);
 		}
 
 		virtual CValueProperty* clone()
@@ -663,7 +663,7 @@ namespace Skylicht
 
 		virtual void deserialize(io::IAttributes* io)
 		{
-			m_value = io->getAttributeAsVector3d(Name.c_str());
+			m_value = io->getAttributeAsVector3d(Name.c_str(), m_value);
 		}
 
 		virtual CValueProperty* clone()
@@ -701,7 +701,7 @@ namespace Skylicht
 
 		virtual void deserialize(io::IAttributes* io)
 		{
-			m_value = io->getAttributeAsVector2d(Name.c_str());
+			m_value = io->getAttributeAsVector2d(Name.c_str(), m_value);
 		}
 
 		virtual CValueProperty* clone()
@@ -739,7 +739,7 @@ namespace Skylicht
 
 		virtual void deserialize(io::IAttributes* io)
 		{
-			m_value = io->getAttributeAsQuaternion(Name.c_str());
+			m_value = io->getAttributeAsQuaternion(Name.c_str(), m_value);
 		}
 
 		virtual CValueProperty* clone()
@@ -777,7 +777,7 @@ namespace Skylicht
 
 		virtual void deserialize(io::IAttributes* io)
 		{
-			m_value = io->getAttributeAsColor(Name.c_str());
+			m_value = io->getAttributeAsColor(Name.c_str(), m_value);
 		}
 
 		virtual CValueProperty* clone()
@@ -815,7 +815,7 @@ namespace Skylicht
 
 		virtual void deserialize(io::IAttributes* io)
 		{
-			m_value = io->getAttributeAsMatrix(Name.c_str());
+			m_value = io->getAttributeAsMatrix(Name.c_str(), m_value);
 		}
 
 		virtual CValueProperty* clone()
@@ -928,7 +928,7 @@ namespace Skylicht
 		virtual void deserialize(io::IAttributes* io)
 		{
 			CValuePropertyTemplate<T>* obj = dynamic_cast<CValuePropertyTemplate<T>*>(this);
-			obj->set(static_cast<T>(io->getAttributeAsInt(obj->Name.c_str())));
+			obj->set(static_cast<T>(io->getAttributeAsInt(obj->Name.c_str(), static_cast<int>(obj->get()))));
 		}
 
 		virtual CValueProperty* clone()
