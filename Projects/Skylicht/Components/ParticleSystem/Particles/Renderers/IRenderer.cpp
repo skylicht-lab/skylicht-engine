@@ -46,6 +46,7 @@ namespace Skylicht
 			m_atlasNy(1),
 			m_useInstancing(true),
 			m_emission(false),
+			m_ztest(true),
 			m_emissionIntensity(1.0f),
 			m_needUpdateMesh(true)
 		{
@@ -111,6 +112,8 @@ namespace Skylicht
 			object->autoRelease(new CIntProperty(object, "atlasX", m_atlasNx, 1));
 			object->autoRelease(new CIntProperty(object, "atlasY", m_atlasNy, 1));
 
+			object->autoRelease(new CBoolProperty(object, "ztest", m_ztest));
+
 			CBoolProperty* useCustom = new CBoolProperty(object, "custom material", m_useCustomMaterial);
 			useCustom->setUISpace(10.0f);
 			object->autoRelease(useCustom);
@@ -136,6 +139,8 @@ namespace Skylicht
 			SizeX = object->get<float>("sizeX", 1.0f);
 			SizeY = object->get<float>("sizeY", 1.0f);
 			SizeZ = object->get<float>("sizeZ", 1.0f);
+
+			m_ztest = object->get<bool>("ztest", true);
 
 			CImageSourceProperty* texturePath = dynamic_cast<CImageSourceProperty*>(object->getProperty("texture"));
 			std::string src;
@@ -171,10 +176,16 @@ namespace Skylicht
 			}
 
 			if (m_material)
+			{
+				m_material->setZTest(m_ztest ? ECFN_LESSEQUAL : ECFN_DISABLED);
 				m_material->updateShaderParams();
+			}
 
 			if (m_customMaterial)
+			{
+				m_customMaterial->setZTest(m_ztest ? ECFN_LESSEQUAL : ECFN_DISABLED);
 				m_customMaterial->updateShaderParams();
+			}
 		}
 
 		void IRenderer::setTexturePath(const char* path)

@@ -50,6 +50,7 @@ namespace Skylicht
 			bool m_useCustomMaterial;
 			bool m_useInstancing;
 			bool m_emission;
+			bool m_ztest;
 			float m_emissionIntensity;
 
 			std::string m_texturePath;
