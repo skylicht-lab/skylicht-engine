@@ -37,6 +37,7 @@ namespace Skylicht
 		m_frameSpeed(0.0f),
 		m_frameRotate(0.0f),
 		m_isCenter(false),
+		m_stretch(false),
 		m_defaultOffsetX(0.0f),
 		m_defaultOffsetY(0.0f)
 	{
@@ -51,6 +52,7 @@ namespace Skylicht
 		m_frameSpeed(0.0f),
 		m_frameRotate(0.0f),
 		m_isCenter(false),
+		m_stretch(false),
 		m_defaultOffsetX(0.0f),
 		m_defaultOffsetY(0.0f)
 	{
@@ -91,7 +93,11 @@ namespace Skylicht
 			const SColor& color = getColor();
 			if (color.getAlpha() > 0)
 			{
-				CGraphics2D::getInstance()->addFrameBatch(m_frame, color, m_transform->World, getShaderID(), getMaterial());
+				if (m_stretch)
+					CGraphics2D::getInstance()->addFrameBatch(getRect(), m_frame, color, m_transform->World, getShaderID(), getMaterial());
+				else
+					CGraphics2D::getInstance()->addFrameBatch(m_frame, color, m_transform->World, getShaderID(), getMaterial());
+
 				CGUIElement::render(camera);
 			}
 		}
@@ -152,8 +158,8 @@ namespace Skylicht
 				m_isCenter = true;
 			}
 
-			m_frame->ModuleOffset[0].OffsetX = -((float)m_frame->BoudingRect.getWidth() * 0.5f);
-			m_frame->ModuleOffset[0].OffsetY = -((float)m_frame->BoudingRect.getHeight() * 0.5f);
+			m_frame->ModuleOffset[0].OffsetX = -((float)m_frame->getWidth() * 0.5f);
+			m_frame->ModuleOffset[0].OffsetY = -((float)m_frame->getHeight() * 0.5f);
 		}
 	}
 
@@ -186,6 +192,7 @@ namespace Skylicht
 		frame->setSpriteGUID(m_spriteId.c_str());
 		object->autoRelease(frame);
 
+		object->autoRelease(new CBoolProperty(object, "stretch", m_stretch));
 		object->autoRelease(new CBoolProperty(object, "centerModule", m_isCenter));
 
 		return object;
@@ -196,6 +203,7 @@ namespace Skylicht
 		CFrameSourceProperty* frame = dynamic_cast<CFrameSourceProperty*>(object->getProperty("spriteSrc"));
 		CGUIElement::loadSerializable(object);
 
+		m_stretch = object->get("stretch", false);
 		bool isCenter = object->get("centerModule", false);
 
 		if (frame != NULL)

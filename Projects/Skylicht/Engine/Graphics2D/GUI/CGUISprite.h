@@ -41,6 +41,8 @@ namespace Skylicht
 		float m_frameSpeed;
 		float m_animationTime;
 
+		bool m_stretch;
+
 		bool m_isCenter;
 		float m_defaultOffsetX;
 		float m_defaultOffsetY;
@@ -91,6 +93,16 @@ namespace Skylicht
 		inline const char* getFrameId()
 		{
 			return m_guid.c_str();
+		}
+
+		inline void setStretch(bool b)
+		{
+			m_stretch = b;
+		}
+
+		inline bool isStretch()
+		{
+			return m_stretch;
 		}
 
 		void setFrameSource(const char* spritePath, const char* frameName, const char* editorFileRef = NULL);

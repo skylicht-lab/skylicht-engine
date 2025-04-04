@@ -46,10 +46,10 @@ namespace Skylicht
 
 	void SModuleOffset::getPositionBuffer(video::S3DVertex* vertices, u16* indices, int vertexOffset, const core::matrix4& mat, float scaleW, float scaleH)
 	{
-		float x1 = (float)OffsetX;
-		float y1 = (float)OffsetY;
-		float x2 = (float)(OffsetX + Module->W * scaleW);
-		float y2 = (float)(OffsetY + Module->H * scaleH);
+		float x1 = (float)OffsetX * scaleW;
+		float y1 = (float)OffsetY * scaleH;
+		float x2 = (float)(OffsetX * scaleW + Module->W * scaleW);
+		float y2 = (float)(OffsetY * scaleH + Module->H * scaleH);
 
 		vertices[0].Pos.X = x1;
 		vertices[0].Pos.Y = y1;
@@ -81,10 +81,10 @@ namespace Skylicht
 
 	void SModuleOffset::getPositionBuffer(video::S3DVertex* vertices, u16* indices, int vertexOffset, float offsetX, float offsetY, const core::matrix4& mat, float scaleW, float scaleH)
 	{
-		float x1 = (float)OffsetX + offsetX;
-		float y1 = (float)OffsetY + offsetY;
-		float x2 = (float)(OffsetX + offsetX + Module->W * scaleW);
-		float y2 = (float)(OffsetY + offsetY + Module->H * scaleH);
+		float x1 = (float)OffsetX * scaleW + offsetX;
+		float y1 = (float)OffsetY * scaleH + offsetY;
+		float x2 = (float)(OffsetX * scaleW + offsetX + Module->W * scaleW);
+		float y2 = (float)(OffsetY * scaleH + offsetY + Module->H * scaleH);
 
 		vertices[0].Pos.X = x1;
 		vertices[0].Pos.Y = y1;
