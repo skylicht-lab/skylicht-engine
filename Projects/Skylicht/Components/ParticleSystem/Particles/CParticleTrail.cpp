@@ -41,7 +41,9 @@ namespace Skylicht
 			m_destroyWhenParticleDead(false),
 			m_deadAlphaReduction(0.01f),
 			m_customMaterial(NULL),
-			m_useCustomMaterial(false)
+			m_useCustomMaterial(false),
+			m_emission(true),
+			m_emissionIntensity(1.0f)
 		{
 			setLength(1.0f);
 

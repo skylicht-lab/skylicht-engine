@@ -184,7 +184,7 @@ void SampleParticlesMagicSkill::initTower(Particle::CParticleComponent* ps)
 	ring->SizeY = 2.0f;
 	ring->SizeZ = 2.0f;
 	ring->setEmission(true);
-	ring->setEmissionIntensity(1.0f);
+	ring->setEmissionIntensity(1.5f);
 	ringGroup->setRenderer(ring);
 
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/modular_aura06.png");
@@ -298,6 +298,8 @@ void SampleParticlesMagicSkill::initProjectiles(Particle::CParticleComponent* ps
 	trail->applyMaterial();
 	trail->setWidth(0.3f);
 	trail->setLength(2.0f);
+	trail->setEmission(true);
+	trail->setEmissionIntensity(1.5f);
 
 
 	// SUB GROUP: Arcane
@@ -308,7 +310,7 @@ void SampleParticlesMagicSkill::initProjectiles(Particle::CParticleComponent* ps
 	arcane->SizeY = 0.4f;
 	arcane->SizeZ = 0.4f;
 	arcane->setEmission(true);
-	arcane->setEmissionIntensity(1.0f);
+	arcane->setEmissionIntensity(1.5f);
 
 	arcaneGroup->setRenderer(arcane);
 	arcaneGroup->setFollowParentTransform(true);
@@ -406,7 +408,7 @@ void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent* ps)
 	glow->SizeY = 1.2f;
 	glow->SizeZ = 1.2f;
 	glow->setEmission(true);
-	glow->setEmissionIntensity(1.0f);
+	glow->setEmissionIntensity(1.5f);
 
 	texture = CTextureManager::getInstance()->getTexture("Particles/Textures/Arcane/arcane_glow.png");
 	glow->setMaterialType(Particle::Additive, Particle::Camera);
@@ -459,7 +461,7 @@ void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent* ps)
 	sphere->SizeY = 0.3f;
 	sphere->SizeZ = 0.3f;
 	sphere->setEmission(true);
-	sphere->setEmissionIntensity(1.0f);
+	sphere->setEmissionIntensity(1.5f);
 
 	sphereGroup->setRenderer(sphere);
 	sphereGroup->Gravity.set(0.0f, 0.0f, 0.0f);
@@ -520,7 +522,7 @@ void SampleParticlesMagicSkill::initImpact(Particle::CParticleComponent* ps)
 	point->SizeY = 0.2f;
 	point->SizeZ = 0.2f;
 	point->setEmission(true);
-	point->setEmissionIntensity(1.0f);
+	point->setEmissionIntensity(1.5f);
 
 	pointGroup->setRenderer(point);
 	pointGroup->Gravity.set(0.0f, -0.2f, 0.0f);

@@ -6,6 +6,7 @@
 		<fs>
 			<uniform name="uTexDiffuse1" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
 			<uniform name="uTexDiffuse2" type="DEFAULT_VALUE" value="1" float="1" directX="false"/>
+			<uniform name="uColorIntensity" type="COLOR_INTENSITY" value="1.0, 1.0, 1.0, 1.0" float="4"/>
 		</fs>
 	</uniforms>
 	<customUI>

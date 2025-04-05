@@ -40,6 +40,8 @@ namespace Skylicht
 		CImageSourceProperty Texture;
 		CBoolProperty UseCustomMaterial;
 		CFilePathProperty CustomMaterial;
+		CBoolProperty Emission;
+		CFloatProperty EmissionIntensity;
 
 	public:
 		CTrailSerializable();

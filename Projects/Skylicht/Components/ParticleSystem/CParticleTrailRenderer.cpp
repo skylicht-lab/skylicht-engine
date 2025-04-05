@@ -132,13 +132,21 @@ namespace Skylicht
 				for (u32 j = 0; j < m; j++)
 				{
 					CParticleTrail* p = trailData->Trails[j];
+					if (p->isEmission())
+					{
+						SColorf color = CShaderMaterial::getColorIntensity();
 
-					IMeshBuffer* mb = p->getMeshBuffer();
+						float intensity = p->getEmissionIntensity();
 
-					CShaderMaterial::setMaterial(p->getMaterial());
+						CShaderMaterial::setColorIntensity(SColorf(intensity, intensity, intensity));
+						CShaderMaterial::setMaterial(p->getMaterial());
 
-					driver->setMaterial(mb->getMaterial());
-					driver->drawMeshBuffer(mb);
+						IMeshBuffer* mb = p->getMeshBuffer();
+						driver->setMaterial(mb->getMaterial());
+						driver->drawMeshBuffer(mb);
+
+						CShaderMaterial::setColorIntensity(color);
+					}
 				}
 			}
 		}

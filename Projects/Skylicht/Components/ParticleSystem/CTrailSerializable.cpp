@@ -40,7 +40,9 @@ namespace Skylicht
 		DeadAlphaReduction(this, "deadAlphaReduction"),
 		Texture(this, "texture"),
 		UseCustomMaterial(this, "useCustomMaterial"),
-		CustomMaterial(this, "customMaterial", "", CMaterialManager::getMaterialExts())
+		CustomMaterial(this, "customMaterial", "", CMaterialManager::getMaterialExts()),
+		Emission(this, "emission", true),
+		EmissionIntensity(this, "emissionIntensity", 1.0f)
 	{
 		Width.set(1.0f);
 		Length.set(1.0f);

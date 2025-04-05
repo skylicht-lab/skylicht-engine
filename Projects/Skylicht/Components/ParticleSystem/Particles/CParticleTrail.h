@@ -118,6 +118,10 @@ namespace Skylicht
 
 			core::matrix4 m_world;
 
+			bool m_emission;
+
+			float m_emissionIntensity;
+
 		public:
 			CParticleTrail(CGroup* group);
 
@@ -230,6 +234,26 @@ namespace Skylicht
 			inline const char* getTexturePath()
 			{
 				return m_texturePath.c_str();
+			}
+
+			inline void setEmission(bool b)
+			{
+				m_emission = b;
+			}
+
+			inline bool isEmission()
+			{
+				return m_emission;
+			}
+
+			inline void setEmissionIntensity(float f)
+			{
+				m_emissionIntensity = f;
+			}
+
+			inline float getEmissionIntensity()
+			{
+				return m_emissionIntensity;
 			}
 
 		protected:

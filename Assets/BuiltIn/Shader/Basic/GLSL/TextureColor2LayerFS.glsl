@@ -7,6 +7,8 @@ in vec2 varTexCoord0;
 in vec2 varTexCoord1;
 in vec4 varColor;
 
+uniform vec4 uColorIntensity;
+
 out vec4 FragColor;
 
 void main(void)
@@ -14,5 +16,5 @@ void main(void)
 	vec4 color1 = texture(uTexDiffuse1, varTexCoord0.xy);
 	vec4 color2 = texture(uTexDiffuse2, varTexCoord1.xy);
 
-	FragColor = color1 * color2 * varColor;
+	FragColor = color1 * color2 * varColor * uColorIntensity;
 }

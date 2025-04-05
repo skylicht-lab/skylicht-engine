@@ -102,6 +102,8 @@ namespace Skylicht
 				trailData->Texture.set(trail->getTexturePath());
 				trailData->UseCustomMaterial.set(trail->useCustomMaterial());
 				trailData->CustomMaterial.set(trail->getCustomMaterial());
+				trailData->Emission.set(trail->isEmission());
+				trailData->EmissionIntensity.set(trail->getEmissionIntensity());
 			}
 
 			return object;
@@ -141,6 +143,8 @@ namespace Skylicht
 					trail->enableDestroyWhenParticleDead(trailData->DestroyWhenParticleDead.get());
 					trail->setDeadAlphaReduction(trailData->DeadAlphaReduction.get());
 					trail->setTexturePath(trailData->Texture.get().c_str());
+					trail->setEmission(trailData->Emission.get());
+					trail->setEmissionIntensity(trailData->EmissionIntensity.get());
 
 					std::string materialPath = trailData->CustomMaterial.get();
 					if (!materialPath.empty())
