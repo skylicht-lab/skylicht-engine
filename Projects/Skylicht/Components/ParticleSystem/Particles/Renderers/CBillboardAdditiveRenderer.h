@@ -33,9 +33,18 @@ namespace Skylicht
 	{
 		class COMPONENT_API CBillboardAdditiveRenderer : public IRenderer
 		{
+		public:
+			enum EBillboardType
+			{
+				Billboard,
+				RotateY
+			};
+
 		protected:
 			static const u32 NB_INDICES_PER_QUAD = 6;
 			static const u32 NB_VERTICES_PER_QUAD = 4;
+
+			EBillboardType m_billboardType;
 
 		public:
 			CBillboardAdditiveRenderer();
@@ -45,6 +54,20 @@ namespace Skylicht
 			virtual void getParticleBuffer(IMeshBuffer* buffer);
 
 			virtual void updateParticleBuffer(IMeshBuffer* buffer, CParticle* particles, int num);
+
+			virtual CObjectSerializable* createSerializable();
+
+			virtual void loadSerializable(CObjectSerializable* object);
+
+			inline EBillboardType getBillboardType()
+			{
+				return m_billboardType;
+			}
+
+			inline void setBillboardType(EBillboardType type)
+			{
+				m_billboardType = type;
+			}
 
 			DECLARE_GETTYPENAME(CBillboardAdditiveRenderer)
 		};

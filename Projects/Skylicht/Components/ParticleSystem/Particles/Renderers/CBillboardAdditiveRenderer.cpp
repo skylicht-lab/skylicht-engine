@@ -31,7 +31,8 @@ namespace Skylicht
 	namespace Particle
 	{
 		CBillboardAdditiveRenderer::CBillboardAdditiveRenderer() :
-			IRenderer(BillboardAddtive)
+			IRenderer(BillboardAddtive),
+			m_billboardType(Billboard)
 		{
 			m_useInstancing = false;
 
@@ -72,7 +73,7 @@ namespace Skylicht
 			float frameW = 1.0f / m_atlasNx;
 			float frameH = 1.0f / m_atlasNy;
 
-			core::vector3df upQuad, sideQuad;
+			core::vector3df upQuad(0.0f, 1.0f, 0.0f), sideQuad;
 			core::vector3df look = CShaderParticle::getViewLook();
 			core::vector3df up = CShaderParticle::getViewUp();
 
@@ -89,25 +90,26 @@ namespace Skylicht
 				float sx = SizeX * params[ScaleX] * 0.5f;
 				float sy = SizeY * params[ScaleY] * 0.5f;
 
-				float rotation = p->Rotation.Z;
+				if (m_billboardType == Billboard)
+				{
+					float rotation = p->Rotation.Z;
+					float cosA = cosf(rotation);
+					float sinA = sinf(rotation);
 
-				float cosA = cosf(rotation);
-				float sinA = sinf(rotation);
+					upQuad.X = (look.X * look.X + (1.0f - look.X * look.X) * cosA) * up.X
+						+ (look.X * look.Y * (1.0f - cosA) - look.Z * sinA) * up.Y
+						+ (look.X * look.Z * (1.0f - cosA) + look.Y * sinA) * up.Z;
 
-				upQuad.X = (look.X * look.X + (1.0f - look.X * look.X) * cosA) * up.X
-					+ (look.X * look.Y * (1.0f - cosA) - look.Z * sinA) * up.Y
-					+ (look.X * look.Z * (1.0f - cosA) + look.Y * sinA) * up.Z;
+					upQuad.Y = (look.X * look.Y * (1.0f - cosA) + look.Z * sinA) * up.X
+						+ (look.Y * look.Y + (1.0f - look.Y * look.Y) * cosA) * up.Y
+						+ (look.Y * look.Z * (1.0f - cosA) - look.X * sinA) * up.Z;
 
-				upQuad.Y = (look.X * look.Y * (1.0f - cosA) + look.Z * sinA) * up.X
-					+ (look.Y * look.Y + (1.0f - look.Y * look.Y) * cosA) * up.Y
-					+ (look.Y * look.Z * (1.0f - cosA) - look.X * sinA) * up.Z;
-
-				upQuad.Z = (look.X * look.Z * (1.0f - cosA) - look.Y * sinA) * up.X
-					+ (look.Y * look.Z * (1.0f - cosA) + look.X * sinA) * up.Y
-					+ (look.Z * look.Z + (1.0f - look.Z * look.Z) * cosA) * up.Z;
+					upQuad.Z = (look.X * look.Z * (1.0f - cosA) - look.Y * sinA) * up.X
+						+ (look.Y * look.Z * (1.0f - cosA) + look.X * sinA) * up.Y
+						+ (look.Z * look.Z + (1.0f - look.Z * look.Z) * cosA) * up.Z;
+				}
 
 				sideQuad = upQuad.crossProduct(look);
-
 				sideQuad *= sx;
 				upQuad *= sy;
 
@@ -143,7 +145,7 @@ namespace Skylicht
 				vertices[offset].Color = color;
 				vertices[offset].TCoords = core::vector2df(0.0f, 0.0f) * uvScale + uvOffset;
 
-				// top right vertex				
+				// top right vertex
 				vertices[++offset].Pos.set(
 					x + sideQuad.X + upQuad.X,
 					y + sideQuad.Y + upQuad.Y,
@@ -195,6 +197,21 @@ namespace Skylicht
 			}
 
 			buffer->setDirty();
+		}
+
+		CObjectSerializable* CBillboardAdditiveRenderer::createSerializable()
+		{
+			CObjectSerializable* object = IRenderer::createSerializable();
+			CEnumProperty<EBillboardType>* billboardType = new CEnumProperty<EBillboardType>(object, "billboardType", m_billboardType);
+			billboardType->addEnumString("Billboard", EBillboardType::Billboard);
+			billboardType->addEnumString("RotateY", EBillboardType::RotateY);
+			return object;
+		}
+
+		void CBillboardAdditiveRenderer::loadSerializable(CObjectSerializable* object)
+		{
+			IRenderer::loadSerializable(object);
+			m_billboardType = object->get<EBillboardType>("billboardType", EBillboardType::Billboard);
 		}
 	}
 }
