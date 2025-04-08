@@ -73,7 +73,7 @@ namespace Skylicht
 			float frameW = 1.0f / m_atlasNx;
 			float frameH = 1.0f / m_atlasNy;
 
-			core::vector3df upQuad(0.0f, 1.0f, 0.0f), sideQuad;
+			core::vector3df upQuad, sideQuad;
 			core::vector3df look = CShaderParticle::getViewLook();
 			core::vector3df up = CShaderParticle::getViewUp();
 
@@ -107,6 +107,10 @@ namespace Skylicht
 					upQuad.Z = (look.X * look.Z * (1.0f - cosA) - look.Y * sinA) * up.X
 						+ (look.Y * look.Z * (1.0f - cosA) + look.X * sinA) * up.Y
 						+ (look.Z * look.Z + (1.0f - look.Z * look.Z) * cosA) * up.Z;
+				}
+				else if (m_billboardType == RotateY)
+				{
+					upQuad.set(0.0f, 1.0f, 0.0f);
 				}
 
 				sideQuad = upQuad.crossProduct(look);
