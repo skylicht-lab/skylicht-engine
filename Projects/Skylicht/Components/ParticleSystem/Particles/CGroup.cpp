@@ -158,6 +158,7 @@ namespace Skylicht
 		core::vector3df CGroup::getTransformVector(const core::vector3df& vec)
 		{
 			core::vector3df p = vec;
+			m_parentWorld.rotateVect(p);
 			m_world.rotateVect(p);
 			return p;
 		}

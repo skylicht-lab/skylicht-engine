@@ -115,6 +115,14 @@ namespace Skylicht
 
 		}
 
+		const core::matrix4& CParticleRenderer::getTransformNoRotate(const core::matrix4& world)
+		{
+			m_transform.makeIdentity();
+			m_transform.setTranslation(world.getTranslation());
+			m_transform.setScale(world.getScale());
+			return m_transform;
+		}
+
 		void CParticleRenderer::renderTransparent(CEntityManager* entityManager)
 		{
 			if (m_group->getEntityCount() == 0)
@@ -138,7 +146,10 @@ namespace Skylicht
 
 					// update group before render
 					for (u32 j = 0, m = data->AllGroups.size(); j < m; j++)
+					{
+						data->AllGroups[j]->setParentWorldMatrix(transform->World);
 						data->AllGroups[j]->update(culling->Visible);
+					}
 				}
 
 				// render
@@ -153,7 +164,7 @@ namespace Skylicht
 							CShaderLighting::setLightAmbient(lightingData->Color);
 					}
 
-					renderParticleGroup(data, transform->World);
+					renderParticleGroup(data, getTransformNoRotate(transform->World));
 				}
 			}
 		}
@@ -185,7 +196,7 @@ namespace Skylicht
 							CShaderLighting::setLightAmbient(lightingData->Color);
 					}
 
-					renderParticleGroupEmission(data, transform->World);
+					renderParticleGroupEmission(data, getTransformNoRotate(transform->World));
 				}
 			}
 		}

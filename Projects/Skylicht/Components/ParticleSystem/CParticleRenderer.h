@@ -43,6 +43,7 @@ namespace Skylicht
 		{
 		protected:
 			CEntityGroup* m_group;
+			core::matrix4 m_transform;
 
 		public:
 			CParticleRenderer();
@@ -64,6 +65,8 @@ namespace Skylicht
 			virtual void renderEmission(CEntityManager* entityManager);
 
 		protected:
+
+			const core::matrix4& getTransformNoRotate(const core::matrix4& world);
 
 			void renderParticleGroup(CParticleBufferData* data, const core::matrix4& world);
 

@@ -140,6 +140,7 @@ namespace Skylicht
 			bool Visible;
 
 		protected:
+			core::matrix4 m_parentWorld;
 			core::matrix4 m_world;
 			core::aabbox3df m_bbox;
 
@@ -153,6 +154,11 @@ namespace Skylicht
 			void setGravityRotation(const core::vector3df& euler);
 
 			void setParticleRotation(const core::vector3df& euler);
+
+			inline void setParentWorldMatrix(const core::matrix4& m)
+			{
+				m_parentWorld = m;
+			}
 
 			inline void setWorldMatrix(const core::matrix4& m)
 			{
