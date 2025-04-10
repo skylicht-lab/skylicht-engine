@@ -680,6 +680,8 @@ namespace Skylicht
 			}
 		}
 
+		loadDefaultTexture();
+
 		initDefaultValue();
 
 		bindUniformParam();
