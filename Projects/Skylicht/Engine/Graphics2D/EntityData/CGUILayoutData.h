@@ -36,7 +36,9 @@ namespace Skylicht
 		enum EAlignType
 		{
 			Vertical,
-			Horizontal
+			Horizontal,
+			VerticalBottom,
+			HorizontalRight,
 		};
 
 		EAlignType AlignType;

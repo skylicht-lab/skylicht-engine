@@ -36,7 +36,6 @@ namespace Skylicht
 {
 	CGUIElement::CGUIElement(CCanvas* canvas, CGUIElement* parent) :
 		m_canvas(canvas),
-		m_visible(true),
 		m_parent(NULL),
 		m_mask(NULL),
 		m_drawBorder(false),
@@ -61,7 +60,6 @@ namespace Skylicht
 
 	CGUIElement::CGUIElement(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect) :
 		m_canvas(canvas),
-		m_visible(true),
 		m_parent(NULL),
 		m_mask(NULL),
 		m_drawBorder(false),
@@ -300,7 +298,7 @@ namespace Skylicht
 		// element data
 		object->autoRelease(new CStringProperty(object, "id", getID()));
 		object->autoRelease(new CStringProperty(object, "name", getName()));
-		object->autoRelease(new CBoolProperty(object, "visible", m_visible));
+		object->autoRelease(new CBoolProperty(object, "visible", isVisible()));
 
 		// transform
 		object->autoRelease(new CVector3Property(object, "position", m_guiTransform->getPosition()));
@@ -360,7 +358,7 @@ namespace Skylicht
 
 		// gui data
 		setName(object->get("name", std::string("No name")).c_str());
-		m_visible = object->get("visible", false);
+		setVisible(object->get("visible", true));
 
 		// transform
 		setPosition(object->get<core::vector3df>("position", core::vector3df()));

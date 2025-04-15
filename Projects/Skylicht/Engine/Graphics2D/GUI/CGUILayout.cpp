@@ -59,6 +59,8 @@ namespace Skylicht
 		CEnumProperty<CGUILayoutData::EAlignType>* alginType = new CEnumProperty<CGUILayoutData::EAlignType>(object, "layoutAlignType", m_layoutData->AlignType);
 		alginType->addEnumString("Vertical", CGUILayoutData::Vertical);
 		alginType->addEnumString("Horizontal", CGUILayoutData::Horizontal);
+		alginType->addEnumString("Vertical Bottom", CGUILayoutData::VerticalBottom);
+		alginType->addEnumString("Horizontal Right", CGUILayoutData::HorizontalRight);
 		object->autoRelease(alginType);
 
 		object->autoRelease(new CFloatProperty(object, "spacing", m_layoutData->Spacing));

@@ -65,6 +65,11 @@ namespace Skylicht
 			{
 				l->CurrentX = 0.0f;
 				l->CurrentY = 0.0f;
+
+				if (l->AlignType == CGUILayoutData::VerticalBottom)
+					l->CurrentY = t->getRect().getHeight();
+				if (l->AlignType == CGUILayoutData::HorizontalRight)
+					l->CurrentX = t->getRect().getWidth();
 			}
 
 			m_worldTransforms.push(w);
@@ -118,8 +123,13 @@ namespace Skylicht
 			if (!parentLayoutInfo)
 				continue;
 
+			if (!transform->Entity->isVisible())
+				continue;
+
 			float h = transform->Rect.getHeight();
 			float w = transform->Rect.getWidth();
+
+			float sw = 0.0f, sh = 0.0f;
 
 			switch (parentLayoutInfo->AlignType)
 			{
@@ -137,6 +147,22 @@ namespace Skylicht
 				parentLayoutInfo->MaxH = y - parentLayoutInfo->Spacing;
 			}
 			break;
+			case CGUILayoutData::VerticalBottom:
+			{
+				float y = parentLayoutInfo->CurrentY;
+				y = y - h;
+				sh = sh + h;
+
+				transform->setPosition(core::vector3df(0.0f, y, 0.0f));
+
+				y = y - parentLayoutInfo->Spacing;
+				sh = sh + parentLayoutInfo->Spacing;
+
+				parentLayoutInfo->CurrentY = y;
+				parentLayoutInfo->MaxW = core::max_(parentLayoutInfo->MaxW, w);
+				parentLayoutInfo->MaxH = sh - parentLayoutInfo->Spacing;
+			}
+			break;
 			case CGUILayoutData::Horizontal:
 			{
 				float x = parentLayoutInfo->CurrentX;
@@ -149,6 +175,22 @@ namespace Skylicht
 				parentLayoutInfo->CurrentX = x;
 				parentLayoutInfo->MaxH = core::max_(parentLayoutInfo->MaxH, h);
 				parentLayoutInfo->MaxW = x - parentLayoutInfo->Spacing;
+			}
+			break;
+			case CGUILayoutData::HorizontalRight:
+			{
+				float x = parentLayoutInfo->CurrentX;
+				x = x - w;
+				sw = sw + w;
+
+				transform->setPosition(core::vector3df(x, 0.0f, 0.0f));
+
+				x = x - parentLayoutInfo->Spacing;
+				sw = sw + parentLayoutInfo->Spacing;
+
+				parentLayoutInfo->CurrentX = x;
+				parentLayoutInfo->MaxH = core::max_(parentLayoutInfo->MaxH, h);
+				parentLayoutInfo->MaxW = sw - parentLayoutInfo->Spacing;
 			}
 			break;
 			}

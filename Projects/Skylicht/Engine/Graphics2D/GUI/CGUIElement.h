@@ -51,7 +51,6 @@ namespace Skylicht
 		CGUIMask* m_applyCurrentMask;
 
 		bool m_drawBorder;
-		bool m_visible;
 		bool m_enableMaterial;
 
 		int m_renderOrder;
@@ -354,12 +353,12 @@ namespace Skylicht
 		}
 		inline void setVisible(bool b)
 		{
-			m_visible = b;
+			m_entity->setVisible(b);
 		}
 
 		inline bool isVisible()
 		{
-			return m_visible;
+			return m_entity->isVisible();
 		}
 
 		void notifyChanged();
