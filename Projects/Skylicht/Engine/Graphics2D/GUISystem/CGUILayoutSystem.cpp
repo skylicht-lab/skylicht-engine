@@ -44,6 +44,7 @@ namespace Skylicht
 		m_guiAlign.reset();
 		m_guiLayout.reset();
 		m_guiLayoutTransform.reset();
+		m_parentLayout.reset();
 	}
 
 	void CGUILayoutSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int count)
@@ -63,13 +64,13 @@ namespace Skylicht
 
 			if (l)
 			{
+				m_parentLayout.push(l);
+
+				// reset
 				l->CurrentX = 0.0f;
 				l->CurrentY = 0.0f;
-
-				if (l->AlignType == CGUILayoutData::VerticalBottom)
-					l->CurrentY = t->getRect().getHeight();
-				if (l->AlignType == CGUILayoutData::HorizontalRight)
-					l->CurrentX = t->getRect().getWidth();
+				l->ChildsWidth = 0.0f;
+				l->ChildsHeight = 0.0f;
 			}
 
 			m_worldTransforms.push(w);
@@ -114,6 +115,71 @@ namespace Skylicht
 		CGUITransformData** transforms = m_guiLayoutTransform.pointer();
 
 		int numEntity = m_guiLayout.count();
+		for (int i = 0; i < numEntity; i++)
+		{
+			CGUIChildLayoutData* layout = layouts[i];
+			CGUITransformData* transform = transforms[i];
+			CGUILayoutData* parentLayoutInfo = layout->Parent;
+
+			if (!parentLayoutInfo)
+				continue;
+
+			if (!transform->Entity->isVisible())
+				continue;
+
+			float h = transform->Rect.getHeight();
+			float w = transform->Rect.getWidth();
+
+			if (parentLayoutInfo->AlignType == CGUILayoutData::Horizontal || parentLayoutInfo->AlignType == CGUILayoutData::HorizontalRight)
+				parentLayoutInfo->ChildsWidth = parentLayoutInfo->ChildsWidth + w + parentLayoutInfo->Spacing;
+			else
+				parentLayoutInfo->ChildsWidth = core::max_(parentLayoutInfo->ChildsWidth, w);
+
+			if (parentLayoutInfo->AlignType == CGUILayoutData::Vertical || parentLayoutInfo->AlignType == CGUILayoutData::VerticalBottom)
+				parentLayoutInfo->ChildsHeight = parentLayoutInfo->ChildsHeight + h + parentLayoutInfo->Spacing;
+			else
+				parentLayoutInfo->ChildsHeight = core::max_(parentLayoutInfo->ChildsHeight, h);
+		}
+
+		CGUILayoutData** parentLayouts = m_parentLayout.pointer();
+		for (int i = 0, n = m_parentLayout.count(); i < n; i++)
+		{
+			CGUILayoutData* l = parentLayouts[i];
+			CGUITransformData* t = GET_ENTITY_DATA(l->Entity, CGUITransformData);
+
+			l->ChildsWidth = l->ChildsWidth - l->Spacing;
+			l->ChildsHeight = l->ChildsHeight - l->Spacing;
+
+			float w = t->getRect().getWidth();
+			float h = t->getRect().getHeight();
+
+			if (l->LayoutCenter)
+			{
+				if (l->AlignType == CGUILayoutData::HorizontalRight)
+					l->CurrentX = w * 0.5f + l->ChildsWidth * 0.5f;
+				else
+					l->CurrentX = w * 0.5f - l->ChildsWidth * 0.5f;
+			}
+			else
+			{
+				if (l->AlignType == CGUILayoutData::HorizontalRight)
+					l->CurrentX = w;
+			}
+
+			if (l->LayoutMiddle)
+			{
+				if (l->AlignType == CGUILayoutData::VerticalBottom)
+					l->CurrentY = h * 0.5f + l->ChildsHeight * 0.5f;
+				else
+					l->CurrentY = h * 0.5f - l->ChildsHeight * 0.5f;
+			}
+			else
+			{
+				if (l->AlignType == CGUILayoutData::VerticalBottom)
+					l->CurrentY = h;
+			}
+		}
+
 		for (int i = 0; i < numEntity; i++)
 		{
 			CGUIChildLayoutData* layout = layouts[i];

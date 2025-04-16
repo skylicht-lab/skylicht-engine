@@ -39,6 +39,7 @@ namespace Skylicht
 		CFastArray<CGUITransformData*> m_guiTransform;
 		CFastArray<CGUIAlignData*> m_guiAlign;
 
+		CFastArray<CGUILayoutData*> m_parentLayout;
 		CFastArray<CGUIChildLayoutData*> m_guiLayout;
 		CFastArray<CGUITransformData*> m_guiLayoutTransform;
 

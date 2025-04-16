@@ -36,7 +36,11 @@ namespace Skylicht
 		CurrentY(0.0f),
 		Spacing(0.0f),
 		MaxW(0.0f),
-		MaxH(0.0f)
+		MaxH(0.0f),
+		LayoutCenter(false),
+		LayoutMiddle(false),
+		ChildsWidth(0.0f),
+		ChildsHeight(0.0f)
 	{
 
 	}
