@@ -55,7 +55,7 @@ namespace Skylicht
 			CParticle* baseParticles = parentGroup->getParticlePointer();
 			CParticle* p;
 
-#pragma omp parallel for private(p)
+// #pragma omp parallel for private(p)
 			for (int i = 0; i < num; i++)
 			{
 				p = particles + i;

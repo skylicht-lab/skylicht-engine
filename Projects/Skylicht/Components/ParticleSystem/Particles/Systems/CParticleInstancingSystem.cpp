@@ -90,7 +90,7 @@ namespace Skylicht
 			float frameH = 1.0f / frameY;
 			u32 frame, row, col;
 
-#pragma omp parallel for private(p, params, data, frame, row, col)
+// #pragma omp parallel for private(p, params, data, frame, row, col)
 			for (int i = 0; i < num; i++)
 			{
 				p = particles + i;

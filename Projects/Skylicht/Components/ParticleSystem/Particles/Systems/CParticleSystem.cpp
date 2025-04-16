@@ -48,7 +48,7 @@ namespace Skylicht
 
 			CParticle* p;
 
-#pragma omp parallel for private(p)
+// #pragma omp parallel for private(p)
 			for (int i = 0; i < num; i++)
 			{
 				p = particles + i;
@@ -99,7 +99,7 @@ namespace Skylicht
 			float f, x, y;
 			EParticleParams t;
 
-#pragma omp parallel for private(p, params, f, x, y, t)
+// #pragma omp parallel for private(p, params, f, x, y, t)
 			for (int i = 0; i < num; i++)
 			{
 				p = particles + i;
