@@ -562,6 +562,31 @@ namespace Skylicht
 	}
 
 	/*
+	* Elipse constructor
+	*/
+
+	CGUIElipse* CCanvas::createElipse(const video::SColor& c)
+	{
+		CGUIElipse* element = new CGUIElipse(this, m_root, m_rect);
+		element->setColor(c);
+		return element;
+	}
+
+	CGUIElipse* CCanvas::createElipse(const core::rectf& r, const video::SColor& c)
+	{
+		CGUIElipse* element = new CGUIElipse(this, m_root, r);
+		element->setColor(c);
+		return element;
+	}
+
+	CGUIElipse* CCanvas::createElipse(CGUIElement* e, const core::rectf& r, const video::SColor& c)
+	{
+		CGUIElipse* element = new CGUIElipse(this, e, r);
+		element->setColor(c);
+		return element;
+	}
+
+	/*
 	* Layout constructor
 	*/
 
@@ -641,6 +666,8 @@ namespace Skylicht
 			element = createLayout(parent, nullRect);
 		else if (typeName == L"CGUIFitSprite")
 			element = createFitSprite(parent, nullRect, NULL);
+		else if (typeName == L"CGUIElipse")
+			element = createElipse(parent, nullRect, NULL);
 		else if (typeName != L"Childs")
 		{
 			char log[512];

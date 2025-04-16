@@ -201,9 +201,10 @@ namespace Skylicht
 			{
 			case CGUILayoutData::Vertical:
 			{
+				float x = parentLayoutInfo->CurrentX;
 				float y = parentLayoutInfo->CurrentY;
 
-				transform->setPosition(core::vector3df(0.0f, y, 0.0f));
+				transform->setPosition(core::vector3df(x, y, 0.0f));
 
 				y = y + h;
 				y = y + parentLayoutInfo->Spacing;
@@ -215,11 +216,12 @@ namespace Skylicht
 			break;
 			case CGUILayoutData::VerticalBottom:
 			{
+				float x = parentLayoutInfo->CurrentX;
 				float y = parentLayoutInfo->CurrentY;
 				y = y - h;
 				sh = sh + h;
 
-				transform->setPosition(core::vector3df(0.0f, y, 0.0f));
+				transform->setPosition(core::vector3df(x, y, 0.0f));
 
 				y = y - parentLayoutInfo->Spacing;
 				sh = sh + parentLayoutInfo->Spacing;
@@ -232,8 +234,9 @@ namespace Skylicht
 			case CGUILayoutData::Horizontal:
 			{
 				float x = parentLayoutInfo->CurrentX;
+				float y = parentLayoutInfo->CurrentY;
 
-				transform->setPosition(core::vector3df(x, 0.0f, 0.0f));
+				transform->setPosition(core::vector3df(x, y, 0.0f));
 
 				x = x + w;
 				x = x + parentLayoutInfo->Spacing;
@@ -246,10 +249,12 @@ namespace Skylicht
 			case CGUILayoutData::HorizontalRight:
 			{
 				float x = parentLayoutInfo->CurrentX;
+				float y = parentLayoutInfo->CurrentY;
+
 				x = x - w;
 				sw = sw + w;
 
-				transform->setPosition(core::vector3df(x, 0.0f, 0.0f));
+				transform->setPosition(core::vector3df(x, y, 0.0f));
 
 				x = x - parentLayoutInfo->Spacing;
 				sw = sw + parentLayoutInfo->Spacing;

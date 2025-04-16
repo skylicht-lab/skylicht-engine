@@ -1484,6 +1484,82 @@ namespace Skylicht
 			flushWithMaterial(material);
 	}
 
+	void CGraphics2D::addEclipseBatch(const core::rectf& pos, const core::rectf& uv, const SColor& color, const core::matrix4& absoluteTransform, int shaderID, float a, float b, CMaterial* material)
+	{
+		if (m_2dMaterial.MaterialType != shaderID || material != NULL)
+			flush();
+
+		int fromVertices = m_vertices->getVertexCount();
+
+		int numStep = 30;
+		if (a > b)
+		{
+			float t = a;
+			a = b;
+			b = t;
+		}
+
+		float d = (b - a) / (float)numStep;
+
+		core::vector2df center = pos.getCenter();
+		float w = pos.getWidth();
+		float h = pos.getHeight();
+		float r1 = w * 0.5f;
+		float r2 = h * 0.5f;
+
+		if (w == 0.0f || h == 0.0f)
+			return;
+
+		S3DVertex vertex;
+		vertex.Pos = core::vector3df(center.X, center.Y, 0.0f);
+		vertex.Color = color;
+		vertex.Normal.set(0.5f, 0.5f, 1.0f);
+		vertex.TCoords.set(0.5f, 0.5f);
+		m_vertices->addVertex(&vertex);
+
+		for (int i = 0; i <= numStep; i++)
+		{
+			float angle = a + i * d - 90.0f;
+
+			float x = cosf(angle * core::DEGTORAD);
+			float y = sinf(angle * core::DEGTORAD);
+			vertex.Pos.set(center.X + x * r1, center.Y + y * r2, 0.0f);
+
+			float u = (vertex.Pos.X - pos.UpperLeftCorner.X) / w;
+			float v = (vertex.Pos.Y - pos.UpperLeftCorner.Y) / h;
+			vertex.Normal.set(u, v, 1.0f);
+
+			float du = uv.LowerRightCorner.X - uv.UpperLeftCorner.X;
+			float dv = uv.LowerRightCorner.Y - uv.UpperLeftCorner.Y;
+			vertex.TCoords.set(uv.UpperLeftCorner.X + u * du, uv.UpperLeftCorner.Y + dv);
+
+			m_vertices->addVertex(&vertex);
+		}
+
+		S3DVertex* vertices = (S3DVertex*)m_vertices->getVertices();
+		int totalVertices = m_vertices->getVertexCount();
+		for (int i = fromVertices; i < totalVertices; i++)
+		{
+			absoluteTransform.transformVect(vertices[i].Pos);
+		}
+
+		for (int i = 1; i <= numStep; i++)
+		{
+			m_indices->addIndex(fromVertices);
+			m_indices->addIndex(fromVertices + i);
+			m_indices->addIndex(fromVertices + (i + 1));
+		}
+
+		m_2dMaterial.MaterialType = shaderID;
+		m_driver->setMaterial(m_2dMaterial);
+
+		m_buffer->setPrimitiveType(scene::EPT_TRIANGLES);
+		m_buffer->setDirty();
+
+		if (material != NULL)
+			flushWithMaterial(material);
+	}
+
 	void CGraphics2D::beginDrawDepth()
 	{
 		flush();

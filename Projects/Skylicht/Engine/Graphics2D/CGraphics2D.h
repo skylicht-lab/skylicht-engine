@@ -147,6 +147,8 @@ namespace Skylicht
 
 		void addRectangleBatch(const core::rectf& pos, const core::rectf& uv, const SColor& color, const core::matrix4& absoluteTransform, int shaderID, CMaterial* material = NULL);
 
+		void addEclipseBatch(const core::rectf& pos, const core::rectf& uv, const SColor& color, const core::matrix4& absoluteTransform, int shaderID, float a = 0.0f, float b = 360.0f, CMaterial* material = NULL);
+
 		void beginDrawDepth();
 
 		void endDrawDepth();

@@ -194,6 +194,11 @@ namespace Skylicht
 				nameHint = L"Rect";
 				newNode = parentNode->getCanvas()->createRect(parentNode, r, c);
 			}
+			else if (command == L"GUI Elipse")
+			{
+				nameHint = L"Elipse";
+				newNode = parentNode->getCanvas()->createElipse(parentNode, r, c);
+			}
 			else if (command == L"GUI Image")
 			{
 				nameHint = L"Img";

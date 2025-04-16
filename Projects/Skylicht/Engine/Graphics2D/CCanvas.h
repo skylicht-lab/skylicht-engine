@@ -36,6 +36,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/CGUIMask.h"
 #include "GUI/CGUILayout.h"
 #include "GUI/CGUIFitSprite.h"
+#include "GUI/CGUIElipse.h"
 
 #include "Entity/CEntityPrefab.h"
 #include "Entity/CEntityManager.h"
@@ -182,6 +183,12 @@ namespace Skylicht
 		CGUIRect* createRect(const core::rectf& r, const video::SColor& c);
 
 		CGUIRect* createRect(CGUIElement* e, const core::rectf& r, const video::SColor& c);
+
+		CGUIElipse* createElipse(const video::SColor& c);
+
+		CGUIElipse* createElipse(const core::rectf& r, const video::SColor& c);
+
+		CGUIElipse* createElipse(CGUIElement* e, const core::rectf& r, const video::SColor& c);
 
 		CGUILayout* createLayout();
 

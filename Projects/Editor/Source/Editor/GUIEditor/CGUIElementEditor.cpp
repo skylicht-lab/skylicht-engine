@@ -32,6 +32,7 @@ namespace Skylicht
 	{
 		GUI_EDITOR_REGISTER(CGUIElementEditor, CGUIElement);
 		GUI_EDITOR_REGISTER(CGUIElementEditor, CGUIRect);
+		GUI_EDITOR_REGISTER(CGUIElementEditor, CGUIElipse);
 		GUI_EDITOR_REGISTER(CGUIElementEditor, CGUIMask);
 		GUI_EDITOR_REGISTER(CGUIElementEditor, CGUIText);
 		GUI_EDITOR_REGISTER(CGUIElementEditor, CGUILayout);
