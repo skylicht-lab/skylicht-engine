@@ -1,0 +1,24 @@
+<shaderConfig name="Vfx2LayerScrollYUV1" baseShader="TRANSPARENT_ALPHA_CHANNEL">
+	<uniforms>
+		<vs>
+			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+		</vs>
+		<fs>
+			<uniform name="uTexDiffuse1" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
+			<uniform name="uTexDiffuse2" type="DEFAULT_VALUE" value="1" float="1" directX="false"/>
+			<uniform name="uColor" type="MATERIAL_PARAM" valueIndex="0" value="1.0, 1.0, 1.0, 1.0" float="4"/>
+			<uniform name="uColorIntensity" type="MATERIAL_PARAM" valueIndex="1" value="1.0, 1.0, 1.0, 1.0" float="4"/>
+			<uniform name="uTime" type="TIME" value="4.0, 0.0, 0.0, 0.0" float="4"/>
+		</fs>
+	</uniforms>
+	<customUI>
+		<ui control="UIGroup" name="Texture">
+			<ui control="UITexture" name="uTexDiffuse1"/>
+			<ui control="UITexture" name="uTexDiffuse2"/>
+			<ui control="UIColor" name="uColor"/>
+			<ui control="UIFloat4" name="uColorIntensity" elementName="R;G;B;A" min="0" max="3"/>
+		</ui>
+	</customUI>
+	<shader type="GLSL" vs="GLSL/Vfx2LayerScrollYUV1VS.glsl" fs="GLSL/Vfx2LayerScrollYUV1FS.glsl" vs_source="GLSL/BasicVfxVS.d.glsl" fs_source="GLSL/BasicVfxFS.d.glsl" define="SCROLL_Y;LAYER2;SCROLL_LAYER2"/>
+	<shader type="HLSL" vs="HLSL/Vfx2LayerScrollYUV1VS.hlsl" fs="HLSL/Vfx2LayerScrollYUV1FS.hlsl" vs_source="HLSL/BasicVfxVS.d.hlsl" fs_source="HLSL/BasicVfxFS.d.hlsl" define="SCROLL_Y;LAYER2;SCROLL_LAYER2"/>
+</shaderConfig>
