@@ -12,7 +12,10 @@ in vec2 varTexCoord1;
 #endif
 in vec4 varColor;
 
-uniform vec4 uColor;
+uniform vec4 uColor1;
+#if defined(UV2) || defined(LAYER2)	
+uniform vec4 uColor2;
+#endif
 uniform vec4 uColorIntensity;
 uniform vec4 uTime;
 
@@ -49,10 +52,10 @@ void main(void)
 #endif
 
 #if defined(UV2) || defined(LAYER2)
-	vec4 result = (color1 + color2) * uColor * varColor * uColorIntensity;
-	result.a = color1.a * color2.a * uColor.a;
+	vec4 result = (color1 * uColor1 + color2 * uColor2) * varColor * uColorIntensity;
+	result.a = color1.a * color2.a * uColor1.a * uColor2.a;
 	return result;
 #else
-	FragColor = color1 * varColor * uColor * uColorIntensity;
+	FragColor = color1 * varColor * uColor1 * uColorIntensity;
 #endif
 }

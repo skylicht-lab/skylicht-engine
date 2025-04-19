@@ -9,7 +9,7 @@ struct PS_INPUT
 };
 cbuffer cbPerFrame
 {
-	float4 uColor;
+	float4 uColor1;
 	float4 uColorIntensity;
 	float4 uTime;
 };
@@ -17,5 +17,5 @@ float4 main(PS_INPUT input) : SV_TARGET
 {
 	float2 uvOffset = float2(0.0, uTime.y) / 4.0;
 	float4 color1 = uTexDiffuse1.Sample(uTex1Sampler, input.tex0 + uvOffset);
-	return color1 * input.color * uColor * uColorIntensity;
+	return color1 * input.color * uColor1 * uColorIntensity;
 }
