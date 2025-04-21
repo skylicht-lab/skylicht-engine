@@ -35,7 +35,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CEntityHandler::CEntityHandler()
+	CEntityHandler::CEntityHandler() :
+		m_shadowCasting(true)
 	{
 
 	}
@@ -229,6 +230,19 @@ namespace Skylicht
 
 			CWorldTransformData* transformData = GET_ENTITY_DATA(entity, CWorldTransformData);
 			result[i] = transformData->Relative;
+		}
+	}
+
+	void CEntityHandler::setShadowCasting(bool b)
+	{
+		u32 n = m_entities.size();
+
+		for (u32 i = 0; i < n; i++)
+		{
+			CEntity* entity = m_entities[i];
+
+			CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
+			visible->ShadowCasting = b;
 		}
 	}
 }

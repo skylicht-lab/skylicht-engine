@@ -34,6 +34,8 @@ namespace Skylicht
 	protected:
 		core::array<CEntity*> m_entities;
 
+		bool m_shadowCasting;
+
 	public:
 		CEntityHandler();
 
@@ -67,6 +69,13 @@ namespace Skylicht
 		}
 
 		void getEntitiesTransforms(core::array<core::matrix4>& result);
+
+		void setShadowCasting(bool b);
+
+		inline bool isShadowCasting()
+		{
+			return m_shadowCasting;
+		}
 
 	protected:
 

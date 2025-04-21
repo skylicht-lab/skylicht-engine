@@ -53,6 +53,8 @@ namespace Skylicht
 		bool m_fixInverseNormal;
 		bool m_enableInstancing;
 
+		bool m_shadowCasting;
+
 	public:
 		CRenderMesh();
 
@@ -84,6 +86,13 @@ namespace Skylicht
 		}
 
 		void enableInstancing(bool b);
+
+		void setShadowCasting(bool b);
+
+		inline bool isShadowCasting()
+		{
+			return m_shadowCasting;
+		}
 
 		void removeRenderMeshName(const char* name);
 

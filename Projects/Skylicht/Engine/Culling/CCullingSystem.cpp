@@ -86,6 +86,7 @@ namespace Skylicht
 			CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
 
 			culling->CullingLayer = visible->CullingLayer;
+			culling->ShadowCasting = visible->ShadowCasting;
 
 			if (visible->Culled || !visible->Visible)
 			{
@@ -188,6 +189,12 @@ namespace Skylicht
 
 			if (culling->Visible == false)
 				continue;
+
+			if (rp->getType() == IRenderPipeline::ShadowMap && !culling->ShadowCasting)
+			{
+				culling->Visible = false;
+				continue;
+			}
 
 			if (g_useCacheCulling)
 				continue;

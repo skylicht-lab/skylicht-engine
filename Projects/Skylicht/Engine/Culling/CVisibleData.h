@@ -34,6 +34,7 @@ namespace Skylicht
 		bool SelfVisible;
 		bool Visible;
 		bool Culled;
+		bool ShadowCasting;
 
 		u32 CullingLayer;
 
