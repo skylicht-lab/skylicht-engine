@@ -15,7 +15,6 @@ struct PS_INPUT
 	float3 worldTangent: WORLDTANGENT;
 	float3 worldBinormal: WORLDBINORMAL;
 	float tangentw : TANGENTW;
-	float4 viewPosition: VIEWPOSITION;
 };
 cbuffer cbPerFrame
 {

@@ -26,7 +26,6 @@ struct PS_INPUT
 	float3 worldNormal: WORLDNORMAL;
 	float3 worldViewDir: WORLDVIEWDIR;
 	float3 worldLightDir: WORLDLIGHTDIR;
-	float4 viewPosition: VIEWPOSITION;
 #ifdef SHADOW
 	float3 depth: DEPTH;
 	float4 shadowCoord: SHADOWCOORD;
@@ -43,7 +42,6 @@ struct PS_INPUT
 	float3 worldTangent: WORLDTANGENT;
 	float3 worldBinormal: WORLDBINORMAL;
 	float tangentw : TANGENTW;
-	float4 viewPosition: VIEWPOSITION;
 #ifdef SHADOW
 	float3 depth: DEPTH;
 	float4 shadowCoord: SHADOWCOORD;

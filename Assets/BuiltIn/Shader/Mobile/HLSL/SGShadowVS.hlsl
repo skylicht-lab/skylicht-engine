@@ -19,7 +19,6 @@ struct VS_OUTPUT
 	float3 worldTangent: WORLDTANGENT;
 	float3 worldBinormal: WORLDBINORMAL;
 	float tangentw : TANGENTW;
-	float4 viewPosition: VIEWPOSITION;
 	float3 depth: DEPTH;
 	float4 shadowCoord: SHADOWCOORD;
 };
@@ -35,7 +34,6 @@ cbuffer cbPerObject
 VS_OUTPUT main(VS_INPUT input)
 {
 	VS_OUTPUT output;
-	output.pos = mul(input.pos, uMvpMatrix);
 	output.tex0 = input.tex0 * uUVScale.xy + uUVScale.zw;
 	output.tangentw = input.data.x;
 	float4 worldPos = mul(input.pos, uWorldMatrix);
@@ -49,6 +47,6 @@ VS_OUTPUT main(VS_INPUT input)
 	output.shadowCoord = mul(float4(worldPos.xyz, 1.0), uShadowMatrix);
 	output.worldViewDir = worldViewDir.xyz;
 	output.worldLightDir = normalize(uLightDirection.xyz);
-	output.viewPosition = output.pos;
+	output.pos = mul(input.pos, uMvpMatrix);
 	return output;
 }

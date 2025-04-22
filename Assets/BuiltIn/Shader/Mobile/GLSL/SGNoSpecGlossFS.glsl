@@ -12,7 +12,6 @@ in vec2 vTexCoord0;
 in vec3 vWorldNormal;
 in vec3 vWorldViewDir;
 in vec3 vWorldLightDir;
-in vec4 vViewPosition;
 out vec4 FragColor;
 const float gamma = 2.2;
 const float invGamma = 1.0 / 2.2;

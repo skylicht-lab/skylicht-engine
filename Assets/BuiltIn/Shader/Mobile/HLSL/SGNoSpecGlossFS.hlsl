@@ -8,7 +8,6 @@ struct PS_INPUT
 	float3 worldNormal: WORLDNORMAL;
 	float3 worldViewDir: WORLDVIEWDIR;
 	float3 worldLightDir: WORLDLIGHTDIR;
-	float4 viewPosition: VIEWPOSITION;
 };
 cbuffer cbPerFrame
 {

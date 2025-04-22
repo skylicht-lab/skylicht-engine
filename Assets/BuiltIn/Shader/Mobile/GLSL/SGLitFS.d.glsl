@@ -43,8 +43,6 @@ in vec3 vWorldBinormal;
 in float vTangentW;
 #endif
 
-in vec4 vViewPosition;
-
 #ifdef SHADOW
 in vec3 vDepth;
 in vec4 vShadowCoord;

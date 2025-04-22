@@ -17,7 +17,6 @@ in vec3 vWorldLightDir;
 in vec3 vWorldTangent;
 in vec3 vWorldBinormal;
 in float vTangentW;
-in vec4 vViewPosition;
 in vec3 vDepth;
 in vec4 vShadowCoord;
 out vec4 FragColor;

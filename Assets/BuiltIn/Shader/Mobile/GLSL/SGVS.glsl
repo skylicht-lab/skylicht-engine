@@ -18,7 +18,6 @@ out vec3 vWorldLightDir;
 out vec3 vWorldTangent;
 out vec3 vWorldBinormal;
 out float vTangentW;
-out vec4 vViewPosition;
 void main(void)
 {
 	vTexCoord0 = inTexCoord0 * uUVScale.xy + uUVScale.zw;
@@ -32,6 +31,5 @@ void main(void)
 	vWorldBinormal = normalize(cross(worldNormal.xyz, worldTangent.xyz));
 	vWorldViewDir = worldViewDir.xyz;
 	vWorldLightDir = normalize(uLightDirection.xyz);
-	vViewPosition = uMvpMatrix * inPosition;
-	gl_Position = vViewPosition;
+	gl_Position = uMvpMatrix * inPosition;
 }

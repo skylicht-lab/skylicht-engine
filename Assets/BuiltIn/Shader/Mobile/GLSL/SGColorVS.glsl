@@ -12,7 +12,6 @@ out vec2 vTexCoord0;
 out vec3 vWorldNormal;
 out vec3 vWorldViewDir;
 out vec3 vWorldLightDir;
-out vec4 vViewPosition;
 void main(void)
 {
 	vTexCoord0 = inTexCoord0 * uUVScale.xy + uUVScale.zw;
@@ -22,6 +21,5 @@ void main(void)
 	vWorldNormal = normalize(worldNormal.xyz);
 	vWorldViewDir = worldViewDir.xyz;
 	vWorldLightDir = normalize(uLightDirection.xyz);
-	vViewPosition = uMvpMatrix * inPosition;
-	gl_Position = vViewPosition;
+	gl_Position = uMvpMatrix * inPosition;
 }
