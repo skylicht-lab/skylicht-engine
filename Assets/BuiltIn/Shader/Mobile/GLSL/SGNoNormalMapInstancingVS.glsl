@@ -33,5 +33,5 @@ void main(void)
 	vWorldBinormal = normalize(cross(worldNormal.xyz, worldTangent.xyz));
 	vWorldViewDir = worldViewDir.xyz;
 	vWorldLightDir = normalize(uLightDirection.xyz);
-	gl_Position = uVPMatrix * worldPosition;
+	gl_Position = uVPMatrix * worldPos;
 }

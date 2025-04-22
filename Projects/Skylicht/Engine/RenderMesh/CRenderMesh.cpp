@@ -157,8 +157,7 @@ namespace Skylicht
 		}
 
 		// enable instancing
-		if (instancing)
-			enableInstancing(true);
+		enableInstancing(instancing);
 
 		// shadow casting
 		setShadowCasting(shadowCasting);
@@ -486,7 +485,7 @@ namespace Skylicht
 
 	void CRenderMesh::enableInstancing(bool b)
 	{
-		m_enable = b;
+		m_enableInstancing = b;
 		for (CRenderMeshData*& renderer : m_renderers)
 		{
 			if (!renderer->isSkinnedMesh())

@@ -89,7 +89,7 @@ void main(void)
 	vWorldLightDir = normalize(uLightDirection.xyz);
 
 #ifdef INSTANCING
-	gl_Position = uVPMatrix * worldPosition;
+	gl_Position = uVPMatrix * worldPos;
 #else
 	gl_Position = uMvpMatrix * inPosition;
 #endif
