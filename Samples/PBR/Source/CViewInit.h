@@ -29,6 +29,7 @@ protected:
 	CGameObject* m_guiObject;
 	CGUIText* m_textInfo;
 	CGlyphFont* m_font;
+	CGlyphFont* m_largeFont;
 
 protected:
 	io::path getBuiltInPath(const char* name);
@@ -49,4 +50,6 @@ public:
 protected:
 
 	void initScene();
+
+	void createCanvasText(CZone* zone, const char* text, const core::vector3df& position);
 };

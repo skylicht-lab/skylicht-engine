@@ -56,6 +56,9 @@ void CViewInit::onInit()
 	m_font = new CGlyphFont();
 	m_font->setFont("Segoe UI Light", 25);
 
+	m_largeFont = new CGlyphFont();
+	m_largeFont->setFont("Segoe UI Light", 100);
+
 	// create text
 	m_textInfo = canvas->createText(m_font);
 	m_textInfo->setTextAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
@@ -85,6 +88,10 @@ void CViewInit::initScene()
 	CCamera* camera = camObj->getComponent<CCamera>();
 	camera->setPosition(core::vector3df(0.0f, 3.0f, 3.0f));
 	camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
+
+	// set mask for canvas text 3d
+	// culling mask bit: 11
+	camera->setCullingMask(3);
 
 	// gui camera
 	CGameObject* guiCameraObject = zone->createEmptyObject();
@@ -165,6 +172,8 @@ void CViewInit::initScene()
 				m_spheres.push_back(sphereObj);
 			}
 		}
+
+		createCanvasText(zone, "PBR Shader", offset + core::vector3df(2.0f, 2.0f, 2.0f));
 	}
 #endif
 
@@ -200,6 +209,8 @@ void CViewInit::initScene()
 				m_spheres.push_back(sphereObj);
 			}
 		}
+
+		createCanvasText(zone, "SpecGloss Shader", offset + core::vector3df(2.0f, 2.0f, 2.0f));
 	}
 #endif
 
@@ -235,6 +246,8 @@ void CViewInit::initScene()
 				m_spheres.push_back(sphereObj);
 			}
 		}
+
+		createCanvasText(zone, "MobileSG Shader", offset + core::vector3df(2.0f, 2.0f, 2.0f));
 	}
 #endif
 
@@ -264,10 +277,30 @@ void CViewInit::initScene()
 		context->getPostProcessorPipeline()->enableAutoExposure(true);
 }
 
+void CViewInit::createCanvasText(CZone* zone, const char* text, const core::vector3df& position)
+{
+	CGameObject* canvasObject = zone->createEmptyObject();
+	CCanvas* canvas = canvasObject->addComponent<CCanvas>();
+	CGUIText* guiText = canvas->createText(core::rectf(0.0f, 0.0f, 700.0f, 100.0f), m_largeFont);
+	guiText->setTextAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
+	guiText->setText(text);
+	guiText->setPosition(core::vector3df(-350.0f, 0.0f, 0.0f));
+
+	CGUIElement* rootGUI = canvas->getRootElement();
+	rootGUI->setScale(core::vector3df(-0.004f, -0.004f, 0.004f));
+	rootGUI->setPosition(position);
+
+	canvas->enable3DBillboard(true);
+
+	// set mask only for camera3d
+	// culling bit: 10
+	canvasObject->setCullingLayer(2);
+}
+
 void CViewInit::onDestroy()
 {
 	m_guiObject->remove();
-	delete m_font;
+	m_font->dropFont();
 }
 
 void CViewInit::onUpdate()
@@ -316,14 +349,14 @@ void CViewInit::onUpdate()
 					delete m_getFile;
 					m_getFile = NULL;
 				}
-			}
+}
 			else if (m_getFile->getState() == CGetFileURL::Error)
 			{
 				// retry download
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-		}
+	}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -334,7 +367,7 @@ void CViewInit::onUpdate()
 
 		m_initState = CViewInit::InitScene;
 #endif
-	}
+}
 	break;
 	case CViewInit::InitScene:
 	{

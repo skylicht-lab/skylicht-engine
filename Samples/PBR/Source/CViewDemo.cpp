@@ -50,6 +50,7 @@ void CViewDemo::onRender()
 	if (camera != NULL && scene != NULL)
 	{
 		context->getRenderPipeline()->render(NULL, camera, scene->getEntityManager(), core::recti());
+		CGraphics2D::getInstance()->render(camera);
 	}
 
 	// render GUI

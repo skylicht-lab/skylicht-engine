@@ -37,7 +37,7 @@ in vec3 vWorldNormal;
 in vec3 vWorldViewDir;
 in vec3 vWorldLightDir;
 
-#if !defined(NO_NORMAL_MAP) && !defined(NO_TEXTURE)
+#if defined(INSTANCING) || (!defined(NO_NORMAL_MAP) && !defined(NO_TEXTURE))
 in vec3 vWorldTangent;
 in vec3 vWorldBinormal;
 in float vTangentW;
