@@ -68,20 +68,25 @@ namespace Skylicht
 		numEntity = m_groupMesh->getNumInstancingMesh();
 		entities = m_groupMesh->getInstancingMeshes();
 
+		CEntity* entity;
+		CRenderMeshData* meshData;
+		SMeshInstancing* data;
+		bool cullingVisible;
+		CCullingData* cullingData;
+
 		for (int i = 0; i < numEntity; i++)
 		{
-			CEntity* entity = entities[i];
+			entity = entities[i];
 
-			CRenderMeshData* meshData = GET_ENTITY_DATA(entity, CRenderMeshData);
-
-			SMeshInstancing* data = meshData->getMeshInstancing();
+			meshData = GET_ENTITY_DATA(entity, CRenderMeshData);
+			data = meshData->getMeshInstancing();
 			if (data == NULL)
 				continue;
 
-			bool cullingVisible = true;
+			cullingVisible = true;
 
 			// get culling result from CCullingSystem
-			CCullingData* cullingData = GET_ENTITY_DATA(entity, CCullingData);
+			cullingData = GET_ENTITY_DATA(entity, CCullingData);
 			if (cullingData != NULL)
 				cullingVisible = cullingData->Visible;
 
