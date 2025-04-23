@@ -67,14 +67,19 @@ namespace Skylicht
 		entities = m_groupProbes->getEntities();
 		numEntity = m_groupProbes->getEntityCount();
 
+		CEntity* entity;
+		CLightProbeData* probeData;
+		CWorldTransformData* transformData;
+		CIndirectLightingData* lightData;
+
 		for (int i = 0; i < numEntity; i++)
 		{
-			CEntity* entity = entities[i];
+			entity = entities[i];
 
-			CLightProbeData* probeData = GET_ENTITY_DATA(entity, CLightProbeData);
+			probeData = GET_ENTITY_DATA(entity, CLightProbeData);
 			m_probes.push_back(probeData);
 
-			CWorldTransformData* transformData = GET_ENTITY_DATA(entity, CWorldTransformData);
+			transformData = GET_ENTITY_DATA(entity, CWorldTransformData);
 			m_probePositions.push_back(transformData);
 
 			if (transformData->NeedValidate || probeData->NeedValidate)
@@ -84,19 +89,22 @@ namespace Skylicht
 			}
 		}
 
+		if (m_probes.size() == 0)
+			return;
+
 		entities = m_groupLighting->getEntities();
 		numEntity = m_groupLighting->getEntityCount();
 
 		for (int i = 0; i < numEntity; i++)
 		{
-			CEntity* entity = entities[i];
+			entity = entities[i];
 
-			CIndirectLightingData* lightData = GET_ENTITY_DATA(entity, CIndirectLightingData);
+			lightData = GET_ENTITY_DATA(entity, CIndirectLightingData);
 			if (lightData->AutoSH &&
 				*lightData->AutoSH &&
 				lightData->Type == CIndirectLightingData::SH9)
 			{
-				CWorldTransformData* transformData = GET_ENTITY_DATA(entity, CWorldTransformData);
+				transformData = GET_ENTITY_DATA(entity, CWorldTransformData);
 				m_entities.push_back(lightData);
 				m_entitiesPositions.push_back(transformData);
 			}
@@ -126,9 +134,17 @@ namespace Skylicht
 			}
 		}
 
+		if (m_probes.size() == 0)
+			return;
+
 		u32 n = m_entitiesPositions.size();
 		CWorldTransformData** worlds = m_entitiesPositions.pointer();
 		CIndirectLightingData** data = m_entities.pointer();
+
+		float* m;
+		kdres* res;
+		CLightProbeData* probe;
+		CIndirectLightingData* indirectData;
 
 		for (u32 i = 0; i < n; i++)
 		{
@@ -139,10 +155,10 @@ namespace Skylicht
 				continue;
 			}
 
-			float* m = worlds[i]->World.pointer();
+			m = worlds[i]->World.pointer();
 
 			// query nearst probe
-			kdres* res = kd_nearest3f(m_kdtree, m[12], m[13], m[14]);
+			res = kd_nearest3f(m_kdtree, m[12], m[13], m[14]);
 			if (res != NULL)
 			{
 				while (!kd_res_end(res))
@@ -151,11 +167,11 @@ namespace Skylicht
 					// kd_res_itemf(res, pos);
 
 					// get probe data
-					CLightProbeData* probe = (CLightProbeData*)kd_res_item_data(res);
+					probe = (CLightProbeData*)kd_res_item_data(res);
 					if (probe != NULL)
 					{
 						// get indirectData
-						CIndirectLightingData* indirectData = data[i];
+						indirectData = data[i];
 
 						// copy sh data
 						// need interpolate here, todo later

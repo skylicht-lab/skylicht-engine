@@ -67,14 +67,19 @@ namespace Skylicht
 		entities = m_groupProbes->getEntities();
 		numEntity = m_groupProbes->getEntityCount();
 
+		CEntity* entity;
+		CReflectionProbeData* probeData;
+		CWorldTransformData* transformData;
+		CIndirectLightingData* lightData;
+
 		for (int i = 0; i < numEntity; i++)
 		{
-			CEntity* entity = entities[i];
+			entity = entities[i];
 
-			CReflectionProbeData* probeData = GET_ENTITY_DATA(entity, CReflectionProbeData);
+			probeData = GET_ENTITY_DATA(entity, CReflectionProbeData);
 			if (probeData->ReflectionTexture != NULL)
 			{
-				CWorldTransformData* transformData = GET_ENTITY_DATA(entity, CWorldTransformData);
+				transformData = GET_ENTITY_DATA(entity, CWorldTransformData);
 
 				m_probes.push(probeData);
 				m_probePositions.push(transformData);
@@ -87,15 +92,18 @@ namespace Skylicht
 			}
 		}
 
+		if (m_probes.count() == 0)
+			return;
+
 		entities = m_groupLighting->getEntities();
 		numEntity = m_groupLighting->getEntityCount();
 
 		for (int i = 0; i < numEntity; i++)
 		{
-			CEntity* entity = entities[i];
+			entity = entities[i];
 
-			CWorldTransformData* transformData = GET_ENTITY_DATA(entity, CWorldTransformData);
-			CIndirectLightingData* lightData = GET_ENTITY_DATA(entity, CIndirectLightingData);
+			transformData = GET_ENTITY_DATA(entity, CWorldTransformData);
+			lightData = GET_ENTITY_DATA(entity, CIndirectLightingData);
 
 			if (transformData->NeedValidate || lightData->InvalidateReflection || m_probeChange)
 			{
@@ -130,25 +138,33 @@ namespace Skylicht
 			m_probeChange = false;
 		}
 
+		if (m_probes.count() == 0)
+			return;
+
 		CWorldTransformData** positions = m_entitiesPositions.pointer();
 		CIndirectLightingData** lightings = m_entities.pointer();
 
+		float* m;
+		kdres* res;
+		CReflectionProbeData* probe;
+		CIndirectLightingData* indirectData;
+
 		for (u32 i = 0, n = m_entities.count(); i < n; i++)
 		{
-			float* m = positions[i]->World.pointer();
+			m = positions[i]->World.pointer();
 
 			// query nearst probe
-			kdres* res = kd_nearest3f(m_kdtree, m[12], m[13], m[14]);
+			res = kd_nearest3f(m_kdtree, m[12], m[13], m[14]);
 			if (res != NULL)
 			{
 				while (!kd_res_end(res))
 				{
 					// get probe data
-					CReflectionProbeData* probe = (CReflectionProbeData*)kd_res_item_data(res);
+					probe = (CReflectionProbeData*)kd_res_item_data(res);
 					if (probe != NULL)
 					{
 						// get indirectData
-						CIndirectLightingData* indirectData = lightings[i];
+						indirectData = lightings[i];
 						indirectData->ReflectionTexture = probe->ReflectionTexture;
 						indirectData->InvalidateReflection = false;
 					}

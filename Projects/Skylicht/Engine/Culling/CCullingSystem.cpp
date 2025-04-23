@@ -81,7 +81,6 @@ namespace Skylicht
 		CEntity* entity;
 		CCullingData* culling;
 		CVisibleData* visible;
-		CWorldTransformData* transform;
 
 		CRenderMeshData* mesh;
 		CMesh* meshObj;
@@ -127,16 +126,6 @@ namespace Skylicht
 						m->Materials = &bbox->Materials;
 					}
 				}
-
-				if (m->BBox)
-				{
-					transform = GET_ENTITY_DATA(entity, CWorldTransformData);
-					if (transform->NeedValidate)
-					{
-						culling->BBox = *m->BBox;
-						transform->World.transformBoxEx(culling->BBox);
-					}
-				}
 			}
 		}
 	}
@@ -168,6 +157,7 @@ namespace Skylicht
 		CMaterial** materials;
 		CMaterial* m;
 		int materialCount;
+		CWorldTransformData* transform;
 
 		for (int i = 0; i < count; i++)
 		{
@@ -224,6 +214,14 @@ namespace Skylicht
 
 			if (g_useCacheCulling)
 				continue;
+
+			// update bbox
+			transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+			if (transform->NeedValidate)
+			{
+				culling->BBox = *bbBoxMat->BBox;
+				transform->World.transformBoxEx(culling->BBox);
+			}
 
 			// 1. Detect by bounding box
 			if (rp->getType() == IRenderPipeline::ShadowMap)

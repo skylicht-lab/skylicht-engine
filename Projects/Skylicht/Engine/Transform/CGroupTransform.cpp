@@ -55,16 +55,20 @@ namespace Skylicht
 		m_childs.reset();
 		m_lateUpdate.reset();
 
+		CEntity* entity;
+		CWorldTransformData* transform;
+		int parentID;
+
 		for (int i = 0; i < numEntity; i++)
 		{
-			CEntity* entity = entities[i];
-			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+			entity = entities[i];
+			transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 
 			// set disable flag
 			transform->NeedValidate = false;
 			transform->NeedValidateForLate = false;
 
-			int parentID = transform->AttachParentIndex >= 0 ?
+			parentID = transform->AttachParentIndex >= 0 ?
 				transform->AttachParentIndex :
 				transform->ParentIndex;
 
