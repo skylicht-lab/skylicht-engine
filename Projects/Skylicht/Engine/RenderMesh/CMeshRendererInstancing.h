@@ -41,6 +41,12 @@ namespace Skylicht
 
 		std::map<SMeshInstancing*, SMeshInstancingGroup*> m_groups;
 
+		struct SInstancingGroup
+		{
+			SMeshInstancing* Instancing;
+			SMeshInstancingGroup* Group;
+		};
+
 	public:
 		CMeshRendererInstancing();
 
@@ -55,5 +61,7 @@ namespace Skylicht
 		virtual void update(CEntityManager* entityManager);
 
 		virtual void render(CEntityManager* entityManager);
+
+		void sortBeforeRender(core::array<SInstancingGroup>& instancing);
 	};
 }

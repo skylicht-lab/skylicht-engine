@@ -205,10 +205,13 @@ namespace Skylicht
 
 		driver->setTransform(video::ETS_WORLD, core::IdentityMatrix);
 
-		for (auto& it : m_groups)
+		core::array<SInstancingGroup> instancings;
+		sortBeforeRender(instancings);
+
+		for (u32 i = 0, n = instancings.size(); i < n; i++)
 		{
-			SMeshInstancing* data = it.first;
-			SMeshInstancingGroup* group = it.second;
+			SMeshInstancing* data = instancings[i].Instancing;
+			SMeshInstancingGroup* group = instancings[i].Group;
 
 			int count = group->Entities.count();
 			if (count == 0)
@@ -235,6 +238,106 @@ namespace Skylicht
 					group->RootEntityIndex,
 					false
 				);
+			}
+		}
+	}
+
+	int cmpMaterialsFunc(SMeshInstancing* meshA, SMeshInstancing* meshB)
+	{
+		core::array<CMaterial*>& materialsA = meshA->Materials;
+		core::array<CMaterial*>& materialsB = meshB->Materials;
+
+		// no material, compare by mesh
+		if (materialsA.size() == 0 || materialsA.size() == 0)
+		{
+			if (meshA == meshB)
+				return 0;
+
+			return meshA < meshB ? -1 : 1;
+		}
+
+		CMaterial* materialA = materialsA[0];
+		CMaterial* materialB = materialsB[0];
+
+		// compare by mesh
+		if (materialA == NULL || materialB == NULL)
+		{
+			IMeshBuffer* mbA = meshA->MeshBuffers[0];
+			IMeshBuffer* mbB = meshB->MeshBuffers[0];
+
+			if (mbA == mbB)
+				return 0;
+
+			return mbA < mbB ? -1 : 1;
+		}
+
+		// comprate by texture
+		ITexture* textureA = materialA->getTexture(0);
+		ITexture* textureB = materialB->getTexture(0);
+
+		// if no texture
+		if (textureA == NULL || textureB == NULL)
+		{
+			if (materialA == materialB)
+			{
+				// compare mesh
+				IMeshBuffer* mbA = meshA->MeshBuffers[0];
+				IMeshBuffer* mbB = meshB->MeshBuffers[0];
+
+				if (mbA == mbB)
+					return 0;
+			}
+
+			return materialA < materialB ? -1 : 1;
+		}
+
+		// sort by texture 0
+		if (textureA == textureB)
+		{
+			// compare mesh
+			IMeshBuffer* mbA = meshA->MeshBuffers[0];
+			IMeshBuffer* mbB = meshB->MeshBuffers[0];
+
+			if (mbA == mbB)
+				return 0;
+
+			return mbA < mbB ? -1 : 1;
+		}
+
+		return textureA < textureB ? -1 : 1;
+	}
+
+	void CMeshRendererInstancing::sortBeforeRender(core::array<SInstancingGroup>& instancing)
+	{
+		instancing.set_used(0);
+
+		for (auto& it : m_groups)
+		{
+			SMeshInstancing* data = it.first;
+			SMeshInstancingGroup* group = it.second;
+
+			int count = group->Entities.count();
+			if (count == 0)
+				continue;
+
+			// insert sort
+			bool insert = false;
+
+			for (u32 i = 0, n = instancing.size(); i < n; i++)
+			{
+				if (cmpMaterialsFunc(instancing[i].Instancing, data) > 0)
+				{
+					SInstancingGroup g{ data, group };
+					instancing.insert(g, i);
+					insert = true;
+					continue;
+				}
+			}
+
+			if (!insert)
+			{
+				SInstancingGroup g{ data, group };
+				instancing.push_back(g);
 			}
 		}
 	}
