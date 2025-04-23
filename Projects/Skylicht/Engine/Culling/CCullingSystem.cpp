@@ -217,7 +217,7 @@ namespace Skylicht
 
 			// update bbox
 			transform = GET_ENTITY_DATA(entity, CWorldTransformData);
-			if (transform->NeedValidate)
+			// if (transform->NeedValidate)
 			{
 				culling->BBox = *bbBoxMat->BBox;
 				transform->World.transformBoxEx(culling->BBox);
