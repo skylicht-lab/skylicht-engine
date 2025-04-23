@@ -79,6 +79,8 @@ namespace Skylicht
 					else
 						box->BBox.addInternalBox(g->getBBox());
 				}
+
+				box->NeedValidate = true;
 			}
 		}
 

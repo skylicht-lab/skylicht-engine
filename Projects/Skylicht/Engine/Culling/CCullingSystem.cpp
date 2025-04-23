@@ -113,6 +113,7 @@ namespace Skylicht
 					m->Culling = culling;
 					m->BBox = meshObj->getBoundingBoxPtr();
 					m->Materials = &meshObj->Materials;
+					m->NeedValidate = false;
 				}
 				else
 				{
@@ -124,6 +125,9 @@ namespace Skylicht
 						m->Culling = culling;
 						m->BBox = &bbox->BBox;
 						m->Materials = &bbox->Materials;
+						m->NeedValidate = bbox->NeedValidate;
+
+						bbox->NeedValidate = false;
 					}
 				}
 			}
@@ -165,6 +169,14 @@ namespace Skylicht
 
 			entity = bbBoxMat->Entity;
 			culling = bbBoxMat->Culling;
+
+			// update bbox
+			transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+			if (transform->NeedValidate || bbBoxMat->NeedValidate)
+			{
+				culling->BBox = *bbBoxMat->BBox;
+				transform->World.transformBoxEx(culling->BBox);
+			}
 
 			if (g_useCacheCulling)
 			{
@@ -214,14 +226,6 @@ namespace Skylicht
 
 			if (g_useCacheCulling)
 				continue;
-
-			// update bbox
-			transform = GET_ENTITY_DATA(entity, CWorldTransformData);
-			// if (transform->NeedValidate)
-			{
-				culling->BBox = *bbBoxMat->BBox;
-				transform->World.transformBoxEx(culling->BBox);
-			}
 
 			// 1. Detect by bounding box
 			if (rp->getType() == IRenderPipeline::ShadowMap)

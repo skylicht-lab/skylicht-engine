@@ -35,6 +35,8 @@ namespace Skylicht
 		core::aabbox3df BBox;
 		ArrayMaterial Materials;
 
+		bool NeedValidate;
+
 	public:
 		CCullingBBoxData();
 

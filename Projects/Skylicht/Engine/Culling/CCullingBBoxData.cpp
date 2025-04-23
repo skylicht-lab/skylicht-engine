@@ -29,7 +29,8 @@ namespace Skylicht
 {
 	IMPLEMENT_DATA_TYPE_INDEX(CCullingBBoxData);
 
-	CCullingBBoxData::CCullingBBoxData()
+	CCullingBBoxData::CCullingBBoxData() :
+		NeedValidate(true)
 	{
 
 	}

@@ -45,12 +45,15 @@ namespace Skylicht
 		// Material to check render pipeline cull
 		ArrayMaterial* Materials;
 
+		bool NeedValidate;
+
 		SBBoxAndMaterial()
 		{
 			Entity = NULL;
 			BBox = NULL;
 			Culling = NULL;
 			Materials = NULL;
+			NeedValidate = true;
 		}
 	};
 
