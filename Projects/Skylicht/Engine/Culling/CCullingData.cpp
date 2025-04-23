@@ -35,7 +35,8 @@ namespace Skylicht
 		Type(CCullingData::BoundingBox),
 		Visible(true),
 		Occlusion(false),
-		ShadowCasting(true)
+		ShadowCasting(true),
+		NeedValidate(true)
 	{
 
 	}

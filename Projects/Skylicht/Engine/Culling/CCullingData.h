@@ -51,6 +51,8 @@ namespace Skylicht
 
 		bool ShadowCasting;
 
+		bool NeedValidate;
+
 	public:
 		CCullingData();
 

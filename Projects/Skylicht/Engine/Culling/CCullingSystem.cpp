@@ -63,9 +63,6 @@ namespace Skylicht
 			const u32 type[] = { DATA_TYPE_INDEX(CCullingData) };
 			m_group = entityManager->createGroup(type, 1);
 		}
-
-		if (g_useCacheCulling)
-			return;
 	}
 
 	void CCullingSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
@@ -86,6 +83,7 @@ namespace Skylicht
 		CMesh* meshObj;
 		SBBoxAndMaterial* m;
 		CCullingBBoxData* bbox;
+		CWorldTransformData* transform;
 
 		for (int i = 0; i < numEntity; i++)
 		{
@@ -103,6 +101,7 @@ namespace Skylicht
 			}
 			else
 			{
+				transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 				mesh = GET_ENTITY_DATA(entity, CRenderMeshData);
 				if (mesh != NULL)
 				{
@@ -111,9 +110,11 @@ namespace Skylicht
 					m = m_bboxAndMaterials.getPush();
 					m->Entity = entity;
 					m->Culling = culling;
+					m->Transform = transform;
 					m->BBox = meshObj->getBoundingBoxPtr();
 					m->Materials = &meshObj->Materials;
-					m->NeedValidate = false;
+
+					m->Culling->NeedValidate |= transform->NeedValidate;
 				}
 				else
 				{
@@ -123,10 +124,11 @@ namespace Skylicht
 						m = m_bboxAndMaterials.getPush();
 						m->Entity = entity;
 						m->Culling = culling;
+						m->Transform = transform;
 						m->BBox = &bbox->BBox;
 						m->Materials = &bbox->Materials;
-						m->NeedValidate = bbox->NeedValidate;
 
+						m->Culling->NeedValidate |= (bbox->NeedValidate || transform->NeedValidate);
 						bbox->NeedValidate = false;
 					}
 				}
@@ -161,7 +163,6 @@ namespace Skylicht
 		CMaterial** materials;
 		CMaterial* m;
 		int materialCount;
-		CWorldTransformData* transform;
 
 		for (int i = 0; i < count; i++)
 		{
@@ -169,14 +170,6 @@ namespace Skylicht
 
 			entity = bbBoxMat->Entity;
 			culling = bbBoxMat->Culling;
-
-			// update bbox
-			transform = GET_ENTITY_DATA(entity, CWorldTransformData);
-			if (transform->NeedValidate || bbBoxMat->NeedValidate)
-			{
-				culling->BBox = *bbBoxMat->BBox;
-				transform->World.transformBoxEx(culling->BBox);
-			}
 
 			if (g_useCacheCulling)
 			{
@@ -226,6 +219,14 @@ namespace Skylicht
 
 			if (g_useCacheCulling)
 				continue;
+
+			// update bbox
+			if (culling->NeedValidate)
+			{
+				culling->BBox = *bbBoxMat->BBox;
+				bbBoxMat->Transform->World.transformBoxEx(culling->BBox);
+				culling->NeedValidate = false;
+			}
 
 			// 1. Detect by bounding box
 			if (rp->getType() == IRenderPipeline::ShadowMap)

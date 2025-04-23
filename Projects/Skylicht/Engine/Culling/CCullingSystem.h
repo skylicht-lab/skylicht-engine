@@ -40,12 +40,12 @@ namespace Skylicht
 
 		CCullingData* Culling;
 
+		CWorldTransformData* Transform;
+
 		core::aabbox3df* BBox;
 
 		// Material to check render pipeline cull
 		ArrayMaterial* Materials;
-
-		bool NeedValidate;
 
 		SBBoxAndMaterial()
 		{
@@ -53,7 +53,7 @@ namespace Skylicht
 			BBox = NULL;
 			Culling = NULL;
 			Materials = NULL;
-			NeedValidate = true;
+			Transform = NULL;
 		}
 	};
 
