@@ -313,7 +313,8 @@ namespace Skylicht
 				}
 			}
 
-			m_textures[p->TextureSlot] = p->Texture;
+			if (p->TextureSlot >= 0 && p->TextureSlot < MATERIAL_MAX_TEXTURES)
+				m_textures[p->TextureSlot] = p->Texture;
 		}
 	}
 
