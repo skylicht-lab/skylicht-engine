@@ -257,7 +257,7 @@ namespace Skylicht
 
 		IShaderInstancing* m_instancing;
 
-		video::E_VERTEX_TYPE m_vertexType;
+		std::string m_instancingVertex;
 
 		std::string m_instancingShaderName;
 		std::string m_shadowDepthShaderName;
@@ -330,9 +330,9 @@ namespace Skylicht
 
 		CShader* getShadowDistanceWriteShader();
 
-		inline video::E_VERTEX_TYPE getVertexType()
+		inline std::string& getInstancingVertex()
 		{
-			return m_vertexType;
+			return m_instancingVertex;
 		}
 
 		inline int getAttributeMappingCount()

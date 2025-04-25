@@ -1,4 +1,4 @@
-<shaderConfig name="MetallicRoughness" baseShader="SOLID" deferred="true" instancing="MetallicRoughnessInstancing" vertexType="tangents">
+<shaderConfig name="MetallicRoughness" baseShader="SOLID" deferred="true" instancing="MetallicRoughnessInstancing" instancingVertex="tangents_sg">
 	<dependent shader="MetallicRoughnessInstancing.xml"/>
 	<uniforms>
 		<vs>

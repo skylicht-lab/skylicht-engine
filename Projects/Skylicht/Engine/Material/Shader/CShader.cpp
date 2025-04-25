@@ -52,7 +52,6 @@ namespace Skylicht
 		m_shadow(true),
 		m_shadowDepthShader(NULL),
 		m_shadowDistanceShader(NULL),
-		m_vertexType(video::EVT_UNKNOWN),
 		m_baseShader(EMT_SOLID)
 	{
 		// builtin callback
@@ -657,22 +656,11 @@ namespace Skylicht
 					}
 
 					// vertex type for instancing batch
-					wtext = xmlReader->getAttributeValue(L"vertexType");
+					wtext = xmlReader->getAttributeValue(L"instancingVertex");
 					if (wtext != NULL)
 					{
 						CStringImp::convertUnicodeToUTF8(wtext, text);
-						std::string vertexType = text;
-
-						int i = 0;
-						while (video::sBuiltInVertexTypeNames[i] != 0)
-						{
-							if (vertexType == video::sBuiltInVertexTypeNames[i])
-							{
-								m_vertexType = (E_VERTEX_TYPE)i;
-								break;
-							}
-							i++;
-						}
+						m_instancingVertex = text;
 					}
 				}
 				if (nodeName == L"dependent")

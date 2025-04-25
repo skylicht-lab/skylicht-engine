@@ -29,6 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Instancing/CStandardSGInstancing.h"
 #include "Instancing/CTBNSGInstancing.h"
+#include "Instancing/CStandardColorInstancing.h"
 
 namespace Skylicht
 {
@@ -287,12 +288,14 @@ namespace Skylicht
 
 		// init instancing batching
 		IShaderInstancing* instancing = NULL;
-		video::E_VERTEX_TYPE vertexType = shader->getVertexType();
-		if (vertexType != video::EVT_UNKNOWN)
+		std::string instancingVertex = shader->getInstancingVertex();
+		if (!instancingVertex.empty())
 		{
-			if (vertexType == video::EVT_STANDARD)
+			if (instancingVertex == "standard_color")
+				instancing = new CStandardColorInstancing();
+			else if (instancingVertex == "standard_sg")
 				instancing = new CStandardSGInstancing();
-			else if (vertexType == video::EVT_TANGENTS)
+			else if (instancingVertex == "tangents_sg")
 				instancing = new CTBNSGInstancing();
 		}
 		shader->setInstancing(instancing);

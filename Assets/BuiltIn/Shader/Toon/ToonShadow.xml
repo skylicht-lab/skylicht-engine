@@ -1,4 +1,4 @@
-<shaderConfig name="ToonShadow" baseShader="SOLID" instancing="ToonShadowInstancing" vertexType="tangents">
+<shaderConfig name="ToonShadow" baseShader="SOLID" instancing="ToonShadowInstancing" instancingVertex="tangents_sg">
 	<dependent shader="ToonShadowInstancing.xml"/>
 	<uniforms>
 		<vs>

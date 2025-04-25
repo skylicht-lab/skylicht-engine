@@ -1,4 +1,4 @@
-<shaderConfig name="Color" baseShader="SOLID" deferred="true" instancing="ColorInstancing" vertexType="standard">
+<shaderConfig name="Color" baseShader="SOLID" deferred="true" instancing="ColorInstancing" instancingVertex="standard_sg">
 	<dependent shader="ColorInstancing.xml"/>
 	<uniforms>
 		<vs>

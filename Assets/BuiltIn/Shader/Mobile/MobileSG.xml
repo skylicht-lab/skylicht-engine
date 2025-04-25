@@ -1,4 +1,4 @@
-<shaderConfig name="MobileSG" baseShader="SOLID" instancing="MobileSGInstancing" vertexType="tangents">
+<shaderConfig name="MobileSG" baseShader="SOLID" instancing="MobileSGInstancing" instancingVertex="tangents_sg">
 	<dependent shader="MobileSGInstancing.xml"/>
 	<uniforms>
 		<vs>
