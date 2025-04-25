@@ -2,13 +2,14 @@
 	<uniforms>
 		<vs>
 			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+			<uniform name="uUVScale" type="MATERIAL_PARAM" valueIndex="0" value="1.0, 1.0, 0.0, 0.0" float="4"/>
 		</vs>
 		<fs>
 			<uniform name="uTexDiffuse1" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
 			<uniform name="uTexDiffuse2" type="DEFAULT_VALUE" value="1" float="1" directX="false"/>
-			<uniform name="uColor1" type="MATERIAL_PARAM" valueIndex="0" value="1.0, 1.0, 1.0, 1.0" float="4"/>
-			<uniform name="uColor2" type="MATERIAL_PARAM" valueIndex="1" value="1.0, 1.0, 1.0, 1.0" float="4"/>
-			<uniform name="uColorIntensity" type="MATERIAL_PARAM" valueIndex="2" value="1.0, 1.0, 1.0, 1.0" float="4"/>
+			<uniform name="uColor1" type="MATERIAL_PARAM" valueIndex="1" value="1.0, 1.0, 1.0, 1.0" float="4"/>
+			<uniform name="uColor2" type="MATERIAL_PARAM" valueIndex="2" value="1.0, 1.0, 1.0, 1.0" float="4"/>
+			<uniform name="uColorIntensity" type="MATERIAL_PARAM" valueIndex="3" value="1.0, 1.0, 1.0, 1.0" float="4"/>
 			<uniform name="uTime" type="TIME" value="4.0, 0.0, 0.0, 0.0" float="4"/>
 		</fs>
 	</uniforms>
@@ -19,6 +20,7 @@
 			<ui control="UIColor" name="uColor1"/>
 			<ui control="UIColor" name="uColor2"/>
 			<ui control="UIFloat4" name="uColorIntensity" elementName="R;G;B;A" min="0" max="3"/>
+			<ui control="UIFloat4" name="uUVScale" elementName="UV ScaleX;UV ScaleY;UV OffsetX;UV OffsetY"/>
 		</ui>
 	</customUI>
 	<shader type="GLSL" vs="GLSL/Vfx2LayerScrollYUV1VS.glsl" fs="GLSL/Vfx2LayerScrollYUV1FS.glsl" vs_source="GLSL/BasicVfxVS.d.glsl" fs_source="GLSL/BasicVfxFS.d.glsl" define="SCROLL_Y;LAYER2;SCROLL_LAYER2"/>

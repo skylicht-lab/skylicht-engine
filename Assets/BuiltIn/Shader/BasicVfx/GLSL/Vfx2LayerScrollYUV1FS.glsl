@@ -3,6 +3,7 @@ precision mediump float;
 uniform sampler2D uTexDiffuse1;
 uniform sampler2D uTexDiffuse2;
 in vec2 varTexCoord0;
+in vec4 varUVScale;
 in vec4 varColor;
 uniform vec4 uColor1;
 uniform vec4 uColor2;
@@ -11,10 +12,11 @@ uniform vec4 uTime;
 out vec4 FragColor;
 void main(void)
 {
-	vec2 uvOffset = vec2(0.0, uTime.x) / 4.0;
-	vec4 color1 = texture(uTexDiffuse1, varTexCoord0);
-	vec4 color2 = texture(uTexDiffuse2, varTexCoord0 + uvOffset);
+	vec2 tex0 = varTexCoord0 * varUVScale.xy + varUVScale.zw;
+	vec2 uvOffset = vec2(0.0, uTime.y) / 4.0;
+	vec4 color1 = texture(uTexDiffuse1, tex0);
+	vec4 color2 = texture(uTexDiffuse2, tex0 + uvOffset);
 	vec4 result = (color1 * uColor1 + color2 * uColor2) * varColor * uColorIntensity;
 	result.a = color1.a * color2.a * uColor1.a * uColor2.a;
-	return result;
+	FragColor = result;
 }
