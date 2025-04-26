@@ -67,13 +67,7 @@ namespace Skylicht
 
 		m_distanceWriteShader = shaderMgr->getShaderIDByName("ShadowLightDistanceWrite");
 		m_distanceWriteSkinMeshShader = shaderMgr->getShaderIDByName("ShadowLightDistanceWriteSkinMesh");
-
-		m_depthWriteStandardSGInstancing = shaderMgr->getShaderIDByName("SDWStandardInstancing");
-		m_depthWriteTBNSGInstancing = shaderMgr->getShaderIDByName("SDWTBNInstancing");
-
-		m_distanceWriteStandardSGInstancing = shaderMgr->getShaderIDByName("SDWLightDistanceStandardInstancing");
-		m_distanceWriteTBNSGInstancing = shaderMgr->getShaderIDByName("SDWLightDistanceTBNInstancing");
-
+		
 		m_depthWriteSkinnedInstancing = shaderMgr->getShaderIDByName("SDWSkinInstancing");
 
 		m_writeDepthMaterial.BackfaceCulling = false;
@@ -385,19 +379,6 @@ namespace Skylicht
 					m_writeDepthMaterial.MaterialType = instancingShader->getShadowDepthWriteShader()->getMaterialRenderID();
 					setMaterial = true;
 				}
-				else
-				{
-					if (vertexSize == sizeof(S3DVertex))
-					{
-						m_writeDepthMaterial.MaterialType = m_depthWriteStandardSGInstancing;
-						setMaterial = true;
-					}
-					else if (vertexSize == sizeof(S3DVertexTangents))
-					{
-						m_writeDepthMaterial.MaterialType = m_depthWriteTBNSGInstancing;
-						setMaterial = true;
-					}
-				}
 				break;
 			}
 			case PointLight:
@@ -405,19 +386,6 @@ namespace Skylicht
 				{
 					m_writeDepthMaterial.MaterialType = instancingShader->getShadowDistanceWriteShader()->getMaterialRenderID();
 					setMaterial = true;
-				}
-				else
-				{
-					if (vertexSize == sizeof(S3DVertex))
-					{
-						m_writeDepthMaterial.MaterialType = m_distanceWriteStandardSGInstancing;
-						setMaterial = true;
-					}
-					else if (vertexSize == sizeof(S3DVertexTangents))
-					{
-						m_writeDepthMaterial.MaterialType = m_distanceWriteTBNSGInstancing;
-						setMaterial = true;
-					}
 				}
 				break;
 			}

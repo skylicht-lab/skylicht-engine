@@ -74,7 +74,7 @@ namespace Skylicht
 
 		void initFromPrefab(CEntityPrefab* prefab);
 
-		void initFromMeshFile(const char* path);
+		void initFromMeshFile(const char* path, bool loadNormalMap = true, bool loadTexcoord2 = false);
 
 		void initMaterialFromFile(const char* material);
 

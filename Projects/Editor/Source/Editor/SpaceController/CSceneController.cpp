@@ -1037,6 +1037,7 @@ namespace Skylicht
 			{
 				std::string defaultMaterial;
 				std::string meta = path + ".meta";
+				bool useNormalMap = true;
 
 				if (fileExt == "dae" ||
 					fileExt == "obj" ||
@@ -1044,12 +1045,15 @@ namespace Skylicht
 				{
 					MeshExportSettings* setting = new MeshExportSettings();
 					if (setting->load(meta.c_str()))
+					{
 						defaultMaterial = setting->DefaultMaterial.get();
+						useNormalMap = setting->UseNormalMap.get();
+					}
 					delete setting;
 				}
 
 				CRenderMesh* renderMesh = gameObject->addComponent<CRenderMesh>();
-				renderMesh->initFromMeshFile(shortPath.c_str());
+				renderMesh->initFromMeshFile(shortPath.c_str(), useNormalMap);
 
 				if (!defaultMaterial.empty())
 					renderMesh->initMaterialFromFile(defaultMaterial.c_str());

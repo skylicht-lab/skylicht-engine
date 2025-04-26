@@ -77,12 +77,6 @@ namespace Skylicht
 		int m_distanceWriteShader;
 		int m_distanceWriteSkinMeshShader;
 
-		int m_depthWriteStandardSGInstancing;
-		int m_depthWriteTBNSGInstancing;
-
-		int m_distanceWriteStandardSGInstancing;
-		int m_distanceWriteTBNSGInstancing;
-
 		int m_depthWriteSkinnedInstancing;
 
 		bool m_saveDebug;

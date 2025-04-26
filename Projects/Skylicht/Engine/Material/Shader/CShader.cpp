@@ -110,6 +110,18 @@ namespace Skylicht
 		return m_instancingShader;
 	}
 
+	void CShader::setShadowDepthWriteShader(const char* name)
+	{
+		m_shadowDepthShaderName = name;
+		m_shadowDepthShader = getShadowDepthWriteShader();
+	}
+
+	void CShader::setShadowDistanceWriteShader(const char* name)
+	{
+		m_shadowDistanceShaderName = name;
+		m_shadowDistanceShader = getShadowDistanceWriteShader();
+	}
+
 	CShader* CShader::getShadowDepthWriteShader()
 	{
 		if (m_shadowDepthShader == NULL && !m_shadowDepthShaderName.empty())

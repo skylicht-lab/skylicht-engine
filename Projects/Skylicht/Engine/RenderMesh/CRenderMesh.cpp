@@ -443,8 +443,10 @@ namespace Skylicht
 		setEntities(entities, numEntities);
 	}
 
-	void CRenderMesh::initFromMeshFile(const char* path)
+	void CRenderMesh::initFromMeshFile(const char* path, bool loadNormalMap, bool loadTexcoord2)
 	{
+		m_loadNormal = loadNormalMap;
+		m_loadTexcoord2 = loadTexcoord2;
 		m_meshFile = path;
 		refreshModelAndMaterial();
 	}

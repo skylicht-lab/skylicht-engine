@@ -32,6 +32,7 @@ namespace Skylicht
 		MeshExportSettings::MeshExportSettings() :
 			CObjectSerializable("MeshExportSettings"),
 			TextureFolder(this, "Texture folder"),
+			UseNormalMap(this, "Use normal map", true),
 			FlipNormal(this, "Flip normal", true),
 			GenerateLightmapUV2(this, "Generate lightmap UV2", false),
 			LightmapScale(this, "Lightmap scale", 1.0f, 0.0f),

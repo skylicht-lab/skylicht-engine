@@ -6,6 +6,7 @@ struct VS_INPUT
 	float4 color: COLOR;
 	float2 tex0: TEXCOORD0;
 	float2 tex1: TEXCOORD1;
+	float3 lightmap: LIGHTMAP;
 };
 struct VS_OUTPUT
 {
@@ -23,10 +24,10 @@ cbuffer cbPerObject
 VS_OUTPUT main(VS_INPUT input)
 {
 	VS_OUTPUT output;
-	output.pos = mul(input.pos, uMvpMatrix);
 	output.color = input.color;
 	output.tex0 = input.tex0;
 	output.uvScale = uUVScale;
 	output.tex1 = input.tex1;
+	output.pos = mul(input.pos, uMvpMatrix);
 	return output;
 }

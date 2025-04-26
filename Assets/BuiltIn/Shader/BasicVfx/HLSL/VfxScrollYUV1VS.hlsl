@@ -21,9 +21,9 @@ cbuffer cbPerObject
 VS_OUTPUT main(VS_INPUT input)
 {
 	VS_OUTPUT output;
-	output.pos = mul(input.pos, uMvpMatrix);
 	output.color = input.color;
 	output.tex0 = input.tex0;
 	output.uvScale = uUVScale;
+	output.pos = mul(input.pos, uMvpMatrix);
 	return output;
 }

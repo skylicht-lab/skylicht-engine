@@ -1,14 +1,41 @@
+#ifdef INSTANCING
+
+layout(location = 0) in vec4 inPosition;
+layout(location = 1) in vec3 inNormal;
+layout(location = 2) in vec4 inColor;
+layout(location = 3) in vec2 inTexCoord0;
+
+#ifdef UV2
+layout(location = 4) in vec2 inTexCoord1;
+layout(location = 5) in vec2 inLightmap;
+layout(location = 7) in vec4 uUVScale;
+layout(location = 8) in vec4 uColor;
+layout(location = 9) in mat4 uWorldMatrix;
+#else
+layout(location = 4) in vec4 uUVScale;
+layout(location = 5) in vec4 uColor;
+layout(location = 6) in mat4 uWorldMatrix;
+#endif
+
+#else
+	
 in vec4 inPosition;
 in vec3 inNormal;
 in vec4 inColor;
 in vec2 inTexCoord0;
-
 #ifdef UV2
 in vec2 inTexCoord1;
 #endif
 
+#endif
+
+#ifdef INSTANCING
+uniform mat4 uVPMatrix;
+#else
 uniform mat4 uMvpMatrix;
 uniform vec4 uUVScale;
+#endif
+
 #ifdef RIM_LIGHT
 uniform mat4 uWorldMatrix;
 uniform vec4 uCameraPosition;
@@ -40,12 +67,20 @@ void main(void)
 
 	varColor = inColor / 255.0;
 
-#ifdef RIM_LIGHT
+#if defined(INSTANCING) || defined(RIM_LIGHT)
 	vec4 worldPos = uWorldMatrix * inPosition;
+#endif
+
+#ifdef RIM_LIGHT
 	varWorldViewDir = normalize((uCameraPosition - worldPos).xyz);
 	
 	vec4 worldNormal = uWorldMatrix * vec4(inNormal, 0.0);
 	varWorldNormal = normalize(worldNormal.xyz);
 #endif
+
+#ifdef INSTANCING
+	gl_Position = uVPMatrix * worldPos;
+#else
 	gl_Position = uMvpMatrix * inPosition;
+#endif
 }

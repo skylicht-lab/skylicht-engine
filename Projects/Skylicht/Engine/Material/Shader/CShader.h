@@ -326,6 +326,10 @@ namespace Skylicht
 
 		CShader* getInstancingShader();
 
+		void setShadowDepthWriteShader(const char* name);
+
+		void setShadowDistanceWriteShader(const char* name);
+
 		CShader* getShadowDepthWriteShader();
 
 		CShader* getShadowDistanceWriteShader();

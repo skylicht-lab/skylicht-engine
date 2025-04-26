@@ -109,12 +109,12 @@ namespace Skylicht
 		loadShader("BuiltIn/Shader/ShadowDepthWrite/ShadowLightDistanceWrite.xml");
 		loadShader("BuiltIn/Shader/ShadowDepthWrite/ShadowLightDistanceWriteSkinMesh.xml");
 
-		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWStandardInstancing.xml");
-		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWTBNInstancing.xml");
+		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWStandardSGInstancing.xml");
+		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWTangentSGInstancing.xml");
 		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWSkinInstancing.xml");
 
-		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWLightDistanceStandardInstancing.xml");
-		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWLightDistanceTBNInstancing.xml");
+		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWDistanceStandardSGInstancing.xml");
+		loadShader("BuiltIn/Shader/ShadowDepthWrite/SDWDistanceTangentSGInstancing.xml");
 
 		loadShader("BuiltIn/Shader/Basic/TextureSRGB.xml");
 		loadShader("BuiltIn/Shader/Basic/TextureLinearRGB.xml");
@@ -242,7 +242,6 @@ namespace Skylicht
 	void CShaderManager::initShader()
 	{
 		initBasicShader();
-
 		initSkylichtEngineShader();
 	}
 
@@ -286,6 +285,8 @@ namespace Skylicht
 		// init shader config
 		shader->initShader(xmlReader, source, shaderFolder);
 
+		CShader* instancingShader = shader->getInstancingShader();
+
 		// init instancing batching
 		IShaderInstancing* instancing = NULL;
 		std::string instancingVertex = shader->getInstancingVertex();
@@ -294,9 +295,25 @@ namespace Skylicht
 			if (instancingVertex == "standard_color")
 				instancing = new CStandardColorInstancing();
 			else if (instancingVertex == "standard_sg")
+			{
 				instancing = new CStandardSGInstancing();
+
+				if (instancingShader)
+				{
+					instancingShader->setShadowDepthWriteShader("SDWStandardSGInstancing");
+					instancingShader->setShadowDistanceWriteShader("SDWDistanceStandardSGInstancing");
+				}
+			}
 			else if (instancingVertex == "tangents_sg")
+			{
 				instancing = new CTBNSGInstancing();
+
+				if (instancingShader)
+				{
+					instancingShader->setShadowDepthWriteShader("SDWTangentSGInstancing");
+					instancingShader->setShadowDistanceWriteShader("SDWDistanceTangentSGInstancing");
+				}
+			}
 		}
 		shader->setInstancing(instancing);
 
