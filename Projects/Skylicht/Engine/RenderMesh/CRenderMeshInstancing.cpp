@@ -331,8 +331,10 @@ namespace Skylicht
 		}
 	}
 
-	void CRenderMeshInstancing::initFromMeshFile(const char* path)
+	void CRenderMeshInstancing::initFromMeshFile(const char* path, bool loadNormalMap, bool loadTexcoord2)
 	{
+		m_loadNormal = loadNormalMap;
+		m_loadTexcoord2 = loadTexcoord2;
 		m_meshFile = path;
 		refreshModelAndMaterial();
 	}

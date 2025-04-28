@@ -60,7 +60,12 @@ VS_OUTPUT main(VS_INPUT input)
 	float4 uUVScale = input.uvScale;
 #endif	
 
+#ifdef INSTANCING
+	output.color = input.uColor;
+#else
 	output.color = input.color;
+#endif
+
 	output.tex0 = input.tex0;
 	output.uvScale = uUVScale;
 

@@ -65,7 +65,11 @@ void main(void)
 	varTexCoord1 = inTexCoord1;
 #endif
 
+#ifdef INSTANCING
+	varColor = uColor;
+#else
 	varColor = inColor / 255.0;
+#endif
 
 #if defined(INSTANCING) || defined(RIM_LIGHT)
 	vec4 worldPos = uWorldMatrix * inPosition;
