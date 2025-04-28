@@ -113,6 +113,7 @@ namespace Skylicht
 	void CMeshRendererInstancing::update(CEntityManager* entityManager)
 	{
 		u32 numEntity = m_meshs.size();
+
 		CRenderMeshData** renderData = m_meshs.pointer();
 
 		CEntity** allEntities = entityManager->getEntities();
@@ -146,6 +147,8 @@ namespace Skylicht
 			if (count == 0)
 				continue;
 
+			CEntity** entities = group->Entities.pointer();
+
 			for (u32 i = 0, n = data->RenderMeshBuffers.size(); i < n; i++)
 			{
 				group->Materials.reset();
@@ -163,7 +166,13 @@ namespace Skylicht
 				if (batchMaterial)
 				{
 					for (u32 j = 0; j < count; j++)
-						group->Materials.push(data->Materials[i]);
+					{
+						CInstancingMaterialData* m = GET_ENTITY_DATA(entities[j], CInstancingMaterialData);
+						if (m && m->Enable)
+							group->Materials.push(m->Materials[i]);
+						else
+							group->Materials.push(data->Materials[i]);
+					}
 
 					// batching transform & material data to buffer
 					data->InstancingShader[i]->batchIntancing(

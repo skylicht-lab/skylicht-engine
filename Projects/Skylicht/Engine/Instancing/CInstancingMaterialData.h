@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2025 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,45 +24,29 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CRenderMeshData.h"
-#include "CMeshRenderSystem.h"
-#include "Transform/CWorldTransformData.h"
-#include "IndirectLighting/CIndirectLightingData.h"
-
-#include "Instancing/SMeshInstancing.h"
-#include "Instancing/SMeshInstancingGroup.h"
-#include "Instancing/CInstancingMaterialData.h"
+#include "Material/CMaterial.h"
+#include "SMeshInstancing.h"
 
 namespace Skylicht
 {
-	class SKYLICHT_API CMeshRendererInstancing : public CMeshRenderSystem
+	class SKYLICHT_API CInstancingMaterialData : public IEntityData
 	{
-	protected:
-		core::array<CRenderMeshData*> m_meshs;
-
-		std::map<SMeshInstancing*, SMeshInstancingGroup*> m_groups;
-
-		struct SInstancingGroup
-		{
-			SMeshInstancing* Instancing;
-			SMeshInstancingGroup* Group;
-		};
-
 	public:
-		CMeshRendererInstancing();
+		core::array<CMaterial*> Materials;
 
-		virtual ~CMeshRendererInstancing();
+		bool Enable;
 
-		virtual void beginQuery(CEntityManager* entityManager);
+		CInstancingMaterialData();
 
-		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity);
+		virtual ~CInstancingMaterialData();
 
-		virtual void init(CEntityManager* entityManager);
+		void release();
 
-		virtual void update(CEntityManager* entityManager);
+		void initCustomMaterial(SMeshInstancing* instancing);
 
-		virtual void render(CEntityManager* entityManager);
-
-		void sortBeforeRender(core::array<SInstancingGroup>& instancing);
+		DECLARE_GETTYPENAME(CInstancingMaterialData)
 	};
+
+	DECLARE_PUBLIC_DATA_TYPE_INDEX(CInstancingMaterialData);
+
 }

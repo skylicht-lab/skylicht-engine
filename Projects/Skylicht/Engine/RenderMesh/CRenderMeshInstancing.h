@@ -30,6 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Material/CMaterialManager.h"
 #include "RenderMesh/CRenderMeshData.h"
 #include "Transform/CWorldTransformData.h"
+#include "Instancing/CInstancingMaterialData.h"
 
 namespace Skylicht
 {

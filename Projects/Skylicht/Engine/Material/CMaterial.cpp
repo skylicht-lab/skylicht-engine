@@ -129,6 +129,38 @@ namespace Skylicht
 		mat->m_manualInitMaterial = m_manualInitMaterial;
 	}
 
+	void CMaterial::copyParams(CMaterial* mat)
+	{
+		for (SUniformValue*& uniform : mat->m_uniformParams)
+			delete uniform;
+		mat->m_uniformParams.clear();
+
+		mat->m_shader = m_shader;
+		mat->m_materialName = m_materialName;
+		mat->m_shaderPath = m_shaderPath;
+		mat->m_materialPath = m_materialPath;
+
+		for (int i = 0; i < MAX_SHADERPARAMS; i++)
+			mat->m_shaderParams.setValue(i, m_shaderParams.getParam(i));
+
+		for (SUniformValue*& u : m_uniformParams)
+		{
+			SUniformValue* v = u->clone();
+			mat->m_uniformParams.push_back(v);
+		}
+
+		mat->m_zBuffer = m_zBuffer;
+		mat->m_zWriteEnable = m_zWriteEnable;
+		mat->m_backfaceCulling = m_backfaceCulling;
+		mat->m_frontfaceCulling = m_frontfaceCulling;
+		mat->m_doubleSided = m_doubleSided;
+
+		mat->m_deferred = m_deferred;
+
+		mat->m_castShadow = m_castShadow;
+		mat->m_manualInitMaterial = m_manualInitMaterial;
+	}
+
 	void CMaterial::deleteAllParams()
 	{
 		for (SUniformValue*& uniform : m_uniformParams)

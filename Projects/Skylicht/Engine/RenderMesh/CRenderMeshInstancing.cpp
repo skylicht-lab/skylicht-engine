@@ -480,7 +480,6 @@ namespace Skylicht
 		CIndirectLightingData* indirect = entity->addData<CIndirectLightingData>();
 		indirect->initSH();
 
-		// entity->addData<CWorldInverseTransformData>();
 		entity->addData<CCullingData>();
 		entity->addData<CVisibleData>();
 
@@ -503,6 +502,11 @@ namespace Skylicht
 		CWorldTransformData* transform = entity->getData<CWorldTransformData>();
 		transform->Relative = baseTransform->Relative;
 		transform->HasChanged = true;
+
+		// add custom material for entity
+		CInstancingMaterialData* customMaterial = entity->addData<CInstancingMaterialData>();
+		customMaterial->initCustomMaterial(renderMesh->getMeshInstancing());
+		customMaterial->Enable = true;
 	}
 
 	void CRenderMeshInstancing::addMaterial(CMaterial* material)

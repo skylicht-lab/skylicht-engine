@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2025 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -22,47 +22,46 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "CRenderMeshData.h"
-#include "CMeshRenderSystem.h"
-#include "Transform/CWorldTransformData.h"
-#include "IndirectLighting/CIndirectLightingData.h"
-
-#include "Instancing/SMeshInstancing.h"
-#include "Instancing/SMeshInstancingGroup.h"
-#include "Instancing/CInstancingMaterialData.h"
+#include "pch.h"
+#include "CInstancingMaterialData.h"
 
 namespace Skylicht
 {
-	class SKYLICHT_API CMeshRendererInstancing : public CMeshRenderSystem
+	ACTIVATOR_REGISTER(CInstancingMaterialData);
+
+	IMPLEMENT_DATA_TYPE_INDEX(CInstancingMaterialData);
+
+	CInstancingMaterialData::CInstancingMaterialData() :
+		Enable(false)
 	{
-	protected:
-		core::array<CRenderMeshData*> m_meshs;
 
-		std::map<SMeshInstancing*, SMeshInstancingGroup*> m_groups;
+	}
 
-		struct SInstancingGroup
+	CInstancingMaterialData::~CInstancingMaterialData()
+	{
+		release();
+	}
+
+	void CInstancingMaterialData::release()
+	{
+		for (u32 i = 0, n = Materials.size(); i < n; i++)
+			Materials[i]->drop();
+
+		Materials.clear();
+		Enable = false;
+	}
+
+	void CInstancingMaterialData::initCustomMaterial(SMeshInstancing* instancing)
+	{
+		for (u32 i = 0, n = instancing->Materials.size(); i < n; i++)
 		{
-			SMeshInstancing* Instancing;
-			SMeshInstancingGroup* Group;
-		};
+			CMaterial* srcMaterial = instancing->Materials[i];
 
-	public:
-		CMeshRendererInstancing();
+			CMaterial* material = new CMaterial(srcMaterial->getName(), srcMaterial->getShaderPath());
+			material->copyParams(srcMaterial);
 
-		virtual ~CMeshRendererInstancing();
-
-		virtual void beginQuery(CEntityManager* entityManager);
-
-		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity);
-
-		virtual void init(CEntityManager* entityManager);
-
-		virtual void update(CEntityManager* entityManager);
-
-		virtual void render(CEntityManager* entityManager);
-
-		void sortBeforeRender(core::array<SInstancingGroup>& instancing);
-	};
+			Materials.push_back(material);
+		}
+		Enable = true;
+	}
 }

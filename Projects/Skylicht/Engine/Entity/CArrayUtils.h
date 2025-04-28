@@ -48,6 +48,13 @@ namespace Skylicht
 			m_count = 0;
 		}
 
+		inline void clear()
+		{
+			m_count = 0;
+			m_alloc = 0;
+			m_array.clear();
+		}
+
 		inline T* pointer()
 		{
 			return m_ptr;

@@ -87,6 +87,8 @@ namespace Skylicht
 
 		void enableInstancing(bool b);
 
+		void enableInstancingMaterialForEntity(bool b);
+
 		void setShadowCasting(bool b);
 
 		inline bool isShadowCasting()

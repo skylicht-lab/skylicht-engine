@@ -144,6 +144,7 @@ void CViewInit::initScene()
 				renderer->initFromPrefab(prefabWindTurbine);
 				renderer->initMaterial(winTurbineMaterials);
 				renderer->enableInstancing(true);
+				renderer->enableInstancingMaterialForEntity(true);
 
 				CIndirectLighting* indirect = windTurbine->addComponent<CIndirectLighting>();
 				indirect->setIndirectLightingType(CIndirectLighting::AmbientColor);
@@ -170,6 +171,7 @@ void CViewInit::initScene()
 				renderer->initFromPrefab(prefabBlades);
 				renderer->initMaterial(bladeTurbineMaterials);
 				renderer->enableInstancing(true);
+				renderer->enableInstancingMaterialForEntity(true);
 
 				CIndirectLighting* indirect = windTurbineBlades->addComponent<CIndirectLighting>();
 				indirect->setIndirectLightingType(CIndirectLighting::AmbientColor);
@@ -201,7 +203,7 @@ void CViewInit::initScene()
 	context->getPostProcessorPipeline()->enableAutoExposure(false);
 	context->getPostProcessorPipeline()->setManualExposure(1.0f);
 	context->setActiveZone(zone);
-	context->setActiveCamera(camera);	
+	context->setActiveCamera(camera);
 	context->setDirectionalLight(directionalLight);
 }
 
@@ -263,7 +265,7 @@ void CViewInit::onUpdate()
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-		}
+	}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -296,7 +298,7 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-	}
+}
 }
 
 void CViewInit::onRender()

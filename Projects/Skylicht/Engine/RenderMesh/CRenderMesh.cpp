@@ -33,6 +33,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "RenderMesh/CJointData.h"
 #include "Culling/CCullingData.h"
 #include "Culling/CVisibleData.h"
+#include "Instancing/CInstancingMaterialData.h"
 
 #include "MeshManager/CMeshManager.h"
 
@@ -491,7 +492,28 @@ namespace Skylicht
 		for (CRenderMeshData*& renderer : m_renderers)
 		{
 			if (!renderer->isSkinnedMesh())
+			{
 				renderer->setInstancing(b);
+			}
+		}
+	}
+
+	void CRenderMesh::enableInstancingMaterialForEntity(bool b)
+	{
+		for (CRenderMeshData*& renderer : m_renderers)
+		{
+			if (m_enableInstancing && b)
+			{
+				CInstancingMaterialData* m = GET_ENTITY_DATA(renderer->Entity, CInstancingMaterialData);
+				if (m == NULL)
+					m = renderer->Entity->addData<CInstancingMaterialData>();
+
+				m->initCustomMaterial(renderer->getMeshInstancing());
+			}
+			else
+			{
+				renderer->Entity->removeData<CInstancingMaterialData>();
+			}
 		}
 	}
 
