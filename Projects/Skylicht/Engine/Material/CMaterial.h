@@ -188,7 +188,7 @@ namespace Skylicht
 
 		CMaterial* clone();
 		void copyTo(CMaterial* mat);
-		void copyParams(CMaterial* mat);
+		void copyParamsTo(CMaterial* mat);
 
 		void deleteAllParams();
 		void deleteExtraParams();

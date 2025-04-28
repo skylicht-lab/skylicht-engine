@@ -129,7 +129,7 @@ namespace Skylicht
 		mat->m_manualInitMaterial = m_manualInitMaterial;
 	}
 
-	void CMaterial::copyParams(CMaterial* mat)
+	void CMaterial::copyParamsTo(CMaterial* mat)
 	{
 		for (SUniformValue*& uniform : mat->m_uniformParams)
 			delete uniform;

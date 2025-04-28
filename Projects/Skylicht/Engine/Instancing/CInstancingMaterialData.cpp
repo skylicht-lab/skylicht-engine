@@ -58,7 +58,7 @@ namespace Skylicht
 			CMaterial* srcMaterial = instancing->Materials[i];
 
 			CMaterial* material = new CMaterial(srcMaterial->getName(), srcMaterial->getShaderPath());
-			material->copyParams(srcMaterial);
+			srcMaterial->copyParamsTo(material);
 
 			Materials.push_back(material);
 		}
