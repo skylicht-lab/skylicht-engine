@@ -56,6 +56,16 @@ namespace Skylicht
 
 	}
 
+	CEntity* CEntityHandler::searchEntityByID(const char* id)
+	{
+		for (u32 i = 0, n = m_entities.size(); i < n; i++)
+		{
+			if (m_entities[i]->getID() == id)
+				return m_entities[i];
+		}
+		return NULL;
+	}
+
 	CEntity* CEntityHandler::createEntity()
 	{
 		CEntityManager* entityManager = m_gameObject->getEntityManager();

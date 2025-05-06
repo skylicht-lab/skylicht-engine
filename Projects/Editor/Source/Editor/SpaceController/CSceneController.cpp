@@ -893,22 +893,7 @@ namespace Skylicht
 			CHierachyNode* parentNode = m_hierachyNode->getNodeByTag(p);
 			if (parentNode != NULL)
 			{
-				CHierachyNode* node = parentNode->addChild();
-				node->setName(newObject->getName());
-
-				if (data->Name == "CZone" || data->Name == "CContainerObject")
-				{
-					node->setIcon(GUI::ESystemIcon::Folder);
-					node->setTagData(newObject, CHierachyNode::Container);
-				}
-				else
-				{
-					node->setIcon(GUI::ESystemIcon::Res3D);
-					node->setTagData(newObject, CHierachyNode::GameObject);
-				}
-
-				setNodeEvent(node);
-
+				CHierachyNode* node = buildHierarchyData(newObject, parentNode);
 				if (m_spaceHierarchy != NULL)
 					m_spaceHierarchy->addToTreeNode(node);
 			}
@@ -1445,7 +1430,7 @@ namespace Skylicht
 				if (zone == NULL)
 					return;
 
-				CCopyPaste::getInstance()->paste(zone);
+				newObjects = CCopyPaste::getInstance()->paste(zone);
 				m_spaceHierarchy->getController()->updateTreeNode(zone);
 			}
 			else
@@ -1490,6 +1475,8 @@ namespace Skylicht
 
 			selection->clear();
 			selection->addSelect(newObjects);
+
+			m_history->saveCreateHistory(newObjects);
 		}
 
 		void CSceneController::onDuplicate()
@@ -1498,6 +1485,7 @@ namespace Skylicht
 			CSelection* selection = CSelection::getInstance();
 			std::vector<CSelectObject*>& selected = selection->getAllSelected();
 			std::vector<CEntity*> newEntities;
+			std::vector<CGameObject*> updateObjects;
 
 			// Duplicate entities
 			for (CSelectObject* selectObject : selected)
@@ -1514,6 +1502,7 @@ namespace Skylicht
 						if (data != NULL)
 						{
 							CEntityHandler* handler = data->Handler;
+							CGameObject* handlerObj = handler->getGameObject();
 
 							// spawn new entity
 							CEntity* spawnNewEntity = handler->spawn();
@@ -1524,9 +1513,22 @@ namespace Skylicht
 
 								newEntities.push_back(spawnNewEntity);
 
+								// add to list to update history
+								bool addObjToList = true;
+								for (CGameObject* obj : updateObjects)
+								{
+									if (obj == handlerObj)
+									{
+										addObjToList = false;
+										break;
+									}
+								}
+								if (addObjToList)
+									updateObjects.push_back(handlerObj);
+
 								// remove gui hierachy
 								if (m_spaceHierarchy != NULL)
-									m_spaceHierarchy->getController()->updateTreeNode(handler->getGameObject());
+									m_spaceHierarchy->getController()->updateTreeNode(handlerObj);
 							}
 						}
 					}
@@ -1537,11 +1539,15 @@ namespace Skylicht
 			{
 				// change selection
 				selection->clear();
+
 				for (CEntity* e : newEntities)
 				{
 					selection->addSelect(e);
 					selectOnHierachy(e);
 				}
+
+				// add history
+				m_history->saveModifyHistory(updateObjects);
 				return;
 			}
 

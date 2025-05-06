@@ -306,7 +306,7 @@ namespace Skylicht
 					capsuleMesh.init(radius, halfHeight * 2.0f, NULL, false);
 					mesh = capsuleMesh.getMesh();
 					mesh->grab();
-#endif;
+#endif
 					break;
 				}
 				case CONE_SHAPE_PROXYTYPE:

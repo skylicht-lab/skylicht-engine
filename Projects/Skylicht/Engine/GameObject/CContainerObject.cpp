@@ -25,10 +25,12 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 
 #include "CContainerObject.h"
+
 #include "Utils/CStringImp.h"
 #include "Utils/CRandomID.h"
 
 #include "Scene/CScene.h"
+#include "Entity/CEntityHandler.h"
 
 namespace Skylicht
 {
@@ -485,9 +487,43 @@ namespace Skylicht
 		return result;
 	}
 
-	CGameObject* CContainerObject::searchObjectInScene(const wchar_t* objectName)
+	CEntity* CContainerObject::searchEntityByID(const char* id)
 	{
-		return m_zone->getScene()->searchObjectInChild(objectName);
+		for (CGameObject*& obj : m_childs)
+		{
+			CEntityHandler* entityHandler = obj->getComponent<CEntityHandler>();
+			if (entityHandler != NULL)
+			{
+				CEntity* result = entityHandler->searchEntityByID(id);
+				if (result != NULL)
+					return result;
+			}
+		}
+		return NULL;
+	}
+
+	CEntity* CContainerObject::searchEntityInChildByID(const char* id)
+	{
+		for (CGameObject*& obj : m_childs)
+		{
+			CEntityHandler* entityHandler = obj->getComponent<CEntityHandler>();
+			if (entityHandler != NULL)
+			{
+				CEntity* result = entityHandler->searchEntityByID(id);
+				if (result != NULL)
+					return result;
+			}
+
+			CContainerObject* container = dynamic_cast<CContainerObject*>(obj);
+			if (container != NULL)
+			{
+				CEntity* result = container->searchEntityByID(id);
+				if (result != NULL)
+					return result;
+			}
+		}
+
+		return NULL;
 	}
 
 	CGameObject* CContainerObject::searchObjectInChildByTemplateObjId(const char* id)

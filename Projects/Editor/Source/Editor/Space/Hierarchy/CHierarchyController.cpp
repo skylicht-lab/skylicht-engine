@@ -124,6 +124,8 @@ namespace Skylicht
 
 									updateTreeNode(targetObject);
 									newNode->getGUINode()->setSelected(true);
+
+									sceneController->getHistory()->saveCreateHistory(targetObject);
 								}
 							}
 						}
@@ -837,7 +839,7 @@ namespace Skylicht
 			CGameObject* parentGameObject = (CGameObject*)parent->getTagData();
 			CContainerObject* parentContainer = (CContainerObject*)parentGameObject;
 
-			CGameObject* newGameObject = CSceneController::getInstance()->createEmptyObject(parentContainer);
+			CGameObject* newGameObject = CSceneController::getInstance()->createEmptyObject(parentContainer, false);
 			CHierachyNode* thisNode = parent->getNodeByTag(newGameObject);
 			return thisNode;
 		}

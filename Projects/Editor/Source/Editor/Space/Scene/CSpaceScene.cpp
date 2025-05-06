@@ -267,16 +267,20 @@ namespace Skylicht
 							fileExt = CStringImp::toLower(fileExt);
 
 							CGameObject* targetObject = NULL;
+							bool saveHistory = true;
 
 							if (fileExt == "template")
 							{
 								targetObject = sceneController->createTemplateObject(path, sceneController->getZone());
+								saveHistory = false;
 							}
 							else
 							{
-								targetObject = sceneController->createEmptyObject(NULL);
+								targetObject = sceneController->createEmptyObject(NULL, false);
 								if (targetObject != NULL)
+								{
 									sceneController->createResourceComponent(path, targetObject);
+								}
 							}
 
 							if (targetObject)
@@ -289,6 +293,9 @@ namespace Skylicht
 									sceneController->onSelectNode(node, true);
 									sceneController->updateTreeNode(targetObject);
 								}
+
+								if (saveHistory)
+									sceneController->getHistory()->saveCreateHistory(targetObject);
 							}
 						}
 					}

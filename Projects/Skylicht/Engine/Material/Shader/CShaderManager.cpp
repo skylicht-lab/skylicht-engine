@@ -389,7 +389,7 @@ namespace Skylicht
 		{
 			sprintf(log, "Reload shader: %s - File not found", shaderConfig);
 			os::Printer::log(log);
-			return NULL;
+			return false;
 		}
 
 		sprintf(log, "Reload shader: %s", shaderConfig);

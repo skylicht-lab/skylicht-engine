@@ -32,18 +32,27 @@ namespace Skylicht
 	{
 		enum EHistory
 		{
+			Selected,
 			Create,
 			Modify,
+			Parent,
 			Delete
 		};
 
 		struct SHistoryData
 		{
 			EHistory History;
-			std::vector<std::string> Container;
 			std::vector<std::string> ObjectID;
-			std::vector<CObjectSerializable*> DataModified;
+			std::vector<std::string> LastSelected;
+
+			std::vector<std::string> Container;
+			std::vector<std::string> ContainerModify;
+
 			std::vector<CObjectSerializable*> Data;
+			std::vector<CObjectSerializable*> DataModified;
+
+			std::vector<u32> Position;
+			std::vector<u32> PositionModified;
 		};
 
 		class CHistory
@@ -66,6 +75,8 @@ namespace Skylicht
 				std::vector<std::string>& id,
 				std::vector<CObjectSerializable*>& dataModified,
 				std::vector<CObjectSerializable*>& data);
+
+			void addSelectHistory(std::vector<std::string>& lastSelected, std::vector<std::string>& id);
 
 			virtual void undo() = 0;
 

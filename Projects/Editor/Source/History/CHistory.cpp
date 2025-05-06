@@ -82,5 +82,16 @@ namespace Skylicht
 
 			clearRedo();
 		}
+
+		void CHistory::addSelectHistory(std::vector<std::string>& lastSelected, std::vector<std::string>& id)
+		{
+			SHistoryData* historyData = new SHistoryData();
+			historyData->History = Selected;
+			historyData->ObjectID = id;
+			historyData->LastSelected = lastSelected;
+			m_history.push_back(historyData);
+
+			clearRedo();
+		}
 	}
 }

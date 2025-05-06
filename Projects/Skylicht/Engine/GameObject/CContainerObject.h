@@ -83,9 +83,11 @@ namespace Skylicht
 
 		virtual CGameObject* searchObjectInChildByID(const char* id);
 
-		virtual CGameObject* searchObjectInScene(const wchar_t* objectName);
-
 		virtual CGameObject* searchObjectInChildByTemplateObjId(const char* id);
+
+		virtual CEntity* searchEntityByID(const char* id);
+
+		virtual CEntity* searchEntityInChildByID(const char* id);
 
 		virtual bool testConflictName(const wchar_t* objectName);
 

@@ -45,6 +45,8 @@ namespace Skylicht
 
 		virtual void updateComponent();
 
+		CEntity* searchEntityByID(const char* id);
+
 		CEntity* createEntity();
 
 		CEntity* createEntity(CEntity* parent);
