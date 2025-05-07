@@ -51,6 +51,7 @@ namespace Skylicht
 
 			std::vector<SGameObjectHistory*> m_objects;
 
+			bool m_disable;
 		public:
 			CSceneHistory(CScene* scene);
 

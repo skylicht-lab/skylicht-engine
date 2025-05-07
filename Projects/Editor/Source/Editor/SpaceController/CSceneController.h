@@ -35,6 +35,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Editor/Gizmos/CGizmos.h"
 #include "GizmosComponents/SelectObject/CSelectObjectSystem.h"
+#include "Selection/CSelectObject.h"
 
 #include "CContextMenuScene.h"
 
@@ -238,15 +239,15 @@ namespace Skylicht
 
 			virtual void onNotify(ISubject* subject, IObserver* from);
 
-			void deselectAllOnHierachy();
+			void deselectAllOnHierachy(bool callEvent = true);
 
-			CHierachyNode* deselectOnHierachy(CGameObject* gameObject);
+			CHierachyNode* deselectOnHierachy(CGameObject* gameObject, bool callEvent = true);
 
-			CHierachyNode* deselectOnHierachy(CEntity* entity);
+			CHierachyNode* deselectOnHierachy(CEntity* entity, bool callEvent = true);
 
-			CHierachyNode* selectOnHierachy(CGameObject* gameObject);
+			CHierachyNode* selectOnHierachy(CGameObject* gameObject, bool callEvent = true);
 
-			CHierachyNode* selectOnHierachy(CEntity* entity);
+			CHierachyNode* selectOnHierachy(CEntity* entity, bool callEvent = true);
 
 			inline CHierachyNode* getContextNode()
 			{
@@ -274,7 +275,7 @@ namespace Skylicht
 
 			void createResourceComponent(const std::string& path, CGameObject* gameObject);
 
-			CGameObject* createTemplateObject(const std::string& path, CContainerObject* container);
+			CGameObject* createTemplateObject(const std::string& path, CContainerObject* container, bool saveHistory = true);
 
 			CHierachyNode* buildHierarchyData(CGameObject* object, CHierachyNode* parentNode);
 
@@ -295,6 +296,8 @@ namespace Skylicht
 			void onUnpackTemplate(CGameObject* object);
 
 			void focusCameraToEntity(CEntity* entity);
+
+			void applySelected(std::vector<CSelectObject*> ids);
 
 		protected:
 

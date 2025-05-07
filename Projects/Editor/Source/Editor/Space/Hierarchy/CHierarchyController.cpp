@@ -99,11 +99,13 @@ namespace Skylicht
 						CHierachyNode* newNode = NULL;
 						CSceneController* sceneController = CSceneController::getInstance();
 
+						CGameObject* targetObject = NULL;
+
 						if (fileExt == "template")
 						{
 							CContainerObject* container = sceneController->getZone();
 
-							CGameObject* targetObject = sceneController->createTemplateObject(path, container);
+							targetObject = sceneController->createTemplateObject(path, container, false);
 							updateTreeNode(targetObject);
 
 							newNode = m_node->getNodeByTag(targetObject);
@@ -117,18 +119,19 @@ namespace Skylicht
 								newNode = createChildObject(node);
 								if (newNode != NULL)
 								{
-									CGameObject* targetObject = (CGameObject*)newNode->getTagData();
+									targetObject = (CGameObject*)newNode->getTagData();
 
 									CSceneController* sceneController = CSceneController::getInstance();
 									sceneController->createResourceComponent(path, targetObject);
 
 									updateTreeNode(targetObject);
 									newNode->getGUINode()->setSelected(true);
-
-									sceneController->getHistory()->saveCreateHistory(targetObject);
 								}
 							}
 						}
+
+						if (targetObject)
+							sceneController->getHistory()->saveCreateHistory(targetObject);
 					}
 
 					editor->refresh();

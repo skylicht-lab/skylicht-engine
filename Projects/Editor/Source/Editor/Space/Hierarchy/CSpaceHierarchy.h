@@ -54,7 +54,7 @@ namespace Skylicht
 
 			virtual void update();
 
-			void deselectAll();
+			void deselectAll(bool callEvent);
 
 			void deleteHierarchyNode();
 

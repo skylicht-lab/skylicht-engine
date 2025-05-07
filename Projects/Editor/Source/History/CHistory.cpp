@@ -24,12 +24,14 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CHistory.h"
+#include "Selection/CSelection.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		CHistory::CHistory()
+		CHistory::CHistory() :
+			m_enableSelectHistory(true)
 		{
 
 		}
@@ -44,6 +46,8 @@ namespace Skylicht
 		{
 			for (SHistoryData* history : m_history)
 			{
+				for (CSelectObject* obj : history->Selected)
+					delete obj;
 				for (CObjectSerializable* data : history->Data)
 					delete data;
 				for (CObjectSerializable* data : history->DataModified)
@@ -57,6 +61,8 @@ namespace Skylicht
 		{
 			for (SHistoryData* history : m_redo)
 			{
+				for (CSelectObject* obj : history->Selected)
+					delete obj;
 				for (CObjectSerializable* data : history->Data)
 					delete data;
 				for (CObjectSerializable* data : history->DataModified)
@@ -69,12 +75,14 @@ namespace Skylicht
 		void CHistory::addHistory(EHistory history,
 			std::vector<std::string>& container,
 			std::vector<std::string>& id,
+			std::vector<CSelectObject*>& selected,
 			std::vector<CObjectSerializable*>& dataModified,
 			std::vector<CObjectSerializable*>& data)
 		{
 			SHistoryData* historyData = new SHistoryData();
 			historyData->History = history;
 			historyData->Container = container;
+			historyData->Selected = selected;
 			historyData->ObjectID = id;
 			historyData->DataModified = dataModified;
 			historyData->Data = data;
@@ -83,15 +91,42 @@ namespace Skylicht
 			clearRedo();
 		}
 
-		void CHistory::addSelectHistory(std::vector<std::string>& lastSelected, std::vector<std::string>& id)
+		void CHistory::addSelectHistory()
 		{
+			if (!m_enableSelectHistory)
+				return;
+
 			SHistoryData* historyData = new SHistoryData();
 			historyData->History = Selected;
-			historyData->ObjectID = id;
-			historyData->LastSelected = lastSelected;
+			historyData->Selected = getSelected();
+
+			if (m_history.size() > 0 && historyData->Selected.size() == 0)
+			{
+				// no need save empty selected
+				SHistoryData* back = m_history.back();
+				if (back->History == Selected && back->Selected.size() == 0)
+				{
+					delete historyData;
+					return;
+				}
+			}
+
 			m_history.push_back(historyData);
 
 			clearRedo();
+		}
+
+		std::vector<CSelectObject*> CHistory::getSelected()
+		{
+			std::vector<CSelectObject*> result;
+
+			std::vector<CSelectObject*>& currentSelection = CSelection::getInstance()->getAllSelected();
+			for (CSelectObject* obj : currentSelection)
+			{
+				result.push_back(new CSelectObject(obj->getType(), obj->getID()));
+			}
+
+			return result;
 		}
 	}
 }

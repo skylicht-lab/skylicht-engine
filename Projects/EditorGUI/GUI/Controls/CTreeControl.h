@@ -60,7 +60,7 @@ namespace Skylicht
 
 				virtual void onNodeClick(CBase* base);
 
-				virtual void deselectAll();
+				virtual void deselectAll(bool callEvent = true);
 
 				virtual bool onKeyUp(bool down);
 

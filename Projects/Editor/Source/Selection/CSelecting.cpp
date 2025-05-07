@@ -92,6 +92,9 @@ namespace Skylicht
 				}
 				else if (event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
 				{
+					CSceneHistory* history = CSceneController::getInstance()->getHistory();
+					history->enableAddSelectHistory(false);
+
 					if (!m_altPressed)
 					{
 						if (isDragSelect())
@@ -103,6 +106,10 @@ namespace Skylicht
 							doSingleSelect();
 						}
 					}
+
+					// add select history
+					history->enableAddSelectHistory(true);
+					history->addSelectHistory();
 
 					m_leftMousePressed = false;
 					m_allowDragSelect = true;
@@ -222,7 +229,6 @@ namespace Skylicht
 		void CSelecting::addSelect(CGameObject* object, CEntity* entity)
 		{
 			CSceneController* sceneController = CSceneController::getInstance();
-			CSelection* selection = CSelection::getInstance();
 
 			if (entity && object)
 			{
@@ -244,6 +250,10 @@ namespace Skylicht
 				object = object->getParentTemplate();
 				sceneController->selectOnHierachy(object);
 			}
+
+			// apply to save history
+			if (object)
+				sceneController->getHistory()->beginSaveHistory(object);
 		}
 
 		void CSelecting::doMultiSelect()

@@ -33,7 +33,8 @@ namespace Skylicht
 	namespace Editor
 	{
 		CSceneHistory::CSceneHistory(CScene* scene) :
-			m_scene(scene)
+			m_scene(scene),
+			m_disable(false)
 		{
 
 		}
@@ -113,9 +114,15 @@ namespace Skylicht
 
 		void CSceneHistory::undo()
 		{
-			size_t historySize = m_history.size();
+			int historySize = (int)m_history.size();
 			if (historySize == 0)
 				return;
+
+			m_disable = true;
+
+			// deselect all first
+			CSceneController* sceneController = CSceneController::getInstance();
+			sceneController->deselectAllOnHierachy(false);
 
 			// last history save
 			SHistoryData* historyData = m_history[historySize - 1];
@@ -139,22 +146,34 @@ namespace Skylicht
 			break;
 			}
 
+			if (historySize - 2 >= 0)
+			{
+				// apply history selection
+				sceneController->applySelected(m_history[historySize - 2]->Selected);
+			}
+
 			// move history to redo action
 			m_redo.push_back(historyData);
 			m_history.erase(m_history.begin() + (historySize - 1));
 
 			// refresh ui on editor
 			CEditor::getInstance()->refresh();
+
+			m_disable = false;
 		}
 
 		void CSceneHistory::redo()
 		{
-			size_t historySize = m_redo.size();
+			int historySize = (int)m_redo.size();
 			if (historySize == 0)
 				return;
 
+			m_disable = true;
+
 			CSceneController* sceneController = CSceneController::getInstance();
 			CScene* scene = sceneController->getScene();
+
+			sceneController->deselectAllOnHierachy(false);
 
 			// last history save
 			SHistoryData* historyData = m_redo[historySize - 1];
@@ -178,12 +197,17 @@ namespace Skylicht
 			break;
 			}
 
+			// apply history selection
+			sceneController->applySelected(historyData->Selected);
+
 			// move history to redo action
 			m_history.push_back(historyData);
 			m_redo.erase(m_redo.begin() + (historySize - 1));
 
 			// refresh ui on editor
 			CEditor::getInstance()->refresh();
+
+			m_disable = false;
 		}
 
 		void CSceneHistory::freeCurrentObjectData()
@@ -212,9 +236,12 @@ namespace Skylicht
 
 			for (SGameObjectHistory* history : m_objects)
 			{
-				// no need
 				if (history->ObjectID == objectID)
+				{
+					delete history->ObjectData;
+					history->ObjectData = gameObject->createSerializable();
 					return;
+				}
 			}
 
 			SGameObjectHistory* objectData = new SGameObjectHistory();
@@ -244,13 +271,22 @@ namespace Skylicht
 
 		void CSceneHistory::saveCreateHistory(CGameObject* gameObject)
 		{
+			if (m_disable)
+				return;
+
 			std::vector<CGameObject*> gameObjects;
 			gameObjects.push_back(gameObject);
 			saveCreateHistory(gameObjects);
+
+			// update the data for gameObject
+			beginSaveHistory(gameObject);
 		}
 
 		void CSceneHistory::saveCreateHistory(std::vector<CGameObject*> gameObjects)
 		{
+			if (m_disable)
+				return;
+
 			if (gameObjects.size() == 0)
 				return;
 
@@ -285,11 +321,14 @@ namespace Skylicht
 			}
 
 			// save history
-			addHistory(EHistory::Create, container, id, modifyData, objectData);
+			addHistory(EHistory::Create, container, id, getSelected(), modifyData, objectData);
 		}
 
 		void CSceneHistory::saveDeleteHistory(CGameObject* gameObject)
 		{
+			if (m_disable)
+				return;
+
 			std::vector<CGameObject*> gameObjects;
 			gameObjects.push_back(gameObject);
 			saveDeleteHistory(gameObjects);
@@ -297,6 +336,9 @@ namespace Skylicht
 
 		void CSceneHistory::saveDeleteHistory(std::vector<CGameObject*> gameObjects)
 		{
+			if (m_disable)
+				return;
+
 			if (gameObjects.size() == 0)
 				return;
 
@@ -331,11 +373,14 @@ namespace Skylicht
 			}
 
 			// save history
-			addHistory(EHistory::Delete, container, id, modifyData, objectData);
+			addHistory(EHistory::Delete, container, id, getSelected(), modifyData, objectData);
 		}
 
 		bool CSceneHistory::saveModifyHistory(std::vector<CGameObject*> gameObjects)
 		{
+			if (m_disable)
+				return false;
+
 			if (gameObjects.size() == 0)
 				return false;
 
@@ -384,12 +429,14 @@ namespace Skylicht
 
 			if (success)
 			{
-				addHistory(EHistory::Modify, container, id, modifyData, objectData);
+				addHistory(EHistory::Modify, container, id, getSelected(), modifyData, objectData);
 			}
 			else
 			{
 				for (CObjectSerializable* objData : modifyData)
 					delete objData;
+
+				clearRedo();
 			}
 
 			return success;

@@ -1055,7 +1055,7 @@ namespace Skylicht
 			}
 		}
 
-		CGameObject* CSceneController::createTemplateObject(const std::string& path, CContainerObject* container)
+		CGameObject* CSceneController::createTemplateObject(const std::string& path, CContainerObject* container, bool saveHistory)
 		{
 			CGameObject* result = CSceneImporter::importTemplate(container, path.c_str());
 
@@ -1073,59 +1073,60 @@ namespace Skylicht
 						m_spaceHierarchy->addToTreeNode(node);
 				}
 
-				m_history->saveCreateHistory(result);
+				if (saveHistory)
+					m_history->saveCreateHistory(result);
 			}
 
 			return result;
 		}
 
-		void CSceneController::deselectAllOnHierachy()
+		void CSceneController::deselectAllOnHierachy(bool callEvent)
 		{
 			if (m_spaceHierarchy)
-				m_spaceHierarchy->deselectAll();
+				m_spaceHierarchy->deselectAll(callEvent);
 		}
 
-		CHierachyNode* CSceneController::deselectOnHierachy(CGameObject* gameObject)
+		CHierachyNode* CSceneController::deselectOnHierachy(CGameObject* gameObject, bool callEvent)
 		{
 			CHierachyNode* node = m_hierachyNode->getNodeByTag(gameObject);
 			if (node != NULL)
 			{
 				GUI::CTreeNode* treeNode = node->getGUINode();
-				treeNode->setSelected(false);
+				treeNode->setSelected(false, callEvent);
 			}
 			return node;
 		}
 
-		CHierachyNode* CSceneController::deselectOnHierachy(CEntity* entity)
+		CHierachyNode* CSceneController::deselectOnHierachy(CEntity* entity, bool callEvent)
 		{
 			CHierachyNode* node = m_hierachyNode->getNodeByTag(entity);
 			if (node != NULL)
 			{
 				GUI::CTreeNode* treeNode = node->getGUINode();
-				treeNode->setSelected(false);
+				treeNode->setSelected(false, callEvent);
 			}
 			return node;
 		}
 
-		CHierachyNode* CSceneController::selectOnHierachy(CGameObject* gameObject)
+		CHierachyNode* CSceneController::selectOnHierachy(CGameObject* gameObject, bool callEvent)
 		{
 			CHierachyNode* node = m_hierachyNode->getNodeByTag(gameObject);
 			if (node != NULL)
 			{
 				GUI::CTreeNode* treeNode = node->getGUINode();
-				treeNode->setSelected(true);
+				treeNode->setSelected(true, callEvent);
 				m_spaceHierarchy->scrollToNode(treeNode);
 			}
 			return node;
 		}
 
-		CHierachyNode* CSceneController::selectOnHierachy(CEntity* entity)
+		CHierachyNode* CSceneController::selectOnHierachy(CEntity* entity, bool callEvent)
 		{
 			CHierachyNode* node = m_hierachyNode->getNodeByTag(entity);
 			if (node != NULL)
 			{
 				GUI::CTreeNode* treeNode = node->getGUINode();
-				treeNode->setSelected(true);
+				treeNode->setSelected(true, callEvent);
 				m_spaceHierarchy->scrollToNode(treeNode);
 			}
 			return node;
@@ -1188,6 +1189,9 @@ namespace Skylicht
 
 					// add new observer
 					selectedObject->addObserver(this);
+
+					// add select history
+					m_history->addSelectHistory();
 				}
 				else
 				{
@@ -1219,6 +1223,9 @@ namespace Skylicht
 
 					// add new observer
 					selectedObject->addObserver(this);
+
+					// add select history
+					m_history->addSelectHistory();
 				}
 				else
 				{
@@ -1673,6 +1680,38 @@ namespace Skylicht
 
 			core::vector3df newPosition = objectPosition + look * d;
 			camera->lookAt(newPosition, objectPosition, Transform::Oy);
+		}
+
+		void CSceneController::applySelected(std::vector<CSelectObject*> ids)
+		{
+			m_scene->updateAddRemoveObject();
+			m_scene->updateIndexSearchObject();
+
+			std::vector<CSelectObject*> listIds;
+
+			for (CSelectObject* id : ids)
+			{
+				if (id->getType() == CSelectObject::GameObject)
+				{
+					CGameObject* go = m_scene->searchObjectInChildByID(id->getID().c_str());
+					if (go)
+					{
+						selectOnHierachy(go, false);
+						listIds.push_back(id);
+					}
+				}
+				else if (id->getType() == CSelectObject::Entity)
+				{
+					CEntity* entity = m_scene->searchEntityInChildByID(id->getID().c_str());
+					if (entity)
+					{
+						selectOnHierachy(entity, false);
+						listIds.push_back(id);
+					}
+				}
+			}
+
+			CSelection::getInstance()->applySelected(listIds);
 		}
 	}
 }

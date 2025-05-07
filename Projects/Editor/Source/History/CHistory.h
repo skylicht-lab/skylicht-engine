@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Serializable/CObjectSerializable.h"
+#include "Selection/CSelectObject.h"
 
 namespace Skylicht
 {
@@ -43,16 +44,17 @@ namespace Skylicht
 		{
 			EHistory History;
 			std::vector<std::string> ObjectID;
-			std::vector<std::string> LastSelected;
+			std::vector<CSelectObject*> Selected;
 
 			std::vector<std::string> Container;
-			std::vector<std::string> ContainerModify;
 
 			std::vector<CObjectSerializable*> Data;
 			std::vector<CObjectSerializable*> DataModified;
 
-			std::vector<u32> Position;
-			std::vector<u32> PositionModified;
+			SHistoryData()
+			{
+				History = Editor::Selected;
+			}
 		};
 
 		class CHistory
@@ -61,6 +63,7 @@ namespace Skylicht
 			std::vector<SHistoryData*> m_history;
 			std::vector<SHistoryData*> m_redo;
 
+			bool m_enableSelectHistory;
 		public:
 			CHistory();
 
@@ -73,14 +76,22 @@ namespace Skylicht
 			void addHistory(EHistory history,
 				std::vector<std::string>& container,
 				std::vector<std::string>& id,
+				std::vector<CSelectObject*>& selected,
 				std::vector<CObjectSerializable*>& dataModified,
 				std::vector<CObjectSerializable*>& data);
 
-			void addSelectHistory(std::vector<std::string>& lastSelected, std::vector<std::string>& id);
+			inline void enableAddSelectHistory(bool b)
+			{
+				m_enableSelectHistory = b;
+			}
+
+			void addSelectHistory();
 
 			virtual void undo() = 0;
 
 			virtual void redo() = 0;
+
+			std::vector<CSelectObject*> getSelected();
 		};
 	}
 }

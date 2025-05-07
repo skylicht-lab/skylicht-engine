@@ -96,9 +96,9 @@ namespace Skylicht
 
 		}
 
-		void CSpaceHierarchy::deselectAll()
+		void CSpaceHierarchy::deselectAll(bool callEvent)
 		{
-			m_tree->deselectAll();
+			m_tree->deselectAll(callEvent);
 		}
 
 		void CSpaceHierarchy::deleteHierarchyNode()

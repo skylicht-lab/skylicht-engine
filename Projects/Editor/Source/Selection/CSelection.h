@@ -92,6 +92,7 @@ namespace Skylicht
 
 			void unSelect(CGUIElement* gui);
 
+			void applySelected(std::vector<CSelectObject*>& ids);
 		};
 	}
 }

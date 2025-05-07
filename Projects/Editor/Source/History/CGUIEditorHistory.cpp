@@ -298,7 +298,7 @@ namespace Skylicht
 			}
 
 			// save history
-			addHistory(EHistory::Create, container, id, modifyData, objectData);
+			addHistory(EHistory::Create, container, id, getSelected(), modifyData, objectData);
 		}
 
 		void CGUIEditorHistory::saveDeleteHistory(CGUIElement* guiObject)
@@ -347,7 +347,7 @@ namespace Skylicht
 			}
 
 			// save history
-			addHistory(EHistory::Delete, container, id, modifyData, objectData);
+			addHistory(EHistory::Delete, container, id, getSelected(), modifyData, objectData);
 		}
 
 		bool CGUIEditorHistory::saveModifyHistory(CGUIElement* guiObject)
@@ -407,7 +407,7 @@ namespace Skylicht
 
 			if (success)
 			{
-				addHistory(EHistory::Modify, container, id, modifyData, objectData);
+				addHistory(EHistory::Modify, container, id, getSelected(), modifyData, objectData);
 			}
 			else
 			{

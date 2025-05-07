@@ -298,5 +298,17 @@ namespace Skylicht
 				++i;
 			}
 		}
+
+		void CSelection::applySelected(std::vector<CSelectObject*>& ids)
+		{
+			for (CSelectObject* selectObject : m_selected)
+				delete selectObject;
+			m_selected.clear();
+
+			for (CSelectObject* obj : ids)
+			{
+				m_selected.push_back(new CSelectObject(obj->getType(), obj->getID()));
+			}
+		}
 	}
 }

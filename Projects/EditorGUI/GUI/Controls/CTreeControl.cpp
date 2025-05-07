@@ -105,14 +105,14 @@ namespace Skylicht
 				deselectAll();
 			}
 
-			void CTreeControl::deselectAll()
+			void CTreeControl::deselectAll(bool callEvent)
 			{
 				for (CBase* c : m_innerPanel->Children)
 				{
 					CTreeNode* node = dynamic_cast<CTreeNode*>(c);
 					if (node)
 					{
-						node->deselectAll();
+						node->deselectAll(callEvent);
 					}
 				}
 
