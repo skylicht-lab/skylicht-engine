@@ -63,6 +63,7 @@ namespace Skylicht
 			std::vector<SHistoryData*> m_history;
 			std::vector<SHistoryData*> m_redo;
 
+			bool m_enable;
 			bool m_enableSelectHistory;
 		public:
 			CHistory();

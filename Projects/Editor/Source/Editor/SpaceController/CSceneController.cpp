@@ -1698,6 +1698,8 @@ namespace Skylicht
 					{
 						selectOnHierachy(go, false);
 						listIds.push_back(id);
+
+						m_history->beginSaveHistory(go);
 					}
 				}
 				else if (id->getType() == CSelectObject::Entity)
@@ -1707,6 +1709,10 @@ namespace Skylicht
 					{
 						selectOnHierachy(entity, false);
 						listIds.push_back(id);
+
+						CEntityHandleData* data = GET_ENTITY_DATA(entity, CEntityHandleData);
+						if (data && data->Handler)
+							m_history->beginSaveHistory(data->Handler->getGameObject());
 					}
 				}
 			}

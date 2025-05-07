@@ -33,8 +33,7 @@ namespace Skylicht
 	namespace Editor
 	{
 		CSceneHistory::CSceneHistory(CScene* scene) :
-			m_scene(scene),
-			m_disable(false)
+			m_scene(scene)
 		{
 
 		}
@@ -75,7 +74,9 @@ namespace Skylicht
 				{
 					CContainerObject* containerObject = (CContainerObject*)scene->searchObjectInChildByID(id.c_str());
 					if (containerObject != NULL)
+					{
 						sceneController->createGameObject(containerObject, historyData->Data[i], false);
+					}
 				}
 				else
 				{
@@ -118,11 +119,7 @@ namespace Skylicht
 			if (historySize == 0)
 				return;
 
-			m_disable = true;
-
-			// deselect all first
-			CSceneController* sceneController = CSceneController::getInstance();
-			sceneController->deselectAllOnHierachy(false);
+			m_enable = false;
 
 			// last history save
 			SHistoryData* historyData = m_history[historySize - 1];
@@ -146,6 +143,8 @@ namespace Skylicht
 			break;
 			}
 
+			CSceneController* sceneController = CSceneController::getInstance();
+			sceneController->deselectAllOnHierachy(false);
 			if (historySize - 2 >= 0)
 			{
 				// apply history selection
@@ -159,7 +158,7 @@ namespace Skylicht
 			// refresh ui on editor
 			CEditor::getInstance()->refresh();
 
-			m_disable = false;
+			m_enable = true;
 		}
 
 		void CSceneHistory::redo()
@@ -168,12 +167,10 @@ namespace Skylicht
 			if (historySize == 0)
 				return;
 
-			m_disable = true;
+			m_enable = false;
 
 			CSceneController* sceneController = CSceneController::getInstance();
 			CScene* scene = sceneController->getScene();
-
-			sceneController->deselectAllOnHierachy(false);
 
 			// last history save
 			SHistoryData* historyData = m_redo[historySize - 1];
@@ -198,6 +195,7 @@ namespace Skylicht
 			}
 
 			// apply history selection
+			sceneController->deselectAllOnHierachy(false);
 			sceneController->applySelected(historyData->Selected);
 
 			// move history to redo action
@@ -207,7 +205,7 @@ namespace Skylicht
 			// refresh ui on editor
 			CEditor::getInstance()->refresh();
 
-			m_disable = false;
+			m_enable = true;
 		}
 
 		void CSceneHistory::freeCurrentObjectData()
@@ -252,6 +250,9 @@ namespace Skylicht
 
 		void CSceneHistory::removeSaveHistory(CGameObject* gameObject)
 		{
+			if (!m_enable)
+				return;
+
 			std::string objectID = gameObject->getID();
 
 			std::vector<SGameObjectHistory*>::iterator i = m_objects.begin(), end = m_objects.end();
@@ -271,20 +272,60 @@ namespace Skylicht
 
 		void CSceneHistory::saveCreateHistory(CGameObject* gameObject)
 		{
-			if (m_disable)
+			if (!m_enable)
 				return;
 
 			std::vector<CGameObject*> gameObjects;
 			gameObjects.push_back(gameObject);
 			saveCreateHistory(gameObjects);
+		}
+
+		void CSceneHistory::addData(CGameObject* gameObject,
+			std::vector<std::string>& container,
+			std::vector<std::string>& id,
+			std::vector<CObjectSerializable*>& modifyData,
+			std::vector<CObjectSerializable*>& objectData)
+		{
+			CObjectSerializable* currentData = gameObject->createSerializable();
+
+			// parent container id
+			if (gameObject->getParent() != NULL)
+			{
+				container.push_back(gameObject->getParent()->getID());
+			}
+			else
+			{
+				// this is zone (no parent)
+				container.push_back("_");
+			}
+
+			// game object id
+			id.push_back(gameObject->getID());
+
+			// last data object
+			objectData.push_back(currentData);
+
+			// current data object
+			modifyData.push_back(NULL);
 
 			// update the data for gameObject
 			beginSaveHistory(gameObject);
+
+			// also add childs
+			CContainerObject* containerObject = dynamic_cast<CContainerObject*>(gameObject);
+			if (containerObject)
+			{
+				ArrayGameObject* childs = containerObject->getChilds();
+				for (CGameObject* go : *childs)
+				{
+					addData(go, container, id, modifyData, objectData);
+				}
+			}
 		}
 
 		void CSceneHistory::saveCreateHistory(std::vector<CGameObject*> gameObjects)
 		{
-			if (m_disable)
+			if (!m_enable)
 				return;
 
 			if (gameObjects.size() == 0)
@@ -297,27 +338,7 @@ namespace Skylicht
 
 			for (CGameObject* gameObject : gameObjects)
 			{
-				CObjectSerializable* currentData = gameObject->createSerializable();
-
-				// parent container id
-				if (gameObject->getParent() != NULL)
-				{
-					container.push_back(gameObject->getParent()->getID());
-				}
-				else
-				{
-					// this is zone (no parent)
-					container.push_back("_");
-				}
-
-				// game object id
-				id.push_back(gameObject->getID());
-
-				// last data object
-				objectData.push_back(currentData);
-
-				// current data object
-				modifyData.push_back(NULL);
+				addData(gameObject, container, id, modifyData, objectData);
 			}
 
 			// save history
@@ -326,7 +347,7 @@ namespace Skylicht
 
 		void CSceneHistory::saveDeleteHistory(CGameObject* gameObject)
 		{
-			if (m_disable)
+			if (!m_enable)
 				return;
 
 			std::vector<CGameObject*> gameObjects;
@@ -336,7 +357,7 @@ namespace Skylicht
 
 		void CSceneHistory::saveDeleteHistory(std::vector<CGameObject*> gameObjects)
 		{
-			if (m_disable)
+			if (!m_enable)
 				return;
 
 			if (gameObjects.size() == 0)
@@ -349,27 +370,7 @@ namespace Skylicht
 
 			for (CGameObject* gameObject : gameObjects)
 			{
-				CObjectSerializable* currentData = gameObject->createSerializable();
-
-				// parent container id
-				if (gameObject->getParent() != NULL)
-				{
-					container.push_back(gameObject->getParent()->getID());
-				}
-				else
-				{
-					// this is zone (no parent)
-					container.push_back("_");
-				}
-
-				// game object id
-				id.push_back(gameObject->getID());
-
-				// last data object
-				objectData.push_back(currentData);
-
-				// current data object
-				modifyData.push_back(NULL);
+				addData(gameObject, container, id, modifyData, objectData);
 			}
 
 			// save history
@@ -378,7 +379,7 @@ namespace Skylicht
 
 		bool CSceneHistory::saveModifyHistory(std::vector<CGameObject*> gameObjects)
 		{
-			if (m_disable)
+			if (!m_enable)
 				return false;
 
 			if (gameObjects.size() == 0)

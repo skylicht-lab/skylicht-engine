@@ -51,7 +51,6 @@ namespace Skylicht
 
 			std::vector<SGameObjectHistory*> m_objects;
 
-			bool m_disable;
 		public:
 			CSceneHistory(CScene* scene);
 
@@ -78,6 +77,12 @@ namespace Skylicht
 			void endSaveHistory();
 
 		protected:
+
+			void addData(CGameObject* go,
+				std::vector<std::string>& container,
+				std::vector<std::string>& id,
+				std::vector<CObjectSerializable*>& modifyData,
+				std::vector<CObjectSerializable*>& objectData);
 
 			void doDelete(SHistoryData* historyData);
 

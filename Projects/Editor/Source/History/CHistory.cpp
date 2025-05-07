@@ -31,6 +31,7 @@ namespace Skylicht
 	namespace Editor
 	{
 		CHistory::CHistory() :
+			m_enable(true),
 			m_enableSelectHistory(true)
 		{
 
@@ -79,6 +80,9 @@ namespace Skylicht
 			std::vector<CObjectSerializable*>& dataModified,
 			std::vector<CObjectSerializable*>& data)
 		{
+			if (!m_enable)
+				return;
+
 			SHistoryData* historyData = new SHistoryData();
 			historyData->History = history;
 			historyData->Container = container;
@@ -93,21 +97,37 @@ namespace Skylicht
 
 		void CHistory::addSelectHistory()
 		{
-			if (!m_enableSelectHistory)
+			if (!m_enable || !m_enableSelectHistory)
 				return;
 
 			SHistoryData* historyData = new SHistoryData();
 			historyData->History = Selected;
 			historyData->Selected = getSelected();
 
-			if (m_history.size() > 0 && historyData->Selected.size() == 0)
+			if (m_history.size() > 0)
 			{
-				// no need save empty selected
+				// no need to save the same objects selected
 				SHistoryData* back = m_history.back();
-				if (back->History == Selected && back->Selected.size() == 0)
+				if (back->History == Selected)
 				{
-					delete historyData;
-					return;
+					if (back->Selected.size() == historyData->Selected.size())
+					{
+						bool same = true;
+						for (u32 i = 0, n = (u32)historyData->Selected.size(); i < n; i++)
+						{
+							if (back->Selected[i]->getID() != historyData->Selected[i]->getID())
+							{
+								same = false;
+								break;
+							}
+						}
+
+						if (same)
+						{
+							delete historyData;
+							return;
+						}
+					}
 				}
 			}
 
