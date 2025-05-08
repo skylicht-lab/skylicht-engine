@@ -67,6 +67,8 @@ namespace Skylicht
 
 		void updateIndexSearchObject();
 
+		CGameObject* getChildObjectBefore(CGameObject* object);
+
 		void bringToNext(CGameObject* object, CGameObject* target, bool behind);
 
 		void bringToChild(CGameObject* object);

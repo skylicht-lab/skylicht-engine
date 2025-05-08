@@ -283,6 +283,15 @@ namespace Skylicht
 		return (int)m_childs.size();
 	}
 
+	CGameObject* CContainerObject::getChildObjectBefore(CGameObject* object)
+	{
+		ArrayGameObject::iterator i = std::find(m_childs.begin(), m_childs.end(), object);
+		if (i == m_childs.begin() || i == m_childs.end())
+			return NULL;
+		--i;
+		return (*i);
+	}
+
 	void CContainerObject::bringToNext(CGameObject* object, CGameObject* target, bool behind)
 	{
 		if (target->getParent() != this)

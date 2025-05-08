@@ -363,6 +363,8 @@ namespace Skylicht
 
 		void notifyChanged();
 
+		CGUIElement* getChildBefore(CGUIElement* object);
+
 		void bringToNext(CGUIElement* object, CGUIElement* target, bool behind);
 
 		void bringToChild(CGUIElement* object);

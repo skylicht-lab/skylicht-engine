@@ -76,6 +76,7 @@ namespace Skylicht
 		void CHistory::addHistory(EHistory history,
 			std::vector<std::string>& container,
 			std::vector<std::string>& id,
+			std::vector<std::string>& before,
 			std::vector<CSelectObject*>& selected,
 			std::vector<CObjectSerializable*>& dataModified,
 			std::vector<CObjectSerializable*>& data)
@@ -88,6 +89,7 @@ namespace Skylicht
 			historyData->Container = container;
 			historyData->Selected = selected;
 			historyData->ObjectID = id;
+			historyData->BeforeID = before;
 			historyData->DataModified = dataModified;
 			historyData->Data = data;
 			m_history.push_back(historyData);

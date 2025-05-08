@@ -36,20 +36,31 @@ namespace Skylicht
 			Selected,
 			Create,
 			Modify,
-			Parent,
+			Structure,
 			Delete
+		};
+
+		struct SMoveData
+		{
+			std::string TargetContainer;
+			std::string To;
+			bool Behind;
 		};
 
 		struct SHistoryData
 		{
 			EHistory History;
-			std::vector<std::string> ObjectID;
-			std::vector<CSelectObject*> Selected;
 
+			std::vector<std::string> ObjectID;
 			std::vector<std::string> Container;
+			std::vector<std::string> BeforeID;
+
+			std::vector<CSelectObject*> Selected;
 
 			std::vector<CObjectSerializable*> Data;
 			std::vector<CObjectSerializable*> DataModified;
+
+			std::vector<SMoveData> MoveData;
 
 			SHistoryData()
 			{
@@ -77,6 +88,7 @@ namespace Skylicht
 			void addHistory(EHistory history,
 				std::vector<std::string>& container,
 				std::vector<std::string>& id,
+				std::vector<std::string>& before,
 				std::vector<CSelectObject*>& selected,
 				std::vector<CObjectSerializable*>& dataModified,
 				std::vector<CObjectSerializable*>& data);

@@ -182,6 +182,15 @@ namespace Skylicht
 		m_zones.insert(pos, object);
 	}
 
+	CZone* CScene::getZoneBefore(CZone* object)
+	{
+		ArrayZone::iterator pos = std::find(m_zones.begin(), m_zones.end(), object);
+		if (pos == m_zones.begin() || pos == m_zones.end())
+			return NULL;
+		--pos;
+		return *pos;
+	}
+
 	void CScene::registerEvent(std::string name, IEventReceiver* pEvent)
 	{
 		std::vector<eventType>::iterator i = m_eventReceivers.begin(), end = m_eventReceivers.end();

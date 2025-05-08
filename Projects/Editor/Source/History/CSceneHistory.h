@@ -37,6 +37,9 @@ namespace Skylicht
 			std::string ObjectID;
 			CObjectSerializable* ObjectData;
 
+			std::string ContainerID;
+			std::string BeforeID;
+
 			void changeData(CObjectSerializable* data)
 			{
 				delete ObjectData;
@@ -78,9 +81,12 @@ namespace Skylicht
 
 		protected:
 
+			void saveToHistory(SGameObjectHistory* historyData, CGameObject* gameObject);
+
 			void addData(CGameObject* go,
 				std::vector<std::string>& container,
 				std::vector<std::string>& id,
+				std::vector<std::string>& before,
 				std::vector<CObjectSerializable*>& modifyData,
 				std::vector<CObjectSerializable*>& objectData);
 

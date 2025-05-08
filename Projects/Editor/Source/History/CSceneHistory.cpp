@@ -228,23 +228,43 @@ namespace Skylicht
 			return NULL;
 		}
 
+		void CSceneHistory::saveToHistory(SGameObjectHistory* historyData, CGameObject* gameObject)
+		{
+			historyData->ObjectID = gameObject->getID();
+			historyData->ObjectData = gameObject->createSerializable();
+
+			CContainerObject* container = (CContainerObject*)gameObject->getParent();
+			if (container != NULL)
+			{
+				historyData->ContainerID = container->getID();
+				CGameObject* obj = container->getChildObjectBefore(gameObject);
+				if (obj)
+					historyData->BeforeID = obj->getID();
+			}
+			else
+			{
+				historyData->ContainerID = "_";
+				CZone* zone = gameObject->getScene()->getZoneBefore((CZone*)gameObject);
+				if (zone)
+					historyData->BeforeID = zone->getID();
+			}
+		}
+
 		void CSceneHistory::beginSaveHistory(CGameObject* gameObject)
 		{
-			std::string objectID = gameObject->getID();
-
+			const std::string& objectID = gameObject->getID();
 			for (SGameObjectHistory* history : m_objects)
 			{
 				if (history->ObjectID == objectID)
 				{
 					delete history->ObjectData;
-					history->ObjectData = gameObject->createSerializable();
+					saveToHistory(history, gameObject);
 					return;
 				}
 			}
 
 			SGameObjectHistory* objectData = new SGameObjectHistory();
-			objectData->ObjectID = objectID;
-			objectData->ObjectData = gameObject->createSerializable();
+			saveToHistory(objectData, gameObject);
 			m_objects.push_back(objectData);
 		}
 
@@ -283,42 +303,46 @@ namespace Skylicht
 		void CSceneHistory::addData(CGameObject* gameObject,
 			std::vector<std::string>& container,
 			std::vector<std::string>& id,
+			std::vector<std::string>& before,
 			std::vector<CObjectSerializable*>& modifyData,
 			std::vector<CObjectSerializable*>& objectData)
 		{
 			CObjectSerializable* currentData = gameObject->createSerializable();
 
-			// parent container id
-			if (gameObject->getParent() != NULL)
+			CContainerObject* parent = (CContainerObject*)gameObject->getParent();
+			if (parent != NULL)
 			{
-				container.push_back(gameObject->getParent()->getID());
+				container.push_back(parent->getID());
+				CGameObject* obj = parent->getChildObjectBefore(gameObject);
+				if (obj)
+					before.push_back(obj->getID());
+				else
+					before.push_back("");
 			}
 			else
 			{
-				// this is zone (no parent)
 				container.push_back("_");
+				CZone* zone = gameObject->getScene()->getZoneBefore((CZone*)gameObject);
+				if (zone)
+					before.push_back(zone->getID());
+				else
+					before.push_back("");
 			}
 
-			// game object id
 			id.push_back(gameObject->getID());
-
-			// last data object
 			objectData.push_back(currentData);
-
-			// current data object
 			modifyData.push_back(NULL);
 
-			// update the data for gameObject
 			beginSaveHistory(gameObject);
 
-			// also add childs
+			// all childs
 			CContainerObject* containerObject = dynamic_cast<CContainerObject*>(gameObject);
 			if (containerObject)
 			{
 				ArrayGameObject* childs = containerObject->getChilds();
 				for (CGameObject* go : *childs)
 				{
-					addData(go, container, id, modifyData, objectData);
+					addData(go, container, id, before, modifyData, objectData);
 				}
 			}
 		}
@@ -333,16 +357,17 @@ namespace Skylicht
 
 			std::vector<std::string> container;
 			std::vector<std::string> id;
+			std::vector<std::string> before;
 			std::vector<CObjectSerializable*> modifyData;
 			std::vector<CObjectSerializable*> objectData;
 
 			for (CGameObject* gameObject : gameObjects)
 			{
-				addData(gameObject, container, id, modifyData, objectData);
+				addData(gameObject, container, id, before, modifyData, objectData);
 			}
 
 			// save history
-			addHistory(EHistory::Create, container, id, getSelected(), modifyData, objectData);
+			addHistory(EHistory::Create, container, id, before, getSelected(), modifyData, objectData);
 		}
 
 		void CSceneHistory::saveDeleteHistory(CGameObject* gameObject)
@@ -365,16 +390,17 @@ namespace Skylicht
 
 			std::vector<std::string> container;
 			std::vector<std::string> id;
+			std::vector<std::string> before;
 			std::vector<CObjectSerializable*> modifyData;
 			std::vector<CObjectSerializable*> objectData;
 
 			for (CGameObject* gameObject : gameObjects)
 			{
-				addData(gameObject, container, id, modifyData, objectData);
+				addData(gameObject, container, id, before, modifyData, objectData);
 			}
 
 			// save history
-			addHistory(EHistory::Delete, container, id, getSelected(), modifyData, objectData);
+			addHistory(EHistory::Delete, container, id, before, getSelected(), modifyData, objectData);
 		}
 
 		bool CSceneHistory::saveModifyHistory(std::vector<CGameObject*> gameObjects)
@@ -389,6 +415,7 @@ namespace Skylicht
 
 			std::vector<std::string> container;
 			std::vector<std::string> id;
+			std::vector<std::string> before;
 			std::vector<CObjectSerializable*> modifyData;
 			std::vector<CObjectSerializable*> objectData;
 
@@ -404,39 +431,22 @@ namespace Skylicht
 
 				CObjectSerializable* currentData = gameObject->createSerializable();
 
-				// parent container id
-				if (gameObject->getParent() != NULL)
-				{
-					container.push_back(gameObject->getParent()->getID());
-				}
-				else
-				{
-					// this is zone (no parent)
-					container.push_back("_");
-				}
-
-				// game object id
 				id.push_back(gameObject->getID());
-
-				// last data object
+				container.push_back(historyData->ContainerID);
+				before.push_back(historyData->BeforeID);
 				objectData.push_back(historyData->ObjectData->clone());
-
-				// current data object
 				modifyData.push_back(currentData);
-
-				// change save point
 				historyData->changeData(currentData);
 			}
 
 			if (success)
 			{
-				addHistory(EHistory::Modify, container, id, getSelected(), modifyData, objectData);
+				addHistory(EHistory::Modify, container, id, before, getSelected(), modifyData, objectData);
 			}
 			else
 			{
 				for (CObjectSerializable* objData : modifyData)
 					delete objData;
-
 				clearRedo();
 			}
 

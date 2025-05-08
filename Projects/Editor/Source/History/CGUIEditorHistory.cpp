@@ -219,20 +219,39 @@ namespace Skylicht
 			return NULL;
 		}
 
+		void CGUIEditorHistory::saveHistory(SGUIObjectHistory* historyData, CGUIElement* guiObject)
+		{
+			historyData->ObjectID = guiObject->getID();
+			historyData->ObjectData = guiObject->createSerializable();
+
+			CGUIElement* parent = guiObject->getParent();
+			if (parent)
+			{
+				historyData->ContainerID = parent->getID();
+
+				CGUIElement* gui = parent->getChildBefore(guiObject);
+				if (gui)
+					historyData->BeforeID = gui->getID();
+			}
+		}
+
 		void CGUIEditorHistory::beginSaveHistory(CGUIElement* guiObject)
 		{
-			std::string objectID = guiObject->getID();
+			const std::string& objectID = guiObject->getID();
 
 			for (SGUIObjectHistory* history : m_objects)
 			{
 				// no need
 				if (history->ObjectID == objectID)
+				{
+					delete history->ObjectData;
+					saveHistory(history, guiObject);
 					return;
+				}
 			}
 
 			SGUIObjectHistory* objectData = new SGUIObjectHistory();
-			objectData->ObjectID = objectID;
-			objectData->ObjectData = guiObject->createSerializable();
+			saveHistory(objectData, guiObject);
 			m_objects.push_back(objectData);
 		}
 
@@ -255,6 +274,44 @@ namespace Skylicht
 			}
 		}
 
+		void CGUIEditorHistory::addData(CGUIElement* guiObject,
+			std::vector<std::string> container,
+			std::vector<std::string> id,
+			std::vector<std::string> before,
+			std::vector<CObjectSerializable*> modifyData,
+			std::vector<CObjectSerializable*> objectData)
+		{
+			CObjectSerializable* currentData = guiObject->createSerializable();
+
+			// parent container id
+			CGUIElement* parent = guiObject->getParent();
+			if (parent != NULL)
+			{
+				container.push_back(parent->getID());
+
+				CGUIElement* gui = parent->getChildBefore(guiObject);
+				if (gui)
+					before.push_back(gui->getID());
+				else
+					before.push_back("");
+			}
+			else
+			{
+				// this is zone (no parent)
+				container.push_back("_");
+				before.push_back("");
+			}
+
+			// game object id
+			id.push_back(guiObject->getID());
+
+			// last data object
+			objectData.push_back(currentData);
+
+			// current data object
+			modifyData.push_back(NULL);
+		}
+
 		void CGUIEditorHistory::saveCreateHistory(CGUIElement* guiObject)
 		{
 			std::vector<CGUIElement*> guiObjects;
@@ -269,36 +326,17 @@ namespace Skylicht
 
 			std::vector<std::string> container;
 			std::vector<std::string> id;
+			std::vector<std::string> before;
 			std::vector<CObjectSerializable*> modifyData;
 			std::vector<CObjectSerializable*> objectData;
 
 			for (CGUIElement* guiObject : guiObjects)
 			{
-				CObjectSerializable* currentData = guiObject->createSerializable();
-
-				// parent container id
-				if (guiObject->getParent() != NULL)
-				{
-					container.push_back(guiObject->getParent()->getID());
-				}
-				else
-				{
-					// this is zone (no parent)
-					container.push_back("_");
-				}
-
-				// game object id
-				id.push_back(guiObject->getID());
-
-				// last data object
-				objectData.push_back(currentData);
-
-				// current data object
-				modifyData.push_back(NULL);
+				addData(guiObject, container, id, before, modifyData, objectData);
 			}
 
 			// save history
-			addHistory(EHistory::Create, container, id, getSelected(), modifyData, objectData);
+			addHistory(EHistory::Create, container, id, before, getSelected(), modifyData, objectData);
 		}
 
 		void CGUIEditorHistory::saveDeleteHistory(CGUIElement* guiObject)
@@ -318,36 +356,17 @@ namespace Skylicht
 
 			std::vector<std::string> container;
 			std::vector<std::string> id;
+			std::vector<std::string> before;
 			std::vector<CObjectSerializable*> modifyData;
 			std::vector<CObjectSerializable*> objectData;
 
 			for (CGUIElement* guiObject : guiObjects)
 			{
-				CObjectSerializable* currentData = guiObject->createSerializable();
-
-				// parent container id
-				if (guiObject->getParent() != NULL)
-				{
-					container.push_back(guiObject->getParent()->getID());
-				}
-				else
-				{
-					// this is zone (no parent)
-					container.push_back("_");
-				}
-
-				// game object id
-				id.push_back(guiObject->getID());
-
-				// last data object
-				objectData.push_back(currentData);
-
-				// current data object
-				modifyData.push_back(NULL);
+				addData(guiObject, container, id, before, modifyData, objectData);
 			}
 
 			// save history
-			addHistory(EHistory::Delete, container, id, getSelected(), modifyData, objectData);
+			addHistory(EHistory::Delete, container, id, before, getSelected(), modifyData, objectData);
 		}
 
 		bool CGUIEditorHistory::saveModifyHistory(CGUIElement* guiObject)
@@ -366,6 +385,7 @@ namespace Skylicht
 
 			std::vector<std::string> container;
 			std::vector<std::string> id;
+			std::vector<std::string> before;
 			std::vector<CObjectSerializable*> modifyData;
 			std::vector<CObjectSerializable*> objectData;
 
@@ -381,33 +401,17 @@ namespace Skylicht
 
 				CObjectSerializable* currentData = guiObject->createSerializable();
 
-				// parent container id
-				if (guiObject->getParent() != NULL)
-				{
-					container.push_back(guiObject->getParent()->getID());
-				}
-				else
-				{
-					// this is zone (no parent)
-					container.push_back("_");
-				}
-
-				// game object id
 				id.push_back(guiObject->getID());
-
-				// last data object
+				container.push_back(historyData->ContainerID);
+				before.push_back(historyData->BeforeID);
 				objectData.push_back(historyData->ObjectData->clone());
-
-				// current data object
 				modifyData.push_back(currentData);
-
-				// change save point
 				historyData->changeData(currentData);
 			}
 
 			if (success)
 			{
-				addHistory(EHistory::Modify, container, id, getSelected(), modifyData, objectData);
+				addHistory(EHistory::Modify, container, id, before, getSelected(), modifyData, objectData);
 			}
 			else
 			{

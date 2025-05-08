@@ -105,6 +105,8 @@ namespace Skylicht
 
 		void bringToNext(CZone* object, CZone* target, bool behind);
 
+		CZone* getZoneBefore(CZone* object);
+
 		void registerEvent(std::string name, IEventReceiver* pEvent);
 
 		void unRegisterEvent(IEventReceiver* pEvent);

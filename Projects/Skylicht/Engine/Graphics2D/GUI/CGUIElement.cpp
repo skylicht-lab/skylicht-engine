@@ -420,6 +420,15 @@ namespace Skylicht
 		m_transform->HasChanged = true;
 	}
 
+	CGUIElement* CGUIElement::getChildBefore(CGUIElement* object)
+	{
+		std::vector<CGUIElement*>::iterator i = std::find(m_childs.begin(), m_childs.end(), object);
+		if (i == m_childs.begin() || i == m_childs.end())
+			return NULL;
+		--i;
+		return (*i);
+	}
+
 	void CGUIElement::bringToNext(CGUIElement* object, CGUIElement* target, bool behind)
 	{
 		if (target->getParent() != this)
