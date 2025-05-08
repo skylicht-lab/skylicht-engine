@@ -184,8 +184,15 @@ namespace Skylicht
 
 	CZone* CScene::getZoneBefore(CZone* object)
 	{
-		ArrayZone::iterator pos = std::find(m_zones.begin(), m_zones.end(), object);
-		if (pos == m_zones.begin() || pos == m_zones.end())
+		ArrayZone zones;
+		for (CZone* z : m_zones)
+		{
+			if (!z->isEditorObject())
+				zones.push_back(z);
+		}
+
+		ArrayZone::iterator pos = std::find(zones.begin(), zones.end(), object);
+		if (pos == zones.begin() || pos == zones.end())
 			return NULL;
 		--pos;
 		return *pos;

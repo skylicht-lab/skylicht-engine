@@ -285,8 +285,15 @@ namespace Skylicht
 
 	CGameObject* CContainerObject::getChildObjectBefore(CGameObject* object)
 	{
-		ArrayGameObject::iterator i = std::find(m_childs.begin(), m_childs.end(), object);
-		if (i == m_childs.begin() || i == m_childs.end())
+		ArrayGameObject childs;
+		for (CGameObject* obj : m_childs)
+		{
+			if (!obj->isEditorObject())
+				childs.push_back(obj);
+		}
+
+		ArrayGameObject::iterator i = std::find(childs.begin(), childs.end(), object);
+		if (i == childs.begin() || i == childs.end())
 			return NULL;
 		--i;
 		return (*i);

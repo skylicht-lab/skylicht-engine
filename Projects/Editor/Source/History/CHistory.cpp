@@ -74,12 +74,12 @@ namespace Skylicht
 		}
 
 		void CHistory::addHistory(EHistory history,
-			std::vector<std::string>& container,
-			std::vector<std::string>& id,
-			std::vector<std::string>& before,
-			std::vector<CSelectObject*>& selected,
-			std::vector<CObjectSerializable*>& dataModified,
-			std::vector<CObjectSerializable*>& data)
+			const std::vector<std::string>& container,
+			const std::vector<std::string>& id,
+			const std::vector<std::string>& before,
+			const std::vector<CSelectObject*>& selected,
+			const std::vector<CObjectSerializable*>& dataModified,
+			const std::vector<CObjectSerializable*>& data)
 		{
 			if (!m_enable)
 				return;

@@ -149,6 +149,9 @@ namespace Skylicht
 				{
 					m_canvas->closeMenu();
 
+					GUI::CMenuItem* deleteItem = m_contextMenuContainer->searchItemByLabel(L"Delete");
+					deleteItem->setHidden(false);
+
 					CContainerObject* container = dynamic_cast<CContainerObject*>(gameObject);
 					if (container != NULL)
 					{
@@ -162,6 +165,10 @@ namespace Skylicht
 								m_setCurrentZoneItem->setIcon(GUI::ESystemIcon::Check);
 							else
 								m_setCurrentZoneItem->setIcon(GUI::ESystemIcon::None);
+
+							// note: hide "delete" first zone
+							if (zone == zone->getScene()->getZone(0))
+								deleteItem->setHidden(true);
 						}
 						else
 						{
@@ -291,15 +298,18 @@ namespace Skylicht
 				}
 				else if (command == L"Delete")
 				{
-					CSelection::getInstance()->unSelect(contextObject);
-					CPropertyController::getInstance()->setProperty(NULL);
+					if (contextObject != sceneController->getScene()->getZone(0))
+					{
+						CSelection::getInstance()->unSelect(contextObject);
+						CPropertyController::getInstance()->setProperty(NULL);
 
-					sceneController->getHistory()->saveDeleteHistory(contextObject);
-					sceneController->onDeleteObject(contextObject);
+						sceneController->getHistory()->saveDeleteHistory(contextObject);
+						sceneController->onDeleteObject(contextObject);
 
-					contextObject->remove();
-					contextNode->remove();
-					sceneController->clearContextNode();
+						contextObject->remove();
+						contextNode->remove();
+						sceneController->clearContextNode();
+					}
 				}
 				else if (command == L"Rename")
 				{

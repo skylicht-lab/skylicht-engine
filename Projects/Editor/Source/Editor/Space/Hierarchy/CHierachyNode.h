@@ -228,8 +228,6 @@ namespace Skylicht
 
 			CHierachyNode* getNodeByTag(void* tag);
 
-		protected:
-
 			void bringNextNode(CHierachyNode* position, bool behind);
 
 			void bringToChild(CHierachyNode* node);

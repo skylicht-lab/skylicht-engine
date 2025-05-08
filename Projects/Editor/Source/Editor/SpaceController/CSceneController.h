@@ -263,9 +263,9 @@ namespace Skylicht
 
 			void removeObject(CGameObject* gameObject);
 
-			CZone* createZoneObject(CObjectSerializable* data, bool saveHistory = true);
+			CZone* createZoneObject(CObjectSerializable* data, CGameObject* before, bool saveHistory = true);
 
-			CGameObject* createGameObject(CContainerObject* parent, CObjectSerializable* data, bool saveHistory = true);
+			CGameObject* createGameObject(CContainerObject* parent, CGameObject* before, CObjectSerializable* data, bool saveHistory = true);
 
 			CGameObject* createEmptyObject(CContainerObject* parent, bool saveHistory = true);
 

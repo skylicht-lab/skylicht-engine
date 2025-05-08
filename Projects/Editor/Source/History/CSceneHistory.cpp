@@ -70,17 +70,24 @@ namespace Skylicht
 			for (size_t i = 0; i < numObject; i++)
 			{
 				std::string& id = historyData->Container[i];
+				std::string& before = historyData->BeforeID[i];
+
+				CGameObject* beforeObject = NULL;
+
+				if (!before.empty())
+					beforeObject = scene->searchObjectInChildByID(before.c_str());
+
 				if (id != "_")
 				{
 					CContainerObject* containerObject = (CContainerObject*)scene->searchObjectInChildByID(id.c_str());
 					if (containerObject != NULL)
 					{
-						sceneController->createGameObject(containerObject, historyData->Data[i], false);
+						sceneController->createGameObject(containerObject, beforeObject, historyData->Data[i], false);
 					}
 				}
 				else
 				{
-					sceneController->createZoneObject(historyData->Data[i], false);
+					sceneController->createZoneObject(historyData->Data[i], beforeObject, false);
 				}
 			}
 		}

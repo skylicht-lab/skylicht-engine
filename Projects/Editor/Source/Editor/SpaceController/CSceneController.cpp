@@ -836,7 +836,7 @@ namespace Skylicht
 			gameObject->remove();
 		}
 
-		CZone* CSceneController::createZoneObject(CObjectSerializable* data, bool saveHistory)
+		CZone* CSceneController::createZoneObject(CObjectSerializable* data, CGameObject* before, bool saveHistory)
 		{
 			CZone* newObject = m_scene->createZone();
 
@@ -844,22 +844,11 @@ namespace Skylicht
 			newObject->loadSerializable(data);
 			newObject->startComponent();
 
-			// create child data
-			CObjectSerializable* childs = data->getProperty<CObjectSerializable>("Childs");
-			if (childs != NULL)
-			{
-				for (int i = 0, n = childs->getNumProperty(); i < n; i++)
-				{
-					CObjectSerializable* childData = (CObjectSerializable*)childs->getPropertyID(i);
-					newObject->createObject(childData, false);
-				}
-				newObject->updateAddRemoveObject();
-			}
-
+			CHierachyNode* node = NULL;
 			CHierachyNode* parentNode = m_hierachyNode;
 			if (parentNode != NULL)
 			{
-				CHierachyNode* node = parentNode->addChild();
+				node = parentNode->addChild();
 				node->setName(newObject->getName());
 				node->setIcon(GUI::ESystemIcon::Folder);
 				node->setTagData(newObject, CHierachyNode::Container);
@@ -868,6 +857,18 @@ namespace Skylicht
 
 				if (m_spaceHierarchy != NULL)
 					m_spaceHierarchy->addToTreeNode(node);
+			}
+
+			if (before)
+			{
+				CHierachyNode* beforeNode = m_hierachyNode->getNodeByTag(before);
+				if (beforeNode && node)
+				{
+					node->bringNextNode(beforeNode, true);
+					if (node->getGUINode() && beforeNode->getGUINode())
+						node->getGUINode()->bringNextToControl(beforeNode->getGUINode(), true);
+				}
+				m_scene->bringToNext(newObject, (CZone*)before, true);
 			}
 
 			if (saveHistory)
@@ -879,7 +880,7 @@ namespace Skylicht
 			return newObject;
 		}
 
-		CGameObject* CSceneController::createGameObject(CContainerObject* parent, CObjectSerializable* data, bool saveHistory)
+		CGameObject* CSceneController::createGameObject(CContainerObject* parent, CGameObject* before, CObjectSerializable* data, bool saveHistory)
 		{
 			CContainerObject* p = parent == NULL ? m_zone : parent;
 			if (p == NULL)
@@ -890,12 +891,25 @@ namespace Skylicht
 			p->getZone()->updateAddRemoveObject();
 			p->getZone()->updateIndexSearchObject();
 
+			CHierachyNode* node = NULL;
 			CHierachyNode* parentNode = m_hierachyNode->getNodeByTag(p);
 			if (parentNode != NULL)
 			{
-				CHierachyNode* node = buildHierarchyData(newObject, parentNode);
+				node = buildHierarchyData(newObject, parentNode);
 				if (m_spaceHierarchy != NULL)
 					m_spaceHierarchy->addToTreeNode(node);
+			}
+
+			if (before)
+			{
+				CHierachyNode* beforeNode = m_hierachyNode->getNodeByTag(before);
+				if (beforeNode && node)
+				{
+					node->bringNextNode(beforeNode, true);
+					if (node->getGUINode() && beforeNode->getGUINode())
+						node->getGUINode()->bringNextToControl(beforeNode->getGUINode(), true);
+				}
+				p->bringToNext(newObject, before, true);
 			}
 
 			if (saveHistory)
