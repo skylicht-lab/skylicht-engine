@@ -87,11 +87,33 @@ namespace Skylicht
 			SHistoryData* historyData = new SHistoryData();
 			historyData->History = history;
 			historyData->Container = container;
-			historyData->Selected = selected;
 			historyData->ObjectID = id;
+			historyData->Selected = selected;
 			historyData->BeforeID = before;
 			historyData->DataModified = dataModified;
 			historyData->Data = data;
+			m_history.push_back(historyData);
+
+			clearRedo();
+		}
+
+		void CHistory::addStrucureHistory(const std::vector<std::string>& container,
+			const std::vector<std::string>& id,
+			const std::vector<std::string>& before,
+			const std::vector<CSelectObject*>& selected,
+			const std::vector<SMoveCommand> moveCmd)
+		{
+			if (!m_enable)
+				return;
+
+			SHistoryData* historyData = new SHistoryData();
+			historyData->History = Structure;
+			historyData->Container = container;
+			historyData->ObjectID = id;
+			historyData->Selected = selected;
+			historyData->BeforeID = before;
+			historyData->MoveData = moveCmd;
+
 			m_history.push_back(historyData);
 
 			clearRedo();

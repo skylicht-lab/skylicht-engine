@@ -900,16 +900,32 @@ namespace Skylicht
 					m_spaceHierarchy->addToTreeNode(node);
 			}
 
+			bool behind = true;
+			if (before == NULL && p->getChilds()->size() > 0)
+			{
+				// insert at first
+				ArrayGameObject* childs = p->getChilds();
+				for (CGameObject* obj : *childs)
+				{
+					if (!obj->isEditorObject())
+					{
+						before = obj;
+						behind = false;
+						break;
+					}
+				}
+			}
+
 			if (before)
 			{
 				CHierachyNode* beforeNode = m_hierachyNode->getNodeByTag(before);
 				if (beforeNode && node)
 				{
-					node->bringNextNode(beforeNode, true);
+					node->bringNextNode(beforeNode, behind);
 					if (node->getGUINode() && beforeNode->getGUINode())
-						node->getGUINode()->bringNextToControl(beforeNode->getGUINode(), true);
+						node->getGUINode()->bringNextToControl(beforeNode->getGUINode(), behind);
 				}
-				p->bringToNext(newObject, before, true);
+				p->bringToNext(newObject, before, behind);
 			}
 
 			if (saveHistory)

@@ -259,6 +259,9 @@ namespace Skylicht
 
 		void CSceneHistory::beginSaveHistory(CGameObject* gameObject)
 		{
+			if (!m_enable || !m_enableSelectHistory)
+				return;
+
 			const std::string& objectID = gameObject->getID();
 			for (SGameObjectHistory* history : m_objects)
 			{
@@ -277,7 +280,7 @@ namespace Skylicht
 
 		void CSceneHistory::removeSaveHistory(CGameObject* gameObject)
 		{
-			if (!m_enable)
+			if (!m_enable || !m_enableSelectHistory)
 				return;
 
 			std::string objectID = gameObject->getID();
@@ -431,7 +434,7 @@ namespace Skylicht
 				SGameObjectHistory* historyData = getObjectHistory(gameObject->getID());
 				if (historyData == NULL)
 				{
-					os::Printer::log("[CSceneHistory::saveHistory] failed, call CSceneHistory::beginSaveHistory first!");
+					os::Printer::log("[CSceneHistory::saveModifyHistory] failed, call CSceneHistory::beginSaveHistory first!");
 					success = false;
 					break;
 				}
@@ -460,8 +463,51 @@ namespace Skylicht
 			return success;
 		}
 
+		void CSceneHistory::saveStructureHistory(std::vector<CGameObject*> gameObjects)
+		{
+			if (!m_enable)
+				return;
+
+			if (gameObjects.size() == 0)
+				return;
+
+			std::vector<std::string> container;
+			std::vector<std::string> id;
+			std::vector<std::string> before;
+			std::vector<SMoveCommand> moveCmd;
+
+			for (CGameObject* gameObject : gameObjects)
+			{
+				SGameObjectHistory* historyData = getObjectHistory(gameObject->getID());
+				if (historyData == NULL)
+				{
+					os::Printer::log("[CSceneHistory::saveStructureHistory] failed, call CSceneHistory::beginSaveHistory first!");
+					break;
+				}
+
+				CObjectSerializable* currentData = gameObject->createSerializable();
+
+				// old location
+				id.push_back(gameObject->getID());
+				container.push_back(historyData->ContainerID);
+				before.push_back(historyData->BeforeID);
+
+				// update new location
+				saveToHistory(historyData, gameObject);
+
+				SMoveCommand moveCmdData;
+				moveCmdData.TargetContainer = historyData->ContainerID;
+				moveCmdData.To = historyData->BeforeID;
+				moveCmd.push_back(moveCmdData);
+			}
+
+			// addStrucureHistory(container, id, before, getSelected(), moveCmd);
+		}
+
 		void CSceneHistory::endSaveHistory()
 		{
+			if (!m_enable || !m_enableSelectHistory)
+				return;
 			freeCurrentObjectData();
 		}
 	}

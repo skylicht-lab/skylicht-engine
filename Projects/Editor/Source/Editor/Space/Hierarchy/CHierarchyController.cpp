@@ -584,6 +584,16 @@ namespace Skylicht
 								affectNodes.push_back(tagData);
 						}
 
+						std::vector<CGameObject*> listGameObjects;
+						for (CHierachyNode* dragNode : affectNodes)
+						{
+							CGameObject* gameObject = (CGameObject*)dragNode->getTagData();
+							listGameObjects.push_back(gameObject);
+						}
+
+						CSceneHistory* history = CSceneController::getInstance()->getHistory();
+						history->enableAddSelectHistory(false);
+
 						for (CHierachyNode* dragNode : affectNodes)
 						{
 							if (node->getTagDataType() == CHierachyNode::Zone)
@@ -624,6 +634,10 @@ namespace Skylicht
 								dragNode->getGUINode()->setSelected(true);
 							}
 						}
+
+						// save the modify struct
+						history->saveStructureHistory(listGameObjects);
+						history->enableAddSelectHistory(true);
 					}
 					else if (data->Name == "ListFSItem")
 					{

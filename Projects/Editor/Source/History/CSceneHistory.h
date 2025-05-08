@@ -77,6 +77,8 @@ namespace Skylicht
 
 			bool saveModifyHistory(std::vector<CGameObject*> gameObject);
 
+			void saveStructureHistory(std::vector<CGameObject*> gameObject);
+
 			void endSaveHistory();
 
 		protected:
