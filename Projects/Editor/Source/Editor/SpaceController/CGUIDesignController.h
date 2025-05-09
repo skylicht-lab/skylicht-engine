@@ -142,7 +142,7 @@ namespace Skylicht
 
 			void createGUINode(CGUIHierachyNode* parent, CGUIElement* node);
 
-			void deselectAllOnHierachy();
+			void deselectAllOnHierachy(bool callEvent = true);
 
 			void removeGUIElement(CGUIElement* node);
 
@@ -167,6 +167,10 @@ namespace Skylicht
 			void onUndo();
 
 			void onRedo();
+
+			void applySelected(std::vector<CSelectObject*> ids);
+
+			CGUIHierachyNode* selectOnHierachy(CGUIElement* gui, bool callEvent);
 
 		protected:
 

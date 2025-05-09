@@ -485,12 +485,6 @@ namespace Skylicht
 				std::wstring newName = nameHint + L" " + newNode->getNameW();
 				newNode->setName(newName.c_str());
 
-				// add history create
-				std::vector<CGUIElement*> listObjects;
-				listObjects.push_back(newNode);
-				newNode->getAllChilds(listObjects);
-				m_history->saveCreateHistory(listObjects);
-
 				createGUINode(parent, newNode);
 			}
 		}
@@ -518,7 +512,7 @@ namespace Skylicht
 			m_history->saveCreateHistory(listObjects);
 		}
 
-		void CGUIDesignController::deselectAllOnHierachy()
+		void CGUIDesignController::deselectAllOnHierachy(bool callEvent)
 		{
 			if (m_guiCanvas)
 			{
@@ -535,7 +529,7 @@ namespace Skylicht
 			}
 
 			if (m_spaceHierarchy)
-				m_spaceHierarchy->deselectAll();
+				m_spaceHierarchy->deselectAll(callEvent);
 		}
 
 		CGUIHierachyNode* CGUIDesignController::deselectOnHierachy(CGUIElement* element)
@@ -693,12 +687,50 @@ namespace Skylicht
 
 				// add new observer
 				selectedObject->addObserver(this);
+
+				m_history->addSelectHistory();
 			}
 			else
 			{
 				propertyController->setProperty(NULL);
 				selection->unSelect(obj);
 			}
+		}
+
+		void CGUIDesignController::applySelected(std::vector<CSelectObject*> ids)
+		{
+			std::vector<CSelectObject*> listIds;
+
+			for (CSelectObject* id : ids)
+			{
+				if (id->getType() == CSelectObject::GUIElement)
+				{
+					CGUIElement* gui = m_guiCanvas->getGUIByID(id->getID().c_str());
+					if (gui)
+					{
+						gui->setDrawBorder(true);
+
+						selectOnHierachy(gui, false);
+						listIds.push_back(id);
+
+						m_history->beginSaveHistory(gui);
+					}
+				}
+			}
+
+			CSelection::getInstance()->applySelected(listIds);
+		}
+
+		CGUIHierachyNode* CGUIDesignController::selectOnHierachy(CGUIElement* gui, bool callEvent)
+		{
+			CGUIHierachyNode* node = m_rootNode->getNodeByTag(gui);
+			if (node != NULL)
+			{
+				GUI::CTreeNode* treeNode = node->getGUINode();
+				treeNode->setSelected(true, callEvent);
+				m_spaceHierarchy->scrollToNode(treeNode);
+			}
+			return node;
 		}
 
 		void CGUIDesignController::onContextMenu(CGUIHierachyNode* node)

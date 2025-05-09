@@ -132,9 +132,12 @@ namespace Skylicht
 			if (historySize == 0)
 				return;
 
+			m_enable = false;
+
+			CGUIDesignController* controller = CGUIDesignController::getInstance();
+
 			// last history save
 			SHistoryData* historyData = m_history[historySize - 1];
-
 
 			switch (historyData->History)
 			{
@@ -155,12 +158,21 @@ namespace Skylicht
 			break;
 			}
 
+			// apply history selection
+			controller->deselectAllOnHierachy(false);
+			if (historySize - 2 >= 0)
+			{
+				controller->applySelected(m_history[historySize - 2]->Selected);
+			}
+
 			// move history to redo action
 			m_redo.push_back(historyData);
 			m_history.erase(m_history.begin() + (historySize - 1));
 
 			// refresh ui on editor
 			CEditor::getInstance()->refresh();
+
+			m_enable = true;
 		}
 
 		void CGUIEditorHistory::redo()
@@ -168,6 +180,10 @@ namespace Skylicht
 			size_t historySize = m_redo.size();
 			if (historySize == 0)
 				return;
+
+			m_enable = false;
+
+			CGUIDesignController* controller = CGUIDesignController::getInstance();
 
 			// last history save
 			SHistoryData* historyData = m_redo[historySize - 1];
@@ -191,12 +207,18 @@ namespace Skylicht
 			break;
 			}
 
+			// apply history selection
+			controller->deselectAllOnHierachy(false);
+			controller->applySelected(historyData->Selected);
+
 			// move history to redo action
 			m_history.push_back(historyData);
 			m_redo.erase(m_redo.begin() + (historySize - 1));
 
 			// refresh ui on editor
 			CEditor::getInstance()->refresh();
+
+			m_enable = true;
 		}
 
 		void CGUIEditorHistory::freeCurrentObjectData()
@@ -237,11 +259,13 @@ namespace Skylicht
 
 		void CGUIEditorHistory::beginSaveHistory(CGUIElement* guiObject)
 		{
+			if (!m_enable || !m_enableSelectHistory)
+				return;
+
 			const std::string& objectID = guiObject->getID();
 
 			for (SGUIObjectHistory* history : m_objects)
 			{
-				// no need
 				if (history->ObjectID == objectID)
 				{
 					delete history->ObjectData;
@@ -257,6 +281,9 @@ namespace Skylicht
 
 		void CGUIEditorHistory::removeSaveHistory(CGUIElement* guiObject)
 		{
+			if (!m_enable || !m_enableSelectHistory)
+				return;
+
 			std::string objectID = guiObject->getID();
 
 			std::vector<SGUIObjectHistory*>::iterator i = m_objects.begin(), end = m_objects.end();
@@ -275,11 +302,11 @@ namespace Skylicht
 		}
 
 		void CGUIEditorHistory::addData(CGUIElement* guiObject,
-			std::vector<std::string> container,
-			std::vector<std::string> id,
-			std::vector<std::string> before,
-			std::vector<CObjectSerializable*> modifyData,
-			std::vector<CObjectSerializable*> objectData)
+			std::vector<std::string>& container,
+			std::vector<std::string>& id,
+			std::vector<std::string>& before,
+			std::vector<CObjectSerializable*>& modifyData,
+			std::vector<CObjectSerializable*>& objectData)
 		{
 			CObjectSerializable* currentData = guiObject->createSerializable();
 
@@ -314,6 +341,9 @@ namespace Skylicht
 
 		void CGUIEditorHistory::saveCreateHistory(CGUIElement* guiObject)
 		{
+			if (!m_enable)
+				return;
+
 			std::vector<CGUIElement*> guiObjects;
 			guiObjects.push_back(guiObject);
 			saveCreateHistory(guiObjects);
@@ -321,6 +351,9 @@ namespace Skylicht
 
 		void CGUIEditorHistory::saveCreateHistory(std::vector<CGUIElement*> guiObjects)
 		{
+			if (!m_enable)
+				return;
+
 			if (guiObjects.size() == 0)
 				return;
 
@@ -341,6 +374,9 @@ namespace Skylicht
 
 		void CGUIEditorHistory::saveDeleteHistory(CGUIElement* guiObject)
 		{
+			if (!m_enable)
+				return;
+
 			std::vector<CGUIElement*> guiObjects;
 
 			guiObjects.push_back(guiObject);
@@ -351,6 +387,9 @@ namespace Skylicht
 
 		void CGUIEditorHistory::saveDeleteHistory(std::vector<CGUIElement*> guiObjects)
 		{
+			if (!m_enable)
+				return;
+
 			if (guiObjects.size() == 0)
 				return;
 
@@ -371,6 +410,9 @@ namespace Skylicht
 
 		bool CGUIEditorHistory::saveModifyHistory(CGUIElement* guiObject)
 		{
+			if (!m_enable)
+				return false;
+
 			std::vector<CGUIElement*> guiObjects;
 			guiObjects.push_back(guiObject);
 			return saveModifyHistory(guiObjects);
@@ -378,6 +420,9 @@ namespace Skylicht
 
 		bool CGUIEditorHistory::saveModifyHistory(std::vector<CGUIElement*> guiObjects)
 		{
+			if (!m_enable)
+				return false;
+
 			if (guiObjects.size() == 0)
 				return false;
 

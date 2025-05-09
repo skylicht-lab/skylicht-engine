@@ -92,9 +92,9 @@ namespace Skylicht
 
 		}
 
-		void CSpaceGUIHierarchy::deselectAll()
+		void CSpaceGUIHierarchy::deselectAll(bool callEvent)
 		{
-			m_tree->deselectAll();
+			m_tree->deselectAll(callEvent);
 		}
 
 		void CSpaceGUIHierarchy::setTreeNode(CGUIHierachyNode* node)

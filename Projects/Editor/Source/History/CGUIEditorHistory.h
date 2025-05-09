@@ -83,11 +83,11 @@ namespace Skylicht
 		protected:
 
 			void addData(CGUIElement* guiObject,
-				std::vector<std::string> container,
-				std::vector<std::string> id,
-				std::vector<std::string> before,
-				std::vector<CObjectSerializable*> modifyData,
-				std::vector<CObjectSerializable*> objectData);
+				std::vector<std::string>& container,
+				std::vector<std::string>& id,
+				std::vector<std::string>& before,
+				std::vector<CObjectSerializable*>& modifyData,
+				std::vector<CObjectSerializable*>& objectData);
 
 			void saveHistory(SGUIObjectHistory* historyData, CGUIElement* guiObject);
 
