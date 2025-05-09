@@ -221,6 +221,10 @@ namespace Skylicht
 
 			void onHistoryModifyObject(CGameObject* object);
 
+			void onMoveStructure(CGameObject* object, CContainerObject* toContainer, CGameObject* before);
+
+			void onMoveStructure(CZone* object, CZone* before);
+
 			void onDeleteObject(CGameObject* object);
 
 			void onDelete();

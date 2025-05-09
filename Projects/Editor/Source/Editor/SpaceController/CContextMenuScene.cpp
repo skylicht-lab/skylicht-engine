@@ -166,8 +166,8 @@ namespace Skylicht
 							else
 								m_setCurrentZoneItem->setIcon(GUI::ESystemIcon::None);
 
-							// note: hide "delete" first zone
-							if (zone == zone->getScene()->getZone(0))
+							// note: hide "delete" in main zone
+							if (zone->isMainZoneInEditor())
 								deleteItem->setHidden(true);
 						}
 						else

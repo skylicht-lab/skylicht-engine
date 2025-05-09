@@ -35,6 +35,7 @@ namespace Skylicht
 	protected:
 		CEntityManager* m_entityManager;
 		CScene* m_scene;
+		bool m_mainZoneInEditor;
 
 	public:
 		CZone(CScene* scene);
@@ -57,6 +58,16 @@ namespace Skylicht
 		inline CScene* getScene()
 		{
 			return m_scene;
+		}
+
+		inline void setMainZoneInEditor(bool b)
+		{
+			m_mainZoneInEditor = b;
+		}
+
+		inline bool isMainZoneInEditor()
+		{
+			return m_mainZoneInEditor;
 		}
 	};
 

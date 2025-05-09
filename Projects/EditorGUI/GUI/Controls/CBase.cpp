@@ -187,7 +187,7 @@ namespace Skylicht
 				if (!m_parent)
 					return;
 
-				if (m_parent->Children.front() == this)
+				if (m_parent->Children.size() > 0 && m_parent->Children.front() == this)
 					return;
 
 				m_parent->Children.remove(this);
@@ -200,7 +200,7 @@ namespace Skylicht
 				if (!m_parent)
 					return;
 
-				if (m_parent->Children.back() == this)
+				if (m_parent->Children.size() > 0 && m_parent->Children.back() == this)
 					return;
 
 				m_parent->Children.remove(this);

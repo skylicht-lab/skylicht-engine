@@ -282,7 +282,7 @@ namespace Skylicht
 							if (targetObject)
 							{
 								targetObject->getTransformEuler()->setPosition(out);
-								
+
 								CHierachyNode* node = sceneController->selectOnHierachy(targetObject);
 								if (node)
 								{
@@ -351,6 +351,8 @@ namespace Skylicht
 
 		void CSpaceScene::initEditorObject(CZone* zone)
 		{
+			zone->setMainZoneInEditor(true);
+
 			// create editor camera
 			CGameObject* camObj = zone->createEmptyObject();
 			camObj->setName(L"EditorCamera");

@@ -33,7 +33,8 @@ namespace Skylicht
 
 	CZone::CZone(CScene* scene) :
 		CContainerObject(NULL, this),
-		m_scene(scene)
+		m_scene(scene),
+		m_mainZoneInEditor(false)
 	{
 		m_enableEditorChange = false;
 

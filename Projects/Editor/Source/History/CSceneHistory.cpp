@@ -106,7 +106,7 @@ namespace Skylicht
 				// revert data
 				CObjectSerializable* data = undo ? historyData->Data[i] : historyData->DataModified[i];
 
-				// get object and undo data
+				// get object and revert data
 				CGameObject* gameObject = scene->searchObjectInChildByID(id.c_str());
 				if (gameObject != NULL)
 					gameObject->loadSerializable(data);
@@ -117,6 +117,65 @@ namespace Skylicht
 				SGameObjectHistory* objHistory = getObjectHistory(id);
 				if (objHistory != NULL)
 					objHistory->changeData(data);
+			}
+		}
+
+		void CSceneHistory::doStructure(SHistoryData* historyData, bool undo)
+		{
+			CSceneController* sceneController = CSceneController::getInstance();
+			CScene* scene = sceneController->getScene();
+
+			size_t numObject = historyData->ObjectID.size();
+			for (size_t i = 0; i < numObject; i++)
+			{
+				// object id
+				std::string& id = historyData->ObjectID[i];
+
+				std::string container = undo ? historyData->Container[i] : historyData->MoveData[i].TargetContainer;
+				std::string before = undo ? historyData->BeforeID[i] : historyData->MoveData[i].To;
+
+				// get object and move structure
+				CGameObject* gameObject = scene->searchObjectInChildByID(id.c_str());
+				CGameObject* beforeObject = scene->searchObjectInChildByID(before.c_str());
+
+				if (gameObject)
+				{
+					if (container == "_")
+					{
+						CZone* zone = dynamic_cast<CZone*>(gameObject);
+						CZone* beforeZone = dynamic_cast<CZone*>(beforeObject);
+
+						if (zone)
+						{
+							sceneController->onMoveStructure(zone, beforeZone);
+						}
+						else
+						{
+							os::Printer::log("[CSceneHistory::doStructure] failed - null zone");
+						}
+					}
+					else
+					{
+						CContainerObject* containerObject = dynamic_cast<CContainerObject*>(scene->searchObjectInChildByID(container.c_str()));
+						if (containerObject)
+						{
+							sceneController->onMoveStructure(gameObject, containerObject, beforeObject);
+						}
+						else
+						{
+							os::Printer::log("[CSceneHistory::doStructure] failed - null container");
+						}
+					}
+				}
+				else
+				{
+					os::Printer::log("[CSceneHistory::doStructure] failed - null obj");
+				}
+
+				// set current data for next action
+				SGameObjectHistory* objHistory = getObjectHistory(id);
+				if (objHistory != NULL)
+					objHistory->changeData(gameObject->createSerializable());
 			}
 		}
 
@@ -148,6 +207,13 @@ namespace Skylicht
 				doCreate(historyData);
 			}
 			break;
+			case EHistory::Structure:
+			{
+				doStructure(historyData, true);
+			}
+			break;
+			default:
+				break;
 			}
 
 			CSceneController* sceneController = CSceneController::getInstance();
@@ -199,6 +265,13 @@ namespace Skylicht
 				doDelete(historyData);
 			}
 			break;
+			case EHistory::Structure:
+			{
+				doStructure(historyData, false);
+			}
+			break;
+			default:
+				break;
 			}
 
 			// apply history selection
@@ -485,8 +558,6 @@ namespace Skylicht
 					break;
 				}
 
-				CObjectSerializable* currentData = gameObject->createSerializable();
-
 				// old location
 				id.push_back(gameObject->getID());
 				container.push_back(historyData->ContainerID);
@@ -501,7 +572,7 @@ namespace Skylicht
 				moveCmd.push_back(moveCmdData);
 			}
 
-			// addStrucureHistory(container, id, before, getSelected(), moveCmd);
+			addStrucureHistory(container, id, before, getSelected(), moveCmd);
 		}
 
 		void CSceneHistory::endSaveHistory()

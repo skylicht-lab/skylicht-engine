@@ -98,6 +98,8 @@ namespace Skylicht
 
 			void doModify(SHistoryData* historyData, bool undo);
 
+			void doStructure(SHistoryData* historyData, bool undo);
+
 			void freeCurrentObjectData();
 
 			SGameObjectHistory* getObjectHistory(const std::string& id);

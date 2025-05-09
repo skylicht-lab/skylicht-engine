@@ -1331,6 +1331,107 @@ namespace Skylicht
 				m_spaceHierarchy->getController()->updateTreeNode(object);
 		}
 
+		void CSceneController::onMoveStructure(CGameObject* object, CContainerObject* toContainer, CGameObject* before)
+		{
+			bool behind = true;
+			if (before == NULL && toContainer->getChilds()->size() > 0)
+			{
+				// insert at first
+				ArrayGameObject* childs = toContainer->getChilds();
+				for (CGameObject* obj : *childs)
+				{
+					if (!obj->isEditorObject())
+					{
+						before = obj;
+						behind = false;
+						break;
+					}
+				}
+			}
+
+			if (before)
+			{
+				CHierachyNode* beforeNode = m_hierachyNode->getNodeByTag(before);
+				CHierachyNode* node = m_hierachyNode->getNodeByTag(object);
+				if (beforeNode && node)
+				{
+					node->removeGUI();
+					node->nullGUI();
+
+					node->bringNextNode(beforeNode, behind);
+
+					if (m_spaceHierarchy != NULL)
+					{
+						m_spaceHierarchy->addToTreeNode(node);
+						node->getGUINode()->bringNextToControl(beforeNode->getGUINode(), behind);
+					}
+				}
+				toContainer->bringToNext(object, before, behind);
+			}
+			else
+			{
+				CHierachyNode* container = m_hierachyNode->getNodeByTag(toContainer);
+				CHierachyNode* node = m_hierachyNode->getNodeByTag(object);
+				if (container && node)
+				{
+					node->removeGUI();
+					node->nullGUI();
+
+					container->bringToChild(node);
+
+					if (m_spaceHierarchy != NULL)
+						m_spaceHierarchy->addToTreeNode(node);
+
+				}
+				toContainer->bringToChild(object);
+			}
+
+			m_scene->updateAddRemoveObject();
+			m_scene->updateIndexSearchObject();
+		}
+
+		void CSceneController::onMoveStructure(CZone* object, CZone* before)
+		{
+			bool behind = true;
+			if (before == NULL && m_scene->getAllZone()->size() > 0)
+			{
+				// insert at first
+				ArrayZone* zones = m_scene->getAllZone();
+				for (CZone* obj : *zones)
+				{
+					if (!obj->isEditorObject())
+					{
+						before = obj;
+						behind = false;
+						break;
+					}
+				}
+			}
+
+			if (before)
+			{
+				CHierachyNode* beforeNode = m_hierachyNode->getNodeByTag(before);
+				CHierachyNode* node = m_hierachyNode->getNodeByTag(object);
+				if (beforeNode && node)
+				{
+					node->removeGUI();
+					node->nullGUI();
+
+					node->bringNextNode(beforeNode, behind);
+
+					if (m_spaceHierarchy != NULL)
+					{
+						m_spaceHierarchy->addToTreeNode(node);
+						node->getGUINode()->bringNextToControl(beforeNode->getGUINode(), behind);
+					}
+				}
+				m_scene->bringToNext(object, before, behind);
+			}
+
+			m_scene->updateAddRemoveObject();
+			m_scene->updateIndexSearchObject();
+		}
+
 		void CSceneController::onDeleteObject(CGameObject* object)
 		{
 			if (CSelection::getInstance()->unSelect(object))

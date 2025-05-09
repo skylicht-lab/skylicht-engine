@@ -581,7 +581,7 @@ namespace Skylicht
 						{
 							CHierachyNode* tagData = (CHierachyNode*)node->getTagData();
 							if (tagData)
-								affectNodes.push_back(tagData);
+								affectNodes.insert(affectNodes.begin(), tagData);
 						}
 
 						std::vector<CGameObject*> listGameObjects;
