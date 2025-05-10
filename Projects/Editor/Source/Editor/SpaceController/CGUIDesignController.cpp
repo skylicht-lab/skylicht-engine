@@ -630,13 +630,16 @@ namespace Skylicht
 
 			for (CGUIElement* del : deleteList)
 			{
+				CGUIHierachyNode* hierachyNode = m_rootNode->getNodeByTag(del);
+				if (hierachyNode)
+					hierachyNode->remove();
+
 				del->remove();
 			}
 
 			if (deleteList.size() > 0)
 			{
 				CSelection::getInstance()->clear();
-				rebuildGUIHierachy();
 			}
 		}
 
@@ -694,6 +697,55 @@ namespace Skylicht
 			{
 				propertyController->setProperty(NULL);
 				selection->unSelect(obj);
+			}
+		}
+
+		void CGUIDesignController::onMoveStructure(CGUIElement* element, CGUIElement* parent, CGUIElement* before)
+		{
+			bool behind = true;
+			if (before == NULL)
+			{
+				std::vector<CGUIElement*>& childs = parent->getChilds();
+				if (childs.size() > 0)
+				{
+					before = childs[0];
+					behind = false;
+				}
+			}
+
+			if (before)
+			{
+				CGUIHierachyNode* beforeNode = m_rootNode->getNodeByTag(before);
+				CGUIHierachyNode* node = m_rootNode->getNodeByTag(element);
+				if (node)
+				{
+					node->removeGUI();
+					node->nullGUI();
+					node->bringNextNode(beforeNode, behind);
+					if (m_spaceHierarchy != NULL)
+					{
+						m_spaceHierarchy->addToTreeNode(node);
+						node->getGUINode()->bringNextToControl(beforeNode ? beforeNode->getGUINode() : NULL, behind);
+					}
+				}
+				parent->bringToNext(element, before, behind);
+			}
+			else
+			{
+				CGUIHierachyNode* container = m_rootNode->getNodeByTag(parent);
+				CGUIHierachyNode* node = m_rootNode->getNodeByTag(element);
+				if (node)
+				{
+					node->removeGUI();
+					node->nullGUI();
+					if (container)
+					{
+						container->bringToChild(node);
+						if (m_spaceHierarchy != NULL)
+							m_spaceHierarchy->addToTreeNode(node);
+					}
+				}
+				parent->bringToChild(element);
 			}
 		}
 

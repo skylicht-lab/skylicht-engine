@@ -1353,17 +1353,17 @@ namespace Skylicht
 			{
 				CHierachyNode* beforeNode = m_hierachyNode->getNodeByTag(before);
 				CHierachyNode* node = m_hierachyNode->getNodeByTag(object);
-				if (beforeNode && node)
+				if (node)
 				{
 					node->removeGUI();
 					node->nullGUI();
 
 					node->bringNextNode(beforeNode, behind);
 
-					if (m_spaceHierarchy != NULL)
+					if (m_spaceHierarchy)
 					{
 						m_spaceHierarchy->addToTreeNode(node);
-						node->getGUINode()->bringNextToControl(beforeNode->getGUINode(), behind);
+						node->getGUINode()->bringNextToControl(beforeNode ? beforeNode->getGUINode() : NULL, behind);
 					}
 				}
 				toContainer->bringToNext(object, before, behind);
@@ -1372,12 +1372,13 @@ namespace Skylicht
 			{
 				CHierachyNode* container = m_hierachyNode->getNodeByTag(toContainer);
 				CHierachyNode* node = m_hierachyNode->getNodeByTag(object);
-				if (container && node)
+				if (node)
 				{
 					node->removeGUI();
 					node->nullGUI();
 
-					container->bringToChild(node);
+					if (container)
+						container->bringToChild(node);
 
 					if (m_spaceHierarchy != NULL)
 						m_spaceHierarchy->addToTreeNode(node);

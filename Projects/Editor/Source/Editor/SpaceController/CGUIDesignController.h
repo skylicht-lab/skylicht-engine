@@ -168,6 +168,8 @@ namespace Skylicht
 
 			void onRedo();
 
+			void onMoveStructure(CGUIElement* element, CGUIElement* parent, CGUIElement* before);
+
 			void applySelected(std::vector<CSelectObject*> ids);
 
 			CGUIHierachyNode* selectOnHierachy(CGUIElement* gui, bool callEvent);

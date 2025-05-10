@@ -68,15 +68,17 @@ namespace Skylicht
 
 			void saveCreateHistory(CGUIElement* guiObject);
 
-			void saveCreateHistory(std::vector<CGUIElement*> guiObject);
+			void saveCreateHistory(std::vector<CGUIElement*> guiObjects);
 
 			void saveDeleteHistory(CGUIElement* guiObject);
 
-			void saveDeleteHistory(std::vector<CGUIElement*> guiObject);
+			void saveDeleteHistory(std::vector<CGUIElement*> guiObjects);
 
 			bool saveModifyHistory(CGUIElement* guiObject);
 
-			bool saveModifyHistory(std::vector<CGUIElement*> guiObject);
+			bool saveModifyHistory(std::vector<CGUIElement*> guiObjects);
+
+			void saveStructureHistory(std::vector<CGUIElement*> guiObjects);
 
 			void endSaveHistory();
 
@@ -96,6 +98,8 @@ namespace Skylicht
 			void doCreate(SHistoryData* historyData);
 
 			void doModify(SHistoryData* historyData, bool undo);
+
+			void doStructure(SHistoryData* historyData, bool undo);
 
 			void freeCurrentObjectData();
 

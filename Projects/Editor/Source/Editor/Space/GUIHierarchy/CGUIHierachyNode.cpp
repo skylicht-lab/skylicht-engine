@@ -152,7 +152,7 @@ namespace Skylicht
 		void CGUIHierachyNode::bringNextNode(CGUIHierachyNode* position, bool behind)
 		{
 			std::vector<CGUIHierachyNode*>::iterator i = m_parent->m_childs.begin(), end = m_parent->m_childs.end();
-			std::vector<CGUIHierachyNode*>::iterator p;
+			std::vector<CGUIHierachyNode*>::iterator p = end;
 
 			while (i != end)
 			{
@@ -182,12 +182,17 @@ namespace Skylicht
 			{
 				if (behind)
 				{
-					m_parent->m_childs.insert(++p, this);
+					p++;
+					m_parent->m_childs.insert(p, this);
 				}
 				else
 				{
 					m_parent->m_childs.insert(p, this);
 				}
+			}
+			else
+			{
+				m_parent->m_childs.push_back(this);
 			}
 		}
 

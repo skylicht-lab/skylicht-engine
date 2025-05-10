@@ -204,12 +204,17 @@ namespace Skylicht
 			{
 				if (behind)
 				{
-					m_parent->m_childs.insert(++p, this);
+					p++;
+					m_parent->m_childs.insert(p, this);
 				}
 				else
 				{
 					m_parent->m_childs.insert(p, this);
 				}
+			}
+			else
+			{
+				m_parent->m_childs.push_back(this);
 			}
 		}
 

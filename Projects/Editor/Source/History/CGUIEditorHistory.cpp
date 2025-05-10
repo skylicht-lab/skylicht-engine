@@ -46,7 +46,6 @@ namespace Skylicht
 		void CGUIEditorHistory::doDelete(SHistoryData* historyData)
 		{
 			CGUIDesignController* controller = CGUIDesignController::getInstance();
-			CGUIHierarchyController* hierarchyController = NULL;
 			CCanvas* canvas = controller->getCanvas();
 
 			size_t numObject = historyData->ObjectID.size();
@@ -100,9 +99,6 @@ namespace Skylicht
 			CGUIHierarchyController* hierarchyController = NULL;
 			CCanvas* canvas = controller->getCanvas();
 
-			if (controller->getSpaceHierarchy() != NULL)
-				hierarchyController = controller->getSpaceHierarchy()->getController();
-
 			size_t numObject = historyData->DataModified.size();
 			for (size_t i = 0; i < numObject; i++)
 			{
@@ -123,6 +119,48 @@ namespace Skylicht
 				SGUIObjectHistory* objHistory = getObjectHistory(id);
 				if (objHistory != NULL)
 					objHistory->changeData(data);
+			}
+		}
+
+		void CGUIEditorHistory::doStructure(SHistoryData* historyData, bool undo)
+		{
+			CGUIDesignController* controller = CGUIDesignController::getInstance();
+			CCanvas* canvas = controller->getCanvas();
+
+			size_t numObject = historyData->ObjectID.size();
+			for (size_t i = 0; i < numObject; i++)
+			{
+				// object id
+				std::string& id = historyData->ObjectID[i];
+
+				std::string container = undo ? historyData->Container[i] : historyData->MoveData[i].TargetContainer;
+				std::string before = undo ? historyData->BeforeID[i] : historyData->MoveData[i].To;
+
+				// get object and move structure
+				CGUIElement* guiObject = canvas->getGUIByID(id.c_str());
+				CGUIElement* beforeObject = canvas->getGUIByID(before.c_str());
+
+				if (guiObject)
+				{
+					CGUIElement* parentObject = canvas->getGUIByID(container.c_str());
+					if (parentObject)
+					{
+						controller->onMoveStructure(guiObject, parentObject, beforeObject);
+					}
+					else
+					{
+						os::Printer::log("[CGUIEditorHistory::doStructure] failed - null parent");
+					}
+
+					// set current data for next action
+					SGUIObjectHistory* objHistory = getObjectHistory(id);
+					if (objHistory != NULL)
+						objHistory->changeData(guiObject->createSerializable());
+				}
+				else
+				{
+					os::Printer::log("[CGUIEditorHistory::doStructure] failed - null gui");
+				}
 			}
 		}
 
@@ -156,6 +194,13 @@ namespace Skylicht
 				doCreate(historyData);
 			}
 			break;
+			case EHistory::Structure:
+			{
+				doStructure(historyData, true);
+			}
+			break;
+			default:
+				break;
 			}
 
 			// apply history selection
@@ -205,6 +250,13 @@ namespace Skylicht
 				doDelete(historyData);
 			}
 			break;
+			case EHistory::Structure:
+			{
+				doStructure(historyData, false);
+			}
+			break;
+			default:
+				break;
 			}
 
 			// apply history selection
@@ -254,6 +306,8 @@ namespace Skylicht
 				CGUIElement* gui = parent->getChildBefore(guiObject);
 				if (gui)
 					historyData->BeforeID = gui->getID();
+				else
+					historyData->BeforeID = "";
 			}
 		}
 
@@ -465,6 +519,46 @@ namespace Skylicht
 			}
 
 			return success;
+		}
+
+		void CGUIEditorHistory::saveStructureHistory(std::vector<CGUIElement*> guiObjects)
+		{
+			if (!m_enable)
+				return;
+
+			if (guiObjects.size() == 0)
+				return;
+
+			std::vector<std::string> container;
+			std::vector<std::string> id;
+			std::vector<std::string> before;
+			std::vector<SMoveCommand> moveCmd;
+
+			for (CGUIElement* guiObject : guiObjects)
+			{
+				SGUIObjectHistory* historyData = getObjectHistory(guiObject->getID());
+				if (historyData == NULL)
+				{
+					os::Printer::log("[CGUIEditorHistory::saveStructureHistory] failed, call CGUIEditorHistory::beginSaveHistory first!");
+					break;
+				}
+
+				// old location
+				id.push_back(guiObject->getID());
+				container.push_back(historyData->ContainerID);
+				before.push_back(historyData->BeforeID);
+
+				// update new location
+				delete historyData->ObjectData;
+				saveHistory(historyData, guiObject);
+
+				SMoveCommand moveCmdData;
+				moveCmdData.TargetContainer = historyData->ContainerID;
+				moveCmdData.To = historyData->BeforeID;
+				moveCmd.push_back(moveCmdData);
+			}
+
+			addStrucureHistory(container, id, before, getSelected(), moveCmd);
 		}
 
 		void CGUIEditorHistory::endSaveHistory()

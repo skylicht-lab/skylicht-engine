@@ -166,16 +166,16 @@ namespace Skylicht
 							os::Printer::log("[CSceneHistory::doStructure] failed - null container");
 						}
 					}
+
+					// set current data for next action
+					SGameObjectHistory* objHistory = getObjectHistory(id);
+					if (objHistory != NULL)
+						objHistory->changeData(gameObject->createSerializable());
 				}
 				else
 				{
 					os::Printer::log("[CSceneHistory::doStructure] failed - null obj");
 				}
-
-				// set current data for next action
-				SGameObjectHistory* objHistory = getObjectHistory(id);
-				if (objHistory != NULL)
-					objHistory->changeData(gameObject->createSerializable());
 			}
 		}
 
@@ -320,6 +320,8 @@ namespace Skylicht
 				CGameObject* obj = container->getChildObjectBefore(gameObject);
 				if (obj)
 					historyData->BeforeID = obj->getID();
+				else
+					historyData->BeforeID = "";
 			}
 			else
 			{
@@ -327,6 +329,8 @@ namespace Skylicht
 				CZone* zone = gameObject->getScene()->getZoneBefore((CZone*)gameObject);
 				if (zone)
 					historyData->BeforeID = zone->getID();
+				else
+					historyData->BeforeID = "";
 			}
 		}
 

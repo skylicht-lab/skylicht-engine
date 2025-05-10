@@ -330,32 +330,54 @@ namespace Skylicht
 				{
 					if (data->Name == "GUIHierarchyNode")
 					{
-						CGUIHierachyNode* dragNode = (CGUIHierachyNode*)data->UserData;
-
-						if (node->getParent() == NULL)
+						std::vector<CGUIHierachyNode*> affectNodes;
+						std::list<GUI::CTreeNode*> selectNodes = m_tree->getSelectedNodes();
+						for (GUI::CTreeNode* node : selectNodes)
 						{
-							// this is canvas node
-							moveToChild(dragNode, node);
+							CGUIHierachyNode* tagData = (CGUIHierachyNode*)node->getTagData();
+							if (tagData)
+								affectNodes.insert(affectNodes.begin(), tagData);
 						}
-						else
+
+						std::vector<CGUIElement*> listGUIs;
+						for (CGUIHierachyNode* dragNode : affectNodes)
 						{
-							// this is child node
-							GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
-							if (local.Y < rowItem->height() * 0.25f)
+							CGUIElement* gui = (CGUIElement*)dragNode->getTagData();
+							listGUIs.push_back(gui);
+						}
+
+						CGUIEditorHistory* history = CGUIDesignController::getInstance()->getHistory();
+						history->enableAddSelectHistory(false);
+
+						for (CGUIHierachyNode* dragNode : affectNodes)
+						{
+							if (node->getParent() == NULL)
 							{
-								move(dragNode, node, false);
-							}
-							else if (local.Y > rowItem->height() * 0.75f)
-							{
-								move(dragNode, node, true);
+								// this is canvas node
+								moveToChild(dragNode, node);
 							}
 							else
 							{
-								moveToChild(dragNode, node);
+								// this is child node
+								GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
+								if (local.Y < rowItem->height() * 0.25f)
+								{
+									move(dragNode, node, false);
+								}
+								else if (local.Y > rowItem->height() * 0.75f)
+								{
+									move(dragNode, node, true);
+								}
+								else
+								{
+									moveToChild(dragNode, node);
+								}
 							}
+							dragNode->getGUINode()->setSelected(true);
 						}
 
-						dragNode->getGUINode()->setSelected(true);
+						history->saveStructureHistory(listGUIs);
+						history->enableAddSelectHistory(true);
 					}
 
 					rowItem->enableDrawLine(false, false);
