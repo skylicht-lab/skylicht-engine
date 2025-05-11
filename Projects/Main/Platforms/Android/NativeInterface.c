@@ -40,8 +40,7 @@ void applicationTouchMove(int touchID, int x, int y);
 void applicationTouchUp(int touchID, int x, int y);
 void applicationUpdateAccelerometer(float x, float y, float z);
 void applicationSetAccelerometer(int b);
-void applicationSetAPK(const char *path);
-void applicationSetIsAndroidAPK(int isApk);
+void applicationAddAPK(const char *path);
 void applicationSetDataFolder(const char *path);
 void applicationSetAppID(const char *id);
 void applicationSetSaveFolder(const char *path);
@@ -190,22 +189,15 @@ JNIEXPORT void JNICALL JNI_FUNCTION(NativeInterface_setAccelerometerSupport)(JNI
 
 
 // native member function setApkPath
-JNIEXPORT void JNICALL JNI_FUNCTION(NativeInterface_setApkPath)(JNIEnv* env, jobject thiz, jstring apkPath)
+JNIEXPORT void JNICALL JNI_FUNCTION(NativeInterface_addApkPath)(JNIEnv* env, jobject thiz, jstring apkPath)
 {
 	const char *path = getJString(env, apkPath);
 
 	// set apkPath
-	__android_log_print(ANDROID_LOG_INFO, JNI_APPNAME, "Set APK path: %s", path);
-	applicationSetAPK(path);
+	__android_log_print(ANDROID_LOG_INFO, JNI_APPNAME, "Add APK path: %s", path);
+	applicationAddAPK(path);
 
 	(*env)->ReleaseStringUTFChars(env, apkPath, path);
-}
-
-// native member function setIsAndroidAPK
-JNIEXPORT void JNICALL JNI_FUNCTION(NativeInterface_setIsAndroidAPK)(JNIEnv* env, jobject thiz, int isAndroidAPK)
-{
-	__android_log_print(ANDROID_LOG_INFO, JNI_APPNAME, "Set is Android APK: %d", isAndroidAPK);
-	applicationSetIsAndroidAPK(isAndroidAPK);
 }
 
 // native member function setDataPath

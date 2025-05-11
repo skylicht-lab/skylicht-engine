@@ -43,8 +43,6 @@ namespace Skylicht
 
 		std::string SyncCloudFolder;
 
-		bool IsAndroidAPK;
-
 		std::string AppID;
 
 		std::string DeviceID;
@@ -52,7 +50,7 @@ namespace Skylicht
 		std::string Factory;
 		std::string Model;
 
-		std::string APKPath;
+		std::vector<std::string> APKPath;
 		std::string Version;
 	};
 

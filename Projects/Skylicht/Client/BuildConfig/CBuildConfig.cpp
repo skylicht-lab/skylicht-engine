@@ -29,8 +29,7 @@ namespace Skylicht
 {
 	IMPLEMENT_SINGLETON(CBuildConfig);
 
-	CBuildConfig::CBuildConfig() :
-		IsAndroidAPK(false)
+	CBuildConfig::CBuildConfig()
 	{
 		SaveFolder = "";
 		DataFolder = "";
@@ -50,7 +49,6 @@ namespace Skylicht
 		Model = "";
 #endif
 
-		APKPath = "";
 		Version = "";
 	}
 

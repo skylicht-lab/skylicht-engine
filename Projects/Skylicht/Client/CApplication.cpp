@@ -165,10 +165,12 @@ namespace Skylicht
 		Skylicht::initSkylicht(m_device);
 
 #ifdef ANDROID
-		if (CBuildConfig::getInstance()->IsAndroidAPK)
+		char androidLog[1024];
+		for (const std::string& apk: CBuildConfig::getInstance()->APKPath)
 		{
-			os::Printer::log("Init file archive .apk");
-			m_fileSystem->addFileArchive(CBuildConfig::getInstance()->APKPath.c_str(), true, true);
+			sprintf(androidLog, "Init file archive %s", apk.c_str());
+			os::Printer::log(androidLog);
+			m_fileSystem->addFileArchive(apk.c_str(), true, true);
 		}
 #endif
 

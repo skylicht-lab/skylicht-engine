@@ -13,6 +13,7 @@ import androidx.core.app.ActivityCompat;
 import com.google.android.play.core.assetpacks.AssetPackLocation;
 import com.google.android.play.core.assetpacks.AssetPackManager;
 import com.google.android.play.core.assetpacks.AssetPackManagerFactory;
+import com.google.android.play.core.assetpacks.model.AssetPackStorageMethod;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -21,6 +22,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
@@ -34,6 +36,9 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -93,15 +98,31 @@ public class FullscreenActivity extends AppCompatActivity {
 
         // asset pack manager
         mAssetPackManager = AssetPackManagerFactory.getInstance(getApplicationContext());
-        AssetPackLocation assetPackPath = mAssetPackManager.getPackLocation("appdata");
-        if (assetPackPath != null) {
-            // use aab
-            String assetsFolderPath = assetPackPath.assetsPath();
-            NativeInterface.getInstance().setDataPath(assetsFolderPath);
-            NativeInterface.getInstance().setIsAndroidAPK(0);
-        } else {
-            // use apk
-            NativeInterface.getInstance().setIsAndroidAPK(1);
+
+        Log.w("Skylicht", "Init AssetPackManager");
+
+        // get source directory
+        final ApplicationInfo applicationInfo = this.getApplicationInfo();
+        NativeInterface.getInstance().addApkPath(applicationInfo.sourceDir);
+
+        String []bundles = {"appdata"};
+        for (String bundle: bundles) {
+            AssetPackLocation assetPackPath = mAssetPackManager.getPackLocation(bundle);
+            if (assetPackPath != null) {
+                int packMethod = assetPackPath.packStorageMethod();
+                if (packMethod == AssetPackStorageMethod.APK_ASSETS) {
+                    for (String src : applicationInfo.splitSourceDirs) {
+                        if (src.contains(bundle)) {
+                            NativeInterface.getInstance().addApkPath(src);
+                        }
+                    }
+                } else {
+                    Log.w("Skylicht", "Engine just support install-time asset: " + bundle);
+                }
+            }
+            else {
+                Log.w("Skylicht", "Asset not found: " + bundle);
+            }
         }
 
         // permission detect
@@ -109,10 +130,6 @@ public class FullscreenActivity extends AppCompatActivity {
 
         // set the main activity
         GameInstance.Activity = this;
-
-        // get source directory
-        final ApplicationInfo applicationInfo = this.getApplicationInfo();
-        NativeInterface.getInstance().setApkPath(applicationInfo.sourceDir);
 
         // set the package name
         NativeInterface.getInstance().setAppID(getPackageName());

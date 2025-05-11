@@ -213,14 +213,10 @@ extern "C" {
 			g_myApp->updateTouch(touchID, x, y, 1);
 	}
 
-	void applicationSetAPK(const char *apkPath)
+	void applicationAddAPK(const char *apkPath)
 	{
-		CBuildConfig::getInstance()->APKPath = apkPath;
-	}
-
-	void applicationSetIsAndroidAPK(int isApk)
-	{
-		CBuildConfig::getInstance()->IsAndroidAPK = (bool)isApk;
+		if (apkPath != NULL)
+			CBuildConfig::getInstance()->APKPath.push_back(apkPath);
 	}
 
 	void applicationSetDataFolder(const char *dataPath)

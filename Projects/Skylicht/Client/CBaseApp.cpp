@@ -162,17 +162,7 @@ namespace Skylicht
 		return io::path(assetPath.c_str());
 #elif defined(ANDROID)
 		// see the file FullscreenActivity.java in Android Project
-		if (CBuildConfig::getInstance()->IsAndroidAPK)
-		{
-			// in apk assets
-			return io::path(name);
-		}
-		else
-		{
-			// in aab assets
-			std::string assetPath = CBuildConfig::getInstance()->DataFolder + std::string("//") + std::string(name);
-			return io::path(assetPath.c_str());
-		}
+		return io::path(name);
 #else
 		return io::path(name);
 #endif
