@@ -1,6 +1,6 @@
 // Base on https://www.shadertoy.com/view/4dXGR4
 
-precision mediump float;
+precision highp float;
 
 uniform vec4 uNoiseOffset;
 

@@ -1,4 +1,4 @@
-precision mediump float;
+precision highp float;
 
 uniform vec4 uNoiseOffset;
 uniform vec4 uElectricColor;
