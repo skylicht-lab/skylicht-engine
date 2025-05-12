@@ -774,7 +774,7 @@ namespace Skylicht
 			from->nullGUI();
 
 			// update position
-			from->bringNextNode(target, behind);
+			target->getParent()->bringToNext(from, target, behind);
 
 			// add new tree gui at new position
 			GUI::CTreeNode* gui = buildTreeNode(target->getParent()->getGUINode(), from);
@@ -841,10 +841,11 @@ namespace Skylicht
 
 			CGameObject* newGameObject = CSceneController::getInstance()->createEmptyObject(parentObject);
 			CHierachyNode* thisNode = parentNode->getNodeByTag(newGameObject);
+
 			if (thisNode != NULL)
 			{
 				parentObject->bringToNext(newGameObject, targetObject, behind);
-				thisNode->bringNextNode(position, behind);
+				parentNode->bringToNext(thisNode, position, behind);
 				thisNode->getGUINode()->bringNextToControl(position->getGUINode(), behind);
 			}
 

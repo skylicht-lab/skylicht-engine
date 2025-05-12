@@ -149,25 +149,27 @@ namespace Skylicht
 			}
 		}
 
-		void CGUIHierachyNode::bringNextNode(CGUIHierachyNode* position, bool behind)
+		void CGUIHierachyNode::bringToNext(CGUIHierachyNode* node, CGUIHierachyNode* position, bool behind)
 		{
-			std::vector<CGUIHierachyNode*>::iterator i = m_parent->m_childs.begin(), end = m_parent->m_childs.end();
-			std::vector<CGUIHierachyNode*>::iterator p = end;
-
+			// remove child
+			CGUIHierachyNode* oldParent = node->m_parent;
+			auto i = oldParent->m_childs.begin();
+			auto end = oldParent->m_childs.end();
+			auto p = end;
 			while (i != end)
 			{
-				if ((*i) == this)
+				if ((*i) == node)
 				{
-					m_parent->m_childs.erase(i);
+					oldParent->m_childs.erase(i);
 					break;
 				}
 				++i;
 			}
 
-			m_parent = position->m_parent;
+			i = m_childs.begin();
+			end = m_childs.end();
+			p = end;
 
-			i = m_parent->m_childs.begin();
-			end = m_parent->m_childs.end();
 			while (i != end)
 			{
 				if ((*i) == position)
@@ -183,17 +185,18 @@ namespace Skylicht
 				if (behind)
 				{
 					p++;
-					m_parent->m_childs.insert(p, this);
+					m_childs.insert(p, node);
 				}
 				else
 				{
-					m_parent->m_childs.insert(p, this);
+					m_childs.insert(p, node);
 				}
 			}
 			else
 			{
-				m_parent->m_childs.push_back(this);
+				m_childs.push_back(node);
 			}
+			node->m_parent = this;
 		}
 
 		void CGUIHierachyNode::bringToChild(CGUIHierachyNode* node)

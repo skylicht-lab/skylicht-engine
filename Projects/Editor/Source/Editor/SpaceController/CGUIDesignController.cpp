@@ -538,7 +538,8 @@ namespace Skylicht
 			if (node != NULL)
 			{
 				GUI::CTreeNode* treeNode = node->getGUINode();
-				treeNode->setSelected(false);
+				if (treeNode)
+					treeNode->setSelected(false);
 			}
 			return node;
 		}
@@ -549,10 +550,12 @@ namespace Skylicht
 			if (node != NULL)
 			{
 				GUI::CTreeNode* treeNode = node->getGUINode();
-				treeNode->setSelected(true);
-
-				if (m_spaceHierarchy)
-					m_spaceHierarchy->scrollToNode(treeNode);
+				if (treeNode)
+				{
+					treeNode->setSelected(true);
+					if (m_spaceHierarchy)
+						m_spaceHierarchy->scrollToNode(treeNode);
+				}
 			}
 			return node;
 		}
@@ -715,13 +718,15 @@ namespace Skylicht
 
 			if (before)
 			{
+				CGUIHierachyNode* parentNode = m_rootNode->getNodeByTag(parent);
 				CGUIHierachyNode* beforeNode = m_rootNode->getNodeByTag(before);
 				CGUIHierachyNode* node = m_rootNode->getNodeByTag(element);
-				if (node)
+
+				if (parentNode && node)
 				{
 					node->removeGUI();
 					node->nullGUI();
-					node->bringNextNode(beforeNode, behind);
+					parentNode->bringToNext(node, beforeNode, behind);
 					if (m_spaceHierarchy != NULL)
 					{
 						m_spaceHierarchy->addToTreeNode(node);
@@ -779,8 +784,11 @@ namespace Skylicht
 			if (node != NULL)
 			{
 				GUI::CTreeNode* treeNode = node->getGUINode();
-				treeNode->setSelected(true, callEvent);
-				m_spaceHierarchy->scrollToNode(treeNode);
+				if (treeNode)
+				{
+					treeNode->setSelected(true, callEvent);
+					m_spaceHierarchy->scrollToNode(treeNode);
+				}
 			}
 			return node;
 		}

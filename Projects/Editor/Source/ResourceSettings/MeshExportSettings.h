@@ -36,6 +36,7 @@ namespace Skylicht
 			CFolderPathProperty TextureFolder;
 			CBoolProperty UseNormalMap;
 			CBoolProperty FlipNormal;
+			CBoolProperty UseUV2;
 			CBoolProperty GenerateLightmapUV2;
 			CFloatProperty LightmapScale;
 			CFilePathProperty DefaultMaterial;

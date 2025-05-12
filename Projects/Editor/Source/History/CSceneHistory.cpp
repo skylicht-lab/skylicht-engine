@@ -170,7 +170,10 @@ namespace Skylicht
 					// set current data for next action
 					SGameObjectHistory* objHistory = getObjectHistory(id);
 					if (objHistory != NULL)
-						objHistory->changeData(gameObject->createSerializable());
+					{
+						delete objHistory->ObjectData;
+						saveToHistory(objHistory, gameObject);
+					}
 				}
 				else
 				{

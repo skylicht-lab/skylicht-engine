@@ -155,7 +155,10 @@ namespace Skylicht
 					// set current data for next action
 					SGUIObjectHistory* objHistory = getObjectHistory(id);
 					if (objHistory != NULL)
-						objHistory->changeData(guiObject->createSerializable());
+					{
+						delete objHistory->ObjectData;
+						saveHistory(objHistory, guiObject);
+					}
 				}
 				else
 				{

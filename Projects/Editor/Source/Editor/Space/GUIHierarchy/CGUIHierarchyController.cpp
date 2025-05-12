@@ -394,7 +394,7 @@ namespace Skylicht
 			from->nullGUI();
 
 			// update position
-			from->bringNextNode(target, behind);
+			target->getParent()->bringToNext(from, target, behind);
 
 			// add new tree gui at new position
 			GUI::CTreeNode* gui = buildTreeNode(target->getParent()->getGUINode(), from);

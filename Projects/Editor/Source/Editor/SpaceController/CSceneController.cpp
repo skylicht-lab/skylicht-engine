@@ -864,9 +864,11 @@ namespace Skylicht
 				CHierachyNode* beforeNode = m_hierachyNode->getNodeByTag(before);
 				if (beforeNode && node)
 				{
-					node->bringNextNode(beforeNode, true);
-					if (node->getGUINode() && beforeNode->getGUINode())
-						node->getGUINode()->bringNextToControl(beforeNode->getGUINode(), true);
+					CHierachyNode* parentNode = node->getParent();
+					parentNode->bringToNext(node, beforeNode, true);
+
+					if (node->getGUINode())
+						node->getGUINode()->bringNextToControl(beforeNode ? beforeNode->getGUINode() : NULL, true);
 				}
 				m_scene->bringToNext(newObject, (CZone*)before, true);
 			}
@@ -921,9 +923,10 @@ namespace Skylicht
 				CHierachyNode* beforeNode = m_hierachyNode->getNodeByTag(before);
 				if (beforeNode && node)
 				{
-					node->bringNextNode(beforeNode, behind);
-					if (node->getGUINode() && beforeNode->getGUINode())
-						node->getGUINode()->bringNextToControl(beforeNode->getGUINode(), behind);
+					CHierachyNode* parentNode = node->getParent();
+					parentNode->bringToNext(node, beforeNode, behind);
+					if (node->getGUINode())
+						node->getGUINode()->bringNextToControl(beforeNode ? beforeNode->getGUINode() : NULL, behind);
 				}
 				p->bringToNext(newObject, before, behind);
 			}
@@ -1053,6 +1056,7 @@ namespace Skylicht
 				std::string defaultMaterial;
 				std::string meta = path + ".meta";
 				bool useNormalMap = true;
+				bool useUV2 = false;
 
 				if (fileExt == "dae" ||
 					fileExt == "obj" ||
@@ -1063,12 +1067,13 @@ namespace Skylicht
 					{
 						defaultMaterial = setting->DefaultMaterial.get();
 						useNormalMap = setting->UseNormalMap.get();
+						useUV2 = setting->UseUV2.get();
 					}
 					delete setting;
 				}
 
 				CRenderMesh* renderMesh = gameObject->addComponent<CRenderMesh>();
-				renderMesh->initFromMeshFile(shortPath.c_str(), useNormalMap);
+				renderMesh->initFromMeshFile(shortPath.c_str(), useNormalMap, useUV2);
 
 				if (!defaultMaterial.empty())
 					renderMesh->initMaterialFromFile(defaultMaterial.c_str());
@@ -1133,7 +1138,8 @@ namespace Skylicht
 			if (node != NULL)
 			{
 				GUI::CTreeNode* treeNode = node->getGUINode();
-				treeNode->setSelected(false, callEvent);
+				if (treeNode)
+					treeNode->setSelected(false, callEvent);
 			}
 			return node;
 		}
@@ -1144,8 +1150,11 @@ namespace Skylicht
 			if (node != NULL)
 			{
 				GUI::CTreeNode* treeNode = node->getGUINode();
-				treeNode->setSelected(true, callEvent);
-				m_spaceHierarchy->scrollToNode(treeNode);
+				if (treeNode)
+				{
+					treeNode->setSelected(true, callEvent);
+					m_spaceHierarchy->scrollToNode(treeNode);
+				}
 			}
 			return node;
 		}
@@ -1156,8 +1165,11 @@ namespace Skylicht
 			if (node != NULL)
 			{
 				GUI::CTreeNode* treeNode = node->getGUINode();
-				treeNode->setSelected(true, callEvent);
-				m_spaceHierarchy->scrollToNode(treeNode);
+				if (treeNode)
+				{
+					treeNode->setSelected(true, callEvent);
+					m_spaceHierarchy->scrollToNode(treeNode);
+				}
 			}
 			return node;
 		}
@@ -1351,14 +1363,15 @@ namespace Skylicht
 
 			if (before)
 			{
+				CHierachyNode* containerNode = m_hierachyNode->getNodeByTag(toContainer);
 				CHierachyNode* beforeNode = m_hierachyNode->getNodeByTag(before);
 				CHierachyNode* node = m_hierachyNode->getNodeByTag(object);
-				if (node)
+				if (containerNode && node)
 				{
 					node->removeGUI();
 					node->nullGUI();
 
-					node->bringNextNode(beforeNode, behind);
+					containerNode->bringToNext(node, beforeNode, behind);
 
 					if (m_spaceHierarchy)
 					{
@@ -1413,17 +1426,17 @@ namespace Skylicht
 			{
 				CHierachyNode* beforeNode = m_hierachyNode->getNodeByTag(before);
 				CHierachyNode* node = m_hierachyNode->getNodeByTag(object);
-				if (beforeNode && node)
+				if (node)
 				{
 					node->removeGUI();
 					node->nullGUI();
 
-					node->bringNextNode(beforeNode, behind);
+					m_hierachyNode->bringToNext(node, beforeNode, behind);
 
 					if (m_spaceHierarchy != NULL)
 					{
 						m_spaceHierarchy->addToTreeNode(node);
-						node->getGUINode()->bringNextToControl(beforeNode->getGUINode(), behind);
+						node->getGUINode()->bringNextToControl(beforeNode ? beforeNode->getGUINode() : NULL, behind);
 					}
 				}
 				m_scene->bringToNext(object, before, behind);
