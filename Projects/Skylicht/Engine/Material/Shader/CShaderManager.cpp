@@ -285,6 +285,20 @@ namespace Skylicht
 		// init shader config
 		shader->initShader(xmlReader, source, shaderFolder);
 
+		const std::string& shaderName = shader->getName();
+
+		// load dependents shader first
+		std::vector<std::string>& deps = shader->getDependents();
+		for (std::string& p : deps)
+		{
+			if (loadShader(p.c_str()) == NULL)
+			{
+				char log[512];
+				sprintf(log, "!!! Warning: Name '%s' fail dependent:'%s'", shaderName.c_str(), p.c_str());
+				os::Printer::log(log);
+			}
+		}
+
 		CShader* instancingShader = shader->getInstancingShader();
 
 		// init instancing batching
@@ -316,8 +330,6 @@ namespace Skylicht
 			}
 		}
 		shader->setInstancing(instancing);
-
-		const std::string& shaderName = shader->getName();
 
 		// warning if it not yet support instancing
 		if (shader->isSupportInstancing() && instancing == NULL)
@@ -361,17 +373,6 @@ namespace Skylicht
 			os::Printer::log(log);
 
 			return false;
-		}
-
-		std::vector<std::string>& deps = shader->getDependents();
-		for (std::string& p : deps)
-		{
-			if (loadShader(p.c_str()) == NULL)
-			{
-				char log[512];
-				sprintf(log, "!!! Warning: Name '%s' fail dependent:'%s'", shaderName.c_str(), p.c_str());
-				os::Printer::log(log);
-			}
 		}
 
 		return true;
