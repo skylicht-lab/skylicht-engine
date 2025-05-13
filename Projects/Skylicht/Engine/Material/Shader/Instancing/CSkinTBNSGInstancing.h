@@ -24,23 +24,12 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "VertexInstancingType.h"
 #include "IShaderInstancing.h"
 #include "CStandardSGInstancing.h"
 
 namespace Skylicht
 {
-	struct SVtxSkinSGInstancing
-	{
-		SVec4 BoneLocation;
-		SVec4 Color;
-		core::vector2df BlendAnimation;
-
-		bool operator==(const SVtxSkinSGInstancing& other) const
-		{
-			return false;
-		}
-	};
-
 	class SKYLICHT_API CSkinTBNSGInstancing : public IShaderInstancing
 	{
 	public:

@@ -24,22 +24,11 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "VertexInstancingType.h"
 #include "IShaderInstancing.h"
 
 namespace Skylicht
 {
-	struct SVtxSGInstancing
-	{
-		SVec4 UVScale;
-		SVec4 Color;
-		SVec4 SpecGloss;
-
-		bool operator==(const SVtxSGInstancing& other) const
-		{
-			return false;
-		}
-	};
-
 	class SKYLICHT_API CStandardSGInstancing : public IShaderInstancing
 	{
 	public:

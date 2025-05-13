@@ -25,36 +25,14 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Entity/CEntity.h"
+#include "VertexInstancingType.h"
 #include "Transform/CWorldTransformData.h"
 #include "IndirectLighting/CIndirectLightingData.h"
 
 namespace Skylicht
 {
 	class CMaterial;
-
-	struct SVtxTransform
-	{
-		core::matrix4 World;
-
-		bool operator==(const SVtxTransform& other) const
-		{
-			return false;
-		}
-	};
-
-	struct SVtxIndirectLighting
-	{
-		core::vector3df D0;
-		core::vector3df D1;
-		core::vector3df D2;
-		core::vector3df D3;
-
-		bool operator==(const SVtxIndirectLighting& other) const
-		{
-			return false;
-		}
-	};
-
+	
 	class SKYLICHT_API IShaderInstancing
 	{
 	protected:
@@ -66,6 +44,8 @@ namespace Skylicht
 		IShaderInstancing();
 
 		virtual ~IShaderInstancing();
+
+		virtual void setupDescriptorForRenderLighting(const char* name);
 
 		virtual bool isSupport(IMeshBuffer* mb);
 

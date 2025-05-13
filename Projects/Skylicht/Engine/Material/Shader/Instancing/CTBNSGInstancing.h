@@ -25,8 +25,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "IShaderInstancing.h"
+#include "VertexInstancingType.h"
 #include "CTBNSGInstancing.h"
-#include "CStandardSGInstancing.h"
 
 namespace Skylicht
 {

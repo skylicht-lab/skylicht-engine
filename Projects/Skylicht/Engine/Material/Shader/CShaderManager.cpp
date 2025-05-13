@@ -30,6 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Instancing/CStandardSGInstancing.h"
 #include "Instancing/CTBNSGInstancing.h"
 #include "Instancing/CStandardColorInstancing.h"
+#include "Instancing/C2TCoordColorInstancing.h"
 
 namespace Skylicht
 {
@@ -308,6 +309,8 @@ namespace Skylicht
 		{
 			if (instancingVertex == "standard_color")
 				instancing = new CStandardColorInstancing();
+			else if (instancingVertex == "2texcoord_color")
+				instancing = new C2TCoordColorInstancing();
 			else if (instancingVertex == "standard_sg")
 			{
 				instancing = new CStandardSGInstancing();

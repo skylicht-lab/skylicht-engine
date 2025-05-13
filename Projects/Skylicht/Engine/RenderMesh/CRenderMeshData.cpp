@@ -119,6 +119,16 @@ namespace Skylicht
 		IsSkinnedInstancing = b;
 	}
 
+	void CRenderMeshData::setSkinnedInstancing(bool b, IShaderInstancing* instancingShader)
+	{
+		if (b)
+			MeshInstancing = CMeshManager::getInstance()->createGetInstancingMesh(RenderMesh, instancingShader);
+		else
+			MeshInstancing = NULL;
+
+		IsSkinnedInstancing = b;
+	}
+
 	bool CRenderMeshData::setMaterial(CMaterial* material)
 	{
 		bool ret = false;

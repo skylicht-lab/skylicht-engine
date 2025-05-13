@@ -40,6 +40,41 @@ namespace Skylicht
 
 	}
 
+	void IShaderInstancing::setupDescriptorForRenderLighting(const char* name)
+	{
+		m_vtxDescriptorForRenderLighting = getVideoDriver()->getVertexDescriptor(name);
+		if (m_vtxDescriptorForRenderLighting == NULL)
+		{
+			// copy new vertex descriptor
+			m_vtxDescriptorForRenderLighting = getVideoDriver()->addVertexDescriptor(name);
+			for (u32 i = 0; i < m_baseVtxDescriptor->getAttributeCount(); ++i)
+			{
+				m_vtxDescriptorForRenderLighting->addAttribute(
+					m_baseVtxDescriptor->getAttribute(i)->getName(),
+					m_baseVtxDescriptor->getAttribute(i)->getElementCount(),
+					m_baseVtxDescriptor->getAttribute(i)->getSemantic(),
+					m_baseVtxDescriptor->getAttribute(i)->getType(),
+					m_baseVtxDescriptor->getAttribute(i)->getBufferID()
+				);
+			}
+
+			// add color & uv scale
+			m_vtxDescriptorForRenderLighting->addAttribute("D0", 3, video::EVAS_TEXCOORD1, video::EVAT_FLOAT, 1);
+			m_vtxDescriptorForRenderLighting->addAttribute("D1", 3, video::EVAS_TEXCOORD2, video::EVAT_FLOAT, 1);
+			m_vtxDescriptorForRenderLighting->addAttribute("D2", 3, video::EVAS_TEXCOORD3, video::EVAT_FLOAT, 1);
+			m_vtxDescriptorForRenderLighting->addAttribute("D3", 3, video::EVAS_TEXCOORD4, video::EVAT_FLOAT, 1);
+
+			// add instance matrix
+			m_vtxDescriptorForRenderLighting->addAttribute("inWorldMatrix1", 4, video::EVAS_TEXCOORD5, video::EVAT_FLOAT, 2);
+			m_vtxDescriptorForRenderLighting->addAttribute("inWorldMatrix2", 4, video::EVAS_TEXCOORD6, video::EVAT_FLOAT, 2);
+			m_vtxDescriptorForRenderLighting->addAttribute("inWorldMatrix3", 4, video::EVAS_TEXCOORD7, video::EVAT_FLOAT, 2);
+			m_vtxDescriptorForRenderLighting->addAttribute("inWorldMatrix4", 4, video::EVAS_TEXCOORD8, video::EVAT_FLOAT, 2);
+
+			m_vtxDescriptorForRenderLighting->setInstanceDataStepRate(video::EIDSR_PER_INSTANCE, 1);
+			m_vtxDescriptorForRenderLighting->setInstanceDataStepRate(video::EIDSR_PER_INSTANCE, 2);
+		}
+	}
+
 	bool IShaderInstancing::isSupport(IMeshBuffer* mb)
 	{
 		if (!m_baseVtxDescriptor || !m_vtxDescriptor)
