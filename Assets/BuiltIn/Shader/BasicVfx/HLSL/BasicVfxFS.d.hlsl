@@ -14,7 +14,10 @@ struct PS_INPUT
 #ifdef UV2
 	float2 tex1 : TEXCOORD1;
 #endif
-	float4 uvScale: UVSCALE;
+	float4 uvScale: UVSCALE0;
+#ifdef UV2
+	float4 uvScale1: UVSCALE1;
+#endif	
 #ifdef RIM_LIGHT
 	float3 worldNormal: WORLDNORMAL;
 	float3 worldViewDir: WORLDVIEWDIR;
@@ -34,7 +37,11 @@ cbuffer cbPerFrame
 float4 main(PS_INPUT input) : SV_TARGET
 {
 	float2 tex0 = input.tex0 * input.uvScale.xy + input.uvScale.zw;
-	
+
+#if defined(UV2)
+	float2 tex1 = input.tex1 * input.uvScale1.xy + input.uvScale1.zw;
+#endif
+
 #ifdef SCROLL_Y
 	float2 uvOffset = float2(0.0, uTime.y) / 4.0;
 #else
@@ -42,7 +49,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 #endif
 	
 #if defined(SCROLL_UV1)
-	float4 color1 = uTexDiffuse1.Sample(uTex1Sampler, tex0+ uvOffset);
+	float4 color1 = uTexDiffuse1.Sample(uTex1Sampler, tex0 + uvOffset);
 #else
 	float4 color1 = uTexDiffuse1.Sample(uTex1Sampler, tex0);
 #endif
@@ -50,9 +57,9 @@ float4 main(PS_INPUT input) : SV_TARGET
 #if defined(UV2)
 // use 2 uv
 #ifdef SCROLL_UV2
-	float4 color2 = uTexDiffuse2.Sample(uTex2Sampler, input.tex1 + uvOffset);
+	float4 color2 = uTexDiffuse2.Sample(uTex2Sampler, tex1 + uvOffset);
 #else
-	float4 color2 = uTexDiffuse2.Sample(uTex2Sampler, input.tex1);
+	float4 color2 = uTexDiffuse2.Sample(uTex2Sampler, tex1);
 #endif
 #elif defined(LAYER2)
 // use 1 uv

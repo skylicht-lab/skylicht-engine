@@ -51,14 +51,15 @@ namespace Skylicht
 			}
 
 			// add color & uv scale
-			m_vtxDescriptor->addAttribute("uUVScale", 4, video::EVAS_TEXCOORD1, video::EVAT_FLOAT, 1);
-			m_vtxDescriptor->addAttribute("uColor", 4, video::EVAS_TEXCOORD2, video::EVAT_FLOAT, 1);
+			m_vtxDescriptor->addAttribute("uUVScale", 4, video::EVAS_TEXCOORD2, video::EVAT_FLOAT, 1);
+			m_vtxDescriptor->addAttribute("uUVScale1", 4, video::EVAS_TEXCOORD3, video::EVAT_FLOAT, 1);
+			m_vtxDescriptor->addAttribute("uColor", 4, video::EVAS_TEXCOORD4, video::EVAT_FLOAT, 1);
 
 			// add instance matrix
-			m_vtxDescriptor->addAttribute("inWorldMatrix1", 4, video::EVAS_TEXCOORD3, video::EVAT_FLOAT, 2);
-			m_vtxDescriptor->addAttribute("inWorldMatrix2", 4, video::EVAS_TEXCOORD4, video::EVAT_FLOAT, 2);
-			m_vtxDescriptor->addAttribute("inWorldMatrix3", 4, video::EVAS_TEXCOORD5, video::EVAT_FLOAT, 2);
-			m_vtxDescriptor->addAttribute("inWorldMatrix4", 4, video::EVAS_TEXCOORD6, video::EVAT_FLOAT, 2);
+			m_vtxDescriptor->addAttribute("inWorldMatrix1", 4, video::EVAS_TEXCOORD5, video::EVAT_FLOAT, 2);
+			m_vtxDescriptor->addAttribute("inWorldMatrix2", 4, video::EVAS_TEXCOORD6, video::EVAT_FLOAT, 2);
+			m_vtxDescriptor->addAttribute("inWorldMatrix3", 4, video::EVAS_TEXCOORD7, video::EVAT_FLOAT, 2);
+			m_vtxDescriptor->addAttribute("inWorldMatrix4", 4, video::EVAS_TEXCOORD8, video::EVAT_FLOAT, 2);
 
 			m_vtxDescriptor->setInstanceDataStepRate(video::EIDSR_PER_INSTANCE, 1);
 			m_vtxDescriptor->setInstanceDataStepRate(video::EIDSR_PER_INSTANCE, 2);
@@ -74,7 +75,7 @@ namespace Skylicht
 
 	IVertexBuffer* C2TCoordColorInstancing::createInstancingVertexBuffer()
 	{
-		return new CVertexBuffer<SVtxColorInstancing>();
+		return new CVertexBuffer<SVtxTex2ColorInstancing>();
 	}
 
 	IMeshBuffer* C2TCoordColorInstancing::createMeshBuffer(video::E_INDEX_TYPE type)
@@ -88,7 +89,7 @@ namespace Skylicht
 		CEntity** entities,
 		int count)
 	{
-		CVertexBuffer<SVtxColorInstancing>* instanceBuffer = dynamic_cast<CVertexBuffer<SVtxColorInstancing>*>(vtxBuffer);
+		CVertexBuffer<SVtxTex2ColorInstancing>* instanceBuffer = dynamic_cast<CVertexBuffer<SVtxTex2ColorInstancing>*>(vtxBuffer);
 		if (instanceBuffer == NULL)
 			return;
 
@@ -100,11 +101,12 @@ namespace Skylicht
 			material = materials[i];
 			if (material)
 			{
-				SVtxColorInstancing& vtx = instanceBuffer->getVertex(i);
+				SVtxTex2ColorInstancing& vtx = instanceBuffer->getVertex(i);
 				CShaderParams& params = material->getShaderParams();
 
-				vtx.UVScale = params.getParam(0);
-				vtx.Color = params.getParam(1);
+				vtx.UVScale1 = params.getParam(0);
+				vtx.UVScale2 = params.getParam(1);
+				vtx.Color = params.getParam(2);
 			}
 		}
 

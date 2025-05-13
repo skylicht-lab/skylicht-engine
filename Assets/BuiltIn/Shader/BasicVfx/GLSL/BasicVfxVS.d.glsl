@@ -7,8 +7,9 @@ layout(location = 3) in vec2 inTexCoord0;
 
 #ifdef UV2
 layout(location = 4) in vec2 inTexCoord1;
-layout(location = 5) in vec2 inLightmap;
-layout(location = 7) in vec4 uUVScale;
+layout(location = 5) in vec3 inLightmap;
+layout(location = 6) in vec4 uUVScale;
+layout(location = 7) in vec4 uUVScale1;
 layout(location = 8) in vec4 uColor;
 layout(location = 9) in mat4 uWorldMatrix;
 #else
@@ -34,6 +35,9 @@ uniform mat4 uVPMatrix;
 #else
 uniform mat4 uMvpMatrix;
 uniform vec4 uUVScale;
+#ifdef UV2
+uniform vec4 uUVScale1;
+#endif
 #endif
 
 #ifdef RIM_LIGHT
@@ -48,6 +52,7 @@ out vec2 varTexCoord1;
 #endif
 
 out vec4 varUVScale;
+out vec4 varUVScale1;
 
 #ifdef RIM_LIGHT
 out vec3 varWorldNormal;
@@ -61,7 +66,8 @@ void main(void)
 	varTexCoord0 = inTexCoord0;
 	varUVScale = uUVScale;
 
-#ifdef UV2	
+#ifdef UV2
+	varUVScale1 = uUVScale1;
 	varTexCoord1 = inTexCoord1;
 #endif
 

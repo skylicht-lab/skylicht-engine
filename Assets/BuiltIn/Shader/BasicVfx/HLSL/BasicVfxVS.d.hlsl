@@ -8,13 +8,14 @@ struct VS_INPUT
 	float2 tex1: TEXCOORD1;
 	float3 lightmap: LIGHTMAP;
 	#ifdef INSTANCING
-	float4 uvScale: TEXCOORD2;
-	float4 uColor: TEXCOORD3;
-	float4x4 worldMatrix: TEXCOORD4;
+	float4 uUVScale: TEXCOORD2;
+	float4 uUVScale1: TEXCOORD3;
+	float4 uColor: TEXCOORD4;
+	float4x4 worldMatrix: TEXCOORD5;
 	#endif
 #else
 	#ifdef INSTANCING
-	float4 uvScale: TEXCOORD1;
+	float4 uUVScale: TEXCOORD1;
 	float4 uColor: TEXCOORD2;
 	float4x4 worldMatrix: TEXCOORD3;
 	#endif
@@ -29,7 +30,10 @@ struct VS_OUTPUT
 #ifdef UV2
 	float2 tex1 : TEXCOORD1;
 #endif
-	float4 uvScale: UVSCALE;
+	float4 uvScale: UVSCALE0;
+#ifdef UV2
+	float4 uvScale1: UVSCALE1;
+#endif	
 #ifdef RIM_LIGHT
 	float3 worldNormal: WORLDNORMAL;
 	float3 worldViewDir: WORLDVIEWDIR;
@@ -43,6 +47,9 @@ cbuffer cbPerObject
 #else	
 	float4x4 uMvpMatrix;
 	float4 uUVScale;
+#ifdef UV2
+	float4 uUVScale1;
+#endif	
 #endif
 	
 #ifdef RIM_LIGHT
@@ -57,7 +64,10 @@ VS_OUTPUT main(VS_INPUT input)
 
 #ifdef INSTANCING
 	float4x4 uWorldMatrix = transpose(input.worldMatrix);
-	float4 uUVScale = input.uvScale;
+	float4 uUVScale = input.uUVScale;
+#ifdef UV2
+	float4 uUVScale1 = input.uUVScale1;
+#endif
 #endif	
 
 #ifdef INSTANCING
@@ -71,6 +81,7 @@ VS_OUTPUT main(VS_INPUT input)
 
 #ifdef UV2
 	output.tex1 = input.tex1;
+	output.uvScale1 = uUVScale1;
 #endif
 
 #if defined(INSTANCING) || defined(RIM_LIGHT)

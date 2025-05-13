@@ -8,7 +8,7 @@ struct PS_INPUT
 	float4 pos : SV_POSITION;
 	float4 color : COLOR0;
 	float2 tex0 : TEXCOORD0;
-	float4 uvScale: UVSCALE;
+	float4 uvScale: UVSCALE0;
 };
 cbuffer cbPerFrame
 {

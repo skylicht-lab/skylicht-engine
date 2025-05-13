@@ -6,14 +6,17 @@ in vec2 inTexCoord0;
 in vec2 inTexCoord1;
 uniform mat4 uMvpMatrix;
 uniform vec4 uUVScale;
+uniform vec4 uUVScale1;
 out vec2 varTexCoord0;
 out vec2 varTexCoord1;
 out vec4 varUVScale;
+out vec4 varUVScale1;
 out vec4 varColor;
 void main(void)
 {
 	varTexCoord0 = inTexCoord0;
 	varUVScale = uUVScale;
+	varUVScale1 = uUVScale1;
 	varTexCoord1 = inTexCoord1;
 	varColor = inColor / 255.0;
 	gl_Position = uMvpMatrix * inPosition;

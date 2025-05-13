@@ -11,6 +11,9 @@ in vec2 varTexCoord0;
 in vec2 varTexCoord1;
 #endif
 in vec4 varUVScale;
+#ifdef UV2
+in vec4 varUVScale1;
+#endif
 in vec4 varColor;
 #ifdef RIM_LIGHT
 in vec3 varWorldNormal;
@@ -29,7 +32,11 @@ out vec4 FragColor;
 void main(void)
 {
 	vec2 tex0 = varTexCoord0 * varUVScale.xy + varUVScale.zw;
-	
+
+#ifdef UV2
+	vec2 tex1 = varTexCoord1 * varUVScale1.xy + varUVScale1.zw;
+#endif
+
 #ifdef SCROLL_Y
 	vec2 uvOffset = vec2(0.0, uTime.y) / 4.0;
 #else
@@ -45,9 +52,9 @@ void main(void)
 #if defined(UV2)
 // use 2 uv
 #ifdef SCROLL_UV2
-	vec4 color2 = texture(uTexDiffuse2, varTexCoord1 + uvOffset);
+	vec4 color2 = texture(uTexDiffuse2, tex1 + uvOffset);
 #else
-	vec4 color2 = texture(uTexDiffuse2, varTexCoord1);
+	vec4 color2 = texture(uTexDiffuse2, tex1);
 #endif
 #elif defined(LAYER2)
 // use 1 uv

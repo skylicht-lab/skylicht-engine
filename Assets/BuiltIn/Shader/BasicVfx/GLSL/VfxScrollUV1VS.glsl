@@ -7,6 +7,7 @@ uniform mat4 uMvpMatrix;
 uniform vec4 uUVScale;
 out vec2 varTexCoord0;
 out vec4 varUVScale;
+out vec4 varUVScale1;
 out vec4 varColor;
 void main(void)
 {

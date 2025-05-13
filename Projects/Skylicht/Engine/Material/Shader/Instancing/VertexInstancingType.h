@@ -37,7 +37,7 @@ namespace Skylicht
 
 		bool operator==(const SVtxTransform& other) const
 		{
-			return false;
+			return World == other.World;
 		}
 	};
 
@@ -50,7 +50,24 @@ namespace Skylicht
 
 		bool operator==(const SVtxIndirectLighting& other) const
 		{
-			return false;
+			return D0 == other.D0 &&
+				D1 == other.D1 &&
+				D2 == other.D2 &&
+				D3 == other.D3;
+		}
+	};
+
+	struct SVtxTex2ColorInstancing
+	{
+		SVec4 UVScale1;
+		SVec4 UVScale2;
+		SVec4 Color;
+
+		bool operator==(const SVtxTex2ColorInstancing& other) const
+		{
+			return UVScale1 == other.UVScale1 &&
+				UVScale2 == other.UVScale2 &&
+				Color == other.Color;
 		}
 	};
 
@@ -61,7 +78,7 @@ namespace Skylicht
 
 		bool operator==(const SVtxColorInstancing& other) const
 		{
-			return false;
+			return UVScale == other.UVScale && Color == other.Color;
 		}
 	};
 
@@ -73,7 +90,9 @@ namespace Skylicht
 
 		bool operator==(const SVtxSGInstancing& other) const
 		{
-			return false;
+			return UVScale == other.UVScale &&
+				Color == other.Color &&
+				SpecGloss == other.SpecGloss;
 		}
 	};
 
@@ -85,7 +104,9 @@ namespace Skylicht
 
 		bool operator==(const SVtxSkinSGInstancing& other) const
 		{
-			return false;
+			return BoneLocation == other.BoneLocation &&
+				Color == other.Color &&
+				BlendAnimation == other.BlendAnimation;
 		}
 	};
 }
