@@ -132,7 +132,7 @@ namespace Skylicht
 
 		public:
 
-			void add(const std::string& currentFolder, std::vector<SFileInfo>& files);
+			void add(const std::string& currentFolder, std::vector<SFileInfo>& files, bool scrollToBegin);
 
 			GUI::ESystemIcon getFileIcon(const std::string& name, GUI::SGUIColor& color);
 		};

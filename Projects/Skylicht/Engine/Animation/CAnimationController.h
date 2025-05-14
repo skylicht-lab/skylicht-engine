@@ -36,6 +36,9 @@ namespace Skylicht
 
 		CSkeleton* m_output;
 
+		std::string m_animFile;
+		bool m_loop;
+
 	public:
 		CAnimationController();
 
@@ -44,6 +47,12 @@ namespace Skylicht
 		virtual void initComponent();
 
 		virtual void updateComponent();
+
+		virtual CObjectSerializable* createSerializable();
+
+		virtual void loadSerializable(CObjectSerializable* object);
+
+		DECLARE_GETTYPENAME(CAnimationController)
 
 	public:
 

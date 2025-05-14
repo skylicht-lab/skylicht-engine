@@ -124,7 +124,7 @@ namespace Skylicht
 				CAssetManager::getInstance()->search(search.c_str(), files);
 
 			m_listFSController->enableSearching(true);
-			m_listFSController->add(m_listFSController->getCurrentFolder(), files);
+			m_listFSController->add(m_listFSController->getCurrentFolder(), files, true);
 		}
 	}
 }

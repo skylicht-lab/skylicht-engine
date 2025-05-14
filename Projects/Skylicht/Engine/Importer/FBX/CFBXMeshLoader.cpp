@@ -309,10 +309,10 @@ namespace Skylicht
 				IVertexBuffer* vertexBuffer = mb->getVertexBuffer();
 				IIndexBuffer* indexBuffer = mb->getIndexBuffer();
 
-				std::map<S3DVertexTangents, u32> mapVT;
-				std::map<S3DVertex2TCoordsTangents, u32> mapV2T;
-				std::map<S3DVertexSkinTangents, u32> mapVST;
-				std::map<S3DVertexSkin, u32> mapVS;
+				core::map<S3DVertexTangents, u32> mapVT;
+				core::map<S3DVertex2TCoordsTangents, u32> mapV2T;
+				core::map<S3DVertexSkinTangents, u32> mapVST;
+				core::map<S3DVertexSkin, u32> mapVS;
 
 				for (size_t fi = 0; fi < mesh_part->num_faces; fi++)
 				{
@@ -362,7 +362,7 @@ namespace Skylicht
 									v.BoneWeight = mesh_skin_vertices[vid].BoneWeight;
 
 									auto it = mapVST.find(v);
-									if (it == mapVST.end())
+									if (it == NULL)
 									{
 										vertexBuffer->addVertex(&v);
 										vertLocation = vertexBuffer->getVertexCount() - 1;
@@ -370,7 +370,7 @@ namespace Skylicht
 									}
 									else
 									{
-										vertLocation = it->second;
+										vertLocation = it->getValue();
 									}
 								}
 								else
@@ -385,7 +385,7 @@ namespace Skylicht
 									v.BoneWeight = mesh_skin_vertices[vid].BoneWeight;
 
 									auto it = mapVS.find(v);
-									if (it == mapVS.end())
+									if (it == NULL)
 									{
 										vertexBuffer->addVertex(&v);
 										vertLocation = vertexBuffer->getVertexCount() - 1;
@@ -393,7 +393,7 @@ namespace Skylicht
 									}
 									else
 									{
-										vertLocation = it->second;
+										vertLocation = it->getValue();
 									}
 								}
 							}
@@ -416,7 +416,7 @@ namespace Skylicht
 									v.Lightmap.set(v.TCoords2.X, v.TCoords2.Y, 0.0f);
 
 									auto it = mapV2T.find(v);
-									if (it == mapV2T.end())
+									if (it == NULL)
 									{
 										vertexBuffer->addVertex(&v);
 										vertLocation = vertexBuffer->getVertexCount() - 1;
@@ -424,7 +424,7 @@ namespace Skylicht
 									}
 									else
 									{
-										vertLocation = it->second;
+										vertLocation = it->getValue();
 									}
 								}
 								else
@@ -440,7 +440,7 @@ namespace Skylicht
 									v.VertexData.set(1.f, (float)vid);
 
 									auto it = mapVT.find(v);
-									if (it == mapVT.end())
+									if (it == NULL)
 									{
 										vertexBuffer->addVertex(&v);
 										vertLocation = vertexBuffer->getVertexCount() - 1;
@@ -448,7 +448,7 @@ namespace Skylicht
 									}
 									else
 									{
-										vertLocation = it->second;
+										vertLocation = it->getValue();
 									}
 								}
 							}

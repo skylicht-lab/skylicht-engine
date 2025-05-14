@@ -25,13 +25,20 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "GameObject/CGameObject.h"
 #include "CAnimationController.h"
+#include "CAnimationManager.h"
 
 #include "RenderMesh/CRenderMesh.h"
+#include "MeshManager/CMeshManager.h"
 
 namespace Skylicht
 {
+	ACTIVATOR_REGISTER(CAnimationController);
+
+	CATEGORY_COMPONENT(CAnimationController, "Animation", "Animation Controller");
+
 	CAnimationController::CAnimationController() :
-		m_output(NULL)
+		m_output(NULL),
+		m_loop(true)
 	{
 
 	}
@@ -70,6 +77,39 @@ namespace Skylicht
 
 		if (m_output != NULL)
 			m_output->applyTransform();
+	}
+
+	CObjectSerializable* CAnimationController::createSerializable()
+	{
+		CObjectSerializable* object = CComponentSystem::createSerializable();
+		object->autoRelease(new CFilePathProperty(object, "animation", m_animFile.c_str(), CMeshManager::getMeshExts()));
+		object->autoRelease(new CBoolProperty(object, "loop", m_loop));
+		return object;
+	}
+
+	void CAnimationController::loadSerializable(CObjectSerializable* object)
+	{
+		CComponentSystem::loadSerializable(object);
+
+		std::string animFile = object->get<std::string>("animation", "");
+		m_loop = object->get<bool>("loop", true);
+
+		if (!animFile.empty() && m_animFile != animFile)
+		{
+			m_animFile = animFile;
+
+			CAnimationClip* clip = CAnimationManager::getInstance()->loadAnimation(m_animFile.c_str());
+			if (clip)
+			{
+				releaseAllSkeleton();
+
+				CSkeleton* skeleton = createSkeleton();
+				skeleton->setAnimation(clip, m_loop);
+			}
+		}
+
+		if (m_skeletons.size() > 0)
+			m_skeletons[0]->getTimeline().Loop = m_loop;
 	}
 
 	CSkeleton* CAnimationController::createSkeleton()

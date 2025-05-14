@@ -63,7 +63,7 @@ namespace Skylicht
 
 			std::vector<SFileInfo> files;
 			m_assetManager->getRoot(files);
-			add("", files);
+			add("", files, true);
 		}
 
 		CListFSController::~CListFSController()
@@ -232,7 +232,7 @@ namespace Skylicht
 			m_listFS->focus();
 		}
 
-		void CListFSController::add(const std::string& currentFolder, std::vector<SFileInfo>& files)
+		void CListFSController::add(const std::string& currentFolder, std::vector<SFileInfo>& files, bool scrollToBegin)
 		{
 			m_listFS->removeAllItem();
 
@@ -273,7 +273,8 @@ namespace Skylicht
 				initDragDrop(item);
 			}
 
-			m_listFS->setScrollVertical(0.0f);
+			if (scrollToBegin)
+				m_listFS->setScrollVertical(0.0f);
 
 			std::string folder = currentFolder;
 			if (folder.empty())
@@ -331,7 +332,7 @@ namespace Skylicht
 					std::vector<SFileInfo> files;
 					m_assetManager->getFolder(fullPath.c_str(), files);
 
-					add(fullPath, files);
+					add(fullPath, files, true);
 
 					if (m_treeController != NULL)
 						m_treeController->expand(fullPath);
@@ -393,7 +394,7 @@ namespace Skylicht
 			else
 				m_assetManager->getFolder(m_currentFolder.c_str(), files);
 
-			add(m_currentFolder, files);
+			add(m_currentFolder, files, false);
 
 			m_listFS->invalidate();
 			m_listFS->recurseLayout();

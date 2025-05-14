@@ -150,7 +150,7 @@ namespace Skylicht
 				CAssetCreateController::getInstance()->setActivateSpace(m_space);
 
 				if (m_listController != NULL)
-					m_listController->add(fullPath, files);
+					m_listController->add(fullPath, files, true);
 			}
 		}
 
