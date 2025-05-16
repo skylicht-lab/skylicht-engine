@@ -169,7 +169,7 @@ namespace Skylicht
 
 		void CGUIEditorHistory::undo()
 		{
-			size_t historySize = m_history.size();
+			int historySize = (int)m_history.size();
 			if (historySize == 0)
 				return;
 

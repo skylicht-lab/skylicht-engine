@@ -95,6 +95,8 @@ namespace Skylicht
 					CSceneHistory* history = CSceneController::getInstance()->getHistory();
 					history->enableAddSelectHistory(false);
 
+					m_current.clear();
+
 					if (!m_altPressed)
 					{
 						if (isDragSelect())
@@ -109,6 +111,10 @@ namespace Skylicht
 
 					// add select history
 					history->enableAddSelectHistory(true);
+
+					for (CGameObject* obj : m_current)
+						history->beginSaveHistory(obj);
+
 					history->addSelectHistory();
 
 					m_leftMousePressed = false;
@@ -223,6 +229,9 @@ namespace Skylicht
 						}
 					}
 				}
+
+				if (object && selection->getSelected(object))
+					m_current.push_back(object);
 			}
 		}
 
@@ -253,7 +262,7 @@ namespace Skylicht
 
 			// apply to save history
 			if (object)
-				sceneController->getHistory()->beginSaveHistory(object);
+				m_current.push_back(object);
 		}
 
 		void CSelecting::doMultiSelect()

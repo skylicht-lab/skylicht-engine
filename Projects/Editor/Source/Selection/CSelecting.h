@@ -45,6 +45,8 @@ namespace Skylicht
 
 			core::vector2di m_mouseBegin;
 			core::vector2di m_mousePosition;
+
+			std::vector<CGameObject*> m_current;
 		public:
 			CSelecting();
 
