@@ -65,8 +65,6 @@ namespace Skylicht
 
 		void CGRenderMesh::updateSelectBBox()
 		{
-			CEntityManager* entityMgr = m_gameObject->getEntityManager();
-
 			std::vector<CRenderMeshData*>& renderers = m_renderMesh->getRenderers();
 			for (size_t i = 0, n = renderers.size(); i < n; i++)
 			{

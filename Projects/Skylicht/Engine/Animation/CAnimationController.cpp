@@ -34,7 +34,7 @@ namespace Skylicht
 {
 	ACTIVATOR_REGISTER(CAnimationController);
 
-	CATEGORY_COMPONENT(CAnimationController, "Animation", "Animation Controller");
+	CATEGORY_COMPONENT(CAnimationController, "Animation Controller", "Animation");
 
 	CAnimationController::CAnimationController() :
 		m_output(NULL),

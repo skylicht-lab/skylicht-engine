@@ -131,8 +131,11 @@ namespace Skylicht
 					// select on game object
 					if (collision->DrawSelectionBox)
 					{
+						bool checkParentSelected = true;
+
 						if (selection->getSelected(collision->GameObject))
 						{
+							checkParentSelected = false;
 							if (selectedBox.find(collision->GameObject) == selectedBox.end())
 								selectedBox[collision->GameObject] = collision->TransformBBox;
 							else
@@ -143,10 +146,29 @@ namespace Skylicht
 							// select on entity
 							if (selection->getSelected(collision->Entity))
 							{
+								checkParentSelected = false;
 								if (selectedBox.find(collision->GameObject) == selectedBox.end())
 									selectedBox[collision->GameObject] = collision->TransformBBox;
 								else
 									selectedBox[collision->GameObject].addInternalBox(collision->TransformBBox);
+							}
+						}
+
+						if (checkParentSelected && collision->GameObject)
+						{
+							// try search in parent
+							CGameObject* parent = collision->GameObject->getParent();
+							while (parent != NULL)
+							{
+								if (selection->getSelected(parent))
+								{
+									if (selectedBox.find(parent) == selectedBox.end())
+										selectedBox[parent] = collision->TransformBBox;
+									else
+										selectedBox[parent].addInternalBox(collision->TransformBBox);
+									break;
+								}
+								parent = parent->getParent();
 							}
 						}
 					}

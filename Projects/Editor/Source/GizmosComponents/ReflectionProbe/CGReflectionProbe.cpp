@@ -59,7 +59,6 @@ namespace Skylicht
 
 		void CGReflectionProbe::updateSelectBBox()
 		{
-			CEntityManager* entityMgr = m_gameObject->getEntityManager();
 			CEntity* entity = m_gameObject->getEntity();
 
 			CSelectObjectData* selectObjectData = GET_ENTITY_DATA(entity, CSelectObjectData);
