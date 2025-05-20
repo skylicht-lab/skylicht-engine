@@ -213,6 +213,8 @@ namespace Skylicht
 		loadShader("BuiltIn/Shader/Mobile/MobileSGNoNormalMapAO.xml");
 
 		loadShader("BuiltIn/Shader/Mobile/MobileSGShadow.xml");
+		loadShader("BuiltIn/Shader/Mobile/MobileSGShadowAO.xml");
+
 		loadShader("BuiltIn/Shader/Mobile/MobileSGDiffuseShadow.xml");
 
 		loadShader("BuiltIn/Shader/Mobile/MobileSGSkin.xml");

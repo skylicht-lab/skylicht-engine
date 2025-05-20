@@ -166,6 +166,11 @@ namespace Skylicht
 			t->setPosition(position);
 
 			core::vector3df front = target - position;
+
+			// todo: Fix math error when front.Z == 0.0f
+			if (fabsf(front.Z) < FLT_EPSILON)
+				front.Z = FLT_EPSILON;
+
 			t->setOrientation(front, up);
 
 			setUpVector(up);
@@ -178,6 +183,11 @@ namespace Skylicht
 		if (t != NULL)
 		{
 			core::vector3df front = target - t->getPosition();
+
+			// todo: Fix math error when front.Z == 0.0f
+			if (fabsf(front.Z) < FLT_EPSILON)
+				front.Z = FLT_EPSILON;
+
 			t->setOrientation(front, up);
 
 			setUpVector(up);
@@ -196,6 +206,11 @@ namespace Skylicht
 		if (t != NULL)
 		{
 			look.normalize();
+
+			// todo: Fix math error when front.Z == 0.0f
+			if (fabsf(look.Z) < FLT_EPSILON)
+				look.Z = FLT_EPSILON;
+
 			t->setOrientation(look, m_up);
 		}
 	}
