@@ -58,8 +58,9 @@ namespace Skylicht
 
 		protected:
 
-			void initObjectLayerMenu(CGameObject *object, GUI::CDropdownBox* dropDown, CSpaceProperty* ui);
+			void initObjectLayerMenu(CGameObject* object, GUI::CDropdownBox* dropDown, CSpaceProperty* ui);
 
+			std::vector<CGameObject*> getSelected();
 		};
 	}
 }

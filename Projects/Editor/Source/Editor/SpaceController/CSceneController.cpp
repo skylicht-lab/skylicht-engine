@@ -1214,11 +1214,6 @@ namespace Skylicht
 			{
 				CGameObject* obj = (CGameObject*)node->getTagData();
 
-				// remove last observer
-				CSelectObject* selectedObject = selection->getLastSelected();
-				if (selectedObject != NULL)
-					selectedObject->removeAllObserver();
-
 				// Set property & event
 				CPropertyController* propertyController = CPropertyController::getInstance();
 				if (selected)
@@ -1226,7 +1221,7 @@ namespace Skylicht
 					// add gizmos
 					setGizmos(m_transformGizmos);
 
-					selectedObject = selection->addSelect(obj);
+					CSelectObject* selectedObject = selection->addSelect(obj);
 					propertyController->setProperty(selectedObject);
 
 					// add new observer
@@ -1248,16 +1243,11 @@ namespace Skylicht
 			{
 				CEntity* entity = (CEntity*)node->getTagData();
 
-				// remove last observer
-				CSelectObject* selectedObject = selection->getLastSelected();
-				if (selectedObject != NULL)
-					selectedObject->removeAllObserver();
-
 				// Set property & event
 				CPropertyController* propertyController = CPropertyController::getInstance();
 				if (selected)
 				{
-					selectedObject = selection->addSelect(entity);
+					CSelectObject* selectedObject = selection->addSelect(entity);
 					propertyController->setProperty(selectedObject);
 
 					// add gizmos
@@ -1274,13 +1264,6 @@ namespace Skylicht
 					selection->unSelect(entity);
 					propertyController->setProperty(NULL);
 				}
-			}
-			else
-			{
-				// remove last observer
-				CSelectObject* selectedObject = selection->getLastSelected();
-				if (selectedObject != NULL)
-					selectedObject->removeAllObserver();
 			}
 		}
 

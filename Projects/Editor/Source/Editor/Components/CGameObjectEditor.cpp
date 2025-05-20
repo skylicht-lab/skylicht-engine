@@ -106,6 +106,17 @@ namespace Skylicht
 					CSubject<bool>* value = (CSubject<bool>*) subject;
 					target->setEnable(value->get());
 					CSelection::getInstance()->notify(target, this);
+
+					// apply for all selected
+					std::vector<CGameObject*> selected = getSelected();
+					for (CGameObject* obj : selected)
+					{
+						if (obj != object)
+						{
+							obj->setEnable(value->get());
+							CSelection::getInstance()->notify(obj, this);
+						}
+					}
 				}), true);
 
 			Visible.addObserver(new CObserver([&, target = object](ISubject* subject, IObserver* from)
@@ -113,6 +124,17 @@ namespace Skylicht
 					CSubject<bool>* value = (CSubject<bool>*) subject;
 					target->setVisible(value->get());
 					CSelection::getInstance()->notify(target, this);
+
+					// apply for all selected
+					std::vector<CGameObject*> selected = getSelected();
+					for (CGameObject* obj : selected)
+					{
+						if (obj != object)
+						{
+							obj->setVisible(value->get());
+							CSelection::getInstance()->notify(obj, this);
+						}
+					}
 				}), true);
 
 			Static.addObserver(new CObserver([&, target = object](ISubject* subject, IObserver* from)
@@ -120,6 +142,17 @@ namespace Skylicht
 					CSubject<bool>* value = (CSubject<bool>*) subject;
 					target->setStatic(value->get());
 					CSelection::getInstance()->notify(target, this);
+
+					// apply for all selected
+					std::vector<CGameObject*> selected = getSelected();
+					for (CGameObject* obj : selected)
+					{
+						if (obj != object)
+						{
+							obj->setStatic(value->get());
+							CSelection::getInstance()->notify(obj, this);
+						}
+					}
 				}), true);
 
 			Lock.addObserver(new CObserver([&, target = object](ISubject* subject, IObserver* from)
@@ -127,6 +160,17 @@ namespace Skylicht
 					CSubject<bool>* value = (CSubject<bool>*) subject;
 					target->setLock(value->get());
 					CSelection::getInstance()->notify(target, this);
+
+					// apply for all selected
+					std::vector<CGameObject*> selected = getSelected();
+					for (CGameObject* obj : selected)
+					{
+						if (obj != object)
+						{
+							obj->setLock(value->get());
+							CSelection::getInstance()->notify(obj, this);
+						}
+					}
 				}), true);
 
 			group->setExpand(true);
@@ -176,7 +220,7 @@ namespace Skylicht
 					item->setIcon(GUI::ESystemIcon::None);
 				}
 
-				item->OnPress = [object, item, value, dropDown, ui](GUI::CBase* base)
+				item->OnPress = [&, object, item, value, dropDown, ui](GUI::CBase* base)
 					{
 						// uncheck all menu item
 						GUI::CMenu* menu = dropDown->getMenu();
@@ -193,6 +237,14 @@ namespace Skylicht
 						// apply culling
 						object->setCullingLayer(value);
 
+						// apply for all selected
+						std::vector<CGameObject*> selected = getSelected();
+						for (CGameObject* obj : selected)
+						{
+							if (obj != object)
+								obj->setCullingLayer(value);
+						}
+
 						// apply value
 						dropDown->setLabel(item->getLabel());
 
@@ -207,6 +259,25 @@ namespace Skylicht
 					ui->getWindow()->getCanvas()->closeMenu();
 					ui->getEditor()->showProjectSetting();
 				};
+		}
+
+		std::vector<CGameObject*> CGameObjectEditor::getSelected()
+		{
+			std::vector<CGameObject*> result;
+
+			CSceneController* sceneController = CSceneController::getInstance();
+			CScene* scene = sceneController->getScene();
+
+			CSelection* selection = CSelection::getInstance();
+			std::vector<CSelectObject*>& selected = selection->getAllSelected();
+			for (CSelectObject* sel : selected)
+			{
+				CGameObject* obj = scene->searchObjectInChildByID(sel->getID().c_str());
+				if (obj)
+					result.push_back(obj);
+			}
+
+			return result;
 		}
 	}
 }
