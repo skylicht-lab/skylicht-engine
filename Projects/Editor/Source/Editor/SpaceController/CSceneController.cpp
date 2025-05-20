@@ -1096,6 +1096,7 @@ namespace Skylicht
 
 			if (result)
 			{
+				result->getTransform()->setWorldMatrix(core::IdentityMatrix);
 				result->getZone()->updateAddRemoveObject();
 				result->getZone()->updateIndexSearchObject();
 
