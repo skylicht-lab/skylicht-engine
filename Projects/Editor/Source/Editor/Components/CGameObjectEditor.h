@@ -29,6 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Reactive/CSubject.h"
 #include "Reactive/CObserver.h"
 #include "GUI/GUI.h"
+#include "Selection/CSelectObject.h"
 
 namespace Skylicht
 {
@@ -45,12 +46,17 @@ namespace Skylicht
 			CSubject<bool> Static;
 			CSubject<bool> Lock;
 
+			CSelectObject* SelectObject;
+			IObserver* Observer;
+
 		public:
 			CGameObjectEditor();
 
 			virtual ~CGameObjectEditor();
 
 			virtual void initGUI(CGameObject* object, CSpaceProperty* ui);
+
+			virtual void closeGUI();
 
 			virtual void update();
 

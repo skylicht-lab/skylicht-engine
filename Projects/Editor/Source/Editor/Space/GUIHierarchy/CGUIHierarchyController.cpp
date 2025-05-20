@@ -103,6 +103,18 @@ namespace Skylicht
 			return m_node->getNodeByTag(object);
 		}
 
+		void CGUIHierarchyController::updateObjectToUI(CGUIElement* object, CGUIHierachyNode* node)
+		{
+			// update node name
+			node->setName(object->getNameW().c_str());
+
+			// visible
+			if (object->isVisible())
+				node->setTextColor(GUI::SGUIColor(255, 250, 250, 250));
+			else
+				node->setTextColor(GUI::SGUIColor(255, 150, 150, 150));
+		}
+
 		void CGUIHierarchyController::updateTreeNode(CGUIElement* object)
 		{
 			if (m_node == NULL)
@@ -111,8 +123,7 @@ namespace Skylicht
 			CGUIHierachyNode* node = m_node->getNodeByTag(object);
 			if (node != NULL)
 			{
-				// update node name
-				node->setName(object->getNameW().c_str());
+				updateObjectToUI(object, node);
 
 				if (node->OnUpdate)
 					node->OnUpdate(node);

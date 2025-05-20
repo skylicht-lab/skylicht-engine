@@ -99,6 +99,7 @@ void SkylichtEditor::onInitApp()
 	app->setClearColor(CColor::toSRGB(SColor(255, 56, 56, 56)));
 	app->showFPS(false);
 	app->enableRunWhenPause(true);
+	app->showDebugConsole();
 }
 
 void SkylichtEditor::onUpdate()

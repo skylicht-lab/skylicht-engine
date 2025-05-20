@@ -36,7 +36,8 @@ namespace Skylicht
 		CGUIEditor::CGUIEditor() :
 			m_gui(NULL),
 			m_guiData(NULL),
-			m_isChanged(false)
+			m_isChanged(false),
+			m_objVisible(true)
 		{
 
 		}
@@ -67,6 +68,7 @@ namespace Skylicht
 			m_isChanged = false;
 			m_gui = gui;
 			m_guiData = m_gui->createSerializable();
+			m_objVisible = gui->isVisible();
 
 			// hide id field
 			m_guiData->getProperty("id")->setHidden(true);
@@ -105,6 +107,26 @@ namespace Skylicht
 							m_gui->getScale(),
 							m_gui->getRect()
 						);
+					}
+				}
+			}
+
+			// update visible for all selected guis
+			if (m_gui->isVisible() != m_objVisible)
+			{
+				m_objVisible = m_gui->isVisible();
+
+				std::vector<CSelectObject*>& selected = selection->getAllSelected();
+				for (CSelectObject* sel : selected)
+				{
+					if (sel->getType() == CSelectObject::GUIElement)
+					{
+						CGUIElement* selectGUI = m_gui->getCanvas()->getGUIByID(sel->getID().c_str());
+						if (selectGUI != m_gui)
+						{
+							selectGUI->setVisible(m_objVisible);
+							selection->notify(selectGUI, this);
+						}
 					}
 				}
 			}

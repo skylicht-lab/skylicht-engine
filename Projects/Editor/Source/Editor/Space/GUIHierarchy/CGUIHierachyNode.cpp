@@ -58,6 +58,14 @@ namespace Skylicht
 				m_guiNode->setText(name);
 		}
 
+		void CGUIHierachyNode::setTextColor(const GUI::SGUIColor& c)
+		{
+			m_textColor = c;
+
+			if (m_guiNode != NULL)
+				m_guiNode->setLabelColor(m_textColor);
+		}
+
 		void CGUIHierachyNode::setIcon(Editor::GUI::ESystemIcon icon)
 		{
 			m_icon = icon;
@@ -242,6 +250,7 @@ namespace Skylicht
 				// update text & icon
 				m_guiNode->setText(m_name);
 				m_guiNode->setIcon(m_icon);
+				m_guiNode->setLabelColor(m_textColor);
 
 				// update background color
 				if (m_color)

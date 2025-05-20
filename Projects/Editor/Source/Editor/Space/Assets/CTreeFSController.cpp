@@ -33,6 +33,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Editor/Space/Hierarchy/CHierachyNode.h"
 #include "Editor/SpaceController/CAssetCreateController.h"
+#include "Editor/SpaceController/CSceneController.h"
 
 #include "AssetManager/CAssetImporter.h"
 #include "Scene/CSceneExporter.h"
@@ -364,6 +365,36 @@ namespace Skylicht
 			GUI::SDragDropPackage* dragDrop = row->setDragDropPackage("TreeFSItem", row);
 			dragDrop->UserData = node;
 			dragDrop->DrawControl = node->getTextItem();
+
+			row->OnAcceptDragDrop = [node](GUI::SDragDropPackage* data)
+				{
+					// accept hierarchy node
+					if (data->Name == "HierarchyNode")
+					{
+						CHierachyNode* dragNode = (CHierachyNode*)data->UserData;
+						if (dragNode->getTagDataType() == CHierachyNode::Container ||
+							dragNode->getTagDataType() == CHierachyNode::GameObject)
+						{
+							return true;
+						}
+					}
+					return false;
+				};
+			row->OnDrop = [&, node](GUI::SDragDropPackage* data, float mouseX, float mouseY)
+				{
+					if (data->Name == "HierarchyNode")
+					{
+						CHierachyNode* dragNode = (CHierachyNode*)data->UserData;
+						if (dragNode->getTagDataType() == CHierachyNode::Container ||
+							dragNode->getTagDataType() == CHierachyNode::GameObject)
+						{
+							CGameObject* obj = (CGameObject*)dragNode->getTagData();
+
+							const std::string folder = node->getTagString();
+							CSceneController::getInstance()->onCreateTemplate(obj, folder.c_str());
+						}
+					}
+				};
 		}
 	}
 }

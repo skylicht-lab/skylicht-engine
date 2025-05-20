@@ -43,7 +43,9 @@ namespace Skylicht
 			Enable(true),
 			Visible(true),
 			Static(false),
-			Lock(false)
+			Lock(false),
+			SelectObject(NULL),
+			Observer(NULL)
 		{
 
 		}
@@ -51,6 +53,15 @@ namespace Skylicht
 		CGameObjectEditor::~CGameObjectEditor()
 		{
 
+		}
+
+		void CGameObjectEditor::closeGUI()
+		{
+			if (SelectObject && Observer)
+				SelectObject->removeObserver(Observer);
+
+			SelectObject = NULL;
+			Observer = NULL;
 		}
 
 		void CGameObjectEditor::initGUI(CGameObject* object, CSpaceProperty* ui)
@@ -88,17 +99,19 @@ namespace Skylicht
 					CSelection::getInstance()->notify(target, this);
 				}), true);
 
-			CSelectObject* selectObject = CSelection::getInstance()->getSelected(object);
-			if (selectObject != NULL)
+
+			SelectObject = CSelection::getInstance()->getSelected(object);
+			if (SelectObject != NULL)
 			{
-				selectObject->addObserver(new CObserver([&, n = &Name, target = object](ISubject* subject, IObserver* from)
+				Observer = new CObserver([&, n = &Name, target = object](ISubject* subject, IObserver* from)
 					{
 						if (from != this)
 						{
 							n->set(target->getName());
 							n->notify(from);
 						}
-					}), true);
+					});
+				SelectObject->addObserver(Observer, true);
 			}
 
 			Enable.addObserver(new CObserver([&, target = object](ISubject* subject, IObserver* from)
@@ -272,9 +285,12 @@ namespace Skylicht
 			std::vector<CSelectObject*>& selected = selection->getAllSelected();
 			for (CSelectObject* sel : selected)
 			{
-				CGameObject* obj = scene->searchObjectInChildByID(sel->getID().c_str());
-				if (obj)
-					result.push_back(obj);
+				if (sel->getType() == CSelectObject::GameObject)
+				{
+					CGameObject* obj = scene->searchObjectInChildByID(sel->getID().c_str());
+					if (obj)
+						result.push_back(obj);
+				}
 			}
 
 			return result;

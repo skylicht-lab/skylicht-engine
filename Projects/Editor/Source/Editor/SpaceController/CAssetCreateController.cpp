@@ -214,10 +214,10 @@ namespace Skylicht
 			}
 		}
 
-		void CAssetCreateController::createTemplate(CGameObject* obj)
+		void CAssetCreateController::createTemplate(CGameObject* obj, const char* saveFolder)
 		{
 			CAssetManager* assetMgr = CAssetManager::getInstance();
-			std::string currentFolder = getCurrentFolder();
+			std::string currentFolder = saveFolder == NULL ? getCurrentFolder() : saveFolder;
 
 			std::string ext = ".template";
 			std::string fileName;

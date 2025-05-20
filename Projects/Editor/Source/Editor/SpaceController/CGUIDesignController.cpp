@@ -677,18 +677,13 @@ namespace Skylicht
 		{
 			CSelection* selection = CSelection::getInstance();
 
-			// remove last observer
-			CSelectObject* selectedObject = selection->getLastSelected();
-			if (selectedObject != NULL)
-				selectedObject->removeAllObserver();
-
 			CGUIElement* obj = (CGUIElement*)node->getTagData();
 
 			// Set property & event
 			CPropertyController* propertyController = CPropertyController::getInstance();
 			if (selected)
 			{
-				selectedObject = selection->addSelect(obj);
+				CSelectObject* selectedObject = selection->addSelect(obj);
 				propertyController->setProperty(selectedObject);
 
 				// add new observer
@@ -787,7 +782,9 @@ namespace Skylicht
 				if (treeNode)
 				{
 					treeNode->setSelected(true, callEvent);
-					m_spaceHierarchy->scrollToNode(treeNode);
+
+					if (m_spaceHierarchy)
+						m_spaceHierarchy->scrollToNode(treeNode);
 				}
 			}
 			return node;
@@ -795,7 +792,8 @@ namespace Skylicht
 
 		void CGUIDesignController::onContextMenu(CGUIHierachyNode* node)
 		{
-			m_contextMenu->onContextMenu(m_spaceHierarchy, node);
+			if (m_spaceHierarchy)
+				m_contextMenu->onContextMenu(m_spaceHierarchy, node);
 		}
 
 		void CGUIDesignController::onNotify(ISubject* subject, IObserver* from)
@@ -811,12 +809,9 @@ namespace Skylicht
 				CGUIElement* gui = m_guiCanvas->getGUIByID(id.c_str());
 				if (gui)
 				{
-					CGUIHierachyNode* guiNode = m_spaceHierarchy->getController()->getNodeByObject(gui);
-					if (guiNode != NULL)
-					{
-						// Update new name on Hierarchy
-						guiNode->setName(gui->getNameW().c_str());
-					}
+					CGUIHierachyNode* node = m_rootNode->getNodeByTag(gui);
+					if (node)
+						CGUIHierarchyController::updateObjectToUI(gui, node);
 				}
 			}
 		}

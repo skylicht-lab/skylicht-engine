@@ -31,7 +31,10 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/Theme/ThemeConfig.h"
 #include "Editor/SpaceController/CAssetPropertyController.h"
 #include "Editor/SpaceController/CAssetCreateController.h"
+#include "Editor/SpaceController/CSceneController.h"
 #include "Editor/CEditor.h"
+
+#include "Editor/Space/Hierarchy/CHierachyNode.h"
 
 namespace Skylicht
 {
@@ -60,6 +63,35 @@ namespace Skylicht
 
 			m_listFS->OnSelected = BIND_LISTENER(&CListFSController::OnSelected, this);
 			m_listFS->setMultiSelected(true);
+
+			GUI::CBase* inner = m_listFS->getInnerPanel();
+			inner->OnAcceptDragDrop = [](GUI::SDragDropPackage* data)
+				{
+					// accept hierarchy node
+					if (data->Name == "HierarchyNode")
+					{
+						CHierachyNode* dragNode = (CHierachyNode*)data->UserData;
+						if (dragNode->getTagDataType() == CHierachyNode::Container ||
+							dragNode->getTagDataType() == CHierachyNode::GameObject)
+						{
+							return true;
+						}
+					}
+					return false;
+				};
+			inner->OnDrop = [&](GUI::SDragDropPackage* data, float mouseX, float mouseY)
+				{
+					if (data->Name == "HierarchyNode")
+					{
+						CHierachyNode* dragNode = (CHierachyNode*)data->UserData;
+						if (dragNode->getTagDataType() == CHierachyNode::Container ||
+							dragNode->getTagDataType() == CHierachyNode::GameObject)
+						{
+							CGameObject* obj = (CGameObject*)dragNode->getTagData();
+							CSceneController::getInstance()->onCreateTemplate(obj, m_currentFolder.c_str());
+						}
+					}
+				};
 
 			std::vector<SFileInfo> files;
 			m_assetManager->getRoot(files);
@@ -314,6 +346,42 @@ namespace Skylicht
 		{
 			GUI::SDragDropPackage* dragDrop = item->setDragDropPackage("ListFSItem", item);
 			dragDrop->DrawControl = item;
+
+			item->OnAcceptDragDrop = [item](GUI::SDragDropPackage* data)
+				{
+					// accept hierarchy node
+					if (data->Name == "HierarchyNode")
+					{
+						CHierachyNode* dragNode = (CHierachyNode*)data->UserData;
+						if (dragNode->getTagDataType() == CHierachyNode::Container ||
+							dragNode->getTagDataType() == CHierachyNode::GameObject)
+						{
+							return true;
+						}
+					}
+					return false;
+				};
+			item->OnDrop = [&, item](GUI::SDragDropPackage* data, float mouseX, float mouseY)
+				{
+					if (data->Name == "HierarchyNode")
+					{
+						CHierachyNode* dragNode = (CHierachyNode*)data->UserData;
+						if (dragNode->getTagDataType() == CHierachyNode::Container ||
+							dragNode->getTagDataType() == CHierachyNode::GameObject)
+						{
+							CGameObject* obj = (CGameObject*)dragNode->getTagData();
+							if (item->getTagBool() == true)
+							{
+								const std::string& folder = item->getTagString();
+								CSceneController::getInstance()->onCreateTemplate(obj, folder.c_str());
+							}
+							else
+							{
+								CSceneController::getInstance()->onCreateTemplate(obj, m_currentFolder.c_str());
+							}
+						}
+					}
+				};
 		}
 
 		void CListFSController::OnFileOpen(GUI::CBase* node)

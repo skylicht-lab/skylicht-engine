@@ -44,6 +44,8 @@ namespace Skylicht
 
 			bool m_isChanged;
 
+			bool m_objVisible;
+
 		public:
 			CGUIEditor();
 

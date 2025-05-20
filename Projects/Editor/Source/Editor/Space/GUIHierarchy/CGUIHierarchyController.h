@@ -56,6 +56,8 @@ namespace Skylicht
 
 			void rename(GUI::CTreeNode* node);
 
+			static void updateObjectToUI(CGUIElement* object, CGUIHierachyNode* node);
+
 			void updateTreeNode(CGUIElement* object);
 
 			CGUIHierachyNode* getNodeByObject(CGUIElement* object);

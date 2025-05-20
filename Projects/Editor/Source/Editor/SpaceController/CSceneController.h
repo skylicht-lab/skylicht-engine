@@ -291,6 +291,8 @@ namespace Skylicht
 
 			void onCreateTemplate(CGameObject* object);
 
+			void onCreateTemplate(CGameObject* object, const char* folder);
+
 			void onApplyTemplate(CGameObject* object);
 
 			void doFinishApplyTemplate(std::list<CGameObject*>& objects);

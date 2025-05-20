@@ -1316,7 +1316,7 @@ namespace Skylicht
 
 			if (node != NULL && m_spaceHierarchy != NULL)
 			{
-				m_spaceHierarchy->getController()->updateObjectToUI(object, node);
+				CHierarchyController::updateObjectToUI(object, node);
 			}
 		}
 
@@ -1724,6 +1724,14 @@ namespace Skylicht
 		void CSceneController::onCreateTemplate(CGameObject* object)
 		{
 			CAssetCreateController::getInstance()->createTemplate(object);
+
+			if (m_spaceHierarchy)
+				m_spaceHierarchy->getController()->updateTreeNode(object);
+		}
+
+		void CSceneController::onCreateTemplate(CGameObject* object, const char* folder)
+		{
+			CAssetCreateController::getInstance()->createTemplate(object, folder);
 
 			if (m_spaceHierarchy)
 				m_spaceHierarchy->getController()->updateTreeNode(object);

@@ -55,7 +55,7 @@ namespace Skylicht
 
 			void createEmptyGUI();
 
-			void createTemplate(CGameObject* obj);
+			void createTemplate(CGameObject* obj, const char* saveFolder = NULL);
 
 			void applyTemplate(CGameObject* obj);
 

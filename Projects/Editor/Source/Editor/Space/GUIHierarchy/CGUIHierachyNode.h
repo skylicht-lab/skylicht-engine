@@ -58,6 +58,8 @@ namespace Skylicht
 
 			GUI::SGUIColor m_iconColor;
 
+			GUI::SGUIColor m_textColor;
+
 			GUI::ESystemIcon m_icon;
 
 			CGUIHierachyNode* m_parent;
@@ -113,6 +115,8 @@ namespace Skylicht
 			}
 
 			void setName(const wchar_t* name);
+
+			void setTextColor(const GUI::SGUIColor& c);
 
 			void setIcon(GUI::ESystemIcon icon);
 
