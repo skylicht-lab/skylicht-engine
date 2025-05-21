@@ -466,9 +466,8 @@ namespace Skylicht
 			if (data->MeshBuffers[mbID] != mb)
 				return false;
 
-			//if (data->Materials[mbID] != mesh->Materials[i])
-			//	return false;
-
+			if (data->Materials[mbID] != mesh->Materials[i])
+				return false;
 			mbID++;
 		}
 

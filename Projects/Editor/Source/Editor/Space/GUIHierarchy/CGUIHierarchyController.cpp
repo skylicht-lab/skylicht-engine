@@ -154,17 +154,7 @@ namespace Skylicht
 
 			// link data node to gui
 			node->setGUINode(guiNode);
-
-			// apply active color
-			if (node->haveColor())
-			{
-				guiNode->getRowItem()->setColor(node->getBGColor());
-				guiNode->getRowItem()->enableDrawBackground(true);
-			}
-			else
-			{
-				guiNode->getRowItem()->enableDrawBackground(false);
-			}
+			node->refreshGUI();
 
 			// loop all childs
 			std::vector<CGUIHierachyNode*>& childs = node->getChilds();
