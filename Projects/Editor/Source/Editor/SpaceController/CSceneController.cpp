@@ -1454,7 +1454,7 @@ namespace Skylicht
 		void CSceneController::onDelete()
 		{
 			CSelection* selection = CSelection::getInstance();
-			std::vector<CSelectObject*>& selected = selection->getAllSelected();
+			std::vector<CSelectObject*> selected = selection->getAllSelected();
 
 			// need save delete history first
 			{

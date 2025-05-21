@@ -45,6 +45,16 @@ namespace Skylicht
 			clear();
 		}
 
+		bool CSelection::isObjectAvaiable(CSelectObject* obj)
+		{
+			for (CSelectObject* selectObject : m_selected)
+			{
+				if (selectObject == obj)
+					return true;
+			}
+			return false;
+		}
+
 		void CSelection::clear()
 		{
 			for (CSelectObject* selectObject : m_selected)

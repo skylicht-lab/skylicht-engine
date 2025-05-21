@@ -60,6 +60,8 @@ namespace Skylicht
 				return m_selected;
 			}
 
+			bool isObjectAvaiable(CSelectObject* obj);
+
 			CSelectObject* getLastSelected();
 
 			CSelectObject* getSelected(CGameObject* obj);

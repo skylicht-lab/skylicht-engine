@@ -57,8 +57,11 @@ namespace Skylicht
 
 		void CGameObjectEditor::closeGUI()
 		{
-			if (SelectObject && Observer)
-				SelectObject->removeObserver(Observer);
+			if (CSelection::getInstance()->isObjectAvaiable(SelectObject))
+			{
+				if (SelectObject && Observer)
+					SelectObject->removeObserver(Observer);
+			}
 
 			SelectObject = NULL;
 			Observer = NULL;
