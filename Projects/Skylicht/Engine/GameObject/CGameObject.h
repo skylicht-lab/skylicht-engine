@@ -256,6 +256,11 @@ namespace Skylicht
 
 		bool isLock();
 
+		inline bool isSelfLock()
+		{
+			return m_lock;
+		}
+
 		virtual void setEnable(bool b)
 		{
 			m_enable = b;

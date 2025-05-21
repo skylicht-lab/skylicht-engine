@@ -158,7 +158,8 @@ namespace Skylicht
 			{
 				CGUIHierachyNode* node = parentNode->addChild();
 				node->setTagData(element, CGUIHierachyNode::GUIElement);
-				node->setName(element->getNameW().c_str());
+
+				CGUIHierarchyController::updateObjectToUI(element, node);
 
 				setNodeEvent(node);
 

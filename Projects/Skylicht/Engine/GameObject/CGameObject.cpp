@@ -561,7 +561,7 @@ namespace Skylicht
 		object->autoRelease(new CBoolProperty(object, "enable", isEnable()));
 		object->autoRelease(new CBoolProperty(object, "visible", isVisible()));
 		object->autoRelease(new CBoolProperty(object, "static", isStatic()));
-		object->autoRelease(new CBoolProperty(object, "lock", m_lock));
+		object->autoRelease(new CBoolProperty(object, "lock", isSelfLock()));
 
 		object->autoRelease(new CUIntProperty(object, "culling", getCullingLayer()));
 

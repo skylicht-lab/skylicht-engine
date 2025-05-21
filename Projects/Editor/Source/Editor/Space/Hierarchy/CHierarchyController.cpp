@@ -213,7 +213,7 @@ namespace Skylicht
 				node->showSubIcon(true);
 
 			// lock
-			if (object->isLock())
+			if (object->isSelfLock())
 				node->setSubIcon(GUI::ESystemIcon::Lock);
 			else
 				node->setSubIcon(GUI::ESystemIcon::None);

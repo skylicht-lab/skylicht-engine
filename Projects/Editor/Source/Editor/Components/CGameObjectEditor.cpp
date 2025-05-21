@@ -78,7 +78,7 @@ namespace Skylicht
 			Enable = object->isEnable();
 			Visible = object->isVisible();
 			Static = object->isStatic();
-			Lock = object->isLock();
+			Lock = object->isSelfLock();
 
 			GUI::CCollapsibleGroup* group = ui->addGroup("GameObject", this);
 			GUI::CBoxLayout* layout = ui->createBoxLayout(group);
