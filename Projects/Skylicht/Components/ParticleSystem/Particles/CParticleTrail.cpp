@@ -128,7 +128,7 @@ namespace Skylicht
 			{
 				STrailInfo& trail = m_deadTrails[i];
 
-				u32 numSeg = trail.Position->size() - 1;
+				int numSeg = (int)trail.Position->size() - 1;
 
 				int endSeg = 0;
 				if (trail.Position->size() > m_maxSegmentCount)
@@ -136,7 +136,7 @@ namespace Skylicht
 
 				trail.Flag = 1;
 
-				for (u32 j = endSeg; j <= numSeg; j++)
+				for (int j = endSeg; j <= numSeg; j++)
 				{
 					SParticlePosition& p = (*trail.Position)[j];
 					if (p.Alpha == 0.0f)

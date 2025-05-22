@@ -37,7 +37,8 @@ namespace Skylicht
 			Life(0.0f),
 			LifeTime(0.0f),
 			HaveRotate(false),
-			SubEmitterDirection(0.0f, 1.0f, 0.0f)
+			SubEmitterDirection(0.0f, 1.0f, 0.0f),
+			UserData(NULL)
 		{
 			memset(StartValue, 0, sizeof(float) * NumParams);
 			memset(EndValue, 0, sizeof(float) * NumParams);
@@ -89,12 +90,13 @@ namespace Skylicht
 			float lifeTime = LifeTime;
 
 			bool haveRotate = HaveRotate;
-			
+
 			core::vector3df position = Position;
 			core::vector3df rotation = Rotation;
 			core::vector3df velocity = Velocity;
 			core::vector3df lastPosition = LastPosition;
 			core::vector3df subEmitterDirection = SubEmitterDirection;
+			void* userData = UserData;
 
 			// note: dont swap [p.Index], just swap data
 			ParentIndex = p.ParentIndex;
@@ -110,6 +112,7 @@ namespace Skylicht
 			LastPosition = p.LastPosition;
 
 			SubEmitterDirection = p.SubEmitterDirection;
+			UserData = p.UserData;
 
 			p.ParentIndex = parentIndex;
 			p.Immortal = immortal;
@@ -126,6 +129,7 @@ namespace Skylicht
 			p.LastPosition = lastPosition;
 
 			p.SubEmitterDirection = subEmitterDirection;
+			p.UserData = userData;
 		}
 	}
 }
