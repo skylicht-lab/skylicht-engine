@@ -116,11 +116,12 @@ namespace Skylicht
 			IsMatrix = false;
 			IsNormal = false;
 
-			ValueIndex = 0;
+			ValueIndex = -1;
 			memset(Value, 0, sizeof(float) * 16);
 			UniformShaderID = -1;
 			SizeOfUniform = 0;
 
+			Type = NUM_SHADER_TYPE;
 			Min = -FLT_MAX;
 			Max = FLT_MAX;
 		}

@@ -83,7 +83,6 @@ void main(void)
 	vec3 localCoords = normalMap * 2.0 - vec3(1.0, 1.0, 1.0);
 	localCoords.y *= vTangentW;
 	vec3 n = normalize(rotation * localCoords);
-	n = normalize(n);
 #endif
 	
 #if defined(SHADOW)

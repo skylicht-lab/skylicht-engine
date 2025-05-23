@@ -1214,11 +1214,11 @@ namespace Skylicht
 				}
 			}
 
-			if (uniformValue->ValueIndex >= 0)
+			switch (uniformValue->Type)
 			{
-				switch (uniformValue->Type)
-				{
-				case MATERIAL_PARAM:
+			case MATERIAL_PARAM:
+			{
+				if (uniformValue->ValueIndex >= 0 && uniformValue->ValueIndex < MAX_SHADERPARAMS)
 				{
 					SVec4& v = m_shaderParams.getParam(uniformValue->ValueIndex);
 					v.X = uniformValue->FloatValue[0];
@@ -1226,16 +1226,20 @@ namespace Skylicht
 					v.Z = uniformValue->FloatValue[2];
 					v.W = uniformValue->FloatValue[3];
 					uniformValue->ShaderDefaultValue = false;
-					break;
 				}
-				default:
+				else
 				{
 					char log[512];
-					sprintf(log, "[CMaterial] - Warning!!! Fail to apply shader param type != OBJECT_PARAM");
+					sprintf(log, "[CMaterial] - Warning!!! Fail to apply shader param '%s' type:MATERIAL_PARAM", uniformValue->Name.c_str());
 					os::Printer::log(log);
 					break;
 				}
-				}
+				break;
+			}
+			default:
+			{
+				break;
+			}
 			}
 		}
 	}
