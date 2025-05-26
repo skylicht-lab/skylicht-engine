@@ -32,6 +32,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Material/Shader/ShaderCallback/CShaderMaterial.h"
 #include "Material/Shader/ShaderCallback/CShaderShadow.h"
 #include "Material/Shader/ShaderCallback/CShaderTransformTexture.h"
+#include "Material/Shader/ShaderCallback/CShaderRTT.h"
 
 #include "IndirectLighting/CIndirectLightingData.h"
 #include "RenderPipeline/CShadowMapRP.h"
@@ -230,6 +231,23 @@ namespace Skylicht
 				{
 					u32 textureID = (u32)uniform->Value[0];
 					irrMaterial.setTexture(textureID, ttexture);
+
+					// disable mipmap
+					irrMaterial.TextureLayer[textureID].BilinearFilter = false;
+					irrMaterial.TextureLayer[textureID].TrilinearFilter = false;
+					irrMaterial.TextureLayer[textureID].AnisotropicFilter = 0;
+				}
+			}
+			else if (res->Type == CShader::ReflectionTexture)
+			{
+				SUniform* uniform = shader->getFSUniform(res->Name.c_str());
+				if (uniform != NULL)
+				{
+					u32 textureID = (u32)uniform->Value[0];
+					irrMaterial.setTexture(textureID, CShaderRTT::getReflectionTexture());
+
+					irrMaterial.TextureLayer[textureID].TextureWrapU = 0;
+					irrMaterial.TextureLayer[textureID].TextureWrapV = 0;
 
 					// disable mipmap
 					irrMaterial.TextureLayer[textureID].BilinearFilter = false;

@@ -601,7 +601,20 @@ namespace Skylicht
 						}
 						else if (r->Type == CShader::CubeTexture)
 						{
-							// texture = textureManager->getCubeTexture( ... );
+							std::string path = r->Path;
+							CStringImp::replaceAll(path, "_X1.png", "");
+
+							std::string x1 = std::string(path) + "_X1.png";
+							std::string x2 = std::string(path) + "_X2.png";
+							std::string y1 = std::string(path) + "_Y1.png";
+							std::string y2 = std::string(path) + "_Y2.png";
+							std::string z1 = std::string(path) + "_Z1.png";
+							std::string z2 = std::string(path) + "_Z2.png";
+
+							texture = textureManager->getCubeTexture(
+								x1.c_str(), x2.c_str(),
+								y1.c_str(), y2.c_str(),
+								z1.c_str(), z2.c_str());
 						}
 						else
 						{

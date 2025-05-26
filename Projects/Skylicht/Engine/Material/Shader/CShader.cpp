@@ -36,6 +36,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "ShaderCallback/CShaderParticle.h"
 #include "ShaderCallback/CShaderDeferred.h"
 #include "ShaderCallback/CShaderTransformTexture.h"
+#include "ShaderCallback/CShaderRTT.h"
 
 namespace Skylicht
 {
@@ -63,6 +64,7 @@ namespace Skylicht
 		addCallback<CShaderParticle>();
 		addCallback<CShaderDeferred>();
 		addCallback<CShaderTransformTexture>();
+		addCallback<CShaderRTT>();
 	}
 
 	CShader::~CShader()
@@ -197,6 +199,7 @@ namespace Skylicht
 			"LIGHTMAP_INDEX",
 			"TIME",
 			"COLOR_INTENSITY",
+			"RENDER_TEXTURE_MATRIX",
 			"NULL"
 		};
 
@@ -1277,25 +1280,6 @@ namespace Skylicht
 				matRender->setShaderVariable(uniform.UniformShaderID, &shaderManager->LightmapIndex, uniform.SizeOfUniform, video::EST_PIXEL_SHADER);
 		}
 		break;
-		/*
-		case BPCEM_MIN:
-		case BPCEM_MAX:
-		{
-		}
-		break;
-		case BPCEM_POS:
-		{
-		}
-		break;
-		case FOG_PARAMS:
-		{
-		}
-		break;
-		case SSAO_KERNEL:
-		{
-		}
-		break;
-		*/
 		case CUSTOM_VALUE:
 		{
 			// todo

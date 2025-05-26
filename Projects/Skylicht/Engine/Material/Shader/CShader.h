@@ -75,6 +75,7 @@ namespace Skylicht
 		LIGHTMAP_INDEX,
 		TIME,
 		COLOR_INTENSITY,
+		RENDER_TEXTURE_MATRIX,
 		NUM_SHADER_TYPE,
 	};
 
@@ -157,6 +158,7 @@ namespace Skylicht
 			Texture = 0,
 			CubeTexture,
 			ReflectionProbe,
+			ReflectionTexture,
 			ShadowMap,
 			TransformTexture,
 			VertexPositionTexture,

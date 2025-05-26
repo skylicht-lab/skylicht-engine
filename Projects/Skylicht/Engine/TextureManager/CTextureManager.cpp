@@ -481,6 +481,18 @@ namespace Skylicht
 		const char* pathZ1,
 		const char* pathZ2)
 	{
+		std::string hash = pathX1;
+		CStringImp::replaceAll(hash, std::string("_X1.png"), std::string(""));
+		hash += ".cube";
+
+		std::vector<STexturePackage*>::iterator i = m_textureList.begin(), end = m_textureList.end();
+		while (i != end)
+		{
+			if ((*i)->Path == hash)
+				return (*i)->Texture;
+			i++;
+		}
+
 		std::vector<std::string> paths;
 		paths.push_back(pathX1);
 		paths.push_back(pathX2);
@@ -513,7 +525,7 @@ namespace Skylicht
 
 		// register the texture
 		if (texture)
-			registerTexture(texture, pathX1);
+			registerTexture(texture, hash.c_str());
 		else
 		{
 			char errorLog[512];
