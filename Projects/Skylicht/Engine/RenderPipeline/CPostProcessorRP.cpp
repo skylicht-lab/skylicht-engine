@@ -103,13 +103,13 @@ namespace Skylicht
 				core::dimension2du s = m_size;
 				// do
 				// {
-					s = s / 2;
+				s = s / 2;
 
-					// round for 4
-					s.Width = (s.Width / 4) * 4;
-					s.Height = (s.Height / 4) * 4;
+				// round for 4
+				s.Width = (s.Width / 4) * 4;
+				s.Height = (s.Height / 4) * 4;
 
-					m_rtt[m_numTarget++] = driver->addRenderTargetTexture(s, "rtt", ECF_A16B16G16R16F);
+				m_rtt[m_numTarget++] = driver->addRenderTargetTexture(s, "rtt", ECF_A16B16G16R16F);
 				// } while (s.Height > 512 && m_numTarget < 4);
 			}
 		}
@@ -268,12 +268,12 @@ namespace Skylicht
 		ITexture* colorBuffer = color;
 
 		// BLOOM
-		if (m_bloomEffect)
+		if (m_bloomEffect && emission)
 		{
 			brightFilter(color, m_rtt[1], emission);
-			
+
 			blurDown(1, 2);
-			
+
 			/*
 			if (m_numTarget > 4)
 			{
@@ -401,7 +401,7 @@ namespace Skylicht
 			beginRender2D(renderW, renderH);
 			renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_effectPass);
 		}
-		// END FXAA		
+		// END FXAA
 
 		// test to target
 		/*

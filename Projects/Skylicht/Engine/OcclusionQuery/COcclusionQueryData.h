@@ -56,6 +56,11 @@ namespace Skylicht
 
 		void setAABBox(const core::aabbox3df& box);
 
+		inline const core::aabbox3df& getAABBox()
+		{
+			return m_box;
+		}
+
 		void updateLocalTransform();
 
 		inline const core::matrix4& getLocalTransform()

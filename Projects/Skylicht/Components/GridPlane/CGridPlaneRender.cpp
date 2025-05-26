@@ -68,6 +68,10 @@ namespace Skylicht
 
 		for (int i = 0; i < numEntity; i++)
 		{
+			CVisibleData* visible = GET_ENTITY_DATA(entities[i], CVisibleData);
+			if (visible->Culled)
+				continue;
+
 			CGridPlaneData* gridPlane = GET_ENTITY_DATA(entities[i], CGridPlaneData);
 			CWorldTransformData* transform = GET_ENTITY_DATA(entities[i], CWorldTransformData);
 

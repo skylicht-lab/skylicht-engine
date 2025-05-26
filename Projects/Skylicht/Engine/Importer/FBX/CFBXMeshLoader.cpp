@@ -43,16 +43,6 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CFBXMeshLoader::CFBXMeshLoader()
-	{
-
-	}
-
-	CFBXMeshLoader::~CFBXMeshLoader()
-	{
-
-	}
-
 	struct SVertexID
 	{
 		u32 Position;
@@ -129,6 +119,16 @@ namespace Skylicht
 			return Position < other.Position;
 		}
 	};
+
+	CFBXMeshLoader::CFBXMeshLoader()
+	{
+
+	}
+
+	CFBXMeshLoader::~CFBXMeshLoader()
+	{
+
+	}
 
 	bool CFBXMeshLoader::loadModel(const char* resource, CEntityPrefab* output, bool normalMap, bool flipNormalMap, bool texcoord2, bool batching)
 	{
@@ -228,6 +228,8 @@ namespace Skylicht
 
 		CShaderManager* shaderMgr = CShaderManager::getInstance();
 
+		char logInfo[1024];
+
 		// import mesh data
 		for (int i = 0; i < scene->meshes.count; i++)
 		{
@@ -239,6 +241,13 @@ namespace Skylicht
 			bool haveColor = mesh->vertex_color.values.count > 0;
 
 			std::string meshName = mesh->name.data;
+
+			snprintf(logInfo, 1024, "[CFBXMeshLoader]: %s\ntris: %d\nvertex: %d\nuv: %d\nnormal: %d", meshName.c_str(),
+				(int)mesh->num_triangles,
+				(int)mesh->vertex_position.values.count,
+				(int)mesh->vertex_uv.values.count,
+				(int)mesh->vertex_normal.values.count);
+			os::Printer::log(logInfo);
 
 			// temp buffer
 			size_t num_tri_indices = mesh->max_face_triangles * 3;

@@ -151,7 +151,6 @@ namespace Skylicht
 
 		// camera
 		CCamera* camera = entityManager->getCamera();
-		u32 cameraCullingMask = camera->getCullingMask();
 		const core::aabbox3df& cameraBox = camera->getViewFrustum().getBoundingBox();
 
 		int count = m_bboxAndMaterials.count();
@@ -183,13 +182,6 @@ namespace Skylicht
 			}
 
 			culling->Visible = true;
-
-			// check camera mask culling
-			if ((cameraCullingMask & culling->CullingLayer) == 0)
-			{
-				culling->Visible = false;
-				continue;
-			}
 
 			// check material first
 			if (bbBoxMat->Materials != NULL)

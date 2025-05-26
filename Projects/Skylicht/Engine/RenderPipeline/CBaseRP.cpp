@@ -123,6 +123,9 @@ namespace Skylicht
 
 	void CBaseRP::onNext(ITexture* target, CCamera* camera, CEntityManager* entity, const core::recti& viewport, int cubeFaceId)
 	{
+		if (OnFinish != nullptr)
+			OnFinish(this);
+
 		if (m_next != NULL)
 			m_next->render(target, camera, entity, viewport, cubeFaceId, this);
 	}

@@ -52,7 +52,7 @@ namespace Skylicht
 
 	bool CBaseShaderCallback::isOpenGLFamily()
 	{
-		IVideoDriver *driver = getVideoDriver();
+		IVideoDriver* driver = getVideoDriver();
 
 		if (driver->getDriverType() == EDT_OPENGL || driver->getDriverType() == EDT_OPENGLES)
 			return true;
@@ -60,7 +60,7 @@ namespace Skylicht
 		return false;
 	}
 
-	void CBaseShaderCallback::setColor(IMaterialRenderer *matRender, int colorID, bool vertexConstant, const SColorf& color, float intensity)
+	void CBaseShaderCallback::setColor(IMaterialRenderer* matRender, int colorID, bool vertexConstant, const SColorf& color, float intensity)
 	{
 		float constBuffer[] = { color.r, color.g, color.b, intensity };
 
@@ -70,21 +70,12 @@ namespace Skylicht
 			matRender->setShaderVariable(colorID, constBuffer, 4, video::EST_PIXEL_SHADER);
 	}
 
-	void CBaseShaderCallback::setDirection(IMaterialRenderer *matRender, int directionID, bool vertexConstant, const core::vector3df& dir, int count, bool worldDirection)
+	void CBaseShaderCallback::setWorldDirection(IMaterialRenderer* matRender, int directionID, bool vertexConstant, const core::vector3df& dir, int count)
 	{
 		core::vector3df directionVec;
 		float dirVec[4] = { 0 };
 
-		if (worldDirection == true)
-		{
-			directionVec = dir;
-		}
-		else
-		{
-			const core::matrix4& worldInv = getVideoDriver()->getTransform(ETS_WORLD_INVERSE);
-			worldInv.rotateVect(directionVec, dir);
-		}
-
+		directionVec = dir;
 		directionVec.normalize();
 
 		dirVec[0] = directionVec.X;
@@ -98,8 +89,7 @@ namespace Skylicht
 			matRender->setShaderVariable(directionID, dirVec, count, video::EST_PIXEL_SHADER);
 	}
 
-	// setPosition
-	void CBaseShaderCallback::setPosition(IMaterialRenderer *matRender, int posID, const core::vector3df& pos, bool vertexConstant)
+	void CBaseShaderCallback::setWorldInvPosition(IMaterialRenderer* matRender, int posID, const core::vector3df& pos, bool vertexConstant)
 	{
 		video::IVideoDriver* driver = getVideoDriver();
 		core::vector3df objPos = pos;
@@ -120,7 +110,7 @@ namespace Skylicht
 			matRender->setShaderVariable(posID, uPos, 4, video::EST_PIXEL_SHADER);
 	}
 
-	void CBaseShaderCallback::setWorldPosition(IMaterialRenderer *matRender, int posID, const core::vector3df& pos, bool vertexConstant)
+	void CBaseShaderCallback::setWorldPosition(IMaterialRenderer* matRender, int posID, const core::vector3df& pos, bool vertexConstant)
 	{
 		float uPos[4];
 		uPos[0] = pos.X;

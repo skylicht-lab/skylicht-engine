@@ -57,7 +57,7 @@ namespace Skylicht
 					CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
 					CWorldTransformData* transformData = GET_ENTITY_DATA(entity, CWorldTransformData);
 
-					if (visible->Visible)
+					if (visible->Visible && !visible->Culled)
 					{
 						m_viewpoints.push_back(viewPointData);
 						m_transforms.push_back(transformData);

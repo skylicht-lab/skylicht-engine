@@ -84,6 +84,9 @@ namespace Skylicht
 		for (int i = 0; i < numEntity; i++)
 		{
 			CSkyDomeData* skydome = GET_ENTITY_DATA(entities[i], CSkyDomeData);
+			CVisibleData* visible = GET_ENTITY_DATA(entities[i], CVisibleData);
+			if (visible->Culled)
+				continue;
 
 			world.makeIdentity();
 			world.setTranslation(cameraPosition);

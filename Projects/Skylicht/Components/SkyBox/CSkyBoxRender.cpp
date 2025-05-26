@@ -84,6 +84,9 @@ namespace Skylicht
 		for (int i = 0; i < numEntity; i++)
 		{
 			CSkyBoxData* skybox = GET_ENTITY_DATA(entities[i], CSkyBoxData);
+			CVisibleData* visible = GET_ENTITY_DATA(entities[i], CVisibleData);
+			if (visible->Culled)
+				continue;
 
 			if (skybox->MeshBuffer[0] == NULL)
 				continue;

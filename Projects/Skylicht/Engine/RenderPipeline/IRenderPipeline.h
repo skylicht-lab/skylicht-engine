@@ -44,6 +44,8 @@ namespace Skylicht
 			Mix,
 		};
 
+		std::function<void(IRenderPipeline*)> OnFinish;
+
 	protected:
 		ERenderPipelineType m_type;
 

@@ -58,14 +58,6 @@ namespace Skylicht
 			shader->setWorldPosition(matRender, uniform->UniformShaderID, position, vertexShader);
 		}
 		break;
-		case CAMERA_POSITION:
-		{
-			core::vector3df position;
-			if (g_camera != NULL)
-				position = g_camera->getGameObject()->getPosition();
-			shader->setPosition(matRender, uniform->UniformShaderID, position, vertexShader);
-		}
-		break;
 		default:
 			break;
 		}

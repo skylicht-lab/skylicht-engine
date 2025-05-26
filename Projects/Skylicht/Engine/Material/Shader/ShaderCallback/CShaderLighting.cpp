@@ -116,21 +116,12 @@ namespace Skylicht
 			}
 		}
 		break;
-		case LIGHT_DIRECTION:
-		{
-			if (g_directionalLight != NULL)
-			{
-				core::vector3df dir = -g_directionalLight->getDirection();
-				shader->setDirection(matRender, uniform->UniformShaderID, vertexShader, dir);
-			}
-		}
-		break;
 		case WORLD_LIGHT_DIRECTION:
 		{
 			if (g_directionalLight != NULL)
 			{
 				core::vector3df dir = -g_directionalLight->getDirection();
-				shader->setDirection(matRender, uniform->UniformShaderID, vertexShader, dir, 4, true);
+				shader->setWorldDirection(matRender, uniform->UniformShaderID, vertexShader, dir, 4);
 			}
 		}
 		break;
@@ -180,7 +171,7 @@ namespace Skylicht
 			if (g_spotLight != NULL)
 			{
 				core::vector3df dir = -g_spotLight->getDirection();
-				shader->setDirection(matRender, uniform->UniformShaderID, vertexShader, dir, 4, true);
+				shader->setWorldDirection(matRender, uniform->UniformShaderID, vertexShader, dir, 4);
 			}
 		}
 		break;

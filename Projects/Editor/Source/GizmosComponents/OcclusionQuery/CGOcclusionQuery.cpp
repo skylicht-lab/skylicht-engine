@@ -2,10 +2,10 @@
 !@
 MIT License
 
-Copyright (c) 2020 Skylicht Technology CO., LTD
+Copyright (c) 2025 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -22,51 +22,45 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "Components/CComponentSystem.h"
-#include "COcclusionQueryData.h"
+#include "pch.h"
+#include "CGOcclusionQuery.h"
+#include "Handles/CHandles.h"
 
 namespace Skylicht
 {
-	class SKYLICHT_API COcclusionQuery : public CComponentSystem
+	namespace Editor
 	{
-	protected:
-		COcclusionQueryData* m_queryData;
+		ACTIVATOR_REGISTER(CGOcclusionQuery);
 
-	public:
-		COcclusionQuery();
+		DEPENDENT_COMPONENT(COcclusionQuery, CGOcclusionQuery);
 
-		virtual ~COcclusionQuery();
-
-		virtual void initComponent();
-
-		virtual void updateComponent();
-
-		virtual CObjectSerializable* createSerializable();
-
-		virtual void loadSerializable(CObjectSerializable* object);
-
-		inline void setAABBox(const core::aabbox3df& box)
+		CGOcclusionQuery::CGOcclusionQuery() :
+			m_occlusionQuery(NULL)
 		{
-			m_queryData->setAABBox(box);
+
 		}
 
-		inline const core::aabbox3df& getAABBox()
+		CGOcclusionQuery::~CGOcclusionQuery()
 		{
-			return m_queryData->getAABBox();
+
 		}
 
-		inline u32 getResult()
+		void CGOcclusionQuery::initComponent()
 		{
-			return m_queryData->QueryResult;
+			m_occlusionQuery = m_gameObject->getComponent<COcclusionQuery>();
 		}
 
-		inline bool getVisible()
+		void CGOcclusionQuery::updateComponent()
 		{
-			return m_queryData->QueryVisible;
-		}
+			if (m_occlusionQuery)
+			{
+				core::matrix4 world = m_gameObject->getTransformEuler()->calcWorldTransform();
 
-		DECLARE_GETTYPENAME(COcclusionQuery)
-	};
+				core::aabbox3df bbox = m_occlusionQuery->getAABBox();
+				world.transformBoxEx(bbox);
+
+				CHandles::getInstance()->draw3DBox(bbox, SColor(255, 255, 255, 0));
+			}
+		}
+	}
 }

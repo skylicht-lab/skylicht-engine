@@ -209,6 +209,30 @@ namespace Skylicht
 			wchar_t labelw[256];
 			CObjectLayer* objectLayer = CProjectSettings::getInstance()->getObjectLayer();
 
+			menu->OnOpen = [object, menu](GUI::CBase* base)
+				{
+					int i = 0;
+					for (GUI::CBase* child : menu->getChildren())
+					{
+						GUI::CMenuItem* item = dynamic_cast<GUI::CMenuItem*>(child);
+						if (item)
+						{
+							u32 value = (1 << i);
+							u32 layer = object->getCullingLayer();
+
+							if ((layer & value) == 0)
+								item->setIcon(GUI::ESystemIcon::None);
+							else
+								item->setIcon(GUI::ESystemIcon::Check);
+
+							i++;
+						}
+
+						if (i >= 16)
+							break;
+					}
+				};
+
 			for (int i = 0; i < 16; i++)
 			{
 				std::wstring name = CStringImp::convertUTF8ToUnicode(objectLayer->getName(i).c_str());
@@ -226,7 +250,8 @@ namespace Skylicht
 				}
 
 				u32 value = (1 << i);
-				if (object->getCullingLayer() == value)
+
+				if (object->getCullingLayer() & value)
 				{
 					item->setIcon(GUI::ESystemIcon::Check);
 					dropDown->setLabel(labelw);
@@ -236,7 +261,7 @@ namespace Skylicht
 					item->setIcon(GUI::ESystemIcon::None);
 				}
 
-				item->OnPress = [&, object, item, value, dropDown, ui](GUI::CBase* base)
+				item->OnPress = [&, object, item, value, dropDown, ui, objectLayer](GUI::CBase* base)
 					{
 						// uncheck all menu item
 						GUI::CMenu* menu = dropDown->getMenu();
@@ -250,19 +275,45 @@ namespace Skylicht
 						// check this item
 						item->setIcon(GUI::ESystemIcon::Check);
 
+						u32 currentMask = object->getCullingLayer();
+						if ((currentMask & value) == 0)
+							currentMask = currentMask | value; // on
+						else
+							currentMask = currentMask & (~value); // off
+
 						// apply culling
-						object->setCullingLayer(value);
+						object->setCullingLayer(currentMask);
 
 						// apply for all selected
 						std::vector<CGameObject*> selected = getSelected();
 						for (CGameObject* obj : selected)
 						{
 							if (obj != object)
-								obj->setCullingLayer(value);
+							{
+								currentMask = obj->getCullingLayer();
+								if ((currentMask & value) == 0)
+									currentMask = currentMask | value;
+								else
+									currentMask = currentMask & (~value);
+
+								obj->setCullingLayer(currentMask);
+							}
 						}
 
-						// apply value
-						dropDown->setLabel(item->getLabel());
+						for (int i = 0; i < 16; i++)
+						{
+							u32 testValue = (1 << i);
+							if (object->getCullingLayer() & testValue)
+							{
+								std::wstring name = CStringImp::convertUTF8ToUnicode(objectLayer->getName(i).c_str());
+								if (name.empty())
+								{
+									swprintf(labelw, 256, L"Layer: %d", i);
+									name = labelw;
+								}
+								dropDown->setLabel(name.c_str());
+							}
+						}
 
 						// close menu
 						ui->getWindow()->getCanvas()->closeMenu();

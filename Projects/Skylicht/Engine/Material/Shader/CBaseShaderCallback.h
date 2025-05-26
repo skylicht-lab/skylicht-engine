@@ -56,9 +56,9 @@ namespace Skylicht
 
 		void setColor(IMaterialRenderer *matRender, int colorID, bool vertexConstant, const SColorf& c, float intensity);
 
-		void setDirection(IMaterialRenderer *matRender, int directionID, bool vertexConstant, const core::vector3df& dir, int count = 4, bool worldDirection = false);
+		void setWorldDirection(IMaterialRenderer *matRender, int directionID, bool vertexConstant, const core::vector3df& dir, int count = 4);
 
-		void setPosition(IMaterialRenderer *matRender, int posID, const core::vector3df& pos, bool vertexConstant = true);
+		void setWorldInvPosition(IMaterialRenderer *matRender, int posID, const core::vector3df& pos, bool vertexConstant = true);
 
 		void setWorldPosition(IMaterialRenderer *matRender, int posID, const core::vector3df& pos, bool vertexConstant = true);
 	};

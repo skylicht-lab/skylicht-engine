@@ -83,6 +83,9 @@ namespace Skylicht
 		for (int i = 0, n = numEntity; i < n; i++)
 		{
 			CSkySunData* sky = GET_ENTITY_DATA(entities[i], CSkySunData);
+			CVisibleData* visible = GET_ENTITY_DATA(entities[i], CVisibleData);
+			if (visible->Culled)
+				continue;
 
 			IMeshBuffer* buffer = sky->Buffer;
 

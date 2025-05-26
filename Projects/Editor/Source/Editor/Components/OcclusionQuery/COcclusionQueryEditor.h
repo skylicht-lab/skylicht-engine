@@ -2,10 +2,10 @@
 !@
 MIT License
 
-Copyright (c) 2020 Skylicht Technology CO., LTD
+Copyright (c) 2021 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -24,49 +24,33 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Components/CComponentSystem.h"
-#include "COcclusionQueryData.h"
+#include "Serializable/CObjectSerializable.h"
+#include "Editor/Components/CComponentEditor.h"
+#include "Activator/CEditorActivator.h"
+#include "Editor/Components/Default/CDefaultEditor.h"
+
+#include "OcclusionQuery/COcclusionQuery.h"
 
 namespace Skylicht
 {
-	class SKYLICHT_API COcclusionQuery : public CComponentSystem
+	namespace Editor
 	{
-	protected:
-		COcclusionQueryData* m_queryData;
-
-	public:
-		COcclusionQuery();
-
-		virtual ~COcclusionQuery();
-
-		virtual void initComponent();
-
-		virtual void updateComponent();
-
-		virtual CObjectSerializable* createSerializable();
-
-		virtual void loadSerializable(CObjectSerializable* object);
-
-		inline void setAABBox(const core::aabbox3df& box)
+		class COcclusionQueryEditor : public CDefaultEditor
 		{
-			m_queryData->setAABBox(box);
-		}
+		protected:
+			bool m_testVisible;
 
-		inline const core::aabbox3df& getAABBox()
-		{
-			return m_queryData->getAABBox();
-		}
+			GUI::CLabel* m_testLabel;
+		public:
+			COcclusionQueryEditor();
 
-		inline u32 getResult()
-		{
-			return m_queryData->QueryResult;
-		}
+			virtual ~COcclusionQueryEditor();
 
-		inline bool getVisible()
-		{
-			return m_queryData->QueryVisible;
-		}
+			virtual void initCustomGUI(GUI::CBoxLayout* layout, CSpaceProperty* ui);
 
-		DECLARE_GETTYPENAME(COcclusionQuery)
-	};
+			virtual void closeGUI();
+
+			virtual void update();
+		};
+	}
 }

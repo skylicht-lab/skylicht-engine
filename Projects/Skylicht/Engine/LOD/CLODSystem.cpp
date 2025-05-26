@@ -91,24 +91,26 @@ namespace Skylicht
 		{
 			entity = entities[i];
 
-			transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 			visible = GET_ENTITY_DATA(entity, CVisibleData);
-			lod = GET_ENTITY_DATA(entity, CLODData);
 
-			m = transform->World.pointer();
+			if (!visible->Culled)
+			{
+				transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+				lod = GET_ENTITY_DATA(entity, CLODData);
 
-			// distance vector
-			x = cameraPosition.X - m[12];
-			z = cameraPosition.Z - m[14];
+				m = transform->World.pointer();
 
-			// length vector
-			d = x * x + z * z;
+				// distance vector
+				x = cameraPosition.X - m[12];
+				z = cameraPosition.Z - m[14];
 
-			// culling
-			if (d < lod->From || d >= lod->To)
-				visible->Culled = true;
-			else
-				visible->Culled = false;
+				// length vector
+				d = x * x + z * z;
+
+				// culling out side
+				if (d < lod->From || d >= lod->To)
+					visible->Culled = true;
+			}
 		}
 	}
 

@@ -416,6 +416,14 @@ namespace Skylicht
 			m_viewpointController = new CViewpointController();
 			m_viewpointController->setCamera(m_editorCamera, m_viewpointCamera);
 
+			// set mask
+			m_viewpointZone->updateAddRemoveObject();
+			u32 layer = (1 << 16);
+			core::array<CGameObject*>& allChilds = m_viewpointZone->getArrayChilds(true);
+			for (u32 i = 0, n = allChilds.size(); i < n; i++)
+				allChilds[i]->setCullingLayer(layer);
+			m_viewpointCamera->setCullingMask(layer);
+
 			// add handle renderer
 			CEntityManager* entityMgr = m_scene->getEntityManager();
 
@@ -756,9 +764,7 @@ namespace Skylicht
 					viewport.LowerRightCorner.set((int)(position.X + base->width()), (int)(position.Y + base->height()));
 					m_sceneRect = viewport;
 
-					// draw scene
-					m_scene->setVisibleAllZone(true);
-					m_viewpointZone->setVisible(false);
+					// DRAW SCENE
 
 					// render handles
 					m_handlesRenderer->setEnable(m_enableHandles);
@@ -790,19 +796,13 @@ namespace Skylicht
 
 					getVideoDriver()->clearZBuffer();
 
-					// draw viewpoint
-					m_scene->setVisibleAllZone(false);
-					m_viewpointZone->setVisible(true);
-
+					// DRAW VIEWPOINT
 					m_selectingRenderer->setEnable(false);
 					m_handlesRenderer->setEnable(false);
 					m_gizmosRenderer->setEnable(false);
 
 					m_viewpointRP->render(NULL, m_viewpointCamera, m_scene->getEntityManager(), viewport);
 
-					// disable viewpoint
-					m_scene->setVisibleAllZone(true);
-					m_viewpointZone->setVisible(false);
 					m_handlesRenderer->setEnable(m_enableHandles);
 				}
 

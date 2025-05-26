@@ -34,6 +34,7 @@ namespace Skylicht
 	protected:
 
 		bool m_useLinearRGB;
+		bool m_useEmission;
 
 		ITexture* m_target;
 		ITexture* m_emission;
@@ -45,7 +46,7 @@ namespace Skylicht
 		SMaterial m_finalPass;
 
 	public:
-		CForwardRP(bool linearRGB = true);
+		CForwardRP(bool linearRGB = true, bool useEmission = true);
 
 		virtual ~CForwardRP();
 

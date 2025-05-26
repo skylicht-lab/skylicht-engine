@@ -29,10 +29,12 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CForwardRP::CForwardRP(bool linearRGB) :
+	CForwardRP::CForwardRP(bool linearRGB, bool useEmission) :
 		m_useLinearRGB(linearRGB),
+		m_useEmission(useEmission),
 		m_postProcessor(NULL),
-		m_target(NULL)
+		m_target(NULL),
+		m_emission(NULL)
 	{
 
 	}
@@ -49,7 +51,8 @@ namespace Skylicht
 		if (m_useLinearRGB == true || m_postProcessor)
 			m_target = getVideoDriver()->addRenderTargetTexture(m_size, "target", ECF_A16B16G16R16F);
 
-		m_emission = getVideoDriver()->addRenderTargetTexture(m_size, "emission", ECF_A16B16G16R16F);
+		if (m_useEmission)
+			m_emission = getVideoDriver()->addRenderTargetTexture(m_size, "emission", ECF_A16B16G16R16F);
 	}
 
 	void CForwardRP::releaseRTT()

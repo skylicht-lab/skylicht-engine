@@ -55,4 +55,21 @@ namespace Skylicht
 	{
 
 	}
+
+	CObjectSerializable* COcclusionQuery::createSerializable()
+	{
+		CObjectSerializable* object = CComponentSystem::createSerializable();
+		object->autoRelease(new CVector3Property(object, "boxMin", m_queryData->getAABBox().MinEdge));
+		object->autoRelease(new CVector3Property(object, "boxMax", m_queryData->getAABBox().MaxEdge));
+		return object;
+	}
+
+	void COcclusionQuery::loadSerializable(CObjectSerializable* object)
+	{
+		CComponentSystem::loadSerializable(object);
+		core::aabbox3df box;
+		box.MinEdge = object->get<core::vector3df>("boxMin", core::vector3df());
+		box.MaxEdge = object->get<core::vector3df>("boxMax", core::vector3df());
+		m_queryData->setAABBox(box);
+	}
 }

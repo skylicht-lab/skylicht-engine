@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CVisibleSystem.h"
 #include "RenderPipeline/IRenderPipeline.h"
+#include "Culling/CCullingSystem.h"
 #include "Entity/CEntityManager.h"
 
 namespace Skylicht
@@ -61,6 +62,30 @@ namespace Skylicht
 
 	void CVisibleSystem::update(CEntityManager* entityManager)
 	{
+		if (CCullingSystem::useCacheCulling())
+			return;
 
+		IRenderPipeline* rp = entityManager->getRenderPipeline();
+		if (rp == NULL)
+			return;
+
+		CCamera* camera = entityManager->getCamera();
+		if (camera == NULL)
+			return;
+
+		u32 cullingMask = camera->getCullingMask();
+
+		CVisibleData* visible;
+		CEntity** entities = m_group->getEntities();
+		u32 numEntity = m_group->getEntityCount();
+		CEntity* entity;
+
+		for (u32 i = 0; i < numEntity; i++)
+		{
+			entity = entities[i];
+
+			visible = GET_ENTITY_DATA(entity, CVisibleData);
+			visible->Culled = !(visible->CullingLayer & cullingMask);
+		}
 	}
 }

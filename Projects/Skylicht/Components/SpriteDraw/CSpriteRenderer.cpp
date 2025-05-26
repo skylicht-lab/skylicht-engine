@@ -70,7 +70,9 @@ namespace Skylicht
 			CEntity* entity = entities[i];
 
 			CSpriteDrawData* spriteData = GET_ENTITY_DATA(entity, CSpriteDrawData);
-			if (spriteData != NULL && (spriteData->Frame != NULL || spriteData->Texture != NULL))
+			CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
+
+			if (!visible->Culled && (spriteData->Frame != NULL || spriteData->Texture != NULL))
 				m_sprites.push(spriteData);
 		}
 	}
