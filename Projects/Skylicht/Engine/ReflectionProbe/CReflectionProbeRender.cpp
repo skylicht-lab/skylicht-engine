@@ -79,9 +79,12 @@ namespace Skylicht
 				CWorldTransformData* transformData = GET_ENTITY_DATA(entity, CWorldTransformData);
 				CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
 
-				m_probes.push_back(probeData);
-				m_transforms.push_back(transformData);
-				m_visibles.push_back(visible);
+				if (visible->Visible && !visible->Culled)
+				{
+					m_probes.push_back(probeData);
+					m_transforms.push_back(transformData);
+					m_visibles.push_back(visible);
+				}
 			}
 		}
 	}
@@ -105,9 +108,6 @@ namespace Skylicht
 
 		for (u32 i = 0, n = m_probes.size(); i < n; i++)
 		{
-			if (!m_visibles[i]->Visible)
-				continue;
-
 			driver->setTransform(video::ETS_WORLD, transforms[i]->World);
 
 			m_material.setTexture(0, probes[i]->ReflectionTexture);
