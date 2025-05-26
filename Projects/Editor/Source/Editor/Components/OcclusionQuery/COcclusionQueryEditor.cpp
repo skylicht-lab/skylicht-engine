@@ -143,7 +143,7 @@ namespace Skylicht
 			if (m_testLabel)
 			{
 				wchar_t log[512];
-				swprintf(log 512, L"Test result: %d", m_testVisible ? 1 : 0);
+				swprintf(log, 512, L"Test result: %d", m_testVisible ? 1 : 0);
 				m_testLabel->setString(log);
 			}
 		}
