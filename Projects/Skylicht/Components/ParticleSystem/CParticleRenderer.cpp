@@ -110,6 +110,31 @@ namespace Skylicht
 
 			CShaderParticle::setViewUp(up);
 			CShaderParticle::setViewLook(look);
+
+			CEntity** entities = m_group->getEntities();
+			int numEntity = m_group->getEntityCount();
+
+			for (int i = 0; i < numEntity; i++)
+			{
+				CEntity* entity = entities[i];
+
+				CParticleBufferData* data = GET_ENTITY_DATA(entity, CParticleBufferData);
+				CCullingData* culling = GET_ENTITY_DATA(entity, CCullingData);
+				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+
+				if (data->Updated != data->RequestUpdate)
+				{
+					// todo: fix pause particle if the code don't call CParticleComponent::update function
+					data->Updated = data->RequestUpdate;
+
+					// update group before render
+					for (u32 j = 0, m = data->AllGroups.size(); j < m; j++)
+					{
+						data->AllGroups[j]->setParentWorldMatrix(transform->World);
+						data->AllGroups[j]->update(culling->Visible);
+					}
+				}
+			}
 		}
 
 		void CParticleRenderer::render(CEntityManager* entityManager)
@@ -139,22 +164,7 @@ namespace Skylicht
 
 				CParticleBufferData* data = GET_ENTITY_DATA(entity, CParticleBufferData);
 				CCullingData* culling = GET_ENTITY_DATA(entity, CCullingData);
-				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 
-				if (data->Updated != data->RequestUpdate)
-				{
-					// todo: fix pause particle if the code don't call CParticleComponent::update function
-					data->Updated = data->RequestUpdate;
-
-					// update group before render
-					for (u32 j = 0, m = data->AllGroups.size(); j < m; j++)
-					{
-						data->AllGroups[j]->setParentWorldMatrix(transform->World);
-						data->AllGroups[j]->update(culling->Visible);
-					}
-				}
-
-				// render
 				if (culling->Visible == true)
 				{
 					CIndirectLightingData* lightingData = GET_ENTITY_DATA(entity, CIndirectLightingData);
@@ -166,6 +176,7 @@ namespace Skylicht
 							CShaderLighting::setLightAmbient(lightingData->Color);
 					}
 
+					CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 					renderParticleGroup(data, getTransformNoRotate(transform->World));
 				}
 			}
