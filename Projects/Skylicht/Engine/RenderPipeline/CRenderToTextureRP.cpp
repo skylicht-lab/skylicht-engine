@@ -29,13 +29,13 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	core::matrix4 g_projection[video::MATERIAL_MAX_TEXTURES];
+	core::matrix4 g_rttMatrix[video::MATERIAL_MAX_TEXTURES];
 
 	const float* CRenderToTextureRP::getMatrix(int id)
 	{
 		if (id >= video::MATERIAL_MAX_TEXTURES)
 			id = 0;
-		return g_projection[id].pointer();
+		return g_rttMatrix[id].pointer();
 	}
 
 	CRenderToTextureRP::CRenderToTextureRP(u32 id) :
@@ -99,7 +99,7 @@ namespace Skylicht
 
 		// update prj matrix
 		core::matrix4 mvp = driver->getTransform(video::ETS_PROJECTION) * driver->getTransform(video::ETS_VIEW);
-		g_projection[m_id] = m_bias * mvp;
+		g_rttMatrix[m_id] = m_bias * mvp;
 
 		if (m_updateEntity == true)
 		{

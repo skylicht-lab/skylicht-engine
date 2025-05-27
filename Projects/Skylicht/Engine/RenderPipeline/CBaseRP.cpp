@@ -238,21 +238,22 @@ namespace Skylicht
 					irrMaterial.TextureLayer[textureID].AnisotropicFilter = 0;
 				}
 			}
-			else if (res->Type == CShader::ReflectionTexture)
+			else if (res->Type >= CShader::RTT0 && res->Type <= CShader::RTT7)
 			{
 				SUniform* uniform = shader->getFSUniform(res->Name.c_str());
 				if (uniform != NULL)
 				{
+					int rttId = (int)(res->Type - CShader::RTT0);
+
 					u32 textureID = (u32)uniform->Value[0];
-					irrMaterial.setTexture(textureID, CShaderRTT::getReflectionTexture());
+					irrMaterial.setTexture(textureID, CShaderRTT::getRTTTexture(rttId));
 
 					irrMaterial.TextureLayer[textureID].TextureWrapU = 0;
 					irrMaterial.TextureLayer[textureID].TextureWrapV = 0;
 
-					// disable mipmap
 					irrMaterial.TextureLayer[textureID].BilinearFilter = false;
 					irrMaterial.TextureLayer[textureID].TrilinearFilter = false;
-					irrMaterial.TextureLayer[textureID].AnisotropicFilter = 0;
+					irrMaterial.TextureLayer[textureID].AnisotropicFilter = 2;
 				}
 			}
 		}

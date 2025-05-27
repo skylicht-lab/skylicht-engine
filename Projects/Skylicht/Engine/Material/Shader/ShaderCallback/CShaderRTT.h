@@ -39,8 +39,8 @@ namespace Skylicht
 
 		virtual void OnSetConstants(CShader* shader, SUniform* uniform, IMaterialRenderer* matRender, bool vertexShader);
 
-		static void setReflectionTexture(ITexture* texture);
+		static void setRTTTexture(int id, ITexture* texture);
 
-		static ITexture* getReflectionTexture();
+		static ITexture* getRTTTexture(int id);
 	};
 }

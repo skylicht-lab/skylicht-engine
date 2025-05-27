@@ -60,15 +60,18 @@ namespace Skylicht
 		}
 	}
 
-	ITexture* g_reflectionTexture = NULL;
+	ITexture* g_rttTexture[video::MATERIAL_MAX_TEXTURES] = { NULL };
 
-	void CShaderRTT::setReflectionTexture(ITexture* texture)
+	void CShaderRTT::setRTTTexture(int id, ITexture* texture)
 	{
-		g_reflectionTexture = texture;
+		if (id >= 0 && id < video::MATERIAL_MAX_TEXTURES)
+			g_rttTexture[id] = texture;
 	}
 
-	ITexture* CShaderRTT::getReflectionTexture()
+	ITexture* CShaderRTT::getRTTTexture(int id)
 	{
-		return g_reflectionTexture;
+		if (id >= 0 && id < video::MATERIAL_MAX_TEXTURES)
+			return g_rttTexture[id];
+		return NULL;
 	}
 }

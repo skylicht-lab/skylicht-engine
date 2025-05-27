@@ -158,11 +158,18 @@ namespace Skylicht
 			Texture = 0,
 			CubeTexture,
 			ReflectionProbe,
-			ReflectionTexture,
 			ShadowMap,
 			TransformTexture,
 			VertexPositionTexture,
 			VertexNormalTexture,
+			RTT0,
+			RTT1,
+			RTT2,
+			RTT3,
+			RTT4,
+			RTT5,
+			RTT6,
+			RTT7,
 			ResourceCount
 		};
 
