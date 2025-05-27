@@ -117,7 +117,7 @@ public class FullscreenActivity extends AppCompatActivity {
                         }
                     }
                 } else {
-                    Log.w("Skylicht", "Engine just support install-time asset: " + bundle);
+                    Log.w("Skylicht", "The engine only supports install-time asset: " + bundle);
                 }
             }
             else {

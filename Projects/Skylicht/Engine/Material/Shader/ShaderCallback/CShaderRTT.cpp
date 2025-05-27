@@ -60,6 +60,7 @@ namespace Skylicht
 		}
 	}
 
+	ITexture* g_lastFrame = NULL;
 	ITexture* g_rttTexture[video::MATERIAL_MAX_TEXTURES] = { NULL };
 
 	void CShaderRTT::setRTTTexture(int id, ITexture* texture)
@@ -73,5 +74,15 @@ namespace Skylicht
 		if (id >= 0 && id < video::MATERIAL_MAX_TEXTURES)
 			return g_rttTexture[id];
 		return NULL;
+	}
+
+	void CShaderRTT::setLastFrameTexture(ITexture* texture)
+	{
+		g_lastFrame = texture;
+	}
+
+	ITexture* CShaderRTT::getLastFrameTexture()
+	{
+		return g_lastFrame;
 	}
 }

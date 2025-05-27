@@ -97,6 +97,7 @@ void CViewInit::initScene()
 	CGameObject* guiCameraObject = zone->createEmptyObject();
 	CCamera* guiCamera = guiCameraObject->addComponent<CCamera>();
 	guiCamera->setProjectionType(CCamera::OrthoUI);
+	guiCamera->setCullingMask(4);
 
 	// sky
 	ITexture* skyDomeTexture = CTextureManager::getInstance()->getTexture("Common/Textures/Sky/PaperMill.png");
@@ -349,14 +350,14 @@ void CViewInit::onUpdate()
 					delete m_getFile;
 					m_getFile = NULL;
 				}
-}
+			}
 			else if (m_getFile->getState() == CGetFileURL::Error)
 			{
 				// retry download
 				delete m_getFile;
 				m_getFile = NULL;
 			}
-	}
+		}
 #else
 
 		for (std::string& bundle : listBundles)
@@ -367,7 +368,7 @@ void CViewInit::onUpdate()
 
 		m_initState = CViewInit::InitScene;
 #endif
-}
+	}
 	break;
 	case CViewInit::InitScene:
 	{

@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2024 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,27 +24,43 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Material/Shader/CShader.h"
+#include "CCamera.h"
+#include "Components/CComponentSystem.h"
+#include "Components/ILateUpdate.h"
 
 namespace Skylicht
 {
-	class CCamera;
-
-	class SKYLICHT_API CShaderRTT : public IShaderCallback
+	class SKYLICHT_API CCameraReflect :
+		public CComponentSystem,
+		public ILateUpdate
 	{
+	protected:
+		CCamera* m_camera;
+		CCamera* m_targetCamera;
+
+		core::plane3df m_plane;
+
 	public:
-		CShaderRTT();
+		CCameraReflect();
 
-		virtual ~CShaderRTT();
+		virtual ~CCameraReflect();
 
-		virtual void OnSetConstants(CShader* shader, SUniform* uniform, IMaterialRenderer* matRender, bool vertexShader);
+		virtual void initComponent();
 
-		static void setRTTTexture(int id, ITexture* texture);
+		virtual void updateComponent();
 
-		static ITexture* getRTTTexture(int id);
+		virtual void lateUpdate();
 
-		static void setLastFrameTexture(ITexture* texture);
+		void setTargetCamera(CCamera* cam);
 
-		static ITexture* getLastFrameTexture();
+		inline CCamera* getTargetCamera()
+		{
+			return m_targetCamera;
+		}
+
+		inline void setPlane(const core::plane3df& p)
+		{
+			m_plane = p;
+		}
 	};
 }

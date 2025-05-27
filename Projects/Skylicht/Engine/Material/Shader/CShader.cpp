@@ -371,7 +371,16 @@ namespace Skylicht
 						"ShadowMap",
 						"TransformTexture",
 						"VertexPositionTexture",
-						"VertexNormalTexture"
+						"VertexNormalTexture",
+						"LastFrame",
+						"RTT0",
+						"RTT1",
+						"RTT2",
+						"RTT3",
+						"RTT4",
+						"RTT5",
+						"RTT6",
+						"RTT7"
 					};
 
 					for (u32 i = 0, n = ResourceCount; i < n; i++)

@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CRenderToTextureRP.h"
 
 #include "Material/Shader/CShaderManager.h"
+#include "Material/Shader/ShaderCallback/CShaderRTT.h"
 
 namespace Skylicht
 {
@@ -38,8 +39,16 @@ namespace Skylicht
 		return g_rttMatrix[id].pointer();
 	}
 
-	CRenderToTextureRP::CRenderToTextureRP(u32 id) :
-		m_id(id)
+	CRenderToTextureRP::CRenderToTextureRP(u32 id, video::ECOLOR_FORMAT format, const core::dimension2du& customSize, float scale) :
+		m_id(id),
+		m_enable(true),
+		m_customCamera(NULL),
+		m_renderTarget(NULL),
+		m_format(format),
+		m_scale(scale),
+		m_customSize(customSize),
+		m_customPipleline(NULL),
+		m_autoGenerateMipmap(false)
 	{
 		if (m_id >= video::MATERIAL_MAX_TEXTURES)
 			m_id = 0;
@@ -64,20 +73,52 @@ namespace Skylicht
 			};
 			m_bias.setM(biasGL);
 		}
+
+		m_updateEntity = false;
 	}
 
 	CRenderToTextureRP::~CRenderToTextureRP()
 	{
+		releaseRTT();
+	}
+
+	void CRenderToTextureRP::initRTT(int w, int h)
+	{
+		if (m_customSize.Width > 0 && m_customSize.Height > 0)
+		{
+			m_size.set(m_customSize.Width, m_customSize.Height);
+		}
+		else
+		{
+			int newW = (int)((float)w * m_scale);
+			int newH = (int)((float)h * m_scale);
+			m_size.set(newW, newH);
+		}
+
+		m_renderTarget = getVideoDriver()->addRenderTargetTexture(m_size, "target", m_format);
+	}
+
+	void CRenderToTextureRP::releaseRTT()
+	{
+		if (m_renderTarget)
+		{
+			getVideoDriver()->removeTexture(m_renderTarget);
+			CShaderRTT::setRTTTexture(m_id, NULL);
+		}
 	}
 
 	void CRenderToTextureRP::initRender(int w, int h)
 	{
-
+		initRTT(w, h);
 	}
 
 	void CRenderToTextureRP::resize(int w, int h)
 	{
-
+		if (m_customSize.Width == 0 || m_customSize.Height == 0)
+		{
+			releaseRTT();
+			initRTT(w, h);
+		}
 	}
 
 	void CRenderToTextureRP::render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport, int cubeFaceId, IRenderPipeline* lastRP)
@@ -85,30 +126,46 @@ namespace Skylicht
 		if (camera == NULL)
 			return;
 
-		IVideoDriver* driver = getVideoDriver();
-
-		setTarget(target, cubeFaceId);
-
-		// custom viewport
-		if (viewport.getWidth() > 0 && viewport.getHeight() > 0)
-			driver->setViewPort(viewport);
-
-		setCamera(camera);
-		entityManager->setCamera(camera);
-		entityManager->setRenderPipeline(this);
-
-		// update prj matrix
-		core::matrix4 mvp = driver->getTransform(video::ETS_PROJECTION) * driver->getTransform(video::ETS_VIEW);
-		g_rttMatrix[m_id] = m_bias * mvp;
-
-		if (m_updateEntity == true)
+		if (m_enable)
 		{
-			entityManager->update();
-			entityManager->cullingAndRender();
-		}
-		else
-		{
-			entityManager->cullingAndRender();
+			IVideoDriver* driver = getVideoDriver();
+			CCamera* renderCamera = camera;
+			if (m_customCamera)
+				renderCamera = m_customCamera;
+
+			if (m_customPipleline)
+			{
+				// maybe: need deferred & postprocess
+				m_customPipleline->render(m_renderTarget, renderCamera, entityManager, core::recti());
+			}
+			else
+			{
+				// quick render forward pass or custom shader
+				driver->setRenderTarget(m_renderTarget, false, true);
+
+				setCamera(renderCamera);
+				entityManager->setCamera(renderCamera);
+				entityManager->setRenderPipeline(this);
+
+				// update prj matrix
+				core::matrix4 mvp = driver->getTransform(video::ETS_PROJECTION) * driver->getTransform(video::ETS_VIEW);
+				g_rttMatrix[m_id] = m_bias * mvp;
+
+				if (m_updateEntity == true)
+				{
+					entityManager->update();
+					entityManager->cullingAndRender();
+				}
+				else
+				{
+					entityManager->cullingAndRender();
+				}
+			}
+
+			if (m_autoGenerateMipmap)
+				m_renderTarget->regenerateMipMapLevels();
+
+			CShaderRTT::setRTTTexture(m_id, m_renderTarget);
 		}
 
 		onNext(target, camera, entityManager, viewport, cubeFaceId);

@@ -63,6 +63,7 @@ namespace Skylicht
 		bool m_bloomEffect;
 		bool m_fxaa;
 		bool m_screenSpaceReflection;
+		bool m_enableLastFrameTexture;
 
 		CMaterial* m_brightFilter;
 		CMaterial* m_blurFilter;
@@ -139,6 +140,16 @@ namespace Skylicht
 		virtual bool isEnableScreenSpaceReflection()
 		{
 			return m_screenSpaceReflection;
+		}
+
+		inline void enableLastFrameTexture(bool b)
+		{
+			m_enableLastFrameTexture = b;
+		}
+
+		inline bool isEnableLastFrameTexture()
+		{
+			return m_enableLastFrameTexture;
 		}
 
 		inline void setBloomThreshold(float f)

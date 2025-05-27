@@ -162,6 +162,7 @@ namespace Skylicht
 			TransformTexture,
 			VertexPositionTexture,
 			VertexNormalTexture,
+			LastFrame,
 			RTT0,
 			RTT1,
 			RTT2,

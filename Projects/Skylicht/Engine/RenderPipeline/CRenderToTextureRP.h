@@ -32,11 +32,19 @@ namespace Skylicht
 	{
 	protected:
 		int m_id;
-
+		bool m_enable;
 		core::matrix4 m_bias;
+		float m_scale;
+		core::dimension2du m_size;
+		core::dimension2du m_customSize;
+		CCamera* m_customCamera;
+		ITexture* m_renderTarget;
+		IRenderPipeline* m_customPipleline;
+		video::ECOLOR_FORMAT m_format;
+		bool m_autoGenerateMipmap;
 
 	public:
-		CRenderToTextureRP(u32 id = 0);
+		CRenderToTextureRP(u32 id, video::ECOLOR_FORMAT format, const core::dimension2du& customSize = core::dimension2du(), float scale = 1.0f);
 
 		virtual ~CRenderToTextureRP();
 
@@ -46,14 +54,57 @@ namespace Skylicht
 
 		virtual void render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport, int cubeFaceId = -1, IRenderPipeline* lastRP = NULL);
 
+		inline void setCustomCamera(CCamera* camera)
+		{
+			m_customCamera = camera;
+		}
+
+		inline CCamera* getCustomCamera()
+		{
+			return m_customCamera;
+		}
+
 		inline int getId()
 		{
 			return m_id;
+		}
+
+		inline bool isEnable()
+		{
+			return m_enable;
+		}
+
+		inline void setEnable(bool b)
+		{
+			m_enable = b;
+		}
+
+		inline ITexture* getTarget()
+		{
+			return m_renderTarget;
+		}
+
+		inline void setCustomPipleline(IRenderPipeline* pipeline)
+		{
+			m_customPipleline = pipeline;
+		}
+
+		inline void enableAutoGenerateMipmap(bool b)
+		{
+			m_autoGenerateMipmap = b;
+		}
+
+		inline bool isAutoGenerateMipmap()
+		{
+			return m_autoGenerateMipmap;
 		}
 
 		static const float* getMatrix(int id);
 
 	protected:
 
+		void initRTT(int w, int h);
+
+		void releaseRTT();
 	};
 }

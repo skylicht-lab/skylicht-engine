@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Material/Shader/CShaderManager.h"
 #include "Material/Shader/CShaderParams.h"
 #include "Material/Shader/ShaderCallback/CShaderMaterial.h"
+#include "Material/Shader/ShaderCallback/CShaderRTT.h"
 
 namespace Skylicht
 {
@@ -38,6 +39,7 @@ namespace Skylicht
 		m_bloomEffect(true),
 		m_fxaa(false),
 		m_screenSpaceReflection(false),
+		m_enableLastFrameTexture(false),
 		m_brightFilter(NULL),
 		m_blurFilter(NULL),
 		m_blurUpFilter(NULL),
@@ -114,7 +116,7 @@ namespace Skylicht
 			}
 		}
 
-		if (m_screenSpaceReflection)
+		if (m_screenSpaceReflection || m_enableLastFrameTexture)
 		{
 			m_lastFrameBuffer = driver->addRenderTargetTexture(m_size, "last_frame", ECF_A8R8G8B8);
 
@@ -316,7 +318,7 @@ namespace Skylicht
 		// END BLOOM
 
 		// SCREEN SPACE REFLECTION (save buffer for deferred rendering)
-		if (m_screenSpaceReflection == true && m_lastFrameBuffer)
+		if ((m_screenSpaceReflection || m_enableLastFrameTexture) && m_lastFrameBuffer)
 		{
 			driver->setRenderTarget(m_lastFrameBuffer, true, false);
 
@@ -329,7 +331,12 @@ namespace Skylicht
 			if (viewport.getWidth() > 0 && viewport.getHeight() > 0)
 				driver->setViewPort(viewport);
 
-			m_lastFrameBuffer->regenerateMipMapLevels();
+			// SSR use textureLod in shader
+			if (m_screenSpaceReflection)
+				m_lastFrameBuffer->regenerateMipMapLevels();
+
+			// last frame texture
+			CShaderRTT::setLastFrameTexture(m_lastFrameBuffer);
 		}
 		// END SCREEN SPACE REFLECTION
 
