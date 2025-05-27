@@ -42,6 +42,7 @@ namespace Skylicht
 		bool m_registerQuery;
 
 	public:
+		bool Enable;
 
 		bool NeedValidate;
 

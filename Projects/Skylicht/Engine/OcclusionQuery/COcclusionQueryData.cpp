@@ -32,6 +32,7 @@ namespace Skylicht
 	COcclusionQueryData::COcclusionQueryData() :
 		m_node(NULL),
 		m_registerQuery(false),
+		Enable(true),
 		NeedValidate(true),
 		QueryResult(0),
 		QueryVisible(false)

@@ -164,8 +164,17 @@ namespace Skylicht
 			CVisibleData* visible = GET_ENTITY_DATA(entities[i], CVisibleData);
 			if (visible->Visible && !visible->Culled)
 			{
-				m_query.push(GET_ENTITY_DATA(entities[i], COcclusionQueryData));
-				m_transforms.push(GET_ENTITY_DATA(entities[i], CWorldTransformData));
+				COcclusionQueryData* queryData = GET_ENTITY_DATA(entities[i], COcclusionQueryData);
+				if (queryData->Enable)
+				{
+					m_query.push(queryData);
+					m_transforms.push(GET_ENTITY_DATA(entities[i], CWorldTransformData));
+				}
+				else
+				{
+					queryData->QueryResult = 0;
+					queryData->QueryVisible = false;
+				}
 			}
 		}
 	}

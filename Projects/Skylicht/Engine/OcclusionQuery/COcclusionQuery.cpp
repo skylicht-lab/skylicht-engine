@@ -56,6 +56,11 @@ namespace Skylicht
 
 	}
 
+	void COcclusionQuery::onEnable(bool b)
+	{
+		m_queryData->Enable = b;
+	}
+
 	CObjectSerializable* COcclusionQuery::createSerializable()
 	{
 		CObjectSerializable* object = CComponentSystem::createSerializable();
