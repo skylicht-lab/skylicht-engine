@@ -87,6 +87,8 @@ namespace Skylicht
 
 		virtual CGameObject* searchObjectInChildByTemplateObjId(const char* id);
 
+		virtual u32 searchObjectByCullingLayer(ArrayGameObject& result, u32 mask);
+
 		virtual CEntity* searchEntityByID(const char* id);
 
 		virtual CEntity* searchEntityInChildByID(const char* id);

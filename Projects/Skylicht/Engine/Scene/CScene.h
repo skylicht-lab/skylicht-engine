@@ -79,6 +79,8 @@ namespace Skylicht
 
 		virtual CEntity* searchEntityInChildByID(const char* id);
 
+		u32 searchObjectByCullingLayer(ArrayGameObject& result, u32 mask);
+
 		virtual CZone* createZone();
 
 		virtual void removeZone(CGameObject* zone);

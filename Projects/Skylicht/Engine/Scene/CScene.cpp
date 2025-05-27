@@ -96,6 +96,13 @@ namespace Skylicht
 		return NULL;
 	}
 
+	u32 CScene::searchObjectByCullingLayer(ArrayGameObject& result, u32 mask)
+	{
+		for (CZone*& zone : m_zones)
+			zone->searchObjectByCullingLayer(result, mask);
+		return (u32)result.size();
+	}
+
 	void CScene::releaseScene()
 	{
 		for (CZone*& zone : m_zones)
