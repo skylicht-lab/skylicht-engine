@@ -141,7 +141,7 @@ namespace Skylicht
 			else
 			{
 				// quick render forward pass or custom shader
-				driver->setRenderTarget(m_renderTarget, false, true);
+				driver->setRenderTarget(m_renderTarget, true, true);
 
 				setCamera(renderCamera);
 				entityManager->setCamera(renderCamera);

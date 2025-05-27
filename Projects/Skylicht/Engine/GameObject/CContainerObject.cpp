@@ -567,7 +567,7 @@ namespace Skylicht
 	{
 		for (CGameObject*& obj : m_childs)
 		{
-			if (obj->getCullingLayer() && mask)
+			if (obj->getCullingLayer() & mask)
 				result.push_back(obj);
 
 			CContainerObject* container = dynamic_cast<CContainerObject*>(obj);
