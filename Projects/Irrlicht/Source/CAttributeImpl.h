@@ -206,7 +206,7 @@ public:
 
 	virtual E_ATTRIBUTE_TYPE getType() const _IRR_OVERRIDE_
 	{
-		return EAT_INT;
+		return EAT_UINT;
 	}
 
 

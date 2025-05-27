@@ -175,7 +175,7 @@ namespace Skylicht
 
 		virtual void serialize(io::IAttributes* io)
 		{
-			io->addInt(Name.c_str(), m_value);
+			io->addUInt(Name.c_str(), m_value);
 		}
 
 		virtual void deserialize(io::IAttributes* io)

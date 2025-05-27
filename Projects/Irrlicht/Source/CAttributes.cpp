@@ -1504,6 +1504,12 @@ void CAttributes::readAttributeFromXML(io::IXMLReader* reader)
 		Attributes.getLast()->setString(reader->getAttributeValue(L"value"));
 	}
 	else
+	if (element == L"uint")
+	{
+		addUInt(name.c_str(), 0);
+		Attributes.getLast()->setString(reader->getAttributeValue(L"value"));
+	}
+	else
 	if (element == L"bool")
 	{
 		addBool(name.c_str(), 0);
