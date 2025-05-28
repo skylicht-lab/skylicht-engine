@@ -32,7 +32,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class SKYLICHT_API CVisibleSystem : public IEntitySystem
+	class SKYLICHT_API CVisibleSystem : public IRenderSystem
 	{
 	protected:
 		CEntityGroup* m_group;
@@ -49,5 +49,7 @@ namespace Skylicht
 		virtual void init(CEntityManager* entityManager);
 
 		virtual void update(CEntityManager* entityManager);
+
+		virtual void render(CEntityManager* entityManager);
 	};
 }

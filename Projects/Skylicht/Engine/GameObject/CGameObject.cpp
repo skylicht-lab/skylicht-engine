@@ -186,6 +186,17 @@ namespace Skylicht
 		}
 	}
 
+	void CGameObject::setCullingLayerOnOff(u32 value, bool on)
+	{
+		u32 currentMask = m_cullingLayer;
+		if (on)
+			currentMask = currentMask | value;
+		else
+			currentMask = currentMask & (~value);
+
+		setCullingLayer(currentMask);
+	}
+
 	CEntityManager* CGameObject::getEntityManager()
 	{
 		return m_zone->getEntityManager();

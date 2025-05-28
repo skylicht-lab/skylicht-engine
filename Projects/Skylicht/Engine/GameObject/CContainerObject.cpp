@@ -578,6 +578,28 @@ namespace Skylicht
 		return (u32)result.size();
 	}
 
+	void CContainerObject::setCullingLayerForChild(u32 mask)
+	{
+		for (CGameObject*& obj : m_childs)
+		{
+			obj->setCullingLayer(mask);
+			CContainerObject* container = dynamic_cast<CContainerObject*>(obj);
+			if (container != NULL)
+				container->setCullingLayerForChild(mask);
+		}
+	}
+
+	void CContainerObject::setCullingOnOffForChild(u32 value, bool on)
+	{
+		for (CGameObject*& obj : m_childs)
+		{
+			obj->setCullingLayerOnOff(value, on);
+			CContainerObject* container = dynamic_cast<CContainerObject*>(obj);
+			if (container != NULL)
+				container->setCullingOnOffForChild(value, on);
+		}
+	}
+
 	bool CContainerObject::testConflictName(const wchar_t* objectName)
 	{
 		return searchObject(objectName) != NULL;

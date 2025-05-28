@@ -295,6 +295,8 @@ namespace Skylicht
 
 		void setCullingLayer(u32 layer);
 
+		void setCullingLayerOnOff(u32 value, bool on);
+
 		inline u32 getCullingLayer()
 		{
 			return m_cullingLayer;

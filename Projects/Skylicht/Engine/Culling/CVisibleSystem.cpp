@@ -45,8 +45,10 @@ namespace Skylicht
 	{
 		if (!m_group)
 		{
-			// add group & manage the query visible entity
-			m_group = entityManager->addCustomGroup(new CGroupVisible());
+			// get visible group
+			// CVisibleGroup added in CEntityManager constructor
+			const u32 visibleGroupType[] = GET_LIST_ENTITY_DATA(CVisibleData);
+			m_group = entityManager->findGroup(visibleGroupType, 1);
 		}
 	}
 
@@ -87,5 +89,10 @@ namespace Skylicht
 			visible = GET_ENTITY_DATA(entity, CVisibleData);
 			visible->Culled = !(visible->CullingLayer & cullingMask);
 		}
+	}
+
+	void CVisibleSystem::render(CEntityManager* entityManager)
+	{
+
 	}
 }

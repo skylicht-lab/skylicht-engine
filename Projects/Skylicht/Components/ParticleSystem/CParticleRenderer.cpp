@@ -119,7 +119,6 @@ namespace Skylicht
 				CEntity* entity = entities[i];
 
 				CParticleBufferData* data = GET_ENTITY_DATA(entity, CParticleBufferData);
-				CCullingData* culling = GET_ENTITY_DATA(entity, CCullingData);
 				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 
 				if (data->Updated != data->RequestUpdate)
@@ -131,7 +130,7 @@ namespace Skylicht
 					for (u32 j = 0, m = data->AllGroups.size(); j < m; j++)
 					{
 						data->AllGroups[j]->setParentWorldMatrix(transform->World);
-						data->AllGroups[j]->update(culling->Visible);
+						data->AllGroups[j]->update(true);
 					}
 				}
 			}
@@ -196,7 +195,6 @@ namespace Skylicht
 
 				CParticleBufferData* data = GET_ENTITY_DATA(entity, CParticleBufferData);
 				CCullingData* culling = GET_ENTITY_DATA(entity, CCullingData);
-				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 
 				if (culling->Visible == true)
 				{
@@ -209,6 +207,7 @@ namespace Skylicht
 							CShaderLighting::setLightAmbient(lightingData->Color);
 					}
 
+					CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 					renderParticleGroupEmission(data, getTransformNoRotate(transform->World));
 				}
 			}

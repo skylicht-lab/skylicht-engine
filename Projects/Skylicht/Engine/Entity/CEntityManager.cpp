@@ -53,8 +53,9 @@ namespace Skylicht
 		m_systemChanged(true),
 		m_needSortEntities(true)
 	{
+		addCustomGroup(new CGroupVisible());
+
 		// core engine systems
-		addSystem<CVisibleSystem>();
 		addSystem<CComponentTransformSystem>();
 		addSystem<CWorldTransformSystem>();
 		addSystem<CWorldInverseTransformSystem>();
@@ -66,6 +67,7 @@ namespace Skylicht
 		addSystem<CIndirectLightingSystem>();
 
 		// culling system
+		addRenderSystem<CVisibleSystem>();
 		addRenderSystem<CLODSystem>();
 		addRenderSystem<CCullingSystem>();
 		addRenderSystem<CLightCullingSystem>();

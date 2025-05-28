@@ -89,6 +89,10 @@ namespace Skylicht
 
 		virtual u32 searchObjectByCullingLayer(ArrayGameObject& result, u32 mask);
 
+		virtual void setCullingLayerForChild(u32 mask);
+
+		virtual void setCullingOnOffForChild(u32 value, bool on);
+
 		virtual CEntity* searchEntityByID(const char* id);
 
 		virtual CEntity* searchEntityInChildByID(const char* id);
