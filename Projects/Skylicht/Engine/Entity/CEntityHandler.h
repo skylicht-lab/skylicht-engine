@@ -45,6 +45,8 @@ namespace Skylicht
 
 		virtual void updateComponent();
 
+		virtual void onUpdateCullingLayer(u32 mask);
+
 		CEntity* searchEntityByID(const char* id);
 
 		CEntity* createEntity();

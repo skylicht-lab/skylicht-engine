@@ -184,6 +184,9 @@ namespace Skylicht
 			CVisibleData* visible = GET_ENTITY_DATA(m_entity, CVisibleData);
 			visible->CullingLayer = layer;
 		}
+
+		for (CComponentSystem* component : m_components)
+			component->onUpdateCullingLayer(layer);
 	}
 
 	void CGameObject::setCullingLayerOnOff(u32 value, bool on)

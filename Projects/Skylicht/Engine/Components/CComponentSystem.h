@@ -77,6 +77,8 @@ namespace Skylicht
 
 		virtual void onEnable(bool b);
 
+		virtual void onUpdateCullingLayer(u32 mask);
+
 		virtual CObjectSerializable* createSerializable();
 
 		virtual void loadSerializable(CObjectSerializable* object);

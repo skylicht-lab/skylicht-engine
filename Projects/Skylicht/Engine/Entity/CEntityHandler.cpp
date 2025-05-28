@@ -56,6 +56,15 @@ namespace Skylicht
 
 	}
 
+	void CEntityHandler::onUpdateCullingLayer(u32 mask)
+	{
+		for (u32 i = 0, n = m_entities.size(); i < n; i++)
+		{
+			CVisibleData* visible = GET_ENTITY_DATA(m_entities[i], CVisibleData);
+			visible->CullingLayer = mask;
+		}
+	}
+
 	CEntity* CEntityHandler::searchEntityByID(const char* id)
 	{
 		for (u32 i = 0, n = m_entities.size(); i < n; i++)

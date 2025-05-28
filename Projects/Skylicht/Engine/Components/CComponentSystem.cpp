@@ -72,9 +72,14 @@ namespace Skylicht
 	{
 		if (m_enable != b)
 		{
-			onEnable(b);
 			m_enable = b;
+			onEnable(b);
 		}
+	}
+
+	void CComponentSystem::onUpdateCullingLayer(u32 mask)
+	{
+
 	}
 
 	CObjectSerializable* CComponentSystem::createSerializable()
