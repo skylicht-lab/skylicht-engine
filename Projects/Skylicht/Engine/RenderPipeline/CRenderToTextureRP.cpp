@@ -96,6 +96,7 @@ namespace Skylicht
 		}
 
 		m_renderTarget = getVideoDriver()->addRenderTargetTexture(m_size, "target", m_format);
+		CShaderRTT::setRTTTexture(m_id, m_renderTarget);
 	}
 
 	void CRenderToTextureRP::releaseRTT()

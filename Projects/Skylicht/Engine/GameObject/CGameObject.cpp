@@ -624,8 +624,6 @@ namespace Skylicht
 		setStatic(object->get("static", true));
 		setLock(object->get("lock", false));
 
-		setCullingLayer(object->get<u32>("culling", 1));
-
 		CObjectSerializable* coms = object->getProperty<CObjectSerializable>("Components");
 		for (int i = 0, n = coms->getNumProperty(); i < n; i++)
 		{
@@ -642,5 +640,7 @@ namespace Skylicht
 				comSystem->loadSerializable(componentData);
 			}
 		}
+
+		setCullingLayer(object->get<u32>("culling", 1));
 	}
 }
