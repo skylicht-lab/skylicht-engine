@@ -354,7 +354,10 @@ namespace Skylicht
 	{
 		SExtraParams* e = new SExtraParams();
 		e->ShaderPath = shaderPath;
-		m_extras.push_back(e);
+
+		// insert at front of list
+		// that priorty to search old params
+		m_extras.insert(m_extras.begin(), e);
 		return e;
 	}
 
@@ -1304,6 +1307,22 @@ namespace Skylicht
 		SExtraParams* e = getExtraParams(m_shaderPath.c_str());
 		if (e == NULL)
 			e = newExtra(m_shaderPath.c_str());
+		else
+		{
+			// move extra to front
+			// that priorty to search old params
+			auto it = m_extras.begin();
+			while (it != m_extras.end())
+			{
+				if ((*it) == e)
+				{
+					m_extras.erase(it);
+					break;
+				}
+				++it;
+			}
+			m_extras.insert(m_extras.begin(), e);
+		}
 
 		// clear old params
 		for (SUniformValue*& uniform : e->UniformParams)
