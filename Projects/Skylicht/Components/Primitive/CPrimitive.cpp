@@ -154,13 +154,6 @@ namespace Skylicht
 		m_material->setUniform4("uColor", m_color);
 		m_material->updateShaderParams();
 
-		if (m_customMaterial)
-		{
-			m_customMaterial->setUniform4("uColor", m_color);
-			m_customMaterial->updateShaderParams();
-		}
-
-
 		CArraySerializable* primitives = (CArraySerializable*)object->getProperty("Primitives");
 		if (primitives == NULL)
 			return;
@@ -268,6 +261,13 @@ namespace Skylicht
 		else
 		{
 			m_useCustomMaterial = false;
+		}
+
+		for (u32 i = 0, n = m_entities.size(); i < n; i++)
+		{
+			CPrimiviteData* data = GET_ENTITY_DATA(m_entities[i], CPrimiviteData);
+			if (data)
+				data->Material = m_useCustomMaterial && m_customMaterial ? m_customMaterial : m_material;
 		}
 	}
 
