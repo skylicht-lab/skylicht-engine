@@ -263,5 +263,7 @@ namespace Skylicht
 			CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
 			visible->ShadowCasting = b;
 		}
+
+		m_shadowCasting = b;
 	}
 }

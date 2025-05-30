@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CPrimitiveRenderer.h"
 #include "Entity/CEntityManager.h"
-#include "Culling/CVisibleData.h"
+#include "Culling/CCullingData.h"
 #include "Transform/CWorldTransformData.h"
 #include "Material/Shader/ShaderCallback/CShaderMaterial.h"
 
@@ -69,13 +69,17 @@ namespace Skylicht
 		{
 			CEntity* entity = entities[i];
 
-			CPrimiviteData* p = GET_ENTITY_DATA(entity, CPrimiviteData);
-			if (!p->Instancing)
+			CCullingData* cullingData = GET_ENTITY_DATA(entity, CCullingData);
+			if (cullingData->Visible)
 			{
-				if (p->NormalMap)
-					m_primitivesTangent[p->Type].push(p);
-				else
-					m_primitives[p->Type].push(p);
+				CPrimiviteData* p = GET_ENTITY_DATA(entity, CPrimiviteData);
+				if (!p->Instancing)
+				{
+					if (p->NormalMap)
+						m_primitivesTangent[p->Type].push(p);
+					else
+						m_primitives[p->Type].push(p);
+				}
 			}
 		}
 	}

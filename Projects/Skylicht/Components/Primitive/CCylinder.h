@@ -13,6 +13,7 @@ namespace Skylicht
 		CMaterial* m_material;
 		CMaterial* m_customMaterial;
 
+		bool m_shadowCasting;
 		bool m_useCustomMaterial;
 		bool m_useNormalMap;
 
@@ -53,6 +54,13 @@ namespace Skylicht
 		inline CMaterial* getMaterial()
 		{
 			return m_material;
+		}
+
+		void setShadowCasting(bool b);
+
+		inline bool isShadowCasting()
+		{
+			return m_shadowCasting;
 		}
 
 		virtual CObjectSerializable* createSerializable();

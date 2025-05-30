@@ -2,6 +2,7 @@
 #include "CCylinder.h"
 #include "LatheMesh/CCylinderMesh.h"
 #include "RenderMesh/CRenderMeshData.h"
+#include "Culling/CVisibleData.h"
 #include "Culling/CCullingData.h"
 #include "Transform/CWorldInverseTransformData.h"
 #include "Material/CMaterialManager.h"
@@ -15,6 +16,7 @@ namespace Skylicht
 	CCylinder::CCylinder() :
 		m_material(NULL),
 		m_customMaterial(NULL),
+		m_shadowCasting(true),
 		m_useNormalMap(true),
 		m_useCustomMaterial(true),
 		m_radius(0.5f),
@@ -51,11 +53,9 @@ namespace Skylicht
 	{
 		CObjectSerializable* object = CComponentSystem::createSerializable();
 
-		CBoolProperty* useCustom = new CBoolProperty(object, "custom material", m_useCustomMaterial);
-		object->autoRelease(useCustom);
-
-		CBoolProperty* useNormalMap = new CBoolProperty(object, "normal map", m_useNormalMap);
-		object->autoRelease(useNormalMap);
+		object->autoRelease(new CBoolProperty(object, "shadow casting", m_shadowCasting));
+		object->autoRelease(new CBoolProperty(object, "custom material", m_useCustomMaterial));
+		object->autoRelease(new CBoolProperty(object, "normal map", m_useNormalMap));
 
 		object->autoRelease(new CFloatProperty(object, "radius", m_radius, 0.0f));
 		object->autoRelease(new CFloatProperty(object, "height", m_height, 0.0f));
@@ -83,6 +83,7 @@ namespace Skylicht
 		float radius = m_radius;
 		float height = m_height;
 
+		m_shadowCasting = object->get<bool>("shadow casting", true);
 		m_useNormalMap = object->get<bool>("normal map", false);
 		m_color = object->get<SColor>("color", SColor(255, 180, 180, 180));
 		m_materialPath = object->get<std::string>("material", std::string());
@@ -127,6 +128,17 @@ namespace Skylicht
 		{
 			init();
 		}
+
+		setShadowCasting(m_shadowCasting);
+	}
+
+	void CCylinder::setShadowCasting(bool b)
+	{
+		m_shadowCasting = b;
+
+		CEntity* entity = m_gameObject->getEntity();
+		CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
+		visible->ShadowCasting = b;
 	}
 
 	void CCylinder::init()

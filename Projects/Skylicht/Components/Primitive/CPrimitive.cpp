@@ -83,6 +83,8 @@ namespace Skylicht
 
 		object->autoRelease(new CBoolProperty(object, "instancing", m_instancing));
 
+		object->autoRelease(new CBoolProperty(object, "shadow casting", m_shadowCasting));
+
 		CBoolProperty* useCustom = new CBoolProperty(object, "custom material", m_useCustomMaterial);
 		object->autoRelease(useCustom);
 
@@ -124,6 +126,7 @@ namespace Skylicht
 		bool useCustom = m_useCustomMaterial;
 
 		m_instancing = object->get<bool>("instancing", false);
+		m_shadowCasting = object->get<bool>("shadow casting", true);
 		m_useCustomMaterial = object->get<bool>("custom material", false);
 		m_useNormalMap = object->get<bool>("normal map", false);
 		m_color = object->get<SColor>("color", SColor(255, 180, 180, 180));
@@ -182,6 +185,8 @@ namespace Skylicht
 			CWorldTransformData* world = GET_ENTITY_DATA(entity, CWorldTransformData);
 			world->Relative = transformData->get();
 		}
+
+		setShadowCasting(m_shadowCasting);
 	}
 
 	CEntity* CPrimitive::spawn()
@@ -283,11 +288,5 @@ namespace Skylicht
 
 		m_material->setUniform4("uColor", m_color);
 		m_material->updateShaderParams();
-
-		if (m_customMaterial)
-		{
-			m_customMaterial->setUniform4("uColor", m_color);
-			m_customMaterial->updateShaderParams();
-		}
 	}
 }
