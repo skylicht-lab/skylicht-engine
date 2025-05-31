@@ -129,6 +129,17 @@ namespace Skylicht
 		IsSkinnedInstancing = b;
 	}
 
+	ArrayMaterial& CRenderMeshData::getMaterials()
+	{
+		CMesh* mesh = RenderMesh;
+		if (SoftwareBlendShapeMesh)
+			mesh = SoftwareBlendShapeMesh;
+		if (SoftwareSkinnedMesh)
+			mesh = SoftwareSkinnedMesh;
+
+		return mesh->Materials;
+	}
+
 	bool CRenderMeshData::setMaterial(CMaterial* material)
 	{
 		bool ret = false;

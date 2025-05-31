@@ -27,9 +27,28 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "DataTypeIndex.h"
 #include "Entity/IEntityData.h"
 #include "Material/CMaterial.h"
+#include "Instancing/SInstancingVertexBuffer.h"
 
 namespace Skylicht
 {
+	struct SPrimiviteMeshInstancing
+	{
+		IShaderInstancing* InstancingShader;
+		int PrimitiveType;
+		bool HaveTangent;
+		CMesh* Mesh;
+		SInstancingVertexBuffer* Buffer;
+
+		SPrimiviteMeshInstancing()
+		{
+			InstancingShader = NULL;
+			Buffer = NULL;
+			PrimitiveType = 0;
+			HaveTangent = false;
+			Mesh = NULL;
+		}
+	};
+
 	class COMPONENT_API CPrimiviteData : public IEntityData
 	{
 	public:
@@ -55,6 +74,10 @@ namespace Skylicht
 		bool NormalMap;
 
 		int RootEntity;
+
+		SPrimiviteMeshInstancing* InstancingMesh;
+
+		core::array<CPrimiviteData*>* InstancingGroup;
 	};
 
 	DECLARE_COMPONENT_DATA_TYPE_INDEX(CPrimiviteData);

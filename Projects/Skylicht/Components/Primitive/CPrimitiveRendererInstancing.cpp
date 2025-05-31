@@ -38,9 +38,11 @@ namespace Skylicht
 
 	CPrimitiveRendererInstancing::~CPrimitiveRendererInstancing()
 	{
-		for (auto& i : m_buffers)
+		for (auto& i : m_meshInstancing)
 		{
-			SInstancingVertexBuffer* b = i.second;
+			i->Mesh->drop();
+
+			SInstancingVertexBuffer* b = i->Buffer;
 			if (b)
 			{
 				if (b->Instancing)
@@ -51,10 +53,11 @@ namespace Skylicht
 					b->IndirectLighting->drop();
 				delete b;
 			}
+
+			delete i;
 		}
 
-		m_buffers.clear();
-		m_haveInstancing.clear();
+		m_meshInstancing.clear();
 	}
 
 	void CPrimitiveRendererInstancing::beginQuery(CEntityManager* entityManager)
@@ -89,72 +92,114 @@ namespace Skylicht
 					shader->getInstancing() &&
 					shader->getInstancingShader())
 				{
-					IShaderInstancing* instancing = shader->getInstancing();
+					IShaderInstancing* instancingShader = shader->getInstancing();
 
-					CMesh* mesh = p->NormalMap ? m_meshTangent[p->Type] : m_mesh[p->Type];
+					if (p->InstancingMesh == NULL)
+					{
+						for (auto& i : m_meshInstancing)
+						{
+							if (i->InstancingShader == instancingShader &&
+								i->HaveTangent == p->NormalMap &&
+								i->PrimitiveType == p->Type)
+							{
+								p->InstancingMesh = i;
+								break;
+							}
+						}
 
-					if (instancing->isSupport(mesh))
+						if (!p->InstancingMesh)
+						{
+							CMesh* mesh = initMesh(p->Type, p->NormalMap);
+
+							SPrimiviteMeshInstancing* newInstancing = new SPrimiviteMeshInstancing();
+							newInstancing->InstancingShader = instancingShader;
+							newInstancing->Mesh = mesh;
+							newInstancing->HaveTangent = p->NormalMap;
+							newInstancing->PrimitiveType = p->Type;
+
+							p->InstancingMesh = newInstancing;
+
+							if (instancingShader->isSupport(mesh))
+							{
+								CIndirectLightingData* lighting = GET_ENTITY_DATA(entity, CIndirectLightingData);
+
+								SShaderMesh shaderMesh;
+								shaderMesh.Shader = shader;
+								shaderMesh.Mesh = mesh;
+								shaderMesh.IndirectLM = lighting->Type == CIndirectLightingData::LightmapArray ? NULL : lighting->IndirectTexture;
+								shaderMesh.DirectLM = lighting->Type == CIndirectLightingData::LightmapArray ? NULL : lighting->LightTexture;
+								shaderMesh.ShaderInstancing = instancingShader;
+
+								for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
+									shaderMesh.Textures[i] = p->Material->getTexture(i);
+
+								// need create instancing mesh
+
+								SInstancingVertexBuffer* buffer = new SInstancingVertexBuffer();
+
+								buffer->Instancing = instancingShader->createInstancingVertexBuffer();
+								buffer->Instancing->setHardwareMappingHint(EHM_STREAM);
+
+								buffer->Transform = IShaderInstancing::createTransformVertexBuffer();
+								buffer->Transform->setHardwareMappingHint(EHM_STREAM);
+
+								buffer->IndirectLighting = IShaderInstancing::createIndirectLightingVertexBuffer();
+								buffer->IndirectLighting->setHardwareMappingHint(EHM_STREAM);
+
+								instancingShader->applyInstancing(
+									mesh,
+									buffer->Instancing,
+									buffer->Transform
+								);
+
+								CMesh* indirectLightingMesh = mesh->clone();
+								indirectLightingMesh->UseInstancing = true;
+								indirectLightingMesh->removeAllMeshBuffer();
+
+								u32 count = mesh->getMeshBufferCount();
+								for (u32 i = 0; i < count; i++)
+								{
+									IMeshBuffer* lightingMeshBuffer = instancingShader->createLinkMeshBuffer(mesh->getMeshBuffer(i));
+									indirectLightingMesh->addMeshBuffer(lightingMeshBuffer, "", NULL);
+									lightingMeshBuffer->drop();
+								}
+
+								mesh->IndirectLightingMesh = indirectLightingMesh;
+
+								instancingShader->applyInstancingForRenderLighting(
+									indirectLightingMesh,
+									buffer->IndirectLighting,
+									buffer->Transform);
+
+								// hold the buffer in the list
+								newInstancing->Buffer = buffer;
+							}
+
+							m_meshInstancing.push_back(newInstancing);
+						}
+					} // p->InstancingMesh == NULL
+
+					if (p->InstancingMesh && !p->InstancingGroup)
 					{
 						CIndirectLightingData* lighting = GET_ENTITY_DATA(entity, CIndirectLightingData);
 
 						SShaderMesh shaderMesh;
 						shaderMesh.Shader = shader;
-						shaderMesh.Mesh = mesh;
+						shaderMesh.Mesh = p->InstancingMesh->Mesh;
 						shaderMesh.IndirectLM = lighting->Type == CIndirectLightingData::LightmapArray ? NULL : lighting->IndirectTexture;
 						shaderMesh.DirectLM = lighting->Type == CIndirectLightingData::LightmapArray ? NULL : lighting->LightTexture;
-						shaderMesh.ShaderInstancing = instancing;
+						shaderMesh.ShaderInstancing = instancingShader;
 
 						for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
 							shaderMesh.Textures[i] = p->Material->getTexture(i);
 
 						// add entity to group
-						m_groups[shaderMesh].push_back(p);
-
-						// need create instancing mesh
-						if (!m_haveInstancing[instancing])
-						{
-							m_haveInstancing[instancing] = true;
-
-							SInstancingVertexBuffer* buffer = new SInstancingVertexBuffer();
-
-							buffer->Instancing = instancing->createInstancingVertexBuffer();
-							buffer->Instancing->setHardwareMappingHint(EHM_STREAM);
-
-							buffer->Transform = IShaderInstancing::createTransformVertexBuffer();
-							buffer->Transform->setHardwareMappingHint(EHM_STREAM);
-
-							buffer->IndirectLighting = IShaderInstancing::createIndirectLightingVertexBuffer();
-							buffer->IndirectLighting->setHardwareMappingHint(EHM_STREAM);
-
-							instancing->applyInstancing(
-								mesh,
-								buffer->Instancing,
-								buffer->Transform
-							);
-
-							m_buffers[shaderMesh] = buffer;
-
-
-							CMesh* indirectLightingMesh = mesh->clone();
-							indirectLightingMesh->UseInstancing = true;
-							indirectLightingMesh->removeAllMeshBuffer();
-
-							u32 count = mesh->getMeshBufferCount();
-							for (u32 i = 0; i < count; i++)
-							{
-								IMeshBuffer* lightingMeshBuffer = instancing->createLinkMeshBuffer(mesh->getMeshBuffer(i));
-								indirectLightingMesh->addMeshBuffer(lightingMeshBuffer, "", NULL);
-								lightingMeshBuffer->drop();
-							}
-
-							mesh->IndirectLightingMesh = indirectLightingMesh;
-
-							instancing->applyInstancingForRenderLighting(
-								indirectLightingMesh,
-								buffer->IndirectLighting,
-								buffer->Transform);
-						}
+						p->InstancingGroup = &m_groups[shaderMesh];
 					}
+
+					// add to group
+					if (p->InstancingGroup)
+						p->InstancingGroup->push_back(p);
 				}
 			}
 		}
@@ -191,7 +236,7 @@ namespace Skylicht
 				m_entities.push(primitive->Entity);
 			}
 
-			SInstancingVertexBuffer* buffer = m_buffers[it.first];
+			SInstancingVertexBuffer* buffer = primitives[0]->InstancingMesh->Buffer;
 
 			// batching transform & material data to buffer
 			instancing->batchIntancing(

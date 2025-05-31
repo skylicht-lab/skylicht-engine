@@ -143,6 +143,8 @@ namespace Skylicht
 
 		bool setMaterial(CMaterial* material);
 
+		ArrayMaterial& getMaterials();
+
 		bool unusedMaterial(CMaterial* material);
 
 		virtual bool serializable(CMemoryStream* stream);

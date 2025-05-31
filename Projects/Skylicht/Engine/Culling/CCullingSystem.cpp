@@ -112,7 +112,7 @@ namespace Skylicht
 					m->Culling = culling;
 					m->Transform = transform;
 					m->BBox = meshObj->getBoundingBoxPtr();
-					m->Materials = &meshObj->Materials;
+					m->Materials = &mesh->getMaterials();
 
 					m->Culling->NeedValidate |= transform->NeedValidate;
 				}

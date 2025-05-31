@@ -267,7 +267,11 @@ namespace Skylicht
 		{
 			CPrimiviteData* data = GET_ENTITY_DATA(m_entities[i], CPrimiviteData);
 			if (data)
+			{
 				data->Material = m_useCustomMaterial && m_customMaterial ? m_customMaterial : m_material;
+				data->InstancingMesh = NULL;
+				data->InstancingGroup = NULL;
+			}
 		}
 	}
 
@@ -278,7 +282,11 @@ namespace Skylicht
 		{
 			CPrimiviteData* data = GET_ENTITY_DATA(m_entities[i], CPrimiviteData);
 			if (data)
+			{
 				data->Instancing = b;
+				data->InstancingMesh = NULL;
+				data->InstancingGroup = NULL;
+			}
 		}
 	}
 

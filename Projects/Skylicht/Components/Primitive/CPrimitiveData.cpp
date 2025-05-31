@@ -34,7 +34,9 @@ namespace Skylicht
 		Material(NULL),
 		Instancing(false),
 		NormalMap(false),
-		RootEntity(-1)
+		RootEntity(-1),
+		InstancingMesh(NULL),
+		InstancingGroup(NULL)
 	{
 
 	}

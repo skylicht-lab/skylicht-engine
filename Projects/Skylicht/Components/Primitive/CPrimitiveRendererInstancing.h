@@ -35,7 +35,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "IndirectLighting/CIndirectLightingData.h"
 
 #include "Instancing/SShaderMesh.h"
-#include "Instancing/SInstancingVertexBuffer.h"
 
 namespace Skylicht
 {
@@ -46,10 +45,10 @@ namespace Skylicht
 	protected:
 		CEntityGroup* m_group;
 
+		std::vector<SPrimiviteMeshInstancing*> m_meshInstancing;
+
 		// group instancing
 		std::map<SShaderMesh, ArrayPrimitives> m_groups;
-		std::map<SShaderMesh, SInstancingVertexBuffer*> m_buffers;
-		std::map<IShaderInstancing*, bool> m_haveInstancing;
 
 		// bake instancing
 		CFastArray<CMaterial*> m_materials;

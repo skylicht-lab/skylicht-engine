@@ -46,25 +46,25 @@ namespace Skylicht
 
 		// cube mesh
 		{
-			initCube(CPrimiviteData::Cube, false);
-			initCube(CPrimiviteData::Cube, true);
+			m_mesh[CPrimiviteData::Cube] = initCube(false);
+			m_meshTangent[CPrimiviteData::Cube] = initCube(true);
 		}
 
 		// sphere mesh
 		{
 			IMesh* m = geometry->createSphereMesh(0.5f);
-			initMesh(m, CPrimiviteData::Sphere, false);
+			m_mesh[CPrimiviteData::Sphere] = initMesh(m, false);
 			m->drop();
 
 			m = geometry->createSphereMesh(0.5f);
-			initMesh(m, CPrimiviteData::Sphere, true);
+			m_meshTangent[CPrimiviteData::Sphere] = initMesh(m, true);
 			m->drop();
 		}
 
 		// plane
 		{
-			initPlane(CPrimiviteData::Plane, false);
-			initPlane(CPrimiviteData::Plane, true);
+			m_mesh[CPrimiviteData::Plane] = initPlane(false);
+			m_meshTangent[CPrimiviteData::Plane] = initPlane(true);
 		}
 	}
 
@@ -80,7 +80,7 @@ namespace Skylicht
 		}
 	}
 
-	void CPrimitiveBaseRenderer::initCube(CPrimiviteData::EPrimitive primitive, bool tangent)
+	CMesh* CPrimitiveBaseRenderer::initCube(bool tangent)
 	{
 		IVideoDriver* driver = getVideoDriver();
 
@@ -182,15 +182,12 @@ namespace Skylicht
 		mesh->recalculateBoundingBox();
 		mesh->setHardwareMappingHint(EHM_STATIC);
 
-		if (tangent)
-			m_meshTangent[primitive] = mesh;
-		else
-			m_mesh[primitive] = mesh;
-
 		meshBuffer->drop();
+
+		return mesh;
 	}
 
-	void CPrimitiveBaseRenderer::initPlane(CPrimiviteData::EPrimitive primitive, bool tangent)
+	CMesh* CPrimitiveBaseRenderer::initPlane(bool tangent)
 	{
 		IVideoDriver* driver = getVideoDriver();
 
@@ -238,15 +235,11 @@ namespace Skylicht
 		mesh->recalculateBoundingBox();
 		mesh->setHardwareMappingHint(EHM_STATIC);
 
-		if (tangent)
-			m_meshTangent[primitive] = mesh;
-		else
-			m_mesh[primitive] = mesh;
-
 		meshBuffer->drop();
+		return mesh;
 	}
 
-	void CPrimitiveBaseRenderer::initMesh(IMesh* primitiveMesh, CPrimiviteData::EPrimitive primitive, bool tangent)
+	CMesh* CPrimitiveBaseRenderer::initMesh(IMesh* primitiveMesh, bool tangent)
 	{
 		CMesh* mesh = new CMesh();
 
@@ -261,9 +254,24 @@ namespace Skylicht
 		mesh->recalculateBoundingBox();
 		mesh->setHardwareMappingHint(EHM_STATIC);
 
-		if (tangent)
-			m_meshTangent[primitive] = mesh;
-		else
-			m_mesh[primitive] = mesh;
+		return mesh;
+	}
+
+	CMesh* CPrimitiveBaseRenderer::initMesh(CPrimiviteData::EPrimitive type, bool tangent)
+	{
+		if (type == CPrimiviteData::Cube)
+			return initCube(tangent);
+		else if (type == CPrimiviteData::Plane)
+			return initPlane(tangent);
+		else if (type == CPrimiviteData::Sphere)
+		{
+			const IGeometryCreator* geometry = getIrrlichtDevice()->getSceneManager()->getGeometryCreator();
+			IMesh* m = geometry->createSphereMesh(0.5f);
+			CMesh* result = initMesh(m, tangent);
+			m->drop();
+			return result;
+		}
+
+		return NULL;
 	}
 }
