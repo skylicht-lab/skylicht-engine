@@ -30,10 +30,19 @@ namespace Skylicht
 
 		virtual void init() = 0;
 
+		CMesh* getMesh();
+
 		inline CMaterial* getMaterial()
 		{
 			return m_material;
 		}
+
+		inline const SColor& getColor()
+		{
+			return m_color;
+		}
+
+		void setColor(const SColor& color);
 
 		void setShadowCasting(bool b);
 

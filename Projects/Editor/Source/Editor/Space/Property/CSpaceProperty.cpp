@@ -198,7 +198,7 @@ namespace Skylicht
 					// update on hierachy
 					CSpaceHierarchy* hierachy = CSceneController::getInstance()->getSpaceHierarchy();
 					if (hierachy)
-						hierachy->getController()->updateTreeNode(parent);
+						hierachy->getController()->updateObjectToUI(parent);
 				}
 			}
 

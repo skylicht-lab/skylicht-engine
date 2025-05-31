@@ -1,4 +1,5 @@
-<shaderConfig name="TransparentColor" baseShader="TRANSPARENT_ALPHA_CHANNEL">
+<shaderConfig name="TransparentColor" baseShader="TRANSPARENT_ALPHA_CHANNEL" instancing="TransparentInstancing" instancingVertex="standard_color">
+	<dependent shader="TransparentInstancing.xml"/>
 	<uniforms>
 		<vs>
 			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>

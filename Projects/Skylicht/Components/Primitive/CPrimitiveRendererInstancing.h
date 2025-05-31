@@ -49,6 +49,7 @@ namespace Skylicht
 		// group instancing
 		std::map<SShaderMesh, ArrayPrimitives> m_groups;
 		std::map<SShaderMesh, SInstancingVertexBuffer*> m_buffers;
+		std::map<IShaderInstancing*, bool> m_haveInstancing;
 
 		// bake instancing
 		CFastArray<CMaterial*> m_materials;
@@ -68,5 +69,12 @@ namespace Skylicht
 		virtual void update(CEntityManager* entityManager);
 
 		virtual void render(CEntityManager* entityManager);
+
+		virtual void renderTransparent(CEntityManager* entityManager);
+
+	protected:
+
+		void renderPrimitive(CEntityManager* entityManager, bool isTransparent);
+
 	};
 }

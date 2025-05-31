@@ -237,6 +237,16 @@ namespace Skylicht
 			}
 		}
 
+		void CHierarchyController::updateObjectToUI(CGameObject* object)
+		{
+			if (m_node == NULL)
+				return;
+
+			CHierachyNode* node = m_node->getNodeByTag(object);
+			if (node != NULL)
+				updateObjectToUI(object, node);
+		}
+
 		void CHierarchyController::updateTreeNode(CGameObject* object, bool rebuildAllTree)
 		{
 			if (m_node == NULL)

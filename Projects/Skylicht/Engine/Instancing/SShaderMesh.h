@@ -32,10 +32,12 @@ namespace Skylicht
 	struct SShaderMesh
 	{
 		CShader* Shader;
+
 		CMesh* Mesh;
 		ITexture* Textures[MATERIAL_MAX_TEXTURES];
 		ITexture* IndirectLM;
 		ITexture* DirectLM;
+		IShaderInstancing* ShaderInstancing;
 
 		SShaderMesh()
 		{
@@ -43,6 +45,8 @@ namespace Skylicht
 			Mesh = NULL;
 			IndirectLM = NULL;
 			DirectLM = NULL;
+			ShaderInstancing = NULL;
+
 			for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
 				Textures[i] = NULL;
 		}
@@ -51,25 +55,29 @@ namespace Skylicht
 		{
 			if (Shader == other.Shader)
 			{
-				if (Mesh == other.Mesh)
+				if (ShaderInstancing == other.ShaderInstancing)
 				{
-					if (IndirectLM == other.IndirectLM)
+					if (Mesh == other.Mesh)
 					{
-						if (DirectLM == other.DirectLM)
+						if (IndirectLM == other.IndirectLM)
 						{
-							for (int i = 0; i < _IRR_MATERIAL_MAX_TEXTURES_; i++)
+							if (DirectLM == other.DirectLM)
 							{
-								if (Textures[i] != other.Textures[i])
-									return Textures[i] < other.Textures[i];
+								for (int i = 0; i < _IRR_MATERIAL_MAX_TEXTURES_; i++)
+								{
+									if (Textures[i] != other.Textures[i])
+										return Textures[i] < other.Textures[i];
+								}
+								// all same
+								return false;
 							}
-							// all same
-							return false;
+							return DirectLM < other.DirectLM;
 						}
-						return DirectLM < other.DirectLM;
+						return IndirectLM < other.IndirectLM;
 					}
-					return IndirectLM < other.IndirectLM;
+					return Mesh < other.Mesh;
 				}
-				return Mesh < other.Mesh;
+				return ShaderInstancing < other.ShaderInstancing;
 			}
 			return Shader < other.Shader;
 		}

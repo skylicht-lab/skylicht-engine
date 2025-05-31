@@ -41,6 +41,9 @@ namespace Skylicht
 		CFastArray<CPrimiviteData*> m_primitives[CPrimiviteData::Count];
 		CFastArray<CPrimiviteData*> m_primitivesTangent[CPrimiviteData::Count];
 
+		CFastArray<CPrimiviteData*> m_transparents;
+		CFastArray<CMesh*> m_transparentMeshs;
+
 	public:
 		CPrimitiveRenderer();
 
@@ -56,6 +59,8 @@ namespace Skylicht
 
 		virtual void render(CEntityManager* entityManager);
 
+		virtual void renderTransparent(CEntityManager* entityManager);
+
 		CMesh* getMesh(CPrimiviteData::EPrimitive type);
 
 		void renderPrimitive(CEntityManager* entityManager,
@@ -63,5 +68,7 @@ namespace Skylicht
 			CMesh* mesh,
 			int numEntity
 		);
+
+		void renderPrimitive(CEntityManager* entityManager, IVideoDriver* driver, IRenderPipeline* rp, CMaterial* mat, CPrimiviteData* data, CMesh* mesh);
 	};
 }

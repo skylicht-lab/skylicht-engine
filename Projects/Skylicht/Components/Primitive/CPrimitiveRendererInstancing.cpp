@@ -54,6 +54,7 @@ namespace Skylicht
 		}
 
 		m_buffers.clear();
+		m_haveInstancing.clear();
 	}
 
 	void CPrimitiveRendererInstancing::beginQuery(CEntityManager* entityManager)
@@ -88,7 +89,6 @@ namespace Skylicht
 					shader->getInstancing() &&
 					shader->getInstancingShader())
 				{
-
 					IShaderInstancing* instancing = shader->getInstancing();
 
 					CMesh* mesh = p->NormalMap ? m_meshTangent[p->Type] : m_mesh[p->Type];
@@ -102,6 +102,7 @@ namespace Skylicht
 						shaderMesh.Mesh = mesh;
 						shaderMesh.IndirectLM = lighting->Type == CIndirectLightingData::LightmapArray ? NULL : lighting->IndirectTexture;
 						shaderMesh.DirectLM = lighting->Type == CIndirectLightingData::LightmapArray ? NULL : lighting->LightTexture;
+						shaderMesh.ShaderInstancing = instancing;
 
 						for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
 							shaderMesh.Textures[i] = p->Material->getTexture(i);
@@ -110,9 +111,9 @@ namespace Skylicht
 						m_groups[shaderMesh].push_back(p);
 
 						// need create instancing mesh
-						if (!mesh->UseInstancing)
+						if (!m_haveInstancing[instancing])
 						{
-							mesh->UseInstancing = true;
+							m_haveInstancing[instancing] = true;
 
 							SInstancingVertexBuffer* buffer = new SInstancingVertexBuffer();
 
@@ -209,6 +210,16 @@ namespace Skylicht
 
 	void CPrimitiveRendererInstancing::render(CEntityManager* entityManager)
 	{
+		renderPrimitive(entityManager, false);
+	}
+
+	void CPrimitiveRendererInstancing::renderTransparent(CEntityManager* entityManager)
+	{
+		renderPrimitive(entityManager, true);
+	}
+
+	void CPrimitiveRendererInstancing::renderPrimitive(CEntityManager* entityManager, bool isTransparent)
+	{
 		IVideoDriver* driver = getVideoDriver();
 		IRenderPipeline* rp = entityManager->getRenderPipeline();
 
@@ -225,6 +236,9 @@ namespace Skylicht
 			ITexture* const* textures = it.first.Textures;
 
 			if (!rp->canRenderShader(shader))
+				continue;
+
+			if (!shader->isOpaque() != isTransparent)
 				continue;
 
 			CShaderMaterial::setMaterial(NULL);

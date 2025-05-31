@@ -115,6 +115,25 @@ namespace Skylicht
 		visible->ShadowCasting = b;
 	}
 
+	void CLathe::setColor(const SColor& color)
+	{
+		m_color = color;
+
+		m_material->setUniform4("uColor", m_color);
+		m_material->updateShaderParams();
+	}
+
+	CMesh* CLathe::getMesh()
+	{
+		CEntity* entity = m_gameObject->getEntity();
+
+		CRenderMeshData* renderMesh = entity->getData<CRenderMeshData>();
+		if (renderMesh == NULL)
+			return NULL;
+
+		return renderMesh->getMesh();
+	}
+
 	void CLathe::initMesh(CLatheMesh* mesh)
 	{
 		CEntity* entity = m_gameObject->getEntity();

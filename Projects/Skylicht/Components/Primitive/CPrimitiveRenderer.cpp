@@ -140,6 +140,9 @@ namespace Skylicht
 
 	void CPrimitiveRenderer::render(CEntityManager* entityManager)
 	{
+		m_transparents.reset();
+		m_transparentMeshs.reset();
+
 		// render no-tangent
 		for (int type = 0; type < CPrimiviteData::Count; type++)
 		{
@@ -169,6 +172,27 @@ namespace Skylicht
 		}
 	}
 
+	void CPrimitiveRenderer::renderTransparent(CEntityManager* entityManager)
+	{
+		int n = m_transparents.count();
+		if (n == 0)
+			return;
+
+		IVideoDriver* driver = getVideoDriver();
+		IRenderPipeline* rp = entityManager->getRenderPipeline();
+
+		CPrimiviteData** primitives = m_transparents.pointer();
+		CMesh** meshs = m_transparentMeshs.pointer();
+
+		for (int i = 0; i < n; i++)
+		{
+			CPrimiviteData* data = primitives[i];
+			CMesh* mesh = meshs[i];
+
+			renderPrimitive(entityManager, driver, rp, data->Material, data, mesh);
+		}
+	}
+
 	CMesh* CPrimitiveRenderer::getMesh(CPrimiviteData::EPrimitive type)
 	{
 		return m_meshTangent[type];
@@ -188,35 +212,45 @@ namespace Skylicht
 		{
 			CPrimiviteData* data = primitives[i];
 
-			CWorldTransformData* transform = GET_ENTITY_DATA(data->Entity, CWorldTransformData);
-
 			if (data->Material == NULL || !rp->canRenderMaterial(data->Material))
 				continue;
 
-			if (mat != data->Material)
-				mat = data->Material;
-
-			driver->setTransform(video::ETS_WORLD, transform->World);
-
-			CShaderMaterial::setMaterial(mat);
-
-			CIndirectLightingData* lightingData = GET_ENTITY_DATA(data->Entity, CIndirectLightingData);
-			if (lightingData != NULL)
+			mat = data->Material;
+			if (mat && mat->getShader() && !mat->getShader()->isOpaque())
 			{
-				if (lightingData->Type == CIndirectLightingData::SH9)
-					CShaderSH::setSH9(lightingData->SH, *lightingData->Intensity);
-				else if (lightingData->Type == CIndirectLightingData::AmbientColor)
-					CShaderLighting::setLightAmbient(lightingData->Color);
+				// transparent
+				m_transparents.push(data);
+				m_transparentMeshs.push(mesh);
+				continue;
 			}
 
-			for (u32 i = 0, n = mesh->MeshBuffers.size(); i < n; i++)
-			{
-				mesh->Materials[i] = mat;
+			renderPrimitive(entityManager, driver, rp, mat, data, mesh);
+		}
+	}
 
-				rp->drawMeshBuffer(mesh, i, entityManager, data->EntityIndex, false);
+	void CPrimitiveRenderer::renderPrimitive(CEntityManager* entityManager, IVideoDriver* driver, IRenderPipeline* rp, CMaterial* mat, CPrimiviteData* data, CMesh* mesh)
+	{
+		CWorldTransformData* transform = GET_ENTITY_DATA(data->Entity, CWorldTransformData);
+		driver->setTransform(video::ETS_WORLD, transform->World);
 
-				mesh->Materials[i] = NULL;
-			}
+		CShaderMaterial::setMaterial(mat);
+
+		CIndirectLightingData* lightingData = GET_ENTITY_DATA(data->Entity, CIndirectLightingData);
+		if (lightingData != NULL)
+		{
+			if (lightingData->Type == CIndirectLightingData::SH9)
+				CShaderSH::setSH9(lightingData->SH, *lightingData->Intensity);
+			else if (lightingData->Type == CIndirectLightingData::AmbientColor)
+				CShaderLighting::setLightAmbient(lightingData->Color);
+		}
+
+		for (u32 i = 0, n = mesh->MeshBuffers.size(); i < n; i++)
+		{
+			mesh->Materials[i] = mat;
+
+			rp->drawMeshBuffer(mesh, i, entityManager, data->EntityIndex, false);
+
+			mesh->Materials[i] = NULL;
 		}
 	}
 }
