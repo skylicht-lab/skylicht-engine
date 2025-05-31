@@ -34,11 +34,26 @@ using namespace irr::video;
 
 namespace Skylicht
 {
-	// Use in CPrimitiveRendererInstancing
 	struct SInstancingVertexBuffer
 	{
 		IVertexBuffer* Instancing;
 		IVertexBuffer* Transform;
 		IVertexBuffer* IndirectLighting;
+	};
+
+	struct SPrimitiveMeshInstancing
+	{
+		IShaderInstancing* InstancingShader;
+		int PrimitiveType;
+		bool HaveTangent;
+		CMesh* Mesh;
+
+		SPrimitiveMeshInstancing()
+		{
+			InstancingShader = NULL;
+			PrimitiveType = 0;
+			HaveTangent = false;
+			Mesh = NULL;
+		}
 	};
 }

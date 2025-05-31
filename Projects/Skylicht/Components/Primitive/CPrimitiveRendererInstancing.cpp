@@ -38,33 +38,42 @@ namespace Skylicht
 
 	CPrimitiveRendererInstancing::~CPrimitiveRendererInstancing()
 	{
-		for (auto& i : m_meshInstancing)
+		for (SPrimitiveMeshInstancing* i : m_meshInstancing)
 		{
 			i->Mesh->drop();
-
-			SInstancingVertexBuffer* b = i->Buffer;
-			if (b)
-			{
-				if (b->Instancing)
-					b->Instancing->drop();
-				if (b->Transform)
-					b->Transform->drop();
-				if (b->IndirectLighting)
-					b->IndirectLighting->drop();
-				delete b;
-			}
-
 			delete i;
 		}
 
+		for (auto& i : m_groups)
+		{
+			SPrimitiveGroup* g = i.second;
+
+			SInstancingVertexBuffer* buffer = g->Buffer;
+			if (buffer)
+			{
+				if (buffer->Instancing)
+					buffer->Instancing->drop();
+				if (buffer->Transform)
+					buffer->Transform->drop();
+				if (buffer->IndirectLighting)
+					buffer->IndirectLighting->drop();
+				delete buffer;
+			}
+
+			delete g;
+		}
+
 		m_meshInstancing.clear();
+		m_groups.clear();
+
 	}
 
 	void CPrimitiveRendererInstancing::beginQuery(CEntityManager* entityManager)
 	{
 		for (auto& i : m_groups)
 		{
-			i.second.set_used(0);
+			SPrimitiveGroup* g = i.second;
+			g->Array.set_used(0);
 		}
 
 		if (m_group == NULL)
@@ -96,7 +105,7 @@ namespace Skylicht
 
 					if (p->InstancingMesh == NULL)
 					{
-						for (auto& i : m_meshInstancing)
+						for (SPrimitiveMeshInstancing* i : m_meshInstancing)
 						{
 							if (i->InstancingShader == instancingShader &&
 								i->HaveTangent == p->NormalMap &&
@@ -111,7 +120,7 @@ namespace Skylicht
 						{
 							CMesh* mesh = initMesh(p->Type, p->NormalMap);
 
-							SPrimiviteMeshInstancing* newInstancing = new SPrimiviteMeshInstancing();
+							SPrimitiveMeshInstancing* newInstancing = new SPrimitiveMeshInstancing();
 							newInstancing->InstancingShader = instancingShader;
 							newInstancing->Mesh = mesh;
 							newInstancing->HaveTangent = p->NormalMap;
@@ -119,22 +128,20 @@ namespace Skylicht
 
 							p->InstancingMesh = newInstancing;
 
+							m_meshInstancing.push_back(newInstancing);
+						}
+					}
+
+					if (p->InstancingMesh && !p->InstancingGroup)
+					{
+						SPrimitiveMeshInstancing* instancingMesh = p->InstancingMesh;
+						CMesh* mesh = instancingMesh->Mesh;
+
+						SPrimitiveGroup* group = getGroup(entity, shader, mesh);
+						if (group->Buffer == NULL)
+						{
 							if (instancingShader->isSupport(mesh))
 							{
-								CIndirectLightingData* lighting = GET_ENTITY_DATA(entity, CIndirectLightingData);
-
-								SShaderMesh shaderMesh;
-								shaderMesh.Shader = shader;
-								shaderMesh.Mesh = mesh;
-								shaderMesh.IndirectLM = lighting->Type == CIndirectLightingData::LightmapArray ? NULL : lighting->IndirectTexture;
-								shaderMesh.DirectLM = lighting->Type == CIndirectLightingData::LightmapArray ? NULL : lighting->LightTexture;
-								shaderMesh.ShaderInstancing = instancingShader;
-
-								for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
-									shaderMesh.Textures[i] = p->Material->getTexture(i);
-
-								// need create instancing mesh
-
 								SInstancingVertexBuffer* buffer = new SInstancingVertexBuffer();
 
 								buffer->Instancing = instancingShader->createInstancingVertexBuffer();
@@ -171,38 +178,43 @@ namespace Skylicht
 									buffer->IndirectLighting,
 									buffer->Transform);
 
-								// hold the buffer in the list
-								newInstancing->Buffer = buffer;
+								group->Buffer = buffer;
 							}
-
-							m_meshInstancing.push_back(newInstancing);
 						}
-					} // p->InstancingMesh == NULL
 
-					if (p->InstancingMesh && !p->InstancingGroup)
-					{
-						CIndirectLightingData* lighting = GET_ENTITY_DATA(entity, CIndirectLightingData);
-
-						SShaderMesh shaderMesh;
-						shaderMesh.Shader = shader;
-						shaderMesh.Mesh = p->InstancingMesh->Mesh;
-						shaderMesh.IndirectLM = lighting->Type == CIndirectLightingData::LightmapArray ? NULL : lighting->IndirectTexture;
-						shaderMesh.DirectLM = lighting->Type == CIndirectLightingData::LightmapArray ? NULL : lighting->LightTexture;
-						shaderMesh.ShaderInstancing = instancingShader;
-
-						for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
-							shaderMesh.Textures[i] = p->Material->getTexture(i);
-
-						// add entity to group
-						p->InstancingGroup = &m_groups[shaderMesh];
+						// assign to group
+						p->InstancingGroup = &group->Array;
 					}
 
-					// add to group
 					if (p->InstancingGroup)
 						p->InstancingGroup->push_back(p);
 				}
 			}
 		}
+	}
+
+	SPrimitiveGroup* CPrimitiveRendererInstancing::getGroup(CEntity* entity, CShader* shader, CMesh* mesh)
+	{
+		CIndirectLightingData* lighting = GET_ENTITY_DATA(entity, CIndirectLightingData);
+		CPrimiviteData* p = GET_ENTITY_DATA(entity, CPrimiviteData);
+
+		SShaderMesh shaderMesh;
+		shaderMesh.Shader = shader;
+		shaderMesh.Mesh = mesh;
+		shaderMesh.IndirectLM = lighting->Type == CIndirectLightingData::LightmapArray ? NULL : lighting->IndirectTexture;
+		shaderMesh.DirectLM = lighting->Type == CIndirectLightingData::LightmapArray ? NULL : lighting->LightTexture;
+
+		for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
+			shaderMesh.Textures[i] = p->Material->getTexture(i);
+
+		SPrimitiveGroup* g = m_groups[shaderMesh];
+		if (g == NULL)
+		{
+			g = new SPrimitiveGroup();
+			m_groups[shaderMesh] = g;
+		}
+
+		return g;
 	}
 
 	void CPrimitiveRendererInstancing::init(CEntityManager* entityManager)
@@ -214,7 +226,9 @@ namespace Skylicht
 	{
 		for (auto& it : m_groups)
 		{
-			ArrayPrimitives& list = it.second;
+			SPrimitiveGroup* group = it.second;
+
+			ArrayPrimitives& list = group->Array;
 			if (list.size() == 0)
 				continue;
 
@@ -236,7 +250,7 @@ namespace Skylicht
 				m_entities.push(primitive->Entity);
 			}
 
-			SInstancingVertexBuffer* buffer = primitives[0]->InstancingMesh->Buffer;
+			SInstancingVertexBuffer* buffer = group->Buffer;
 
 			// batching transform & material data to buffer
 			instancing->batchIntancing(
@@ -272,13 +286,16 @@ namespace Skylicht
 
 		for (auto& it : m_groups)
 		{
-			ArrayPrimitives& list = it.second;
+			SPrimitiveGroup* group = it.second;
+			const SShaderMesh& shaderMesh = it.first;
+
+			ArrayPrimitives& list = group->Array;
 			if (list.size() == 0)
 				continue;
 
-			CMesh* mesh = it.first.Mesh;
-			CShader* shader = it.first.Shader;
-			ITexture* const* textures = it.first.Textures;
+			CMesh* mesh = shaderMesh.Mesh;
+			CShader* shader = shaderMesh.Shader;
+			ITexture* const* textures = shaderMesh.Textures;
 
 			if (!rp->canRenderShader(shader))
 				continue;
