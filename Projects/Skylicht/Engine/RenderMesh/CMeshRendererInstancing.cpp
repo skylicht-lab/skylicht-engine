@@ -217,10 +217,64 @@ namespace Skylicht
 		core::array<SInstancingGroup> instancings;
 		sortBeforeRender(instancings);
 
+		m_transparents.set_used(0);
+
 		for (u32 i = 0, n = instancings.size(); i < n; i++)
 		{
 			SMeshInstancing* data = instancings[i].Instancing;
 			SMeshInstancingGroup* group = instancings[i].Group;
+
+			int count = group->Entities.count();
+			if (count == 0)
+				continue;
+
+			bool haveTransparent = false;
+			u32 numMeshBuffer = data->RenderMeshBuffers.size();
+			for (u32 i = 0; i < numMeshBuffer; i++)
+			{
+				if (data->Materials[i] == NULL)
+					continue;
+
+				CShader* shader = data->Materials[i]->getShader();
+
+				if (!rp->canRenderShader(shader))
+					continue;
+
+				if (shader->isOpaque())
+				{
+					CShaderMaterial::setMaterial(data->Materials[i]);
+
+					rp->drawInstancingMeshBuffer(
+						(CMesh*)data->InstancingMesh,
+						i,
+						shader->getInstancingShader(),
+						entityManager,
+						group->RootEntityIndex,
+						false
+					);
+				}
+				else
+				{
+					haveTransparent = true;
+				}
+			}
+
+			if (haveTransparent)
+				m_transparents.push_back(instancings[i]);
+		}
+	}
+
+	void CMeshRendererInstancing::renderTransparent(CEntityManager* entityManager)
+	{
+		IVideoDriver* driver = getVideoDriver();
+		IRenderPipeline* rp = entityManager->getRenderPipeline();
+
+		driver->setTransform(video::ETS_WORLD, core::IdentityMatrix);
+
+		for (u32 i = 0, n = m_transparents.size(); i < n; i++)
+		{
+			SMeshInstancing* data = m_transparents[i].Instancing;
+			SMeshInstancingGroup* group = m_transparents[i].Group;
 
 			int count = group->Entities.count();
 			if (count == 0)
@@ -237,16 +291,19 @@ namespace Skylicht
 				if (!rp->canRenderShader(shader))
 					continue;
 
-				CShaderMaterial::setMaterial(data->Materials[i]);
+				if (!shader->isOpaque())
+				{
+					CShaderMaterial::setMaterial(data->Materials[i]);
 
-				rp->drawInstancingMeshBuffer(
-					(CMesh*)data->InstancingMesh,
-					i,
-					shader->getInstancingShader(),
-					entityManager,
-					group->RootEntityIndex,
-					false
-				);
+					rp->drawInstancingMeshBuffer(
+						(CMesh*)data->InstancingMesh,
+						i,
+						shader->getInstancingShader(),
+						entityManager,
+						group->RootEntityIndex,
+						false
+					);
+				}
 			}
 		}
 	}

@@ -53,6 +53,9 @@ namespace Skylicht
 
 	void CInstancingMaterialData::initCustomMaterial(SMeshInstancing* instancing)
 	{
+		if (instancing == NULL)
+			return;
+
 		for (u32 i = 0, n = instancing->Materials.size(); i < n; i++)
 		{
 			CMaterial* srcMaterial = instancing->Materials[i];
