@@ -276,10 +276,7 @@ namespace Skylicht
 
 		// transparent (disable zwrite)
 		if (shader->isOpaque() == false)
-		{
 			irrMaterial.ZWriteEnable = false;
-			irrMaterial.BackfaceCulling = false;
-		}
 	}
 
 	void CBaseRP::drawMeshBuffer(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID, bool skinnedMesh)

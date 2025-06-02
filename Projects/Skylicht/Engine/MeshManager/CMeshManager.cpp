@@ -109,6 +109,19 @@ namespace Skylicht
 			for (u32 i = 0; i < n; i++)
 				data->RenderLightMeshBuffers[i]->drop();
 
+			CMesh* instancingMesh = dynamic_cast<CMesh*>(data->InstancingMesh);
+			if (instancingMesh)
+			{
+				for (int i = 0, n = (int)instancingMesh->Materials.size(); i < n; i++)
+				{
+					if (instancingMesh->Materials[i])
+					{
+						instancingMesh->Materials[i]->drop();
+						instancingMesh->Materials[i] = NULL;
+					}
+				}
+			}
+
 			data->InstancingMesh->drop();
 			delete data;
 		}

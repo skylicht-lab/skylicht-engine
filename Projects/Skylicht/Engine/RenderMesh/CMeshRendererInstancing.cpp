@@ -396,7 +396,7 @@ namespace Skylicht
 					SInstancingGroup g{ data, group };
 					instancing.insert(g, i);
 					insert = true;
-					continue;
+					break;
 				}
 			}
 

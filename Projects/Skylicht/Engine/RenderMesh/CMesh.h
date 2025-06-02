@@ -92,6 +92,8 @@ namespace Skylicht
 
 		void removeMeshBuffer(IMeshBuffer* buf);
 
+		void removeHWBuffer();
+
 		void replaceMeshBuffer(int i, IMeshBuffer* buf);
 
 		IMeshBuffer* getBufferByMaterialID(int materialID);

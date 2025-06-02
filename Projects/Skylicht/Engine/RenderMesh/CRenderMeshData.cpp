@@ -222,23 +222,7 @@ namespace Skylicht
 
 			bufferID++;
 		}
-
-		if (MeshInstancing != NULL)
-		{
-			CMesh* instancingMesh = dynamic_cast<CMesh*>(MeshInstancing->InstancingMesh);
-			if (instancingMesh)
-			{
-				for (int i = 0, n = (int)instancingMesh->Materials.size(); i < n; i++)
-				{
-					if (instancingMesh->Materials[i])
-					{
-						instancingMesh->Materials[i]->drop();
-						instancingMesh->Materials[i] = NULL;
-					}
-				}
-			}
-		}
-
+		
 		return ret;
 	}
 
