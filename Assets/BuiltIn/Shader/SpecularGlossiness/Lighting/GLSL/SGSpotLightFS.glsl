@@ -38,7 +38,7 @@ void main(void)
 	float spotDot = dot(lightDir, uLightDirection.xyz);
 	if (spotDot < uLightAttenuation.x)
 	{
-		attenuation = 0.f;
+		attenuation = 0.0;
 	}
 	else
 	{
@@ -51,7 +51,7 @@ void main(void)
 	// Specular
 	vec3 H = normalize(direction + viewDir);
 	float NdotE = max(0.0, dot(normal, H));
-	float specular = pow(NdotE, 100.0f * gloss) * spec;
+	float specular = pow(NdotE, 100.0 * gloss) * spec;
 
 	vec3 lightColor = uLightColor.rgb * (NdotL * attenuation);
 

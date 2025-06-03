@@ -46,7 +46,7 @@ void main(void)
 	// Specular
 	vec3 H = normalize(direction + viewDir);
 	float NdotE = max(0.0, dot(normal, H));
-	float specular = pow(NdotE, 100.0f * gloss) * spec;
+	float specular = pow(NdotE, 100.0 * gloss) * spec;
 
 	// Shadow
 	float bias = 0.2;
@@ -56,7 +56,6 @@ void main(void)
 	float sampledDistance = texture(uShadowMap, -lightDir).r;
 	float shadow = step(sampledDistance, d);
 #else
-	
 	float shadow = 0.0;
 	float samples = 2.0;
 	float offset = 0.01;

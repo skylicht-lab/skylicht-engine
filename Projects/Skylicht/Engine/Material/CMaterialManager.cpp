@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CMaterialManager.h"
+#include "TextureManager/CTextureManager.h"
 #include "Shader/CShader.h"
 #include "RenderMesh/CRenderMeshData.h"
 #include "Utils/CStringImp.h"
@@ -35,7 +36,7 @@ namespace Skylicht
 
 	CMaterialManager::CMaterialManager()
 	{
-
+		m_package = CTextureManager::getGlobalName();
 	}
 
 	CMaterialManager::~CMaterialManager()
@@ -100,6 +101,67 @@ namespace Skylicht
 			}
 		}
 		m_listGenerateMaterials.clear();
+	}
+
+	void CMaterialManager::releaseAllMaterials(const char* package)
+	{
+		bool done = true;
+		std::string s = package;
+
+		do
+		{
+			std::map<std::string, ArrayMaterial>::iterator i = m_materials.begin(), end = m_materials.end();
+			while (i != end)
+			{
+				ArrayMaterial& list = (*i).second;
+				bool remove = false;
+
+				for (int j = 0, n = (int)list.size(); j < n; j++)
+				{
+					CMaterial* m = list[j];
+					if (s == m->getPackage())
+					{
+						if (m->drop() == false)
+						{
+							char log[512];
+							sprintf(log, "[CMaterialManager] Leak material %s - file: %s", m->getName(), m->getMaterialPath());
+							os::Printer::log(log);
+						}
+						remove = true;
+					}
+				}
+
+				if (remove)
+				{
+					m_materials.erase(i);
+					break;
+				}
+
+				++i;
+			}
+
+			if (i == end)
+				done = true;
+			else
+				done = false;
+
+		} while (!done);
+
+
+		for (int i = (int)m_listGenerateMaterials.size() - 1; i >= 0; i--)
+		{
+			CMaterial* m = m_listGenerateMaterials[i];
+			if (s == m->getPackage())
+			{
+				if (m->drop() == false)
+				{
+					char log[512];
+					sprintf(log, "[CMaterialManager] Leak material generated %s", m->getName());
+					os::Printer::log(log);
+				}
+				m_listGenerateMaterials.erase(m_listGenerateMaterials.begin() + i);
+			}
+		}
 	}
 
 	void CMaterialManager::unloadMaterial(const char* filename)
@@ -178,6 +240,7 @@ namespace Skylicht
 
 					// create material
 					material = new CMaterial(name.c_str(), shader.c_str());
+					material->setPackage(m_package.c_str());
 					material->setMaterialPath(filename);
 					material->updateShaderParams();
 
@@ -320,6 +383,7 @@ namespace Skylicht
 	CMaterial* CMaterialManager::createMaterial(ArrayMaterial& materials)
 	{
 		CMaterial* material = new CMaterial("NewMaterial", "BuiltIn/Shader/Basic/TextureColor.xml");
+		material->setPackage(m_package.c_str());
 		materials.push_back(material);
 
 		if (materials.size() >= 2)
@@ -680,6 +744,7 @@ namespace Skylicht
 								if (shader != NULL)
 								{
 									materialObj = new CMaterial(materialName, shader->getSource().c_str());
+									materialObj->setPackage(m_package.c_str());
 									materialObj->loadDefaultTexture();
 
 									ITexture* t[MATERIAL_MAX_TEXTURES];

@@ -117,6 +117,7 @@ namespace Skylicht
 		// this will copy value from m_uniformParams (see function updateShaderParams)
 		CShaderParams m_shaderParams;
 
+		std::string m_package;
 		std::string m_materialName;
 		std::string m_shaderPath;
 		std::string m_materialPath;
@@ -159,6 +160,16 @@ namespace Skylicht
 		inline const char* getName()
 		{
 			return m_materialName.c_str();
+		}
+
+		inline const char* getPackage()
+		{
+			return m_package.c_str();
+		}
+
+		inline void setPackage(const char* package)
+		{
+			m_package = package;
 		}
 
 		inline const char* getShaderPath()

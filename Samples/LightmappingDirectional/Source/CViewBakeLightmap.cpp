@@ -6,6 +6,7 @@
 #include "ViewManager/CViewManager.h"
 #include "Lightmap/CLightmapData.h"
 #include "Importer/Utils/CMeshUtils.h"
+#include "Shadow/CShadowRTTManager.h"
 
 CViewBakeLightmap::CViewBakeLightmap() :
 #ifdef LIGHTMAP_SPONZA
@@ -345,6 +346,14 @@ void CViewBakeLightmap::gotoDemoView()
 
 	// enable render indirect
 	CDeferredRP::enableRenderIndirect(true);
+
+	for (CLight* light : m_lights)
+	{
+		light->setLightType(CLight::Realtime);
+	}
+
+	CShadowRTTManager* shadowRTT = CShadowRTTManager::getInstance();
+	shadowRTT->clearTextures();
 
 	/*
 	std::vector<std::string> listTextures;

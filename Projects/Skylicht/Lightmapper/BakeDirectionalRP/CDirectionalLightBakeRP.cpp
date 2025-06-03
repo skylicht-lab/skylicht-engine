@@ -39,7 +39,7 @@ namespace Skylicht
 {
 	CDirectionalLightBakeRP::CDirectionalLightBakeRP() :
 		m_renderMesh(NULL),
-		m_renderSubmesh(NULL),
+		m_submesh(NULL),
 		m_renderTarget(NULL),
 		m_numTarget(0),
 		m_currentTarget(0),
@@ -93,7 +93,7 @@ namespace Skylicht
 
 		for (int i = 0; i < m_numTarget; i++)
 		{
-			if (m_renderTarget[i] == NULL || m_renderSubmesh[i] == NULL)
+			if (m_renderTarget[i] == NULL || m_submesh[i] == NULL)
 				continue;
 
 			driver->setRenderTarget(m_renderTarget[i], false, false);
@@ -149,7 +149,7 @@ namespace Skylicht
 		driver->setMaterial(irrMaterial);
 
 		// draw mesh buffer
-		driver->drawMeshBuffer(m_renderSubmesh[m_currentTarget]);
+		driver->drawMeshBuffer(m_submesh[m_currentTarget]);
 	}
 
 	void CDirectionalLightBakeRP::drawInstancingMeshBuffer(CMesh* mesh, int bufferID, int materialRenderID, CEntityManager* entityMgr, int entityID, bool skinnedMesh)

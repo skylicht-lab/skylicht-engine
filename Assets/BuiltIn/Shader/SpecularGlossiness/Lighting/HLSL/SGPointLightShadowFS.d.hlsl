@@ -54,7 +54,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 	// Specular
 	float3 H = normalize(direction + viewDir);
 	float NdotE = max(0.0,dot(normal, H));
-	float specular = pow(NdotE, 100.0f * gloss) * spec;
+	float specular = pow(NdotE, 100.0 * gloss) * spec;
 
 	// Shadow
 	float bias = 0.2;

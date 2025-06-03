@@ -49,6 +49,12 @@ namespace Skylicht
 
 		virtual void loadSerializable(CObjectSerializable* object);
 
+		virtual void setLightType(ELightType type)
+		{
+			CLight::setLightType(type);
+			m_needRenderShadowDepth = true;
+		}
+
 		DECLARE_GETTYPENAME(CPointLight)
 
 	public:

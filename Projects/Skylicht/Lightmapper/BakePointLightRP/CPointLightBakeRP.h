@@ -34,7 +34,7 @@ namespace Skylicht
 	protected:
 		IMeshBuffer* m_renderMesh;
 
-		IMeshBuffer** m_renderSubmesh;
+		IMeshBuffer** m_submesh;
 		ITexture** m_renderTarget;
 		int m_numTarget;
 		int m_currentTarget;
@@ -49,7 +49,7 @@ namespace Skylicht
 		inline void setRenderMesh(IMeshBuffer* mb, IMeshBuffer** submesh, ITexture** targets, int numTarget)
 		{
 			m_renderMesh = mb;
-			m_renderSubmesh = submesh;
+			m_submesh = submesh;
 			m_renderTarget = targets;
 			m_numTarget = numTarget;
 		}
