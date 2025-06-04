@@ -119,6 +119,6 @@ float4 main(PS_INPUT input) : SV_TARGET
 
 	shadow = max(1.0 - shadow, 0.0);
 
-	float3 lightColor = uLightColor.rgb * (NdotL * attenuation) * shadow;
-	return float4(lightColor, specular * attenuation * shadow);
+	float3 lightColor = (uLightColor.rgb * NdotL + specular * float3(1.0, 1.0, 1.0)) * shadow * attenuation;
+	return float4(lightColor, 1.0);
 }

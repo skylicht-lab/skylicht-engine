@@ -157,9 +157,9 @@ vec3 SG(
 	float specular = pow(NdotE, 10.0 + 100.0 * gloss) * spec;
 	vec3 envSpecColor = mix(indirectColor, vec3(1.0, 1.0, 1.0), visibility);
 	vec3 directionalLight = NdotL * directionLightColor * visibility;
-	vec3 color = (directionalLight * directMultiplier + pointLightColor * lightMultiplier) * diffuseColor * (0.1 + roughness * 0.3) * c;
+	vec3 color = (directionalLight * directMultiplier) * diffuseColor * (0.1 + roughness * 0.3) * c;
+	color += pointLightColor * lightMultiplier * diffuseColor * 0.5;
 	color += specular * specularColor * envSpecColor;
-	color += light.a * specularColor;
 	color += indirectColor * diffuseColor * indirectMultiplier * (0.1 + c * 0.9) / PI;
 	float brightness = (0.8 + gloss * 1.8);
 	vec3 reflection = -normalize(reflect(worldViewDir, worldNormal));

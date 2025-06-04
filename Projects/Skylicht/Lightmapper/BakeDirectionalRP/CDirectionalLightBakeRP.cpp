@@ -159,7 +159,9 @@ namespace Skylicht
 
 	bool CDirectionalLightBakeRP::canRenderMaterial(CMaterial* material)
 	{
-		if (material->isDeferred() == true)
+		if (material &&
+			material->getShader() &&
+			material->getShader()->isOpaque() == true)
 			return true;
 
 		return false;
@@ -167,7 +169,7 @@ namespace Skylicht
 
 	bool CDirectionalLightBakeRP::canRenderShader(CShader* shader)
 	{
-		if (shader->isDeferred() == true)
+		if (shader && shader->isOpaque() == true)
 			return true;
 
 		return false;

@@ -53,7 +53,7 @@ void main(void)
 	float NdotE = max(0.0, dot(normal, H));
 	float specular = pow(NdotE, 100.0 * gloss) * spec;
 
-	vec3 lightColor = uLightColor.rgb * (NdotL * attenuation);
+	vec3 lightColor = (uLightColor.rgb * NdotL + specular * vec3(1.0, 1.0, 1.0)) * attenuation;
 
-	FragColor = vec4(lightColor, specular * attenuation);
+	FragColor = vec4(lightColor, 1.0);
 }

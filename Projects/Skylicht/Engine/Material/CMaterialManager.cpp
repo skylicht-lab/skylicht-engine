@@ -36,7 +36,7 @@ namespace Skylicht
 
 	CMaterialManager::CMaterialManager()
 	{
-		m_package = CTextureManager::getGlobalName();
+
 	}
 
 	CMaterialManager::~CMaterialManager()
@@ -217,8 +217,9 @@ namespace Skylicht
 		const wchar_t* textw;
 		char text[1024];
 
-		CMaterial* material = NULL;
+		const char* packageName = CTextureManager::getInstance()->getCurrentPackage();
 
+		CMaterial* material = NULL;
 		CMaterial::SExtraParams* extra = NULL;
 
 		while (xmlRead->read())
@@ -240,7 +241,7 @@ namespace Skylicht
 
 					// create material
 					material = new CMaterial(name.c_str(), shader.c_str());
-					material->setPackage(m_package.c_str());
+					material->setPackage(packageName);
 					material->setMaterialPath(filename);
 					material->updateShaderParams();
 
@@ -383,7 +384,7 @@ namespace Skylicht
 	CMaterial* CMaterialManager::createMaterial(ArrayMaterial& materials)
 	{
 		CMaterial* material = new CMaterial("NewMaterial", "BuiltIn/Shader/Basic/TextureColor.xml");
-		material->setPackage(m_package.c_str());
+		material->setPackage(CTextureManager::getInstance()->getCurrentPackage());
 		materials.push_back(material);
 
 		if (materials.size() >= 2)
@@ -719,6 +720,8 @@ namespace Skylicht
 
 		std::map<std::string, bool> saved;
 
+		const char* packageName = CTextureManager::getInstance()->getCurrentPackage();
+
 		CEntity** entities = prefab->getEntities();
 		for (int i = 0, n = prefab->getNumEntities(); i < n; i++)
 		{
@@ -744,7 +747,7 @@ namespace Skylicht
 								if (shader != NULL)
 								{
 									materialObj = new CMaterial(materialName, shader->getSource().c_str());
-									materialObj->setPackage(m_package.c_str());
+									materialObj->setPackage(packageName);
 									materialObj->loadDefaultTexture();
 
 									ITexture* t[MATERIAL_MAX_TEXTURES];

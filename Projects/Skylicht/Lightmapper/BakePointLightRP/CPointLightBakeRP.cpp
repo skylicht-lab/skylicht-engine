@@ -161,7 +161,9 @@ namespace Skylicht
 
 	bool CPointLightBakeRP::canRenderMaterial(CMaterial* material)
 	{
-		if (material->isDeferred() == true)
+		if (material &&
+			material->getShader() &&
+			material->getShader()->isOpaque() == true)
 			return true;
 
 		return false;
@@ -169,7 +171,7 @@ namespace Skylicht
 
 	bool CPointLightBakeRP::canRenderShader(CShader* shader)
 	{
-		if (shader->isDeferred() == true)
+		if (shader && shader->isOpaque() == true)
 			return true;
 
 		return false;

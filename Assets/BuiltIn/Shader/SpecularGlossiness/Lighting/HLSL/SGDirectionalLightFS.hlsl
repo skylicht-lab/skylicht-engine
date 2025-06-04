@@ -124,9 +124,9 @@ float3 SG(
 	float specular = pow(NdotE, 10.0 + 100.0 * gloss) * spec;
 	float3 envSpecColor = lerp(indirectColor, float3(1.0, 1.0, 1.0), visibility);
 	float3 directionalLight = NdotL * directionLightColor * visibility;
-	float3 color = (directionalLight * directMultiplier + pointLightColor * lightMultiplier) * diffuseColor * (0.1 + roughness * 0.3) * c;
+	float3 color = (directionalLight * directMultiplier) * diffuseColor * (0.1 + roughness * 0.3) * c;
+	color += pointLightColor * lightMultiplier * diffuseColor * 0.5;
 	color += specular * specularColor * envSpecColor;
-	color += light.a * specularColor;
 	color += indirectColor * diffuseColor * indirectMultiplier * (0.1 + c * 0.9) / PI;
 	return color;
 }

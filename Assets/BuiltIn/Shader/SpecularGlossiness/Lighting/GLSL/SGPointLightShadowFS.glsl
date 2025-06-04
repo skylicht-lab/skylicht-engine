@@ -60,6 +60,6 @@ void main(void)
 	{fragToLight = -lightDir + vec3(x, y, z);shadow += step(textureLod(uShadowMap, fragToLight, 0.0).r, d);};
 	shadow /= (samples * samples * samples);
 	shadow = max(0.0, 1.0 - shadow);
-	vec3 lightColor = NdotL * attenuation * uLightColor.rgb * shadow;
-	FragColor = vec4(lightColor, specular * attenuation * shadow);
+	vec3 lightColor = (uLightColor.rgb * NdotL + specular * vec3(1.0, 1.0, 1.0)) * shadow * attenuation;
+	FragColor = vec4(lightColor, 1.0);
 }

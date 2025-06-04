@@ -40,6 +40,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Material/Shader/ShaderCallback/CShaderMaterial.h"
 #include "Shadow/CShadowRTTManager.h"
 #include "Culling/CCullingSystem.h"
+#include "EventManager/CEventManager.h"
 
 namespace Skylicht
 {
@@ -58,6 +59,7 @@ namespace Skylicht
 		m_textureLinearRGBShader(0),
 		m_pointLightShader(0),
 		m_pointLightShadowShader(0),
+		m_spotLightShader(0),
 		m_lightmapArrayShader(0),
 		m_lightmapVertexShader(0),
 		m_lightmapSHShader(0),
@@ -69,14 +71,41 @@ namespace Skylicht
 		m_indirectMultipler(1.0f),
 		m_directMultipler(1.0f),
 		m_lightMultipler(1.0f),
-		m_postProcessor(NULL)
+		m_postProcessor(NULL),
+		m_indirect(NULL),
+		m_lightBuffer(NULL),
+		m_target(NULL),
+		m_lightDirection(0),
+		m_lightDirectionSSR(0),
+		m_lightDirectionBake(0)
+
 	{
 		m_type = IRenderPipeline::Deferred;
+
+		// CEventManager::getInstance()->registerEvent("DeferredRP", this);
 	}
 
 	CDeferredRP::~CDeferredRP()
 	{
 		releaseRTT();
+
+		// CEventManager::getInstance()->unRegisterEvent(this);
+	}
+
+	bool CDeferredRP::OnEvent(const SEvent& event)
+	{
+		// todo: test buffer
+		if (event.EventType == EET_KEY_INPUT_EVENT)
+		{
+			if (event.KeyInput.Key == KEY_KEY_1 && event.KeyInput.PressedDown == false)
+			{
+				if (g_enableRenderTestBuffer > 0)
+					g_enableRenderTestBuffer = -1;
+				else
+					g_enableRenderTestBuffer = 2;
+			}
+		}
+		return false;
 	}
 
 	void CDeferredRP::initRTT(int w, int h)
@@ -705,6 +734,8 @@ namespace Skylicht
 				t.setTexture(0, m_albedo);
 			else if (g_enableRenderTestBuffer == 1)
 				t.setTexture(0, m_normal);
+			else if (g_enableRenderTestBuffer == 2)
+				t.setTexture(0, m_lightBuffer);
 			else
 				t.setTexture(0, m_data);
 			t.MaterialType = m_textureColorShader;

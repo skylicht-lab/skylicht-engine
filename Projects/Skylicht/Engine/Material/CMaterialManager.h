@@ -40,17 +40,10 @@ namespace Skylicht
 
 		ArrayMaterial m_listGenerateMaterials;
 
-		std::string m_package;
-
 	public:
 		CMaterialManager();
 
 		virtual ~CMaterialManager();
-
-		inline void setPackage(const char* package)
-		{
-			m_package = package;
-		}
 
 		static std::vector<std::string> getMaterialExts();
 

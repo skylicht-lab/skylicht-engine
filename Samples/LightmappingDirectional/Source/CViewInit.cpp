@@ -5,7 +5,7 @@
 #include "ViewManager/CViewManager.h"
 #include "SkyDome/CSkyDome.h"
 
-#define LIGHTMAP_SPONZA
+// #define LIGHTMAP_SPONZA
 
 CViewInit::CViewInit()
 {
@@ -135,6 +135,23 @@ void CViewInit::onInit()
 	core::vector3df direction = core::vector3df(4.0f, -6.0f, -4.5f);
 	lightTransform->setOrientation(direction, Transform::Oy);
 
+	// test point light
+	/*
+	{
+		CGameObject* pointLightObj = zone->createEmptyObject();
+
+		CPointLight* pointLight = pointLightObj->addComponent<CPointLight>();
+		pointLight->setShadow(true);
+		pointLight->setColor(SColor(255, 221, 123, 34));
+		pointLight->setIntensity(1.2f);
+		pointLight->setBounce(1);
+		pointLight->setRadius(4.0f);
+		pointLight->setLightType(CLight::Baked);
+
+		CTransformEuler* pointLightTransform = pointLightObj->getTransformEuler();
+		pointLightTransform->setPosition(core::vector3df(0.0f, 2.0f, 0.0f));
+	}
+	*/
 	CEntityPrefab* model = CMeshManager::getInstance()->loadModel("SampleModels/Gazebo/gazebo.smesh", "LightmapUV");
 #endif	
 
@@ -161,11 +178,11 @@ void CViewInit::onInit()
 
 			float c[] = { 165.0f / 255.0f, 161.0f / 255.0f, 147 / 255.0f, 1.0f };
 			material->setUniform4("uColor", c);
-	}
+		}
 #endif
 
 		renderMesh->initMaterial(materials);
-}
+	}
 
 	// save to context	
 	context->initRenderPipeline(app->getWidth(), app->getHeight(), false);

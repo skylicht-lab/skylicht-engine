@@ -59,6 +59,6 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float NdotE = max(0.0,dot(normal, H));
 	float specular = pow(NdotE, 100.0 * gloss) * spec;
 
-	float3 lightColor = uLightColor.rgb * (NdotL * attenuation);
-	return float4(lightColor, specular * attenuation);
+	float3 lightColor = (uLightColor.rgb * NdotL + specular * float3(1.0, 1.0, 1.0)) * attenuation;
+	return float4(lightColor, 1.0);
 }

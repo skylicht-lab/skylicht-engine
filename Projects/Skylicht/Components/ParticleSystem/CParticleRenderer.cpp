@@ -91,6 +91,9 @@ namespace Skylicht
 
 		void CParticleRenderer::update(CEntityManager* entityManager)
 		{
+			if (entityManager->getRenderPipeline()->getType() == IRenderPipeline::ShadowMap)
+				return;
+
 			if (m_group->getEntityCount() == 0)
 				return;
 

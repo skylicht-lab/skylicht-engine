@@ -29,7 +29,9 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class SKYLICHT_API CDeferredRP : public CBaseRP
+	class SKYLICHT_API CDeferredRP : 
+		public CBaseRP,
+		public IEventReceiver
 	{
 	protected:
 		ITexture* m_target;
@@ -94,6 +96,8 @@ namespace Skylicht
 		CDeferredRP();
 
 		virtual ~CDeferredRP();
+
+		virtual bool OnEvent(const SEvent& event);
 
 		virtual bool canRenderMaterial(CMaterial* material);
 

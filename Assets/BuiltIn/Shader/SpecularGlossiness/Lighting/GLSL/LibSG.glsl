@@ -58,13 +58,11 @@ vec3 SG(
 	vec3 directionalLight = NdotL * directionLightColor * visibility;
 	
 	// Direction lighting
-	vec3 color = (directionalLight * directMultiplier + pointLightColor * lightMultiplier) * diffuseColor * (0.1 + roughness * 0.3) * c;
+	vec3 color = (directionalLight * directMultiplier) * diffuseColor * (0.1 + roughness * 0.3) * c;
+	color += pointLightColor * lightMultiplier * diffuseColor * 0.5;
 
 	// Direction specular
 	color += specular * specularColor * envSpecColor;
-	
-	// Point light specular
-	color += light.a * specularColor;
 
 	// IBL Ambient
 	color += indirectColor * diffuseColor * indirectMultiplier * (0.1 + c * 0.9) / PI;
