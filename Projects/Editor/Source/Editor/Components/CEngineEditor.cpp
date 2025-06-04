@@ -35,6 +35,11 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "LightProbes/CLightProbes.h"
 #include "Animation/CAnimationController.h"
 
+#ifdef BUILD_SKYLICHT_LIGHMAPPER
+#include "BakeLightComponent/CBakeLightComponent.h"
+using namespace Skylicht::Lightmapper;
+#endif
+
 #include "SkyDome/CSkyDome.h"
 #include "SkyBox/CSkyBox.h"
 
@@ -110,6 +115,11 @@ namespace Skylicht
 #ifdef BUILD_SKYLICHT_GRAPH
 		USE_COMPONENT(CGraphComponent);
 #endif
+
+#ifdef BUILD_SKYLICHT_LIGHMAPPER
+		USE_COMPONENT(CBakeLightComponent);
+#endif
+
 		// END DECLARE COMPONENT
 	}
 }

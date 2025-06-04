@@ -14,6 +14,6 @@
 	</resources>
 	<customUI>
 	</customUI>
-	<shader type="GLSL" vs="GLSL/BakeLightVS.glsl" fs="GLSL/BakeDirectionalLightFS.glsl" fs_source="GLSL/BakeDirectionalLightFS.d.glsl"/>
-	<shader type="HLSL" vs="HLSL/BakeLightVS.hlsl" fs="HLSL/BakeDirectionalLightFS.hlsl" fs_source="HLSL/BakeDirectionalLightFS.d.hlsl"/>
+	<shader type="GLSL" vs="GLSL/BakeLightVS.glsl" fs="GLSL/BakeDirectionalLightFS.glsl" vs_source="GLSL/BakeLightVS.d.glsl" fs_source="GLSL/BakeDirectionalLightFS.d.glsl" define="UV2"/>
+	<shader type="HLSL" vs="HLSL/BakeLightVS.hlsl" fs="HLSL/BakeDirectionalLightFS.hlsl" vs_source="HLSL/BakeLightVS.d.hlsl" fs_source="HLSL/BakeDirectionalLightFS.d.hlsl" define="UV2"/>
 </shaderConfig>
