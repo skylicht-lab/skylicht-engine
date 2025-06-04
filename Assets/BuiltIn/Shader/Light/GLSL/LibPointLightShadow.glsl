@@ -1,59 +1,40 @@
-precision highp float;
-precision highp sampler2D;
-precision highp sampler2DArray;
-
-uniform sampler2D uTexPosition;
-uniform sampler2D uTexNormal;
-uniform sampler2D uTexData;
-uniform samplerCube uShadowMap;
-
-uniform vec4 uCameraPosition;
-uniform vec4 uLightPosition;
-uniform vec4 uLightAttenuation;
-uniform vec4 uLightColor;
-
-in vec2 varTexCoord0;
-
-out vec4 FragColor;
-
-// #define HARD_SHADOW
-
 #define SHADOW_SAMPLE(x, y, z) {\
 fragToLight = -lightDir + vec3(x, y, z);\
-shadow += step(textureLod(uShadowMap, fragToLight, 0.0).r, d);\
+shadow += step(textureLod(uPointLightShadowMap, fragToLight, 0.0).r, d);\
 }
 
-void main(void)
+vec3 pointlightShadow(
+	const vec3 position, 
+	const vec3 normal,
+	const vec3 camPosition, 
+	const vec4 lightColor, 
+	const vec3 lightPosition, 
+	const vec4 lightAttenuation, 
+	const float spec, 
+	const float gloss, 
+	const vec3 specColor)
 {
-	vec3 position = texture(uTexPosition, varTexCoord0.xy).xyz;
-	vec3 normal = texture(uTexNormal, varTexCoord0.xy).xyz;
-	vec3 data = texture(uTexData, varTexCoord0.xy).rgb;
-
-	vec3 v = uCameraPosition.xyz - position;
-	vec3 viewDir = normalize(v);
-
-	float spec = data.r;
-	float gloss = data.g;
-
 	// Lighting	
-	vec3 direction = uLightPosition.xyz - position;
+	vec3 direction = lightPosition.xyz - position;
 	float distance = length(direction);
-	float attenuation = max(0.0, 1.0 - (distance * uLightAttenuation.y)) * uLightColor.a;
+	float attenuation = max(0.0, 1.0 - (distance * lightAttenuation.y)) * lightColor.a;
 
 	vec3 lightDir = normalize(direction);
 	float NdotL = max(0.0, dot(lightDir, normal));
 
 	// Specular
+	vec3 v = camPosition.xyz - position;
+	vec3 viewDir = normalize(v);
 	vec3 H = normalize(direction + viewDir);
-	float NdotE = max(0.0, dot(normal, H));
+	float NdotE = max(0.0,dot(normal, H));
 	float specular = pow(NdotE, 100.0 * gloss) * spec;
 
 	// Shadow
 	float bias = 0.2;
 	float d = distance - bias;
-	
+
 #if defined(HARD_SHADOW)
-	float sampledDistance = texture(uShadowMap, -lightDir).r;
+	float sampledDistance = uPointLightShadowMap.SampleLevel(uPointLightShadowMapSampler, -lightDir, 0).r;
 	float shadow = step(sampledDistance, d);
 #else
 	float shadow = 0.0;
@@ -61,7 +42,7 @@ void main(void)
 	float offset = 0.01;
 	float delta = offset / (samples * 0.5);
 	vec3 fragToLight;
-		
+	
 	/*
 	for (float x = -offset; x < offset; x += delta)
 	{
@@ -73,7 +54,7 @@ void main(void)
 			}
 		}
 	}
-	*/
+	*/	
 	
 	float x = -offset;
 	float y = -offset;
@@ -106,8 +87,7 @@ void main(void)
 	shadow /= (samples * samples * samples);
 #endif
 
-	shadow = max(0.0, 1.0 - shadow);
+	shadow = max(1.0 - shadow, 0.0);
 
-	vec3 lightColor = (uLightColor.rgb * NdotL + specular * vec3(1.0, 1.0, 1.0)) * shadow * attenuation;
-	FragColor = vec4(lightColor, 1.0);
+	return (lightColor.rgb * NdotL + specular * specColor) * shadow * attenuation;
 }

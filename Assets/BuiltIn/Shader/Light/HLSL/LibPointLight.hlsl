@@ -1,0 +1,28 @@
+float3 pointlight(
+	const float3 position, 
+	const float3 normal,
+	const float3 camPosition, 
+	const float4 lightColor, 
+	const float3 lightPosition, 
+	const float4 lightAttenuation, 
+	const float spec, 
+	const float gloss, 
+	const float3 specColor)
+{
+	// Lighting	
+	float3 direction = lightPosition.xyz - position;
+	float distance = length(direction);
+	float attenuation = max(0.0, 1.0 - (distance * lightAttenuation.y)) * lightColor.a;
+
+	float3 lightDir = normalize(direction);
+	float NdotL = max(0.0, dot(lightDir, normal));
+
+	// Specular
+	float3 v = camPosition.xyz - position;
+	float3 viewDir = normalize(v);
+	float3 H = normalize(direction + viewDir);
+	float NdotE = max(0.0,dot(normal, H));
+	float specular = pow(NdotE, 100.0 * gloss) * spec;	
+
+	return (lightColor.rgb * NdotL + specular * specColor) * attenuation;
+}

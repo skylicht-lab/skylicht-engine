@@ -19,6 +19,6 @@
 	</resources>
 	<customUI>
 	</customUI>
-	<shader type="GLSL" vs="GLSL/SGPointLightVS.glsl" fs="GLSL/SGSpotLightFS.glsl"/>
-	<shader type="HLSL" vs="HLSL/SGPointLightVS.hlsl" fs="HLSL/SGSpotLightFS.hlsl"/>
+	<shader type="GLSL" vs="GLSL/SGPointLightVS.glsl" fs="GLSL/SGSpotLightFS.glsl" fs_source="GLSL/SGSpotLightFS.d.glsl"/>
+	<shader type="HLSL" vs="HLSL/SGPointLightVS.hlsl" fs="HLSL/SGSpotLightFS.hlsl" fs_source="HLSL/SGSpotLightFS.d.hlsl"/>
 </shaderConfig>

@@ -1,57 +1,30 @@
-Texture2D uTexPosition : register(t0);
-SamplerState uTexPositionSampler : register(s0);
-
-Texture2D uTexNormal : register(t1);
-SamplerState uTexNormalSampler : register(s1);
-
-Texture2D uTexData : register(t2);
-SamplerState uTexDataSampler : register(s2);
-
-TextureCube uShadowMap : register(t3);
-SamplerState uShadowMapSampler : register(s3);
-
-// #define HARD_SHADOW
-
 #define SHADOW_SAMPLE(x, y, z) {\
 fragToLight = -lightDir + float3(x, y, z);\
-shadow += step(uShadowMap.SampleLevel(uShadowMapSampler, fragToLight, 0).r, d);\
+shadow += step(uPointLightShadowMap.SampleLevel(uPointLightShadowMapSampler, fragToLight, 0).r, d);\
 }
 
-struct PS_INPUT
+float3 pointlightShadow(
+	const float3 position, 
+	const float3 normal,
+	const float3 camPosition, 
+	const float4 lightColor, 
+	const float3 lightPosition, 
+	const float4 lightAttenuation, 
+	const float spec, 
+	const float gloss, 
+	const float3 specColor)
 {
-	float4 pos : SV_POSITION;
-	float2 tex0 : TEXCOORD0;
-};
-
-cbuffer cbPerFrame
-{
-	float4 uCameraPosition;
-	float4 uLightPosition;
-	float4 uLightAttenuation;
-	float4 uLightColor;
-};
-
-float4 main(PS_INPUT input) : SV_TARGET
-{
-	float3 position = uTexPosition.Sample(uTexPositionSampler, input.tex0).xyz;
-	float3 normal = uTexNormal.Sample(uTexNormalSampler, input.tex0).xyz;
-	float3 data = uTexData.Sample(uTexDataSampler, input.tex0).xyz;
-
-	float3 v = uCameraPosition.xyz - position;
-	float3 viewDir = normalize(v);
-
-	float spec = data.r;
-	float gloss = data.g;
-
 	// Lighting	
-	float3 direction = uLightPosition.xyz - position;
+	float3 direction = lightPosition.xyz - position;
 	float distance = length(direction);
-	float attenuation = max(0.0, 1.0 - (distance * uLightAttenuation.y)) * uLightColor.a;
+	float attenuation = max(0.0, 1.0 - (distance * lightAttenuation.y)) * lightColor.a;
 
 	float3 lightDir = normalize(direction);
 	float NdotL = max(0.0, dot(lightDir, normal));
 
 	// Specular
+	float3 v = camPosition.xyz - position;
+	float3 viewDir = normalize(v);
 	float3 H = normalize(direction + viewDir);
 	float NdotE = max(0.0,dot(normal, H));
 	float specular = pow(NdotE, 100.0 * gloss) * spec;
@@ -61,7 +34,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float d = distance - bias;
 
 #if defined(HARD_SHADOW)
-	float sampledDistance = uShadowMap.SampleLevel(uShadowMapSampler, -lightDir, 0).r;
+	float sampledDistance = uPointLightShadowMap.SampleLevel(uPointLightShadowMapSampler, -lightDir, 0).r;
 	float shadow = step(sampledDistance, d);
 #else
 	float shadow = 0.0;
@@ -119,6 +92,5 @@ float4 main(PS_INPUT input) : SV_TARGET
 
 	shadow = max(1.0 - shadow, 0.0);
 
-	float3 lightColor = (uLightColor.rgb * NdotL + specular * float3(1.0, 1.0, 1.0)) * shadow * attenuation;
-	return float4(lightColor, 1.0);
+	return (lightColor.rgb * NdotL + specular * specColor) * shadow * attenuation;
 }

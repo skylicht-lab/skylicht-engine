@@ -7,7 +7,7 @@
 			<uniform name="uTexPosition" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
 			<uniform name="uTexNormal" type="DEFAULT_VALUE" value="1" float="1" directX="false"/>
 			<uniform name="uTexData" type="DEFAULT_VALUE" value="2" float="1" directX="false"/>
-			<uniform name="uShadowMap" type="DEFAULT_VALUE" value="3" float="1" directX="false"/>
+			<uniform name="uPointLightShadowMap" type="DEFAULT_VALUE" value="3" float="1" directX="false"/>
 
 			<uniform name="uCameraPosition" type="WORLD_CAMERA_POSITION" value="0" float="4"/>
 			<uniform name="uLightPosition" type="POINT_LIGHT_POSITION" value="0" float="4"/>
@@ -19,6 +19,6 @@
 	</resources>
 	<customUI>
 	</customUI>
-	<shader type="GLSL" vs="GLSL/SGPointLightShadowVS.glsl" fs="GLSL/SGPointLightShadowFS.glsl" fs_source="GLSL/SGPointLightShadowFS.d.glsl"/>
-	<shader type="HLSL" vs="HLSL/SGPointLightShadowVS.hlsl" fs="HLSL/SGPointLightShadowFS.hlsl" fs_source="HLSL/SGPointLightShadowFS.d.hlsl"/>
+	<shader type="GLSL" vs="GLSL/SGPointLightShadowVS.glsl" fs="GLSL/SGPointLightShadowFS.glsl" fs_source="GLSL/SGPointLightFS.d.glsl" define="SHADOW"/>
+	<shader type="HLSL" vs="HLSL/SGPointLightShadowVS.hlsl" fs="HLSL/SGPointLightShadowFS.hlsl" fs_source="HLSL/SGPointLightFS.d.hlsl" define="SHADOW"/>
 </shaderConfig>
