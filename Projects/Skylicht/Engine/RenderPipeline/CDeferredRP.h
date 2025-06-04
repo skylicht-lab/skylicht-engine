@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class SKYLICHT_API CDeferredRP : 
+	class SKYLICHT_API CDeferredRP :
 		public CBaseRP,
 		public IEventReceiver
 	{
@@ -71,7 +71,6 @@ namespace Skylicht
 		int m_lightDirectionBake;
 
 		SMaterial m_pointLightPass;
-		SMaterial m_spotLightPass;
 		SMaterial m_directionalLightPass;
 		SMaterial m_finalPass;
 
@@ -79,6 +78,7 @@ namespace Skylicht
 		int m_pointLightShadowShader;
 
 		int m_spotLightShader;
+		int m_spotLightShadowShader;
 
 		float m_indirectMultipler;
 		float m_directMultipler;

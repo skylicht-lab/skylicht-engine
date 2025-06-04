@@ -67,7 +67,7 @@ namespace Skylicht
 
 		m_distanceWriteShader = shaderMgr->getShaderIDByName("ShadowLightDistanceWrite");
 		m_distanceWriteSkinMeshShader = shaderMgr->getShaderIDByName("ShadowLightDistanceWriteSkinMesh");
-		
+
 		m_depthWriteSkinnedInstancing = shaderMgr->getShaderIDByName("SDWSkinInstancing");
 
 		m_writeDepthMaterial.BackfaceCulling = false;
@@ -574,9 +574,9 @@ namespace Skylicht
 			for (u32 i = 0, n = listLight.size(); i < n && i < s_maxLight; i++)
 			{
 				CLight* light = listLight[i]->Light;
+
 				CPointLight* pointLight = dynamic_cast<CPointLight*>(light);
 
-				// no render shadow on bake light
 				if (s_bakeMode == false && light->getLightType() == CLight::Baked)
 					continue;
 
@@ -597,21 +597,6 @@ namespace Skylicht
 					}
 
 					pointLight->endRenderShadowDepth();
-				}
-				else
-				{
-					CSpotLight* spotLight = dynamic_cast<CSpotLight*>(light);
-					if (spotLight != NULL &&
-						spotLight->isCastShadow() == true &&
-						(spotLight->needRenderShadowDepth() || spotLight->isDynamicShadow()))
-					{
-						spotLight->beginRenderShadowDepth();
-
-						// todo later
-						// ....
-
-						spotLight->endRenderShadowDepth();
-					}
 				}
 			}
 		}

@@ -34,26 +34,19 @@ namespace Skylicht
 
 	CATEGORY_COMPONENT(CSpotLight, "Spotlight", "Lighting");
 
-	CSpotLight::CSpotLight() :
-		m_needRenderShadowDepth(true),
-		m_cullingData(NULL)
+	CSpotLight::CSpotLight()
 	{
 
 	}
 
 	CSpotLight::~CSpotLight()
 	{
-		if (m_gameObject)
-			m_gameObject->getEntity()->removeData<CLightCullingData>();
+
 	}
 
 	void CSpotLight::initComponent()
 	{
-		CEntity* entity = m_gameObject->getEntity();
-		m_cullingData = entity->addData<CLightCullingData>();
-		m_cullingData->Light = this;
-
-		entity->addData<CWorldInverseTransformData>();
+		CPointLight::initComponent();
 	}
 
 	void CSpotLight::updateComponent()
@@ -95,25 +88,7 @@ namespace Skylicht
 		m_spotExponent = object->get<float>("spot exponent", 10.0f);
 
 		setRadius(radius);
-	}
 
-	core::vector3df CSpotLight::getPosition()
-	{
-		return m_gameObject->getPosition();
-	}
-
-	bool CSpotLight::needRenderShadowDepth()
-	{
-		return m_needRenderShadowDepth;
-	}
-
-	void CSpotLight::beginRenderShadowDepth()
-	{
-
-	}
-
-	void CSpotLight::endRenderShadowDepth()
-	{
-		m_needRenderShadowDepth = false;
+		m_needRenderShadowDepth = true;
 	}
 }

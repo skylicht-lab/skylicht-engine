@@ -7,6 +7,11 @@ SamplerState uTexNormalSampler : register(s1);
 Texture2D uTexData : register(t2);
 SamplerState uTexDataSampler : register(s2);
 
+#ifdef SHADOW
+TextureCube uPointLightShadowMap : register(t3);
+SamplerState uPointLightShadowMapSampler : register(s3);
+#endif
+
 struct PS_INPUT
 {
 	float4 pos : SV_POSITION;
@@ -22,7 +27,11 @@ cbuffer cbPerFrame
 	float4 uLightColor;
 };
 
+#if defined(SHADOW)
+#include "../../../Light/HLSL/LibSpotLightShadow.hlsl"
+#else
 #include "../../../Light/HLSL/LibSpotLight.hlsl"
+#endif
 
 float4 main(PS_INPUT input) : SV_TARGET
 {
@@ -30,7 +39,11 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 normal = uTexNormal.Sample(uTexNormalSampler, input.tex0).xyz;
 	float3 data = uTexData.Sample(uTexDataSampler, input.tex0).xyz;
 
+#ifdef SHADOW
+	float3 lightColor = spotlightShadow(
+#else
 	float3 lightColor = spotlight(
+#endif
 		position, 
 		normal,
 		uCameraPosition.xyz, 

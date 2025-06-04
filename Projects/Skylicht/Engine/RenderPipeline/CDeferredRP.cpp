@@ -60,6 +60,7 @@ namespace Skylicht
 		m_pointLightShader(0),
 		m_pointLightShadowShader(0),
 		m_spotLightShader(0),
+		m_spotLightShadowShader(0),
 		m_lightmapArrayShader(0),
 		m_lightmapVertexShader(0),
 		m_lightmapSHShader(0),
@@ -249,23 +250,15 @@ namespace Skylicht
 
 		m_pointLightShader = shaderMgr->getShaderIDByName("SGPointLight");
 		m_pointLightShadowShader = shaderMgr->getShaderIDByName("SGPointLightShadow");
+		m_spotLightShader = shaderMgr->getShaderIDByName("SGSpotLight");
+		m_spotLightShadowShader = shaderMgr->getShaderIDByName("SGSpotLightShadow");
 
 		m_pointLightPass.MaterialType = m_pointLightShader;
-
 		m_pointLightPass.setTexture(0, m_position);
 		m_pointLightPass.setTexture(1, m_normal);
 		m_pointLightPass.setTexture(2, m_data);
 
-		m_spotLightShader = shaderMgr->getShaderIDByName("SGSpotLight");
-
-		m_spotLightPass.MaterialType = m_spotLightShader;
-
-		m_spotLightPass.setTexture(0, m_position);
-		m_spotLightPass.setTexture(1, m_normal);
-		m_spotLightPass.setTexture(2, m_data);
-
 		disableFloatTextureFilter(m_pointLightPass);
-		disableFloatTextureFilter(m_spotLightPass);
 	}
 
 	void CDeferredRP::disableFloatTextureFilter(SMaterial& m)
@@ -599,11 +592,33 @@ namespace Skylicht
 					if (renderLight == true)
 					{
 						CPointLight* pointLight = dynamic_cast<CPointLight*>(light);
-						if (pointLight)
+						CSpotLight* spotLight = dynamic_cast<CSpotLight*>(light);
+
+						if (spotLight)
+						{
+							CShaderLighting::setSpotLight(spotLight);
+
+							if (spotLight->isCastShadow())
+							{
+								ITexture* depthTexture = shadowRTT->createGetPointLightDepth(pointLight);
+
+								m_pointLightPass.MaterialType = m_spotLightShadowShader;
+								m_pointLightPass.setTexture(3, depthTexture);
+							}
+							else
+							{
+								m_pointLightPass.MaterialType = m_spotLightShader;
+								m_pointLightPass.setTexture(3, NULL);
+							}
+
+							beginRender2D(renderW, renderH);
+							renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_pointLightPass);
+						}
+						else if (pointLight)
 						{
 							CShaderLighting::setPointLight(pointLight);
 
-							if (pointLight->isCastShadow() == true)
+							if (pointLight->isCastShadow())
 							{
 								ITexture* depthTexture = shadowRTT->createGetPointLightDepth(pointLight);
 
@@ -618,20 +633,6 @@ namespace Skylicht
 
 							beginRender2D(renderW, renderH);
 							renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_pointLightPass);
-						}
-						else
-						{
-							CSpotLight* spotLight = dynamic_cast<CSpotLight*>(light);
-							if (spotLight)
-							{
-								CShaderLighting::setSpotLight(spotLight);
-
-								m_spotLightPass.MaterialType = m_spotLightShader;
-								m_spotLightPass.setTexture(3, NULL);
-
-								beginRender2D(renderW, renderH);
-								renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_spotLightPass);
-							}
 						}
 					}
 				}

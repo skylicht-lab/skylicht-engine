@@ -6,6 +6,10 @@ uniform sampler2D uTexPosition;
 uniform sampler2D uTexNormal;
 uniform sampler2D uTexData;
 
+#if defined(SHADOW)
+uniform samplerCube uPointLightShadowMap;
+#endif
+
 uniform vec4 uCameraPosition;
 uniform vec4 uLightPosition;
 uniform vec4 uLightDirection;
@@ -16,7 +20,11 @@ in vec2 varTexCoord0;
 
 out vec4 FragColor;
 
+#if defined(SHADOW)
+#include "../../../Light/GLSL/LibSpotLightShadow.glsl"
+#else
 #include "../../../Light/GLSL/LibSpotLight.glsl"
+#endif
 
 void main(void)
 {
@@ -24,7 +32,11 @@ void main(void)
 	vec3 normal = texture(uTexNormal, varTexCoord0.xy).xyz;
 	vec3 data = texture(uTexData, varTexCoord0.xy).rgb;
 
+#if defined(SHADOW)
+	vec3 lightColor = spotlightShadow(
+#else
 	vec3 lightColor = spotlight(
+#endif
 		position, 
 		normal,
 		uCameraPosition.xyz, 
