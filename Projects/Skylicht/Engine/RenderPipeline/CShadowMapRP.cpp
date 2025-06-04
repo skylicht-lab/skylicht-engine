@@ -51,7 +51,8 @@ namespace Skylicht
 		m_currentCSM(0),
 		m_saveDebug(false),
 		m_screenWidth(0),
-		m_screenHeight(0)
+		m_screenHeight(0),
+		m_renderShadowState(CShadowMapRP::DirectionLight)
 	{
 		m_type = ShadowMap;
 		m_lightDirection.set(-1.0f, -1.0f, -1.0f);

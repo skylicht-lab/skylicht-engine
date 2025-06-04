@@ -15,7 +15,7 @@ float3 pointlightShadow(
 	const float3 specColor)
 {
 	// Lighting	
-	float3 direction = lightPosition.xyz - position;
+	float3 direction = lightPosition - position;
 	float distance = length(direction);
 	float attenuation = max(0.0, 1.0 - (distance * lightAttenuation.y)) * lightColor.a;
 
@@ -23,7 +23,7 @@ float3 pointlightShadow(
 	float NdotL = max(0.0, dot(lightDir, normal));
 
 	// Specular
-	float3 v = camPosition.xyz - position;
+	float3 v = camPosition - position;
 	float3 viewDir = normalize(v);
 	float3 H = normalize(direction + viewDir);
 	float NdotE = max(0.0,dot(normal, H));

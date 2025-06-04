@@ -96,19 +96,8 @@ namespace Skylicht
 
 			pointLight->endRenderShadowDepth();
 		}
-		else
-		{
-			CSpotLight* spotLight = dynamic_cast<CSpotLight*>(m_currentLight);
-			if (spotLight != NULL && spotLight->isCastShadow() == true)
-			{
-				spotLight->beginRenderShadowDepth();
 
-				// todo later
-				// ....
-
-				spotLight->endRenderShadowDepth();
-			}
-		}
+		setTarget(target, cubeFaceId);
 
 		// todo on next render pipeline
 		onNext(target, camera, entityManager, viewport, cubeFaceId);

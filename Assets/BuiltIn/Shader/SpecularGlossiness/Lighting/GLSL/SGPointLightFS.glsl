@@ -27,7 +27,7 @@ vec3 pointlight(
 	float attenuation = max(0.0, 1.0 - (distance * lightAttenuation.y)) * lightColor.a;
 	vec3 lightDir = normalize(direction);
 	float NdotL = max(0.0, dot(lightDir, normal));
-	vec3 v = camPosition.xyz - position;
+	vec3 v = camPosition - position;
 	vec3 viewDir = normalize(v);
 	vec3 H = normalize(direction + viewDir);
 	float NdotE = max(0.0,dot(normal, H));

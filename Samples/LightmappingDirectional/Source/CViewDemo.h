@@ -5,6 +5,9 @@
 
 class CViewDemo : public CView
 {
+protected:
+	std::vector<CLight*> m_lights;
+
 public:
 	CViewDemo();
 

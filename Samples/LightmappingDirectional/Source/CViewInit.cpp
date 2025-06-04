@@ -143,15 +143,16 @@ void CViewInit::onInit()
 		CPointLight* pointLight = pointLightObj->addComponent<CPointLight>();
 		pointLight->setShadow(true);
 		pointLight->setColor(SColor(255, 221, 123, 34));
-		pointLight->setIntensity(1.2f);
+		pointLight->setIntensity(1.0f);
 		pointLight->setBounce(1);
 		pointLight->setRadius(4.0f);
 		pointLight->setLightType(CLight::Baked);
 
 		CTransformEuler* pointLightTransform = pointLightObj->getTransformEuler();
-		pointLightTransform->setPosition(core::vector3df(0.0f, 2.0f, 0.0f));
+		pointLightTransform->setPosition(core::vector3df(0.0f, 3.0f, 0.0f));
 	}
 	*/
+
 	CEntityPrefab* model = CMeshManager::getInstance()->loadModel("SampleModels/Gazebo/gazebo.smesh", "LightmapUV");
 #endif	
 

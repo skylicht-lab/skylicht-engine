@@ -852,7 +852,7 @@ namespace Skylicht
 		if (allPipeline)
 			render(target, camera, entityMgr, core::recti());
 		else
-			entityMgr->render();
+			entityMgr->cullingAndRender();
 	}
 
 	void CBaseRP::drawSceneToCubeTexture(ITexture* target, CCamera* camera, video::E_CUBEMAP_FACE faceID, CEntityManager* entityMgr, bool allPipeline)
@@ -872,6 +872,6 @@ namespace Skylicht
 		if (allPipeline)
 			render(target, camera, entityMgr, core::recti(), (int)faceID);
 		else
-			entityMgr->render();
+			entityMgr->cullingAndRender();
 	}
 }

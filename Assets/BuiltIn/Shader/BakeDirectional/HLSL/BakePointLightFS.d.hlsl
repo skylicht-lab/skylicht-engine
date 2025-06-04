@@ -1,5 +1,5 @@
-TextureCube uShadowMap : register(t0);
-SamplerState uShadowMapSampler : register(s0);
+TextureCube uPointLightShadowMap : register(t0);
+SamplerState uPointLightShadowMapSampler : register(s0);
 
 struct PS_INPUT
 {
@@ -16,54 +16,20 @@ cbuffer cbPerFrame
 	float4 uLightColor;
 };
 
-#define SHADOW_SAMPLE(x, y, z) {\
-fragToLight = -lightDir + float3(x, y, z);\
-shadow += step(uShadowMap.SampleLevel(uShadowMapSampler, fragToLight, 0).r, d);\
-}
+#include "../../Light/HLSL/LibPointLightShadow.hlsl"
 
 float4 main(PS_INPUT input) : SV_TARGET
 {
-	// Lighting
-	float3 direction = uLightPosition.xyz - input.worldPosition;
-	float distance = length(direction);
-	float attenuation = max(0.0, 1.0 - (distance * uLightAttenuation.y)) * uLightColor.a;
-
-	float3 lightDir = normalize(direction);
-	float NdotL = max(0.0, dot(lightDir, input.worldNormal));
-	
-	// Shadow
-	float bias = 0.2;
-	float d = distance - bias;
-
-#if defined(HARD_SHADOW)
-	float sampledDistance = uShadowMap.SampleLevel(uShadowMapSampler, -lightDir, 0).r;
-	float shadow = step(sampledDistance, d);
-#else
-	float shadow = 0.0;
-	float samples = 2.0;
-	float offset = 0.01;
-	float delta = offset / (samples * 0.5);
-	float3 fragToLight;	
-	
-	[unroll]
-	for (float x = -offset; x < offset; x += delta)
-	{
-		[unroll]
-		for (float y = -offset; y < offset; y += delta)
-		{
-			[unroll]
-			for (float z = -offset; z < offset; z += delta)
-			{
-				SHADOW_SAMPLE(x, y, z)
-			}
-		}
-	}
-	
-	shadow /= (samples * samples * samples);
-#endif
-
-	shadow = max(1.0 - shadow, 0.0);
-
-	float3 directionalLightColor = NdotL * attenuation * uLightColor.rgb * shadow;
+	float3 directionalLightColor = pointlightShadow(
+		input.worldPosition, 
+		input.worldNormal,
+		float3(0.0, 100.0, 0.0), 
+		uLightColor, 
+		uLightPosition.xyz, 
+		uLightAttenuation, 
+		0.0, 
+		0.1,
+		float3(1.0, 1.0, 1.0));
+		
 	return float4(directionalLightColor / 3.0, 1.0);
 }
