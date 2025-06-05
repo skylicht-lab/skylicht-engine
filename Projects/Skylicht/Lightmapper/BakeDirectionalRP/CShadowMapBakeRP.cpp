@@ -36,7 +36,8 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	CShadowMapBakeRP::CShadowMapBakeRP() :
-		m_sm(NULL)
+		m_sm(NULL),
+		m_bakeInUV0(false)
 	{
 		CEventManager::getInstance()->registerEvent("ShadowBakeRP", this);
 	}
@@ -148,7 +149,7 @@ namespace Skylicht
 			getVideoDriver()->removeTexture(rtt);
 			m_saveDebug = false;
 		}
-		
+
 		// todo on next render pipeline
 		onNext(target, camera, entityManager, viewport, cubeFaceId);
 	}

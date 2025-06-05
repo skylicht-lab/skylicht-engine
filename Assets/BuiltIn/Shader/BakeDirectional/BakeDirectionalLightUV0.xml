@@ -1,4 +1,4 @@
-<shaderConfig name="BakeDirectionalLight" baseShader="TRANSPARENT_ADD_COLOR">
+<shaderConfig name="BakeDirectionalLightUV0" baseShader="TRANSPARENT_ADD_COLOR">
 	<uniforms>
 		<vs>
 			<uniform name="uWorldMatrix" type="WORLD" value="0" float="16" matrix="true"/>
@@ -14,6 +14,6 @@
 	</resources>
 	<customUI>
 	</customUI>
-	<shader type="GLSL" vs="GLSL/BakeLightLMVS.glsl" fs="GLSL/BakeDirectionalLightFS.glsl" vs_source="GLSL/BakeLightVS.d.glsl" fs_source="GLSL/BakeDirectionalLightFS.d.glsl" define="LM"/>
-	<shader type="HLSL" vs="HLSL/BakeLightLMVS.hlsl" fs="HLSL/BakeDirectionalLightFS.hlsl" vs_source="HLSL/BakeLightVS.d.hlsl" fs_source="HLSL/BakeDirectionalLightFS.d.hlsl" define="LM"/>
+	<shader type="GLSL" vs="GLSL/BakeLightUV0VS.glsl" fs="GLSL/BakeDirectionalLightFS.glsl" vs_source="GLSL/BakeLightVS.d.glsl"/>
+	<shader type="HLSL" vs="HLSL/BakeLightUV0VS.hlsl" fs="HLSL/BakeDirectionalLightFS.hlsl" vs_source="HLSL/BakeLightVS.d.hlsl"/>
 </shaderConfig>

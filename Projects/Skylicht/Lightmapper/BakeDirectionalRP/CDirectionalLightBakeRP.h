@@ -40,6 +40,8 @@ namespace Skylicht
 		int m_currentTarget;
 
 		int m_bakeDirectionMaterialID;
+		int m_bakeDirectionUV0MaterialID;
+
 	public:
 		CDirectionalLightBakeRP();
 

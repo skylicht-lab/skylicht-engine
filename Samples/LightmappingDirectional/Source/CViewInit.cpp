@@ -135,7 +135,6 @@ void CViewInit::onInit()
 	core::vector3df direction = core::vector3df(4.0f, -6.0f, -4.5f);
 	lightTransform->setOrientation(direction, Transform::Oy);
 
-	/*
 	// test point light
 	{
 		CGameObject* pointLightObj = zone->createEmptyObject();
@@ -174,7 +173,6 @@ void CViewInit::onInit()
 		pointLightTransform->setPosition(pos);
 		pointLightTransform->setOrientation(front, Transform::Oy);
 	}
-	*/
 
 	CEntityPrefab* model = CMeshManager::getInstance()->loadModel("SampleModels/Gazebo/gazebo.smesh", "LightmapUV");
 #endif	

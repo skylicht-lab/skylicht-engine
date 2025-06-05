@@ -33,6 +33,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "RenderMesh/CMesh.h"
 #include "Material/Shader/CShaderManager.h"
 #include "Material/Shader/ShaderCallback/CShaderShadow.h"
+#include "Material/Shader/ShaderCallback/CShaderLighting.h"
 #include "Material/CMaterial.h"
 
 #include "CPointLightShadowBakeRP.h"
@@ -46,7 +47,9 @@ namespace Skylicht
 		m_numTarget(0),
 		m_currentTarget(0),
 		m_bakePointLightMaterialID(0),
-		m_bakeSpotLightMaterialID(0)
+		m_bakeSpotLightMaterialID(0),
+		m_bakePointLightUV0MaterialID(0),
+		m_bakeSpotLightUV0MaterialID(0)
 	{
 		m_type = Deferred;
 	}
@@ -62,8 +65,14 @@ namespace Skylicht
 		shaderMgr->loadShader("BuiltIn/Shader/BakeDirectional/BakePointLight.xml");
 		shaderMgr->loadShader("BuiltIn/Shader/BakeDirectional/BakeSpotLight.xml");
 
+		shaderMgr->loadShader("BuiltIn/Shader/BakeDirectional/BakePointLightUV0.xml");
+		shaderMgr->loadShader("BuiltIn/Shader/BakeDirectional/BakeSpotLightUV0.xml");
+
 		m_bakePointLightMaterialID = shaderMgr->getShaderIDByName("BakePointLight");
 		m_bakeSpotLightMaterialID = shaderMgr->getShaderIDByName("BakeSpotLight");
+
+		m_bakePointLightUV0MaterialID = shaderMgr->getShaderIDByName("BakePointLightUV0");
+		m_bakeSpotLightUV0MaterialID = shaderMgr->getShaderIDByName("BakeSpotLightUV0");
 	}
 
 	void CPointLightBakeRP::resize(int w, int h)
@@ -140,10 +149,19 @@ namespace Skylicht
 			return;
 
 		CSpotLight* sl = dynamic_cast<CSpotLight*>(currentLight);
+		if (sl)
+			CShaderLighting::setSpotLight(sl);
+		else
+			CShaderLighting::setPointLight(pl);
 
 		// render mesh with light bake shader
 		video::SMaterial irrMaterial;
-		irrMaterial.MaterialType = sl != NULL ? m_bakeSpotLightMaterialID : m_bakePointLightMaterialID;
+
+		if (shadowRP->isBakeInUV0())
+			irrMaterial.MaterialType = sl != NULL ? m_bakeSpotLightUV0MaterialID : m_bakePointLightUV0MaterialID;
+		else
+			irrMaterial.MaterialType = sl != NULL ? m_bakeSpotLightMaterialID : m_bakePointLightMaterialID;
+
 		irrMaterial.ZBuffer = video::ECFN_DISABLED;
 		irrMaterial.ZWriteEnable = false;
 		irrMaterial.BackfaceCulling = false;

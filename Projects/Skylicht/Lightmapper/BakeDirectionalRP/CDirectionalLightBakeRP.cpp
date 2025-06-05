@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CDirectionalLightBakeRP.h"
+#include "CShadowMapBakeRP.h"
 
 #include "Lighting/CDirectionalLight.h"
 #include "Lighting/CPointLight.h"
@@ -43,7 +44,8 @@ namespace Skylicht
 		m_renderTarget(NULL),
 		m_numTarget(0),
 		m_currentTarget(0),
-		m_bakeDirectionMaterialID(0)
+		m_bakeDirectionMaterialID(0),
+		m_bakeDirectionUV0MaterialID(0)
 	{
 		m_type = Deferred;
 	}
@@ -57,8 +59,10 @@ namespace Skylicht
 	{
 		CShaderManager* shaderMgr = CShaderManager::getInstance();
 		shaderMgr->loadShader("BuiltIn/Shader/BakeDirectional/BakeDirectionalLight.xml");
+		shaderMgr->loadShader("BuiltIn/Shader/BakeDirectional/BakeDirectionalLightUV0.xml");
 
 		m_bakeDirectionMaterialID = shaderMgr->getShaderIDByName("BakeDirectionalLight");
+		m_bakeDirectionUV0MaterialID = shaderMgr->getShaderIDByName("BakeDirectionalLightUV0");
 	}
 
 	void CDirectionalLightBakeRP::resize(int w, int h)
@@ -124,26 +128,29 @@ namespace Skylicht
 
 		IVideoDriver* driver = getVideoDriver();
 
-		// render mesh with light bake shader
+		// shadow
+		CShadowMapBakeRP* shadowRP = dynamic_cast<CShadowMapBakeRP*>(CShaderShadow::getShadowMapRP());
+		if (shadowRP == NULL)
+			return;
+
 		video::SMaterial irrMaterial;
-		irrMaterial.MaterialType = m_bakeDirectionMaterialID;
+		ITexture* depthTexture = shadowRP->getDepthTexture();
+		depthTexture->regenerateMipMapLevels();
+
+		irrMaterial.TextureLayer[0].Texture = depthTexture;
+		irrMaterial.TextureLayer[0].BilinearFilter = false;
+		irrMaterial.TextureLayer[0].TrilinearFilter = false;
+		irrMaterial.TextureLayer[0].AnisotropicFilter = 0;
+
+		// render mesh with light bake shader
+		irrMaterial.MaterialType = shadowRP->isBakeInUV0() ? m_bakeDirectionUV0MaterialID : m_bakeDirectionMaterialID;
 		irrMaterial.ZBuffer = video::ECFN_DISABLED;
 		irrMaterial.ZWriteEnable = false;
 		irrMaterial.BackfaceCulling = false;
 		irrMaterial.FrontfaceCulling = false;
 
-		// shadow
-		CShadowMapRP* shadowRP = CShaderShadow::getShadowMapRP();
-		if (shadowRP != NULL)
-		{
-			ITexture* depthTexture = shadowRP->getDepthTexture();
-			depthTexture->regenerateMipMapLevels();
-
-			irrMaterial.TextureLayer[0].Texture = depthTexture;
-			irrMaterial.TextureLayer[0].BilinearFilter = false;
-			irrMaterial.TextureLayer[0].TrilinearFilter = false;
-			irrMaterial.TextureLayer[0].AnisotropicFilter = 0;
-		}
+		if (irrMaterial.MaterialType <= 0)
+			return;
 
 		// set irrlicht material
 		driver->setMaterial(irrMaterial);

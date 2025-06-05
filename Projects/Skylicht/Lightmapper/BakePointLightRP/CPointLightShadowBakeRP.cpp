@@ -38,7 +38,8 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	CPointLightShadowBakeRP::CPointLightShadowBakeRP() :
-		m_currentLight(NULL)
+		m_currentLight(NULL),
+		m_bakeInUV0(false)
 	{
 		CEventManager::getInstance()->registerEvent("ShadowBakeRP", this);
 	}
@@ -85,7 +86,6 @@ namespace Skylicht
 		CPointLight* pointLight = dynamic_cast<CPointLight*>(m_currentLight);
 		if (pointLight != NULL && pointLight->isCastShadow() == true)
 		{
-			CShaderLighting::setPointLight(pointLight);
 			pointLight->beginRenderShadowDepth();
 
 			core::vector3df lightPosition = pointLight->getGameObject()->getPosition();

@@ -1,4 +1,4 @@
-<shaderConfig name="BakePointLight" baseShader="TRANSPARENT_ADD_COLOR">
+<shaderConfig name="BakePointLightUV0" baseShader="TRANSPARENT_ADD_COLOR">
 	<uniforms>
 		<vs>
 			<uniform name="uWorldMatrix" type="WORLD" value="0" float="16" matrix="true"/>
@@ -14,6 +14,6 @@
 	</resources>
 	<customUI>
 	</customUI>
-	<shader type="GLSL" vs="GLSL/BakeLightLMVS.glsl" fs="GLSL/BakePointLightFS.glsl" fs_source="GLSL/BakePointLightFS.d.glsl"/>
-	<shader type="HLSL" vs="HLSL/BakeLightLMVS.hlsl" fs="HLSL/BakePointLightFS.hlsl" fs_source="HLSL/BakePointLightFS.d.hlsl"/>
+	<shader type="GLSL" vs="GLSL/BakeLightUV0VS.glsl" fs="GLSL/BakePointLightFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/BakeLightUV0VS.hlsl" fs="HLSL/BakePointLightFS.hlsl"/>
 </shaderConfig>

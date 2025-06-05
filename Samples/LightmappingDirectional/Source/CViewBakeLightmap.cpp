@@ -274,13 +274,17 @@ void CViewBakeLightmap::onRender()
 	// update scene first
 	context->getScene()->update();
 
+	bool bakeInUV0 = false; // we bake in lightmap coord
+
 	// bake direction light
+	m_shadowRP->setBakeInUV0(bakeInUV0);
 	m_shadowRP->render(NULL, bakeCamera, entityMgr, core::recti());
 
 	// bake all point light
 	for (CLight* light : m_lights)
 	{
 		m_shadowPLRP->setCurrentLight(light);
+		m_shadowPLRP->setBakeInUV0(bakeInUV0);
 		m_shadowPLRP->render(NULL, bakeCamera, entityMgr, core::recti());
 	}
 
