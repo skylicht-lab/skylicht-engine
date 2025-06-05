@@ -40,7 +40,7 @@ namespace Skylicht
 		int m_currentTarget;
 
 		int m_bakePointLightMaterialID;
-
+		int m_bakeSpotLightMaterialID;
 	public:
 		CPointLightBakeRP();
 

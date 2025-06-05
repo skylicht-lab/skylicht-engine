@@ -45,7 +45,8 @@ namespace Skylicht
 		m_renderTarget(NULL),
 		m_numTarget(0),
 		m_currentTarget(0),
-		m_bakePointLightMaterialID(0)
+		m_bakePointLightMaterialID(0),
+		m_bakeSpotLightMaterialID(0)
 	{
 		m_type = Deferred;
 	}
@@ -59,8 +60,10 @@ namespace Skylicht
 	{
 		CShaderManager* shaderMgr = CShaderManager::getInstance();
 		shaderMgr->loadShader("BuiltIn/Shader/BakeDirectional/BakePointLight.xml");
+		shaderMgr->loadShader("BuiltIn/Shader/BakeDirectional/BakeSpotLight.xml");
 
 		m_bakePointLightMaterialID = shaderMgr->getShaderIDByName("BakePointLight");
+		m_bakeSpotLightMaterialID = shaderMgr->getShaderIDByName("BakeSpotLight");
 	}
 
 	void CPointLightBakeRP::resize(int w, int h)
@@ -126,26 +129,36 @@ namespace Skylicht
 
 		IVideoDriver* driver = getVideoDriver();
 
+		// shadow
+		CPointLightShadowBakeRP* shadowRP = dynamic_cast<CPointLightShadowBakeRP*>(CShaderShadow::getShadowMapRP());
+		if (shadowRP == NULL)
+			return;
+
+		CLight* currentLight = shadowRP->getCurrentLight();
+		CPointLight* pl = dynamic_cast<CPointLight*>(currentLight);
+		if (pl == NULL)
+			return;
+
+		CSpotLight* sl = dynamic_cast<CSpotLight*>(currentLight);
+
 		// render mesh with light bake shader
 		video::SMaterial irrMaterial;
-		irrMaterial.MaterialType = m_bakePointLightMaterialID;
+		irrMaterial.MaterialType = sl != NULL ? m_bakeSpotLightMaterialID : m_bakePointLightMaterialID;
 		irrMaterial.ZBuffer = video::ECFN_DISABLED;
 		irrMaterial.ZWriteEnable = false;
 		irrMaterial.BackfaceCulling = false;
 		irrMaterial.FrontfaceCulling = false;
 
-		// shadow
-		CShadowMapRP* shadowRP = CShaderShadow::getShadowMapRP();
-		if (shadowRP != NULL)
-		{
-			ITexture* depthTexture = shadowRP->getDepthTexture();
-			depthTexture->regenerateMipMapLevels();
+		if (irrMaterial.MaterialType <= 0)
+			return;
 
-			irrMaterial.TextureLayer[0].Texture = depthTexture;
-			irrMaterial.TextureLayer[0].BilinearFilter = false;
-			irrMaterial.TextureLayer[0].TrilinearFilter = false;
-			irrMaterial.TextureLayer[0].AnisotropicFilter = 0;
-		}
+		ITexture* depthTexture = shadowRP->getDepthTexture();
+		depthTexture->regenerateMipMapLevels();
+
+		irrMaterial.TextureLayer[0].Texture = depthTexture;
+		irrMaterial.TextureLayer[0].BilinearFilter = false;
+		irrMaterial.TextureLayer[0].TrilinearFilter = false;
+		irrMaterial.TextureLayer[0].AnisotropicFilter = 0;
 
 		// set irrlicht material
 		driver->setMaterial(irrMaterial);

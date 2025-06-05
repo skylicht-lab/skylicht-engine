@@ -135,8 +135,8 @@ void CViewInit::onInit()
 	core::vector3df direction = core::vector3df(4.0f, -6.0f, -4.5f);
 	lightTransform->setOrientation(direction, Transform::Oy);
 
-	// test point light
 	/*
+	// test point light
 	{
 		CGameObject* pointLightObj = zone->createEmptyObject();
 
@@ -150,6 +150,29 @@ void CViewInit::onInit()
 
 		CTransformEuler* pointLightTransform = pointLightObj->getTransformEuler();
 		pointLightTransform->setPosition(core::vector3df(0.0f, 3.0f, 0.0f));
+	}
+
+	// test spotlight
+	{
+		CGameObject* pointLightObj = zone->createEmptyObject();
+
+		CSpotLight* spotLight = pointLightObj->addComponent<CSpotLight>();
+		spotLight->setShadow(true);
+		spotLight->setColor(SColor(255, 34, 123, 221));
+		spotLight->setIntensity(1.0f);
+		spotLight->setBounce(1);
+		spotLight->setRadius(4.0f);
+		spotLight->setLightType(CLight::Baked);
+
+		core::vector3df pos(0.0f, 1.0f, -3.0f);
+		core::vector3df target(-2.0f, -1.0f, -1.0f);
+
+		core::vector3df front = target - pos;
+		front.normalize();
+
+		CTransformEuler* pointLightTransform = pointLightObj->getTransformEuler();
+		pointLightTransform->setPosition(pos);
+		pointLightTransform->setOrientation(front, Transform::Oy);
 	}
 	*/
 
