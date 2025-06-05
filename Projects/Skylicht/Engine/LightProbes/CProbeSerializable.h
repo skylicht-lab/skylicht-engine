@@ -31,6 +31,7 @@ namespace Skylicht
 	class SKYLICHT_API CProbeSerializable : public CObjectSerializable
 	{
 	public:
+		CStringProperty Id;
 		CMatrixProperty Transform;
 		CVector3Property* SH[9];
 

@@ -199,6 +199,9 @@ namespace Skylicht
 						}
 					}
 				}
+
+				if (object)
+					m_current.push_back(object);
 			}
 			else if (object != NULL)
 			{

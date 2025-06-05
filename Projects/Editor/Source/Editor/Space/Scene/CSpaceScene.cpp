@@ -81,7 +81,8 @@ namespace Skylicht
 			m_enableRender(true),
 			m_enableRenderGrid(true),
 			m_enableHandles(true),
-			m_waitHotKeyRelease(false)
+			m_waitHotKeyRelease(false),
+			m_rp(CSpaceScene::Materials)
 		{
 			CScene* currentScene = CSceneController::getInstance()->getScene();
 			if (currentScene == NULL)
@@ -160,7 +161,19 @@ namespace Skylicht
 
 			getSubjectTransformGizmos().addObserver(this);
 
-			// camera			
+			toolbar->addSpace();
+
+			// pipeline
+			GUI::CComboBox* pipelineDropDown = (GUI::CComboBox*)toolbar->addControl(new GUI::CComboBox(toolbar));
+			pipelineDropDown->setWidth(120.0f);
+			pipelineDropDown->addItem(L"RP: Materials");
+			pipelineDropDown->addItem(L"RP: Lighting");
+			pipelineDropDown->setSelectIndex(0, false);
+			pipelineDropDown->OnChanged = BIND_LISTENER(&CSpaceScene::onToolbarPipeline, this);
+			m_toolbarButton[Pipeline] = pipelineDropDown;
+
+
+			// camera
 			button = toolbar->addButton(L"Ortho", GUI::ESystemIcon::Ortho, true);
 			button->OnPress = BIND_LISTENER(&CSpaceScene::onCameraOrtho, this);
 			m_toolbarButton[ESceneToolBar::Ortho] = button;
@@ -612,6 +625,15 @@ namespace Skylicht
 			else
 				handles->setUseLocalSpace(false);
 			m_editor->refresh();
+		}
+
+		void CSpaceScene::onToolbarPipeline(GUI::CBase* base)
+		{
+			GUI::CComboBox* btn = (GUI::CComboBox*)base;
+			if (btn->getSelectIndex() == 0)
+				m_rp = CSpaceScene::Materials;
+			else
+				m_rp = CSpaceScene::Lighting;
 		}
 
 		void CSpaceScene::onNotify(ISubject* subject, IObserver* from)

@@ -56,6 +56,7 @@ namespace Skylicht
 			Snap,
 			Perspective,
 			Ortho,
+			Pipeline,
 			ToolbarCount
 		};
 
@@ -118,6 +119,15 @@ namespace Skylicht
 			bool m_enableRenderGrid;
 
 			bool m_waitHotKeyRelease;
+
+			enum ERenderPipeline
+			{
+				Materials = 0,
+				Lighting
+			};
+
+			ERenderPipeline m_rp;
+
 		public:
 			CSpaceScene(GUI::CWindow* window, CEditor* editor);
 
@@ -156,6 +166,8 @@ namespace Skylicht
 			void onToolbarTransform(GUI::CBase* base);
 
 			void onToolbarWorldSpace(GUI::CBase* base);
+
+			void onToolbarPipeline(GUI::CBase* base);
 
 			void onSnapSetting(GUI::CBase* base);
 

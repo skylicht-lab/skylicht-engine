@@ -91,6 +91,9 @@ namespace Skylicht
 			CWorldTransformData* world = GET_ENTITY_DATA(m_entities[i], CWorldTransformData);
 			CLightProbeData* light = GET_ENTITY_DATA(m_entities[i], CLightProbeData);
 
+			// save id
+			probeData->Id.set(m_entities[i]->getID());
+
 			// save transform
 			probeData->Transform.set(world->Relative);
 
@@ -125,6 +128,10 @@ namespace Skylicht
 			CEntity* entity = addLightProbe(core::vector3df());
 			CWorldTransformData* world = GET_ENTITY_DATA(entity, CWorldTransformData);
 			CLightProbeData* light = GET_ENTITY_DATA(entity, CLightProbeData);
+
+			// set id
+			if (!shData->Id.get().empty())
+				entity->setID(shData->Id.getString());
 
 			// set transform
 			world->Relative = shData->Transform.get();
