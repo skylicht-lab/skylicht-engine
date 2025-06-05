@@ -133,6 +133,12 @@ namespace Skylicht
 		if (shadowRP == NULL)
 			return;
 
+		// check uv2
+		video::E_VERTEX_TYPE vtxType = m_submesh[m_currentTarget]->getVertexType();
+		bool haveTangent = vtxType == video::EVT_2TCOORDS || vtxType == video::EVT_2TCOORDS_TANGENTS;
+		if (!shadowRP->isBakeInUV0() && !haveTangent)
+			return;
+
 		video::SMaterial irrMaterial;
 		ITexture* depthTexture = shadowRP->getDepthTexture();
 		depthTexture->regenerateMipMapLevels();
