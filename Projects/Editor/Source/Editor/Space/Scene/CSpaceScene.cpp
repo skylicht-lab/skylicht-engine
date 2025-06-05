@@ -62,6 +62,7 @@ namespace Skylicht
 			m_forwardRP(NULL),
 			m_postProcessor(NULL),
 			m_viewpointRP(NULL),
+			m_lightRP(NULL),
 			m_editorCamera(NULL),
 			m_gridPlane(NULL),
 			m_leftMouseDown(false),
@@ -731,6 +732,18 @@ namespace Skylicht
 					m_viewpointRP->resize(w, h);
 				}
 
+				if (m_lightRP == NULL)
+				{
+					CDiffuseLightRenderPipeline* lightRP = new CDiffuseLightRenderPipeline();
+					lightRP->initRender(w, h);
+					lightRP->enableUpdateEntity(false);
+					m_lightRP = lightRP;
+				}
+				else
+				{
+					m_lightRP->resize(w, h);
+				}
+
 				// update camera aspect
 				m_editorCamera->setAspect(fw / fh);
 
@@ -798,6 +811,11 @@ namespace Skylicht
 					// render gizmos
 					m_gizmosRenderer->setEnable(true);
 					m_selectingRenderer->setEnable(true);
+
+					if (m_rp == CSpaceScene::Materials)
+						m_shadowMapRendering->setNextPipeLine(m_rendering);
+					else
+						m_shadowMapRendering->setNextPipeLine(m_lightRP);
 
 					// render scene
 					m_renderRP->render(NULL, m_editorCamera, m_scene->getEntityManager(), viewport);

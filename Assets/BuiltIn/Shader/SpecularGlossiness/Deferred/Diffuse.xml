@@ -1,4 +1,5 @@
-<shaderConfig name="Diffuse" baseShader="SOLID" deferred="true">
+<shaderConfig name="Diffuse" baseShader="SOLID" deferred="true" instancing="DiffuseInstancing" instancingVertex="standard_sg">
+	<dependent shader="DiffuseInstancing.xml"/>
 	<uniforms>
 		<vs>
 			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>

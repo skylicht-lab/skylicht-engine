@@ -1,0 +1,34 @@
+#pragma once
+
+#include "RenderPipeline/CDeferredRP.h"
+
+namespace Skylicht
+{
+	namespace Editor
+	{
+		class CDiffuseLightRenderPipeline : public CDeferredRP
+		{
+		protected:
+			int m_diffuseShader;
+			int m_colorShader;
+
+			int m_diffuseInstancingStandardShader;
+			int m_colorInstancingStandardShader;
+
+		public:
+			CDiffuseLightRenderPipeline();
+
+			virtual ~CDiffuseLightRenderPipeline();
+
+			virtual void initRender(int w, int h);
+
+			virtual bool canRenderMaterial(CMaterial* material);
+
+			virtual bool canRenderShader(CShader* shader);
+
+			virtual void drawMeshBuffer(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID, bool skinnedMesh);
+
+			virtual void drawInstancingMeshBuffer(CMesh* mesh, int bufferID, CShader* instancingShader, CEntityManager* entityMgr, int entityID, bool skinnedMesh);
+		};
+	}
+}
