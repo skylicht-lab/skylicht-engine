@@ -15,16 +15,16 @@
 	</customUI>
 	<shader 
 		type="GLSL" 
-		vs="GLSL/SpecularGlossinessVSInstancing.glsl" 
+		vs="GLSL/SGTangentVSInstancing.glsl" 
 		fs="GLSL/DiffuseNormalFSInstancing.glsl"
-		vs_source="GLSL/SpecularGlossinessVS.glsl" 
+		vs_source="GLSL/SGTangentVS.glsl" 
 		fs_source="GLSL/DiffuseNormalFS.glsl"
 		define="INSTANCING"/>
 	<shader 
 		type="HLSL" 
-		vs="HLSL/SpecularGlossinessVSInstancing.hlsl" 
+		vs="HLSL/SGTangentVSInstancing.hlsl" 
 		fs="HLSL/DiffuseNormalFSInstancing.hlsl"
-		vs_source="HLSL/SpecularGlossinessVS.hlsl" 
+		vs_source="HLSL/SGTangentVS.hlsl" 
 		fs_source="HLSL/DiffuseNormalFS.hlsl"
 		define="INSTANCING"/>
 </shaderConfig>

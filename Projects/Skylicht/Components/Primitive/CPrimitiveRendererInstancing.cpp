@@ -251,19 +251,21 @@ namespace Skylicht
 			}
 
 			SInstancingVertexBuffer* buffer = group->Buffer;
+			if (buffer)
+			{
+				// batching transform & material data to buffer
+				instancing->batchIntancing(
+					buffer->Instancing,
+					m_materials.pointer(),
+					m_entities.pointer(),
+					m_entities.count());
 
-			// batching transform & material data to buffer
-			instancing->batchIntancing(
-				buffer->Instancing,
-				m_materials.pointer(),
-				m_entities.pointer(),
-				m_entities.count());
-
-			IShaderInstancing::batchTransformAndLighting(
-				buffer->Transform,
-				buffer->IndirectLighting,
-				m_entities.pointer(),
-				m_entities.count());
+				IShaderInstancing::batchTransformAndLighting(
+					buffer->Transform,
+					buffer->IndirectLighting,
+					m_entities.pointer(),
+					m_entities.count());
+			}
 		}
 	}
 
@@ -290,7 +292,7 @@ namespace Skylicht
 			const SShaderMesh& shaderMesh = it.first;
 
 			ArrayPrimitives& list = group->Array;
-			if (list.size() == 0)
+			if (list.size() == 0 || group->Buffer == NULL)
 				continue;
 
 			CMesh* mesh = shaderMesh.Mesh;

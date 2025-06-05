@@ -15,15 +15,15 @@
 	<customUI>	
 	</customUI>
 	<shader type="GLSL" 
-		vs="GLSL/SpecularGlossinessVSInstancing.glsl" 
+		vs="GLSL/SGTangentVSInstancing.glsl" 
 		fs="GLSL/SpecularGlossinessFSInstancing.glsl"
-		vs_source="GLSL/SpecularGlossinessVS.glsl" 
+		vs_source="GLSL/SGTangentVS.glsl" 
 		fs_source="GLSL/SpecularGlossinessFS.glsl"
 		define="INSTANCING"/>
 	<shader type="HLSL" 
-		vs="HLSL/SpecularGlossinessVSInstancing.hlsl" 
+		vs="HLSL/SGTangentVSInstancing.hlsl" 
 		fs="HLSL/SpecularGlossinessFSInstancing.hlsl"
-		vs_source="HLSL/SpecularGlossinessVS.hlsl" 
+		vs_source="HLSL/SGTangentVS.hlsl" 
 		fs_source="HLSL/SpecularGlossinessFS.hlsl"
 		define="INSTANCING"/>
 </shaderConfig>

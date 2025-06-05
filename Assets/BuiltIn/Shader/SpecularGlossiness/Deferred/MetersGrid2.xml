@@ -25,6 +25,6 @@
 			<ui control="UIColor" name="uBorderColor"/>
 		</ui>
 	</customUI>
-	<shader type="GLSL" vs="GLSL/DiffuseSpecularGlossinessVS.glsl" fs="GLSL/MetersGrid2FS.glsl" fs_source="GLSL/MetersGridFS.d.glsl" define="CUSTOM_COLOR"/>
-	<shader type="HLSL" vs="HLSL/DiffuseSpecularGlossinessVS.hlsl" fs="HLSL/MetersGrid2FS.hlsl" fs_source="HLSL/MetersGridFS.d.hlsl" define="CUSTOM_COLOR"/>
+	<shader type="GLSL" vs="GLSL/SGStandardVS.glsl" fs="GLSL/MetersGrid2FS.glsl" fs_source="GLSL/MetersGridFS.d.glsl" define="CUSTOM_COLOR"/>
+	<shader type="HLSL" vs="HLSL/SGStandardVS.hlsl" fs="HLSL/MetersGrid2FS.hlsl" fs_source="HLSL/MetersGridFS.d.hlsl" define="CUSTOM_COLOR"/>
 </shaderConfig>

@@ -27,6 +27,6 @@
 			<ui control="UIFloat2" name="uSpecGloss" elementName="Specular;Glossiness" min="0" max="1"/>
 		</ui>
 	</customUI>
-	<shader type="GLSL" vs="GLSL/SpecularGlossinessVS.glsl" fs="GLSL/DiffuseNormalFS.glsl"/>
-	<shader type="HLSL" vs="HLSL/SpecularGlossinessVS.hlsl" fs="HLSL/DiffuseNormalFS.hlsl"/>
+	<shader type="GLSL" vs="GLSL/SGTangentVS.glsl" fs="GLSL/DiffuseNormalFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/SGTangentVS.hlsl" fs="HLSL/DiffuseNormalFS.hlsl"/>
 </shaderConfig>

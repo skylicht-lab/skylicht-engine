@@ -20,6 +20,6 @@
 			<ui control="UIFloat2" name="uSpecGloss" elementName="Specular;Glossiness" min="0" max="1"/>
 		</ui>
 	</customUI>
-	<shader type="GLSL" vs="GLSL/DiffuseSpecularGlossinessVS.glsl" fs="GLSL/ColorFS.glsl"/>
-	<shader type="HLSL" vs="HLSL/DiffuseSpecularGlossinessVS.hlsl" fs="HLSL/ColorFS.hlsl"/>
+	<shader type="GLSL" vs="GLSL/SGStandardVS.glsl" fs="GLSL/ColorFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/SGStandardVS.hlsl" fs="HLSL/ColorFS.hlsl"/>
 </shaderConfig>
