@@ -8,10 +8,8 @@ namespace Skylicht
 	namespace Editor
 	{
 		CDiffuseLightRenderPipeline::CDiffuseLightRenderPipeline() :
-			m_diffuseShader(0),
-			m_colorShader(0),
-			m_diffuseInstancingStandardShader(0),
-			m_colorInstancingStandardShader(0)
+			m_diffuseShader(NULL),
+			m_colorShader(NULL)
 		{
 
 		}
@@ -29,11 +27,8 @@ namespace Skylicht
 			shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");
 			shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Diffuse.xml");
 
-			m_diffuseShader = shaderMgr->getShaderIDByName("Diffuse");
-			m_colorShader = shaderMgr->getShaderIDByName("Color");
-
-			m_diffuseInstancingStandardShader = shaderMgr->getShaderIDByName("DiffuseInstancing");
-			m_colorInstancingStandardShader = shaderMgr->getShaderIDByName("ColorInstancing");
+			m_diffuseShader = shaderMgr->getShaderByName("Diffuse");
+			m_colorShader = shaderMgr->getShaderByName("Color");
 		}
 
 		bool CDiffuseLightRenderPipeline::canRenderMaterial(CMaterial* material)
@@ -64,9 +59,9 @@ namespace Skylicht
 				// force change to pipeline shader
 				video::SMaterial irrMaterial = mb->getMaterial();
 				if (irrMaterial.getTexture(0) == NULL)
-					irrMaterial.MaterialType = m_colorShader;
+					irrMaterial.MaterialType = m_colorShader->getMaterialRenderID();
 				else
-					irrMaterial.MaterialType = m_diffuseShader;
+					irrMaterial.MaterialType = m_diffuseShader->getMaterialRenderID();
 
 				// set irrlicht material
 				driver->setMaterial(irrMaterial);
@@ -89,24 +84,29 @@ namespace Skylicht
 				u32 size = mb->getVertexBuffer(0)->getVertexSize();
 
 				video::SMaterial& irrMaterial = mb->getMaterial();
+				CShader* instancingShader = NULL;
 
 				if (irrMaterial.getTexture(0) == NULL)
 				{
 					if (size == sizeof(video::S3DVertex))
-						irrMaterial.MaterialType = m_colorInstancingStandardShader;
+						instancingShader = m_colorShader->getInstancingShader(video::EVT_STANDARD);
 					else if (size == sizeof(video::S3DVertexTangents))
-						return;
+						instancingShader = m_colorShader->getInstancingShader(video::EVT_TANGENTS);
 				}
 				else
 				{
 					if (size == sizeof(video::S3DVertex))
-						irrMaterial.MaterialType = m_diffuseInstancingStandardShader;
+						instancingShader = m_diffuseShader->getInstancingShader(video::EVT_STANDARD);
 					else
-						return;
+						instancingShader = m_diffuseShader->getInstancingShader(video::EVT_TANGENTS);
 				}
 
-				driver->setMaterial(irrMaterial);
-				driver->drawMeshBuffer(mb);
+				if (instancingShader)
+				{
+					irrMaterial.MaterialType = instancingShader->getMaterialRenderID();
+					driver->setMaterial(irrMaterial);
+					driver->drawMeshBuffer(mb);
+				}
 			}
 		}
 	}

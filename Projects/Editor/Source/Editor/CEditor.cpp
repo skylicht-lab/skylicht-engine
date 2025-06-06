@@ -65,6 +65,10 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Space/BuildWalkingMap/CSpaceBuildWalkingMap.h"
 #endif
 
+#ifdef BUILD_SKYLICHT_LIGHMAPPER
+#include "Space/BakeDirectional/CSpaceBakeDirectional.h"
+#endif
+
 namespace Skylicht
 {
 	namespace Editor
@@ -683,6 +687,12 @@ namespace Skylicht
 			{
 				ret = new CSpaceInterpolateCurves(window, this);
 			}
+#ifdef BUILD_SKYLICHT_LIGHMAPPER
+			else if (workspace == L"Bake Directional")
+			{
+				ret = new CSpaceBakeDirectional(window, this);
+			}
+#endif
 
 			if (ret)
 				m_workspaces.push_back(ret);
@@ -1551,6 +1561,23 @@ namespace Skylicht
 			CSpaceExportSprite* spaceExport = dynamic_cast<CSpaceExportSprite*>(space);
 			spaceExport->exportSprite(id, path, pngs, width, height, alpha);
 		}
+
+#ifdef BUILD_SKYLICHT_LIGHMAPPER
+		void CEditor::bakeDirectional(Lightmapper::CBakeLightComponent* component)
+		{
+			m_waitingDialog = new GUI::CDialogWindow(m_canvas, 0.0f, 0.0f, 600.0f, 120.0f);
+			m_waitingDialog->setCaption(L"Bake Directional");
+			m_waitingDialog->showCloseButton(true);
+			m_waitingDialog->setCenterPosition();
+			m_waitingDialog->bringToFront();
+
+			initWorkspace(m_waitingDialog, m_waitingDialog->getCaption());
+
+			CSpace* space = getWorkspace(m_waitingDialog);
+			CSpaceBakeDirectional* spaceExport = dynamic_cast<CSpaceBakeDirectional*>(space);
+			spaceExport->bake(component);
+		}
+#endif
 
 		void CEditor::OnCommandGameObject(GUI::CBase* item)
 		{

@@ -98,7 +98,7 @@ void CViewBakeLightmap::onInit()
 	{
 		if (renderMesh->getGameObject()->isStatic() == true)
 		{
-			// just list static object
+			// only list static object
 			std::vector<CRenderMeshData*>& renderers = renderMesh->getRenderers();
 			for (CRenderMeshData* r : renderers)
 			{

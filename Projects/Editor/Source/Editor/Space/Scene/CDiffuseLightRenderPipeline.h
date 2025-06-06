@@ -9,11 +9,8 @@ namespace Skylicht
 		class CDiffuseLightRenderPipeline : public CDeferredRP
 		{
 		protected:
-			int m_diffuseShader;
-			int m_colorShader;
-
-			int m_diffuseInstancingStandardShader;
-			int m_colorInstancingStandardShader;
+			CShader* m_diffuseShader;
+			CShader* m_colorShader;
 
 		public:
 			CDiffuseLightRenderPipeline();

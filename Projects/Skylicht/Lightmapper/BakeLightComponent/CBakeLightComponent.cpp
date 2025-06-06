@@ -36,6 +36,8 @@ namespace Skylicht
 		CATEGORY_COMPONENT(CBakeLightComponent, "Bake Light", "Lightmapper");
 
 		CBakeLightComponent::CBakeLightComponent() :
+			m_bakeAll(false),
+			m_bakeUV0(false),
 			m_bakeSize(Size2048),
 			m_outputFile("lightmap_directional_%d.png")
 		{
@@ -57,12 +59,36 @@ namespace Skylicht
 
 		}
 
+		u32 CBakeLightComponent::getBakeSize()
+		{
+			u32 size = 2048;
+			switch (m_bakeSize)
+			{
+			case Size512:
+				size = 512;
+				break;
+			case Size1024:
+				size = 1024;
+				break;
+			case Size2048:
+				size = 2048;
+				break;
+			case Size4096:
+				size = 4096;
+				break;
+			}
+			return size;
+		}
+
 		CObjectSerializable* CBakeLightComponent::createSerializable()
 		{
 			CObjectSerializable* object = CComponentSystem::createSerializable();
 
 			object->autoRelease(new CFolderPathProperty(object, "folder", m_outputFolder.c_str()));
 			object->autoRelease(new CStringProperty(object, "file", m_outputFile.c_str()));
+
+			object->autoRelease(new CBoolProperty(object, "bake all", m_bakeAll));
+			object->autoRelease(new CBoolProperty(object, "bake in uv0", m_bakeUV0));
 
 			CEnumProperty<EBakeSize>* bakeSize = new CEnumProperty<EBakeSize>(object, "size", m_bakeSize);
 			bakeSize->addEnumString("512", EBakeSize::Size512);
@@ -80,6 +106,10 @@ namespace Skylicht
 
 			m_outputFolder = object->get<std::string>("folder", "");
 			m_outputFile = object->get<std::string>("file", "");
+
+			m_bakeAll = object->get<bool>("bake all", false);
+			m_bakeUV0 = object->get<bool>("bake in uv0", false);
+
 			m_bakeSize = object->get<EBakeSize>("size", EBakeSize::Size2048);
 
 			// see: Projects/Editor/Source/Editor/Components/BakeLight/CBakeLightEditor.cpp

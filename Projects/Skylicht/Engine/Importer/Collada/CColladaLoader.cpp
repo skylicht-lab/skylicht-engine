@@ -516,8 +516,7 @@ namespace Skylicht
 												}
 												else if (node == ambientNode)
 												{
-													// ambient lightmap texture:
-													// see lightmap component
+
 												}
 												else if (node == specularNode)
 												{
@@ -2091,6 +2090,10 @@ namespace Skylicht
 					{
 						v.TCoords2.X = texCoord2->FloatArray[idx + 0];
 						v.TCoords2.Y = texCoord2->FloatArray[idx + 1];
+
+						v.Lightmap.X = v.TCoords2.X;
+						v.Lightmap.Y = v.TCoords2.X;
+						v.Lightmap.Z = 0.0f;
 					}
 				}
 			}
@@ -2109,6 +2112,10 @@ namespace Skylicht
 					// set texcoord
 					v.TCoords2.X = texCoord2->FloatArray[texcoordId2 + 0];
 					v.TCoords2.Y = 1.0f - texCoord2->FloatArray[texcoordId2 + 1];
+
+					v.Lightmap.X = v.TCoords2.X;
+					v.Lightmap.Y = v.TCoords2.X;
+					v.Lightmap.Z = 0.0f;
 				}
 			}
 

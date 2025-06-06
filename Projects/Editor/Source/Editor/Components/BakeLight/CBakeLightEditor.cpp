@@ -52,9 +52,10 @@ namespace Skylicht
 		{
 			layout->addSpace(5.0f);
 
-			ui->addButton(layout, L"Bake lighting")->OnPress = [&](GUI::CBase* button)
+			ui->addButton(layout, L"Bake directional")->OnPress = [&](GUI::CBase* button)
 				{
-
+					CBakeLightComponent* bakeComp = (CBakeLightComponent*)m_component;
+					CEditor::getInstance()->bakeDirectional(bakeComp);
 				};
 		}
 

@@ -42,6 +42,9 @@ namespace Skylicht
 			};
 
 		protected:
+			bool m_bakeAll;
+			bool m_bakeUV0;
+
 			std::string m_outputFolder;
 			std::string m_outputFile;
 
@@ -62,10 +65,17 @@ namespace Skylicht
 
 			DECLARE_GETTYPENAME(CBakeLightComponent)
 
-			inline EBakeSize getBakeSize()
+			inline bool bakeAll()
 			{
-				return m_bakeSize;
+				return m_bakeAll;
 			}
+
+			inline bool bakeUV0()
+			{
+				return m_bakeUV0;
+			}
+
+			u32 getBakeSize();
 
 			inline const char* getOutputFolder()
 			{
