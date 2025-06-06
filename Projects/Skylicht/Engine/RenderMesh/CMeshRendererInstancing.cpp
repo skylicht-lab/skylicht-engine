@@ -247,7 +247,7 @@ namespace Skylicht
 					rp->drawInstancingMeshBuffer(
 						(CMesh*)data->InstancingMesh,
 						i,
-						shader->getInstancingShader(),
+						shader->getInstancingShader(data->BaseVertexType),
 						entityManager,
 						group->RootEntityIndex,
 						false
@@ -298,7 +298,7 @@ namespace Skylicht
 					rp->drawInstancingMeshBuffer(
 						(CMesh*)data->InstancingMesh,
 						i,
-						shader->getInstancingShader(),
+						shader->getInstancingShader(data->BaseVertexType),
 						entityManager,
 						group->RootEntityIndex,
 						false

@@ -1,4 +1,5 @@
-<shaderConfig name="DiffuseNormal" baseShader="SOLID" deferred="true" instancing="DiffuseNormalInstancing" instancingVertex="tangent_sg">
+<shaderConfig name="DiffuseNormal" baseShader="SOLID" deferred="true">
+	<instancing vertex="tangents" shader="DiffuseNormalInstancing" instancingVertex="tangents_sg"/>
 	<dependent shader="DiffuseNormalInstancing.xml"/>
 	<uniforms>
 		<vs>

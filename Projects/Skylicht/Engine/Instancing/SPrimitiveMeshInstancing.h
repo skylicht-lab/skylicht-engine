@@ -36,6 +36,7 @@ namespace Skylicht
 {
 	struct SInstancingVertexBuffer
 	{
+		video::E_VERTEX_TYPE BaseVertexType;
 		IVertexBuffer* Instancing;
 		IVertexBuffer* Transform;
 		IVertexBuffer* IndirectLighting;

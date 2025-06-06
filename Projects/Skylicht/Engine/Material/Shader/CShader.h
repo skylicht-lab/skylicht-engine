@@ -221,6 +221,22 @@ namespace Skylicht
 			std::string FragmentShader;
 		};
 
+		struct SShaderInstancing
+		{
+			video::E_VERTEX_TYPE VertexType;
+			std::string ShaderName;
+			std::string InstancingVertex;
+			IShaderInstancing* Instancing;
+			CShader* InstancingShader;
+
+			SShaderInstancing()
+			{
+				VertexType = video::EVT_UNKNOWN;
+				Instancing = NULL;
+				InstancingShader = NULL;
+			}
+		};
+
 		struct SAttributeMapping
 		{
 			std::string UniformName;
@@ -259,17 +275,13 @@ namespace Skylicht
 		std::string m_softwareSkinningShaderName;
 		CShader* m_softwareSkinningShader;
 
-		IShaderInstancing* m_instancing;
-
-		std::string m_instancingVertex;
-
-		std::string m_instancingShaderName;
 		std::string m_shadowDepthShaderName;
 		std::string m_shadowDistanceShaderName;
 
-		CShader* m_instancingShader;
 		CShader* m_shadowDepthShader;
 		CShader* m_shadowDistanceShader;
+
+		SShaderInstancing* m_shaderInstancing[video::EVT_UNKNOWN + 1];
 
 		std::string m_source;
 
@@ -311,11 +323,6 @@ namespace Skylicht
 			return m_skinning;
 		}
 
-		inline bool isSupportInstancing()
-		{
-			return !m_instancingShaderName.empty();
-		}
-
 		inline bool isCustomShadowDepthWrite()
 		{
 			return !m_shadowDepthShaderName.empty();
@@ -328,7 +335,15 @@ namespace Skylicht
 
 		CShader* getSoftwareSkinningShader();
 
-		CShader* getInstancingShader();
+		CShader* getInstancingShader(video::E_VERTEX_TYPE vtxType);
+
+		std::string getInstancingVertex(video::E_VERTEX_TYPE vtxType);
+
+		bool isSupportInstancing(video::E_VERTEX_TYPE vtxType);
+
+		void setInstancing(video::E_VERTEX_TYPE vtxType, IShaderInstancing* instancing);
+
+		IShaderInstancing* getInstancing(video::E_VERTEX_TYPE vtxType);
 
 		void setShadowDepthWriteShader(const char* name);
 
@@ -337,11 +352,6 @@ namespace Skylicht
 		CShader* getShadowDepthWriteShader();
 
 		CShader* getShadowDistanceWriteShader();
-
-		inline std::string& getInstancingVertex()
-		{
-			return m_instancingVertex;
-		}
 
 		inline int getAttributeMappingCount()
 		{
@@ -462,19 +472,6 @@ namespace Skylicht
 		void buildShader();
 
 		void buildUIUniform();
-
-		void setInstancing(IShaderInstancing* instancing)
-		{
-			if (m_instancing)
-				delete m_instancing;
-
-			m_instancing = instancing;
-		}
-
-		inline IShaderInstancing* getInstancing()
-		{
-			return m_instancing;
-		}
 
 		inline bool isDrawDepthShadow()
 		{

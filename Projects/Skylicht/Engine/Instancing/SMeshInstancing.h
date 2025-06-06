@@ -70,6 +70,9 @@ namespace Skylicht
 		// the group, that have many instances will be render
 		SMeshInstancingGroup* InstancingGroup;
 
+		// the base mesh vertex type
+		video::E_VERTEX_TYPE BaseVertexType;
+
 		// That tell us that, transform and lighting buffer is shared with another Mesh
 		bool UseShareTransformBuffer;
 		bool UseShareMaterialsBuffer;
@@ -77,7 +80,7 @@ namespace Skylicht
 		int* ShareDataTransform;
 		int* ShareDataMaterials;
 
-		SMeshInstancing()
+		SMeshInstancing(video::E_VERTEX_TYPE vtxType)
 		{
 			HandleShader = NULL;
 			InstancingMesh = NULL;
@@ -88,6 +91,7 @@ namespace Skylicht
 			UseShareMaterialsBuffer = false;
 			ShareDataTransform = NULL;
 			ShareDataMaterials = NULL;
+			BaseVertexType = vtxType;
 		}
 
 		~SMeshInstancing()

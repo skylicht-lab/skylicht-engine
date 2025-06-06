@@ -1,4 +1,5 @@
-<shaderConfig name="ToonAlpha" baseShader="TRANSPARENT_ALPHA_CHANNEL" instancing="ToonInstancing" instancingVertex="tangent_sg">
+<shaderConfig name="ToonAlpha" baseShader="TRANSPARENT_ALPHA_CHANNEL">
+	<instancing vertex="tangents" shader="ToonInstancing" instancingVertex="tangents_sg"/>
 	<dependent shader="ToonInstancing.xml"/>
 	<uniforms>
 		<vs>

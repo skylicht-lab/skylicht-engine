@@ -46,8 +46,6 @@ namespace Skylicht
 		m_numVSUniform(0),
 		m_numFSUniform(0),
 		m_deferred(false),
-		m_instancing(NULL),
-		m_instancingShader(NULL),
 		m_softwareSkinningShader(NULL),
 		m_skinning(false),
 		m_shadow(true),
@@ -55,6 +53,10 @@ namespace Skylicht
 		m_shadowDistanceShader(NULL),
 		m_baseShader(EMT_SOLID)
 	{
+		// set null
+		for (int i = 0; i < (int)video::EVT_UNKNOWN + 1; i++)
+			m_shaderInstancing[i] = NULL;
+
 		// builtin callback
 		addCallback<CShaderLighting>();
 		addCallback<CShaderCamera>();
@@ -78,8 +80,17 @@ namespace Skylicht
 		deleteAllUI();
 		deleteAllResource();
 
-		if (m_instancing)
-			delete m_instancing;
+		for (int i = 0; i < (int)video::EVT_UNKNOWN; i++)
+		{
+			SShaderInstancing* s = m_shaderInstancing[i];
+			if (s)
+			{
+				if (s->Instancing)
+					delete s->Instancing;
+				delete s;
+			}
+			m_shaderInstancing[i] = NULL;
+		}
 	}
 
 	void CShader::deleteAllUI()
@@ -102,14 +113,53 @@ namespace Skylicht
 		return m_softwareSkinningShader;
 	}
 
-	CShader* CShader::getInstancingShader()
+	CShader* CShader::getInstancingShader(video::E_VERTEX_TYPE vtxType)
 	{
-		if (m_instancingShader == NULL && !m_instancingShaderName.empty())
+		SShaderInstancing* s = m_shaderInstancing[vtxType];
+		if (s)
 		{
-			CShaderManager* shaderManager = CShaderManager::getInstance();
-			m_instancingShader = shaderManager->getShaderByName(m_instancingShaderName.c_str());
+			if (s->InstancingShader == NULL)
+			{
+				CShaderManager* shaderManager = CShaderManager::getInstance();
+				s->InstancingShader = shaderManager->getShaderByName(s->ShaderName.c_str());
+			}
+			return s->InstancingShader;
 		}
-		return m_instancingShader;
+		return NULL;
+	}
+
+	std::string CShader::getInstancingVertex(video::E_VERTEX_TYPE vtxType)
+	{
+		SShaderInstancing* s = m_shaderInstancing[vtxType];
+		if (s)
+			return s->InstancingVertex;
+		return std::string();
+	}
+
+	bool CShader::isSupportInstancing(video::E_VERTEX_TYPE vtxType)
+	{
+		return m_shaderInstancing[vtxType] != NULL;
+	}
+
+	void CShader::setInstancing(video::E_VERTEX_TYPE vtxType, IShaderInstancing* instancing)
+	{
+		SShaderInstancing* s = m_shaderInstancing[vtxType];
+		if (s)
+		{
+			if (s->Instancing)
+				delete s->Instancing;
+			s->Instancing = instancing;
+		}
+	}
+
+	IShaderInstancing* CShader::getInstancing(video::E_VERTEX_TYPE vtxType)
+	{
+		SShaderInstancing* s = m_shaderInstancing[vtxType];
+		if (s)
+		{
+			return s->Instancing;
+		}
+		return NULL;
 	}
 
 	void CShader::setShadowDepthWriteShader(const char* name)
@@ -618,16 +668,6 @@ namespace Skylicht
 							m_deferred = true;
 					}
 
-					// shader for instancing
-					wtext = xmlReader->getAttributeValue(L"instancing");
-					if (wtext != NULL)
-					{
-						CStringImp::convertUnicodeToUTF8(wtext, text);
-
-						m_instancingShaderName = text;
-						m_instancingShader = shaderManager->getShaderByName(text);
-					}
-
 					// shader for fallback to software skinning
 					wtext = xmlReader->getAttributeValue(L"softwareSkinning");
 					if (wtext != NULL)
@@ -671,16 +711,68 @@ namespace Skylicht
 						m_shadowDistanceShaderName = text;
 						m_shadowDistanceShader = shaderManager->getShaderByName(text);
 					}
+				}
+				else if (nodeName == L"instancing")
+				{
+					// base vertex type
+					wtext = xmlReader->getAttributeValue(L"vertex");
 
-					// vertex type for instancing batch
-					wtext = xmlReader->getAttributeValue(L"instancingVertex");
 					if (wtext != NULL)
 					{
+						video::E_VERTEX_TYPE vtxType = video::EVT_UNKNOWN;
+
 						CStringImp::convertUnicodeToUTF8(wtext, text);
-						m_instancingVertex = text;
+						for (int i = 0; i < video::EVT_UNKNOWN; i++)
+						{
+							if (CStringImp::comp<const char>(text, video::sBuiltInVertexTypeNames[i]) == 0)
+							{
+								vtxType = (video::E_VERTEX_TYPE)i;
+								break;
+							}
+						}
+
+						std::string shaderName;
+						std::string instancingVertex;
+
+						if (vtxType != video::EVT_UNKNOWN)
+						{
+							// shader for instancing
+							wtext = xmlReader->getAttributeValue(L"shader");
+							if (wtext != NULL)
+							{
+								CStringImp::convertUnicodeToUTF8(wtext, text);
+								shaderName = text;
+							}
+
+							// vertex type for instancing batch
+							wtext = xmlReader->getAttributeValue(L"instancingVertex");
+							if (wtext != NULL)
+							{
+								CStringImp::convertUnicodeToUTF8(wtext, text);
+								instancingVertex = text;
+							}
+
+							if (!shaderName.empty() && !instancingVertex.empty())
+							{
+								SShaderInstancing* instancingShader = new SShaderInstancing();
+								instancingShader->VertexType = vtxType;
+								instancingShader->ShaderName = shaderName;
+								instancingShader->InstancingVertex = instancingVertex;
+								instancingShader->InstancingShader = shaderManager->getShaderByName(shaderName.c_str());
+
+								SShaderInstancing* s = m_shaderInstancing[vtxType];
+								if (s)
+								{
+									if (s->Instancing)
+										delete s->Instancing;
+									delete s;
+								}
+								m_shaderInstancing[vtxType] = instancingShader;
+							}
+						}
 					}
 				}
-				if (nodeName == L"dependent")
+				else if (nodeName == L"dependent")
 				{
 					wtext = xmlReader->getAttributeValue(L"shader");
 					if (wtext != NULL)

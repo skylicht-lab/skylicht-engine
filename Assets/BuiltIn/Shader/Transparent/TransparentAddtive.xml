@@ -1,4 +1,5 @@
-<shaderConfig name="TransparentColorAddtive" baseShader="TRANSPARENT_ADD_COLOR" instancing="TransparentAddtiveInstancing" instancingVertex="standard_color">
+<shaderConfig name="TransparentColorAddtive" baseShader="TRANSPARENT_ADD_COLOR">
+	<instancing vertex="standard" shader="TransparentAddtiveInstancing" instancingVertex="standard_color"/>
 	<dependent shader="TransparentAddtiveInstancing.xml"/>
 	<uniforms>
 		<vs>

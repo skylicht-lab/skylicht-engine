@@ -262,7 +262,7 @@ namespace Skylicht
 
 	SMeshInstancing* CMeshManager::createInstancingData(CMesh* mesh)
 	{
-		SMeshInstancing* data = new SMeshInstancing();
+		SMeshInstancing* data = new SMeshInstancing(mesh->getVertexType());
 
 		u32 mbCount = mesh->getMeshBufferCount();
 
@@ -288,6 +288,8 @@ namespace Skylicht
 		data->TransformBuffer = transformBuffer;
 		data->IndirectLightingBuffer = lightingBuffer;
 
+		video::E_VERTEX_TYPE vertexType = mesh->getVertexType();
+
 		for (u32 i = 0; i < mbCount; i++)
 		{
 			CMaterial* material = mesh->Materials[i];
@@ -297,10 +299,10 @@ namespace Skylicht
 			if (material->getShader() == NULL)
 				continue;
 
-			if (material->getShader()->getInstancing() == NULL)
+			if (material->getShader()->getInstancing(vertexType) == NULL)
 				continue;
 
-			if (material->getShader()->getInstancingShader() == NULL)
+			if (material->getShader()->getInstancingShader(vertexType) == NULL)
 				continue;
 
 			IMeshBuffer* mb = mesh->getMeshBuffer(i);
@@ -310,7 +312,7 @@ namespace Skylicht
 
 			mb->grab();
 
-			IShaderInstancing* shaderInstancing = material->getShader()->getInstancing();
+			IShaderInstancing* shaderInstancing = material->getShader()->getInstancing(vertexType);
 
 			IVertexBuffer* materialBuffer = shaderInstancing->createInstancingVertexBuffer();
 			materialBuffer->setHardwareMappingHint(EHM_STREAM);
@@ -360,7 +362,7 @@ namespace Skylicht
 
 	SMeshInstancing* CMeshManager::createInstancingData(CMesh* mesh, IShaderInstancing* shaderInstancing)
 	{
-		SMeshInstancing* data = new SMeshInstancing();
+		SMeshInstancing* data = new SMeshInstancing(mesh->getVertexType());
 
 		u32 mbCount = mesh->getMeshBufferCount();
 
@@ -444,6 +446,8 @@ namespace Skylicht
 	{
 		u32 mbCount = mesh->getMeshBufferCount();
 
+		video::E_VERTEX_TYPE vertexType = mesh->getVertexType();
+
 		for (u32 i = 0; i < mbCount; i++)
 		{
 			CMaterial* material = mesh->Materials[i];
@@ -453,10 +457,10 @@ namespace Skylicht
 			if (material->getShader() == NULL)
 				continue;
 
-			if (material->getShader()->getInstancing() == NULL)
+			if (material->getShader()->getInstancing(vertexType) == NULL)
 				continue;
 
-			if (material->getShader()->getInstancingShader() == NULL)
+			if (material->getShader()->getInstancingShader(vertexType) == NULL)
 				continue;
 
 			return true;

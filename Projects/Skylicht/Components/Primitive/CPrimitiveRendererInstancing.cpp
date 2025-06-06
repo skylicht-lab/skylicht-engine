@@ -94,14 +94,16 @@ namespace Skylicht
 
 			CPrimiviteData* p = GET_ENTITY_DATA(entity, CPrimiviteData);
 
+			video::E_VERTEX_TYPE vtxType = p->NormalMap ? video::EVT_TANGENTS : video::EVT_STANDARD;
+
 			if (p->Instancing && p->Material)
 			{
 				CShader* shader = p->Material->getShader();
 				if (shader &&
-					shader->getInstancing() &&
-					shader->getInstancingShader())
+					shader->getInstancing(vtxType) &&
+					shader->getInstancingShader(vtxType))
 				{
-					IShaderInstancing* instancingShader = shader->getInstancing();
+					IShaderInstancing* instancingShader = shader->getInstancing(vtxType);
 
 					if (p->InstancingMesh == NULL)
 					{
@@ -144,6 +146,7 @@ namespace Skylicht
 							{
 								SInstancingVertexBuffer* buffer = new SInstancingVertexBuffer();
 
+								buffer->BaseVertexType = mesh->getVertexType();
 								buffer->Instancing = instancingShader->createInstancingVertexBuffer();
 								buffer->Instancing->setHardwareMappingHint(EHM_STREAM);
 
@@ -232,7 +235,7 @@ namespace Skylicht
 			if (list.size() == 0)
 				continue;
 
-			IShaderInstancing* instancing = it.first.Shader->getInstancing();
+			IShaderInstancing* instancing = it.first.Shader->getInstancing(group->Buffer->BaseVertexType);
 
 			m_materials.reset();
 			m_entities.reset();
@@ -298,6 +301,7 @@ namespace Skylicht
 			CMesh* mesh = shaderMesh.Mesh;
 			CShader* shader = shaderMesh.Shader;
 			ITexture* const* textures = shaderMesh.Textures;
+			video::E_VERTEX_TYPE vertexType = group->Buffer->BaseVertexType;
 
 			if (!rp->canRenderShader(shader))
 				continue;
@@ -314,7 +318,7 @@ namespace Skylicht
 				for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
 					irrMat.setTexture(i, textures[i]);
 
-				rp->drawInstancingMeshBuffer(mesh, i, shader->getInstancingShader(), entityManager, -1, false);
+				rp->drawInstancingMeshBuffer(mesh, i, shader->getInstancingShader(vertexType), entityManager, -1, false);
 			}
 		}
 	}

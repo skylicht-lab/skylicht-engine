@@ -214,6 +214,15 @@ namespace Skylicht
 		buf->grab();
 	}
 
+	video::E_VERTEX_TYPE CMesh::getVertexType()
+	{
+		if (MeshBuffers.size() > 0)
+		{
+			return MeshBuffers[0]->getVertexType();
+		}
+		return video::EVT_UNKNOWN;
+	}
+
 	IMeshBuffer* CMesh::getBufferByMaterialID(int materialID)
 	{
 		for (u32 i = 0, n = MeshBuffers.size(); i < n; i++)

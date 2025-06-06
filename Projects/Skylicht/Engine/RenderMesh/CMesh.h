@@ -96,6 +96,8 @@ namespace Skylicht
 
 		void replaceMeshBuffer(int i, IMeshBuffer* buf);
 
+		video::E_VERTEX_TYPE getVertexType();
+
 		IMeshBuffer* getBufferByMaterialID(int materialID);
 
 		CMesh* detachAlphaMeshBuffer();

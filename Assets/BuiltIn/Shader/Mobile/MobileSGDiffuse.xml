@@ -1,4 +1,5 @@
-<shaderConfig name="MobileSGDiffuse" baseShader="SOLID" instancing="MobileSGDiffuseInstancing" instancingVertex="tangent_sg">
+<shaderConfig name="MobileSGDiffuse" baseShader="SOLID">
+	<instancing vertex="tangents" shader="MobileSGDiffuseInstancing" instancingVertex="tangents_sg"/>
 	<dependent shader="MobileSGDiffuseInstancing.xml"/>
 	<uniforms>
 		<vs>

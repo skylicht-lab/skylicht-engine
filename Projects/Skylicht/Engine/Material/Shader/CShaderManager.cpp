@@ -164,11 +164,6 @@ namespace Skylicht
 
 	void CShaderManager::initSGDeferredShader()
 	{
-		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/ColorInstancing.xml");
-		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/MetallicRoughnessInstancing.xml");
-		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossinessInstancing.xml");
-		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/DiffuseNormalInstancing.xml");
-
 		loadShader("BuiltIn/Shader/Lightmap/LMStandardSGInstancing.xml");
 		loadShader("BuiltIn/Shader/Lightmap/LMTBNSGInstancing.xml");
 
@@ -303,46 +298,54 @@ namespace Skylicht
 			}
 		}
 
-		CShader* instancingShader = shader->getInstancingShader();
-
-		// init instancing batching
-		IShaderInstancing* instancing = NULL;
-		std::string instancingVertex = shader->getInstancingVertex();
-		if (!instancingVertex.empty())
+		for (int i = 0; i < video::EVT_UNKNOWN; i++)
 		{
-			if (instancingVertex == "standard_color")
-				instancing = new CStandardColorInstancing();
-			else if (instancingVertex == "2texcoord_color")
-				instancing = new C2TCoordColorInstancing();
-			else if (instancingVertex == "standard_sg")
-			{
-				instancing = new CStandardSGInstancing();
+			video::E_VERTEX_TYPE vtxType = (video::E_VERTEX_TYPE)i;
 
-				if (instancingShader)
+			CShader* instancingShader = shader->getInstancingShader(vtxType);
+			if (instancingShader == NULL)
+				continue;
+
+			// init instancing batching
+			IShaderInstancing* instancing = NULL;
+			std::string instancingVertex = shader->getInstancingVertex(vtxType);
+			if (!instancingVertex.empty())
+			{
+				if (instancingVertex == "standard_color")
+					instancing = new CStandardColorInstancing();
+				else if (instancingVertex == "2texcoords_color")
+					instancing = new C2TCoordColorInstancing();
+				else if (instancingVertex == "standard_sg")
 				{
-					instancingShader->setShadowDepthWriteShader("SDWStandardSGInstancing");
-					instancingShader->setShadowDistanceWriteShader("SDWDistanceStandardSGInstancing");
+					instancing = new CStandardSGInstancing();
+					if (instancingShader)
+					{
+						instancingShader->setShadowDepthWriteShader("SDWStandardSGInstancing");
+						instancingShader->setShadowDistanceWriteShader("SDWDistanceStandardSGInstancing");
+					}
+				}
+				else if (instancingVertex == "tangents_sg")
+				{
+					instancing = new CTBNSGInstancing();
+					if (instancingShader)
+					{
+						instancingShader->setShadowDepthWriteShader("SDWTangentSGInstancing");
+						instancingShader->setShadowDistanceWriteShader("SDWDistanceTangentSGInstancing");
+					}
 				}
 			}
-			else if (instancingVertex == "tangent_sg")
+			shader->setInstancing(vtxType, instancing);
+
+			// warning if it not yet support instancing
+			if (shader->isSupportInstancing(vtxType) && instancing == NULL)
 			{
-				instancing = new CTBNSGInstancing();
-
-				if (instancingShader)
-				{
-					instancingShader->setShadowDepthWriteShader("SDWTangentSGInstancing");
-					instancingShader->setShadowDistanceWriteShader("SDWDistanceTangentSGInstancing");
-				}
+				char log[512];
+				sprintf(log, "!!! Warning: Name '%s:%s' have support instancing, but xml file missing 'instancingVertex'",
+					shaderName.c_str(),
+					video::sBuiltInVertexTypeNames[vtxType]
+				);
+				os::Printer::log(log);
 			}
-		}
-		shader->setInstancing(instancing);
-
-		// warning if it not yet support instancing
-		if (shader->isSupportInstancing() && instancing == NULL)
-		{
-			char log[512];
-			sprintf(log, "!!! Warning: Name '%s' have support instancing, but xml file missing 'vertexType'", shaderName.c_str());
-			os::Printer::log(log);
 		}
 
 		if (!rebuild)

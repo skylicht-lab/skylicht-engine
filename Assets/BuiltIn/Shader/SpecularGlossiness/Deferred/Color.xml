@@ -1,5 +1,8 @@
-<shaderConfig name="Color" baseShader="SOLID" deferred="true" instancing="ColorInstancing" instancingVertex="standard_sg">
+<shaderConfig name="Color" baseShader="SOLID" deferred="true">
+	<instancing vertex="standard" shader="ColorInstancing" instancingVertex="standard_sg"/>
+	<instancing vertex="tangents" shader="ColorInstancingTangent" instancingVertex="tangents_sg"/>
 	<dependent shader="ColorInstancing.xml"/>
+	<dependent shader="ColorInstancingTangent.xml"/>
 	<uniforms>
 		<vs>
 			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
