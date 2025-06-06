@@ -3,7 +3,12 @@ precision highp float;
 in vec2 vTexCoord0;
 in vec4 vWorldPosition;
 in vec3 vWorldNormal;
+
+#ifdef TANGENT
+in vec3 vWorldTangent;
+in vec3 vWorldBinormal;
 in float vTangentW;
+#endif
 
 #ifdef INSTANCING
 in vec4 vColor;

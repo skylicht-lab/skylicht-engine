@@ -3,7 +3,6 @@ precision highp float;
 in vec2 vTexCoord0;
 in vec4 vWorldPosition;
 in vec3 vWorldNormal;
-in float vTangentW;
 in vec4 vColor;
 in vec2 vSpecGloss;
 layout(location = 0) out vec4 Diffuse;

@@ -7,6 +7,11 @@ struct PS_INPUT
 	float2 tex0 : TEXCOORD0;
 	float4 worldPosition: WORLDPOSITION;
 	float3 worldNormal: WORLDNORMAL;
+#ifdef TANGENT
+	float3 worldTangent: WORLDTANGENT;
+	float3 worldBinormal: WORLDBINORMAL;
+	float tangentw : TANGENTW;
+#endif
 #ifdef INSTANCING
 	float4 color: COLOR;
 	float2 specGloss: SPECGLOSS;

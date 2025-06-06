@@ -324,7 +324,7 @@ namespace Skylicht
 					instancingShader->setShadowDistanceWriteShader("SDWDistanceStandardSGInstancing");
 				}
 			}
-			else if (instancingVertex == "tangents_sg")
+			else if (instancingVertex == "tangent_sg")
 			{
 				instancing = new CTBNSGInstancing();
 

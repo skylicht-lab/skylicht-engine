@@ -1,0 +1,28 @@
+<shaderConfig name="ColorInstancingTangent" baseShader="SOLID" deferred="true">
+	<uniforms>
+		<vs>
+			<uniform name="uVPMatrix" type="VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+			<uniform name="uView" type="DEFERRED_VIEW" value="0" float="16" matrix="true"/>
+		</vs>
+		<fs>
+		</fs>
+	</uniforms>
+	<resources>
+	</resources>
+	<customUI>
+	</customUI>
+	<shader 
+		type="GLSL" 
+		vs="GLSL/SGTangentVSInstancing.glsl" 
+		fs="GLSL/ColorFSTangentInstancing.glsl" 
+		vs_source="GLSL/SGTangentVS.glsl" 
+		fs_source="GLSL/ColorFS.glsl"
+		define="INSTANCING;TANGENT"/>
+	<shader 
+		type="HLSL" 
+		vs="HLSL/SGTangentVSInstancing.hlsl" 
+		fs="HLSL/ColorFSTangentInstancing.hlsl" 
+		vs_source="HLSL/SGTangentVS.hlsl" 
+		fs_source="HLSL/ColorFS.hlsl"
+		define="INSTANCING;TANGENT"/>
+</shaderConfig>

@@ -82,9 +82,11 @@ namespace Skylicht
 		CEntity* entity = entityManager->createEntity();
 		CWorldTransformData* transformData = entity->addData<CWorldTransformData>();
 
+		int namePosition = (int)m_entities.size();
+
 		// name
 		char name[512];
-		sprintf(name, "#%d", entity->getIndex());
+		sprintf(name, "#%d", namePosition);
 
 		// id
 		std::string id = CRandomID::generate();

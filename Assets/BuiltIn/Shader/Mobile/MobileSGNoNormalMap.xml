@@ -1,4 +1,4 @@
-<shaderConfig name="MobileSGNoNormalMap" baseShader="SOLID" instancing="MobileSGNoNormalMapInstancing" instancingVertex="tangents_sg">
+<shaderConfig name="MobileSGNoNormalMap" baseShader="SOLID" instancing="MobileSGNoNormalMapInstancing" instancingVertex="tangent_sg">
 	<dependent shader="MobileSGNoNormalMapInstancing.xml"/>
 	<uniforms>
 		<vs>

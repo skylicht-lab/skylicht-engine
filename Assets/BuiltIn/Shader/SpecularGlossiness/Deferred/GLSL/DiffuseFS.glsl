@@ -13,7 +13,12 @@ uniform vec2 uSpecGloss;
 in vec2 vTexCoord0;
 in vec4 vWorldPosition;
 in vec3 vWorldNormal;
+
+#ifdef TANGENT
+in vec3 vWorldTangent;
+in vec3 vWorldBinormal;
 in float vTangentW;
+#endif
 
 layout(location = 0) out vec4 Diffuse;
 layout(location = 1) out vec4 Position;

@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CPrimitive.h"
 #include "CPrimitiveRenderer.h"
 #include "CPrimitiveRendererInstancing.h"
+#include "CPrimitiveSerializable.h"
 #include "GameObject/CGameObject.h"
 #include "Entity/CEntityManager.h"
 #include "Transform/CWorldTransformData.h"
@@ -42,7 +43,7 @@ namespace Skylicht
 		m_instancing(false),
 		m_useCustomMaterial(false),
 		m_useNormalMap(false),
-		m_color(255, 180, 180, 180),
+		m_color(255, 150, 150, 150),
 		m_material(NULL),
 		m_customMaterial(NULL)
 	{
@@ -106,12 +107,15 @@ namespace Skylicht
 		int numPrimities = (int)m_entities.size();
 		for (int i = 0; i < numPrimities; i++)
 		{
-			CMatrixProperty* transformData = new CMatrixProperty(primitives, "transform");
-			primitives->autoRelease(transformData);
+			CPrimitiveSerializable* p = new CPrimitiveSerializable(primitives);
+			primitives->autoRelease(p);
 
-			// get world transform data
+			// id
+			p->Id.set(m_entities[i]->getID());
+
+			// transform
 			CWorldTransformData* world = GET_ENTITY_DATA(m_entities[i], CWorldTransformData);
-			transformData->set(world->Relative);
+			p->Transform.set(world->Relative);
 		}
 
 		return object;
@@ -164,8 +168,8 @@ namespace Skylicht
 
 		for (int i = 0; i < numPrimities; i++)
 		{
-			CMatrixProperty* transformData = (CMatrixProperty*)primitives->getElement(i);
-			if (transformData == NULL)
+			CPrimitiveSerializable* primitiveData = (CPrimitiveSerializable*)primitives->getElement(i);
+			if (primitiveData == NULL)
 				return;
 
 			CEntity* entity = addPrimitive(
@@ -174,9 +178,12 @@ namespace Skylicht
 				core::vector3df(1.0f, 1.0f, 1.0f)
 			);
 
+			// set id
+			entity->setID(primitiveData->Id.getString());
+
 			// set transform
 			CWorldTransformData* world = GET_ENTITY_DATA(entity, CWorldTransformData);
-			world->Relative = transformData->get();
+			world->Relative = primitiveData->Transform.get();
 		}
 
 		setShadowCasting(m_shadowCasting);
