@@ -1,11 +1,11 @@
 precision highp float;
 precision highp samplerCube;
 
+uniform samplerCube uPointLightShadowMap;
+
 #if defined(NORMAL_MAP)
 uniform sampler2D uTexNormal;
 #endif
-
-uniform samplerCube uPointLightShadowMap;
 
 in vec2 varTex0;
 in vec3 varWorldPosition;

@@ -1,0 +1,20 @@
+<shaderConfig name="BakeDirectionalLightNormal" baseShader="TRANSPARENT_ADD_COLOR">
+	<uniforms>
+		<vs>
+			<uniform name="uWorldMatrix" type="WORLD" value="0" float="16" matrix="true"/>
+		</vs>
+		<fs>
+			<uniform name="uShadowMap" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
+			<uniform name="uTexNormal" type="DEFAULT_VALUE" value="1" float="1" directX="false"/>
+			<uniform name="uLightColor" type="LIGHT_COLOR" value="1.0,1.0,1.0,1.0" float="4"/>
+			<uniform name="uLightDirection" type="WORLD_LIGHT_DIRECTION" value="0" float="4"/>
+			<uniform name="uShadowMatrix" type="SHADOW_MAP_MATRIX" value="0" float="16" array="1" matrix="true"/>
+		</fs>
+	</uniforms>
+	<resources>
+	</resources>
+	<customUI>
+	</customUI>
+	<shader type="GLSL" vs="GLSL/BakeLightLMNormalVS.glsl" fs="GLSL/BakeDirectionalLightNormalFS.glsl" vs_source="GLSL/BakeLightVS.d.glsl" fs_source="GLSL/BakeDirectionalLightFS.d.glsl" define="LM;NORMAL_MAP"/>
+	<shader type="HLSL" vs="HLSL/BakeLightLMNormalVS.hlsl" fs="HLSL/BakeDirectionalLightNormalFS.hlsl" vs_source="HLSL/BakeLightVS.d.hlsl" fs_source="HLSL/BakeDirectionalLightFS.d.hlsl" define="LM;NORMAL_MAP"/>
+</shaderConfig>

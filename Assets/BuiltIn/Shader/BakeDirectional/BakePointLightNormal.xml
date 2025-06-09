@@ -1,0 +1,20 @@
+<shaderConfig name="BakePointLightNormal" baseShader="TRANSPARENT_ADD_COLOR">
+	<uniforms>
+		<vs>
+			<uniform name="uWorldMatrix" type="WORLD" value="0" float="16" matrix="true"/>
+		</vs>
+		<fs>
+			<uniform name="uPointLightShadowMap" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
+			<uniform name="uTexNormal" type="DEFAULT_VALUE" value="1" float="1" directX="false"/>
+			<uniform name="uLightPosition" type="POINT_LIGHT_POSITION" value="0" float="4"/>
+			<uniform name="uLightAttenuation" type="POINT_LIGHT_ATTENUATION" value="0" float="4"/>
+			<uniform name="uLightColor" type="POINT_LIGHT_COLOR" value="1.0,1.0,1.0,1.0" float="4"/>
+		</fs>
+	</uniforms>
+	<resources>
+	</resources>
+	<customUI>
+	</customUI>
+	<shader type="GLSL" vs="GLSL/BakeLightLMNormalVS.glsl" fs="GLSL/BakePointLightNormalFS.glsl" fs_source="GLSL/BakePointLightFS.d.glsl" define="LM;NORMAL_MAP"/>
+	<shader type="HLSL" vs="HLSL/BakeLightLMNormalVS.hlsl" fs="HLSL/BakePointLightNormalFS.hlsl" fs_source="HLSL/BakePointLightFS.d.hlsl" define="LM;NORMAL_MAP"/>
+</shaderConfig>

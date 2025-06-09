@@ -1,10 +1,9 @@
 precision mediump float;
 
+uniform sampler2D uShadowMap;
 #if defined(NORMAL_MAP)
 uniform sampler2D uTexNormal;
 #endif
-
-uniform sampler2D uShadowMap;
 
 in vec2 varTex0;
 in vec3 varWorldPosition;
