@@ -168,22 +168,40 @@ namespace Skylicht
 
 		for (int i = 0; i < numPrimities; i++)
 		{
-			CPrimitiveSerializable* primitiveData = (CPrimitiveSerializable*)primitives->getElement(i);
-			if (primitiveData == NULL)
-				return;
+			CPrimitiveSerializable* primitiveData = dynamic_cast<CPrimitiveSerializable*>(primitives->getElement(i));
+			if (primitiveData)
+			{
+				CEntity* entity = addPrimitive(
+					core::vector3df(),
+					core::vector3df(),
+					core::vector3df(1.0f, 1.0f, 1.0f)
+				);
 
-			CEntity* entity = addPrimitive(
-				core::vector3df(),
-				core::vector3df(),
-				core::vector3df(1.0f, 1.0f, 1.0f)
-			);
+				// set id
+				if (!primitiveData->Id.get().empty())
+					entity->setID(primitiveData->Id.getString());
 
-			// set id
-			entity->setID(primitiveData->Id.getString());
+				// set transform
+				CWorldTransformData* world = GET_ENTITY_DATA(entity, CWorldTransformData);
+				world->Relative = primitiveData->Transform.get();
+			}
+			else
+			{
+				// fix for old version
+				CMatrixProperty* worldMatrix = dynamic_cast<CMatrixProperty*>(primitives->getElement(i));
+				if (worldMatrix)
+				{
+					CEntity* entity = addPrimitive(
+						core::vector3df(),
+						core::vector3df(),
+						core::vector3df(1.0f, 1.0f, 1.0f)
+					);
 
-			// set transform
-			CWorldTransformData* world = GET_ENTITY_DATA(entity, CWorldTransformData);
-			world->Relative = primitiveData->Transform.get();
+					// set transform
+					CWorldTransformData* world = GET_ENTITY_DATA(entity, CWorldTransformData);
+					world->Relative = worldMatrix->get();
+				}
+			}
 		}
 
 		setShadowCasting(m_shadowCasting);
