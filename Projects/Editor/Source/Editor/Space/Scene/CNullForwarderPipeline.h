@@ -1,25 +1,25 @@
 #pragma once
 
-#include "RenderPipeline/CDeferredRP.h"
+#include "RenderPipeline/CForwardRP.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CDiffuseLightRenderPipeline : public CDeferredRP
+		class CNullForwarderPipeline : public CForwardRP
 		{
 		protected:
-			CShader* m_diffuseShader;
-			CShader* m_colorShader;
-
-			CMaterial* m_material;
 
 		public:
-			CDiffuseLightRenderPipeline();
+			CNullForwarderPipeline();
 
-			virtual ~CDiffuseLightRenderPipeline();
+			virtual ~CNullForwarderPipeline();
 
 			virtual void initRender(int w, int h);
+
+			virtual void resize(int w, int h);
+
+			virtual void render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport, int cubeFaceId, IRenderPipeline* lastRP);
 
 			virtual bool canRenderMaterial(CMaterial* material);
 

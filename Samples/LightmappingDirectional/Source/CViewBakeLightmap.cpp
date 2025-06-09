@@ -113,15 +113,22 @@ void CViewBakeLightmap::onInit()
 
 					// just list static mesh
 					CMesh* mesh = r->getMesh();
+
 					u32 bufferCount = mesh->getMeshBufferCount();
 					for (u32 i = 0; i < bufferCount; i++)
 					{
+						ITexture* normalMap = NULL;
+
+						if (mesh->Materials[i] != NULL)
+							normalMap = mesh->Materials[i]->getTexture(1);
+
 						IMeshBuffer* mb = mesh->getMeshBuffer(i);
 						if (mb->getVertexBufferCount() > 0)
 						{
 							// add mesh buffer, that will bake lighting
 							m_meshBuffers.push_back(mb);
 							m_meshTransforms.push_back(transform);
+							m_normalMaps.push_back(normalMap);
 						}
 					}
 				}
@@ -183,6 +190,7 @@ void CViewBakeLightmap::onRender()
 
 	// lightmap texture
 	IMeshBuffer* mb = m_meshBuffers[m_currentMesh];
+	ITexture* normalMap = m_normalMaps[m_currentMesh];
 
 	IVertexBuffer* srcVtx = mb->getVertexBuffer();
 	IIndexBuffer* srcIdx = mb->getIndexBuffer();
@@ -260,8 +268,8 @@ void CViewBakeLightmap::onRender()
 	m_shadowRP->setBound(box);
 
 	// setup target for pipeline
-	m_bakeLightRP->setRenderMesh(mb, m_subMesh, m_directionLightBake, m_numBakeTexture);
-	m_bakePointLightRP->setRenderMesh(mb, m_subMesh, m_pointLightBake, m_numBakeTexture);
+	m_bakeLightRP->setRenderMesh(mb, normalMap, m_subMesh, m_directionLightBake, m_numBakeTexture);
+	m_bakePointLightRP->setRenderMesh(mb, normalMap, m_subMesh, m_pointLightBake, m_numBakeTexture);
 
 	// set camera view
 	core::vector3df center = box.getCenter();

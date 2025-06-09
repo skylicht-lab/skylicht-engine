@@ -45,6 +45,7 @@ namespace Skylicht
 			bool m_bakeAll;
 			bool m_bakeUV0;
 			bool m_bakeDetailNormal;
+			bool m_combineDirectionLightColor;
 
 			std::string m_outputFolder;
 			std::string m_outputFile;
@@ -79,6 +80,11 @@ namespace Skylicht
 			inline bool bakeDetailNormal()
 			{
 				return m_bakeDetailNormal;
+			}
+
+			inline bool combineDirectionLightColor()
+			{
+				return m_combineDirectionLightColor;
 			}
 
 			u32 getBakeSize();

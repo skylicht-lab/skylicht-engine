@@ -63,6 +63,7 @@ namespace Skylicht
 			m_postProcessor(NULL),
 			m_viewpointRP(NULL),
 			m_lightRP(NULL),
+			m_nullRP(NULL),
 			m_editorCamera(NULL),
 			m_gridPlane(NULL),
 			m_leftMouseDown(false),
@@ -340,6 +341,18 @@ namespace Skylicht
 			{
 				delete m_forwardRP;
 				m_forwardRP = NULL;
+			}
+
+			if (m_lightRP)
+			{
+				delete m_lightRP;
+				m_lightRP = NULL;
+			}
+
+			if (m_nullRP)
+			{
+				delete m_nullRP;
+				m_nullRP = NULL;
 			}
 
 			if (m_postProcessor != NULL)
@@ -732,11 +745,24 @@ namespace Skylicht
 					m_viewpointRP->resize(w, h);
 				}
 
+				if (m_nullRP == NULL)
+				{
+					CNullForwarderPipeline* nullRP = new CNullForwarderPipeline();
+					nullRP->initRender(w, h);
+					nullRP->enableUpdateEntity(false);
+					m_nullRP = nullRP;
+				}
+				else
+				{
+					m_nullRP->resize(w, h);
+				}
+
 				if (m_lightRP == NULL)
 				{
 					CDiffuseLightRenderPipeline* lightRP = new CDiffuseLightRenderPipeline();
 					lightRP->initRender(w, h);
 					lightRP->enableUpdateEntity(false);
+					lightRP->setNextPipeLine(m_nullRP);
 					m_lightRP = lightRP;
 				}
 				else

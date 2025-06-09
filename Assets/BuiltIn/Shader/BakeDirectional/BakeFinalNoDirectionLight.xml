@@ -1,4 +1,4 @@
-<shaderConfig name="BakeFinal" baseShader="SOLID">
+<shaderConfig name="BakeFinalNoDirectionLight" baseShader="SOLID">
 	<uniforms>
 		<vs>
 			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
@@ -10,6 +10,6 @@
 	</uniforms>
 	<customUI>
 	</customUI>
-	<shader type="GLSL" vs="GLSL/BakeFinalVS.glsl" fs="GLSL/BakeFinalFS.glsl" fs_source="GLSL/BakeFinalFS.d.glsl" define="COMBINE_DIRECTIONLIGHT"/>
-	<shader type="HLSL" vs="HLSL/BakeFinalVS.hlsl" fs="HLSL/BakeFinalFS.hlsl" fs_source="HLSL/BakeFinalFS.d.hlsl" define="COMBINE_DIRECTIONLIGHT"/>
+	<shader type="GLSL" vs="GLSL/BakeFinalVS.glsl" fs="GLSL/BakeFinalNoDLFS.glsl" fs_source="GLSL/BakeFinalFS.d.glsl" />
+	<shader type="HLSL" vs="HLSL/BakeFinalVS.hlsl" fs="HLSL/BakeFinalNoDLFS.hlsl" fs_source="HLSL/BakeFinalFS.d.hlsl" />
 </shaderConfig>

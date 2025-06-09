@@ -39,7 +39,8 @@ namespace Skylicht
 {
 	CPointLightShadowBakeRP::CPointLightShadowBakeRP() :
 		m_currentLight(NULL),
-		m_bakeInUV0(false)
+		m_bakeInUV0(false),
+		m_bakeDetailNormal(false)
 	{
 		CEventManager::getInstance()->registerEvent("ShadowBakeRP", this);
 	}
@@ -63,7 +64,8 @@ namespace Skylicht
 		if (direction)
 			return;
 
-		if (m_currentLight->getLightType() != CLight::Baked)
+		if (m_currentLight->getLightType() != CLight::Baked &&
+			m_currentLight->getLightType() != CLight::Mixed)
 			return;
 
 		setCamera(camera);
@@ -83,8 +85,9 @@ namespace Skylicht
 		// set state point light
 		m_renderShadowState = ERenderShadowState::PointLight;
 
+		// note: alway enable shadow on baked mode
 		CPointLight* pointLight = dynamic_cast<CPointLight*>(m_currentLight);
-		if (pointLight != NULL && pointLight->isCastShadow() == true)
+		if (pointLight != NULL)
 		{
 			pointLight->beginRenderShadowDepth();
 

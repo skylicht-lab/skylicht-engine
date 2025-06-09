@@ -40,12 +40,15 @@ namespace Skylicht
 {
 	CDirectionalLightBakeRP::CDirectionalLightBakeRP() :
 		m_renderMesh(NULL),
+		m_normalMap(NULL),
 		m_submesh(NULL),
 		m_renderTarget(NULL),
 		m_numTarget(0),
 		m_currentTarget(0),
-		m_bakeDirectionMaterialID(0),
-		m_bakeDirectionUV0MaterialID(0)
+		m_bakeDirection(0),
+		m_bakeDirectionUV0(0),
+		m_bakeDirectionNormal(0),
+		m_bakeDirectionUV0Normal(0)
 	{
 		m_type = Deferred;
 	}
@@ -59,10 +62,15 @@ namespace Skylicht
 	{
 		CShaderManager* shaderMgr = CShaderManager::getInstance();
 		shaderMgr->loadShader("BuiltIn/Shader/BakeDirectional/BakeDirectionalLight.xml");
+		shaderMgr->loadShader("BuiltIn/Shader/BakeDirectional/BakeDirectionalLightNormal.xml");
 		shaderMgr->loadShader("BuiltIn/Shader/BakeDirectional/BakeDirectionalLightUV0.xml");
+		shaderMgr->loadShader("BuiltIn/Shader/BakeDirectional/BakeDirectionalLightUV0Normal.xml");
 
-		m_bakeDirectionMaterialID = shaderMgr->getShaderIDByName("BakeDirectionalLight");
-		m_bakeDirectionUV0MaterialID = shaderMgr->getShaderIDByName("BakeDirectionalLightUV0");
+		m_bakeDirection = shaderMgr->getShaderIDByName("BakeDirectionalLight");
+		m_bakeDirectionUV0 = shaderMgr->getShaderIDByName("BakeDirectionalLightUV0");
+
+		m_bakeDirectionNormal = shaderMgr->getShaderIDByName("BakeDirectionalLightNormal");
+		m_bakeDirectionUV0Normal = shaderMgr->getShaderIDByName("BakeDirectionalLightUV0Normal");
 	}
 
 	void CDirectionalLightBakeRP::resize(int w, int h)
@@ -135,9 +143,15 @@ namespace Skylicht
 
 		// check uv2
 		video::E_VERTEX_TYPE vtxType = m_submesh[m_currentTarget]->getVertexType();
-		bool haveTangent = vtxType == video::EVT_2TCOORDS || vtxType == video::EVT_2TCOORDS_TANGENTS;
-		if (!shadowRP->isBakeInUV0() && !haveTangent)
+		bool haveLM = vtxType == video::EVT_2TCOORDS || vtxType == video::EVT_2TCOORDS_TANGENTS;
+		if (!shadowRP->isBakeInUV0() && !haveLM)
 			return;
+
+		// check detail normal
+		bool haveDetailNormal = false;
+		bool haveTangent = vtxType == EVT_TANGENTS || vtxType == video::EVT_2TCOORDS_TANGENTS;
+		if (shadowRP->isBakeDetailNormal() && haveTangent && m_normalMap)
+			haveDetailNormal = true;
 
 		video::SMaterial irrMaterial;
 		ITexture* depthTexture = shadowRP->getDepthTexture();
@@ -148,8 +162,20 @@ namespace Skylicht
 		irrMaterial.TextureLayer[0].TrilinearFilter = false;
 		irrMaterial.TextureLayer[0].AnisotropicFilter = 0;
 
-		// render mesh with light bake shader
-		irrMaterial.MaterialType = shadowRP->isBakeInUV0() ? m_bakeDirectionUV0MaterialID : m_bakeDirectionMaterialID;
+		if (haveDetailNormal)
+		{
+			irrMaterial.TextureLayer[1].Texture = m_normalMap;
+			irrMaterial.TextureLayer[1].BilinearFilter = false;
+			irrMaterial.TextureLayer[1].TrilinearFilter = false;
+			irrMaterial.TextureLayer[1].AnisotropicFilter = 8;
+
+			irrMaterial.MaterialType = shadowRP->isBakeInUV0() ? m_bakeDirectionUV0Normal : m_bakeDirectionNormal;
+		}
+		else
+		{
+			irrMaterial.MaterialType = shadowRP->isBakeInUV0() ? m_bakeDirectionUV0 : m_bakeDirection;
+		}
+
 		irrMaterial.ZBuffer = video::ECFN_DISABLED;
 		irrMaterial.ZWriteEnable = false;
 		irrMaterial.BackfaceCulling = false;

@@ -34,7 +34,8 @@ namespace Skylicht
 		enum ELightType
 		{
 			Realtime = 0,
-			Baked
+			Baked,
+			Mixed
 		};
 
 	protected:

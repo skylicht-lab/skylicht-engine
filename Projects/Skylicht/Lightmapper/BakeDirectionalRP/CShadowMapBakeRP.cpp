@@ -37,7 +37,8 @@ namespace Skylicht
 {
 	CShadowMapBakeRP::CShadowMapBakeRP() :
 		m_sm(NULL),
-		m_bakeInUV0(false)
+		m_bakeInUV0(false),
+		m_bakeDetailNormal(false)
 	{
 		CEventManager::getInstance()->registerEvent("ShadowBakeRP", this);
 	}

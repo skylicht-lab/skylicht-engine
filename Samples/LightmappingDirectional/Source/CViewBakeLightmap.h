@@ -25,6 +25,7 @@ protected:
 	std::vector<CLight*> m_lights;
 
 	std::vector<IMeshBuffer*> m_meshBuffers;
+	std::vector<ITexture*> m_normalMaps;
 	std::vector<core::matrix4> m_meshTransforms;
 
 	ITexture* m_directionLightBake[MAX_LIGHTMAP_ATLAS];

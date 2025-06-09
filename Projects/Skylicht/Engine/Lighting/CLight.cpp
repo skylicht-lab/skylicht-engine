@@ -37,7 +37,7 @@ namespace Skylicht
 		m_spotExponent(10.0f),
 		m_intensity(1.0f),
 		m_bakeBounce(1),
-		m_type(CLight::Realtime)
+		m_type(CLight::Mixed)
 	{
 		setRadius(3.0f);
 	}
@@ -58,6 +58,7 @@ namespace Skylicht
 		CEnumProperty<ELightType>* lighType = new CEnumProperty<ELightType>(object, "type", m_type);
 		lighType->addEnumString("Realtime", ELightType::Realtime);
 		lighType->addEnumString("Baked", ELightType::Baked);
+		lighType->addEnumString("Mixed", ELightType::Mixed);
 		object->autoRelease(lighType);
 
 		return object;
@@ -70,7 +71,7 @@ namespace Skylicht
 		m_castShadow = object->get<bool>("castShadow", false);
 		m_color = object->get<SColor>("color", SColor(255, 255, 255, 255));
 		m_intensity = object->get<float>("intensity", 1.0f);
-		m_type = object->get<ELightType>("type", ELightType::Realtime);
+		m_type = object->get<ELightType>("type", ELightType::Mixed);
 	}
 
 	core::aabbox3df CLight::getBBBox()

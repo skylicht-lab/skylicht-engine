@@ -69,12 +69,16 @@ namespace Skylicht
 			std::string m_file;
 			bool m_bakeAll;
 			bool m_bakeUV0;
+			bool m_bakeDetailNormal;
+			bool m_combineDirectionLightColor;
 			u32 m_bakeSize;
 
 			CGameObject* m_cameraObj;
 			std::vector<CLight*> m_lights;
+
 			std::vector<IMeshBuffer*> m_meshBuffers;
 			std::vector<core::matrix4> m_meshTransforms;
+			std::vector<ITexture*> m_normalMaps;
 
 			CShadowMapBakeRP* m_shadowRP;
 			CDirectionalLightBakeRP* m_bakeLightRP;

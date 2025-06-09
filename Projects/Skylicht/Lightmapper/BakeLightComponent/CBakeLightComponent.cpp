@@ -40,6 +40,7 @@ namespace Skylicht
 			m_bakeUV0(false),
 			m_bakeSize(Size2048),
 			m_bakeDetailNormal(false),
+			m_combineDirectionLightColor(true),
 			m_outputFile("lightmap_directional_%d.png")
 		{
 
@@ -90,6 +91,8 @@ namespace Skylicht
 
 			object->autoRelease(new CBoolProperty(object, "bake all", m_bakeAll));
 			object->autoRelease(new CBoolProperty(object, "bake in uv0", m_bakeUV0));
+			object->autoRelease(new CBoolProperty(object, "bake detail normal", m_bakeDetailNormal));
+			object->autoRelease(new CBoolProperty(object, "combine direction light color", m_combineDirectionLightColor));
 
 			CEnumProperty<EBakeSize>* bakeSize = new CEnumProperty<EBakeSize>(object, "size", m_bakeSize);
 			bakeSize->addEnumString("512", EBakeSize::Size512);
@@ -110,6 +113,8 @@ namespace Skylicht
 
 			m_bakeAll = object->get<bool>("bake all", false);
 			m_bakeUV0 = object->get<bool>("bake in uv0", false);
+			m_bakeDetailNormal = object->get<bool>("bake detail normal", false);
+			m_combineDirectionLightColor = object->get<bool>("combine direction light color", true);
 
 			m_bakeSize = object->get<EBakeSize>("size", EBakeSize::Size2048);
 

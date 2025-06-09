@@ -37,6 +37,8 @@ namespace Skylicht
 
 		bool m_bakeInUV0;
 
+		bool m_bakeDetailNormal;
+
 		core::aabbox3df m_cullingBox;
 
 	public:
@@ -66,6 +68,16 @@ namespace Skylicht
 		inline bool isBakeInUV0()
 		{
 			return m_bakeInUV0;
+		}
+
+		inline void setBakeDetailNormal(bool b)
+		{
+			m_bakeDetailNormal = b;
+		}
+
+		inline bool isBakeDetailNormal()
+		{
+			return m_bakeDetailNormal;
 		}
 
 		virtual const core::aabbox3df& getFrustumBox();

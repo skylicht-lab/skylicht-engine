@@ -27,12 +27,16 @@ https://github.com/skylicht-lab/skylicht-engine
 #ifdef BUILD_SKYLICHT_LIGHMAPPER
 
 #include "GUI/GUIContext.h"
+#include "GUI/Controls/CMessageBox.h"
+
 #include "CSpaceBakeDirectional.h"
 #include "AssetManager/CAssetManager.h"
 #include "Editor/CEditor.h"
 
 #include "Graphics2D/SpriteFrame/CFrameSource.h"
 #include "Serializable/CSerializableLoader.h"
+
+#include "Shadow/CShadowRTTManager.h"
 
 #include <filesystem>
 #if defined(__APPLE_CC__)
@@ -54,6 +58,8 @@ namespace Skylicht
 			m_total(0),
 			m_bakeAll(false),
 			m_bakeUV0(false),
+			m_bakeDetailNormal(false),
+			m_combineDirectionLightColor(true),
 			m_bakeSize(2048),
 			m_cameraObj(NULL),
 			m_shadowRP(NULL),
@@ -137,6 +143,15 @@ namespace Skylicht
 				// done
 				CEditor::getInstance()->refresh();
 				m_finished = true;
+
+				// need refresh all lighting
+				CShadowRTTManager::getInstance()->clearTextures();
+
+				if (m_total == 0)
+				{
+					GUI::CMessageBox* msb = new GUI::CMessageBox(m_window->getCanvas(), GUI::CMessageBox::OK);
+					msb->setMessage("Lightmapper not found RenderMesh or Static Object", "");
+				}
 			}
 
 			CSpace::update();
@@ -145,6 +160,7 @@ namespace Skylicht
 		void CSpaceBakeDirectional::doBakeUV0()
 		{
 			IMeshBuffer* mb = m_meshBuffers[m_position];
+			ITexture* normalMap = m_normalMaps[m_position];
 
 			CEntityManager* entityMgr = m_cameraObj->getEntityManager();
 
@@ -176,8 +192,8 @@ namespace Skylicht
 			m_shadowRP->setBound(box);
 
 			// setup target for pipeline
-			m_bakeLightRP->setRenderMesh(mb, m_subMesh, m_directionLightBake, numTargetTexture);
-			m_bakePointLightRP->setRenderMesh(mb, m_subMesh, m_pointLightBake, numTargetTexture);
+			m_bakeLightRP->setRenderMesh(mb, normalMap, m_subMesh, m_directionLightBake, numTargetTexture);
+			m_bakePointLightRP->setRenderMesh(mb, normalMap, m_subMesh, m_pointLightBake, numTargetTexture);
 
 			// set camera view
 			core::vector3df center = box.getCenter();
@@ -193,6 +209,7 @@ namespace Skylicht
 
 			// bake direction light
 			m_shadowRP->setBakeInUV0(m_bakeUV0);
+			m_shadowRP->setBakeDetailNormal(m_bakeDetailNormal);
 			m_shadowRP->render(NULL, bakeCamera, entityMgr, core::recti());
 
 			// bake all point light
@@ -200,6 +217,7 @@ namespace Skylicht
 			{
 				m_shadowPLRP->setCurrentLight(light);
 				m_shadowPLRP->setBakeInUV0(m_bakeUV0);
+				m_shadowPLRP->setBakeDetailNormal(m_bakeDetailNormal);
 				m_shadowPLRP->render(NULL, bakeCamera, entityMgr, core::recti());
 			}
 
@@ -209,6 +227,7 @@ namespace Skylicht
 		void CSpaceBakeDirectional::doBakeLightmap()
 		{
 			IMeshBuffer* mb = m_meshBuffers[m_position];
+			ITexture* normalMap = m_normalMaps[m_position];
 
 			video::E_VERTEX_TYPE vtxType = mb->getVertexType();
 			if (vtxType != video::EVT_2TCOORDS &&
@@ -306,8 +325,8 @@ namespace Skylicht
 			m_shadowRP->setBound(box);
 
 			// setup target for pipeline
-			m_bakeLightRP->setRenderMesh(mb, m_subMesh, m_directionLightBake, numTargetTexture);
-			m_bakePointLightRP->setRenderMesh(mb, m_subMesh, m_pointLightBake, numTargetTexture);
+			m_bakeLightRP->setRenderMesh(mb, normalMap, m_subMesh, m_directionLightBake, numTargetTexture);
+			m_bakePointLightRP->setRenderMesh(mb, normalMap, m_subMesh, m_pointLightBake, numTargetTexture);
 
 			// set camera view
 			core::vector3df center = box.getCenter();
@@ -323,6 +342,7 @@ namespace Skylicht
 
 			// bake direction light
 			m_shadowRP->setBakeInUV0(m_bakeUV0);
+			m_shadowRP->setBakeDetailNormal(m_bakeDetailNormal);
 			m_shadowRP->render(NULL, bakeCamera, entityMgr, core::recti());
 
 			// bake all point light
@@ -330,6 +350,7 @@ namespace Skylicht
 			{
 				m_shadowPLRP->setCurrentLight(light);
 				m_shadowPLRP->setBakeInUV0(m_bakeUV0);
+				m_shadowPLRP->setBakeDetailNormal(m_bakeDetailNormal);
 				m_shadowPLRP->render(NULL, bakeCamera, entityMgr, core::recti());
 			}
 
@@ -340,6 +361,7 @@ namespace Skylicht
 		{
 			CShaderManager* shaderMgr = CShaderManager::getInstance();
 			shaderMgr->loadShader("BuiltIn/Shader/BakeDirectional/BakeFinal.xml");
+			shaderMgr->loadShader("BuiltIn/Shader/BakeDirectional/BakeFinalNoDirectionLight.xml");
 
 			for (int i = 0; i < MAX_LIGHTMAP_ATLAS; i++)
 			{
@@ -359,7 +381,12 @@ namespace Skylicht
 				SMaterial material;
 				material.setTexture(0, m_directionLightBake[i]);
 				material.setTexture(1, m_pointLightBake[i]);
-				material.MaterialType = shaderMgr->getShaderIDByName("BakeFinal");
+
+				if (m_combineDirectionLightColor)
+					material.MaterialType = shaderMgr->getShaderIDByName("BakeFinal");
+				else
+					material.MaterialType = shaderMgr->getShaderIDByName("BakeFinalNoDirectionLight");
+
 				m_bakeLightRP->renderBufferToTarget(0.0f, 0.0f, lmSize, lmSize, material, false);
 				getVideoDriver()->setRenderTarget(NULL);
 
@@ -405,6 +432,8 @@ namespace Skylicht
 			m_file = bakeLight->getOutputFile();
 			m_bakeAll = bakeLight->bakeAll();
 			m_bakeUV0 = bakeLight->bakeUV0();
+			m_bakeDetailNormal = bakeLight->bakeDetailNormal();
+			m_combineDirectionLightColor = bakeLight->combineDirectionLightColor();
 			m_bakeSize = bakeLight->getBakeSize();
 
 			CZone* zone = bakeLight->getGameObject()->getZone();
@@ -414,7 +443,13 @@ namespace Skylicht
 			m_cameraObj->addComponent<CCamera>();
 
 			// all lights
-			m_lights = zone->getComponentsInChild<CLight>(false);
+			m_lights.clear();
+			std::vector<CLight*> lights = zone->getComponentsInChild<CLight>(false);
+			for (CLight* l : lights)
+			{
+				if (l->getLightType() == CLight::Baked || l->getLightType() == CLight::Mixed)
+					m_lights.push_back(l);
+			}
 
 			// all meshs, that will bake
 			std::vector<CRenderMesh*> renderMeshs;
@@ -456,11 +491,17 @@ namespace Skylicht
 							for (u32 i = 0; i < bufferCount; i++)
 							{
 								IMeshBuffer* mb = mesh->getMeshBuffer(i);
+								ITexture* normalMap = NULL;
+
+								if (mesh->Materials[i] != NULL)
+									normalMap = mesh->Materials[i]->getTexture(1);
+
 								if (mb->getVertexBufferCount() > 0)
 								{
 									// add mesh buffer, that will bake lighting
 									m_meshBuffers.push_back(mb);
 									m_meshTransforms.push_back(transform);
+									m_normalMaps.push_back(normalMap);
 								}
 							}
 						}
@@ -472,9 +513,12 @@ namespace Skylicht
 			m_position = 0;
 			m_total = (int)m_meshBuffers.size();
 
+			// need refresh all lighting
+			CShadowRTTManager::getInstance()->clearTextures();
+
 			// direction light
 			m_shadowRP = new CShadowMapBakeRP();
-			m_shadowRP->initRender(4096, 4096);
+			m_shadowRP->initRender(2048, 2048);
 
 			m_bakeLightRP = new CDirectionalLightBakeRP();
 			m_bakeLightRP->initRender(m_bakeSize, m_bakeSize);

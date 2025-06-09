@@ -2,6 +2,7 @@
 #include "CDiffuseLightRenderPipeline.h"
 
 #include "RenderMesh/CMesh.h"
+#include "Material/Shader/ShaderCallback/CShaderMaterial.h"
 
 namespace Skylicht
 {
@@ -9,14 +10,17 @@ namespace Skylicht
 	{
 		CDiffuseLightRenderPipeline::CDiffuseLightRenderPipeline() :
 			m_diffuseShader(NULL),
-			m_colorShader(NULL)
+			m_colorShader(NULL),
+			m_material(NULL)
 		{
-
+			m_material = new CMaterial("default", "BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");
+			m_material->setUniform4("uColor", SColor(255, 150, 150, 150));
+			m_material->updateShaderParams();
 		}
 
 		CDiffuseLightRenderPipeline::~CDiffuseLightRenderPipeline()
 		{
-
+			delete m_material;
 		}
 
 		void CDiffuseLightRenderPipeline::initRender(int w, int h)
@@ -50,6 +54,13 @@ namespace Skylicht
 				CDeferredRP::drawMeshBuffer(mesh, bufferID, entity, entityID, skinnedMesh);
 			else
 			{
+				// set shader (uniform) material
+				if (mesh->Materials.size() > (u32)bufferID)
+					CShaderMaterial::setMaterial(mesh->Materials[bufferID]);
+
+				if (CShaderMaterial::getMaterial() == NULL)
+					CShaderMaterial::setMaterial(m_material);
+
 				// update texture resource
 				updateTextureResource(mesh, bufferID, entity, entityID, skinnedMesh);
 

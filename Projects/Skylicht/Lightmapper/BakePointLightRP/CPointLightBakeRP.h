@@ -33,26 +33,32 @@ namespace Skylicht
 	{
 	protected:
 		IMeshBuffer* m_renderMesh;
+		ITexture* m_normalMap;
 
 		IMeshBuffer** m_submesh;
 		ITexture** m_renderTarget;
 		int m_numTarget;
 		int m_currentTarget;
 
-		int m_bakePointLightMaterialID;
-		int m_bakeSpotLightMaterialID;
+		int m_bakePointLight;
+		int m_bakeSpotLight;
+		int m_bakePointLightNormal;
+		int m_bakeSpotLightNormal;
 
-		int m_bakePointLightUV0MaterialID;
-		int m_bakeSpotLightUV0MaterialID;
+		int m_bakePointLightUV0;
+		int m_bakeSpotLightUV0;
+		int m_bakePointLightUV0Normal;
+		int m_bakeSpotLightUV0Normal;
 
 	public:
 		CPointLightBakeRP();
 
 		virtual ~CPointLightBakeRP();
 
-		inline void setRenderMesh(IMeshBuffer* mb, IMeshBuffer** submesh, ITexture** targets, int numTarget)
+		inline void setRenderMesh(IMeshBuffer* mb, ITexture* normalMap, IMeshBuffer** submesh, ITexture** targets, int numTarget)
 		{
 			m_renderMesh = mb;
+			m_normalMap = normalMap;
 			m_submesh = submesh;
 			m_renderTarget = targets;
 			m_numTarget = numTarget;

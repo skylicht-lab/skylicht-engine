@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "SkylichtEngine.h"
 #include "Editor/Space/CSpace.h"
 #include "Editor/Space/Scene/CDiffuseLightRenderPipeline.h"
+#include "Editor/Space/Scene/CNullForwarderPipeline.h"
 
 #include "GizmosComponents/Handles/CHandlesRenderer.h"
 #include "GizmosComponents/Gizmos/CGizmosRenderer.h"
@@ -80,6 +81,7 @@ namespace Skylicht
 			CForwardRP* m_forwardRP;
 			CPostProcessorRP* m_postProcessor;
 			CDiffuseLightRenderPipeline* m_lightRP;
+			CNullForwarderPipeline* m_nullRP;
 
 			CGameObject* m_gridPlane;
 

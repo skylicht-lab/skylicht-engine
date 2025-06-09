@@ -353,10 +353,9 @@ namespace Skylicht
 			// if this name it loaded
 			if (m_listShaderID.find(shaderName) != m_listShaderID.end())
 			{
-				char log[512];
-				sprintf(log, "!!! Warning: Name '%s' is loaded <-- SKIP", shaderName.c_str());
-				os::Printer::log(log);
-
+				// char log[512];
+				// sprintf(log, "!!! Warning: Name '%s' is loaded <-- SKIP", shaderName.c_str());
+				// os::Printer::log(log);
 				return false;
 			}
 		}
