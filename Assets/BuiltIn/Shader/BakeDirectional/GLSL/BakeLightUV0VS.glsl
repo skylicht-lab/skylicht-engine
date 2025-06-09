@@ -4,11 +4,13 @@ in vec3 inNormal;
 in vec4 inColor;
 in vec2 inTexCoord0;
 uniform mat4 uWorldMatrix;
+out vec2 varTex0;
 out vec3 varWorldPosition;
 out vec3 varWorldNormal;
 void main(void)
 {
 	vec2 lightmapUV = inTexCoord0;
+	varTex0 = inTexCoord0;
 	lightmapUV.y = 1.0 - lightmapUV.y;
 	lightmapUV = lightmapUV * 2.0 - vec2(1.0, 1.0);
 	varWorldNormal = (uWorldMatrix * vec4(inNormal, 0.0)).xyz;

@@ -6,7 +6,7 @@ struct PS_INPUT
 	float4 pos : SV_POSITION;
 	float3 worldNormal: WORLDNORMAL;
 	float3 worldPosition: WORLDPOSITION;
-	float3 tex0 : LIGHTMAP;
+	float2 tex0: TEXCOORD0;
 };
 cbuffer cbPerFrame
 {
@@ -70,9 +70,10 @@ float3 pointlightShadow(
 }
 float4 main(PS_INPUT input) : SV_TARGET
 {
+	float3 worldNormal = input.worldNormal;
 	float3 directionalLightColor = pointlightShadow(
 		input.worldPosition,
-		input.worldNormal,
+		worldNormal,
 		float3(0.0, 100.0, 0.0),
 		uLightColor,
 		uLightPosition.xyz,

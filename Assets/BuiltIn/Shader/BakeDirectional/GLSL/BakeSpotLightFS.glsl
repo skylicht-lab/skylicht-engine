@@ -2,6 +2,7 @@
 precision highp float;
 precision highp samplerCube;
 uniform samplerCube uPointLightShadowMap;
+in vec2 varTex0;
 in vec3 varWorldPosition;
 in vec3 varWorldNormal;
 uniform vec4 uLightPosition;
@@ -75,9 +76,10 @@ vec3 spotlightShadow(
 }
 void main(void)
 {
+	vec3 worldNormal = varWorldNormal;
 	vec3 directionalLightColor = spotlightShadow(
 		varWorldPosition,
-		varWorldNormal,
+		worldNormal,
 		vec3(0.0, 100.0, 0.0),
 		uLightColor,
 		uLightPosition.xyz,

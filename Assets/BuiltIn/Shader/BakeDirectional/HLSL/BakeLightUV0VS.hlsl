@@ -11,6 +11,7 @@ struct VS_OUTPUT
 	float4 pos : SV_POSITION;
 	float3 worldNormal: WORLDNORMAL;
 	float3 worldPosition: WORLDPOSITION;
+	float2 tex0: TEXCOORD0;
 };
 cbuffer cbPerObject
 {
@@ -20,6 +21,7 @@ VS_OUTPUT main(VS_INPUT input)
 {
 	VS_OUTPUT output;
 	float2 lightmapUV = input.tex0;
+	output.tex0 = input.tex0;
 	lightmapUV.y = 1.0 - lightmapUV.y;
 	lightmapUV = lightmapUV * 2.0 - float2(1.0, 1.0);
 	output.pos = float4(lightmapUV, 0.0, 1.0);

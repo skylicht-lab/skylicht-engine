@@ -44,6 +44,7 @@ namespace Skylicht
 		protected:
 			bool m_bakeAll;
 			bool m_bakeUV0;
+			bool m_bakeDetailNormal;
 
 			std::string m_outputFolder;
 			std::string m_outputFile;
@@ -73,6 +74,11 @@ namespace Skylicht
 			inline bool bakeUV0()
 			{
 				return m_bakeUV0;
+			}
+
+			inline bool bakeDetailNormal()
+			{
+				return m_bakeDetailNormal;
 			}
 
 			u32 getBakeSize();

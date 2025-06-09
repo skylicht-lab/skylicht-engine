@@ -99,7 +99,6 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 localCoords = normalMap * 2.0 - float3(1.0, 1.0, 1.0);
 	localCoords.y *= input.tangentw;
 	float3 n = normalize(mul(localCoords, rotation));
-	n = normalize(n);
 #endif
 
 	// Solver metallic

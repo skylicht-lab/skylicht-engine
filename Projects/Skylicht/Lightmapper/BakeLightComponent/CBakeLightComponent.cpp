@@ -39,6 +39,7 @@ namespace Skylicht
 			m_bakeAll(false),
 			m_bakeUV0(false),
 			m_bakeSize(Size2048),
+			m_bakeDetailNormal(false),
 			m_outputFile("lightmap_directional_%d.png")
 		{
 

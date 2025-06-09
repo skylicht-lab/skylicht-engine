@@ -308,21 +308,25 @@ void CViewBakeLightmap::gotoDemoView()
 	CShaderManager* shaderMgr = CShaderManager::getInstance();
 	shaderMgr->loadShader("BuiltIn/Shader/BakeDirectional/BakeFinal.xml");
 
+	IVideoDriver* driver = getVideoDriver();
+
 	for (int i = 0; i < m_numBakeTexture; i++)
 	{
 		// bake final, that merge direction light & point light & shadow mask in alpha channel
 		core::dimension2du size((u32)m_lightmapSize, (u32)m_lightmapSize);
 		float lmSize = (float)m_lightmapSize;
 
-		m_result[i] = getVideoDriver()->addRenderTargetTexture(size, "resultLM", video::ECF_A8R8G8B8);
+		m_result[i] = driver->addRenderTargetTexture(size, "resultLM", video::ECF_A8R8G8B8);
 
-		getVideoDriver()->setRenderTarget(m_result[i]);
+		driver->setRenderTarget(m_result[i]);
 		m_bakeLightRP->beginRender2D(lmSize, lmSize);
 		SMaterial material;
 		material.setTexture(0, m_directionLightBake[i]);
 		material.setTexture(1, m_pointLightBake[i]);
 		material.MaterialType = shaderMgr->getShaderIDByName("BakeFinal");
-		m_bakeLightRP->renderBufferToTarget(0.0f, 0.0f, lmSize, lmSize, material, false);
+
+		bool flipY = driver->getDriverType() == video::EDT_DIRECT3D11 ? false : true;
+		m_bakeLightRP->renderBufferToTarget(0.0f, 0.0f, lmSize, lmSize, material, flipY);
 
 		if (m_directionLightBake[i])
 		{
