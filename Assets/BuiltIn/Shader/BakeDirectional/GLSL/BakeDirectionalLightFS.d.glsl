@@ -17,6 +17,7 @@ in float vTangentW;
 
 uniform vec4 uLightColor;
 uniform vec4 uLightDirection;
+uniform vec4 uShadowBias;
 uniform mat4 uShadowMatrix;
 
 out vec4 FragColor;

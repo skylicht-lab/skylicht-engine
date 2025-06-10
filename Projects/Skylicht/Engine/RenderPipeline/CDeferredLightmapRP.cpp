@@ -282,9 +282,11 @@ namespace Skylicht
 			if (lightmapData == NULL)
 				return;
 
+			/*
 			if (indirectData->IndirectTexture == NULL ||
 				indirectData->IndirectTexture != lightmapData->LightmapTexture)
 				return;
+			*/
 
 			// set shader (uniform) material
 			if (mesh->Materials.size() > (u32)bufferID)
@@ -300,8 +302,10 @@ namespace Skylicht
 				// change shader to vertex color
 				SMaterial lightmapMat;
 
+				ITexture* lightmapTexture = lightmapData->LightmapTexture ? lightmapData->LightmapTexture : indirectData->IndirectTexture;
+
 				lightmapMat.MaterialType = m_lightmapDirectionalShader;
-				lightmapMat.setTexture(0, indirectData->IndirectTexture);
+				lightmapMat.setTexture(0, lightmapTexture);
 
 				CShaderManager::getInstance()->LightmapIndex = (float)lightmapData->LightmapIndex;
 

@@ -40,6 +40,7 @@ namespace Skylicht
 			m_bakeUV0(false),
 			m_bakeSize(Size2048),
 			m_bakeDetailNormal(false),
+			m_shadowBias(0.0004f),
 			m_combineDirectionLightColor(true),
 			m_outputFile("lightmap_directional_%d.png")
 		{
@@ -89,6 +90,8 @@ namespace Skylicht
 			object->autoRelease(new CFolderPathProperty(object, "folder", m_outputFolder.c_str()));
 			object->autoRelease(new CStringProperty(object, "file", m_outputFile.c_str()));
 
+			object->autoRelease(new CFloatProperty(object, "shadow bias", m_shadowBias, 0.0f, 0.001f));
+
 			object->autoRelease(new CBoolProperty(object, "bake all", m_bakeAll));
 			object->autoRelease(new CBoolProperty(object, "bake in uv0", m_bakeUV0));
 			object->autoRelease(new CBoolProperty(object, "bake detail normal", m_bakeDetailNormal));
@@ -110,6 +113,8 @@ namespace Skylicht
 
 			m_outputFolder = object->get<std::string>("folder", "");
 			m_outputFile = object->get<std::string>("file", "");
+
+			m_shadowBias = object->get<float>("shadow bias", 0.0004f);
 
 			m_bakeAll = object->get<bool>("bake all", false);
 			m_bakeUV0 = object->get<bool>("bake in uv0", false);

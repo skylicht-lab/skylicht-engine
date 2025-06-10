@@ -42,6 +42,10 @@ namespace Skylicht
 
 	public:
 
+		static void setShadowBias(const SVec4& bias);
+
+		static const SVec4& getShadowBias();
+
 		static void setShadowMapRP(CShadowMapRP* rp);
 
 		static CShadowMapRP* getShadowMapRP();

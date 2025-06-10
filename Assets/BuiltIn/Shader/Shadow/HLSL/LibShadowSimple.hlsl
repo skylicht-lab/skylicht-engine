@@ -19,8 +19,7 @@ result += COMPARE(rand, depth);\
 float shadowSimple(const float4 shadowCoord)
 {
 	int id = 0;
-	float visible = 1.0;	
-	const float bias = 0.0001;
+	float visible = 1.0;
 	float depth = 0.0;
 
 	float result = 0.0;
@@ -28,7 +27,7 @@ float shadowSimple(const float4 shadowCoord)
 	float3 shadowUV = shadowCoord.xyz / shadowCoord.w;
 
 	depth = shadowUV.z;
-	depth -= bias;
+	depth -= uShadowBias.x;
 	
 	float2 uv = shadowUV.xy;
 	

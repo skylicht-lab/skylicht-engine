@@ -32,6 +32,8 @@ namespace Skylicht
 {
 	CShadowMapRP* g_shadowMapRP = NULL;
 
+	SVec4 g_shadowBias = SVec4(0.0004f, 0.0004f, 0.0004f, 0.0004f);
+
 	CShaderShadow::CShaderShadow()
 	{
 
@@ -70,9 +72,27 @@ namespace Skylicht
 			}
 		}
 		break;
+		case SHADOW_BIAS:
+		{
+			if (vertexShader == true)
+				matRender->setShaderVariable(uniform->UniformShaderID, &g_shadowBias.X, uniform->SizeOfUniform, video::EST_VERTEX_SHADER);
+			else
+				matRender->setShaderVariable(uniform->UniformShaderID, &g_shadowBias.X, uniform->SizeOfUniform, video::EST_PIXEL_SHADER);
+		}
+		break;
 		default:
 			break;
 		}
+	}
+
+	void CShaderShadow::setShadowBias(const SVec4& bias)
+	{
+		g_shadowBias = bias;
+	}
+
+	const SVec4& CShaderShadow::getShadowBias()
+	{
+		return g_shadowBias;
 	}
 
 	void CShaderShadow::setShadowMapRP(CShadowMapRP* rp)

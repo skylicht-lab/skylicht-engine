@@ -37,6 +37,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Serializable/CSerializableLoader.h"
 
 #include "Shadow/CShadowRTTManager.h"
+#include "Material/Shader/ShaderCallback/CShaderShadow.h"
 
 #include <filesystem>
 #if defined(__APPLE_CC__)
@@ -56,6 +57,7 @@ namespace Skylicht
 			m_state(None),
 			m_position(0),
 			m_total(0),
+			m_shadowBias(0.0004f),
 			m_bakeAll(false),
 			m_bakeUV0(false),
 			m_bakeDetailNormal(false),
@@ -207,10 +209,17 @@ namespace Skylicht
 			// update scene first
 			m_cameraObj->getScene()->update();
 
+			SVec4 oldBias = CShaderShadow::getShadowBias();
+			SVec4 bias = oldBias;
+			bias.X = m_shadowBias;
+			CShaderShadow::setShadowBias(bias);
+
 			// bake direction light
 			m_shadowRP->setBakeInUV0(m_bakeUV0);
 			m_shadowRP->setBakeDetailNormal(m_bakeDetailNormal);
 			m_shadowRP->render(NULL, bakeCamera, entityMgr, core::recti());
+
+			CShaderShadow::setShadowBias(oldBias);
 
 			// bake all point light
 			for (CLight* light : m_lights)
@@ -340,10 +349,18 @@ namespace Skylicht
 			// update scene first
 			m_cameraObj->getScene()->update();
 
+			SVec4 oldBias = CShaderShadow::getShadowBias();
+
+			SVec4 bias = oldBias;
+			bias.X = m_shadowBias;
+			CShaderShadow::setShadowBias(bias);
+
 			// bake direction light
 			m_shadowRP->setBakeInUV0(m_bakeUV0);
 			m_shadowRP->setBakeDetailNormal(m_bakeDetailNormal);
 			m_shadowRP->render(NULL, bakeCamera, entityMgr, core::recti());
+
+			CShaderShadow::setShadowBias(oldBias);
 
 			// bake all point light
 			for (CLight* light : m_lights)
@@ -430,6 +447,7 @@ namespace Skylicht
 				m_folder += "/";
 
 			m_file = bakeLight->getOutputFile();
+			m_shadowBias = bakeLight->getShadowBias();
 			m_bakeAll = bakeLight->bakeAll();
 			m_bakeUV0 = bakeLight->bakeUV0();
 			m_bakeDetailNormal = bakeLight->bakeDetailNormal();

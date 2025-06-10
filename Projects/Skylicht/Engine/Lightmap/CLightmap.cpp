@@ -35,7 +35,7 @@ namespace Skylicht
 {
 	ACTIVATOR_REGISTER(CLightmap);
 
-	CATEGORY_COMPONENT(CLightmap, "Lightmap", "Lightmap");
+	CATEGORY_COMPONENT(CLightmap, "Lightmap", "Lightmapper");
 
 	CLightmap::CLightmap() :
 		m_internalLightmap(false),
@@ -106,12 +106,39 @@ namespace Skylicht
 	CObjectSerializable* CLightmap::createSerializable()
 	{
 		CObjectSerializable* object = CComponentSystem::createSerializable();
+
+		object->autoRelease(new CIntProperty(object, "lightmapIndex", m_lightmapBeginIndex, 0, 32));
+
+		CArrayTypeSerializable<CFilePathProperty>* textureArray = new CArrayTypeSerializable<CFilePathProperty>("lightmap", object);
+		for (std::string& path : m_lightmapPaths)
+			textureArray->autoRelease(new CFilePathProperty(textureArray, "texture", path.c_str(), CTextureManager::getTextureExts()));
+		object->autoRelease(textureArray);
+
 		return object;
 	}
 
 	void CLightmap::loadSerializable(CObjectSerializable* object)
 	{
 		CComponentSystem::loadSerializable(object);
+
+		m_lightmapBeginIndex = object->get<int>("lightmapIndex", 0);
+
+		bool haveLightmap = false;
+		CArraySerializable* textureArray = (CArraySerializable*)object->getProperty("lightmap");
+		if (textureArray)
+		{
+			int numTextures = textureArray->getElementCount();
+			haveLightmap = numTextures > 0;
+
+			m_lightmapPaths.clear();
+			for (int i = 0; i < numTextures; i++)
+			{
+				CFilePathProperty* file = (CFilePathProperty*)textureArray->getElement(i);
+				m_lightmapPaths.push_back(file->get());
+			}
+		}
+
+		updateLightmap();
 	}
 
 	bool CLightmap::isLightmapEmpty()

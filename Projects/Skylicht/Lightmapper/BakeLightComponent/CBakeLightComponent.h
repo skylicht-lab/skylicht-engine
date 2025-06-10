@@ -45,6 +45,7 @@ namespace Skylicht
 			bool m_bakeAll;
 			bool m_bakeUV0;
 			bool m_bakeDetailNormal;
+			float m_shadowBias;
 			bool m_combineDirectionLightColor;
 
 			std::string m_outputFolder;
@@ -88,6 +89,11 @@ namespace Skylicht
 			}
 
 			u32 getBakeSize();
+
+			inline float getShadowBias()
+			{
+				return m_shadowBias;
+			}
 
 			inline const char* getOutputFolder()
 			{

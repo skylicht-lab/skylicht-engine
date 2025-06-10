@@ -23,6 +23,7 @@ cbuffer cbPerFrame
 {
 	float4 uLightColor;
 	float4 uLightDirection;
+	float4 uShadowBias;
 	float4x4 uShadowMatrix;
 };
 

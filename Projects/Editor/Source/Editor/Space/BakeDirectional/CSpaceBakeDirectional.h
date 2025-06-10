@@ -67,6 +67,7 @@ namespace Skylicht
 
 			std::string m_folder;
 			std::string m_file;
+			float m_shadowBias;
 			bool m_bakeAll;
 			bool m_bakeUV0;
 			bool m_bakeDetailNormal;

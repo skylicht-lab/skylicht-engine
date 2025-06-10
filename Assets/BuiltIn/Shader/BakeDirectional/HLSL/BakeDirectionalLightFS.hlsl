@@ -12,18 +12,18 @@ cbuffer cbPerFrame
 {
 	float4 uLightColor;
 	float4 uLightDirection;
+	float4 uShadowBias;
 	float4x4 uShadowMatrix;
 };
 float shadowSimple(const float4 shadowCoord)
 {
 	int id = 0;
 	float visible = 1.0;
-	const float bias = 0.0001;
 	float depth = 0.0;
 	float result = 0.0;
 	float3 shadowUV = shadowCoord.xyz / shadowCoord.w;
 	depth = shadowUV.z;
-	depth -= bias;
+	depth -= uShadowBias.x;
 	float2 uv = shadowUV.xy;
 	float size = 1.0/2048;
 	result += (step(depth, uShadowMap.SampleLevel(uShadowMapSampler, uv + float2(-1, -1) * size, 0).r));

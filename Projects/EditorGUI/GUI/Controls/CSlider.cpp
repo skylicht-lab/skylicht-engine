@@ -238,7 +238,7 @@ namespace Skylicht
 
 				wchar_t text[64];
 				if (m_numberType == Float)
-					swprintf(text, 64, L"%.03f", m_value);
+					swprintf(text, 64, L"%.05f", m_value);
 				else
 					swprintf(text, 64, L"%d", (int)m_value);
 				setString(std::wstring(text));

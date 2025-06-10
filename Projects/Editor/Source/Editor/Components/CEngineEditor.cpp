@@ -33,6 +33,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "OcclusionQuery/COcclusionQuery.h"
 #include "IndirectLighting/CIndirectLighting.h"
 #include "LightProbes/CLightProbes.h"
+#include "Lightmap/CLightmap.h"
 #include "Animation/CAnimationController.h"
 
 #ifdef BUILD_SKYLICHT_LIGHMAPPER
@@ -90,6 +91,7 @@ namespace Skylicht
 
 		USE_COMPONENT(CIndirectLighting);
 		USE_COMPONENT(CLightProbes);
+		USE_COMPONENT(CLightmap);
 
 		USE_COMPONENT(CCube);
 		USE_COMPONENT(CSphere);
