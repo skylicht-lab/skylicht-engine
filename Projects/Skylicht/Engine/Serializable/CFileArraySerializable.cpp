@@ -2,10 +2,10 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2022 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -23,47 +23,39 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CObjectLayer.h"
+#include "CFileArraySerializable.h"
+#include "CValuePropertyTemplate.h"
 
 namespace Skylicht
 {
-	namespace Editor
+	SERIALIZABLE_REGISTER(CFileArraySerializable);
+
+	CFileArraySerializable::CFileArraySerializable() :
+		CArrayTypeSerializable("CFileArraySerializable")
 	{
-		CObjectLayer::CObjectLayer() :
-			CObjectSerializable("ObjectLayer")
+		m_objectType = FileArray;
+	}
+
+	CFileArraySerializable::CFileArraySerializable(CObjectSerializable* parent) :
+		CArrayTypeSerializable("CFileArraySerializable", parent)
+	{
+		m_objectType = FileArray;
+	}
+
+	CFileArraySerializable::~CFileArraySerializable()
+	{
+
+	}
+
+	std::vector<std::string> CFileArraySerializable::getListFiles()
+	{
+		std::vector<std::string> results;
+		for (int i = 0, n = getElementCount(); i < n; i++)
 		{
-			Name = "CObjectLayer";
-
-			char name[64];
-			for (int i = 0; i < 16; i++)
-			{
-				sprintf(name, "%d", i);
-				autoRelease(new CStringProperty(this, name, ""));
-			}
-
-			setName(0, "Default");
-			setName(1, "UI");
-			setName(2, "Transparent FX");
-			setName(3, "Sky");
-			setName(4, "Enviroment");
-			setName(5, "Collision");
+			CFilePathProperty* filePropety = dynamic_cast<CFilePathProperty*>(getElement(i));
+			if (filePropety)
+				results.push_back(filePropety->get());
 		}
-
-		CObjectLayer::~CObjectLayer()
-		{
-
-		}
-
-		const std::string& CObjectLayer::getName(int i)
-		{
-			CStringProperty* value = dynamic_cast<CStringProperty*>(getPropertyID(i));
-			return value->get();
-		}
-
-		void CObjectLayer::setName(int i, const char* name)
-		{
-			CStringProperty* value = dynamic_cast<CStringProperty*>(getPropertyID(i));
-			value->set(name);
-		}
+		return results;
 	}
 }

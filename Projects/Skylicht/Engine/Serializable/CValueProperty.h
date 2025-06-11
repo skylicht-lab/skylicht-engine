@@ -59,6 +59,8 @@ namespace Skylicht
 		None,
 		ObjectArray,
 		ObjectInterpolate,
+		FileArray,
+		TextureArray,
 		NumObjectType
 	};
 

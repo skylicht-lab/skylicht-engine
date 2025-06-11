@@ -268,10 +268,6 @@ namespace Skylicht
 			// create new scene
 			m_scene = m_spaceScene->initNullScene();
 
-			// set scene name
-			std::string sceneName = CPath::getFileName(path);
-			m_scene->setName(sceneName.c_str());
-
 			m_spaceScene->enableRender(false);
 			m_spaceScene->getEditor()->initLoadSceneGUI(path.c_str());
 
@@ -281,6 +277,12 @@ namespace Skylicht
 
 		void CSceneController::doFinishLoadScene()
 		{
+			if (!m_scenePath.empty())
+			{
+				std::string sceneName = CPath::getFileName(m_scenePath);
+				m_scene->setName(sceneName.c_str());
+			}
+
 			CZone* zone = m_scene->getZone(0);
 
 			if (zone != NULL && !zone->isEditorObject())

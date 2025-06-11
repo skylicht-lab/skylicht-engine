@@ -46,11 +46,5 @@ namespace Skylicht
 		{
 
 		}
-
-		void MeshExportSettings::saveToFile()
-		{
-			if (!m_savePath.empty())
-				save(m_savePath.c_str());
-		}
 	}
 }

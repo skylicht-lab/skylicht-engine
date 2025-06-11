@@ -45,8 +45,6 @@ namespace Skylicht
 			MeshExportSettings();
 
 			virtual ~MeshExportSettings();
-
-			void saveToFile();
 		};
 	}
 }

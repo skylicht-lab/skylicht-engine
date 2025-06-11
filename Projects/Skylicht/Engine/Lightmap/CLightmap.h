@@ -37,9 +37,11 @@ namespace Skylicht
 
 	protected:
 		std::vector<std::string> m_lightmapPaths;
+		std::vector<std::string> m_lightDataExternal;
 
 		ITexture* m_lightmap;
 
+		bool m_autoLoadLightmap;
 		bool m_internalLightmap;
 
 		int m_lightmapBeginIndex;
@@ -79,6 +81,11 @@ namespace Skylicht
 		std::vector<CLightmapData*>& getData()
 		{
 			return m_data;
+		}
+
+		const std::vector<std::string>& getLightDataExternal()
+		{
+			return m_lightDataExternal;
 		}
 
 		bool isLightmapEmpty();

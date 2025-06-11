@@ -115,6 +115,8 @@ namespace Skylicht
 
 		virtual bool save(const char* file);
 
+		virtual bool saveToFile();
+
 		virtual bool load(const char* file);
 
 		virtual void save(io::IXMLWriter* writer);

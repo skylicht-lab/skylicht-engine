@@ -46,11 +46,5 @@ namespace Skylicht
 		{
 
 		}
-
-		void SpriteExportSettings::saveToFile()
-		{
-			if (!m_savePath.empty())
-				save(m_savePath.c_str());
-		}
 	}
 }

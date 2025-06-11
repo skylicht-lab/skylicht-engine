@@ -40,8 +40,6 @@ namespace Skylicht
 			const std::string& getName(int i);
 
 			void setName(int i, const char* name);
-
-			void saveToFile();
 		};
 	}
 }

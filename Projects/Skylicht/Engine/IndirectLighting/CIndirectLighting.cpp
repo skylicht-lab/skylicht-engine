@@ -42,7 +42,8 @@ namespace Skylicht
 		m_autoSH(true),
 		m_internalIndirectLM(false),
 		m_indirectLM(NULL),
-		m_intensity(1.0f)
+		m_intensity(1.0f),
+		m_ambientColor(255, 60, 60, 60)
 	{
 
 	}
@@ -140,10 +141,16 @@ namespace Skylicht
 		object->autoRelease(enumType);
 
 		// ambient color
-		object->autoRelease(new CColorProperty(object, "ambient Color", m_ambientColor));
+		object->autoRelease(new CColorProperty(object, "ambientColor", m_ambientColor));
 
 		// lightmap
 		CArrayTypeSerializable<CFilePathProperty>* textureArray = new CArrayTypeSerializable<CFilePathProperty>("lightmap", object);
+		textureArray->OnCreateElement = [](CValueProperty* p)
+			{
+				CFilePathProperty* filePath = (CFilePathProperty*)p;
+				filePath->Exts = CTextureManager::getTextureExts();
+			};
+
 		for (std::string& path : m_indirectLMPaths)
 			textureArray->autoRelease(new CFilePathProperty(textureArray, "texture", path.c_str(), CTextureManager::getTextureExts()));
 		object->autoRelease(textureArray);
@@ -157,7 +164,7 @@ namespace Skylicht
 
 		EIndirectType type = object->get<EIndirectType>("type", EIndirectType::SH9);
 
-		m_ambientColor = object->get<SColor>("ambient Color", SColor(255, 60, 60, 60));
+		m_ambientColor = object->get<SColor>("ambientColor", SColor(255, 60, 60, 60));
 
 		bool haveLightmap = false;
 		CArraySerializable* textureArray = (CArraySerializable*)object->getProperty("lightmap");

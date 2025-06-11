@@ -124,6 +124,13 @@ namespace Skylicht
 		return true;
 	}
 
+	bool CObjectSerializable::saveToFile()
+	{
+		if (!m_savePath.empty())
+			return save(m_savePath.c_str());
+		return false;
+	}
+
 	bool CObjectSerializable::load(const char* file)
 	{
 		io::IXMLReader* reader = getIrrlichtDevice()->getFileSystem()->createXMLReader(file);
@@ -142,7 +149,9 @@ namespace Skylicht
 	{
 		char elementName[512];
 
-		if (m_objectType == ObjectArray)
+		if (m_objectType == ObjectArray ||
+			m_objectType == FileArray ||
+			m_objectType == TextureArray)
 			sprintf(elementName, "node type=\"%s\" array=\"true\"", Name.c_str());
 		else
 			sprintf(elementName, "node type=\"%s\"", Name.c_str());

@@ -438,6 +438,8 @@ namespace Skylicht
 			submenu->addItem(L"Font");
 			submenu->addItem(L"GUI");
 			submenu->addItem(L"Sprite");
+			submenu->addItem(L"File array");
+			submenu->addItem(L"Texture array");
 			submenu->OnCommand = BIND_LISTENER(&CEditor::OnCommandAssetCreate, this);
 
 			GUI::CMenuItem* gameObject = m_menuBar->addItem(L"GameObject");
@@ -1346,6 +1348,14 @@ namespace Skylicht
 			else if (label == L"GUI")
 			{
 				assetCreater->createEmptyGUI();
+			}
+			else if (label == L"File array")
+			{
+				assetCreater->createEmptyFileArray();
+			}
+			else if (label == L"Texture array")
+			{
+				assetCreater->createEmptyTextureArray();
 			}
 		}
 

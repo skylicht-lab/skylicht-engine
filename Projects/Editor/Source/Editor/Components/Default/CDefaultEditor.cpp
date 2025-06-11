@@ -466,7 +466,9 @@ namespace Skylicht
 							};
 					}
 
-					if (object->getObjectType() == ObjectArray)
+					if (object->getObjectType() == ObjectArray ||
+						object->getObjectType() == FileArray ||
+						object->getObjectType() == TextureArray)
 					{
 						CArraySerializable* arrayObject = (CArraySerializable*)object;
 

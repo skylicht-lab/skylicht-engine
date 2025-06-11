@@ -39,6 +39,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "ResourceSettings/SpriteExportSettings.h"
 #include "Graphics2D/CGUIExporter.h"
 #include "Graphics2D/SpriteFrame/CFontSource.h"
+#include "Serializable/CFileArraySerializable.h"
+#include "Serializable/CTextureArraySerializable.h"
 
 namespace Skylicht
 {
@@ -181,6 +183,32 @@ namespace Skylicht
 			importAndSelect(fullPath.c_str());
 
 			canvas->remove();
+		}
+
+		void CAssetCreateController::createEmptyFileArray()
+		{
+			CAssetManager* assetMgr = CAssetManager::getInstance();
+			std::string currentFolder = getCurrentFolder();
+
+			std::string fullPath = assetMgr->generateAssetPath("/File%02d.array", currentFolder.c_str());
+
+			CFileArraySerializable fileArray;
+			fileArray.save(fullPath.c_str());
+
+			importAndSelect(fullPath.c_str());
+		}
+
+		void CAssetCreateController::createEmptyTextureArray()
+		{
+			CAssetManager* assetMgr = CAssetManager::getInstance();
+			std::string currentFolder = getCurrentFolder();
+
+			std::string fullPath = assetMgr->generateAssetPath("/File%02d.texarray", currentFolder.c_str());
+
+			CTextureArraySerializable fileArray;
+			fileArray.save(fullPath.c_str());
+
+			importAndSelect(fullPath.c_str());
 		}
 
 		void CAssetCreateController::syncTemplateIdToAllChild(CGameObject* obj)

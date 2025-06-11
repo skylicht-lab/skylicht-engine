@@ -22,48 +22,34 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CObjectLayer.h"
+#pragma once
+
+#include "CAssetEditor.h"
+#include "Serializable/CFileArraySerializable.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		CObjectLayer::CObjectLayer() :
-			CObjectSerializable("ObjectLayer")
+		class CFileArrayEditor : public CAssetEditor
 		{
-			Name = "CObjectLayer";
+		protected:
+			CFileArraySerializable* m_fileArray;
+			CObjectSerializable* m_obj;
+		public:
+			CFileArrayEditor();
 
-			char name[64];
-			for (int i = 0; i < 16; i++)
-			{
-				sprintf(name, "%d", i);
-				autoRelease(new CStringProperty(this, name, ""));
-			}
+			virtual ~CFileArrayEditor();
 
-			setName(0, "Default");
-			setName(1, "UI");
-			setName(2, "Transparent FX");
-			setName(3, "Sky");
-			setName(4, "Enviroment");
-			setName(5, "Collision");
-		}
+			virtual void closeGUI();
 
-		CObjectLayer::~CObjectLayer()
-		{
+			virtual void initGUI(const char* path, CSpaceProperty* ui);
 
-		}
+			virtual void onUpdateValue(CObjectSerializable* object);
 
-		const std::string& CObjectLayer::getName(int i)
-		{
-			CStringProperty* value = dynamic_cast<CStringProperty*>(getPropertyID(i));
-			return value->get();
-		}
+			CObjectSerializable* createGetFileArray(const char* path);
 
-		void CObjectLayer::setName(int i, const char* name)
-		{
-			CStringProperty* value = dynamic_cast<CStringProperty*>(getPropertyID(i));
-			value->set(name);
-		}
+			DECLARE_GETTYPENAME(CFileArrayEditor)
+		};
 	}
 }

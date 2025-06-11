@@ -2,10 +2,10 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2025 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -22,48 +22,24 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
-#include "CObjectLayer.h"
+#pragma once
+
+#include "CArraySerializable.h"
+#include <functional>
 
 namespace Skylicht
 {
-	namespace Editor
+	class SKYLICHT_API CFileArraySerializable : public CArrayTypeSerializable<CFilePathProperty>
 	{
-		CObjectLayer::CObjectLayer() :
-			CObjectSerializable("ObjectLayer")
-		{
-			Name = "CObjectLayer";
+	public:
+		CFileArraySerializable();
 
-			char name[64];
-			for (int i = 0; i < 16; i++)
-			{
-				sprintf(name, "%d", i);
-				autoRelease(new CStringProperty(this, name, ""));
-			}
+		CFileArraySerializable(CObjectSerializable* parent);
 
-			setName(0, "Default");
-			setName(1, "UI");
-			setName(2, "Transparent FX");
-			setName(3, "Sky");
-			setName(4, "Enviroment");
-			setName(5, "Collision");
-		}
+		virtual ~CFileArraySerializable();
 
-		CObjectLayer::~CObjectLayer()
-		{
+		std::vector<std::string> getListFiles();
 
-		}
-
-		const std::string& CObjectLayer::getName(int i)
-		{
-			CStringProperty* value = dynamic_cast<CStringProperty*>(getPropertyID(i));
-			return value->get();
-		}
-
-		void CObjectLayer::setName(int i, const char* name)
-		{
-			CStringProperty* value = dynamic_cast<CStringProperty*>(getPropertyID(i));
-			value->set(name);
-		}
-	}
+		DECLARE_GETTYPENAME(CFileArraySerializable)
+	};
 }

@@ -45,8 +45,6 @@ namespace Skylicht
 			SpriteExportSettings();
 
 			virtual ~SpriteExportSettings();
-
-			void saveToFile();
 		};
 	}
 }
