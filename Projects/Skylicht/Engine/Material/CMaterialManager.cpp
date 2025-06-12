@@ -110,6 +110,7 @@ namespace Skylicht
 
 		do
 		{
+			size_t pos = 0;
 			std::map<std::string, ArrayMaterial>::iterator i = m_materials.begin(), end = m_materials.end();
 			while (i != end)
 			{
@@ -138,10 +139,11 @@ namespace Skylicht
 					break;
 				}
 
+				++pos;
 				++i;
 			}
 
-			if (i == m_materials.end())
+			if (pos >= m_materials.size())
 				done = true;
 			else
 				done = false;
