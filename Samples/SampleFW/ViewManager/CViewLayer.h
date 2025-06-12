@@ -31,6 +31,10 @@ public:
 
 	bool onBack();
 
+	void pushView(CView* view);
+
+	bool changeView(CView* view);
+
 	template<class T>
 	T* pushView();
 

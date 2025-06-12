@@ -301,6 +301,9 @@ namespace Skylicht
 
 	void CBaseRP::drawInstancingMeshBuffer(CMesh* mesh, int bufferID, CShader* instancingShader, CEntityManager* entity, int entityID, bool skinnedMesh)
 	{
+		if (!instancingShader)
+			return;
+
 		updateTextureResource(mesh, bufferID, entity, entityID, skinnedMesh);
 
 		IMeshBuffer* mb = mesh->getMeshBuffer(bufferID);

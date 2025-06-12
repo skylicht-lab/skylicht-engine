@@ -88,6 +88,30 @@ bool CViewLayer::onBack()
 	return true;
 }
 
+void CViewLayer::pushView(CView* view)
+{
+	if (m_views.size() > 0)
+		m_views[0]->onDeactive();
+
+	m_views.insert(m_views.begin(), view);
+	view->onInit();
+	view->onData();
+}
+
+bool CViewLayer::changeView(CView* view)
+{
+	if (m_views.size() > 0)
+	{
+		m_willDeleteView.push_back(m_views[0]);
+		m_views.erase(m_views.begin());
+
+		m_views.insert(m_views.begin(), view);
+		view->onInit();
+		view->onData();
+		return true;
+	}
+	return false;
+}
 
 void CViewLayer::popView()
 {

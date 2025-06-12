@@ -133,6 +133,7 @@ namespace Skylicht
 
 				if (remove)
 				{
+					// remove key
 					m_materials.erase(i);
 					break;
 				}
@@ -140,7 +141,7 @@ namespace Skylicht
 				++i;
 			}
 
-			if (i == end)
+			if (i == m_materials.end())
 				done = true;
 			else
 				done = false;
