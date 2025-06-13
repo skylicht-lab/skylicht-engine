@@ -138,6 +138,8 @@ namespace Skylicht
 		virtual void OnSetConstants(CShader* shader, SUniform* uniform, IMaterialRenderer* matRender, bool vertexShader) = 0;
 	};
 
+	/// @brief The object class describes shader information
+	/// @ingroup Materials
 	class SKYLICHT_API CShader : public CBaseShaderCallback
 	{
 	public:

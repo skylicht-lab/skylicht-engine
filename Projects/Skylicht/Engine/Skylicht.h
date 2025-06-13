@@ -29,6 +29,30 @@ namespace irr
 	class IrrlichtDevice;
 }
 
+/**
+ * @defgroup Materials
+ * @brief This group includes object classes related to materials, shaders, and textures
+ */
+
+ /**
+  * @defgroup Graphics2D Graphics 2D
+  * @brief This group includes object classes related to sprite, gui, font...
+  */
+
+/*! \mainpage Skylicht Engine API documentation
+ *
+ * \section intro Introduction
+ *
+ * Welcome to the Skylicht Engine API documentation.
+ * Here you'll find any information you'll need to develop applications with
+ * the Skylicht Engine. 
+ * 
+ * For more information on how to install and build this library, you can refer to the Readme.md file or visit <A HREF="https://github.com/skylicht-lab/skylicht-engine" >github: skylicht-engine</A>
+ *
+ * You can start by looking at the <A HREF="topics.html">topics</A>
+ */
+
+/// @brief Everything in the Skylicht Engine
 namespace Skylicht
 {
 	SKYLICHT_API void initSkylicht(IrrlichtDevice* device, bool server = false);

@@ -129,6 +129,8 @@ namespace Skylicht
 	void CTextureManager::removeTexture(const char* namePackage)
 	{
 		IVideoDriver* driver = getVideoDriver();
+		char log[1024];
+
 		bool needContinue = false;
 		do
 		{
@@ -140,19 +142,27 @@ namespace Skylicht
 				if ((*i)->Package == namePackage)
 				{
 					ITexture* texture = (*i)->Texture;
+					if (texture->getReferenceCount() == 1)
+					{
+						sprintf(log, "Remove Texture: %s - refCount: %d",
+							texture->getName().getPath().c_str(),
+							texture->getReferenceCount() - 1);
+						os::Printer::log(log);
 
-					char log[1024];
-					sprintf(log, "Remove Texture: %s - refCount: %d",
-						texture->getName().getPath().c_str(),
-						texture->getReferenceCount() - 1);
-					os::Printer::log(log);
+						driver->removeTexture(texture);
+						delete (*i);
 
-					driver->removeTexture(texture);
-					delete (*i);
-
-					m_textureList.erase(i);
-					needContinue = true;
-					break;
+						m_textureList.erase(i);
+						needContinue = true;
+						break;
+					}
+					else
+					{
+						sprintf(log, "Skip remove Texture: %s - refCount: %d",
+							texture->getName().getPath().c_str(),
+							texture->getReferenceCount() - 1);
+						os::Printer::log(log);
+					}
 				}
 				i++;
 			}
@@ -296,7 +306,7 @@ namespace Skylicht
 #else
 			CStringImp::replacePathExt(ansiPath, ".tga");
 #endif
-		}
+	}
 		else if (driver->getDriverType() == video::EDT_DIRECT3D11 || driver->getDriverType() == video::EDT_OPENGL)
 		{
 			CStringImp::replacePathExt(ansiPath, ".dds");
@@ -336,7 +346,7 @@ namespace Skylicht
 
 		result = ansiPath;
 		return true;
-	}
+}
 
 	ITexture* CTextureManager::getTexture(const char* path)
 	{

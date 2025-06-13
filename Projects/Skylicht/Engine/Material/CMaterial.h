@@ -31,6 +31,9 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief The object class describes material information
+	/// such as which shader it's associated with, which texture it uses, and what its color parameters are.
+	/// @ingroup Materials
 	class SKYLICHT_API CMaterial : public IReferenceCounted
 	{
 	public:

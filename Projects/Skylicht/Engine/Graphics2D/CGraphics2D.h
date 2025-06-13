@@ -36,6 +36,25 @@ namespace Skylicht
 	class CCamera;
 	class CCanvas;
 
+	/// @brief The object class supports 2D drawing on the screen.
+	/// @ingroup Graphics2D
+	/// 
+	/// @code
+	/// CGraphics2D *g = CGraphics2D::getInstance();
+	/// 
+	/// // setup 2d projection
+	/// float w = 800.0f;
+	/// float h = 600.0f;
+	/// 
+	/// core::matrix4 projection, view;
+	/// projection.buildProjectionMatrixOrthoLH(w, -h, -1.0f, 1.0f);
+	/// view.setTranslation(core::vector3df(-w * 0.5f, -h * 0.5f, 0.0f);
+	/// 
+	/// g->beginRenderGUI(projection, view);
+	/// ... draw code
+	/// g->endRenderGUI();
+	/// 
+	/// @endcode
 	class SKYLICHT_API CGraphics2D
 	{
 	public:

@@ -34,6 +34,13 @@ namespace Skylicht
 	class IShaderCallback;
 	class IShaderInstancing;
 
+	/// @brief The object class supports shader management
+	/// @ingroup Materials
+	/// 
+	/// @code
+	/// CShaderManager *shaderMgr = CShaderManager::getInstance();
+	/// shaderMgr->loadShader("BuiltIn/Shader/Transparent/Transparent.xml");
+	/// @endcode
 	class SKYLICHT_API CShaderManager
 	{
 	public:

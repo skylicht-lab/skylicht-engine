@@ -31,6 +31,12 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief The object class supports texture management
+	/// @ingroup Materials
+	/// 
+	/// @code
+	/// ITexture *texture = CTextureManager::getInstance()->getTexture("BuiltIn/Textures/Skylicht.png");
+	/// @endcode
 	class SKYLICHT_API CTextureManager
 	{
 	public:

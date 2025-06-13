@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CSpriteManager.h"
+#include "TextureManager/CTextureManager.h"
 #include "Utils/CPath.h"
 #include "Utils/CStringImp.h"
 
@@ -31,8 +32,7 @@ namespace Skylicht
 {
 	IMPLEMENT_SINGLETON(CSpriteManager);
 
-	CSpriteManager::CSpriteManager() :
-		m_currentCategory("global")
+	CSpriteManager::CSpriteManager()
 	{
 
 	}
@@ -51,14 +51,11 @@ namespace Skylicht
 			releaseSprite(s);
 	}
 
-	CSpriteFrame* CSpriteManager::loadSprite(const char* path, const char* category)
+	CSpriteFrame* CSpriteManager::loadSprite(const char* path)
 	{
 		char ansiPath[512];
 
-		if (category == NULL)
-		{
-			category = m_currentCategory.c_str();
-		}
+		const char* category = CTextureManager::getInstance()->getCurrentPackage();
 
 		std::string fixPath = CPath::normalizePath(path);
 		strcpy(ansiPath, fixPath.c_str());
