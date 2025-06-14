@@ -28,7 +28,7 @@ namespace Skylicht
 {
 	class CAtlas;
 
-	struct SImage
+	struct SKYLICHT_API SImage
 	{
 		int ID;
 		std::string Path;
@@ -43,7 +43,7 @@ namespace Skylicht
 		}
 	};
 
-	struct SModuleRect
+	struct SKYLICHT_API SModuleRect
 	{
 		int ID;
 		std::string Name;
@@ -89,7 +89,7 @@ namespace Skylicht
 		void getColorBuffer(video::S3DVertex* vertices, const SColor& c);
 	};
 
-	struct SFrame
+	struct SKYLICHT_API SFrame
 	{
 		std::string ID;
 		std::string Name;
@@ -114,6 +114,11 @@ namespace Skylicht
 		}
 	};
 
+	/// @brief The object class holds data on an image, including the locations of sprites and frames on it.
+	/// 
+	/// You can use the SkylichtEditor to combine multiple image files into a single sprite file to optimize drawing calls.
+	/// Use the CGraphics2D object or the CGUISprite, CGUIFitSprite to draw this sprite and image.
+	/// @ingroup Graphics2D
 	class SKYLICHT_API CSpriteFrame : public IReferenceCounted
 	{
 	protected:

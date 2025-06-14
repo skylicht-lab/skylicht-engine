@@ -24,13 +24,16 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include "Entity/IRenderSystem.h"
 #include "Entity/CEntityManager.h"
 
 namespace Skylicht
 {
+	/// @brief This is a Render System object class that supports 2D drawing.
+	/// @ingroup Graphics2D
+	/// You can find more information in the CTextBilboardRenderer class, which inherits from it.
 	class SKYLICHT_API CGraphic2DRenderer : public IRenderSystem
 	{
-		// see CTextBilboardRenderer for more details
 	private:
 		core::matrix4 m_saveProjection;
 		core::matrix4 m_saveView;

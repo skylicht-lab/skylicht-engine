@@ -31,6 +31,18 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief This object class loads fonts from .ttf and .otf files, converting them into sprite images.
+	/// @ingroup Graphics2D
+	/// 
+	/// To load the font file, you'll require assistance from the CGlyphFreetype object class.
+	/// Then, use the CGraphics2D object to draw text with the font.
+	/// 
+	/// @code
+	/// CGlyphFreetype* freetypeFont = CGlyphFreetype::getInstance();
+	/// freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
+	/// CGlyphFont* font = new CGlyphFont();
+	/// font->setFont("Segoe UI Light", 25);
+	/// @endcode
 	class SKYLICHT_API CGlyphFont :
 		public CSpriteFrame,
 		public IFont

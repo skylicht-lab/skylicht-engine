@@ -607,6 +607,10 @@ namespace Skylicht
 			setTarget(target, cubeFaceId);
 		}
 
+		// Fix bugs if any textures are removed
+		for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
+			m_writeDepthMaterial.setTexture(i, NULL);
+
 		onNext(target, camera, entityManager, viewport, cubeFaceId);
 	}
 }

@@ -28,6 +28,14 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief The object class holds data on an image, including the locations of sprites and frames on it.
+	/// @ingroup Graphics2D
+	/// 
+	/// @code
+	/// CSpriteAtlas* sprite = new CSpriteAtlas(video::ECF_A8R8G8B8, 1024, 1024);
+	/// SFrame* btnYellowBackground = sprite->addFrame("btn_yellow.png", "LuckyDraw/btn_yellow.png");
+	/// @endcode
+	/// Then, use the CGraphics2D object or the CGUISprite, CGUIFitSprite to draw this sprite and image.
 	class SKYLICHT_API CSpriteAtlas : public CSpriteFrame
 	{
 	protected:

@@ -30,14 +30,14 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class SKYLICHT_API CTextBilboardRenderer : public CGraphic2DRenderer
+	class SKYLICHT_API CTextBillboardRenderer : public CGraphic2DRenderer
 	{
 	protected:
 
 	public:
-		CTextBilboardRenderer();
+		CTextBillboardRenderer();
 
-		virtual ~CTextBilboardRenderer();
+		virtual ~CTextBillboardRenderer();
 
 		virtual void beginQuery(CEntityManager* entityManager);
 

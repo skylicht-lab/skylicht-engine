@@ -43,6 +43,9 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief This class manages GUI components, including creating and deleting images and sprites.
+	/// @ingroup Graphics2D
+	/// You can initialize GUI components using the UI in the SkylichtEditor, or load CCanvas information via the CGUIImporter class.
 	class SKYLICHT_API CCanvas : public CComponentSystem
 	{
 	protected:

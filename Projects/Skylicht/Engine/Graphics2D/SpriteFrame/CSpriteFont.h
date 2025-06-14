@@ -29,12 +29,10 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	/// <summary>
-	/// CSpriteFont
-	/// Use the software BMFont
-	/// https://www.angelcode.com/products/bmfont/
-	/// To generate the font sprite
-	/// </summary>
+	/// @brief This object class is designed to load fonts, which are created using the BMFont software (https://www.angelcode.com/products/bmfont).
+	/// 
+	/// Use the CGraphics2D object to draw text with the font.
+	/// @ingroup Graphics2D
 	class SKYLICHT_API CSpriteFont :
 		public CSpriteFrame,
 		public IFont

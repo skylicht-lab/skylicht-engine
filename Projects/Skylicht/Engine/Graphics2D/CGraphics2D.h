@@ -48,7 +48,7 @@ namespace Skylicht
 	/// 
 	/// core::matrix4 projection, view;
 	/// projection.buildProjectionMatrixOrthoLH(w, -h, -1.0f, 1.0f);
-	/// view.setTranslation(core::vector3df(-w * 0.5f, -h * 0.5f, 0.0f);
+	/// view.setTranslation(core::vector3df(-w * 0.5f, -h * 0.5f, 0.0f));
 	/// 
 	/// g->beginRenderGUI(projection, view);
 	/// ... draw code

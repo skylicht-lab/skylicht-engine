@@ -28,6 +28,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief The object class supports exporting Canvas objects to files or data
+	/// @ingroup Graphics2D
 	class SKYLICHT_API CGUIExporter
 	{
 	public:

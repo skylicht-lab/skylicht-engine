@@ -131,12 +131,14 @@ namespace Skylicht
 		IVideoDriver* driver = getVideoDriver();
 		char log[1024];
 
+		std::map<ITexture*, int> skips;
+
+		int pos = 0;
 		bool needContinue = false;
 		do
 		{
 			needContinue = false;
-
-			std::vector<STexturePackage*>::iterator i = m_textureList.begin(), end = m_textureList.end();
+			std::vector<STexturePackage*>::iterator i = m_textureList.begin() + pos, end = m_textureList.end();
 			while (i != end)
 			{
 				if ((*i)->Package == namePackage)
@@ -158,17 +160,23 @@ namespace Skylicht
 					}
 					else
 					{
-						sprintf(log, "Skip remove Texture: %s - refCount: %d",
-							texture->getName().getPath().c_str(),
-							texture->getReferenceCount() - 1);
-						os::Printer::log(log);
+						skips[texture] = 1;
 					}
 				}
-				i++;
+				++i;
+				++pos;
 			}
 
 		} while (needContinue);
 
+		for (auto i : skips)
+		{
+			ITexture* texture = i.first;
+			sprintf(log, "Skip remove Texture: %s - refCount: %d",
+				texture->getName().getPath().c_str(),
+				texture->getReferenceCount() - 1);
+			os::Printer::log(log);
+		}
 	}
 
 	const char* CTextureManager::getTexturePath(ITexture* tex)
@@ -306,7 +314,7 @@ namespace Skylicht
 #else
 			CStringImp::replacePathExt(ansiPath, ".tga");
 #endif
-	}
+		}
 		else if (driver->getDriverType() == video::EDT_DIRECT3D11 || driver->getDriverType() == video::EDT_OPENGL)
 		{
 			CStringImp::replacePathExt(ansiPath, ".dds");
@@ -346,7 +354,7 @@ namespace Skylicht
 
 		result = ansiPath;
 		return true;
-}
+	}
 
 	ITexture* CTextureManager::getTexture(const char* path)
 	{
