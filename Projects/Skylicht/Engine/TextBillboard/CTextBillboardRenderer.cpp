@@ -23,48 +23,48 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CTextBilboardRenderer.h"
+#include "CTextBillboardRenderer.h"
 
 #include "Graphics2D/CGraphics2D.h"
 
 namespace Skylicht
 {
-	CTextBilboardRenderer::CTextBilboardRenderer()
+	CTextBillboardRenderer::CTextBillboardRenderer()
 	{
 
 	}
 
-	CTextBilboardRenderer::~CTextBilboardRenderer()
+	CTextBillboardRenderer::~CTextBillboardRenderer()
 	{
 
 	}
 
-	void CTextBilboardRenderer::beginQuery(CEntityManager* entityManager)
+	void CTextBillboardRenderer::beginQuery(CEntityManager* entityManager)
 	{
 
 	}
 
-	void CTextBilboardRenderer::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
+	void CTextBillboardRenderer::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
 
 	}
 
-	void CTextBilboardRenderer::init(CEntityManager* entityManager)
+	void CTextBillboardRenderer::init(CEntityManager* entityManager)
 	{
 
 	}
 
-	void CTextBilboardRenderer::update(CEntityManager* entityManager)
+	void CTextBillboardRenderer::update(CEntityManager* entityManager)
 	{
 
 	}
 
-	void CTextBilboardRenderer::render(CEntityManager* entityManager)
+	void CTextBillboardRenderer::render(CEntityManager* entityManager)
 	{
 
 	}
 
-	void CTextBilboardRenderer::postRender(CEntityManager* entityManager)
+	void CTextBillboardRenderer::postRender(CEntityManager* entityManager)
 	{
 		CTextBillboardManager* textMgr = CTextBillboardManager::getInstance();
 
@@ -81,7 +81,7 @@ namespace Skylicht
 		}
 
 		beginRender2D(viewportW, viewportH);
-		
+
 		CCamera* camera = entityManager->getCamera();
 
 		float x, y;
@@ -139,7 +139,7 @@ namespace Skylicht
 		endRender2D();
 	}
 
-	void CTextBilboardRenderer::renderText(CRenderTextData* renderTextData)
+	void CTextBillboardRenderer::renderText(CRenderTextData* renderTextData)
 	{
 		std::vector<std::vector<SModuleOffset*>>& lines = renderTextData->getModules();
 
@@ -167,7 +167,7 @@ namespace Skylicht
 		}
 	}
 
-	void CTextBilboardRenderer::renderText(float x, float y, CRenderTextData* renderTextData, std::vector<SModuleOffset*>& modules, int line)
+	void CTextBillboardRenderer::renderText(float x, float y, CRenderTextData* renderTextData, std::vector<SModuleOffset*>& modules, int line)
 	{
 		int numCharacter = (int)modules.size();
 
