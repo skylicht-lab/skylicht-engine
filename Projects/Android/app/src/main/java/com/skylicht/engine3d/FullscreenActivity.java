@@ -23,6 +23,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
@@ -170,6 +171,12 @@ public class FullscreenActivity extends AppCompatActivity {
 
         mVisible = true;
 
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mContentView.post(() -> mContentView.requestLayout());
     }
 
     @Override
