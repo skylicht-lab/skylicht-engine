@@ -295,7 +295,6 @@ namespace Skylicht
 		if (driver->getDriverType() == video::EDT_OPENGLES)
 		{
 #if defined(ANDROID)
-			// etc compress
 			CStringImp::replacePathExt(ansiPath, ".etc2");
 #elif defined(IOS)
 #if defined(USE_ETC_TEXTURE)
@@ -392,6 +391,13 @@ namespace Skylicht
 
 		core::array<io::path> paths;
 
+		os::Printer::log("CTextureManager::getTextureArray");
+		if (listTexture.size() == 0)
+		{
+			os::Printer::log("Error: list file is empty");
+			return NULL;
+		}
+
 		for (u32 i = 0, n = (u32)listTexture.size(); i < n; i++)
 		{
 			std::string fixPath = CPath::normalizePath(listTexture[i]);
@@ -414,7 +420,7 @@ namespace Skylicht
 			if (loadImage == true)
 			{
 				char log[1024];
-				sprintf(log, "Load array texture: %s", realPath.c_str());
+				sprintf(log, "getTextureArray texture: %s", realPath.c_str());
 				os::Printer::log(log);
 
 				io::IReadFile* file = fs->createAndOpenFile(realPath.c_str());
@@ -423,6 +429,12 @@ namespace Skylicht
 					image = driver->createImageFromFile(file);
 					file->drop();
 				}
+			}
+			else
+			{
+				char log[1024];
+				sprintf(log, "getTextureArray load image error!");
+				os::Printer::log(log);
 			}
 
 			if (image != NULL)
@@ -443,7 +455,7 @@ namespace Skylicht
 					if (w != imageW || h != imageH)
 					{
 						char errorLog[1024];
-						sprintf(errorLog, "Error: Texture size is not equal %d-%d: %s", w, h, realPath.c_str());
+						sprintf(errorLog, "Texture size is not equal %d-%d: %s", w, h, realPath.c_str());
 						os::Printer::log(errorLog);
 
 						image->drop();
@@ -459,7 +471,13 @@ namespace Skylicht
 
 		ITexture* texture = NULL;
 
-		if (listImage.size() > 0 && listImage[0] == NULL)
+		if (listImage.size() == 0)
+		{
+			char errorLog[512];
+			sprintf(errorLog, "Can not load texture array, size = 0");
+			os::Printer::log(errorLog);
+		}
+		else if (listImage.size() > 0 && listImage[0] == NULL)
 		{
 			char errorLog[512];
 			sprintf(errorLog, "Can not load texture array: %s", paths[0].c_str());
