@@ -47,9 +47,12 @@ namespace irr
  * Here you'll find any information you'll need to develop applications with
  * the Skylicht Engine. 
  * 
- * For more information on how to install and build this library, you can refer to the Readme.md file or visit <A HREF="https://github.com/skylicht-lab/skylicht-engine" >github: skylicht-engine</A>
+ * For more information on how to install and build this library, you can refer to the Readme.md file.
+ *
+ * To update to the latest version, please visit <A HREF="https://github.com/skylicht-lab/skylicht-engine" >github: skylicht-engine</A>
  *
  * You can start by looking at the <A HREF="topics.html">topics</A>
+ * 
  */
 
 /// @brief Everything in the Skylicht Engine

@@ -35,6 +35,8 @@ namespace Skylicht
 	/// @code
 	/// CSpriteFrame* spriteFrame = CSpriteManager::getInstance()->loadSprite("sprite.spritedata");
 	/// @endcode
+	/// 
+	/// @see CSpriteFrame
 	class SKYLICHT_API CSpriteManager
 	{
 	public:

@@ -30,7 +30,9 @@ namespace Skylicht
 {
 	/// @brief This object class helps initialize GUI components for the CCanvas from files and data.
 	/// @ingroup Graphics2D
-	/// This object class helps initialize GUI components for the CCanvas from files and data, which are extracted by the CGUIExporter class or created from SkylichtEditor
+	/// This object class helps initialize GUI components for the CCanvas from files (.gui) and data, which are extracted by the CGUIExporter class or created from Skylicht-Editor
+	/// 
+	/// @see CCanvas
 	/// 
 	/// @code
 	/// CZone* zone = scene->getZone(0);
