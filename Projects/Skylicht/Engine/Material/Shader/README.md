@@ -40,12 +40,60 @@ Additionally, you can view sample shader files in the `Assets\BuiltIn\Shader` fo
 | Attribute | Description | Value |
 |-----------|-------------|-------|
 | name | This is the Uniform name attached to the vertex shader or fragment shader | |
-| type | The value passed to the uniform | VIEW_PROJECTION<br>WORLD_VIEW_PROJECTION<br>VIEW<br>WORLD<br>WORLD_INVERSE<br>WORLD_INVERSE_TRANSPOSE<br>WORLD_TRANSPOSE<br>BONE_MATRIX<br>BONE_COUNT<br>SHADOW_MAP_MATRIX<br>SHADOW_MAP_DISTANCE<br>SHADOW_BIAS<br>WORLD_CAMERA_POSITION<br>LIGHT_COLOR<br>LIGHT_AMBIENT<br>WORLD_LIGHT_DIRECTION<br>POINT_LIGHT_COLOR<br>POINT_LIGHT_POSITION<br>POINT_LIGHT_ATTENUATION<br>SPOT_LIGHT_COLOR<br>SPOT_LIGHT_DIRECTION<br>SPOT_LIGHT_POSITION<br>SPOT_LIGHT_ATTENUATION<br>MATERIAL_PARAM<br>DEFAULT_VALUE<br>SHADER_VEC2<br>SHADER_VEC3<br>SHADER_VEC4<br>SH_CONST<br>CUSTOM_VALUE<br>TEXTURE_MIPMAP_COUNT<br>TEXTURE_WIDTH_HEIGHT<br>DEFERRED_VIEW<br>DEFERRED_PROJECTION<br>DEFERRED_VIEW_PROJECTION<br>TIME_STEP<br>PARTICLE_VIEW_UP<br>PARTICLE_VIEW_LOOK<br>PARTICLE_ORIENTATION_UP<br>PARTICLE_ORIENTATION_NORMAL<br>LIGHTMAP_INDEX<br>TIME<br>COLOR_INTENSITY<br>RENDER_TEXTURE_MATRIX<br> |
+| type | The value passed to the uniform |See next table|
 | valueIndex| Is an input parameter for a value type | |
-| value | Default value |
+| value | Default value ||
 | float | Number of elements in the array | Example:<br>1 is float<br>4 is float4<br>16 is float4x4 |
 | matrix| If a **uniform is a matrix**, this attribute is required for the Skylicht-Engine to transpose the matrix for DirectX |true|
 | directX| **For uniform textures**, this property is needed because OpenGL and DirectX handle uniform binding a bit differently. DirectX doesn't require binding uniform textures |false|
+
+Value table for the `type` property
+| Type | Description |
+|------|-------------|
+|VIEW_PROJECTION||
+|WORLD_VIEW_PROJECTION||
+|VIEW||
+|WORLD||
+|WORLD_INVERSE||
+|WORLD_INVERSE_TRANSPOSE||
+|WORLD_TRANSPOSE||
+|BONE_MATRIX||
+|BONE_COUNT||
+|SHADOW_MAP_MATRIX||
+|SHADOW_MAP_DISTANCE||
+|SHADOW_BIAS||
+|WORLD_CAMERA_POSITION||
+|LIGHT_COLOR||
+|LIGHT_AMBIENT||
+|WORLD_LIGHT_DIRECTION||
+|POINT_LIGHT_COLOR||
+|POINT_LIGHT_POSITION||
+|POINT_LIGHT_ATTENUATION||
+|SPOT_LIGHT_COLOR||
+|SPOT_LIGHT_DIRECTION||
+|SPOT_LIGHT_POSITION||
+|SPOT_LIGHT_ATTENUATION||
+|MATERIAL_PARAM||
+|DEFAULT_VALUE||
+|SHADER_VEC2||
+|SHADER_VEC3||
+|SHADER_VEC4||
+|SH_CONST||
+|CUSTOM_VALUE||
+|TEXTURE_MIPMAP_COUNT||
+|TEXTURE_WIDTH_HEIGHT||
+|DEFERRED_VIEW||
+|DEFERRED_PROJECTION||
+|DEFERRED_VIEW_PROJECTION||
+|TIME_STEP||
+|PARTICLE_VIEW_UP||
+|PARTICLE_VIEW_LOOK||
+|PARTICLE_ORIENTATION_UP||
+|PARTICLE_ORIENTATION_NORMAL||
+|LIGHTMAP_INDEX||
+|TIME||
+|COLOR_INTENSITY||
+|RENDER_TEXTURE_MATRIX||
 
 The order of uniforms defined in the .xml shader file and the .hlsl shader file must be the same.
 
@@ -80,12 +128,12 @@ cbuffer cbPerObject
 Describes controls like sliders and images for adjusting uniform values in the Skylicht-Editor.
 | Attribute | Description | Value |
 |-----------|-------------|-------|
-| control | Control name | UITexture<br>UIColor<br>UIFloat<br>UIFloat2<br>UIFloat3<br>UIFloat4<br>UIGroup
+| control | Control name | UITexture<br>UIColor<br>UIFloat<br>UIFloat2<br>UIFloat3<br>UIFloat4<br>UIGroup |
 | name | Uniform name | |
 | autoReplace | Only used for the UITexture control; it will automatically find textures with corresponding filenames |
 
 ## shader
-```xml;
+```xml
 <shader type="GLSL" 
 	vs="GLSL/SGShadowVS.glsl" 
 	fs="GLSL/SGLitShadowFS.glsl" 
@@ -103,9 +151,9 @@ Describes controls like sliders and images for adjusting uniform values in the S
 | Attribute | Description | Value |
 |-----------|-------------|-------|
 | type | | GLSL, HLSL |
-| vs | Path to the vertex shader file |
-| fs | Path to the fragment shader file |
-| vs_source<br>fs_source | Path to the source file; it will be compiled by the `python BuildShader.py` command.<br>The compiled output will be overwritten to the vs or fs path |
+| vs | Path to the vertex shader file | |
+| fs | Path to the fragment shader file | |
+| vs_source<br>fs_source | Path to the source file; it will be compiled by the `python BuildShader.py` command.<br>The compiled output will be overwritten to the vs or fs path | |
 | define | Definition flags during compilation | You can refer to the sample file `BuiltIn\Shader\PBR\Forward\PBR.xml`|
 
 ## instancing
