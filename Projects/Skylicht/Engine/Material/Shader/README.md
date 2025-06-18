@@ -29,14 +29,14 @@ Let's take a look at an example shader file (.xml)
 Additionally, you can view sample shader files in the `Assets\BuiltIn\Shader` folder.
 
 ## shaderConfig
-
+`<shaderConfig name="TransparentColor" baseShader="TRANSPARENT_ALPHA_CHANNEL">`
 | Attribute | Description | Value |
 |-----------|-------------|-------|
 | name | This is the shader name | |
 | baseShader | Description of inherited shader | SOLID<br>TRANSPARENT_ADD_COLOR<br>TRANSPARENT_MULTIPLY_COLOR<br>TRANSPARENT_SCREEN_COLOR<br>TRANSPARENT_ALPHA_CHANNEL |
 
 ## uniforms
-
+`<uniform name="uColor" type="MATERIAL_PARAM" valueIndex="1" value="1.0, 1.0, 1.0, 1.0" float="4"/>`
 | Attribute | Description | Value |
 |-----------|-------------|-------|
 | name | This is the Uniform name attached to the vertex shader or fragment shader | |
@@ -71,6 +71,12 @@ cbuffer cbPerObject
 
 
 ## ui
+```xml
+<ui control="UIGroup" name="Texture">
+	<ui control="UITexture" name="uTexDiffuse" autoReplace="_diff.tga"/>
+	<ui control="UIColor" name="uColor"/>
+</ui>
+```
 Describes controls like sliders and images for adjusting uniform values in the Skylicht-Editor.
 | Attribute | Description | Value |
 |-----------|-------------|-------|
@@ -79,6 +85,21 @@ Describes controls like sliders and images for adjusting uniform values in the S
 | autoReplace | Only used for the UITexture control; it will automatically find textures with corresponding filenames |
 
 ## shader
+```xml;
+<shader type="GLSL" 
+	vs="GLSL/SGShadowVS.glsl" 
+	fs="GLSL/SGLitShadowFS.glsl" 
+	vs_source="GLSL/SGVS.d.glsl" 
+	fs_source="GLSL/SGLitFS.d.glsl" 
+	define="SHADOW;OPTIMIZE_SHADOW"/>
+
+<shader type="HLSL" 
+	vs="HLSL/SGShadowVS.hlsl"
+	fs="HLSL/SGLitShadowFS.hlsl"
+	vs_source="HLSL/SGVS.d.hlsl"
+	fs_source="HLSL/SGLitFS.d.hlsl"
+	define="SHADOW;OPTIMIZE_SHADOW"/>
+```
 | Attribute | Description | Value |
 |-----------|-------------|-------|
 | type | | GLSL, HLSL |
@@ -88,6 +109,10 @@ Describes controls like sliders and images for adjusting uniform values in the S
 | define | Definition flags during compilation | You can refer to the sample file `BuiltIn\Shader\PBR\Forward\PBR.xml`|
 
 ## instancing
+`<instancing vertex="standard" shader="TransparentInstancing" instancingVertex="standard_color"/>`
+
+Instancing information is described when this shader supports instancing. It will be passed to the instancing shader when the `CRenderMesh::enableInstancing` method is called.
+
 | Attribute | Description | Value |
 |-----------|-------------|-------|
 | vertex | Description of vertex input data |standard<br>2tcoords<br>tangents<br>skin<br>skintangents<br>2tcoordstangents<br>skin2tcoordtangents|
@@ -95,6 +120,11 @@ Describes controls like sliders and images for adjusting uniform values in the S
 | instancingVertex | Detailed information on batched vertex instancing structure | standard_color<br>2texcoords_color<br>standard_sg<br>tangents_sg |
 
 You can read more of the source code for batching instancing here `Projects\Skylicht\Engine\Material\Shader\Instancing`
+
+You can also refer to some instancing-supported shaders within the engine:
+- `BuiltIn\Shader\Mobile\MobileSG.xml`
+- `BuiltIn\Shader\Toon\Toon.xml`
+- `BuiltIn\Shader\SpecularGlossiness\Deferred\Color.xml`
 
 ## dependent
 Defines an accompanying shader file (.xml) to be loaded, typically its own shader instancing.

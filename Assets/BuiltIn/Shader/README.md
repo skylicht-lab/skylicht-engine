@@ -2,4 +2,4 @@
 
 Documentation on the engine's shader file format
 
-[See details:](../../../Projects/Skylicht/Engine/Material/Shader/README.md)
+[See details](../../../Projects/Skylicht/Engine/Material/Shader/README.md)

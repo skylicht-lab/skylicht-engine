@@ -65,6 +65,7 @@ namespace Skylicht
 		{
 		protected:
 			int m_lastTank;
+			int m_defaultTank;
 			int m_tank;
 			float m_flow;
 			float m_lastFlow;
@@ -137,6 +138,16 @@ namespace Skylicht
 			inline int getTank()
 			{
 				return m_tank;
+			}
+
+			inline int getLastTank()
+			{
+				return m_lastTank;
+			}
+
+			inline int getDefaultTank()
+			{
+				return m_defaultTank;
 			}
 
 			inline void setFlow(float flow)

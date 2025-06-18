@@ -38,6 +38,7 @@ namespace Skylicht
 		CEmitter::CEmitter(EEmitter type) :
 			m_tank(-1),
 			m_lastTank(-1),
+			m_defaultTank(-1),
 			m_flow(10.0f),
 			m_lastFlow(10.0f),
 			m_forceMin(0.0f),
@@ -106,8 +107,8 @@ namespace Skylicht
 			m_active = object->get<bool>("active", true);
 			m_emitFullZone = object->get<bool>("emitFullZone", true);
 
-			int tank = object->get<int>("tank", -1);
-			setTank(tank);
+			m_defaultTank = object->get<int>("tank", -1);
+			setTank(m_defaultTank);
 
 			float flow = object->get<float>("flow", 0.0f);
 			setFlow(flow);
