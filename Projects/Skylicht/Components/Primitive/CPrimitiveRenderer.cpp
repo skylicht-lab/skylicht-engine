@@ -237,12 +237,7 @@ namespace Skylicht
 
 		CIndirectLightingData* lightingData = GET_ENTITY_DATA(data->Entity, CIndirectLightingData);
 		if (lightingData != NULL)
-		{
-			if (lightingData->Type == CIndirectLightingData::SH9)
-				CShaderSH::setSH9(lightingData->SH, *lightingData->Intensity);
-			else if (lightingData->Type == CIndirectLightingData::AmbientColor)
-				CShaderLighting::setLightAmbient(lightingData->Color);
-		}
+			lightingData->applyShader();
 
 		for (u32 i = 0, n = mesh->MeshBuffers.size(); i < n; i++)
 		{

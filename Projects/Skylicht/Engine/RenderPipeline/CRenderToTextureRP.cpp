@@ -104,7 +104,9 @@ namespace Skylicht
 		if (m_renderTarget)
 		{
 			getVideoDriver()->removeTexture(m_renderTarget);
-			CShaderRTT::setRTTTexture(m_id, NULL);
+
+			if (CShaderRTT::getRTTTexture(m_id) == m_renderTarget)
+				CShaderRTT::setRTTTexture(m_id, NULL);
 		}
 	}
 

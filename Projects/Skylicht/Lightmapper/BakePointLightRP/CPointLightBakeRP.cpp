@@ -224,6 +224,9 @@ namespace Skylicht
 
 		// draw mesh buffer
 		driver->drawMeshBuffer(m_submesh[m_currentTarget]);
+
+		CShaderLighting::setSpotLight(NULL);
+		CShaderLighting::setPointLight(NULL);
 	}
 
 	void CPointLightBakeRP::drawInstancingMeshBuffer(CMesh* mesh, int bufferID, int materialRenderID, CEntityManager* entityMgr, int entityID, bool skinnedMesh)

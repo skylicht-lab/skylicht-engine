@@ -338,11 +338,8 @@ namespace Skylicht
 
 			CEntity* rootEntity = allEntities[group->RootEntityIndex];
 			CIndirectLightingData* indirectLighting = GET_ENTITY_DATA(rootEntity, CIndirectLightingData);
-			if (indirectLighting != NULL && indirectLighting->SH != NULL)
-			{
-				// apply sh
-				CShaderSH::setSH9(indirectLighting->SH, *indirectLighting->Intensity);
-			}
+			if (indirectLighting != NULL)
+				indirectLighting->applyShader();
 
 			int materialCount = group->Materials.count();
 			CMaterial** materials = group->Materials.pointer();

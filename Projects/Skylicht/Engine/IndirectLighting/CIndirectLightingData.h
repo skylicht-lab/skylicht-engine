@@ -67,6 +67,8 @@ namespace Skylicht
 		void initSH();
 
 		void releaseSH();
+
+		void applyShader();
 	};
 
 	DECLARE_PUBLIC_DATA_TYPE_INDEX(CIndirectLightingData);

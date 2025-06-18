@@ -638,6 +638,9 @@ namespace Skylicht
 				}
 			}
 		}
+		
+		CShaderLighting::setSpotLight(NULL);
+		CShaderLighting::setPointLight(NULL);
 
 		// STEP 04
 		// Render final direction lighting to screen

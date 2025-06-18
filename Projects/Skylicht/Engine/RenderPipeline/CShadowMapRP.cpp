@@ -82,6 +82,9 @@ namespace Skylicht
 		// CEventManager::getInstance()->unRegisterEvent(this);
 
 		release();
+
+		if (CShaderShadow::getShadowMapRP() == this)
+			CShaderShadow::setShadowMapRP(NULL);
 	}
 
 	void CShadowMapRP::release()
@@ -601,6 +604,8 @@ namespace Skylicht
 				}
 			}
 		}
+
+		CShaderLighting::setPointLight(NULL);
 
 		if (listDepthTexture.size() > 0)
 		{

@@ -333,6 +333,11 @@ namespace Skylicht
 						instancingShader->setShadowDistanceWriteShader("SDWDistanceTangentSGInstancing");
 					}
 				}
+				else
+				{
+					if (OnCreateInstancingVertex)
+						instancing = OnCreateInstancingVertex(instancingVertex.c_str());
+				}
 			}
 			shader->setInstancing(vtxType, instancing);
 

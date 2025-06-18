@@ -28,6 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Utils/CPath.h"
 #include "RenderMesh/CMesh.h"
 #include "TextureManager/CTextureManager.h"
+#include "Shader/ShaderCallback/CShaderMaterial.h"
 
 namespace Skylicht
 {
@@ -68,6 +69,9 @@ namespace Skylicht
 
 		deleteAllParams();
 		deleteExtraParams();
+
+		if (CShaderMaterial::getMaterial() == this)
+			CShaderMaterial::setMaterial(NULL);
 	}
 
 	CMaterial* CMaterial::clone()

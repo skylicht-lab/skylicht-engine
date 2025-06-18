@@ -51,17 +51,17 @@ namespace Skylicht
 	/// 
 	/// To design the GUI, open the Skylicht-Editor and switch to the GUI design window.
 	/// 
-	/// @image html Graphics2D/CCanvas/gui-design.jpg "The interface includes features for designing GUIs for Canvas" width=1200px
+	/// @image html Graphics2D/CCanvas/gui-design.jpg "The interface includes features for designing GUIs for Canvas." width=1200px
 	/// 
 	/// **Setting**
 	/// 
-	/// @image html Graphics2D/CCanvas/gui-design-tool.jpg "You can adjust the base size of the Canvas in the Settings section" width=1200px
+	/// @image html Graphics2D/CCanvas/gui-design-tool.jpg "You can adjust the base size of the Canvas in the Settings section." width=1200px
 	/// 
-	/// **Resource .gui**
+	/// **Working with .gui Files**
 	/// 
 	/// You can save the design file to .gui formats and use CGUIImporter to load it into the Canvas.
 	/// 
-	/// @image html Graphics2D/CCanvas/gui-design-sample.jpg "You can refer to the example file Assets\SampleGUIDemo\Setting.gui and the codes in Samples\GUI" width=1200px
+	/// @image html Graphics2D/CCanvas/gui-design-sample.jpg "You can refer to the example file Assets\SampleGUIDemo\Setting.gui and the codes in Samples\GUI," width=1200px
 	class SKYLICHT_API CCanvas : public CComponentSystem
 	{
 	protected:

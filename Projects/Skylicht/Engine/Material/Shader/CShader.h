@@ -140,6 +140,10 @@ namespace Skylicht
 
 	/// @brief The object class describes shader information
 	/// @ingroup Materials
+	/// 
+	/// Please see page
+	/// 
+	/// @ref md__material_2_shader_2_r_e_a_d_m_e "Shader information structure".
 	class SKYLICHT_API CShader : public CBaseShaderCallback
 	{
 	public:

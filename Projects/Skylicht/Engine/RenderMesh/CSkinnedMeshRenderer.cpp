@@ -168,12 +168,7 @@ namespace Skylicht
 
 			CIndirectLightingData* lightingData = GET_ENTITY_DATA(entity, CIndirectLightingData);
 			if (lightingData != NULL)
-			{
-				if (lightingData->Type == CIndirectLightingData::SH9)
-					CShaderSH::setSH9(lightingData->SH, *lightingData->Intensity);
-				else if (lightingData->Type == CIndirectLightingData::AmbientColor)
-					CShaderLighting::setLightAmbient(lightingData->Color);
-			}
+				lightingData->applyShader();
 
 			// set bone matrix to shader callback
 			CSkinnedMesh* mesh = (CSkinnedMesh*)renderMeshData->getMesh();

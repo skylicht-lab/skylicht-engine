@@ -27,6 +27,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "Utils/CSingleton.h"
 
+#include <functional>
+
 namespace Skylicht
 {
 
@@ -63,6 +65,8 @@ namespace Skylicht
 		f32* BoneMatrix;
 		u32 BoneCount;
 		float LightmapIndex;
+
+		std::function<IShaderInstancing* (const char*)> OnCreateInstancingVertex;
 
 	public:
 
