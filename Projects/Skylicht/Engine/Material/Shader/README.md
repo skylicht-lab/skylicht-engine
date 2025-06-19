@@ -116,7 +116,42 @@ cbuffer cbPerObject
 	float4 uUVScale;
 };
 ```
+## resources
+```xml
+<resources>
+	<resource name="uTexReflect" type="ReflectionProbe"/>
+	<resource name="uTexBRDF" type="Texture" path="BuiltIn/Textures/BRDF.png"/>
+</resources>
+```
+Set the default texture for the uniform.
 
+| Attribute | Description | Value |
+|-----------|-------------|-------|
+|name|The uniform name||
+|type|See next table||
+|path|Path to the texture file (if type is Texture or CubeTexture)||
+
+Value table for the `type` property
+| Type | Description |
+|------|-------------|
+|Texture|Specify the path to the texture file.|
+|CubeTexture|Specify the path to the cube texture file|
+|ReflectionProbe||
+|ShadowMap||
+|TransformTexture|`CShaderTransformTexture::getTexture()`|
+|VertexPositionTexture|`CShaderTransformTexture::getPositionTexture()`|
+|VertexNormalTexture|`CShaderTransformTexture::getNormalTexture()`|
+|LastFrame||
+|RTT0|Get the target texture from the Render-to-Texture Pipeline `CRenderToTextureRP`|
+|RTT1||
+|RTT2||
+|RTT3||
+|RTT4||
+|RTT5||
+|RTT6||
+|RTT7||
+
+TransformTexture, VertexPositionTexture, VertexNormalTexture used for instanced rendering of skin meshes. See example: `Samples\BoidSystem` and `Samples\BoidSystemVAT`
 
 ## ui
 ```xml

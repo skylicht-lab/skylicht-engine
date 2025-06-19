@@ -648,6 +648,31 @@ namespace Skylicht
 			m_data->removeGroup(group);
 		}
 
+		void CParticleComponent::decreaseParticleCountByPercentage(float f, bool includeSubGroup)
+		{
+			f = core::clamp<float>(f, 0.0f, 1.0f);
+
+			CGroup** groups = m_data->AllGroups.pointer();
+			for (u32 i = 0, n = m_data->AllGroups.size(); i < n; i++)
+			{
+				CGroup* g = groups[i];
+				CSubGroup* sg = dynamic_cast<CSubGroup*>(g);
+
+				if (sg && !includeSubGroup)
+					continue;
+
+				std::vector<CEmitter*>& emitter = g->getEmitters();
+				for (CEmitter* e : emitter)
+				{
+					if (e->getDefaultFlow() > 0.0f)
+						e->setFlow(e->getDefaultFlow() * f);
+
+					if (e->getDefaultTank() > 0)
+						e->setTank((int)(e->getDefaultTank() * f));
+				}
+			}
+		}
+
 		void CParticleComponent::Play()
 		{
 			CGroup** groups = m_data->AllGroups.pointer();

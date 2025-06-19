@@ -86,6 +86,8 @@ namespace Skylicht
 
 			void removeParticleGroup(CGroup* group);
 
+			void decreaseParticleCountByPercentage(float f, bool includeSubGroup = false);
+
 			void Play();
 
 			void Stop();

@@ -69,6 +69,7 @@ namespace Skylicht
 			int m_tank;
 			float m_flow;
 			float m_lastFlow;
+			float m_defaultFlow;
 			float m_flowLifeTime;
 			float m_forceMin;
 			float m_forceMax;
@@ -148,6 +149,11 @@ namespace Skylicht
 			inline int getDefaultTank()
 			{
 				return m_defaultTank;
+			}
+
+			inline float getDefaultFlow()
+			{
+				return m_defaultFlow;
 			}
 
 			inline void setFlow(float flow)

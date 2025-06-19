@@ -40,7 +40,8 @@ namespace Skylicht
 			m_lastTank(-1),
 			m_defaultTank(-1),
 			m_flow(10.0f),
-			m_lastFlow(10.0f),
+			m_lastFlow(0.0f),
+			m_defaultFlow(10.0f),
 			m_forceMin(0.0f),
 			m_forceMax(1.0f),
 			m_flowLifeTime(0.0f),
@@ -110,8 +111,8 @@ namespace Skylicht
 			m_defaultTank = object->get<int>("tank", -1);
 			setTank(m_defaultTank);
 
-			float flow = object->get<float>("flow", 0.0f);
-			setFlow(flow);
+			m_defaultFlow = object->get<float>("flow", 0.0f);
+			setFlow(m_defaultFlow);
 
 			m_forceMin = object->get<float>("forceMin", 0.0f);
 			m_forceMax = object->get<float>("forceMax", 1.0f);
