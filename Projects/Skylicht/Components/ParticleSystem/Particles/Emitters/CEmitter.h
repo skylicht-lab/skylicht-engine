@@ -145,6 +145,11 @@ namespace Skylicht
 			{
 				return m_lastTank;
 			}
+			
+			inline void setTankValue(int tank)
+			{
+				m_lastTank = tank;
+			}
 
 			inline int getDefaultTank()
 			{

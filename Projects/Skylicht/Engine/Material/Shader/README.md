@@ -45,7 +45,7 @@ Additionally, you can view sample shader files in the `Assets\BuiltIn\Shader` fo
 | value | Default value ||
 | float | Number of elements in the array | Example:<br>1 is float<br>4 is float4<br>16 is float4x4 |
 | matrix| If a **uniform is a matrix**, this attribute is required for the Skylicht-Engine to transpose the matrix for DirectX |true|
-| directX| **For uniform textures**, this property is needed because OpenGL and DirectX handle uniform binding a bit differently. DirectX doesn't require binding uniform textures |false|
+| directX| When the directX=false attribute is set, this uniform will be ignored if the engine is using DirectX. **For uniform textures**, this property is needed because OpenGL and DirectX handle uniform binding a bit differently. DirectX doesn't require binding uniform textures |false|
 
 Value table for the `type` property
 | Type | Description |
@@ -136,12 +136,12 @@ Value table for the `type` property
 |------|-------------|
 |Texture|Specify the path to the texture file.|
 |CubeTexture|Specify the path to the cube texture file|
-|ReflectionProbe||
-|ShadowMap||
+|ReflectionProbe|Nearest reflection probe's reflection texture `TextureCube`|
+|ShadowMap|Depth shadow map `Texture2DArray`|
 |TransformTexture|`CShaderTransformTexture::getTexture()`|
 |VertexPositionTexture|`CShaderTransformTexture::getPositionTexture()`|
-|VertexNormalTexture|`CShaderTransformTexture::getNormalTexture()`|
-|LastFrame||
+|VertexNormalTexture|`CShaderTransformTexture::getNormalTexture()`<br>TransformTexture, VertexPositionTexture, VertexNormalTexture used for instanced rendering of skin meshes. <br>See example: `Samples\BoidSystem` and `Samples\BoidSystemVAT`|
+|LastFrame|Used for Screen-Space-Reflection|
 |RTT0|Get the target texture from the Render-to-Texture Pipeline `CRenderToTextureRP`|
 |RTT1||
 |RTT2||
@@ -150,8 +150,6 @@ Value table for the `type` property
 |RTT5||
 |RTT6||
 |RTT7||
-
-TransformTexture, VertexPositionTexture, VertexNormalTexture used for instanced rendering of skin meshes. See example: `Samples\BoidSystem` and `Samples\BoidSystemVAT`
 
 ## ui
 ```xml
@@ -165,7 +163,7 @@ Describes controls like sliders and images for adjusting uniform values in the S
 |-----------|-------------|-------|
 | control | Control name | UITexture<br>UIColor<br>UIFloat<br>UIFloat2<br>UIFloat3<br>UIFloat4<br>UIGroup |
 | name | Uniform name | |
-| autoReplace | Only used for the UITexture control; it will automatically find textures with corresponding filenames |
+| autoReplace | Only used for the UITexture control; it will automatically find textures with corresponding filenames | |
 
 ## shader
 ```xml
@@ -201,6 +199,79 @@ Instancing information is described when this shader supports instancing. It wil
 | vertex | Description of vertex input data |standard<br>2tcoords<br>tangents<br>skin<br>skintangents<br>2tcoordstangents<br>skin2tcoordtangents|
 | shader | The name of shader instancing | |
 | instancingVertex | Detailed information on batched vertex instancing structure | standard_color<br>2texcoords_color<br>standard_sg<br>tangents_sg |
+
+Example: **vertex=standard**
+- `vertex="standard" instancingVertex="standard_color"`
+
+Here's how instanced vertices are batched (see `CStandardColorInstancing`)
+
+```C
+struct VS_INPUT
+{
+	float4 pos: POSITION;
+	float3 norm: NORMAL;
+	float4 color: COLOR;
+	float2 tex0: TEXCOORD0;
+	
+	float4 uUVScale: TEXCOORD1;
+	float4 uColor: TEXCOORD2;
+
+	float4x4 worldMatrix: TEXCOORD3;
+};
+```
+
+- `vertex="standard" instancingVertex="tangents_sg"`
+
+Here's how instanced vertices are batched (see `CStandardSGInstancing`)
+
+```C
+struct VS_INPUT
+{
+	float4 pos: POSITION;
+	float3 norm: NORMAL;
+	float4 color: COLOR;
+	float2 tex0: TEXCOORD0;
+
+	float4 uvScale: TEXCOORD1;
+	float4 uColor: TEXCOORD2;
+	float4 uSpecGloss: TEXCOORD3;
+
+	float4x4 worldMatrix: TEXCOORD4;
+}
+```
+
+You can define your own batching structure.
+
+```C
+class CYourBatchingInstancing : public IShaderInstancing
+{
+public:
+	CYourBatchingInstancing();
+
+	virtual ~CYourBatchingInstancing();
+
+	virtual IVertexBuffer* createInstancingVertexBuffer();
+
+	virtual IMeshBuffer* createMeshBuffer(video::E_INDEX_TYPE type);
+
+	// The function performs the batching process from multiple Entities and Materials.
+	virtual void batchIntancing(IVertexBuffer* vtxBuffer,
+		CMaterial** materials,
+		CEntity** entities,
+		int count);
+};
+
+
+CShaderManager *shaderMgr = CShaderManager::getInstance();
+shaderMgr->OnCreateInstancingVertex = [](const char* vertexType)
+{
+	if (std::string(vertexType) == "YourVertexTypeName")
+	{
+		return new CYourBatchingInstancing();
+	}
+	return NULL;
+};
+```
 
 You can read more of the source code for batching instancing here `Projects\Skylicht\Engine\Material\Shader\Instancing`
 

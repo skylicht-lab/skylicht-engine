@@ -648,7 +648,7 @@ namespace Skylicht
 			m_data->removeGroup(group);
 		}
 
-		void CParticleComponent::decreaseParticleCountByPercentage(float f, bool includeSubGroup)
+		void CParticleComponent::updateParticleCountByPercentage(float f, bool includeSubGroup)
 		{
 			f = core::clamp<float>(f, 0.0f, 1.0f);
 
@@ -668,7 +668,7 @@ namespace Skylicht
 						e->setFlow(e->getDefaultFlow() * f);
 
 					if (e->getDefaultTank() > 0)
-						e->setTank((int)(e->getDefaultTank() * f));
+						e->setTankValue((int)(e->getDefaultTank() * f));
 				}
 			}
 		}
