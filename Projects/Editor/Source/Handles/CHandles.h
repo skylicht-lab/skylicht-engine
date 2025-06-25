@@ -56,6 +56,8 @@ namespace Skylicht
 			core::quaternion m_targetRotation;
 			core::vector3df m_targetScale;
 
+			core::quaternion m_rotationOrigin;
+
 			std::vector<core::vector3df> m_listPosition;
 			int m_selectId;
 
@@ -219,6 +221,11 @@ namespace Skylicht
 			inline const core::quaternion& getHandleRotation()
 			{
 				return m_rotation;
+			}
+
+			inline const core::quaternion& getRotationOrigin()
+			{
+				return m_rotationOrigin;
 			}
 
 			inline void setTargetRotation(const core::quaternion& target)

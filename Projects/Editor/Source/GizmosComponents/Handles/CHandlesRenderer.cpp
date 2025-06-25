@@ -1005,7 +1005,7 @@ namespace Skylicht
 					worldNormal[i] = rot * worldNormal[i];
 					worldNormal[i].normalize();
 
-					localNormal[i] = handles->getHandleRotation() * localNormal[i];
+					localNormal[i] = handles->getRotationOrigin() * localNormal[i];
 					localNormal[i].normalize();
 				}
 			}
@@ -1102,8 +1102,8 @@ namespace Skylicht
 								resultRotation.normalize();
 
 								handles->setTargetRotation(resultRotation);
-								break;
 							}
+							break;
 						}
 					}
 				} // mouse down

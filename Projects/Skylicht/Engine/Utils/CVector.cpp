@@ -127,4 +127,21 @@ namespace Skylicht
 		float dotPrd = fabs(a.dotProduct(b));
 		return equivalent(dotPrd, 1.0f, kEpsilon);
 	}
+
+	core::vector3df CVector::quaternionToEuler(const core::quaternion& q)
+	{
+		core::vector3df angles;
+		q.toEuler(angles);
+
+		const float epsilon = 0.001f;
+		if ((fabsf(angles.X - core::PI) < epsilon || fabsf(angles.X + core::PI) < epsilon) &&
+			(fabsf(angles.Z - core::PI) < epsilon || fabsf(angles.Z + core::PI) < epsilon))
+		{
+			angles.X = 0.0f;
+			angles.Y = core::PI - angles.Y;
+			angles.Z = 0.0f;
+		}
+
+		return angles;
+	}
 }

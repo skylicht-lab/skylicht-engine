@@ -28,6 +28,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Editor/Space/Property/CSpaceProperty.h"
 #include "Editor/SpaceController/CSceneController.h"
 
+#include "Utils/CVector.h"
+
 namespace Skylicht
 {
 	namespace Editor
@@ -195,8 +197,7 @@ namespace Skylicht
 					{
 						CSubject<core::quaternion>* value = (CSubject<core::quaternion>*)subject;
 
-						core::vector3df rot;
-						value->get().toEuler(rot);
+						core::vector3df rot = CVector::quaternionToEuler(value->get());
 
 						x->set(rot.X * core::RADTODEG);
 						y->set(rot.Y * core::RADTODEG);

@@ -25,6 +25,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CTransformEuler.h"
 
+#include "Utils/CVector.h"
+
 namespace Skylicht
 {
 	ACTIVATOR_REGISTER(CTransformEuler);
@@ -96,6 +98,14 @@ namespace Skylicht
 		matData[15] = 1.0f;
 
 		m_rotation = rotationMatrix.getRotationDegrees();
+		m_hasChanged = true;
+		m_matrixChanged = true;
+	}
+
+	void CTransformEuler::setRotation(const core::quaternion& q)
+	{
+		m_rotation = CVector::quaternionToEuler(q);
+		m_rotation *= core::RADTODEG;
 		m_hasChanged = true;
 		m_matrixChanged = true;
 	}

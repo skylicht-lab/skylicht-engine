@@ -88,13 +88,7 @@ namespace Skylicht
 			m_matrixChanged = true;
 		}
 
-		inline void setRotation(const core::quaternion& q)
-		{
-			q.toEuler(m_rotation);
-			m_rotation *= core::RADTODEG;
-			m_hasChanged = true;
-			m_matrixChanged = true;
-		}
+		void setRotation(const core::quaternion& q);
 
 		inline float getYaw()
 		{

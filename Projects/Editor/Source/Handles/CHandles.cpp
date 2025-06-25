@@ -190,7 +190,10 @@ namespace Skylicht
 		core::quaternion CHandles::rotateHandle(const core::quaternion& rotate, const core::vector3df& origin)
 		{
 			if (!m_handleRotation)
+			{
 				m_targetRotation = rotate;
+				m_rotationOrigin = rotate;
+			}
 
 			m_handleListPosition = false;
 			m_handleRotation = true;
