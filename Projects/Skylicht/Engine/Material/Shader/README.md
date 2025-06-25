@@ -48,52 +48,51 @@ Additionally, you can view sample shader files in the `Assets\BuiltIn\Shader` fo
 | directX| When the directX=false attribute is set, this uniform will be ignored if the engine is using DirectX. **For uniform textures**, this property is needed because OpenGL and DirectX handle uniform binding a bit differently. DirectX doesn't require binding uniform textures |false|
 
 Value table for the `type` property
-| Type | Description |
-|------|-------------|
-|VIEW_PROJECTION||
-|WORLD_VIEW_PROJECTION||
-|VIEW||
-|WORLD||
-|WORLD_INVERSE||
-|WORLD_INVERSE_TRANSPOSE||
-|WORLD_TRANSPOSE||
-|BONE_MATRIX||
-|BONE_COUNT||
-|SHADOW_MAP_MATRIX||
-|SHADOW_MAP_DISTANCE||
-|SHADOW_BIAS||
-|WORLD_CAMERA_POSITION||
-|LIGHT_COLOR||
-|LIGHT_AMBIENT||
-|WORLD_LIGHT_DIRECTION||
-|POINT_LIGHT_COLOR||
-|POINT_LIGHT_POSITION||
-|POINT_LIGHT_ATTENUATION||
-|SPOT_LIGHT_COLOR||
-|SPOT_LIGHT_DIRECTION||
-|SPOT_LIGHT_POSITION||
-|SPOT_LIGHT_ATTENUATION||
-|MATERIAL_PARAM||
-|DEFAULT_VALUE||
-|SHADER_VEC2||
-|SHADER_VEC3||
-|SHADER_VEC4||
-|SH_CONST||
-|CUSTOM_VALUE||
-|TEXTURE_MIPMAP_COUNT||
-|TEXTURE_WIDTH_HEIGHT||
-|DEFERRED_VIEW||
-|DEFERRED_PROJECTION||
-|DEFERRED_VIEW_PROJECTION||
-|TIME_STEP||
-|PARTICLE_VIEW_UP||
-|PARTICLE_VIEW_LOOK||
-|PARTICLE_ORIENTATION_UP||
-|PARTICLE_ORIENTATION_NORMAL||
-|LIGHTMAP_INDEX||
-|TIME||
-|COLOR_INTENSITY||
-|RENDER_TEXTURE_MATRIX||
+| Type | Value type | Description |
+|------|------------|-------------|
+|VIEW|float4x4| Model-to-camera transformation matrix.<br> `viewMatrix = getVideoDriver()->getTransform(video::ETS_VIEW)`|
+|WORLD|float4x4| Model transformation matrix.<br> `worldMatrix = getVideoDriver()->getTransform(video::ETS_WORLD)`|
+|VIEW_PROJECTION|float4x4| It's often used when rendering with instancing, because world matrices are batched in the vertex attributes<br> `vpMatrix = projectionMatrix * viewMatrix`|
+|WORLD_VIEW_PROJECTION|float4x4| The MVP transformation matrix to convert vertex coordinates from 3D to 2D.<br> `mvpMatrix = projectionMatrix x viewMatrix x worldMatrix`|
+|WORLD_INVERSE|float4x4| Matrix to transform vertices from world coordinates to local coordinates, where local coordinates are the coordinates within the 3D model file.|
+|WORLD_TRANSPOSE|float4x4| |
+|BONE_MATRIX|float4x4[64]| Matrices to transform skin-vertices to the animated skeleton's positions.<br>See `BuiltIn/Shader/Toon/SkinToon.xml`|
+|BONE_COUNT|float2| |
+|SHADOW_MAP_MATRIX|float4x4[4]| Matrices to project 3D vertex coordinates onto the 2D cascade shadow map textures|
+|SHADOW_MAP_DISTANCE|float4| The maximum depth (in meters) covered by the cascade shadow map|
+|SHADOW_BIAS|float4| |
+|WORLD_CAMERA_POSITION|float4| The camera position|
+|LIGHT_COLOR|float4| |
+|LIGHT_AMBIENT|float4| |
+|WORLD_LIGHT_DIRECTION|float4| It returns the light direction vector for the directional light, similar to how you'd consider the direction of sunlight.|
+|POINT_LIGHT_COLOR|float4| |
+|POINT_LIGHT_POSITION|float4| The light position, See `CShaderLighting::setPointLight`|
+|POINT_LIGHT_ATTENUATION|float4| `value.y = CLight::getAttenuation()`<br>See `BuiltIn\Shader\SpecularGlossiness\Lighting\SGPointLight.xml`|
+|SPOT_LIGHT_COLOR|float4| |
+|SPOT_LIGHT_DIRECTION|float4| |
+|SPOT_LIGHT_POSITION|float4| The light position, See `CShaderLighting::setSpotLight`|
+|SPOT_LIGHT_ATTENUATION|float4| `value.x = cos(CSpotLight::getSplotCutoff() * 0.5f)`<br> `value.y = cos(CSpotLight::getSpotInnerCutof() * 0.5f)`<br> `value.z = CLight::getAttenuation()`<br> `value.w = CSpotLight::getSpotExponent()`<br>See `BuiltIn\Shader\SpecularGlossiness\Lighting\SGSpotLight.xml`|
+|MATERIAL_PARAM|float2<br>float3<br>float4|Gets the value already set at *valueIndex* within *CMaterial*.<br>See `CMaterial::setUniform, CMaterial::setUniform2, CMaterial::setUnifor3, CMaterial::setUniform4, CMaterial::updateShaderParams`<br><br>Sample project:<br>- Code:`Samples\Shader\Source\SampleShader.cpp`<br>- Shader:`Assets\SampleShader\Shader\Dissolved.xml`
+|DEFAULT_VALUE|| |
+|SHADER_VEC2|float2| |
+|SHADER_VEC3|float3| |
+|SHADER_VEC4|float4| |
+|SH_CONST|float4[4]| The value used to calculate ambient light color based on Spherical Harmonics (SH)<br>See `CIndirectLighting`|
+|CUSTOM_VALUE|| |
+|TEXTURE_MIPMAP_COUNT|float2| |
+|TEXTURE_WIDTH_HEIGHT|float2| |
+|DEFERRED_VIEW|float4x4| |
+|DEFERRED_PROJECTION|float4x4| |
+|DEFERRED_VIEW_PROJECTION|float4x4| |
+|TIME_STEP|float2| `value.x = getTimeStep()`|
+|PARTICLE_VIEW_UP|float4| *Used in the particle component*|
+|PARTICLE_VIEW_LOOK|float4| *Used in the particle component*|
+|PARTICLE_ORIENTATION_UP|float4| *Used in the particle component*|
+|PARTICLE_ORIENTATION_NORMAL|float4| *Used in the particle component*|
+|LIGHTMAP_INDEX|float2| *Used in the lightmapper to bake light color to texture*|
+|TIME|float4| `value.x = time()`<br> `value.y = time() * 2.0`<br>`value.z = time() * 3.0`<br>`value.w = time() * 4.0`<br>Default, The return value of time() will loop from 0.0 to 4.0. However, you can also adjust the default value by setting the attribute `value="8.0"` in the **uniform** node.<br>See `BuiltIn\Shader\BasicVfx\VfxScrollUV1.xml`|
+|COLOR_INTENSITY|float4| *Used in the particle component.*<br>This is the return value of the `CShaderMaterial::getColorIntensity()` function. It's used in the shader to boost color brightness beyond the 255-byte limit.<br>Call the `CShaderMaterial::setColorIntensity(const SColorf& c)` function to set the value before drawing.|
+|RENDER_TEXTURE_MATRIX|float4x4| Matrix to project 3D vertex coordinates onto a 2D render texture, which is the result of CRenderToTextureRP|
 
 The order of uniforms defined in the .xml shader file and the .hlsl shader file must be the same.
 
@@ -140,7 +139,8 @@ Value table for the `type` property
 |ShadowMap|Depth shadow map `Texture2DArray`|
 |TransformTexture|`CShaderTransformTexture::getTexture()`|
 |VertexPositionTexture|`CShaderTransformTexture::getPositionTexture()`|
-|VertexNormalTexture|`CShaderTransformTexture::getNormalTexture()`<br>TransformTexture, VertexPositionTexture, VertexNormalTexture used for instanced rendering of skin meshes. <br>See example: `Samples\BoidSystem` and `Samples\BoidSystemVAT`|
+|VertexNormalTexture|`CShaderTransformTexture::getNormalTexture()`|
+||TransformTexture, VertexPositionTexture, VertexNormalTexture used for instanced rendering of skin meshes. <br>See example: `Samples\BoidSystem` and `Samples\BoidSystemVAT`|
 |LastFrame|Used for Screen-Space-Reflection|
 |RTT0|Get the target texture from the Render-to-Texture Pipeline `CRenderToTextureRP`|
 |RTT1||

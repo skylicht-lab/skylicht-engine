@@ -1336,19 +1336,21 @@ namespace Skylicht
 					}
 				}
 
+				float value[2] = { count, 0 };
+
 				if (vertexShader == true)
-					matRender->setShaderVariable(uniform.UniformShaderID, &count, uniform.SizeOfUniform, video::EST_VERTEX_SHADER);
+					matRender->setShaderVariable(uniform.UniformShaderID, value, uniform.SizeOfUniform, video::EST_VERTEX_SHADER);
 				else
-					matRender->setShaderVariable(uniform.UniformShaderID, &count, uniform.SizeOfUniform, video::EST_PIXEL_SHADER);
+					matRender->setShaderVariable(uniform.UniformShaderID, value, uniform.SizeOfUniform, video::EST_PIXEL_SHADER);
 			}
 			else
 			{
-				float count = 11.0f;
+				float value[2] = { 11.0f, 0 };
 
 				if (vertexShader == true)
-					matRender->setShaderVariable(uniform.UniformShaderID, &count, uniform.SizeOfUniform, video::EST_VERTEX_SHADER);
+					matRender->setShaderVariable(uniform.UniformShaderID, value, uniform.SizeOfUniform, video::EST_VERTEX_SHADER);
 				else
-					matRender->setShaderVariable(uniform.UniformShaderID, &count, uniform.SizeOfUniform, video::EST_PIXEL_SHADER);
+					matRender->setShaderVariable(uniform.UniformShaderID, value, uniform.SizeOfUniform, video::EST_PIXEL_SHADER);
 			}
 		}
 		break;

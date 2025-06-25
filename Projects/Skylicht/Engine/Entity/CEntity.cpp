@@ -61,6 +61,11 @@ namespace Skylicht
 		removeAllData();
 	}
 
+	void CEntity::remove()
+	{
+		m_mgr->removeEntity(this);
+	}
+
 	bool CEntity::removeData(u32 index)
 	{
 		if (Data[index])

@@ -62,6 +62,8 @@ namespace Skylicht
 
 		virtual ~CEntity();
 
+		void remove();
+
 		template<class T>
 		T* addData();
 

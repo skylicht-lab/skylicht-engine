@@ -34,6 +34,50 @@ namespace Skylicht
 	/// @brief The object class describes material information
 	/// such as which shader it's associated with, which texture it uses, and what its color parameters are.
 	/// @ingroup Materials
+	/// 
+	/// **Skylicht-Editor**
+	/// 
+	/// You can create materials in two ways
+	/// 
+	/// **Method 1:** Select the model file (.fbx, .dae) and click the "Export Material" button
+	/// @image html Material/export-material.jpg
+	/// 
+	/// **Method 2:** Create it manually by choosing the menu Asset/Create/Material.
+	/// @image html Material/material-asset.jpg
+	/// 
+	/// **Adjusting materials:**
+	/// 
+	/// The Material Property window allows you to add multiple materials within a .mat file. It also includes functions like delete/rename.
+	/// 
+	/// @image html Material/material-property-window.jpg "Material property"
+	/// <br>
+	/// @image html Material/material-tool.jpg "Delete/Rename Material"
+	/// 
+	/// **Next**, drag the shader .xml file into the Shader Field to select the material's shader. 
+	/// 
+	/// From there, you can then drag texture files into the various uniform textures, or adjust the parameters defined within the shader .xml.
+	/// 
+	/// @image html Material/material.jpg
+	/// 
+	/// Materials are essential for the CRenderMesh component to display the model's appearance on the Skylicht-Engine
+	/// 
+	/// @image html RenderMesh/render-mesh-property.jpg width=1200px
+	/// 
+	/// 
+	/// You use CTextureManager to support loading .mat material files.
+	/// @code
+	/// std::vector<std::string> textureFolders;
+	/// ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial(
+	/// 	"SampleModels/BlendShape/Cat.mat",
+	/// 	true,
+	/// 	textureFolders
+	/// );
+	/// 
+	/// for (CMaterial* mat: materials)
+	/// {
+	/// 	printf("%s\n", mat->getName());
+	/// }
+	/// @endcode
 	class SKYLICHT_API CMaterial : public IReferenceCounted
 	{
 	public:

@@ -140,7 +140,7 @@ namespace Skylicht
 			{
 				float attenuation[4] = { 0 };
 
-				// set attenuation			
+				// set attenuation
 				attenuation[0] = 0.0f;
 				attenuation[1] = g_pointLight->getAttenuation();
 				attenuation[2] = 0.0f;
@@ -190,7 +190,7 @@ namespace Skylicht
 			{
 				float attenuation[4] = { 0 };
 
-				// set attenuation			
+				// set attenuation
 				attenuation[0] = cosf(g_spotLight->getSplotCutoff() * core::DEGTORAD * 0.5f);
 				attenuation[1] = cosf(g_spotLight->getSpotInnerCutof() * core::DEGTORAD * 0.5f);
 				attenuation[2] = g_spotLight->getAttenuation();
