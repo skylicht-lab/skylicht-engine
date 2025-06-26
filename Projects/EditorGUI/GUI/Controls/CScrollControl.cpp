@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CScrollControl.h"
+#include "GUI/GUIContext.h"
 #include "GUI/Theme/ThemeConfig.h"
 
 namespace Skylicht
@@ -39,7 +40,9 @@ namespace Skylicht
 				m_modifyChildWidth(false),
 				m_widthScrollExpand(0.0f),
 				m_heightScrollExpand(0.0f),
-				m_enableMouseWheelScroll(true)
+				m_enableMouseWheelScroll(true),
+				m_autoScrollState(0),
+				m_lastTime(0.0f)
 			{
 				setPadding(SPadding(0.0f, 0.0f, 0.0f, 0.0f));
 				m_vertical = new CScrollBar(this, false);
@@ -62,6 +65,30 @@ namespace Skylicht
 			CScrollControl::~CScrollControl()
 			{
 
+			}
+
+			void CScrollControl::think()
+			{
+				CBase::think();
+
+				float time = Context::getTime();
+
+				if (m_autoScrollState != 0)
+				{
+					float dt = time - m_lastTime;
+					float delta = 0.0f;
+
+					if (dt > 25.0f)
+					{
+						if (m_autoScrollState == 1)
+							delta = -0.1f;
+						else if (m_autoScrollState == 2)
+							delta = 0.1f;
+
+						m_vertical->setScroll(m_vertical->getScroll() + m_vertical->getNudgeAmount() * delta);
+						m_lastTime = time;
+					}
+				}
 			}
 
 			void CScrollControl::layout()
@@ -87,6 +114,22 @@ namespace Skylicht
 					}
 				}
 				return false;
+			}
+
+			void CScrollControl::onDragItemOver(float x, float y)
+			{
+				m_autoScrollState = 0;
+
+				if (m_canScrollV || !m_vertical->isHidden())
+				{
+					SPoint local = canvasPosToLocal(SPoint(x, y));
+					float edgeSize = 10.0f;
+
+					if (local.Y < edgeSize)
+						m_autoScrollState = 1;
+					if (local.Y >= height() - edgeSize)
+						m_autoScrollState = 2;
+				}
 			}
 
 			void CScrollControl::onChildBoundsChanged(const SRect& oldChildBounds, CBase* child)

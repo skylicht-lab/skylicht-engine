@@ -47,10 +47,14 @@ namespace Skylicht
 
 				bool m_modifyChildWidth;
 
+				int m_autoScrollState;
+				float m_lastTime;
 			public:
 				CScrollControl(CBase* parent);
 
 				~CScrollControl();
+
+				virtual void think();
 
 				virtual void layout();
 
@@ -61,6 +65,13 @@ namespace Skylicht
 				virtual void onScrollBarV(CBase* base);
 
 				virtual void onScrollBarH(CBase* base);
+
+				virtual void onDragItemOver(float x, float y);
+
+				inline void stopAutoScroll()
+				{
+					m_autoScrollState = 0;
+				}
 
 				void scrollToItem(CBase* item);
 

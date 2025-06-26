@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CDragAndDrop.h"
 #include "GUI/Input/CInput.h"
+#include "GUI/Controls/CScrollControl.h"
 #include "GUI//Renderer/CRenderer.h"
 
 namespace Skylicht
@@ -39,6 +40,7 @@ namespace Skylicht
 			static float s_lastMousePositionY = 0;
 			static GUI::CBase* s_lastPressedControl = NULL;
 			static GUI::CBase* s_lastHoverControl = NULL;
+			static GUI::CScrollControl* s_lastHoverOnScrollControl = NULL;
 			static bool s_dragging = false;
 
 			void CDragAndDrop::cancel()
@@ -145,6 +147,35 @@ namespace Skylicht
 
 					if (accept && hoveredControl->OnDragDropHover != nullptr)
 						hoveredControl->OnDragDropHover(s_lastPressedControl->getDragDropPackage(), x, y);
+
+					// Auto-scroll when dragging to the edge of the ScrollControl
+					CScrollControl* currentScroll = NULL;
+					CBase* parent = hoveredControl->getParent();
+					while (parent)
+					{
+						CScrollControl* scroll = dynamic_cast<CScrollControl*>(parent);
+						if (scroll)
+						{
+							scroll->onDragItemOver(x, y);
+							currentScroll = scroll;
+							break;
+						}
+						parent = parent->getParent();
+					}
+
+					if (!currentScroll)
+					{
+						if (s_lastHoverOnScrollControl)
+						{
+							// stop auto scroll if drag out
+							s_lastHoverOnScrollControl->stopAutoScroll();
+							s_lastHoverOnScrollControl = NULL;
+						}
+					}
+					else
+					{
+						s_lastHoverOnScrollControl = currentScroll;
+					}
 				}
 
 				if (!accept)
