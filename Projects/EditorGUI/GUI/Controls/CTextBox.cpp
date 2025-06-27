@@ -241,8 +241,8 @@ namespace Skylicht
 
 				CScrollControl::onLostKeyboardFocus();
 
-				if (OnLostKeyboardFocus != nullptr)
-					OnLostKeyboardFocus(this);
+				if (OnEndTextEdit != nullptr)
+					OnEndTextEdit(this);
 			}
 
 			bool CTextBox::onKeyPress(EKey key, bool press)

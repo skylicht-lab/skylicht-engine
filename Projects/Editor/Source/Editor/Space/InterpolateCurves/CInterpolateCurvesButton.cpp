@@ -127,6 +127,9 @@ namespace Skylicht
 
 						if (OnChanged != nullptr)
 							OnChanged(this);
+
+						if (OnEndValue != nullptr)
+							OnEndValue(this);
 					};
 			}
 		}

@@ -105,6 +105,8 @@ namespace Skylicht
 				m_color = m_hsvrgbPicker->getColor();
 				if (OnChanged != nullptr)
 					OnChanged(this);
+				if (OnEndValue != nullptr)
+					OnEndValue(this);
 				m_menuPicker->close();
 			}
 

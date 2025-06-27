@@ -172,13 +172,19 @@ namespace Skylicht
 
 			void CSlider::onLostKeyboardFocus()
 			{
-				CTextBox::onLostKeyboardFocus();
+				if (m_focusTextbox)
+				{
+					CTextBox::onLostKeyboardFocus();
 
-				applyTextValue();
+					applyTextValue();
 
-				m_focusTextbox = false;
-				setCursor(ECursorType::SizeWE);
-				setCaretToEnd();
+					m_focusTextbox = false;
+					setCursor(ECursorType::SizeWE);
+					setCaretToEnd();
+
+					if (OnEndTextEdit != nullptr)
+						OnEndTextEdit(this);
+				}
 			}
 
 			void CSlider::onMouseClickLeft(float x, float y, bool down)
@@ -218,6 +224,11 @@ namespace Skylicht
 
 							m_focusTextbox = true;
 							setCursor(ECursorType::Beam);
+						}
+						else
+						{
+							if (OnEndTextEdit != nullptr)
+								OnEndTextEdit(this);
 						}
 
 						m_drag = false;

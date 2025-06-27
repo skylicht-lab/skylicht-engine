@@ -85,6 +85,8 @@ namespace Skylicht
 
 			virtual ~CSpaceProperty();
 
+			void OnHotkey(GUI::CBase* base, const std::string& hotkey);
+
 			void OnComponentCommand(GUI::CBase* base);
 
 			virtual void update();
@@ -172,6 +174,17 @@ namespace Skylicht
 			GUI::CBoxLayout* createBoxLayout(GUI::CCollapsibleGroup* group);
 
 			const wchar_t* getPrettyName(const std::string& paramName);
+
+			void onEndEditValue(GUI::CBase* base);
+
+			void focus();
+
+		protected:
+
+			void onUndo();
+
+			void onRedo();
+
 		};
 	}
 }

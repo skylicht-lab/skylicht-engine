@@ -33,11 +33,14 @@ namespace Skylicht
 	namespace Editor
 	{
 		class CEditor;
+		class CSpaceProperty;
 
 		class CAddComponentController
 		{
 		protected:
 			CEditor* m_editor;
+			CSpaceProperty* m_ui;
+
 			GUI::CMenu* m_menu;
 
 			GUI::CTextBox* m_search;
@@ -55,7 +58,7 @@ namespace Skylicht
 			CGameObject* m_gameObject;
 
 		public:
-			CAddComponentController(CEditor* editor, GUI::CMenu* menu);
+			CAddComponentController(CEditor* editor, CSpaceProperty* ui, GUI::CMenu* menu);
 
 			virtual ~CAddComponentController();
 

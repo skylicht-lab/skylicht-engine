@@ -30,6 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Editor/SpaceController/CPropertyController.h"
 #include "Editor/SpaceController/CAssetPropertyController.h"
 #include "Editor/SpaceController/CSceneController.h"
+#include "Editor/SpaceController/CGUIDesignController.h"
 #include "GUI/Theme/ThemeConfig.h"
 #include "Editor/Components/Transform/CTransformEditor.h"
 
@@ -48,6 +49,10 @@ namespace Skylicht
 			scrollWindow->enableModifyChildWidth(true);
 
 			m_content = scrollWindow;
+
+			m_content->setKeyboardInputEnabled(true);
+			m_content->addAccelerator("Ctrl + Z", [&](GUI::CBase* base) {this->OnHotkey(base, "Ctrl + Z"); });
+			m_content->addAccelerator("Ctrl + Y", [&](GUI::CBase* base) {this->OnHotkey(base, "Ctrl + Y"); });
 
 			GUI::CBase* titleBar = new GUI::CBase(m_content);
 			titleBar->setHeight(25.0f);
@@ -84,7 +89,7 @@ namespace Skylicht
 			m_componentContextMenu->OnCommand = BIND_LISTENER(&CSpaceProperty::OnComponentCommand, this);
 
 			m_addComponentMenu = new GUI::CMenu(window->getCanvas());
-			m_addComponentController = new CAddComponentController(editor, m_addComponentMenu);
+			m_addComponentController = new CAddComponentController(editor, this, m_addComponentMenu);
 		}
 
 		CSpaceProperty::~CSpaceProperty()
@@ -102,6 +107,18 @@ namespace Skylicht
 				delete editor;
 			}
 			m_releaseComponents.clear();
+		}
+
+		void CSpaceProperty::OnHotkey(GUI::CBase* base, const std::string& hotkey)
+		{
+			if (hotkey == "Ctrl + Z")
+			{
+				onUndo();
+			}
+			else if (hotkey == "Ctrl + Y")
+			{
+				onRedo();
+			}
 		}
 
 		void CSpaceProperty::OnComponentCommand(GUI::CBase* base)
@@ -135,6 +152,9 @@ namespace Skylicht
 				gameObject->removeComponent(component);
 			}
 
+			onEndEditValue(base);
+			focus();
+
 			CSceneController::getInstance()->updateTreeNode(gameObject);
 
 			getEditor()->refresh();
@@ -142,64 +162,14 @@ namespace Skylicht
 
 		void CSpaceProperty::clearAllGroup()
 		{
-			bool changed = false;
-			bool notifyTemplateChange = false;
-
-			std::vector<CGameObject*> objs;
-
 			for (SGroup* group : m_groups)
 			{
 				group->GroupUI->remove();
 
 				if (group->Owner)
-				{
-					CComponentEditor* componentEditor = dynamic_cast<CComponentEditor*>(group->Owner);
-					if (componentEditor && componentEditor->isChanged())
-					{
-						// need save history
-						CGameObject* obj = componentEditor->getGameObject();
-						if (std::find(objs.begin(), objs.end(), obj) == objs.end())
-							objs.push_back(obj);
-						changed = true;
-
-						// check component (that is not transform) is changed
-						CTransformEditor* transformEditor = dynamic_cast<CTransformEditor*>(group->Owner);
-						if (transformEditor == NULL)
-							notifyTemplateChange = true;
-					}
-
 					group->Owner->closeGUI();
-				}
 
 				delete group;
-			}
-
-			// save modify history
-			if (changed && objs.size() > 0)
-			{
-				CSceneController::getInstance()->getHistory()->saveModifyHistory(objs);
-
-				// notify the current template is changed
-				for (CGameObject* gameObject : objs)
-				{
-					CGameObject* parent = gameObject->getParentTemplate();
-					if (parent == gameObject)
-					{
-						// note: if template just change transform, we do not set modify
-						if (notifyTemplateChange)
-							parent->setTemplateChanged(true);
-					}
-					else
-					{
-						// note: if child is changed, we set modify
-						parent->setTemplateChanged(true);
-					}
-
-					// update on hierachy
-					CSpaceHierarchy* hierachy = CSceneController::getInstance()->getSpaceHierarchy();
-					if (hierachy)
-						hierachy->getController()->updateObjectToUI(parent);
-				}
 			}
 
 			// delete editor components
@@ -207,6 +177,141 @@ namespace Skylicht
 				delete editor;
 			m_releaseComponents.clear();
 			m_groups.clear();
+		}
+
+		void CSpaceProperty::focus()
+		{
+			m_content->focus();
+		}
+
+		void CSpaceProperty::onEndEditValue(GUI::CBase* base)
+		{
+			int editorId = 0;
+			bool changed = false;
+			bool notifyTemplateChange = false;
+
+			std::vector<CGameObject*> objs;
+			std::vector<CGUIElement*> guis;
+
+			for (SGroup* group : m_groups)
+			{
+				if (group->Owner)
+				{
+					CComponentEditor* componentEditor = dynamic_cast<CComponentEditor*>(group->Owner);
+					CGUIEditor* guiEditor = dynamic_cast<CGUIEditor*>(group->Owner);
+
+					if (componentEditor)
+					{
+						// need save history
+						CGameObject* obj = componentEditor->getGameObject();
+						if (std::find(objs.begin(), objs.end(), obj) == objs.end())
+							objs.push_back(obj);
+
+						changed = true;
+						editorId = 1;
+
+						// check component (that is not transform) is changed
+						if (componentEditor->isChanged())
+						{
+							CTransformEditor* transformEditor = dynamic_cast<CTransformEditor*>(group->Owner);
+							if (transformEditor == NULL)
+								notifyTemplateChange = true;
+						}
+					}
+					else if (guiEditor)
+					{
+						CGUIElement* element = guiEditor->getGUIElement();
+						if (std::find(guis.begin(), guis.end(), element) == guis.end())
+							guis.push_back(element);
+
+						changed = true;
+						editorId = 2;
+					}
+				}
+			}
+
+			if (editorId == 1)
+			{
+				if (changed && objs.size() > 0)
+				{
+					CSceneController::getInstance()->getHistory()->saveModifyHistory(objs);
+
+					// notify the current template is changed
+					for (CGameObject* gameObject : objs)
+					{
+						CGameObject* parent = gameObject->getParentTemplate();
+						if (parent == gameObject)
+						{
+							// if template just change transform, we do not set modify
+							if (notifyTemplateChange)
+								parent->setTemplateChanged(true);
+						}
+						else
+						{
+							// if child is changed, we set modify
+							parent->setTemplateChanged(true);
+						}
+
+						// update on hierachy
+						CSpaceHierarchy* hierachy = CSceneController::getInstance()->getSpaceHierarchy();
+						if (hierachy)
+							hierachy->getController()->updateObjectToUI(parent);
+					}
+				}
+			}
+			else if (editorId == 2)
+			{
+				if (changed && guis.size() > 0)
+				{
+					CGUIDesignController::getInstance()->getHistory()->saveModifyHistory(guis);
+				}
+			}
+		}
+
+		void CSpaceProperty::onUndo()
+		{
+			for (SGroup* group : m_groups)
+			{
+				if (group->Owner)
+				{
+					CComponentEditor* componentEditor = dynamic_cast<CComponentEditor*>(group->Owner);
+					CGUIEditor* guiEditor = dynamic_cast<CGUIEditor*>(group->Owner);
+
+					if (componentEditor)
+					{
+						CSceneController::getInstance()->onUndo();
+						break;
+					}
+					else if (guiEditor)
+					{
+						CGUIDesignController::getInstance()->onUndo();
+						break;
+					}
+				}
+			}
+		}
+
+		void CSpaceProperty::onRedo()
+		{
+			for (SGroup* group : m_groups)
+			{
+				if (group->Owner)
+				{
+					CComponentEditor* componentEditor = dynamic_cast<CComponentEditor*>(group->Owner);
+					CGUIEditor* guiEditor = dynamic_cast<CGUIEditor*>(group->Owner);
+
+					if (componentEditor)
+					{
+						CSceneController::getInstance()->onRedo();
+						break;
+					}
+					else if (guiEditor)
+					{
+						CGUIDesignController::getInstance()->onRedo();
+						break;
+					}
+				}
+			}
 		}
 
 		void CSpaceProperty::update()
@@ -435,6 +540,10 @@ namespace Skylicht
 					value->set(input->getValue());
 					value->notify(observer);
 					};
+
+				input->OnEndTextEdit = BIND_LISTENER(&CSpaceProperty::onEndEditValue, this);
+				input->addAccelerator("Ctrl + Z", [&](GUI::CBase* base) {this->OnHotkey(base, "Ctrl + Z"); });
+				input->addAccelerator("Ctrl + Y", [&](GUI::CBase* base) {this->OnHotkey(base, "Ctrl + Y"); });
 			}
 		}
 
@@ -479,6 +588,10 @@ namespace Skylicht
 					value->set((int)input->getValue());
 					value->notify(observer);
 					};
+
+				input->OnEndTextEdit = BIND_LISTENER(&CSpaceProperty::onEndEditValue, this);
+				input->addAccelerator("Ctrl + Z", [&](GUI::CBase* base) {this->OnHotkey(base, "Ctrl + Z"); });
+				input->addAccelerator("Ctrl + Y", [&](GUI::CBase* base) {this->OnHotkey(base, "Ctrl + Y"); });
 			}
 		}
 
@@ -523,6 +636,10 @@ namespace Skylicht
 					value->set((u32)input->getValue());
 					value->notify(observer);
 					};
+
+				input->OnEndTextEdit = BIND_LISTENER(&CSpaceProperty::onEndEditValue, this);
+				input->addAccelerator("Ctrl + Z", [&](GUI::CBase* base) {this->OnHotkey(base, "Ctrl + Z"); });
+				input->addAccelerator("Ctrl + Y", [&](GUI::CBase* base) {this->OnHotkey(base, "Ctrl + Y"); });
 			}
 		}
 
@@ -559,6 +676,10 @@ namespace Skylicht
 					value->set(input->getString());
 					value->notify(observer);
 					};
+
+				input->OnEndTextEdit = BIND_LISTENER(&CSpaceProperty::onEndEditValue, this);
+				input->addAccelerator("Ctrl + Z", [&](GUI::CBase* base) {this->OnHotkey(base, "Ctrl + Z"); });
+				input->addAccelerator("Ctrl + Y", [&](GUI::CBase* base) {this->OnHotkey(base, "Ctrl + Y"); });
 			}
 
 			boxLayout->endVertical();
@@ -603,6 +724,10 @@ namespace Skylicht
 					value->set(input->getValueInt());
 					value->notify(observer);
 					};
+
+				input->OnEndTextEdit = BIND_LISTENER(&CSpaceProperty::onEndEditValue, this);
+				input->addAccelerator("Ctrl + Z", [&](GUI::CBase* base) {this->OnHotkey(base, "Ctrl + Z"); });
+				input->addAccelerator("Ctrl + Y", [&](GUI::CBase* base) {this->OnHotkey(base, "Ctrl + Y"); });
 			}
 
 			boxLayout->endVertical();
@@ -639,9 +764,11 @@ namespace Skylicht
 
 				// when check control change => update value
 				value->addObserver(onChange, true);
-				check->OnChanged = [value, check, observer = onChange](GUI::CBase* base) {
+				check->OnChanged = [&, value, check, observer = onChange](GUI::CBase* base) {
 					value->set(check->getToggle());
 					value->notify(observer);
+
+					onEndEditValue(check);
 					};
 			}
 
@@ -675,14 +802,16 @@ namespace Skylicht
 
 			// when combobox change => update value
 			value->addObserver(onChange, true);
-			comboBox->OnChanged = [value, comboBox, observer = onChange](GUI::CBase* base)
+			comboBox->OnChanged = [&, value, comboBox, observer = onChange](GUI::CBase* base)
 				{
 					value->set(comboBox->getLabel());
 					value->notify(observer);
+
+					onEndEditValue(comboBox);
+					focus();
 				};
 
 			comboBox->setLabel(value->get());
-
 			boxLayout->endVertical();
 		}
 
@@ -718,6 +847,10 @@ namespace Skylicht
 				value->notify(observer);
 				};
 
+			slider->OnEndTextEdit = BIND_LISTENER(&CSpaceProperty::onEndEditValue, this);
+			slider->addAccelerator("Ctrl + Z", [&](GUI::CBase* base) {this->OnHotkey(base, "Ctrl + Z"); });
+			slider->addAccelerator("Ctrl + Y", [&](GUI::CBase* base) {this->OnHotkey(base, "Ctrl + Y"); });
+
 			boxLayout->endVertical();
 		}
 
@@ -749,10 +882,15 @@ namespace Skylicht
 
 			// when color pick change => update value
 			value->addObserver(onChange, true);
-			colorPicker->OnChanged = [value, colorPicker, observer = onChange](GUI::CBase* base) {
+			colorPicker->OnChanged = [&, value, colorPicker, observer = onChange](GUI::CBase* base) {
 				const GUI::SGUIColor& guiColor = colorPicker->getColor();
 				value->set(SColor(guiColor.A, guiColor.R, guiColor.G, guiColor.B));
 				value->notify(observer);
+				};
+
+			colorPicker->OnEndValue = [&](GUI::CBase* base) {
+				onEndEditValue(base);
+				focus();
 				};
 
 			boxLayout->endVertical();
@@ -784,10 +922,14 @@ namespace Skylicht
 
 			// when update interpolate change => update value
 			value->addObserver(onChange, true);
-			curvesBtn->OnChanged = [value, curvesBtn, observer = onChange](GUI::CBase* base) {
+			curvesBtn->OnChanged = [&, value, curvesBtn, observer = onChange](GUI::CBase* base) {
 				value->set(curvesBtn->getInterpolator());
 				value->notify(observer);
 				};
+
+			curvesBtn->OnEndValue = BIND_LISTENER(&CSpaceProperty::onEndEditValue, this);
+			curvesBtn->addAccelerator("Ctrl + Z", [&](GUI::CBase* base) {this->OnHotkey(base, "Ctrl + Z"); });
+			curvesBtn->addAccelerator("Ctrl + Y", [&](GUI::CBase* base) {this->OnHotkey(base, "Ctrl + Y"); });
 
 			boxLayout->endVertical();
 		}
@@ -891,7 +1033,7 @@ namespace Skylicht
 
 			// when ui update => change value
 			value->addObserver(onChange, true);
-			input->OnDrop = [s = value, observer = onChange](GUI::SDragDropPackage* data, float mouseX, float mouseY)
+			input->OnDrop = [&, target = input, s = value, observer = onChange](GUI::SDragDropPackage* data, float mouseX, float mouseY)
 				{
 					if (data->Name == "ListFSItem")
 					{
@@ -900,8 +1042,13 @@ namespace Skylicht
 						path = CAssetManager::getInstance()->getShortPath(path.c_str());
 						s->set(path);
 						s->notify(observer);
+
+						onEndEditValue(target);
 					}
 				};
+
+			input->OnEndTextEdit = BIND_LISTENER(&CSpaceProperty::onEndEditValue, this);
+
 			boxLayout->endVertical();
 
 			return input;
@@ -964,7 +1111,7 @@ namespace Skylicht
 				};
 
 			value->addObserver(onChange, true);
-			input->OnDrop = [s = value, observer = onChange](GUI::SDragDropPackage* data, float mouseX, float mouseY)
+			input->OnDrop = [&, target = input, s = value, observer = onChange](GUI::SDragDropPackage* data, float mouseX, float mouseY)
 				{
 					if (data->Name == "ListFSItem")
 					{
@@ -973,6 +1120,8 @@ namespace Skylicht
 						path = CAssetManager::getInstance()->getShortPath(path.c_str());
 						s->set(path);
 						s->notify(observer);
+
+						onEndEditValue(target);
 					}
 					else if (data->Name == "TreeFSItem")
 					{
@@ -981,8 +1130,12 @@ namespace Skylicht
 						path = CAssetManager::getInstance()->getShortPath(path.c_str());
 						s->set(path);
 						s->notify(observer);
+
+						onEndEditValue(target);
 					}
 				};
+
+			input->OnEndTextEdit = BIND_LISTENER(&CSpaceProperty::onEndEditValue, this);
 			boxLayout->endVertical();
 
 			return input;
@@ -1022,7 +1175,6 @@ namespace Skylicht
 			comboBox->setLabel(value);
 
 			boxLayout->endVertical();
-
 			return comboBox;
 		}
 

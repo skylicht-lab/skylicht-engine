@@ -195,9 +195,9 @@ namespace Skylicht
 
 				Listener OnPressed;
 				Listener OnTextChanged;
+				Listener OnEndTextEdit;
 				Listener OnESC;
 				Listener OnEnter;
-				Listener OnLostKeyboardFocus;
 
 			protected:
 

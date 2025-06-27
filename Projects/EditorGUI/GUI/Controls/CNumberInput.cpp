@@ -123,19 +123,22 @@ namespace Skylicht
 
 			void CNumberInput::onLostKeyboardFocus()
 			{
-				CTextBox::onLostKeyboardFocus();
+				if (m_focusTextbox)
+				{
+					CTextBox::onLostKeyboardFocus();
 
-				applyTextValue();
+					applyTextValue();
 
-				CInput::getInput()->hideCursor(false);
+					CInput::getInput()->hideCursor(false);
 
-				m_focusTextbox = false;
-				if (m_alwayFocusTextbox)
-					setCursor(ECursorType::Beam);
-				else
-					setCursor(ECursorType::SizeWE);
+					m_focusTextbox = false;
+					if (m_alwayFocusTextbox)
+						setCursor(ECursorType::Beam);
+					else
+						setCursor(ECursorType::SizeWE);
 
-				setCaretToEnd();
+					setCaretToEnd();
+				}
 			}
 
 			void CNumberInput::onMouseClickLeft(float x, float y, bool down)
@@ -193,6 +196,11 @@ namespace Skylicht
 
 							m_focusTextbox = true;
 							setCursor(ECursorType::Beam);
+						}
+						else
+						{
+							if (OnEndTextEdit != nullptr)
+								OnEndTextEdit(this);
 						}
 
 						m_drag = false;

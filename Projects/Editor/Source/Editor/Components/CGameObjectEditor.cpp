@@ -317,6 +317,8 @@ namespace Skylicht
 
 						// close menu
 						ui->getWindow()->getCanvas()->closeMenu();
+						ui->onEndEditValue(item);
+						ui->focus();
 					};
 			}
 

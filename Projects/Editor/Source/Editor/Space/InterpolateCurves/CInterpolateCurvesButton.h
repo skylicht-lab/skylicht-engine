@@ -37,6 +37,7 @@ namespace Skylicht
 			{
 			public:
 				Listener OnChanged;
+				Listener OnEndValue;
 
 			protected:
 

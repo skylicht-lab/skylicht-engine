@@ -174,6 +174,10 @@ namespace Skylicht
 					}
 					else
 					{
+						// stop auto scroll if drag out to another scroll
+						if (s_lastHoverOnScrollControl && s_lastHoverOnScrollControl != currentScroll)
+							s_lastHoverOnScrollControl->stopAutoScroll();
+
 						s_lastHoverOnScrollControl = currentScroll;
 					}
 				}

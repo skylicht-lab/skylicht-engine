@@ -28,12 +28,16 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Utils/CStringImp.h"
 #include "Utils/CPath.h"
 
+#include "Editor/SpaceController/CSceneController.h"
+#include "Editor/Space/Property/CSpaceProperty.h"
+
 namespace Skylicht
 {
 	namespace Editor
 	{
-		CAddComponentController::CAddComponentController(CEditor* editor, GUI::CMenu* menu) :
+		CAddComponentController::CAddComponentController(CEditor* editor, CSpaceProperty* ui, GUI::CMenu* menu) :
 			m_editor(editor),
+			m_ui(ui),
 			m_menu(menu),
 			m_gameObject(NULL),
 			m_inputTimeout(0.0f),
@@ -233,7 +237,12 @@ namespace Skylicht
 			const std::string& typeName = item->getTagString();
 			m_gameObject->addComponentByTypeName(typeName.c_str());
 
+			ArrayGameObject objs;
+			objs.push_back(m_gameObject);
+			CSceneController::getInstance()->getHistory()->saveModifyHistory(objs);
+
 			m_menu->closeMenu();
+			m_ui->focus();
 			m_editor->refresh();
 		}
 	}

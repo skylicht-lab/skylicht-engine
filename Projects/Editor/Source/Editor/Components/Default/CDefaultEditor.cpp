@@ -437,6 +437,8 @@ namespace Skylicht
 								updateData();
 								dropBox->setLabel(item->getLabel());
 								ui->getWindow()->getCanvas()->closeMenu();
+								ui->onEndEditValue(item);
+								ui->focus();
 							};
 					}
 				}
