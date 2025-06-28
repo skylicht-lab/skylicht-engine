@@ -54,6 +54,8 @@ namespace Skylicht
 
 		void CWorldTransformDataEditor::initGUI(IEntityData* entityData, CSpaceProperty* ui)
 		{
+			CEntityDataEditor::initGUI(entityData, ui);
+
 			m_worldTransform = dynamic_cast<CWorldTransformData*>(entityData);
 
 			// clear all registered observer
@@ -274,6 +276,8 @@ namespace Skylicht
 
 		void CWorldTransformDataEditor::closeGUI()
 		{
+			CEntityDataEditor::closeGUI();
+
 			// clear all registered observer
 			X.removeAllObserver();
 			Y.removeAllObserver();

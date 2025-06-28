@@ -45,10 +45,12 @@ namespace Skylicht
 
 			virtual void closeGUI()
 			{
+				m_data = NULL;
 			}
 
 			virtual void initGUI(IEntityData* entityData, CSpaceProperty* ui)
 			{
+				m_data = entityData;
 			}
 
 			IEntityData* getEntityData()

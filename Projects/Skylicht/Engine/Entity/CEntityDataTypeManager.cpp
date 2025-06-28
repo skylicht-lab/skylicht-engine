@@ -23,6 +23,7 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
+#include "CEntity.h"
 #include "CEntityDataTypeManager.h"
 
 namespace Skylicht
@@ -55,6 +56,11 @@ namespace Skylicht
 		hashes = dataHash.pointer();
 		indices = dataIndex.pointer();
 		dataSize++;
+
+		if (dataSize >= MAX_ENTITY_DATA)
+		{
+			os::Printer::log("CEntityDataTypeManager::getDataIndex Exceeding the allowed limit number DataType");
+		}
 
 		// get result
 		return dataTypeIndexInc - 1;

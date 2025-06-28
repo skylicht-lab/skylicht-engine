@@ -33,6 +33,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Editor/SpaceController/CGUIDesignController.h"
 #include "GUI/Theme/ThemeConfig.h"
 #include "Editor/Components/Transform/CTransformEditor.h"
+#include "Editor/EntityData/CEntityDataEditor.h"
+#include "Entity/CEntityHandleData.h"
 
 namespace Skylicht
 {
@@ -199,6 +201,7 @@ namespace Skylicht
 				{
 					CComponentEditor* componentEditor = dynamic_cast<CComponentEditor*>(group->Owner);
 					CGUIEditor* guiEditor = dynamic_cast<CGUIEditor*>(group->Owner);
+					CEntityDataEditor* entityDataEditor = dynamic_cast<CEntityDataEditor*>(group->Owner);
 
 					if (componentEditor)
 					{
@@ -226,6 +229,20 @@ namespace Skylicht
 
 						changed = true;
 						editorId = 2;
+					}
+					else if (entityDataEditor)
+					{
+						IEntityData* data = entityDataEditor->getEntityData();
+						CEntityHandleData* handler = data->Entity->getData<CEntityHandleData>();
+						if (handler && handler->Handler)
+						{
+							CGameObject* obj = handler->Handler->getGameObject();
+							if (std::find(objs.begin(), objs.end(), obj) == objs.end())
+								objs.push_back(obj);
+
+							changed = true;
+							editorId = 1;
+						}
 					}
 				}
 			}
@@ -276,8 +293,9 @@ namespace Skylicht
 				{
 					CComponentEditor* componentEditor = dynamic_cast<CComponentEditor*>(group->Owner);
 					CGUIEditor* guiEditor = dynamic_cast<CGUIEditor*>(group->Owner);
+					CEntityDataEditor* entityDataEditor = dynamic_cast<CEntityDataEditor*>(group->Owner);
 
-					if (componentEditor)
+					if (componentEditor || entityDataEditor)
 					{
 						CSceneController::getInstance()->onUndo();
 						break;
@@ -289,6 +307,7 @@ namespace Skylicht
 					}
 				}
 			}
+			focus();
 		}
 
 		void CSpaceProperty::onRedo()
@@ -299,8 +318,9 @@ namespace Skylicht
 				{
 					CComponentEditor* componentEditor = dynamic_cast<CComponentEditor*>(group->Owner);
 					CGUIEditor* guiEditor = dynamic_cast<CGUIEditor*>(group->Owner);
+					CEntityDataEditor* entityDataEditor = dynamic_cast<CEntityDataEditor*>(group->Owner);
 
-					if (componentEditor)
+					if (componentEditor || entityDataEditor)
 					{
 						CSceneController::getInstance()->onRedo();
 						break;
@@ -312,6 +332,7 @@ namespace Skylicht
 					}
 				}
 			}
+			focus();
 		}
 
 		void CSpaceProperty::update()
