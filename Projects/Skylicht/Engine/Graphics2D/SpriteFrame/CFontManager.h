@@ -29,6 +29,10 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief This is an object class that supports the management and loading of .font files
+	/// @ingroup Graphics2D
+	/// 
+	/// @see CFontSource
 	class SKYLICHT_API CFontManager
 	{
 	public:

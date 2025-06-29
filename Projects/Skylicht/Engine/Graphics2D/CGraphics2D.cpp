@@ -1872,7 +1872,7 @@ namespace Skylicht
 		m_vertices->set_used(0);
 	}
 
-	void CGraphics2D::drawText(const core::position2df& pos, CGlyphFont* font, const SColor& color, const std::wstring& string, int materialID, CMaterial* material)
+	void CGraphics2D::drawText(const core::position2df& pos, IFont* font, const SColor& color, const std::wstring& string, int materialID, CMaterial* material)
 	{
 		std::vector<SModuleOffset*> modules;
 		const wchar_t* lpString = string.c_str();
@@ -1910,7 +1910,7 @@ namespace Skylicht
 		}
 	}
 
-	float CGraphics2D::measureCharWidth(CGlyphFont* font, wchar_t c)
+	float CGraphics2D::measureCharWidth(IFont* font, wchar_t c)
 	{
 		if (c == '\n' || c == '\r')
 			return 0.0f;
@@ -1929,7 +1929,7 @@ namespace Skylicht
 		return charWidth;
 	}
 
-	core::dimension2df CGraphics2D::measureText(CGlyphFont* font, const std::wstring& string)
+	core::dimension2df CGraphics2D::measureText(IFont* font, const std::wstring& string)
 	{
 		float stringWidth = 0.0f;
 		float charSpacePadding = 0.0f;
