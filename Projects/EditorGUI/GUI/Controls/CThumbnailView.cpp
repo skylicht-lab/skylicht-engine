@@ -32,12 +32,11 @@ namespace Skylicht
 		namespace GUI
 		{
 			CThumbnailView::CThumbnailView(CBase* parent, float itemWidth, float itemHeight) :
-				CBase(parent),
+				CListBase(parent),
 				m_itemWidth(itemWidth),
 				m_itemHeight(itemHeight)
 			{
-				m_view = new CScrollControl(this);
-				m_view->dock(EPosition::Fill);
+
 			}
 
 			CThumbnailView::~CThumbnailView()
@@ -47,7 +46,7 @@ namespace Skylicht
 
 			void CThumbnailView::layout()
 			{
-				CBase::layout();
+				CListBase::layout();
 
 				float totalWidth = width() - 5.0f;
 
@@ -65,7 +64,7 @@ namespace Skylicht
 					if (i > 0 && i % numItemInRow == 0)
 					{
 						x = 0.0f;
-						y = y + m_itemHeight;
+						y = y + m_itemHeight + 5.0f;
 					}
 
 					CThumbnailItem* item = m_items[i];
@@ -77,71 +76,184 @@ namespace Skylicht
 
 			void CThumbnailView::postLayout()
 			{
-				CBase::postLayout();
+				CListBase::postLayout();
 			}
 
-			void CThumbnailView::unSelectAll()
+			int CThumbnailView::getNumItemInRow()
 			{
-
-			}
-
-			bool CThumbnailView::onKeyUp(bool down)
-			{
-				return true;
-			}
-
-			bool CThumbnailView::onKeyDown(bool down)
-			{
-				return true;
-			}
-
-			bool CThumbnailView::onKeyHome(bool down)
-			{
-				return true;
-			}
-
-			bool CThumbnailView::onKeyEnd(bool down)
-			{
-				return true;
+				float totalWidth = width() - 5.0f;
+				return (int)(totalWidth / m_itemWidth);
 			}
 
 			CThumbnailItem* CThumbnailView::addItem()
 			{
-				CThumbnailItem* item = new CThumbnailItem(m_view, this, m_itemWidth, m_itemHeight);
+				CThumbnailItem* item = new CThumbnailItem(this, m_itemWidth, m_itemHeight);
 				item->OnDown = BIND_LISTENER(&CThumbnailView::onItemDown, this);
 				m_items.push_back(item);
 				invalidate();
 				return item;
 			}
 
-			void CThumbnailView::onItemDown(CBase* base)
+			bool CThumbnailView::onKeyUp(bool down)
 			{
-				for (CThumbnailItem* item : m_items)
+				if (down)
 				{
-					if (item != NULL)
+					int numItemInRow = getNumItemInRow();
+					std::vector<CButton*> btns;
+
+					for (CBase* child : m_innerPanel->Children)
 					{
-						if (item == base)
+						CButton* item = dynamic_cast<CButton*>(child);
+						if (item != NULL)
 						{
-							if (item->getToggle() == false)
+							if (item->getToggle() == true)
+							{
+								if (btns.size() > 0 && btns.size() >= numItemInRow)
+								{
+									CButton* sel = btns[btns.size() - numItemInRow];
+
+									if (OnSelected != nullptr)
+										OnSelected(sel);
+
+									if (OnSelectChange != nullptr)
+										OnSelectChange(sel);
+
+									sel->setToggle(true);
+									item->setToggle(false);
+
+									scrollToItem(sel);
+								}
+								break;
+							}
+							btns.push_back(item);
+
+							if (btns.size() > numItemInRow + 1)
+								btns.erase(btns.begin());
+						}
+					}
+				}
+				return true;
+			}
+
+			bool CThumbnailView::onKeyDown(bool down)
+			{
+				if (down)
+				{
+					int numItemInRow = getNumItemInRow();
+
+					auto it = m_innerPanel->Children.begin();
+					auto end = m_innerPanel->Children.end();
+					while (it != end)
+					{
+						CButton* item = dynamic_cast<CButton*>(*it);
+						if (item != NULL)
+						{
+							if (item->getToggle() == true)
+							{
+								CButton* sel = NULL;
+
+								for (int i = 0; i < numItemInRow; i++)
+								{
+									++it;
+									if (it == end)
+										break;
+									if (i == numItemInRow - 1)
+										sel = dynamic_cast<CButton*>(*it);
+								}
+
+								if (sel)
+								{
+									if (OnSelected != nullptr)
+										OnSelected(sel);
+
+									if (OnSelectChange != nullptr)
+										OnSelectChange(sel);
+
+									sel->setToggle(true);
+									item->setToggle(false);
+
+									scrollToItem(sel);
+								}
+								break;
+							}
+						}
+						++it;
+					}
+				}
+				return true;
+			}
+
+			bool CThumbnailView::onKeyLeft(bool down)
+			{
+				if (down)
+				{
+					CButton* lastItem = NULL;
+					for (CBase* child : m_innerPanel->Children)
+					{
+						CButton* item = dynamic_cast<CButton*>(child);
+						if (item != NULL)
+						{
+							if (item->getToggle() == true)
+							{
+								if (lastItem != NULL && !lastItem->isDisabled())
+								{
+									if (OnSelected != nullptr)
+										OnSelected(lastItem);
+
+									if (OnSelectChange != nullptr)
+										OnSelectChange(lastItem);
+
+									lastItem->setToggle(true);
+									item->setToggle(false);
+
+									scrollToItem(lastItem);
+									return true;
+								}
+								else
+								{
+									return true;
+								}
+							}
+						}
+						lastItem = item;
+					}
+				}
+
+				return true;
+			}
+
+			bool CThumbnailView::onKeyRight(bool down)
+			{
+				if (down)
+				{
+					CButton* lastItem = NULL;
+					for (CBase* child : m_innerPanel->Children)
+					{
+						CButton* item = dynamic_cast<CButton*>(child);
+						if (item != NULL)
+						{
+							if (lastItem != NULL && !item->isDisabled())
 							{
 								if (OnSelected != nullptr)
 									OnSelected(item);
 
 								if (OnSelectChange != nullptr)
 									OnSelectChange(item);
+
+								item->setToggle(true);
+								lastItem->setToggle(false);
+
+								scrollToItem(item);
+								return true;
 							}
-
-							item->setToggle(true);
-						}
-						else
-						{
-							if (item->getToggle() == true && OnUnselected != nullptr)
-								OnUnselected(item);
-
-							item->setToggle(false);
+							else if (item->getToggle() == true)
+							{
+								lastItem = item;
+							}
 						}
 					}
 				}
+				return true;
 			}
 		}
 	}

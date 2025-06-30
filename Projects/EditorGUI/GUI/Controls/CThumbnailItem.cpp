@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CThumbnailItem.h"
+#include "CListBase.h"
 #include "GUI/Theme/ThemeConfig.h"
 
 namespace Skylicht
@@ -32,11 +33,13 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CThumbnailItem::CThumbnailItem(CBase* parent, CBase* owner, float itemWidth, float itemHeight) :
-				CButton(parent),
-				m_owner(owner)
+			CThumbnailItem::CThumbnailItem(CListBase* parent, float itemWidth, float itemHeight) :
+				CListItemBase(parent)
 			{
 				setIsToggle(true);
+
+				setHoverColor(ThemeConfig::ListItemBackgroundHoverColor);
+				setPressColor(ThemeConfig::ListItemBackgroundFocusColor);
 
 				m_label->dock(EPosition::Bottom);
 				m_label->setTextAlignment(GUI::TextCenter);

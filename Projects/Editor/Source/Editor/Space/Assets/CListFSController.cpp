@@ -105,8 +105,8 @@ namespace Skylicht
 
 		void CListFSController::removePath(const char* path)
 		{
-			std::list<GUI::CListRowItem*> items = m_listFS->getAllItems();
-			for (GUI::CListRowItem* item : items)
+			std::list<GUI::CButton*> items = m_listFS->getAllItems();
+			for (GUI::CButton* item : items)
 			{
 				const std::string& tagPath = item->getTagString();
 				if (tagPath == path)
@@ -119,10 +119,10 @@ namespace Skylicht
 
 		GUI::CBase* CListFSController::scrollAndSelectPath(const char* path)
 		{
-			GUI::CListRowItem* result = NULL;
+			GUI::CButton* result = NULL;
 
-			std::list<GUI::CListRowItem*> items = m_listFS->getAllItems();
-			for (GUI::CListRowItem* item : items)
+			std::list<GUI::CButton*> items = m_listFS->getAllItems();
+			for (GUI::CButton* item : items)
 			{
 				const std::string& tagPath = item->getTagString();
 				if (tagPath == path)
@@ -202,17 +202,21 @@ namespace Skylicht
 			}
 		}
 
-		void CListFSController::rename(GUI::CListRowItem* node)
+		void CListFSController::rename(GUI::CButton* node)
 		{
 			if (node != NULL)
 			{
 				m_renameItem = node;
 				m_renameRevert = node->getLabel();
 
-				node->getTextEditHelper()->beginEdit(
-					BIND_LISTENER(&CListFSController::OnRename, this),
-					BIND_LISTENER(&CListFSController::OnCancelRename, this)
-				);
+				GUI::CListRowItem* rowItem = dynamic_cast<GUI::CListRowItem*>(node);
+				if (rowItem)
+				{
+					rowItem->getTextEditHelper()->beginEdit(
+						BIND_LISTENER(&CListFSController::OnRename, this),
+						BIND_LISTENER(&CListFSController::OnCancelRename, this)
+					);
+				}
 			}
 		}
 
@@ -342,7 +346,7 @@ namespace Skylicht
 			return GUI::ESystemIcon::File;
 		}
 
-		void CListFSController::initDragDrop(GUI::CListRowItem* item)
+		void CListFSController::initDragDrop(GUI::CButton* item)
 		{
 			GUI::SDragDropPackage* dragDrop = item->setDragDropPackage("ListFSItem", item);
 			dragDrop->DrawControl = item;
@@ -500,7 +504,7 @@ namespace Skylicht
 			m_newFolderItem->setIconColor(GUI::ThemeConfig::FolderColor);
 			m_newFolderItem->tagString(parent);
 
-			GUI::CListRowItem* next = m_listFS->getItemByLabel(L"..");
+			GUI::CButton* next = m_listFS->getItemByLabel(L"..");
 			if (next != NULL)
 				m_newFolderItem->bringNextToControl(next, true);
 			else

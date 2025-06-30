@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2020 Skylicht Technology CO., LTD
+Copyright (c) 2025 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
@@ -25,10 +25,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CBase.h"
-#include "CScrollControl.h"
-#include "CListBase.h"
-#include "CIconTextItem.h"
-#include "CListRowItem.h"
+#include "CButton.h"
+#include "CTextEditHelper.h"
 
 namespace Skylicht
 {
@@ -36,18 +34,31 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CListBox : public CListBase
+			class CListBase;
+
+			class CListItemBase : public CButton
 			{
+			protected:
+				CListBase* m_owner;
+
+				CTextEditHelper* m_textEditHelper;
+
 			public:
-				CListBox(CBase* parent);
+				CListItemBase(CListBase* base);
 
-				virtual ~CListBox();
+				virtual ~CListItemBase();
 
-				virtual void postLayout();
+				inline CTextEditHelper* getTextEditHelper()
+				{
+					return m_textEditHelper;
+				}
 
-				CListRowItem* addItem(const std::wstring& label, ESystemIcon icon);
+				inline CListBase* getList()
+				{
+					return m_owner;
+				}
 
-				CListRowItem* addItem(const std::wstring& label);
+				virtual void onMouseClickRight(float x, float y, bool down);
 			};
 		}
 	}

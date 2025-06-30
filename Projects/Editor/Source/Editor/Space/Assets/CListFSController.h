@@ -46,7 +46,7 @@ namespace Skylicht
 
 			GUI::CListBox* m_listFS;
 
-			GUI::CListRowItem* m_renameItem;
+			GUI::CButton* m_renameItem;
 
 			std::wstring m_renameRevert;
 
@@ -95,9 +95,9 @@ namespace Skylicht
 				m_searchController = searchController;
 			}
 
-			void rename(GUI::CListRowItem* node);
+			void rename(GUI::CButton* node);
 
-			void initDragDrop(GUI::CListRowItem* item);
+			void initDragDrop(GUI::CButton* item);
 
 			void OnRename(GUI::CBase* control);
 

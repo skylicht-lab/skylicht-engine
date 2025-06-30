@@ -33,9 +33,8 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CListRowItem::CListRowItem(CBase* base) :
-				CButton(base),
-				m_owner(base)
+			CListRowItem::CListRowItem(CListBase* base) :
+				CListItemBase(base)
 			{
 				setIsToggle(true);
 
@@ -51,13 +50,11 @@ namespace Skylicht
 				setPadding(SPadding(8.0f, 0.0f, 0.0f, 0.0f));
 
 				showIcon(true);
-
-				m_textEditHelper = new CTextEditHelper(this, new CTextBox(this), m_label);
 			}
 
 			CListRowItem::~CListRowItem()
 			{
-				delete m_textEditHelper;
+
 			}
 
 			void CListRowItem::layout()
@@ -114,26 +111,6 @@ namespace Skylicht
 				r.Height = r.Height - 1.0f;
 
 				CTheme::getTheme()->drawButton(r, c);
-			}
-
-			void CListRowItem::onMouseClickRight(float x, float y, bool down)
-			{
-				if (isDisabled())
-					return;
-
-				CButton::onMouseClickRight(x, y, down);
-
-				if (down == false)
-				{
-					CListBox* listBox = dynamic_cast<CListBox*>(m_owner);
-					if (listBox->OnItemContextMenu != nullptr)
-						listBox->OnItemContextMenu(this);
-				}
-			}
-
-			CListBox* CListRowItem::getListBox()
-			{
-				return dynamic_cast<CListBox*>(m_owner);
 			}
 		}
 	}

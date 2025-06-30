@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2020 Skylicht Technology CO., LTD
+Copyright (c) 2025 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
@@ -26,9 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CBase.h"
 #include "CScrollControl.h"
-#include "CListBase.h"
-#include "CIconTextItem.h"
-#include "CListRowItem.h"
+#include "CButton.h"
 
 namespace Skylicht
 {
@@ -36,18 +34,55 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CListBox : public CListBase
+			class CListBase : public CScrollControl
 			{
 			public:
-				CListBox(CBase* parent);
+				CListBase(CBase* parent);
 
-				virtual ~CListBox();
+				virtual ~CListBase();
 
-				virtual void postLayout();
+				void removeAllItem();
 
-				CListRowItem* addItem(const std::wstring& label, ESystemIcon icon);
+				CButton* getItemByLabel(const std::wstring& label);
 
-				CListRowItem* addItem(const std::wstring& label);
+				CButton* getItemByTagValue(int value);
+
+				CButton* getSelected();
+
+				std::list<CButton*> getAllItems();
+
+				void unSelectAll();
+
+				virtual bool onKeyUp(bool down);
+
+				virtual bool onKeyDown(bool down);
+
+				virtual bool onKeyHome(bool down);
+
+				virtual bool onKeyEnd(bool down);
+
+				inline void setMultiSelected(bool b)
+				{
+					m_multiSelected = b;
+				}
+
+				inline bool isMultiSelected()
+				{
+					return m_multiSelected;
+				}
+
+			public:
+
+				Listener OnSelected;
+				Listener OnUnselected;
+				Listener OnSelectChange;
+				Listener OnItemContextMenu;
+
+			protected:
+
+				virtual void onItemDown(CBase* item);
+
+				bool m_multiSelected;
 			};
 		}
 	}

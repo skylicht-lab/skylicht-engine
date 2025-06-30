@@ -122,7 +122,7 @@ namespace Skylicht
 			GUI::CListRowItem* rowItem = dynamic_cast<GUI::CListRowItem*>(row);
 			if (rowItem != NULL)
 			{
-				m_ownerControl = rowItem->getListBox();
+				m_ownerControl = rowItem->getList();
 				m_selected = rowItem;
 				m_selectedPath = rowItem->getTagString();
 
@@ -263,7 +263,7 @@ namespace Skylicht
 
 			if (m_listFS->isFocussed())
 			{
-				GUI::CListRowItem* row = m_listFS->getSelected();
+				GUI::CButton* row = m_listFS->getSelected();
 				std::string path = row->getTagString();
 				if (path.empty() == false)
 				{

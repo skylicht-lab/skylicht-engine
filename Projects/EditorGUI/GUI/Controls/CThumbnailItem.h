@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CBase.h"
 #include "CButton.h"
 #include "CRawImage.h"
+#include "CListItemBase.h"
 
 namespace Skylicht
 {
@@ -34,14 +35,15 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CThumbnailItem : public CButton
+			class CListBase;
+
+			class CThumbnailItem : public CListItemBase
 			{
 			protected:
 				CBase* m_render;
-				CBase* m_owner;
 
 			public:
-				CThumbnailItem(CBase* parent, CBase* owner, float itemHeight, float itemWidth);
+				CThumbnailItem(CListBase* parent, float itemHeight, float itemWidth);
 
 				virtual ~CThumbnailItem();
 

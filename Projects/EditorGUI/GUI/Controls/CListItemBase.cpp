@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2020 Skylicht Technology CO., LTD
+Copyright (c) 2025 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
@@ -22,13 +22,11 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
-
-#include "CBase.h"
-#include "CScrollControl.h"
+#include "pch.h"
+#include "CListItemBase.h"
 #include "CListBase.h"
-#include "CIconTextItem.h"
-#include "CListRowItem.h"
+#include "GUI/Theme/ThemeConfig.h"
+#include "GUI/Input/CInput.h"
 
 namespace Skylicht
 {
@@ -36,19 +34,31 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CListBox : public CListBase
+			CListItemBase::CListItemBase(CListBase* base) :
+				CButton(base),
+				m_owner(base)
 			{
-			public:
-				CListBox(CBase* parent);
+				m_textEditHelper = new CTextEditHelper(this, new CTextBox(this), m_label);
+			}
 
-				virtual ~CListBox();
+			CListItemBase::~CListItemBase()
+			{
+				delete m_textEditHelper;
+			}
 
-				virtual void postLayout();
+			void CListItemBase::onMouseClickRight(float x, float y, bool down)
+			{
+				if (isDisabled())
+					return;
 
-				CListRowItem* addItem(const std::wstring& label, ESystemIcon icon);
+				CButton::onMouseClickRight(x, y, down);
 
-				CListRowItem* addItem(const std::wstring& label);
-			};
+				if (down == false)
+				{
+					if (m_owner->OnItemContextMenu != nullptr)
+						m_owner->OnItemContextMenu(this);
+				}
+			}
 		}
 	}
 }

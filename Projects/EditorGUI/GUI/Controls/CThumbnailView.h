@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CBase.h"
-#include "CScrollControl.h"
+#include "CListBase.h"
 #include "CThumbnailItem.h"
 
 namespace Skylicht
@@ -34,13 +34,11 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CThumbnailView : public CBase
+			class CThumbnailView : public CListBase
 			{
 			protected:
 				float m_itemWidth;
 				float m_itemHeight;
-
-				CScrollControl* m_view;
 
 				std::vector<CThumbnailItem*> m_items;
 
@@ -53,28 +51,20 @@ namespace Skylicht
 
 				virtual void postLayout();
 
-				void unSelectAll();
+				CThumbnailItem* addItem();
 
 				virtual bool onKeyUp(bool down);
 
 				virtual bool onKeyDown(bool down);
 
-				virtual bool onKeyHome(bool down);
+				virtual bool onKeyLeft(bool down);
 
-				virtual bool onKeyEnd(bool down);
-
-				CThumbnailItem* addItem();
-
-			public:
-
-				Listener OnSelected;
-				Listener OnUnselected;
-				Listener OnSelectChange;
-				Listener OnItemContextMenu;
+				virtual bool onKeyRight(bool down);
 
 			protected:
 
-				virtual void onItemDown(CBase* base);
+				int getNumItemInRow();
+
 			};
 		}
 	}

@@ -25,8 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CBase.h"
-#include "CButton.h"
-#include "CTextEditHelper.h"
+#include "CListItemBase.h"
 
 namespace Skylicht
 {
@@ -34,17 +33,12 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			class CListBox;
+			class CListBase;
 
-			class CListRowItem : public CButton
+			class CListRowItem : public CListItemBase
 			{
-			protected:
-				CBase* m_owner;
-
-				CTextEditHelper* m_textEditHelper;
-
 			public:
-				CListRowItem(CBase* base);
+				CListRowItem(CListBase* base);
 
 				virtual ~CListRowItem();
 
@@ -55,15 +49,6 @@ namespace Skylicht
 				virtual void renderUnder();
 
 				virtual void renderBackground();
-
-				virtual void onMouseClickRight(float x, float y, bool down);
-
-				inline CTextEditHelper* getTextEditHelper()
-				{
-					return m_textEditHelper;
-				}
-
-				CListBox* getListBox();
 			};
 		}
 	}
