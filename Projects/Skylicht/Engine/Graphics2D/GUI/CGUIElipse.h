@@ -28,6 +28,14 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief This is the object class for displaying an ellipse.
+	/// @ingroup GUI
+	/// 
+	/// @code
+	/// CCanvas *canvas = gameobject->addComponent<CCanvas>();
+	/// core::rectf r(0.0f, 0.0f, 100.0f, 100.0f);
+	/// CGUIElipse* gui = canvas->createElipse(r, SColor(255,255,0,0));
+	/// @endcode
 	class SKYLICHT_API CGUIElipse : public CGUIElement
 	{
 		friend class CCanvas;

@@ -29,6 +29,20 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief This is the object class for displaying a frame image in sprite. But it will scale the image size while minimizing image distortion.
+	/// @ingroup GUI
+	/// 
+	/// @see CSpriteFrame
+	/// 
+	/// @code
+	/// CSpriteFrame* sprite = CSpriteManager::getInstance()->loadSprite("Assets/SampleGUI/SampleGUI.spritedata")
+	/// SFrame* frame = sprite->getFrame("dialog");
+	/// 
+	/// CCanvas *canvas = gameobject->addComponent<CCanvas>();
+	/// core::rectf r(0.0f, 0.0f, 100.0f, 100.0f);
+	/// CGUIFitSprite* gui = canvas->createFitSprite(r, frame);
+	/// gui->setAnchor(CGUIFitSprite::AnchorAll, 20.0f, 20.0f, 20.0f, 20.0f);
+	/// @endcode
 	class SKYLICHT_API CGUIFitSprite : public CGUIElement
 	{
 		friend class CCanvas;

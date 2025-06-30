@@ -28,19 +28,27 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief This is the object class for displaying a rectangle.
+	/// @ingroup GUI
+	/// 
+	/// @code
+	/// CCanvas *canvas = gameobject->addComponent<CCanvas>();
+	/// core::rectf r(0.0f, 0.0f, 100.0f, 100.0f);
+	/// CGUIRect* gui = canvas->createRect(r, SColor(255,255,0,0));
+	/// @endcode
 	class SKYLICHT_API CGUIRect : public CGUIElement
 	{
 		friend class CCanvas;
 	public:
 
 	protected:
-		CGUIRect(CCanvas *canvas, CGUIElement *parent);
-		CGUIRect(CCanvas *canvas, CGUIElement *parent, const core::rectf& rect);
+		CGUIRect(CCanvas* canvas, CGUIElement* parent);
+		CGUIRect(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect);
 
 	public:
 		virtual ~CGUIRect();
 
-		virtual void render(CCamera *camera);
+		virtual void render(CCamera* camera);
 
 		DECLARE_GETTYPENAME(CGUIRect)
 	};

@@ -135,7 +135,7 @@ namespace Skylicht
 	/// @image html Graphics2D/CSpriteFrame/export-sprite.jpg "Next, press the Export button to see the resulting .sprite and .png files." width=1200px
 	/// 
 	/// @code
-	/// CSpriteFrame* CSpriteManager::getInstance()->loadSprite("Assets/SampleGUI/SampleGUI.spritedata");
+	/// CSpriteFrame* sprite = CSpriteManager::getInstance()->loadSprite("Assets/SampleGUI/SampleGUI.spritedata");
 	/// @endcode
 	/// 
 	/// @see CGUIFitSprite, CGUISprite

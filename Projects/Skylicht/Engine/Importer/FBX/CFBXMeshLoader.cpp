@@ -41,6 +41,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "RenderMesh/CRenderMeshData.h"
 #include "Culling/CCullingData.h"
 
+using namespace FBX;
+
 namespace Skylicht
 {
 	struct SVertexID

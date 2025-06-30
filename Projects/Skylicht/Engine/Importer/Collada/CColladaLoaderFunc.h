@@ -27,11 +27,11 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CColladaLoader.h"
 
-namespace Skylicht
+namespace Collada
 {
 	void uriToId(std::wstring& str);
-	std::wstring readId(io::IXMLReader *xmlRead);
-	std::wstring readName(io::IXMLReader *xmlRead);
+	std::wstring readId(io::IXMLReader* xmlRead);
+	std::wstring readName(io::IXMLReader* xmlRead);
 	void findNextNoneWhiteSpace(const c8** start);
 	inline f32 readFloat(const c8** p);
 
@@ -40,8 +40,8 @@ namespace Skylicht
 	void readFloatsInsideElement(io::IXMLReader* reader, f32* floats, u32 count);
 	void readStringInsideElement(io::IXMLReader* reader, std::wstring& string);
 
-	int	calcNumTriangleFromPolygon(const s32 *vCount, int numPolygon);
-	int	convertPolygonToTriangle(const s32 *sourcePolygon, int offset, s32 *targetTriangle, int &targetID, int numVertex, int numElementPerVertex);
+	int	calcNumTriangleFromPolygon(const s32* vCount, int numPolygon);
+	int	convertPolygonToTriangle(const s32* sourcePolygon, int offset, s32* targetTriangle, int& targetID, int numVertex, int numElementPerVertex);
 
 	SColorf readColorNode(io::IXMLReader* reader);
 	f32 readFloatNode(io::IXMLReader* reader);

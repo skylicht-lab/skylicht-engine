@@ -42,7 +42,6 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-
 	bool CColladaLoader::s_fixUV = false;
 
 	CColladaLoader::CColladaLoader() :

@@ -35,6 +35,25 @@ namespace Skylicht
 {
 	class CFontSource;
 
+	/// @brief This is the object class for displaying a text.
+	/// @ingroup GUI
+	/// 
+	/// @see CFontSource, CGlyphFont, CSpriteFont
+	/// 
+	/// @code
+	/// CFontSource* fontSource = CFontManager::getInstance()->loadFontSource("SampleGUI/Fonts/Roboto.font");
+	/// IFont* font = NULL;
+	/// if (fontSource)
+	/// {
+	/// 	fontSource->initFont();
+	/// 	font = fontSource->getFont();
+	/// }
+	/// 
+	/// CCanvas *canvas = gameobject->addComponent<CCanvas>();
+	/// core::rectf r(0.0f, 0.0f, 100.0f, 100.0f);
+	/// CGUIText* gui = canvas->createText(r, font);
+	/// gui->setText("Hello");
+	/// @endcode
 	class SKYLICHT_API CGUIText : public CGUIElement
 	{
 		friend class CCanvas;

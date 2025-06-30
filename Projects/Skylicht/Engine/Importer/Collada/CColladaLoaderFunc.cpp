@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Utils/CStringImp.h"
 #include "TextureManager/CTextureManager.h"
 
-namespace Skylicht
+namespace Collada
 {
 	//! changes the XML URI into an internal id
 	void uriToId(std::wstring& str)
@@ -41,7 +41,7 @@ namespace Skylicht
 	}
 
 
-	std::wstring readId(io::IXMLReader *xmlRead)
+	std::wstring readId(io::IXMLReader* xmlRead)
 	{
 		std::wstring str = xmlRead->getAttributeValue(L"id");
 		if (str.size() == 0)
@@ -50,7 +50,7 @@ namespace Skylicht
 		return str;
 	}
 
-	std::wstring readName(io::IXMLReader *xmlRead)
+	std::wstring readName(io::IXMLReader* xmlRead)
 	{
 		std::wstring str = xmlRead->getAttributeValue(L"name");
 		return str;
@@ -101,7 +101,7 @@ namespace Skylicht
 		}
 	}
 
-	int calcNumTriangleFromPolygon(const s32 *vCount, int numPolygon)
+	int calcNumTriangleFromPolygon(const s32* vCount, int numPolygon)
 	{
 		int r = 0;
 		for (int i = 0; i < numPolygon; i++)
@@ -114,7 +114,7 @@ namespace Skylicht
 		return r;
 	}
 
-	int convertPolygonToTriangle(const s32 *sourcePolygon, int offset, s32 *targetTriangle, int &targetID, int numVertex, int numElementPerVertex)
+	int convertPolygonToTriangle(const s32* sourcePolygon, int offset, s32* targetTriangle, int& targetID, int numVertex, int numElementPerVertex)
 	{
 		// {1 2 3 4} => {1 2 3} {1 3 4}
 		// {1 2 3 4 5} => {1 2 3} {1 3 4} {1 4 5}
@@ -369,8 +369,8 @@ namespace Skylicht
 	ITexture* loadDaeTexture(const std::wstring& path, std::vector<std::string>& textureFolder)
 	{
 		char realFilePath[1024];
-		CStringImp::copy(realFilePath, path.c_str());
-		return CTextureManager::getInstance()->getTexture(realFilePath, textureFolder);
+		Skylicht::CStringImp::copy(realFilePath, path.c_str());
+		return Skylicht::CTextureManager::getInstance()->getTexture(realFilePath, textureFolder);
 	}
 
 	std::wstring getImageWithId(const std::wstring& id, const ArrayImages& listImages)
@@ -517,5 +517,4 @@ namespace Skylicht
 
 		return -1;
 	}
-
 }

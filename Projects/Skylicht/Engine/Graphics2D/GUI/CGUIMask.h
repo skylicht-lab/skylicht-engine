@@ -28,6 +28,20 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief This is the object class that represents a masked rectangle, and other GUIs will only display within that rectangle. Any drawing outside of this mask rectangle will be clipped.
+	/// @ingroup GUI
+	/// 
+	/// @code
+	/// CCanvas *canvas = gameobject->addComponent<CCanvas>();
+	/// 
+	/// core::rectf maskRect(50.0f, 50.0f, 100.0f, 100.0f);
+	/// CGUIMask* mask = canvas->createMask(maskRect);
+	/// 
+	/// core::rectf r(0.0f, 0.0f, 200.0f, 200.0f);
+	/// CGUIImage* gui = canvas->createImage(r);
+	/// gui->setImage(CTextureManager::getInstance()->getTexture("BuiltIn/Textures/Skylicht.png"));
+	/// gui->setMask(mask);
+	/// @endcode
 	class SKYLICHT_API CGUIMask : public CGUIElement
 	{
 		friend class CCanvas;

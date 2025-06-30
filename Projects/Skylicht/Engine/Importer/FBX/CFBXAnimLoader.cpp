@@ -32,6 +32,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Utils/CPath.h"
 #include "Utils/CStringImp.h"
 
+using namespace FBX;
+
 namespace Skylicht
 {
 	CFBXAnimLoader::CFBXAnimLoader()

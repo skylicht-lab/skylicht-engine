@@ -2,7 +2,7 @@
 
 #include "ufbx.h"
 
-namespace Skylicht
+namespace FBX
 {
 	core::matrix4 convertFBXMatrix(const ufbx_matrix& mat);
 

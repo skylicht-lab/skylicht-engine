@@ -29,6 +29,20 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief This is the object class that arranges other GUIs horizontally or vertically.
+	/// @ingroup GUI
+	/// 
+	/// @code
+	/// CCanvas *canvas = gameobject->addComponent<CCanvas>();
+	/// core::rectf layoutRect(0.0f, 0.0f, 400.0f, 400.0f);
+	/// CGUILayout* gui = canvas->createLayout(layoutRect);
+	/// gui->setAlign(CGUILayoutData::Vertical);
+	/// 
+	/// core::rectf r(0.0f, 0.0f, 100.0f, 100.0f);
+	/// canvas->createRect(gui, r, SColor(255,255,0,0));
+	/// canvas->createRect(gui, r, SColor(255,0,255,0));
+	/// canvas->createRect(gui, r, SColor(255,0,0,255));
+	/// @endcode
 	class SKYLICHT_API CGUILayout : public CGUIElement
 	{
 		friend class CCanvas;

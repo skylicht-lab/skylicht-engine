@@ -29,10 +29,14 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "RenderMesh/CSkinnedMesh.h"
 
 #include "Importer/CBaseMeshImporter.h"
-
 #include "RenderMesh/CJointData.h"
 
 namespace Skylicht
+{
+	class CEntity;
+}
+
+namespace Collada
 {
 	// const for buffer
 	const int k_positionBuffer = 0;
@@ -83,7 +87,6 @@ namespace Skylicht
 		}
 	};
 	typedef std::vector<SEffect> ArrayEffects;
-
 
 	struct SColladaMaterial
 	{
@@ -168,7 +171,6 @@ namespace Skylicht
 		std::vector<SWeightParam> Weights;
 	};
 
-
 	struct SMeshParam
 	{
 		std::wstring Name;
@@ -188,8 +190,6 @@ namespace Skylicht
 	};
 	typedef std::vector<SMeshParam>	ArrayMeshParams;
 
-	class CEntity;
-
 	struct SNodeParam
 	{
 		std::wstring Name;
@@ -203,7 +203,7 @@ namespace Skylicht
 		std::vector<SNodeParam*> Childs;
 		SNodeParam* Parent;
 
-		CEntity* Entity;
+		Skylicht::CEntity* Entity;
 		int ChildLevel;
 
 		SNodeParam()
@@ -214,7 +214,6 @@ namespace Skylicht
 	};
 	typedef std::vector<SNodeParam*> ArrayNodeParams;
 
-	// Add to support read DAE from FBX Converter
 	struct SColladaMeshVertexMap
 	{
 		SMeshParam* meshId;
@@ -274,7 +273,12 @@ namespace Skylicht
 			}
 		}
 	};
+}
 
+using namespace Collada;
+
+namespace Skylicht
+{
 	class SKYLICHT_API CColladaLoader : public CBaseMeshImporter
 	{
 	public:

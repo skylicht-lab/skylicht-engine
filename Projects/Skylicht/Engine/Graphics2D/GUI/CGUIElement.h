@@ -37,6 +37,14 @@ namespace Skylicht
 	class CCanvas;
 	class CGUIMask;
 
+	/// @brief This is the base object class from which other GUIs inherit. It's an empty GUI and can contain child GUIs in a tree structure.
+	/// @ingroup GUI
+	/// 
+	/// @code
+	/// CCanvas *canvas = gameobject->addComponent<CCanvas>();
+	/// core::rectf r(0.0f, 0.0f, 100.0f, 100.0f);
+	/// CGUIElement* gui = canvas->createElement(r);
+	/// @endcode
 	class SKYLICHT_API CGUIElement
 	{
 		friend class CCanvas;

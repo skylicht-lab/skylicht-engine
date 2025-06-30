@@ -26,12 +26,17 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Importer/IAnimationImporter.h"
 
+namespace Collada
+{
+	struct SNodeParam;
+}
+
+using namespace Collada;
+
 namespace Skylicht
 {
 	class CAnimationClip;
-
 	struct SEntityAnim;
-	struct SNodeParam;
 
 	class SKYLICHT_API CColladaAnimLoader : public IAnimationImporter
 	{

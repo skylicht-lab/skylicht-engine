@@ -70,6 +70,8 @@ namespace Skylicht
 	/// g->drawText(rect, font, SColor(255, 255, 255, 255), "Text", shaderId);
 	/// g->endRenderGUI();
 	/// @endcode
+	/// 
+	/// @see CGUIText
 	class SKYLICHT_API CFontSource : public CAssetResource
 	{
 	public:

@@ -29,6 +29,19 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief This is the object class for displaying a frame image in sprite.
+	/// @ingroup GUI
+	/// 
+	/// @see CSpriteFrame
+	/// 
+	/// @code
+	/// CSpriteFrame* sprite = CSpriteManager::getInstance()->loadSprite("Assets/SampleGUI/SampleGUI.spritedata")
+	/// SFrame* frame = sprite->getFrame("skylicht-icon");
+	/// 
+	/// CCanvas *canvas = gameobject->addComponent<CCanvas>();
+	/// core::rectf r(0.0f, 0.0f, 100.0f, 100.0f);
+	/// CGUISprite* gui = canvas->createSprite(r, frame);
+	/// @endcode
 	class SKYLICHT_API CGUISprite : public CGUIElement
 	{
 		friend class CCanvas;

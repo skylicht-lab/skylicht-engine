@@ -28,6 +28,15 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief This is the object class for displaying a texture image.
+	/// @ingroup GUI
+	/// 
+	/// @code
+	/// CCanvas *canvas = gameobject->addComponent<CCanvas>();
+	/// core::rectf r(0.0f, 0.0f, 100.0f, 100.0f);
+	/// CGUIImage* gui = canvas->createImage(r);
+	/// gui->setImage(CTextureManager::getInstance()->getTexture("BuiltIn/Textures/Skylicht.png"));
+	/// @endcode
 	class SKYLICHT_API CGUIImage : public CGUIElement
 	{
 		friend class CCanvas;

@@ -37,7 +37,10 @@ namespace Skylicht
 {
 	CColladaAnimLoader::CColladaAnimLoader() :
 		m_unit(""),
-		m_unitScale(1.0f)
+		m_unitScale(1.0f),
+		m_colladaRoot(NULL),
+		m_flipOx(false),
+		m_zUp(false)
 	{
 	}
 

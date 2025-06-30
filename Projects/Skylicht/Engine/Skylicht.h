@@ -36,7 +36,12 @@ namespace irr
 
  /**
   * @defgroup Graphics2D Graphics 2D
-  * @brief This group includes object classes related to sprite, gui, font...
+  * @brief This group includes object classes related to sprite, font... and a graphics object for 2D drawing.
+  */
+
+/**
+  * @defgroup GUI GUI
+  * @brief This group includes GUI display object classes for Canvas.
   */
 
 /*! \mainpage Skylicht Engine API documentation
@@ -55,7 +60,7 @@ namespace irr
  * 
  */
 
-/// @brief Everything in the Skylicht Engine
+/// @brief Everything in the Skylicht Engine. You can start by looking at the <A HREF="topics.html">topics</A>.
 namespace Skylicht
 {
 	SKYLICHT_API void initSkylicht(IrrlichtDevice* device, bool server = false);
