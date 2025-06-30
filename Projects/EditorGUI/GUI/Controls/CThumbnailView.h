@@ -40,8 +40,6 @@ namespace Skylicht
 				float m_itemWidth;
 				float m_itemHeight;
 
-				std::vector<CThumbnailItem*> m_items;
-
 			public:
 				CThumbnailView(CBase* parent, float itemWidth, float itemHeight);
 
@@ -50,6 +48,10 @@ namespace Skylicht
 				virtual void layout();
 
 				virtual void postLayout();
+
+				virtual CListItemBase* addItem(const std::wstring& label, ESystemIcon icon);
+
+				virtual CListItemBase* addItem(const std::wstring& label);
 
 				CThumbnailItem* addItem();
 

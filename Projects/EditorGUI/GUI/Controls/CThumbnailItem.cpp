@@ -41,6 +41,10 @@ namespace Skylicht
 				setHoverColor(ThemeConfig::ListItemBackgroundHoverColor);
 				setPressColor(ThemeConfig::ListItemBackgroundFocusColor);
 
+				m_icon->dock(EPosition::Center);
+				m_icon->setSize(40.0f, 40.0f);
+				m_icon->setLargeIcon(true);
+
 				m_label->dock(EPosition::Bottom);
 				m_label->setTextAlignment(GUI::TextCenter);
 

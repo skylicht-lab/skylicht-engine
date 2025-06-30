@@ -54,7 +54,17 @@ namespace Skylicht
 				}
 			}
 
-			CListRowItem* CListBox::addItem(const std::wstring& label, ESystemIcon icon)
+			CListItemBase* CListBox::addItem(const std::wstring& label, ESystemIcon icon)
+			{
+				return addRowItem(label, icon);
+			}
+
+			CListItemBase* CListBox::addItem(const std::wstring& label)
+			{
+				return addRowItem(label);
+			}
+
+			CListRowItem* CListBox::addRowItem(const std::wstring& label, ESystemIcon icon)
 			{
 				CListRowItem* item = new CListRowItem(this);
 				item->dock(EPosition::Top);
@@ -64,7 +74,7 @@ namespace Skylicht
 				return item;
 			}
 
-			CListRowItem* CListBox::addItem(const std::wstring& label)
+			CListRowItem* CListBox::addRowItem(const std::wstring& label)
 			{
 				CListRowItem* item = new CListRowItem(this);
 				item->dock(EPosition::Top);

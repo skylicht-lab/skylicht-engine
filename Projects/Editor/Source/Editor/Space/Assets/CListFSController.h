@@ -44,7 +44,7 @@ namespace Skylicht
 
 			GUI::CCanvas* m_canvas;
 
-			GUI::CListBox* m_listFS;
+			GUI::CListBase* m_listFS;
 
 			GUI::CButton* m_renameItem;
 
@@ -62,12 +62,12 @@ namespace Skylicht
 
 			GUI::CMessageBox* m_msgBox;
 
-			GUI::CListRowItem* m_newFolderItem;
+			GUI::CListItemBase* m_newFolderItem;
 
 			bool m_searching;
 
 		public:
-			CListFSController(GUI::CCanvas* canvas, CSpace* space, GUI::CListBox* list);
+			CListFSController(GUI::CCanvas* canvas, CSpace* space, GUI::CListBase* list);
 
 			virtual ~CListFSController();
 

@@ -41,7 +41,7 @@ namespace Skylicht
 			CSpace* space,
 			GUI::CTreeControl* tree,
 			CTreeFSController* treeFSController,
-			GUI::CListBox* list,
+			GUI::CListBase* list,
 			CListFSController* listFSController) :
 			m_space(space),
 			m_canvas(canvas),
@@ -119,7 +119,7 @@ namespace Skylicht
 
 		void CContextMenuFS::OnListContextMenu(GUI::CBase* row)
 		{
-			GUI::CListRowItem* rowItem = dynamic_cast<GUI::CListRowItem*>(row);
+			GUI::CListItemBase* rowItem = dynamic_cast<GUI::CListItemBase*>(row);
 			if (rowItem != NULL)
 			{
 				m_ownerControl = rowItem->getList();
@@ -225,7 +225,7 @@ namespace Skylicht
 				{
 					CPropertyController::getInstance()->setProperty(NULL);
 
-					GUI::CListRowItem* rowItem = dynamic_cast<GUI::CListRowItem*>(m_selected);
+					GUI::CListItemBase* rowItem = dynamic_cast<GUI::CListItemBase*>(m_selected);
 					if (rowItem != NULL)
 					{
 						m_listFSController->rename(rowItem);

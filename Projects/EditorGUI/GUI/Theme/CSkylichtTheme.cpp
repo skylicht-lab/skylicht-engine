@@ -282,11 +282,11 @@ namespace Skylicht
 				m_systemIcon32[type] = m_sprite->addFrame(nameNoExt.c_str(), path);
 			}
 
-			void CSkylichtTheme::drawIcon(const SRect& r, ESystemIcon icon, const SGUIColor& color, bool use32Bit)
+			void CSkylichtTheme::drawIcon(const SRect& r, ESystemIcon icon, const SGUIColor& color, bool use32px)
 			{
 				SFrame* frame = NULL;
 
-				if (use32Bit == true)
+				if (use32px == true)
 					frame = m_systemIcon32[icon];
 				else
 					frame = m_systemIcon16[icon];

@@ -43,7 +43,7 @@ namespace Skylicht
 			GUI::CTreeControl* m_treeFS;
 			CTreeFSController* m_treeFSController;
 
-			GUI::CListBox* m_listFS;
+			GUI::CListBase* m_listFS;
 			CListFSController* m_listFSController;
 
 			CContextMenuFS* m_contextMenuFS;

@@ -40,7 +40,7 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		CListFSController::CListFSController(GUI::CCanvas* canvas, CSpace* space, GUI::CListBox* list) :
+		CListFSController::CListFSController(GUI::CCanvas* canvas, CSpace* space, GUI::CListBase* list) :
 			m_space(space),
 			m_renameItem(NULL),
 			m_treeController(NULL),
@@ -146,7 +146,7 @@ namespace Skylicht
 
 		void CListFSController::OnPress(GUI::CBase* item)
 		{
-			GUI::CListRowItem* rowItem = dynamic_cast<GUI::CListRowItem*>(item);
+			GUI::CListItemBase* rowItem = dynamic_cast<GUI::CListItemBase*>(item);
 			if (rowItem == NULL)
 				return;
 
@@ -158,7 +158,7 @@ namespace Skylicht
 
 		void CListFSController::OnSelected(GUI::CBase* item)
 		{
-			GUI::CListRowItem* rowItem = dynamic_cast<GUI::CListRowItem*>(item);
+			GUI::CListItemBase* rowItem = dynamic_cast<GUI::CListItemBase*>(item);
 			if (rowItem == NULL)
 				return;
 
@@ -209,7 +209,7 @@ namespace Skylicht
 				m_renameItem = node;
 				m_renameRevert = node->getLabel();
 
-				GUI::CListRowItem* rowItem = dynamic_cast<GUI::CListRowItem*>(node);
+				GUI::CListItemBase* rowItem = dynamic_cast<GUI::CListItemBase*>(node);
 				if (rowItem)
 				{
 					rowItem->getTextEditHelper()->beginEdit(
@@ -275,7 +275,7 @@ namespace Skylicht
 			if (currentFolder.size() > 0 &&
 				currentFolder != m_assetManager->getAssetFolder())
 			{
-				GUI::CListRowItem* item = m_listFS->addItem(L"..", GUI::ESystemIcon::Folder);
+				GUI::CListItemBase* item = m_listFS->addItem(L"..", GUI::ESystemIcon::Folder);
 
 				std::string parent = CPath::getFolderPath(currentFolder);
 				item->tagString(parent);
@@ -287,7 +287,7 @@ namespace Skylicht
 
 			for (SFileInfo& f : files)
 			{
-				GUI::CListRowItem* item;
+				GUI::CListItemBase* item;
 
 				if (f.IsFolder)
 				{
@@ -390,7 +390,7 @@ namespace Skylicht
 
 		void CListFSController::OnFileOpen(GUI::CBase* node)
 		{
-			GUI::CListRowItem* rowNode = dynamic_cast<GUI::CListRowItem*>(node);
+			GUI::CListItemBase* rowNode = dynamic_cast<GUI::CListItemBase*>(node);
 			if (rowNode != NULL)
 			{
 				CAssetCreateController::getInstance()->setActivateSpace(m_space);

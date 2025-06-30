@@ -43,7 +43,7 @@ namespace Skylicht
 
 				virtual ~CTheme();
 
-				virtual void drawIcon(const SRect& r, ESystemIcon icon, const SGUIColor& color, bool use32Bit) {}
+				virtual void drawIcon(const SRect& r, ESystemIcon icon, const SGUIColor& color, bool use32px) {}
 
 				virtual void drawDockHintIcon(const SRect& r, EDockHintIcon icon, const SGUIColor& color) {}
 

@@ -103,7 +103,7 @@ namespace Skylicht
 			for (const CComponentCategory::SCategory* subCategory : m_category->Childs)
 			{
 				std::wstring name = CStringImp::convertUTF8ToUnicode(subCategory->Name.c_str());
-				GUI::CListRowItem* item = m_list->addItem(name.c_str(), GUI::ESystemIcon::Folder);
+				GUI::CListItemBase* item = m_list->addItem(name.c_str(), GUI::ESystemIcon::Folder);
 				item->tagString(subCategory->Name);
 				item->setIconColor(GUI::ThemeConfig::FolderColor);
 				item->OnDoubleLeftMouseClick = BIND_LISTENER(&CAddComponentController::OnSelectCategory, this);
@@ -112,7 +112,7 @@ namespace Skylicht
 			for (const CComponentCategory::SComponent* component : m_category->Components)
 			{
 				std::wstring name = CStringImp::convertUTF8ToUnicode(component->Name.c_str());
-				GUI::CListRowItem* item = m_list->addItem(name.c_str(), GUI::ESystemIcon::ResFile);
+				GUI::CListItemBase* item = m_list->addItem(name.c_str(), GUI::ESystemIcon::ResFile);
 				item->tagString(component->ComponentName);
 				item->OnDoubleLeftMouseClick = BIND_LISTENER(&CAddComponentController::OnSelectComponent, this);
 			}
@@ -182,7 +182,7 @@ namespace Skylicht
 				if (match)
 				{
 					std::wstring name = CStringImp::convertUTF8ToUnicode(c->Name.c_str());
-					GUI::CListRowItem* item = m_list->addItem(name.c_str(), GUI::ESystemIcon::ResFile);
+					GUI::CListItemBase* item = m_list->addItem(name.c_str(), GUI::ESystemIcon::ResFile);
 					item->tagString(c->ComponentName);
 					item->OnDoubleLeftMouseClick = BIND_LISTENER(&CAddComponentController::OnSelectComponent, this);
 				}

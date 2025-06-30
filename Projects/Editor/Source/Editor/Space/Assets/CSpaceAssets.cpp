@@ -81,8 +81,8 @@ namespace Skylicht
 			m_buttonCancelSearch->setIcon(GUI::ESystemIcon::Close);
 			m_buttonCancelSearch->dock(GUI::EPosition::Left);
 
-
 			m_listFS = new GUI::CListBox(listContainer);
+			// m_listFS = new GUI::CThumbnailView(listContainer, 96.0f, 70.0f);
 			m_listFS->dock(GUI::EPosition::Fill);
 
 			m_listFSController = new CListFSController(window->getCanvas(), this, m_listFS);

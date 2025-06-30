@@ -32,15 +32,15 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CIcon::CIcon(CBase *parent, ESystemIcon icon, bool use32Bit) :
+			CIcon::CIcon(CBase *parent, ESystemIcon icon, bool use32px) :
 				m_icon(icon),
-				m_use32Bit(use32Bit),
+				m_use32px(use32px),
 				m_color(ThemeConfig::DefaultIconColor),
 				CBase(parent)
 			{
 				setMouseInputEnabled(false);
 
-				if (use32Bit)
+				if (use32px)
 					setSize(40, 40);
 				else
 					setSize(20, 20);
@@ -53,7 +53,7 @@ namespace Skylicht
 
 			void CIcon::render()
 			{
-				CTheme::getTheme()->drawIcon(getRenderBounds(), m_icon, m_color, m_use32Bit);
+				CTheme::getTheme()->drawIcon(getRenderBounds(), m_icon, m_color, m_use32px);
 			}
 		}
 	}

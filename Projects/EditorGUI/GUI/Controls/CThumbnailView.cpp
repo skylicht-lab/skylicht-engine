@@ -50,27 +50,31 @@ namespace Skylicht
 
 				float totalWidth = width() - 5.0f;
 
+				int numItems = (int)m_innerPanel->Children.size();
 				int numItemInRow = (int)(totalWidth / m_itemWidth);
-				int numItems = (int)m_items.size();
 
 				float itemWidth = totalWidth / numItemInRow;
 
 				float offsetX = (itemWidth - m_itemWidth) * 0.5f;
 				float x = 0.0f;
 				float y = 0.0f;
+				int i = 0;
 
-				for (int i = 0; i < numItems; i++)
+				for (CBase* child : m_innerPanel->Children)
 				{
-					if (i > 0 && i % numItemInRow == 0)
+					CThumbnailItem* item = dynamic_cast<CThumbnailItem*>(child);
+					if (item)
 					{
-						x = 0.0f;
-						y = y + m_itemHeight + 5.0f;
+						if (i > 0 && i % numItemInRow == 0)
+						{
+							x = 0.0f;
+							y = y + m_itemHeight + 5.0f;
+						}
+
+						item->setPos(x + offsetX, y);
+						x = x + itemWidth;
+						i++;
 					}
-
-					CThumbnailItem* item = m_items[i];
-					item->setPos(x + offsetX, y);
-
-					x = x + itemWidth;
 				}
 			}
 
@@ -85,11 +89,26 @@ namespace Skylicht
 				return (int)(totalWidth / m_itemWidth);
 			}
 
+			CListItemBase* CThumbnailView::addItem(const std::wstring& label, ESystemIcon icon)
+			{
+				CThumbnailItem* item = addItem();
+				item->setLabel(label.c_str());
+				item->setIcon(icon);
+				item->showIcon(true);
+				return item;
+			}
+
+			CListItemBase* CThumbnailView::addItem(const std::wstring& label)
+			{
+				CThumbnailItem* item = addItem();
+				item->setLabel(label.c_str());
+				return item;
+			}
+
 			CThumbnailItem* CThumbnailView::addItem()
 			{
 				CThumbnailItem* item = new CThumbnailItem(this, m_itemWidth, m_itemHeight);
 				item->OnDown = BIND_LISTENER(&CThumbnailView::onItemDown, this);
-				m_items.push_back(item);
 				invalidate();
 				return item;
 			}

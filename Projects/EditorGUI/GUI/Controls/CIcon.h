@@ -38,10 +38,10 @@ namespace Skylicht
 				ESystemIcon m_icon;
 				SGUIColor m_color;
 
-				bool m_use32Bit;
+				bool m_use32px;
 
 			public:
-				CIcon(CBase *parent, ESystemIcon icon, bool use32Bit = false);
+				CIcon(CBase* parent, ESystemIcon icon, bool use32px = false);
 
 				virtual ~CIcon();
 
@@ -65,6 +65,11 @@ namespace Skylicht
 				inline const SGUIColor& getColor()
 				{
 					return m_color;
+				}
+
+				inline void setLargeIcon(bool b)
+				{
+					m_use32px = b;
 				}
 			};
 		}

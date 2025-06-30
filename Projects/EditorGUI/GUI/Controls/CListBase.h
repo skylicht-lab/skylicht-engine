@@ -34,6 +34,8 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
+			class CListItemBase;
+
 			class CListBase : public CScrollControl
 			{
 			public:
@@ -70,6 +72,10 @@ namespace Skylicht
 				{
 					return m_multiSelected;
 				}
+
+				virtual CListItemBase* addItem(const std::wstring& label, ESystemIcon icon) = 0;
+
+				virtual CListItemBase* addItem(const std::wstring& label) = 0;
 
 			public:
 
