@@ -63,13 +63,8 @@ namespace Skylicht
 			if (m_importer != NULL)
 				delete m_importer;
 
-			Editor::CAssetManager* assetManager = Editor::CAssetManager::getInstance();
-			assetManager->discoveryAssetFolder();
-			assetManager->update();
-
-			m_importer = new CAssetImporter(assetManager->getListFiles());
-
-			m_state = ImportAsset;
+			m_importer = NULL;
+			m_state = ListFiles;
 		}
 
 		void CSpaceImport::initImportFiles(std::list<SFileNode*>& files, std::list<std::string>& deleted)
@@ -87,7 +82,16 @@ namespace Skylicht
 
 		void CSpaceImport::update()
 		{
-			if (m_state == ImportAsset)
+			if (m_state == ListFiles)
+			{
+				Editor::CAssetManager* assetManager = Editor::CAssetManager::getInstance();
+				assetManager->discoveryAssetFolder();
+				assetManager->update();
+
+				m_importer = new CAssetImporter(assetManager->getListFiles());
+				m_state = ImportAsset;
+			}
+			else if (m_state == ImportAsset)
 			{
 				float percent = 0.0f;
 				std::string last;
@@ -103,6 +107,8 @@ namespace Skylicht
 
 				if (finish == true)
 				{
+					CAssetManager::getInstance()->getThumbnail()->save();
+
 					if (m_importer->needDelete())
 						m_state = DeleteAsset;
 					else

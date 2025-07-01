@@ -101,9 +101,7 @@ namespace Skylicht
 			{
 				SFileNode* node = (*m_fileIterator);
 
-				std::string path = node->Path;
-
-				importPath(path);
+				importPath(node);
 
 				m_lastFile = node->Path;
 
@@ -182,19 +180,21 @@ namespace Skylicht
 			{
 				SFileNode* node = (*m_fileIterator);
 
-				std::string path = node->Path;
-
-				importPath(path);
+				importPath(node);
 
 				m_lastFile = node->Path;
 
 				++m_fileIterator;
 				++m_fileID;
 			}
+
+			m_assetManager->getThumbnail()->save();
 		}
 
-		void CAssetImporter::importPath(const std::string& path)
+		void CAssetImporter::importPath(const SFileNode* node)
 		{
+			std::string path = node->Path;
+
 			if (fs::exists(path))
 			{
 				std::string ext = CPath::getFileNameExt(path);
@@ -202,8 +202,14 @@ namespace Skylicht
 
 				if (CTextureManager::isTextureExt(ext.c_str()))
 				{
-					CTextureManager* textureMgr = CTextureManager::getInstance();
+					std::string editorPath = "Editor/";
+					if (editorPath != path.substr(0, editorPath.size()))
+					{
+						// std::string id = m_assetManager->getGenerateMetaGUID(path.c_str());
+						// m_assetManager->getThumbnail()->addInfo(id.c_str(), path.c_str(), node->ModifyTime);
+					}
 
+					CTextureManager* textureMgr = CTextureManager::getInstance();
 					if (textureMgr->isTextureLoaded(path.c_str()))
 					{
 						// get old texture

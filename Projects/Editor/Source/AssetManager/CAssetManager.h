@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Utils/CSingleton.h"
+#include "CThumbnailDb.h"
 
 #include <functional>
 
@@ -99,11 +100,11 @@ namespace Skylicht
 
 			bool m_haveAssetFolder;
 
+			std::map<std::string, IFileLoader*> m_fileLoader;
 			std::map<std::string, SFileNode*> m_pathToFile;
-
 			std::list<SFileNode*> m_files;
 
-			std::map<std::string, IFileLoader*> m_fileLoader;
+			CThumbnailDb m_thumbnail;
 
 		public:
 
@@ -113,6 +114,8 @@ namespace Skylicht
 			CAssetManager();
 
 			virtual ~CAssetManager();
+
+			void clearFiles();
 
 			inline const std::string& getAssetFolder()
 			{
@@ -127,6 +130,11 @@ namespace Skylicht
 			inline std::list<SFileNode*>& getListFiles()
 			{
 				return m_files;
+			}
+
+			inline CThumbnailDb* getThumbnail()
+			{
+				return &m_thumbnail;
 			}
 
 			SFileNode* getFileNode(const char* path);

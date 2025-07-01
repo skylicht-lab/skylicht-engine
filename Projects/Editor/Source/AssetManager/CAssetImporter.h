@@ -81,7 +81,7 @@ namespace Skylicht
 
 		protected:
 
-			void importPath(const std::string& path);
+			void importPath(const SFileNode* node);
 
 		};
 	}

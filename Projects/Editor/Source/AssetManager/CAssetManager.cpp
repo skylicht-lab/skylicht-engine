@@ -64,22 +64,28 @@ namespace Skylicht
 			m_haveAssetFolder = fs::exists(m_assetFolder);
 			if (!m_haveAssetFolder)
 				os::Printer::log("[CAssetManager] Asset folder is not exists");
-
+			else
+				m_thumbnail.init();
 		}
 
 		CAssetManager::~CAssetManager()
+		{
+			clearFiles();
+		}
+
+		void CAssetManager::clearFiles()
 		{
 			for (SFileNode* file : m_files)
 			{
 				delete file;
 			}
 			m_files.clear();
+			m_pathToFile.clear();
 		}
 
 		void CAssetManager::discoveryAssetFolder()
 		{
-			m_files.clear();
-			m_pathToFile.clear();
+			clearFiles();
 
 			if (m_haveAssetFolder)
 			{

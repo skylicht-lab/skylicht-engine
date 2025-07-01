@@ -40,8 +40,10 @@
 /PrjAndroid-arm64-v8a/
 /PrjAndroid-armeabi-v7a/
 /PrjAndroid-x86/
+/PrjAndroid-x86_64/
 /InstallLibs/
 /Maps/
+/Thumbnails/
 /Doc/
 /build/
 /.vscode/
