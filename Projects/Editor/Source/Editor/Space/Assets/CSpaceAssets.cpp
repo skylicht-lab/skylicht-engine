@@ -35,11 +35,19 @@ namespace Skylicht
 	{
 		CSpaceAssets::CSpaceAssets(GUI::CWindow* window, CEditor* editor) :
 			m_isLock(false),
+			m_currentView(0),
 			CSpace(window, editor)
 		{
 			GUI::CToolbar* toolbar = new GUI::CToolbar(window);
 
 			m_btnAdd = toolbar->addButton(L"Add", GUI::ESystemIcon::Plus);
+
+			toolbar->addSpace();
+			m_btnViewList = toolbar->addButton(L"", GUI::ESystemIcon::ViewList);
+			m_btnViewList->setIsToggle(true);
+			m_btnViewList->setToggle(true);
+			m_btnViewThumbnail = toolbar->addButton(L"", GUI::ESystemIcon::ViewThumbnail);
+			m_btnViewThumbnail->setIsToggle(true);
 
 			m_btnNewWin = toolbar->addButton(L"", GUI::ESystemIcon::Windows, true);
 			m_btnNewWin->OnPress = BIND_LISTENER(&CSpaceAssets::onNewWindow, this);
@@ -61,9 +69,9 @@ namespace Skylicht
 			m_treeFS = new GUI::CTreeControl(spliter);
 			m_treeFSController = new CTreeFSController(window->getCanvas(), this, m_treeFS);
 
-			GUI::CBase* listContainer = new GUI::CBase(spliter);
+			m_listContainer = new GUI::CBase(spliter);
 
-			GUI::CBase* searchInfo = new GUI::CBase(listContainer);
+			GUI::CBase* searchInfo = new GUI::CBase(m_listContainer);
 			searchInfo->setHeight(20.0f);
 			searchInfo->dock(GUI::EPosition::Top);
 			searchInfo->enableRenderFillRect(true);
@@ -81,8 +89,7 @@ namespace Skylicht
 			m_buttonCancelSearch->setIcon(GUI::ESystemIcon::Close);
 			m_buttonCancelSearch->dock(GUI::EPosition::Left);
 
-			m_listFS = new GUI::CListBox(listContainer);
-			// m_listFS = new GUI::CThumbnailView(listContainer, 96.0f, 70.0f);
+			m_listFS = new GUI::CListBox(m_listContainer);
 			m_listFS->dock(GUI::EPosition::Fill);
 
 			m_listFSController = new CListFSController(window->getCanvas(), this, m_listFS);
@@ -96,7 +103,7 @@ namespace Skylicht
 			m_listFSController->setSearchController(m_searchController);
 
 			spliter->setControl(m_treeFS, 0, 0);
-			spliter->setControl(listContainer, 0, 1);
+			spliter->setControl(m_listContainer, 0, 1);
 
 			spliter->setColWidth(0, 300.0f);
 			spliter->setWeakCol(1);
@@ -108,6 +115,9 @@ namespace Skylicht
 				{
 					contextMenu->popupMenu((GUI::CButton*)sender);
 				};
+
+			m_btnViewList->OnDown = BIND_LISTENER(&CSpaceAssets::onChangeView, this);
+			m_btnViewThumbnail->OnDown = BIND_LISTENER(&CSpaceAssets::onChangeView, this);
 		}
 
 		CSpaceAssets::~CSpaceAssets()
@@ -128,6 +138,52 @@ namespace Skylicht
 		{
 			m_listFSController->refresh();
 			m_treeFSController->refresh();
+		}
+
+		void CSpaceAssets::onChangeView(GUI::CBase* base)
+		{
+			std::vector<GUI::CButton*> btns;
+			btns.push_back(m_btnViewList);
+			btns.push_back(m_btnViewThumbnail);
+
+			int view = 0;
+			int i = 0;
+
+			for (GUI::CButton* b : btns)
+			{
+				if (b == base)
+				{
+					b->setToggle(true);
+					view = i;
+				}
+				else
+					b->setToggle(false);
+
+				i++;
+			}
+
+			if (m_currentView != view)
+			{
+				m_currentView = view;
+				m_listFS->remove();
+
+				if (base == m_btnViewList)
+					m_listFS = new GUI::CListBox(m_listContainer);
+				else if (base == m_btnViewThumbnail)
+					m_listFS = new GUI::CThumbnailView(m_listContainer, 96.0f + 24.0f, 96.0f);
+
+				m_listFS->dock(GUI::EPosition::Fill);
+				m_listFSController->setListUI(m_listFS);
+
+				m_listContainer->invalidate();
+				m_listContainer->recurseLayout();
+
+				m_listFSController->refresh();
+
+				const std::string& selectPath = m_listFSController->getSelectPath();
+				if (!selectPath.empty())
+					m_listFSController->scrollAndSelectPath(selectPath.c_str());
+			}
 		}
 
 		void CSpaceAssets::onNewWindow(GUI::CBase* base)

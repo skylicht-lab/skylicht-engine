@@ -53,6 +53,7 @@ namespace Skylicht
 
 			void CIcon::render()
 			{
+				CBase::render();
 				CTheme::getTheme()->drawIcon(getRenderBounds(), m_icon, m_color, m_use32px);
 			}
 		}

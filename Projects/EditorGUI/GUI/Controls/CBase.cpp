@@ -978,6 +978,28 @@ namespace Skylicht
 
 						child->recurseLayout();
 					}
+
+					if (dock & EPosition::CenterV ||
+						dock & EPosition::CenterH)
+					{
+						const SMargin& margin = child->getMargin();
+
+						float w = rBounds.Width - margin.Left - margin.Right;
+						float h = rBounds.Height - margin.Top - margin.Bottom;
+						float centerX = (w - child->width()) * 0.5f;
+						float centerY = (h - child->height()) * 0.5f;
+						float x = child->getBounds().X;
+						float y = child->getBounds().Y;
+
+						child->setBounds(
+							dock & EPosition::CenterV ? rBounds.X + centerX : x,
+							dock & EPosition::CenterH ? rBounds.Y + centerY : y,
+							child->width(),
+							child->height()
+						);
+
+						child->recurseLayout();
+					}
 				}
 
 				postLayout();

@@ -43,6 +43,7 @@ namespace Skylicht
 			GUI::CTreeControl* m_treeFS;
 			CTreeFSController* m_treeFSController;
 
+			GUI::CBase* m_listContainer;
 			GUI::CListBase* m_listFS;
 			CListFSController* m_listFSController;
 
@@ -51,6 +52,9 @@ namespace Skylicht
 			CSearchAssetController* m_searchController;
 
 			GUI::CButton* m_btnAdd;
+			GUI::CButton* m_btnViewList;
+			GUI::CButton* m_btnViewThumbnail;
+
 			GUI::CButton* m_btnNewWin;
 			GUI::CButton* m_btnLockUnlock;
 
@@ -59,6 +63,7 @@ namespace Skylicht
 			GUI::CIconButton* m_buttonCancelSearch;
 
 			bool m_isLock;
+			int m_currentView;
 
 		public:
 			CSpaceAssets(GUI::CWindow* window, CEditor* editor);
@@ -85,6 +90,8 @@ namespace Skylicht
 			}
 
 		protected:
+
+			void onChangeView(GUI::CBase* base);
 
 			void onNewWindow(GUI::CBase* base);
 

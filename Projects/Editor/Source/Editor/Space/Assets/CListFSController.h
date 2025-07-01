@@ -60,6 +60,8 @@ namespace Skylicht
 
 			std::string m_selectSearchPath;
 
+			std::string m_selectPath;
+
 			GUI::CMessageBox* m_msgBox;
 
 			GUI::CListItemBase* m_newFolderItem;
@@ -70,6 +72,8 @@ namespace Skylicht
 			CListFSController(GUI::CCanvas* canvas, CSpace* space, GUI::CListBase* list);
 
 			virtual ~CListFSController();
+
+			void setListUI(GUI::CListBase* list);
 
 			void OnPress(GUI::CBase* item);
 
@@ -128,6 +132,11 @@ namespace Skylicht
 			inline bool isSearching()
 			{
 				return m_searching;
+			}
+
+			const std::string& getSelectPath()
+			{
+				return m_selectPath;
 			}
 
 		public:

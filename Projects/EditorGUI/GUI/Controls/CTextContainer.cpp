@@ -37,6 +37,7 @@ namespace Skylicht
 			CTextContainer::CTextContainer(CBase* parent) :
 				CBase(parent),
 				m_wrapMultiLine(false),
+				m_trimText(false),
 				m_textChange(true),
 				m_fontSize(EFontSize::SizeNormal),
 				m_color(ThemeConfig::DefaultTextColor),
@@ -659,6 +660,7 @@ namespace Skylicht
 
 				// this is not yet layout, so calc from parent (Label, TextBox,...)
 				float w = floor(m_parent->width() - m_parent->getPadding().Left - m_parent->getPadding().Right - m_paddingRight);
+				CRenderer* renderer = CRenderer::getRenderer();
 
 				if (m_wrapMultiLine == true)
 				{
@@ -685,7 +687,7 @@ namespace Skylicht
 
 						// Does adding this word drive us over the width?
 						strLine += *it;
-						SDimension p = CRenderer::getRenderer()->measureText(m_fontSize, strLine);
+						SDimension p = renderer->measureText(m_fontSize, strLine);
 
 						if (lineWidth == 0.0f)
 							lineWidth = p.Width;
@@ -749,8 +751,23 @@ namespace Skylicht
 					{
 						removeAllLines();
 
+						float limitWidth = width() - m_margin.Right - m_margin.Left;
+						SDimension p;
+
 						// compute size of text
-						SDimension p = CRenderer::getRenderer()->measureText(m_fontSize, m_string);
+						std::wstring text = m_string;
+						p = renderer->measureText(m_fontSize, text);
+
+						if (m_trimText)
+						{
+							while (limitWidth > 0 && p.Width >= limitWidth - 5.0f && text.length() > 4)
+							{
+								text = text.substr(0, text.length() - 4);
+								text += L"...";
+
+								p = renderer->measureText(m_fontSize, text);
+							};
+						}
 
 						if (m_textAlign == ETextAlign::TextRight)
 						{
@@ -766,7 +783,7 @@ namespace Skylicht
 						t->setFontSize(m_fontSize);
 						t->setColor(m_color);
 						t->setBounds(floorf(x), floorf(y), p.Width, p.Height);
-						t->setString(m_string);
+						t->setString(text);
 						m_lines.push_back(t);
 					}
 				}

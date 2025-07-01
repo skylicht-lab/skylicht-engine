@@ -252,6 +252,8 @@ namespace Skylicht
 				addEditorIcon(ESystemIcon::CurveInOutCubic, "curve_inoutcubic.png");
 				addEditorIcon(ESystemIcon::CurveClear, "curve_clear.png");
 				addEditorIcon(ESystemIcon::CurveAutoZoom, "curve_autozoom.png");
+				addEditorIcon(ESystemIcon::ViewList, "view_list.png");
+				addEditorIcon(ESystemIcon::ViewThumbnail, "view_thumbnail.png");
 			}
 
 			void CSkylichtTheme::addSystemIcon(ESystemIcon type, const char* name)

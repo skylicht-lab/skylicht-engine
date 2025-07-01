@@ -52,6 +52,8 @@ namespace Skylicht
 
 				int numItems = (int)m_innerPanel->Children.size();
 				int numItemInRow = (int)(totalWidth / m_itemWidth);
+				if (numItemInRow == 0)
+					return;
 
 				float itemWidth = totalWidth / numItemInRow;
 
@@ -91,23 +93,22 @@ namespace Skylicht
 
 			CListItemBase* CThumbnailView::addItem(const std::wstring& label, ESystemIcon icon)
 			{
-				CThumbnailItem* item = addItem();
+				CThumbnailItem* item = addItem(true);
 				item->setLabel(label.c_str());
 				item->setIcon(icon);
-				item->showIcon(true);
 				return item;
 			}
 
 			CListItemBase* CThumbnailView::addItem(const std::wstring& label)
 			{
-				CThumbnailItem* item = addItem();
+				CThumbnailItem* item = addItem(false);
 				item->setLabel(label.c_str());
 				return item;
 			}
 
-			CThumbnailItem* CThumbnailView::addItem()
+			CThumbnailItem* CThumbnailView::addItem(bool haveLargeIcon)
 			{
-				CThumbnailItem* item = new CThumbnailItem(this, m_itemWidth, m_itemHeight);
+				CThumbnailItem* item = new CThumbnailItem(this, m_itemWidth, m_itemHeight, haveLargeIcon);
 				item->OnDown = BIND_LISTENER(&CThumbnailView::onItemDown, this);
 				invalidate();
 				return item;

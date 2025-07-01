@@ -118,33 +118,33 @@ namespace Skylicht
 					return m_label->getFontSize();
 				}
 
-				inline void showIcon(bool b)
+				virtual void showIcon(bool b)
 				{
 					m_icon->setHidden(!b);
 				}
 
-				inline void setIcon(ESystemIcon icon)
+				virtual void setIcon(ESystemIcon icon)
 				{
 					m_icon->setIcon(icon);
 				}
 
-				inline ESystemIcon getIcon()
+				virtual ESystemIcon getIcon()
 				{
 					return m_icon->getIcon();
 				}
 
-				inline void setIconColor(const SGUIColor& c)
+				virtual void setIconColor(const SGUIColor& c)
 				{
 					m_icon->setColor(c);
 					m_iconColor = c;
 				}
 
-				inline const SGUIColor& getIconColor()
+				virtual const SGUIColor& getIconColor()
 				{
 					return m_icon->getColor();
 				}
 
-				inline void setIconMargin(const SMargin& m)
+				virtual void setIconMargin(const SMargin& m)
 				{
 					m_icon->setMargin(m);
 				}

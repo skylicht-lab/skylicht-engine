@@ -106,7 +106,7 @@ namespace Skylicht
 
 			// scale the frame
 			float sourceSize = core::max_(frame->getWidth(), frame->getHeight());
-			float renderSize = core::max_(base->width(), base->height());
+			float renderSize = core::min_(base->width(), base->height());
 			float scale = sourceSize < renderSize ? 1.0f : renderSize / sourceSize;
 
 			// align center of the render control

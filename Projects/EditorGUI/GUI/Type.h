@@ -531,6 +531,8 @@ namespace Skylicht
 				CurveInOutCubic,
 				CurveClear,
 				CurveAutoZoom,
+				ViewList,
+				ViewThumbnail,
 				// End
 				NumSystemIcon
 			};

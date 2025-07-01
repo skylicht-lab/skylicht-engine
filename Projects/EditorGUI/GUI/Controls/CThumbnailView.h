@@ -53,7 +53,7 @@ namespace Skylicht
 
 				virtual CListItemBase* addItem(const std::wstring& label);
 
-				CThumbnailItem* addItem();
+				CThumbnailItem* addItem(bool haveLargeIcon = false);
 
 				virtual bool onKeyUp(bool down);
 

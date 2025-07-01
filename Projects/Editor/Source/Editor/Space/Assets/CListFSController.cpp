@@ -52,6 +52,20 @@ namespace Skylicht
 		{
 			m_assetManager = CAssetManager::getInstance();
 
+			setListUI(list);
+
+			std::vector<SFileInfo> files;
+			m_assetManager->getRoot(files);
+			add("", files, true);
+		}
+
+		CListFSController::~CListFSController()
+		{
+
+		}
+
+		void CListFSController::setListUI(GUI::CListBase* list)
+		{
 			m_listFS = list;
 			m_listFS->OnKeyPress = std::bind(
 				&CListFSController::OnKeyPress,
@@ -92,15 +106,6 @@ namespace Skylicht
 						}
 					}
 				};
-
-			std::vector<SFileInfo> files;
-			m_assetManager->getRoot(files);
-			add("", files, true);
-		}
-
-		CListFSController::~CListFSController()
-		{
-
 		}
 
 		void CListFSController::removePath(const char* path)
@@ -162,30 +167,30 @@ namespace Skylicht
 			if (rowItem == NULL)
 				return;
 
+			m_selectPath = rowItem->getTagString();
+
 			if (m_searching)
 			{
-				const std::string& fullPath = rowItem->getTagString();
-
 				bool isFolder = rowItem->getTagBool();
 				std::string folder;
 
 				if (isFolder == true)
 				{
 					if (m_treeController != NULL)
-						m_treeController->expand(fullPath);
+						m_treeController->expand(m_selectPath);
 
-					folder = fullPath;
+					folder = m_selectPath;
 				}
 				else
 				{
-					std::string folderPath = CPath::getFolderPath(fullPath);
+					std::string folderPath = CPath::getFolderPath(m_selectPath);
 					if (m_treeController != NULL)
 						m_treeController->expand(folderPath);
 
 					folder = folderPath;
 				}
 
-				m_selectSearchPath = fullPath;
+				m_selectSearchPath = m_selectPath;
 				setCurrentFolder(folder.c_str());
 			}
 		}

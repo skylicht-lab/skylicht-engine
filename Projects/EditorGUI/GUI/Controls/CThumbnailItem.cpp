@@ -33,25 +33,30 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CThumbnailItem::CThumbnailItem(CListBase* parent, float itemWidth, float itemHeight) :
-				CListItemBase(parent)
+			CThumbnailItem::CThumbnailItem(CListBase* parent, float itemWidth, float itemHeight, bool haveLargeIcon) :
+				CListItemBase(parent),
+				m_largeIcon(NULL)
 			{
 				setIsToggle(true);
+				setPadding(SPadding(0.0f, 0.0f, 0.0f, 0.0f));
 
 				setHoverColor(ThemeConfig::ListItemBackgroundHoverColor);
 				setPressColor(ThemeConfig::ListItemBackgroundFocusColor);
 
-				m_icon->dock(EPosition::Center);
-				m_icon->setSize(40.0f, 40.0f);
-				m_icon->setLargeIcon(true);
-
 				m_label->dock(EPosition::Bottom);
 				m_label->setTextAlignment(GUI::TextCenter);
+				m_label->setAutoTrimText(true);
 
 				m_render = new CBase(this);
 				m_render->setTransparentMouseInput(true);
 				m_render->setMargin(SMargin(5.0f, 5.0f, 5.0f, 5.0f));
 				m_render->dock(EPosition::Fill);
+
+				if (haveLargeIcon)
+				{
+					m_largeIcon = new CIcon(m_render, GUI::None, true);
+					m_largeIcon->dock(EPosition::Center);
+				}
 
 				setSize(itemWidth, itemHeight);
 			}
@@ -63,6 +68,9 @@ namespace Skylicht
 
 			void CThumbnailItem::renderUnder()
 			{
+				if (m_renderDragDrop)
+					return;
+
 				if (isHovered() || m_toggleStatus)
 					renderBackground();
 			}
@@ -94,6 +102,27 @@ namespace Skylicht
 				r.Height = r.Height - 1.0f;
 
 				CTheme::getTheme()->drawButton(r, c);
+			}
+
+			void CThumbnailItem::showIcon(bool b)
+			{
+				CListItemBase::showIcon(b);
+				if (m_largeIcon)
+					m_largeIcon->setHidden(!b);
+			}
+
+			void CThumbnailItem::setIcon(ESystemIcon icon)
+			{
+				CListItemBase::setIcon(icon);
+				if (m_largeIcon)
+					m_largeIcon->setIcon(icon);
+			}
+
+			void CThumbnailItem::setIconColor(const SGUIColor& c)
+			{
+				CListItemBase::setIconColor(c);
+				if (m_largeIcon)
+					m_largeIcon->setColor(c);
 			}
 		}
 	}

@@ -158,6 +158,16 @@ namespace Skylicht
 					return m_wrapMultiLine;
 				}
 
+				inline void setAutoTrimText(bool b)
+				{
+					m_trimText = b;
+				}
+
+				inline bool isAutoTrimText()
+				{
+					return m_trimText;
+				}
+
 				void setColor(const SGUIColor& color);
 
 				inline const SGUIColor& getColor()
@@ -196,6 +206,8 @@ namespace Skylicht
 				bool m_wrapMultiLine;
 
 				bool m_textChange;
+
+				bool m_trimText;
 
 				float m_paddingRight;
 
