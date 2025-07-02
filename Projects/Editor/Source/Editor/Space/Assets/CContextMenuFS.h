@@ -74,6 +74,8 @@ namespace Skylicht
 				GUI::CListBase* list,
 				CListFSController* listFSController);
 
+			void setListUI(GUI::CListBase* listUI);
+
 			virtual ~CContextMenuFS();
 
 			void OnTreeContextMenu(GUI::CBase* row);

@@ -125,9 +125,9 @@ namespace Skylicht
 			group->setExpand(true);
 		}
 
-		MeshExportSettings* CMeshEditor::createGetMeshExportSetting(const char* path)
+		CMeshExportSettings* CMeshEditor::createGetMeshExportSetting(const char* path)
 		{
-			MeshExportSettings* setting = new MeshExportSettings();
+			CMeshExportSettings* setting = new CMeshExportSettings();
 			if (!setting->load(path))
 				setting->save(path);
 			return setting;

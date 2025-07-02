@@ -34,7 +34,7 @@ namespace Skylicht
 		class CSpriteEditor : public CAssetEditor
 		{
 		protected:
-			SpriteExportSettings* m_settings;
+			CSpriteExportSettings* m_settings;
 
 		public:
 			CSpriteEditor();
@@ -47,7 +47,7 @@ namespace Skylicht
 
 			virtual void onUpdateValue(CObjectSerializable* object);
 
-			SpriteExportSettings* createGetSpriteExportSetting(const char* path);
+			CSpriteExportSettings* createGetSpriteExportSetting(const char* path);
 
 			void exportSprite(const char* path);
 

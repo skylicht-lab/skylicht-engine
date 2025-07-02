@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CThumbnailDb.h"
+#include "CAssetManager.h"
 #include "Utils/CStringImp.h"
 #include <filesystem>
 
@@ -45,6 +46,7 @@ namespace Skylicht
 		CThumbnailDb::~CThumbnailDb()
 		{
 			clear();
+			clearTextures();
 		}
 
 		void CThumbnailDb::clear()
@@ -54,6 +56,32 @@ namespace Skylicht
 				delete it.second;
 			}
 			m_db.clear();
+		}
+
+		void CThumbnailDb::clearTextures()
+		{
+			IVideoDriver* driver = getVideoDriver();
+			for (auto it : m_textures)
+				driver->removeTexture(it.second);
+			m_textures.clear();
+		}
+
+		ITexture* CThumbnailDb::getThumbnail(const char* path)
+		{
+			std::string id = CAssetManager::getInstance()->getGenerateMetaGUID(path);
+			if (m_textures[id])
+				return m_textures[id];
+
+			SThumbnailInfo* info = m_db[id];
+			if (info == NULL)
+				return NULL;
+
+			std::string thumbnailFile = getThumbnailFile(id.c_str());
+			ITexture* texture = getVideoDriver()->getTexture(thumbnailFile.c_str());
+			if (texture)
+				m_textures[id] = texture;
+
+			return texture;
 		}
 
 		void CThumbnailDb::init()
@@ -176,7 +204,7 @@ namespace Skylicht
 			if (info == NULL)
 				return false;
 
-			video::IVideoDriver* driver = getIrrlichtDevice()->getVideoDriver();
+			video::IVideoDriver* driver = getVideoDriver();
 
 			IImage* img = driver->createImageFromFile(info->Path.c_str());
 			if (img == NULL)

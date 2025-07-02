@@ -59,6 +59,11 @@ namespace Skylicht
 				return addRowItem(label, icon);
 			}
 
+			CListItemBase* CListBox::addItem(const std::wstring& label, CGUIImage* image, const SRect& srcRect)
+			{
+				return addRowItem(label);
+			}
+
 			CListItemBase* CListBox::addItem(const std::wstring& label)
 			{
 				return addRowItem(label);

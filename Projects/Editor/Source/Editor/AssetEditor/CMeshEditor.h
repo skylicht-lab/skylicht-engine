@@ -34,7 +34,7 @@ namespace Skylicht
 		class CMeshEditor : public CAssetEditor
 		{
 		protected:
-			MeshExportSettings* m_settings;
+			CMeshExportSettings* m_settings;
 
 		public:
 			CMeshEditor();
@@ -47,7 +47,7 @@ namespace Skylicht
 
 			virtual void onUpdateValue(CObjectSerializable* object);
 
-			MeshExportSettings* createGetMeshExportSetting(const char* path);
+			CMeshExportSettings* createGetMeshExportSetting(const char* path);
 		};
 
 		class CDaeMeshEditor : public CMeshEditor

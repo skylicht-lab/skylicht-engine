@@ -48,7 +48,8 @@ namespace Skylicht
 			m_msgBox(NULL),
 			m_newFolderItem(NULL),
 			m_searching(false),
-			m_searchController(NULL)
+			m_searchController(NULL),
+			m_enableThumbnail(false)
 		{
 			m_assetManager = CAssetManager::getInstance();
 
@@ -276,6 +277,7 @@ namespace Skylicht
 		void CListFSController::add(const std::string& currentFolder, std::vector<SFileInfo>& files, bool scrollToBegin)
 		{
 			m_listFS->removeAllItem();
+			clearThumbnail();
 
 			if (currentFolder.size() > 0 &&
 				currentFolder != m_assetManager->getAssetFolder())
@@ -301,9 +303,34 @@ namespace Skylicht
 				}
 				else
 				{
-					GUI::SGUIColor color;
-					item = m_listFS->addItem(f.NameW.c_str(), getFileIcon(f.Name, color));
-					item->setIconColor(color);
+					ITexture* thumbnail = NULL;
+					if (m_enableThumbnail)
+					{
+						std::string ext = CPath::getFileNameExt(f.Name);
+						if (CTextureManager::isTextureExt(ext.c_str()))
+							thumbnail = getFileThumbnail(f.FullPath);
+					}
+
+					if (thumbnail)
+					{
+						const core::dimension2du& size = thumbnail->getSize();
+						GUI::SRect srcRect(0.0f, 0.0f, (float)size.Width, (float)size.Height);
+						item = m_listFS->addItem(f.NameW.c_str(), thumbnail, srcRect);
+
+						GUI::CThumbnailItem* thumbnailItem = dynamic_cast<GUI::CThumbnailItem*>(item);
+						if (thumbnailItem)
+						{
+							GUI::CRawImage* rawImage = thumbnailItem->getImage();
+							rawImage->enableRenderFillRect(true);
+							rawImage->setFillRectColor(GUI::SGUIColor(255, 100, 100, 100));
+						}
+					}
+					else
+					{
+						GUI::SGUIColor color;
+						item = m_listFS->addItem(f.NameW.c_str(), getFileIcon(f.Name, color));
+						item->setIconColor(color);
+					}
 				}
 
 				item->tagString(f.FullPath);
@@ -349,6 +376,16 @@ namespace Skylicht
 			}
 
 			return GUI::ESystemIcon::File;
+		}
+
+		ITexture* CListFSController::getFileThumbnail(const std::string& path)
+		{
+			return CAssetManager::getInstance()->getThumbnail()->getThumbnail(path.c_str());
+		}
+
+		void CListFSController::clearThumbnail()
+		{
+			CAssetManager::getInstance()->getThumbnail()->clearTextures();
 		}
 
 		void CListFSController::initDragDrop(GUI::CButton* item)

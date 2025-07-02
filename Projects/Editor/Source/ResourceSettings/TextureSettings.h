@@ -30,16 +30,16 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		class TextureSettings : public CAssetResource
+		class CTextureSettings : public CAssetResource
 		{
 		public:
 			CBoolProperty AutoScale;
 			CFloatProperty CustomScale;
 
 		public:
-			TextureSettings();
+			CTextureSettings();
 
-			virtual ~TextureSettings();
+			virtual ~CTextureSettings();
 		};
 	}
 }

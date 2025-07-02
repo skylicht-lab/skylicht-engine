@@ -68,9 +68,9 @@ namespace Skylicht
 			group->setExpand(true);
 		}
 
-		TextureSettings* CTextureEditor::createTextureSetting(const char* path)
+		CTextureSettings* CTextureEditor::createTextureSetting(const char* path)
 		{
-			TextureSettings* setting = new TextureSettings();
+			CTextureSettings* setting = new CTextureSettings();
 			if (!setting->load(path))
 				setting->save(path);
 			return setting;

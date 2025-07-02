@@ -38,7 +38,10 @@ namespace Skylicht
 		std::wstring nodeName = L"node";
 		std::wstring attributeName = CStringImp::convertUTF8ToUnicode(object->Name.c_str());
 
-		if (nodeName == reader->getNodeName() && attributeName == reader->getAttributeValue(L"type"))
+		std::wstring type = reader->getAttributeValue(L"type");
+		std::wstring ctype = L"C" + type;
+
+		if (nodeName == reader->getNodeName() && (type == attributeName || ctype == attributeName))
 		{
 			attr->read(reader);
 

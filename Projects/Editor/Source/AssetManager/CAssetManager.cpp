@@ -473,9 +473,9 @@ namespace Skylicht
 			ext = CStringImp::toLower(ext);
 
 			if (CTextureManager::getInstance()->isTextureExt(ext.c_str()))
-				asset = new TextureSettings();
+				asset = new CTextureSettings();
 			else if (CMeshManager::getInstance()->isMeshExt(ext.c_str()))
-				asset = new MeshExportSettings();
+				asset = new CMeshExportSettings();
 			else
 				asset = new CAssetResource("CAssetResource");
 

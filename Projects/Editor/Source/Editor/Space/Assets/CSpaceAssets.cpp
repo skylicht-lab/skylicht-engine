@@ -173,7 +173,10 @@ namespace Skylicht
 					m_listFS = new GUI::CThumbnailView(m_listContainer, 96.0f + 24.0f, 96.0f);
 
 				m_listFS->dock(GUI::EPosition::Fill);
+
+				m_contextMenuFS->setListUI(m_listFS);
 				m_listFSController->setListUI(m_listFS);
+				m_listFSController->enableThumbnail(base == m_btnViewThumbnail ? true : false);
 
 				m_listContainer->invalidate();
 				m_listContainer->recurseLayout();

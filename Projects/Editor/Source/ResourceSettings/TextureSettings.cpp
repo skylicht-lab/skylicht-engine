@@ -29,15 +29,15 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		TextureSettings::TextureSettings() :
-			CAssetResource("TextureSettings"),
+		CTextureSettings::CTextureSettings() :
+			CAssetResource("CTextureSettings"),
 			AutoScale(this, "Auto scale", true),
 			CustomScale(this, "Custom Scale", 1.0f, 0.0f, 1.0f)
 		{
 
 		}
 
-		TextureSettings::~TextureSettings()
+		CTextureSettings::~CTextureSettings()
 		{
 
 		}

@@ -93,22 +93,32 @@ namespace Skylicht
 
 			CListItemBase* CThumbnailView::addItem(const std::wstring& label, ESystemIcon icon)
 			{
-				CThumbnailItem* item = addItem(true);
+				CThumbnailItem* item = addItem();
 				item->setLabel(label.c_str());
+				item->showIcon(true);
 				item->setIcon(icon);
+				return item;
+			}
+
+			CListItemBase* CThumbnailView::addItem(const std::wstring& label, CGUIImage* image, const SRect& srcRect)
+			{
+				CThumbnailItem* item = addItem();
+				item->setLabel(label.c_str());
+				item->showImage(true);
+				item->setImage(image, srcRect);
 				return item;
 			}
 
 			CListItemBase* CThumbnailView::addItem(const std::wstring& label)
 			{
-				CThumbnailItem* item = addItem(false);
+				CThumbnailItem* item = addItem();
 				item->setLabel(label.c_str());
 				return item;
 			}
 
-			CThumbnailItem* CThumbnailView::addItem(bool haveLargeIcon)
+			CThumbnailItem* CThumbnailView::addItem()
 			{
-				CThumbnailItem* item = new CThumbnailItem(this, m_itemWidth, m_itemHeight, haveLargeIcon);
+				CThumbnailItem* item = new CThumbnailItem(this, m_itemWidth, m_itemHeight);
 				item->OnDown = BIND_LISTENER(&CThumbnailView::onItemDown, this);
 				invalidate();
 				return item;

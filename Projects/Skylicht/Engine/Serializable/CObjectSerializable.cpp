@@ -232,7 +232,11 @@ namespace Skylicht
 			switch (reader->getNodeType())
 			{
 			case io::EXN_ELEMENT:
-				if (nodeName == reader->getNodeName() && attributeName == reader->getAttributeValue(L"type"))
+			{
+				std::wstring type = reader->getAttributeValue(L"type");
+				std::wstring ctype = L"C" + type; // add to fix old version, it will remove later
+
+				if (nodeName == reader->getNodeName() && (attributeName == type || attributeName == ctype))
 				{
 					attr->read(reader);
 
@@ -271,7 +275,8 @@ namespace Skylicht
 						logError = false;
 					}
 				}
-				break;
+			}
+			break;
 			case io::EXN_ELEMENT_END:
 				if (attributeNode == reader->getNodeName())
 				{

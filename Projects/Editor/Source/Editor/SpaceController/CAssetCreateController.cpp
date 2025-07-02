@@ -148,7 +148,7 @@ namespace Skylicht
 
 			std::string fullPath = assetMgr->generateAssetPath("/Sprite%02d.sprite", currentFolder.c_str());
 
-			SpriteExportSettings nullSprite;
+			CSpriteExportSettings nullSprite;
 			nullSprite.save(fullPath.c_str());
 
 			importAndSelect(fullPath.c_str());

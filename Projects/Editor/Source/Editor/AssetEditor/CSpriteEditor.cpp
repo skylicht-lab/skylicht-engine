@@ -149,9 +149,9 @@ namespace Skylicht
 			}
 		}
 
-		SpriteExportSettings* CSpriteEditor::createGetSpriteExportSetting(const char* path)
+		CSpriteExportSettings* CSpriteEditor::createGetSpriteExportSetting(const char* path)
 		{
-			SpriteExportSettings* setting = new SpriteExportSettings();
+			CSpriteExportSettings* setting = new CSpriteExportSettings();
 			CSerializableLoader::loadSerializable(path, setting);
 			return setting;
 		}

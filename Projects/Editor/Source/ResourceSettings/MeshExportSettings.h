@@ -30,7 +30,7 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		class MeshExportSettings : public CAssetResource
+		class CMeshExportSettings : public CAssetResource
 		{
 		public:
 			CFolderPathProperty TextureFolder;
@@ -42,9 +42,9 @@ namespace Skylicht
 			CFilePathProperty DefaultMaterial;
 
 		public:
-			MeshExportSettings();
+			CMeshExportSettings();
 
-			virtual ~MeshExportSettings();
+			virtual ~CMeshExportSettings();
 		};
 	}
 }

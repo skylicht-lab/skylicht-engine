@@ -58,6 +58,8 @@ namespace Skylicht
 
 			void CRawImage::render()
 			{
+				CBase::render();
+
 				if (m_image != NULL)
 				{
 					CRenderer::getRenderer()->drawImage(m_image, m_color, m_sourceRect, getRenderBounds());

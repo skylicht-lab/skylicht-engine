@@ -44,8 +44,10 @@ namespace Skylicht
 
 				CIcon* m_largeIcon;
 
+				CRawImage* m_image;
+
 			public:
-				CThumbnailItem(CListBase* parent, float itemHeight, float itemWidth, bool haveLargeIcon = false);
+				CThumbnailItem(CListBase* parent, float itemHeight, float itemWidth);
 
 				virtual ~CThumbnailItem();
 
@@ -54,11 +56,20 @@ namespace Skylicht
 					return m_render;
 				}
 
+				CRawImage* getImage()
+				{
+					return m_image;
+				}
+
 				virtual void showIcon(bool b);
 
 				virtual void setIcon(ESystemIcon icon);
 
 				virtual void setIconColor(const SGUIColor& c);
+
+				virtual void showImage(bool b);
+
+				virtual void setImage(CGUIImage* image, const SRect& srcRect);
 
 			protected:
 

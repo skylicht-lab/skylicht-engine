@@ -30,8 +30,8 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		SpriteExportSettings::SpriteExportSettings() :
-			CAssetResource("SpriteExportSettings"),
+		CSpriteExportSettings::CSpriteExportSettings() :
+			CAssetResource("CSpriteExportSettings"),
 			Width(this, "width", 2048),
 			Height(this, "height", 2048),
 			Alpha(this, "alpha", true),
@@ -41,7 +41,7 @@ namespace Skylicht
 			GUID.set(CRandomID::generate().c_str());
 		}
 
-		SpriteExportSettings::~SpriteExportSettings()
+		CSpriteExportSettings::~CSpriteExportSettings()
 		{
 
 		}

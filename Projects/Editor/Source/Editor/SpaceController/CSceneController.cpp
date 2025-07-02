@@ -1064,7 +1064,7 @@ namespace Skylicht
 					fileExt == "obj" ||
 					fileExt == "fbx")
 				{
-					MeshExportSettings* setting = new MeshExportSettings();
+					CMeshExportSettings* setting = new CMeshExportSettings();
 					if (setting->load(meta.c_str()))
 					{
 						defaultMaterial = setting->DefaultMaterial.get();

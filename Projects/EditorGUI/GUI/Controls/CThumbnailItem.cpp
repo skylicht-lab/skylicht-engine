@@ -33,7 +33,7 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			CThumbnailItem::CThumbnailItem(CListBase* parent, float itemWidth, float itemHeight, bool haveLargeIcon) :
+			CThumbnailItem::CThumbnailItem(CListBase* parent, float itemWidth, float itemHeight) :
 				CListItemBase(parent),
 				m_largeIcon(NULL)
 			{
@@ -52,11 +52,14 @@ namespace Skylicht
 				m_render->setMargin(SMargin(5.0f, 5.0f, 5.0f, 5.0f));
 				m_render->dock(EPosition::Fill);
 
-				if (haveLargeIcon)
-				{
-					m_largeIcon = new CIcon(m_render, GUI::None, true);
-					m_largeIcon->dock(EPosition::Center);
-				}
+				m_largeIcon = new CIcon(m_render, GUI::None, true);
+				m_largeIcon->dock(EPosition::Center);
+				m_largeIcon->setHidden(true);
+
+				m_image = new CRawImage(m_render);
+				m_image->setSize(64.0f, 64.0f);
+				m_image->dock(EPosition::Center);
+				m_image->setHidden(true);
 
 				setSize(itemWidth, itemHeight);
 			}
@@ -106,7 +109,6 @@ namespace Skylicht
 
 			void CThumbnailItem::showIcon(bool b)
 			{
-				CListItemBase::showIcon(b);
 				if (m_largeIcon)
 					m_largeIcon->setHidden(!b);
 			}
@@ -123,6 +125,16 @@ namespace Skylicht
 				CListItemBase::setIconColor(c);
 				if (m_largeIcon)
 					m_largeIcon->setColor(c);
+			}
+
+			void CThumbnailItem::showImage(bool b)
+			{
+				m_image->setHidden(!b);
+			}
+
+			void CThumbnailItem::setImage(CGUIImage* image, const SRect& srcRect)
+			{
+				m_image->setImage(image, srcRect);
 			}
 		}
 	}

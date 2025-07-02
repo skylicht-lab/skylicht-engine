@@ -69,9 +69,9 @@ namespace Skylicht
 			// m_duplicate = m_contextMenu->addItem(L"Duplicate", GUI::ESystemIcon::Duplicate, L"CTRL + D");
 
 			m_treeFS->addAccelerator("SHIFT + C", BIND_LISTENER(&CContextMenuFS::OnCopyPath, this));
-			m_listFS->addAccelerator("SHIFT + C", BIND_LISTENER(&CContextMenuFS::OnCopyPath, this));
-
 			m_treeFS->OnItemContextMenu = BIND_LISTENER(&CContextMenuFS::OnTreeContextMenu, this);
+
+			m_listFS->addAccelerator("SHIFT + C", BIND_LISTENER(&CContextMenuFS::OnCopyPath, this));
 			m_listFS->OnItemContextMenu = BIND_LISTENER(&CContextMenuFS::OnListContextMenu, this);
 
 			m_assetManager = CAssetManager::getInstance();
@@ -80,6 +80,13 @@ namespace Skylicht
 		CContextMenuFS::~CContextMenuFS()
 		{
 
+		}
+
+		void CContextMenuFS::setListUI(GUI::CListBase* listUI)
+		{
+			m_listFS = listUI;
+			m_listFS->addAccelerator("SHIFT + C", BIND_LISTENER(&CContextMenuFS::OnCopyPath, this));
+			m_listFS->OnItemContextMenu = BIND_LISTENER(&CContextMenuFS::OnListContextMenu, this);
 		}
 
 		void CContextMenuFS::OnTreeContextMenu(GUI::CBase* row)
@@ -188,7 +195,7 @@ namespace Skylicht
 				sprintf(cmd, "osascript -e 'tell app \"Finder\" to activate'");
 				system(cmd);
 #endif				
-			}
+				}
 			else if (label == L"Delete")
 			{
 				std::string shortPath = m_assetManager->getShortPath(m_selectedPath.c_str());
@@ -255,7 +262,7 @@ namespace Skylicht
 			{
 				m_listFSController->newFolder(m_selectedPath.c_str());
 			}
-		}
+			}
 
 		void CContextMenuFS::OnCopyPath(GUI::CBase* item)
 		{
@@ -288,5 +295,5 @@ namespace Skylicht
 				delete[]text;
 			}
 		}
+		}
 	}
-}

@@ -68,6 +68,8 @@ namespace Skylicht
 
 			bool m_searching;
 
+			bool m_enableThumbnail;
+
 		public:
 			CListFSController(GUI::CCanvas* canvas, CSpace* space, GUI::CListBase* list);
 
@@ -134,6 +136,11 @@ namespace Skylicht
 				return m_searching;
 			}
 
+			void enableThumbnail(bool b)
+			{
+				m_enableThumbnail = b;
+			}
+
 			const std::string& getSelectPath()
 			{
 				return m_selectPath;
@@ -144,6 +151,10 @@ namespace Skylicht
 			void add(const std::string& currentFolder, std::vector<SFileInfo>& files, bool scrollToBegin);
 
 			GUI::ESystemIcon getFileIcon(const std::string& name, GUI::SGUIColor& color);
+
+			ITexture* getFileThumbnail(const std::string& path);
+
+			void clearThumbnail();
 		};
 	}
 }

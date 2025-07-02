@@ -34,7 +34,7 @@ namespace Skylicht
 		class CTextureEditor : public CAssetEditor
 		{
 		protected:
-			TextureSettings* m_settings;
+			CTextureSettings* m_settings;
 
 		public:
 			CTextureEditor();
@@ -47,7 +47,7 @@ namespace Skylicht
 
 			virtual void onUpdateValue(CObjectSerializable* object);
 
-			TextureSettings* createTextureSetting(const char* path);
+			CTextureSettings* createTextureSetting(const char* path);
 		};
 	}
 }

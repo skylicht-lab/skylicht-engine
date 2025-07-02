@@ -47,6 +47,8 @@ namespace Skylicht
 
 				virtual CListItemBase* addItem(const std::wstring& label, ESystemIcon icon);
 
+				virtual CListItemBase* addItem(const std::wstring& label, CGUIImage* image, const SRect& srcRect);
+
 				virtual CListItemBase* addItem(const std::wstring& label);
 
 				CListRowItem* addRowItem(const std::wstring& label, ESystemIcon icon);

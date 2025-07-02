@@ -46,10 +46,16 @@ namespace Skylicht
 			};
 
 			std::map<std::string, SThumbnailInfo*> m_db;
+			std::map<std::string, ITexture*> m_textures;
+
 		public:
 			CThumbnailDb();
 
 			virtual ~CThumbnailDb();
+
+			void clearTextures();
+
+			ITexture* getThumbnail(const char* path);
 
 			void clear();
 

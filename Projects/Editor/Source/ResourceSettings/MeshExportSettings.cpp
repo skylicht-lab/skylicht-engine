@@ -29,8 +29,8 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		MeshExportSettings::MeshExportSettings() :
-			CAssetResource("MeshExportSettings"),
+		CMeshExportSettings::CMeshExportSettings() :
+			CAssetResource("CMeshExportSettings"),
 			TextureFolder(this, "Texture folder"),
 			UseNormalMap(this, "Use normal map", true),
 			FlipNormal(this, "Flip normal", true),
@@ -42,7 +42,7 @@ namespace Skylicht
 
 		}
 
-		MeshExportSettings::~MeshExportSettings()
+		CMeshExportSettings::~CMeshExportSettings()
 		{
 
 		}

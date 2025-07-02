@@ -31,7 +31,7 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		class SpriteExportSettings : public CAssetResource
+		class CSpriteExportSettings : public CAssetResource
 		{
 		public:
 			CIntProperty Width;
@@ -41,9 +41,9 @@ namespace Skylicht
 			CArrayTypeSerializable<CFolderPathProperty> ImagesFolder;
 
 		public:
-			SpriteExportSettings();
+			CSpriteExportSettings();
 
-			virtual ~SpriteExportSettings();
+			virtual ~CSpriteExportSettings();
 		};
 	}
 }
