@@ -31,13 +31,13 @@ namespace Skylicht
 	{
 		CMeshExportSettings::CMeshExportSettings() :
 			CAssetResource("CMeshExportSettings"),
-			TextureFolder(this, "Texture folder"),
-			UseNormalMap(this, "Use normal map", true),
-			FlipNormal(this, "Flip normal", true),
-			UseUV2(this, "Use uv2", false),
-			GenerateLightmapUV2(this, "Generate lightmap UV2", false),
-			LightmapScale(this, "Lightmap scale", 1.0f, 0.0f),
-			DefaultMaterial(this, "Default material")
+			TextureFolder(this, "textureFolder"),
+			UseNormalMap(this, "useNormalMap", true),
+			FlipNormal(this, "flipNormal", true),
+			UseUV2(this, "useUV2", false),
+			GenerateLightmapUV2(this, "generateLightmapUV2", false),
+			LightmapScale(this, "lightmapScale", 1.0f, 0.0f),
+			DefaultMaterial(this, "defaultMaterial")
 		{
 			OtherName.push_back("MeshExportSettings");
 		}

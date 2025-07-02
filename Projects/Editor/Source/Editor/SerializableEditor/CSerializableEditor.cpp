@@ -30,7 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/Input/CInput.h"
 #include "AssetManager/CAssetManager.h"
 #include "Graphics2D/SpriteFrame/CSpriteManager.h"
-#include "Graphics2D/SpriteFrame/CFrameSource.h"
+#include "ResourceSettings/TextureSettings.h"
 #include "Serializable/CSerializableLoader.h"
 
 namespace Skylicht
@@ -839,12 +839,12 @@ namespace Skylicht
 								const std::string& path = s->get();
 								std::string meta = path + ".meta";
 
-								CFrameSource frameSource;
-								if (CSerializableLoader::loadSerializable(meta.c_str(), &frameSource))
+								CTextureSettings textureSetting;
+								if (CSerializableLoader::loadSerializable(meta.c_str(), &textureSetting))
 								{
 									// update value
-									value->setGUID(frameSource.getGUID());
-									value->setSprite(frameSource.SpritePath.getString());
+									value->setGUID(textureSetting.getGUID());
+									value->setSprite(textureSetting.SpritePath.getString());
 
 									// apply image texture
 									onUpdateValue(object);
@@ -930,22 +930,22 @@ namespace Skylicht
 
 								bool errorSprite = true;
 
-								CFrameSource frameSource;
-								if (CSerializableLoader::loadSerializable(meta.c_str(), &frameSource))
+								CTextureSettings textureSetting;
+								if (CSerializableLoader::loadSerializable(meta.c_str(), &textureSetting))
 								{
 									// show on property
-									CSpriteFrame* spriteFrame = CSpriteManager::getInstance()->loadSprite(frameSource.SpritePath.getString());
+									CSpriteFrame* spriteFrame = CSpriteManager::getInstance()->loadSprite(textureSetting.SpritePath.getString());
 									if (spriteFrame)
 									{
 										errorSprite = false;
 
 										// update value
 										value->set(shortPath.c_str());
-										value->setGUID(frameSource.getGUID());
-										value->setSprite(frameSource.SpritePath.getString());
-										value->setSpriteGUID(frameSource.SpriteGUID.getString());
+										value->setGUID(textureSetting.getGUID());
+										value->setSprite(textureSetting.SpritePath.getString());
+										value->setSpriteId(textureSetting.SpriteId.getString());
 
-										SFrame* frame = spriteFrame->getFrameById(frameSource.getGUID());
+										SFrame* frame = spriteFrame->getFrameById(textureSetting.getGUID());
 										if (frame)
 										{
 											ITexture* texture = frame->Image->Texture;

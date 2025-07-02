@@ -37,21 +37,26 @@ namespace Skylicht
 
 		std::wstring nodeName = L"node";
 
-		std::string type = CStringImp::convertUnicodeToUTF8(reader->getAttributeValue(L"type"));
+		bool acceptName = false;
+		std::string type;
 
-		bool acceptName = object->Name == type;
-		if (!acceptName)
+		const wchar_t* typePtr = reader->getAttributeValue(L"type");
+		if (typePtr)
 		{
-			for (const std::string& name : object->OtherName)
+			type = CStringImp::convertUnicodeToUTF8(typePtr);
+			acceptName = object->Name == type;
+			if (!acceptName)
 			{
-				if (name == type)
+				for (const std::string& name : object->OtherName)
 				{
-					acceptName = true;
-					break;
+					if (name == type)
+					{
+						acceptName = true;
+						break;
+					}
 				}
 			}
 		}
-
 
 		if (nodeName == reader->getNodeName() && acceptName)
 		{
@@ -87,7 +92,7 @@ namespace Skylicht
 		}
 		else
 		{
-			char log[512];
+			char log[1024];
 			sprintf(log, "[CObjectSerializable::load] Skip wrong data: type: %s, %s ", object->Name.c_str(), type.c_str());
 			os::Printer::log(log);
 			attr->drop();

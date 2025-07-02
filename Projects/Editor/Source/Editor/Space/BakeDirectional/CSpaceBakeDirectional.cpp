@@ -33,7 +33,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "AssetManager/CAssetManager.h"
 #include "Editor/CEditor.h"
 
-#include "Graphics2D/SpriteFrame/CFrameSource.h"
 #include "Serializable/CSerializableLoader.h"
 
 #include "Shadow/CShadowRTTManager.h"

@@ -232,17 +232,24 @@ namespace Skylicht
 			{
 			case io::EXN_ELEMENT:
 			{
-				std::string type = CStringImp::convertUnicodeToUTF8(reader->getAttributeValue(L"type"));
+				bool acceptName = false;
+				std::string type;
 
-				bool acceptName = Name == type;
-				if (!acceptName)
+				const wchar_t* typePtr = reader->getAttributeValue(L"type");
+				if (typePtr)
 				{
-					for (const std::string& name : OtherName)
+					type = CStringImp::convertUnicodeToUTF8(typePtr);
+
+					acceptName = Name == type;
+					if (!acceptName)
 					{
-						if (name == type)
+						for (const std::string& name : OtherName)
 						{
-							acceptName = true;
-							break;
+							if (name == type)
+							{
+								acceptName = true;
+								break;
+							}
 						}
 					}
 				}
@@ -276,11 +283,8 @@ namespace Skylicht
 				{
 					if (logError)
 					{
-						std::wstring nodeName = reader->getNodeName();
-						std::wstring attribute = reader->getAttributeValue(L"type");
-
 						char log[1024];
-						sprintf(log, "[CAttributeSerializable::load] Skip wrong data: type: %s, %s", Name.c_str(), type.c_str());
+						sprintf(log, "[CAttributeSerializable::load] Skip wrong data: type: %s", Name.c_str());
 						os::Printer::log(log);
 						logError = false;
 					}

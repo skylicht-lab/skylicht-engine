@@ -184,7 +184,7 @@ namespace Skylicht
 		CFrameSourceProperty* frame = new CFrameSourceProperty(object, "spriteSrc", m_frameName.c_str());
 		frame->setGUID(m_guid.c_str());
 		frame->setSprite(m_sprite.c_str());
-		frame->setSpriteGUID(m_spriteId.c_str());
+		frame->setSpriteId(m_spriteId.c_str());
 		object->autoRelease(frame);
 
 		CEnumProperty<AnchorType>* anchorType = new CEnumProperty<AnchorType>(object, "anchorType", m_anchorType);
@@ -220,7 +220,7 @@ namespace Skylicht
 				m_guid = frame->getGUID();
 				m_frameName = frame->get();
 				m_sprite = frame->getSprite();
-				m_spriteId = frame->getSpriteGUID();
+				m_spriteId = frame->getSpriteId();
 
 				CSpriteManager* spriteMgr = CSpriteManager::getInstance();
 

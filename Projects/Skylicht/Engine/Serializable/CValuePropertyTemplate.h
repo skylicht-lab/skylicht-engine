@@ -550,12 +550,12 @@ namespace Skylicht
 			return m_sprite.c_str();
 		}
 
-		void setSpriteGUID(const char* id)
+		void setSpriteId(const char* id)
 		{
 			m_spriteId = id;
 		}
 
-		const char* getSpriteGUID()
+		const char* getSpriteId()
 		{
 			return m_spriteId.c_str();
 		}

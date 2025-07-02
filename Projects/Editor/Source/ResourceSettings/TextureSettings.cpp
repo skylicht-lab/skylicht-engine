@@ -31,9 +31,14 @@ namespace Skylicht
 	{
 		CTextureSettings::CTextureSettings() :
 			CAssetResource("CTextureSettings"),
-			AutoScale(this, "Auto scale", true),
-			CustomScale(this, "Custom Scale", 1.0f, 0.0f, 1.0f)
+			SpritePath(this, "spritePath"),
+			SpriteId(this, "spriteId"),
+			AutoScale(this, "autoScale", true),
+			CustomScale(this, "customScale", 1.0f, 0.0f, 1.0f)
 		{
+			SpritePath.setHidden(true);
+			SpriteId.setHidden(true);
+			OtherName.push_back("CFrameSource");
 			OtherName.push_back("TextureSettings");
 		}
 

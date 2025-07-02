@@ -33,6 +33,8 @@ namespace Skylicht
 		class CTextureSettings : public CAssetResource
 		{
 		public:
+			CStringProperty SpritePath;
+			CStringProperty SpriteId;
 			CBoolProperty AutoScale;
 			CFloatProperty CustomScale;
 

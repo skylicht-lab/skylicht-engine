@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "AssetManager/CAssetManager.h"
 #include "Editor/CEditor.h"
 
-#include "Graphics2D/SpriteFrame/CFrameSource.h"
+#include "ResourceSettings/TextureSettings.h"
 #include "Serializable/CSerializableLoader.h"
 
 #include <filesystem>
@@ -96,10 +96,10 @@ namespace Skylicht
 
 				std::string meta = png + ".meta";
 
-				CFrameSource frameSource;
-				CSerializableLoader::loadSerializable(meta.c_str(), &frameSource);
+				CTextureSettings textureSetting;
+				CSerializableLoader::loadSerializable(meta.c_str(), &textureSetting);
 
-				m_atlas->addFrame(name.c_str(), png.c_str(), frameSource.GUID.getString());
+				m_atlas->addFrame(name.c_str(), png.c_str(), textureSetting.GUID.getString());
 
 				CAssetManager* assetManager = CAssetManager::getInstance();
 				std::string folderPath = CPath::getFolderPath(m_path);
@@ -109,9 +109,9 @@ namespace Skylicht
 				sprintf(targetPath, "%s/%s.spritedata", folderPath.c_str(), exportName.c_str());
 				fixCleanPath(targetPath);
 
-				frameSource.SpritePath.set(targetPath);
-				frameSource.SpriteGUID.set(m_id);
-				frameSource.save(meta.c_str());
+				textureSetting.SpritePath.set(targetPath);
+				textureSetting.SpriteId.set(m_id);
+				textureSetting.save(meta.c_str());
 
 				float percent = m_position / (float)m_total;
 				m_progressBar->setPercent(percent);
