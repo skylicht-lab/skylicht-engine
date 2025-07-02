@@ -85,6 +85,7 @@ namespace Skylicht
 
 	public:
 		std::string Name;
+		std::vector<std::string> OtherName;
 
 		CValueProperty(CObjectSerializable* owner, EPropertyDataType dataType, const char* name);
 

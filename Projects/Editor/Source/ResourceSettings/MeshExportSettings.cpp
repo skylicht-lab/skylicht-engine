@@ -39,7 +39,7 @@ namespace Skylicht
 			LightmapScale(this, "Lightmap scale", 1.0f, 0.0f),
 			DefaultMaterial(this, "Default material")
 		{
-
+			OtherName.push_back("MeshExportSettings");
 		}
 
 		CMeshExportSettings::~CMeshExportSettings()

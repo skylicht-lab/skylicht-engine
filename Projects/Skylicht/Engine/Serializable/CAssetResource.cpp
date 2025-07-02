@@ -33,6 +33,7 @@ namespace Skylicht
 		GUID(this, "guid", CRandomID::generate().c_str())
 	{
 		GUID.setHidden(true);
+		OtherName.push_back("CAssetResource");
 	}
 
 	CAssetResource::~CAssetResource()

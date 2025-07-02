@@ -34,7 +34,7 @@ namespace Skylicht
 			AutoScale(this, "Auto scale", true),
 			CustomScale(this, "Custom Scale", 1.0f, 0.0f, 1.0f)
 		{
-
+			OtherName.push_back("TextureSettings");
 		}
 
 		CTextureSettings::~CTextureSettings()

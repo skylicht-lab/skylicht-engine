@@ -225,7 +225,6 @@ namespace Skylicht
 
 		std::wstring attributeNode = L"attributes";
 		std::wstring nodeName = L"node";
-		std::wstring attributeName = CStringImp::convertUTF8ToUnicode(Name.c_str());
 
 		while (!done && reader->read())
 		{
@@ -233,10 +232,22 @@ namespace Skylicht
 			{
 			case io::EXN_ELEMENT:
 			{
-				std::wstring type = reader->getAttributeValue(L"type");
-				std::wstring ctype = L"C" + type; // add to fix old version, it will remove later
+				std::string type = CStringImp::convertUnicodeToUTF8(reader->getAttributeValue(L"type"));
 
-				if (nodeName == reader->getNodeName() && (attributeName == type || attributeName == ctype))
+				bool acceptName = Name == type;
+				if (!acceptName)
+				{
+					for (const std::string& name : OtherName)
+					{
+						if (name == type)
+						{
+							acceptName = true;
+							break;
+						}
+					}
+				}
+
+				if (nodeName == reader->getNodeName() && acceptName)
 				{
 					attr->read(reader);
 
@@ -253,8 +264,7 @@ namespace Skylicht
 						else
 						{
 							char log[1024];
-							std::string name = CStringImp::convertUnicodeToUTF8(attributeName.c_str());
-							sprintf(log, "[CObjectSerializable::load] Can't load array '%s'", name.c_str());
+							sprintf(log, "[CObjectSerializable::load] Can't load array '%s'", type.c_str());
 							os::Printer::log(log);
 						}
 					}
@@ -269,8 +279,8 @@ namespace Skylicht
 						std::wstring nodeName = reader->getNodeName();
 						std::wstring attribute = reader->getAttributeValue(L"type");
 
-						char log[512];
-						sprintf(log, "[CAttributeSerializable::load] Skip wrong data: type: %s", Name.c_str());
+						char log[1024];
+						sprintf(log, "[CAttributeSerializable::load] Skip wrong data: type: %s, %s", Name.c_str(), type.c_str());
 						os::Printer::log(log);
 						logError = false;
 					}

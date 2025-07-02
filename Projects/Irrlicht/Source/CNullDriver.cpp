@@ -615,7 +615,6 @@ video::ITexture* CNullDriver::loadTextureFromFile(io::IReadFile* file, const io:
 	{
 		// create texture from surface
 		texture = createDeviceDependentTexture(image, hashName.size() ? hashName : file->getFileName() );
-		os::Printer::log("Loaded texture", file->getFileName());
 		image->drop();
 	}
 

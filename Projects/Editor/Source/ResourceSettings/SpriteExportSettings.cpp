@@ -37,6 +37,8 @@ namespace Skylicht
 			Alpha(this, "alpha", true),
 			ImagesFolder("imagesFolder", this)
 		{
+			OtherName.push_back("SpriteExportSettings");
+
 			GUID.setHidden(true);
 			GUID.set(CRandomID::generate().c_str());
 		}

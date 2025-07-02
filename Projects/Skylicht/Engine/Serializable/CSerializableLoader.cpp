@@ -36,12 +36,24 @@ namespace Skylicht
 		io::IAttributes* attr = fs->createEmptyAttributes();
 
 		std::wstring nodeName = L"node";
-		std::wstring attributeName = CStringImp::convertUTF8ToUnicode(object->Name.c_str());
 
-		std::wstring type = reader->getAttributeValue(L"type");
-		std::wstring ctype = L"C" + type;
+		std::string type = CStringImp::convertUnicodeToUTF8(reader->getAttributeValue(L"type"));
 
-		if (nodeName == reader->getNodeName() && (type == attributeName || ctype == attributeName))
+		bool acceptName = object->Name == type;
+		if (!acceptName)
+		{
+			for (const std::string& name : object->OtherName)
+			{
+				if (name == type)
+				{
+					acceptName = true;
+					break;
+				}
+			}
+		}
+
+
+		if (nodeName == reader->getNodeName() && acceptName)
 		{
 			attr->read(reader);
 
@@ -76,7 +88,7 @@ namespace Skylicht
 		else
 		{
 			char log[512];
-			sprintf(log, "[CObjectSerializable::load] Skip wrong data: type: %s", object->Name.c_str());
+			sprintf(log, "[CObjectSerializable::load] Skip wrong data: type: %s, %s ", object->Name.c_str(), type.c_str());
 			os::Printer::log(log);
 			attr->drop();
 			return;
