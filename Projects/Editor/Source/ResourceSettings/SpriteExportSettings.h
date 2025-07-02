@@ -24,17 +24,16 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Serializable/CObjectSerializable.h"
+#include "Serializable/CAssetResource.h"
 #include "Serializable/CArraySerializable.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class SpriteExportSettings : public CObjectSerializable
+		class SpriteExportSettings : public CAssetResource
 		{
 		public:
-			CStringProperty GUID;
 			CIntProperty Width;
 			CIntProperty Height;
 			CBoolProperty Alpha;

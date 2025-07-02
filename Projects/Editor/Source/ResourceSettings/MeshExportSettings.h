@@ -24,13 +24,13 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Serializable/CObjectSerializable.h"
+#include "Serializable/CAssetResource.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class MeshExportSettings : public CObjectSerializable
+		class MeshExportSettings : public CAssetResource
 		{
 		public:
 			CFolderPathProperty TextureFolder;

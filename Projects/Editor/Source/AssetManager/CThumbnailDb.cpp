@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CThumbnailDb.h"
-
+#include "Utils/CStringImp.h"
 #include <filesystem>
 
 #if defined(__APPLE_CC__)
@@ -66,55 +66,85 @@ namespace Skylicht
 
 		void CThumbnailDb::load()
 		{
-			io::IReadFile* file = getIrrlichtDevice()->getFileSystem()->createAndOpenFile("../Thumbnails/db.txt");
-			if (file)
+			io::IXMLReader* reader = getIrrlichtDevice()->getFileSystem()->createXMLReader("../Thumbnails/.db.xml");
+			if (reader)
 			{
-				long i = 0;
-				long fileSize = file->getSize();
-				char* data = new char[fileSize + 1];
-				file->read(data, fileSize);
-				data[fileSize] = 0;
+				std::wstring nodeName = L"node";
 
-				std::string line;
-				while (i < fileSize)
+				while (reader->read())
 				{
-					if (data[i] == '\n' || data[i] == '\r')
+					switch (reader->getNodeType())
 					{
-						line.clear();
-					}
-					else
+					case io::EXN_ELEMENT:
 					{
-						line += data[i];
-					}
-					i++;
-				}
+						// <node>
+						if (nodeName == reader->getNodeName())
+						{
+							const wchar_t* guid = reader->getAttributeValue(L"guid");
+							const wchar_t* path = reader->getAttributeValue(L"path");
+							const wchar_t* modify = reader->getAttributeValue(L"modify");
+							if (guid && path && modify)
+							{
+								SThumbnailInfo* info = new SThumbnailInfo();
+								info->Id = CStringImp::convertUnicodeToUTF8(guid);
+								info->Path = CStringImp::convertUnicodeToUTF8(path);
+								info->ModifyTime = wcstol(modify, nullptr, 10);
+								info->Exists = false;
 
-				delete[]data;
-				file->drop();
+								std::string file = getThumbnailFile(info->Id.c_str());
+								if (!fs::exists(file))
+									delete info;
+								else
+									m_db[info->Id] = info;
+							}
+						}
+					}
+					break;
+					default:
+						break;
+					}
+				}
+				reader->drop();
 			}
 		}
 
 		void CThumbnailDb::save()
 		{
-			io::IWriteFile* file = getIrrlichtDevice()->getFileSystem()->createAndWriteFile("../Thumbnails/db.txt");
+			io::IXMLWriter* file = getIrrlichtDevice()->getFileSystem()->createXMLWriter("../Thumbnails/.db.xml");
 			if (file)
 			{
+				core::array<core::stringw> names;
+				core::array<core::stringw> attributes;
+
+				names.push_back(L"guid");
+				names.push_back(L"path");
+				names.push_back(L"modify");
+
+				file->writeXMLHeader();
+				file->writeElement(L"db");
+				file->writeLineBreak();
+
 				for (auto it : m_db)
 				{
 					SThumbnailInfo* info = it.second;
-					std::string s = info->Id;
-					s += ";";
-					s += std::to_string(info->ModifyTime);
-					s += ";";
-					s += info->Path;
-					s += "\n";
-					file->write(s.c_str(), (u32)s.size());
+					if (info->Exists)
+					{
+						attributes.clear();
+						attributes.push_back(info->Id.c_str());
+						attributes.push_back(info->Path.c_str());
+						attributes.push_back(std::to_string(info->ModifyTime).c_str());
+
+						file->writeElement(L"node", true, names, attributes);
+						file->writeLineBreak();
+					}
 				}
+
+				file->writeClosingTag(L"db");
 				file->drop();
 			}
 		}
 
-		void CThumbnailDb::addInfo(const char* id, const char* path, time_t modify)
+		bool CThumbnailDb::updateInfo(const char* id, const char* path, time_t modify)
 		{
 			SThumbnailInfo* info = m_db[id];
 			if (info == NULL)
@@ -123,9 +153,60 @@ namespace Skylicht
 				m_db[id] = info;
 			}
 
+			bool ret = info->ModifyTime != modify;
+
 			info->Id = id;
 			info->ModifyTime = modify;
 			info->Path = path;
+			info->Exists = true;
+
+			if (ret == false)
+			{
+				std::string file = getThumbnailFile(info->Id.c_str());
+				if (!fs::exists(file))
+					ret = true;
+			}
+
+			return ret;
+		}
+
+		bool CThumbnailDb::saveThumbnailTexture(const char* id)
+		{
+			SThumbnailInfo* info = m_db[id];
+			if (info == NULL)
+				return false;
+
+			video::IVideoDriver* driver = getIrrlichtDevice()->getVideoDriver();
+
+			IImage* img = driver->createImageFromFile(info->Path.c_str());
+			if (img == NULL)
+				return false;
+
+			core::dimension2d s = img->getDimension();
+
+			u32 max = core::max_(s.Width, s.Height);
+			float scale = max <= 64 ? 1.0f : 64 / (float)max;
+
+			u32 w = (u32)(s.Width * scale);
+			u32 h = (u32)(s.Height * scale);
+
+			IImage* scaleImg = driver->createImage(img->getColorFormat(), core::dimension2du(w, h));
+			img->copyToScaling(scaleImg);
+
+			std::string output = getThumbnailFile(info->Id.c_str());
+			driver->writeImageToFile(scaleImg, output.c_str());
+
+			scaleImg->drop();
+			img->drop();
+			return false;
+		}
+
+		std::string CThumbnailDb::getThumbnailFile(const char* id)
+		{
+			std::string file = "../Thumbnails/";
+			file += id;
+			file += ".png";
+			return file;
 		}
 	}
 }

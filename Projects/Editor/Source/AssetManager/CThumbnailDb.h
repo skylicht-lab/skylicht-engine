@@ -36,6 +36,13 @@ namespace Skylicht
 				std::string Id;
 				std::string Path;
 				time_t ModifyTime;
+				bool Exists;
+
+				SThumbnailInfo()
+				{
+					ModifyTime = 0;
+					Exists = false;
+				}
 			};
 
 			std::map<std::string, SThumbnailInfo*> m_db;
@@ -52,7 +59,11 @@ namespace Skylicht
 
 			void save();
 
-			void addInfo(const char* id, const char* path, time_t modify);
+			bool updateInfo(const char* id, const char* path, time_t modify);
+
+			bool saveThumbnailTexture(const char* id);
+
+			std::string getThumbnailFile(const char* id);
 		};
 	}
 }

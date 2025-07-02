@@ -30,7 +30,7 @@ namespace Skylicht
 	namespace Editor
 	{
 		MeshExportSettings::MeshExportSettings() :
-			CObjectSerializable("MeshExportSettings"),
+			CAssetResource("MeshExportSettings"),
 			TextureFolder(this, "Texture folder"),
 			UseNormalMap(this, "Use normal map", true),
 			FlipNormal(this, "Flip normal", true),

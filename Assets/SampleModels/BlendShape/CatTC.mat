@@ -12,12 +12,12 @@
             <Property name='FrontfaceCulling' value='false'/>
         </Properties>
         <Extras>
-            <Extra name='BuiltIn/Shader/Basic/TextureColor.xml'>
+            <Extra name='BuiltIn/Shader/Basic/Skin.xml'>
                 <Textures>
                     <Texture name='uTexDiffuse' path='Cat_D_7.tga' wrapU='0' wrapV='0'/>
                 </Textures>
             </Extra>
-            <Extra name='BuiltIn/Shader/Basic/Skin.xml'>
+            <Extra name='BuiltIn/Shader/Basic/TextureColor.xml'>
                 <Textures>
                     <Texture name='uTexDiffuse' path='Cat_D_7.tga' wrapU='0' wrapV='0'/>
                 </Textures>
@@ -35,17 +35,17 @@
             <Property name='FrontfaceCulling' value='false'/>
         </Properties>
         <Extras>
-            <Extra name='BuiltIn/Shader/Basic/VertexColor.xml'>
+            <Extra name='BuiltIn/Shader/Basic/TextureColor.xml'>
+                <Textures>
+                    <Texture name='uTexDiffuse' path='Cat_D_7.png' wrapU='0' wrapV='0'/>
+                </Textures>
             </Extra>
             <Extra name='BuiltIn/Shader/Basic/Skin.xml'>
                 <Textures>
                     <Texture name='uTexDiffuse' path='Cat_D_7.png' wrapU='0' wrapV='0'/>
                 </Textures>
             </Extra>
-            <Extra name='BuiltIn/Shader/Basic/TextureColor.xml'>
-                <Textures>
-                    <Texture name='uTexDiffuse' path='Cat_D_7.png' wrapU='0' wrapV='0'/>
-                </Textures>
+            <Extra name='BuiltIn/Shader/Basic/VertexColor.xml'>
             </Extra>
         </Extras>
     </Material>
@@ -60,17 +60,17 @@
             <Property name='FrontfaceCulling' value='false'/>
         </Properties>
         <Extras>
-            <Extra name='BuiltIn/Shader/Basic/VertexColor.xml'>
+            <Extra name='BuiltIn/Shader/Basic/TextureColor.xml'>
+                <Textures>
+                    <Texture name='uTexDiffuse' path='Cat_D_7.png' wrapU='0' wrapV='0'/>
+                </Textures>
             </Extra>
             <Extra name='BuiltIn/Shader/Basic/Skin.xml'>
                 <Textures>
                     <Texture name='uTexDiffuse' path='Cat_D_7.png' wrapU='0' wrapV='0'/>
                 </Textures>
             </Extra>
-            <Extra name='BuiltIn/Shader/Basic/TextureColor.xml'>
-                <Textures>
-                    <Texture name='uTexDiffuse' path='Cat_D_7.png' wrapU='0' wrapV='0'/>
-                </Textures>
+            <Extra name='BuiltIn/Shader/Basic/VertexColor.xml'>
             </Extra>
         </Extras>
     </Material>

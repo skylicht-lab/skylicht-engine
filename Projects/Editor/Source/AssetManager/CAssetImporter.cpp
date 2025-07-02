@@ -205,8 +205,9 @@ namespace Skylicht
 					std::string editorPath = "Editor/";
 					if (editorPath != path.substr(0, editorPath.size()))
 					{
-						// std::string id = m_assetManager->getGenerateMetaGUID(path.c_str());
-						// m_assetManager->getThumbnail()->addInfo(id.c_str(), path.c_str(), node->ModifyTime);
+						std::string id = m_assetManager->getGenerateMetaGUID(path.c_str());
+						if (m_assetManager->getThumbnail()->updateInfo(id.c_str(), path.c_str(), node->ModifyTime))
+							m_assetManager->getThumbnail()->saveThumbnailTexture(id.c_str());
 					}
 
 					CTextureManager* textureMgr = CTextureManager::getInstance();

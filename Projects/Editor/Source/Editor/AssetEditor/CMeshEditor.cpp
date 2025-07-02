@@ -74,53 +74,53 @@ namespace Skylicht
 			layout = ui->createBoxLayout(group);
 			std::string daePath = path;
 			ui->addButton(layout, L"Export Mesh")->OnPress = [&, p = daePath](GUI::CBase* button)
-			{
-				std::string outout = CPath::replaceFileExt(p, ".smesh");
-
-				CEntityPrefab* prefab = CMeshManager::getInstance()->loadModel(
-					p.c_str(),
-					m_settings->TextureFolder.getString(),
-					true,
-					m_settings->FlipNormal.get(),
-					false);
-
-				if (prefab != NULL)
 				{
-					CMeshManager::getInstance()->exportModel(prefab->getEntities(), prefab->getNumEntities(), outout.c_str());
-					CMeshManager::getInstance()->releasePrefab(prefab);
+					std::string outout = CPath::replaceFileExt(p, ".smesh");
 
-					CAssetImporter importer;
-					importer.add(outout.c_str());
-					importer.importAll();
+					CEntityPrefab* prefab = CMeshManager::getInstance()->loadModel(
+						p.c_str(),
+						m_settings->TextureFolder.getString(),
+						true,
+						m_settings->FlipNormal.get(),
+						m_settings->UseUV2.get());
 
-					CEditor::getInstance()->refresh();
-				}
-			};
+					if (prefab != NULL)
+					{
+						CMeshManager::getInstance()->exportModel(prefab->getEntities(), prefab->getNumEntities(), outout.c_str());
+						CMeshManager::getInstance()->releasePrefab(prefab);
+
+						CAssetImporter importer;
+						importer.add(outout.c_str());
+						importer.importAll();
+
+						CEditor::getInstance()->refresh();
+					}
+				};
 			layout->addSpace(5.0f);
 			ui->addButton(layout, L"Export Material")->OnPress = [&, p = daePath](GUI::CBase* button)
-			{
-				std::string outout = CPath::replaceFileExt(p, ".mat");
-				std::string textureFolder = m_settings->TextureFolder.getString();
-
-				CEntityPrefab* prefab = CMeshManager::getInstance()->loadModel(
-					p.c_str(),
-					m_settings->TextureFolder.getString(),
-					true,
-					m_settings->FlipNormal.get(),
-					false);
-
-				if (prefab != NULL)
 				{
-					CMaterialManager::getInstance()->exportMaterial(prefab, outout.c_str());
-					CMeshManager::getInstance()->releasePrefab(prefab);
+					std::string outout = CPath::replaceFileExt(p, ".mat");
+					std::string textureFolder = m_settings->TextureFolder.getString();
 
-					CAssetImporter importer;
-					importer.add(outout.c_str());
-					importer.importAll();
+					CEntityPrefab* prefab = CMeshManager::getInstance()->loadModel(
+						p.c_str(),
+						m_settings->TextureFolder.getString(),
+						true,
+						m_settings->FlipNormal.get(),
+						false);
 
-					CEditor::getInstance()->refresh();
-				}
-			};
+					if (prefab != NULL)
+					{
+						CMaterialManager::getInstance()->exportMaterial(prefab, outout.c_str());
+						CMeshManager::getInstance()->releasePrefab(prefab);
+
+						CAssetImporter importer;
+						importer.add(outout.c_str());
+						importer.importAll();
+
+						CEditor::getInstance()->refresh();
+					}
+				};
 
 			group->setExpand(true);
 		}

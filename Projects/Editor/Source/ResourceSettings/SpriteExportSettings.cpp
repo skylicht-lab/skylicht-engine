@@ -31,8 +31,7 @@ namespace Skylicht
 	namespace Editor
 	{
 		SpriteExportSettings::SpriteExportSettings() :
-			CObjectSerializable("SpriteExportSettings"),
-			GUID(this, "guid", ""),
+			CAssetResource("SpriteExportSettings"),
 			Width(this, "width", 2048),
 			Height(this, "height", 2048),
 			Alpha(this, "alpha", true),

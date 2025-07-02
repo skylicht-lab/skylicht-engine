@@ -38,6 +38,12 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Serializable/CAssetResource.h"
 #include "Serializable/CSerializableLoader.h"
 
+#include "TextureManager/CTextureManager.h"
+#include "MeshManager/CMeshManager.h"
+
+#include "ResourceSettings/TextureSettings.h"
+#include "ResourceSettings/MeshExportSettings.h"
+
 #if defined(__APPLE_CC__)
 namespace fs = std::__fs::filesystem;
 #else
@@ -461,10 +467,20 @@ namespace Skylicht
 			std::string meta = path;
 			meta += ".meta";
 
-			CAssetResource* asset = new CAssetResource("CAssetResource");
+			CAssetResource* asset = NULL;
+
+			std::string ext = CPath::getFileNameExt(path);
+			ext = CStringImp::toLower(ext);
+
+			if (CTextureManager::getInstance()->isTextureExt(ext.c_str()))
+				asset = new TextureSettings();
+			else if (CMeshManager::getInstance()->isMeshExt(ext.c_str()))
+				asset = new MeshExportSettings();
+			else
+				asset = new CAssetResource("CAssetResource");
+
 			if (!CSerializableLoader::loadSerializable(meta.c_str(), asset))
 			{
-				// save the meta file
 				asset->save(meta.c_str());
 			}
 

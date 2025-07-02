@@ -170,7 +170,7 @@ namespace Skylicht
 				// <node>
 				if (nodeName == reader->getNodeName())
 				{
-					load(reader, object, "~");	// todo load to end the file
+					load(reader, object, "~"); // todo load to end the file
 				}
 			}
 			break;
