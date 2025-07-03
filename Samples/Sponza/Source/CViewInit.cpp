@@ -474,6 +474,7 @@ void CViewInit::onUpdate()
 		std::vector<std::string> listBundles;
 		listBundles.push_back("Common.zip");
 		listBundles.push_back("Sponza.zip");
+		listBundles.push_back("SponzaResource.zip");
 		listBundles.push_back(getApplication()->getTexturePackageName("Sponza"));
 		listBundles.push_back("Particles.zip");
 

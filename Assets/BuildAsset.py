@@ -13,7 +13,7 @@ compressExt = ["xml", "ttf", "otf", "txt",
                "scene",
                "particle",
                "texarray"]
-compressResourceModel = ["dae", "obj", "mtl", "fbx"]
+compressResourceModel = ["dae", "obj", "mtl", "fbx", "smesh", "sanim", "wtm"]
 compressTextureDDSExt = ["dds"]
 compressTexturePVRExt = ["pvr"]
 compressTextureETCExt = ["etc2"]
