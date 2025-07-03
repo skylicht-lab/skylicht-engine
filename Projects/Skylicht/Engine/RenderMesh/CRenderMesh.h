@@ -141,6 +141,8 @@ namespace Skylicht
 			return m_transforms;
 		}
 
+		core::aabbox3df getBounds();
+
 		void printEntites();
 
 		CWorldTransformData* getChildTransform(const char* name);

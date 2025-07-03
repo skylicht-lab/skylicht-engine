@@ -53,6 +53,10 @@ namespace Skylicht
 
 		virtual bool deserializable(CMemoryStream* stream, int version);
 
+		core::matrix4 calcWorldMatrix(CWorldTransformData* endParent = NULL);
+
+		CWorldTransformData* getParent();
+
 		inline core::vector3df getRelativePosition()
 		{
 			return Relative.getTranslation();

@@ -307,7 +307,7 @@ namespace Skylicht
 					if (m_enableThumbnail)
 					{
 						std::string ext = CPath::getFileNameExt(f.Name);
-						if (CTextureManager::isTextureExt(ext.c_str()))
+						if (CTextureManager::isTextureExt(ext.c_str()) || CMeshManager::isMeshExt(ext.c_str()))
 							thumbnail = getFileThumbnail(f.FullPath);
 					}
 

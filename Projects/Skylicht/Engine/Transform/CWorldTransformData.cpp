@@ -77,4 +77,40 @@ namespace Skylicht
 		HasChanged = true;
 		Entity->getEntityManager()->notifyUpdateSortEntities();
 	}
+
+	core::matrix4 CWorldTransformData::calcWorldMatrix(CWorldTransformData* endParent)
+	{
+		core::matrix4 world = Relative;
+
+		CWorldTransformData* parent = getParent();
+		while (parent != NULL)
+		{
+			world = parent->Relative * world;
+
+			if (parent == endParent)
+				break;
+			parent = parent->getParent();
+		}
+
+		return world;
+	}
+
+	CWorldTransformData* CWorldTransformData::getParent()
+	{
+		CEntity** entities = Entity->getEntityManager()->getEntities();
+		CWorldTransformData* parent = NULL;
+
+		if (AttachParentIndex > 0)
+		{
+			CEntity* parentEntity = entities[AttachParentIndex];
+			parent = GET_ENTITY_DATA(parentEntity, CWorldTransformData);
+		}
+		else
+		{
+			CEntity* parentEntity = entities[ParentIndex];
+			parent = GET_ENTITY_DATA(parentEntity, CWorldTransformData);
+		}
+
+		return parent;
+	}
 }

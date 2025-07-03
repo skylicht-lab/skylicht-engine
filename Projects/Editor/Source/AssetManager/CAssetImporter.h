@@ -25,6 +25,10 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CAssetManager.h"
+#include "Scene/CScene.h"
+
+#include "RenderPipeline/CShadowMapRP.h"
+#include "Editor/Space/Scene/CDiffuseLightRenderPipeline.h"
 
 namespace Skylicht
 {
@@ -51,12 +55,21 @@ namespace Skylicht
 			std::list<std::string>::iterator m_deleteIterator;
 			std::list<std::string>::iterator m_deleteIteratorEnd;
 
+			CScene* m_scene;
+			CCamera* m_camera;
+
+			ITexture* m_rtt;
+			CShadowMapRP* m_shadowRP;
+			CDiffuseLightRenderPipeline* m_rp;
+
 		public:
 			CAssetImporter(std::list<SFileNode*>& listFiles);
 
 			CAssetImporter();
 
 			virtual ~CAssetImporter();
+
+			void initScene();
 
 			bool load(int count);
 
@@ -83,6 +96,7 @@ namespace Skylicht
 
 			void importPath(const SFileNode* node);
 
+			void saveModelThumbnail(const char* id, const char* path);
 		};
 	}
 }

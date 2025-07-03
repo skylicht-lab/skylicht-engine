@@ -909,6 +909,32 @@ namespace Skylicht
 		}
 	}
 
+	core::aabbox3df CRenderMesh::getBounds()
+	{
+		core::aabbox3df result, box;
+
+		CWorldTransformData* rootTransform = GET_ENTITY_DATA(m_root, CWorldTransformData);
+
+		for (int i = 0, n = (int)m_renderers.size(); i < n; i++)
+		{
+			CRenderMeshData* r = m_renderers[i];
+			CWorldTransformData* t = m_renderTransforms[i];
+
+			if (r->getMesh())
+			{
+				box = r->getMesh()->getBoundingBox();
+
+				t->calcWorldMatrix(rootTransform).transformBoxEx(box);
+
+				if (i == 0)
+					result = box;
+				else
+					result.addInternalBox(box);
+			}
+		}
+		return result;
+	}
+
 	void CRenderMesh::printEntites()
 	{
 		std::string log;

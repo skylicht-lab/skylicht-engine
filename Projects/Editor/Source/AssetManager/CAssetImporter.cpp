@@ -39,6 +39,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Editor/SpaceController/CSceneController.h"
 
+#include "LightProbes/CLightProbes.h"
+
 #if defined(__APPLE_CC__)
 namespace fs = std::__fs::filesystem;
 #else
@@ -52,7 +54,11 @@ namespace Skylicht
 		CAssetImporter::CAssetImporter(std::list<SFileNode*>& listFiles) :
 			m_fileID(0),
 			m_deleteID(0),
-			m_totalDeleted(0)
+			m_totalDeleted(0),
+			m_scene(NULL),
+			m_camera(NULL),
+			m_shadowRP(NULL),
+			m_rp(NULL)
 		{
 			m_assetManager = CAssetManager::getInstance();
 
@@ -63,12 +69,19 @@ namespace Skylicht
 
 			m_deleteIterator = m_fileDeleted.begin();
 			m_deleteIteratorEnd = m_fileDeleted.end();
+
+			initScene();
 		}
 
 		CAssetImporter::CAssetImporter() :
 			m_fileID(0),
 			m_deleteID(0),
-			m_totalDeleted(0)
+			m_totalDeleted(0),
+			m_scene(NULL),
+			m_camera(NULL),
+			m_shadowRP(NULL),
+			m_rp(NULL),
+			m_rtt(NULL)
 		{
 			m_assetManager = CAssetManager::getInstance();
 
@@ -76,11 +89,70 @@ namespace Skylicht
 
 			m_deleteIterator = m_fileDeleted.begin();
 			m_deleteIteratorEnd = m_fileDeleted.end();
+
+			initScene();
 		}
 
 		CAssetImporter::~CAssetImporter()
 		{
+			delete m_scene;
+			delete m_shadowRP;
+			delete m_rp;
+			getVideoDriver()->removeTexture(m_rtt);
+		}
 
+		void CAssetImporter::initScene()
+		{
+			int w = 128;
+			int h = 128;
+
+			m_rtt = getVideoDriver()->addRenderTargetTexture(core::dimension2du(w, h), "rt", video::ECF_A8R8G8B8);
+
+			m_shadowRP = new CShadowMapRP();
+			m_shadowRP->enableUpdateEntity(true);
+			m_shadowRP->setNoShadowCascade();
+			m_shadowRP->initRender(w, h);
+
+			m_rp = new CDiffuseLightRenderPipeline();
+			m_rp->initRender(w, h);
+			m_rp->enableUpdateEntity(false);
+
+			m_shadowRP->setNextPipeLine(m_rp);
+
+			m_scene = new CScene();
+			CZone* zone = m_scene->createZone();
+
+			// camera
+			CGameObject* camObj = zone->createEmptyObject();
+			m_camera = camObj->addComponent<CCamera>();
+
+			// lighting
+			CGameObject* lightObj = zone->createEmptyObject();
+			lightObj->setName(L"Direction Light");
+
+			CTransformEuler* lightTransform = lightObj->getTransformEuler();
+			lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
+
+			core::vector3df direction = core::vector3df(0.0f, -1.5f, -2.0f);
+			lightTransform->setOrientation(direction, Transform::Oy);
+
+			CDirectionalLight* directionalLight = lightObj->addComponent<CDirectionalLight>();
+			SColor c(255, 255, 244, 214);
+			directionalLight->setColor(SColorf(c));
+
+			// lightprobres
+			CGameObject* lightProbesObj = zone->createEmptyObject();
+			lightProbesObj->setName(L"Light Probes");
+			lightProbesObj->addComponent<CLightProbes>();
+
+			// reflection probe
+			// CGameObject* reflectionProbesObj = zone->createEmptyObject();
+			// reflectionProbesObj->setName(L"Reflection Probe");
+			// CReflectionProbe* reflection = reflectionProbesObj->addComponent<CReflectionProbe>();
+			// reflectionProbesObj->getTransformEuler()->setPosition(core::vector3df(0.0f, 2.0f, 0.0f));
+			// reflection->loadStaticTexture("Editor/Textures/Sky/PaperMill");
+
+			m_scene->update();
 		}
 
 		void CAssetImporter::addDeleted(std::list<std::string>& list)
@@ -200,10 +272,14 @@ namespace Skylicht
 				std::string ext = CPath::getFileNameExt(path);
 				ext = CStringImp::toLower(ext);
 
+				bool inEditorFolder = false;
+				std::string editorPath = "Editor/";
+				if (editorPath == path.substr(0, editorPath.size()))
+					inEditorFolder = true;
+
 				if (CTextureManager::isTextureExt(ext.c_str()))
 				{
-					std::string editorPath = "Editor/";
-					if (editorPath != path.substr(0, editorPath.size()))
+					if (!inEditorFolder)
 					{
 						std::string id = m_assetManager->getGenerateMetaGUID(path.c_str());
 						if (m_assetManager->getThumbnail()->updateInfo(id.c_str(), path.c_str(), node->ModifyTime))
@@ -231,11 +307,26 @@ namespace Skylicht
 				{
 					CMeshManager* meshMgr = CMeshManager::getInstance();
 
+					bool meshLoaded = false;
+
 					if (meshMgr->isMeshLoaded(path.c_str()))
 					{
 						// unload mesh & reload
+						meshLoaded = true;
 						meshMgr->releaseResource(path.c_str());
 						CSceneController::getInstance()->doMeshChange(path.c_str());
+					}
+
+					if (!inEditorFolder)
+					{
+						std::string id = m_assetManager->getGenerateMetaGUID(path.c_str());
+						if (m_assetManager->getThumbnail()->updateInfo(id.c_str(), path.c_str(), node->ModifyTime))
+						{
+							saveModelThumbnail(id.c_str(), path.c_str());
+
+							if (!meshLoaded)
+								meshMgr->releaseResource(path.c_str());
+						}
 					}
 				}
 				else if (CMaterialManager::isMaterialExt(ext.c_str()))
@@ -250,6 +341,40 @@ namespace Skylicht
 					}
 				}
 			}
+		}
+
+		void CAssetImporter::saveModelThumbnail(const char* id, const char* path)
+		{
+			CEntityPrefab* prefab = CMeshManager::getInstance()->loadModel(path, "");
+			if (!prefab)
+				return;
+
+			CGameObject* model = m_scene->getZone(0)->createEmptyObject();
+			CRenderMesh* renderMesh = model->addComponent<CRenderMesh>();
+			renderMesh->initFromPrefab(prefab);
+
+			model->addComponent<CIndirectLighting>();
+
+			core::aabbox3df bound = renderMesh->getBounds();
+			core::vector3df lookAt = bound.getCenter();
+
+			float diagonalLength = bound.getExtent().getLength();
+			float fovRadians = m_camera->getFOV() * core::DEGTORAD;
+			float distance = (diagonalLength * 0.5f) / tanf(fovRadians * 0.5f) * 1.2f;
+
+			core::vector3df camDirection(1.0f, 1.0f, 1.0f);
+			camDirection.normalize();
+
+			m_camera->setPosition(lookAt + camDirection * distance);
+			m_camera->lookAt(lookAt, Transform::Oy);
+
+			m_scene->update();
+			m_shadowRP->render(m_rtt, m_camera, m_scene->getEntityManager(), core::recti());
+
+			std::string output = CAssetManager::getInstance()->getThumbnail()->getThumbnailFile(id);
+			CBaseRP::saveFBOToFile(m_rtt, output.c_str());
+
+			model->remove();
 		}
 	}
 }
