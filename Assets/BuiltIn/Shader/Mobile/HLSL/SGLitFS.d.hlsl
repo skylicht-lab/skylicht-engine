@@ -57,6 +57,9 @@ cbuffer cbPerFrame
 	float2 uSpecGloss;
 #endif
 	float2 uLightMul;
+#if defined(CUTOFF)
+	float uCutoff;
+#endif
 	float4 uSHConst[4];
 };
 
@@ -76,6 +79,12 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 specMap = float3(uSpecGloss, 1.0);
 #else
 	float4 diffuseMap = uTexDiffuse.Sample(uTexDiffuseSampler, input.tex0) * uColor;
+
+#if defined(CUTOFF)
+	if (diffuseMap.a < uCutoff)
+		discard;
+#endif
+
 	#ifdef NO_SPECGLOSS
 	float3 specMap = float3(uSpecGloss, 1.0);
 	#else

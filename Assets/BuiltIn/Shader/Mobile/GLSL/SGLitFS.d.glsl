@@ -26,7 +26,9 @@ uniform sampler2DArray uShadowMap;
 uniform vec4 uLightColor;
 uniform vec4 uColor;
 uniform vec2 uLightMul;
-
+#if defined(CUTOFF)
+uniform float uCutoff;
+#endif
 #if defined(NO_TEXTURE) || defined(NO_SPECGLOSS)
 uniform vec2 uSpecGloss;
 #endif
@@ -66,6 +68,11 @@ void main(void)
 	vec3 specMap = vec3(uSpecGloss, 1.0);
 #else
 	vec4 diffuseMap = texture(uTexDiffuse, vTexCoord0.xy) * uColor;
+
+#if defined(CUTOFF)
+	if (diffuseMap.a < uCutoff)
+		discard;
+#endif
 
 	#ifdef NO_SPECGLOSS
 	vec3 specMap = vec3(uSpecGloss, 1.0);
