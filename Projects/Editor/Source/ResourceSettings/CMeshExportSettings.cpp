@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2025 Skylicht Technology CO., LTD
+Copyright (c) 2021 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
@@ -23,26 +23,26 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "TextureSettings.h"
+#include "CMeshExportSettings.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		CTextureSettings::CTextureSettings() :
-			CAssetResource("CTextureSettings"),
-			SpritePath(this, "spritePath"),
-			SpriteId(this, "spriteId"),
-			AutoScale(this, "autoScale", true),
-			CustomScale(this, "customScale", 1.0f, 0.0f, 1.0f)
+		CMeshExportSettings::CMeshExportSettings() :
+			CAssetResource("CMeshExportSettings"),
+			TextureFolder(this, "textureFolder"),
+			UseNormalMap(this, "useNormalMap", true),
+			FlipNormal(this, "flipNormal", true),
+			UseUV2(this, "useUV2", false),
+			GenerateLightmapUV2(this, "generateLightmapUV2", false),
+			LightmapScale(this, "lightmapScale", 1.0f, 0.0f),
+			DefaultMaterial(this, "defaultMaterial")
 		{
-			SpritePath.setHidden(true);
-			SpriteId.setHidden(true);
-			OtherName.push_back("CFrameSource");
-			OtherName.push_back("TextureSettings");
+			OtherName.push_back("MeshExportSettings");
 		}
 
-		CTextureSettings::~CTextureSettings()
+		CMeshExportSettings::~CMeshExportSettings()
 		{
 
 		}

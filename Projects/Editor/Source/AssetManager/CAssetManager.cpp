@@ -41,8 +41,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "TextureManager/CTextureManager.h"
 #include "MeshManager/CMeshManager.h"
 
-#include "ResourceSettings/TextureSettings.h"
-#include "ResourceSettings/MeshExportSettings.h"
+#include "ResourceSettings/CTextureSettings.h"
+#include "ResourceSettings/CMeshExportSettings.h"
 
 #if defined(__APPLE_CC__)
 namespace fs = std::__fs::filesystem;

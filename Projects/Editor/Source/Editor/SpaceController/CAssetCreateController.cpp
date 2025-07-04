@@ -36,7 +36,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Editor/CEditor.h"
 
 #include "Scene/CSceneExporter.h"
-#include "ResourceSettings/SpriteExportSettings.h"
+#include "ResourceSettings/CSpriteExportSettings.h"
 #include "Graphics2D/CGUIExporter.h"
 #include "Graphics2D/SpriteFrame/CFontSource.h"
 #include "Serializable/CFileArraySerializable.h"

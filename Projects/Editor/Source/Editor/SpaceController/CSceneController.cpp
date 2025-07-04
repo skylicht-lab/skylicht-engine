@@ -44,7 +44,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Entity/CEntityHandler.h"
 #include "Entity/CEntityHandleData.h"
 
-#include "ResourceSettings/MeshExportSettings.h"
+#include "ResourceSettings/CMeshExportSettings.h"
 
 #if BUILD_SKYLICHT_PHYSIC
 #include "PhysicsEngine/CPhysicsEngine.h"

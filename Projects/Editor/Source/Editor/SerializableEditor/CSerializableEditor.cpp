@@ -30,7 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "GUI/Input/CInput.h"
 #include "AssetManager/CAssetManager.h"
 #include "Graphics2D/SpriteFrame/CSpriteManager.h"
-#include "ResourceSettings/TextureSettings.h"
+#include "ResourceSettings/CTextureSettings.h"
 #include "Serializable/CSerializableLoader.h"
 
 namespace Skylicht

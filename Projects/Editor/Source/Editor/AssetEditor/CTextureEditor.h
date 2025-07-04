@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CAssetEditor.h"
-#include "ResourceSettings/TextureSettings.h"
+#include "ResourceSettings/CTextureSettings.h"
 
 namespace Skylicht
 {

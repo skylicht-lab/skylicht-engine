@@ -23,7 +23,7 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "SpriteExportSettings.h"
+#include "CSpriteExportSettings.h"
 #include "Utils/CRandomID.h"
 
 namespace Skylicht

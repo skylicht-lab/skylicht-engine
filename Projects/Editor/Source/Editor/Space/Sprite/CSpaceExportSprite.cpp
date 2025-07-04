@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "AssetManager/CAssetManager.h"
 #include "Editor/CEditor.h"
 
-#include "ResourceSettings/TextureSettings.h"
+#include "ResourceSettings/CTextureSettings.h"
 #include "Serializable/CSerializableLoader.h"
 
 #include <filesystem>

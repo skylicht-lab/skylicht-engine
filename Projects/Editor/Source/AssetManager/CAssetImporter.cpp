@@ -125,6 +125,7 @@ namespace Skylicht
 			// camera
 			CGameObject* camObj = zone->createEmptyObject();
 			m_camera = camObj->addComponent<CCamera>();
+			m_camera->setAspect(1.0f);
 
 			// lighting
 			CGameObject* lightObj = zone->createEmptyObject();
@@ -144,13 +145,6 @@ namespace Skylicht
 			CGameObject* lightProbesObj = zone->createEmptyObject();
 			lightProbesObj->setName(L"Light Probes");
 			lightProbesObj->addComponent<CLightProbes>();
-
-			// reflection probe
-			// CGameObject* reflectionProbesObj = zone->createEmptyObject();
-			// reflectionProbesObj->setName(L"Reflection Probe");
-			// CReflectionProbe* reflection = reflectionProbesObj->addComponent<CReflectionProbe>();
-			// reflectionProbesObj->getTransformEuler()->setPosition(core::vector3df(0.0f, 2.0f, 0.0f));
-			// reflection->loadStaticTexture("Editor/Textures/Sky/PaperMill");
 
 			m_scene->update();
 		}

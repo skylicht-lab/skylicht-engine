@@ -2049,10 +2049,14 @@ namespace Skylicht
 
 		buffer->recalculateBoundingBox();
 
-		// apply unit scale for culling
-		core::aabbox3df box = buffer->getBoundingBox();
-		m_unitScaleMatrix.transformBox(box);
-		buffer->getBoundingBox() = box;
+		if (mesh->Type == k_skinMesh)
+		{
+			// apply unit scale for culling
+			// because the unit scale on skinned mesh assign in Bone Node
+			core::aabbox3df box = buffer->getBoundingBox();
+			m_unitScaleMatrix.transformBox(box);
+			buffer->getBoundingBox() = box;
+		}
 
 		return buffer;
 	}

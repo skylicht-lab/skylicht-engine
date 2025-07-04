@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CAssetEditor.h"
-#include "ResourceSettings/SpriteExportSettings.h"
+#include "ResourceSettings/CSpriteExportSettings.h"
 
 namespace Skylicht
 {
