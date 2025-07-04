@@ -63,8 +63,8 @@ namespace Skylicht
 		int m_lightmapIndirectTestShader;
 
 		int m_colorInstancing;
-		int m_lmInstancingStandard;
-		int m_lmInstancingTBN;
+		int m_lmInstancingStandardSG;
+		int m_lmInstancingTangentSG;
 
 		int m_lightDirection;
 		int m_lightDirectionSSR;

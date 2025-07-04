@@ -11,6 +11,7 @@ namespace Skylicht
 		protected:
 			CShader* m_diffuseShader;
 			CShader* m_colorShader;
+			CShader* m_skinColorShader;
 
 			CMaterial* m_material;
 

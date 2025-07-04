@@ -129,6 +129,9 @@ namespace Skylicht
 		loadShader("BuiltIn/Shader/Lightmap/LightmapSH.xml");
 		loadShader("BuiltIn/Shader/Lightmap/LightmapColor.xml");
 
+		loadShader("BuiltIn/Shader/Lightmap/LMInstancingStandardSG.xml");
+		loadShader("BuiltIn/Shader/Lightmap/LMInstancingTangentSG.xml");
+
 		loadShader("BuiltIn/Shader/PostProcessing/AdaptLuminance.xml");
 		loadShader("BuiltIn/Shader/PostProcessing/PostEffect.xml");
 		loadShader("BuiltIn/Shader/PostProcessing/PostEffectManualExposure.xml");
@@ -164,15 +167,14 @@ namespace Skylicht
 
 	void CShaderManager::initSGDeferredShader()
 	{
-		loadShader("BuiltIn/Shader/Lightmap/LMStandardSGInstancing.xml");
-		loadShader("BuiltIn/Shader/Lightmap/LMTBNSGInstancing.xml");
-
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/DiffuseNormal.xml");
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Specular.xml");
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Diffuse.xml");
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossiness.xml");
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossinessMask.xml");
+
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SkinColor.xml");
 
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/MetallicRoughness.xml");
 

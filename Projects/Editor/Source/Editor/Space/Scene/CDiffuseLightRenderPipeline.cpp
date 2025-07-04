@@ -30,9 +30,11 @@ namespace Skylicht
 			CShaderManager* shaderMgr = CShaderManager::getInstance();
 			shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");
 			shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Diffuse.xml");
+			shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SkinColor.xml");
 
 			m_diffuseShader = shaderMgr->getShaderByName("Diffuse");
 			m_colorShader = shaderMgr->getShaderByName("Color");
+			m_skinColorShader = shaderMgr->getShaderByName("SkinColor");
 		}
 
 		bool CDiffuseLightRenderPipeline::canRenderMaterial(CMaterial* material)

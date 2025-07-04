@@ -67,8 +67,8 @@ namespace Skylicht
 		m_lightmapColorShader(0),
 		m_lightmapIndirectTestShader(0),
 		m_colorInstancing(0),
-		m_lmInstancingStandard(0),
-		m_lmInstancingTBN(0),
+		m_lmInstancingStandardSG(0),
+		m_lmInstancingTangentSG(0),
 		m_indirectMultipler(1.0f),
 		m_directMultipler(1.0f),
 		m_lightMultipler(1.0f),
@@ -181,8 +181,8 @@ namespace Skylicht
 
 		m_colorInstancing = shaderMgr->getShaderIDByName("ColorInstancing");
 
-		m_lmInstancingStandard = shaderMgr->getShaderIDByName("LMStandardSGInstancing");
-		m_lmInstancingTBN = shaderMgr->getShaderIDByName("LMTBNSGInstancing");
+		m_lmInstancingStandardSG = shaderMgr->getShaderIDByName("LMInstancingStandardSG");
+		m_lmInstancingTangentSG = shaderMgr->getShaderIDByName("LMInstancingTangentSG");
 
 		m_lightmapIndirectTestShader = shaderMgr->getShaderIDByName("IndirectTest");
 
@@ -438,9 +438,9 @@ namespace Skylicht
 				video::SMaterial& irrMaterial = mb->getMaterial();
 
 				if (size == sizeof(video::S3DVertex))
-					irrMaterial.MaterialType = m_lmInstancingStandard;
+					irrMaterial.MaterialType = m_lmInstancingStandardSG;
 				else if (size == sizeof(video::S3DVertexTangents))
-					irrMaterial.MaterialType = m_lmInstancingTBN;
+					irrMaterial.MaterialType = m_lmInstancingTangentSG;
 
 				IVideoDriver* driver = getVideoDriver();
 				driver->setMaterial(irrMaterial);
