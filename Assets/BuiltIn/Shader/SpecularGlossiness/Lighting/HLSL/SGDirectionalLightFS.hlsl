@@ -127,7 +127,7 @@ float3 SG(
 	float3 color = (directionalLight * directMultiplier) * diffuseColor * (0.1 + roughness * 0.3) * c;
 	color += pointLightColor * lightMultiplier * diffuseColor * 0.5;
 	color += specular * specularColor * envSpecColor;
-	color += indirectColor * diffuseColor * indirectMultiplier * (0.1 + c * 0.9) / PI;
+	color += indirectColor * diffuseColor * indirectMultiplier / PI;
 	return color;
 }
 float4 main(PS_INPUT input) : SV_TARGET

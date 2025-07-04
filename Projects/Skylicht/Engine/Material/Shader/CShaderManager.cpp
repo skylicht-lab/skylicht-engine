@@ -128,6 +128,7 @@ namespace Skylicht
 		loadShader("BuiltIn/Shader/Lightmap/LightmapVertex.xml");
 		loadShader("BuiltIn/Shader/Lightmap/LightmapSH.xml");
 		loadShader("BuiltIn/Shader/Lightmap/LightmapColor.xml");
+		loadShader("BuiltIn/Shader/Lightmap/LightmapSkinSH.xml");
 
 		loadShader("BuiltIn/Shader/Lightmap/LMInstancingStandardSG.xml");
 		loadShader("BuiltIn/Shader/Lightmap/LMInstancingTangentSG.xml");
@@ -174,9 +175,10 @@ namespace Skylicht
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossiness.xml");
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SpecularGlossinessMask.xml");
 
-		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SkinColor.xml");
-
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/MetallicRoughness.xml");
+
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SkinColor.xml");
+		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SkinDiffuse.xml");
 
 		loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/MetersGrid.xml");
 

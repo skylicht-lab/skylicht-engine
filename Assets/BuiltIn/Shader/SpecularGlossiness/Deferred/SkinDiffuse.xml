@@ -1,0 +1,30 @@
+<shaderConfig name="SkinDiffuse" baseShader="SOLID" deferred="true">
+	<uniforms>
+		<vs>
+			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+			<uniform name="uWorldMatrix" type="WORLD" value="0" float="16" matrix="true"/>
+			<uniform name="uView" type="DEFERRED_VIEW" value="0" float="16" matrix="true"/>
+			<uniform name="uUVScale" type="MATERIAL_PARAM" valueIndex="0" value="1.0, 1.0, 0.0, 0.0" float="4"/>
+			<uniform name="uBoneMatrix" type="BONE_MATRIX" value="0" float="16" array="64" matrix="true"/>
+		</vs>
+		<fs>
+			<uniform name="uTexDiffuse" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
+			<uniform name="uColor" type="MATERIAL_PARAM" valueIndex="1" value="1.0, 1.0, 1.0, 1.0" float="4"/>
+			<uniform name="uSpecGloss" type="MATERIAL_PARAM" valueIndex="2" value="0.4, 0.3, 0.0, 1.0" float="2"/>
+		</fs>
+	</uniforms>
+	<resources>
+	</resources>
+	<customUI>
+		<ui control="UIGroup" name="Texture">
+			<ui control="UITexture" name="uTexDiffuse" autoReplace="_diff.;_dif."/>
+		</ui>
+		<ui control="UIGroup" name="Customize">
+			<ui control="UIColor" name="uColor"/>
+			<ui control="UIFloat4" name="uUVScale" elementName="UV ScaleX;UV ScaleY;UV OffsetX;UV OffsetY"/>
+			<ui control="UIFloat2" name="uSpecGloss" elementName="Specular;Glossiness" min="0" max="1"/>
+		</ui>
+	</customUI>
+	<shader type="GLSL" vs="GLSL/SGSkinVS.glsl" fs="GLSL/DiffuseFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/SGSkinVS.hlsl" fs="HLSL/DiffuseFS.hlsl"/>
+</shaderConfig>

@@ -65,10 +65,10 @@ float3 SG(
 	color += specular * specularColor * envSpecColor;
 
 	// IBL Ambient
-	color += indirectColor * diffuseColor * indirectMultiplier * (0.1 + c * 0.9) / PI;
-
+	color += indirectColor * diffuseColor * indirectMultiplier / PI;
+	
+#if defined(ENABLE_SSR)	
 	// IBL reflection
-#if defined(ENABLE_SSR)
 	float brightness = (0.8 + gloss * 1.8);
 	float3 reflection = -normalize(reflect(worldViewDir, worldNormal));
 	color += sRGB(SSR(linearRGB(color), position, reflection, roughness)) * brightness * specularColor;

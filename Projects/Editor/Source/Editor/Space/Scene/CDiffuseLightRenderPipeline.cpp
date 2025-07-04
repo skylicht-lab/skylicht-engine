@@ -11,6 +11,8 @@ namespace Skylicht
 		CDiffuseLightRenderPipeline::CDiffuseLightRenderPipeline() :
 			m_diffuseShader(NULL),
 			m_colorShader(NULL),
+			m_skinColorShader(NULL),
+			m_skinDiffuseShader(NULL),
 			m_material(NULL)
 		{
 			m_material = new CMaterial("default", "BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");
@@ -31,10 +33,12 @@ namespace Skylicht
 			shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");
 			shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/Diffuse.xml");
 			shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SkinColor.xml");
+			shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Deferred/SkinDiffuse.xml");
 
 			m_diffuseShader = shaderMgr->getShaderByName("Diffuse");
 			m_colorShader = shaderMgr->getShaderByName("Color");
 			m_skinColorShader = shaderMgr->getShaderByName("SkinColor");
+			m_skinDiffuseShader = shaderMgr->getShaderByName("SkinDiffuse");
 		}
 
 		bool CDiffuseLightRenderPipeline::canRenderMaterial(CMaterial* material)
@@ -49,9 +53,6 @@ namespace Skylicht
 
 		void CDiffuseLightRenderPipeline::drawMeshBuffer(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID, bool skinnedMesh)
 		{
-			if (skinnedMesh)
-				return;
-
 			if (m_isIndirectPass == true)
 				CDeferredRP::drawMeshBuffer(mesh, bufferID, entity, entityID, skinnedMesh);
 			else
@@ -71,10 +72,20 @@ namespace Skylicht
 
 				// force change to pipeline shader
 				video::SMaterial irrMaterial = mb->getMaterial();
-				if (irrMaterial.getTexture(0) == NULL)
-					irrMaterial.MaterialType = m_colorShader->getMaterialRenderID();
+				if (skinnedMesh)
+				{
+					if (irrMaterial.getTexture(0) == NULL)
+						irrMaterial.MaterialType = m_skinColorShader->getMaterialRenderID();
+					else
+						irrMaterial.MaterialType = m_skinDiffuseShader->getMaterialRenderID();
+				}
 				else
-					irrMaterial.MaterialType = m_diffuseShader->getMaterialRenderID();
+				{
+					if (irrMaterial.getTexture(0) == NULL)
+						irrMaterial.MaterialType = m_colorShader->getMaterialRenderID();
+					else
+						irrMaterial.MaterialType = m_diffuseShader->getMaterialRenderID();
+				}
 
 				// set irrlicht material
 				driver->setMaterial(irrMaterial);

@@ -1,0 +1,14 @@
+<shaderConfig name="LightmapSkinSH" baseShader="SOLID">
+	<uniforms>
+		<vs>
+			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+			<uniform name="uWorldMatrix" type="WORLD" value="0" float="16" matrix="true"/>
+			<uniform name="uBoneMatrix" type="BONE_MATRIX" value="0" float="16" array="64" matrix="true"/>
+		</vs>
+		<fs>
+			<uniform name="uSHConst" type="SH_CONST" value="0" float="4" array="9"/>
+		</fs>
+	</uniforms>
+	<shader type="GLSL" vs="GLSL/SHSkinVS.glsl" fs="GLSL/LightmapSHFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/SHSkinVS.hlsl" fs="HLSL/LightmapSHFS.hlsl"/>
+</shaderConfig>

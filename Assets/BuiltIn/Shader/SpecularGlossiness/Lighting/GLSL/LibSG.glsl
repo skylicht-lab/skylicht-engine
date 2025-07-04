@@ -65,7 +65,7 @@ vec3 SG(
 	color += specular * specularColor * envSpecColor;
 
 	// IBL Ambient
-	color += indirectColor * diffuseColor * indirectMultiplier * (0.1 + c * 0.9) / PI;
+	color += indirectColor * diffuseColor * indirectMultiplier / PI;
 
 	// IBL reflection
 #if defined(ENABLE_SSR)

@@ -66,6 +66,7 @@ namespace Skylicht
 		m_lightmapSHShader(0),
 		m_lightmapColorShader(0),
 		m_lightmapIndirectTestShader(0),
+		m_lightmapSkinSHShader(0),
 		m_colorInstancing(0),
 		m_lmInstancingStandardSG(0),
 		m_lmInstancingTangentSG(0),
@@ -177,6 +178,7 @@ namespace Skylicht
 		m_lightmapArrayShader = shaderMgr->getShaderIDByName("Lightmap");
 		m_lightmapVertexShader = shaderMgr->getShaderIDByName("LightmapVertex");
 		m_lightmapSHShader = shaderMgr->getShaderIDByName("LightmapSH");
+		m_lightmapSkinSHShader = shaderMgr->getShaderIDByName("LightmapSkinSH");
 		m_lightmapColorShader = shaderMgr->getShaderIDByName("LightmapColor");
 
 		m_colorInstancing = shaderMgr->getShaderIDByName("ColorInstancing");
@@ -339,82 +341,85 @@ namespace Skylicht
 
 			video::SMaterial& material = mb->getMaterial();
 
-			if (indirectData->Type == CIndirectLightingData::VertexColor)
+			if (skinnedMesh)
 			{
-				// change shader to vertex color
-				SMaterial vertexLightmap;
-				vertexLightmap.MaterialType = m_lightmapVertexShader;
-
-				// set irrlicht material
-				driver->setMaterial(vertexLightmap);
-
-				// draw mesh buffer
-				driver->drawMeshBuffer(mb);
-			}
-			else if (indirectData->Type == CIndirectLightingData::LightmapArray)
-			{
-				if (indirectData->IndirectTexture)
+				if (indirectData->Type == CIndirectLightingData::SH9 && indirectData->SH)
 				{
-					// change shader to vertex color
-					SMaterial indirectColor;
+					CShaderSH::setSH9(indirectData->SH, *indirectData->Intensity);
 
-					indirectColor.MaterialType = m_lightmapArrayShader;
-					indirectColor.setTexture(0, indirectData->IndirectTexture);
+					SMaterial shMaterial;
+					shMaterial.MaterialType = m_lightmapSkinSHShader;
 
-					// set irrlicht material
-					driver->setMaterial(indirectColor);
-
-					// draw mesh buffer
+					driver->setMaterial(shMaterial);
 					driver->drawMeshBuffer(mb);
 				}
 			}
-			else if (indirectData->Type == CIndirectLightingData::SH9 && indirectData->SH)
+			else
 			{
-				CShaderSH::setSH9(indirectData->SH, *indirectData->Intensity);
+				if (indirectData->Type == CIndirectLightingData::VertexColor)
+				{
+					SMaterial vertexLightmap;
+					vertexLightmap.MaterialType = m_lightmapVertexShader;
 
-				// change shader to vertex color
-				SMaterial shMaterial;
-				shMaterial.MaterialType = m_lightmapSHShader;
+					driver->setMaterial(vertexLightmap);
+					driver->drawMeshBuffer(mb);
+				}
+				else if (indirectData->Type == CIndirectLightingData::LightmapArray)
+				{
+					if (indirectData->IndirectTexture)
+					{
+						SMaterial indirectColor;
 
-				// set irrlicht material
-				driver->setMaterial(shMaterial);
+						indirectColor.MaterialType = m_lightmapArrayShader;
+						indirectColor.setTexture(0, indirectData->IndirectTexture);
 
-				// draw mesh buffer
-				driver->drawMeshBuffer(mb);
-			}
-			else if (indirectData->Type == CIndirectLightingData::AmbientColor)
-			{
-				CShaderLighting::setLightAmbient(indirectData->Color);
+						driver->setMaterial(indirectColor);
+						driver->drawMeshBuffer(mb);
+					}
+				}
+				else if (indirectData->Type == CIndirectLightingData::SH9 && indirectData->SH)
+				{
+					CShaderSH::setSH9(indirectData->SH, *indirectData->Intensity);
 
-				// change shader to color
-				SMaterial shMaterial;
-				shMaterial.MaterialType = m_lightmapColorShader;
+					SMaterial shMaterial;
+					shMaterial.MaterialType = m_lightmapSHShader;
 
-				// set irrlicht material
-				driver->setMaterial(shMaterial);
+					driver->setMaterial(shMaterial);
+					driver->drawMeshBuffer(mb);
+				}
+				else if (indirectData->Type == CIndirectLightingData::AmbientColor)
+				{
+					CShaderLighting::setLightAmbient(indirectData->Color);
 
-				// draw mesh buffer
-				driver->drawMeshBuffer(mb);
+					SMaterial shMaterial;
+					shMaterial.MaterialType = m_lightmapColorShader;
+
+					driver->setMaterial(shMaterial);
+					driver->drawMeshBuffer(mb);
+				}
 			}
 		}
 		else
 		{
 			if (s_bakeMode == true)
 			{
-				// update texture resource
-				updateTextureResource(mesh, bufferID, entity, entityID, skinnedMesh);
+				if (!skinnedMesh)
+				{
+					// update texture resource
+					updateTextureResource(mesh, bufferID, entity, entityID, skinnedMesh);
 
-				IMeshBuffer* mb = mesh->getMeshBuffer(bufferID);
-				IVideoDriver* driver = getVideoDriver();
+					IMeshBuffer* mb = mesh->getMeshBuffer(bufferID);
+					IVideoDriver* driver = getVideoDriver();
 
-				video::SMaterial irrMaterial = mb->getMaterial();
-				irrMaterial.BackfaceCulling = false;
+					video::SMaterial irrMaterial = mb->getMaterial();
+					irrMaterial.BackfaceCulling = false;
 
-				// set irrlicht material
-				driver->setMaterial(irrMaterial);
+					// set irrlicht material
+					driver->setMaterial(irrMaterial);
 
-				// draw mesh buffer
-				driver->drawMeshBuffer(mb);
+					// draw mesh buffer
+					driver->drawMeshBuffer(mb);
+				}
 			}
 			else
 			{
@@ -638,7 +643,7 @@ namespace Skylicht
 				}
 			}
 		}
-		
+
 		CShaderLighting::setSpotLight(NULL);
 		CShaderLighting::setPointLight(NULL);
 
@@ -734,15 +739,28 @@ namespace Skylicht
 		if (g_enableRenderTestBuffer >= 0)
 		{
 			SMaterial t = m_finalPass;
+
+			t.MaterialType = m_textureColorShader;
+
 			if (g_enableRenderTestBuffer == 0)
 				t.setTexture(0, m_albedo);
 			else if (g_enableRenderTestBuffer == 1)
 				t.setTexture(0, m_normal);
 			else if (g_enableRenderTestBuffer == 2)
 				t.setTexture(0, m_lightBuffer);
+			else if (g_enableRenderTestBuffer == 3)
+			{
+				t.setTexture(0, m_indirect);
+				t.MaterialType = m_lightmapIndirectTestShader;
+			}
+			else if (g_enableRenderTestBuffer == 4)
+			{
+				t.setTexture(0, m_target);
+				t.MaterialType = m_textureLinearRGBShader;
+			}
 			else
 				t.setTexture(0, m_data);
-			t.MaterialType = m_textureColorShader;
+
 			renderBufferToTarget(0.0f, 0.0f, renderW, renderH, 0.0f, 0.0f, renderW, renderH, t);
 		}
 	}
