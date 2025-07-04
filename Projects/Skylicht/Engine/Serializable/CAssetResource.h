@@ -33,6 +33,8 @@ namespace Skylicht
 	public:
 		CStringProperty GUID;
 
+		bool GenerateNewId;
+
 	public:
 		CAssetResource(const char* name);
 
@@ -44,5 +46,7 @@ namespace Skylicht
 		}
 
 		virtual void deserialize(io::IAttributes* io);
+
+		virtual bool save(const char* file);
 	};
 }

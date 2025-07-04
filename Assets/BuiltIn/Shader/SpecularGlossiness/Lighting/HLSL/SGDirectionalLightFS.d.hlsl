@@ -49,7 +49,7 @@ cbuffer cbPerFrame
 
 float4 main(PS_INPUT input) : SV_TARGET
 {
-	float3 albedo = uTexAlbedo.Sample(uTexAlbedoSampler, input.tex0).rgb;
+	float4 albedo = uTexAlbedo.Sample(uTexAlbedoSampler, input.tex0);
 	
 	float4 posdepth = uTexPosition.Sample(uTexPositionSampler, input.tex0);
 	float3 position = posdepth.xyz;
@@ -93,7 +93,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 
 	// lighting
 	float3 color = SG(
-		albedo,
+		albedo.rgb,
 		data.r,
 		data.g,
 		posdepth,
@@ -108,5 +108,5 @@ float4 main(PS_INPUT input) : SV_TARGET
 		indirectMul,
 		lightMul);
 
-	return float4(color, 1.0);
+	return float4(color, albedo.a);
 }

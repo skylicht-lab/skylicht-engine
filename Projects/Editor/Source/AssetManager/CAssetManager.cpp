@@ -479,7 +479,7 @@ namespace Skylicht
 			else
 				asset = new CAssetResource("CAssetResource");
 
-			if (!CSerializableLoader::loadSerializable(meta.c_str(), asset))
+			if (!CSerializableLoader::loadSerializable(meta.c_str(), asset) || asset->GenerateNewId)
 			{
 				asset->save(meta.c_str());
 			}

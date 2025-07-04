@@ -645,7 +645,7 @@ namespace Skylicht
 		// STEP 04
 		// Render final direction lighting to screen
 		{
-			driver->setRenderTarget(m_target, false, false);
+			driver->setRenderTarget(m_target, true, false);
 
 			// custom viewport
 			if (useCustomViewport)

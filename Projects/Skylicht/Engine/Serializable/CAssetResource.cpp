@@ -30,7 +30,8 @@ namespace Skylicht
 {
 	CAssetResource::CAssetResource(const char* name) :
 		CObjectSerializable(name),
-		GUID(this, "guid", CRandomID::generate().c_str())
+		GUID(this, "guid", CRandomID::generate().c_str()),
+		GenerateNewId(true)
 	{
 		OtherName.push_back("CAssetResource");
 		GUID.setHidden(true);
@@ -43,10 +44,26 @@ namespace Skylicht
 
 	void CAssetResource::deserialize(io::IAttributes* io)
 	{
+		std::string oldId = GUID.get();
+
 		CObjectSerializable::deserialize(io);
+
 		if (GUID.get().empty())
 		{
 			GUID.set(CRandomID::generate());
+			GenerateNewId = true;
 		}
+		else if (GUID.get() != oldId)
+		{
+			GenerateNewId = false;
+		}
+	}
+
+	bool CAssetResource::save(const char* file)
+	{
+		bool ret = CObjectSerializable::save(file);
+		if (ret)
+			GenerateNewId = false;
+		return ret;
 	}
 }

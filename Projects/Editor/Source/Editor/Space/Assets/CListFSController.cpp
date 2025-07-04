@@ -303,11 +303,13 @@ namespace Skylicht
 				}
 				else
 				{
+					std::string ext = CPath::getFileNameExt(f.Name);
 					ITexture* thumbnail = NULL;
+					bool isTexture = CTextureManager::isTextureExt(ext.c_str());
+					bool isModel = CMeshManager::isMeshExt(ext.c_str());
 					if (m_enableThumbnail)
 					{
-						std::string ext = CPath::getFileNameExt(f.Name);
-						if (CTextureManager::isTextureExt(ext.c_str()) || CMeshManager::isMeshExt(ext.c_str()))
+						if (isTexture || isModel)
 							thumbnail = getFileThumbnail(f.FullPath);
 					}
 
@@ -321,8 +323,11 @@ namespace Skylicht
 						if (thumbnailItem)
 						{
 							GUI::CRawImage* rawImage = thumbnailItem->getImage();
-							rawImage->enableRenderFillRect(true);
-							rawImage->setFillRectColor(GUI::SGUIColor(255, 100, 100, 100));
+							if (isTexture)
+							{
+								rawImage->enableRenderFillRect(true);
+								rawImage->setFillRectColor(GUI::SGUIColor(255, 60, 60, 60));
+							}
 						}
 					}
 					else

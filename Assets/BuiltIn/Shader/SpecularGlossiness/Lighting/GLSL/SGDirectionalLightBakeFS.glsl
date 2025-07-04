@@ -122,7 +122,7 @@ vec3 SG(
 }
 void main(void)
 {
-	vec3 albedo = texture(uTexAlbedo, varTexCoord0.xy).rgb;
+	vec4 albedo = texture(uTexAlbedo, varTexCoord0.xy);
 	vec4 posdepth = texture(uTexPosition, varTexCoord0.xy);
 	vec3 position = posdepth.xyz;
 	vec3 normal = texture(uTexNormal, varTexCoord0.xy).xyz;
@@ -152,7 +152,7 @@ void main(void)
 	shadowDistance[2] = uShadowDistance.z;
 	float visibility = shadow(shadowCoord, shadowDistance, depth);
 	vec3 color = SG(
-		albedo,
+		albedo.rgb,
 		data.r,
 		data.g,
 		posdepth,
@@ -166,5 +166,5 @@ void main(void)
 		directMul,
 		indirectMul,
 		lightMul);
-	FragColor = vec4(color, 1.0);
+	FragColor = vec4(color, albedo.a);
 }
