@@ -128,8 +128,7 @@ namespace Skylicht
 			core::vector3df pos = handles->getHandlePosition();
 			handles->getWorld().transformVect(pos);
 
-			core::matrix4 worldRot = handles->getWorld() * handles->getRelativeTransform();
-			core::quaternion rot = getRotation(worldRot);
+			core::quaternion rot = handles->getHandleRotation() * getRotation(handles->getWorld());
 
 			m_screenFactor = 0.2f / CProjective::getSegmentLengthClipSpace(camera, pos, pos + cameraRight);
 
@@ -955,8 +954,7 @@ namespace Skylicht
 			core::vector3df pos = handles->getHandlePosition();
 			handles->getWorld().transformVect(pos);
 
-			core::matrix4 worldRot = handles->getWorld() * handles->getRelativeTransform();
-			core::quaternion rot = getRotation(worldRot);
+			core::quaternion rot = handles->getRotationOrigin() * getRotation(handles->getWorld());
 
 			if (m_mouseState != state)
 			{
@@ -1091,9 +1089,7 @@ namespace Skylicht
 								m_rotationAngle = computeAngleOnPlan(hitVector, worldNormal[i]);
 
 								if (handles->isSnapRotate())
-								{
 									m_rotationAngle = snap(m_rotationAngle, handles->getSnapRotateDeg() * core::DEGTORAD);
-								}
 
 								core::quaternion q;
 								q.fromAngleAxis(m_rotationAngle, localNormal[i]);

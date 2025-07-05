@@ -205,20 +205,6 @@ namespace Skylicht
 			return m_targetRotation;
 		}
 
-		core::matrix4 CHandles::getRelativeTransform()
-		{
-			core::matrix4 result = m_rotation.getMatrix();
-
-			// position
-			f32* m1 = result.pointer();
-
-			m1[12] = m_position.X;
-			m1[13] = m_position.Y;
-			m1[14] = m_position.Z;
-
-			return result;
-		}
-
 		bool CHandles::OnEvent(const SEvent& event)
 		{
 			if (event.EventType == EET_MOUSE_INPUT_EVENT)

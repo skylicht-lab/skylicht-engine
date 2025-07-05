@@ -142,6 +142,14 @@ namespace Skylicht
 			angles.Z = 0.0f;
 		}
 
+		if ((fabsf(angles.Z - core::PI) < epsilon || fabsf(angles.Z + core::PI) < epsilon) &&
+			(fabsf(angles.Y) < epsilon))
+		{
+			angles.X = -angles.X;
+			angles.Y = 0.0f;
+			angles.Z = 0.0f;
+		}
+
 		return angles;
 	}
 }

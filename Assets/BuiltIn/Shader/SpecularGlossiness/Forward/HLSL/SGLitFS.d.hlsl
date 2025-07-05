@@ -138,7 +138,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 	color += specular * specularColor * uLightMul.x;
 
 	// IBL lighting
-	color += ambientLighting * diffuseColor * (0.1 + c * 0.9) / PI;
+	color += ambientLighting * diffuseColor / PI;
 	
 	// IBL reflection
 	float3 reflection = -normalize(reflect(input.worldViewDir, n));

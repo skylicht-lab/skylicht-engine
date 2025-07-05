@@ -79,7 +79,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float NdotE = max(0.0,dot(n, H));
 	float specular = pow(NdotE, 10.0 + 100.0 * gloss) * spec;
 	color += specular * specularColor * uLightMul.x;
-	color += ambientLighting * diffuseColor * (0.1 + c * 0.9) / PI;
+	color += ambientLighting * diffuseColor / PI;
 	float3 reflection = -normalize(reflect(input.worldViewDir, n));
 	float brightness = (0.8 + gloss * 1.8);
 	color += sRGB(uTexReflect.SampleLevel(uTexReflectSampler, reflection, roughness * 7).xyz) * brightness * specularColor;
