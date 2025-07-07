@@ -70,6 +70,8 @@ namespace Skylicht
 
 			bool m_enableThumbnail;
 
+			std::vector<ITexture*> m_thumbnails;
+			
 		public:
 			CListFSController(GUI::CCanvas* canvas, CSpace* space, GUI::CListBase* list);
 

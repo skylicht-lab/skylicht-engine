@@ -385,11 +385,20 @@ namespace Skylicht
 
 		ITexture* CListFSController::getFileThumbnail(const std::string& path)
 		{
-			return CAssetManager::getInstance()->getThumbnail()->getThumbnail(path.c_str());
+			ITexture* texture = CAssetManager::getInstance()->getThumbnail()->getThumbnail(path.c_str());
+			if (texture)
+			{
+				texture->grab();
+				m_thumbnails.push_back(texture);
+			}
+			return texture;
 		}
 
 		void CListFSController::clearThumbnail()
 		{
+			for (ITexture* texture: m_thumbnails)
+				texture->drop();
+			m_thumbnails.clear();
 			CAssetManager::getInstance()->getThumbnail()->clearTextures();
 		}
 

@@ -62,8 +62,29 @@ namespace Skylicht
 		{
 			IVideoDriver* driver = getVideoDriver();
 			for (auto it : m_textures)
-				driver->removeTexture(it.second);
-			m_textures.clear();
+			{
+				ITexture* texture = it.second;
+				if (texture && texture->getReferenceCount() == 1)
+				{
+					driver->removeTexture(texture);
+					
+					m_textures[it.first] = NULL;
+				}
+			}
+			
+			bool done = true;
+			do {
+				done = true;
+				for (auto it : m_textures)
+				{
+					if (it.second == NULL)
+					{
+						m_textures.erase(it.first);
+						done = false;
+						break;
+					}
+				}
+			} while (!done);
 		}
 
 		ITexture* CThumbnailDb::getThumbnail(const char* path)
