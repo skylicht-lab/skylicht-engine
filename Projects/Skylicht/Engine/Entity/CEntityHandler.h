@@ -57,7 +57,9 @@ namespace Skylicht
 		{
 			return NULL;
 		}
-
+		
+		void regenerateEntityId();
+		
 		void removeEntity(CEntity* entity);
 
 		void removeAllEntities();

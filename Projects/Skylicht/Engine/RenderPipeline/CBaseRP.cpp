@@ -802,7 +802,11 @@ namespace Skylicht
 
 		if (driver->getDriverType() == video::EDT_DIRECT3D11)
 			im->swapBG();
-
+		
+#if defined(MACOS) || defined(IOS)
+		im->swapBG();
+#endif
+		
 		driver->writeImageToFile(im, output);
 		im->drop();
 

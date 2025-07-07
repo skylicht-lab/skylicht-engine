@@ -159,6 +159,19 @@ namespace Skylicht
 		}
 	}
 
+	void CEntityHandler::regenerateEntityId()
+	{
+		for (int i = (int)m_entities.size() - 1; i >= 0; i--)
+		{
+			CEntity* entity = m_entities[i];
+			if (entity->isAlive())
+			{
+				std::string id = CRandomID::generate();
+				entity->setID(id.c_str());
+			}
+		}
+	}
+
 	void CEntityHandler::removeAllEntities()
 	{
 		if (m_gameObject == NULL)
