@@ -1,1 +1,1 @@
-#define PROJECT_PATH "/home/hong-duc/Projects/skylicht-engine/Assets"
+#define PROJECT_PATH "/Users/phamhongduc/skylicht-engine/Assets"

@@ -400,10 +400,10 @@ static Angle::Key NSCodeToKey(int keyCode)
 
 static void AddNSKeyStateToEvent(Event *event, NSEventModifierFlags state)
 {
-    event->Key.Shift   = state & NSShiftKeyMask;
-    event->Key.Control = state & NSControlKeyMask;
-    event->Key.Alt     = state & NSAlternateKeyMask;
-    event->Key.System  = state & NSCommandKeyMask;
+	event->Key.Shift   = state & NSEventModifierFlagShift;
+	event->Key.Control = state & NSEventModifierFlagControl;
+    event->Key.Alt     = state & NSEventModifierFlagOption;
+	event->Key.System  = state & NSEventModifierFlagCommand;
 }
 
 static MouseButton TranslateMouseButton(NSInteger button)

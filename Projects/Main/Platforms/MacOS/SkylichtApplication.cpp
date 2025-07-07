@@ -156,7 +156,7 @@ void SkylichtApplication::onKeyUp(const Event::KeyEvent &keyEvent)
     event.KeyInput.Key = key;
     event.KeyInput.PressedDown = false;
     event.KeyInput.Shift = m_shiftHold;
-    event.KeyInput.Control = m_controlHold;
+    event.KeyInput.Control = keyEvent.Control || keyEvent.System;
     
     IrrlichtDevice *dev  = getIrrlichtDevice();
     if (dev)
@@ -184,7 +184,7 @@ void SkylichtApplication::onKeyDown(const Event::KeyEvent &keyEvent)
     event.KeyInput.Key = key;
     event.KeyInput.PressedDown = true;
     event.KeyInput.Shift = m_shiftHold;
-    event.KeyInput.Control = m_controlHold;
+	event.KeyInput.Control = keyEvent.Control || keyEvent.System;
     
     IrrlichtDevice *dev  = getIrrlichtDevice();
     if (dev)

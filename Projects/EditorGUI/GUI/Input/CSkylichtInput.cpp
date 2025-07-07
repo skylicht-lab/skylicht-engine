@@ -108,9 +108,16 @@ namespace Skylicht
 						inputKeyEvent(EKey::KEY_MENU, event.KeyInput.PressedDown);
 						break;
 					default:
+#ifdef MACOS
+						KeyData.KeyState[EKey::KEY_CONTROL] = event.KeyInput.Control;
+						KeyData.KeyState[EKey::KEY_SHIFT] = event.KeyInput.Shift;
+#endif
+						
 						if (event.KeyInput.Char != 0 && !isKeyDown(EKey::KEY_MENU) && event.KeyInput.PressedDown)
+						{
 							inputCharacter(event.KeyInput.Char);
-
+						}
+							
 						inputKeyEvent((EKey)event.KeyInput.Key, event.KeyInput.PressedDown);
 						break;
 					}
