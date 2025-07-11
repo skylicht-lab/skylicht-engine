@@ -72,11 +72,15 @@ namespace Skylicht
 
 		const std::string& CAssetCreateController::getCurrentFolder()
 		{
-			CSpaceAssets* spaceAssets = (CSpaceAssets*)CEditor::getInstance()->getWorkspaceByName(L"Assets");
-			if (spaceAssets == NULL)
+			std::vector<CSpace*> spaceAssets = CEditor::getInstance()->getAllWorkspaceByName(L"Assets");
+			if (spaceAssets.size() == 0)
 			{
 				os::Printer::log("[CAssetCreateController] Warning create asset with no Assets windows");
 				return CAssetManager::getInstance()->getAssetFolder();
+			}
+			else if (spaceAssets.size() == 1)
+			{
+				m_currentFolder = ((CSpaceAssets*)spaceAssets[0])->getListController()->getCurrentFolder();
 			}
 			return m_currentFolder;
 		}

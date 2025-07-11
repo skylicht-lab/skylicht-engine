@@ -92,7 +92,12 @@ namespace Skylicht
 			void browse(const char* folder);
 
 			void setCurrentFolder(const char* folder);
-
+			
+			inline const std::string& getCurrentFolder()
+			{
+				return m_currentFolder;
+			}
+			
 			inline void setTreeController(CTreeFSController* treeController)
 			{
 				m_treeController = treeController;
@@ -120,11 +125,6 @@ namespace Skylicht
 			void OnRenameFolder(GUI::CBase* control);
 
 			void OnCancelRenameFolder(GUI::CBase* control);
-
-			inline const std::string& getCurrentFolder()
-			{
-				return m_currentFolder;
-			}
 
 			void enableSearching(bool b)
 			{

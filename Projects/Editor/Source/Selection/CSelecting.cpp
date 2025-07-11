@@ -377,7 +377,7 @@ namespace Skylicht
 			core::matrix4 trans = camera->getProjectionMatrix();
 			trans *= camera->getViewMatrix();
 
-			core::vector2df min2d, max2d;
+			core::vector2df v2d, center2d;
 
 			for (u32 i = 0, n = selectObjectData.size(); i < n; i++)
 			{
@@ -388,14 +388,26 @@ namespace Skylicht
 					continue;
 
 				// convert 3d to 2d
-				if (project3Dto2D(data->TransformBBox.MinEdge, trans, dim, min2d))
+				bool selected = false;
+				
+				core::vector3df edges[8];
+				data->TransformBBox.getEdges(edges);
+				
+				if (project3Dto2D(data->TransformBBox.getCenter(), trans, dim, center2d))
 				{
-					if (project3Dto2D(data->TransformBBox.MaxEdge, trans, dim, max2d))
+					if (r.isPointInside(center2d))
 					{
-						if (r.isPointInside(min2d) && r.isPointInside(max2d))
+						for (int i = 0; i < 8; i++)
 						{
-							objects.push_back(data->GameObject);
-							entities.push_back(data->Entity);
+							if (project3Dto2D(edges[i], trans, dim, v2d))
+							{
+								if (r.isPointInside(v2d))
+								{
+									objects.push_back(data->GameObject);
+									entities.push_back(data->Entity);
+									break;
+								}
+							}
 						}
 					}
 				}

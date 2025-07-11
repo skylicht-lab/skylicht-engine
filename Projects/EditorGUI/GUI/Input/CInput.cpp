@@ -88,12 +88,15 @@ namespace Skylicht
 				// Simulate hold key-repeats
 				for (int i = 0; i < EKey::KEY_KEY_CODES_COUNT; i++)
 				{
-					if (KeyData.KeyState[i] && KeyData.Target != Context::KeyboardFocus)
+					if (i != EKey::KEY_CONTROL && i != EKey::KEY_SHIFT && i != EKey::KEY_MENU)
 					{
-						KeyData.KeyState[i] = false;
-						continue;
+						if (KeyData.KeyState[i] && KeyData.Target != Context::KeyboardFocus)
+						{
+							KeyData.KeyState[i] = false;
+							continue;
+						}
 					}
-
+					
 					if (KeyData.KeyState[i] && time > KeyData.NextRepeat[i])
 					{
 						KeyData.NextRepeat[i] = time + m_keyRepeatDelay;
@@ -387,6 +390,7 @@ namespace Skylicht
 				{
 					if (!KeyData.KeyState[key])
 					{
+						printf("Key: %d down\n", key);
 						KeyData.KeyState[key] = true;
 						KeyData.NextRepeat[key] = Context::getTime() + m_firstKeyRepeatDelay;
 						KeyData.Target = target;
@@ -399,11 +403,8 @@ namespace Skylicht
 				{
 					if (KeyData.KeyState[key])
 					{
+						printf("Key: %d up\n", key);
 						KeyData.KeyState[key] = false;
-
-						//! @bug This causes shift left arrow in textboxes
-						//! to not work. What is disabling it here breaking?
-						//! `KeyData.Target = nullptr;`
 
 						if (target)
 							return target->onKeyRelease(key);

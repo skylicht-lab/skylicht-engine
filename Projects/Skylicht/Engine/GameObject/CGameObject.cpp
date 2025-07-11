@@ -165,6 +165,12 @@ namespace Skylicht
 				parentPrefabId = parent->getTemplateID();
 				if (parentPrefabId == m_templateId)
 					obj = parent;
+				if (!parentPrefabId.empty() && parentPrefabId != m_templateId)
+				{
+					// if parent is in another template
+					obj = parent;
+					break;
+				}
 			} while (parentPrefabId == m_templateId);
 		}
 
