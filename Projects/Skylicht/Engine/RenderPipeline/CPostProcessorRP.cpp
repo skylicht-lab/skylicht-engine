@@ -121,7 +121,7 @@ namespace Skylicht
 			m_lastFrameBuffer = driver->addRenderTargetTexture(m_size, "last_frame", ECF_A8R8G8B8);
 
 			driver->setRenderTarget(m_lastFrameBuffer, true, false);
-			driver->setRenderTarget(NULL);
+			driver->setRenderTarget(NULL, true, false);
 		}
 		else
 			m_lastFrameBuffer = NULL;
@@ -197,7 +197,7 @@ namespace Skylicht
 
 		// Step 1: Generate target luminance from color to lum[0]
 		IVideoDriver* driver = getVideoDriver();
-		driver->setRenderTarget(m_adaptLum, true, true);
+		driver->setRenderTarget(m_adaptLum, true, false);
 
 		m_lumPass.setTexture(0, color);
 
@@ -205,7 +205,7 @@ namespace Skylicht
 		renderBufferToTarget(0.0f, 0.0f, w, h, m_lumPass);
 
 		// Step 2: Interpolate to target luminance
-		driver->setRenderTarget(m_luminance[m_lumTarget], true, true);
+		driver->setRenderTarget(m_luminance[m_lumTarget], true, false);
 
 		m_adaptLumPass.setTexture(0, m_adaptLum);
 		m_adaptLumPass.setTexture(1, m_luminance[!m_lumTarget]);
@@ -354,7 +354,7 @@ namespace Skylicht
 		if (m_fxaa && !disableFXAA)
 		{
 			colorID = !colorID;
-			driver->setRenderTarget(m_rtt[colorID]);
+			driver->setRenderTarget(m_rtt[colorID], true, false);
 		}
 		else
 		{
@@ -435,7 +435,7 @@ namespace Skylicht
 	{
 		IVideoDriver* driver = getVideoDriver();
 
-		driver->setRenderTarget(toTarget);
+		driver->setRenderTarget(toTarget, true, false);
 
 		material->setTexture(0, fromTarget);
 		material->applyMaterial(m_effectPass);

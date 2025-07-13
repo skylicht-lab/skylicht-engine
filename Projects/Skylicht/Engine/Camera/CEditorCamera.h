@@ -140,8 +140,10 @@ namespace Skylicht
 
 	protected:
 
-		void updateInputRotate(core::vector3df& relativeRotation, f32 timeDiff);
-
+		void fixVector(core::vector3df& v);
+		
+		void updateInputRotate(core::vector3df& relativeRotation, f32 timeDiff, bool useCenterPivot = false);
+		
 		void updateInputOffset(core::vector3df& offsetPosition, f32 timeDiff);
 
 		void updateInputZoom(f32 timeDiff, core::vector3df& pos, const core::vector3df& moveDir);

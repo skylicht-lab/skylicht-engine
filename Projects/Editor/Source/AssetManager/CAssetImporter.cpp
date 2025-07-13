@@ -95,19 +95,24 @@ namespace Skylicht
 
 		CAssetImporter::~CAssetImporter()
 		{
-			delete m_scene;
-			delete m_shadowRP;
-			delete m_rp;
-			getVideoDriver()->removeTexture(m_rtt);
+			if (m_scene)
+				delete m_scene;
+			
+			if (m_shadowRP)
+			{
+				delete m_shadowRP;
+				delete m_rp;
+				getVideoDriver()->removeTexture(m_rtt);
+			}
 		}
 
 		void CAssetImporter::initScene()
 		{
 			int w = 128;
 			int h = 128;
-
+			
 			m_rtt = getVideoDriver()->addRenderTargetTexture(core::dimension2du(w, h), "rt", video::ECF_A8R8G8B8);
-
+						
 			m_shadowRP = new CShadowMapRP();
 			m_shadowRP->enableUpdateEntity(true);
 			m_shadowRP->setNoShadowCascade();
@@ -118,7 +123,7 @@ namespace Skylicht
 			m_rp->enableUpdateEntity(false);
 
 			m_shadowRP->setNextPipeLine(m_rp);
-
+						
 			m_scene = new CScene();
 			CZone* zone = m_scene->createZone();
 

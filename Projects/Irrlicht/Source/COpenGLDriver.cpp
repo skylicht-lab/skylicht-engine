@@ -2696,6 +2696,8 @@ ITexture* COpenGLDriver::addRenderTargetTextureArray(const core::dimension2d<u32
 		}
 	}
 #endif
+	
+	ResetRenderStates = true;
 	return rtt;
 }
 
@@ -2715,6 +2717,8 @@ ITexture* COpenGLDriver::addRenderTargetCubeTexture(const core::dimension2d<u32>
 		}
 	}
 #endif
+	
+	ResetRenderStates = true;
 	return rtt;
 }
 

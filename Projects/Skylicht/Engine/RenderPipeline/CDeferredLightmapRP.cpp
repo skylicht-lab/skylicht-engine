@@ -89,8 +89,8 @@ namespace Skylicht
 
 		m_target = driver->addRenderTargetTexture(m_size, "target", ECF_A16B16G16R16F);
 
-		// setup multi render target
-		// opengles just support 4 buffer
+		// setup multi render targets
+		// opengles only support 4 buffers
 		m_multiRenderTarget.push_back(m_albedo);
 		m_multiRenderTarget.push_back(m_position);
 		m_multiRenderTarget.push_back(m_normal);

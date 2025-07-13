@@ -1915,8 +1915,8 @@ namespace irr
 			rtt->drop();
 
 			//restore mip-mapping
-			setTextureCreationFlag(ETCF_CREATE_MIP_MAPS, generateMipLevels);
-
+			setTextureCreationFlag(ETCF_CREATE_MIP_MAPS, generateMipLevels);			
+			ResetRenderStates = true;
 			return rtt;
 		}
 
@@ -1930,7 +1930,7 @@ namespace irr
 				addTexture(rtt);
 				rtt->drop();
 			}
-
+			ResetRenderStates = true;
 			return rtt;
 		}
 
@@ -1939,7 +1939,7 @@ namespace irr
 			video::ITexture* rtt = new COGLES3TextureCube(this, size, name, format);
 			addTexture(rtt);
 			rtt->drop();
-
+			ResetRenderStates = true;
 			return rtt;
 		}
 

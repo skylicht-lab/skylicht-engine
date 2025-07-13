@@ -44,40 +44,55 @@ namespace Skylicht
 		}
 	}
 
-	void CEditorCamera::endUpdate()
+	void CEditorCamera::fixVector(core::vector3df& v)
 	{
-		CTransformEuler* transform = m_gameObject->getTransformEuler();
+		if (fabsf(v.X) < 0.00001)
+			v.X = 0.0f;
+		if (fabsf(v.Y) < 0.00001)
+			v.Y = 0.0f;
+		if (fabsf(v.Z) < 0.00001)
+			v.Z = 0.0f;
+	}
 
+	void CEditorCamera::endUpdate()
+{
+		CTransformEuler* transform = m_gameObject->getTransformEuler();
+		
 		if (m_camera == NULL || transform == NULL)
 			return;
-
+		
 		if (!m_camera->isInputReceiverEnabled())
 			return;
-
+		
 		f32 timeDiff = getTimeStep();
-
+		
 		// skip lag
 		const float delta = 1000.0f / 20.0f;
 		if (timeDiff > delta)
 			timeDiff = delta;
-
+		
 		core::vector3df pos = transform->getPosition();
-
 		core::vector3df target = transform->getFront();
-
+		
+		// inverse target is used when hold alt + drag left mouse
+		float pivotDistance = 5.0f;
+		core::vector3df rotatePivot = pos + target * pivotDistance;
+		core::vector3df inverseTarget = pos - rotatePivot;
+		inverseTarget.normalize();
+		
 		// fix something wrong in math
-		if (fabsf(target.X) < 0.00001)
-			target.X = 0.0f;
-		if (fabsf(target.Y) < 0.00001)
-			target.Y = 0.0f;
-		if (fabsf(target.Z) < 0.00001)
-			target.Z = 0.0f;
-
+		fixVector(target);
+		fixVector(inverseTarget);
+		
 		core::vector3df	up, right;
-
+		
 		core::vector3df relativeRotation = target.getHorizontalAngle();
+		core::vector3df inverseRotation = inverseTarget.getHorizontalAngle();
+		
 		core::vector3df offsetPosition;
-
+		
+		bool doRotatePivot = false;
+		
 		if (m_controlStyle == Maya)
 		{
 			if (m_altKeyDown)
@@ -108,20 +123,47 @@ namespace Skylicht
 				updateInputRotate(relativeRotation, timeDiff);
 			else if (m_midMousePress)
 				updateInputOffset(offsetPosition, timeDiff);
+			else if (m_leftMousePress)
+			{
+				if (m_altKeyDown)
+				{
+					updateInputRotate(inverseRotation, timeDiff, true);
+					doRotatePivot = true;
+				}
+			}
 		}
-
-		// calc target after rotation
-		target.set(0.0f, 0.0f, 1.0f);
-		right.set(1.0f, 0.0f, 0.0f);
-
-		core::matrix4 mat;
-		mat.setRotationDegrees(core::vector3df(relativeRotation.X, relativeRotation.Y, 0));
-		mat.transformVect(target);
-		mat.transformVect(right);
-
-		target.normalize();
-		right.normalize();
-
+		
+		if (doRotatePivot)
+		{
+			inverseTarget.set(0.0f, 0.0f, 1.0f);
+			core::matrix4 mat;
+			mat.setRotationDegrees(core::vector3df(inverseRotation.X, inverseRotation.Y, 0));
+			mat.transformVect(inverseTarget);
+			inverseTarget.normalize();
+			
+			pos = rotatePivot + inverseTarget * pivotDistance;
+			
+			target = rotatePivot - pos;
+			target.normalize();
+			
+			core::vector3df up(0.0f, 1.0f, 0.0f);
+			right = up.crossProduct(target);
+			right.normalize();
+		}
+		else
+		{
+			target.set(0.0f, 0.0f, 1.0f);
+			right.set(1.0f, 0.0f, 0.0f);
+			
+			core::matrix4 mat;
+			mat.setRotationDegrees(core::vector3df(relativeRotation.X, relativeRotation.Y, 0));
+			mat.transformVect(target);
+			mat.transformVect(right);
+			
+			target.normalize();
+			right.normalize();
+		}
+		
 		// set position
 		core::vector3df movedir = target;
 
@@ -159,7 +201,7 @@ namespace Skylicht
 		m_camera->lookAt(pos, pos + target, up);
 	}
 
-	void CEditorCamera::updateInputRotate(core::vector3df& relativeRotation, f32 timeDiff)
+	void CEditorCamera::updateInputRotate(core::vector3df& relativeRotation, f32 timeDiff, bool useCenterPivot)
 	{
 		const float MaxVerticalAngle = 88;
 		const int MouseYDirection = 1;
@@ -168,7 +210,10 @@ namespace Skylicht
 		relativeRotation.Y -= (m_centerCursor.X - m_cursorPos.X) * m_rotateSpeed * MouseYDirection * timeDiff;
 
 		// rotate Y
-		relativeRotation.X -= (m_centerCursor.Y - m_cursorPos.Y) * m_rotateSpeed * timeDiff;
+		if (useCenterPivot)
+			relativeRotation.X += (m_centerCursor.Y - m_cursorPos.Y) * m_rotateSpeed * timeDiff;
+		else
+			relativeRotation.X -= (m_centerCursor.Y - m_cursorPos.Y) * m_rotateSpeed * timeDiff;
 
 		if (relativeRotation.X > MaxVerticalAngle * 2 && relativeRotation.X < 360.0f - MaxVerticalAngle)
 		{

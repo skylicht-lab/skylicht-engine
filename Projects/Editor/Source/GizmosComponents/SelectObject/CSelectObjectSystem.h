@@ -49,6 +49,8 @@ namespace Skylicht
 			core::recti m_viewport;
 
 			bool m_skipUpdate;
+			
+			std::map<CGameObject*, core::aabbox3df> m_gameObjBBox;
 
 		public:
 			CSelectObjectSystem();
@@ -63,6 +65,8 @@ namespace Skylicht
 
 			virtual void update(CEntityManager* entityManager);
 
+			bool getTransformBBox(CGameObject* obj, core::aabbox3df& result);
+			
 			inline void setCameraAndViewport(CCamera* camera, const core::recti& viewport)
 			{
 				m_camera = camera;

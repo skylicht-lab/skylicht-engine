@@ -123,7 +123,16 @@ namespace Skylicht
 
 			for (CTransformEuler* t : transforms)
 			{
-				selectedObject.push_back(t->getGameObject());
+				CGameObject* gameObject = t->getGameObject();
+				selectedObject.push_back(gameObject);
+				
+				CGameObject* parent = gameObject->getParentTemplate();
+				if (parent != gameObject)
+				{
+					// if child is changed, we set modify
+					parent->setTemplateChanged(true);
+					sceneController->updateTreeNode(parent);
+				}
 			}
 
 			history->saveModifyHistory(selectedObject);

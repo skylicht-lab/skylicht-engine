@@ -87,7 +87,7 @@ namespace Skylicht
 				Editor::CAssetManager* assetManager = Editor::CAssetManager::getInstance();
 				assetManager->discoveryAssetFolder();
 				assetManager->update();
-
+				
 				m_importer = new CAssetImporter(assetManager->getListFiles());
 				m_state = ImportAsset;
 			}
@@ -100,7 +100,7 @@ namespace Skylicht
 				m_importer->getImportStatus(percent, last);
 
 				m_progressBar->setPercent(percent);
-
+				
 				std::string status = "Importing...\n";
 				status += last;
 				m_statusText->setString(status);

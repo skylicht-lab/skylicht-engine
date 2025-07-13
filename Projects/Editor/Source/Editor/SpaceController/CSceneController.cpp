@@ -44,6 +44,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Entity/CEntityHandler.h"
 #include "Entity/CEntityHandleData.h"
 
+#include "SpriteDraw/CSprite.h"
+
 #include "ResourceSettings/CMeshExportSettings.h"
 
 #if BUILD_SKYLICHT_PHYSIC
@@ -1275,7 +1277,7 @@ namespace Skylicht
 			if (node->isTagGameObject())
 			{
 				CGameObject* obj = (CGameObject*)node->getTagData();
-				focusCameraToEntity(obj->getEntity());
+				focusCameraToObject(obj);
 			}
 			else if (node->isTagEntity())
 			{
@@ -1294,7 +1296,7 @@ namespace Skylicht
 					CGameObject* obj = m_scene->searchObjectInChildByID(selectedObject->getID().c_str());
 					if (obj != NULL)
 					{
-						focusCameraToEntity(obj->getEntity());
+						focusCameraToObject(obj);
 					}
 				}
 				else if (selectedObject->getType() == CSelectObject::Entity)
@@ -1800,6 +1802,7 @@ namespace Skylicht
 		void CSceneController::focusCameraToEntity(CEntity* entity)
 		{
 			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+			
 			core::vector3df objectPosition = transform->World.getTranslation();
 
 			CCamera* camera = m_spaceScene->getEditorCamera();
@@ -1816,11 +1819,39 @@ namespace Skylicht
 				d = yDistance / cos;
 				d = core::clamp(d, -maxDistance, maxDistance);
 			}
-
+			
 			core::vector3df newPosition = objectPosition + look * d;
 			camera->lookAt(newPosition, objectPosition, Transform::Oy);
 		}
+	
+		void CSceneController::focusCameraToObject(CGameObject* obj)
+		{
+			bool haveBBox = false;
+			core::aabbox3df bbox;
+			
+			// billboard object (ex: light...)
+			if (obj->getComponent<CSprite>() != NULL)
+				return focusCameraToEntity(obj->getEntity());
+			
+			CSelectObjectSystem *selectObjectSystem = m_scene->getEntityManager()->getSystem<CSelectObjectSystem>();
+			haveBBox = selectObjectSystem->getTransformBBox(obj, bbox);
+			if (!haveBBox)
+				return focusCameraToEntity(obj->getEntity());
+			
+			CCamera* camera = m_spaceScene->getEditorCamera();
+			core::vector3df lookAt = bbox.getCenter();
 
+			float diagonalLength = bbox.getExtent().getLength();
+			float fovRadians = camera->getFOV() * core::DEGTORAD;
+			float distance = (diagonalLength * 0.5f) / tanf(fovRadians * 0.5f) * 1.5f;
+			
+			core::vector3df camDirection = -camera->getLookVector();
+			camDirection.normalize();
+
+			camera->setPosition(lookAt + camDirection * distance);
+			camera->lookAt(lookAt, Transform::Oy);
+		}
+	
 		void CSceneController::applySelected(std::vector<CSelectObject*> ids)
 		{
 			m_scene->updateAddRemoveObject();

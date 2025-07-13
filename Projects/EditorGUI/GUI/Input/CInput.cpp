@@ -390,7 +390,6 @@ namespace Skylicht
 				{
 					if (!KeyData.KeyState[key])
 					{
-						printf("Key: %d down\n", key);
 						KeyData.KeyState[key] = true;
 						KeyData.NextRepeat[key] = Context::getTime() + m_firstKeyRepeatDelay;
 						KeyData.Target = target;
@@ -403,7 +402,6 @@ namespace Skylicht
 				{
 					if (KeyData.KeyState[key])
 					{
-						printf("Key: %d up\n", key);
 						KeyData.KeyState[key] = false;
 
 						if (target)

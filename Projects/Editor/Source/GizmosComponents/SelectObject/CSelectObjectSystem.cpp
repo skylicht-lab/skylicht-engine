@@ -107,7 +107,8 @@ namespace Skylicht
 
 			CCamera* camera = entityManager->getCamera();
 
-			std::map<CGameObject*, core::aabbox3df> selectedBox;
+			std::map<CGameObject*, core::aabbox3df>& selectedBox = m_gameObjBBox;
+			selectedBox.clear();
 
 			CSelection* selection = CSelection::getInstance();
 
@@ -183,6 +184,21 @@ namespace Skylicht
 				// Draw bbox for selected object
 				CHandles::getInstance()->draw3DBox(i.second, SColor(200, 0, 255, 0));
 			}
+		}
+	
+		bool CSelectObjectSystem::getTransformBBox(CGameObject* obj, core::aabbox3df& result)
+		{
+			auto i = m_gameObjBBox.find(obj);
+			if (i == m_gameObjBBox.end())
+			{
+				core::vector3df size(1.0f, 1.0f, 1.0f);
+				core::vector3df pos = obj->getPosition();
+				result.MinEdge = pos - size;
+				result.MaxEdge = pos + size;
+				return false;
+			}
+			result = i->second;
+			return true;
 		}
 	}
 }

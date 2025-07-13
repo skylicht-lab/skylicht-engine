@@ -302,6 +302,8 @@ namespace Skylicht
 			void onUnpackTemplate(CGameObject* object);
 
 			void focusCameraToEntity(CEntity* entity);
+			
+			void focusCameraToObject(CGameObject* obj);
 
 			void applySelected(std::vector<CSelectObject*> ids);
 
