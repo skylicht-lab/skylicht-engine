@@ -396,8 +396,14 @@ namespace Skylicht
 					if (fs::is_directory(path))
 						fs::remove_all(path);
 					else
+					{
 						fs::remove(path);
-
+						
+						std::string meta = path + ".meta";
+						if (fs::exists(meta.c_str()))
+							fs::remove(meta.c_str());
+					}
+					
 					m_pathToFile.erase(it);
 
 					delete node;
@@ -429,6 +435,11 @@ namespace Skylicht
 
 			fs::rename(path, newPath.c_str());
 
+			std::string meta = std::string(path) + ".meta";
+			std::string newMeta = newPath + ".meta";
+			if (fs::exists(meta.c_str()))
+				fs::rename(meta.c_str(), newMeta.c_str());
+			
 			node->FullPath = newPath;
 			node->Path = getShortPath(newPath.c_str());
 
