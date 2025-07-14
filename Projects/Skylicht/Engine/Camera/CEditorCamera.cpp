@@ -20,6 +20,7 @@ namespace Skylicht
 		m_wheel(0.0f),
 		m_altKeyDown(false),
 		m_shiftKeyDown(false),
+		m_pivotRotateDistance(5.0f),
 		m_controlStyle(CEditorCamera::Default)
 	{
 		m_cursorControl = getIrrlichtDevice()->getCursorControl();
@@ -54,8 +55,18 @@ namespace Skylicht
 			v.Z = 0.0f;
 	}
 
+	void CEditorCamera::setPivotRotate(const core::vector3df& pos)
+	{
+		CTransformEuler* transform = m_gameObject->getTransformEuler();
+		if (m_camera == NULL || transform == NULL)
+			return;
+		
+		core::plane3df p(pos, -transform->getFront());
+		m_pivotRotateDistance = p.getDistanceTo(transform->getPosition());
+	}
+
 	void CEditorCamera::endUpdate()
-{
+	{
 		CTransformEuler* transform = m_gameObject->getTransformEuler();
 		
 		if (m_camera == NULL || transform == NULL)
@@ -75,8 +86,7 @@ namespace Skylicht
 		core::vector3df target = transform->getFront();
 		
 		// inverse target is used when hold alt + drag left mouse
-		float pivotDistance = 5.0f;
-		core::vector3df rotatePivot = pos + target * pivotDistance;
+		core::vector3df rotatePivot = pos + target * m_pivotRotateDistance;
 		core::vector3df inverseTarget = pos - rotatePivot;
 		inverseTarget.normalize();
 		
@@ -98,7 +108,10 @@ namespace Skylicht
 			if (m_altKeyDown)
 			{
 				if (m_mayaLeftMousePress)
-					updateInputRotate(relativeRotation, timeDiff);
+				{
+					updateInputRotate(inverseRotation, timeDiff, true);
+					doRotatePivot = true;
+				}
 			}
 
 			if (m_midMousePress)
@@ -109,7 +122,10 @@ namespace Skylicht
 			if (m_shiftKeyDown)
 			{
 				if (m_midMousePress)
-					updateInputRotate(relativeRotation, timeDiff);
+				{
+					updateInputRotate(inverseRotation, timeDiff, true);
+					doRotatePivot = true;
+				}
 			}
 			else
 			{
@@ -141,7 +157,7 @@ namespace Skylicht
 			mat.transformVect(inverseTarget);
 			inverseTarget.normalize();
 			
-			pos = rotatePivot + inverseTarget * pivotDistance;
+			pos = rotatePivot + inverseTarget * m_pivotRotateDistance;
 			
 			target = rotatePivot - pos;
 			target.normalize();

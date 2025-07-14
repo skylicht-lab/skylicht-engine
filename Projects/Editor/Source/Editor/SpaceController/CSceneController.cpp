@@ -594,9 +594,32 @@ namespace Skylicht
 
 		void CSceneController::update()
 		{
+			CCamera* cam = NULL;
+			CEditorCamera* editorCam = NULL;
+			
+			if (m_spaceScene)
+			{
+				cam = m_spaceScene->getEditorCamera();
+				editorCam = cam->getGameObject()->getComponent<CEditorCamera>();
+			}
+			
 			if (m_gizmos)
 			{
 				m_gizmos->onGizmos();
+				
+				if (editorCam)
+				{
+					core::vector3df gizmosPosition;
+					if (m_gizmos->getPosition(gizmosPosition))
+						editorCam->setPivotRotate(gizmosPosition);
+					else
+						editorCam->setPivotRotateDistance(5.0f);
+				}
+			}
+			else
+			{
+				if (editorCam)
+					editorCam->setPivotRotateDistance(5.0f);
 			}
 
 			updateSelectedRigidBody();

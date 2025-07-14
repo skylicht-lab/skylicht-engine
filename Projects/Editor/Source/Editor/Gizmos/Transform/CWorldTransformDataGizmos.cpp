@@ -438,5 +438,15 @@ namespace Skylicht
 		{
 			onRemove();
 		}
+	
+		bool CWorldTransformDataGizmos::getPosition(core::vector3df& position)
+		{
+			if (m_transform)
+			{
+				position = m_transform->getWorldPosition();
+				return true;
+			}
+			return false;
+		}
 	}
 }

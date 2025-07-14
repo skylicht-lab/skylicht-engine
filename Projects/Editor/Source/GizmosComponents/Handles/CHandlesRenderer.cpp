@@ -44,7 +44,8 @@ namespace Skylicht
 			m_usingEvent(false),
 			m_rotationAngle(0.0f),
 			m_enable(true),
-			m_hoverOnPointId(-1)
+			m_hoverOnPointId(-1),
+			m_haveDrawed(0)
 		{
 			m_data = new CHandlesData();
 			m_data->LineBuffer->getMaterial().ZBuffer = ECFN_DISABLED;
@@ -131,18 +132,22 @@ namespace Skylicht
 			core::quaternion rot = handles->getHandleRotation() * getRotation(handles->getWorld());
 
 			m_screenFactor = 0.2f / CProjective::getSegmentLengthClipSpace(camera, pos, pos + cameraRight);
-
+			m_haveDrawed = 0;
+			
 			if (handles->isHandlePosition())
 			{
 				drawTranslateGizmo(pos, rot, cameraPos, camera);
+				m_haveDrawed = 1;
 			}
 			else if (handles->isHandleRotation())
 			{
 				drawRotationGizmo(pos, cameraPos, rot);
+				m_haveDrawed = 2;
 			}
 			else if (handles->isHandleScale())
 			{
 				drawScaleGizmo(pos, rot, cameraLook, cameraUp, camera);
+				m_haveDrawed = 3;
 			}
 			else if (handles->isHandleListPosition())
 			{
@@ -151,6 +156,7 @@ namespace Skylicht
 					rot,
 					cameraPos, cameraRight, camera
 				);
+				m_haveDrawed = 4;
 			}
 
 			((CLineDrawData*)m_data)->updateBuffer();
@@ -672,17 +678,17 @@ namespace Skylicht
 
 		void CHandlesRenderer::onMouseEvent(int x, int y, int state)
 		{
-			if (m_enable == false || m_camera == NULL)
+			if (m_enable == false || m_camera == NULL || m_haveDrawed == 0)
 				return;
 
 			CHandles* handles = CHandles::getInstance();
-			if (handles->isHandlePosition())
+			if (handles->isHandlePosition() && m_haveDrawed == 1)
 				handleTranslate(x, y, state);
-			else if (handles->isHandleRotation())
+			else if (handles->isHandleRotation() && m_haveDrawed == 2)
 				handleRotation(x, y, state);
-			else if (handles->isHandleScale())
+			else if (handles->isHandleScale() && m_haveDrawed == 3)
 				handleScale(x, y, state);
-			else if (handles->isHandleListPosition())
+			else if (handles->isHandleListPosition() && m_haveDrawed == 4)
 			{
 				handleTranslate(x, y, state);
 				handleSelectPoint(x, y, state);
@@ -1205,11 +1211,10 @@ namespace Skylicht
 					{
 						float dx = mouse.X - m_lastMouse.X;
 						float dy = m_lastMouse.Y - mouse.Y;
-
-						float drag = 0.0f;
+						
 						float d = core::max_(vpWidth, vpHeight) * 0.2f;
 
-						drag = fabsf(dx) > fabsf(dy) ? dx : dy;
+						float drag = dx + dy;
 
 						if (d > 0.0f)
 						{
@@ -1272,13 +1277,16 @@ namespace Skylicht
 										float s[3]{ 1.0f, 1.0f, 1.0f };
 										float* f = &from.X;
 										float* t = &target.X;
-
-										s[i] = t[i] / f[i];
-
-										resultScale.set(s[0], s[1], s[2]);
-										resultScale *= m_lastScale;
-
-										handles->setTargetScale(resultScale);
+										
+										if (fabsf(f[i]) > FLT_EPSILON)
+										{
+											s[i] = t[i] / f[i];
+											
+											resultScale.set(s[0], s[1], s[2]);
+											resultScale *= m_lastScale;
+											
+											handles->setTargetScale(resultScale);
+										}
 										break;
 									}
 								}

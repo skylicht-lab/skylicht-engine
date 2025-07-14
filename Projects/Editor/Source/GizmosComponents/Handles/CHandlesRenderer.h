@@ -85,6 +85,7 @@ namespace Skylicht
 			core::vector3df m_rotationVectorSource;
 			float m_rotationAngle;
 
+			int m_haveDrawed;
 		public:
 			CHandlesRenderer();
 

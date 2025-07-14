@@ -67,6 +67,8 @@ namespace Skylicht
 			virtual void onRemove();
 
 			virtual void refresh();
+			
+			virtual bool getPosition(core::vector3df& position);
 
 			void setPosition(const core::vector3df& pos);
 

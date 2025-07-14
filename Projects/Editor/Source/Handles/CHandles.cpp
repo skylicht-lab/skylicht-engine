@@ -90,6 +90,7 @@ namespace Skylicht
 			m_handlePosition = false;
 			m_handleRotation = false;
 			m_handleScale = false;
+			m_endCheck = false;
 		}
 
 		void CHandles::reset()

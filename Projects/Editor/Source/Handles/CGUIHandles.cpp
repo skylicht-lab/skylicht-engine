@@ -54,6 +54,7 @@ namespace Skylicht
 			m_handleRotation = false;
 			m_handleScale = false;
 			m_handleRect = false;
+			m_endCheck = false;
 		}
 
 		bool CGUIHandles::endCheck()

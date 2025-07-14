@@ -370,5 +370,15 @@ namespace Skylicht
 		{
 			onRemove();
 		}
+	
+		bool CTransformGizmos::getPosition(core::vector3df& position)
+		{
+			if (m_transform)
+			{
+				position = m_transform->getPosition();
+				return true;
+			}
+			return false;
+		}
 	}
 }
