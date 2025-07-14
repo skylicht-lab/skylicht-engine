@@ -474,6 +474,7 @@ namespace Skylicht
 			m_scene = new CScene();
 
 			m_viewpointController = NULL;
+			m_editorCamera = NULL;
 
 			return m_scene;
 		}

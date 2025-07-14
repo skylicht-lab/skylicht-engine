@@ -597,10 +597,11 @@ namespace Skylicht
 			CCamera* cam = NULL;
 			CEditorCamera* editorCam = NULL;
 			
-			if (m_spaceScene)
+			if (m_spaceScene && m_scene)
 			{
 				cam = m_spaceScene->getEditorCamera();
-				editorCam = cam->getGameObject()->getComponent<CEditorCamera>();
+				if (cam)
+					editorCam = cam->getGameObject()->getComponent<CEditorCamera>();
 			}
 			
 			if (m_gizmos)
