@@ -1225,6 +1225,11 @@ namespace Skylicht
 				CSelectObject* selectedObject = CSelection::getInstance()->getSelected(obj);
 				if (selectedObject != NULL)
 					selectedObject->notify(this);
+				
+				// update history
+				std::vector<CGameObject*> objs;
+				objs.push_back(obj);
+				m_history->saveModifyHistory(objs);
 			}
 			else if (node->isTagScene())
 			{
@@ -1477,6 +1482,10 @@ namespace Skylicht
 				else
 					setZone(defaultZone);
 			}
+			
+			// refresh gizmos
+			if (m_gizmos)
+				m_gizmos->refresh();
 		}
 
 		void CSceneController::onDelete()
