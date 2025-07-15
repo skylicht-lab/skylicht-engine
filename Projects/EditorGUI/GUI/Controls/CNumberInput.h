@@ -34,6 +34,7 @@ namespace Skylicht
 			class CNumberInput : public CTextBox
 			{
 			protected:
+				float m_lastX;
 				float m_mouseDownX;
 				float m_mouseDownY;
 

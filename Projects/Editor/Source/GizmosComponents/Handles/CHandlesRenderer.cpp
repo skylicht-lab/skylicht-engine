@@ -1275,12 +1275,15 @@ namespace Skylicht
 										core::vector3df target = from + offset;
 
 										float s[3]{ 1.0f, 1.0f, 1.0f };
-										float* f = &from.X;
-										float* t = &target.X;
+										float axisLength = from.getLength();
 										
-										if (fabsf(f[i]) > FLT_EPSILON)
+										if (fabsf(axisLength) > FLT_EPSILON)
 										{
-											s[i] = t[i] / f[i];
+											s[i] = target.getLength() / axisLength;
+											
+											float h = axis.dotProduct(offset);
+											if (h + axisLength < 0.0f)
+												s[i] = -s[i];
 											
 											resultScale.set(s[0], s[1], s[2]);
 											resultScale *= m_lastScale;

@@ -342,6 +342,7 @@ namespace Skylicht
 			{
 				handle->end();
 				m_cacheSelectedObjects.clear();
+				m_selectID = "";
 				m_changed = false;
 			}
 

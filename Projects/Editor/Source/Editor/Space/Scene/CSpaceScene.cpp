@@ -623,6 +623,8 @@ namespace Skylicht
 			}
 			else if (base == m_toolbarButton[ESceneToolBar::Select])
 			{
+				gizmos.set(ETransformGizmo::None);
+				gizmos.notify(this);
 				m_enableHandles = false;
 			}
 

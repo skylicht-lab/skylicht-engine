@@ -13,12 +13,12 @@
 #ifndef TEST_APP
 
 int main(int argc, const char * argv[]) {
-    NSBundle *main = [NSBundle mainBundle];
-    const char *resourcePath = [[main resourcePath] UTF8String];
-    CBuildConfig::getInstance()->DataFolder = resourcePath;
-    
-    SkylichtApplication app(argc, (char**)argv);
-    return app.run();
+	NSBundle *main = [NSBundle mainBundle];
+	const char *resourcePath = [[main resourcePath] UTF8String];
+	CBuildConfig::getInstance()->DataFolder = resourcePath;
+	
+	SkylichtApplication app(argc, (char**)argv);
+	return app.run();
 }
 
 #endif

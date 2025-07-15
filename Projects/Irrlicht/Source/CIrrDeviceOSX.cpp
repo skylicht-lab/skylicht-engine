@@ -15,16 +15,16 @@
 
 namespace irr
 {
-	namespace video
-	{
-		#if defined(_IRR_COMPILE_WITH_DIRECT3D_11_)
-		IVideoDriver* createDirectX11Driver(const irr::SIrrlichtCreationParameters& params, io::IFileSystem* io);
-		#endif
+namespace video
+{
+#if defined(_IRR_COMPILE_WITH_DIRECT3D_11_)
+IVideoDriver* createDirectX11Driver(const irr::SIrrlichtCreationParameters& params, io::IFileSystem* io);
+#endif
 
-		#if defined(_IRR_COMPILE_WITH_OGLES3_)
-		IVideoDriver* createOGLES3Driver(const irr::SIrrlichtCreationParameters& params, io::IFileSystem* io);
-		#endif
-	}
+#if defined(_IRR_COMPILE_WITH_OGLES3_)
+IVideoDriver* createOGLES3Driver(const irr::SIrrlichtCreationParameters& params, io::IFileSystem* io);
+#endif
+}
 }
 
 void OSXSetWindow(void* window);
@@ -47,149 +47,149 @@ CIrrDeviceOSX::CIrrDeviceOSX(const SIrrlichtCreationParameters& param)
 : CIrrDeviceStub(param), Focused(false), Initialized(false), Paused(true)
 {
 #ifdef _DEBUG
-    setDebugName("CIrrDeviceOSX");
+	setDebugName("CIrrDeviceOSX");
 #endif
-    
-    Operator = new COSOperator("Device Phone");
-    
-    createDriver();
-    
-    if (VideoDriver)
-        createGUIAndScene();
-    
-    Initialized = true;
-    
-    OSXSetWindow(param.WindowId);
-    OSXSetDefaultCaption();
-    
-    CursorControl = new CCursorControl(CreationParams.WindowSize, this);
+	
+	Operator = new COSOperator("Device Phone");
+	
+	createDriver();
+	
+	if (VideoDriver)
+		createGUIAndScene();
+	
+	Initialized = true;
+	
+	OSXSetWindow(param.WindowId);
+	OSXSetDefaultCaption();
+	
+	CursorControl = new CCursorControl(CreationParams.WindowSize, this);
 }
 
 
 CIrrDeviceOSX::~CIrrDeviceOSX()
 {
-    if (SceneManager)
-    {
-        SceneManager->drop();
-        SceneManager = 0;
-    }
-    
-    if (VideoDriver)
-    {
-        VideoDriver->drop();
-        VideoDriver = 0;
-    }
+	if (SceneManager)
+	{
+		SceneManager->drop();
+		SceneManager = 0;
+	}
+	
+	if (VideoDriver)
+	{
+		VideoDriver->drop();
+		VideoDriver = 0;
+	}
 }
 
 bool CIrrDeviceOSX::run()
 {
-    if (!Initialized)
-        return false;
-    
-    os::Timer::tick();
-    
-    return Initialized;
+	if (!Initialized)
+		return false;
+	
+	os::Timer::tick();
+	
+	return Initialized;
 }
 
 void CIrrDeviceOSX::yield()
 {
-    struct timespec ts = {0,1};
-    nanosleep(&ts, NULL);
+	struct timespec ts = {0,1};
+	nanosleep(&ts, NULL);
 }
 
 void CIrrDeviceOSX::sleep(u32 timeMs, bool pauseTimer)
 {
-    const bool wasStopped = Timer ? Timer->isStopped() : true;
-    
-    struct timespec ts;
-    ts.tv_sec = (time_t) (timeMs / 1000);
-    ts.tv_nsec = (long) (timeMs % 1000) * 1000000;
-    
-    if (pauseTimer && !wasStopped)
-        Timer->stop();
-    
-    nanosleep(&ts, NULL);
-    
-    if (pauseTimer && !wasStopped)
-        Timer->start();
+	const bool wasStopped = Timer ? Timer->isStopped() : true;
+	
+	struct timespec ts;
+	ts.tv_sec = (time_t) (timeMs / 1000);
+	ts.tv_nsec = (long) (timeMs % 1000) * 1000000;
+	
+	if (pauseTimer && !wasStopped)
+		Timer->stop();
+	
+	nanosleep(&ts, NULL);
+	
+	if (pauseTimer && !wasStopped)
+		Timer->start();
 }
 
 void CIrrDeviceOSX::setWindowCaption(const wchar_t* text)
 {
-    OSXSetWindowCaption(text);
+	OSXSetWindowCaption(text);
 }
 
 bool CIrrDeviceOSX::present(video::IImage* surface, void* windowId, core::rect<s32>* srcClip)
 {
-    return true;
+	return true;
 }
 
 bool CIrrDeviceOSX::isWindowActive() const
 {
-    return (Focused && !Paused);
+	return (Focused && !Paused);
 }
 
 bool CIrrDeviceOSX::isWindowFocused() const
 {
-    return Focused;
+	return Focused;
 }
 
 bool CIrrDeviceOSX::isWindowMinimized() const
 {
-    return !Focused;
+	return !Focused;
 }
 
 void CIrrDeviceOSX::closeDevice()
 {
-    // close window
-    OSXClose();
-    
-    // invoke close application
-    SEvent closeEvent;
-    closeEvent.EventType = EET_GAME_EXIT;
-    postEventFromUser(closeEvent);
+	// close window
+	OSXClose();
+	
+	// invoke close application
+	SEvent closeEvent;
+	closeEvent.EventType = EET_GAME_EXIT;
+	postEventFromUser(closeEvent);
 }
 
 void CIrrDeviceOSX::setResizable(bool resize)
 {
-    OSXSetResizable(resize);
+	OSXSetResizable(resize);
 }
 
 void CIrrDeviceOSX::minimizeWindow()
 {
-    OSXMinimizeWindow();
+	OSXMinimizeWindow();
 }
 
 void CIrrDeviceOSX::maximizeWindow()
 {
-    OSXMaximizeWindow();
+	OSXMaximizeWindow();
 }
 
 void CIrrDeviceOSX::restoreWindow()
 {
-    OSXRestoreWindow();
+	OSXRestoreWindow();
 }
 
 core::position2di CIrrDeviceOSX::getWindowPosition()
 {
-    int x, y;
-    OSXGetWindowPosition(x, y);
-    return core::position2di(x, y);
+	int x, y;
+	OSXGetWindowPosition(x, y);
+	return core::position2di(x, y);
 }
 
 void CIrrDeviceOSX::setMouseLocation(int x, int y)
 {
-    OSXSetMouseLocation(x, y);
+	OSXSetMouseLocation(x, y);
 }
 
 void CIrrDeviceOSX::setCursorVisible(bool visible)
 {
-    OSXSetCursorVisible(visible);
+	OSXSetCursorVisible(visible);
 }
 
 void CIrrDeviceOSX::setCursorIcon(gui::ECURSOR_ICON iconId)
 {
-    OSXSetCursorIcon(gui::GUICursorIconNames[iconId]);
+	OSXSetCursorIcon(gui::GUICursorIconNames[iconId]);
 }
 
 E_DEVICE_TYPE CIrrDeviceOSX::getType() const
@@ -200,27 +200,27 @@ E_DEVICE_TYPE CIrrDeviceOSX::getType() const
 void CIrrDeviceOSX::createDriver()
 {
 	switch(CreationParams.DriverType)
-	{	
-	case video::EDT_OPENGLES:
-		#if defined(_IRR_COMPILE_WITH_OGLES3_)
+	{
+		case video::EDT_OPENGLES:
+#if defined(_IRR_COMPILE_WITH_OGLES3_)
 			VideoDriver = video::createOGLES3Driver(CreationParams, FileSystem);
-		#else
+#else
 			os::Printer::log("No OpenGL ES 3 support compiled in.", ELL_ERROR);
-		#endif
-		break;
-	case video::EDT_NULL:
-		VideoDriver = video::createNullDriver(FileSystem, CreationParams.WindowSize);
-		break;	
-	case video::EDT_DIRECT3D11:
-		#if defined(_IRR_COMPILE_WITH_DIRECT3D_11_)
+#endif
+			break;
+		case video::EDT_NULL:
+			VideoDriver = video::createNullDriver(FileSystem, CreationParams.WindowSize);
+			break;
+		case video::EDT_DIRECT3D11:
+#if defined(_IRR_COMPILE_WITH_DIRECT3D_11_)
 			VideoDriver = video::createDirectX11Driver(CreationParams, FileSystem);
-		#else
+#else
 			os::Printer::log("No DirectX11 support compiled in.", ELL_ERROR);
-		#endif
-		break;
-	default:
-		os::Printer::log("Unable to create video driver of unknown type.", ELL_ERROR);
-		break;
+#endif
+			break;
+		default:
+			os::Printer::log("Unable to create video driver of unknown type.", ELL_ERROR);
+			break;
 	}
 }
 

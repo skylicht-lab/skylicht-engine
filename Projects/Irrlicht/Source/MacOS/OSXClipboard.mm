@@ -10,7 +10,7 @@ void OSXCopyToClipboard(const char *text)
 {
 	NSString *str;
 	NSPasteboard *board;
-
+	
 	if ((text != NULL) && (strlen(text) > 0))
 	{
 		str = [NSString stringWithCString:text encoding:NSWindowsCP1252StringEncoding];
@@ -25,7 +25,7 @@ char* OSXCopyFromClipboard()
 	NSString* str;
 	NSPasteboard* board;
 	char* result;
-
+	
 	result = NULL;
 	board = [NSPasteboard generalPasteboard];
 	str = [board stringForType:NSPasteboardTypeString];

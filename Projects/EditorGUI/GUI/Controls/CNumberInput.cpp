@@ -66,16 +66,16 @@ namespace Skylicht
 					if (m_mousePress)
 					{
 						SPoint mousePos = CInput::getInput()->getMousePosition();
-						float dx = mousePos.X - m_mouseDownX;
-						if (fabs(dx) > 0)
+						float dx = mousePos.X - m_lastX;
+						if (fabs(dx) > 0.0f)
 						{
 							m_drag = true;
 
 							float value = m_value;
 							value = value + m_stepValue * dx;
 							setValue(value, true);
-
-							CInput::getInput()->setCursorPosition(m_cursorX, m_cursorY);
+							
+							m_lastX = mousePos.X;
 						}
 					}
 				}
@@ -174,6 +174,7 @@ namespace Skylicht
 					{
 						m_drag = false;
 
+						m_lastX = x;
 						m_mouseDownX = x;
 						m_mouseDownY = y;
 
@@ -185,7 +186,8 @@ namespace Skylicht
 					{
 						input->setCapture(NULL);
 						input->hideCursor(false);
-
+						input->setCursorPosition(m_cursorX, m_cursorY);
+						
 						if (!m_drag)
 						{
 							CTextBox::onKeyboardFocus();
