@@ -148,7 +148,10 @@ namespace Skylicht
 				if (m_alwayFocusTextbox)
 				{
 					if (down)
+					{
 						CTextBox::onKeyboardFocus();
+						m_focusTextbox = true;
+					}
 
 					CTextBox::onMouseClickLeft(x, y, down);
 
