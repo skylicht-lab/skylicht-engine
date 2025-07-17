@@ -125,7 +125,7 @@ namespace Skylicht
 			{
 				CGameObject* gameObject = t->getGameObject();
 				selectedObject.push_back(gameObject);
-				
+
 				CGameObject* parent = gameObject->getParentTemplate();
 				if (parent != gameObject)
 				{
@@ -198,7 +198,9 @@ namespace Skylicht
 				return;
 			}
 
-			if (selectObject->getID() != m_selectID)
+			ETransformGizmo type = getSubjectTransformGizmos().get();
+
+			if (selectObject->getID() != m_selectID && type != ETransformGizmo::None)
 			{
 				m_selectID = selectObject->getID();
 				m_selectObject = NULL;
@@ -240,15 +242,6 @@ namespace Skylicht
 				m_selectID = "";
 				return;
 			}
-
-			/*
-			if (m_transform)
-			{
-				CSceneDebug::getInstance()->getNoZDebug()->addTransform(m_transform->calcWorldTransform(), 2.0f);
-			}
-			*/
-
-			ETransformGizmo type = getSubjectTransformGizmos().get();
 
 			if (type == ETransformGizmo::Translate)
 			{
@@ -343,6 +336,8 @@ namespace Skylicht
 				handle->end();
 				m_cacheSelectedObjects.clear();
 				m_selectID = "";
+				m_selectObject = NULL;
+				m_transform = NULL;
 				m_changed = false;
 			}
 
@@ -371,13 +366,13 @@ namespace Skylicht
 		{
 			onRemove();
 		}
-	
+
 		bool CTransformGizmos::getPosition(core::vector3df& position)
 		{
 			if (m_transform)
 			{
 				CEntity* entity = m_transform->getGameObject()->getEntity();
-				CWorldTransformData *t = GET_ENTITY_DATA(entity, CWorldTransformData);
+				CWorldTransformData* t = GET_ENTITY_DATA(entity, CWorldTransformData);
 				position = t->World.getTranslation();
 				return true;
 			}
