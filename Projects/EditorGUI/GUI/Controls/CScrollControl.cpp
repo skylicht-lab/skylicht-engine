@@ -81,9 +81,9 @@ namespace Skylicht
 					if (dt > 25.0f)
 					{
 						if (m_autoScrollState == 1)
-							delta = -0.1f;
+							delta = -0.2f;
 						else if (m_autoScrollState == 2)
-							delta = 0.1f;
+							delta = 0.2f;
 
 						m_vertical->setScroll(m_vertical->getScroll() + m_vertical->getNudgeAmount() * delta);
 						m_lastTime = time;
@@ -113,6 +113,8 @@ namespace Skylicht
 						return true;
 					}
 				}
+
+				stopAutoScroll();
 				return false;
 			}
 
@@ -161,6 +163,8 @@ namespace Skylicht
 				}
 
 				updateScrollBar();
+
+				stopAutoScroll();
 			}
 
 			void CScrollControl::showScrollBar(bool h, bool v)

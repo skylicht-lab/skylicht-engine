@@ -20,6 +20,7 @@ namespace Skylicht
 		m_wheel(0.0f),
 		m_altKeyDown(false),
 		m_shiftKeyDown(false),
+		m_ctrlKeyDown(false),
 		m_pivotRotateDistance(5.0f),
 		m_controlStyle(CEditorCamera::Default)
 	{
@@ -60,7 +61,7 @@ namespace Skylicht
 		CTransformEuler* transform = m_gameObject->getTransformEuler();
 		if (m_camera == NULL || transform == NULL)
 			return;
-		
+
 		core::plane3df p(pos, -transform->getFront());
 		m_pivotRotateDistance = p.getDistanceTo(transform->getPosition());
 	}
@@ -68,41 +69,41 @@ namespace Skylicht
 	void CEditorCamera::endUpdate()
 	{
 		CTransformEuler* transform = m_gameObject->getTransformEuler();
-		
+
 		if (m_camera == NULL || transform == NULL)
 			return;
-		
+
 		if (!m_camera->isInputReceiverEnabled())
 			return;
-		
+
 		f32 timeDiff = getTimeStep();
-		
+
 		// skip lag
 		const float delta = 1000.0f / 20.0f;
 		if (timeDiff > delta)
 			timeDiff = delta;
-		
+
 		core::vector3df pos = transform->getPosition();
 		core::vector3df target = transform->getFront();
-		
+
 		// inverse target is used when hold alt + drag left mouse
 		core::vector3df rotatePivot = pos + target * m_pivotRotateDistance;
 		core::vector3df inverseTarget = pos - rotatePivot;
 		inverseTarget.normalize();
-		
+
 		// fix something wrong in math
 		fixVector(target);
 		fixVector(inverseTarget);
-		
+
 		core::vector3df	up, right;
-		
+
 		core::vector3df relativeRotation = target.getHorizontalAngle();
 		core::vector3df inverseRotation = inverseTarget.getHorizontalAngle();
-		
+
 		core::vector3df offsetPosition;
-		
+
 		bool doRotatePivot = false;
-		
+
 		if (m_controlStyle == Maya)
 		{
 			if (m_altKeyDown)
@@ -119,25 +120,28 @@ namespace Skylicht
 		}
 		else if (m_controlStyle == Blender)
 		{
-			if (m_shiftKeyDown)
+			if (!m_ctrlKeyDown)
 			{
-				if (m_midMousePress)
+				if (m_shiftKeyDown)
 				{
-					updateInputRotate(inverseRotation, timeDiff, true);
-					doRotatePivot = true;
+					if (m_midMousePress)
+						updateInputOffset(offsetPosition, timeDiff);
 				}
-			}
-			else
-			{
-				if (m_midMousePress)
-					updateInputOffset(offsetPosition, timeDiff);
+				else
+				{
+					if (m_midMousePress)
+					{
+						updateInputRotate(inverseRotation, timeDiff, true);
+						doRotatePivot = true;
+					}
+				}
 			}
 		}
 		else
 		{
 			if (m_rightMousePress)
 				updateInputRotate(relativeRotation, timeDiff);
-			else if (m_midMousePress)
+			else if (m_midMousePress && !m_ctrlKeyDown)
 				updateInputOffset(offsetPosition, timeDiff);
 			else if (m_leftMousePress)
 			{
@@ -148,7 +152,7 @@ namespace Skylicht
 				}
 			}
 		}
-		
+
 		if (doRotatePivot)
 		{
 			inverseTarget.set(0.0f, 0.0f, 1.0f);
@@ -156,12 +160,12 @@ namespace Skylicht
 			mat.setRotationDegrees(core::vector3df(inverseRotation.X, inverseRotation.Y, 0));
 			mat.transformVect(inverseTarget);
 			inverseTarget.normalize();
-			
+
 			pos = rotatePivot + inverseTarget * m_pivotRotateDistance;
-			
+
 			target = rotatePivot - pos;
 			target.normalize();
-			
+
 			core::vector3df up(0.0f, 1.0f, 0.0f);
 			right = up.crossProduct(target);
 			right.normalize();
@@ -170,16 +174,16 @@ namespace Skylicht
 		{
 			target.set(0.0f, 0.0f, 1.0f);
 			right.set(1.0f, 0.0f, 0.0f);
-			
+
 			core::matrix4 mat;
 			mat.setRotationDegrees(core::vector3df(relativeRotation.X, relativeRotation.Y, 0));
 			mat.transformVect(target);
 			mat.transformVect(right);
-			
+
 			target.normalize();
 			right.normalize();
 		}
-		
+
 		// set position
 		core::vector3df movedir = target;
 
@@ -197,16 +201,23 @@ namespace Skylicht
 
 		if (m_midMousePress)
 		{
-			// move left, right
-			core::vector3df strafevect = target;
-			strafevect = strafevect.crossProduct(transform->getUp());
-			strafevect.normalize();
-			pos += strafevect * offsetPosition.X;
+			if (m_ctrlKeyDown)
+			{
+				updateInputZoom(timeDiff, pos, movedir);
+			}
+			else
+			{
+				// move left, right
+				core::vector3df strafevect = target;
+				strafevect = strafevect.crossProduct(transform->getUp());
+				strafevect.normalize();
+				pos += strafevect * offsetPosition.X;
 
-			// move up, down
-			up = strafevect.crossProduct(target);
-			up.normalize();
-			pos += up * offsetPosition.Y;
+				// move up, down
+				up = strafevect.crossProduct(target);
+				up.normalize();
+				pos += up * offsetPosition.Y;
+			}
 		}
 
 		// caculate up vector
@@ -276,8 +287,16 @@ namespace Skylicht
 		}
 		else if (zoomDirection == 2)
 		{
-			if (zoomY < 0.0f)
-				length = -length;
+			if (m_controlStyle == EControlStyle::Maya)
+			{
+				if (zoomY < 0.0f)
+					length = -length;
+			}
+			else
+			{
+				if (zoomY > 0.0f)
+					length = -length;
+			}
 		}
 
 		pos += moveDir * length;
@@ -324,6 +343,10 @@ namespace Skylicht
 				evt.KeyInput.Key == KEY_RSHIFT)
 			{
 				m_shiftKeyDown = evt.KeyInput.PressedDown;
+			}
+			else if (evt.KeyInput.Key == KEY_CONTROL)
+			{
+				m_ctrlKeyDown = evt.KeyInput.PressedDown;
 			}
 			break;
 

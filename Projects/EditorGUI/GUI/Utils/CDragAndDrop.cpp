@@ -93,6 +93,12 @@ namespace Skylicht
 					s_lastHoverControl = NULL;
 					s_dragging = false;
 
+					if (s_lastHoverOnScrollControl)
+					{
+						s_lastHoverOnScrollControl->stopAutoScroll();
+						s_lastHoverOnScrollControl = NULL;
+					}
+
 					return ret;
 				}
 

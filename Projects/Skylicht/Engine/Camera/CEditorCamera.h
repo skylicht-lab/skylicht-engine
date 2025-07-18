@@ -55,6 +55,7 @@ namespace Skylicht
 		core::position2df m_cursorPos;
 
 		bool m_altKeyDown;
+		bool m_ctrlKeyDown;
 		bool m_shiftKeyDown;
 		bool m_leftMousePress;
 		bool m_rightMousePress;
