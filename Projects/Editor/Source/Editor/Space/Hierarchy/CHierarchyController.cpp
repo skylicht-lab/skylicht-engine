@@ -229,7 +229,7 @@ namespace Skylicht
 						node->setIconColor(GUI::SGUIColor(255, 170, 110, 255));
 				}
 				else
-					node->setIconColor(GUI::SGUIColor(255, 255, 170, 110));
+					node->setIconColor(GUI::SGUIColor(255, 255, 75, 75));
 			}
 			else
 			{
