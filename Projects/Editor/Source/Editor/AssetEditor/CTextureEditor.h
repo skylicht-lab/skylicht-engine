@@ -36,6 +36,12 @@ namespace Skylicht
 		protected:
 			CTextureSettings* m_settings;
 
+			int m_width;
+			int m_height;
+
+			ITexture* m_thumbnails;
+
+			GUI::CLabel* m_txtScaleResult;
 		public:
 			CTextureEditor();
 
@@ -48,6 +54,8 @@ namespace Skylicht
 			virtual void onUpdateValue(CObjectSerializable* object);
 
 			CTextureSettings* createTextureSetting(const char* path);
+
+			void showTargetSize();
 		};
 	}
 }

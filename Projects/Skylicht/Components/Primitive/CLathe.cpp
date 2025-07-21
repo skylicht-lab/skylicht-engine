@@ -146,8 +146,8 @@ namespace Skylicht
 		renderMesh->setShareMesh(mesh->getMesh());
 
 		// add culling
-		if (entity->getData<CWorldInverseTransformData>())
-			entity->addData<CWorldInverseTransformData>();
+		// if (entity->getData<CWorldInverseTransformData>())
+		//	entity->addData<CWorldInverseTransformData>();
 
 		CCullingData* culling = entity->getData<CCullingData>();
 		if (culling == NULL)

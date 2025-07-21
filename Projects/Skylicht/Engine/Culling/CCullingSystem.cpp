@@ -91,6 +91,7 @@ namespace Skylicht
 
 			culling = GET_ENTITY_DATA(entity, CCullingData);
 			visible = GET_ENTITY_DATA(entity, CVisibleData);
+			transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 
 			culling->CullingLayer = visible->CullingLayer;
 			culling->ShadowCasting = visible->ShadowCasting;
@@ -98,10 +99,10 @@ namespace Skylicht
 			if (visible->Culled || !visible->Visible)
 			{
 				culling->Visible = false;
+				culling->NeedValidate |= transform->NeedValidate;
 			}
 			else
 			{
-				transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 				mesh = GET_ENTITY_DATA(entity, CRenderMeshData);
 				if (mesh != NULL)
 				{
