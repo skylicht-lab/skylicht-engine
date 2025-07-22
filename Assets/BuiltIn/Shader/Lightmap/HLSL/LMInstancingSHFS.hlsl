@@ -17,5 +17,5 @@ float4 main(PS_INPUT input) : SV_TARGET
 		input.D2 * input.worldNormal.z +
 		input.D3 * input.worldNormal.x;
 	
-	return float4(ambient * 0.9, 1.0);	// fix 0.9 for SH4
+	return float4(ambient * 0.75, 1.0);	// fix for SH4
 }

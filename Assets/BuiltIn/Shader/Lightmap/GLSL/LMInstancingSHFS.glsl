@@ -17,5 +17,5 @@ void main(void)
 		vD2 * vWorldNormal.z +
 		vD3 * vWorldNormal.x;
 	
-	FragColor = vec4(ambient * 0.9, 1.0);	// fix 0.9 for SH4
+	FragColor = vec4(ambient * 0.75, 1.0); // fix for SH4
 }

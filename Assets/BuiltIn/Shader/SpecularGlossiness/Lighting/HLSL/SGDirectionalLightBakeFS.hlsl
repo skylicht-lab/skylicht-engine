@@ -116,15 +116,14 @@ float3 SG(
 	float3 directionLightColor = sRGB(lightColor);
 	float3 pointLightColor = sRGB(light.rgb);
 	float3 indirectColor = sRGB(indirect.rgb);
-	float c = (1.0 - spec * gloss);
 	float NdotL = max(dot(worldNormal, worldLightDir), 0.0);
 	NdotL = min(NdotL, 1.0);
 	float3 H = normalize(worldLightDir + worldViewDir);
 	float NdotE = max(0.0, dot(worldNormal, H));
 	float specular = pow(NdotE, 10.0 + 100.0 * gloss) * spec;
-	float3 envSpecColor = lerp(indirectColor, float3(1.0, 1.0, 1.0), visibility);
+	float3 envSpecColor = lerp(indirectColor * 0.2, float3(1.0, 1.0, 1.0), visibility);
 	float3 directionalLight = NdotL * directionLightColor * visibility;
-	float3 color = (directionalLight * directMultiplier) * diffuseColor * (0.1 + roughness * 0.3) * c;
+	float3 color = (directionalLight * directMultiplier) * diffuseColor * (0.1 + roughness * 0.3);
 	color += pointLightColor * lightMultiplier * diffuseColor * 0.5;
 	color += specular * specularColor * envSpecColor;
 	color += indirectColor * diffuseColor * indirectMultiplier / PI;

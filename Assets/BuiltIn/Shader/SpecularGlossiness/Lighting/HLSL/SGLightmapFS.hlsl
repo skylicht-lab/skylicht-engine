@@ -78,9 +78,9 @@ float3 SGLM(
 	float3 H = normalize(worldLightDir + worldViewDir);
 	float NdotE = max(0.0, dot(worldNormal, H));
 	float specular = pow(NdotE, 10.0 + 100.0 * gloss) * spec;
-	float3 color = (directionColor * lightMultiplier) * diffuseColor;
+	float3 color = (directionColor * lightMultiplier) * diffuseColor * (0.1 + roughness * 0.3);
 	float visibility = light.a;
-	float3 envSpecColor = lerp(indirectColor, float3(1.0, 1.0, 1.0), visibility);
+	float3 envSpecColor = lerp(indirectColor * 0.2, float3(1.0, 1.0, 1.0), visibility);
 	color += specular * specularColor * envSpecColor;
 	color += indirectColor * diffuseColor * indirectMultiplier / PI;
 	return color;

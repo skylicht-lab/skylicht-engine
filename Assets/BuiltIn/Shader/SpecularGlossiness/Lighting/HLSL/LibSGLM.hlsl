@@ -47,11 +47,11 @@ float3 SGLM(
 	float specular = pow(NdotE, 10.0 + 100.0 * gloss) * spec;
 	
 	// Direction lighting
-	float3 color = (directionColor * lightMultiplier) * diffuseColor;
+	float3 color = (directionColor * lightMultiplier) * diffuseColor * (0.1 + roughness * 0.3);
 	
 	// Direction specular
 	float visibility = light.a;
-	float3 envSpecColor = lerp(indirectColor, float3(1.0, 1.0, 1.0), visibility);
+	float3 envSpecColor = lerp(indirectColor * 0.2, float3(1.0, 1.0, 1.0), visibility);
 	color += specular * specularColor * envSpecColor;
 
 	// IBL Ambient
