@@ -396,6 +396,12 @@ namespace Skylicht
 				m_history = NULL;
 			}
 			m_history = new CSceneHistory(m_scene);
+
+			// refresh gizmos
+			m_transformGizmos->onRemove();
+			m_worldTransformDataGizmos->onRemove();
+			m_particleGizmos->onRemove();
+			m_gizmos = NULL;
 		}
 
 		void CSceneController::reinitHierachyData()
