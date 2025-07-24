@@ -62,10 +62,12 @@ namespace Skylicht
 			int nX = (int)ceilf(size.X / tileWidth);
 			int nZ = (int)ceilf(size.Z / tileWidth);
 
+			int h = core::max_(nY, 1);
+
 			core::vector3df boxSize(tileWidth, tileHeight, tileWidth);
 
 			m_bbox.MinEdge = bbox.MinEdge;
-			m_bbox.MaxEdge = bbox.MinEdge + core::vector3df(nX * tileWidth, nY * tileHeight, nZ * tileWidth);
+			m_bbox.MaxEdge = bbox.MinEdge + core::vector3df(nX * tileWidth, h * tileHeight, nZ * tileWidth);
 
 			m_bbox.MinEdge.Y = m_bbox.MinEdge.Y - 0.1f;
 			m_bbox.MaxEdge.Y = m_bbox.MaxEdge.Y + 0.1f;
