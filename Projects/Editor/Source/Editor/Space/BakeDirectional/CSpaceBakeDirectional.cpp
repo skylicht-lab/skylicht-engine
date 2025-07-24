@@ -403,7 +403,11 @@ namespace Skylicht
 				else
 					material.MaterialType = shaderMgr->getShaderIDByName("BakeFinalNoDirectionLight");
 
-				m_bakeLightRP->renderBufferToTarget(0.0f, 0.0f, lmSize, lmSize, material, false);
+				bool flipY = false;
+				if (getVideoDriver()->getDriverType() != video::EDT_DIRECT3D11)
+					flipY = true;
+
+				m_bakeLightRP->renderBufferToTarget(0.0f, 0.0f, lmSize, lmSize, material, flipY);
 				getVideoDriver()->setRenderTarget(NULL);
 
 				/*
