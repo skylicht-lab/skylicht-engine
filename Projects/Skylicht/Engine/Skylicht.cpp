@@ -33,6 +33,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Control/CAccelerometer.h"
 #include "Control/CJoystick.h"
 
+// Debug
+#include "Debug/CSceneDebug.h"
+
 // Shader Manager
 #include "Material/CMaterialManager.h"
 #include "Material/Shader/CShaderManager.h"
@@ -153,6 +156,11 @@ namespace Skylicht
 		CAccelerometer::getInstance()->update();
 		CJoystick::getInstance()->update();
 		CTweenManager::getInstance()->update();
+
+		CSceneDebug* debug = CSceneDebug::getInstance();
+		CSceneDebug* noZDebug = debug->getNoZDebug();
+		debug->clear();
+		noZDebug->clear();
 	}
 
 	IrrlichtDevice* getIrrlichtDevice()

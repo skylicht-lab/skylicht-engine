@@ -163,9 +163,5 @@ namespace Skylicht
 			videoDriver->setMaterial(buffer->getMaterial());
 			videoDriver->drawMeshBuffer(buffer);
 		}
-
-		debug->clear();
-		noZDebug->clear();
-
 	}
 }
