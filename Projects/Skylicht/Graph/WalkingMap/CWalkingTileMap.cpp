@@ -781,8 +781,8 @@ namespace Skylicht
 					}
 					else if (nodeName == L"link")
 					{
-						int a = xmlReader->getAttributeValueAsInt(L"a");
-						currentTile = m_tiles[a];
+						int id = xmlReader->getAttributeValueAsInt(L"id");
+						currentTile = m_tiles[id];
 					}
 					break;
 				}
@@ -824,8 +824,8 @@ namespace Skylicht
 							if (*begin)
 							{
 								value = -1;
-								swscanf(begin, L"%d", &value);
-								if (value >= 0 && value < numTiles)
+								int ret = swscanf(begin, L"%d", &value);
+								if (ret > 0 && value >= 0 && value < numTiles)
 								{
 									STile* tile = m_tiles[value];
 
