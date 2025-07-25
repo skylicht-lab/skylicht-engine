@@ -154,6 +154,8 @@ namespace Skylicht
 			okBtn->setTextAlignment(GUI::TextCenter);
 			okBtn->OnPress = BIND_LISTENER(&CCameraSettingController::onOK, this);
 			boxLayout->endVertical();
+
+			m_menu->OnClose = BIND_LISTENER(&CCameraSettingController::onClose, this);
 		}
 
 		CCameraSettingController::~CCameraSettingController()
@@ -190,6 +192,12 @@ namespace Skylicht
 			m_grid->setToggle(spaceScene->isEnableRenderGrid());
 		}
 
+		void CCameraSettingController::onClose(GUI::CBase* base)
+		{
+			onChanged(base);
+			saveSetting();
+		}
+
 		void CCameraSettingController::onDefault(GUI::CBase* base)
 		{
 			CSpaceScene* spaceScene = CSceneController::getInstance()->getSpaceScene();
@@ -216,13 +224,11 @@ namespace Skylicht
 			m_near->setValue(camera->getNearValue(), false);
 			m_far->setValue(camera->getFarValue(), false);
 
-			saveSetting();
 			m_menu->close();
 		}
 
 		void CCameraSettingController::onOK(GUI::CBase* base)
 		{
-			saveSetting();
 			m_menu->close();
 		}
 

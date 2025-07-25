@@ -152,4 +152,45 @@ namespace Skylicht
 
 		return angles;
 	}
+
+	core::quaternion CVector::getQuaternionFromAxes(const core::vector3df& xAxis, const core::vector3df& yAxis, const core::vector3df& zAxis)
+	{
+		// copilot
+		// Can you write function get quaternion from 3 vector axis 3d in C
+		core::quaternion q;
+
+		// Compute the trace of the matrix
+		float trace = xAxis.X + yAxis.Y + zAxis.Z;
+
+		if (trace > 0.0f) {
+			float s = sqrtf(trace + 1.0f) * 2.0f;
+			q.W = 0.25f * s;
+			q.X = (yAxis.Z - zAxis.Y) / s;
+			q.Y = (zAxis.X - xAxis.Z) / s;
+			q.Z = (xAxis.Y - yAxis.X) / s;
+		}
+		else if ((xAxis.X > yAxis.Y) && (xAxis.X > zAxis.Z)) {
+			float s = sqrtf(1.0f + xAxis.X - yAxis.Y - zAxis.Z) * 2.0f;
+			q.W = (yAxis.Z - zAxis.Y) / s;
+			q.X = 0.25f * s;
+			q.Y = (yAxis.X + xAxis.Y) / s;
+			q.Z = (zAxis.X + xAxis.Z) / s;
+		}
+		else if (yAxis.Y > zAxis.Z) {
+			float s = sqrtf(1.0f + yAxis.Y - xAxis.X - zAxis.Z) * 2.0f;
+			q.W = (zAxis.X - xAxis.Z) / s;
+			q.X = (yAxis.X + xAxis.Y) / s;
+			q.Y = 0.25f * s;
+			q.Z = (zAxis.Y + yAxis.Z) / s;
+		}
+		else {
+			float s = sqrtf(1.0f + zAxis.Z - xAxis.X - yAxis.Y) * 2.0f;
+			q.W = (xAxis.Y - yAxis.X) / s;
+			q.X = (zAxis.X + xAxis.Z) / s;
+			q.Y = (zAxis.Y + yAxis.Z) / s;
+			q.Z = 0.25f * s;
+		}
+
+		return q;
+	}
 }

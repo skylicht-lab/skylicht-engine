@@ -57,6 +57,8 @@ namespace Skylicht
 
 			void onShow();
 
+			void onClose(GUI::CBase* base);
+
 			void onDefault(GUI::CBase* base);
 
 			void onOK(GUI::CBase* base);

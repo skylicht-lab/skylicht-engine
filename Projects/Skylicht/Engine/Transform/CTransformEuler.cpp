@@ -120,8 +120,14 @@ namespace Skylicht
 
 	void CTransformEuler::setRelativeTransform(const core::matrix4& mat)
 	{
+		m_position = mat.getTranslation();
+		m_scale = mat.getScale();
+
 		core::vector3df front = Transform::Oz;
 		core::vector3df up = Transform::Oy;
+
+		up *= m_scale;
+		front *= m_scale;
 
 		mat.rotateVect(front);
 		mat.rotateVect(up);
@@ -132,34 +138,10 @@ namespace Skylicht
 		core::vector3df right = up.crossProduct(front);
 		right.normalize();
 
-		core::matrix4 rotationMatrix;
-		f32* matData = rotationMatrix.pointer();
-		matData[0] = right.X;
-		matData[1] = right.Y;
-		matData[2] = right.Z;
-		matData[3] = 0.0f;
-
-		matData[4] = up.X;
-		matData[5] = up.Y;
-		matData[6] = up.Z;
-		matData[7] = 0.0f;
-
-		matData[8] = front.X;
-		matData[9] = front.Y;
-		matData[10] = front.Z;
-		matData[11] = 0.0f;
-
-		matData[12] = 0.0f;
-		matData[13] = 0.0f;
-		matData[14] = 0.0f;
-		matData[15] = 1.0f;
-
-		core::quaternion q(rotationMatrix);
+		core::quaternion q = CVector::getQuaternionFromAxes(right, up, front);
 		q.toEuler(m_rotation);
 
 		m_rotation = m_rotation * core::RADTODEG;
-		m_position = mat.getTranslation();
-		m_scale = mat.getScale();
 
 		m_hasChanged = true;
 

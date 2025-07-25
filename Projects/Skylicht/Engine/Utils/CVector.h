@@ -43,5 +43,7 @@ namespace Skylicht
 		static bool isParallel(const core::vector3df& a, const core::vector3df& b);
 
 		static core::vector3df quaternionToEuler(const core::quaternion& q);
+
+		static core::quaternion getQuaternionFromAxes(const core::vector3df& xAxis, const core::vector3df& yAxis, const core::vector3df& zAxis);
 	};
 }
