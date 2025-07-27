@@ -45,6 +45,11 @@ namespace Skylicht
 
 	public:
 
+		virtual core::vector3df getRelativePosition()
+		{
+			return m_transform.getTranslation();
+		}
+
 		inline core::vector3df getPosition()
 		{
 			return m_transform.getTranslation();

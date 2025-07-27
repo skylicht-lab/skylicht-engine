@@ -58,6 +58,10 @@ namespace Skylicht
 
 		void attachTransform(CEntity* entity);
 
+		virtual core::vector3df getRelativePosition() = 0;
+
+		core::vector3df getWorldPosition();
+
 		inline void setChanged(bool b)
 		{
 			m_hasChanged = b;

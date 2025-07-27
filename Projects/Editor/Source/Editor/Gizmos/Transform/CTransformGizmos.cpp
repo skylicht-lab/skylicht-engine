@@ -147,7 +147,13 @@ namespace Skylicht
 			{
 				if (t != m_transform)
 				{
-					core::vector3df newPosition = t->getPosition() + delta;
+					core::vector3df offset = delta;
+
+					core::matrix4 world = m_transform->getParent()->calcWorldTransform();
+					world.makeInverse();
+					world.rotateVect(offset);
+
+					core::vector3df newPosition = t->getPosition() + offset;
 					t->setPosition(newPosition);
 				}
 			}
@@ -248,14 +254,15 @@ namespace Skylicht
 				core::vector3df newPos = handle->positionHandle(*m_position, m_transform->getRotationQuaternion());
 				if (newPos != *m_position)
 				{
-					core::vector3df delta = newPos - *m_position;
+					core::vector3df p1 = m_transform->getWorldPosition();
+					m_transform->setPosition(newPos);
+					core::vector3df p2 = m_transform->getWorldPosition();
+
+					core::vector3df delta = p2 - p1;
 					updateSelectedPosition(delta);
 
 					m_position = newPos;
 					m_position.notify(this);
-
-					m_transform->setPosition(newPos);
-
 					m_changed = true;
 				}
 

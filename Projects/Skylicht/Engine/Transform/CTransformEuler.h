@@ -52,6 +52,11 @@ namespace Skylicht
 
 	public:
 
+		virtual core::vector3df getRelativePosition()
+		{
+			return m_position;
+		}
+
 		inline const core::vector3df& getPosition()
 		{
 			return m_position;

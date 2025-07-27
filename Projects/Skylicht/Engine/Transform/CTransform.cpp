@@ -171,6 +171,32 @@ namespace Skylicht
 		return result;
 	}
 
+	core::vector3df CTransform::getWorldPosition()
+	{
+		core::vector3df p = getRelativePosition();
+
+		if (!isAttached())
+		{
+			CTransform* parent = getParent();
+			while (parent != NULL)
+			{
+				parent->getRelativeTransform().transformVect(p);
+				parent = parent->getParent();
+			}
+		}
+		else
+		{
+			CWorldTransformData* transform = GET_ENTITY_DATA(m_gameObject->getEntity(), CWorldTransformData);
+
+			CEntity* parent = m_gameObject->getEntityManager()->getEntity(transform->AttachParentIndex);
+			CWorldTransformData* parentTransform = GET_ENTITY_DATA(parent, CWorldTransformData);
+
+			parentTransform->World.transformVect(p);
+		}
+
+		return p;
+	}
+
 	void CTransform::setWorldMatrix(const core::matrix4& world)
 	{
 		if (m_isWorldTransform)
