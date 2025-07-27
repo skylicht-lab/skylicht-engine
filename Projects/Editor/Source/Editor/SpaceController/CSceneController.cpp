@@ -602,31 +602,46 @@ namespace Skylicht
 		{
 			CCamera* cam = NULL;
 			CEditorCamera* editorCam = NULL;
-			
+
 			if (m_spaceScene && m_scene)
 			{
 				cam = m_spaceScene->getEditorCamera();
 				if (cam)
 					editorCam = cam->getGameObject()->getComponent<CEditorCamera>();
 			}
-			
+
 			if (m_gizmos)
-			{
 				m_gizmos->onGizmos();
-				
-				if (editorCam)
-				{
-					core::vector3df gizmosPosition;
-					if (m_gizmos->getPosition(gizmosPosition))
-						editorCam->setPivotRotate(gizmosPosition);
-					else
-						editorCam->setPivotRotateDistance(5.0f);
-				}
-			}
-			else
+
+			if (editorCam)
 			{
-				if (editorCam)
+				CSelectObject* selectObject = CSelection::getInstance()->getLastSelected();
+				if (selectObject)
+				{
+					if (selectObject->getType() == CSelectObject::GameObject)
+					{
+						CGameObject* obj = m_scene->searchObjectInChildByID(selectObject->getID().c_str());
+						if (obj)
+						{
+							CEntity* entity = obj->getEntity();
+							CWorldTransformData* t = GET_ENTITY_DATA(entity, CWorldTransformData);
+							editorCam->setPivotRotate(t->World.getTranslation());
+						}
+					}
+					else
+					{
+						CEntity* entity = m_scene->getEntityManager()->getEntityByID(selectObject->getID().c_str());
+						if (entity)
+						{
+							CWorldTransformData* t = GET_ENTITY_DATA(entity, CWorldTransformData);
+							editorCam->setPivotRotate(t->World.getTranslation());
+						}
+					}
+				}
+				else
+				{
 					editorCam->setPivotRotateDistance(5.0f);
+				}
 			}
 
 			updateSelectedRigidBody();
@@ -1231,7 +1246,7 @@ namespace Skylicht
 				CSelectObject* selectedObject = CSelection::getInstance()->getSelected(obj);
 				if (selectedObject != NULL)
 					selectedObject->notify(this);
-				
+
 				// update history
 				std::vector<CGameObject*> objs;
 				objs.push_back(obj);
@@ -1488,7 +1503,7 @@ namespace Skylicht
 				else
 					setZone(defaultZone);
 			}
-			
+
 			// refresh gizmos
 			if (m_gizmos)
 				m_gizmos->refresh();
@@ -1841,7 +1856,7 @@ namespace Skylicht
 		void CSceneController::focusCameraToEntity(CEntity* entity)
 		{
 			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
-			
+
 			core::vector3df objectPosition = transform->World.getTranslation();
 
 			CCamera* camera = m_spaceScene->getEditorCamera();
@@ -1858,39 +1873,39 @@ namespace Skylicht
 				d = yDistance / cos;
 				d = core::clamp(d, -maxDistance, maxDistance);
 			}
-			
+
 			core::vector3df newPosition = objectPosition + look * d;
 			camera->lookAt(newPosition, objectPosition, Transform::Oy);
 		}
-	
+
 		void CSceneController::focusCameraToObject(CGameObject* obj)
 		{
 			bool haveBBox = false;
 			core::aabbox3df bbox;
-			
+
 			// billboard object (ex: light...)
 			if (obj->getComponent<CSprite>() != NULL)
 				return focusCameraToEntity(obj->getEntity());
-			
-			CSelectObjectSystem *selectObjectSystem = m_scene->getEntityManager()->getSystem<CSelectObjectSystem>();
+
+			CSelectObjectSystem* selectObjectSystem = m_scene->getEntityManager()->getSystem<CSelectObjectSystem>();
 			haveBBox = selectObjectSystem->getTransformBBox(obj, bbox);
 			if (!haveBBox)
 				return focusCameraToEntity(obj->getEntity());
-			
+
 			CCamera* camera = m_spaceScene->getEditorCamera();
 			core::vector3df lookAt = bbox.getCenter();
 
 			float diagonalLength = bbox.getExtent().getLength();
 			float fovRadians = camera->getFOV() * core::DEGTORAD;
 			float distance = (diagonalLength * 0.5f) / tanf(fovRadians * 0.5f) * 1.5f;
-			
+
 			core::vector3df camDirection = -camera->getLookVector();
 			camDirection.normalize();
 
 			camera->setPosition(lookAt + camDirection * distance);
 			camera->lookAt(lookAt, Transform::Oy);
 		}
-	
+
 		void CSceneController::applySelected(std::vector<CSelectObject*> ids)
 		{
 			m_scene->updateAddRemoveObject();

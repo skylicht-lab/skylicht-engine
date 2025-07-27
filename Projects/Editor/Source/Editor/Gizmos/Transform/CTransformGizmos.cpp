@@ -366,17 +366,5 @@ namespace Skylicht
 		{
 			onRemove();
 		}
-
-		bool CTransformGizmos::getPosition(core::vector3df& position)
-		{
-			if (m_transform)
-			{
-				CEntity* entity = m_transform->getGameObject()->getEntity();
-				CWorldTransformData* t = GET_ENTITY_DATA(entity, CWorldTransformData);
-				position = t->World.getTranslation();
-				return true;
-			}
-			return false;
-		}
 	}
 }
