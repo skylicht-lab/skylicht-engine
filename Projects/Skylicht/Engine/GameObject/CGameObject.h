@@ -39,6 +39,15 @@ namespace Skylicht
 	class CEntity;
 	class CEntityManager;
 
+	/// @brief This object class stores information for a GameObject. 
+	/// @ingroup GameObject
+	/// 
+	/// A GameObject can contain multiple Components, such as RenderMesh, Camera, or Collider...
+	/// 
+	/// @image html GameObject/gameobject.jpg "The image shows a scene's structure featuring many GameObjects"
+	/// 
+	/// Creating an object automatically creates an associated entity (CEntity) to store relevant data (IEntityData) like its position, visibility, and more. When components are initialized, they'll continue to add data to this entity.
+	/// 
 	class SKYLICHT_API CGameObject
 	{
 		friend class CDependentComponent;

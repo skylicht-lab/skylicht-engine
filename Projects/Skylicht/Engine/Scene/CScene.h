@@ -33,6 +33,38 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief This object class manages all other objects, it represents the data of a scene.
+	/// @ingroup GameObject
+	/// 
+	/// A scene can be constructed programmatically, or you can use an Skylicht-Editor to create and arrange objects.
+	/// @image html GameObject/scene_editor.jpg "The image shows a scene built with Skylicht-Editor."
+	/// 
+	/// When a scene is created in the editor and saved as a .scene file, you can use CSceneImporter to load all the data back into CScene.
+	/// 
+	/// Additionally, in some cases, you can manually create a scene using code, as shown below:
+	/// @code
+	/// CScene *scene = new CScene();
+	/// CZone *zone = scene->createZone();
+	/// 
+	/// // Example add canvas
+	/// CGameObject* guiObj = zone->createEmptyObject();
+	/// CCanvas* canvas = guiObj->addComponent<CCanvas>();
+	/// 
+	/// // Example add camera
+	/// CGameObject* camObj = zone->createEmptyObject();
+	/// camObj->addComponent<CCamera>();
+	/// camObj->addComponent<CEditorCamera>()->setMoveSpeed(2.0f);
+	/// camObj->addComponent<CFpsMoveCamera>()->setMoveSpeed(1.0f);
+	/// 
+	/// // call update method for all objects
+	/// scene->update();
+	/// @endcode
+	/// 
+	/// @see CGameObject, CContainerObject, CZone, CSceneImporter
+	/// 
+	/// 
+	/// To render the scene to screen, you first need to set up the Render Pipeline, and then call render method from the Pipeline.
+	/// @see CShadowMapRP, CDeferredRP, CForwardRP, CPostProcessorRP
 	class SKYLICHT_API CScene : public IEventReceiver
 	{
 	protected:

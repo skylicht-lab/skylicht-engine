@@ -44,6 +44,11 @@ namespace irr
   * @brief This group includes GUI display object classes for Canvas.
   */
 
+/**
+  * @defgroup GameObject Scene and Game Objects
+  * @brief This group includes scene object classes for 3D rendering.
+  */
+
 /*! \mainpage Skylicht Engine API documentation
  *
  * \section intro Introduction

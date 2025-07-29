@@ -30,6 +30,9 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	class CScene;
+
+	/// @brief It's the primary container object for the CScene; all CGameObject have a CZone as their root parent.
+	/// @ingroup GameObject
 	class SKYLICHT_API CZone : public CContainerObject
 	{
 	protected:

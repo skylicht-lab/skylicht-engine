@@ -28,6 +28,13 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief It's an object class used to manage multiple objects.
+	/// @ingroup GameObject
+	/// 
+	/// A Container Object has full Component functionality, just like a CGameObject, but it also includes the ability to manage child objects. 
+	/// The coordinates of objects inside it are relative to the Container's own coordinates.
+	/// 
+	/// @image html GameObject/gameobject.jpg "The image shows a scene's structure featuring many GameObjects"
 	class SKYLICHT_API CContainerObject : public CGameObject
 	{
 	protected:
