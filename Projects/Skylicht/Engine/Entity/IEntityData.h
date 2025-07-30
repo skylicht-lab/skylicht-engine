@@ -34,6 +34,8 @@ namespace Skylicht
 	class IMeshImporter;
 	class CEntity;
 
+	/// @brief This is the Interface for object classes that describe data to be attached to an entity.
+	/// @ingroup ECS
 	class SKYLICHT_API IEntityData : public IActivatorObject
 	{
 	public:

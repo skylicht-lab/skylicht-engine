@@ -30,6 +30,18 @@ namespace Skylicht
 {
 	class CEntityManager;
 
+	/// @brief This is the interface for object classes responsible for processing Entity data.
+	/// @ingroup ECS
+	/// 
+	/// Code example for adding a system
+	/// @code
+	/// CEntityManager* entityManager = scene->getEntityManager();
+	/// entityManager->addSystem<CBoidSystem>();
+	/// @endcode
+	/// 
+	/// A IEntitySystem will operate by querying entities that have data requiring processing (onQuery), and then running an update function to process the entity's data.
+	/// 
+	/// @see CEntityGroup
 	class SKYLICHT_API IEntitySystem
 	{
 	protected:

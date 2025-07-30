@@ -40,6 +40,38 @@ namespace Skylicht
 	/// @image html GameObject/scene_editor.jpg "The image shows a scene built with Skylicht-Editor."
 	/// 
 	/// When a scene is created in the editor and saved as a .scene file, you can use CSceneImporter to load all the data back into CScene.
+	/// @code
+	/// CScene* scene = new CScene();
+	/// 
+	/// // declare component used in scene
+	/// // see: SampleScene/Demo.txt
+	/// USE_COMPONENT(CBoxCollider);
+	/// USE_COMPONENT(CCube);
+	/// USE_COMPONENT(CDirectionalLight);
+	/// USE_COMPONENT(CIndirectLighting);
+	/// USE_COMPONENT(CLightProbes);
+	/// USE_COMPONENT(CPlane);
+	/// USE_COMPONENT(CReflectionProbe);
+	/// USE_COMPONENT(CRenderMesh);
+	/// USE_COMPONENT(CRigidbody);
+	/// USE_COMPONENT(CSkySun);
+	/// USE_COMPONENT(CStaticPlaneCollider);
+	/// USE_COMPONENT(CTransformEuler);
+	/// ...
+	/// 
+	/// CSceneImporter::beginImportScene(scene, "SampleScene/Demo.scene");
+	/// 
+	/// bool finished = false;
+	/// char log[512];
+	/// do
+	/// {
+	/// 	finished = CSceneImporter::updateLoadScene())
+	/// 	sprintf(log, "Loading: %d%%", (int)(CSceneImporter::getLoadingPercent() * 100.0f));
+	///		os::Printer::log(log);
+	/// }
+	/// while (!finished);
+	/// @endcode
+	/// 
 	/// 
 	/// Additionally, in some cases, you can manually create a scene using code, as shown below:
 	/// @code

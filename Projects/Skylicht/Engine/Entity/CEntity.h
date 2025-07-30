@@ -40,6 +40,19 @@ namespace Skylicht
 
 #define MAX_ENTITY_DATA 64
 
+	/// @brief This is the object class that describes an entity.
+	/// @ingroup ECS
+	/// 
+	/// @image html GameObject/gameobject.jpg "The image shows a scene's structure featuring many GameObjects and Entity"
+	/// Within an entity, various types of data (IEntityData) will be stored. 
+	/// Example: CWorldTransformData, CVisibleData, CCullingData, CRenderMeshData...
+	/// 
+	/// Use the GET_ENTITY_DATA macro to retrieve the Data object attached to the Entity.
+	/// @code
+	/// CEntity* entity = gameObject->getEntity();
+	/// CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+	/// const core::matrix4f& worldTransform = transform->World;
+	/// @endcode
 	class SKYLICHT_API CEntity
 	{
 		friend class CEntityManager;

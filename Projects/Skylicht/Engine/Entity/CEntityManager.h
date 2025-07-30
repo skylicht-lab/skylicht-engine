@@ -37,6 +37,18 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief This object class manages all entities within a scene
+	/// @ingroup ECS
+	/// 
+	/// When a scene is created, it will generate a CEntityManager object
+	/// A scene's data, including models, coordinates, and more, will be stored within IEntityData, CEntity objects and managed by the CEntityManager.
+	/// 
+	/// @code
+	/// CScene* scene = new CScene();
+	/// CEntityManager* entityMgr = scene->getEntityManager()
+	/// @endcode
+	/// 
+	/// @see CEntity, CEntityGroup
 	class SKYLICHT_API CEntityManager
 	{
 	protected:

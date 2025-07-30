@@ -49,6 +49,11 @@ namespace irr
   * @brief This group includes scene object classes for 3D rendering.
   */
 
+/**
+  * @defgroup ECS Entity Component System
+  * @brief This group contains objects used to support ECS architecture.
+  */
+
 /*! \mainpage Skylicht Engine API documentation
  *
  * \section intro Introduction

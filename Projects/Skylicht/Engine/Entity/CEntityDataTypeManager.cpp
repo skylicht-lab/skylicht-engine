@@ -34,8 +34,9 @@ namespace Skylicht
 		static core::array<size_t> dataHash;
 		static core::array<u32> dataIndex;
 		static u32 dataSize = 0;
-		static size_t* hashes = dataHash.pointer();
-		static u32* indices = dataIndex.pointer();
+
+		size_t* hashes = dataHash.pointer();
+		u32* indices = dataIndex.pointer();
 
 		size_t hash = ti.hash_code();
 
@@ -52,11 +53,7 @@ namespace Skylicht
 		dataHash.push_back(hash);
 		dataIndex.push_back(dataTypeIndexInc++);
 
-		// update cache
-		hashes = dataHash.pointer();
-		indices = dataIndex.pointer();
 		dataSize++;
-
 		if (dataSize >= MAX_ENTITY_DATA)
 		{
 			os::Printer::log("CEntityDataTypeManager::getDataIndex Exceeding the allowed limit number DataType");

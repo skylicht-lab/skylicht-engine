@@ -31,6 +31,23 @@ namespace Skylicht
 {
 	class CEntityManager;
 
+	/// @brief The object class is designed to optimize entity queries.
+	/// @ingroup ECS
+	/// 
+	/// CGroupEntity will store query results; however, in some cases, it will re-query, such as when an entity is created or destroyed by CEntityManager, or when the notifyNeedQuery method is called.
+	/// 
+	/// Example of creating a group, that only queries entities containing CPrimiviteData.
+	/// @code
+	/// const u32 primitive[] = GET_LIST_ENTITY_DATA(CPrimiviteData);
+	/// CEntityGroup* group = entityManager->createGroup(primitive, 1);
+	/// @endcode
+	/// 
+	/// 
+	/// This method also creates a group that queries entities with CPrimiviteData, but only if those entities are visible (visible = true)
+	/// @code
+	/// const u32 primitive[] = GET_LIST_ENTITY_DATA(CPrimiviteData);
+	/// CEntityGroup* group = entityManager->createGroupFromVisible(primitive, 1);
+	/// @endcode
 	class SKYLICHT_API CEntityGroup
 	{
 	protected:

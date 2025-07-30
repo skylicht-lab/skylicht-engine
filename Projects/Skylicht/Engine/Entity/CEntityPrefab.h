@@ -29,6 +29,11 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief This object class is created to store data in an array of multiple CEntities.
+	/// @ingroup ECS
+	/// 
+	/// CEntityPrefab is used to store data when loading 3D files like .fbx, .dae, or .obj...
+	/// @see CMeshManager
 	class SKYLICHT_API CEntityPrefab
 	{
 	protected:

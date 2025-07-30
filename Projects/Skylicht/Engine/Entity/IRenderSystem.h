@@ -32,6 +32,16 @@ namespace Skylicht
 {
 	class CEntityManager;
 
+	/// @brief It serves as the interface for object classes that render 3D scenes
+	/// @ingroup ECS
+	/// 
+	/// Code example for adding a render system
+	/// @code
+	/// CEntityManager* entityManager = scene->getEntityManager();
+	/// entityManager->addRenderSystem<CSelectingRenderer>()
+	/// @endcode
+	/// 
+	/// After querying and updating data for Entities, the IRenderSystem will call functions like render, renderTransparent, etc., to display the data on the screen or output image.
 	class SKYLICHT_API IRenderSystem : public IEntitySystem
 	{
 	public:
