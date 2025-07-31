@@ -164,18 +164,21 @@ namespace Skylicht
 		setShadowCasting(shadowCasting);
 	}
 
-	void CRenderMesh::refreshModelAndMaterial()
+	void CRenderMesh::refreshModelAndMaterial(bool reloadModel)
 	{
-		CEntityPrefab* prefab = CMeshManager::getInstance()->loadModel(
-			m_meshFile.c_str(),
-			"",
-			m_loadNormal,
-			m_fixInverseNormal,
-			m_loadTexcoord2,
-			false);
+		if (reloadModel)
+		{
+			CEntityPrefab* prefab = CMeshManager::getInstance()->loadModel(
+				m_meshFile.c_str(),
+				"",
+				m_loadNormal,
+				m_fixInverseNormal,
+				m_loadTexcoord2,
+				false);
 
-		if (prefab != NULL)
-			initFromPrefab(prefab);
+			if (prefab != NULL)
+				initFromPrefab(prefab);
+		}
 
 		if (!m_materialFile.empty())
 		{
@@ -455,7 +458,7 @@ namespace Skylicht
 	void CRenderMesh::initMaterialFromFile(const char* material)
 	{
 		m_materialFile = material;
-		refreshModelAndMaterial();
+		refreshModelAndMaterial(false);
 	}
 
 	void CRenderMesh::initMaterial(ArrayMaterial& materials, bool cloneMaterial)

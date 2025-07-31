@@ -45,6 +45,7 @@ namespace Skylicht
 			CSubject<bool> Visible;
 			CSubject<bool> Static;
 			CSubject<bool> Lock;
+			CSubject<std::string> Template;
 
 			CSelectObject* SelectObject;
 			IObserver* Observer;

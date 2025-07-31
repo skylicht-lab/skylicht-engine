@@ -35,6 +35,7 @@ namespace Skylicht
 		{
 		protected:
 
+			std::string m_replaceTemplateId;
 			CObjectSerializable* m_data;
 			bool m_startLoading;
 
@@ -53,6 +54,8 @@ namespace Skylicht
 			virtual void onDestroy(GUI::CBase* base);
 
 			void applyTemplate(const char* path);
+
+			void replaceTemplate(const char* templateId, const char* path);
 		};
 	}
 }

@@ -317,6 +317,22 @@ namespace Skylicht
 			spaceApplyTemplate->applyTemplate(path);
 		}
 
+		void CEditor::initReplaceTemplateGUI(const char* templateId, const char* path)
+		{
+			m_waitingDialog = new GUI::CDialogWindow(m_canvas, 0.0f, 0.0f, 600.0f, 120.0f);
+			m_waitingDialog->setCaption(L"Apply Template");
+			m_waitingDialog->showCloseButton(false);
+			m_waitingDialog->setCenterPosition();
+			m_waitingDialog->bringToFront();
+
+			initWorkspace(m_waitingDialog, m_waitingDialog->getCaption());
+
+			CSpace* space = getWorkspace(m_waitingDialog);
+
+			CSpaceApplyTemplate* spaceApplyTemplate = dynamic_cast<CSpaceApplyTemplate*>(space);
+			spaceApplyTemplate->replaceTemplate(templateId, path);
+		}
+
 #ifdef BUILD_SKYLICHT_GRAPH
 		void CEditor::initBuildWalkMap(Graph::CGraphComponent* component)
 		{

@@ -85,6 +85,8 @@ namespace Skylicht
 
 			void initApplyTemplateGUI(const char* path);
 
+			void initReplaceTemplateGUI(const char* templateId, const char* path);
+
 #ifdef BUILD_SKYLICHT_GRAPH
 			void initBuildWalkMap(Graph::CGraphComponent* component);
 #endif

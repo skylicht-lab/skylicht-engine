@@ -70,7 +70,7 @@ namespace Skylicht
 
 	public:
 
-		void refreshModelAndMaterial();
+		void refreshModelAndMaterial(bool reloadModel = true);
 
 		void initFromPrefab(CEntityPrefab* prefab);
 

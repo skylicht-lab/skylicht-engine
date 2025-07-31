@@ -76,6 +76,7 @@ namespace Skylicht
 		const io::path relPath = fs->getFileDir(resource) + "/";
 		const io::path fullName = file->getFileName();
 
+		m_flipNormalMap = flipNormalMap;
 		m_modelName = fullName.c_str();
 
 		SObjMtl* currMtl = new SObjMtl();

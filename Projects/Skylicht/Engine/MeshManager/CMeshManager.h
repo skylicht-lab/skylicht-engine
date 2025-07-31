@@ -16,7 +16,26 @@ namespace Skylicht
 		DECLARE_SINGLETON(CMeshManager)
 
 	protected:
-		std::map<std::string, CEntityPrefab*> m_meshPrefabs;
+		struct SPrefabInfo
+		{
+			bool NormalMap;
+			bool FlipNormalMap;
+			bool Texcoord2;
+			bool Batching;
+
+			CEntityPrefab* Prefab;
+
+			SPrefabInfo()
+			{
+				NormalMap = true;
+				FlipNormalMap = true;
+				Texcoord2 = false;
+				Batching = false;
+				Prefab = NULL;
+			}
+		};
+
+		std::map<std::string, std::vector<SPrefabInfo*>> m_meshPrefabs;
 
 		std::vector<SMeshInstancing*> m_instancingData;
 

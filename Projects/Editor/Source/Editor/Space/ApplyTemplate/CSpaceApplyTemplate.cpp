@@ -61,7 +61,14 @@ namespace Skylicht
 
 			if (m_startLoading)
 			{
-				int numObject = CSceneImporter::beginReloadTemplate(CSceneController::getInstance()->getScene(), m_data);
+				int numObject = 0;
+				CScene* scene = CSceneController::getInstance()->getScene();
+
+				if (m_replaceTemplateId.empty())
+					numObject = CSceneImporter::beginReloadTemplate(scene, m_data);
+				else
+					numObject = CSceneImporter::beginReplaceTemplate(scene, m_replaceTemplateId.c_str(), m_data);
+
 				if (numObject == 0)
 				{
 					m_finished = true;
@@ -91,6 +98,22 @@ namespace Skylicht
 		{
 			CSceneController* sceneController = CSceneController::getInstance();
 
+			m_data = CSceneImporter::importTemplateToObject(sceneController->getZone(), path);
+			if (m_data)
+			{
+				m_startLoading = true;
+			}
+			else
+			{
+				m_finished = true;
+			}
+		}
+
+		void CSpaceApplyTemplate::replaceTemplate(const char* templateId, const char* path)
+		{
+			CSceneController* sceneController = CSceneController::getInstance();
+
+			m_replaceTemplateId = templateId;
 			m_data = CSceneImporter::importTemplateToObject(sceneController->getZone(), path);
 			if (m_data)
 			{

@@ -51,24 +51,50 @@ namespace Skylicht
 
 	void CMeshManager::releaseResource(const char* resource)
 	{
-		std::map<std::string, CEntityPrefab*>::iterator it = m_meshPrefabs.find(resource);
+		std::map<std::string, std::vector<SPrefabInfo*>>::iterator it = m_meshPrefabs.find(resource);
 		if (it != m_meshPrefabs.end())
 		{
-			delete it->second;
+			std::vector<SPrefabInfo*>& prefabInfo = it->second;
+			for (SPrefabInfo* p : prefabInfo)
+			{
+				delete p->Prefab;
+				delete p;
+			}
 			m_meshPrefabs.erase(it);
 		}
 	}
 
 	void CMeshManager::releasePrefab(CEntityPrefab* prefab)
 	{
-		std::map<std::string, CEntityPrefab*>::iterator i = m_meshPrefabs.begin(), end = m_meshPrefabs.end();
+		std::map<std::string, std::vector<SPrefabInfo*>>::iterator i = m_meshPrefabs.begin(), end = m_meshPrefabs.end();
 		while (i != end)
 		{
-			if (i->second == prefab)
+			std::vector<SPrefabInfo*>& prefabInfo = i->second;
+			std::vector<SPrefabInfo*>::iterator it = prefabInfo.begin(), itEnd = prefabInfo.end();
+
+			bool released = false;
+
+			while (it != itEnd)
 			{
-				delete i->second;
-				m_meshPrefabs.erase(i);
-				return;
+				SPrefabInfo* p = (*it);
+				if (p->Prefab == prefab)
+				{
+					delete p->Prefab;
+					delete p;
+					prefabInfo.erase(it);
+					released = true;
+					break;
+				}
+				++it;
+			}
+
+			if (released)
+			{
+				if (prefabInfo.size() == 0)
+				{
+					m_meshPrefabs.erase(i);
+					break;
+				}
 			}
 			++i;
 		}
@@ -76,13 +102,18 @@ namespace Skylicht
 
 	void CMeshManager::releaseAllPrefabs()
 	{
-		std::map<std::string, CEntityPrefab*>::iterator i = m_meshPrefabs.begin(), end = m_meshPrefabs.end();
+		std::map<std::string, std::vector<SPrefabInfo*>>::iterator i = m_meshPrefabs.begin(), end = m_meshPrefabs.end();
 		while (i != end)
 		{
-			delete (*i).second;
+			std::vector<SPrefabInfo*>& prefabInfo = i->second;
+			for (SPrefabInfo* p : prefabInfo)
+			{
+				delete p->Prefab;
+				delete p;
+			}
+			prefabInfo.clear();
 			++i;
 		}
-
 		m_meshPrefabs.clear();
 	}
 
@@ -130,11 +161,9 @@ namespace Skylicht
 
 	bool CMeshManager::isMeshLoaded(const char* resource)
 	{
-		std::map<std::string, CEntityPrefab*>::iterator it = m_meshPrefabs.find(resource);
+		std::map<std::string, std::vector<SPrefabInfo*>>::iterator it = m_meshPrefabs.find(resource);
 		if (it != m_meshPrefabs.end())
-		{
 			return true;
-		}
 		return false;
 	}
 
@@ -164,10 +193,20 @@ namespace Skylicht
 	CEntityPrefab* CMeshManager::loadModel(const char* resource, const char* texturePath, IMeshImporter* importer, bool loadNormalMap, bool flipNormalMap, bool loadTexcoord2, bool createBatching)
 	{
 		// find in cached
-		std::map<std::string, CEntityPrefab*>::iterator findCache = m_meshPrefabs.find(resource);
+		std::map<std::string, std::vector<SPrefabInfo*>>::iterator findCache = m_meshPrefabs.find(resource);
 		if (findCache != m_meshPrefabs.end())
 		{
-			return (*findCache).second;
+			std::vector<SPrefabInfo*>& prefabInfo = findCache->second;
+			for (SPrefabInfo* p : prefabInfo)
+			{
+				if (p->NormalMap == loadNormalMap &&
+					p->FlipNormalMap == flipNormalMap &&
+					p->Texcoord2 == loadTexcoord2 &&
+					p->Batching == createBatching)
+				{
+					return p->Prefab;
+				}
+			}
 		}
 
 		CEntityPrefab* output = NULL;
@@ -191,7 +230,16 @@ namespace Skylicht
 			if (importer->loadModel(resource, output, loadNormalMap, flipNormalMap, loadTexcoord2, createBatching) == true)
 			{
 				// cached resource
-				m_meshPrefabs[resource] = output;
+				std::vector<SPrefabInfo*>& prefabInfo = m_meshPrefabs[resource];
+
+				SPrefabInfo* p = new SPrefabInfo();
+				p->NormalMap = loadNormalMap;
+				p->FlipNormalMap = flipNormalMap;
+				p->Texcoord2 = loadTexcoord2;
+				p->Batching = createBatching;
+				p->Prefab = output;
+
+				prefabInfo.push_back(p);
 			}
 			else
 			{

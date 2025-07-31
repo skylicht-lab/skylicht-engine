@@ -45,7 +45,8 @@ namespace Skylicht
 			Static(false),
 			Lock(false),
 			SelectObject(NULL),
-			Observer(NULL)
+			Observer(NULL),
+			Template("")
 		{
 
 		}
@@ -76,6 +77,7 @@ namespace Skylicht
 			Visible.removeAllObserver();
 			Static.removeAllObserver();
 			Lock.removeAllObserver();
+			Template.removeAllObserver();
 
 			Name = object->getName();
 			Enable = object->isEnable();
@@ -94,6 +96,15 @@ namespace Skylicht
 			ui->addCheckBox(layout, L"Visible", &Visible);
 			ui->addCheckBox(layout, L"Static", &Static);
 			ui->addCheckBox(layout, L"Lock", &Lock);
+
+			if (object->isTemplateAsset())
+			{
+				Template.set(object->getTemplateAsset());
+
+				std::vector<std::string> exts;
+				exts.push_back("template");
+				ui->addInputFile(layout, L"Template", &Template, exts);
+			}
 
 			Name.addObserver(new CObserver([&, target = object](ISubject* subject, IObserver* from)
 				{
@@ -189,12 +200,37 @@ namespace Skylicht
 					}
 				}), true);
 
+			Template.addObserver(new CObserver([&, target = object](ISubject* subject, IObserver* from)
+				{
+					if (from != this)
+					{
+						CSubject<std::string>* value = (CSubject<std::string>*) subject;
+
+						std::string path = value->get();
+						std::string templateId = target->getTemplateID();
+						std::string oldPath = target->getTemplateAsset();
+
+						GUI::CCanvas* canvas = CEditor::getInstance()->getRootCanvas();
+
+						GUI::CMessageBox* msb = new GUI::CMessageBox(canvas, GUI::CMessageBox::YesNo);
+						msb->setMessage("Are you sure to save override this template?\nYou can't undo this action", path);
+						msb->OnYes = [p = path, id = templateId](GUI::CBase* base)
+							{
+								CEditor::getInstance()->initReplaceTemplateGUI(id.c_str(), p.c_str());
+							};
+						msb->OnNo = [&, p = oldPath](GUI::CBase* base)
+							{
+								Template.set(p);
+								Template.notify(this);
+							};
+					}
+				}), true);
+
 			group->setExpand(true);
 		}
 
 		void CGameObjectEditor::update()
 		{
-
 		}
 
 		void CGameObjectEditor::onNotify(ISubject* subject, IObserver* from)

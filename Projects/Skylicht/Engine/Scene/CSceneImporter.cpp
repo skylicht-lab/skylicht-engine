@@ -498,6 +498,12 @@ namespace Skylicht
 	int CSceneImporter::beginReloadTemplate(CScene* scene, CObjectSerializable* templateData)
 	{
 		std::string templateId = templateData->get("templateId", std::string(""));
+		return beginReplaceTemplate(scene, templateId.c_str(), templateData);
+	}
+
+	int CSceneImporter::beginReplaceTemplate(CScene* scene, const char* oldTemplateId, CObjectSerializable* templateData)
+	{
+		std::string templateId = oldTemplateId;
 
 		std::stack<CContainerObject*> stack;
 

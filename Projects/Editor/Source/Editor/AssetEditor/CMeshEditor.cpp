@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CMeshEditor.h"
 #include "Activator/CEditorActivator.h"
 #include "Editor/Space/Property/CSpaceProperty.h"
+#include "Editor/SpaceController/CSceneController.h"
 
 #include "MeshManager/CMeshManager.h"
 #include "Material/CMaterialManager.h"
@@ -68,6 +69,21 @@ namespace Skylicht
 			GUI::CCollapsibleGroup* group = ui->addGroup("Mesh Exporter", this);
 			GUI::CBoxLayout* layout = ui->createBoxLayout(group);
 			serializableToControl(m_settings, ui, layout);
+
+			layout->addSpace(5.0f);
+
+			std::string reloadPath = path;
+			ui->addButton(layout, L"Reload mesh in scene")->OnPress = [&, p = reloadPath](GUI::CBase* button)
+				{
+					CMeshManager* meshMgr = CMeshManager::getInstance();
+					if (meshMgr->isMeshLoaded(p.c_str()))
+					{
+						// unload mesh & reload
+						meshMgr->releaseResource(p.c_str());
+						CSceneController::getInstance()->doMeshChange(p.c_str());
+					}
+				};
+
 			group->setExpand(true);
 
 			group = ui->addGroup("Exporter", this);
@@ -87,7 +103,6 @@ namespace Skylicht
 					if (prefab != NULL)
 					{
 						CMeshManager::getInstance()->exportModel(prefab->getEntities(), prefab->getNumEntities(), outout.c_str());
-						CMeshManager::getInstance()->releasePrefab(prefab);
 
 						CAssetImporter importer;
 						importer.add(outout.c_str());
