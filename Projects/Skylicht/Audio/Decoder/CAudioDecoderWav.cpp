@@ -187,6 +187,7 @@ namespace Skylicht
 			}
 			
 			// silent buffer
+			memset(outputBuffer, 0, bufferSize);
 			memset(decodeBuffer, 0, decodeSize);
 			
 			// need wait data
