@@ -107,6 +107,8 @@ namespace Skylicht
 			m_source = NULL;
 			m_decoder = NULL;
 
+			m_allocBufferSize = 0;
+			m_bufferSize = 0;
 			m_bufferLengthTime = 0.0f;
 			m_currentBuffer = 0;
 			m_numBuffer = 0;
@@ -126,18 +128,19 @@ namespace Skylicht
 			if (m_source)
 				m_driver->destroyDriverSource(m_source);
 
-			for (int i = 0; i < m_numBuffer; i++)
-			{
-				if (m_buffer[i] != NULL)
-					delete m_buffer[i];
-			}
-
 			if (m_decodeBuffer)
 				delete m_decodeBuffer;
 
 			if (m_numBuffer > 0)
+			{
+				for (int i = 0; i < m_numBuffer; i++)
+				{
+					if (m_buffer[i] != NULL)
+						delete m_buffer[i];
+				}
 				delete m_buffer;
-
+			}
+			
 			if (m_decoder)
 				delete m_decoder;
 
@@ -147,6 +150,35 @@ namespace Skylicht
 			delete m_mutex;
 		}
 
+		void CAudioEmitter::updateSourceBuffer()
+		{
+			bool reallocation = false;
+			
+			if (m_allocBufferSize < m_source->getBufferSize())
+				reallocation = true;
+			
+			m_bufferSize = m_source->getBufferSize();
+			m_bufferLengthTime = m_source->getBufferLength();
+
+			if (reallocation)
+			{
+				if (m_decodeBuffer)
+					delete m_decodeBuffer;
+				m_decodeBuffer = new unsigned char[(int)(m_bufferSize * SKYLICHTAUDIO_MAX_PITCH)];
+				
+				for (int i = 0; i < m_numBuffer; i++)
+				{
+					if (m_buffer[i])
+						delete m_buffer[i];
+					
+					m_buffer[i] = new unsigned char[m_bufferSize];
+					memset(m_buffer[i], 0, m_bufferSize);
+				}
+				
+				m_allocBufferSize = m_bufferSize;
+			}
+		}
+	
 		EStatus CAudioEmitter::initEmitter()
 		{
 			// state 0
@@ -203,7 +235,6 @@ namespace Skylicht
 				// init decode
 				if (status == Success)
 				{
-					// get param
 					SSourceParam sourceParam;
 					STrackParams trackParam;
 
@@ -215,22 +246,13 @@ namespace Skylicht
 
 					// init decode buffer
 					m_numBuffer = sourceParam.NumBuffer;
-					m_bufferSize = m_source->getBufferSize();
+					
 					m_buffer = new unsigned char* [m_numBuffer];
-
-					// calc buffer length
-					m_bufferLengthTime = m_source->getBufferLength();
-
-					// init decode
-					m_decodeBuffer = new unsigned char[(int)(m_bufferSize * SKYLICHTAUDIO_MAX_PITCH)];
-
-					// silent buffer
 					for (int i = 0; i < m_numBuffer; i++)
-					{
-						m_buffer[i] = new unsigned char[m_bufferSize];
-						memset(m_buffer[i], 0, m_bufferSize);
-					}
-
+						m_buffer[i] = NULL;
+						
+					updateSourceBuffer();
+					
 					m_state = ISoundSource::StateStopped;
 				}
 				else
@@ -314,6 +336,11 @@ namespace Skylicht
 					m_source->setRollOff(m_rollOff);
 				}
 
+				if (m_bufferSize != m_source->getBufferSize())
+				{
+					// update buffer when driver is changed duration
+					updateSourceBuffer();
+				}
 			}
 
 			// force play (fix play when source is not init)

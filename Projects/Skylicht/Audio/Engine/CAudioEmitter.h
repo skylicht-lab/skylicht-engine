@@ -67,6 +67,7 @@ namespace Skylicht
 			int m_currentBuffer;
 			int m_numBuffer;
 			int m_bufferSize;
+			int m_allocBufferSize;
 			
 			bool m_init;
 			int m_initState;
@@ -94,6 +95,8 @@ namespace Skylicht
 		protected:
 			
 			EStatus initEmitter();
+			
+			void updateSourceBuffer();
 			
 		public:
 			CAudioEmitter(IStream* stream, IAudioDecoder::EDecoderType type, ISoundDriver* driver);
