@@ -10,6 +10,36 @@
 
 namespace Skylicht
 {
+	/// @brief This object class manages, load and converts model resources like .fbx, .dae, and .obj into a CEntityPrefab.
+	/// @ingroup Mesh
+	/// 
+	/// And, you can then use the CRenderMesh component to display this model on the scene.
+	/// 
+	/// @code
+	/// std::string folder = "SampleModels/BlendShape/";
+	/// std::string modelPath = "SampleModels/BlendShape/Cat.fbx";
+	/// std::string materialPath = "SampleModels/BlendShape/Cat.mat";
+	/// 
+	/// CEntityPrefab* model = CMeshManager::getInstance()->loadModel(modelPath.c_str(), folder.c_str());
+	/// if (model)
+	/// {
+	/// 	CGameObject* renderObj = scene->createEmptyObject();
+	/// 
+	/// 	renderer = renderObj->addComponent<CRenderMesh>();
+	/// 	renderer->initFromPrefab(model);
+	/// 
+	/// 	std::vector<std::string> folders;
+	/// 	ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial(
+	/// 		materialPath.c_str(),
+	/// 		true,
+	/// 		folders);
+	/// 
+	/// 	renderer->initMaterial(materials);
+	/// 
+	/// 	renderObj->addComponent<CIndirectLighting>();
+	/// }
+	/// @endcode
+	/// 
 	class SKYLICHT_API CMeshManager
 	{
 	public:

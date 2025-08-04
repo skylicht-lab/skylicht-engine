@@ -29,6 +29,9 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief This is DATA linked to an entity, allowing you to look up the component of the game object that originally created and is now managing the entity.
+	/// @ingroup ECS
+	/// @see CEntityHandler
 	class SKYLICHT_API CEntityHandleData : public IEntityData
 	{
 	public:

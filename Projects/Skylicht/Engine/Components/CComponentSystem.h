@@ -36,6 +36,8 @@ namespace Skylicht
 	class CGameObject;
 	class CDependentComponent;
 
+	/// @brief This is an abstract class that describes a component that is called to update continuously. You can add multiple components to a GameObject to handle its updates.
+	/// @ingroup GameObject
 	class SKYLICHT_API CComponentSystem : public IActivatorObject
 	{
 	protected:

@@ -29,6 +29,11 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief In the Skylicht-Engine, any components with the functionality to manage multiple entities like creating or deleting entities will inherit from the CEntityHandler class.
+	/// 
+	/// And, classes that inherit from CEntityHandler will override the spawn() method to add the necessary data to it.
+	/// 
+	/// @ingroup ECS
 	class SKYLICHT_API CEntityHandler : public CComponentSystem
 	{
 	protected:

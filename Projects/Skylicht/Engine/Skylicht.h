@@ -54,6 +54,11 @@ namespace irr
   * @brief This group contains objects used to support ECS architecture.
   */
 
+/**
+  * @defgroup Mesh Mesh Manager
+  * @brief This group includes object classes used to load models such as .fbx, .dae, and .obj into the engine, as well as to export them to other formats.
+  */
+
 /*! \mainpage Skylicht Engine API documentation
  *
  * \section intro Introduction
