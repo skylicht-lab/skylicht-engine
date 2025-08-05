@@ -28,6 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Editor/Space/Hierarchy/CHierarchyController.h"
 #include "Editor/SpaceController/CSceneController.h"
 #include "Selection/CSelection.h"
+#include "AssetManager/CAssetImporter.h"
 
 #ifdef BUILD_SKYLICHT_GRAPH
 
@@ -86,6 +87,10 @@ namespace Skylicht
 
 								CMeshManager::getInstance()->exportModel(prefab.getEntities(), prefab.getNumEntities(), path.c_str());
 
+								CAssetImporter i;
+								i.add(path.c_str());
+								i.importAll();
+
 								CEditor::getInstance()->refresh();
 							};
 					};
@@ -122,6 +127,11 @@ namespace Skylicht
 							{
 								CGraphComponent* graph = (CGraphComponent*)m_component;
 								graph->saveWalkMap(path.c_str());
+
+								CAssetImporter i;
+								i.add(path.c_str());
+								i.importAll();
+
 								CEditor::getInstance()->refresh();
 							};
 					};

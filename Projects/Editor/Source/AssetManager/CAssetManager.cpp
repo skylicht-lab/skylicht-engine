@@ -398,12 +398,12 @@ namespace Skylicht
 					else
 					{
 						fs::remove(path);
-						
+
 						std::string meta = path + ".meta";
 						if (fs::exists(meta.c_str()))
 							fs::remove(meta.c_str());
 					}
-					
+
 					m_pathToFile.erase(it);
 
 					delete node;
@@ -427,7 +427,12 @@ namespace Skylicht
 			std::string shortPath = getShortPath(path);
 			SFileNode* node = getFileNodeByPath(shortPath.c_str());
 			if (node == NULL)
+			{
+				char log[1024];
+				sprintf(log, "[CAssetManager] renameAsset '%s' is not yet imported", shortPath.c_str());
+				os::Printer::log(log);
 				return false;
+			}
 
 			std::string newPath = CPath::getFolderPath(path);
 			newPath += "/";
@@ -439,7 +444,7 @@ namespace Skylicht
 			std::string newMeta = newPath + ".meta";
 			if (fs::exists(meta.c_str()))
 				fs::rename(meta.c_str(), newMeta.c_str());
-			
+
 			node->FullPath = newPath;
 			node->Path = getShortPath(newPath.c_str());
 

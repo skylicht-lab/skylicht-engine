@@ -81,6 +81,10 @@ namespace Skylicht
 			float m_waitDelay;
 			float m_lifeTime;
 
+			float m_reset;
+			float m_resetIntervalMin;
+			float m_resetIntervalMax;
+
 			CZone* m_zone;
 
 			EEmitter m_type;
@@ -145,7 +149,7 @@ namespace Skylicht
 			{
 				return m_lastTank;
 			}
-			
+
 			inline void setTankValue(int tank)
 			{
 				m_lastTank = tank;
@@ -212,6 +216,20 @@ namespace Skylicht
 			inline float getForceMax()
 			{
 				return m_forceMax;
+			}
+
+			inline void setResetTankInterval(float min, float max)
+			{
+				if (min > max)
+				{
+					m_resetIntervalMin = max;
+					m_resetIntervalMax = min;
+				}
+				else
+				{
+					m_resetIntervalMin = min;
+					m_resetIntervalMax = max;
+				}
 			}
 
 			inline void setEmitFullZone(bool b)

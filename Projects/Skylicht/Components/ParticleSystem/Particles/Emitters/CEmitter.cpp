@@ -51,7 +51,10 @@ namespace Skylicht
 			m_zone(NULL),
 			m_delay(0.0f),
 			m_waitDelay(0.0f),
-			m_lifeTime(0.0f)
+			m_lifeTime(0.0f),
+			m_reset(0.0f),
+			m_resetIntervalMin(0.0f),
+			m_resetIntervalMax(0.0f)
 		{
 			m_fraction = random(0.0f, 1.0f);
 		}
@@ -98,6 +101,11 @@ namespace Skylicht
 			object->autoRelease(delay);
 			object->autoRelease(new CFloatProperty(object, "flowLifeTime", m_flowLifeTime, 0.0f));
 
+			CFloatProperty* interval = new CFloatProperty(object, "resetIntervalMin", m_resetIntervalMin, 0.0f);
+			interval->setUISpace(10.0f);
+			object->autoRelease(interval);
+			object->autoRelease(new CFloatProperty(object, "resetIntervalMax", m_resetIntervalMax, 0.0f));
+
 			return object;
 		}
 
@@ -118,18 +126,34 @@ namespace Skylicht
 			m_forceMax = object->get<float>("forceMax", 1.0f);
 			m_delay = object->get<float>("delay", 0.0f);
 			m_flowLifeTime = object->get<float>("flowLifeTime", 0.0f);
+
+			m_resetIntervalMin = object->get<float>("resetIntervalMin", 0.0f);
+			m_resetIntervalMax = object->get<float>("resetIntervalMax", 0.0f);
+			m_reset = random(m_resetIntervalMin, m_resetIntervalMax);
 		}
 
 		u32 CEmitter::updateNumber(float deltaTime)
 		{
+			float tsecond = deltaTime * 0.001f;
+
+			if (m_reset > 0.0f)
+			{
+				m_reset = m_reset - tsecond;
+				if (m_reset <= 0.0f)
+				{
+					resetTank();
+					m_reset = random(m_resetIntervalMin, m_resetIntervalMax);
+				}
+			}
+
 			if (m_waitDelay > 0.0f)
 			{
-				m_waitDelay = m_waitDelay - deltaTime * 0.001f;
+				m_waitDelay = m_waitDelay - tsecond;
 				return 0;
 			}
 
 			int nbBorn = 0;
-			m_lifeTime = m_lifeTime + deltaTime * 0.001f;
+			m_lifeTime = m_lifeTime + tsecond;
 
 			if (m_flow <= 0.0f)
 			{
@@ -144,7 +168,7 @@ namespace Skylicht
 				}
 				else
 				{
-					m_fraction += m_flow * deltaTime * 0.001f;
+					m_fraction += m_flow * tsecond;
 					nbBorn = static_cast<int>(m_fraction);
 					if (m_tank > 0)
 					{
@@ -173,14 +197,16 @@ namespace Skylicht
 
 		u32 CEmitter::updateBornData(SBornData& data, float deltaTime)
 		{
+			float tsecond = deltaTime * 0.001f;
+
 			if (data.WaitDelay > 0.0f)
 			{
-				data.WaitDelay = data.WaitDelay - deltaTime * 0.001f;
+				data.WaitDelay = data.WaitDelay - tsecond;
 				return 0;
 			}
 
 			int nbBorn = 0;
-			data.LifeTime = data.LifeTime + deltaTime * 0.001f;
+			data.LifeTime = data.LifeTime + tsecond;
 
 			if (m_flow <= 0.0f)
 			{
@@ -195,7 +221,7 @@ namespace Skylicht
 				}
 				else
 				{
-					data.Fraction += m_flow * deltaTime * 0.001f;
+					data.Fraction += m_flow * tsecond;
 					nbBorn = static_cast<int>(data.Fraction);
 					if (data.Tank > 0)
 					{
