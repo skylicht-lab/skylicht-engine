@@ -28,6 +28,62 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief This is the object class that performs the draw call onto a texture. It's used in cases where you need to display planar reflections.
+	/// @ingroup RP
+	/// 
+	/// The setCustomCamera method is used to set up the camera for rendering, for example, a reflection camera with a viewing direction symmetrical to the current rendering camera.
+	/// 
+	/// Here's an example of a shader that needs to get parameters from RenderToTexture.
+	/// @code
+	/// <shaderConfig name="WaterPlanarReflection" baseShader="SOLID">
+	/// <uniforms>
+	/// 	<vs>
+	/// 		...
+	/// 		<uniform name="uRTTMatrix" type="RENDER_TEXTURE_MATRIX" valueIndex="0" value="0" float="16" matrix = "true"/>
+	/// 	</vs>
+	/// 	<fs>
+	/// 		...
+	/// 		<uniform name="uTexReflect" type="DEFAULT_VALUE" value="3" float="1" directX="false"/>
+	/// 	</fs>
+	/// </uniforms>
+	/// <resources>
+	/// 	<resource name="uTexReflect" type="RTT0"/>
+	/// 	...
+	/// </resources>
+	/// <customUI>
+	/// 	...
+	/// </customUI>
+	///	...
+	/// </shaderConfig>
+	/// @endcode
+	/// 
+	/// - In which the **RENDER_TEXTURE_MATRIX uniform type** will return the matrix that transforms 3D world into 2D coordinates already projected onto the texture.
+	/// 
+	/// - And **resource type RTT0** will help the engine find the source texture that has been Rendered To Texture.
+	/// 
+	/// When you initialize a CRenderToTextureRP with id=1, the resource type will be RTT1, and RENDER_TEXTURE_MATRIX valueIndex=1.
+	/// 
+	/// You can attach it to the main render pipeline and *setEnable* it whenever you need to use RTT.
+	/// 
+	/// @code
+	/// // 1st
+	/// m_shadowMapRendering = new CShadowMapRP();
+	/// m_shadowMapRendering->initRender(w, h);
+
+	/// m_rttRP = new CRenderToTextureRP(0, video::ECF_A8R8G8B8, core::dimension2du(1024, 1024));
+	/// m_rttRP->initRender(w, h);
+	/// m_rttRP->setEnable(false);
+
+	/// // 2rd
+	/// m_forwardRP = new CForwardRP(!postEffect);
+	/// m_forwardRP->enableUpdateEntity(false);
+
+	/// // link rp
+	/// m_shadowMapRendering->setNextPipeLine(m_rttRP);
+	/// m_rttRP->setNextPipeLine(m_forwardRP);
+	/// @endcode
+	/// 
+	/// @see CShaderRTT
 	class SKYLICHT_API CRenderToTextureRP : public CBaseRP
 	{
 	protected:

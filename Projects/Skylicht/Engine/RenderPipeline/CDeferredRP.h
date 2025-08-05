@@ -29,6 +29,63 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief This object class will perform draw commands using "Deferred rendering"
+	/// @ingroup RP
+	/// 
+	/// You can find more references here: https://learnopengl.com/Advanced-Lighting/Deferred-Shading
+	/// 
+	/// Only materials with the *deferred=true* property will be drawn in this method.
+	/// @code
+	/// <shaderConfig name="Color" baseShader="SOLID" deferred="true">
+	/// @endcode
+	/// So, the render pipeline only draws shaders located in the "Assets/BuiltIn/Shader/SpecularGlossiness/Deferred" folder.
+	/// You can still combine drawing by first using Deferred rendering, and then drawing materials with Forward shaders afterward.
+	/// 
+	/// The advantage of this method is its support for real-time lights (CPointLight, CSpotLight, CDirectionalLight) and lighting. 
+	/// However, on smartphone devices like iOS and Android, it causes rapid overheating. 
+	/// Therefore, Deferred Rendering should only be used on PC.
+	/// 
+	/// Note that you need to set up an additional Shadow pass before Deferred Rendering.
+	/// 
+	/// @code
+	/// CScene* scene = new CScene();
+	/// CZone* zone = scene->createZone();
+	/// ...
+	/// // load or setup a scene
+	/// ...
+	/// ...
+	/// // camera
+	/// CGameObject* camObj = zone->createEmptyObject();
+	/// CCamera* camera = camObj->addComponent<CCamera>();
+	/// camera->setPosition(core::vector3df(0.0f, 1.5f, 4.0f));
+	/// camera->lookAt(
+	/// 	core::vector3df(0.0f, 0.0f, 0.0f),  // look at target position
+	/// 	core::vector3df(0.0f, 1.0f, 0.0f)   // head up vector
+	/// );
+	/// 
+	/// // init render pipeline
+	/// CBaseApp* app = getApplication();
+	/// u32 w = app->getWidth();
+	/// u32 h = app->getHeight();
+	/// 
+	/// CShadowMapRP* shadowRP = new CShadowMapRP();
+	/// shadowRP->initRender(w, h);
+	/// 
+	/// CDeferredRP* deferredRP = new CDeferredRP();
+	/// deferredRP->initRender(w, h);
+	/// 
+	/// shadowRP->setNextPipeLine(deferredRP);
+	/// 
+	/// // render function
+	/// shadowRP->render(
+	/// 	NULL, // render target is screen
+	/// 	camera, // the camera
+	/// 	scene->getEntityManager(), // all entities in scene
+	/// 	core::recti() // the viewport is fullscreen
+	/// );
+	/// @endcode
+	/// 
+	/// @see CShadowMapRP, CForwardRP
 	class SKYLICHT_API CDeferredRP :
 		public CBaseRP,
 		public IEventReceiver

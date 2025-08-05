@@ -12,7 +12,7 @@ float3 spotlight(
 	// Lighting	
 	float3 direction = lightPosition - position;
 	float distance = length(direction);
-	float attenuation = max(0.0, 1.0 - (distance * lightAttenuation.z)) * lightColor.a;
+	float attenuation = max(0.0, 1.0 - (distance * lightAttenuation.z * 0.5)) * lightColor.a;
 	
 	float3 lightDir = normalize(direction);
 	
@@ -24,7 +24,7 @@ float3 spotlight(
 	else
 	{
 		float spotValue = smoothstep(lightAttenuation.x, lightAttenuation.y, spotDot);
-		attenuation = pow(spotValue, lightAttenuation.w);
+		attenuation *= pow(spotValue, lightAttenuation.w);
 	}
 	
 	float NdotL = max(0.0, dot(lightDir, normal));

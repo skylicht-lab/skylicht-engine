@@ -26,7 +26,7 @@ vec3 spotlightShadow(
 {
 	vec3 direction = lightPosition - position;
 	float distance = length(direction);
-	float attenuation = max(0.0, 1.0 - (distance * lightAttenuation.z)) * lightColor.a;
+	float attenuation = max(0.0, 1.0 - (distance * lightAttenuation.z * 0.5)) * lightColor.a;
 	vec3 lightDir = normalize(direction);
 	float spotDot = dot(lightDir, uLightDirection.xyz);
 	if (spotDot < lightAttenuation.x)
@@ -36,7 +36,7 @@ vec3 spotlightShadow(
 	else
 	{
 		float spotValue = smoothstep(lightAttenuation.x, lightAttenuation.y, spotDot);
-		attenuation = pow(spotValue, lightAttenuation.w);
+		attenuation *= pow(spotValue, lightAttenuation.w);
 	}
 	float NdotL = max(0.0, dot(lightDir, normal));
 	vec3 v = camPosition - position;

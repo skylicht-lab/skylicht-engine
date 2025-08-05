@@ -29,6 +29,14 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief This object class will perform draw commands using "Forwarder rendering"
+	/// @ingroup RP
+	/// 
+	/// This is the most basic rendering style, where lighting is calculated directly from the shader.
+	/// Because of this, forward shaders generally only support one directional light (CDirectionalLight).
+	/// Any other complex lighting is baked into a lightmap, and the shader computes all the visual output.
+	/// 
+	/// @see CShadowMapRP, CDeferredRP
 	class SKYLICHT_API CForwardRP : public CBaseRP
 	{
 	protected:

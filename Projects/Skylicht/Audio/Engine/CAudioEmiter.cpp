@@ -414,7 +414,7 @@ namespace Skylicht
 						int pitchSize = (int)(m_bufferSize * m_pitch);
 
 						memset(m_buffer[m_currentBuffer], 0, m_allocBufferSize);
-						memset(m_decodeBuffer, 0, m_allocBufferSize * SKYLICHTAUDIO_MAX_PITCH);
+						memset(m_decodeBuffer, 0, (int)(m_allocBufferSize * SKYLICHTAUDIO_MAX_PITCH));
 						
 						decodeResult = m_decoder->decode(m_decodeBuffer, pitchSize);
 

@@ -25,7 +25,7 @@ namespace Skylicht
 	/// {
 	/// 	CGameObject* renderObj = scene->createEmptyObject();
 	/// 
-	/// 	renderer = renderObj->addComponent<CRenderMesh>();
+	/// 	CRenderMesh* renderer = renderObj->addComponent<CRenderMesh>();
 	/// 	renderer->initFromPrefab(model);
 	/// 
 	/// 	std::vector<std::string> folders;

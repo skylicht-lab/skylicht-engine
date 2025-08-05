@@ -59,6 +59,11 @@ namespace irr
   * @brief This group includes object classes used to load models such as .fbx, .dae, and .obj into the engine, as well as to export them to other formats.
   */
 
+/**
+  * @defgroup RP Render pipeline
+  * @brief This group includes includes object classes that execute 3D scene rendering to the screen or to a texture.
+  */
+
 /*! \mainpage Skylicht Engine API documentation
  *
  * \section intro Introduction

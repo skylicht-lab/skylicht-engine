@@ -38,7 +38,7 @@ float3 spotlightShadow(
 	else
 	{
 		float spotValue = smoothstep(lightAttenuation.x, lightAttenuation.y, spotDot);
-		attenuation = pow(spotValue, lightAttenuation.w);
+		attenuation *= pow(spotValue, lightAttenuation.w);
 	}
 	float NdotL = max(0.0, dot(lightDir, normal));
 	float3 v = camPosition - position;
