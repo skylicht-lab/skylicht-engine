@@ -168,8 +168,10 @@ namespace Skylicht
 			{
 				parent = parent->getParent();
 				parentPrefabId = parent->getTemplateID();
+
 				if (parentPrefabId == m_templateId)
 					obj = parent;
+
 				if (!parentPrefabId.empty() && parentPrefabId != m_templateId)
 				{
 					// if parent is in another template
@@ -177,6 +179,10 @@ namespace Skylicht
 					break;
 				}
 			} while (parentPrefabId == m_templateId);
+
+			// check again to make sure parent is template object
+			if (!obj->isTemplateAsset())
+				obj = this;
 		}
 
 		return obj;

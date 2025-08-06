@@ -79,7 +79,6 @@ namespace Skylicht
 			{
 				int mouseX = event.MouseInput.X;
 				int mouseY = event.MouseInput.Y;
-				printf("%d %d\n", mouseX, mouseY);
 
 				m_mousePosition.set(mouseX, mouseY);
 				if (event.MouseInput.Event == EMIE_MOUSE_MOVED)
@@ -97,30 +96,33 @@ namespace Skylicht
 				}
 				else if (event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
 				{
-					CSceneHistory* history = CSceneController::getInstance()->getHistory();
-					history->enableAddSelectHistory(false);
-
-					m_current.clear();
-
-					if (!m_altPressed)
+					if (m_leftMousePressed)
 					{
-						if (isDragSelect())
+						CSceneHistory* history = CSceneController::getInstance()->getHistory();
+						history->enableAddSelectHistory(false);
+
+						m_current.clear();
+
+						if (!m_altPressed)
 						{
-							doMultiSelect();
+							if (isDragSelect())
+							{
+								doMultiSelect();
+							}
+							else
+							{
+								doSingleSelect();
+							}
 						}
-						else
-						{
-							doSingleSelect();
-						}
+
+						// add select history
+						history->enableAddSelectHistory(true);
+
+						for (CGameObject* obj : m_current)
+							history->beginSaveHistory(obj);
+
+						history->addSelectHistory();
 					}
-
-					// add select history
-					history->enableAddSelectHistory(true);
-
-					for (CGameObject* obj : m_current)
-						history->beginSaveHistory(obj);
-
-					history->addSelectHistory();
 
 					m_leftMousePressed = false;
 					m_allowDragSelect = true;
