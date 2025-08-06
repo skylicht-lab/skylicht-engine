@@ -124,6 +124,7 @@ namespace Skylicht
 				m_tank = 0;
 				m_flow = 0;
 				m_lifeTime = 0.0f;
+				m_reset = 0.0f;
 			}
 
 			inline void setTank(int tank)
@@ -132,13 +133,7 @@ namespace Skylicht
 				m_lastTank = tank;
 			}
 
-			inline void resetTank()
-			{
-				setTank(m_lastTank);
-				setFlow(m_lastFlow);
-				m_waitDelay = m_delay;
-				m_lifeTime = 0.0f;
-			}
+			void resetTank();
 
 			inline int getTank()
 			{

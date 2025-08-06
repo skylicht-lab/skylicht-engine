@@ -546,8 +546,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			if (lParam & 0x1000000)
 				event.KeyInput.Key = irr::KEY_RCONTROL;
 		}
+
+		bool isAltKey = false;
 		if (event.KeyInput.Key == irr::KEY_MENU)
 		{
+			isAltKey = true;
 			event.KeyInput.Key = (irr::EKEY_CODE)MapVirtualKey(((lParam >> 16) & 255), MY_MAPVK_VSC_TO_VK_EX);
 			if (lParam & 0x1000000)
 				event.KeyInput.Key = irr::KEY_RMENU;
@@ -584,7 +587,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			dev->postEventFromUser(event);
 
 		if (message == WM_SYSKEYDOWN || message == WM_SYSKEYUP)
+		{
+			if (isAltKey)
+			{
+				// no need to focus MENU in Skylicht
+				return 0;
+			}
+
 			return DefWindowProc(hWnd, message, wParam, lParam);
+		}
 		else
 			return 0;
 	}

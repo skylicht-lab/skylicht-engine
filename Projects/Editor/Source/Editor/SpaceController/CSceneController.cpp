@@ -946,7 +946,11 @@ namespace Skylicht
 			CHierachyNode* parentNode = m_hierachyNode->getNodeByTag(p);
 			if (parentNode != NULL)
 			{
+				parentNode->getGUINode()->expand(false);
+
 				node = buildHierarchyData(newObject, parentNode);
+
+				setModify(parentNode);
 				if (m_spaceHierarchy != NULL)
 					m_spaceHierarchy->addToTreeNode(node);
 			}
@@ -1000,6 +1004,8 @@ namespace Skylicht
 			CHierachyNode* parentNode = m_hierachyNode->getNodeByTag(p);
 			if (parentNode != NULL)
 			{
+				parentNode->getGUINode()->expand(false);
+
 				CHierachyNode* node = parentNode->addChild();
 				node->setName(newObject->getName());
 				node->setIcon(GUI::ESystemIcon::Res3D);
@@ -1007,6 +1013,8 @@ namespace Skylicht
 
 				setNodeEvent(node);
 				CHierarchyController::updateObjectToUI(newObject, node);
+
+				setModify(parentNode);
 
 				if (m_spaceHierarchy != NULL)
 					m_spaceHierarchy->addToTreeNode(node);
@@ -1031,6 +1039,8 @@ namespace Skylicht
 			CHierachyNode* parentNode = m_hierachyNode->getNodeByTag(p);
 			if (parentNode != NULL)
 			{
+				parentNode->getGUINode()->expand(false);
+
 				CHierachyNode* node = parentNode->addChild();
 				node->setName(newObject->getName());
 				node->setIcon(GUI::ESystemIcon::Folder);
@@ -1038,6 +1048,8 @@ namespace Skylicht
 
 				setNodeEvent(node);
 				CHierarchyController::updateObjectToUI(newObject, node);
+
+				setModify(parentNode);
 
 				if (m_spaceHierarchy != NULL)
 					m_spaceHierarchy->addToTreeNode(node);
@@ -1070,6 +1082,8 @@ namespace Skylicht
 			CHierachyNode* parentNode = m_hierachyNode->getNodeByTag(p);
 			if (parentNode != NULL)
 			{
+				parentNode->getGUINode()->expand(false);
+
 				CHierachyNode* node = parentNode->addChild();
 				node->setName(newObject->getName());
 				node->setIcon(GUI::ESystemIcon::Res3D);
@@ -1079,6 +1093,8 @@ namespace Skylicht
 				CHierarchyController::updateObjectToUI(newObject, node);
 
 				rebuildHierarchyEntityData(newObject, node);
+
+				setModify(parentNode);
 
 				if (m_spaceHierarchy != NULL)
 					m_spaceHierarchy->addToTreeNode(node);
@@ -1229,6 +1245,18 @@ namespace Skylicht
 			node->OnUpdate = std::bind(&CSceneController::onUpdateNode, this, std::placeholders::_1);
 			node->OnSelected = std::bind(&CSceneController::onSelectNode, this, std::placeholders::_1, std::placeholders::_2);
 			node->OnDoubleClick = std::bind(&CSceneController::onDoubleClickNode, this, std::placeholders::_1);
+		}
+
+		void CSceneController::setModify(CHierachyNode* node)
+		{
+			CGameObject* obj = (CGameObject*)node->getTagData();
+
+			if (obj->isTemplateAsset())
+			{
+				obj = obj->getParentTemplate();
+				obj->setTemplateChanged(true);
+				onObjectChange(obj);
+			}
 		}
 
 		void CSceneController::onUpdateNode(CHierachyNode* node)

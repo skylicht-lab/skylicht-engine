@@ -114,9 +114,9 @@ namespace Skylicht
 	{
 		CComponentSystem::loadSerializable(object);
 
-		m_loadNormal = object->get<bool>("load normal", true);
-		m_fixInverseNormal = object->get<bool>("inserse normal", true);
-		m_loadTexcoord2 = object->get<bool>("load texcoord2", false);
+		bool loadNormal = object->get<bool>("load normal", true);
+		bool fixInverseNormal = object->get<bool>("inserse normal", true);
+		bool loadTexcoord2 = object->get<bool>("load texcoord2", false);
 
 		bool optimize = object->get<bool>("optimize", false);
 		bool instancing = object->get<bool>("instancing", false);
@@ -125,10 +125,17 @@ namespace Skylicht
 		std::string meshFile = object->get<std::string>("mesh", "");
 		std::string materialFile = object->get<std::string>("material", "");
 
-		if (meshFile != m_meshFile || optimize != m_optimizeForRender)
+		if (meshFile != m_meshFile ||
+			optimize != m_optimizeForRender ||
+			loadNormal != m_loadNormal ||
+			fixInverseNormal != m_fixInverseNormal ||
+			loadTexcoord2 != m_loadTexcoord2)
 		{
 			m_meshFile = meshFile;
 			m_optimizeForRender = optimize;
+			m_loadNormal = loadNormal;
+			m_fixInverseNormal = fixInverseNormal;
+			m_loadTexcoord2 = loadTexcoord2;
 
 			CEntityPrefab* prefab = CMeshManager::getInstance()->loadModel(
 				meshFile.c_str(),

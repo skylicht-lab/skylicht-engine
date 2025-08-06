@@ -132,6 +132,16 @@ namespace Skylicht
 			m_reset = random(m_resetIntervalMin, m_resetIntervalMax);
 		}
 
+		void CEmitter::resetTank()
+		{
+			setTank(m_lastTank);
+			setFlow(m_lastFlow);
+
+			m_waitDelay = m_delay;
+			m_lifeTime = 0.0f;
+			m_reset = random(m_resetIntervalMin, m_resetIntervalMax);
+		}
+
 		u32 CEmitter::updateNumber(float deltaTime)
 		{
 			float tsecond = deltaTime * 0.001f;
@@ -142,7 +152,6 @@ namespace Skylicht
 				if (m_reset <= 0.0f)
 				{
 					resetTank();
-					m_reset = random(m_resetIntervalMin, m_resetIntervalMax);
 				}
 			}
 

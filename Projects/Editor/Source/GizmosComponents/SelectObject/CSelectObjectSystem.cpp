@@ -38,7 +38,8 @@ namespace Skylicht
 	namespace Editor
 	{
 		CSelectObjectSystem::CSelectObjectSystem() :
-			m_camera(NULL)
+			m_camera(NULL),
+			m_skipUpdate(false)
 		{
 
 		}
@@ -66,7 +67,21 @@ namespace Skylicht
 		void CSelectObjectSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 		{
 			if (m_skipUpdate)
+			{
+				// just set transform changed
+				for (int i = 0; i < numEntity; i++)
+				{
+					CEntity* entity = entities[i];
+
+					CSelectObjectData* collisionData = GET_ENTITY_DATA(entity, CSelectObjectData);
+					if (collisionData != NULL)
+					{
+						CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+						collisionData->TransformChanged |= transform->NeedValidate;
+					}
+				}
 				return;
+			}
 
 			for (int i = 0; i < numEntity; i++)
 			{
@@ -75,6 +90,9 @@ namespace Skylicht
 				CSelectObjectData* collisionData = GET_ENTITY_DATA(entity, CSelectObjectData);
 				if (collisionData != NULL)
 				{
+					CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+					collisionData->TransformChanged |= transform->NeedValidate;
+
 					// check this entity is visible?
 					CVisibleData* visibleData = GET_ENTITY_DATA(entity, CVisibleData);
 					if (visibleData != NULL && !visibleData->Visible)
@@ -85,7 +103,6 @@ namespace Skylicht
 					if (cullingData != NULL && cullingData->CameraCulled)
 						continue;
 
-					CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 					m_collision.push_back(collisionData);
 					m_transform.push_back(transform);
 				}
@@ -118,8 +135,14 @@ namespace Skylicht
 				CWorldTransformData* transform = transforms[i];
 				CSelectObjectData* collision = collisions[i];
 
-				collision->TransformBBox = collision->BBox;
-				transform->World.transformBoxEx(collision->TransformBBox);
+				// 0. Update transform
+				if (collision->TransformChanged)
+				{
+					collision->TransformBBox = collision->BBox;
+					collision->TransformChanged = false;
+
+					transform->World.transformBoxEx(collision->TransformBBox);
+				}
 
 				// 1. Detect by bounding box
 				const SViewFrustum& frust = camera->getViewFrustum();
@@ -185,7 +208,7 @@ namespace Skylicht
 				CHandles::getInstance()->draw3DBox(i.second, SColor(200, 0, 255, 0));
 			}
 		}
-	
+
 		bool CSelectObjectSystem::getTransformBBox(CGameObject* obj, core::aabbox3df& result)
 		{
 			auto i = m_gameObjBBox.find(obj);

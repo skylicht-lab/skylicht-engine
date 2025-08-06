@@ -29,6 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Editor/SpaceController/CParticleController.h"
 #include "Editor/SpaceController/CSceneController.h"
+#include "AssetManager/CAssetImporter.h"
 
 
 namespace Skylicht
@@ -138,6 +139,10 @@ namespace Skylicht
 							std::string shortPath = CAssetManager::getInstance()->getShortPath(path.c_str());
 							particle->setSourcePath(shortPath.c_str());
 							particle->save();
+
+							CAssetImporter i;
+							i.add(shortPath.c_str());
+							i.importAll();
 						};
 				}
 				else

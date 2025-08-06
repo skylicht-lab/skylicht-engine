@@ -79,16 +79,21 @@ namespace Skylicht
 			{
 				int mouseX = event.MouseInput.X;
 				int mouseY = event.MouseInput.Y;
+				printf("%d %d\n", mouseX, mouseY);
 
 				m_mousePosition.set(mouseX, mouseY);
 				if (event.MouseInput.Event == EMIE_MOUSE_MOVED)
 				{
-
+					if (m_leftMousePressed && !m_allowDragSelect)
+						m_leftMousePressed = false;
 				}
 				else if (event.MouseInput.Event == EMIE_LMOUSE_PRESSED_DOWN)
 				{
-					m_leftMousePressed = true;
-					m_mouseBegin = m_mousePosition;
+					if (m_allowDragSelect)
+					{
+						m_leftMousePressed = true;
+						m_mouseBegin = m_mousePosition;
+					}
 				}
 				else if (event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
 				{
@@ -389,10 +394,10 @@ namespace Skylicht
 
 				// convert 3d to 2d
 				bool selected = false;
-				
+
 				core::vector3df edges[8];
 				data->TransformBBox.getEdges(edges);
-				
+
 				if (project3Dto2D(data->TransformBBox.getCenter(), trans, dim, center2d))
 				{
 					if (r.isPointInside(center2d))

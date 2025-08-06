@@ -41,6 +41,7 @@ namespace Skylicht
 			core::aabbox3df TransformBBox;
 
 			bool DrawSelectionBox;
+			bool TransformChanged;
 
 		public:
 			CSelectObjectData();
