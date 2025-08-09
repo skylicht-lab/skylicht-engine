@@ -22,7 +22,7 @@ jobs:
           mkdir InstallLibs
           mkdir InstallLibs\include
           mkdir InstallLibs\include\SDL2
-          7z x SDL2-version_22.zip -oInstallLibs
+          7z x SDL2-version_22.zip -oInstallLibs include
           copy InstallLibs\SDL2-version_22\include\*.* InstallLibs\include\SDL2
       - name: Build
         shell: cmd

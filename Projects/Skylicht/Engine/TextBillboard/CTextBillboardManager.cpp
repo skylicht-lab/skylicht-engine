@@ -40,6 +40,7 @@ namespace Skylicht
 		ShaderID(0),
 		Material(NULL),
 		Visible(true),
+		Type(CRenderTextData::Billboard),
 		VAlign(CRenderTextData::Top),
 		HAlign(CRenderTextData::Left),
 		UserData(NULL)
@@ -238,6 +239,34 @@ namespace Skylicht
 		t->ShaderID = m_defaultShader;
 		t->setText(font, text);
 
+		return t;
+	}
+
+	CRenderTextData* CTextBillboardManager::addText2D(const core::vector2df& position, const char* text)
+	{
+		CRenderTextData* t = addText(core::vector3df(position.X, position.Y, 0.0f), text);
+		t->Type = CRenderTextData::Text2D;
+		return t;
+	}
+
+	CRenderTextData* CTextBillboardManager::addText2D(const core::vector2df& position, const wchar_t* text)
+	{
+		CRenderTextData* t = addText(core::vector3df(position.X, position.Y, 0.0f), text);
+		t->Type = CRenderTextData::Text2D;
+		return t;
+	}
+
+	CRenderTextData* CTextBillboardManager::addText2D(const core::vector2df& position, const char* text, IFont* font)
+	{
+		CRenderTextData* t = addText(core::vector3df(position.X, position.Y, 0.0f), text, font);
+		t->Type = CRenderTextData::Text2D;
+		return t;
+	}
+
+	CRenderTextData* CTextBillboardManager::addText2D(const core::vector2df& position, const wchar_t* text, IFont* font)
+	{
+		CRenderTextData* t = addText(core::vector3df(position.X, position.Y, 0.0f), text, font);
+		t->Type = CRenderTextData::Text2D;
 		return t;
 	}
 }

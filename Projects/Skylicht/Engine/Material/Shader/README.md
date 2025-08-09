@@ -72,7 +72,7 @@ Value table for the `type` property
 |SPOT_LIGHT_DIRECTION|float4| |
 |SPOT_LIGHT_POSITION|float4| The light position, See `CShaderLighting::setSpotLight`|
 |SPOT_LIGHT_ATTENUATION|float4| `value.x = cos(CSpotLight::getSplotCutoff() * 0.5f)`<br> `value.y = cos(CSpotLight::getSpotInnerCutof() * 0.5f)`<br> `value.z = CLight::getAttenuation()`<br> `value.w = CSpotLight::getSpotExponent()`<br>See `BuiltIn\Shader\SpecularGlossiness\Lighting\SGSpotLight.xml`|
-|MATERIAL_PARAM|float2<br>float3<br>float4|Gets the value already set at *valueIndex* within *CMaterial*.<br>See `CMaterial::setUniform, CMaterial::setUniform2, CMaterial::setUnifor3, CMaterial::setUniform4, CMaterial::updateShaderParams`<br><br>Sample project:<br>- Code:`Samples\Shader\Source\SampleShader.cpp`<br>- Shader:`Assets\SampleShader\Shader\Dissolved.xml`
+|MATERIAL_PARAM|float2<br>float3<br>float4|Gets the value already set at *valueIndex* within *CMaterial*.<br>See `CMaterial::setUniform, CMaterial::setUniform2, CMaterial::setUniform3, CMaterial::setUniform4, CMaterial::updateShaderParams`<br><br>Sample project:<br>- Code: `Samples\Shader\Source\SampleShader.cpp`<br>- Shader: `Assets\SampleShader\Shader\Dissolved.xml`
 |DEFAULT_VALUE|| |
 |SHADER_VEC2|float2| |
 |SHADER_VEC3|float3| |

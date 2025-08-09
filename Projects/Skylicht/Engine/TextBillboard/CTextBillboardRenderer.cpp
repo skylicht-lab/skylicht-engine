@@ -110,28 +110,37 @@ namespace Skylicht
 			if (modules.size() == 1 && modules[0].size() == 0)
 				continue;
 
-			// convert 3d to 2d
-			transformedPos[0] = text->Position.X;
-			transformedPos[1] = text->Position.Y;
-			transformedPos[2] = text->Position.Z;
-			transformedPos[3] = 1.0f;
-
-			trans.multiplyWith1x4Matrix(transformedPos);
-			f32 zDiv = transformedPos[3] == 0.0f ? 1.0f : core::reciprocal(transformedPos[3]);
-			if (zDiv < 0)
-				zDiv = -zDiv;
-
-			x = dim.Width + dim.Width * transformedPos[0] * zDiv;
-			y = dim.Height - dim.Height * transformedPos[1] * zDiv;
-
-			if (transformedPos[3] >= 0)
+			if (text->Type == CRenderTextData::Billboard)
 			{
-				// update transform
-				text->Transform.setTranslation(core::vector3df(x, y, 0.0f));
+				// convert 3d to 2d
+				transformedPos[0] = text->Position.X;
+				transformedPos[1] = text->Position.Y;
+				transformedPos[2] = text->Position.Z;
+				transformedPos[3] = 1.0f;
+
+				trans.multiplyWith1x4Matrix(transformedPos);
+				f32 zDiv = transformedPos[3] == 0.0f ? 1.0f : core::reciprocal(transformedPos[3]);
+				if (zDiv < 0)
+					zDiv = -zDiv;
+
+				x = dim.Width + dim.Width * transformedPos[0] * zDiv;
+				y = dim.Height - dim.Height * transformedPos[1] * zDiv;
+
+				if (transformedPos[3] >= 0)
+				{
+					text->Transform.setTranslation(core::vector3df(x, y, 0.0f));
+					if (text->UpdateTransformCallback != nullptr)
+						text->UpdateTransformCallback(text);
+
+					renderText(text);
+				}
+			}
+			else
+			{
+				text->Transform.setTranslation(text->Position);
 				if (text->UpdateTransformCallback != nullptr)
 					text->UpdateTransformCallback(text);
 
-				// render text to screen
 				renderText(text);
 			}
 		}

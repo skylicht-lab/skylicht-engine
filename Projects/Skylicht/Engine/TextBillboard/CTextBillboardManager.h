@@ -34,6 +34,12 @@ namespace Skylicht
 	class SKYLICHT_API CRenderTextData
 	{
 	public:
+		enum EPositionType
+		{
+			Billboard,
+			Text2D
+		};
+
 		enum EVerticalAlign
 		{
 			Top,
@@ -49,6 +55,7 @@ namespace Skylicht
 		};
 
 	public:
+		EPositionType Type;
 		core::vector3df Position;
 		SColor Color;
 		int ShaderID;
@@ -155,6 +162,14 @@ namespace Skylicht
 		CRenderTextData* addText(const core::vector3df& position, const char* text, IFont* font);
 
 		CRenderTextData* addText(const core::vector3df& position, const wchar_t* text, IFont* font);
+
+		CRenderTextData* addText2D(const core::vector2df& position, const char* text);
+
+		CRenderTextData* addText2D(const core::vector2df& position, const wchar_t* text);
+
+		CRenderTextData* addText2D(const core::vector2df& position, const char* text, IFont* font);
+
+		CRenderTextData* addText2D(const core::vector2df& position, const wchar_t* text, IFont* font);
 
 		void initDefaultFont();
 

@@ -252,6 +252,20 @@ namespace Skylicht
 		}
 	}
 
+	void CSceneDebug::addText2D(const core::vector2df& pos, const char* string, const SColor& color)
+	{
+		CTextBillboardManager* textMgr = CTextBillboardManager::getInstance();
+
+		CRenderTextData* textData = textMgr->addText2D(pos, string);
+		if (textData)
+		{
+			textData->Color = color;
+			textData->VAlign = CRenderTextData::Middle;
+			textData->HAlign = CRenderTextData::Left;
+			m_texts.push_back(textData);
+		}
+	}
+
 	void CSceneDebug::clearText()
 	{
 		CTextBillboardManager* textMgr = CTextBillboardManager::getInstance();

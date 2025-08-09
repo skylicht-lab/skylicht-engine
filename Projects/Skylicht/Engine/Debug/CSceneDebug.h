@@ -94,6 +94,7 @@ namespace Skylicht
 		void addPosition(const core::vector3df& pos, float length, const SColor& color);
 		void addTransform(const core::matrix4& mat, float vectorLength);
 		void addText(const core::vector3df& pos, const char* string, const SColor& color);
+		void addText2D(const core::vector2df& pos, const char* string, const SColor& color);
 		void clearText();
 
 		void clear()
