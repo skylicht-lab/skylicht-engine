@@ -51,7 +51,7 @@ namespace Skylicht
 	/// @code
 	/// CEntity* entity = gameObject->getEntity();
 	/// CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
-	/// const core::matrix4f& worldTransform = transform->World;
+	/// const core::matrix4& worldTransform = transform->World;
 	/// @endcode
 	class SKYLICHT_API CEntity
 	{

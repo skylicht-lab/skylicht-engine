@@ -37,6 +37,31 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief This is an object class that provides additional support for the camera, such as looking at a specific target or rotating around that target object.
+	/// @ingroup Camera
+	/// 
+	/// The 3rd person camera support touch screen gestures or mouse dragging to rotate around the target.
+	/// You can call the function CCamera::setInputReceiver(false) to disable this feature.
+	/// 
+	/// Example of setting up a follow camera
+	/// @code
+	/// // create follow 3rd top camera
+	/// CGameObject* camera3rdTopObj = zone->createEmptyObject();
+	/// CCamera* camera3rdTop = camera3rdTopObj->addComponent<CCamera>();
+	/// camera3rdTop->setPosition(core::vector3df(0.0f, 1.8f, 3.0f));
+	/// camera3rdTop->lookAt(core::vector3df(0.0f, 1.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
+	/// camera3rdTop->setInputReceiver(false);
+	/// 
+	/// core::vector3df targetOffset(0.0f, 0.5f, 0.0f);
+	/// 
+	/// C3rdCamera* followTopCam = camera3rdTopObj->addComponent<C3rdCamera>();
+	/// followTopCam->setOrientation(45.0f, -45.0f);
+	/// followTopCam->setTargetDistance(5.0f);
+	/// followTopCam->setTargetOffset(targetOffset);
+	/// followTopCam->setFollowTarget(getFollowEntity());
+	/// @endcode
+	/// 
+	/// @see CCamera
 	class SKYLICHT_API C3rdCamera :
 		public CComponentSystem,
 		public IEventReceiver,
@@ -53,6 +78,9 @@ namespace Skylicht
 		core::vector3df m_targetOffset;
 
 		bool m_isFollowPosition;
+
+		float m_minVerticalAngle;
+		float m_maxVerticalAngle;
 
 		// camPan = 0 places camera behind Model
 		// camPan range 0 - 360
@@ -120,6 +148,23 @@ namespace Skylicht
 		{
 			m_camPan = pan;
 			m_camTilt = tilt;
+			m_camTilt = core::clamp(m_camTilt, m_minVerticalAngle, m_maxVerticalAngle);
+		}
+
+		inline void setMinMaxVerticaAngle(float min, float max)
+		{
+			m_minVerticalAngle = min;
+			m_maxVerticalAngle = max;
+		}
+
+		inline float getMinVerticalAngle()
+		{
+			return m_minVerticalAngle;
+		}
+
+		inline float getMaxVerticalAngle()
+		{
+			return m_maxVerticalAngle;
 		}
 
 		inline void setTargetDistance(float d)

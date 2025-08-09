@@ -28,6 +28,19 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief This is object class for classes that describe a GameObject's Transform.
+	/// @ingroup Transform
+	/// 
+	/// The CTransformEuler class is created by default along with the CGameObject, so you just need to call the getTransformEuler() function to access it.
+	/// 
+	/// @code
+	/// CGameObject* lightObj = zone->createEmptyObject();
+	/// lightObj->setName(L"Direction Light");
+	/// 
+	/// CTransformEuler* lightTransform = lightObj->getTransformEuler();
+	/// lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
+	/// lightTransform->setRotation(core::vector3df(90.0f, 0.0f, 0.0f));
+	/// @endcode
 	class SKYLICHT_API CTransformEuler : public CTransform
 	{
 	protected:

@@ -31,6 +31,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief The object class supports camera movement with arrow keys, but only when the right mouse button is pressed and held.
+	/// @ingroup Camera
 	class SKYLICHT_API CEditorMoveCamera : public CFpsMoveCamera
 	{
 	protected:

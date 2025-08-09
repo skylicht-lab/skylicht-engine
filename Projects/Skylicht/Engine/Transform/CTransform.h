@@ -39,6 +39,10 @@ namespace Skylicht
 		SKYLICHT_EXPORT void getNonScaleTransform(const core::matrix4& src, core::matrix4& dst);
 	}
 
+	/// @brief An abstract object class for classes that describe a GameObject's Transform.
+	/// @ingroup Transform
+	/// 
+	/// @see CTransformEuler, CTransformMatrix
 	class SKYLICHT_API CTransform : public CComponentSystem
 	{
 	protected:

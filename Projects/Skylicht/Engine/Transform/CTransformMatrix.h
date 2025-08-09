@@ -28,6 +28,26 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief This is an object class that describes a transform, but the input data is a matrix.
+	/// @ingroup Transform
+	/// 
+	/// In some cases, when using third-party modules, converting a transform back to its position or rotation can have performance limitations. Therefore, it's better to use the matrix directly.
+	/// For example, from the Bullet3 physics engine.
+	/// And GameObjects with an attached Physics::CRigidbody component will have their transform converted to a matrix.
+	///
+	/// Although CTransformMatrix inherits from CTransformEuler, but some of the inherits member functions will not work like setPosition, setRotation, setScale...
+	/// 
+	/// You can call the setupMatrixTransform function from CGameObject to convert the transform from Euler to a Matrix.
+	/// 
+	/// Example code:
+	/// @code
+	/// CGameObject* gameObject = zone->createEmptyObject();
+	/// gameObject->setupMatrixTransform();
+	/// CTransformMatrix* transform = gameObject->getTransformMatrix();
+	/// core::matrix4 mat;
+	/// mat.setTranslation(core::vector3df(-1.0f, 1.0f, 0.0f));
+	/// transform->setRelativeTransform(mat);
+	/// @endcode
 	class SKYLICHT_API CTransformMatrix : public CTransformEuler
 	{
 	protected:

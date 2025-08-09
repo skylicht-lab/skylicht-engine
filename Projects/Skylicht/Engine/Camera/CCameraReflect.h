@@ -30,6 +30,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief This is an object class that sets up a camera to be symmetrical with a selected camera. It's used for rendering planar reflections.
+	/// @ingroup Camera
 	class SKYLICHT_API CCameraReflect :
 		public CComponentSystem,
 		public ILateUpdate

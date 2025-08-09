@@ -30,6 +30,58 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief This is an object class that makes it easier to switch between multiple cameras.
+	/// @ingroup Camera
+	/// 
+	/// You can use CTween and CTweenManager to make the camera transitions smoother.
+	/// 
+	/// Example of setting up a brain camera
+	/// @code
+	/// // camera 1
+	/// CGameObject* cam1Obj = zone->createEmptyObject();
+	/// CCamera* camera1 = cam1Obj->addComponent<CCamera>();
+	/// camera1->setPosition(core::vector3df(0.0f, 1.8f, 3.0f));
+	/// camera1->lookAt(core::vector3df(0.0f, 1.0f, 0.0f), Transform::Oy);
+	/// 
+	/// // camera 2
+	/// CGameObject* cam2Obj = zone->createEmptyObject();
+	/// CCamera* camera2 = cam2Obj->addComponent<CCamera>();
+	/// camera2->setPosition(core::vector3df(3.0f, 1.8f, 3.0f));
+	/// camera2->lookAt(core::vector3df(0.0f, 1.0f, 0.0f), Transform::Oy);
+	/// 
+	/// // create main camera
+	/// CGameObject* cameraMainObj = zone->createEmptyObject();
+	/// CCamera* cameraMain = cameraMainObj->addComponent<CCamera>();
+	/// 
+	/// CCameraBrain* g_cameraBrain = cameraMainObj->addComponent<CCameraBrain>();
+	/// setTargetCamera(camera1, 0.0f);
+	/// setTargetCamera(camera2, 5000.0f);
+	/// 
+	/// void setTargetCamera(CCamera* cam, float blendDuration)
+	/// {
+	/// 	// focus new camera
+	/// 	g_cameraBrain->setTargetCamera(cam, blendDuration <= 0.0f ? 1.0f: 0.0f);
+	/// 
+	/// 	if (g_cameraBlendTween)
+	/// 	{
+	/// 		g_cameraBlendTween->stop();
+	/// 		g_cameraBlendTween = NULL;
+	/// 	}
+	///		if (blendDuration > 0.0f)
+	///		{
+	///			// create a tween animation from 0.0 to 1.0 over a duration of blendDuration
+	/// 		g_cameraBlendTween = new CTweenFloat(0.0f, 1.0f, blendDuration);
+	/// 		g_cameraBlendTween->setEase(EaseOutCubic);
+	/// 		g_cameraBlendTween->OnUpdate = [&](CTween* tween) {	g_cameraBrain->setBlendValue(g_cameraBlendTween->getValue()); };
+	/// 		g_cameraBlendTween->OnFinish = [&](CTween* tween) {	g_cameraBlendTween = NULL; };
+	/// 		CTweenManager::getInstance()->addTween(g_cameraBlendTween);
+	///		}
+	///		// you can call force update a frame
+	///		g_cameraBrain->lateUpdate();
+	/// }
+	/// @endcode
+	/// 
+	/// @see CCamera
 	class SKYLICHT_API CCameraBrain :
 		public CComponentSystem,
 		public ILateUpdate

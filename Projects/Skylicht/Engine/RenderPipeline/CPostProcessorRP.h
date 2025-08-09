@@ -31,6 +31,37 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief The object class supports post-processing such as Glow effects, Antialiasing using FXAA, and Exposure, Reflection...
+	/// @ingroup RP
+	/// 
+	/// On a smartphone, you shouldn't use too many of these effects as they can cause the device to heat up quickly and reduce the frame rate (FPS).
+	/// However, You can use a Bloom Effect for smartphones.
+	/// 
+	/// Use the setPostProcessor function to attach a post-processor to the render pipeline. If you're using Deferred Rendering, attach the post-processor to that pipeline.
+	/// 
+	/// @code
+	/// // 1st
+	/// CShadowMapRP* shadowMapRendering = new CShadowMapRP();
+	/// CShadowMapRP* shadowMapRendering->initRender(w, h);
+	/// // 2rd
+	/// CForwardRP* forwardRP = new CForwardRP(false);
+	/// CForwardRP* forwardRP->enableUpdateEntity(false);
+	/// // link rp
+	/// shadowMapRendering->setNextPipeLine(forwardRP);
+	/// if (postEffect == true)
+	/// {
+	/// 	// post processor
+	/// 	CPostProcessorRP* postProcessor = new CPostProcessorRP();
+	/// 	postProcessor->enableAutoExposure(false);
+	/// 	postProcessor->enableBloomEffect(true);
+	/// 	postProcessor->enableFXAA(false);
+	/// 	postProcessor->enableScreenSpaceReflection(false);
+	/// 	postProcessor->initRender(w, h);
+	///		// apply post processor
+	/// 	forwardRP->setPostProcessor(postProcessor);
+	/// }
+	/// forwardRP->initRender(w, h);
+	/// @endcode
 	class SKYLICHT_API CPostProcessorRP :
 		public CBaseRP,
 		public IPostProcessor

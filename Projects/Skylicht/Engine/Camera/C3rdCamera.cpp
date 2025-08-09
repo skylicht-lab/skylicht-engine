@@ -17,7 +17,9 @@ namespace Skylicht
 		m_camPan(0.1f),
 		m_camTilt(-20.0f),
 		m_targetDistance(3.0f),
-		m_leftMousePress(false)
+		m_leftMousePress(false),
+		m_minVerticalAngle(-60.0f),
+		m_maxVerticalAngle(88.0f)
 	{
 		m_followPosition.set(0.0f, 1.8f, 0.0f);
 	}
@@ -73,8 +75,7 @@ namespace Skylicht
 				updateInputRotate(timeDiff);
 		}
 
-		// thanks for 
-		// https://github.com/netpipe/IrrlichtDemos/blob/master/Camera/3rdPersonCam/I3rdPersonCam.h
+		// thanks https://github.com/netpipe/IrrlichtDemos/blob/master/Camera/3rdPersonCam/I3rdPersonCam.h
 
 		core::vector3df posVector;
 
@@ -103,7 +104,6 @@ namespace Skylicht
 
 	void C3rdCamera::updateInputRotate(float timeDiff)
 	{
-		const float MaxVerticalAngle = 88;
 		const int MouseYDirection = 1;
 
 		float dx = m_centerCursor.X - m_cursorPos.X;
@@ -118,7 +118,7 @@ namespace Skylicht
 		if (m_camPan < 0.001f && m_camPan > -0.001f)
 			m_camPan = 0.001f;
 
-		m_camTilt = core::clamp(m_camTilt, -MaxVerticalAngle, MaxVerticalAngle);
+		m_camTilt = core::clamp(m_camTilt, m_minVerticalAngle, m_maxVerticalAngle);
 
 		m_centerCursor = m_cursorPos;
 	}

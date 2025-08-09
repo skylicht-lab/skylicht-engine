@@ -30,6 +30,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief This is an object class that can perform mouse operations to move the camera. It is used on operating systems with a mouse, such as Windows, Mac, and within the engine's Editor.
+	/// @ingroup Camera
 	class SKYLICHT_API CEditorCamera :
 		public CComponentSystem,
 		public IEventReceiver

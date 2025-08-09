@@ -64,6 +64,23 @@ namespace irr
   * @brief This group includes includes object classes that execute 3D scene rendering to the screen or to a texture.
   */
 
+/**
+  * @defgroup Components Main Components
+  * @brief It is a group that includes the component objects within the engine.
+  */
+
+/**
+  * @defgroup Camera Camera
+  * @ingroup Components
+  * @brief This is a group that includes the object classes related to the camera.
+  */
+
+/**
+  * @defgroup Transform Transform
+  * @ingroup Components
+  * @brief This is a group of objects used to set the Transform (position, rotation, scale) for a GameObject.
+  */
+
 /*! \mainpage Skylicht Engine API documentation
  *
  * \section intro Introduction

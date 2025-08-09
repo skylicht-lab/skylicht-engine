@@ -134,7 +134,7 @@ namespace Skylicht
 				}
 				else
 				{
-					printLog("[SkylichtAudio] Can not crate WAV SUBDECODE");
+					printLog("[SkylichtAudio] Can not create WAV SUBDECODE");
 					success = false;
 				}
 			}

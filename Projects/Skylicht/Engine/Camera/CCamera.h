@@ -30,6 +30,38 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief This is an object class used to set up the camera, including its position, viewing angle, and viewing distance.
+	/// @ingroup Camera
+	/// 
+	/// Example of setting up a 3D camera
+	/// @code
+	/// CGameObject* camObj = zone->createEmptyObject();
+	/// CCamera* camera = camObj->addComponent<CCamera>();
+	/// 
+	/// // setup camera position
+	/// camera->setPosition(core::vector3df(10.0f, 5.0f, 10.0f));
+	/// // setup camera target
+	/// camera->lookAt(core::vector3df(0.0f, 0.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
+	/// 
+	/// ..
+	/// ..
+	/// 
+	/// // and render the scene with the camera that has been set up
+	/// getRenderPipeline()->render(NULL, camera, scene->getEntityManager(), core::recti())
+	/// @endcode
+	/// 
+	/// Example of setting up a 2D orthographic camera for drawing a GUI
+	/// @code
+	/// CGameObject* guiCameraObj = zone->createEmptyObject();
+	/// guiCameraObj->addComponent<CCamera>();
+	/// CCamera* guiCamera = guiCameraObj->getComponent<CCamera>();
+	/// guiCamera->setProjectionType(CCamera::OrthoUI);
+	/// 
+	/// ...
+	/// ...
+	/// // and render the GUI with the 2D camera.
+	/// CGraphics2D::getInstance()->render(guiCamera);
+	/// @endcode
 	class SKYLICHT_API CCamera : public CComponentSystem
 	{
 	public:

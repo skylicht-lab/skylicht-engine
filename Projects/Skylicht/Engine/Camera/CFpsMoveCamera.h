@@ -30,6 +30,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief The object class supports camera movement with arrow keys.
+	/// @ingroup Camera
 	class SKYLICHT_API CFpsMoveCamera :
 		public CComponentSystem,
 		public IEventReceiver
