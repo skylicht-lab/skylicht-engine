@@ -81,6 +81,11 @@ namespace irr
   * @brief This is a group of objects used to set the Transform (position, rotation, scale) for a GameObject.
   */
 
+/**
+  * @defgroup Debug Debug
+  * @brief A group of helper object that draw on the scene for debugging purposes.
+  */
+
 /*! \mainpage Skylicht Engine API documentation
  *
  * \section intro Introduction

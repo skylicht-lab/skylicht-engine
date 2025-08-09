@@ -60,6 +60,20 @@ namespace Skylicht
 		SColor color;
 	};
 
+	/// @brief A helper class that allows you to draw lines, circles, text... etc., for debugging.
+	/// @ingroup Debug
+	/// 
+	/// You can draw debug visualizations by calling addLine, addText, addCircle, etc., in each loop.
+	/// The debug data added will be automatically cleared every frame.
+	/// 
+	/// @code
+	/// CSceneDebug* debug = CSceneDebug::getInstance();
+	/// 
+	/// // Use debugNoZ for drawing that ignores depth and appears in front of all other 3D objects.
+	/// CSceneDebug* debugNoZ = debug->getNoZDebug();
+	/// debugNoZ->addText(core::vector3df(0.0f, 1.0f, 0.0f), "Debug string 3d", SColor(255,255,255,255));
+	/// debugNoZ->addText2D(core::vector2df(10.0f, 10.0f), "Debug string 2d", SColor(255,255,255,255));
+	/// @endcode
 	class SKYLICHT_API CSceneDebug
 	{
 	public:
