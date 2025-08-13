@@ -34,6 +34,46 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief This object class is similar to CRenderMesh but is designed for optimized instanced rendering.
+	/// @ingroup RenderMesh
+	/// 
+	/// @image html RenderMesh/render-mesh-instancing.jpg width=1200px
+	/// 
+	/// Instead of creating multiple game objects, CRenderMeshInstancing limits this to optimize the number of update calls and the total number of entities by using a single game object.
+	/// 
+	/// Instead, a model becomes a child entity that stores its transform data.
+	/// 
+	/// @code
+	/// CMeshManager* meshManager = CMeshManager::getInstance();
+	/// std::vector<std::string> searchTextureFolders;
+	/// ArrayMaterial envMaterials = CMaterialManager::getInstance()->loadMaterial("SampleBoids/Environment/Environment.mat", true, searchTextureFolders);
+	/// CEntityPrefab* groundPrefab = meshManager->loadModel("SampleBoids/Environment/1_Ground_1.fbx", NULL, true);
+	/// if (groundPrefab)
+	/// {
+	/// 	CGameObject* plane = zone->createEmptyObject();
+	/// 
+	/// 	CRenderMeshInstancing* meshInstancing = plane->addComponent<CRenderMeshInstancing>();
+	/// 	meshInstancing->initFromPrefab(groundPrefab);
+	/// 	meshInstancing->initMaterial(envMaterials);
+	/// 
+	/// 	for (int i = minBound; i <= maxBound; i++)
+	/// 	{
+	/// 		for (int j = minBound; j <= maxBound; j++)
+	/// 		{
+	/// 			CEntity* entity = meshInstancing->spawn();
+	/// 
+	/// 			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+	/// 			transform->Relative.setTranslation(core::vector3df(i * space, 0.0f, j * space));
+	/// 			transform->Relative.setScale(scaleVector);
+	/// 		}
+	/// 	}
+	/// 
+	/// 	meshInstancing->applyShareTransformBuffer();
+	/// 	meshInstancing->applyShareMaterialBuffer();
+	/// 
+	/// 	plane->addComponent<CIndirectLighting>();
+	/// }
+	/// @endcode
 	class SKYLICHT_API CRenderMeshInstancing : public CEntityHandler
 	{
 	protected:

@@ -88,10 +88,38 @@ namespace Skylicht
 		releaseAllGroups();
 	}
 
+	void CEntityManager::registerCallback(IEntityManagerCallback* callback)
+	{
+		for (auto c : m_callbacks)
+		{
+			if (c == callback)
+				return;
+		}
+		m_callbacks.push_back(callback);
+	}
+
+	void CEntityManager::unRegisterCallback(IEntityManagerCallback* callback)
+	{
+		auto i = m_callbacks.begin(), end = m_callbacks.end();
+		while (i != end)
+		{
+			if ((*i) == callback)
+			{
+				m_callbacks.erase(i);
+				return;
+			}
+		}
+	}
+
 	void CEntityManager::releaseAllEntities()
 	{
 		CEntity** entities = m_entities.pointer();
-		for (u32 i = 0, n = m_entities.size(); i < n; i++)
+		int n = (int)m_entities.size();
+
+		for (auto c : m_callbacks)
+			c->onEntityRemoved(entities, n);
+
+		for (int i = 0; i < n; i++)
 		{
 			delete entities[i];
 			entities[i] = NULL;
@@ -134,6 +162,9 @@ namespace Skylicht
 
 			m_unused.erase(last);
 
+			for (auto c : m_callbacks)
+				c->onEntityCreated(entity);
+
 			notifyUpdateSortEntities();
 			return entity;
 		}
@@ -141,6 +172,9 @@ namespace Skylicht
 		CEntity* entity = new CEntity(this);
 		initDefaultData(entity);
 		m_entities.push_back(entity);
+
+		for (auto c : m_callbacks)
+			c->onEntityCreated(entity);
 
 		notifyUpdateSortEntities();
 		return entity;
@@ -160,8 +194,13 @@ namespace Skylicht
 			entities.push_back(entity);
 		}
 
+		CEntity** result = entities.pointer();
+
+		for (auto c : m_callbacks)
+			c->onEntityCreated(result, num);
+
 		notifyUpdateSortEntities();
-		return entities.pointer();
+		return result;
 	}
 
 	void CEntityManager::initDefaultData(CEntity* entity)
@@ -235,6 +274,9 @@ namespace Skylicht
 		{
 			entity->setAlive(false);
 			m_delayRemove.push_back(entity);
+
+			for (auto c : m_callbacks)
+				c->onEntityRemoved(entity);
 		}
 	}
 
@@ -244,6 +286,9 @@ namespace Skylicht
 		{
 			entity->setAlive(false);
 			m_delayRemove.push_back(entity);
+
+			for (auto c : m_callbacks)
+				c->onEntityRemoved(entity);
 		}
 	}
 
@@ -327,10 +372,14 @@ namespace Skylicht
 			{
 				CWorldTransformData* world = GET_ENTITY_DATA(entity, CWorldTransformData);
 				getDepth(world);
-				m_sortDepth[world->Depth].push(entity);
 
-				if (maxDepth < world->Depth)
-					maxDepth = world->Depth;
+				if (world->Depth >= 0)
+				{
+					m_sortDepth[world->Depth].push(entity);
+
+					if (maxDepth < world->Depth)
+						maxDepth = world->Depth;
+				}
 			}
 		}
 

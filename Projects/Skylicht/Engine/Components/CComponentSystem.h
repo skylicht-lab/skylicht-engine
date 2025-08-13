@@ -30,6 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CComponentCategory.h"
 
 #define USE_COMPONENT(component) int component##_used = Skylicht::CComponentSystem::useComponent(new component())
+#define USE_NAMESPACE_COMPONENT(name, component) int name##_used = Skylicht::CComponentSystem::useComponent(new component())
 
 namespace Skylicht
 {

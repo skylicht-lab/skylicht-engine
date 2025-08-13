@@ -37,6 +37,40 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	class IEntityManagerCallback
+	{
+	public:
+		IEntityManagerCallback()
+		{
+
+		}
+
+		virtual ~IEntityManagerCallback()
+		{
+
+		}
+
+		virtual void onEntityCreated(CEntity* entity)
+		{
+
+		}
+
+		virtual void onEntityCreated(CEntity** entity, int count)
+		{
+
+		}
+
+		virtual void onEntityRemoved(CEntity* entity)
+		{
+
+		}
+
+		virtual void onEntityRemoved(CEntity** entity, int count)
+		{
+
+		}
+	};
+
 	/// @brief This object class manages all entities within a scene
 	/// @ingroup ECS
 	/// 
@@ -67,6 +101,8 @@ namespace Skylicht
 		std::vector<IEntitySystem*> m_sortUpdate;
 		std::vector<IRenderSystem*> m_sortRender;
 
+		std::vector<IEntityManagerCallback*> m_callbacks;
+
 		bool m_systemChanged;
 		bool m_needSortEntities;
 
@@ -94,6 +130,10 @@ namespace Skylicht
 		void sortAliveEntities();
 
 	public:
+
+		void registerCallback(IEntityManagerCallback* callback);
+
+		void unRegisterCallback(IEntityManagerCallback* callback);
 
 		inline void setCamera(CCamera* camera)
 		{

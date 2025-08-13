@@ -82,6 +82,12 @@ namespace irr
   */
 
 /**
+  * @defgroup RenderMesh Render Mesh
+  * @ingroup Components
+  * @brief This group includes components for rendering models on the screen.
+  */
+
+/**
   * @defgroup Debug Debug
   * @brief A group of helper object that draw on the scene for debugging purposes.
   */
