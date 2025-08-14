@@ -45,17 +45,17 @@ namespace irr
   */
 
 /**
-  * @defgroup GameObject Scene and Game Objects
+  * @defgroup GameObject Scene and game objects
   * @brief This group includes scene object classes for 3D rendering.
   */
 
 /**
-  * @defgroup ECS Entity Component System
+  * @defgroup ECS Entity component system
   * @brief This group contains objects used to support ECS architecture.
   */
 
 /**
-  * @defgroup Mesh Mesh Manager
+  * @defgroup Mesh Mesh manager
   * @brief This group includes object classes used to load models such as .fbx, .dae, and .obj into the engine, as well as to export them to other formats.
   */
 
@@ -65,7 +65,7 @@ namespace irr
   */
 
 /**
-  * @defgroup Components Main Components
+  * @defgroup Components Main components
   * @brief It is a group that includes the component objects within the engine.
   */
 
@@ -82,7 +82,7 @@ namespace irr
   */
 
 /**
-  * @defgroup RenderMesh Render Mesh
+  * @defgroup RenderMesh Render mesh
   * @ingroup Components
   * @brief This group includes components for rendering models on the screen.
   */
@@ -92,6 +92,7 @@ namespace irr
  * @ingroup Components
  * @brief This group contains all the objects related to lighting.
  */
+
 /**
   * @defgroup Debug Debug
   * @brief A group of helper object that draw on the scene for debugging purposes.

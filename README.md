@@ -264,7 +264,7 @@ C:\skylicht-engine>cmake --build ./PrjVisualStudio --target install --config Deb
 ```
 *Note: Use the parameters "-DINSTALL_LIBS=ON -DBUILD_SHARED_LIBS=ON" with cmake command*
 
-<img src="Documents/Media/DoxyGen/library.jpg"/>
+<img src="Documents/Media/Doxygen/library.jpg"/>
 
 ## Static library
 ```Shell

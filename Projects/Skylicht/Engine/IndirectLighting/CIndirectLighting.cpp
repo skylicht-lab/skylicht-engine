@@ -112,6 +112,7 @@ namespace Skylicht
 		data->AutoSH = &m_autoSH;
 		data->Intensity = &m_intensity;
 		data->ReleaseSH = false;
+		data->InvalidateProbe = true;
 
 		if (std::find(m_data.begin(), m_data.end(), data) == m_data.end())
 			m_data.push_back(data);
@@ -271,6 +272,7 @@ namespace Skylicht
 			{
 				data->Type = CIndirectLightingData::SH9;
 				data->SH = m_sh;
+				data->InvalidateProbe = true;
 			}
 			else if (m_type == AmbientColor)
 			{

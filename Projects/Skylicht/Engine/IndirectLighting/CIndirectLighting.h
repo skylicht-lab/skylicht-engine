@@ -31,6 +31,15 @@ namespace Skylicht
 {
 	class CEntity;
 
+	/// @brief This object holds the parameters for indirect lighting like SH or AmbientColor or Lightmap.
+	/// @ingroup Lighting
+	/// 
+	/// The component stores parameters related to indirect light. 
+	/// 
+	/// The default type is Spherical Harmonics (SH). The SH values are taken from the nearest CLightProbe.
+	/// 
+	/// However, you can change the indirect lighting to a Ambient Color or a Lightmap Texture that has been baked using a Lightmapper.
+	/// 
 	class SKYLICHT_API CIndirectLighting : public CComponentSystem
 	{
 	public:
