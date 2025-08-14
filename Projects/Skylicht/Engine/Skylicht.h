@@ -87,16 +87,21 @@ namespace irr
   * @brief This group includes components for rendering models on the screen.
   */
 
+ /**
+ * @defgroup Lighting Lighting
+ * @ingroup Components
+ * @brief This group contains all the objects related to lighting.
+ */
 /**
   * @defgroup Debug Debug
   * @brief A group of helper object that draw on the scene for debugging purposes.
   */
 
-/*! \mainpage Skylicht Engine API documentation
+/*! \mainpage Skylicht-Engine API documentation
  *
  * \section intro Introduction
  *
- * Welcome to the Skylicht Engine API documentation.
+ * Welcome to the Skylicht-Engine API documentation.
  * Here you'll find any information you'll need to develop applications with
  * the Skylicht Engine. 
  * 
@@ -104,8 +109,38 @@ namespace irr
  *
  * To update to the latest version, please visit <A HREF="https://github.com/skylicht-lab/skylicht-engine" >github: skylicht-engine</A>
  *
- * You can start by looking at the <A HREF="topics.html">topics</A>
+ * You can start by looking at the <A HREF="topics.html">**topics**</A>
  * 
+ * \section build How to build
+ * 
+ * ## Prerequisites
+ * - <A HREF="https://cmake.org/download/">CMake</A> 3.12 or higher
+ * - <A HREF="https://visualstudio.microsoft.com/downloads/">Visual Studio</A>
+ * - <A HREF="https://www.python.org/downloads">Python</A> 3.x
+ * 
+ * ## Build library
+ * ### Static
+ * You can call the build command `InstallLibVCPrj2022.cmd` in the BuildCommand directory after you have fully installed CMake and Visual Studio 2022.
+ * @code
+ * C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 17 2022" -A x64 -DINSTALL_LIBS=ON
+ * C:\skylicht-engine>cmake --build ./PrjVisualStudio --target install --config Debug
+ * @endcode
+ * 
+ * ### Dynamic dll
+ * You can call the build command `InstallSharedLibVCPrj2022.cmd` in the BuildCommand directory.
+ * @code
+ * C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 17 2022" -A x64 -DINSTALL_LIBS=ON -DBUILD_SHARED_LIBS=ON
+ * C:\skylicht-engine>cmake --build ./PrjVisualStudio --target install --config Debug
+ * @endcode
+ * 
+ * ## How to integrate
+ * After building the Skylicht-Engine into a library, you can include the .h files and link the .lib files into your project.
+ * @image html library.jpg width=600px
+ * 
+ * This is a quick reminder: An application running on the Skylicht-Engine platform needs sufficient shader data to start. 
+ * Therefore, you must copy all files from the `Asset/BuildIn` folder into your project.
+ * 
+ * You can check out the <A HREF="https://github.com/skylicht-lab/hello-skylicht">sample project</a>.
  */
 
 /// @brief Everything in the Skylicht Engine. You can start by looking at the <A HREF="topics.html">topics</A>.

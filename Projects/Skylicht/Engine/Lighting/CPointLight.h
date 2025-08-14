@@ -29,6 +29,12 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief This object holds the parameters for point lights.
+	/// @ingroup Lighting
+	/// 
+	/// @image html Lighting/point_light.jpg width=1200px
+	/// 
+	/// @see CShaderLighting
 	class SKYLICHT_API CPointLight : public CLight
 	{
 	protected:

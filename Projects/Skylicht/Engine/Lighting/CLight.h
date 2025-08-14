@@ -28,6 +28,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief This is the base class for all types of lights.
+	/// @ingroup Lighting
 	class SKYLICHT_API CLight : public CComponentSystem
 	{
 	public:

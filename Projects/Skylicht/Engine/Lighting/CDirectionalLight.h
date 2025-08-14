@@ -28,6 +28,12 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief This object holds the parameters for directional lights, also known as outdoor lighting.
+	/// @ingroup Lighting
+	/// 
+	/// @image html Lighting/direction_light.jpg width=1200px
+	/// 
+	/// @see CShaderLighting
 	class SKYLICHT_API CDirectionalLight : public CLight
 	{
 	public:

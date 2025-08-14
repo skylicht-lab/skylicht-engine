@@ -29,6 +29,12 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief This object holds the parameters for spot lights.
+	/// @ingroup Lighting
+	/// 
+	/// @image html Lighting/spot_light.jpg width=1200px
+	/// 
+	/// @see CShaderLighting
 	class SKYLICHT_API CSpotLight : public CPointLight
 	{
 	protected:
