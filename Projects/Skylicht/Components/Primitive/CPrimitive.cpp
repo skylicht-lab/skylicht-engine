@@ -86,11 +86,7 @@ namespace Skylicht
 
 		object->autoRelease(new CBoolProperty(object, "shadow casting", m_shadowCasting));
 
-		CBoolProperty* useCustom = new CBoolProperty(object, "custom material", m_useCustomMaterial);
-		object->autoRelease(useCustom);
-
-		CBoolProperty* useNormalMap = new CBoolProperty(object, "normal map", m_useNormalMap);
-		object->autoRelease(useNormalMap);
+		object->autoRelease(new CBoolProperty(object, "normal map", m_useNormalMap));
 
 		CColorProperty* color = new CColorProperty(object, "color", m_color);
 		color->setUIHeader("Default Material");
@@ -99,6 +95,8 @@ namespace Skylicht
 		CFilePathProperty* material = new CFilePathProperty(object, "material", m_materialPath.c_str(), CMaterialManager::getMaterialExts());
 		material->setUIHeader("Custom Material");
 		object->autoRelease(material);
+
+		object->autoRelease(new CBoolProperty(object, "custom material", m_useCustomMaterial));
 
 		CArraySerializable* primitives = new CArraySerializable("Primitives");
 		object->addProperty(primitives);
@@ -157,6 +155,12 @@ namespace Skylicht
 
 		m_material->setUniform4("uColor", m_color);
 		m_material->updateShaderParams();
+
+		if (m_customMaterial)
+		{
+			m_customMaterial->setUniform4("uColor", m_color);
+			m_customMaterial->updateShaderParams();
+		}
 
 		CArraySerializable* primitives = (CArraySerializable*)object->getProperty("Primitives");
 		if (primitives == NULL)
@@ -258,9 +262,7 @@ namespace Skylicht
 	CMaterial* CPrimitive::getMaterial()
 	{
 		if (m_useCustomMaterial && m_customMaterial)
-		{
 			return m_customMaterial;
-		}
 
 		return m_material;
 	}

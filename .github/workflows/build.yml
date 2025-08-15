@@ -197,7 +197,7 @@ jobs:
           cd ..
           cmake -S . -B ./PrjIOS -G Xcode -DCMAKE_TOOLCHAIN_FILE=./ios.cmake -DPLATFORM=${PLATFORM}
           cd PrjIOS
-          cmake --build . --config "Release"
+          xcodebuild -configuration Release -alltargets -skip-install
           cd ..
       - name: Package
         run: |

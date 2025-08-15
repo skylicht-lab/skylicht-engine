@@ -12,6 +12,20 @@ namespace Skylicht
 		CLineRenderData* m_lineData;
 		CCullingBBoxData* m_culling;
 
+		float m_lineWidth;
+
+		SColor m_color;
+
+		bool m_billboard;
+
+		bool m_useCustomMaterial;
+
+		std::string m_materialFile;
+
+		CMaterial* m_material;
+
+		CMaterial* m_customMaterial;
+
 	public:
 		CRenderLine();
 
@@ -28,6 +42,8 @@ namespace Skylicht
 		virtual CEntity* spawn();
 
 		DECLARE_GETTYPENAME(CRenderLine)
+
+		CMaterial* getMaterial();
 
 	protected:
 

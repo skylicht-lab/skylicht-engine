@@ -2,6 +2,8 @@
 
 #include "Entity/CEntityGroup.h"
 #include "Entity/IRenderSystem.h"
+#include "Transform/CWorldTransformData.h"
+#include "CLineRenderData.h"
 
 namespace Skylicht
 {
@@ -9,6 +11,9 @@ namespace Skylicht
 	{
 	protected:
 		CEntityGroup* m_group;
+
+		CFastArray<CWorldTransformData*> m_transforms;
+		CFastArray<CLineRenderData*> m_lines;
 
 	public:
 		CLineRenderer();
