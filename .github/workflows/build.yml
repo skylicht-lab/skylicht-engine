@@ -175,7 +175,7 @@ jobs:
   IOS:
     runs-on: macos-latest
     env:
-      PLATFORM: OS64
+      PLATFORM: SIMULATORARM64
     steps:
       - uses: actions/checkout@v2
       - name: Restore LFS cache
@@ -197,7 +197,9 @@ jobs:
           cd ..
           cmake -S . -B ./PrjIOS -G Xcode -DCMAKE_TOOLCHAIN_FILE=./ios.cmake -DPLATFORM=${PLATFORM}
           cd PrjIOS
-          xcodebuild -configuration Release -alltargets -skip-install
+          xcodebuild -showsdks
+          xcrun simctl list devices
+          xcodebuild -configuration Release -alltargets -sdk iphonesimulator
           cd ..
       - name: Package
         run: |

@@ -125,6 +125,11 @@ namespace Skylicht
 			m_isFollowPosition = true;
 		}
 
+		inline const core::vector3df& getFollowPosition()
+		{
+			return m_followPosition;
+		}
+
 		inline void setFollowTarget(CGameObject* object)
 		{
 			m_followEntity = object->getEntity();
@@ -190,6 +195,11 @@ namespace Skylicht
 		inline void setTargetOffset(const core::vector3df& offset)
 		{
 			m_targetOffset = offset;
+		}
+
+		inline const core::vector3df& getTargetOffset()
+		{
+			return m_targetOffset;
 		}
 
 		DECLARE_GETTYPENAME(C3rdCamera)
