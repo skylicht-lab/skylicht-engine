@@ -175,7 +175,7 @@ jobs:
   IOS:
     runs-on: macos-latest
     env:
-      PLATFORM: SIMULATORARM64
+      PLATFORM: OS64
     steps:
       - uses: actions/checkout@v2
       - name: Restore LFS cache
