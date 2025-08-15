@@ -231,7 +231,7 @@ jobs:
           cd ..
       - name: Package
         run: |
-          dir Bin\Release
+          dir Bin\x64\Release
 
   Windows-Shared:
     runs-on: windows-latest
@@ -253,7 +253,7 @@ jobs:
           cd ..
       - name: Package
         run: |
-          dir Bin\Release
+          dir Bin\x64\Release
 
   Windows-Shared-Smallest:
     runs-on: windows-latest
@@ -298,4 +298,4 @@ jobs:
           cd ..
       - name: Package
         run: |
-          dir Bin\Release
+          dir Bin\x64\Release

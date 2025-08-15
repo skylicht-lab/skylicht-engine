@@ -251,6 +251,8 @@ namespace Skylicht
 	{
 		m_type = type;
 
+		initComponent();
+
 		for (CIndirectLightingData* data : m_data)
 		{
 			if (m_type == LightmapArray)

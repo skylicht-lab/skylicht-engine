@@ -50,6 +50,8 @@ using namespace Skylicht::Lightmapper;
 #include "Primitive/CCapsule.h"
 #include "Primitive/CCylinder.h"
 
+#include "RenderLine/CRenderLine.h"
+
 #include "ParticleSystem/CParticleComponent.h"
 #include "ParticleSystem/CParticleTrailComponent.h"
 using namespace Particle;
@@ -98,6 +100,8 @@ namespace Skylicht
 		USE_COMPONENT(CPlane);
 		USE_COMPONENT(CCapsule);
 		USE_COMPONENT(CCylinder);
+
+		USE_COMPONENT(CRenderLine);
 
 		USE_COMPONENT(CParticleComponent);
 		USE_COMPONENT(CParticleTrailComponent);
