@@ -4,6 +4,7 @@
 #include "DataTypeIndex.h"
 #include "Transform/CWorldTransformData.h"
 #include "Material/CMaterial.h"
+#include "RenderMesh/CMesh.h"
 
 namespace Skylicht
 {
@@ -14,11 +15,15 @@ namespace Skylicht
 
 		bool Billboard;
 
+		CMesh* Mesh;
+
 		IMeshBuffer* MeshBuffer;
 
 		core::array<CWorldTransformData*> Points;
 
 		CMaterial* Material;
+
+		bool NeedValidate;
 
 	public:
 		CLineRenderData();

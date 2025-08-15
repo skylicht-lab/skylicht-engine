@@ -29,5 +29,14 @@ namespace Skylicht
 		virtual void update(CEntityManager* entityManager);
 
 		virtual void render(CEntityManager* entityManager);
+
+		virtual void renderTransparent(CEntityManager* entityManager);
+
+	protected:
+
+		void updateBuffer(CLineRenderData* line, CCamera* camera);
+
+		void renderLine(CEntityManager* entityMgr, CWorldTransformData* transform, CLineRenderData* line);
+
 	};
 }
