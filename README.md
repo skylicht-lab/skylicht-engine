@@ -276,8 +276,8 @@ And then copy the resulting InstallLibs folder to another project.
 See the project example: https://github.com/skylicht-lab/hello-skylicht
 
 # Roadmap
-- [Skylight Engine Core](https://github.com/skylicht-lab/skylicht-engine/issues/5) (In progress)
-- [Engine Editor](https://github.com/skylicht-lab/skylicht-engine/issues/6) (In progress)
+- [Skylight Engine Core](https://github.com/skylicht-lab/skylicht-engine/issues/5)
+- [Engine Editor](https://github.com/skylicht-lab/skylicht-engine/issues/6)
 <img src="Documents/Media/Editor/skylicht-engine-editor.jpg"/>
 
 # Code example
