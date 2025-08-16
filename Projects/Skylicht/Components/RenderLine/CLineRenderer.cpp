@@ -81,7 +81,7 @@ namespace Skylicht
 		{
 			CLineRenderData* l = lines[i];
 
-			if (l->NeedValidate)
+			if (l->NeedValidate || l->Billboard)
 			{
 				updateBuffer(l, camera);
 				l->NeedValidate = false;
@@ -94,10 +94,6 @@ namespace Skylicht
 		IVertexBuffer* buffer = line->MeshBuffer->getVertexBuffer(0);
 		IIndexBuffer* index = line->MeshBuffer->getIndexBuffer();
 
-		int indexID = 0;
-		int vertexID = 0;
-
-		// camera
 		core::vector3df campos = camera->getGameObject()->getPosition();
 		core::vector3df up = camera->getUpVector();
 
@@ -116,45 +112,65 @@ namespace Skylicht
 
 		CWorldTransformData** transforms = line->Points.pointer();
 		core::array<core::vector3df> points;
+		core::array<core::vector3df> normals;
 
 		for (int i = 0; i < numPoint - 1; i++)
 		{
 			core::vector3df pos1 = transforms[i]->Relative.getTranslation();
 			core::vector3df pos2 = transforms[i + 1]->Relative.getTranslation();
 
+			core::vector3df n1(0.0f, -1.0f, 0.0f);
+			core::vector3df n2(0.0f, -1.0f, 0.0f);
+
+			if (!line->Billboard)
+			{
+				transforms[i]->Relative.rotateVect(n1);
+				transforms[i + 1]->Relative.rotateVect(n2);
+			}
+			else
+			{
+				n1 = pos1 - campos;
+				n2 = pos2 - campos;
+			}
+
 			length = length + pos1.getDistanceFrom(pos2);
 
 			points.push_back(pos1);
+
+			n1.normalize();
+			normals.push_back(n1);
+
 			if (i == numPoint - 2)
+			{
 				points.push_back(pos2);
+
+				n2.normalize();
+				normals.push_back(n2);
+			}
 		}
 
 		SColor c(255, 255, 255, 255);
-		float thickness = line->Width;
+		float thickness = line->Width * 0.5f;
+
+		u32 vtxCount = 0;
+		u32 idxCount = 0;
 
 		// build trail mesh buffer
 		for (int i = 0; i < numPoint - 1; i++)
 		{
 			const core::vector3df& pos1 = points[i];
 			const core::vector3df& pos2 = points[i + 1];
-
-			// direction
 			core::vector3df direction = pos1 - pos2;
 
 			float uv1 = currentLength / length;
 
-			// length
 			currentLength = currentLength + direction.getLength();
+			float uv2 = currentLength / length;
 
 			direction.normalize();
 
-			float uv2 = currentLength / length;
-
 			// look
-			core::vector3df lookdir = pos1 - campos;
-			if (lookdir.getLength() < 0.2f)
-				continue;
-			lookdir.normalize();
+			core::vector3df lookdir = normals[i];
 
 			// view angle
 			f32 angle = lookdir.dotProduct(direction);
@@ -167,31 +183,53 @@ namespace Skylicht
 				// note: we use updown as normal on billboard
 				// core::vector3df normal = direction.crossProduct(updown);
 
-				u32 vertex = i * 4;
-				u32 index = i * 6;
+				u32 vertex = vtxCount;
+				u32 index = idxCount;
 
 				// vertex buffer
-				vertices[vertex + 0].Pos = pos1 - updown * thickness * 0.5f;
-				vertices[vertex + 0].Normal = updown;
-				vertices[vertex + 0].Color = c;
-				vertices[vertex + 0].TCoords.set(0.0f, uv1);
+				if (i == 0)
+				{
+					vertices[vertex + 0].Pos = pos1 - updown * thickness;
+					vertices[vertex + 0].Normal = lookdir;
+					vertices[vertex + 0].Color = c;
+					vertices[vertex + 0].TCoords.set(0.0f, uv1);
 
-				vertices[vertex + 1].Pos = pos1 + updown * thickness * 0.5f;
-				vertices[vertex + 1].Normal = updown;
-				vertices[vertex + 1].Color = c;
-				vertices[vertex + 1].TCoords.set(1.0f, uv1);
+					vertices[vertex + 1].Pos = pos1 + updown * thickness;
+					vertices[vertex + 1].Normal = lookdir;
+					vertices[vertex + 1].Color = c;
+					vertices[vertex + 1].TCoords.set(1.0f, uv1);
+				}
+				else
+				{
+					int lastVertex = vertex - 2;
+					vertices[vertex + 0] = vertices[lastVertex + 0];
+					vertices[vertex + 1] = vertices[lastVertex + 1];
+				}
 
-				vertices[vertex + 2].Pos = pos2 - updown * thickness * 0.5f;
-				vertices[vertex + 2].Normal = updown;
+				if (i < numPoint - 2)
+				{
+					lookdir = normals[i + 1];
+
+					core::vector3df nextDirection = pos2 - points[i + 2];
+					nextDirection.normalize();
+
+					core::vector3df nextUpdown = nextDirection.crossProduct(lookdir);
+					nextUpdown.normalize();
+
+					updown = updown + nextUpdown;
+					updown.normalize();
+				}
+
+				vertices[vertex + 2].Pos = pos2 - updown * thickness;
+				vertices[vertex + 2].Normal = lookdir;
 				vertices[vertex + 2].Color = c;
 				vertices[vertex + 2].TCoords.set(0.0f, uv2);
 
-				vertices[vertex + 3].Pos = pos2 + updown * thickness * 0.5f;
-				vertices[vertex + 3].Normal = updown;
+				vertices[vertex + 3].Pos = pos2 + updown * thickness;
+				vertices[vertex + 3].Normal = lookdir;
 				vertices[vertex + 3].Color = c;
 				vertices[vertex + 3].TCoords.set(1.0f, uv2);
 
-				// index buffer
 				indices[index + 0] = vertex + 0;
 				indices[index + 1] = vertex + 1;
 				indices[index + 2] = vertex + 2;
@@ -199,8 +237,14 @@ namespace Skylicht
 				indices[index + 3] = vertex + 1;
 				indices[index + 4] = vertex + 3;
 				indices[index + 5] = vertex + 2;
+
+				vtxCount += 4;
+				idxCount += 6;
 			}
 		}
+
+		buffer->set_used(vtxCount);
+		index->set_used(idxCount);
 
 		buffer->setDirty();
 		index->setDirty();

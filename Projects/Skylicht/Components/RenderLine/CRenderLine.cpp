@@ -6,6 +6,7 @@
 #include "Culling/CCullingData.h"
 #include "Serializable/CEntityTransformSerializable.h"
 #include "Material/CMaterialManager.h"
+#include "TextureManager/CTextureManager.h"
 
 namespace Skylicht
 {
@@ -17,8 +18,9 @@ namespace Skylicht
 		m_lineData(NULL),
 		m_culling(NULL),
 		m_lineWidth(1.0f),
-		m_billboard(false),
+		m_billboard(true),
 		m_useCustomMaterial(false),
+		m_textureFile("BuiltIn/Textures/Line.png"),
 		m_material(NULL),
 		m_customMaterial(NULL)
 	{
@@ -41,8 +43,10 @@ namespace Skylicht
 
 		m_gameObject->getEntityManager()->addRenderSystem<CLineRenderer>();
 
-		m_material = new CMaterial("Primitive", "BuiltIn/Shader/SpecularGlossiness/Deferred/Color.xml");
+		m_material = new CMaterial("Primitive", "BuiltIn/Shader/Transparent/Transparent.xml");
+		m_material->setUniformTexture("uTexDiffuse", CTextureManager::getInstance()->getTexture(m_textureFile.c_str()));
 		m_material->setUniform4("uColor", m_color);
+		m_material->setBackfaceCulling(false);
 		m_material->updateShaderParams();
 
 		updateData();
@@ -54,6 +58,14 @@ namespace Skylicht
 			return m_customMaterial;
 
 		return m_material;
+	}
+
+	CWorldTransformData* CRenderLine::getPoint(u32 id)
+	{
+		if (id >= m_lineData->Points.size())
+			return NULL;
+
+		return m_lineData->Points[id];
 	}
 
 	void CRenderLine::updateComponent()
@@ -71,6 +83,8 @@ namespace Skylicht
 		CColorProperty* color = new CColorProperty(object, "color", m_color);
 		color->setUIHeader("Default Material");
 		object->autoRelease(color);
+
+		object->autoRelease(new CImageSourceProperty(object, "texture", m_textureFile.c_str()));
 
 		CFilePathProperty* material = new CFilePathProperty(object, "material", m_materialFile.c_str(), CMaterialManager::getMaterialExts());
 		material->setUIHeader("Custom Material");
@@ -102,10 +116,11 @@ namespace Skylicht
 		CEntityHandler::loadSerializable(object);
 
 		m_lineWidth = object->get("line width", 1.0f);
-		m_billboard = object->get("billboard", false);
+		m_billboard = object->get("billboard", true);
 		m_color = object->get<SColor>("color", SColor(255, 180, 180, 180));
 		m_useCustomMaterial = object->get("custom material", false);
 
+		std::string textureFile = object->get<std::string>("texture", "BuiltIn/Textures/Line.png");
 		std::string materialFile = object->get<std::string>("material", "");
 
 		CArraySerializable* points = (CArraySerializable*)object->getProperty("Points");
@@ -146,6 +161,16 @@ namespace Skylicht
 
 			if (materials.size() > 0)
 				m_customMaterial = materials[0];
+		}
+
+		if (!textureFile.empty())
+		{
+			ITexture* texture = CTextureManager::getInstance()->getTexture(textureFile.c_str());
+			if (texture)
+			{
+				m_material->setUniformTexture("uTexDiffuse", texture);
+				m_textureFile = textureFile;
+			}
 		}
 
 		m_material->setUniform4("uColor", m_color);

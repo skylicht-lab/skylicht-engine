@@ -279,7 +279,7 @@ namespace Skylicht
 						// first segment
 						SParticlePosition& p = (*trail.Position)[i];
 						pos2 = p.Position;
-						thickness = p.Width;
+						thickness = p.Width * 0.5f;
 						alpha1 = p.Alpha;
 						alpha2 = p.Alpha;
 
@@ -293,7 +293,7 @@ namespace Skylicht
 
 						pos2 = p2.Position;
 						pos1 = p1.Position;
-						thickness = p1.Width;
+						thickness = p1.Width * 0.5f;
 						alpha1 = p1.Alpha;
 						alpha2 = p2.Alpha;
 					}
@@ -344,22 +344,22 @@ namespace Skylicht
 						u32 index = totalSegDraw * 6;
 
 						// vertex buffer
-						vertices[vertex + 0].Pos = pos1 - updown * thickness * 0.5f;
+						vertices[vertex + 0].Pos = pos1 - updown * thickness;
 						vertices[vertex + 0].Normal = updown;
 						vertices[vertex + 0].Color = c1;
 						vertices[vertex + 0].TCoords.set(0.0f, uv1);
 
-						vertices[vertex + 1].Pos = pos1 + updown * thickness * 0.5f;
+						vertices[vertex + 1].Pos = pos1 + updown * thickness;
 						vertices[vertex + 1].Normal = updown;
 						vertices[vertex + 1].Color = c1;
 						vertices[vertex + 1].TCoords.set(1.0f, uv1);
 
-						vertices[vertex + 2].Pos = pos2 - updown * thickness * 0.5f;
+						vertices[vertex + 2].Pos = pos2 - updown * thickness;
 						vertices[vertex + 2].Normal = updown;
 						vertices[vertex + 2].Color = c2;
 						vertices[vertex + 2].TCoords.set(0.0f, uv2);
 
-						vertices[vertex + 3].Pos = pos2 + updown * thickness * 0.5f;
+						vertices[vertex + 3].Pos = pos2 + updown * thickness;
 						vertices[vertex + 3].Normal = updown;
 						vertices[vertex + 3].Color = c2;
 						vertices[vertex + 3].TCoords.set(1.0f, uv2);

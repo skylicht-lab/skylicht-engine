@@ -173,7 +173,7 @@ jobs:
     #    path: Build
 
   IOS:
-    runs-on: macos-15
+    runs-on: macos-latest
     env:
       PLATFORM: SIMULATORARM64
     steps:
@@ -198,6 +198,7 @@ jobs:
           cmake -S . -B ./PrjIOS -G Xcode -DCMAKE_TOOLCHAIN_FILE=./ios.cmake -DPLATFORM=${PLATFORM}
           cd PrjIOS
           xcodebuild -showsdks
+          xcodebuild -downloadPlatform iOS
           xcodebuild -configuration Release -alltargets -sdk iphonesimulator
           cd ..
       - name: Package
