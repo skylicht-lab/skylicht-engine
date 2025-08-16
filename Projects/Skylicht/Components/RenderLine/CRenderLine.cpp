@@ -68,6 +68,20 @@ namespace Skylicht
 		return m_lineData->Points[id];
 	}
 
+	void CRenderLine::setPoints(const std::vector<core::vector3df>& position)
+	{
+		removeAllEntities();
+
+		for (const core::vector3df& p : position)
+		{
+			CEntity* entity = createEntity();
+			CWorldTransformData* world = GET_ENTITY_DATA(entity, CWorldTransformData);
+			world->Relative.setTranslation(p);
+		}
+
+		updateData();
+	}
+
 	void CRenderLine::updateComponent()
 	{
 

@@ -25,6 +25,8 @@ namespace Skylicht
 
 		bool NeedValidate;
 
+		bool RenderInTransparent;
+
 	public:
 		CLineRenderData();
 

@@ -254,17 +254,48 @@ namespace Skylicht
 	{
 		CWorldTransformData** transforms = m_transforms.pointer();
 		CLineRenderData** lines = m_lines.pointer();
-		int n = m_lines.count();
 
+		CMaterial* mat;
+		IRenderPipeline* rp = entityManager->getRenderPipeline();
+
+		int n = m_lines.count();
 		for (int i = 0; i < n; i++)
 		{
-			renderLine(entityManager, transforms[i], lines[i]);
+			CLineRenderData* line = lines[i];
+			line->RenderInTransparent = false;
+
+			mat = line->Material;
+			if (mat == NULL || !rp->canRenderMaterial(mat))
+				continue;
+
+			if (mat && mat->getShader() && !mat->getShader()->isOpaque())
+			{
+				// transparent
+				line->RenderInTransparent = true;
+				continue;
+			}
+
+			renderLine(entityManager, transforms[i], line);
 		}
 	}
 
 	void CLineRenderer::renderTransparent(CEntityManager* entityManager)
 	{
+		CWorldTransformData** transforms = m_transforms.pointer();
+		CLineRenderData** lines = m_lines.pointer();
 
+		IRenderPipeline* rp = entityManager->getRenderPipeline();
+
+		int n = m_lines.count();
+		for (int i = 0; i < n; i++)
+		{
+			CLineRenderData* line = lines[i];
+
+			if (!line->RenderInTransparent)
+				continue;
+
+			renderLine(entityManager, transforms[i], line);
+		}
 	}
 
 	void CLineRenderer::renderLine(CEntityManager* entityMgr, CWorldTransformData* transform, CLineRenderData* line)

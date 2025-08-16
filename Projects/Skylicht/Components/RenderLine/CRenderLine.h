@@ -60,6 +60,8 @@ namespace Skylicht
 
 		CWorldTransformData* getPoint(u32 id);
 
+		void setPoints(const std::vector<core::vector3df>& position);
+
 	protected:
 
 		void updateData();

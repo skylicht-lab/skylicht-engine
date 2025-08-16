@@ -10,7 +10,8 @@ namespace Skylicht
 		Billboard(false),
 		Mesh(NULL),
 		Material(NULL),
-		NeedValidate(true)
+		NeedValidate(true),
+		RenderInTransparent(false)
 	{
 		Mesh = new CMesh();
 
