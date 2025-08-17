@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2025 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
@@ -24,26 +24,61 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "GUI/GUIContext.h"
-
-#include "Utils/CSingleton.h"
-#include "AssetManager/CAssetManager.h"
+#include "SkylichtEngine.h"
+#include "Editor/Space/CSpace.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSpriteController : public IFileLoader
+		class CSpaceTextureViewer : public CSpace
 		{
-		public:
-			DECLARE_SINGLETON(CSpriteController)
+		protected:
+			GUI::CBase* m_view;
+
+			GUI::CLabel* m_labelZoom;
+
+			int m_zoom;
+			float m_scale;
+			float m_viewX;
+			float m_viewY;
+
+			int m_vertexColor;
+			int m_textureColor;
+			int m_debugColor;
+			int m_debugTransparent;
+
+			GUI::SPoint m_mouseLocal;
+			bool m_leftPress;
+
+			ITexture* m_texture;
+			core::matrix4 m_world;
 
 		public:
-			CSpriteController();
+			CSpaceTextureViewer(GUI::CWindow* window, CEditor* editor);
 
-			virtual ~CSpriteController();
+			virtual ~CSpaceTextureViewer();
 
-			virtual void loadFile(const std::string& path);
+			void onDebugColor(GUI::CBase* base);
+
+			void onDebugTransparent(GUI::CBase* base);
+
+			virtual void onResize(float w, float h);
+
+			virtual void onRender(GUI::CBase* base);
+
+			virtual void onMouseMoved(GUI::CBase* base, float x, float y, float deltaX, float deltaY);
+
+			virtual void onLeftMouseClick(GUI::CBase* base, float x, float y, bool down);
+
+			virtual void onMouseWheeled(GUI::CBase* base, int wheel);
+
+			void openTexture(const char* path);
+
+		protected:
+
+			void updateView();
+
 		};
 	}
 }

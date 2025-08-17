@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2025 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
@@ -24,33 +24,43 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "Editor/CEditor.h"
-#include "Editor/Space/Sprite/CSpaceSprite.h"
+#include "Editor/Space/TextureViewer/CSpaceTextureViewer.h"
 #include "GUI/Utils/CDragAndDrop.h"
-#include "CSpriteController.h"
+#include "CTextureViewerController.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		IMPLEMENT_SINGLETON(CSpriteController);
+		IMPLEMENT_SINGLETON(CTextureViewerController);
 
-		CSpriteController::CSpriteController()
+		CTextureViewerController::CTextureViewerController()
 		{
-			CAssetManager::getInstance()->registerFileLoader("spritedata", this);
+			CAssetManager* assetMgr = CAssetManager::getInstance();
+			assetMgr->registerFileLoader("png", this);
+			assetMgr->registerFileLoader("tga", this);
+			assetMgr->registerFileLoader("jpg", this);
+			assetMgr->registerFileLoader("jpeg", this);
+			assetMgr->registerFileLoader("dds", this);
 		}
 
-		CSpriteController::~CSpriteController()
+		CTextureViewerController::~CTextureViewerController()
 		{
-			CAssetManager::getInstance()->unRegisterFileLoader("spritedata", this);
+			CAssetManager* assetMgr = CAssetManager::getInstance();
+			assetMgr->unRegisterFileLoader("png", this);
+			assetMgr->unRegisterFileLoader("tga", this);
+			assetMgr->unRegisterFileLoader("jpg", this);
+			assetMgr->unRegisterFileLoader("jpeg", this);
+			assetMgr->unRegisterFileLoader("dds", this);
 		}
 
-		void CSpriteController::loadFile(const std::string& path)
+		void CTextureViewerController::loadFile(const std::string& path)
 		{
 			CEditor* editor = CEditor::getInstance();
 
-			CSpace* space = editor->getWorkspaceByName(std::wstring(L"Sprite"));
+			CSpace* space = editor->getWorkspaceByName(std::wstring(L"Texture Viewer"));
 			if (!space)
-				space = editor->openWorkspace(std::wstring(L"Sprite"));
+				space = editor->openWorkspace(std::wstring(L"Texture Viewer"));
 			else
 			{
 				GUI::CDockableWindow* dockWindow = dynamic_cast<GUI::CDockableWindow*>(space->getWindow());
@@ -68,8 +78,8 @@ namespace Skylicht
 
 			if (space)
 			{
-				CSpaceSprite* spaceSprite = dynamic_cast<CSpaceSprite*>(space);
-				spaceSprite->openSprite(path);
+				CSpaceTextureViewer* spaceTV = dynamic_cast<CSpaceTextureViewer*>(space);
+				spaceTV->openTexture(path.c_str());
 			}
 		}
 	}

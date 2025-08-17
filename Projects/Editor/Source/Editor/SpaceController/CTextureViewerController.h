@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2025 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
@@ -33,15 +33,15 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		class CSpriteController : public IFileLoader
+		class CTextureViewerController : public IFileLoader
 		{
 		public:
-			DECLARE_SINGLETON(CSpriteController)
+			DECLARE_SINGLETON(CTextureViewerController)
 
 		public:
-			CSpriteController();
+			CTextureViewerController();
 
-			virtual ~CSpriteController();
+			virtual ~CTextureViewerController();
 
 			virtual void loadFile(const std::string& path);
 		};

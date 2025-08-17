@@ -44,6 +44,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Space/Sprite/CSpaceExportSprite.h"
 #include "Space/Sprite/CSpaceSprite.h"
 #include "Space/Particle/CSpaceParticle.h"
+#include "Space/TextureViewer/CSpaceTextureViewer.h"
 #include "Space/InterpolateCurves/CSpaceInterpolateCurves.h"
 
 #include "SpaceController/CSceneController.h"
@@ -53,6 +54,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "SpaceController/CSpriteController.h"
 #include "SpaceController/CGUIDesignController.h"
 #include "SpaceController/CParticleController.h"
+#include "SpaceController/CTextureViewerController.h"
 
 #include "Handles/CHandles.h"
 
@@ -101,9 +103,11 @@ namespace Skylicht
 
 			// init controller
 			CSceneController::createGetInstance()->initContextMenu(m_canvas);
-			CSpriteController::createGetInstance()->initContextMenu(m_canvas);
 			CGUIDesignController::createGetInstance()->initContextMenu(m_canvas);
 			CParticleController::createGetInstance()->initContextMenu(m_canvas);
+
+			CSpriteController::createGetInstance();
+			CTextureViewerController::createGetInstance();
 
 			CPropertyController::createGetInstance();
 			CAssetPropertyController::createGetInstance();
@@ -704,6 +708,10 @@ namespace Skylicht
 			else if (workspace == L"Interpolate Curves")
 			{
 				ret = new CSpaceInterpolateCurves(window, this);
+			}
+			else if (workspace == L"Texture Viewer")
+			{
+				ret = new CSpaceTextureViewer(window, this);
 			}
 #ifdef BUILD_SKYLICHT_LIGHMAPPER
 			else if (workspace == L"Bake Directional")
