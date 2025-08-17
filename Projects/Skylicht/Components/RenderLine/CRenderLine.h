@@ -62,6 +62,24 @@ namespace Skylicht
 
 		void setPoints(const std::vector<core::vector3df>& position);
 
+		void setColor(const SColor& c);
+
+		inline const SColor& getColor()
+		{
+			return m_color;
+		}
+
+		inline void setWidth(float w)
+		{
+			m_lineWidth = w;
+			m_lineData->Width = w;
+		}
+
+		inline float getWidth()
+		{
+			return m_lineWidth;
+		}
+
 	protected:
 
 		void updateData();

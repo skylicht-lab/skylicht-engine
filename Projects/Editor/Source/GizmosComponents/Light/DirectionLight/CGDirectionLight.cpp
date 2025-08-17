@@ -53,7 +53,8 @@ namespace Skylicht
 
 		CGDirectionLight::~CGDirectionLight()
 		{
-
+			if (m_gameObject)
+				m_gameObject->removeComponent<CSprite>();
 		}
 
 		void CGDirectionLight::initComponent()

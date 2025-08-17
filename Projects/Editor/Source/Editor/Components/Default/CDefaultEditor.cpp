@@ -387,7 +387,19 @@ namespace Skylicht
 						};
 
 					subject->addObserver(observer, true);
-					ui->addInputFile(layout, ui->getPrettyName(value->Name), subject, value->Exts);
+
+					GUI::CInputResourceBox* input = ui->addInputFile(layout, ui->getPrettyName(value->Name), subject, value->Exts);
+					input->OnRightMouseClick = [&, s = subject, o = observer](GUI::CBase* base, float x, float y, bool down)
+						{
+							GUI::SPoint mousePos = GUI::CInput::getInput()->getMousePosition();
+							s_pickFileMenu->open(mousePos);
+							s_pickFileMenu->OnCommand = [&, s, o](GUI::CBase* item)
+								{
+									s->set("");
+									s->notify(NULL);
+								};
+						};
+
 					m_subjects.push_back(subject);
 				}
 				else if (valueProperty->getType() == EPropertyDataType::FolderPath)
@@ -406,7 +418,18 @@ namespace Skylicht
 						};
 
 					subject->addObserver(observer, true);
-					ui->addInputFolder(layout, ui->getPrettyName(value->Name), subject);
+					GUI::CInputResourceBox* input = ui->addInputFolder(layout, ui->getPrettyName(value->Name), subject);
+					input->OnRightMouseClick = [&, s = subject, o = observer](GUI::CBase* base, float x, float y, bool down)
+						{
+							GUI::SPoint mousePos = GUI::CInput::getInput()->getMousePosition();
+							s_pickFileMenu->open(mousePos);
+							s_pickFileMenu->OnCommand = [&, s, o](GUI::CBase* item)
+								{
+									s->set("");
+									s->notify(NULL);
+								};
+						};
+
 					m_subjects.push_back(subject);
 				}
 				else if (valueProperty->getType() == EPropertyDataType::Enum)

@@ -123,7 +123,8 @@ namespace Skylicht
 		bool shadowCasting = object->get<bool>("shadowCasting", true);
 
 		std::string meshFile = object->get<std::string>("mesh", "");
-		std::string materialFile = object->get<std::string>("material", "");
+
+		m_materialFile = object->get<std::string>("material", "");
 
 		if (meshFile != m_meshFile ||
 			optimize != m_optimizeForRender ||
@@ -137,22 +138,27 @@ namespace Skylicht
 			m_fixInverseNormal = fixInverseNormal;
 			m_loadTexcoord2 = loadTexcoord2;
 
-			CEntityPrefab* prefab = CMeshManager::getInstance()->loadModel(
-				meshFile.c_str(),
-				"",
-				m_loadNormal,
-				m_fixInverseNormal,
-				m_loadTexcoord2,
-				false);
+			if (m_meshFile.empty())
+			{
+				releaseEntities();
+			}
+			else
+			{
+				CEntityPrefab* prefab = CMeshManager::getInstance()->loadModel(
+					meshFile.c_str(),
+					"",
+					m_loadNormal,
+					m_fixInverseNormal,
+					m_loadTexcoord2,
+					false);
 
-			if (prefab != NULL)
-				initFromPrefab(prefab);
+				if (prefab != NULL)
+					initFromPrefab(prefab);
+			}
 		}
 
-		if (!materialFile.empty())
+		if (!m_materialFile.empty())
 		{
-			m_materialFile = materialFile;
-
 			std::vector<std::string> textureFolders;
 			ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial(
 				m_materialFile.c_str(),
@@ -162,6 +168,10 @@ namespace Skylicht
 
 			if (materials.size() > 0)
 				initMaterial(materials);
+		}
+		else
+		{
+			releaseMaterial();
 		}
 
 		// enable instancing

@@ -86,22 +86,25 @@ namespace Skylicht
 				selectObjectData->Entity = entity;
 
 				CEntityChildsData* childs = GET_ENTITY_DATA(entity, CEntityChildsData);
-				for (u32 j = 0, m = (u32)childs->Childs.size(); j < m; j++)
+				if (childs)
 				{
-					CEntity* renderEntity = childs->Childs[j];
-
-					CRenderMeshData* renderMesh = GET_ENTITY_DATA(renderEntity, CRenderMeshData);
-					if (renderMesh->getMesh())
+					for (u32 j = 0, m = (u32)childs->Childs.size(); j < m; j++)
 					{
-						core::aabbox3df bbox = renderMesh->getMesh()->getBoundingBox();
+						CEntity* renderEntity = childs->Childs[j];
 
-						CWorldTransformData* transform = GET_ENTITY_DATA(renderEntity, CWorldTransformData);
-						transform->Relative.transformBoxEx(bbox);
+						CRenderMeshData* renderMesh = GET_ENTITY_DATA(renderEntity, CRenderMeshData);
+						if (renderMesh->getMesh())
+						{
+							core::aabbox3df bbox = renderMesh->getMesh()->getBoundingBox();
 
-						if (j == 0)
-							selectObjectData->BBox = bbox;
-						else
-							selectObjectData->BBox.addInternalBox(bbox);
+							CWorldTransformData* transform = GET_ENTITY_DATA(renderEntity, CWorldTransformData);
+							transform->Relative.transformBoxEx(bbox);
+
+							if (j == 0)
+								selectObjectData->BBox = bbox;
+							else
+								selectObjectData->BBox.addInternalBox(bbox);
+						}
 					}
 				}
 			}

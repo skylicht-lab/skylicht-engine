@@ -23,6 +23,13 @@ namespace Skylicht
 
 	CLathe::~CLathe()
 	{
+		if (m_gameObject)
+		{
+			CEntity* entity = m_gameObject->getEntity();
+			entity->removeData<CRenderMeshData>();
+			entity->removeData<CCullingData>();
+		}
+
 		if (m_material)
 		{
 			m_material->drop();

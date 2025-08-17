@@ -24,6 +24,10 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CGizmosComponent.h"
+#include "GameObject/CGameObject.h"
+#include "SelectObject/CSelectObjectData.h"
+#include "Transform/CWorldInverseTransformData.h"
+#include "Entity/CEntity.h"
 
 namespace Skylicht
 {
@@ -36,7 +40,12 @@ namespace Skylicht
 
 		CGizmosComponent::~CGizmosComponent()
 		{
-
+			if (m_gameObject)
+			{
+				CEntity* entity = m_gameObject->getEntity();
+				entity->removeData<CSelectObjectData>();
+				entity->removeData<CWorldInverseTransformData>();
+			}
 		}
 	}
 }

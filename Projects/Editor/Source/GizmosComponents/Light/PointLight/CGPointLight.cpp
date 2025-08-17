@@ -55,6 +55,9 @@ namespace Skylicht
 		CGPointLight::~CGPointLight()
 		{
 			delete[]m_circlePos;
+
+			if (m_gameObject)
+				m_gameObject->removeComponent<CSprite>();
 		}
 
 		void CGPointLight::initComponent()

@@ -29,6 +29,14 @@ namespace Skylicht
 
 	CRenderLine::~CRenderLine()
 	{
+		if (m_gameObject)
+		{
+			CEntity* entity = m_gameObject->getEntity();
+			entity->removeData<CLineRenderData>();
+			entity->removeData<CCullingBBoxData>();
+			entity->removeData<CCullingData>();
+		}
+
 		if (m_material)
 			m_material->drop();
 	}
@@ -80,6 +88,20 @@ namespace Skylicht
 		}
 
 		updateData();
+	}
+
+	void CRenderLine::setColor(const SColor& c)
+	{
+		m_color = c;
+
+		m_material->setUniform4("uColor", m_color);
+		m_material->updateShaderParams();
+
+		if (m_customMaterial)
+		{
+			m_customMaterial->setUniform4("uColor", m_color);
+			m_customMaterial->updateShaderParams();
+		}
 	}
 
 	void CRenderLine::updateComponent()
