@@ -41,7 +41,7 @@ namespace Skylicht
 		m_screenSpaceReflection(false),
 		m_enableLastFrameTexture(false),
 		m_brightFilter(NULL),
-		m_blurFilter(NULL),
+		m_blurDownFilter(NULL),
 		m_blurUpFilter(NULL),
 		m_bloomFilter(NULL),
 		m_fxaaFilter(NULL),
@@ -75,8 +75,8 @@ namespace Skylicht
 		if (m_brightFilter != NULL)
 			delete m_brightFilter;
 
-		if (m_blurFilter != NULL)
-			delete m_blurFilter;
+		if (m_blurDownFilter != NULL)
+			delete m_blurDownFilter;
 
 		if (m_blurUpFilter != NULL)
 			delete m_blurUpFilter;
@@ -169,8 +169,8 @@ namespace Skylicht
 		m_adaptLumPass.MaterialType = shaderMgr->getShaderIDByName("AdaptLuminance");
 
 		m_brightFilter = new CMaterial("BrightFilter", "BuiltIn/Shader/PostProcessing/BrightFilter.xml");
-		m_blurFilter = new CMaterial("DownBlurFilter", "BuiltIn/Shader/PostProcessing/DownsampleFilter.xml");
-		m_blurUpFilter = new CMaterial("DownBlurFilter", "BuiltIn/Shader/PostProcessing/BlurFilter.xml");
+		m_blurDownFilter = new CMaterial("DownBlurFilter", "BuiltIn/Shader/PostProcessing/DownsampleFilter.xml");
+		m_blurUpFilter = new CMaterial("UpBlurFilter", "BuiltIn/Shader/PostProcessing/BlurFilter.xml");
 		m_bloomFilter = new CMaterial("BloomFilter", "BuiltIn/Shader/PostProcessing/Bloom.xml");
 		m_fxaaFilter = new CMaterial("BloomFilter", "BuiltIn/Shader/PostProcessing/FXAA.xml");
 	}
@@ -239,8 +239,8 @@ namespace Skylicht
 		core::vector2df blurSize;
 		blurSize.X = 1.0f / (float)rrtSize.Width;
 		blurSize.Y = 1.0f / (float)rrtSize.Height;
-		m_blurFilter->setUniform2("uTexelSize", &blurSize.X);
-		renderEffect(from, to, m_blurFilter);
+		m_blurDownFilter->setUniform2("uTexelSize", &blurSize.X);
+		renderEffect(from, to, m_blurDownFilter);
 	}
 
 	void CPostProcessorRP::blurUp(int from, int to)
@@ -276,7 +276,6 @@ namespace Skylicht
 
 			blurDown(1, 2);
 
-			/*
 			if (m_numTarget > 4)
 			{
 				blurDown(2, 3);
@@ -295,11 +294,10 @@ namespace Skylicht
 			{
 				blurUp(2, 1);
 			}
-			*/
 
 			// bloom
 			m_bloomFilter->setTexture(0, color);
-			m_bloomFilter->setTexture(1, m_rtt[2]);
+			m_bloomFilter->setTexture(1, m_rtt[1]);
 			m_bloomFilter->applyMaterial(m_effectPass);
 
 			m_bloomFilter->setUniform("uBloomIntensity", m_bloomIntensity);
@@ -412,7 +410,7 @@ namespace Skylicht
 
 		// test to target
 		/*
-		ITexture *tex = m_rtt[2];
+		ITexture* tex = m_rtt[1];
 		SMaterial t;
 		t.setTexture(0, tex);
 		t.MaterialType = CShaderManager::getInstance()->getShaderIDByName("TextureLinearRGB");
@@ -421,6 +419,9 @@ namespace Skylicht
 		float h = (float)tex->getSize().Height;
 
 		driver->setRenderTarget(finalTarget, false, false);
+		if (viewport.getWidth() > 0 && viewport.getHeight() > 0)
+			driver->setViewPort(viewport);
+
 		beginRender2D(renderW, renderH);
 		renderBufferToTarget(0.0f, 0.0f, renderW, renderH, 0.0f, 0.0f, w, h, t);
 		*/

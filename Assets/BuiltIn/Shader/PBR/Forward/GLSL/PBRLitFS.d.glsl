@@ -18,6 +18,9 @@ uniform sampler2D uTexEmissive;
 uniform vec4 uLightDirection;
 uniform vec4 uLightColor;
 uniform vec4 uColor;
+#ifdef EMISSIVE
+uniform vec4 uEmissive;
+#endif
 #ifdef NO_TEXTURE
 uniform vec2 uRoughnessMetal;
 #endif
@@ -109,7 +112,7 @@ void main(void)
 #endif
 
 #ifdef EMISSIVE
-	vec3 emissiveMap = texture(uTexEmissive, vTexCoord0.xy).rgb;
+	vec3 emissiveMap = texture(uTexEmissive, vTexCoord0.xy).rgb * uEmissive.rgb * uEmissive.a;
 #endif
 
 #if defined(NO_NORMAL_MAP) || defined(NO_TEXTURE)

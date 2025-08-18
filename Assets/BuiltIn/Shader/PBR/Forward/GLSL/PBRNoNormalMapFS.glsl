@@ -8,6 +8,7 @@ uniform sampler2D uTexEmissive;
 uniform vec4 uLightDirection;
 uniform vec4 uLightColor;
 uniform vec4 uColor;
+uniform vec4 uEmissive;
 uniform vec4 uSHConst[4];
 in vec2 vTexCoord0;
 in vec3 vWorldNormal;
@@ -77,7 +78,7 @@ void main(void)
 {
 	vec4 albedoMap = texture(uTexAlbedo, vTexCoord0.xy) * uColor;
 	vec3 rmaMap = texture(uTexRMA, vTexCoord0.xy).xyz;
-	vec3 emissiveMap = texture(uTexEmissive, vTexCoord0.xy).rgb;
+	vec3 emissiveMap = texture(uTexEmissive, vTexCoord0.xy).rgb * uEmissive.rgb * uEmissive.a;
 	vec3 n = vWorldNormal;
 	float roughness = rmaMap.r;
 	float metalness = rmaMap.g;

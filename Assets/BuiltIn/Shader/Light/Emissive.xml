@@ -1,0 +1,19 @@
+<shaderConfig name="Emissive" baseShader="SOLID">
+	<uniforms>
+		<vs>
+			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+		</vs>
+		<fs>
+			<uniform name="uColor" type="MATERIAL_PARAM" valueIndex="1" value="1.0, 1.0, 1.0, 1.0" float="4"/>
+			<uniform name="uEmissive" type="MATERIAL_PARAM" valueIndex="2" value="1.0, 1.0, 1.0, 1.0" float="4"/>
+		</fs>
+	</uniforms>
+	<customUI>		
+		<ui control="UIGroup" name="Customize">
+			<ui control="UIColor" name="uColor"/>
+			<ui control="UIFloat4" name="uEmissive" elementName="Intensity R;Intensity G;Intensity B;Intensity"/>
+		</ui>
+	</customUI>
+	<shader type="GLSL" vs="GLSL/EmissiveVS.glsl" fs="GLSL/EmissiveFS.glsl" fs_source="GLSL/EmissiveFS.d.glsl"/>
+	<shader type="HLSL" vs="HLSL/EmissiveVS.hlsl" fs="HLSL/EmissiveFS.hlsl" fs_source="HLSL/EmissiveFS.d.hlsl"/>
+</shaderConfig>

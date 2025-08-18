@@ -52,6 +52,9 @@ cbuffer cbPerFrame
 	float4 uLightDirection;
 	float4 uLightColor;
 	float4 uColor;
+#ifdef EMISSIVE
+	float4 uEmissive;
+#endif	
 #ifdef NO_TEXTURE
 	float2 uRoughnessMetal;
 #endif
@@ -125,7 +128,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 #endif
 
 #ifdef EMISSIVE
-	float3 emissiveMap = uTexEmissive.Sample(uTexEmissiveSampler, input.tex0).rgb;
+	float3 emissiveMap = uTexEmissive.Sample(uTexEmissiveSampler, input.tex0).rgb * uEmissive.rgb * uEmissive.a;
 #endif
 
 #if defined(NO_NORMAL_MAP) || defined(NO_TEXTURE)

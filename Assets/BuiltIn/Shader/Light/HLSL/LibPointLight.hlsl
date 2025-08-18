@@ -22,7 +22,7 @@ float3 pointlight(
 	float3 viewDir = normalize(v);
 	float3 H = normalize(direction + viewDir);
 	float NdotE = max(0.0,dot(normal, H));
-	float specular = pow(NdotE, 100.0 * gloss) * spec;	
+	float specular = pow(NdotE, 10.0 + 100.0 * gloss) * spec;	
 
 	return (lightColor.rgb * NdotL + specular * specColor) * attenuation;
 }

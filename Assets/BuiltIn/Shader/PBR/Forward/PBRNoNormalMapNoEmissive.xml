@@ -1,4 +1,4 @@
-<shaderConfig name="PBRNoNormalMapNoEmissve" baseShader="SOLID">
+<shaderConfig name="PBRNoNormalMapNoEmissive" baseShader="SOLID">
 	<uniforms>
 		<vs>
 			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
@@ -31,6 +31,6 @@
 			<ui control="UIFloat4" name="uUVScale" elementName="UV ScaleX;UV ScaleY;UV OffsetX;UV OffsetY"/>
 		</ui>
 	</customUI>
-	<shader type="GLSL" vs="GLSL/PBRNoNormalMapVS.glsl" fs="GLSL/PBRNoNormalMapNoEmissveFS.glsl" vs_source="GLSL/PBRVS.d.glsl" fs_source="GLSL/PBRLitFS.d.glsl" define="NO_NORMAL_MAP"/>
-	<shader type="HLSL" vs="HLSL/PBRNoNormalMapVS.hlsl" fs="HLSL/PBRNoNormalMapNoEmissveFS.hlsl" vs_source="HLSL/PBRVS.d.hlsl" fs_source="HLSL/PBRLitFS.d.hlsl" define="NO_NORMAL_MAP"/>
+	<shader type="GLSL" vs="GLSL/PBRNoNormalMapVS.glsl" fs="GLSL/PBRNoNormalMapNoEmissiveFS.glsl" vs_source="GLSL/PBRVS.d.glsl" fs_source="GLSL/PBRLitFS.d.glsl" define="NO_NORMAL_MAP"/>
+	<shader type="HLSL" vs="HLSL/PBRNoNormalMapVS.hlsl" fs="HLSL/PBRNoNormalMapNoEmissiveFS.hlsl" vs_source="HLSL/PBRVS.d.hlsl" fs_source="HLSL/PBRLitFS.d.hlsl" define="NO_NORMAL_MAP"/>
 </shaderConfig>

@@ -13,21 +13,31 @@ cbuffer cbPerFrame
 	float2 uTexelSize;
 };
 
-float3 upsampleFilter(const float2 uv)
-{
-	float4 d = float4(-uTexelSize.x, -uTexelSize.y, uTexelSize.x, uTexelSize.y);
-
-	float3 s0 = uSourceTex.SampleLevel(uSourceTexSampler, uv, 0).rgb;
-	float3 s1 = uSourceTex.SampleLevel(uSourceTexSampler, uv + d.xy, 0).rgb;
-	float3 s2 = uSourceTex.SampleLevel(uSourceTexSampler, uv + d.zy, 0).rgb;
-	float3 s3 = uSourceTex.SampleLevel(uSourceTexSampler, uv + d.xw, 0).rgb;
-	float3 s4 = uSourceTex.SampleLevel(uSourceTexSampler, uv + d.zw, 0).rgb;
-
-	return (s0 + s1 + s2 + s3 + s4) * 0.2;
-}
-
 float4 main(PS_INPUT input) : SV_TARGET
 {
-	float3 m = upsampleFilter(input.tex0);
-	return float4(m, 1.0);
+	float3 sum = float3(0.0, 0.0, 0.0);
+    
+	/*
+	float weights[5] = {0.05, 0.25, 0.4, 0.25, 0.05};
+
+    sum += uSourceTex.SampleLevel(uSourceTexSampler, input.tex0 + float2(-2.0 * uTexelSize.x, 0.0), 0).rgb * weights[0];
+    sum += uSourceTex.SampleLevel(uSourceTexSampler, input.tex0 + float2(-1.0 * uTexelSize.x, 0.0), 0).rgb * weights[1];
+    sum += uSourceTex.SampleLevel(uSourceTexSampler, input.tex0, 0).rgb * weights[2];
+    sum += uSourceTex.SampleLevel(uSourceTexSampler, input.tex0 + float2(1.0 * uTexelSize.x, 0.0), 0).rgb * weights[3];
+    sum += uSourceTex.SampleLevel(uSourceTexSampler, input.tex0 + float2(2.0 * uTexelSize.x, 0.0), 0).rgb * weights[4];
+	*/
+	
+	float weights[9] = {0.05, 0.09, 0.12, 0.15, 0.16, 0.15, 0.12, 0.09, 0.05};
+	
+	sum += uSourceTex.SampleLevel(uSourceTexSampler, input.tex0 + float2(-4.0 * uTexelSize.x, 0.0), 0.0).rgb * weights[0];
+    sum += uSourceTex.SampleLevel(uSourceTexSampler, input.tex0 + float2(-3.0 * uTexelSize.x, 0.0), 0.0).rgb * weights[1];
+	sum += uSourceTex.SampleLevel(uSourceTexSampler, input.tex0 + float2(-2.0 * uTexelSize.x, 0.0), 0.0).rgb * weights[2];
+    sum += uSourceTex.SampleLevel(uSourceTexSampler, input.tex0 + float2(-1.0 * uTexelSize.x, 0.0), 0.0).rgb * weights[3];
+    sum += uSourceTex.SampleLevel(uSourceTexSampler, input.tex0, 0.0).rgb * weights[4];
+    sum += uSourceTex.SampleLevel(uSourceTexSampler, input.tex0 + float2(1.0 * uTexelSize.x, 0.0), 0.0).rgb * weights[5];
+	sum += uSourceTex.SampleLevel(uSourceTexSampler, input.tex0 + float2(2.0 * uTexelSize.x, 0.0), 0.0).rgb * weights[6];
+    sum += uSourceTex.SampleLevel(uSourceTexSampler, input.tex0 + float2(3.0 * uTexelSize.x, 0.0), 0.0).rgb * weights[7];
+    sum += uSourceTex.SampleLevel(uSourceTexSampler, input.tex0 + float2(4.0 * uTexelSize.x, 0.0), 0.0).rgb * weights[8];
+	
+	return float4(sum, 1.0);
 }

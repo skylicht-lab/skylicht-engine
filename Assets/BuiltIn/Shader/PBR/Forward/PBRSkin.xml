@@ -17,6 +17,7 @@
 			<uniform name="uLightDirection" type="WORLD_LIGHT_DIRECTION" value="0" float="4"/>
 			<uniform name="uLightColor" type="LIGHT_COLOR" value="1.0,1.0,1.0,1.0" float="4"/>
 			<uniform name="uColor" type="MATERIAL_PARAM" valueIndex="1" value="1.0, 1.0, 1.0, 1.0" float="4"/>
+			<uniform name="uEmissive" type="MATERIAL_PARAM" valueIndex="2" value="1.0, 1.0, 1.0, 1.0" float="4"/>
 			<uniform name="uSHConst" type="SH_CONST" value="0" float="4" array="4"/>
 		</fs>
 	</uniforms>
@@ -34,6 +35,7 @@
 		<ui control="UIGroup" name="Customize">
 			<ui control="UIColor" name="uColor"/>
 			<ui control="UIFloat4" name="uUVScale" elementName="UV ScaleX;UV ScaleY;UV OffsetX;UV OffsetY"/>
+			<ui control="UIFloat4" name="uEmissive" elementName="Intensity R;Intensity G;Intensity B;Intensity"/>
 		</ui>
 	</customUI>
 	<shader type="GLSL" vs="GLSL/PBRSkinVS.glsl" vs_source="GLSL/PBRSkinVS.d.glsl" fs="GLSL/PBRLitFS.glsl"/>

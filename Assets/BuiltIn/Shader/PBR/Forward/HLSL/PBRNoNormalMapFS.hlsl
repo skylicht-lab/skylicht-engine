@@ -23,6 +23,7 @@ cbuffer cbPerFrame
 	float4 uLightDirection;
 	float4 uLightColor;
 	float4 uColor;
+	float4 uEmissive;
 	float4 uSHConst[4];
 };
 static const float gamma = 2.2;
@@ -87,7 +88,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 {
 	float4 albedoMap = uTexAlbedo.Sample(uTexAlbedoSampler, input.tex0) * uColor;
 	float3 rmaMap = uTexRMA.Sample(uTexRMASampler, input.tex0).xyz;
-	float3 emissiveMap = uTexEmissive.Sample(uTexEmissiveSampler, input.tex0).rgb;
+	float3 emissiveMap = uTexEmissive.Sample(uTexEmissiveSampler, input.tex0).rgb * uEmissive.rgb * uEmissive.a;
 	float3 n = input.worldNormal;
 	float roughness = rmaMap.r;
 	float metalness = rmaMap.g;

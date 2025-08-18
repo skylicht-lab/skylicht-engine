@@ -97,7 +97,7 @@ namespace Skylicht
 		bool m_enableLastFrameTexture;
 
 		CMaterial* m_brightFilter;
-		CMaterial* m_blurFilter;
+		CMaterial* m_blurDownFilter;
 		CMaterial* m_blurUpFilter;
 		CMaterial* m_bloomFilter;
 		CMaterial* m_fxaaFilter;
