@@ -88,8 +88,8 @@ namespace Skylicht
 
 			group = ui->addGroup("Exporter", this);
 			layout = ui->createBoxLayout(group);
-			std::string daePath = path;
-			ui->addButton(layout, L"Export Mesh")->OnPress = [&, p = daePath](GUI::CBase* button)
+			std::string modelPath = path;
+			ui->addButton(layout, L"Export Mesh")->OnPress = [&, p = modelPath](GUI::CBase* button)
 				{
 					std::string outout = CPath::replaceFileExt(p, ".smesh");
 
@@ -112,7 +112,7 @@ namespace Skylicht
 					}
 				};
 			layout->addSpace(5.0f);
-			ui->addButton(layout, L"Export Material")->OnPress = [&, p = daePath](GUI::CBase* button)
+			ui->addButton(layout, L"Export Material")->OnPress = [&, p = modelPath](GUI::CBase* button)
 				{
 					std::string outout = CPath::replaceFileExt(p, ".mat");
 					std::string textureFolder = m_settings->TextureFolder.getString();
@@ -120,9 +120,9 @@ namespace Skylicht
 					CEntityPrefab* prefab = CMeshManager::getInstance()->loadModel(
 						p.c_str(),
 						m_settings->TextureFolder.getString(),
-						true,
+						m_settings->UseNormalMap.get(),
 						m_settings->FlipNormal.get(),
-						false);
+						m_settings->UseUV2.get());
 
 					if (prefab != NULL)
 					{

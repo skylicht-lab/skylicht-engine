@@ -228,6 +228,18 @@ namespace Skylicht
 		return entity;
 	}
 
+	void CRenderLine::removeEntity(CEntity* entity)
+	{
+		CEntityHandler::removeEntity(entity);
+		updateData();
+	}
+
+	void CRenderLine::removeAllEntities()
+	{
+		CEntityHandler::removeAllEntities();
+		updateData();
+	}
+
 	void CRenderLine::updateData()
 	{
 		m_culling->NeedValidate = true;

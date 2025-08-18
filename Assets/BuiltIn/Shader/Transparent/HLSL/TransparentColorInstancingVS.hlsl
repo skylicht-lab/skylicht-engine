@@ -30,7 +30,7 @@ VS_OUTPUT main(VS_INPUT input)
 	output.pos = mul(worldPos, uVPMatrix);
 	
 	output.color = input.uColor;
-	output.tex0 = input.tex0;
+	output.tex0 = input.tex0 * input.uvScale.xy + input.uvScale.zw;
 
 	return output;
 }

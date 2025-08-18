@@ -44,6 +44,10 @@ namespace Skylicht
 
 		virtual CEntity* spawn();
 
+		virtual void removeEntity(CEntity* entity);
+
+		virtual void removeAllEntities();
+
 		DECLARE_GETTYPENAME(CRenderLine)
 
 		CMaterial* getMaterial();

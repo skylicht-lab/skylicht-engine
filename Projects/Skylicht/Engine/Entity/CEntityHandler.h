@@ -54,20 +54,20 @@ namespace Skylicht
 
 		CEntity* searchEntityByID(const char* id);
 
-		CEntity* createEntity();
+		virtual CEntity* createEntity();
 
-		CEntity* createEntity(CEntity* parent);
+		virtual CEntity* createEntity(CEntity* parent);
 
 		virtual CEntity* spawn()
 		{
 			return NULL;
 		}
-		
-		void regenerateEntityId();
-		
-		void removeEntity(CEntity* entity);
 
-		void removeAllEntities();
+		virtual void removeEntity(CEntity* entity);
+
+		virtual void removeAllEntities();
+
+		void regenerateEntityId();
 
 		core::array<CEntity*>& getEntities()
 		{

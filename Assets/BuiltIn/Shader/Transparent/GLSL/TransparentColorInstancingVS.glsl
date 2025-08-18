@@ -13,7 +13,7 @@ out vec4 varColor;
 
 void main(void)
 {
-	varTexCoord0 = inTexCoord0;
+	varTexCoord0 = inTexCoord0 * uUVScale.xy + uUVScale.zw;;
 	varColor = uColor;
 	
 	vec4 worldPos = uWorldMatrix * inPosition;

@@ -16,6 +16,7 @@ struct VS_OUTPUT
 cbuffer cbPerObject
 {
 	float4x4 uMvpMatrix;
+	float4 uUVScale;
 };
 
 VS_OUTPUT main(VS_INPUT input)
@@ -24,7 +25,7 @@ VS_OUTPUT main(VS_INPUT input)
 
 	output.pos = mul(input.pos, uMvpMatrix);
 	output.color = input.color;
-	output.tex0 = input.tex0;
+	output.tex0 = input.tex0 * uUVScale.xy + uUVScale.zw;;
 
 	return output;
 }

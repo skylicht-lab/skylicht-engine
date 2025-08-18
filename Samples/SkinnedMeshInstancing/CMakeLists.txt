@@ -396,4 +396,4 @@ if (BUILD_SDL AND MSVC)
 endif()
 
 set_target_properties(SampleSkinnedMeshInstancing PROPERTIES VERSION ${SKYLICHT_VERSION})
-set_target_properties(SampleSkinnedMeshInstancing PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+set_target_properties(SampleSkinnedMeshInstancing PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${SKYLICHT_ENGINE_BIN_DIR}")

@@ -16,6 +16,7 @@ void installApplication(const std::vector<std::string>& argv)
 {
 	SampleParticlesMagicSkill* app = new SampleParticlesMagicSkill();
 	getApplication()->registerAppEvent("SampleParticlesMagicSkill", app);
+	getApplication()->showDebugConsole();
 }
 
 SampleParticlesMagicSkill::SampleParticlesMagicSkill() :

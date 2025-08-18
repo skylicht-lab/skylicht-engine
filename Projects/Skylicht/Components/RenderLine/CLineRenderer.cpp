@@ -119,8 +119,8 @@ namespace Skylicht
 			core::vector3df pos1 = transforms[i]->Relative.getTranslation();
 			core::vector3df pos2 = transforms[i + 1]->Relative.getTranslation();
 
-			core::vector3df n1(0.0f, -1.0f, 0.0f);
-			core::vector3df n2(0.0f, -1.0f, 0.0f);
+			core::vector3df n1(0.0f, 1.0f, 0.0f);
+			core::vector3df n2(0.0f, 1.0f, 0.0f);
 
 			if (!line->Billboard)
 			{
@@ -129,8 +129,8 @@ namespace Skylicht
 			}
 			else
 			{
-				n1 = pos1 - campos;
-				n2 = pos2 - campos;
+				n1 = campos - pos1;
+				n2 = campos - pos2;
 			}
 
 			length = length + pos1.getDistanceFrom(pos2);
@@ -154,13 +154,14 @@ namespace Skylicht
 
 		u32 vtxCount = 0;
 		u32 idxCount = 0;
+		core::vector3df updown;
 
 		// build trail mesh buffer
 		for (int i = 0; i < numPoint - 1; i++)
 		{
 			const core::vector3df& pos1 = points[i];
 			const core::vector3df& pos2 = points[i + 1];
-			core::vector3df direction = pos1 - pos2;
+			core::vector3df direction = pos2 - pos1;
 
 			float uv1 = currentLength / length;
 
@@ -174,73 +175,73 @@ namespace Skylicht
 
 			// view angle
 			f32 angle = lookdir.dotProduct(direction);
-
 			if (angle < 0.9999f && angle > -0.9999f)
 			{
-				core::vector3df updown = direction.crossProduct(lookdir);
+				updown = direction.crossProduct(lookdir);
 				updown.normalize();
+			}
 
-				// note: we use updown as normal on billboard
-				// core::vector3df normal = direction.crossProduct(updown);
+			u32 vertex = vtxCount;
+			u32 index = idxCount;
 
-				u32 vertex = vtxCount;
-				u32 index = idxCount;
+			// vertex buffer
+			if (i == 0)
+			{
+				vertices[vertex + 0].Pos = pos1 - updown * thickness;
+				vertices[vertex + 0].Normal = lookdir;
+				vertices[vertex + 0].Color = c;
+				vertices[vertex + 0].TCoords.set(uv1, 0.0f);
 
-				// vertex buffer
-				if (i == 0)
+				vertices[vertex + 1].Pos = pos1 + updown * thickness;
+				vertices[vertex + 1].Normal = lookdir;
+				vertices[vertex + 1].Color = c;
+				vertices[vertex + 1].TCoords.set(uv1, 1.0f);
+			}
+			else
+			{
+				int lastVertex = vertex - 2;
+				vertices[vertex + 0] = vertices[lastVertex + 0];
+				vertices[vertex + 1] = vertices[lastVertex + 1];
+			}
+
+			if (i < numPoint - 2)
+			{
+				lookdir = normals[i + 1];
+
+				core::vector3df nextDirection = points[i + 2] - pos2;
+				nextDirection.normalize();
+
+				f32 angle = lookdir.dotProduct(nextDirection);
+				if (angle < 0.9999f && angle > -0.9999f)
 				{
-					vertices[vertex + 0].Pos = pos1 - updown * thickness;
-					vertices[vertex + 0].Normal = lookdir;
-					vertices[vertex + 0].Color = c;
-					vertices[vertex + 0].TCoords.set(0.0f, uv1);
-
-					vertices[vertex + 1].Pos = pos1 + updown * thickness;
-					vertices[vertex + 1].Normal = lookdir;
-					vertices[vertex + 1].Color = c;
-					vertices[vertex + 1].TCoords.set(1.0f, uv1);
-				}
-				else
-				{
-					int lastVertex = vertex - 2;
-					vertices[vertex + 0] = vertices[lastVertex + 0];
-					vertices[vertex + 1] = vertices[lastVertex + 1];
-				}
-
-				if (i < numPoint - 2)
-				{
-					lookdir = normals[i + 1];
-
-					core::vector3df nextDirection = pos2 - points[i + 2];
-					nextDirection.normalize();
-
 					core::vector3df nextUpdown = nextDirection.crossProduct(lookdir);
 					nextUpdown.normalize();
 
 					updown = updown + nextUpdown;
 					updown.normalize();
 				}
-
-				vertices[vertex + 2].Pos = pos2 - updown * thickness;
-				vertices[vertex + 2].Normal = lookdir;
-				vertices[vertex + 2].Color = c;
-				vertices[vertex + 2].TCoords.set(0.0f, uv2);
-
-				vertices[vertex + 3].Pos = pos2 + updown * thickness;
-				vertices[vertex + 3].Normal = lookdir;
-				vertices[vertex + 3].Color = c;
-				vertices[vertex + 3].TCoords.set(1.0f, uv2);
-
-				indices[index + 0] = vertex + 0;
-				indices[index + 1] = vertex + 1;
-				indices[index + 2] = vertex + 2;
-
-				indices[index + 3] = vertex + 1;
-				indices[index + 4] = vertex + 3;
-				indices[index + 5] = vertex + 2;
-
-				vtxCount += 4;
-				idxCount += 6;
 			}
+
+			vertices[vertex + 2].Pos = pos2 - updown * thickness;
+			vertices[vertex + 2].Normal = lookdir;
+			vertices[vertex + 2].Color = c;
+			vertices[vertex + 2].TCoords.set(uv2, 0.0f);
+
+			vertices[vertex + 3].Pos = pos2 + updown * thickness;
+			vertices[vertex + 3].Normal = lookdir;
+			vertices[vertex + 3].Color = c;
+			vertices[vertex + 3].TCoords.set(uv2, 1.0f);
+
+			indices[index + 0] = vertex + 0;
+			indices[index + 1] = vertex + 1;
+			indices[index + 2] = vertex + 2;
+
+			indices[index + 3] = vertex + 1;
+			indices[index + 4] = vertex + 3;
+			indices[index + 5] = vertex + 2;
+
+			vtxCount += 4;
+			idxCount += 6;
 		}
 
 		buffer->set_used(vtxCount);

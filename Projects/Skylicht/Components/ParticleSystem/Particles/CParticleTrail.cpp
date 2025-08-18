@@ -347,22 +347,22 @@ namespace Skylicht
 						vertices[vertex + 0].Pos = pos1 - updown * thickness;
 						vertices[vertex + 0].Normal = updown;
 						vertices[vertex + 0].Color = c1;
-						vertices[vertex + 0].TCoords.set(0.0f, uv1);
+						vertices[vertex + 0].TCoords.set(uv1, 0.0f);
 
 						vertices[vertex + 1].Pos = pos1 + updown * thickness;
 						vertices[vertex + 1].Normal = updown;
 						vertices[vertex + 1].Color = c1;
-						vertices[vertex + 1].TCoords.set(1.0f, uv1);
+						vertices[vertex + 1].TCoords.set(uv1, 1.0f);
 
 						vertices[vertex + 2].Pos = pos2 - updown * thickness;
 						vertices[vertex + 2].Normal = updown;
 						vertices[vertex + 2].Color = c2;
-						vertices[vertex + 2].TCoords.set(0.0f, uv2);
+						vertices[vertex + 2].TCoords.set(uv2, 0.0f);
 
 						vertices[vertex + 3].Pos = pos2 + updown * thickness;
 						vertices[vertex + 3].Normal = updown;
 						vertices[vertex + 3].Color = c2;
-						vertices[vertex + 3].TCoords.set(1.0f, uv2);
+						vertices[vertex + 3].TCoords.set(uv2, 1.0f);
 
 						// index buffer
 						indices[index + 0] = vertex + 0;
