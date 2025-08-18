@@ -8,21 +8,21 @@ in vec2	varTexCoord0;
 
 out vec4 FragColor;
 
-vec3 blurFilter(vec2 uv)
-{
-	vec4 d = vec4(-uTexelSize.x, -uTexelSize.y, uTexelSize.x, uTexelSize.y);
-
-	vec3 s0 = texture(uSourceTex, uv).rgb;
-	vec3 s1 = texture(uSourceTex, uv + d.xy).rgb;
-	vec3 s2 = texture(uSourceTex, uv + d.zy).rgb;
-	vec3 s3 = texture(uSourceTex, uv + d.xw).rgb;
-	vec3 s4 = texture(uSourceTex, uv + d.zw).rgb;
-
-	return (s0 + s1 + s2 + s3 + s4) * 0.2;
-}
+const float weights[9] = float[9](0.05, 0.09, 0.12, 0.15, 0.16, 0.15, 0.12, 0.09, 0.05);
 
 void main(void)
 {
-	vec3 m = blurFilter(varTexCoord0);
-	FragColor = vec4(m, 1.0);
+	vec3 sum = vec3(0.0, 0.0, 0.0);	
+
+	sum += textureLod(uSourceTex, varTexCoord0 + vec2(-4.0 * uTexelSize.x, 0.0), 0.0).rgb * weights[0];
+	sum += textureLod(uSourceTex, varTexCoord0 + vec2(-3.0 * uTexelSize.x, 0.0), 0.0).rgb * weights[1];
+	sum += textureLod(uSourceTex, varTexCoord0 + vec2(-2.0 * uTexelSize.x, 0.0), 0.0).rgb * weights[2];
+	sum += textureLod(uSourceTex, varTexCoord0 + vec2(-1.0 * uTexelSize.x, 0.0), 0.0).rgb * weights[3];
+	sum += textureLod(uSourceTex, varTexCoord0, 0.0).rgb * weights[4];
+	sum += textureLod(uSourceTex, varTexCoord0 + vec2(1.0 * uTexelSize.x, 0.0), 0.0).rgb * weights[5];
+	sum += textureLod(uSourceTex, varTexCoord0 + vec2(2.0 * uTexelSize.x, 0.0), 0.0).rgb * weights[6];
+	sum += textureLod(uSourceTex, varTexCoord0 + vec2(3.0 * uTexelSize.x, 0.0), 0.0).rgb * weights[7];
+	sum += textureLod(uSourceTex, varTexCoord0 + vec2(4.0 * uTexelSize.x, 0.0), 0.0).rgb * weights[8];
+	
+	FragColor = vec4(sum, 1.0);
 }

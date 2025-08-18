@@ -8,33 +8,21 @@ in vec2	varTexCoord0;
 
 out vec4 FragColor;
 
-float brightness(vec3 c)
-{
-	return max(max(c.r, c.g), c.b);
-}
-
-vec3 downsampleAntiFlickerFilter(vec2 uv)
-{
-	vec4 d = vec4(-uTexelSize.x, -uTexelSize.y, uTexelSize.x, uTexelSize.y);
-
-	vec3 s1 = texture(uSourceTex, uv + d.xy).rgb;
-	vec3 s2 = texture(uSourceTex, uv + d.zy).rgb;
-	vec3 s3 = texture(uSourceTex, uv + d.xw).rgb;
-	vec3 s4 = texture(uSourceTex, uv + d.zw).rgb;
-
-	// Karis's luma weighted average (using brightness instead of luma)
-	float s1w = 1.0 / (brightness(s1) + 1.0);
-	float s2w = 1.0 / (brightness(s2) + 1.0);
-	float s3w = 1.0 / (brightness(s3) + 1.0);
-	float s4w = 1.0 / (brightness(s4) + 1.0);
-	float oneDivWSum = 1.0 / (s1w + s2w + s3w + s4w);
-
-	return (s1 * s1w + s2 * s2w + s3 * s3w + s4 * s4w) * oneDivWSum;
-}
+const float weights[9] = float[9](0.05, 0.09, 0.12, 0.15, 0.16, 0.15, 0.12, 0.09, 0.05);
 
 void main(void)
 {
-	vec3 m = downsampleAntiFlickerFilter(varTexCoord0);
+	vec3 sum = vec3(0.0, 0.0, 0.0);	
 
-	FragColor = vec4(m, 1.0);
+	sum += textureLod(uSourceTex, varTexCoord0 + vec2(0.0, -4.0 * uTexelSize.y), 0.0).rgb * weights[0];
+	sum += textureLod(uSourceTex, varTexCoord0 + vec2(0.0, -3.0 * uTexelSize.y), 0.0).rgb * weights[1];
+	sum += textureLod(uSourceTex, varTexCoord0 + vec2(0.0, -2.0 * uTexelSize.y), 0.0).rgb * weights[2];
+	sum += textureLod(uSourceTex, varTexCoord0 + vec2(0.0, -1.0 * uTexelSize.y), 0.0).rgb * weights[3];
+	sum += textureLod(uSourceTex, varTexCoord0, 0.0).rgb * weights[4];
+	sum += textureLod(uSourceTex, varTexCoord0 + vec2(0.0, 1.0 * uTexelSize.y), 0.0).rgb * weights[5];
+	sum += textureLod(uSourceTex, varTexCoord0 + vec2(0.0, 2.0 * uTexelSize.y), 0.0).rgb * weights[6];
+	sum += textureLod(uSourceTex, varTexCoord0 + vec2(0.0, 3.0 * uTexelSize.y), 0.0).rgb * weights[7];
+	sum += textureLod(uSourceTex, varTexCoord0 + vec2(0.0, 4.0 * uTexelSize.y), 0.0).rgb * weights[8];
+	
+	FragColor = vec4(sum, 1.0);
 }
