@@ -11,7 +11,7 @@ out vec4 FragColor;
 void main(void)
 {
 	vec2 tex0 = varTexCoord0 * varUVScale.xy + varUVScale.zw;
-	vec2 uvOffset = vec2(uTime.x, 0.0) / 4.0;
+	vec2 uvOffset = vec2(-uTime.y, 0.0) / 4.0;
 	vec4 color1 = texture(uTexDiffuse1, tex0 + uvOffset);
 	FragColor = color1 * varColor * uColor1 * uColorIntensity;
 }

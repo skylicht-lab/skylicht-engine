@@ -17,7 +17,7 @@ cbuffer cbPerFrame
 float4 main(PS_INPUT input) : SV_TARGET
 {
 	float2 tex0 = input.tex0 * input.uvScale.xy + input.uvScale.zw;
-	float2 uvOffset = float2(uTime.x, 0.0) / 4.0;
+	float2 uvOffset = float2(-uTime.y, 0.0) / 4.0;
 	float4 color1 = uTexDiffuse1.Sample(uTex1Sampler, tex0 + uvOffset);
 	return color1 * input.color * uColor1 * uColorIntensity;
 }

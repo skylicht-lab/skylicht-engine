@@ -40,11 +40,13 @@ void main(void)
 #ifdef SCROLL_Y
 	vec2 uvOffset = vec2(0.0, uTime.y) / 4.0;
 #else
-	vec2 uvOffset = vec2(uTime.x, 0.0) / 4.0;
+	vec2 uvOffset = vec2(-uTime.y, 0.0) / 4.0;
 #endif
 
 #ifdef SCROLL_UV1
 	vec4 color1 = texture(uTexDiffuse1, tex0 + uvOffset);
+#elif defined(NO_TILE_UV1)
+	vec4 color1 = texture(uTexDiffuse1, varTexCoord0);
 #else	
 	vec4 color1 = texture(uTexDiffuse1, tex0);
 #endif

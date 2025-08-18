@@ -23,7 +23,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 {
 	float2 tex0 = input.tex0 * input.uvScale.xy + input.uvScale.zw;
 	float2 tex1 = input.tex1 * input.uvScale1.xy + input.uvScale1.zw;
-	float2 uvOffset = float2(uTime.x, 0.0) / 4.0;
+	float2 uvOffset = float2(-uTime.y, 0.0) / 4.0;
 	float4 color1 = uTexDiffuse1.Sample(uTex1Sampler, tex0);
 	float4 color2 = uTexDiffuse2.Sample(uTex2Sampler, tex1 + uvOffset);
 	float4 result = (color1 * uColor1 + color2 * uColor2) * input.color * uColorIntensity;

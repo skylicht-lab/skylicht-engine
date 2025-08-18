@@ -16,7 +16,7 @@ void main(void)
 {
 	vec2 tex0 = varTexCoord0 * varUVScale.xy + varUVScale.zw;
 	vec2 tex1 = varTexCoord1 * varUVScale1.xy + varUVScale1.zw;
-	vec2 uvOffset = vec2(uTime.x, 0.0) / 4.0;
+	vec2 uvOffset = vec2(-uTime.y, 0.0) / 4.0;
 	vec4 color1 = texture(uTexDiffuse1, tex0);
 	vec4 color2 = texture(uTexDiffuse2, tex1 + uvOffset);
 	vec4 result = (color1 * uColor1 + color2 * uColor2) * varColor * uColorIntensity;

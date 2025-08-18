@@ -45,11 +45,13 @@ float4 main(PS_INPUT input) : SV_TARGET
 #ifdef SCROLL_Y
 	float2 uvOffset = float2(0.0, uTime.y) / 4.0;
 #else
-	float2 uvOffset = float2(uTime.x, 0.0) / 4.0;
+	float2 uvOffset = float2(-uTime.y, 0.0) / 4.0;
 #endif
 	
 #if defined(SCROLL_UV1)
 	float4 color1 = uTexDiffuse1.Sample(uTex1Sampler, tex0 + uvOffset);
+#elif defined(NO_TILE_UV1)
+	float4 color1 = uTexDiffuse1.Sample(uTex1Sampler, input.tex0);
 #else
 	float4 color1 = uTexDiffuse1.Sample(uTex1Sampler, tex0);
 #endif
