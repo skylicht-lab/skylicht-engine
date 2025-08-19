@@ -32,6 +32,6 @@
 			<ui control="UIFloat4" name="uUVScale" elementName="UV ScaleX;UV ScaleY;UV OffsetX;UV OffsetY"/>
 		</ui>
 	</customUI>
-	<shader type="GLSL" vs="GLSL/PBRSkinNoNormalVS.glsl" vs_source="GLSL/PBRSkinVS.d.glsl" fs="GLSL/PBRNoNormalMapNoEmissveFS.glsl" define="NO_NORMAL_MAP"/>
-	<shader type="HLSL" vs="HLSL/PBRSkinNoNormalVS.hlsl" vs_source="HLSL/PBRSkinVS.d.hlsl" fs="HLSL/PBRNoNormalMapNoEmissveFS.hlsl" define="NO_NORMAL_MAP"/>
+	<shader type="GLSL" vs="GLSL/PBRSkinNoNormalVS.glsl" vs_source="GLSL/PBRSkinVS.d.glsl" fs="GLSL/PBRNoNormalMapNoEmissiveFS.glsl" define="NO_NORMAL_MAP"/>
+	<shader type="HLSL" vs="HLSL/PBRSkinNoNormalVS.hlsl" vs_source="HLSL/PBRSkinVS.d.hlsl" fs="HLSL/PBRNoNormalMapNoEmissiveFS.hlsl" define="NO_NORMAL_MAP"/>
 </shaderConfig>
