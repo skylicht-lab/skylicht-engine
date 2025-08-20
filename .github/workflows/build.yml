@@ -175,7 +175,7 @@ jobs:
   IOS:
     runs-on: macos-latest
     env:
-      PLATFORM: SIMULATORARM64
+      PLATFORM: OS64
     steps:
       - uses: actions/checkout@v2
       - name: Restore LFS cache
@@ -199,7 +199,7 @@ jobs:
           cd PrjIOS
           xcodebuild -showsdks
           xcodebuild -downloadPlatform iOS
-          xcodebuild -configuration Release -alltargets -sdk iphonesimulator
+          xcodebuild -configuration Release -alltargets -sdk iphoneos CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY=""
           cd ..
       - name: Package
         run: |

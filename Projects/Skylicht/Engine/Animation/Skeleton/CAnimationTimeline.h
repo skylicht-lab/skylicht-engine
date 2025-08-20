@@ -29,18 +29,47 @@ namespace Skylicht
 	class SKYLICHT_API CAnimationTimeline
 	{
 	public:
+		//! Animation from frame (second)
 		float From;
+
+		//! Animation play to frame (second)
 		float To;
-		float Duration; // second
-		float Frame; // second
+
+		//! Clip duration (second)
+		float Duration;
+
+		//! Current frame (second)
+		float Frame;
+
+		//! Current Speed (default 1.0)
 		float Speed;
+
+		//! The animation blend weight
 		float Weight;
+
+		//! The animation is loop or not?
 		bool Loop;
+
+		//! The animation is paused?
 		bool Pause;
 
 	public:
 		CAnimationTimeline();
 
 		void update();
+
+		void play(bool fromBegin = true);
+
+		inline float getAnimDuration()
+		{
+			return To - From;
+		}
+
+		inline float getClipDuration()
+		{
+			return Duration;
+		}
+
+		bool isEnd();
 	};
 }

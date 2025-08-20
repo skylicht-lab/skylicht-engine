@@ -63,4 +63,17 @@ namespace Skylicht
 		}
 	}
 
+	void CAnimationTimeline::play(bool fromBegin)
+	{
+		Pause = false;
+
+		if (fromBegin)
+			Frame = From;
+	}
+
+	bool CAnimationTimeline::isEnd()
+	{
+		return Frame >= To;
+	}
+
 }
