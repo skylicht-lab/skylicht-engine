@@ -199,7 +199,7 @@ jobs:
           cd PrjIOS
           xcodebuild -showsdks
           xcrun simctl list devices
-          xcodebuild -configuration Release -alltargets -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 15 Pro' IPHONEOS_DEPLOYMENT_TARGET=18.0
+          xcodebuild -configuration Release -alltargets -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 16 Pro' IPHONEOS_DEPLOYMENT_TARGET=18.4
           cd ..
       - name: Package
         run: |
