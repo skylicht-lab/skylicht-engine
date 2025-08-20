@@ -60,6 +60,50 @@ namespace Skylicht
 		updateData();
 	}
 
+	void CRenderLine::loadCustomMaterial(const char* materialFile)
+	{
+		if (materialFile)
+		{
+			m_materialFile = materialFile;
+			if (!m_materialFile.empty())
+			{
+				std::vector<std::string> textureFolders;
+				ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial(
+					m_materialFile.c_str(),
+					true,
+					textureFolders
+				);
+
+				if (materials.size() > 0)
+				{
+					m_customMaterial = materials[0];
+					m_useCustomMaterial = true;
+
+					m_lineData->Material = getMaterial();
+				}
+			}
+		}
+	}
+
+	void CRenderLine::setTextureFile(const char* textureFile)
+	{
+		if (textureFile)
+		{
+			m_textureFile = textureFile;
+			if (!m_textureFile.empty())
+			{
+				ITexture* texture = CTextureManager::getInstance()->getTexture(m_textureFile.c_str());
+				if (texture)
+					setTexture(texture);
+			}
+		}
+	}
+
+	void CRenderLine::setTexture(ITexture* texture)
+	{
+		m_material->setUniformTexture("uTexDiffuse", texture);
+	}
+
 	CMaterial* CRenderLine::getMaterial()
 	{
 		if (m_useCustomMaterial && m_customMaterial)
@@ -102,6 +146,13 @@ namespace Skylicht
 			m_customMaterial->setUniform4("uColor", m_color);
 			m_customMaterial->updateShaderParams();
 		}
+	}
+
+	void CRenderLine::setBillboard(bool b)
+	{
+		m_billboard = b;
+		m_lineData->Billboard = m_billboard;
+		m_lineData->NeedValidate = true;
 	}
 
 	void CRenderLine::updateComponent()

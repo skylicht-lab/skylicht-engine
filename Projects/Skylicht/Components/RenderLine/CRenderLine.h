@@ -50,6 +50,12 @@ namespace Skylicht
 
 		DECLARE_GETTYPENAME(CRenderLine)
 
+		void loadCustomMaterial(const char* materialFile);
+
+		void setTextureFile(const char* textureFile);
+
+		void setTexture(ITexture* texture);
+
 		CMaterial* getMaterial();
 
 		inline u32 getNumPoint()
@@ -82,6 +88,13 @@ namespace Skylicht
 		inline float getWidth()
 		{
 			return m_lineWidth;
+		}
+
+		void setBillboard(bool b);
+
+		inline bool isBillboard()
+		{
+			return false;
 		}
 
 	protected:
