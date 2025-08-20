@@ -198,7 +198,6 @@ jobs:
           cmake -S . -B ./PrjIOS -G Xcode -DCMAKE_TOOLCHAIN_FILE=./ios.cmake -DPLATFORM=${PLATFORM}
           cd PrjIOS
           xcodebuild -showsdks
-          xcodebuild -downloadPlatform iOS
           xcodebuild -configuration Release -alltargets -sdk iphoneos CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY=""
           cd ..
       - name: Package
