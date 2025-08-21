@@ -449,20 +449,20 @@ namespace Skylicht
 		bool castShadow = true;
 
 		CDirectionalLight* light = CShaderLighting::getDirectionalLight();
-		if (light == NULL)
-			return;
+		if (light)
+		{
+			m_lightDirection = light->getDirection();
+			castShadow = light->isCastShadow();
 
-		m_lightDirection = light->getDirection();
-		castShadow = light->isCastShadow();
+			// no render shadow on bake light
+			if (s_bakeMode == false && light->getLightType() == CLight::Baked)
+				castShadow = false;
 
-		// no render shadow on bake light
-		if (s_bakeMode == false && light->getLightType() == CLight::Baked)
-			castShadow = false;
-
-		if (m_shadowMapType == CShadowMapRP::CascadedShadow)
-			m_csm->update(camera, m_lightDirection);
-		else
-			m_sm->update(camera, m_lightDirection);
+			if (m_shadowMapType == CShadowMapRP::CascadedShadow)
+				m_csm->update(camera, m_lightDirection);
+			else
+				m_sm->update(camera, m_lightDirection);
+		}
 
 		setCamera(camera);
 
@@ -490,7 +490,7 @@ namespace Skylicht
 
 				m_currentCSM = i;
 
-				if (castShadow)
+				if (castShadow && light)
 				{
 					if (i == m_numCascade - 1)
 						entityManager->cullingAndRender();
@@ -578,6 +578,8 @@ namespace Skylicht
 			for (u32 i = 0, n = listLight.size(); i < n && i < s_maxLight; i++)
 			{
 				CLight* light = listLight[i]->Light;
+				if (!light->isEnable())
+					continue;
 
 				CPointLight* pointLight = dynamic_cast<CPointLight*>(light);
 

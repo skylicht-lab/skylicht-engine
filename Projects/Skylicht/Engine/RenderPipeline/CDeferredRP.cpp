@@ -580,6 +580,8 @@ namespace Skylicht
 				for (u32 i = 0, n = (u32)listLight.size(); i < n && i < s_maxLight; i++)
 				{
 					CLight* light = listLight[i]->Light;
+					if (!light->isEnable())
+						continue;
 
 					bool renderLight = true;
 

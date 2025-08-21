@@ -45,6 +45,8 @@ namespace Skylicht
 
 		virtual void updateComponent();
 
+		virtual void onEnable(bool b);
+
 		static CDirectionalLight* getCurrentDirectionLight();
 
 		DECLARE_GETTYPENAME(CDirectionalLight)

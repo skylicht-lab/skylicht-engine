@@ -92,87 +92,100 @@ namespace Skylicht
 		{
 		case LIGHT_COLOR:
 		{
+			video::SColorf color;
+			float intensity = 0.0f;
+
 			if (g_directionalLight != NULL)
 			{
-				video::SColorf color = g_directionalLight->getColor();
+				color = g_directionalLight->getColor();
 				color.r = color.r * g_directionalLight->getIntensity();
 				color.g = color.g * g_directionalLight->getIntensity();
 				color.b = color.b * g_directionalLight->getIntensity();
-
-				shader->setColor(matRender, uniform->UniformShaderID, vertexShader, color, g_directionalLight->getIntensity());
+				intensity = g_directionalLight->getIntensity();
 			}
+
+			shader->setColor(matRender, uniform->UniformShaderID, vertexShader, color, intensity);
 		}
 		break;
 		case POINT_LIGHT_COLOR:
 		{
+			video::SColorf color;
+			float intensity = 0.0f;
+
 			if (g_pointLight != NULL)
 			{
-				video::SColorf color = g_pointLight->getColor();
+				color = g_pointLight->getColor();
 				color.r = color.r * g_pointLight->getIntensity();
 				color.g = color.g * g_pointLight->getIntensity();
 				color.b = color.b * g_pointLight->getIntensity();
-
-				shader->setColor(matRender, uniform->UniformShaderID, vertexShader, color, g_pointLight->getIntensity());
+				intensity = g_pointLight->getIntensity();
 			}
+
+			shader->setColor(matRender, uniform->UniformShaderID, vertexShader, color, intensity);
 		}
 		break;
 		case WORLD_LIGHT_DIRECTION:
 		{
+			core::vector3df dir(0.0f, 0.1, 0.0);
+
 			if (g_directionalLight != NULL)
-			{
-				core::vector3df dir = -g_directionalLight->getDirection();
-				shader->setWorldDirection(matRender, uniform->UniformShaderID, vertexShader, dir, 4);
-			}
+				dir = -g_directionalLight->getDirection();
+
+			shader->setWorldDirection(matRender, uniform->UniformShaderID, vertexShader, dir, 4);
 		}
 		break;
 		case POINT_LIGHT_POSITION:
 		{
+			core::vector3df position;
+
 			if (g_pointLight != NULL)
-			{
-				core::vector3df position = g_pointLight->getPosition();
-				shader->setWorldPosition(matRender, uniform->UniformShaderID, position, vertexShader);
-			}
+				position = g_pointLight->getPosition();
+
+			shader->setWorldPosition(matRender, uniform->UniformShaderID, position, vertexShader);
 		}
 		break;
 		case POINT_LIGHT_ATTENUATION:
 		{
+			float attenuation[4] = { 0 };
+
 			if (g_pointLight != NULL)
 			{
-				float attenuation[4] = { 0 };
-
 				// set attenuation
 				attenuation[0] = 0.0f;
 				attenuation[1] = g_pointLight->getAttenuation();
 				attenuation[2] = 0.0f;
-
-				// shader variable
-				if (vertexShader == true)
-					matRender->setShaderVariable(uniform->UniformShaderID, attenuation, 4, video::EST_VERTEX_SHADER);
-				else
-					matRender->setShaderVariable(uniform->UniformShaderID, attenuation, 4, video::EST_PIXEL_SHADER);
 			}
+
+			// shader variable
+			if (vertexShader == true)
+				matRender->setShaderVariable(uniform->UniformShaderID, attenuation, 4, video::EST_VERTEX_SHADER);
+			else
+				matRender->setShaderVariable(uniform->UniformShaderID, attenuation, 4, video::EST_PIXEL_SHADER);
 		}
 		break;
 		case SPOT_LIGHT_COLOR:
 		{
+			video::SColorf color;
+			float intensity = 0.0f;
+
 			if (g_spotLight != NULL)
 			{
 				video::SColorf color = g_spotLight->getColor();
 				color.r = color.r * g_spotLight->getIntensity();
 				color.g = color.g * g_spotLight->getIntensity();
 				color.b = color.b * g_spotLight->getIntensity();
-
-				shader->setColor(matRender, uniform->UniformShaderID, vertexShader, color, g_spotLight->getIntensity());
+				intensity = g_spotLight->getIntensity();
 			}
+
+			shader->setColor(matRender, uniform->UniformShaderID, vertexShader, color, intensity);
 		}
 		break;
 		case SPOT_LIGHT_DIRECTION:
 		{
+			core::vector3df dir(0.0f, 1.0f, 0.0f);
 			if (g_spotLight != NULL)
-			{
-				core::vector3df dir = -g_spotLight->getDirection();
-				shader->setWorldDirection(matRender, uniform->UniformShaderID, vertexShader, dir, 4);
-			}
+				dir = -g_spotLight->getDirection();
+			shader->setWorldDirection(matRender, uniform->UniformShaderID, vertexShader, dir, 4);
 		}
 		break;
 		case SPOT_LIGHT_POSITION:
@@ -186,22 +199,22 @@ namespace Skylicht
 		break;
 		case SPOT_LIGHT_ATTENUATION:
 		{
+			float attenuation[4] = { 0 };
+
 			if (g_spotLight != NULL)
 			{
-				float attenuation[4] = { 0 };
-
 				// set attenuation
 				attenuation[0] = cosf(g_spotLight->getSplotCutoff() * core::DEGTORAD * 0.5f);
 				attenuation[1] = cosf(g_spotLight->getSpotInnerCutof() * core::DEGTORAD * 0.5f);
 				attenuation[2] = g_spotLight->getAttenuation();
 				attenuation[3] = g_spotLight->getSpotExponent();
-
-				// shader variable
-				if (vertexShader == true)
-					matRender->setShaderVariable(uniform->UniformShaderID, attenuation, 4, video::EST_VERTEX_SHADER);
-				else
-					matRender->setShaderVariable(uniform->UniformShaderID, attenuation, 4, video::EST_PIXEL_SHADER);
 			}
+
+			// shader variable
+			if (vertexShader == true)
+				matRender->setShaderVariable(uniform->UniformShaderID, attenuation, 4, video::EST_VERTEX_SHADER);
+			else
+				matRender->setShaderVariable(uniform->UniformShaderID, attenuation, 4, video::EST_PIXEL_SHADER);
 		}
 		break;
 		case LIGHT_AMBIENT:

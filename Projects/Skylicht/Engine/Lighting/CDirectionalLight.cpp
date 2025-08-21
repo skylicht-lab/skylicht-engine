@@ -34,8 +34,6 @@ namespace Skylicht
 
 	CATEGORY_COMPONENT(CDirectionalLight, "Direction Light", "Lighting");
 
-	CDirectionalLight* g_currentLight = NULL;
-
 	CDirectionalLight::CDirectionalLight()
 	{
 		// default 2 bounce
@@ -54,8 +52,6 @@ namespace Skylicht
 	void CDirectionalLight::initComponent()
 	{
 		CShaderLighting::setDirectionalLight(this);
-
-		g_currentLight = this;
 	}
 
 	void CDirectionalLight::updateComponent()
@@ -65,12 +61,31 @@ namespace Skylicht
 		transform.rotateVect(m_direction);
 		m_direction.normalize();
 
-		if (CShaderLighting::getDirectionalLight() == NULL)
+		if (m_enable)
+		{
+			if (CShaderLighting::getDirectionalLight() == NULL)
+				CShaderLighting::setDirectionalLight(this);
+		}
+		else
+		{
+			if (CShaderLighting::getDirectionalLight() == this)
+				CShaderLighting::setDirectionalLight(NULL);
+		}
+	}
+
+	void CDirectionalLight::onEnable(bool b)
+	{
+		if (b)
 			CShaderLighting::setDirectionalLight(this);
+		else
+		{
+			if (CShaderLighting::getDirectionalLight() == this)
+				CShaderLighting::setDirectionalLight(NULL);
+		}
 	}
 
 	CDirectionalLight* CDirectionalLight::getCurrentDirectionLight()
 	{
-		return g_currentLight;
+		return CShaderLighting::getDirectionalLight();
 	}
 }
