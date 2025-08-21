@@ -38,7 +38,7 @@ namespace Skylicht
 		m_needRenderShadowDepth(true),
 		m_cullingData(NULL)
 	{
-
+		setIntensity(2.0f);
 	}
 
 	CPointLight::~CPointLight()

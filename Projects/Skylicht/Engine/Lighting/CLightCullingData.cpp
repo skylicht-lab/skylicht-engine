@@ -31,6 +31,7 @@ namespace Skylicht
 
 	CLightCullingData::CLightCullingData() :
 		Visible(true),
+		NeedValidate(true),
 		Light(NULL),
 		CameraDistance(0.0f)
 	{

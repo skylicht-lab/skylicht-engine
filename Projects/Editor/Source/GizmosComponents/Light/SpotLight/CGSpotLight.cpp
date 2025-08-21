@@ -35,6 +35,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Handles/CHandles.h"
 
 #include "GizmosComponents/SelectObject/CSelectObjectData.h"
+#include "Selection/CSelection.h"
 
 namespace Skylicht
 {
@@ -91,54 +92,57 @@ namespace Skylicht
 			SColor lightColor = m_spotLight->getColor().toSColor();
 			m_sprite->setColor(lightColor);
 
-			// draw light direction arrow
-			core::matrix4 world = m_gameObject->getTransformEuler()->calcWorldTransform();
-
-			float radius = m_spotLight->getRadius();
-			float outner = m_spotLight->getSplotCutoff() * 0.5f;
-			float maxOuterEdge = tanf(outner * core::DEGTORAD) * radius;
-
-			const core::vector3df& position = world.getTranslation();
-			const core::vector3df& direction = m_spotLight->getDirection();
-			core::vector3df end = position + direction * radius;
-
-			CHandles::getInstance()->drawLine(position, end, lightColor);
-
-			core::quaternion q;
-			q.rotationFromTo(core::vector3df(0.0f, 1.0f, 0.0f), direction);
-
-			std::vector<core::vector3df> bounds;
-
-			int count = CircleSegmentCount / 5;
-
-			for (int i = 0; i < CircleSegmentCount; i++)
+			if (CSelection::getInstance()->getSelected(m_gameObject))
 			{
-				float ng = 2 * core::PI * ((float)i / (float)CircleSegmentCount);
+				// draw light direction arrow
+				core::matrix4 world = m_gameObject->getTransformEuler()->calcWorldTransform();
 
-				core::vector3df axisPos = core::vector3df(cosf(ng), sinf(ng), 0.f);
-				float* p = &axisPos.X;
+				float radius = m_spotLight->getRadius();
+				float outner = m_spotLight->getSplotCutoff() * 0.5f;
+				float maxOuterEdge = tanf(outner * core::DEGTORAD) * radius;
 
-				int axis = 1;
-				core::vector3df r = core::vector3df(p[axis], p[(axis + 1) % 3], p[(axis + 2) % 3]);
+				const core::vector3df& position = world.getTranslation();
+				const core::vector3df& direction = m_spotLight->getDirection();
+				core::vector3df end = position + direction * radius;
 
-				core::vector3df worldR = q * r;
-				worldR.normalize();
+				CHandles::getInstance()->drawLine(position, end, lightColor);
 
-				if (i % count == 0)
-					bounds.push_back(worldR);
+				core::quaternion q;
+				q.rotationFromTo(core::vector3df(0.0f, 1.0f, 0.0f), direction);
 
-				m_circlePos[i] = end + worldR * maxOuterEdge;
+				std::vector<core::vector3df> bounds;
+
+				int count = CircleSegmentCount / 5;
+
+				for (int i = 0; i < CircleSegmentCount; i++)
+				{
+					float ng = 2 * core::PI * ((float)i / (float)CircleSegmentCount);
+
+					core::vector3df axisPos = core::vector3df(cosf(ng), sinf(ng), 0.f);
+					float* p = &axisPos.X;
+
+					int axis = 1;
+					core::vector3df r = core::vector3df(p[axis], p[(axis + 1) % 3], p[(axis + 2) % 3]);
+
+					core::vector3df worldR = q * r;
+					worldR.normalize();
+
+					if (i % count == 0)
+						bounds.push_back(worldR);
+
+					m_circlePos[i] = end + worldR * maxOuterEdge;
+				}
+
+				// draw circle
+				CHandles::getInstance()->drawPolyline(m_circlePos, CircleSegmentCount, true, lightColor);
+
+				// draw border edge
+				for (int i = 0, n = (int)bounds.size(); i < n; i++)
+					CHandles::getInstance()->drawLine(position, end + bounds[i] * maxOuterEdge, lightColor);
 			}
 
-			// draw circle
-			CHandles::getInstance()->drawPolyline(m_circlePos, CircleSegmentCount, true, lightColor);
-
-			// draw border edge
-			for (int i = 0, n = (int)bounds.size(); i < n; i++)
-				CHandles::getInstance()->drawLine(position, end + bounds[i] * maxOuterEdge, lightColor);
-
 			// update collision bbox
-			float boxScale = m_sprite->getViewScale() * 10.0f;
+			float boxScale = m_sprite->getViewScale() * 20.0f;
 			CSelectObjectData* selectObject = GET_ENTITY_DATA(m_gameObject->getEntity(), CSelectObjectData);
 			selectObject->BBox.MinEdge = m_defaultBBox.MinEdge * boxScale;
 			selectObject->BBox.MaxEdge = m_defaultBBox.MaxEdge * boxScale;

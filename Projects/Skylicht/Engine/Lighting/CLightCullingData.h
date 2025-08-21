@@ -35,7 +35,11 @@ namespace Skylicht
 	public:
 		bool Visible;
 
+		bool NeedValidate;
+
 		core::aabbox3df BBox;
+
+		core::aabbox3df TransformBBox;
 
 		CLight* Light;
 

@@ -35,6 +35,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Handles/CHandles.h"
 
 #include "GizmosComponents/SelectObject/CSelectObjectData.h"
+#include "Selection/CSelection.h"
 
 namespace Skylicht
 {
@@ -91,26 +92,29 @@ namespace Skylicht
 			SColor lightColor = m_pointLight->getColor().toSColor();
 			m_sprite->setColor(lightColor);
 
-			const core::vector3df& position = m_gameObject->getTransformEuler()->getPosition();
-			float radius = m_pointLight->getRadius();
-
-			// draw radius point light
-			for (int i = 0; i < CircleSegmentCount; i++)
+			if (CSelection::getInstance()->getSelected(m_gameObject))
 			{
-				float ng = 2 * core::PI * ((float)i / (float)CircleSegmentCount);
+				const core::vector3df& position = m_gameObject->getTransformEuler()->getPosition();
+				float radius = m_pointLight->getRadius();
 
-				core::vector3df axisPos = core::vector3df(cosf(ng), sinf(ng), 0.f);
-				float* p = &axisPos.X;
+				// draw radius point light
+				for (int i = 0; i < CircleSegmentCount; i++)
+				{
+					float ng = 2 * core::PI * ((float)i / (float)CircleSegmentCount);
 
-				int axis = 1;
-				core::vector3df r = core::vector3df(p[axis], p[(axis + 1) % 3], p[(axis + 2) % 3]);
+					core::vector3df axisPos = core::vector3df(cosf(ng), sinf(ng), 0.f);
+					float* p = &axisPos.X;
 
-				m_circlePos[i] = position + r * radius;
+					int axis = 1;
+					core::vector3df r = core::vector3df(p[axis], p[(axis + 1) % 3], p[(axis + 2) % 3]);
+
+					m_circlePos[i] = position + r * radius;
+				}
+				CHandles::getInstance()->drawPolyline(m_circlePos, CircleSegmentCount, true, lightColor);
 			}
-			CHandles::getInstance()->drawPolyline(m_circlePos, CircleSegmentCount, true, lightColor);
 
 			// update collision bbox
-			float boxScale = m_sprite->getViewScale() * 10.0f;
+			float boxScale = m_sprite->getViewScale() * 20.0f;
 			CSelectObjectData* selectObject = GET_ENTITY_DATA(m_gameObject->getEntity(), CSelectObjectData);
 			selectObject->BBox.MinEdge = m_defaultBBox.MinEdge * boxScale;
 			selectObject->BBox.MaxEdge = m_defaultBBox.MaxEdge * boxScale;

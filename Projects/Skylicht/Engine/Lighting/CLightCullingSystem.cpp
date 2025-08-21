@@ -69,6 +69,8 @@ namespace Skylicht
 			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 			CWorldInverseTransformData* invTransform = GET_ENTITY_DATA(entity, CWorldInverseTransformData);
 
+			culling->NeedValidate |= transform->NeedValidate;
+
 			m_cullings.push_back(culling);
 			m_transforms.push_back(transform);
 			m_invTransforms.push_back(invTransform);
@@ -105,9 +107,15 @@ namespace Skylicht
 
 			culling->Visible = true;
 
+			core::aabbox3df& lightBox = culling->TransformBBox;
+
 			// transform world bbox
-			core::aabbox3df lightBox = culling->BBox;
-			transform->World.transformBoxEx(lightBox);
+			if (culling->NeedValidate)
+			{
+				lightBox = culling->BBox;
+				transform->World.transformBoxEx(lightBox);
+				culling->NeedValidate = false;
+			}
 
 			// CSceneDebug::getInstance()->addBoudingBox(lightBox, SColor(255, 255, 0, 0));
 
