@@ -1,5 +1,5 @@
 # Skylicht Engine
-Skylicht Engine, which is an evolution of the [Irrlicht Project](http://irrlicht.sourceforge.net). We have upgraded many features: Sound Engine, Physics Engine, Particle Engine...
+Skylicht Engine is an evolution of the [Irrlicht Project](http://irrlicht.sourceforge.net). We have upgraded many features, including Sound Engine, Physics Engine, Particle Engine...
 
 -   Core functionality: Direct3D11, OpenGL 4+, OpenGLES 3+, Google Angle GLES video driver backends.
 
@@ -356,15 +356,15 @@ This demo is to draw Cube 3D, set up, transform and use components.
 <img src="Documents/Media/Samples/sample_draw_cube.png"/>
 
 ### Samples\Materials
-This demo code, that renders Sphere 3D, loads textures (Diffuse, Normal, Specular), and binds SpecGloss shader to Material.
+This demo code renders a 3D sphere, loads textures (Diffuse, Normal, Specular), and binds a SpecGloss shader to the material.
 <img src="Documents/Media/Samples/sample_material.jpg"/>
 
 ### Samples\PBR
-This demo code, that renders Sci-fi Helmet, loads textures (Albedo, Roughness, Metal, AO, Emissive), and binds Physically Based Rendering shader (PBR) to Material.
+This demo code renders a Sci-fi Helmet, loads textures (Albedo, Roughness, Metal, AO, Emissive), and binds a Physically Based Rendering (PBR) shader to the material.
 <img src="Documents/Media/Samples/sample_pbr.jpg"/>
 
 ### Samples\SampleShader
-This demo code, How to binds shader to Material.
+This demo code shows how to bind a shader to a material.
 <img src="Documents/Media/Samples/sample_shader.jpg"/>
 
 ### Samples\LuckyDraw
@@ -379,7 +379,7 @@ Engine Components are used:
 <img src="Documents/Media/Samples/sample_lucky_draw.gif" width="50%"/>
 
 ### Samples\SkinnedMesh
-This is example code. How to render character model with animation, models are downloaded from [mixamo](https://www.mixamo.com)
+This is an example of how to render a character model with animation. The models are downloaded from [mixamo](https://www.mixamo.com)
 - **DAE Collada** loader model/animation
 - Forwarder rendering
 - Skydome
@@ -387,7 +387,7 @@ This is example code. How to render character model with animation, models are d
 <img src="Documents/Media/Samples/sample_skinned_mesh.jpg"/>
 
 ### Samples\LightmapUV
-This is a demo how to use UnwrapUV tool to create Lightmap UV. 
+This is a demo on how to use the UnwrapUV tool to create Lightmap UVs.
 [Library xatlas](https://github.com/jpcy/xatlas) is integrated to Skylicht Engine.
 
 <img src="Documents/Media/Samples/lightmap-uv/lightmap-uv.png"/>
@@ -395,7 +395,7 @@ This is a demo how to use UnwrapUV tool to create Lightmap UV.
 <img src="Documents/Media/Samples/lightmap-uv/mesh-charts00.png" width="50%"/>
 
 ### Samples\Lightmapping
-This is a demo code to use lightmapper to bake indirect lighting color on lightmap texture.
+This is a demo showing how to use the lightmapper to bake indirect lighting colors onto a lightmap texture.
 [Project references: Lightmapper](https://github.com/ands/lightmapper)
 
 #### Gazebo
@@ -407,7 +407,7 @@ Result lightmap
 <img src="Documents/Media/Samples/lightmap/rasterize_1.png"/>
 
 ### Sponza lightmap
-Sponza indirect lighting baked by Skylicht Lightmapper
+Indirect lighting on Sponza baked by Skylicht Lightmapper.
 
 <img src="Documents/Media/Samples/sponza/Sponza_indirect_01.jpg"/>
 
@@ -429,7 +429,7 @@ Run on Ubuntu 20.04
 <img src="Documents/Media/Samples/sponza/sponza_ubuntu.jpg"/>
 
 ### Samples\LightmappingVertex
-This is a demo to use lightmapper to set indirect lighting color on vertex color.
+This is a demo on how to use the lightmapper to apply indirect lighting color to vertex color.
 
 Engine Components are used:
 - OBJ Wavefront loader
@@ -459,10 +459,10 @@ And how to use the decal projector feature
 <img src="Documents/Media/Samples/sample_collision_decal.jpg"/>
 
 ### Samples\Instancing
-This is demo setup render many mesh instancing to optimize draw call and render performance.
+This is a demo on setting up the rendering of many mesh instances to optimize draw calls and rendering performance.
 
 ### Samples\SkinnedMeshInstancing
-This is a demo of drawing many characters and animations, that use GPU Instancing technique.
+This is a demo of drawing many characters and animations using the GPU Instancing technique.
 <img src="Documents/Media/Samples/sample_skinned_instancing.jpg"/>
 
 ### Samples\BoidSystem
@@ -471,7 +471,7 @@ This is a demo of drawing many characters and animations, that use GPU Instancin
 ### Samples\Particles
 Skylicht Particle Component is a cleanup version of [SPARK](https://github.com/Synxis/SPARK). We have optimized by GPU Billboard Instancing.
 
-This is demo code how to create particle system and use [imgui](https://github.com/ocornut/imgui)
+This is a demo showing how to create a particle system and use [imgui](https://github.com/ocornut/imgui)
 
 #### Basic particle
 <img src="Documents/Media/Samples/sample_particles.jpg"/>

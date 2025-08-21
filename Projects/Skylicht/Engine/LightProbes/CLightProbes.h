@@ -30,6 +30,53 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief Light probes are objects that store SH illumination. These SH values are baked from environmental texture maps, such as a skybox or skydome.
+	/// @ingroup Lighting
+	/// 
+	/// You can use Lightmapper::CLightmapper to bake light into CLightProbes, 
+	/// or you can also bake it directly from Skylicht-Editor once you have set up the Sky environment.
+	/// 
+	/// @image html Lighting/light_probes_0.jpg "The ambient light that shines on objects is influenced by light probes and the environment" width=1200px
+	/// 
+	/// The baking process recalculates the colors and stores them in CLightProbeData.
+	/// This value is then mapped to the nearest objects with CIndirectLightingData.
+	/// This SH value will eventually be passed to the Shader during the drawing step.
+	/// 
+	/// @image html Lighting/light_probes_1.jpg "When the environment changes, you need to rebake the light probes" width=600px
+	/// 
+	/// @code
+	/// // Example code for using Lightmapper to bake lighting to probes
+	/// CLightProbes* probesComponent = object->getComponent<CLightProbes>();
+	/// ...
+	/// ...
+	/// std::vector<core::vector3df> positions;
+	/// std::vector<Lightmapper::CSH9> probes;
+	/// std::vector<core::vector3df> results;
+	/// 
+	/// CEntityManager* entityMgr = scene->getEntityManager();
+	/// if (probesComponent->getPositions(positions) > 0)
+	/// {
+	/// 	entityMgr->update();
+	/// 	Lightmapper::CLightmapper::getInstance()->initBaker(32);
+	/// 	Lightmapper::CLightmapper::getInstance()->bakeProbes(
+	/// 		positions,
+	/// 		probes,
+	/// 		bakeCamera,
+	/// 		renderPipeline,
+	/// 		entityMgr
+	/// 	);
+	/// 	for (Lightmapper::CSH9& sh : probes)
+	/// 	{
+	/// 		core::vector3df r[9];
+	/// 		sh.copyTo(r);
+	/// 		for (int i = 0; i < 9; i++)
+	/// 			results.push_back(r[i]);
+	/// 	}
+	/// 	probesComponent->setSH(results);
+	/// }
+	/// @endcode
+	/// 
+	/// @see Lightmapper::CLightmapper
 	class SKYLICHT_API CLightProbes : public CEntityHandler
 	{
 	protected:

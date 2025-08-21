@@ -55,7 +55,6 @@ LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 CApplication* g_application;
 bool g_restartApplication = false;
 bool g_update = true;
-float g_displayScale = 1.0f;
 
 void installApplication(const std::vector<std::string>& argv);
 
@@ -93,13 +92,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	bool haveConfig = false;
 	haveConfig = CWindowConfig::loadConfig(x, y, w, h, maximize);
 #endif
-
-	// Get screen scale (windows 10)
-	HDC screenDC = GetDC(NULL);
-	int virtualWidth = GetDeviceCaps(screenDC, HORZRES);
-	int physicalWidth = GetDeviceCaps(screenDC, DESKTOPHORZRES);
-	g_displayScale = physicalWidth / (float)virtualWidth;
-	ReleaseDC(NULL, screenDC);
 
 	// Perform application initialization:
 	if (!InitInstance(hInstance, nCmdShow))
@@ -142,7 +134,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	else
 	{
 		winSize.Width = 1440;
-		winSize.Height = 900;
+		winSize.Height = 800;
 	}
 #endif
 

@@ -131,7 +131,6 @@ namespace Skylicht
 			CEntityChildsData* childs = GET_ENTITY_DATA(parent, CEntityChildsData);
 			if (childs == NULL)
 				childs = parent->addData<CEntityChildsData>();
-
 			childs->Childs.push_back(entity);
 		}
 
@@ -206,8 +205,8 @@ namespace Skylicht
 			childs = GET_ENTITY_DATA(parent, CEntityChildsData);
 			if (childs)
 			{
-				u32 childCount = childs->Childs.size();
-				for (u32 i = 0; i < childCount; i++)
+				int childCount = (int)childs->Childs.size();
+				for (int i = childCount - 1; i >= 0; i--)
 				{
 					if (childs->Childs[i] == entity)
 					{
@@ -221,9 +220,14 @@ namespace Skylicht
 		childs = GET_ENTITY_DATA(entity, CEntityChildsData);
 		if (childs)
 		{
-			u32 childCount = childs->Childs.size();
-			for (u32 i = 0; i < childCount; i++)
-				entityManager->removeEntity(childs->Childs[i]);
+			int childCount = (int)childs->Childs.size();
+			for (int i = childCount - 1; i >= 0; i--)
+			{
+				CEntity* c = childs->Childs[i];
+
+				removeChilds(c);
+				entityManager->removeEntity(c);
+			}
 			childs->Childs.clear();
 		}
 	}

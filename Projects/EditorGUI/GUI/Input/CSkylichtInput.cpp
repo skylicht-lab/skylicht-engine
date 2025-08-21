@@ -61,6 +61,7 @@ namespace Skylicht
 						m_mouseX = x;
 						m_mouseY = y;
 						inputMouseMoved(x, y, dx, dy);
+						printf("Mouse: %f %f\n", x, y);
 						break;
 					}
 
