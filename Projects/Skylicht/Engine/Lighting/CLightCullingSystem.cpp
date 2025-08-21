@@ -28,6 +28,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Entity/CEntityManager.h"
 #include "Material/Shader/CShaderManager.h"
 
+#include "Debug/CSceneDebug.h"
+
 namespace Skylicht
 {
 	CLightCullingSystem::CLightCullingSystem() :
@@ -106,6 +108,8 @@ namespace Skylicht
 			// transform world bbox
 			core::aabbox3df lightBox = culling->BBox;
 			transform->World.transformBoxEx(lightBox);
+
+			// CSceneDebug::getInstance()->addBoudingBox(lightBox, SColor(255, 255, 0, 0));
 
 			// 1. Detect by bounding box
 			culling->Visible = lightBox.intersectsWithBox(camBox);

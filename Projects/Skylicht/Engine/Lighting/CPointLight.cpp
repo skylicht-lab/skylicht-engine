@@ -58,7 +58,7 @@ namespace Skylicht
 
 	void CPointLight::updateComponent()
 	{
-		float r = m_radius * m_radius * 0.5f;
+		float r = m_radius;
 		m_cullingData->BBox.MaxEdge.set(r, r, r);
 		m_cullingData->BBox.MinEdge.set(-r, -r, -r);
 

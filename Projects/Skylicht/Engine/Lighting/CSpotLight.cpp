@@ -52,13 +52,17 @@ namespace Skylicht
 	void CSpotLight::updateComponent()
 	{
 		m_direction.set(0.0f, 0.0f, 1.0f);
+
+		float r = m_radius * 0.5f;
+		m_cullingData->BBox.MaxEdge.set(r, r, r);
+		m_cullingData->BBox.MinEdge.set(-r, -r, -r);
+
+		m_cullingData->BBox.MaxEdge += m_direction * r;
+		m_cullingData->BBox.MinEdge += m_direction * r;
+
 		const core::matrix4& transform = m_gameObject->getTransform()->getRelativeTransform();
 		transform.rotateVect(m_direction);
 		m_direction.normalize();
-
-		float r = m_radius * m_radius * 0.5f;
-		m_cullingData->BBox.MaxEdge.set(r, r, r);
-		m_cullingData->BBox.MinEdge.set(-r, -r, -r);
 
 		if (m_gameObject->getTransform()->hasChanged() == true)
 			m_needRenderShadowDepth = true;

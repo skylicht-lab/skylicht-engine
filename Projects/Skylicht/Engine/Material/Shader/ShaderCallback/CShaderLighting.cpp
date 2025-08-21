@@ -115,9 +115,6 @@ namespace Skylicht
 			if (g_pointLight != NULL)
 			{
 				color = g_pointLight->getColor();
-				color.r = color.r * g_pointLight->getIntensity();
-				color.g = color.g * g_pointLight->getIntensity();
-				color.b = color.b * g_pointLight->getIntensity();
 				intensity = g_pointLight->getIntensity();
 			}
 
@@ -170,10 +167,7 @@ namespace Skylicht
 
 			if (g_spotLight != NULL)
 			{
-				video::SColorf color = g_spotLight->getColor();
-				color.r = color.r * g_spotLight->getIntensity();
-				color.g = color.g * g_spotLight->getIntensity();
-				color.b = color.b * g_spotLight->getIntensity();
+				color = g_spotLight->getColor();
 				intensity = g_spotLight->getIntensity();
 			}
 
