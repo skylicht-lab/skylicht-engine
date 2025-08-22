@@ -195,7 +195,10 @@ namespace Skylicht
 			if (m_bakedTexture)
 			{
 				if (m_probeData->ReflectionTexture == m_bakedTexture)
+				{
 					m_probeData->ReflectionTexture = NULL;
+					m_probeData->NeedValidate = true;
+				}
 
 				m_textureWillRemoved = m_bakedTexture;
 				m_bakedTexture = NULL;
@@ -212,6 +215,7 @@ namespace Skylicht
 			baseRP->renderCubeEnvironment(camera, entityMgr, position, m_bakedTexture, NULL, 0, true);
 			m_bakedTexture->regenerateMipMapLevels();
 			m_probeData->ReflectionTexture = m_bakedTexture;
+			m_probeData->NeedValidate = true;
 			m_type = EReflectionType::Baked;
 		}
 	}
@@ -328,6 +332,7 @@ namespace Skylicht
 		{
 			m_staticTexture->regenerateMipMapLevels();
 			m_probeData->ReflectionTexture = m_staticTexture;
+			m_probeData->NeedValidate = true;
 			m_type = EReflectionType::Static;
 		}
 

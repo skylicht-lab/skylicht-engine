@@ -578,7 +578,7 @@ namespace Skylicht
 			for (u32 i = 0, n = listLight.size(); i < n && i < s_maxLight; i++)
 			{
 				CLight* light = listLight[i]->Light;
-				if (!light->isEnable())
+				if (!light->isEnable() || !light->getGameObject()->isVisible())
 					continue;
 
 				CPointLight* pointLight = dynamic_cast<CPointLight*>(light);
