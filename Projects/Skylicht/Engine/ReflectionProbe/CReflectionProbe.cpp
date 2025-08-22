@@ -46,6 +46,7 @@ namespace Skylicht
 		m_size(EReflectionSize::X128),
 		m_bakeSize(128, 128),
 		m_probeData(NULL),
+		m_textureWillRemoved(NULL),
 		m_type(EReflectionType::Baked)
 	{
 		for (int i = 0; i < 6; i++)
@@ -101,7 +102,14 @@ namespace Skylicht
 			m_probeData->ReflectionTexture = m_bakedTexture;
 
 		if (m_probeData->ReflectionTexture != oldTexture)
-			m_probeData->Invalidate = true;
+			m_probeData->NeedValidate = true;
+
+		if (m_textureWillRemoved)
+		{
+			// safe remove texture here
+			CTextureManager::getInstance()->removeTexture(m_textureWillRemoved);
+			m_textureWillRemoved = NULL;
+		}
 	}
 
 	CObjectSerializable* CReflectionProbe::createSerializable()
@@ -189,7 +197,7 @@ namespace Skylicht
 				if (m_probeData->ReflectionTexture == m_bakedTexture)
 					m_probeData->ReflectionTexture = NULL;
 
-				getVideoDriver()->removeTexture(m_bakedTexture);
+				m_textureWillRemoved = m_bakedTexture;
 				m_bakedTexture = NULL;
 			}
 		}
@@ -306,7 +314,7 @@ namespace Skylicht
 
 		if (m_staticTexture != NULL)
 		{
-			CTextureManager::getInstance()->removeTexture(m_staticTexture);
+			m_textureWillRemoved = m_staticTexture;
 			m_staticTexture = NULL;
 		}
 

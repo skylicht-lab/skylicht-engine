@@ -55,8 +55,11 @@ namespace Skylicht
 			CAssetEditor::closeGUI();
 			if (m_settings)
 			{
-				m_thumbnails->drop();
-				m_thumbnails = NULL;
+				if (m_thumbnails)
+				{
+					m_thumbnails->drop();
+					m_thumbnails = NULL;
+				}
 				m_settings->saveToFile();
 				delete m_settings;
 				m_settings = NULL;

@@ -490,27 +490,33 @@ namespace Skylicht
 		{
 			// render light rect
 			float x, y;
-			if (CProjective::getScreenCoordinatesFrom3DPosition(
+			CProjective::getScreenCoordinatesFrom3DPosition(
 				camera,
 				edges[i],
 				x, y,
-				vpW, vpH))
-			{
-				minX = core::min_(minX, x);
-				minY = core::min_(minY, y);
-				maxX = core::max_(maxX, x);
-				maxY = core::max_(maxY, y);
-			}
+				vpW, vpH);
+
+			minX = core::min_(minX, x);
+			minY = core::min_(minY, y);
+			maxX = core::max_(maxX, x);
+			maxY = core::max_(maxY, y);
 		}
 
 		x = core::max_(minX, 0.0f);
 		y = core::max_(minY, 0.0f);
+		maxX = core::max_(maxX, 0.0f);
+		maxX = core::max_(maxX, 0.0f);
 		w = core::min_(maxX, maxW) - x;
 		h = core::min_(maxY, maxH) - y;
 
 		/*
 		CSceneDebug* debug = CSceneDebug::getInstance();
 		debug->addBoudingBox(box, SColor(255, 255, 0, 0));
+
+		minX = x + 10.0f;
+		minY = y + 10.0f;
+		maxX = x + w - 10.0f;
+		maxY = y + h - 10.0f;
 		debug->addText2D(core::vector2df(minX, minY), "min", SColor(255, 255, 255, 255));
 		debug->addText2D(core::vector2df(maxX, maxY), "max", SColor(255, 255, 255, 255));
 		*/
@@ -646,6 +652,9 @@ namespace Skylicht
 
 						float rx, ry, rw, rh;
 						getRenderLightRect(camera, listLight[i]->TransformBBox, rx, ry, rw, rh, renderW, renderH);
+
+						if (rw <= 1.0f || rh <= 1.0f)
+							continue;
 
 						if (spotLight)
 						{

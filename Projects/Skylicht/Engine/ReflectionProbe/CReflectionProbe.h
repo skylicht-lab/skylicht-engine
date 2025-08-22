@@ -69,6 +69,8 @@ namespace Skylicht
 
 		EReflectionType m_type;
 
+		video::ITexture* m_textureWillRemoved;
+
 	protected:
 
 		void removeBakeTexture();

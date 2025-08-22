@@ -84,10 +84,10 @@ namespace Skylicht
 				m_probes.push(probeData);
 				m_probePositions.push(transformData);
 
-				if (transformData->NeedValidate || probeData->Invalidate)
+				if (transformData->NeedValidate || probeData->NeedValidate)
 				{
 					m_probeChange = true;
-					probeData->Invalidate = false;
+					probeData->NeedValidate = false;
 				}
 			}
 		}
