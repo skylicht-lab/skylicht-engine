@@ -36,7 +36,7 @@ namespace Skylicht
 
 	CSpotLight::CSpotLight()
 	{
-
+		setIntensity(3.5f);
 	}
 
 	CSpotLight::~CSpotLight()
@@ -76,7 +76,7 @@ namespace Skylicht
 		object->autoRelease(new CFloatProperty(object, "radius", m_radius, 0.0f));
 		object->autoRelease(new CFloatProperty(object, "outer cutoff", m_spotCutoff, 0.0f, 180.0f));
 		object->autoRelease(new CFloatProperty(object, "inner cutoff", m_spotInnerCutoff, 0.0f, 180.0f));
-		object->autoRelease(new CFloatProperty(object, "spot exponent", m_spotExponent, 0.0f, 128.0f));
+		object->autoRelease(new CFloatProperty(object, "spot exponent", m_spotExponent, 0.001f, 64.0f));
 
 		return object;
 	}

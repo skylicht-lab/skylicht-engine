@@ -171,6 +171,8 @@ namespace Skylicht
 
 		virtual void drawInstancingMeshBuffer(CMesh* mesh, int bufferID, CShader* instancingShader, CEntityManager* entityMgr, int entityID, bool skinnedMesh);
 
+		void getRenderLightRect(CCamera* camera, const core::aabbox3df& box, float& x, float& y, float& w, float& h, float maxW, float maxH);
+
 		inline void setPostProcessor(IPostProcessor* pp)
 		{
 			m_postProcessor = pp;

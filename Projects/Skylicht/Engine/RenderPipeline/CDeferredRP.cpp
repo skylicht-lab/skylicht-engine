@@ -41,6 +41,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Shadow/CShadowRTTManager.h"
 #include "Culling/CCullingSystem.h"
 #include "EventManager/CEventManager.h"
+#include "Projective/CProjective.h"
+#include "Debug/CSceneDebug.h"
 
 namespace Skylicht
 {
@@ -473,6 +475,47 @@ namespace Skylicht
 		}
 	}
 
+	void CDeferredRP::getRenderLightRect(CCamera* camera, const core::aabbox3df& box, float& x, float& y, float& w, float& h, float maxW, float maxH)
+	{
+		const core::recti& vp = getVideoDriver()->getViewPort();
+		int vpW = vp.getWidth();
+		int vpH = vp.getHeight();
+
+		core::vector3df edges[8];
+		box.getEdges(edges);
+
+		float minX = maxW, minY = maxH, maxX = 0.0f, maxY = 0.0f;
+
+		for (int i = 0; i < 8; i++)
+		{
+			// render light rect
+			float x, y;
+			if (CProjective::getScreenCoordinatesFrom3DPosition(
+				camera,
+				edges[i],
+				x, y,
+				vpW, vpH))
+			{
+				minX = core::min_(minX, x);
+				minY = core::min_(minY, y);
+				maxX = core::max_(maxX, x);
+				maxY = core::max_(maxY, y);
+			}
+		}
+
+		x = core::max_(minX, 0.0f);
+		y = core::max_(minY, 0.0f);
+		w = core::min_(maxX, maxW) - x;
+		h = core::min_(maxY, maxH) - y;
+
+		/*
+		CSceneDebug* debug = CSceneDebug::getInstance();
+		debug->addBoudingBox(box, SColor(255, 255, 0, 0));
+		debug->addText2D(core::vector2df(minX, minY), "min", SColor(255, 255, 255, 255));
+		debug->addText2D(core::vector2df(maxX, maxY), "max", SColor(255, 255, 255, 255));
+		*/
+	}
+
 	void CDeferredRP::render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport, int cubeFaceId, IRenderPipeline* lastRP)
 	{
 		if (camera == NULL)
@@ -601,6 +644,9 @@ namespace Skylicht
 						CPointLight* pointLight = dynamic_cast<CPointLight*>(light);
 						CSpotLight* spotLight = dynamic_cast<CSpotLight*>(light);
 
+						float rx, ry, rw, rh;
+						getRenderLightRect(camera, listLight[i]->TransformBBox, rx, ry, rw, rh, renderW, renderH);
+
 						if (spotLight)
 						{
 							CShaderLighting::setSpotLight(spotLight);
@@ -619,7 +665,7 @@ namespace Skylicht
 							}
 
 							beginRender2D(renderW, renderH);
-							renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_pointLightPass);
+							renderBufferToTarget(rx, ry, rw, rh, rx, ry, rw, rh, m_pointLightPass);
 						}
 						else if (pointLight)
 						{
@@ -639,7 +685,7 @@ namespace Skylicht
 							}
 
 							beginRender2D(renderW, renderH);
-							renderBufferToTarget(0.0f, 0.0f, renderW, renderH, m_pointLightPass);
+							renderBufferToTarget(rx, ry, rw, rh, rx, ry, rw, rh, m_pointLightPass);
 						}
 					}
 				}
