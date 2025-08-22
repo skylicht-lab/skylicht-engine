@@ -199,7 +199,7 @@ namespace Skylicht
 
 		CEntityChildsData* childs = NULL;
 		CWorldTransformData* transformData = entity->getData<CWorldTransformData>();
-		if (transformData->ParentIndex >= 0)
+		if (transformData && transformData->ParentIndex >= 0)
 		{
 			CEntity* parent = entityManager->getEntity(transformData->ParentIndex);
 			childs = GET_ENTITY_DATA(parent, CEntityChildsData);
@@ -224,9 +224,11 @@ namespace Skylicht
 			for (int i = childCount - 1; i >= 0; i--)
 			{
 				CEntity* c = childs->Childs[i];
-
-				removeChilds(c);
-				entityManager->removeEntity(c);
+				if (c->isAlive())
+				{
+					removeChilds(c);
+					entityManager->removeEntity(c);
+				}
 			}
 			childs->Childs.clear();
 		}
