@@ -113,6 +113,9 @@ namespace Skylicht
 
 				if (m_result[i])
 					driver->removeTexture(m_result[i]);
+
+				if (m_subMesh[i])
+					m_subMesh[i]->drop();
 			}
 
 			if (m_cameraObj)
@@ -131,6 +134,16 @@ namespace Skylicht
 					m_state = Finish;
 				else
 				{
+					// clean last frame mesh
+					for (int i = 0; i < MAX_LIGHTMAP_ATLAS; i++)
+					{
+						if (m_subMesh[i])
+						{
+							m_subMesh[i]->drop();
+							m_subMesh[i] = NULL;
+						}
+					}
+
 					if (m_bakeUV0)
 						doBakeUV0();
 					else
@@ -165,7 +178,6 @@ namespace Skylicht
 
 			CEntityManager* entityMgr = m_cameraObj->getEntityManager();
 
-			// todo: later
 			int numTargetTexture = 1;
 			m_subMesh[0] = mb;
 
