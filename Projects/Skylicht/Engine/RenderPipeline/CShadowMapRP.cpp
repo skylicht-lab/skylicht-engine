@@ -574,7 +574,7 @@ namespace Skylicht
 			CShadowRTTManager* shadowRTT = CShadowRTTManager::getInstance();
 			shadowRTT->clearLightData();
 
-			core::array<CLightCullingData*>& listLight = lightCullingSystem->getLightVisible();
+			core::array<CLightCullingData*> listLight = lightCullingSystem->getLightVisible();
 			for (u32 i = 0, n = listLight.size(); i < n && i < s_maxLight; i++)
 			{
 				CLight* light = listLight[i]->Light;

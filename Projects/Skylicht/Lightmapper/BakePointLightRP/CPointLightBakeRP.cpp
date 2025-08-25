@@ -123,7 +123,7 @@ namespace Skylicht
 			if (m_renderTarget[i] == NULL || m_submesh[i] == NULL)
 				continue;
 
-			driver->setRenderTarget(m_renderTarget[i], false, false);
+			driver->setRenderTarget(m_renderTarget[i], false, true);
 
 			m_currentTarget = i;
 

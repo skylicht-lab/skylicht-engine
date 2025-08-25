@@ -681,6 +681,8 @@ namespace Skylicht
 		if (driver->getDriverType() != video::EDT_DIRECT3D11)
 			target = targetOpenGL;
 
+		CCamera::ECameraProjection cameraType = camera->getProjectionType();
+
 		core::matrix4 view;
 
 		// OpenGL have flipY buffer
@@ -713,13 +715,13 @@ namespace Skylicht
 				view.makeIdentity();
 				view.buildCameraLookAtMatrixLH(position, position + target[faceID] * 100.0f, up[faceID]);
 
-				if (allPipeline)
 				{
-					// Set transform to camera and pass it for all IRenderPipeline
+					// Set transform to camera for culling
 					camera->setProjectionMatrix(projection);
 					camera->setViewMatrix(view, position);
 				}
-				else
+
+				if (!allPipeline)
 				{
 					// Just need quick render in this RP
 					driver->setTransform(video::ETS_PROJECTION, projection);
@@ -750,13 +752,13 @@ namespace Skylicht
 				view.makeIdentity();
 				view.buildCameraLookAtMatrixLH(position, position + target[i] * 100.0f, up[i]);
 
-				if (allPipeline)
 				{
-					// Set transform to camera and pass it for all IRenderPipeline
+					// Set transform to camera for culling
 					camera->setProjectionMatrix(projection);
 					camera->setViewMatrix(view, position);
 				}
-				else
+
+				if (!allPipeline)
 				{
 					// Just quick render in this RP
 					driver->setTransform(video::ETS_PROJECTION, projection);
@@ -784,6 +786,10 @@ namespace Skylicht
 		{
 			driver->removeTexture(tempFBO);
 		}
+
+		// revert camera
+		camera->setProjectionType(cameraType);
+		camera->endUpdate();
 	}
 
 	void CBaseRP::saveFBOToFile(ITexture* texture, const char* output)
@@ -802,11 +808,11 @@ namespace Skylicht
 
 		if (driver->getDriverType() == video::EDT_DIRECT3D11)
 			im->swapBG();
-		
+
 #if defined(MACOS) || defined(IOS)
 		im->swapBG();
 #endif
-		
+
 		driver->writeImageToFile(im, output);
 		im->drop();
 
