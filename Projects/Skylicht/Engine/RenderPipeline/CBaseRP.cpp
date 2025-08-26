@@ -513,12 +513,13 @@ namespace Skylicht
 		driver->drawMeshBuffer(m_drawBuffer);
 	}
 
-	void CBaseRP::renderEnvironment(CCamera* camera, CEntityManager* entityMgr, const core::vector3df& position, ITexture* texture[], int* face, int numFace)
+	void CBaseRP::renderEnvironment(CCamera* camera, CEntityManager* entityMgr, const core::vector3df& position, ITexture* texture[], int* face, int numFace, bool allPipeline)
 	{
 		if (texture == NULL)
 			return;
 
 		IVideoDriver* driver = getVideoDriver();
+		CCamera::ECameraProjection cameraType = camera->getProjectionType();
 
 		core::matrix4 projection;
 		projection.buildProjectionMatrixPerspectiveFovLH(90.0f * core::DEGTORAD, 1.0f, camera->getNearValue(), camera->getFarValue());
@@ -580,9 +581,16 @@ namespace Skylicht
 				camera->setProjectionMatrix(projection);
 				camera->setViewMatrix(view, position);
 
+				if (!allPipeline)
+				{
+					// Just need quick render in this RP
+					driver->setTransform(video::ETS_PROJECTION, projection);
+					driver->setTransform(video::ETS_VIEW, view);
+				}
+
 				if (tempFBO)
 				{
-					drawSceneToTexture(tempFBO, camera, entityMgr, true);
+					drawSceneToTexture(tempFBO, camera, entityMgr, allPipeline);
 
 					driver->setRenderTarget(texture[i], true, true);
 					beginRender2D(sizeW, sizeH);
@@ -590,7 +598,7 @@ namespace Skylicht
 				}
 				else
 				{
-					drawSceneToTexture(texture[i], camera, entityMgr, true);
+					drawSceneToTexture(texture[i], camera, entityMgr, allPipeline);
 				}
 			}
 		}
@@ -610,9 +618,16 @@ namespace Skylicht
 				camera->setProjectionMatrix(projection);
 				camera->setViewMatrix(view, position);
 
+				if (!allPipeline)
+				{
+					// Just need quick render in this RP
+					driver->setTransform(video::ETS_PROJECTION, projection);
+					driver->setTransform(video::ETS_VIEW, view);
+				}
+
 				if (tempFBO)
 				{
-					drawSceneToTexture(tempFBO, camera, entityMgr, true);
+					drawSceneToTexture(tempFBO, camera, entityMgr, allPipeline);
 
 					driver->setRenderTarget(texture[i], true, true);
 					beginRender2D(sizeW, sizeH);
@@ -620,7 +635,7 @@ namespace Skylicht
 				}
 				else
 				{
-					drawSceneToTexture(texture[i], camera, entityMgr, true);
+					drawSceneToTexture(texture[i], camera, entityMgr, allPipeline);
 				}
 			}
 		}
@@ -630,6 +645,10 @@ namespace Skylicht
 		{
 			driver->removeTexture(tempFBO);
 		}
+
+		// revert camera
+		camera->setProjectionType(cameraType);
+		camera->endUpdate();
 	}
 
 	void CBaseRP::renderCubeEnvironment(CCamera* camera, CEntityManager* entityMgr, const core::vector3df& position, ITexture* texture, int* face, int numFace, bool allPipeline)
@@ -715,11 +734,9 @@ namespace Skylicht
 				view.makeIdentity();
 				view.buildCameraLookAtMatrixLH(position, position + target[faceID] * 100.0f, up[faceID]);
 
-				{
-					// Set transform to camera for culling
-					camera->setProjectionMatrix(projection);
-					camera->setViewMatrix(view, position);
-				}
+				// Set transform to camera for culling
+				camera->setProjectionMatrix(projection);
+				camera->setViewMatrix(view, position);
 
 				if (!allPipeline)
 				{
@@ -752,11 +769,9 @@ namespace Skylicht
 				view.makeIdentity();
 				view.buildCameraLookAtMatrixLH(position, position + target[i] * 100.0f, up[i]);
 
-				{
-					// Set transform to camera for culling
-					camera->setProjectionMatrix(projection);
-					camera->setViewMatrix(view, position);
-				}
+				// Set transform to camera for culling
+				camera->setProjectionMatrix(projection);
+				camera->setViewMatrix(view, position);
 
 				if (!allPipeline)
 				{

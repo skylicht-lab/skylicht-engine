@@ -42,12 +42,12 @@ namespace Skylicht
 		m_bakeInUV0(false),
 		m_bakeDetailNormal(false)
 	{
-		CEventManager::getInstance()->registerEvent("ShadowBakeRP", this);
+		// CEventManager::getInstance()->registerProcessorEvent("ShadowBakeRP", this);
 	}
 
 	CPointLightShadowBakeRP::~CPointLightShadowBakeRP()
 	{
-		CEventManager::getInstance()->unRegisterEvent(this);
+		// CEventManager::getInstance()->unRegisterProcessorEvent(this);
 	}
 
 	void CPointLightShadowBakeRP::initRender(int w, int h)

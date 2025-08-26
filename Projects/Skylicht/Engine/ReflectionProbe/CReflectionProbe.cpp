@@ -268,7 +268,7 @@ namespace Skylicht
 		CBaseRP* baseRP = dynamic_cast<CBaseRP*>(rp);
 		if (baseRP != NULL)
 		{
-			baseRP->renderEnvironment(camera, entityMgr, position, m_bakeTexture, NULL, 0);
+			baseRP->renderEnvironment(camera, entityMgr, position, m_bakeTexture, NULL, 0, true);
 
 			const char* cubeText[] =
 			{

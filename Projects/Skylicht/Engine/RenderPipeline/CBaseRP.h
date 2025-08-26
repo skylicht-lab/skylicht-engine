@@ -86,7 +86,7 @@ namespace Skylicht
 
 		void renderBufferToTarget(float dx, float dy, float dw, float dh, float sx, float sy, float sw, float sh, SMaterial& material, bool flipY = true, bool flipX = false);
 
-		void renderEnvironment(CCamera* camera, CEntityManager* entityMgr, const core::vector3df& position, ITexture* texture[], int* face, int numFace);
+		void renderEnvironment(CCamera* camera, CEntityManager* entityMgr, const core::vector3df& position, ITexture* texture[], int* face, int numFace, bool allPipeline);
 
 		void renderCubeEnvironment(CCamera* camera, CEntityManager* entityMgr, const core::vector3df& position, ITexture* texture, int* face, int numFace, bool allPipeline);
 

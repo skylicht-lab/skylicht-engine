@@ -40,7 +40,7 @@ namespace Skylicht
 		m_bakeInUV0(false),
 		m_bakeDetailNormal(false)
 	{
-		CEventManager::getInstance()->registerEvent("ShadowBakeRP", this);
+		// CEventManager::getInstance()->registerProcessorEvent("ShadowBakeRP", this);
 	}
 
 	CShadowMapBakeRP::~CShadowMapBakeRP()
@@ -48,7 +48,7 @@ namespace Skylicht
 		if (m_sm != NULL)
 			delete m_sm;
 
-		CEventManager::getInstance()->unRegisterEvent(this);
+		// CEventManager::getInstance()->unRegisterProcessorEvent(this);
 	}
 
 	void CShadowMapBakeRP::initRender(int w, int h)

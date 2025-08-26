@@ -36,7 +36,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Lighting/CSpotLight.h"
 #include "Lighting/CDirectionalLight.h"
 #include "Shadow/CShadowRTTManager.h"
-#include "EventManager/CEventManager.h"
 
 namespace Skylicht
 {
@@ -50,6 +49,7 @@ namespace Skylicht
 		m_numCascade(3),
 		m_currentCSM(0),
 		m_saveDebug(false),
+		m_saveDebugPL(false),
 		m_screenWidth(0),
 		m_screenHeight(0),
 		m_renderShadowState(CShadowMapRP::DirectionLight)
@@ -57,12 +57,15 @@ namespace Skylicht
 		m_type = ShadowMap;
 		m_lightDirection.set(-1.0f, -1.0f, -1.0f);
 
-		// write depth material
+		// debug material
 		CShaderManager* shaderMgr = CShaderManager::getInstance();
+		// shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGColor.xml");
+		// m_texColorShader = shaderMgr->getShaderIDByName("SGColor");
 
 		m_texColorShader = shaderMgr->getShaderIDByName("TextureColor");
 		m_skinShader = shaderMgr->getShaderIDByName("Skin");
 
+		// write depth material
 		m_depthWriteShader = shaderMgr->getShaderIDByName("ShadowDepthWrite");
 		m_depthWriteSkinMeshShader = shaderMgr->getShaderIDByName("ShadowDepthWriteSkinMesh");
 
@@ -74,12 +77,12 @@ namespace Skylicht
 		m_writeDepthMaterial.BackfaceCulling = false;
 		m_writeDepthMaterial.FrontfaceCulling = false;
 
-		// CEventManager::getInstance()->registerEvent("ShadowRP", this);
+		// CEventManager::getInstance()->registerProcessorEvent("ShadowRP", this);
 	}
 
 	CShadowMapRP::~CShadowMapRP()
 	{
-		// CEventManager::getInstance()->unRegisterEvent(this);
+		// CEventManager::getInstance()->unRegisterProcessorEvent(this);
 
 		release();
 
@@ -237,7 +240,7 @@ namespace Skylicht
 		CShaderManager* shaderMgr = CShaderManager::getInstance();
 
 		// override write depth material
-		if (m_saveDebug == true)
+		if (m_saveDebug || m_saveDebugPL)
 		{
 			SMaterial m = mb->getMaterial();
 
@@ -404,13 +407,17 @@ namespace Skylicht
 		}
 	}
 
-	bool CShadowMapRP::OnEvent(const SEvent& event)
+	bool CShadowMapRP::OnProcessEvent(const SEvent& event)
 	{
 		if (event.EventType == EET_KEY_INPUT_EVENT)
 		{
 			if (event.KeyInput.Key == KEY_KEY_1 && event.KeyInput.PressedDown == false)
 			{
 				m_saveDebug = true;
+			}
+			else if (event.KeyInput.Key == KEY_KEY_2 && event.KeyInput.PressedDown == false)
+			{
+				m_saveDebugPL = true;
 			}
 		}
 		return false;
@@ -514,7 +521,6 @@ namespace Skylicht
 			}
 		}
 
-		// todo
 		// Save output to file to test
 		if (m_saveDebug == true)
 		{
@@ -559,14 +565,12 @@ namespace Skylicht
 			}
 
 			getVideoDriver()->removeTexture(rtt);
-
-			m_saveDebug = false;
 		}
 
 		// render point light shadow
 		m_renderShadowState = CShadowMapRP::PointLight;
 
-		std::vector<ITexture*> listDepthTexture;
+		bool renderTargetChanged = false;
 
 		CLightCullingSystem* lightCullingSystem = entityManager->getSystem<CLightCullingSystem>();
 		if (lightCullingSystem != NULL)
@@ -591,25 +595,52 @@ namespace Skylicht
 					(pointLight->needRenderShadowDepth() || pointLight->isDynamicShadow()))
 				{
 					CShaderLighting::setPointLight(pointLight);
-					pointLight->beginRenderShadowDepth();
 
 					core::vector3df lightPosition = pointLight->getGameObject()->getPosition();
 
-					ITexture* depth = shadowRTT->createGetPointLightDepth(pointLight);
-					if (depth != NULL)
+					// Save output to file to test
+					if (m_saveDebugPL)
 					{
-						renderCubeEnvironment(camera, entityManager, lightPosition, depth, NULL, 0, false);
-						listDepthTexture.push_back(depth);
-					}
+						ITexture* debugTexture[6];
+						for (int i = 0; i < 6; i++)
+							debugTexture[i] = getVideoDriver()->addRenderTargetTexture(core::dimension2du(512, 512), "bake_reflection", video::ECF_A8R8G8B8);
 
-					pointLight->endRenderShadowDepth();
+						renderEnvironment(camera, entityManager, lightPosition, debugTexture, NULL, 0, false);
+						setTarget(target, cubeFaceId);
+
+						for (int face = 0; face < 6; face++)
+						{
+							char filename[32];
+							sprintf(filename, "pl_shadow_%d_f%d.png", i, face);
+							CBaseRP::saveFBOToFile(debugTexture[face], filename);
+							os::Printer::log(filename);
+
+							getVideoDriver()->removeTexture(debugTexture[face]);
+						}
+					}
+					else
+					{
+						pointLight->beginRenderShadowDepth();
+
+						ITexture* depth = shadowRTT->createGetPointLightDepth(pointLight);
+						if (depth != NULL)
+						{
+							renderCubeEnvironment(camera, entityManager, lightPosition, depth, NULL, 0, false);
+							renderTargetChanged = true;
+						}
+
+						pointLight->endRenderShadowDepth();
+					}
 				}
 			}
 		}
 
 		CShaderLighting::setPointLight(NULL);
 
-		if (listDepthTexture.size() > 0)
+		m_saveDebugPL = false;
+		m_saveDebug = false;
+
+		if (renderTargetChanged)
 		{
 			setTarget(target, cubeFaceId);
 		}

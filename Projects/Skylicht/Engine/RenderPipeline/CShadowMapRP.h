@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CBaseRP.h"
 #include "Shadow/CCascadedShadowMaps.h"
 #include "Shadow/CShadowMaps.h"
+#include "EventManager/CEventManager.h"
 
 namespace Skylicht
 {
@@ -50,7 +51,7 @@ namespace Skylicht
 	/// @see CDeferredRP, CForwardRP
 	class SKYLICHT_API CShadowMapRP :
 		public CBaseRP,
-		public IEventReceiver
+		public IEventProcessor
 	{
 	public:
 		enum EShadowMapType
@@ -59,13 +60,13 @@ namespace Skylicht
 			ShadowMapping
 		};
 
-	protected:
 		enum ERenderShadowState
 		{
 			DirectionLight = 0,
 			PointLight,
 		};
 
+	protected:
 		EShadowMapType m_shadowMapType;
 
 		ERenderShadowState m_renderShadowState;
@@ -98,6 +99,7 @@ namespace Skylicht
 		int m_depthWriteSkinnedInstancing;
 
 		bool m_saveDebug;
+		bool m_saveDebugPL;
 	public:
 		CShadowMapRP();
 
@@ -125,7 +127,7 @@ namespace Skylicht
 
 		virtual void drawInstancingMeshBuffer(CMesh* mesh, int bufferID, CShader* instancingShader, CEntityManager* entityMgr, int entityID, bool skinnedMesh);
 
-		virtual bool OnEvent(const SEvent& event);
+		virtual bool OnProcessEvent(const SEvent& event);
 
 	public:
 
@@ -141,6 +143,11 @@ namespace Skylicht
 		virtual float* getShadowDistance();
 
 		virtual float* getShadowMatrices();
+
+		inline ERenderShadowState getRenderShadowState()
+		{
+			return m_renderShadowState;
+		}
 
 	protected:
 		CCascadedShadowMaps* getCSM()

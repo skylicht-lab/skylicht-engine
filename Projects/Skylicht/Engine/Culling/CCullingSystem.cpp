@@ -226,9 +226,17 @@ namespace Skylicht
 			{
 				CShadowMapRP* shadowMapRP = (CShadowMapRP*)rp;
 
-				const core::aabbox3df& box = shadowMapRP->getFrustumBox();
-				culling->CameraCulled = !culling->BBox.intersectsWithBox(box);
-				culling->Visible = !culling->CameraCulled;
+				if (shadowMapRP->getRenderShadowState() == CShadowMapRP::DirectionLight)
+				{
+					const core::aabbox3df& box = shadowMapRP->getFrustumBox();
+					culling->CameraCulled = !culling->BBox.intersectsWithBox(box);
+					culling->Visible = !culling->CameraCulled;
+				}
+				else
+				{
+					culling->CameraCulled = !culling->BBox.intersectsWithBox(cameraBox);
+					culling->Visible = !culling->CameraCulled;
+				}
 				continue;
 			}
 			else
