@@ -478,6 +478,27 @@ namespace Skylicht
 		refreshModelAndMaterial(false);
 	}
 
+	void CRenderMesh::changeMaterialFromFile(const char* material)
+	{
+		std::vector<std::string> textureFolders;
+		ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial(
+			m_materialFile.c_str(),
+			true,
+			textureFolders
+		);
+
+		if (materials.size() > 0)
+			initMaterial(materials);
+	}
+
+	void CRenderMesh::changeShaderForAllMaterials(const char* shader)
+	{
+		ArrayMaterial m = m_materials;
+		initMaterial(m, true);
+		for (CMaterial* m : m_materials)
+			m->changeShader(shader);
+	}
+
 	void CRenderMesh::initMaterial(ArrayMaterial& materials, bool cloneMaterial)
 	{
 		releaseMaterial();

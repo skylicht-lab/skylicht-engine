@@ -22,48 +22,29 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#include "pch.h"
+#pragma once
 
-#ifdef BUILD_SKYLICHT_LIGHMAPPER
+#include "Serializable/CObjectSerializable.h"
+#include "Editor/Components/CComponentEditor.h"
+#include "Activator/CEditorActivator.h"
+#include "Editor/Components/Default/CDefaultEditor.h"
 
-#include "CBakeLightEditor.h"
-using namespace Skylicht::Lightmapper;
-
-#include "Editor/Space/Property/CSpaceProperty.h"
-#include "Editor/SpaceController/CSceneController.h"
+#include "Lightmap/CLightmap.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		EDITOR_REGISTER(CBakeLightEditor, CBakeLightComponent);
-
-		CBakeLightEditor::CBakeLightEditor()
+		class CLightmapEditor : public CDefaultEditor
 		{
+		public:
+			CLightmapEditor();
 
-		}
+			virtual ~CLightmapEditor();
 
-		CBakeLightEditor::~CBakeLightEditor()
-		{
+			virtual void initCustomGUI(GUI::CBoxLayout* layout, CSpaceProperty* ui);
 
-		}
-
-		void CBakeLightEditor::initCustomGUI(GUI::CBoxLayout* layout, CSpaceProperty* ui)
-		{
-			layout->addSpace(5.0f);
-
-			ui->addButton(layout, L"Bake directional")->OnPress = [&](GUI::CBase* button)
-				{
-					CBakeLightComponent* bakeComp = (CBakeLightComponent*)m_component;
-					CEditor::getInstance()->bakeDirectional(bakeComp);
-				};
-		}
-
-		void CBakeLightEditor::update()
-		{
-
-		}
+			virtual void update();
+		};
 	}
 }
-
-#endif

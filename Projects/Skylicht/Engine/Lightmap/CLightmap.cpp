@@ -28,6 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Entity/CEntityHandler.h"
 #include "GameObject/CGameObject.h"
+#include "GameObject/CContainerObject.h"
 #include "RenderMesh/CRenderMesh.h"
 #include "Entity/CEntityManager.h"
 
@@ -39,16 +40,17 @@ namespace Skylicht
 
 	CLightmap::CLightmap() :
 		m_autoLoadLightmap(true),
-		m_internalLightmap(false),
+		m_textureOwner(false),
 		m_lightmap(NULL),
-		m_lightmapBeginIndex(0)
+		m_lightmapBeginIndex(0),
+		m_applyChilds(true)
 	{
 
 	}
 
 	CLightmap::~CLightmap()
 	{
-		if (m_internalLightmap && m_lightmap)
+		if (m_textureOwner && m_lightmap)
 		{
 			CTextureManager::getInstance()->removeTexture(m_lightmap);
 		}
@@ -108,8 +110,10 @@ namespace Skylicht
 	{
 		CObjectSerializable* object = CComponentSystem::createSerializable();
 
+		object->autoRelease(new CFilePathProperty(object, "lightmapShader", m_lightmapShader.c_str(), "xml"));
 		object->autoRelease(new CBoolProperty(object, "autoLoadLightmap", m_autoLoadLightmap));
 		object->autoRelease(new CIntProperty(object, "lightmapIndex", m_lightmapBeginIndex, 0, 32));
+		object->autoRelease(new CBoolProperty(object, "applyChilds", m_applyChilds));
 
 		CArrayTypeSerializable<CFilePathProperty>* textureArray = new CArrayTypeSerializable<CFilePathProperty>("lightmap", object);
 		textureArray->OnCreateElement = [](CValueProperty* p)
@@ -139,8 +143,10 @@ namespace Skylicht
 	{
 		CComponentSystem::loadSerializable(object);
 
+		m_lightmapShader = object->get<std::string>("lightmapShader", "");
 		m_autoLoadLightmap = object->get<bool>("autoLoadLightmap", true);
 		m_lightmapBeginIndex = object->get<int>("lightmapIndex", 0);
+		m_applyChilds = object->get<bool>("applyChilds", true);
 
 		bool haveLightmap = false;
 		CArraySerializable* textureArray = (CArraySerializable*)object->getProperty("lightmap");
@@ -201,14 +207,72 @@ namespace Skylicht
 
 	void CLightmap::setLightmap(ITexture* texture, int beginIndex)
 	{
-		if (m_internalLightmap && m_lightmap)
+		if (m_textureOwner && m_lightmap)
 			CTextureManager::getInstance()->removeTexture(m_lightmap);
 
 		m_lightmap = texture;
 		m_lightmapBeginIndex = beginIndex;
-		m_internalLightmap = false;
+		m_textureOwner = false;
 
 		updateLightmap(false);
+	}
+
+	void CLightmap::changeLightmapShader()
+	{
+		if (!m_lightmapShader.empty())
+			changeLightmapShader(m_lightmapShader.c_str());
+	}
+
+	void CLightmap::changeLightmapShader(const char* shader)
+	{
+		std::vector<CRenderMesh*> allRenderers;
+
+		if (m_applyChilds && m_gameObject->isContainer())
+		{
+			allRenderers = ((CContainerObject*)m_gameObject)->getComponentsInChild<CRenderMesh>(true);
+		}
+		else
+		{
+			CRenderMesh* renderMesh = m_gameObject->getComponent<CRenderMesh>();
+			if (renderMesh)
+				allRenderers.push_back(renderMesh);
+		}
+
+		updateLightmap(true);
+
+		for (CRenderMesh* renderMesh : allRenderers)
+		{
+			renderMesh->changeShaderForAllMaterials(shader);
+			if (m_lightmap)
+			{
+				for (int i = 0, n = renderMesh->getMaterialCount(); i < n; i++)
+				{
+					CMaterial* mat = renderMesh->getMaterial(i);
+					mat->setUniformTexture("uLightmap", m_lightmap);
+				}
+			}
+		}
+	}
+
+	void CLightmap::changeDefaultShader()
+	{
+		std::vector<CRenderMesh*> allRenderers;
+
+		if (m_applyChilds && m_gameObject->isContainer())
+		{
+			allRenderers = ((CContainerObject*)m_gameObject)->getComponentsInChild<CRenderMesh>(true);
+		}
+		else
+		{
+			CRenderMesh* renderMesh = m_gameObject->getComponent<CRenderMesh>();
+			if (renderMesh)
+				allRenderers.push_back(renderMesh);
+		}
+
+		for (CRenderMesh* renderMesh : allRenderers)
+		{
+			renderMesh->refreshModelAndMaterial(false);
+		}
 	}
 
 	void CLightmap::updateLightmap(bool loadLightmap)
@@ -216,11 +280,11 @@ namespace Skylicht
 		// Load lightmap texture array
 		if (m_lightmapPaths.size() > 0 && loadLightmap)
 		{
-			if (m_internalLightmap && m_lightmap)
+			if (m_textureOwner && m_lightmap)
 				CTextureManager::getInstance()->removeTexture(m_lightmap);
 
 			m_lightmap = CTextureManager::getInstance()->getTextureArray(m_lightmapPaths);
-			m_internalLightmap = true;
+			m_textureOwner = true;
 		}
 
 		for (CLightmapData* data : m_data)

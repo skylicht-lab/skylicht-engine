@@ -67,11 +67,11 @@ namespace Skylicht
 				if (texture && texture->getReferenceCount() == 1)
 				{
 					driver->removeTexture(texture);
-					
+
 					m_textures[it.first] = NULL;
 				}
 			}
-			
+
 			bool done = true;
 			do {
 				done = true;
@@ -176,7 +176,7 @@ namespace Skylicht
 				for (auto it : m_db)
 				{
 					SThumbnailInfo* info = it.second;
-					if (info->Exists)
+					if (info && info->Exists)
 					{
 						attributes.clear();
 						attributes.push_back(info->Id.c_str());

@@ -117,6 +117,10 @@ namespace Skylicht
 
 		void initMaterialFromFile(const char* material);
 
+		void changeMaterialFromFile(const char* material);
+
+		void changeShaderForAllMaterials(const char* shader);
+
 		void initMaterial(ArrayMaterial& materials, bool cloneMaterial = false);
 
 		void enableOptimizeForRender(bool b)

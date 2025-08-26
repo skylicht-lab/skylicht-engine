@@ -41,10 +41,12 @@ namespace Skylicht
 
 		ITexture* m_lightmap;
 
+		std::string m_lightmapShader;
 		bool m_autoLoadLightmap;
-		bool m_internalLightmap;
-
 		int m_lightmapBeginIndex;
+		bool m_applyChilds;
+
+		bool m_textureOwner;
 
 		std::vector<CLightmapData*> m_data;
 
@@ -72,6 +74,12 @@ namespace Skylicht
 		void updateLightmap(bool loadLightmap = true);
 
 		void setLightmap(ITexture* texture, int beginIndex);
+
+		void changeLightmapShader();
+
+		void changeLightmapShader(const char* shader);
+
+		void changeDefaultShader();
 
 		ITexture* getLightmap()
 		{

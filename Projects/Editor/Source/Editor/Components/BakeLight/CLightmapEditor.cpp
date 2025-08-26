@@ -23,11 +23,9 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-
-#ifdef BUILD_SKYLICHT_LIGHMAPPER
-
-#include "CBakeLightEditor.h"
-using namespace Skylicht::Lightmapper;
+#include "CLightmapEditor.h"
+#include "GameObject/CGameObject.h"
+#include "RenderMesh/CRenderMesh.h"
 
 #include "Editor/Space/Property/CSpaceProperty.h"
 #include "Editor/SpaceController/CSceneController.h"
@@ -36,34 +34,38 @@ namespace Skylicht
 {
 	namespace Editor
 	{
-		EDITOR_REGISTER(CBakeLightEditor, CBakeLightComponent);
+		EDITOR_REGISTER(CLightmapEditor, CLightmap);
 
-		CBakeLightEditor::CBakeLightEditor()
+		CLightmapEditor::CLightmapEditor()
 		{
 
 		}
 
-		CBakeLightEditor::~CBakeLightEditor()
+		CLightmapEditor::~CLightmapEditor()
 		{
 
 		}
 
-		void CBakeLightEditor::initCustomGUI(GUI::CBoxLayout* layout, CSpaceProperty* ui)
+		void CLightmapEditor::initCustomGUI(GUI::CBoxLayout* layout, CSpaceProperty* ui)
 		{
 			layout->addSpace(5.0f);
 
-			ui->addButton(layout, L"Bake directional")->OnPress = [&](GUI::CBase* button)
+			ui->addButton(layout, L"Change lightmap shader")->OnPress = [&](GUI::CBase* button)
 				{
-					CBakeLightComponent* bakeComp = (CBakeLightComponent*)m_component;
-					CEditor::getInstance()->bakeDirectional(bakeComp);
+					CLightmap* lmComp = (CLightmap*)m_component;
+					lmComp->changeLightmapShader();
+				};
+
+			ui->addButton(layout, L"Change default shader")->OnPress = [&](GUI::CBase* button)
+				{
+					CLightmap* lmComp = (CLightmap*)m_component;
+					lmComp->changeDefaultShader();
 				};
 		}
 
-		void CBakeLightEditor::update()
+		void CLightmapEditor::update()
 		{
 
 		}
 	}
 }
-
-#endif
