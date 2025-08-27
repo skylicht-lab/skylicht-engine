@@ -81,6 +81,11 @@ namespace Skylicht
 
 		void changeDefaultShader();
 
+		inline const std::string& getLightmapShader()
+		{
+			return m_lightmapShader;
+		}
+
 		ITexture* getLightmap()
 		{
 			return m_lightmap;
@@ -97,6 +102,7 @@ namespace Skylicht
 		}
 
 		bool isLightmapEmpty();
+
 		bool isLightmapChanged(const std::vector<std::string>& paths);
 
 		DECLARE_GETTYPENAME(CLightmap)

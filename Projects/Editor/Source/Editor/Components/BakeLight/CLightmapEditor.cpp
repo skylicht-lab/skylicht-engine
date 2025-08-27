@@ -26,6 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CLightmapEditor.h"
 #include "GameObject/CGameObject.h"
 #include "RenderMesh/CRenderMesh.h"
+#include "Material/Shader/CShaderManager.h"
 
 #include "Editor/Space/Property/CSpaceProperty.h"
 #include "Editor/SpaceController/CSceneController.h"
@@ -54,6 +55,20 @@ namespace Skylicht
 				{
 					CLightmap* lmComp = (CLightmap*)m_component;
 					lmComp->changeLightmapShader();
+				};
+
+			ui->addButton(layout, L"Rebuild lightmap shader")->OnPress = [&](GUI::CBase* button)
+				{
+					CLightmap* lmComp = (CLightmap*)m_component;
+					const std::string& lmShader = lmComp->getLightmapShader();
+
+					CShaderManager* shaderMgr = CShaderManager::getInstance();
+					CShader* oldShader = shaderMgr->getShaderByPath(lmShader.c_str());
+					if (oldShader)
+					{
+						shaderMgr->rebuildShader(oldShader);
+						lmComp->changeLightmapShader();
+					}
 				};
 
 			ui->addButton(layout, L"Change default shader")->OnPress = [&](GUI::CBase* button)

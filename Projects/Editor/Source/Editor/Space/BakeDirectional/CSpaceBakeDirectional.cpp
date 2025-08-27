@@ -480,6 +480,9 @@ namespace Skylicht
 			std::vector<CLight*> lights = zone->getComponentsInChild<CLight>(false);
 			for (CLight* l : lights)
 			{
+				if (!l->isEnable() || !l->getGameObject()->isVisible())
+					continue;
+
 				if (l->getLightType() == CLight::Baked || l->getLightType() == CLight::Mixed)
 					m_lights.push_back(l);
 			}

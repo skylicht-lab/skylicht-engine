@@ -493,10 +493,17 @@ namespace Skylicht
 
 	void CRenderMesh::changeShaderForAllMaterials(const char* shader)
 	{
-		ArrayMaterial m = m_materials;
-		initMaterial(m, true);
+		ArrayMaterial mats = m_materials;
+
+		for (CMaterial* m : mats)
+			m->grab();
+
+		initMaterial(mats, true);
 		for (CMaterial* m : m_materials)
 			m->changeShader(shader);
+
+		for (CMaterial* m : mats)
+			m->drop();
 	}
 
 	void CRenderMesh::initMaterial(ArrayMaterial& materials, bool cloneMaterial)
