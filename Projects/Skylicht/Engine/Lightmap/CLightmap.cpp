@@ -242,13 +242,16 @@ namespace Skylicht
 
 		for (CRenderMesh* renderMesh : allRenderers)
 		{
-			renderMesh->changeShaderForAllMaterials(shader);
-			if (m_lightmap)
+			if (renderMesh->getGameObject()->isStatic())
 			{
-				for (int i = 0, n = renderMesh->getMaterialCount(); i < n; i++)
+				renderMesh->changeShaderForAllMaterials(shader);
+				if (m_lightmap)
 				{
-					CMaterial* mat = renderMesh->getMaterial(i);
-					mat->setUniformTexture("uLightmap", m_lightmap);
+					for (int i = 0, n = renderMesh->getMaterialCount(); i < n; i++)
+					{
+						CMaterial* mat = renderMesh->getMaterial(i);
+						mat->setUniformTexture("uLightmap", m_lightmap);
+					}
 				}
 			}
 		}
@@ -271,7 +274,8 @@ namespace Skylicht
 
 		for (CRenderMesh* renderMesh : allRenderers)
 		{
-			renderMesh->refreshModelAndMaterial(false);
+			if (renderMesh->getGameObject()->isStatic())
+				renderMesh->refreshModelAndMaterial(false);
 		}
 	}
 
