@@ -140,12 +140,15 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 color = directionalLight * diffuseColor * 0.3 * uLightMul.y;
 
 #if defined(PLANAR_REFLECTION)
+	float3 f0 = float3(0.1, 0.1, 0.1);	
+	float3 rc = lerp(f0, diffuseColor, spec) * (0.8 + gloss * 1.8);
+	
 	// projection uv
 	float3 reflectUV = input.reflectCoord.xyz / input.reflectCoord.w;
 	#if defined(REFLECTION_MIPMAP)
-	color += uTexReflect.SampleLevel(uTexReflectSampler, reflectUV.xy, (1.0 - gloss) * 7.0).xyz;
+	color += uTexReflect.SampleLevel(uTexReflectSampler, reflectUV.xy, (1.0 - gloss) * 7.0).xyz * rc;
 	#else
-	color += uTexReflect.SampleLevel(uTexReflectSampler, reflectUV.xy, 0.0).xyz;
+	color += uTexReflect.SampleLevel(uTexReflectSampler, reflectUV.xy, 0.0).xyz * rc;
 	#endif
 #else
 	// Specular

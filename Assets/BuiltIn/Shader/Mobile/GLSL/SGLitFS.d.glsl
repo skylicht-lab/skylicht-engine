@@ -130,12 +130,15 @@ void main(void)
 	vec3 color = directionalLight * diffuseColor * 0.3 * uLightMul.y;
 
 #if defined(PLANAR_REFLECTION)
+	vec3 f0 = vec3(0.1, 0.1, 0.1);	
+	vec3 rc = mix(f0, diffuseColor, spec) * (0.8 + gloss * 1.8);
+	
 	// projection uv
 	vec3 reflectUV = vReflectCoord.xyz / vReflectCoord.w;
 	#if defined(REFLECTION_MIPMAP)
-	color += textureLod(uTexReflect, reflectUV.xy, (1.0 - gloss) * 7.0).xyz;
+	color += textureLod(uTexReflect, reflectUV.xy, (1.0 - gloss) * 7.0).xyz * rc;
 	#else
-	color += textureLod(uTexReflect, reflectUV.xy, 0.0).xyz;
+	color += textureLod(uTexReflect, reflectUV.xy, 0.0).xyz * rc;
 	#endif
 #else
 
