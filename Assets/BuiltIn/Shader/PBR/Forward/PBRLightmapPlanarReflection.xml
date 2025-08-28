@@ -27,7 +27,7 @@
 		<ui control="UIGroup" name="Texture">
 			<ui control="UITexture" name="uTexAlbedo" autoReplace="albedo.;_Albedo.;_A."/>
 			<ui control="UITexture" name="uTexRMA" autoReplace="_rma.;_RMA."/>
-			<ui control="UITexture" name="uLightmap"/>
+			<ui control="UITexture" name="uTexLightmap"/>
 		</ui>
 		<ui control="UIGroup" name="Customize">
 			<ui control="UIColor" name="uColor"/>
