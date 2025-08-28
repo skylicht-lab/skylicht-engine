@@ -231,6 +231,7 @@ namespace Skylicht
 		loadShader("BuiltIn/Shader/PBR/Forward/PBRNoTexture.xml");
 
 		loadShader("BuiltIn/Shader/PBR/Forward/PBRLightmap.xml");
+		loadShader("BuiltIn/Shader/PBR/Forward/PBRLightmapPlanarReflection.xml");
 
 		loadShader("BuiltIn/Shader/PBR/Forward/PBRSkin.xml");
 		loadShader("BuiltIn/Shader/PBR/Forward/PBRSkinNoEmissive.xml");

@@ -61,6 +61,8 @@ namespace Skylicht
 	/// 
 	/// - And **resource type RTT0** will help the engine find the source texture that has been Rendered To Texture.
 	/// 
+	/// You can view the shader details in the file `BuiltIn\Shader\PBR\Forward\PBRLightmapPlanarReflection.xml`.
+	/// 
 	/// When you initialize a CRenderToTextureRP with id=1, the resource type will be RTT1, and RENDER_TEXTURE_MATRIX valueIndex=1.
 	/// 
 	/// You can attach it to the main render pipeline and *setEnable* it whenever you need to use RTT.

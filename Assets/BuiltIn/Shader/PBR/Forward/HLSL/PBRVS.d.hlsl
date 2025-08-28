@@ -28,6 +28,9 @@ struct VS_OUTPUT
 	float3 worldViewDir: WORLDVIEWDIR;
 	float4 viewPosition: VIEWPOSITION;
 	float3 worldPosition: WORLDPOSITION;
+#if defined(PLANAR_REFLECTION)
+	float4 reflectCoord: REFLECTIONCOORD;
+#endif	
 };
 #else
 struct VS_OUTPUT
@@ -41,6 +44,9 @@ struct VS_OUTPUT
 	float tangentw : TANGENTW;
 	float4 viewPosition: VIEWPOSITION;
 	float3 worldPosition: WORLDPOSITION;
+#if defined(PLANAR_REFLECTION)
+	float4 reflectCoord: REFLECTIONCOORD;
+#endif
 };
 #endif
 
@@ -50,6 +56,9 @@ cbuffer cbPerObject
 	float4x4 uWorldMatrix;
 	float4 uCameraPosition;
 	float4 uUVScale;
+#if defined(PLANAR_REFLECTION)
+	float4x4 uRTTMatrix;
+#endif
 };
 
 VS_OUTPUT main(VS_INPUT input)
@@ -82,6 +91,10 @@ VS_OUTPUT main(VS_INPUT input)
 #if !defined(NO_NORMAL_MAP) && !defined(NO_TEXTURE)	
 	output.worldTangent = normalize(worldTangent.xyz);
 	output.worldBinormal = normalize(cross(worldNormal.xyz, worldTangent.xyz));
+#endif
+
+#if defined(PLANAR_REFLECTION)
+	output.reflectCoord = mul(float4(worldPos.xyz, 1.0), uRTTMatrix);
 #endif
 
 	output.worldViewDir = worldViewDir.xyz;
