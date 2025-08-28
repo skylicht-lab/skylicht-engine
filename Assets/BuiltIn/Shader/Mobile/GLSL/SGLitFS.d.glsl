@@ -19,6 +19,10 @@ uniform sampler2D uTexSpecular;
 #endif
 #endif
 
+#if defined(PLANAR_REFLECTION)
+uniform sampler2D uTexReflect;
+#endif
+
 #if defined(SHADOW)
 uniform sampler2DArray uShadowMap;
 #endif
@@ -48,6 +52,10 @@ in float vTangentW;
 #ifdef SHADOW
 in vec3 vDepth;
 in vec4 vShadowCoord;
+#endif
+
+#if defined(PLANAR_REFLECTION)
+in vec4 vReflectCoord;
 #endif
 
 out vec4 FragColor;
@@ -121,6 +129,16 @@ void main(void)
 #endif		
 	vec3 color = directionalLight * diffuseColor * 0.3 * uLightMul.y;
 
+#if defined(PLANAR_REFLECTION)
+	// projection uv
+	vec3 reflectUV = vReflectCoord.xyz / vReflectCoord.w;
+	#if defined(REFLECTION_MIPMAP)
+	color += textureLod(uTexReflect, reflectUV.xy, (1.0 - gloss) * 7.0).xyz;
+	#else
+	color += textureLod(uTexReflect, reflectUV.xy, 0.0).xyz;
+	#endif
+#else
+
 	// Specular	
 	vec3 specularColor = vec3(0.5, 0.5, 0.5);
 	
@@ -132,6 +150,8 @@ void main(void)
 	ambientLighting *= ao;
 #endif
 	color += specular * specularColor * uLightMul.x;
+
+#endif
 
 #if defined(SHADOW)
 	color *= visibility;

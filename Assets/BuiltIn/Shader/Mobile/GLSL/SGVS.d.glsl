@@ -37,6 +37,10 @@ uniform vec4 uLightDirection;
 uniform vec4 uUVScale;
 #endif
 
+#if defined(PLANAR_REFLECTION)
+uniform mat4 uRTTMatrix;
+#endif
+
 #ifdef SHADOW
 uniform mat4 uShadowMatrix;
 #endif
@@ -54,6 +58,10 @@ out float vTangentW;
 #ifdef SHADOW
 out vec3 vDepth;
 out vec4 vShadowCoord;
+#endif
+
+#if defined(PLANAR_REFLECTION)
+out vec4 vReflectCoord;
 #endif
 
 void main(void)
@@ -83,6 +91,10 @@ void main(void)
 #ifdef SHADOW
 	vDepth = uCameraPosition.xyz - worldPos.xyz;
 	vShadowCoord = uShadowMatrix * vec4(worldPos.xyz, 1.0);
+#endif
+
+#if defined(PLANAR_REFLECTION)
+	vReflectCoord = uRTTMatrix * vec4(worldPos.xyz, 1.0);
 #endif
 
 	vWorldViewDir = worldViewDir.xyz;

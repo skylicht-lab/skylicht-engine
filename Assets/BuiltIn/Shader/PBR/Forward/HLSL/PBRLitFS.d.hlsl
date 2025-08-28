@@ -225,15 +225,15 @@ float4 main(PS_INPUT input) : SV_TARGET
 	// projection uv
 	float3 reflectUV = input.reflectCoord.xyz / input.reflectCoord.w;
 	#if defined(REFLECTION_MIPMAP)
-	float3 prefilteredColor = uTexReflect.Sample(uTexReflectSampler, reflectUV.xy, roughness * 7).xyz;
+	float3 prefilteredColor = uTexReflect.SampleLevel(uTexReflectSampler, reflectUV.xy, roughness * 7.0).xyz;
 	#else
-	float3 prefilteredColor = uTexReflect.Sample(uTexReflectSampler, reflectUV.xy, 0.0).xyz;
+	float3 prefilteredColor = uTexReflect.SampleLevel(uTexReflectSampler, reflectUV.xy, 0.0).xyz;
 	#endif
 #else
 	// IBL reflection
 	float3 reflection = -normalize(reflect(input.worldViewDir, n));	
 	// reflection should be the size: 128x128
-	float3 prefilteredColor = sRGB(uTexReflect.SampleLevel(uTexReflectSampler, reflection, roughness * 7).xyz);
+	float3 prefilteredColor = sRGB(uTexReflect.SampleLevel(uTexReflectSampler, reflection, roughness * 7.0).xyz);
 #endif
 	
 	// Get F scale and bias from the LUT

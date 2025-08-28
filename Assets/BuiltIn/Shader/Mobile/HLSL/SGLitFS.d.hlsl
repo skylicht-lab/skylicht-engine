@@ -13,6 +13,11 @@ SamplerState uTexSpecularMapSampler : register(s2);
 #endif
 #endif
 
+#if defined(PLANAR_REFLECTION)
+Texture2D uTexReflect : register(t3);
+SamplerState uTexReflectSampler : register(s3);
+#endif
+
 #if defined(SHADOW)
 Texture2DArray uShadowMap : register(t6);
 SamplerState uShadowMapSampler : register(s6);
@@ -29,6 +34,9 @@ struct PS_INPUT
 #ifdef SHADOW
 	float3 depth: DEPTH;
 	float4 shadowCoord: SHADOWCOORD;
+#endif
+#if defined(PLANAR_REFLECTION)
+	float4 reflectCoord: REFLECTIONCOORD;
 #endif
 };
 #else
@@ -131,6 +139,15 @@ float4 main(PS_INPUT input) : SV_TARGET
 #endif	
 	float3 color = directionalLight * diffuseColor * 0.3 * uLightMul.y;
 
+#if defined(PLANAR_REFLECTION)
+	// projection uv
+	float3 reflectUV = input.reflectCoord.xyz / input.reflectCoord.w;
+	#if defined(REFLECTION_MIPMAP)
+	color += uTexReflect.SampleLevel(uTexReflectSampler, reflectUV.xy, (1.0 - gloss) * 7.0).xyz;
+	#else
+	color += uTexReflect.SampleLevel(uTexReflectSampler, reflectUV.xy, 0.0).xyz;
+	#endif
+#else
 	// Specular
 	float3 specularColor = float3(0.5, 0.5, 0.5);
 	
@@ -142,6 +159,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 	ambientLighting *= ao;
 #endif		
 	color += specular * specularColor * uLightMul.x;
+#endif
 
 #if defined(SHADOW)
 	color *= visibility;

@@ -44,6 +44,9 @@ struct VS_OUTPUT
 #ifdef SHADOW
 	float3 depth: DEPTH;
 	float4 shadowCoord: SHADOWCOORD;
+#endif
+#if defined(PLANAR_REFLECTION)
+	float4 reflectCoord: REFLECTIONCOORD;
 #endif	
 };
 #endif
@@ -66,6 +69,10 @@ cbuffer cbPerObject
 
 #ifdef SHADOW
 	float4x4 uShadowMatrix;
+#endif
+
+#if defined(PLANAR_REFLECTION)
+	float4x4 uRTTMatrix;
 #endif
 };
 
@@ -102,6 +109,10 @@ VS_OUTPUT main(VS_INPUT input)
 #ifdef SHADOW
 	output.depth = uCameraPosition.xyz - worldPos.xyz;
 	output.shadowCoord = mul(float4(worldPos.xyz, 1.0), uShadowMatrix);
+#endif
+
+#if defined(PLANAR_REFLECTION)
+	output.reflectCoord = mul(float4(worldPos.xyz, 1.0), uRTTMatrix);
 #endif
 
 	output.worldViewDir = worldViewDir.xyz;
