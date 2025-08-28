@@ -11,7 +11,7 @@
 			<uniform name="uTexRMA" type="DEFAULT_VALUE" value="2" float="1" directX="false"/>
 			<uniform name="uTexReflect" type="DEFAULT_VALUE" value="3" float="1" directX="false"/>
 			<uniform name="uTexBRDF" type="DEFAULT_VALUE" value="4" float="1" directX="false"/>
-			<uniform name="uLightmap" type="DEFAULT_VALUE" value="6" float="1" directX="false"/>			
+			<uniform name="uTexLightmap" type="DEFAULT_VALUE" value="6" float="1" directX="false"/>			
 			<uniform name="uLightDirection" type="WORLD_LIGHT_DIRECTION" value="0" float="4"/>
 			<uniform name="uLightColor" type="LIGHT_COLOR" value="1.0,1.0,1.0,1.0" float="4"/>
 			<uniform name="uColor" type="MATERIAL_PARAM" valueIndex="1" value="1.0, 1.0, 1.0, 1.0" float="4"/>

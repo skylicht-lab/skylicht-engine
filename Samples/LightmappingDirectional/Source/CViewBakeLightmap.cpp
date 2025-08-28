@@ -282,7 +282,7 @@ void CViewBakeLightmap::onRender()
 	// update scene first
 	context->getScene()->update();
 
-	bool bakeInUV0 = false; // we bake in lightmap coord
+	bool bakeInUV0 = false;
 
 	// bake direction light
 	m_shadowRP->setBakeInUV0(bakeInUV0);

@@ -89,6 +89,9 @@ namespace Skylicht
 		CPointLight* pointLight = dynamic_cast<CPointLight*>(m_currentLight);
 		if (pointLight != NULL)
 		{
+			// for uLightPosition in shader write depth distance
+			CShaderLighting::setPointLight(pointLight);
+
 			pointLight->beginRenderShadowDepth();
 
 			core::vector3df lightPosition = pointLight->getGameObject()->getPosition();

@@ -5,8 +5,6 @@
 #include "ViewManager/CViewManager.h"
 #include "SkyDome/CSkyDome.h"
 
-// #define LIGHTMAP_SPONZA
-
 CViewInit::CViewInit()
 {
 
@@ -142,13 +140,13 @@ void CViewInit::onInit()
 		CPointLight* pointLight = pointLightObj->addComponent<CPointLight>();
 		pointLight->setShadow(true);
 		pointLight->setColor(SColor(255, 221, 123, 34));
-		pointLight->setIntensity(1.0f);
+		pointLight->setIntensity(2.0f);
 		pointLight->setBounce(1);
-		pointLight->setRadius(4.0f);
+		pointLight->setRadius(8.0f);
 		pointLight->setLightType(CLight::Baked);
 
 		CTransformEuler* pointLightTransform = pointLightObj->getTransformEuler();
-		pointLightTransform->setPosition(core::vector3df(0.0f, 3.0f, 0.0f));
+		pointLightTransform->setPosition(core::vector3df(-2.0f, 6.0f, 0.0f));
 	}
 
 	// test spotlight
@@ -156,11 +154,11 @@ void CViewInit::onInit()
 		CGameObject* pointLightObj = zone->createEmptyObject();
 
 		CSpotLight* spotLight = pointLightObj->addComponent<CSpotLight>();
-		spotLight->setShadow(true);
+		spotLight->setShadow(false);
 		spotLight->setColor(SColor(255, 34, 123, 221));
-		spotLight->setIntensity(1.0f);
+		spotLight->setIntensity(3.0f);
 		spotLight->setBounce(1);
-		spotLight->setRadius(4.0f);
+		spotLight->setRadius(7.0f);
 		spotLight->setLightType(CLight::Baked);
 
 		core::vector3df pos(0.0f, 1.0f, -3.0f);
