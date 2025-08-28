@@ -250,7 +250,7 @@ namespace Skylicht
 					for (int i = 0, n = renderMesh->getMaterialCount(); i < n; i++)
 					{
 						CMaterial* mat = renderMesh->getMaterial(i);
-						mat->setUniformTexture("uLightmap", m_lightmap);
+						mat->setUniformTexture("uTexLightmap", m_lightmap);
 					}
 				}
 			}
