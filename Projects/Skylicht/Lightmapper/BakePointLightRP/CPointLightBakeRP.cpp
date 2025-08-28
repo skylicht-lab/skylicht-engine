@@ -36,6 +36,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Material/Shader/ShaderCallback/CShaderLighting.h"
 #include "Material/CMaterial.h"
 
+#include "Shadow/CShadowRTTManager.h"
+
 #include "CPointLightShadowBakeRP.h"
 
 namespace Skylicht
@@ -187,9 +189,8 @@ namespace Skylicht
 		irrMaterial.BackfaceCulling = false;
 		irrMaterial.FrontfaceCulling = false;
 
-		ITexture* depthTexture = shadowRP->getDepthTexture();
-		if (depthTexture)
-			depthTexture->regenerateMipMapLevels();
+		CShadowRTTManager* shadowRTT = CShadowRTTManager::getInstance();
+		ITexture* depthTexture = shadowRTT->createGetPointLightDepth(currentLight);
 
 		irrMaterial.TextureLayer[0].Texture = depthTexture;
 		irrMaterial.TextureLayer[0].BilinearFilter = false;

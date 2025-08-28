@@ -98,6 +98,32 @@ namespace Skylicht
 				renderCubeEnvironment(camera, entityManager, lightPosition, m_depthTexture, NULL, 0, false);
 
 			pointLight->endRenderShadowDepth();
+
+			// debug
+			/*
+			{
+				m_saveDebugPL = true;
+				ITexture* debugTexture[6];
+				for (int i = 0; i < 6; i++)
+					debugTexture[i] = getVideoDriver()->addRenderTargetTexture(core::dimension2du(512, 512), "bake_reflection", video::ECF_A8R8G8B8);
+
+				renderEnvironment(camera, entityManager, lightPosition, debugTexture, NULL, 0, false);
+				setTarget(target, cubeFaceId);
+
+				static int lightId = 0;
+				lightId++;
+				for (int face = 0; face < 6; face++)
+				{
+					char filename[32];
+					sprintf(filename, "pl_bake_shadow_%d_f%d.png", lightId, face);
+					CBaseRP::saveFBOToFile(debugTexture[face], filename);
+					os::Printer::log(filename);
+
+					getVideoDriver()->removeTexture(debugTexture[face]);
+				}
+				m_saveDebugPL = false;
+			}
+			*/
 		}
 
 		setTarget(target, cubeFaceId);
