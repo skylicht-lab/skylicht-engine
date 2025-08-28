@@ -204,7 +204,11 @@ void main(void)
 #if defined(PLANAR_REFLECTION)
 	// projection uv
 	vec3 reflectUV = vReflectCoord.xyz / vReflectCoord.w;
+	#if defined(REFLECTION_MIPMAP)
+	vec3 prefilteredColor = textureLod(uTexReflect, reflectUV.xy, roughness * 7.0).xyz;
+	#else
 	vec3 prefilteredColor = textureLod(uTexReflect, reflectUV.xy, 0.0).xyz;
+	#endif
 #else
 	// IBL reflection
 	vec3 reflection = -normalize(reflect(vWorldViewDir, n));	

@@ -34,6 +34,6 @@
 			<ui control="UIFloat4" name="uUVScale" elementName="UV ScaleX;UV ScaleY;UV OffsetX;UV OffsetY"/>
 		</ui>
 	</customUI>
-	<shader type="GLSL" vs="GLSL/PBRLightmapPRVS.glsl" fs="GLSL/PBRLightmapPRFS.glsl" vs_source="GLSL/PBRVS.d.glsl" fs_source="GLSL/PBRLitFS.d.glsl" define="NO_NORMAL_MAP;LM;PLANAR_REFLECTION"/>
-	<shader type="HLSL" vs="HLSL/PBRLightmapPRVS.hlsl" fs="HLSL/PBRLightmapPRFS.hlsl" vs_source="HLSL/PBRVS.d.hlsl" fs_source="HLSL/PBRLitFS.d.hlsl" define="NO_NORMAL_MAP;LM;PLANAR_REFLECTION"/>
+	<shader type="GLSL" vs="GLSL/PBRLightmapPRVS.glsl" fs="GLSL/PBRLightmapPRFS.glsl" vs_source="GLSL/PBRVS.d.glsl" fs_source="GLSL/PBRLitFS.d.glsl" define="NO_NORMAL_MAP;LM;PLANAR_REFLECTION;REFLECTION_MIPMAP"/>
+	<shader type="HLSL" vs="HLSL/PBRLightmapPRVS.hlsl" fs="HLSL/PBRLightmapPRFS.hlsl" vs_source="HLSL/PBRVS.d.hlsl" fs_source="HLSL/PBRLitFS.d.hlsl" define="NO_NORMAL_MAP;LM;PLANAR_REFLECTION;REFLECTION_MIPMAP"/>
 </shaderConfig>

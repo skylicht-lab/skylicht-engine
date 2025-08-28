@@ -224,7 +224,11 @@ float4 main(PS_INPUT input) : SV_TARGET
 #if defined(PLANAR_REFLECTION)
 	// projection uv
 	float3 reflectUV = input.reflectCoord.xyz / input.reflectCoord.w;
+	#if defined(REFLECTION_MIPMAP)
+	float3 prefilteredColor = uTexReflect.Sample(uTexReflectSampler, reflectUV.xy, roughness * 7).xyz;
+	#else
 	float3 prefilteredColor = uTexReflect.Sample(uTexReflectSampler, reflectUV.xy, 0.0).xyz;
+	#endif
 #else
 	// IBL reflection
 	float3 reflection = -normalize(reflect(input.worldViewDir, n));	
