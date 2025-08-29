@@ -54,16 +54,26 @@ namespace Skylicht
 		m_cullingData->Light = this;
 
 		entity->addData<CWorldInverseTransformData>();
+
+		m_gameObject->setEnableEndUpdate(true);
 	}
 
 	void CPointLight::updateComponent()
+	{
+
+	}
+
+	void CPointLight::endUpdate()
 	{
 		float r = m_radius;
 		m_cullingData->BBox.MaxEdge.set(r, r, r);
 		m_cullingData->BBox.MinEdge.set(-r, -r, -r);
 
-		if (m_gameObject->getTransform()->hasChanged() == true)
+		if (m_gameObject->getTransform()->hasChanged() || m_needValidate)
+		{
 			m_needRenderShadowDepth = true;
+			m_needValidate = false;
+		}
 	}
 
 	CObjectSerializable* CPointLight::createSerializable()

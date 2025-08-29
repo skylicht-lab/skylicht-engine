@@ -51,41 +51,56 @@ namespace Skylicht
 
 	void CDirectionalLight::initComponent()
 	{
-		CShaderLighting::setDirectionalLight(this);
+		m_gameObject->setEnableEndUpdate(true);
 	}
 
 	void CDirectionalLight::updateComponent()
 	{
-		m_direction.set(0.0f, 0.0f, 1.0f);
-		const core::matrix4& transform = m_gameObject->getTransform()->getRelativeTransform();
-		transform.rotateVect(m_direction);
-		m_direction.normalize();
+
+	}
+
+	void CDirectionalLight::endUpdate()
+	{
+		CTransform* t = m_gameObject->getTransform();
+		if (t->hasChanged() || m_needValidate)
+		{
+			m_direction.set(0.0f, 0.0f, 1.0f);
+			core::matrix4 transform = t->calcWorldTransform();
+			transform.rotateVect(m_direction);
+			m_direction.normalize();
+			m_needValidate = false;
+		}
 
 		if (m_enable)
 		{
-			if (CShaderLighting::getDirectionalLight() == NULL)
-				CShaderLighting::setDirectionalLight(this);
-		}
-		else
-		{
-			if (CShaderLighting::getDirectionalLight() == this)
-				CShaderLighting::setDirectionalLight(NULL);
+			CDirectionalLight* currentLight = CShaderLighting::getDirectionalLight();
+			if (currentLight == NULL)
+			{
+				if (isShineOnDefaultObjects())
+					CShaderLighting::setDirectionalLight(this);
+			}
+			else
+			{
+				if (currentLight != this)
+				{
+					if (isShineOnDefaultObjects() && currentLight->getLightPriority() < m_lightPriority)
+						CShaderLighting::setDirectionalLight(this);
+				}
+				else
+				{
+					if (!isShineOnDefaultObjects())
+						CShaderLighting::setDirectionalLight(NULL);
+				}
+			}
 		}
 	}
 
 	void CDirectionalLight::onEnable(bool b)
 	{
-		if (b)
-			CShaderLighting::setDirectionalLight(this);
-		else
+		if (!b)
 		{
 			if (CShaderLighting::getDirectionalLight() == this)
 				CShaderLighting::setDirectionalLight(NULL);
 		}
-	}
-
-	CDirectionalLight* CDirectionalLight::getCurrentDirectionLight()
-	{
-		return CShaderLighting::getDirectionalLight();
 	}
 }

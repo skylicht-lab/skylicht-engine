@@ -72,6 +72,7 @@ namespace Skylicht
 
 			void updateData();
 
+			void initObjectLayerMenu(CObjectSerializable* obj, CUIntProperty* data, GUI::CBoxLayout* layout, CSpaceProperty* ui);
 		};
 	}
 }

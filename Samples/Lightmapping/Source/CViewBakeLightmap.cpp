@@ -166,6 +166,7 @@ void CViewBakeLightmap::onDestroy()
 
 void CViewBakeLightmap::onUpdate()
 {
+	CContext* context = CContext::getInstance();
 	u32 deltaTime = (os::Timer::getRealTime() - m_timeBeginBake) + m_timeSpentFromLastSave;
 
 	if (m_lightBounce == 0)
@@ -178,8 +179,8 @@ void CViewBakeLightmap::onUpdate()
 
 	u32 numLightBounce = 1;
 
-	if (CDirectionalLight::getCurrentDirectionLight() != NULL)
-		numLightBounce = CDirectionalLight::getCurrentDirectionLight()->getBounce();
+	if (context->getDirectionalLight() != NULL)
+		numLightBounce = context->getDirectionalLight()->getBounce();
 
 	for (int loopCount = 0; loopCount < 64; loopCount++)
 	{
@@ -614,8 +615,9 @@ void CViewBakeLightmap::loadProgress()
 			{
 				u32 numLightBounce = 1;
 
-				if (CDirectionalLight::getCurrentDirectionLight() != NULL)
-					numLightBounce = CDirectionalLight::getCurrentDirectionLight()->getBounce();
+				CContext* context = CContext::getInstance();
+				if (context->getDirectionalLight() != NULL)
+					numLightBounce = context->getDirectionalLight()->getBounce();
 
 				// finish
 				if (m_lightBounce >= numLightBounce)

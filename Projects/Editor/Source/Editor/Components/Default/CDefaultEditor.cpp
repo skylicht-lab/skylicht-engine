@@ -37,6 +37,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "AssetManager/CAssetManager.h"
 #include "Graphics2D/SpriteFrame/CSpriteManager.h"
 #include "ResourceSettings/CTextureSettings.h"
+#include "ProjectSettings/CProjectSettings.h"
 
 namespace Skylicht
 {
@@ -106,7 +107,10 @@ namespace Skylicht
 			{
 				CValueProperty* valueProperty = data->getPropertyID(i);
 				if (valueProperty->isHidden())
+				{
+					initCustomDataGUI(data, valueProperty, layout, ui);
 					continue;
+				}
 
 				// add ui space
 				if (valueProperty->getUISpace() > 0)
@@ -915,6 +919,122 @@ namespace Skylicht
 		void CDefaultEditor::initCustomDataGUI(CObjectSerializable* obj, CValueProperty* data, GUI::CBoxLayout* layout, CSpaceProperty* ui)
 		{
 
+		}
+
+		void CDefaultEditor::initObjectLayerMenu(CObjectSerializable* obj, CUIntProperty* data, GUI::CBoxLayout* layout, CSpaceProperty* ui)
+		{
+			GUI::CDropdownBox* dropDown = ui->addDropBox(layout, ui->getPrettyName(data->Name), L"");
+
+			GUI::CMenu* menu = dropDown->getMenu();
+
+			wchar_t labelw[256];
+			CObjectLayer* objectLayer = CProjectSettings::getInstance()->getObjectLayer();
+
+			menu->OnOpen = [data, menu](GUI::CBase* base)
+				{
+					int i = 0;
+					for (GUI::CBase* child : menu->getChildren())
+					{
+						GUI::CMenuItem* item = dynamic_cast<GUI::CMenuItem*>(child);
+						if (item)
+						{
+							u32 value = (1 << i);
+							u32 layer = data->get();
+
+							if ((layer & value) == 0)
+								item->setIcon(GUI::ESystemIcon::None);
+							else
+								item->setIcon(GUI::ESystemIcon::Check);
+
+							i++;
+						}
+
+						if (i >= 16)
+							break;
+					}
+				};
+
+			for (int i = 0; i < 16; i++)
+			{
+				std::wstring name = CStringImp::convertUTF8ToUnicode(objectLayer->getName(i).c_str());
+				CStringImp::copy(labelw, name.c_str());
+				CStringImp::trim(labelw);
+
+				GUI::CMenuItem* item = NULL;
+
+				if (CStringImp::length(labelw) > 0)
+					item = menu->addItem(labelw);
+				else
+				{
+					swprintf(labelw, 256, L"Layer: %d", i);
+					item = menu->addItem(labelw);
+				}
+
+				u32 value = (1 << i);
+
+				if (data->get() & value)
+				{
+					item->setIcon(GUI::ESystemIcon::Check);
+					dropDown->setLabel(labelw);
+				}
+				else
+				{
+					item->setIcon(GUI::ESystemIcon::None);
+				}
+
+				item->OnPress = [&, data, item, value, dropDown, ui, objectLayer](GUI::CBase* base)
+					{
+						// uncheck all menu item
+						GUI::CMenu* menu = dropDown->getMenu();
+						for (GUI::CBase* childMenu : menu->getChildren())
+						{
+							GUI::CMenuItem* item = dynamic_cast<GUI::CMenuItem*>(childMenu);
+							if (item != NULL)
+								item->setIcon(GUI::ESystemIcon::None);
+						}
+
+						// check this item
+						item->setIcon(GUI::ESystemIcon::Check);
+
+						u32 currentMask = data->get();
+						if ((currentMask & value) == 0)
+							currentMask = currentMask | value; // on
+						else
+							currentMask = currentMask & (~value); // off
+
+						// apply culling
+						data->set(currentMask);
+
+						if (currentMask == 0)
+						{
+							dropDown->setLabel(L"");
+						}
+						else
+						{
+							for (int i = 0; i < 16; i++)
+							{
+								u32 testValue = (1 << i);
+								if (data->get() & testValue)
+								{
+									std::wstring name = CStringImp::convertUTF8ToUnicode(objectLayer->getName(i).c_str());
+									if (name.empty())
+									{
+										swprintf(labelw, 256, L"Layer: %d", i);
+										name = labelw;
+									}
+									dropDown->setLabel(name.c_str());
+								}
+							}
+						}
+
+						// close menu
+						ui->getWindow()->getCanvas()->closeMenu();
+						ui->onEndEditValue(item);
+						ui->focus();
+
+						updateData();
+					};
+			}
 		}
 
 		void CDefaultEditor::update()

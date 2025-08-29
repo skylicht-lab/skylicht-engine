@@ -126,8 +126,8 @@ void CViewBakeLightmap::onUpdate()
 
 	// get total light bounce
 	u32 numLightBounce = 1;
-	if (CDirectionalLight::getCurrentDirectionLight() != NULL)
-		numLightBounce = CDirectionalLight::getCurrentDirectionLight()->getBounce();
+	if (context->getDirectionalLight() != NULL)
+		numLightBounce = context->getDirectionalLight()->getBounce();
 
 	// bake lightmap
 	u32 numMB = (u32)m_neshBuffers.size();

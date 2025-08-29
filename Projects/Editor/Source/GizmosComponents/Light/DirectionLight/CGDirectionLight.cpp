@@ -97,6 +97,7 @@ namespace Skylicht
 			CSelectObjectData* selectObject = GET_ENTITY_DATA(m_gameObject->getEntity(), CSelectObjectData);
 			selectObject->BBox.MinEdge = m_defaultBBox.MinEdge * boxScale;
 			selectObject->BBox.MaxEdge = m_defaultBBox.MaxEdge * boxScale;
+			selectObject->TransformChanged = true;
 		}
 	}
 }

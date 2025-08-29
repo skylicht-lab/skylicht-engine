@@ -84,6 +84,7 @@ namespace Skylicht
 			CSelectObjectData* selectObject = entity->addData<CSelectObjectData>();
 			selectObject->GameObject = m_gameObject;
 			selectObject->BBox = m_defaultBBox;
+			selectObject->TransformChanged = true;
 		}
 
 		void CGPointLight::updateComponent()

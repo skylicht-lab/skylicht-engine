@@ -617,8 +617,8 @@ namespace Skylicht
 				driver->setViewPort(customViewport);
 
 			u32 totalBounce = 1;
-			if (CDirectionalLight::getCurrentDirectionLight() != NULL)
-				totalBounce = CDirectionalLight::getCurrentDirectionLight()->getBounce();
+			if (CShaderLighting::getDirectionalLight() != NULL)
+				totalBounce = CShaderLighting::getDirectionalLight()->getBounce();
 
 			CLightCullingSystem* lightCullingSystem = entityManager->getSystem<CLightCullingSystem>();
 			if (lightCullingSystem != NULL)
@@ -629,7 +629,9 @@ namespace Skylicht
 				for (u32 i = 0, n = (u32)listLight.size(); i < n && i < s_maxLight; i++)
 				{
 					CLight* light = listLight[i]->Light;
-					if (!light->isEnable() || !light->getGameObject()->isVisible())
+					if (!light->isEnable() ||
+						!light->getGameObject()->isVisible() ||
+						!light->isShineOnDefaultObjects())
 						continue;
 
 					bool renderLight = true;

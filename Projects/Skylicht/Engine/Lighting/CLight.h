@@ -76,6 +76,14 @@ namespace Skylicht
 		//! Light type
 		ELightType m_type;
 
+		//! The layers where the light will shine on
+		u32 m_lightLayers;
+
+		//! Priority order of lights selected for shaders
+		u32 m_lightPriority;
+
+		bool m_needValidate;
+
 	public:
 		CLight();
 
@@ -117,12 +125,12 @@ namespace Skylicht
 			m_type = type;
 		}
 
-		void setBounce(u32 b)
+		inline void setBounce(u32 b)
 		{
 			m_bakeBounce = b;
 		}
 
-		u32 getBounce()
+		inline u32 getBounce()
 		{
 			return m_bakeBounce;
 		}
@@ -197,6 +205,36 @@ namespace Skylicht
 		inline float getIntensity()
 		{
 			return m_intensity;
+		}
+
+		inline u32 getLightLayers()
+		{
+			return m_lightLayers;
+		}
+
+		inline void setLightLayers(u32 layers)
+		{
+			m_lightLayers = layers;
+		}
+
+		inline bool isShineOnDefaultObjects()
+		{
+			return m_lightLayers & 1;
+		}
+
+		inline void setLightPriority(u32 priority)
+		{
+			m_lightPriority = priority;
+		}
+
+		inline u32 getLightPriority()
+		{
+			return m_lightPriority;
+		}
+
+		inline void validate()
+		{
+			m_needValidate = true;
 		}
 	};
 }

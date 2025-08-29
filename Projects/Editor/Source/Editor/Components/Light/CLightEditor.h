@@ -2,10 +2,10 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2025 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -24,31 +24,27 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CLight.h"
+#include "Serializable/CObjectSerializable.h"
+#include "Editor/Components/CComponentEditor.h"
+#include "Activator/CEditorActivator.h"
+#include "Editor/Components/Default/CDefaultEditor.h"
+
+#include "Lighting/CLight.h"
 
 namespace Skylicht
 {
-	/// @brief This object holds the parameters for directional lights, also known as outdoor lighting.
-	/// @ingroup Lighting
-	/// 
-	/// @image html Lighting/direction_light.jpg width=1200px
-	/// 
-	/// @see CShaderLighting
-	class SKYLICHT_API CDirectionalLight : public CLight
+	namespace Editor
 	{
-	public:
-		CDirectionalLight();
+		class CLightEditor : public CDefaultEditor
+		{
+		public:
+			CLightEditor();
 
-		virtual ~CDirectionalLight();
+			virtual ~CLightEditor();
 
-		virtual void initComponent();
+			virtual void initCustomDataGUI(CObjectSerializable* obj, CValueProperty* data, GUI::CBoxLayout* layout, CSpaceProperty* ui);
 
-		virtual void updateComponent();
-
-		virtual void endUpdate();
-
-		virtual void onEnable(bool b);
-
-		DECLARE_GETTYPENAME(CDirectionalLight)
-	};
+			virtual void update();
+		};
+	}
 }

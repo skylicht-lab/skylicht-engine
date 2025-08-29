@@ -2,10 +2,10 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2025 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -22,33 +22,48 @@ https://github.com/skylicht-lab/skylicht-engine
 !#
 */
 
-#pragma once
+#include "pch.h"
+#include "CLightEditor.h"
 
-#include "CLight.h"
+#include "Lighting/CDirectionalLight.h"
+#include "Lighting/CPointLight.h"
+#include "Lighting/CSpotLight.h"
+
+#include "Editor/Space/Property/CSpaceProperty.h"
 
 namespace Skylicht
 {
-	/// @brief This object holds the parameters for directional lights, also known as outdoor lighting.
-	/// @ingroup Lighting
-	/// 
-	/// @image html Lighting/direction_light.jpg width=1200px
-	/// 
-	/// @see CShaderLighting
-	class SKYLICHT_API CDirectionalLight : public CLight
+	namespace Editor
 	{
-	public:
-		CDirectionalLight();
+		EDITOR_REGISTER(CLightEditor, CDirectionalLight);
+		EDITOR_REGISTER(CLightEditor, CPointLight);
+		EDITOR_REGISTER(CLightEditor, CSpotLight);
 
-		virtual ~CDirectionalLight();
+		CLightEditor::CLightEditor()
+		{
 
-		virtual void initComponent();
+		}
 
-		virtual void updateComponent();
+		CLightEditor::~CLightEditor()
+		{
 
-		virtual void endUpdate();
+		}
 
-		virtual void onEnable(bool b);
+		void CLightEditor::initCustomDataGUI(CObjectSerializable* obj, CValueProperty* data, GUI::CBoxLayout* boxLayout, CSpaceProperty* ui)
+		{
+			if (data->Name == "lightLayers")
+			{
+				CUIntProperty* value = dynamic_cast<CUIntProperty*>(data);
+				if (value == NULL)
+					return;
 
-		DECLARE_GETTYPENAME(CDirectionalLight)
-	};
+				initObjectLayerMenu(obj, value, boxLayout, ui);
+			}
+		}
+
+		void CLightEditor::update()
+		{
+
+		}
+	}
 }
