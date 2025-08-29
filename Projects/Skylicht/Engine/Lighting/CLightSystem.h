@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2025 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,34 +24,45 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Entity/IEntityData.h"
+#include "CLightCullingData.h"
+#include "Entity/IRenderSystem.h"
+#include "Entity/CEntityGroup.h"
+#include "Transform/CWorldTransformData.h"
+#include "Transform/CWorldInverseTransformData.h"
+#include "RenderMesh/CRenderMeshData.h"
+#include "RenderMesh/CGroupMesh.h"
 
 namespace Skylicht
 {
-	class CLight;
-
-	class SKYLICHT_API CLightCullingData : public IEntityData
+	class SKYLICHT_API CLightSystem : public IRenderSystem
 	{
+	protected:
+		core::array<CLightCullingData*> m_pointLights;
+		core::array<CLightCullingData*> m_spotLights;
+		core::array<CLightCullingData*> m_dirLights;
+		core::array<CRenderMeshData*> m_renderMeshs;
+
+		bool m_needUpdatePL;
+		bool m_needUpdateSL;
+
+		CEntityGroup* m_group;
+		CGroupMesh* m_groupMesh;
 	public:
-		int LightType;
+		CLightSystem();
 
-		bool Visible;
+		virtual ~CLightSystem();
 
-		bool NeedValidate;
+		virtual void beginQuery(CEntityManager* entityManager);
 
-		core::aabbox3df BBox;
+		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity);
 
-		core::aabbox3df TransformBBox;
+		virtual void init(CEntityManager* entityManager);
 
-		CLight* Light;
+		virtual void update(CEntityManager* entityManager);
 
-		float CameraDistance;
+		virtual void render(CEntityManager* entityManager);
 
-	public:
-		CLightCullingData();
+		virtual void postRender(CEntityManager* entityManager);
 
-		virtual ~CLightCullingData();
 	};
-
-	DECLARE_PUBLIC_DATA_TYPE_INDEX(CLightCullingData);
 }

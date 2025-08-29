@@ -91,6 +91,7 @@ namespace Skylicht
 		bool m_loadNormal;
 		bool m_fixInverseNormal;
 		bool m_enableInstancing;
+		bool m_isSortingLights;
 
 		bool m_shadowCasting;
 
@@ -137,6 +138,13 @@ namespace Skylicht
 		inline bool isShadowCasting()
 		{
 			return m_shadowCasting;
+		}
+
+		void setSortLights(bool b);
+
+		inline bool isSortingLights()
+		{
+			return m_isSortingLights;
 		}
 
 		void removeRenderMeshName(const char* name);

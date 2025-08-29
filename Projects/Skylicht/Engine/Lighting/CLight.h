@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Components/CComponentSystem.h"
+#include "CLightCullingData.h"
 
 namespace Skylicht
 {
@@ -84,6 +85,7 @@ namespace Skylicht
 
 		bool m_needValidate;
 
+		CLightCullingData* m_cullingData;
 	public:
 		CLight();
 
@@ -217,7 +219,7 @@ namespace Skylicht
 			m_lightLayers = layers;
 		}
 
-		inline bool isShineOnDefaultObjects()
+		inline bool isAffectingDefaultObjects()
 		{
 			return m_lightLayers & 1;
 		}

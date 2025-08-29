@@ -49,6 +49,7 @@ namespace Skylicht
 		bool IsSoftwareBlendShape;
 		bool IsInstancing;
 		bool IsSkinnedInstancing;
+		bool IsSortingLights;
 
 		SMeshInstancing* MeshInstancing;
 
@@ -133,6 +134,16 @@ namespace Skylicht
 		inline bool isVisible()
 		{
 			return Visible;
+		}
+
+		inline void setSortLights(bool b)
+		{
+			IsSortingLights = b;
+		}
+
+		inline bool isSortingLights()
+		{
+			return IsSortingLights;
 		}
 
 		void setInstancing(bool b);

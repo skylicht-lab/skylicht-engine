@@ -47,10 +47,18 @@ namespace Skylicht
 	{
 		if (CShaderLighting::getDirectionalLight() == this)
 			CShaderLighting::setDirectionalLight(NULL);
+
+		if (m_gameObject && m_cullingData)
+			m_gameObject->getEntity()->removeData<CLightCullingData>();
 	}
 
 	void CDirectionalLight::initComponent()
 	{
+		CEntity* entity = m_gameObject->getEntity();
+		m_cullingData = entity->addData<CLightCullingData>();
+		m_cullingData->Light = this;
+		m_cullingData->LightType = 0;
+
 		m_gameObject->setEnableEndUpdate(true);
 	}
 
@@ -76,19 +84,19 @@ namespace Skylicht
 			CDirectionalLight* currentLight = CShaderLighting::getDirectionalLight();
 			if (currentLight == NULL)
 			{
-				if (isShineOnDefaultObjects())
+				if (isAffectingDefaultObjects())
 					CShaderLighting::setDirectionalLight(this);
 			}
 			else
 			{
 				if (currentLight != this)
 				{
-					if (isShineOnDefaultObjects() && currentLight->getLightPriority() < m_lightPriority)
+					if (isAffectingDefaultObjects() && currentLight->getLightPriority() < m_lightPriority)
 						CShaderLighting::setDirectionalLight(this);
 				}
 				else
 				{
-					if (!isShineOnDefaultObjects())
+					if (!isAffectingDefaultObjects())
 						CShaderLighting::setDirectionalLight(NULL);
 				}
 			}

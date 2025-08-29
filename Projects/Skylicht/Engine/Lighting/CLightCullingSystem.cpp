@@ -66,14 +66,17 @@ namespace Skylicht
 			CEntity* entity = entities[i];
 
 			CLightCullingData* culling = GET_ENTITY_DATA(entity, CLightCullingData);
-			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
-			CWorldInverseTransformData* invTransform = GET_ENTITY_DATA(entity, CWorldInverseTransformData);
+			if (culling->LightType >= 1)
+			{
+				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+				CWorldInverseTransformData* invTransform = GET_ENTITY_DATA(entity, CWorldInverseTransformData);
 
-			culling->NeedValidate |= transform->NeedValidate;
+				culling->NeedValidate |= transform->NeedValidate;
 
-			m_cullings.push_back(culling);
-			m_transforms.push_back(transform);
-			m_invTransforms.push_back(invTransform);
+				m_cullings.push_back(culling);
+				m_transforms.push_back(transform);
+				m_invTransforms.push_back(invTransform);
+			}
 		}
 	}
 

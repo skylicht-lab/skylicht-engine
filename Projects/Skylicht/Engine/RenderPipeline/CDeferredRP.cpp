@@ -631,7 +631,7 @@ namespace Skylicht
 					CLight* light = listLight[i]->Light;
 					if (!light->isEnable() ||
 						!light->getGameObject()->isVisible() ||
-						!light->isShineOnDefaultObjects())
+						!light->isAffectingDefaultObjects())
 						continue;
 
 					bool renderLight = true;

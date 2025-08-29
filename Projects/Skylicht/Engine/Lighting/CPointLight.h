@@ -25,7 +25,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CLight.h"
-#include "CLightCullingData.h"
 
 namespace Skylicht
 {
@@ -38,8 +37,6 @@ namespace Skylicht
 	class SKYLICHT_API CPointLight : public CLight
 	{
 	protected:
-		CLightCullingData* m_cullingData;
-
 		bool m_needRenderShadowDepth;
 
 	public:

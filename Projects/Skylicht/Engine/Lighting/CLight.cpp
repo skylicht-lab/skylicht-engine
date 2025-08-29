@@ -40,7 +40,8 @@ namespace Skylicht
 		m_lightLayers(1),
 		m_lightPriority(0),
 		m_type(CLight::Mixed),
-		m_needValidate(true)
+		m_needValidate(true),
+		m_cullingData(NULL)
 	{
 		setRadius(3.0f);
 	}

@@ -30,6 +30,7 @@ namespace Skylicht
 	IMPLEMENT_DATA_TYPE_INDEX(CLightCullingData);
 
 	CLightCullingData::CLightCullingData() :
+		LightType(0),
 		Visible(true),
 		NeedValidate(true),
 		Light(NULL),

@@ -35,15 +35,14 @@ namespace Skylicht
 	CATEGORY_COMPONENT(CPointLight, "Point Light", "Lighting");
 
 	CPointLight::CPointLight() :
-		m_needRenderShadowDepth(true),
-		m_cullingData(NULL)
+		m_needRenderShadowDepth(true)
 	{
 		setIntensity(2.0f);
 	}
 
 	CPointLight::~CPointLight()
 	{
-		if (m_gameObject)
+		if (m_gameObject && m_cullingData)
 			m_gameObject->getEntity()->removeData<CLightCullingData>();
 	}
 
@@ -52,6 +51,7 @@ namespace Skylicht
 		CEntity* entity = m_gameObject->getEntity();
 		m_cullingData = entity->addData<CLightCullingData>();
 		m_cullingData->Light = this;
+		m_cullingData->LightType = 1;
 
 		entity->addData<CWorldInverseTransformData>();
 

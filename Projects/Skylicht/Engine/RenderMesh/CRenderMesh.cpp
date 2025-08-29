@@ -50,6 +50,7 @@ namespace Skylicht
 		m_loadNormal(true),
 		m_fixInverseNormal(true),
 		m_enableInstancing(false),
+		m_isSortingLights(false),
 		m_shadowCasting(true)
 	{
 
@@ -104,6 +105,7 @@ namespace Skylicht
 		object->autoRelease(new CBoolProperty(object, "optimize", m_optimizeForRender));
 		object->autoRelease(new CBoolProperty(object, "instancing", m_enableInstancing));
 		object->autoRelease(new CBoolProperty(object, "shadowCasting", m_shadowCasting));
+		object->autoRelease(new CBoolProperty(object, "sortingLights", m_isSortingLights));
 
 		object->autoRelease(new CFilePathProperty(object, "mesh", m_meshFile.c_str(), CMeshManager::getMeshExts()));
 		object->autoRelease(new CFilePathProperty(object, "material", m_materialFile.c_str(), CMaterialManager::getMaterialExts()));
@@ -121,6 +123,7 @@ namespace Skylicht
 		bool optimize = object->get<bool>("optimize", false);
 		bool instancing = object->get<bool>("instancing", false);
 		bool shadowCasting = object->get<bool>("shadowCasting", true);
+		bool sortingLights = object->get<bool>("sortingLights", false);
 
 		std::string meshFile = object->get<std::string>("mesh", "");
 
@@ -174,11 +177,9 @@ namespace Skylicht
 			releaseMaterial();
 		}
 
-		// enable instancing
 		enableInstancing(instancing);
-
-		// shadow casting
 		setShadowCasting(shadowCasting);
+		setSortLights(sortingLights);
 	}
 
 	void CRenderMesh::refreshModelAndMaterial(bool reloadModel)
@@ -574,6 +575,14 @@ namespace Skylicht
 			CVisibleData* visible = GET_ENTITY_DATA(r->Entity, CVisibleData);
 			visible->ShadowCasting = b;
 		}
+	}
+
+	void CRenderMesh::setSortLights(bool b)
+	{
+		m_isSortingLights = b;
+
+		for (CRenderMeshData* r : m_renderers)
+			r->setSortLights(b);
 	}
 
 	void CRenderMesh::removeRenderMeshName(const char* name)
