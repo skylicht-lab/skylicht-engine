@@ -33,6 +33,7 @@ namespace Skylicht
 
 	CReflectionProbeData::CReflectionProbeData() :
 		ReflectionTexture(NULL),
+		LightLayers(1),
 		NeedValidate(true)
 	{
 

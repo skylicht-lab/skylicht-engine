@@ -56,6 +56,8 @@ namespace Skylicht
 		bool InvalidateProbe;
 		bool InvalidateReflection;
 
+		u32 LightLayers;
+
 		bool ReleaseSH;
 
 	public:

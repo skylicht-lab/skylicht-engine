@@ -62,7 +62,7 @@ namespace Skylicht
 
 			virtual void onUpdateValue(CObjectSerializable* object);
 
-			virtual void initCustomDataGUI(CObjectSerializable* object, CValueProperty* data, GUI::CBoxLayout* layout, CSpaceProperty* ui);
+			virtual void initCustomValueGUI(CObjectSerializable* object, CValueProperty* data, GUI::CBoxLayout* layout, CSpaceProperty* ui);
 
 			CObjectSerializable* getData()
 			{

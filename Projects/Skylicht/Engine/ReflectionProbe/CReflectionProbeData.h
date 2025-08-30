@@ -33,6 +33,8 @@ namespace Skylicht
 	public:
 		ITexture* ReflectionTexture;
 
+		u32 LightLayers;
+
 		bool NeedValidate;
 
 	public:

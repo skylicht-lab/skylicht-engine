@@ -121,7 +121,7 @@ namespace Skylicht
 			}
 		}
 
-		void CParticleEditor::initCustomDataGUI(CObjectSerializable* object, CValueProperty* data, GUI::CBoxLayout* layout, CSpaceProperty* ui)
+		void CParticleEditor::initCustomValueGUI(CObjectSerializable* object, CValueProperty* data, GUI::CBoxLayout* layout, CSpaceProperty* ui)
 		{
 			// Custom color picker for model RGB
 			Particle::CModel* model = dynamic_cast<Particle::CModel*>(m_ps);

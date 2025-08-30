@@ -70,6 +70,8 @@ namespace Skylicht
 
 		SColor m_ambientColor;
 
+		u32 m_lightLayers;
+
 	public:
 		CIndirectLighting();
 
@@ -90,6 +92,8 @@ namespace Skylicht
 		void addLightingData(CEntity* entity);
 
 	public:
+
+		void setLightLayers(u32 layers);
 
 		void setAutoSH(bool b);
 

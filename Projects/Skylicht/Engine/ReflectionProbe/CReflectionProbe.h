@@ -71,6 +71,8 @@ namespace Skylicht
 
 		video::ITexture* m_textureWillRemoved;
 
+		u32 m_lightLayers;
+
 	protected:
 
 		void removeBakeTexture();
@@ -97,6 +99,13 @@ namespace Skylicht
 		void bakeProbeToFile(CCamera* camera, IRenderPipeline* rp, CEntityManager* entityMgr, const char* outfolder, const char* outname);
 
 		video::ITexture* getReflectionTexture();
+
+		inline u32 getLightLayers()
+		{
+			return m_lightLayers;
+		}
+
+		void setLightLayers(u32 layers);
 
 		DECLARE_GETTYPENAME(CReflectionProbe)
 	};

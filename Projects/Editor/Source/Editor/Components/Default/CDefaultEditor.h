@@ -61,7 +61,7 @@ namespace Skylicht
 
 			virtual void initCustomGUI(GUI::CBoxLayout* layout, CSpaceProperty* ui);
 
-			virtual void initCustomDataGUI(CObjectSerializable* obj, CValueProperty* data, GUI::CBoxLayout* layout, CSpaceProperty* ui);
+			virtual void initCustomValueGUI(CObjectSerializable* obj, CValueProperty* data, GUI::CBoxLayout* layout, CSpaceProperty* ui);
 
 			void setName(const char* name)
 			{
@@ -73,6 +73,8 @@ namespace Skylicht
 			void updateData();
 
 			void initObjectLayerMenu(CObjectSerializable* obj, CUIntProperty* data, GUI::CBoxLayout* layout, CSpaceProperty* ui);
+
+			void initLightLayerMenu(CObjectSerializable* obj, CUIntProperty* data, GUI::CBoxLayout* layout, CSpaceProperty* ui);
 		};
 	}
 }

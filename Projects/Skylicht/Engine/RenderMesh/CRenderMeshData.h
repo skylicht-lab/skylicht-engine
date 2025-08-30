@@ -49,11 +49,12 @@ namespace Skylicht
 		bool IsSoftwareBlendShape;
 		bool IsInstancing;
 		bool IsSkinnedInstancing;
-		bool IsSortingLights;
 
 		SMeshInstancing* MeshInstancing;
 
 		bool Visible;
+
+		u32 LightLayers;
 
 	public:
 
@@ -136,14 +137,19 @@ namespace Skylicht
 			return Visible;
 		}
 
-		inline void setSortLights(bool b)
-		{
-			IsSortingLights = b;
-		}
-
 		inline bool isSortingLights()
 		{
-			return IsSortingLights;
+			return LightLayers != 1;
+		}
+
+		inline void setLightLayers(u32 layers)
+		{
+			LightLayers = layers;
+		}
+
+		inline u32 getLightLayers()
+		{
+			return LightLayers;
 		}
 
 		void setInstancing(bool b);

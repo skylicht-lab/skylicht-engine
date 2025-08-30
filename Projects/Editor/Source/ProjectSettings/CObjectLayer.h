@@ -41,5 +41,17 @@ namespace Skylicht
 
 			void setName(int i, const char* name);
 		};
+
+		class CLightLayer : public CObjectSerializable
+		{
+		public:
+			CLightLayer();
+
+			virtual ~CLightLayer();
+
+			const std::string& getName(int i);
+
+			void setName(int i, const char* name);
+		};
 	}
 }

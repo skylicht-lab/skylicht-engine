@@ -30,10 +30,8 @@ namespace Skylicht
 	namespace Editor
 	{
 		CObjectLayer::CObjectLayer() :
-			CObjectSerializable("ObjectLayer")
+			CObjectSerializable("CObjectLayer")
 		{
-			Name = "CObjectLayer";
-
 			char name[64];
 			for (int i = 0; i < 16; i++)
 			{
@@ -61,6 +59,37 @@ namespace Skylicht
 		}
 
 		void CObjectLayer::setName(int i, const char* name)
+		{
+			CStringProperty* value = dynamic_cast<CStringProperty*>(getPropertyID(i));
+			value->set(name);
+		}
+
+
+		CLightLayer::CLightLayer() :
+			CObjectSerializable("CLightLayer")
+		{
+			char name[64];
+			for (int i = 0; i < 16; i++)
+			{
+				sprintf(name, "%d", i);
+				autoRelease(new CStringProperty(this, name, ""));
+			}
+
+			setName(0, "Default");
+		}
+
+		CLightLayer::~CLightLayer()
+		{
+
+		}
+
+		const std::string& CLightLayer::getName(int i)
+		{
+			CStringProperty* value = dynamic_cast<CStringProperty*>(getPropertyID(i));
+			return value->get();
+		}
+
+		void CLightLayer::setName(int i, const char* name)
 		{
 			CStringProperty* value = dynamic_cast<CStringProperty*>(getPropertyID(i));
 			value->set(name);

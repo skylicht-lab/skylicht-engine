@@ -1013,7 +1013,7 @@ namespace Skylicht
 						};
 				}
 
-				initCustomDataGUI(object, valueProperty, layout, ui);
+				initCustomValueGUI(object, valueProperty, layout, ui);
 			}
 		}
 	}

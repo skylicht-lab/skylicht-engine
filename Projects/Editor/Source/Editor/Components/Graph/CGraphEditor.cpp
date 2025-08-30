@@ -50,7 +50,7 @@ namespace Skylicht
 
 		}
 
-		void CGraphEditor::initCustomDataGUI(CObjectSerializable* obj, CValueProperty* data, GUI::CBoxLayout* layout, CSpaceProperty* ui)
+		void CGraphEditor::initCustomValueGUI(CObjectSerializable* obj, CValueProperty* data, GUI::CBoxLayout* layout, CSpaceProperty* ui)
 		{
 			if (data->Name == "agentMaxSlope")
 			{

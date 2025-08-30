@@ -47,7 +47,8 @@ namespace Skylicht
 		m_bakeSize(128, 128),
 		m_probeData(NULL),
 		m_textureWillRemoved(NULL),
-		m_type(EReflectionType::Baked)
+		m_type(EReflectionType::Baked),
+		m_lightLayers(1)
 	{
 		for (int i = 0; i < 6; i++)
 			m_bakeTexture[i] = NULL;
@@ -116,6 +117,10 @@ namespace Skylicht
 	{
 		CObjectSerializable* object = CComponentSystem::createSerializable();
 
+		CUIntProperty* lightLayers = new CUIntProperty(object, "lightLayers", m_lightLayers);
+		lightLayers->setHidden(true);
+		object->autoRelease(lightLayers);
+
 		CEnumProperty<EReflectionType>* enumType = new CEnumProperty<EReflectionType>(object, "type", m_type);
 		enumType->addEnumString("Static", EReflectionType::Static);
 		enumType->addEnumString("Bake", EReflectionType::Baked);
@@ -142,6 +147,9 @@ namespace Skylicht
 	void CReflectionProbe::loadSerializable(CObjectSerializable* object)
 	{
 		CComponentSystem::loadSerializable(object);
+
+		u32 lightLayers = object->get<u32>("lightLayers", 1);
+		setLightLayers(lightLayers);
 
 		m_type = object->get<EReflectionType>("type", EReflectionType::Baked);
 		m_size = object->get<EReflectionSize>("size", EReflectionSize::X128);
@@ -337,5 +345,12 @@ namespace Skylicht
 		}
 
 		return (m_staticTexture != NULL);
+	}
+
+	void CReflectionProbe::setLightLayers(u32 layers)
+	{
+		m_lightLayers = layers;
+		m_probeData->LightLayers = layers;
+		m_probeData->NeedValidate = true;
 	}
 }

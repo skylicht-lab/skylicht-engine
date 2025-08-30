@@ -38,6 +38,7 @@ namespace Skylicht
 
 		protected:
 			CObjectLayer* m_objectLayer;
+			CLightLayer* m_lightLayer;
 
 		public:
 			CProjectSettings();
@@ -51,6 +52,11 @@ namespace Skylicht
 			CObjectLayer* getObjectLayer()
 			{
 				return m_objectLayer;
+			}
+
+			CLightLayer* getLightLayer()
+			{
+				return m_lightLayer;
 			}
 		};
 	}

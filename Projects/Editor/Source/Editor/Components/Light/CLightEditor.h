@@ -42,7 +42,7 @@ namespace Skylicht
 
 			virtual ~CLightEditor();
 
-			virtual void initCustomDataGUI(CObjectSerializable* obj, CValueProperty* data, GUI::CBoxLayout* layout, CSpaceProperty* ui);
+			virtual void initCustomValueGUI(CObjectSerializable* obj, CValueProperty* data, GUI::CBoxLayout* layout, CSpaceProperty* ui);
 
 			virtual void update();
 		};

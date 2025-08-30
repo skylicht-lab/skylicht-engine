@@ -163,14 +163,18 @@ namespace Skylicht
 					probe = (CReflectionProbeData*)kd_res_item_data(res);
 					if (probe != NULL)
 					{
-						// get indirectData
-						indirectData = lightings[i];
-						indirectData->ReflectionTexture = probe->ReflectionTexture;
-						indirectData->InvalidateReflection = false;
+						if (probe->LightLayers & lightings[i]->LightLayers)
+						{
+							// get indirectData
+							indirectData = lightings[i];
+							indirectData->ReflectionTexture = probe->ReflectionTexture;
+							indirectData->InvalidateReflection = false;
+							break;
+						}
 					}
 
-					// kd_res_next(res);
-					break;
+					// seek next
+					kd_res_next(res);
 				}
 				kd_res_free(res);
 			}

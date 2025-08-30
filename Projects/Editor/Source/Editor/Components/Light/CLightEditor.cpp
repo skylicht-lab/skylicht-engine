@@ -49,7 +49,7 @@ namespace Skylicht
 
 		}
 
-		void CLightEditor::initCustomDataGUI(CObjectSerializable* obj, CValueProperty* data, GUI::CBoxLayout* boxLayout, CSpaceProperty* ui)
+		void CLightEditor::initCustomValueGUI(CObjectSerializable* obj, CValueProperty* data, GUI::CBoxLayout* boxLayout, CSpaceProperty* ui)
 		{
 			if (data->Name == "lightLayers")
 			{
@@ -57,7 +57,7 @@ namespace Skylicht
 				if (value == NULL)
 					return;
 
-				initObjectLayerMenu(obj, value, boxLayout, ui);
+				initLightLayerMenu(obj, value, boxLayout, ui);
 			}
 		}
 

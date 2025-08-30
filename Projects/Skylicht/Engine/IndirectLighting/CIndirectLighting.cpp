@@ -43,7 +43,8 @@ namespace Skylicht
 		m_internalIndirectLM(false),
 		m_indirectLM(NULL),
 		m_intensity(1.0f),
-		m_ambientColor(255, 60, 60, 60)
+		m_ambientColor(255, 60, 60, 60),
+		m_lightLayers(1)
 	{
 
 	}
@@ -144,6 +145,11 @@ namespace Skylicht
 		// ambient color
 		object->autoRelease(new CColorProperty(object, "ambientColor", m_ambientColor));
 
+		// lightlayer
+		CUIntProperty* lightLayers = new CUIntProperty(object, "lightLayers", m_lightLayers);
+		lightLayers->setHidden(true);
+		object->autoRelease(lightLayers);
+
 		// lightmap
 		CArrayTypeSerializable<CFilePathProperty>* textureArray = new CArrayTypeSerializable<CFilePathProperty>("lightmap", object);
 		textureArray->OnCreateElement = [](CValueProperty* p)
@@ -183,6 +189,9 @@ namespace Skylicht
 		}
 
 		setIndirectLightingType(type, haveLightmap);
+
+		u32 lightLayers = object->get<u32>("lightLayers", 1);
+		setLightLayers(lightLayers);
 	}
 
 	bool CIndirectLighting::isLightmapEmpty()
@@ -234,6 +243,16 @@ namespace Skylicht
 
 		m_indirectLM = texture;
 		m_internalIndirectLM = false;
+	}
+
+	void CIndirectLighting::setLightLayers(u32 layers)
+	{
+		m_lightLayers = layers;
+
+		for (CIndirectLightingData* data : m_data)
+		{
+			data->LightLayers = layers;
+		}
 	}
 
 	void CIndirectLighting::setAutoSH(bool b)

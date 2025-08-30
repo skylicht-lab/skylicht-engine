@@ -134,6 +134,18 @@ namespace Skylicht
 				};
 		}
 
+		void CReflectionProbeEditor::initCustomValueGUI(CObjectSerializable* obj, CValueProperty* data, GUI::CBoxLayout* boxLayout, CSpaceProperty* ui)
+		{
+			if (data->Name == "lightLayers")
+			{
+				CUIntProperty* value = dynamic_cast<CUIntProperty*>(data);
+				if (value == NULL)
+					return;
+
+				initLightLayerMenu(obj, value, boxLayout, ui);
+			}
+		}
+
 		void CReflectionProbeEditor::update()
 		{
 

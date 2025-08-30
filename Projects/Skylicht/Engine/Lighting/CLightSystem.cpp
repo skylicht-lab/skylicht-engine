@@ -124,16 +124,9 @@ namespace Skylicht
 			CShaderLighting::setSpotLight(NULL, i);
 		}
 
-		CVisibleData* visible = GET_ENTITY_DATA(data->Entity, CVisibleData);
 		SDistanceLightEntry entry;
 
-		// We give priority to layers that are not default layers.
-		u32 objLayer = visible->CullingLayer;
-		if (objLayer != 1)
-		{
-			u32 value = 1;
-			objLayer = objLayer & (~value);
-		}
+		u32 objLayer = data->getLightLayers();
 
 		// direction light
 		m_sorts.set_used(0);

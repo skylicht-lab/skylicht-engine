@@ -42,6 +42,7 @@ namespace Skylicht
 		InvalidateProbe(true),
 		InvalidateReflection(true),
 		Intensity(NULL),
+		LightLayers(1),
 		ReleaseSH(false)
 	{
 

@@ -35,6 +35,7 @@ namespace Skylicht
 		CProjectSettings::CProjectSettings()
 		{
 			m_objectLayer = new CObjectLayer();
+			m_lightLayer = new CLightLayer();
 
 			load();
 		}
@@ -42,25 +43,33 @@ namespace Skylicht
 		CProjectSettings::~CProjectSettings()
 		{
 			delete m_objectLayer;
+			delete m_lightLayer;
 		}
 
 		void CProjectSettings::load()
 		{
 			std::string assetFolder = CAssetManager::getInstance()->getAssetFolder();
 			std::string settingFolder = assetFolder + "/BuiltIn/Settings";
-			std::string layerSetting = settingFolder + "/ObjectLayer.xml";
 
+			std::string layerSetting = settingFolder + "/ObjectLayer.xml";
 			if (m_objectLayer->load(layerSetting.c_str()) == false)
 				m_objectLayer->save(layerSetting.c_str());
+
+			layerSetting = settingFolder + "/LightLayer.xml";
+			if (m_lightLayer->load(layerSetting.c_str()) == false)
+				m_lightLayer->save(layerSetting.c_str());
 		}
 
 		void CProjectSettings::save()
 		{
 			std::string assetFolder = CAssetManager::getInstance()->getAssetFolder();
 			std::string settingFolder = assetFolder + "/BuiltIn/Settings";
-			std::string layerSetting = settingFolder + "/ObjectLayer.xml";
 
+			std::string layerSetting = settingFolder + "/ObjectLayer.xml";
 			m_objectLayer->save(layerSetting.c_str());
+
+			layerSetting = settingFolder + "/LightLayer.xml";
+			m_lightLayer->save(layerSetting.c_str());
 		}
 	}
 }

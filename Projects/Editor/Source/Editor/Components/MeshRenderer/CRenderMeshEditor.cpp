@@ -48,6 +48,18 @@ namespace Skylicht
 			CDefaultEditor::initGUI(target, ui);
 		}
 
+		void CRenderMeshEditor::initCustomValueGUI(CObjectSerializable* obj, CValueProperty* data, GUI::CBoxLayout* boxLayout, CSpaceProperty* ui)
+		{
+			if (data->Name == "lightLayers")
+			{
+				CUIntProperty* value = dynamic_cast<CUIntProperty*>(data);
+				if (value == NULL)
+					return;
+
+				initLightLayerMenu(obj, value, boxLayout, ui);
+			}
+		}
+
 		void CRenderMeshEditor::update()
 		{
 
