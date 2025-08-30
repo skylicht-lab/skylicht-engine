@@ -43,6 +43,8 @@ namespace Skylicht
 
 		core::aabbox3df TransformBBox;
 
+		core::vector3df LightPosition;
+
 		CLight* Light;
 
 		float CameraDistance;

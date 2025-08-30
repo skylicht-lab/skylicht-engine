@@ -25,19 +25,21 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CLightSystem.h"
 #include "Culling/CVisibleData.h"
+#include "Culling/CCullingData.h"
 #include "Entity/CEntityManager.h"
-#include "Material/Shader/CShaderManager.h"
-
-#include "Debug/CSceneDebug.h"
+#include "Material/Shader/ShaderCallback/CShaderLighting.h"
 
 namespace Skylicht
 {
 	CLightSystem::CLightSystem() :
 		m_group(NULL),
-		m_groupMesh(NULL),
-		m_needUpdatePL(true),
-		m_needUpdateSL(true)
+		m_currentDLight(NULL)
 	{
+		for (int i = 0; i < 4; i++)
+		{
+			m_currentPLight[i] = NULL;
+			m_currentSLight[i] = NULL;
+		}
 		m_pipelineType = IRenderPipeline::Forwarder;
 	}
 
@@ -50,18 +52,11 @@ namespace Skylicht
 		m_pointLights.set_used(0);
 		m_spotLights.set_used(0);
 		m_dirLights.set_used(0);
-		m_renderMeshs.set_used(0);
 
 		if (!m_group)
 		{
 			const u32 type[] = GET_LIST_ENTITY_DATA(CLightCullingData);
 			m_group = entityManager->createGroupFromVisible(type, 1);
-		}
-
-		if (!m_groupMesh)
-		{
-			const u32 type[] = GET_LIST_ENTITY_DATA(CRenderMeshData);
-			m_groupMesh = (CGroupMesh*)entityManager->findGroup(type, 1);
 		}
 	}
 
@@ -70,9 +65,6 @@ namespace Skylicht
 		entities = m_group->getEntities();
 		numEntity = m_group->getEntityCount();
 
-		if (!m_groupMesh)
-			return;
-
 		for (int i = 0; i < numEntity; i++)
 		{
 			CEntity* entity = entities[i];
@@ -80,49 +72,23 @@ namespace Skylicht
 			CWorldTransformData* transformData = GET_ENTITY_DATA(entity, CWorldTransformData);
 
 			CLightCullingData* lightData = GET_ENTITY_DATA(entity, CLightCullingData);
-			switch (lightData->LightType)
+			if (lightData->Visible)
 			{
-			case 0:
-				m_dirLights.push_back(lightData);
-				break;
-			case 1:
-				m_pointLights.push_back(lightData);
-				m_needUpdatePL = m_needUpdatePL || transformData->NeedValidate;
-				break;
-			case 2:
-				m_spotLights.push_back(lightData);
-				m_needUpdateSL = m_needUpdateSL || transformData->NeedValidate;
-				break;
-			default:
-				break;
-			};
-		}
-
-		entities = m_groupMesh->getStaticMeshes();
-		numEntity = m_groupMesh->getNumStaticMesh();
-
-		for (int i = 0; i < numEntity; i++)
-		{
-			CEntity* entity = entities[i];
-
-			CRenderMeshData* renderMesh = GET_ENTITY_DATA(entity, CRenderMeshData);
-			if (renderMesh->isVisible() &&
-				renderMesh->isSortingLights())
-			{
-				m_renderMeshs.push_back(renderMesh);
+				switch (lightData->LightType)
+				{
+				case 0:
+					m_dirLights.push_back(lightData);
+					break;
+				case 1:
+					m_pointLights.push_back(lightData);
+					break;
+				case 2:
+					m_spotLights.push_back(lightData);
+					break;
+				default:
+					break;
+				};
 			}
-		}
-
-		entities = m_groupMesh->getSkinnedMeshes();
-		numEntity = m_groupMesh->getNumSkinnedMesh();
-
-		for (int i = 0; i < numEntity; i++)
-		{
-			CEntity* entity = entities[i];
-
-			CRenderMeshData* renderMesh = GET_ENTITY_DATA(entity, CRenderMeshData);
-			if (renderMesh->isVisible())
-				m_renderMeshs.push_back(renderMesh);
 		}
 	}
 
@@ -144,5 +110,161 @@ namespace Skylicht
 	void CLightSystem::postRender(CEntityManager* entityManager)
 	{
 
+	}
+
+	void CLightSystem::onBeginSetupLight(CRenderMeshData* data, CWorldTransformData* transform)
+	{
+		m_currentDLight = CShaderLighting::getDirectionalLight();
+		for (int i = 0; i < 4; i++)
+		{
+			m_currentPLight[i] = CShaderLighting::getPointLight(i);
+			m_currentSLight[i] = CShaderLighting::getSpotLight(i);
+
+			CShaderLighting::setPointLight(NULL, i);
+			CShaderLighting::setSpotLight(NULL, i);
+		}
+
+		CVisibleData* visible = GET_ENTITY_DATA(data->Entity, CVisibleData);
+		SDistanceLightEntry entry;
+
+		// We give priority to layers that are not default layers.
+		u32 objLayer = visible->CullingLayer;
+		if (objLayer != 1)
+		{
+			u32 value = 1;
+			objLayer = objLayer & (~value);
+		}
+
+		// direction light
+		m_sorts.set_used(0);
+		CLightCullingData** lights = m_dirLights.pointer();
+		int lightCount = m_dirLights.size();
+
+		for (int i = 0; i < lightCount; i++)
+		{
+			CLight* light = lights[i]->Light;
+
+			u32 priority = light->getLightPriority();
+			u32 lightLayer = light->getLightLayers();
+
+			if (objLayer & lightLayer)
+			{
+				entry.Data = lights[i];
+				entry.Light = light;
+				entry.Distance = 0.0f;
+
+				int n = m_sorts.size();
+				if (n == 0 || priority < m_sorts[n - 1].Light->getLightPriority())
+					m_sorts.push_back(entry);
+				else
+				{
+					// insert sort by priority
+					for (int i = 0; i < n; i++)
+					{
+						if (priority > m_sorts[i].Light->getLightPriority())
+						{
+							m_sorts.insert(entry, i);
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		if (m_sorts.size() == 0)
+			CShaderLighting::setDirectionalLight(NULL);
+		else
+			CShaderLighting::setDirectionalLight((CDirectionalLight*)m_sorts[0].Light);
+
+		core::vector3df position = transform->getWorldPosition();
+
+		// point light
+		m_sorts.set_used(0);
+		lights = m_pointLights.pointer();
+		lightCount = m_pointLights.size();
+
+		for (int i = 0; i < lightCount; i++)
+		{
+			CLight* light = lights[i]->Light;
+			u32 lightLayer = light->getLightLayers();
+
+			if (objLayer & lightLayer)
+			{
+				entry.Data = lights[i];
+				entry.Light = light;
+				entry.Distance = lights[i]->LightPosition.getDistanceFromSQ(position);
+
+				int n = m_sorts.size();
+				if (n == 0 || entry.Distance > m_sorts[n - 1].Distance)
+					m_sorts.push_back(entry);
+				else
+				{
+					// insert sort by distance
+					for (int i = 0; i < n; i++)
+					{
+						if (entry.Distance < m_sorts[i].Distance)
+						{
+							m_sorts.insert(entry, i);
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		lightCount = m_sorts.size();
+		lightCount = core::min_(lightCount, 4);
+		for (int i = 0; i < lightCount; i++)
+			CShaderLighting::setPointLight((CPointLight*)m_sorts[i].Light, i);
+
+		// spotlight
+		m_sorts.set_used(0);
+		lights = m_spotLights.pointer();
+		lightCount = m_spotLights.size();
+
+		for (int i = 0; i < lightCount; i++)
+		{
+			CLight* light = lights[i]->Light;
+			u32 lightLayer = light->getLightLayers();
+
+			if (objLayer & lightLayer)
+			{
+				entry.Data = lights[i];
+				entry.Light = light;
+				entry.Distance = lights[i]->LightPosition.getDistanceFromSQ(position);
+
+				int n = m_sorts.size();
+				if (n == 0 || entry.Distance > m_sorts[n - 1].Distance)
+					m_sorts.push_back(entry);
+				else
+				{
+					// insert sort by distance
+					for (int i = 0; i < n; i++)
+					{
+						if (entry.Distance < m_sorts[i].Distance)
+						{
+							m_sorts.insert(entry, i);
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		lightCount = m_sorts.size();
+		lightCount = core::min_(lightCount, 4);
+		for (int i = 0; i < lightCount; i++)
+			CShaderLighting::setSpotLight((CSpotLight*)m_sorts[i].Light, i);
+	}
+
+	void CLightSystem::onEndSetupLight()
+	{
+		CShaderLighting::setDirectionalLight(m_currentDLight);
+
+		for (int i = 0; i < 4; i++)
+		{
+			CShaderLighting::setPointLight(m_currentPLight[i], i);
+			CShaderLighting::setSpotLight(m_currentSLight[i], i);
+		}
 	}
 }

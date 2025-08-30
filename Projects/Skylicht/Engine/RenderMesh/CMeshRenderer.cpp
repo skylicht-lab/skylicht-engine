@@ -31,6 +31,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Material/Shader/ShaderCallback/CShaderSH.h"
 #include "Material/Shader/ShaderCallback/CShaderLighting.h"
 
+#include "Lighting/CLightSystem.h"
+
 namespace Skylicht
 {
 	CMeshRenderer::CMeshRenderer()
@@ -181,6 +183,8 @@ namespace Skylicht
 		IRenderPipeline* rp = entityManager->getRenderPipeline();
 		CRenderMeshData** meshs = m_meshs.pointer();
 
+		CLightSystem* lightSystem = entityManager->getRenderSystem<CLightSystem>();
+
 		for (u32 i = 0, n = m_meshs.size(); i < n; i++)
 		{
 			CRenderMeshData* meshData = m_meshs[i];
@@ -201,6 +205,9 @@ namespace Skylicht
 
 			bool haveTransparent = false;
 
+			if (meshData->isSortingLights())
+				lightSystem->onBeginSetupLight(meshData, transform);
+
 			for (u32 j = 0, m = mesh->getMeshBufferCount(); j < m; j++)
 			{
 				CMaterial* material = mesh->Materials[j];
@@ -218,6 +225,9 @@ namespace Skylicht
 					rp->drawMeshBuffer(mesh, j, entityManager, meshData->EntityIndex, false);
 				}
 			}
+
+			if (meshData->isSortingLights())
+				lightSystem->onEndSetupLight();
 
 			if (haveTransparent == true)
 			{
@@ -239,6 +249,8 @@ namespace Skylicht
 		CRenderMeshData** meshs = m_meshs.pointer();
 		CEntity** allEntities = entityManager->getEntities();
 
+		CLightSystem* lightSystem = entityManager->getRenderSystem<CLightSystem>();
+
 		for (u32 i = 0; i < numTransparent; i++)
 		{
 			u32 meshID = m_transparents[i];
@@ -250,13 +262,15 @@ namespace Skylicht
 			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 			driver->setTransform(video::ETS_WORLD, transform->World);
 
+			if (meshData->isSortingLights())
+				lightSystem->onBeginSetupLight(meshData, transform);
+
 			CMesh* mesh = meshData->getMesh();
 			if (meshData->isSoftwareBlendShape())
 				mesh = meshData->getSoftwareBlendShapeMesh();
 			if (meshData->isSoftwareSkinning())
 				mesh = meshData->getSoftwareSkinnedMesh();
 
-			// render mesh
 			for (u32 j = 0, m = mesh->getMeshBufferCount(); j < m; j++)
 			{
 				CMaterial* material = mesh->Materials[j];
@@ -268,6 +282,9 @@ namespace Skylicht
 					rp->drawMeshBuffer(mesh, j, entityManager, meshData->EntityIndex, false);
 				}
 			}
+
+			if (meshData->isSortingLights())
+				lightSystem->onEndSetupLight();
 		}
 	}
 }

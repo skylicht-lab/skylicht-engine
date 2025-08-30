@@ -31,8 +31,8 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	CDirectionalLight* g_directionalLight = NULL;
-	CPointLight* g_pointLight = NULL;
-	CSpotLight* g_spotLight = NULL;
+	CPointLight* g_pointLight[4] = { NULL, NULL, NULL, NULL };
+	CSpotLight* g_spotLight[4] = { NULL, NULL, NULL, NULL };
 
 	SColorf s_lightAmbient = SColorf(0.4f, 0.4f, 0.4f, 1.0f);
 
@@ -48,25 +48,25 @@ namespace Skylicht
 	}
 
 
-	void CShaderLighting::setPointLight(CPointLight* light)
+	void CShaderLighting::setPointLight(CPointLight* light, int lightId)
 	{
-		g_pointLight = light;
+		g_pointLight[lightId] = light;
 	}
 
-	CPointLight* CShaderLighting::getPointLight()
+	CPointLight* CShaderLighting::getPointLight(int lightId)
 	{
-		return g_pointLight;
+		return g_pointLight[lightId];
 	}
 
 
-	void CShaderLighting::setSpotLight(CSpotLight* light)
+	void CShaderLighting::setSpotLight(CSpotLight* light, int lightId)
 	{
-		g_spotLight = light;
+		g_spotLight[lightId] = light;
 	}
 
-	CSpotLight* CShaderLighting::getSpotLight()
+	CSpotLight* CShaderLighting::getSpotLight(int lightId)
 	{
-		return g_spotLight;
+		return g_spotLight[lightId];
 	}
 
 
@@ -112,10 +112,11 @@ namespace Skylicht
 			video::SColorf color;
 			float intensity = 0.0f;
 
-			if (g_pointLight != NULL)
+			int lightId = core::clamp(uniform->ValueIndex, 0, 3);
+			if (g_pointLight[lightId] != NULL)
 			{
-				color = g_pointLight->getColor();
-				intensity = g_pointLight->getIntensity();
+				color = g_pointLight[lightId]->getColor();
+				intensity = g_pointLight[lightId]->getIntensity();
 			}
 
 			shader->setColor(matRender, uniform->UniformShaderID, vertexShader, color, intensity);
@@ -135,8 +136,9 @@ namespace Skylicht
 		{
 			core::vector3df position;
 
-			if (g_pointLight != NULL)
-				position = g_pointLight->getPosition();
+			int lightId = core::clamp(uniform->ValueIndex, 0, 3);
+			if (g_pointLight[lightId] != NULL)
+				position = g_pointLight[lightId]->getPosition();
 
 			shader->setWorldPosition(matRender, uniform->UniformShaderID, position, vertexShader);
 		}
@@ -145,11 +147,12 @@ namespace Skylicht
 		{
 			float attenuation[4] = { 0 };
 
-			if (g_pointLight != NULL)
+			int lightId = core::clamp(uniform->ValueIndex, 0, 3);
+			if (g_pointLight[lightId] != NULL)
 			{
 				// set attenuation
 				attenuation[0] = 0.0f;
-				attenuation[1] = g_pointLight->getAttenuation();
+				attenuation[1] = g_pointLight[lightId]->getAttenuation();
 				attenuation[2] = 0.0f;
 			}
 
@@ -165,10 +168,11 @@ namespace Skylicht
 			video::SColorf color;
 			float intensity = 0.0f;
 
-			if (g_spotLight != NULL)
+			int lightId = core::clamp(uniform->ValueIndex, 0, 3);
+			if (g_spotLight[lightId] != NULL)
 			{
-				color = g_spotLight->getColor();
-				intensity = g_spotLight->getIntensity();
+				color = g_spotLight[lightId]->getColor();
+				intensity = g_spotLight[lightId]->getIntensity();
 			}
 
 			shader->setColor(matRender, uniform->UniformShaderID, vertexShader, color, intensity);
@@ -177,16 +181,20 @@ namespace Skylicht
 		case SPOT_LIGHT_DIRECTION:
 		{
 			core::vector3df dir(0.0f, 1.0f, 0.0f);
-			if (g_spotLight != NULL)
-				dir = -g_spotLight->getDirection();
+
+			int lightId = core::clamp(uniform->ValueIndex, 0, 3);
+			if (g_spotLight[lightId] != NULL)
+				dir = -g_spotLight[lightId]->getDirection();
+
 			shader->setWorldDirection(matRender, uniform->UniformShaderID, vertexShader, dir, 4);
 		}
 		break;
 		case SPOT_LIGHT_POSITION:
 		{
-			if (g_spotLight != NULL)
+			int lightId = core::clamp(uniform->ValueIndex, 0, 3);
+			if (g_spotLight[lightId] != NULL)
 			{
-				core::vector3df position = g_spotLight->getPosition();
+				core::vector3df position = g_spotLight[lightId]->getPosition();
 				shader->setWorldPosition(matRender, uniform->UniformShaderID, position, vertexShader);
 			}
 		}
@@ -195,13 +203,14 @@ namespace Skylicht
 		{
 			float attenuation[4] = { 0 };
 
+			int lightId = core::clamp(uniform->ValueIndex, 0, 3);
 			if (g_spotLight != NULL)
 			{
 				// set attenuation
-				attenuation[0] = cosf(g_spotLight->getSplotCutoff() * core::DEGTORAD * 0.5f);
-				attenuation[1] = cosf(g_spotLight->getSpotInnerCutof() * core::DEGTORAD * 0.5f);
-				attenuation[2] = g_spotLight->getAttenuation();
-				attenuation[3] = g_spotLight->getSpotExponent();
+				attenuation[0] = cosf(g_spotLight[lightId]->getSplotCutoff() * core::DEGTORAD * 0.5f);
+				attenuation[1] = cosf(g_spotLight[lightId]->getSpotInnerCutof() * core::DEGTORAD * 0.5f);
+				attenuation[2] = g_spotLight[lightId]->getAttenuation();
+				attenuation[3] = g_spotLight[lightId]->getSpotExponent();
 			}
 
 			// shader variable

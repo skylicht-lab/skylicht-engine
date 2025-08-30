@@ -68,6 +68,9 @@ namespace Skylicht
 			m_currentLight->getLightType() != CLight::Mixed)
 			return;
 
+		if (!m_currentLight->isAffectingDefaultObjects())
+			return;
+
 		setCamera(camera);
 
 		entityManager->setCamera(camera);
@@ -90,7 +93,7 @@ namespace Skylicht
 		if (pointLight != NULL)
 		{
 			// for uLightPosition in shader write depth distance
-			CShaderLighting::setPointLight(pointLight);
+			CShaderLighting::setPointLight(pointLight, 0);
 
 			pointLight->beginRenderShadowDepth();
 

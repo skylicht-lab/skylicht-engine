@@ -48,14 +48,14 @@ namespace Skylicht
 		static CDirectionalLight* getDirectionalLight();
 
 
-		static void setPointLight(CPointLight* light);
+		static void setPointLight(CPointLight* light, int lightId);
 
-		static CPointLight* getPointLight();
+		static CPointLight* getPointLight(int lightId);
 
 
-		static void setSpotLight(CSpotLight* light);
+		static void setSpotLight(CSpotLight* light, int lightId);
 
-		static CSpotLight* getSpotLight();
+		static CSpotLight* getSpotLight(int lightId);
 
 
 		static void setLightAmbient(const SColorf& c);

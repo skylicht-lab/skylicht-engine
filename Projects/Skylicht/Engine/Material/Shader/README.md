@@ -65,10 +65,10 @@ Value table for the `type` property
 |LIGHT_COLOR|float4| |
 |LIGHT_AMBIENT|float4| |
 |WORLD_LIGHT_DIRECTION|float4| It returns the light direction vector for the directional light, similar to how you'd consider the direction of sunlight.|
-|POINT_LIGHT_COLOR|float4| |
+|POINT_LIGHT_COLOR|float4| The parameter valueIndex is clamped from 0 to 3, representing the order of the four closest pointlights to the object.|
 |POINT_LIGHT_POSITION|float4| The light position, See `CShaderLighting::setPointLight`|
 |POINT_LIGHT_ATTENUATION|float4| `value.y = CLight::getAttenuation()`<br>See `BuiltIn\Shader\SpecularGlossiness\Lighting\SGPointLight.xml`|
-|SPOT_LIGHT_COLOR|float4| |
+|SPOT_LIGHT_COLOR|float4| The parameter valueIndex is clamped from 0 to 3, representing the order of the four closest spotlights to the object.|
 |SPOT_LIGHT_DIRECTION|float4| |
 |SPOT_LIGHT_POSITION|float4| The light position, See `CShaderLighting::setSpotLight`|
 |SPOT_LIGHT_ATTENUATION|float4| `value.x = cos(CSpotLight::getSplotCutoff() * 0.5f)`<br> `value.y = cos(CSpotLight::getSpotInnerCutof() * 0.5f)`<br> `value.z = CLight::getAttenuation()`<br> `value.w = CSpotLight::getSpotExponent()`<br>See `BuiltIn\Shader\SpecularGlossiness\Lighting\SGSpotLight.xml`|

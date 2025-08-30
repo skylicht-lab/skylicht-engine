@@ -177,9 +177,9 @@ namespace Skylicht
 
 		CSpotLight* sl = dynamic_cast<CSpotLight*>(currentLight);
 		if (sl)
-			CShaderLighting::setSpotLight(sl);
+			CShaderLighting::setSpotLight(sl, 0);
 		else
-			CShaderLighting::setPointLight(pl);
+			CShaderLighting::setPointLight(pl, 0);
 
 		// render mesh with light bake shader
 		video::SMaterial irrMaterial;
@@ -226,8 +226,8 @@ namespace Skylicht
 		// draw mesh buffer
 		driver->drawMeshBuffer(m_submesh[m_currentTarget]);
 
-		CShaderLighting::setSpotLight(NULL);
-		CShaderLighting::setPointLight(NULL);
+		CShaderLighting::setSpotLight(NULL, 0);
+		CShaderLighting::setPointLight(NULL, 0);
 	}
 
 	void CPointLightBakeRP::drawInstancingMeshBuffer(CMesh* mesh, int bufferID, int materialRenderID, CEntityManager* entityMgr, int entityID, bool skinnedMesh)

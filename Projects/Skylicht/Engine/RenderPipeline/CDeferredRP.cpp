@@ -660,7 +660,7 @@ namespace Skylicht
 
 						if (spotLight)
 						{
-							CShaderLighting::setSpotLight(spotLight);
+							CShaderLighting::setSpotLight(spotLight, 0);
 
 							if (spotLight->isCastShadow())
 							{
@@ -680,7 +680,7 @@ namespace Skylicht
 						}
 						else if (pointLight)
 						{
-							CShaderLighting::setPointLight(pointLight);
+							CShaderLighting::setPointLight(pointLight, 0);
 
 							if (pointLight->isCastShadow())
 							{
@@ -703,8 +703,8 @@ namespace Skylicht
 			}
 		}
 
-		CShaderLighting::setSpotLight(NULL);
-		CShaderLighting::setPointLight(NULL);
+		CShaderLighting::setSpotLight(NULL, 0);
+		CShaderLighting::setPointLight(NULL, 0);
 
 		// STEP 04
 		// Render final direction lighting to screen

@@ -77,6 +77,11 @@ namespace Skylicht
 				m_transforms.push_back(transform);
 				m_invTransforms.push_back(invTransform);
 			}
+			else
+			{
+				// direction light is alway visible
+				culling->Visible = true;
+			}
 		}
 	}
 
@@ -117,6 +122,7 @@ namespace Skylicht
 			{
 				lightBox = culling->BBox;
 				transform->World.transformBoxEx(lightBox);
+				culling->LightPosition = transform->getWorldPosition();
 				culling->NeedValidate = false;
 			}
 

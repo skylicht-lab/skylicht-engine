@@ -197,6 +197,9 @@ namespace Skylicht
 		template<class T>
 		T* getSystem();
 
+		template<class T>
+		T* getRenderSystem();
+
 		bool removeSystem(IEntitySystem* system);
 
 		void addTransformDataToEntity(CEntity* entity, CTransform* transform);
@@ -306,6 +309,20 @@ namespace Skylicht
 	T* CEntityManager::getSystem()
 	{
 		for (IEntitySystem*& s : m_systems)
+		{
+			T* system = dynamic_cast<T*>(s);
+			if (system != NULL)
+			{
+				return system;
+			}
+		}
+		return NULL;
+	}
+
+	template<class T>
+	T* CEntityManager::getRenderSystem()
+	{
+		for (IRenderSystem*& s : m_renders)
 		{
 			T* system = dynamic_cast<T*>(s);
 			if (system != NULL)

@@ -28,25 +28,36 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Entity/IRenderSystem.h"
 #include "Entity/CEntityGroup.h"
 #include "Transform/CWorldTransformData.h"
-#include "Transform/CWorldInverseTransformData.h"
 #include "RenderMesh/CRenderMeshData.h"
-#include "RenderMesh/CGroupMesh.h"
+
+#include "Lighting/CDirectionalLight.h"
+#include "Lighting/CPointLight.h"
+#include "Lighting/CSpotLight.h"
 
 namespace Skylicht
 {
 	class SKYLICHT_API CLightSystem : public IRenderSystem
 	{
 	protected:
+		struct SDistanceLightEntry
+		{
+			CLightCullingData* Data;
+			CLight* Light;
+			float Distance;
+		};
+
 		core::array<CLightCullingData*> m_pointLights;
 		core::array<CLightCullingData*> m_spotLights;
 		core::array<CLightCullingData*> m_dirLights;
-		core::array<CRenderMeshData*> m_renderMeshs;
-
-		bool m_needUpdatePL;
-		bool m_needUpdateSL;
 
 		CEntityGroup* m_group;
-		CGroupMesh* m_groupMesh;
+
+		CDirectionalLight* m_currentDLight;
+		CPointLight* m_currentPLight[4];
+		CSpotLight* m_currentSLight[4];
+
+		core::array<SDistanceLightEntry> m_sorts;
+
 	public:
 		CLightSystem();
 
@@ -64,5 +75,8 @@ namespace Skylicht
 
 		virtual void postRender(CEntityManager* entityManager);
 
+		void onBeginSetupLight(CRenderMeshData* data, CWorldTransformData* transform);
+
+		void onEndSetupLight();
 	};
 }

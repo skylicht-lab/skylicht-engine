@@ -30,6 +30,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Material/Shader/ShaderCallback/CShaderSH.h"
 #include "Material/Shader/ShaderCallback/CShaderLighting.h"
 
+#include "Lighting/CLightSystem.h"
+
 #include "Entity/CEntityManager.h"
 
 namespace Skylicht
@@ -161,6 +163,8 @@ namespace Skylicht
 		CShaderManager* shaderManager = CShaderManager::getInstance();
 		IRenderPipeline* rp = entityManager->getRenderPipeline();
 
+		CLightSystem* lightSystem = entityManager->getRenderSystem<CLightSystem>();
+
 		for (u32 i = 0, n = m_meshs.size(); i < n; i++)
 		{
 			CRenderMeshData* renderMeshData = m_meshs[i];
@@ -183,9 +187,11 @@ namespace Skylicht
 			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 			driver->setTransform(video::ETS_WORLD, transform->World);
 
+			if (renderMeshData->isSortingLights())
+				lightSystem->onBeginSetupLight(renderMeshData, transform);
+
 			bool haveTransparent = false;
 
-			// render mesh
 			for (u32 j = 0, m = mesh->getMeshBufferCount(); j < m; j++)
 			{
 				CMaterial* material = mesh->Materials[j];
@@ -205,6 +211,9 @@ namespace Skylicht
 					rp->drawMeshBuffer(mesh, j, entityManager, renderMeshData->EntityIndex, true);
 				}
 			}
+
+			if (renderMeshData->isSortingLights())
+				lightSystem->onEndSetupLight();
 
 			if (haveTransparent == true)
 			{
@@ -226,6 +235,8 @@ namespace Skylicht
 		CRenderMeshData** meshs = m_meshs.pointer();
 		CEntity** allEntities = entityManager->getEntities();
 
+		CLightSystem* lightSystem = entityManager->getRenderSystem<CLightSystem>();
+
 		for (u32 i = 0; i < numTransparent; i++)
 		{
 			u32 meshID = m_transparents[i];
@@ -241,6 +252,9 @@ namespace Skylicht
 			// set transform
 			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 			driver->setTransform(video::ETS_WORLD, transform->World);
+
+			if (renderMeshData->isSortingLights())
+				lightSystem->onBeginSetupLight(renderMeshData, transform);
 
 			// software blendshape
 			if (renderMeshData->isSoftwareBlendShape())
@@ -258,6 +272,9 @@ namespace Skylicht
 					rp->drawMeshBuffer(mesh, j, entityManager, renderMeshData->EntityIndex, true);
 				}
 			}
+
+			if (renderMeshData->isSortingLights())
+				lightSystem->onEndSetupLight();
 		}
 	}
 }

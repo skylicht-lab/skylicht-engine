@@ -594,7 +594,7 @@ namespace Skylicht
 					pointLight->isCastShadow() == true &&
 					(pointLight->needRenderShadowDepth() || pointLight->isDynamicShadow()))
 				{
-					CShaderLighting::setPointLight(pointLight);
+					CShaderLighting::setPointLight(pointLight, 0);
 
 					core::vector3df lightPosition = pointLight->getGameObject()->getPosition();
 
@@ -635,7 +635,7 @@ namespace Skylicht
 			}
 		}
 
-		CShaderLighting::setPointLight(NULL);
+		CShaderLighting::setPointLight(NULL, 0);
 
 		m_saveDebugPL = false;
 		m_saveDebug = false;
