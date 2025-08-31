@@ -63,6 +63,7 @@ namespace Skylicht
 
 		core::vector3df m_sh[9];
 		float m_intensity;
+		float m_customIntensity;
 
 		std::vector<std::string> m_indirectLMPaths;
 		ITexture* m_indirectLM;
@@ -109,6 +110,8 @@ namespace Skylicht
 		void setSH(core::vector3df* sh);
 
 		void setAmbientColor(const SColor& color);
+
+		void setCustomIntensity(float intensity);
 
 		EIndirectType getIndirectLightingType()
 		{

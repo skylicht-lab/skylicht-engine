@@ -46,6 +46,7 @@ namespace Skylicht
 		core::vector3df* SH;
 
 		float* Intensity;
+		float* CustomIntensity;
 
 		SColor Color;
 

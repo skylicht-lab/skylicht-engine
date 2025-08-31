@@ -42,6 +42,7 @@ namespace Skylicht
 		InvalidateProbe(true),
 		InvalidateReflection(true),
 		Intensity(NULL),
+		CustomIntensity(NULL),
 		LightLayers(1),
 		ReleaseSH(false)
 	{
@@ -61,9 +62,11 @@ namespace Skylicht
 
 		AutoSH = new bool();
 		Intensity = new float();
+		CustomIntensity = new float();
 
 		*AutoSH = true;
 		*Intensity = 1.0f;
+		*CustomIntensity = 1.0f;
 
 		ReleaseSH = true;
 	}
@@ -86,6 +89,11 @@ namespace Skylicht
 			{
 				delete Intensity;
 				Intensity = NULL;
+			}
+			if (CustomIntensity)
+			{
+				delete CustomIntensity;
+				CustomIntensity = NULL;
 			}
 			ReleaseSH = false;
 		}

@@ -43,6 +43,7 @@ namespace Skylicht
 		m_internalIndirectLM(false),
 		m_indirectLM(NULL),
 		m_intensity(1.0f),
+		m_customIntensity(1.0f),
 		m_ambientColor(255, 60, 60, 60),
 		m_lightLayers(1)
 	{
@@ -112,6 +113,7 @@ namespace Skylicht
 		data->SH = m_sh;
 		data->AutoSH = &m_autoSH;
 		data->Intensity = &m_intensity;
+		data->CustomIntensity = &m_customIntensity;
 		data->ReleaseSH = false;
 		data->InvalidateProbe = true;
 
@@ -145,6 +147,9 @@ namespace Skylicht
 		// ambient color
 		object->autoRelease(new CColorProperty(object, "ambientColor", m_ambientColor));
 
+		// custom intensity
+		object->autoRelease(new CFloatProperty(object, "customIntensity", m_customIntensity, 0.0f, 3.0f));
+
 		// lightlayer
 		CUIntProperty* lightLayers = new CUIntProperty(object, "lightLayers", m_lightLayers);
 		lightLayers->setHidden(true);
@@ -172,6 +177,9 @@ namespace Skylicht
 		EIndirectType type = object->get<EIndirectType>("type", EIndirectType::SH9);
 
 		m_ambientColor = object->get<SColor>("ambientColor", SColor(255, 60, 60, 60));
+
+		float intensity = object->get<float>("customIntensity", 1.0f);
+		setCustomIntensity(intensity);
 
 		bool haveLightmap = false;
 		CArraySerializable* textureArray = (CArraySerializable*)object->getProperty("lightmap");
@@ -225,6 +233,16 @@ namespace Skylicht
 		m_autoSH = false;
 		for (int i = 0; i < 9; i++)
 			m_sh[i] = sh[i];
+	}
+
+	void CIndirectLighting::setCustomIntensity(float intensity)
+	{
+		m_customIntensity = intensity;
+		for (CIndirectLightingData* data : m_data)
+		{
+			*data->CustomIntensity = m_customIntensity;
+			data->InvalidateProbe = true;
+		}
 	}
 
 	void CIndirectLighting::setAmbientColor(const SColor& color)
