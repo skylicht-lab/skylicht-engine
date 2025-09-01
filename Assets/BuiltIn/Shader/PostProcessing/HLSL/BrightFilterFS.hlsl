@@ -24,6 +24,8 @@ float brightness(float3 c)
 float4 main(PS_INPUT input) : SV_TARGET
 {
 	float3 m = uSourceTex.Sample(uSourceTexSampler, input.tex0).rgb;
+	m = min(m, float3(4.0, 4.0, 4.0));
+	
 	float3 e = uSourceEmission.Sample(uSourceEmissionSampler, input.tex0).rgb;
 	
 	float br = brightness(m);

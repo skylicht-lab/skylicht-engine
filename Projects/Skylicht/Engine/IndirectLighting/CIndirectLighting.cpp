@@ -239,10 +239,7 @@ namespace Skylicht
 	{
 		m_customIntensity = intensity;
 		for (CIndirectLightingData* data : m_data)
-		{
-			*data->CustomIntensity = m_customIntensity;
 			data->InvalidateProbe = true;
-		}
 	}
 
 	void CIndirectLighting::setAmbientColor(const SColor& color)
@@ -266,10 +263,10 @@ namespace Skylicht
 	void CIndirectLighting::setLightLayers(u32 layers)
 	{
 		m_lightLayers = layers;
-
 		for (CIndirectLightingData* data : m_data)
 		{
 			data->LightLayers = layers;
+			data->InvalidateReflection = true;
 		}
 	}
 

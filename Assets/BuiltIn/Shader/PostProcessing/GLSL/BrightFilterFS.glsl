@@ -17,6 +17,8 @@ float brightness(vec3 c)
 void main(void)
 {
 	vec3 m = texture(uSourceTex, varTexCoord0.xy).rgb;
+	m = min(m, vec3(4.0, 4.0, 4.0));
+	
 	vec3 e = texture(uSourceEmission, varTexCoord0.xy).rgb;
 	
 	float br = brightness(m);

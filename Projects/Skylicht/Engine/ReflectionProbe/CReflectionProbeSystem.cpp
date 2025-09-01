@@ -149,17 +149,41 @@ namespace Skylicht
 		CReflectionProbeData* probe;
 		CIndirectLightingData* indirectData;
 
+		bool found = false;
+
 		for (u32 i = 0, n = m_entities.count(); i < n; i++)
 		{
 			m = positions[i]->World.pointer();
 
 			// query nearst probe
 			res = kd_nearest3f(m_kdtree, m[12], m[13], m[14]);
+			if (res != NULL && !kd_res_end(res))
+			{
+				// get probe data
+				probe = (CReflectionProbeData*)kd_res_item_data(res);
+				if (probe != NULL)
+				{
+					if (probe->LightLayers & lightings[i]->LightLayers)
+					{
+						// get indirectData
+						indirectData = lightings[i];
+						indirectData->ReflectionTexture = probe->ReflectionTexture;
+						indirectData->InvalidateReflection = false;
+						found = true;
+					}
+				}
+				kd_res_free(res);
+			}
+
+			if (found)
+				continue;
+
+			// search in 100m
+			res = kd_nearest_range3f(m_kdtree, m[12], m[13], m[14], 10000.0f);
 			if (res != NULL)
 			{
 				while (!kd_res_end(res))
 				{
-					// get probe data
 					probe = (CReflectionProbeData*)kd_res_item_data(res);
 					if (probe != NULL)
 					{
@@ -172,8 +196,6 @@ namespace Skylicht
 							break;
 						}
 					}
-
-					// seek next
 					kd_res_next(res);
 				}
 				kd_res_free(res);

@@ -159,33 +159,23 @@ namespace Skylicht
 
 			// query nearst probe
 			res = kd_nearest3f(m_kdtree, m[12], m[13], m[14]);
-			if (res != NULL)
+			if (res != NULL && !kd_res_end(res))
 			{
-				while (!kd_res_end(res))
+				probe = (CLightProbeData*)kd_res_item_data(res);
+				if (probe != NULL)
 				{
-					// float pos[3];
-					// kd_res_itemf(res, pos);
+					// get indirectData
+					indirectData = data[i];
 
-					// get probe data
-					probe = (CLightProbeData*)kd_res_item_data(res);
-					if (probe != NULL)
+					// copy sh data
+					// need interpolate here, todo later
+					for (int j = 0; j < 9; j++)
 					{
-						// get indirectData
-						indirectData = data[i];
-
-						// copy sh data
-						// need interpolate here, todo later
-						for (int j = 0; j < 9; j++)
-						{
-							indirectData->SH[j].set(probe->SH[j]);
-						}
-
-						*indirectData->Intensity = probe->Intensity * *indirectData->CustomIntensity;
-						indirectData->InvalidateProbe = false;
+						indirectData->SH[j].set(probe->SH[j]);
 					}
 
-					// kd_res_next(res);
-					break;
+					*indirectData->Intensity = probe->Intensity * *indirectData->CustomIntensity;
+					indirectData->InvalidateProbe = false;
 				}
 				kd_res_free(res);
 			}
