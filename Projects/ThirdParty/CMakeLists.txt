@@ -58,6 +58,7 @@ setup_project_group("${jpeglib_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 file(GLOB_RECURSE libpng_source 
 	./libpng/**.cpp 
 	./libpng/**.hpp 
+	./libpng/**.S 
 	./libpng/**.c 
 	./libpng/**.h)
 setup_project_group("${libpng_source}" ${CMAKE_CURRENT_SOURCE_DIR})
