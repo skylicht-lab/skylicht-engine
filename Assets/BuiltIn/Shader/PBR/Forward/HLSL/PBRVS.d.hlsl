@@ -28,9 +28,13 @@ struct VS_OUTPUT
 	float3 worldViewDir: WORLDVIEWDIR;
 	float4 viewPosition: VIEWPOSITION;
 	float3 worldPosition: WORLDPOSITION;
+#ifdef SHADOW
+	float3 depth: DEPTH;
+	float4 shadowCoord: SHADOWCOORD;
+#endif
 #if defined(PLANAR_REFLECTION)
 	float4 reflectCoord: REFLECTIONCOORD;
-#endif	
+#endif
 };
 #else
 struct VS_OUTPUT
@@ -44,6 +48,9 @@ struct VS_OUTPUT
 	float tangentw : TANGENTW;
 	float4 viewPosition: VIEWPOSITION;
 	float3 worldPosition: WORLDPOSITION;
+#ifdef SHADOW
+	float4x4 uShadowMatrix;
+#endif	
 #if defined(PLANAR_REFLECTION)
 	float4 reflectCoord: REFLECTIONCOORD;
 #endif
@@ -56,6 +63,9 @@ cbuffer cbPerObject
 	float4x4 uWorldMatrix;
 	float4 uCameraPosition;
 	float4 uUVScale;
+#ifdef SHADOW
+	float4x4 uShadowMatrix;
+#endif
 #if defined(PLANAR_REFLECTION)
 	float4x4 uRTTMatrix;
 #endif
@@ -91,6 +101,11 @@ VS_OUTPUT main(VS_INPUT input)
 #if !defined(NO_NORMAL_MAP) && !defined(NO_TEXTURE)	
 	output.worldTangent = normalize(worldTangent.xyz);
 	output.worldBinormal = normalize(cross(worldNormal.xyz, worldTangent.xyz));
+#endif
+
+#ifdef SHADOW
+	output.depth = uCameraPosition.xyz - worldPos.xyz;
+	output.shadowCoord = mul(float4(worldPos.xyz, 1.0), uShadowMatrix);
 #endif
 
 #if defined(PLANAR_REFLECTION)

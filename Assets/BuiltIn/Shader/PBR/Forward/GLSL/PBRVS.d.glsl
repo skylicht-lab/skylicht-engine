@@ -18,6 +18,10 @@ uniform vec4 uCameraPosition;
 uniform vec4 uLightDirection;
 uniform vec4 uUVScale;
 
+#ifdef SHADOW
+uniform mat4 uShadowMatrix;
+#endif
+
 #if defined(PLANAR_REFLECTION)
 uniform mat4 uRTTMatrix;
 #endif
@@ -35,6 +39,11 @@ out float vTangentW;
 #endif
 out vec4 vViewPosition;
 out vec3 vWorldPosition;
+
+#ifdef SHADOW
+out vec3 vDepth;
+out vec4 vShadowCoord;
+#endif
 
 #if defined(PLANAR_REFLECTION)
 out vec4 vReflectCoord;
@@ -66,6 +75,11 @@ void main(void)
 #if !defined(NO_NORMAL_MAP) && !defined(NO_TEXTURE)
 	vWorldTangent = normalize(worldTangent.xyz);
 	vWorldBinormal = normalize(cross(worldNormal.xyz, worldTangent.xyz));
+#endif
+
+#ifdef SHADOW
+	vDepth = uCameraPosition.xyz - worldPos.xyz;
+	vShadowCoord = uShadowMatrix * vec4(worldPos.xyz, 1.0);
 #endif
 
 #if defined(PLANAR_REFLECTION)

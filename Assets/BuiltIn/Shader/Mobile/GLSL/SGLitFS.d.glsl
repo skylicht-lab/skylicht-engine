@@ -130,6 +130,11 @@ void main(void)
 	vec3 color = directionalLight * diffuseColor * 0.3 * uLightMul.y;
 
 #if defined(PLANAR_REFLECTION)
+
+#if defined(SHADOW)
+	color *= visibility;
+#endif
+
 	vec3 f0 = vec3(0.1, 0.1, 0.1);	
 	vec3 rc = mix(f0, diffuseColor, spec) * (0.8 + gloss * 1.8);
 	
@@ -154,10 +159,10 @@ void main(void)
 #endif
 	color += specular * specularColor * uLightMul.x;
 
-#endif
-
 #if defined(SHADOW)
 	color *= visibility;
+#endif
+
 #endif
 
 	// IBL lighting

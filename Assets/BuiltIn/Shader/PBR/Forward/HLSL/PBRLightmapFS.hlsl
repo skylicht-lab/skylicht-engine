@@ -7,8 +7,8 @@ TextureCube uTexReflect : register(t3);
 SamplerState uTexReflectSampler : register(s3);
 Texture2D uTexBRDF : register(t4);
 SamplerState uTexBRDFSampler : register(s4);
-Texture2DArray uTexLightmap : register(t6);
-SamplerState uTexLightmapSampler : register(s6);
+Texture2DArray uTexLightmap : register(t7);
+SamplerState uTexLightmapSampler : register(s7);
 struct PS_INPUT
 {
 	float4 pos : SV_POSITION;

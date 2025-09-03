@@ -1,39 +1,44 @@
-<shaderConfig name="PBRLightmapPlanarReflection" baseShader="SOLID">
+<shaderConfig name="PBRSkinNoNormalShadow" baseShader="SOLID" softwareSkinning="PBR">
 	<uniforms>
 		<vs>
 			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
 			<uniform name="uWorldMatrix" type="WORLD" value="0" float="16" matrix="true"/>
 			<uniform name="uCameraPosition" type="WORLD_CAMERA_POSITION" value="0" float="4"/>
 			<uniform name="uUVScale" type="MATERIAL_PARAM" valueIndex="0" value="1.0, 1.0, 0.0, 0.0" float="4"/>
-			<uniform name="uRTTMatrix" type="RENDER_TEXTURE_MATRIX" valueIndex="0" value="0" float="16" matrix="true"/>
+			<uniform name="uBoneMatrix" type="BONE_MATRIX" value="0" float="16" array="64" matrix="true"/>
+			<uniform name="uShadowMatrix" type="SHADOW_MAP_MATRIX" value="0" float="16" array="1" matrix="true"/>
 		</vs>
 		<fs>
 			<uniform name="uTexAlbedo" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
 			<uniform name="uTexRMA" type="DEFAULT_VALUE" value="2" float="1" directX="false"/>
 			<uniform name="uTexReflect" type="DEFAULT_VALUE" value="3" float="1" directX="false"/>
 			<uniform name="uTexBRDF" type="DEFAULT_VALUE" value="4" float="1" directX="false"/>
-			<uniform name="uTexLightmap" type="DEFAULT_VALUE" value="7" float="1" directX="false"/>
+			<uniform name="uTexEmissive" type="DEFAULT_VALUE" value="5" float="1" directX="false"/>
+			<uniform name="uShadowMap" type="DEFAULT_VALUE" value="6" float="1" directX="false"/>
 			<uniform name="uLightDirection" type="WORLD_LIGHT_DIRECTION" value="0" float="4"/>
 			<uniform name="uLightColor" type="LIGHT_COLOR" value="1.0,1.0,1.0,1.0" float="4"/>
 			<uniform name="uColor" type="MATERIAL_PARAM" valueIndex="1" value="1.0, 1.0, 1.0, 1.0" float="4"/>
+			<uniform name="uEmissive" type="MATERIAL_PARAM" valueIndex="2" value="1.0, 1.0, 1.0, 1.0" float="4"/>
 			<uniform name="uSHConst" type="SH_CONST" value="0" float="4" array="4"/>
 		</fs>
 	</uniforms>
 	<resources>
-		<resource name="uTexReflect" type="RTT0"/>
+		<resource name="uTexReflect" type="ReflectionProbe"/>
+		<resource name="uShadowMap" type="ShadowMap"/>
 		<resource name="uTexBRDF" type="Texture" path="BuiltIn/Textures/BRDF.png"/>
 	</resources>
 	<customUI>
 		<ui control="UIGroup" name="Texture">
 			<ui control="UITexture" name="uTexAlbedo" autoReplace="albedo.;_Albedo.;_A."/>
 			<ui control="UITexture" name="uTexRMA" autoReplace="_rma.;_RMA."/>
-			<ui control="UITexture" name="uTexLightmap"/>
+			<ui control="UITexture" name="uTexEmissive" autoReplace="_emissive.;_E."/>
 		</ui>
 		<ui control="UIGroup" name="Customize">
 			<ui control="UIColor" name="uColor"/>
 			<ui control="UIFloat4" name="uUVScale" elementName="UV ScaleX;UV ScaleY;UV OffsetX;UV OffsetY"/>
+			<ui control="UIFloat4" name="uEmissive" elementName="Intensity R;Intensity G;Intensity B;Intensity"/>
 		</ui>
 	</customUI>
-	<shader type="GLSL" vs="GLSL/PBRLightmapPRVS.glsl" fs="GLSL/PBRLightmapPRFS.glsl" vs_source="GLSL/PBRVS.d.glsl" fs_source="GLSL/PBRLitFS.d.glsl" define="NO_NORMAL_MAP;LM;PLANAR_REFLECTION;REFLECTION_MIPMAP"/>
-	<shader type="HLSL" vs="HLSL/PBRLightmapPRVS.hlsl" fs="HLSL/PBRLightmapPRFS.hlsl" vs_source="HLSL/PBRVS.d.hlsl" fs_source="HLSL/PBRLitFS.d.hlsl" define="NO_NORMAL_MAP;LM;PLANAR_REFLECTION;REFLECTION_MIPMAP"/>
+	<shader type="GLSL" vs="GLSL/PBRSkinNoNormalShadowVS.glsl" vs_source="GLSL/PBRSkinVS.d.glsl" fs="GLSL/PBRSkinNoNormalShadowFS.glsl" fs_source="GLSL/PBRLitFS.d.glsl" define="NO_NORMAL_MAP;SHADOW;OPTIMIZE_SHADOW"/>
+	<shader type="HLSL" vs="HLSL/PBRSkinNoNormalShadowVS.hlsl" vs_source="HLSL/PBRSkinVS.d.hlsl" fs="HLSL/PBRSkinNoNormalShadowFS.hlsl" fs_source="HLSL/PBRLitFS.d.hlsl" define="NO_NORMAL_MAP;SHADOW;OPTIMIZE_SHADOW"/>
 </shaderConfig>

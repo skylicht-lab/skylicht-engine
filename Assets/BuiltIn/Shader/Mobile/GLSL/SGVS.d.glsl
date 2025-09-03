@@ -37,12 +37,12 @@ uniform vec4 uLightDirection;
 uniform vec4 uUVScale;
 #endif
 
-#if defined(PLANAR_REFLECTION)
-uniform mat4 uRTTMatrix;
-#endif
-
 #ifdef SHADOW
 uniform mat4 uShadowMatrix;
+#endif
+
+#if defined(PLANAR_REFLECTION)
+uniform mat4 uRTTMatrix;
 #endif
 
 out vec2 vTexCoord0;

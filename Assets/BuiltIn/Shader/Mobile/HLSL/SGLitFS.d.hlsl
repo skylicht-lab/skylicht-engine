@@ -140,6 +140,11 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 color = directionalLight * diffuseColor * 0.3 * uLightMul.y;
 
 #if defined(PLANAR_REFLECTION)
+
+#if defined(SHADOW)
+	color *= visibility;
+#endif
+
 	float3 f0 = float3(0.1, 0.1, 0.1);	
 	float3 rc = lerp(f0, diffuseColor, spec) * (0.8 + gloss * 1.8);
 	
@@ -162,10 +167,11 @@ float4 main(PS_INPUT input) : SV_TARGET
 	ambientLighting *= ao;
 #endif		
 	color += specular * specularColor * uLightMul.x;
-#endif
-
+	
 #if defined(SHADOW)
 	color *= visibility;
+#endif	
+	
 #endif
 
 	// IBL lighting
