@@ -59,8 +59,6 @@ namespace Skylicht
 
 		// debug material
 		CShaderManager* shaderMgr = CShaderManager::getInstance();
-		// shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/SGColor.xml");
-		// m_texColorShader = shaderMgr->getShaderIDByName("SGColor");
 
 		m_texColorShader = shaderMgr->getShaderIDByName("TextureColor");
 		m_skinShader = shaderMgr->getShaderIDByName("Skin");
@@ -455,7 +453,10 @@ namespace Skylicht
 		// use direction light
 		bool castShadow = true;
 
-		CDirectionalLight* light = CShaderLighting::getDirectionalLight();
+		CDirectionalLight* light = CShaderLighting::getMainShadowLight();
+		if (light == NULL)
+			light = CShaderLighting::getDirectionalLight();
+
 		if (light)
 		{
 			m_lightDirection = light->getDirection();

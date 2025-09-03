@@ -31,11 +31,22 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	CDirectionalLight* g_directionalLight = NULL;
+	CDirectionalLight* g_mainShadowLight = NULL;
+
 	CPointLight* g_pointLight[4] = { NULL, NULL, NULL, NULL };
 	CSpotLight* g_spotLight[4] = { NULL, NULL, NULL, NULL };
 
 	SColorf s_lightAmbient = SColorf(0.4f, 0.4f, 0.4f, 1.0f);
 
+	void CShaderLighting::setMainShadowLight(CDirectionalLight* light)
+	{
+		g_mainShadowLight = light;
+	}
+
+	CDirectionalLight* CShaderLighting::getMainShadowLight()
+	{
+		return g_mainShadowLight;
+	}
 
 	void CShaderLighting::setDirectionalLight(CDirectionalLight* light)
 	{

@@ -68,7 +68,6 @@ namespace Skylicht
 
 	protected:
 		EShadowMapType m_shadowMapType;
-
 		ERenderShadowState m_renderShadowState;
 
 		ITexture* m_depthTexture;

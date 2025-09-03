@@ -9,6 +9,7 @@ struct VS_INPUT
 struct VS_OUTPUT
 {
 	float4 pos : SV_POSITION;
+	float4 color : COLOR0;
 };
 
 cbuffer cbPerObject
@@ -19,8 +20,7 @@ cbuffer cbPerObject
 VS_OUTPUT main(VS_INPUT input)
 {
 	VS_OUTPUT output;
-	float4 pos;
-	pos = mul(input.pos, uMvpMatrix);
-	output.pos = pos;
+	output.pos = mul(input.pos, uMvpMatrix);
+	output.color = input.color;
 	return output;
 }

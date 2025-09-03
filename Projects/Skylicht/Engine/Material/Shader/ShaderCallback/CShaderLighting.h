@@ -48,6 +48,11 @@ namespace Skylicht
 		static CDirectionalLight* getDirectionalLight();
 
 
+		static void setMainShadowLight(CDirectionalLight* light);
+
+		static CDirectionalLight* getMainShadowLight();
+
+
 		static void setPointLight(CPointLight* light, int lightId);
 
 		static CPointLight* getPointLight(int lightId);

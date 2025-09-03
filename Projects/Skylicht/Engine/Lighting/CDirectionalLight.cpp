@@ -48,6 +48,9 @@ namespace Skylicht
 		if (CShaderLighting::getDirectionalLight() == this)
 			CShaderLighting::setDirectionalLight(NULL);
 
+		if (CShaderLighting::getMainShadowLight() == this)
+			CShaderLighting::setMainShadowLight(NULL);
+
 		if (m_gameObject && m_cullingData)
 			m_gameObject->getEntity()->removeData<CLightCullingData>();
 	}
