@@ -42,11 +42,8 @@ namespace Skylicht
 		DECLARE_SINGLETON(CShadowRTTManager)
 
 	protected:
-		std::vector<SDepthShadowRTT*> m_pointLightDepthStatic;
-		std::vector<SDepthShadowRTT*> m_pointLightDepthDynamic;
-
-		std::vector<SDepthShadowRTT*> m_spotLightDepthStatic;
-		std::vector<SDepthShadowRTT*> m_spotLightDepthDynamic;
+		std::vector<SDepthShadowRTT*> m_depthStatic;
+		std::vector<SDepthShadowRTT*> m_depthDynamic;
 
 	public:
 		CShadowRTTManager();
@@ -55,9 +52,11 @@ namespace Skylicht
 
 		void clearTextures();
 
-		void clearLightData();
+		void clearDynamicTextures();
 
 		ITexture* createGetPointLightDepth(CLight* light);
+
+		void onLightRemoved(CLight* light);
 
 	protected:
 

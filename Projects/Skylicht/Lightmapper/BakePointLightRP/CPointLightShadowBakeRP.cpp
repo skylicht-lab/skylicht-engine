@@ -83,7 +83,7 @@ namespace Skylicht
 
 		// rtt
 		CShadowRTTManager* shadowRTT = CShadowRTTManager::getInstance();
-		shadowRTT->clearLightData();
+		shadowRTT->clearDynamicTextures();
 
 		// set state point light
 		m_renderShadowState = ERenderShadowState::PointLight;

@@ -92,7 +92,6 @@ namespace Skylicht
 		setSize(sizeX, sizeY);
 
 		m_needRenderShadowDepth = true;
-		m_cullingData->NeedValidate = true;
 	}
 
 	void CAreaLight::endUpdate()

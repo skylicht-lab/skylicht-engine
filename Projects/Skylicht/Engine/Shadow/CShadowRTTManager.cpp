@@ -41,51 +41,77 @@ namespace Skylicht
 
 	void CShadowRTTManager::clearTextures()
 	{
-		for (SDepthShadowRTT* d : m_pointLightDepthStatic)
+		for (SDepthShadowRTT* d : m_depthStatic)
+		{
+			d->Light->setShadowTexture(NULL);
+			getVideoDriver()->removeTexture(d->Texture);
+			delete d;
+		}
+		m_depthStatic.clear();
+
+		for (SDepthShadowRTT* d : m_depthDynamic)
 		{
 			getVideoDriver()->removeTexture(d->Texture);
 			delete d;
 		}
-		m_pointLightDepthStatic.clear();
-
-		for (SDepthShadowRTT* d : m_pointLightDepthDynamic)
-		{
-			getVideoDriver()->removeTexture(d->Texture);
-			delete d;
-		}
-		m_pointLightDepthDynamic.clear();
-
-
-		for (SDepthShadowRTT* d : m_spotLightDepthStatic)
-		{
-			getVideoDriver()->removeTexture(d->Texture);
-			delete d;
-		}
-		m_spotLightDepthStatic.clear();
-
-		for (SDepthShadowRTT* d : m_spotLightDepthDynamic)
-		{
-			getVideoDriver()->removeTexture(d->Texture);
-			delete d;
-		}
-		m_spotLightDepthDynamic.clear();
+		m_depthDynamic.clear();
 	}
 
-	void CShadowRTTManager::clearLightData()
+	void CShadowRTTManager::clearDynamicTextures()
 	{
-		for (SDepthShadowRTT* d : m_pointLightDepthDynamic)
+		for (SDepthShadowRTT* d : m_depthDynamic)
 		{
+			if (d->Light)
+				d->Light->setShadowTexture(NULL);
 			d->Light = NULL;
+		}
+	}
+
+	void CShadowRTTManager::onLightRemoved(CLight* light)
+	{
+		auto it = m_depthStatic.begin(), end = m_depthStatic.end();
+		while (it != end)
+		{
+			SDepthShadowRTT* d = (*it);
+			if (d->Light == light)
+			{
+				getVideoDriver()->removeTexture(d->Texture);
+				delete d;
+
+				m_depthStatic.erase(it);
+				break;
+			}
+			++it;
+		}
+
+		it = m_depthDynamic.begin(), end = m_depthDynamic.end();
+		while (it != end)
+		{
+			SDepthShadowRTT* d = (*it);
+			if (d->Light == light)
+			{
+				getVideoDriver()->removeTexture(d->Texture);
+				delete d;
+
+				m_depthDynamic.erase(it);
+				break;
+			}
+			++it;
 		}
 	}
 
 	ITexture* CShadowRTTManager::createGetPointLightDepthStatic(CLight* light)
 	{
+		ITexture* result = light->getShadowTexture();
+		if (result)
+			return result;
+
 		// Find the light texture in list
-		for (SDepthShadowRTT* d : m_pointLightDepthStatic)
+		for (SDepthShadowRTT* d : m_depthStatic)
 		{
 			if (d->Light == light)
 			{
+				light->setShadowTexture(d->Texture);
 				return d->Texture;
 			}
 		}
@@ -96,30 +122,40 @@ namespace Skylicht
 		SDepthShadowRTT* d = new SDepthShadowRTT();
 		d->Light = light;
 		d->Texture = getVideoDriver()->addRenderTargetCubeTexture(core::dimension2du(size, size), "CubeDepthMap", video::ECF_R32F);
-		m_pointLightDepthStatic.push_back(d);
+		m_depthStatic.push_back(d);
+
+		light->setShadowTexture(d->Texture);
 
 		return d->Texture;
 	}
 
 	ITexture* CShadowRTTManager::createGetPointLightDepthDynamic(CLight* light)
 	{
+		ITexture* result = light->getShadowTexture();
+		if (result)
+			return result;
+
 		SDepthShadowRTT* slot = NULL;
 
 		// Find the light texture in list
-		for (SDepthShadowRTT* d : m_pointLightDepthDynamic)
+		for (SDepthShadowRTT* d : m_depthDynamic)
 		{
 			if (d->Light == light)
 			{
+				light->setShadowTexture(d->Texture);
 				return d->Texture;
 			}
 			else if (slot == NULL && d->Light == NULL)
 			{
 				slot = d;
+				break;
 			}
 		}
 
 		if (slot)
 		{
+			light->setShadowTexture(slot->Texture);
+
 			slot->Light = light;
 			return slot->Texture;
 		}
@@ -130,8 +166,9 @@ namespace Skylicht
 		SDepthShadowRTT* d = new SDepthShadowRTT();
 		d->Light = light;
 		d->Texture = getVideoDriver()->addRenderTargetCubeTexture(core::dimension2du(size, size), "CubeDepthMap", video::ECF_R32F);
-		m_pointLightDepthDynamic.push_back(d);
+		m_depthDynamic.push_back(d);
 
+		light->setShadowTexture(d->Texture);
 		return d->Texture;
 	}
 

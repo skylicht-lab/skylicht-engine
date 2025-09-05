@@ -86,6 +86,9 @@ namespace Skylicht
 		bool m_needValidate;
 
 		CLightCullingData* m_cullingData;
+
+		ITexture* m_shadowTex;
+
 	public:
 		CLight();
 
@@ -192,6 +195,7 @@ namespace Skylicht
 		inline void setShadow(bool shadow)
 		{
 			m_castShadow = shadow;
+			m_shadowTex = NULL;
 		}
 
 		inline bool isDynamicShadow()
@@ -202,6 +206,7 @@ namespace Skylicht
 		inline void setDynamicShadow(bool shadow)
 		{
 			m_dynamicShadow = shadow;
+			m_shadowTex = NULL;
 		}
 
 		inline void setIntensity(float f)
@@ -242,6 +247,16 @@ namespace Skylicht
 		inline void validate()
 		{
 			m_needValidate = true;
+		}
+
+		inline ITexture* getShadowTexture()
+		{
+			return m_shadowTex;
+		}
+
+		inline void setShadowTexture(ITexture* tex)
+		{
+			m_shadowTex = tex;
 		}
 	};
 }

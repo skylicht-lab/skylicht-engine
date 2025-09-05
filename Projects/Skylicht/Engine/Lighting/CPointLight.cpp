@@ -94,7 +94,6 @@ namespace Skylicht
 		setRadius(radius);
 
 		m_needRenderShadowDepth = true;
-		m_cullingData->NeedValidate = true;
 	}
 
 	core::vector3df CPointLight::getPosition()

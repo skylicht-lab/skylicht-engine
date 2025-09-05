@@ -26,6 +26,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CLight.h"
 #include "GameObject/CGameObject.h"
 
+#include "Shadow/CShadowRTTManager.h"
+
 namespace Skylicht
 {
 	CLight::CLight() :
@@ -41,14 +43,16 @@ namespace Skylicht
 		m_lightPriority(0),
 		m_renderType(CLight::Mixed),
 		m_needValidate(true),
-		m_cullingData(NULL)
+		m_cullingData(NULL),
+		m_shadowTex(NULL)
 	{
 		setRadius(3.0f);
 	}
 
 	CLight::~CLight()
 	{
-
+		if (CShadowRTTManager::getInstance())
+			CShadowRTTManager::getInstance()->onLightRemoved(this);
 	}
 
 	CObjectSerializable* CLight::createSerializable()
@@ -82,6 +86,9 @@ namespace Skylicht
 		m_intensity = object->get<float>("intensity", 1.0f);
 		m_lightPriority = object->get<u32>("lightPriority", 0);
 		m_renderType = object->get<ERenderLightType>("renderType", ERenderLightType::Mixed);
+
+		m_shadowTex = NULL;
+		m_cullingData->NeedValidate = true;
 	}
 
 	core::aabbox3df CLight::getBBBox()
