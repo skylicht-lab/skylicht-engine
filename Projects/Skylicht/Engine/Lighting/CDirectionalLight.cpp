@@ -60,7 +60,7 @@ namespace Skylicht
 		CEntity* entity = m_gameObject->getEntity();
 		m_cullingData = entity->addData<CLightCullingData>();
 		m_cullingData->Light = this;
-		m_cullingData->LightType = 0;
+		m_cullingData->LightType = CLight::DirectionalLight;
 
 		m_gameObject->setEnableEndUpdate(true);
 	}

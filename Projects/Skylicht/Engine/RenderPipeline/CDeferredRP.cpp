@@ -658,7 +658,8 @@ namespace Skylicht
 						if (rw <= 1.0f || rh <= 1.0f)
 							continue;
 
-						if (light->getLightTypeId() == 3)
+						int lightType = light->getLightTypeId();
+						if (lightType == CLight::AreaLight)
 						{
 							CAreaLight* areaLight = dynamic_cast<CAreaLight*>(light);
 							CShaderLighting::setAreaLight(areaLight, 0);
@@ -669,7 +670,7 @@ namespace Skylicht
 							beginRender2D(renderW, renderH);
 							renderBufferToTarget(rx, ry, rw, rh, rx, ry, rw, rh, m_lightPass);
 						}
-						else if (light->getLightTypeId() == 2)
+						else if (lightType == CLight::SpotLight)
 						{
 							CSpotLight* spotLight = dynamic_cast<CSpotLight*>(light);
 							CShaderLighting::setSpotLight(spotLight, 0);
@@ -690,7 +691,7 @@ namespace Skylicht
 							beginRender2D(renderW, renderH);
 							renderBufferToTarget(rx, ry, rw, rh, rx, ry, rw, rh, m_lightPass);
 						}
-						else if (light->getLightTypeId() == 1)
+						else if (lightType == CLight::PointLight)
 						{
 							CPointLight* pointLight = dynamic_cast<CPointLight*>(light);
 							CShaderLighting::setPointLight(pointLight, 0);

@@ -58,7 +58,7 @@ namespace Skylicht
 		CEntity* entity = m_gameObject->getEntity();
 		m_cullingData = entity->addData<CLightCullingData>();
 		m_cullingData->Light = this;
-		m_cullingData->LightType = 3;
+		m_cullingData->LightType = CLight::AreaLight;
 
 		m_gameObject->setEnableEndUpdate(true);
 	}
@@ -102,7 +102,7 @@ namespace Skylicht
 		CTransform* t = m_gameObject->getTransform();
 		if (t->hasChanged() || m_needValidate)
 		{
-			m_direction.set(0.0f, 0.0f, -1.0f);
+			m_direction.set(0.0f, 0.0f, 1.0f);
 			core::matrix4 transform = t->calcWorldTransform();
 			transform.rotateVect(m_direction);
 			m_direction.normalize();

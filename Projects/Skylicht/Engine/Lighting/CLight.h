@@ -41,6 +41,14 @@ namespace Skylicht
 			Mixed
 		};
 
+		enum ELightType
+		{
+			DirectionalLight = 0,
+			PointLight,
+			SpotLight,
+			AreaLight
+		};
+
 	protected:
 		//! Diffuse color emitted by the light.
 		SColorf m_color;

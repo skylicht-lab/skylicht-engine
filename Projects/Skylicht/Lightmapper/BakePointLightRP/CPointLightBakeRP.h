@@ -40,15 +40,10 @@ namespace Skylicht
 		int m_numTarget;
 		int m_currentTarget;
 
-		int m_bakePointLight;
-		int m_bakeSpotLight;
-		int m_bakePointLightNormal;
-		int m_bakeSpotLightNormal;
-
-		int m_bakePointLightUV0;
-		int m_bakeSpotLightUV0;
-		int m_bakePointLightUV0Normal;
-		int m_bakeSpotLightUV0Normal;
+		int m_light[4];
+		int m_lightUV0[4];
+		int m_lightN[4];
+		int m_lightNUV0[4];
 
 	public:
 		CPointLightBakeRP();

@@ -51,7 +51,7 @@ namespace Skylicht
 		CEntity* entity = m_gameObject->getEntity();
 		m_cullingData = entity->addData<CLightCullingData>();
 		m_cullingData->Light = this;
-		m_cullingData->LightType = 1;
+		m_cullingData->LightType = CLight::PointLight;
 
 		entity->addData<CWorldInverseTransformData>();
 
