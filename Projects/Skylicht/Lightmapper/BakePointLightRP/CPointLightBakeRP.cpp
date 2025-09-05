@@ -42,13 +42,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CPointLightBakeRP::CPointLightBakeRP() :
-		m_renderMesh(NULL),
-		m_normalMap(NULL),
-		m_submesh(NULL),
-		m_renderTarget(NULL),
-		m_numTarget(0),
-		m_currentTarget(0)
+	CPointLightBakeRP::CPointLightBakeRP()
 	{
 		m_type = Deferred;
 

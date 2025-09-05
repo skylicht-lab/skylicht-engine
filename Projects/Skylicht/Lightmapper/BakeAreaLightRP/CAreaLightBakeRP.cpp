@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2023 Skylicht Technology CO., LTD
+Copyright (c) 2025 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -23,56 +23,58 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CDirectionalLightBakeRP.h"
-#include "CShadowMapBakeRP.h"
+#include "CAreaLightBakeRP.h"
+#include "BakeDirectionalRP/CShadowMapBakeRP.h"
 
-#include "Lighting/CDirectionalLight.h"
-#include "Lighting/CPointLight.h"
+#include "Lighting/CAreaLight.h"
 
 #include "EventManager/CEventManager.h"
 
 #include "RenderMesh/CMesh.h"
 #include "Material/Shader/CShaderManager.h"
 #include "Material/Shader/ShaderCallback/CShaderShadow.h"
+#include "Material/Shader/ShaderCallback/CShaderLighting.h"
 #include "Material/CMaterial.h"
+
+#include "Shadow/CShadowRTTManager.h"
 
 namespace Skylicht
 {
-	CDirectionalLightBakeRP::CDirectionalLightBakeRP() :
-		m_bakeDirection(0),
-		m_bakeDirectionUV0(0),
-		m_bakeDirectionNormal(0),
-		m_bakeDirectionUV0Normal(0)
+	CAreaLightBakeRP::CAreaLightBakeRP() :
+		m_light(0),
+		m_lightUV0(0),
+		m_lightN(0),
+		m_lightNUV0(0)
 	{
 		m_type = Deferred;
 	}
 
-	CDirectionalLightBakeRP::~CDirectionalLightBakeRP()
+	CAreaLightBakeRP::~CAreaLightBakeRP()
 	{
 
 	}
 
-	void CDirectionalLightBakeRP::initRender(int w, int h)
+	void CAreaLightBakeRP::initRender(int w, int h)
 	{
 		CShaderManager* shaderMgr = CShaderManager::getInstance();
-		shaderMgr->loadShader("BuiltIn/Shader/BakeDirectional/BakeDirectionalLight.xml");
-		shaderMgr->loadShader("BuiltIn/Shader/BakeDirectional/BakeDirectionalLightNormal.xml");
-		shaderMgr->loadShader("BuiltIn/Shader/BakeDirectional/BakeDirectionalLightUV0.xml");
-		shaderMgr->loadShader("BuiltIn/Shader/BakeDirectional/BakeDirectionalLightUV0Normal.xml");
+		shaderMgr->loadShader("BuiltIn/Shader/BakeDirectional/BakeAreaLight.xml");
+		shaderMgr->loadShader("BuiltIn/Shader/BakeDirectional/BakeAreaLightUV0.xml");
 
-		m_bakeDirection = shaderMgr->getShaderIDByName("BakeDirectionalLight");
-		m_bakeDirectionUV0 = shaderMgr->getShaderIDByName("BakeDirectionalLightUV0");
+		shaderMgr->loadShader("BuiltIn/Shader/BakeDirectional/BakeAreaLightNormal.xml");
+		shaderMgr->loadShader("BuiltIn/Shader/BakeDirectional/BakeAreaLightUV0Normal.xml");
 
-		m_bakeDirectionNormal = shaderMgr->getShaderIDByName("BakeDirectionalLightNormal");
-		m_bakeDirectionUV0Normal = shaderMgr->getShaderIDByName("BakeDirectionalLightUV0Normal");
+		m_light = shaderMgr->getShaderIDByName("BakeAreaLight");
+		m_lightUV0 = shaderMgr->getShaderIDByName("BakeAreaLightUV0");
+		m_lightN = shaderMgr->getShaderIDByName("BakeAreaLightNormal");
+		m_lightNUV0 = shaderMgr->getShaderIDByName("BakeAreaLightUV0Normal");
 	}
 
-	void CDirectionalLightBakeRP::resize(int w, int h)
+	void CAreaLightBakeRP::resize(int w, int h)
 	{
 
 	}
 
-	void CDirectionalLightBakeRP::render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport, int cubeFaceId, IRenderPipeline* lastRP)
+	void CAreaLightBakeRP::render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport, int cubeFaceId, IRenderPipeline* lastRP)
 	{
 		if (camera == NULL)
 			return;
@@ -102,7 +104,7 @@ namespace Skylicht
 			if (m_renderTarget[i] == NULL || m_submesh[i] == NULL)
 				continue;
 
-			driver->setRenderTarget(m_renderTarget[i], false, false);
+			driver->setRenderTarget(m_renderTarget[i], false, true);
 
 			m_currentTarget = i;
 
@@ -121,19 +123,19 @@ namespace Skylicht
 		onNext(target, camera, entityManager, viewport, cubeFaceId);
 	}
 
-	void CDirectionalLightBakeRP::drawMeshBuffer(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID, bool skinnedMesh)
+	void CAreaLightBakeRP::drawMeshBuffer(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID, bool skinnedMesh)
 	{
 		// just render the render mesh
 		IMeshBuffer* mb = mesh->getMeshBuffer(bufferID);
 		if (mb != m_renderMesh)
 			return;
 
-		IVideoDriver* driver = getVideoDriver();
-
 		// shadow
 		CShadowMapBakeRP* shadowRP = dynamic_cast<CShadowMapBakeRP*>(CShaderShadow::getShadowMapRP());
 		if (shadowRP == NULL)
 			return;
+
+		IVideoDriver* driver = getVideoDriver();
 
 		// check uv2
 		video::E_VERTEX_TYPE vtxType = m_submesh[m_currentTarget]->getVertexType();
@@ -147,14 +149,34 @@ namespace Skylicht
 		if (shadowRP->isBakeDetailNormal() && haveTangent && m_normalMap)
 			haveDetailNormal = true;
 
+		CLight* currentLight = shadowRP->getCurrentLight();
+		int lightTypeId = currentLight->getLightTypeId();
+
+		if (lightTypeId != CLight::AreaLight)
+			return;
+
+		CAreaLight* al = dynamic_cast<CAreaLight*>(currentLight);
+		CShaderLighting::setAreaLight(al, 0);
+
+		// render mesh with light bake shader
 		video::SMaterial irrMaterial;
-		ITexture* depthTexture = shadowRP->getDepthTexture();
-		depthTexture->regenerateMipMapLevels();
+
+		irrMaterial.ZBuffer = video::ECFN_DISABLED;
+		irrMaterial.ZWriteEnable = false;
+		irrMaterial.BackfaceCulling = false;
+		irrMaterial.FrontfaceCulling = false;
+
+		/*
+		CShadowRTTManager* shadowRTT = CShadowRTTManager::getInstance();
+		ITexture* depthTexture = shadowRTT->createGetPointLightDepth(currentLight);
 
 		irrMaterial.TextureLayer[0].Texture = depthTexture;
 		irrMaterial.TextureLayer[0].BilinearFilter = false;
 		irrMaterial.TextureLayer[0].TrilinearFilter = false;
 		irrMaterial.TextureLayer[0].AnisotropicFilter = 0;
+		*/
+
+		bool inUV0 = shadowRP->isBakeInUV0();
 
 		if (haveDetailNormal)
 		{
@@ -163,17 +185,13 @@ namespace Skylicht
 			irrMaterial.TextureLayer[1].TrilinearFilter = false;
 			irrMaterial.TextureLayer[1].AnisotropicFilter = 8;
 
-			irrMaterial.MaterialType = shadowRP->isBakeInUV0() ? m_bakeDirectionUV0Normal : m_bakeDirectionNormal;
+			// have normal map shader
+			irrMaterial.MaterialType = inUV0 ? m_lightNUV0 : m_lightN;
 		}
 		else
 		{
-			irrMaterial.MaterialType = shadowRP->isBakeInUV0() ? m_bakeDirectionUV0 : m_bakeDirection;
+			irrMaterial.MaterialType = inUV0 ? m_lightUV0 : m_light;
 		}
-
-		irrMaterial.ZBuffer = video::ECFN_DISABLED;
-		irrMaterial.ZWriteEnable = false;
-		irrMaterial.BackfaceCulling = false;
-		irrMaterial.FrontfaceCulling = false;
 
 		if (irrMaterial.MaterialType <= 0)
 			return;
@@ -183,14 +201,16 @@ namespace Skylicht
 
 		// draw mesh buffer
 		driver->drawMeshBuffer(m_submesh[m_currentTarget]);
+
+		CShaderLighting::setAreaLight(NULL, 0);
 	}
 
-	void CDirectionalLightBakeRP::drawInstancingMeshBuffer(CMesh* mesh, int bufferID, int materialRenderID, CEntityManager* entityMgr, int entityID, bool skinnedMesh)
+	void CAreaLightBakeRP::drawInstancingMeshBuffer(CMesh* mesh, int bufferID, int materialRenderID, CEntityManager* entityMgr, int entityID, bool skinnedMesh)
 	{
 		// no render instancing mesh
 	}
 
-	bool CDirectionalLightBakeRP::canRenderMaterial(CMaterial* material)
+	bool CAreaLightBakeRP::canRenderMaterial(CMaterial* material)
 	{
 		if (material &&
 			material->getShader() &&
@@ -200,7 +220,7 @@ namespace Skylicht
 		return false;
 	}
 
-	bool CDirectionalLightBakeRP::canRenderShader(CShader* shader)
+	bool CAreaLightBakeRP::canRenderShader(CShader* shader)
 	{
 		if (shader && shader->isOpaque() == true)
 			return true;

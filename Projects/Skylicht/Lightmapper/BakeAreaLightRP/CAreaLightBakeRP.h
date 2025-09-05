@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2023 Skylicht Technology CO., LTD
+Copyright (c) 2025 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,26 +24,36 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "BakeRP/CShadowMapBaseRP.h"
-#include "Lighting/CPointLight.h"
-#include "Lighting/CSpotLight.h"
+#include "BakeRP/CLightBakeRP.h"
+#include "Shadow/CBoundShadowMaps.h"
 
 namespace Skylicht
 {
-	class CPointLightShadowBakeRP : public CShadowMapBaseRP
+	class CAreaLightBakeRP : public CLightBakeRP
 	{
 	protected:
-		core::aabbox3df m_cullingBox;
+		int m_light;
+		int m_lightUV0;
+		int m_lightN;
+		int m_lightNUV0;
 
 	public:
-		CPointLightShadowBakeRP();
+		CAreaLightBakeRP();
 
-		virtual ~CPointLightShadowBakeRP();
+		virtual ~CAreaLightBakeRP();
 
 		virtual void initRender(int w, int h);
 
+		virtual void resize(int w, int h);
+
 		virtual void render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport, int cubeFaceId = -1, IRenderPipeline* lastRP = NULL);
 
-		virtual const core::aabbox3df& getFrustumBox();
+		virtual void drawMeshBuffer(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID, bool skinnedMesh);
+
+		virtual void drawInstancingMeshBuffer(CMesh* mesh, int bufferID, int materialRenderID, CEntityManager* entityMgr, int entityID, bool skinnedMesh);
+
+		virtual bool canRenderMaterial(CMaterial* material);
+
+		virtual bool canRenderShader(CShader* shader);
 	};
 }

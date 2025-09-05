@@ -24,22 +24,14 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "RenderPipeline/CBaseRP.h"
+#include "BakeRP/CLightBakeRP.h"
 #include "Shadow/CBoundShadowMaps.h"
 
 namespace Skylicht
 {
-	class CDirectionalLightBakeRP : public CBaseRP
+	class CDirectionalLightBakeRP : public CLightBakeRP
 	{
 	protected:
-		IMeshBuffer* m_renderMesh;
-		ITexture* m_normalMap;
-
-		IMeshBuffer** m_submesh;
-		ITexture** m_renderTarget;
-		int m_numTarget;
-		int m_currentTarget;
-
 		int m_bakeDirection;
 		int m_bakeDirectionNormal;
 		int m_bakeDirectionUV0;
@@ -49,15 +41,6 @@ namespace Skylicht
 		CDirectionalLightBakeRP();
 
 		virtual ~CDirectionalLightBakeRP();
-
-		inline void setRenderMesh(IMeshBuffer* mb, ITexture* normal, IMeshBuffer** submesh, ITexture** targets, int numTarget)
-		{
-			m_renderMesh = mb;
-			m_normalMap = normal;
-			m_submesh = submesh;
-			m_renderTarget = targets;
-			m_numTarget = numTarget;
-		}
 
 		virtual void initRender(int w, int h);
 

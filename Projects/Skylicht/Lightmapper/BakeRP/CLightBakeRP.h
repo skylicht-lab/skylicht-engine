@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2023 Skylicht Technology CO., LTD
+Copyright (c) 2025 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,26 +24,34 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "BakeRP/CShadowMapBaseRP.h"
-#include "Lighting/CPointLight.h"
-#include "Lighting/CSpotLight.h"
+#include "RenderPipeline/CBaseRP.h"
+#include "Lighting/CLight.h"
 
 namespace Skylicht
 {
-	class CPointLightShadowBakeRP : public CShadowMapBaseRP
+	class CLightBakeRP : public CBaseRP
 	{
 	protected:
-		core::aabbox3df m_cullingBox;
+		IMeshBuffer* m_renderMesh;
+		ITexture* m_normalMap;
+
+		IMeshBuffer** m_submesh;
+		ITexture** m_renderTarget;
+		int m_numTarget;
+		int m_currentTarget;
 
 	public:
-		CPointLightShadowBakeRP();
+		CLightBakeRP();
 
-		virtual ~CPointLightShadowBakeRP();
+		virtual ~CLightBakeRP();
 
-		virtual void initRender(int w, int h);
-
-		virtual void render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport, int cubeFaceId = -1, IRenderPipeline* lastRP = NULL);
-
-		virtual const core::aabbox3df& getFrustumBox();
+		inline void setRenderMesh(IMeshBuffer* mb, ITexture* normalMap, IMeshBuffer** submesh, ITexture** targets, int numTarget)
+		{
+			m_renderMesh = mb;
+			m_normalMap = normalMap;
+			m_submesh = submesh;
+			m_renderTarget = targets;
+			m_numTarget = numTarget;
+		}
 	};
 }

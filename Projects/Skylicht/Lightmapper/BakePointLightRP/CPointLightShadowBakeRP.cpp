@@ -37,10 +37,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CPointLightShadowBakeRP::CPointLightShadowBakeRP() :
-		m_currentLight(NULL),
-		m_bakeInUV0(false),
-		m_bakeDetailNormal(false)
+	CPointLightShadowBakeRP::CPointLightShadowBakeRP()
 	{
 		// CEventManager::getInstance()->registerProcessorEvent("ShadowBakeRP", this);
 	}

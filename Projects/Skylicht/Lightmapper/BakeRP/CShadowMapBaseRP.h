@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2023 Skylicht Technology CO., LTD
+Copyright (c) 2025 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,26 +24,51 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "BakeRP/CShadowMapBaseRP.h"
-#include "Lighting/CPointLight.h"
-#include "Lighting/CSpotLight.h"
+#include "RenderPipeline/CShadowMapRP.h"
+#include "Lighting/CLight.h"
 
 namespace Skylicht
 {
-	class CPointLightShadowBakeRP : public CShadowMapBaseRP
+	class CShadowMapBaseRP : public CShadowMapRP
 	{
 	protected:
-		core::aabbox3df m_cullingBox;
+		CLight* m_currentLight;
 
+		bool m_bakeInUV0;
+		bool m_bakeDetailNormal;
 	public:
-		CPointLightShadowBakeRP();
+		CShadowMapBaseRP();
 
-		virtual ~CPointLightShadowBakeRP();
+		virtual ~CShadowMapBaseRP();
 
-		virtual void initRender(int w, int h);
+		inline void setCurrentLight(CLight* light)
+		{
+			m_currentLight = light;
+		}
 
-		virtual void render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport, int cubeFaceId = -1, IRenderPipeline* lastRP = NULL);
+		inline CLight* getCurrentLight()
+		{
+			return m_currentLight;
+		}
 
-		virtual const core::aabbox3df& getFrustumBox();
+		inline void setBakeInUV0(bool b)
+		{
+			m_bakeInUV0 = b;
+		}
+
+		inline bool isBakeInUV0()
+		{
+			return m_bakeInUV0;
+		}
+
+		inline void setBakeDetailNormal(bool b)
+		{
+			m_bakeDetailNormal = b;
+		}
+
+		inline bool isBakeDetailNormal()
+		{
+			return m_bakeDetailNormal;
+		}
 	};
 }

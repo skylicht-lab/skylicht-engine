@@ -284,16 +284,20 @@ void CViewBakeLightmap::onRender()
 
 	bool bakeInUV0 = false;
 
-	// bake direction light
-	m_shadowRP->setBakeInUV0(bakeInUV0);
-	m_shadowRP->render(NULL, bakeCamera, entityMgr, core::recti());
-
-	// bake all point light
 	for (CLight* light : m_lights)
 	{
-		m_shadowPLRP->setCurrentLight(light);
-		m_shadowPLRP->setBakeInUV0(bakeInUV0);
-		m_shadowPLRP->render(NULL, bakeCamera, entityMgr, core::recti());
+		if (light->getLightTypeId() == CLight::DirectionalLight)
+		{
+			m_shadowRP->setCurrentLight(light);
+			m_shadowRP->setBakeInUV0(bakeInUV0);
+			m_shadowRP->render(NULL, bakeCamera, entityMgr, core::recti());
+		}
+		else
+		{
+			m_shadowPLRP->setCurrentLight(light);
+			m_shadowPLRP->setBakeInUV0(bakeInUV0);
+			m_shadowPLRP->render(NULL, bakeCamera, entityMgr, core::recti());
+		}
 	}
 
 	// next mesh
