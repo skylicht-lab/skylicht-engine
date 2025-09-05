@@ -74,10 +74,8 @@ namespace Skylicht
 		m_lightDirection = lightDir;
 		m_lightDirection.normalize();
 
-		CTransform* cameraTransform = camera->getGameObject()->getTransform();
-
 		// camera position
-		const core::matrix4& mat = cameraTransform->getRelativeTransform();
+		const core::matrix4& mat = camera->getGameObject()->getWorldTransform();
 		core::vector3df cameraPosition = mat.getTranslation();
 
 		// calc shadow volume

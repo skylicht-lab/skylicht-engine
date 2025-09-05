@@ -24,51 +24,64 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Material/Shader/CShader.h"
+#include "CLight.h"
 
 namespace Skylicht
 {
-	class CDirectionalLight;
-	class CPointLight;
-	class CSpotLight;
-	class CAreaLight;
-
-	class SKYLICHT_API CShaderLighting : public IShaderCallback
+	class SKYLICHT_API CAreaLight : public CLight
 	{
-	public:
-		CShaderLighting();
-
-		virtual ~CShaderLighting();
-
-		virtual void OnSetConstants(CShader* shader, SUniform* uniform, IMaterialRenderer* matRender, bool vertexShader);
+	protected:
+		float m_sizeX;
+		float m_sizeY;
+		bool m_needRenderShadowDepth;
 
 	public:
+		CAreaLight();
 
-		static void setDirectionalLight(CDirectionalLight* light);
+		virtual ~CAreaLight();
 
-		static CDirectionalLight* getDirectionalLight();
+		virtual void initComponent();
 
+		virtual void updateComponent();
 
-		static void setMainShadowLight(CDirectionalLight* light);
+		virtual void endUpdate();
 
-		static CDirectionalLight* getMainShadowLight();
+		virtual CObjectSerializable* createSerializable();
 
+		virtual void loadSerializable(CObjectSerializable* object);
 
-		static void setPointLight(CPointLight* light, int lightId);
+		virtual void setRenderLightType(ERenderLightType type)
+		{
+			CLight::setRenderLightType(type);
+			m_needRenderShadowDepth = true;
+		}
 
-		static CPointLight* getPointLight(int lightId);
+		DECLARE_GETTYPENAME(CAreaLight)
 
+		inline void setSize(float x, float y)
+		{
+			m_sizeX = x;
+			m_sizeY = y;
+		}
 
-		static void setSpotLight(CSpotLight* light, int lightId);
+		inline float getSizeX()
+		{
+			return m_sizeX;
+		}
 
-		static CSpotLight* getSpotLight(int lightId);
+		inline float getSizeY()
+		{
+			return m_sizeY;
+		}
 
+		bool needRenderShadowDepth();
 
-		static void setAreaLight(CAreaLight* light, int lightId);
+		void beginRenderShadowDepth();
 
-		static CAreaLight* getAreaLight(int lightId);
+		void endRenderShadowDepth();
 
+		core::vector3df getPosition();
 
-		static void setLightAmbient(const SColorf& c);
+		const core::matrix4& getWorldTransform();
 	};
 }

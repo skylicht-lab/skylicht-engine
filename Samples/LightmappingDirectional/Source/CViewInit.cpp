@@ -113,7 +113,7 @@ void CViewInit::onInit()
 		pointLight->setColor(SColor(255, 221, 123, 34));
 		pointLight->setBounce(1);
 		pointLight->setRadius(4.0f);
-		pointLight->setLightType(CLight::Baked);
+		pointLight->setRenderLightType(CLight::Baked);
 
 		CTransformEuler* pointLightTransform = pointLightObj->getTransformEuler();
 		pointLightTransform->setPosition(pointLightPosition[i]);
@@ -143,7 +143,7 @@ void CViewInit::onInit()
 		pointLight->setIntensity(2.0f);
 		pointLight->setBounce(1);
 		pointLight->setRadius(8.0f);
-		pointLight->setLightType(CLight::Baked);
+		pointLight->setRenderLightType(CLight::Baked);
 
 		CTransformEuler* pointLightTransform = pointLightObj->getTransformEuler();
 		pointLightTransform->setPosition(core::vector3df(-2.0f, 6.0f, 0.0f));
@@ -159,7 +159,7 @@ void CViewInit::onInit()
 		spotLight->setIntensity(3.0f);
 		spotLight->setBounce(1);
 		spotLight->setRadius(7.0f);
-		spotLight->setLightType(CLight::Baked);
+		spotLight->setRenderLightType(CLight::Baked);
 
 		core::vector3df pos(0.0f, 1.0f, -3.0f);
 		core::vector3df target(-2.0f, -1.0f, -1.0f);

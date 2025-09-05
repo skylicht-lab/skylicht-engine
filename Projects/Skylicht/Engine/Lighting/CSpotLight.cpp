@@ -106,5 +106,6 @@ namespace Skylicht
 		setRadius(radius);
 
 		m_needRenderShadowDepth = true;
+		m_cullingData->NeedValidate = true;
 	}
 }

@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2025 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -23,69 +23,63 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CPointLight.h"
+#include "CAreaLight.h"
+
 #include "GameObject/CGameObject.h"
-#include "Entity/CEntity.h"
-#include "Transform/CWorldInverseTransformData.h"
+#include "Material/Shader/ShaderCallback/CShaderLighting.h"
 
 namespace Skylicht
 {
-	ACTIVATOR_REGISTER(CPointLight);
+	ACTIVATOR_REGISTER(CAreaLight);
 
-	CATEGORY_COMPONENT(CPointLight, "Point Light", "Lighting");
+	CATEGORY_COMPONENT(CAreaLight, "Area Light", "Lighting");
 
-	CPointLight::CPointLight() :
+	CAreaLight::CAreaLight() :
+		m_sizeX(1.0f),
+		m_sizeY(1.0f),
 		m_needRenderShadowDepth(true)
 	{
-		setIntensity(2.0f);
+		// default 2 bounce
+		m_bakeBounce = 2;
+		m_castShadow = true;
+
+		setIntensity(3.5f);
+		setRadius(1.5f);
 	}
 
-	CPointLight::~CPointLight()
+	CAreaLight::~CAreaLight()
 	{
 		if (m_gameObject && m_cullingData)
 			m_gameObject->getEntity()->removeData<CLightCullingData>();
 	}
 
-	void CPointLight::initComponent()
+	void CAreaLight::initComponent()
 	{
 		CEntity* entity = m_gameObject->getEntity();
 		m_cullingData = entity->addData<CLightCullingData>();
 		m_cullingData->Light = this;
-		m_cullingData->LightType = 1;
-
-		entity->addData<CWorldInverseTransformData>();
+		m_cullingData->LightType = 3;
 
 		m_gameObject->setEnableEndUpdate(true);
 	}
 
-	void CPointLight::updateComponent()
+	void CAreaLight::updateComponent()
 	{
 
 	}
 
-	void CPointLight::endUpdate()
-	{
-		float r = m_radius;
-		m_cullingData->BBox.MaxEdge.set(r, r, r);
-		m_cullingData->BBox.MinEdge.set(-r, -r, -r);
-
-		if (m_gameObject->getTransform()->hasChanged() || m_needValidate)
-		{
-			m_needRenderShadowDepth = true;
-			m_needValidate = false;
-		}
-	}
-
-	CObjectSerializable* CPointLight::createSerializable()
+	CObjectSerializable* CAreaLight::createSerializable()
 	{
 		CObjectSerializable* object = CLight::createSerializable();
 
 		object->autoRelease(new CBoolProperty(object, "dynamic shadow", m_dynamicShadow));
 		object->autoRelease(new CFloatProperty(object, "radius", m_radius, 0.0f));
+		object->autoRelease(new CFloatProperty(object, "sizeX", m_sizeX, 0.0f));
+		object->autoRelease(new CFloatProperty(object, "sizeY", m_sizeY, 0.0f));
 		return object;
 	}
 
-	void CPointLight::loadSerializable(CObjectSerializable* object)
+	void CAreaLight::loadSerializable(CObjectSerializable* object)
 	{
 		CLight::loadSerializable(object);
 
@@ -93,27 +87,52 @@ namespace Skylicht
 		float radius = object->get<float>("radius", 3.0f);
 		setRadius(radius);
 
+		float sizeX = object->get<float>("sizeX", 1.0f);
+		float sizeY = object->get<float>("sizeY", 1.0f);
+		setSize(sizeX, sizeY);
+
 		m_needRenderShadowDepth = true;
 		m_cullingData->NeedValidate = true;
 	}
 
-	core::vector3df CPointLight::getPosition()
+	void CAreaLight::endUpdate()
 	{
-		return m_gameObject->getWorldTransform().getTranslation();
+		m_cullingData->BBox.MaxEdge.set(m_radius + m_sizeX * 0.5f, m_radius + m_sizeY * 0.5f, 0.1f);
+		m_cullingData->BBox.MinEdge.set(-(m_radius + m_sizeX * 0.5f), -(m_radius + m_sizeY * 0.5f), -0.1f);
+
+		CTransform* t = m_gameObject->getTransform();
+		if (t->hasChanged() || m_needValidate)
+		{
+			m_direction.set(0.0f, 0.0f, -1.0f);
+			core::matrix4 transform = t->calcWorldTransform();
+			transform.rotateVect(m_direction);
+			m_direction.normalize();
+			m_needValidate = false;
+		}
 	}
 
-	bool CPointLight::needRenderShadowDepth()
+	bool CAreaLight::needRenderShadowDepth()
 	{
 		return m_needRenderShadowDepth;
 	}
 
-	void CPointLight::beginRenderShadowDepth()
+	void CAreaLight::beginRenderShadowDepth()
 	{
 
 	}
 
-	void CPointLight::endRenderShadowDepth()
+	void CAreaLight::endRenderShadowDepth()
 	{
 		m_needRenderShadowDepth = false;
+	}
+
+	core::vector3df CAreaLight::getPosition()
+	{
+		return m_gameObject->getWorldTransform().getTranslation();
+	}
+
+	const core::matrix4& CAreaLight::getWorldTransform()
+	{
+		return m_gameObject->getWorldTransform();
 	}
 }

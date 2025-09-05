@@ -35,6 +35,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Lighting/CLightCullingSystem.h"
 #include "Lighting/CPointLight.h"
 #include "Lighting/CSpotLight.h"
+#include "Lighting/CAreaLight.h"
 #include "Lighting/CDirectionalLight.h"
 #include "IndirectLighting/CIndirectLightingData.h"
 #include "Material/Shader/ShaderCallback/CShaderMaterial.h"
@@ -63,6 +64,7 @@ namespace Skylicht
 		m_pointLightShadowShader(0),
 		m_spotLightShader(0),
 		m_spotLightShadowShader(0),
+		m_areaLightShader(0),
 		m_lightmapArrayShader(0),
 		m_lightmapVertexShader(0),
 		m_lightmapSHShader(0),
@@ -196,7 +198,7 @@ namespace Skylicht
 
 		// setup material
 		initDefferredMaterial();
-		initPointLightMaterial();
+		initLightMaterial();
 	}
 
 	void CDeferredRP::resize(int w, int h)
@@ -205,7 +207,7 @@ namespace Skylicht
 		initRTT(w, h);
 
 		initDefferredMaterial();
-		initPointLightMaterial();
+		initLightMaterial();
 	}
 
 	void CDeferredRP::initDefferredMaterial()
@@ -248,7 +250,7 @@ namespace Skylicht
 		m_directionalLightPass.ZWriteEnable = false;
 	}
 
-	void CDeferredRP::initPointLightMaterial()
+	void CDeferredRP::initLightMaterial()
 	{
 		CShaderManager* shaderMgr = CShaderManager::getInstance();
 
@@ -256,13 +258,14 @@ namespace Skylicht
 		m_pointLightShadowShader = shaderMgr->getShaderIDByName("SGPointLightShadow");
 		m_spotLightShader = shaderMgr->getShaderIDByName("SGSpotLight");
 		m_spotLightShadowShader = shaderMgr->getShaderIDByName("SGSpotLightShadow");
+		m_areaLightShader = shaderMgr->getShaderIDByName("SGAreaLight");
 
-		m_pointLightPass.MaterialType = m_pointLightShader;
-		m_pointLightPass.setTexture(0, m_position);
-		m_pointLightPass.setTexture(1, m_normal);
-		m_pointLightPass.setTexture(2, m_data);
+		m_lightPass.MaterialType = m_pointLightShader;
+		m_lightPass.setTexture(0, m_position);
+		m_lightPass.setTexture(1, m_normal);
+		m_lightPass.setTexture(2, m_data);
 
-		disableFloatTextureFilter(m_pointLightPass);
+		disableFloatTextureFilter(m_lightPass);
 	}
 
 	void CDeferredRP::disableFloatTextureFilter(SMaterial& m)
@@ -644,59 +647,69 @@ namespace Skylicht
 					}
 
 					// no render shadow on bake light
-					if (s_bakeMode == false && light->getLightType() == CLight::Baked)
+					if (s_bakeMode == false && light->getRenderLightType() == CLight::Baked)
 						renderLight = false;
 
 					if (renderLight == true)
 					{
-						CPointLight* pointLight = dynamic_cast<CPointLight*>(light);
-						CSpotLight* spotLight = dynamic_cast<CSpotLight*>(light);
-
 						float rx, ry, rw, rh;
 						getRenderLightRect(camera, listLight[i]->TransformBBox, rx, ry, rw, rh, renderW, renderH);
 
 						if (rw <= 1.0f || rh <= 1.0f)
 							continue;
 
-						if (spotLight)
+						if (light->getLightTypeId() == 3)
 						{
+							CAreaLight* areaLight = dynamic_cast<CAreaLight*>(light);
+							CShaderLighting::setAreaLight(areaLight, 0);
+
+							m_lightPass.MaterialType = m_areaLightShader;
+							m_lightPass.setTexture(3, NULL);
+
+							beginRender2D(renderW, renderH);
+							renderBufferToTarget(rx, ry, rw, rh, rx, ry, rw, rh, m_lightPass);
+						}
+						else if (light->getLightTypeId() == 2)
+						{
+							CSpotLight* spotLight = dynamic_cast<CSpotLight*>(light);
 							CShaderLighting::setSpotLight(spotLight, 0);
 
 							if (spotLight->isCastShadow())
 							{
-								ITexture* depthTexture = shadowRTT->createGetPointLightDepth(pointLight);
+								ITexture* depthTexture = shadowRTT->createGetPointLightDepth(light);
 
-								m_pointLightPass.MaterialType = m_spotLightShadowShader;
-								m_pointLightPass.setTexture(3, depthTexture);
+								m_lightPass.MaterialType = m_spotLightShadowShader;
+								m_lightPass.setTexture(3, depthTexture);
 							}
 							else
 							{
-								m_pointLightPass.MaterialType = m_spotLightShader;
-								m_pointLightPass.setTexture(3, NULL);
+								m_lightPass.MaterialType = m_spotLightShader;
+								m_lightPass.setTexture(3, NULL);
 							}
 
 							beginRender2D(renderW, renderH);
-							renderBufferToTarget(rx, ry, rw, rh, rx, ry, rw, rh, m_pointLightPass);
+							renderBufferToTarget(rx, ry, rw, rh, rx, ry, rw, rh, m_lightPass);
 						}
-						else if (pointLight)
+						else if (light->getLightTypeId() == 1)
 						{
+							CPointLight* pointLight = dynamic_cast<CPointLight*>(light);
 							CShaderLighting::setPointLight(pointLight, 0);
 
 							if (pointLight->isCastShadow())
 							{
-								ITexture* depthTexture = shadowRTT->createGetPointLightDepth(pointLight);
+								ITexture* depthTexture = shadowRTT->createGetPointLightDepth(light);
 
-								m_pointLightPass.MaterialType = m_pointLightShadowShader;
-								m_pointLightPass.setTexture(3, depthTexture);
+								m_lightPass.MaterialType = m_pointLightShadowShader;
+								m_lightPass.setTexture(3, depthTexture);
 							}
 							else
 							{
-								m_pointLightPass.MaterialType = m_pointLightShader;
-								m_pointLightPass.setTexture(3, NULL);
+								m_lightPass.MaterialType = m_pointLightShader;
+								m_lightPass.setTexture(3, NULL);
 							}
 
 							beginRender2D(renderW, renderH);
-							renderBufferToTarget(rx, ry, rw, rh, rx, ry, rw, rh, m_pointLightPass);
+							renderBufferToTarget(rx, ry, rw, rh, rx, ry, rw, rh, m_lightPass);
 						}
 					}
 				}
@@ -705,6 +718,7 @@ namespace Skylicht
 
 		CShaderLighting::setSpotLight(NULL, 0);
 		CShaderLighting::setPointLight(NULL, 0);
+		CShaderLighting::setAreaLight(NULL, 0);
 
 		// STEP 04
 		// Render final direction lighting to screen

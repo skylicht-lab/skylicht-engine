@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Lighting/CDirectionalLight.h"
 #include "Lighting/CPointLight.h"
 #include "Lighting/CSpotLight.h"
+#include "Lighting/CAreaLight.h"
 
 namespace Skylicht
 {
@@ -35,6 +36,7 @@ namespace Skylicht
 
 	CPointLight* g_pointLight[4] = { NULL, NULL, NULL, NULL };
 	CSpotLight* g_spotLight[4] = { NULL, NULL, NULL, NULL };
+	CAreaLight* g_areaLight[4] = { NULL, NULL, NULL, NULL };
 
 	SColorf s_lightAmbient = SColorf(0.4f, 0.4f, 0.4f, 1.0f);
 
@@ -80,6 +82,15 @@ namespace Skylicht
 		return g_spotLight[lightId];
 	}
 
+	void CShaderLighting::setAreaLight(CAreaLight* light, int lightId)
+	{
+		g_areaLight[lightId] = light;
+	}
+
+	CAreaLight* CShaderLighting::getAreaLight(int lightId)
+	{
+		return g_areaLight[lightId];
+	}
 
 	void CShaderLighting::setLightAmbient(const SColorf& c)
 	{
@@ -229,6 +240,79 @@ namespace Skylicht
 				matRender->setShaderVariable(uniform->UniformShaderID, attenuation, 4, video::EST_VERTEX_SHADER);
 			else
 				matRender->setShaderVariable(uniform->UniformShaderID, attenuation, 4, video::EST_PIXEL_SHADER);
+		}
+		break;
+		case AREA_LIGHT_POSITION:
+		{
+			core::vector3df position;
+
+			int lightId = core::clamp(uniform->ValueIndex, 0, 3);
+			if (g_areaLight[lightId] != NULL)
+				position = g_areaLight[lightId]->getPosition();
+
+			shader->setWorldPosition(matRender, uniform->UniformShaderID, position, vertexShader);
+		}
+		break;
+		case AREA_LIGHT_DIR_X:
+		{
+			core::vector3df dir(1.0f, 0.0f, 0.0f);
+
+			int lightId = core::clamp(uniform->ValueIndex, 0, 3);
+			if (g_areaLight[lightId] != NULL)
+				g_areaLight[lightId]->getWorldTransform().rotateVect(dir);
+
+			shader->setWorldDirection(matRender, uniform->UniformShaderID, vertexShader, dir, 3);
+		}
+		break;
+		case AREA_LIGHT_DIR_Y:
+		{
+			core::vector3df dir(0.0f, 1.0f, 0.0f);
+
+			int lightId = core::clamp(uniform->ValueIndex, 0, 3);
+			if (g_areaLight[lightId] != NULL)
+				g_areaLight[lightId]->getWorldTransform().rotateVect(dir);
+
+			shader->setWorldDirection(matRender, uniform->UniformShaderID, vertexShader, dir, 3);
+		}
+		break;
+		case AREA_LIGHT_SIZE:
+		{
+			float size[2] = { 0.1f, 0.1f };
+
+			int lightId = core::clamp(uniform->ValueIndex, 0, 3);
+			if (g_areaLight[lightId] != NULL)
+			{
+				CAreaLight* light = g_areaLight[lightId];
+
+				core::vector3df sx(light->getSizeX() * 0.5f, 0.0f, 0.0f);
+				core::vector3df sy(0.0f, light->getSizeY() * 0.5f, 0.0f);
+
+				light->getWorldTransform().rotateVect(sx);
+				light->getWorldTransform().rotateVect(sy);
+
+				size[0] = sx.getLength();
+				size[1] = sy.getLength();
+			}
+
+			if (vertexShader == true)
+				matRender->setShaderVariable(uniform->UniformShaderID, size, 2, video::EST_VERTEX_SHADER);
+			else
+				matRender->setShaderVariable(uniform->UniformShaderID, size, 2, video::EST_PIXEL_SHADER);
+		}
+		break;
+		case AREA_LIGHT_COLOR:
+		{
+			video::SColorf color;
+			float intensity = 0.0f;
+
+			int lightId = core::clamp(uniform->ValueIndex, 0, 3);
+			if (g_areaLight[lightId] != NULL)
+			{
+				color = g_areaLight[lightId]->getColor();
+				intensity = g_areaLight[lightId]->getIntensity();
+			}
+
+			shader->setColor(matRender, uniform->UniformShaderID, vertexShader, color, intensity);
 		}
 		break;
 		case LIGHT_AMBIENT:

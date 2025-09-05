@@ -463,7 +463,7 @@ namespace Skylicht
 			castShadow = light->isCastShadow();
 
 			// no render shadow on bake light
-			if (s_bakeMode == false && light->getLightType() == CLight::Baked)
+			if (s_bakeMode == false && light->getRenderLightType() == CLight::Baked)
 				castShadow = false;
 
 			if (m_shadowMapType == CShadowMapRP::CascadedShadow)
@@ -588,7 +588,7 @@ namespace Skylicht
 
 				CPointLight* pointLight = dynamic_cast<CPointLight*>(light);
 
-				if (s_bakeMode == false && light->getLightType() == CLight::Baked)
+				if (s_bakeMode == false && light->getRenderLightType() == CLight::Baked)
 					continue;
 
 				if (pointLight != NULL &&

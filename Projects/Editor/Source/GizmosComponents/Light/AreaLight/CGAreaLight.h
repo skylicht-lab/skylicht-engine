@@ -2,10 +2,10 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2025 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -24,52 +24,32 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "CLight.h"
+#include "GizmosComponents/CGizmosComponent.h"
+#include "Lighting/CAreaLight.h"
+#include "SpriteDraw/CSprite.h"
 
 namespace Skylicht
 {
-	/// @brief This object holds the parameters for point lights.
-	/// @ingroup Lighting
-	/// 
-	/// @image html Lighting/point_light.jpg width=1200px
-	/// 
-	/// @see CShaderLighting
-	class SKYLICHT_API CPointLight : public CLight
+	namespace Editor
 	{
-	protected:
-		bool m_needRenderShadowDepth;
-
-	public:
-		CPointLight();
-
-		virtual ~CPointLight();
-
-		virtual void initComponent();
-
-		virtual void updateComponent();
-
-		virtual void endUpdate();
-
-		virtual CObjectSerializable* createSerializable();
-
-		virtual void loadSerializable(CObjectSerializable* object);
-
-		virtual void setRenderLightType(ERenderLightType type)
+		class CGAreaLight : public CGizmosComponent
 		{
-			CLight::setRenderLightType(type);
-			m_needRenderShadowDepth = true;
-		}
+		protected:
+			core::aabbox3df m_defaultBBox;
 
-		DECLARE_GETTYPENAME(CPointLight)
+			CAreaLight* m_areaLight;
+			CSprite* m_sprite;
 
-	public:
+		public:
+			CGAreaLight();
 
-		bool needRenderShadowDepth();
+			virtual ~CGAreaLight();
 
-		void beginRenderShadowDepth();
+			virtual void initComponent();
 
-		void endRenderShadowDepth();
+			virtual void updateComponent();
 
-		core::vector3df getPosition();
-	};
+			DECLARE_GETTYPENAME(CGAreaLight)
+		};
+	}
 }

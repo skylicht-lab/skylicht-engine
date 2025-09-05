@@ -34,7 +34,7 @@ namespace Skylicht
 	class SKYLICHT_API CLight : public CComponentSystem
 	{
 	public:
-		enum ELightType
+		enum ERenderLightType
 		{
 			Realtime = 0,
 			Baked,
@@ -75,7 +75,7 @@ namespace Skylicht
 		u32 m_bakeBounce;
 
 		//! Light type
-		ELightType m_type;
+		ERenderLightType m_renderType;
 
 		//! The layers where the light will shine on
 		u32 m_lightLayers;
@@ -117,14 +117,19 @@ namespace Skylicht
 
 		core::aabbox3df getBBBox();
 
-		inline ELightType getLightType()
+		inline ERenderLightType getRenderLightType()
 		{
-			return m_type;
+			return m_renderType;
 		}
 
-		virtual void setLightType(ELightType type)
+		virtual void setRenderLightType(ERenderLightType type)
 		{
-			m_type = type;
+			m_renderType = type;
+		}
+
+		inline int getLightTypeId()
+		{
+			return m_cullingData->LightType;
 		}
 
 		inline void setBounce(u32 b)

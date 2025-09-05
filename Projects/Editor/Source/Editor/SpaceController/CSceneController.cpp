@@ -792,6 +792,12 @@ namespace Skylicht
 				CGameObject* go = createComponentObject("Spotlight", components, parent);
 				go->getTransformEuler()->setRotation(core::vector3df(90.0f, 0.0f, 0.0f));
 			}
+			else if (objectType == L"Area Light")
+			{
+				std::vector<std::string> components = { "CAreaLight" };
+				CGameObject* go = createComponentObject("AreaLight", components, parent);
+				go->getTransformEuler()->setRotation(core::vector3df(-90.0f, 0.0f, 0.0f));
+			}
 			else if (objectType == L"Reflection Probe")
 			{
 				std::vector<std::string> components = { "CReflectionProbe" };

@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Lighting/CDirectionalLight.h"
 #include "Lighting/CPointLight.h"
 #include "Lighting/CSpotLight.h"
+#include "Lighting/CAreaLight.h"
 
 #include "RenderMesh/CRenderMesh.h"
 #include "RenderMesh/CRenderMeshInstancing.h"
@@ -82,6 +83,7 @@ namespace Skylicht
 		USE_COMPONENT(CDirectionalLight);
 		USE_COMPONENT(CPointLight);
 		USE_COMPONENT(CSpotLight);
+		USE_COMPONENT(CAreaLight);
 
 		USE_COMPONENT(CRenderMesh);
 		USE_COMPONENT(CRenderMeshInstancing);

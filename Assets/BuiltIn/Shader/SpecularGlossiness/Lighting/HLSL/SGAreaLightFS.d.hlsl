@@ -1,0 +1,98 @@
+Texture2D uTexPosition : register(t0);
+SamplerState uTexPositionSampler : register(s0);
+
+Texture2D uTexNormal : register(t1);
+SamplerState uTexNormalSampler : register(s1);
+
+Texture2D uTexData : register(t2);
+SamplerState uTexDataSampler : register(s2);
+
+struct PS_INPUT
+{
+	float4 pos : SV_POSITION;
+	float2 tex0 : TEXCOORD0;
+};
+
+cbuffer cbPerFrame
+{
+	float4 uCameraPosition;
+	float4 uLightPosition;
+	float3 uLightDirX;
+	float3 uLightDirY;
+	float2 uLightSize;
+	float4 uLightColor;
+};
+
+// https://learnopengl.com/Guest-Articles/2022/Area-Lights
+float3 integrateEdge(float3 v1, float3 v2) 
+{
+    float x = dot(v1, v2);
+    float y = abs(x);
+
+    float a = 0.8543985 + (0.4965155 + 0.0145206*y)*y;
+    float b = 3.4175940 + (4.1616724 + y)*y;
+    float v = a / b;
+
+    float theta_sintheta = (x > 0.0) ? v : 0.5*rsqrt(max(1.0 - x*x, 1e-7)) - v;
+
+    return cross(v1, v2)*theta_sintheta;
+}
+
+float3 arealight(const float3 position, 
+	const float3 normal,
+	const float3 camPosition, 
+	const float4 lightColor, 
+	const float3 lightPosition, 
+	const float3 lightDirX,
+	const float3 lightDirY,
+	const float2 lightSize)
+{
+	float3 v0 = lightPosition - lightDirX * lightSize.x - lightDirY * lightSize.y;
+	float3 v1 = lightPosition + lightDirX * lightSize.x - lightDirY * lightSize.y;
+    float3 v2 = lightPosition + lightDirX * lightSize.x + lightDirY * lightSize.y;
+    float3 v3 = lightPosition - lightDirX * lightSize.x + lightDirY * lightSize.y;
+	
+    float3 L[4];
+    L[0] = (v0 - position);
+    L[1] = (v1 - position);
+    L[2] = (v2 - position);
+    L[3] = (v3 - position);
+	
+	L[0] = normalize(L[0]);
+    L[1] = normalize(L[1]);
+    L[2] = normalize(L[2]);
+    L[3] = normalize(L[3]);
+	
+	float3 sum = float3(0.0, 0.0, 0.0);
+	sum += integrateEdge(L[0], L[1]);
+	sum += integrateEdge(L[1], L[2]);
+	sum += integrateEdge(L[2], L[3]);
+	sum += integrateEdge(L[3], L[0]);
+	
+	float len = length(sum);
+	
+	float3 dir = v0 - position;
+    float3 lightNormal = cross(v1 - v0, v3 - v0);
+    if (dot(dir, lightNormal) < 0.0)
+		len = 0.0;
+	
+	return max(0.0, len) * lightColor.rgb * lightColor.a;
+}
+
+float4 main(PS_INPUT input) : SV_TARGET
+{
+	float3 position = uTexPosition.Sample(uTexPositionSampler, input.tex0).xyz;
+	float3 normal = uTexNormal.Sample(uTexNormalSampler, input.tex0).xyz;
+
+	float3 lightColor = arealight(
+		position, 
+		normal,
+		uCameraPosition.xyz, 
+		uLightColor, 
+		uLightPosition.xyz, 
+		uLightDirX, 
+		uLightDirY,
+		uLightSize);
+	
+	return float4(lightColor, 1.0);
+}

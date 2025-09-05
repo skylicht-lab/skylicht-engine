@@ -365,7 +365,7 @@ void CViewBakeLightmap::gotoDemoView()
 
 	for (CLight* light : m_lights)
 	{
-		light->setLightType(CLight::Realtime);
+		light->setRenderLightType(CLight::Realtime);
 	}
 
 	CShadowRTTManager* shadowRTT = CShadowRTTManager::getInstance();

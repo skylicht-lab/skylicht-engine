@@ -64,8 +64,8 @@ namespace Skylicht
 		if (direction)
 			return;
 
-		if (m_currentLight->getLightType() != CLight::Baked &&
-			m_currentLight->getLightType() != CLight::Mixed)
+		if (m_currentLight->getRenderLightType() != CLight::Baked &&
+			m_currentLight->getRenderLightType() != CLight::Mixed)
 			return;
 
 		if (!m_currentLight->isAffectingDefaultObjects())

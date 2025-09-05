@@ -483,7 +483,7 @@ namespace Skylicht
 				if (!l->isEnable() || !l->getGameObject()->isVisible())
 					continue;
 
-				if (l->getLightType() == CLight::Baked || l->getLightType() == CLight::Mixed)
+				if (l->getRenderLightType() == CLight::Baked || l->getRenderLightType() == CLight::Mixed)
 					m_lights.push_back(l);
 			}
 

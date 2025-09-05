@@ -517,6 +517,7 @@ namespace Skylicht
 			submenu->addItem(L"Direction Light");
 			submenu->addItem(L"Point Light");
 			submenu->addItem(L"Spot Light");
+			submenu->addItem(L"Area Light");
 			submenu->addSeparator();
 			submenu->addItem(L"Reflection Probe");
 			submenu->addItem(L"Light Probes");
