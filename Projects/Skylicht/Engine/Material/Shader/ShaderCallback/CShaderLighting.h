@@ -31,6 +31,7 @@ namespace Skylicht
 	class CDirectionalLight;
 	class CPointLight;
 	class CSpotLight;
+	class CAreaLight;
 
 	class SKYLICHT_API CShaderLighting : public IShaderCallback
 	{
@@ -61,6 +62,11 @@ namespace Skylicht
 		static void setSpotLight(CSpotLight* light, int lightId);
 
 		static CSpotLight* getSpotLight(int lightId);
+
+
+		static void setAreaLight(CAreaLight* light, int lightId);
+
+		static CAreaLight* getAreaLight(int lightId);
 
 
 		static void setLightAmbient(const SColorf& c);

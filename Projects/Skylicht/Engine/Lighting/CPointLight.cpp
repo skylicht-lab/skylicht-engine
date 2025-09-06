@@ -51,7 +51,7 @@ namespace Skylicht
 		CEntity* entity = m_gameObject->getEntity();
 		m_cullingData = entity->addData<CLightCullingData>();
 		m_cullingData->Light = this;
-		m_cullingData->LightType = 1;
+		m_cullingData->LightType = CLight::PointLight;
 
 		entity->addData<CWorldInverseTransformData>();
 
@@ -98,7 +98,7 @@ namespace Skylicht
 
 	core::vector3df CPointLight::getPosition()
 	{
-		return m_gameObject->getPosition();
+		return m_gameObject->getWorldTransform().getTranslation();
 	}
 
 	bool CPointLight::needRenderShadowDepth()

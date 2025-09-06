@@ -26,7 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CShadowMapBakeRP.h"
 
 #include "Lighting/CDirectionalLight.h"
-#include "Lighting/CPointLight.h"
+#include "Lighting/CAreaLight.h"
 
 #include "Material/Shader/ShaderCallback/CShaderLighting.h"
 #include "Material/Shader/ShaderCallback/CShaderShadow.h"
@@ -36,9 +36,7 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	CShadowMapBakeRP::CShadowMapBakeRP() :
-		m_sm(NULL),
-		m_bakeInUV0(false),
-		m_bakeDetailNormal(false)
+		m_sm(NULL)
 	{
 		// CEventManager::getInstance()->registerProcessorEvent("ShadowBakeRP", this);
 	}
@@ -85,17 +83,21 @@ namespace Skylicht
 		if (camera == NULL)
 			return;
 
-		// use direction light
-		bool castShadow = true;
+		CLight* light = getCurrentLight();
 
-		CDirectionalLight* light = CShaderLighting::getDirectionalLight();
-		if (light != NULL)
+		int lightTypeId = light->getLightTypeId();
+		bool castShadow = light->isCastShadow();
+		m_lightDirection = light->getDirection();
+
+		if (lightTypeId == CLight::DirectionalLight)
 		{
-			m_lightDirection = light->getDirection();
-			castShadow = light->isCastShadow();
+			m_sm->update(camera, m_lightDirection, m_bound);
 		}
-
-		m_sm->update(camera, m_lightDirection, m_bound);
+		else if (lightTypeId == CLight::AreaLight)
+		{
+			CAreaLight* areaLight = dynamic_cast<CAreaLight*>(light);
+			m_sm->update(areaLight->getPosition(), areaLight->getRadius(), areaLight->getWorldBounds());
+		}
 
 		setCamera(camera);
 

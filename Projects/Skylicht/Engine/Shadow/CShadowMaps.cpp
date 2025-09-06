@@ -85,10 +85,8 @@ namespace Skylicht
 		for (int i = 0; i < 4; i++)
 			m_farBounds[i] = m_farValue;
 
-		CTransform* cameraTransform = camera->getGameObject()->getTransform();
-
 		// camera position
-		const core::matrix4& mat = cameraTransform->getRelativeTransform();
+		const core::matrix4& mat = camera->getGameObject()->getWorldTransform();
 		core::vector3df cameraPosition = mat.getTranslation();
 
 		// camera forward

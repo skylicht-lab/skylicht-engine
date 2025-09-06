@@ -1,0 +1,20 @@
+<shaderConfig name="BakeAreaLightUV0" baseShader="TRANSPARENT_ADD_COLOR">
+	<uniforms>
+		<vs>
+			<uniform name="uWorldMatrix" type="WORLD" value="0" float="16" matrix="true"/>
+		</vs>
+		<fs>
+			<uniform name="uLightPosition" type="AREA_LIGHT_POSITION" value="0" float="4"/>
+			<uniform name="uLightDirX" type="AREA_LIGHT_DIR_X" value="0" float="3"/>
+			<uniform name="uLightDirY" type="AREA_LIGHT_DIR_Y" value="0" float="3"/>
+			<uniform name="uLightSize" type="AREA_LIGHT_SIZE" value="0" float="2"/>
+			<uniform name="uLightColor" type="AREA_LIGHT_COLOR" value="1.0,1.0,1.0,1.0" float="4"/>
+		</fs>
+	</uniforms>
+	<resources>
+	</resources>
+	<customUI>
+	</customUI>
+	<shader type="GLSL" vs="GLSL/BakeLightUV0VS.glsl" fs="GLSL/BakeAreaLightFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/BakeLightUV0VS.hlsl" fs="HLSL/BakeAreaLightFS.hlsl"/>
+</shaderConfig>

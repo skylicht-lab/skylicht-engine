@@ -54,9 +54,9 @@ namespace Skylicht
 
 		virtual void loadSerializable(CObjectSerializable* object);
 
-		virtual void setLightType(ELightType type)
+		virtual void setRenderLightType(ERenderLightType type)
 		{
-			CLight::setLightType(type);
+			CLight::setRenderLightType(type);
 			m_needRenderShadowDepth = true;
 		}
 

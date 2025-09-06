@@ -39,12 +39,6 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	CDirectionalLightBakeRP::CDirectionalLightBakeRP() :
-		m_renderMesh(NULL),
-		m_normalMap(NULL),
-		m_submesh(NULL),
-		m_renderTarget(NULL),
-		m_numTarget(0),
-		m_currentTarget(0),
 		m_bakeDirection(0),
 		m_bakeDirectionUV0(0),
 		m_bakeDirectionNormal(0),
@@ -129,7 +123,6 @@ namespace Skylicht
 
 	void CDirectionalLightBakeRP::drawMeshBuffer(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID, bool skinnedMesh)
 	{
-		// just render the render mesh
 		IMeshBuffer* mb = mesh->getMeshBuffer(bufferID);
 		if (mb != m_renderMesh)
 			return;

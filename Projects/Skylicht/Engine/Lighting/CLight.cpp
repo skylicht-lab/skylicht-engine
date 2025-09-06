@@ -26,6 +26,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CLight.h"
 #include "GameObject/CGameObject.h"
 
+#include "Shadow/CShadowRTTManager.h"
+
 namespace Skylicht
 {
 	CLight::CLight() :
@@ -39,16 +41,18 @@ namespace Skylicht
 		m_bakeBounce(1),
 		m_lightLayers(1),
 		m_lightPriority(0),
-		m_type(CLight::Mixed),
+		m_renderType(CLight::Mixed),
 		m_needValidate(true),
-		m_cullingData(NULL)
+		m_cullingData(NULL),
+		m_shadowTex(NULL)
 	{
 		setRadius(3.0f);
 	}
 
 	CLight::~CLight()
 	{
-
+		if (CShadowRTTManager::getInstance())
+			CShadowRTTManager::getInstance()->onLightRemoved(this);
 	}
 
 	CObjectSerializable* CLight::createSerializable()
@@ -60,13 +64,13 @@ namespace Skylicht
 		object->autoRelease(new CUIntProperty(object, "bakeBounce", m_bakeBounce, 4));
 		object->autoRelease(new CBoolProperty(object, "castShadow", m_castShadow));
 		object->autoRelease(new CColorProperty(object, "color", m_color.toSColor()));
-		object->autoRelease(new CFloatProperty(object, "intensity", m_intensity, 0.0f, 10.0f));
+		object->autoRelease(new CFloatProperty(object, "intensity", m_intensity, 0.0f, 20.0f));
 		object->autoRelease(new CUIntProperty(object, "lightPriority", m_lightPriority));
 
-		CEnumProperty<ELightType>* lighType = new CEnumProperty<ELightType>(object, "type", m_type);
-		lighType->addEnumString("Realtime", ELightType::Realtime);
-		lighType->addEnumString("Baked", ELightType::Baked);
-		lighType->addEnumString("Mixed", ELightType::Mixed);
+		CEnumProperty<ERenderLightType>* lighType = new CEnumProperty<ERenderLightType>(object, "renderType", m_renderType);
+		lighType->addEnumString("Realtime", ERenderLightType::Realtime);
+		lighType->addEnumString("Baked", ERenderLightType::Baked);
+		lighType->addEnumString("Mixed", ERenderLightType::Mixed);
 		object->autoRelease(lighType);
 
 		return object;
@@ -81,7 +85,10 @@ namespace Skylicht
 		m_color = object->get<SColor>("color", SColor(255, 255, 255, 255));
 		m_intensity = object->get<float>("intensity", 1.0f);
 		m_lightPriority = object->get<u32>("lightPriority", 0);
-		m_type = object->get<ELightType>("type", ELightType::Mixed);
+		m_renderType = object->get<ERenderLightType>("renderType", ERenderLightType::Mixed);
+
+		m_shadowTex = NULL;
+		m_cullingData->NeedValidate = true;
 	}
 
 	core::aabbox3df CLight::getBBBox()

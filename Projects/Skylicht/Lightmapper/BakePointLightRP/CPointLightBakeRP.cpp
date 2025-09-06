@@ -42,23 +42,17 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CPointLightBakeRP::CPointLightBakeRP() :
-		m_renderMesh(NULL),
-		m_normalMap(NULL),
-		m_submesh(NULL),
-		m_renderTarget(NULL),
-		m_numTarget(0),
-		m_currentTarget(0),
-		m_bakePointLight(0),
-		m_bakeSpotLight(0),
-		m_bakePointLightUV0(0),
-		m_bakeSpotLightUV0(0),
-		m_bakePointLightNormal(0),
-		m_bakeSpotLightNormal(0),
-		m_bakePointLightUV0Normal(0),
-		m_bakeSpotLightUV0Normal(0)
+	CPointLightBakeRP::CPointLightBakeRP()
 	{
 		m_type = Deferred;
+
+		for (int i = 0; i < 4; i++)
+		{
+			m_light[i] = 0;
+			m_lightUV0[i] = 0;
+			m_lightN[i] = 0;
+			m_lightNUV0[i] = 0;
+		}
 	}
 
 	CPointLightBakeRP::~CPointLightBakeRP()
@@ -79,15 +73,17 @@ namespace Skylicht
 		shaderMgr->loadShader("BuiltIn/Shader/BakeDirectional/BakePointLightUV0Normal.xml");
 		shaderMgr->loadShader("BuiltIn/Shader/BakeDirectional/BakeSpotLightUV0Normal.xml");
 
-		m_bakePointLight = shaderMgr->getShaderIDByName("BakePointLight");
-		m_bakeSpotLight = shaderMgr->getShaderIDByName("BakeSpotLight");
-		m_bakePointLightUV0 = shaderMgr->getShaderIDByName("BakePointLightUV0");
-		m_bakeSpotLightUV0 = shaderMgr->getShaderIDByName("BakeSpotLightUV0");
+		m_light[CLight::PointLight] = shaderMgr->getShaderIDByName("BakePointLight");
+		m_light[CLight::SpotLight] = shaderMgr->getShaderIDByName("BakeSpotLight");
 
-		m_bakePointLightNormal = shaderMgr->getShaderIDByName("BakePointLightNormal");
-		m_bakeSpotLightNormal = shaderMgr->getShaderIDByName("BakeSpotLightNormal");
-		m_bakePointLightUV0Normal = shaderMgr->getShaderIDByName("BakePointLightUV0Normal");
-		m_bakeSpotLightUV0Normal = shaderMgr->getShaderIDByName("BakeSpotLightUV0Normal");
+		m_lightUV0[CLight::PointLight] = shaderMgr->getShaderIDByName("BakePointLightUV0");
+		m_lightUV0[CLight::SpotLight] = shaderMgr->getShaderIDByName("BakeSpotLightUV0");
+
+		m_lightN[CLight::PointLight] = shaderMgr->getShaderIDByName("BakePointLightNormal");
+		m_lightN[CLight::SpotLight] = shaderMgr->getShaderIDByName("BakeSpotLightNormal");
+
+		m_lightNUV0[CLight::PointLight] = shaderMgr->getShaderIDByName("BakePointLightUV0Normal");
+		m_lightNUV0[CLight::SpotLight] = shaderMgr->getShaderIDByName("BakeSpotLightUV0Normal");
 	}
 
 	void CPointLightBakeRP::resize(int w, int h)
@@ -146,7 +142,6 @@ namespace Skylicht
 
 	void CPointLightBakeRP::drawMeshBuffer(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID, bool skinnedMesh)
 	{
-		// just render the render mesh
 		IMeshBuffer* mb = mesh->getMeshBuffer(bufferID);
 		if (mb != m_renderMesh)
 			return;
@@ -171,15 +166,22 @@ namespace Skylicht
 			haveDetailNormal = true;
 
 		CLight* currentLight = shadowRP->getCurrentLight();
-		CPointLight* pl = dynamic_cast<CPointLight*>(currentLight);
-		if (pl == NULL)
+		int lightTypeId = currentLight->getLightTypeId();
+
+		if (lightTypeId != CLight::PointLight &&
+			lightTypeId != CLight::SpotLight)
 			return;
 
-		CSpotLight* sl = dynamic_cast<CSpotLight*>(currentLight);
-		if (sl)
-			CShaderLighting::setSpotLight(sl, 0);
-		else
+		if (lightTypeId == CLight::PointLight)
+		{
+			CPointLight* pl = dynamic_cast<CPointLight*>(currentLight);
 			CShaderLighting::setPointLight(pl, 0);
+		}
+		else if (lightTypeId == CLight::SpotLight)
+		{
+			CSpotLight* sl = dynamic_cast<CSpotLight*>(currentLight);
+			CShaderLighting::setSpotLight(sl, 0);
+		}
 
 		// render mesh with light bake shader
 		video::SMaterial irrMaterial;
@@ -190,12 +192,14 @@ namespace Skylicht
 		irrMaterial.FrontfaceCulling = false;
 
 		CShadowRTTManager* shadowRTT = CShadowRTTManager::getInstance();
-		ITexture* depthTexture = shadowRTT->createGetPointLightDepth(currentLight);
+		ITexture* depthTexture = shadowRTT->createGetDepthCube(currentLight);
 
 		irrMaterial.TextureLayer[0].Texture = depthTexture;
 		irrMaterial.TextureLayer[0].BilinearFilter = false;
 		irrMaterial.TextureLayer[0].TrilinearFilter = false;
 		irrMaterial.TextureLayer[0].AnisotropicFilter = 0;
+
+		bool inUV0 = shadowRP->isBakeInUV0();
 
 		if (haveDetailNormal)
 		{
@@ -204,17 +208,12 @@ namespace Skylicht
 			irrMaterial.TextureLayer[1].TrilinearFilter = false;
 			irrMaterial.TextureLayer[1].AnisotropicFilter = 8;
 
-			if (shadowRP->isBakeInUV0())
-				irrMaterial.MaterialType = sl != NULL ? m_bakeSpotLightUV0Normal : m_bakePointLightUV0Normal;
-			else
-				irrMaterial.MaterialType = sl != NULL ? m_bakeSpotLightNormal : m_bakePointLightNormal;
+			// have normal map shader
+			irrMaterial.MaterialType = inUV0 ? m_lightNUV0[lightTypeId] : m_lightN[lightTypeId];
 		}
 		else
 		{
-			if (shadowRP->isBakeInUV0())
-				irrMaterial.MaterialType = sl != NULL ? m_bakeSpotLightUV0 : m_bakePointLightUV0;
-			else
-				irrMaterial.MaterialType = sl != NULL ? m_bakeSpotLight : m_bakePointLight;
+			irrMaterial.MaterialType = inUV0 ? m_lightUV0[lightTypeId] : m_light[lightTypeId];
 		}
 
 		if (irrMaterial.MaterialType <= 0)

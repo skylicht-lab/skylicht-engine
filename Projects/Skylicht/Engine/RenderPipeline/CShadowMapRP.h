@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CBaseRP.h"
 #include "Shadow/CCascadedShadowMaps.h"
 #include "Shadow/CShadowMaps.h"
+#include "Shadow/CBoundShadowMaps.h"
 #include "EventManager/CEventManager.h"
 
 namespace Skylicht
@@ -64,6 +65,7 @@ namespace Skylicht
 		{
 			DirectionLight = 0,
 			PointLight,
+			AreaLight,
 		};
 
 	protected:
@@ -83,6 +85,7 @@ namespace Skylicht
 		SMaterial m_writeDepthMaterial;
 		core::vector3df m_lightDirection;
 
+		CBoundShadowMaps* m_lsm;
 		CShadowMaps* m_sm;
 		CCascadedShadowMaps* m_csm;
 		int m_currentCSM;

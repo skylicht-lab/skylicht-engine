@@ -74,14 +74,58 @@ namespace Skylicht
 		m_lightDirection = lightDir;
 		m_lightDirection.normalize();
 
-		CTransform* cameraTransform = camera->getGameObject()->getTransform();
-
 		// camera position
-		const core::matrix4& mat = cameraTransform->getRelativeTransform();
+		const core::matrix4& mat = camera->getGameObject()->getWorldTransform();
 		core::vector3df cameraPosition = mat.getTranslation();
 
 		// calc shadow volume
 		updateMatrix(cameraPosition, bound);
+	}
+
+	void CBoundShadowMaps::update(const core::vector3df& lightPosition, float lightRadius, const core::aabbox3df& bound)
+	{
+		// Calculate bounding sphere radius
+		core::vector3df center = bound.getCenter();
+
+		float radius = 0.0f;
+
+		float length = (bound.MinEdge - center).getLength();
+		radius = core::max_(radius, length);
+
+		radius = ceil(radius * 16.0f) / 16.0f;
+
+		m_nearOffset = 1.0f;
+		m_farValue = lightRadius;
+
+		// Find bounding box that fits the sphere
+		core::vector3df radius3(radius, radius, radius);
+
+		core::vector3df max = radius3;
+		core::vector3df min = -radius3;
+
+		core::vector3df cascadeExtents = max - min;
+
+		// Compute bounding box for culling
+		m_frustumBox.MinEdge = center - radius3;
+		m_frustumBox.MaxEdge = center + radius3;
+
+		// Fix: object shadow culling above camera
+		core::vector3df highCameraPos = center - m_lightDirection * radius * 2.0f;
+		m_frustumBox.addInternalPoint(highCameraPos);
+
+		// Add the near offset to the Z value of the cascade extents to make sure the orthographic frustum captures the entire frustum split (else it will exhibit cut-off issues).
+		core::matrix4 ortho;
+		ortho.buildProjectionMatrixOrthoLH(max.X - min.X, max.Y - min.Y, -m_nearOffset, m_nearOffset + cascadeExtents.Z + m_farValue);
+
+		core::matrix4 view;
+		view.buildCameraLookAtMatrixLH(lightPosition, center, Transform::Oy);
+
+		m_projMatrices = ortho;
+		m_viewMatrices = view;
+
+		core::matrix4 mvp = m_projMatrices * m_viewMatrices;
+		core::matrix4 shadowMatrix = m_bias * mvp;
+		memcpy(m_shadowMatrices, shadowMatrix.pointer(), 16 * sizeof(float));
 	}
 
 	void CBoundShadowMaps::updateMatrix(core::vector3df& camPos, const core::aabbox3df& bound)

@@ -34,11 +34,19 @@ namespace Skylicht
 	class SKYLICHT_API CLight : public CComponentSystem
 	{
 	public:
-		enum ELightType
+		enum ERenderLightType
 		{
 			Realtime = 0,
 			Baked,
 			Mixed
+		};
+
+		enum ELightType
+		{
+			DirectionalLight = 0,
+			PointLight,
+			SpotLight,
+			AreaLight
 		};
 
 	protected:
@@ -75,7 +83,7 @@ namespace Skylicht
 		u32 m_bakeBounce;
 
 		//! Light type
-		ELightType m_type;
+		ERenderLightType m_renderType;
 
 		//! The layers where the light will shine on
 		u32 m_lightLayers;
@@ -86,6 +94,9 @@ namespace Skylicht
 		bool m_needValidate;
 
 		CLightCullingData* m_cullingData;
+
+		ITexture* m_shadowTex;
+
 	public:
 		CLight();
 
@@ -117,14 +128,19 @@ namespace Skylicht
 
 		core::aabbox3df getBBBox();
 
-		inline ELightType getLightType()
+		inline ERenderLightType getRenderLightType()
 		{
-			return m_type;
+			return m_renderType;
 		}
 
-		virtual void setLightType(ELightType type)
+		virtual void setRenderLightType(ERenderLightType type)
 		{
-			m_type = type;
+			m_renderType = type;
+		}
+
+		inline int getLightTypeId()
+		{
+			return m_cullingData->LightType;
 		}
 
 		inline void setBounce(u32 b)
@@ -187,6 +203,7 @@ namespace Skylicht
 		inline void setShadow(bool shadow)
 		{
 			m_castShadow = shadow;
+			m_shadowTex = NULL;
 		}
 
 		inline bool isDynamicShadow()
@@ -197,6 +214,7 @@ namespace Skylicht
 		inline void setDynamicShadow(bool shadow)
 		{
 			m_dynamicShadow = shadow;
+			m_shadowTex = NULL;
 		}
 
 		inline void setIntensity(float f)
@@ -237,6 +255,16 @@ namespace Skylicht
 		inline void validate()
 		{
 			m_needValidate = true;
+		}
+
+		inline ITexture* getShadowTexture()
+		{
+			return m_shadowTex;
+		}
+
+		inline void setShadowTexture(ITexture* tex)
+		{
+			m_shadowTex = tex;
 		}
 	};
 }

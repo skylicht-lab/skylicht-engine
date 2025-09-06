@@ -37,10 +37,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CPointLightShadowBakeRP::CPointLightShadowBakeRP() :
-		m_currentLight(NULL),
-		m_bakeInUV0(false),
-		m_bakeDetailNormal(false)
+	CPointLightShadowBakeRP::CPointLightShadowBakeRP()
 	{
 		// CEventManager::getInstance()->registerProcessorEvent("ShadowBakeRP", this);
 	}
@@ -64,8 +61,8 @@ namespace Skylicht
 		if (direction)
 			return;
 
-		if (m_currentLight->getLightType() != CLight::Baked &&
-			m_currentLight->getLightType() != CLight::Mixed)
+		if (m_currentLight->getRenderLightType() != CLight::Baked &&
+			m_currentLight->getRenderLightType() != CLight::Mixed)
 			return;
 
 		if (!m_currentLight->isAffectingDefaultObjects())
@@ -83,7 +80,7 @@ namespace Skylicht
 
 		// rtt
 		CShadowRTTManager* shadowRTT = CShadowRTTManager::getInstance();
-		shadowRTT->clearLightData();
+		shadowRTT->clearDynamicTextures();
 
 		// set state point light
 		m_renderShadowState = ERenderShadowState::PointLight;
@@ -99,7 +96,7 @@ namespace Skylicht
 
 			core::vector3df lightPosition = pointLight->getGameObject()->getPosition();
 
-			m_depthTexture = shadowRTT->createGetPointLightDepth(pointLight);
+			m_depthTexture = shadowRTT->createGetDepthCube(pointLight);
 			if (m_depthTexture != NULL)
 				renderCubeEnvironment(camera, entityManager, lightPosition, m_depthTexture, NULL, 0, false);
 

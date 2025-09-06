@@ -128,7 +128,7 @@ namespace Skylicht
 		int m_lightDirectionSSR;
 		int m_lightDirectionBake;
 
-		SMaterial m_pointLightPass;
+		SMaterial m_lightPass;
 		SMaterial m_directionalLightPass;
 		SMaterial m_finalPass;
 
@@ -137,6 +137,8 @@ namespace Skylicht
 
 		int m_spotLightShader;
 		int m_spotLightShadowShader;
+
+		int m_areaLightShader;
 
 		float m_indirectMultipler;
 		float m_directMultipler;
@@ -147,7 +149,7 @@ namespace Skylicht
 	protected:
 
 		void initDefferredMaterial();
-		void initPointLightMaterial();
+		void initLightMaterial();
 		void disableFloatTextureFilter(SMaterial& m);
 
 	public:

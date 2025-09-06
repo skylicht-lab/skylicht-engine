@@ -15,6 +15,6 @@
 	</resources>
 	<customUI>
 	</customUI>
-	<shader type="GLSL" vs="GLSL/BakeLightUV0NormalVS.glsl" fs="GLSL/BakePointLightNormalFS.glsl" define="NORMAL_MAP"/>
-	<shader type="HLSL" vs="HLSL/BakeLightUV0NormalVS.hlsl" fs="HLSL/BakePointLightNormalFS.hlsl" define="NORMAL_MAP"/>
+	<shader type="GLSL" vs="GLSL/BakeLightUV0NormalVS.glsl" fs="GLSL/BakePointLightNormalFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/BakeLightUV0NormalVS.hlsl" fs="HLSL/BakePointLightNormalFS.hlsl"/>
 </shaderConfig>

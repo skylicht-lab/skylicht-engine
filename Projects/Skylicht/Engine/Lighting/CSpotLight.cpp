@@ -49,7 +49,7 @@ namespace Skylicht
 		CPointLight::initComponent();
 
 		if (m_cullingData)
-			m_cullingData->LightType = 2;
+			m_cullingData->LightType = CLight::SpotLight;
 	}
 
 	void CSpotLight::updateComponent()

@@ -220,25 +220,30 @@ namespace Skylicht
 			// update scene first
 			m_cameraObj->getScene()->update();
 
-			SVec4 oldBias = CShaderShadow::getShadowBias();
-			SVec4 bias = oldBias;
-			bias.X = m_shadowBias;
-			CShaderShadow::setShadowBias(bias);
-
-			// bake direction light
-			m_shadowRP->setBakeInUV0(m_bakeUV0);
-			m_shadowRP->setBakeDetailNormal(m_bakeDetailNormal);
-			m_shadowRP->render(NULL, bakeCamera, entityMgr, core::recti());
-
-			CShaderShadow::setShadowBias(oldBias);
-
 			// bake all point light
 			for (CLight* light : m_lights)
 			{
-				m_shadowPLRP->setCurrentLight(light);
-				m_shadowPLRP->setBakeInUV0(m_bakeUV0);
-				m_shadowPLRP->setBakeDetailNormal(m_bakeDetailNormal);
-				m_shadowPLRP->render(NULL, bakeCamera, entityMgr, core::recti());
+				if (light->getLightTypeId() == CLight::DirectionalLight)
+				{
+					SVec4 oldBias = CShaderShadow::getShadowBias();
+					SVec4 bias = oldBias;
+					bias.X = m_shadowBias;
+					CShaderShadow::setShadowBias(bias);
+
+					m_shadowRP->setCurrentLight(light);
+					m_shadowRP->setBakeInUV0(m_bakeUV0);
+					m_shadowRP->setBakeDetailNormal(m_bakeDetailNormal);
+					m_shadowRP->render(NULL, bakeCamera, entityMgr, core::recti());
+
+					CShaderShadow::setShadowBias(oldBias);
+				}
+				else
+				{
+					m_shadowPLRP->setCurrentLight(light);
+					m_shadowPLRP->setBakeInUV0(m_bakeUV0);
+					m_shadowPLRP->setBakeDetailNormal(m_bakeDetailNormal);
+					m_shadowPLRP->render(NULL, bakeCamera, entityMgr, core::recti());
+				}
 			}
 
 			m_position++;
@@ -360,26 +365,31 @@ namespace Skylicht
 			// update scene first
 			m_cameraObj->getScene()->update();
 
-			SVec4 oldBias = CShaderShadow::getShadowBias();
-
-			SVec4 bias = oldBias;
-			bias.X = m_shadowBias;
-			CShaderShadow::setShadowBias(bias);
-
-			// bake direction light
-			m_shadowRP->setBakeInUV0(m_bakeUV0);
-			m_shadowRP->setBakeDetailNormal(m_bakeDetailNormal);
-			m_shadowRP->render(NULL, bakeCamera, entityMgr, core::recti());
-
-			CShaderShadow::setShadowBias(oldBias);
-
 			// bake all point light
 			for (CLight* light : m_lights)
 			{
-				m_shadowPLRP->setCurrentLight(light);
-				m_shadowPLRP->setBakeInUV0(m_bakeUV0);
-				m_shadowPLRP->setBakeDetailNormal(m_bakeDetailNormal);
-				m_shadowPLRP->render(NULL, bakeCamera, entityMgr, core::recti());
+				if (light->getLightTypeId() == CLight::DirectionalLight)
+				{
+					SVec4 oldBias = CShaderShadow::getShadowBias();
+
+					SVec4 bias = oldBias;
+					bias.X = m_shadowBias;
+					CShaderShadow::setShadowBias(bias);
+
+					m_shadowRP->setCurrentLight(light);
+					m_shadowRP->setBakeInUV0(m_bakeUV0);
+					m_shadowRP->setBakeDetailNormal(m_bakeDetailNormal);
+					m_shadowRP->render(NULL, bakeCamera, entityMgr, core::recti());
+
+					CShaderShadow::setShadowBias(oldBias);
+				}
+				else
+				{
+					m_shadowPLRP->setCurrentLight(light);
+					m_shadowPLRP->setBakeInUV0(m_bakeUV0);
+					m_shadowPLRP->setBakeDetailNormal(m_bakeDetailNormal);
+					m_shadowPLRP->render(NULL, bakeCamera, entityMgr, core::recti());
+				}
 			}
 
 			m_position++;
@@ -483,7 +493,7 @@ namespace Skylicht
 				if (!l->isEnable() || !l->getGameObject()->isVisible())
 					continue;
 
-				if (l->getLightType() == CLight::Baked || l->getLightType() == CLight::Mixed)
+				if (l->getRenderLightType() == CLight::Baked || l->getRenderLightType() == CLight::Mixed)
 					m_lights.push_back(l);
 			}
 

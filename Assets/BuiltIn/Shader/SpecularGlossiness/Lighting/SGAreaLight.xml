@@ -1,0 +1,25 @@
+<shaderConfig name="SGAreaLight" baseShader="TRANSPARENT_ADD_COLOR">
+	<uniforms>
+		<vs>
+			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+		</vs>
+		<fs>
+			<uniform name="uTexPosition" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
+			<uniform name="uTexNormal" type="DEFAULT_VALUE" value="1" float="1" directX="false"/>
+			<uniform name="uTexData" type="DEFAULT_VALUE" value="2" float="1" directX="false"/>
+
+			<uniform name="uCameraPosition" type="WORLD_CAMERA_POSITION" value="0" float="4"/>
+			<uniform name="uLightPosition" type="AREA_LIGHT_POSITION" value="0" float="4"/>
+			<uniform name="uLightDirX" type="AREA_LIGHT_DIR_X" value="0" float="3"/>
+			<uniform name="uLightDirY" type="AREA_LIGHT_DIR_Y" value="0" float="3"/>
+			<uniform name="uLightSize" type="AREA_LIGHT_SIZE" value="0" float="2"/>
+			<uniform name="uLightColor" type="AREA_LIGHT_COLOR" value="1.0,1.0,1.0,1.0" float="4"/>
+		</fs>
+	</uniforms>
+	<resources>
+	</resources>
+	<customUI>
+	</customUI>
+	<shader type="GLSL" vs="GLSL/SGPointLightVS.glsl" fs="GLSL/SGAreaLightFS.glsl" fs_source="GLSL/SGAreaLightFS.d.glsl"/>
+	<shader type="HLSL" vs="HLSL/SGPointLightVS.hlsl" fs="HLSL/SGAreaLightFS.hlsl" fs_source="HLSL/SGAreaLightFS.d.hlsl"/>
+</shaderConfig>
