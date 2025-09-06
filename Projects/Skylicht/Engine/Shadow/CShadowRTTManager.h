@@ -34,6 +34,7 @@ namespace Skylicht
 	{
 		CLight* Light;
 		ITexture* Texture;
+		bool Tex2D;
 	};
 
 	class SKYLICHT_API CShadowRTTManager
@@ -54,15 +55,17 @@ namespace Skylicht
 
 		void clearDynamicTextures();
 
-		ITexture* createGetPointLightDepth(CLight* light);
+		ITexture* createGetDepthCube(CLight* light);
+
+		ITexture* createGetDepth(CLight* light);
 
 		void onLightRemoved(CLight* light);
 
 	protected:
 
-		ITexture* createGetPointLightDepthStatic(CLight* light);
+		ITexture* createGetDepthStatic(CLight* light, bool texture2d);
 
-		ITexture* createGetPointLightDepthDynamic(CLight* light);
+		ITexture* createGetDepthDynamic(CLight* light, bool texture2d);
 
 	};
 }

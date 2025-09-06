@@ -24,12 +24,12 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "BakeRP/CShadowMapBaseRP.h"
+#include "BakeRP/CShadowBakeRP.h"
 #include "Shadow/CBoundShadowMaps.h"
 
 namespace Skylicht
 {
-	class CShadowMapBakeRP : public CShadowMapBaseRP
+	class CShadowMapBakeRP : public CShadowBakeRP
 	{
 	protected:
 		CBoundShadowMaps* m_sm;

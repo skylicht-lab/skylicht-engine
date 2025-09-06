@@ -26,7 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CShadowMapBakeRP.h"
 
 #include "Lighting/CDirectionalLight.h"
-#include "Lighting/CPointLight.h"
+#include "Lighting/CAreaLight.h"
 
 #include "Material/Shader/ShaderCallback/CShaderLighting.h"
 #include "Material/Shader/ShaderCallback/CShaderShadow.h"
@@ -87,15 +87,16 @@ namespace Skylicht
 
 		int lightTypeId = light->getLightTypeId();
 		bool castShadow = light->isCastShadow();
+		m_lightDirection = light->getDirection();
 
 		if (lightTypeId == CLight::DirectionalLight)
 		{
-			m_lightDirection = light->getDirection();
 			m_sm->update(camera, m_lightDirection, m_bound);
 		}
 		else if (lightTypeId == CLight::AreaLight)
 		{
-
+			CAreaLight* areaLight = dynamic_cast<CAreaLight*>(light);
+			m_sm->update(areaLight->getPosition(), areaLight->getRadius(), areaLight->getWorldBounds());
 		}
 
 		setCamera(camera);

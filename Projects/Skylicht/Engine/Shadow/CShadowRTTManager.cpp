@@ -100,7 +100,7 @@ namespace Skylicht
 		}
 	}
 
-	ITexture* CShadowRTTManager::createGetPointLightDepthStatic(CLight* light)
+	ITexture* CShadowRTTManager::createGetDepthStatic(CLight* light, bool texture2d)
 	{
 		ITexture* result = light->getShadowTexture();
 		if (result)
@@ -121,7 +121,13 @@ namespace Skylicht
 
 		SDepthShadowRTT* d = new SDepthShadowRTT();
 		d->Light = light;
-		d->Texture = getVideoDriver()->addRenderTargetCubeTexture(core::dimension2du(size, size), "CubeDepthMap", video::ECF_R32F);
+		d->Tex2D = texture2d;
+
+		if (texture2d)
+			d->Texture = getVideoDriver()->addRenderTargetTextureArray(core::dimension2du(size, size), 1, "DepthMap", video::ECF_R32F);
+		else
+			d->Texture = getVideoDriver()->addRenderTargetCubeTexture(core::dimension2du(size, size), "CubeDepthMap", video::ECF_R32F);
+
 		m_depthStatic.push_back(d);
 
 		light->setShadowTexture(d->Texture);
@@ -129,7 +135,7 @@ namespace Skylicht
 		return d->Texture;
 	}
 
-	ITexture* CShadowRTTManager::createGetPointLightDepthDynamic(CLight* light)
+	ITexture* CShadowRTTManager::createGetDepthDynamic(CLight* light, bool texture2d)
 	{
 		ITexture* result = light->getShadowTexture();
 		if (result)
@@ -145,7 +151,7 @@ namespace Skylicht
 				light->setShadowTexture(d->Texture);
 				return d->Texture;
 			}
-			else if (slot == NULL && d->Light == NULL)
+			else if (slot == NULL && d->Light == NULL && d->Tex2D == texture2d)
 			{
 				slot = d;
 				break;
@@ -165,18 +171,32 @@ namespace Skylicht
 
 		SDepthShadowRTT* d = new SDepthShadowRTT();
 		d->Light = light;
-		d->Texture = getVideoDriver()->addRenderTargetCubeTexture(core::dimension2du(size, size), "CubeDepthMap", video::ECF_R32F);
+		d->Tex2D = texture2d;
+
+		if (texture2d)
+			d->Texture = getVideoDriver()->addRenderTargetTextureArray(core::dimension2du(size, size), 1, "DepthMap", video::ECF_R32F);
+		else
+			d->Texture = getVideoDriver()->addRenderTargetCubeTexture(core::dimension2du(size, size), "CubeDepthMap", video::ECF_R32F);
+
 		m_depthDynamic.push_back(d);
 
 		light->setShadowTexture(d->Texture);
 		return d->Texture;
 	}
 
-	ITexture* CShadowRTTManager::createGetPointLightDepth(CLight* light)
+	ITexture* CShadowRTTManager::createGetDepthCube(CLight* light)
 	{
 		if (light->isDynamicShadow())
-			return createGetPointLightDepthDynamic(light);
+			return createGetDepthDynamic(light, false);
 
-		return createGetPointLightDepthStatic(light);
+		return createGetDepthStatic(light, false);
+	}
+
+	ITexture* CShadowRTTManager::createGetDepth(CLight* light)
+	{
+		if (light->isDynamicShadow())
+			return createGetDepthDynamic(light, true);
+
+		return createGetDepthStatic(light, true);
 	}
 }

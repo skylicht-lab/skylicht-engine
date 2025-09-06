@@ -34,7 +34,7 @@ namespace Skylicht
 		float m_sizeX;
 		float m_sizeY;
 		bool m_needRenderShadowDepth;
-
+		core::aabbox3df m_worldBounds;
 	public:
 		CAreaLight();
 
@@ -83,5 +83,10 @@ namespace Skylicht
 		core::vector3df getPosition();
 
 		const core::matrix4& getWorldTransform();
+
+		inline const core::aabbox3df& getWorldBounds()
+		{
+			return m_worldBounds;
+		}
 	};
 }

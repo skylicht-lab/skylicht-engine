@@ -142,7 +142,6 @@ namespace Skylicht
 
 	void CPointLightBakeRP::drawMeshBuffer(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID, bool skinnedMesh)
 	{
-		// just render the render mesh
 		IMeshBuffer* mb = mesh->getMeshBuffer(bufferID);
 		if (mb != m_renderMesh)
 			return;
@@ -193,7 +192,7 @@ namespace Skylicht
 		irrMaterial.FrontfaceCulling = false;
 
 		CShadowRTTManager* shadowRTT = CShadowRTTManager::getInstance();
-		ITexture* depthTexture = shadowRTT->createGetPointLightDepth(currentLight);
+		ITexture* depthTexture = shadowRTT->createGetDepthCube(currentLight);
 
 		irrMaterial.TextureLayer[0].Texture = depthTexture;
 		irrMaterial.TextureLayer[0].BilinearFilter = false;

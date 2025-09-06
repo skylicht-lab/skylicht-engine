@@ -35,6 +35,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Lighting/CPointLight.h"
 #include "Lighting/CSpotLight.h"
 #include "Lighting/CDirectionalLight.h"
+#include "Lighting/CAreaLight.h"
 #include "Shadow/CShadowRTTManager.h"
 
 namespace Skylicht
@@ -43,6 +44,7 @@ namespace Skylicht
 		m_depthTexture(NULL),
 		m_csm(NULL),
 		m_sm(NULL),
+		m_lsm(NULL),
 		m_shadowMapType(CascadedShadow),
 		m_shadowFar(300.0f),
 		m_shadowMapSize(2048),
@@ -93,15 +95,19 @@ namespace Skylicht
 		if (m_depthTexture != NULL)
 			getVideoDriver()->removeTexture(m_depthTexture);
 
-		if (m_csm != NULL)
+		if (m_csm)
 			delete m_csm;
 
-		if (m_sm != NULL)
+		if (m_sm)
 			delete m_sm;
+
+		if (m_lsm)
+			delete m_lsm;
 
 		m_depthTexture = NULL;
 		m_csm = NULL;
 		m_sm = NULL;
+		m_lsm = NULL;
 	}
 
 	void CShadowMapRP::setShadowMapping(EShadowMapType type)
@@ -175,6 +181,9 @@ namespace Skylicht
 			core::dimension2du size = core::dimension2du((u32)m_shadowMapSize, (u32)m_shadowMapSize);
 			m_depthTexture = getVideoDriver()->addRenderTargetTextureArray(size, 1, "shadow_depth", ECF_R32F);
 		}
+
+		m_lsm = new CBoundShadowMaps();
+		m_lsm->init(512, m_shadowFar, w, h);
 	}
 
 	void CShadowMapRP::resize(int w, int h)
@@ -255,10 +264,10 @@ namespace Skylicht
 			switch (m_renderShadowState)
 			{
 			case DirectionLight:
+			case AreaLight:
 			{
 				if (shader && shader->getShadowDepthWriteShader())
 				{
-					// have custom write depth
 					m_writeDepthMaterial.MaterialType = shader->getShadowDepthWriteShader()->getMaterialRenderID();
 				}
 				else
@@ -273,7 +282,6 @@ namespace Skylicht
 			case PointLight:
 				if (shader && shader->getShadowDistanceWriteShader())
 				{
-					// have custom write depth
 					m_writeDepthMaterial.MaterialType = shader->getShadowDistanceWriteShader()->getMaterialRenderID();
 				}
 				else
@@ -356,6 +364,7 @@ namespace Skylicht
 			switch (m_renderShadowState)
 			{
 			case DirectionLight:
+			case AreaLight:
 			{
 				if (instancingShader && instancingShader->getShadowDepthWriteShader())
 				{
@@ -378,6 +387,7 @@ namespace Skylicht
 			switch (m_renderShadowState)
 			{
 			case DirectionLight:
+			case AreaLight:
 			{
 				if (instancingShader && instancingShader->getShadowDepthWriteShader())
 				{
@@ -481,8 +491,6 @@ namespace Skylicht
 			entityManager->update();
 
 		CShaderShadow::setShadowMapRP(this);
-
-		// render directional light shadow
 		m_renderShadowState = CShadowMapRP::DirectionLight;
 
 		IVideoDriver* driver = getVideoDriver();
@@ -523,6 +531,7 @@ namespace Skylicht
 		}
 
 		// Save output to file to test
+		/*
 		if (m_saveDebug == true)
 		{
 			core::dimension2du size = core::dimension2du((u32)m_shadowMapSize, (u32)m_shadowMapSize);
@@ -564,12 +573,9 @@ namespace Skylicht
 				CBaseRP::saveFBOToFile(rtt, "shadow.png");
 				os::Printer::log(filename);
 			}
-
 			getVideoDriver()->removeTexture(rtt);
 		}
-
-		// render point light shadow
-		m_renderShadowState = CShadowMapRP::PointLight;
+		*/
 
 		bool renderTargetChanged = false;
 
@@ -583,47 +589,61 @@ namespace Skylicht
 			for (u32 i = 0, n = listLight.size(); i < n && i < s_maxLight; i++)
 			{
 				CLight* light = listLight[i]->Light;
+
 				if (!light->isEnable() || !light->getGameObject()->isVisible())
 					continue;
-
-				CPointLight* pointLight = dynamic_cast<CPointLight*>(light);
 
 				if (s_bakeMode == false && light->getRenderLightType() == CLight::Baked)
 					continue;
 
-				if (pointLight != NULL &&
-					pointLight->isCastShadow() == true &&
-					(pointLight->needRenderShadowDepth() || pointLight->isDynamicShadow()))
+				int lightType = light->getLightTypeId();
+				if (lightType == CLight::AreaLight)
 				{
-					CShaderLighting::setPointLight(pointLight, 0);
+					m_renderShadowState = CShadowMapRP::AreaLight;
+					CAreaLight* areaLight = dynamic_cast<CAreaLight*>(light);
 
-					core::vector3df lightPosition = pointLight->getGameObject()->getPosition();
-
-					// Save output to file to test
-					if (m_saveDebugPL)
+					if (areaLight != NULL &&
+						areaLight->isCastShadow() == true &&
+						(areaLight->needRenderShadowDepth() || areaLight->isDynamicShadow()))
 					{
-						ITexture* debugTexture[6];
-						for (int i = 0; i < 6; i++)
-							debugTexture[i] = getVideoDriver()->addRenderTargetTexture(core::dimension2du(512, 512), "bake_reflection", video::ECF_A8R8G8B8);
+						core::vector3df lightPosition = areaLight->getPosition();
 
-						renderEnvironment(camera, entityManager, lightPosition, debugTexture, NULL, 0, false);
-						setTarget(target, cubeFaceId);
+						CShaderLighting::setAreaLight(areaLight, 0);
+						areaLight->beginRenderShadowDepth();
 
-						for (int face = 0; face < 6; face++)
+						ITexture* depth = shadowRTT->createGetDepth(areaLight);
+						if (depth != NULL)
 						{
-							char filename[32];
-							sprintf(filename, "pl_shadow_%d_f%d.png", i, face);
-							CBaseRP::saveFBOToFile(debugTexture[face], filename);
-							os::Printer::log(filename);
+							m_lsm->update(lightPosition, areaLight->getRadius(), areaLight->getWorldBounds());
 
-							getVideoDriver()->removeTexture(debugTexture[face]);
+							// note: clear while 0xFFFFFFFF for max depth value
+							driver->setRenderTargetArray(depth, 0, true, true, SColor(255, 255, 255, 255));
+							driver->setTransform(video::ETS_PROJECTION, m_lsm->getProjectionMatrices());
+							driver->setTransform(video::ETS_VIEW, m_lsm->getViewMatrices());
+
+							entityManager->cullingAndRender();
+
+							renderTargetChanged = true;
 						}
+
+						areaLight->endRenderShadowDepth();
 					}
-					else
+				}
+				else if (lightType == CLight::PointLight || lightType == CLight::SpotLight)
+				{
+					m_renderShadowState = CShadowMapRP::PointLight;
+					CPointLight* pointLight = dynamic_cast<CPointLight*>(light);
+
+					if (pointLight != NULL &&
+						pointLight->isCastShadow() == true &&
+						(pointLight->needRenderShadowDepth() || pointLight->isDynamicShadow()))
 					{
+						core::vector3df lightPosition = pointLight->getPosition();
+
+						CShaderLighting::setPointLight(pointLight, 0);
 						pointLight->beginRenderShadowDepth();
 
-						ITexture* depth = shadowRTT->createGetPointLightDepth(pointLight);
+						ITexture* depth = shadowRTT->createGetDepthCube(pointLight);
 						if (depth != NULL)
 						{
 							renderCubeEnvironment(camera, entityManager, lightPosition, depth, NULL, 0, false);
@@ -631,20 +651,44 @@ namespace Skylicht
 						}
 
 						pointLight->endRenderShadowDepth();
+
+						// Save output to file to test
+						/*
+						if (m_saveDebugPL)
+						{
+							ITexture* debugTexture[6];
+							for (int i = 0; i < 6; i++)
+								debugTexture[i] = getVideoDriver()->addRenderTargetTexture(core::dimension2du(512, 512), "bake_reflection", video::ECF_A8R8G8B8);
+
+							renderEnvironment(camera, entityManager, lightPosition, debugTexture, NULL, 0, false);
+
+							setTarget(target, cubeFaceId);
+							renderTargetChanged = false;
+
+							for (int face = 0; face < 6; face++)
+							{
+								char filename[32];
+								sprintf(filename, "pl_shadow_%d_f%d.png", i, face);
+								CBaseRP::saveFBOToFile(debugTexture[face], filename);
+								os::Printer::log(filename);
+
+								getVideoDriver()->removeTexture(debugTexture[face]);
+							}
+						}
+						*/
 					}
 				}
-			}
+			} // for listLight
 		}
 
 		CShaderLighting::setPointLight(NULL, 0);
+		CShaderLighting::setAreaLight(NULL, 0);
 
 		m_saveDebugPL = false;
 		m_saveDebug = false;
 
 		if (renderTargetChanged)
-		{
 			setTarget(target, cubeFaceId);
-		}
 
 		// Fix bugs if any textures are removed
 		for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)

@@ -96,7 +96,7 @@ namespace Skylicht
 
 			core::vector3df lightPosition = pointLight->getGameObject()->getPosition();
 
-			m_depthTexture = shadowRTT->createGetPointLightDepth(pointLight);
+			m_depthTexture = shadowRTT->createGetDepthCube(pointLight);
 			if (m_depthTexture != NULL)
 				renderCubeEnvironment(camera, entityManager, lightPosition, m_depthTexture, NULL, 0, false);
 

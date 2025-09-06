@@ -56,6 +56,8 @@ namespace Skylicht
 
 		void update(CCamera* camera, const core::vector3df& lightDir, const core::aabbox3df& bound);
 
+		void update(const core::vector3df& lightPosition, float lightRadius, const core::aabbox3df& bound);
+
 		const core::aabbox3df& getFrustumBox()
 		{
 			return m_frustumBox;

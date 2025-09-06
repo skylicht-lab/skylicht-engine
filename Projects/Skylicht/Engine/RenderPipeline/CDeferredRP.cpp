@@ -677,7 +677,7 @@ namespace Skylicht
 
 							if (spotLight->isCastShadow())
 							{
-								ITexture* depthTexture = shadowRTT->createGetPointLightDepth(light);
+								ITexture* depthTexture = shadowRTT->createGetDepthCube(light);
 
 								m_lightPass.MaterialType = m_spotLightShadowShader;
 								m_lightPass.setTexture(3, depthTexture);
@@ -698,7 +698,7 @@ namespace Skylicht
 
 							if (pointLight->isCastShadow())
 							{
-								ITexture* depthTexture = shadowRTT->createGetPointLightDepth(light);
+								ITexture* depthTexture = shadowRTT->createGetDepthCube(light);
 
 								m_lightPass.MaterialType = m_pointLightShadowShader;
 								m_lightPass.setTexture(3, depthTexture);

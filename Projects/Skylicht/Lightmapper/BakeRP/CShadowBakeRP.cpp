@@ -1,9 +1,9 @@
 #include "pch.h"
-#include "CShadowMapBaseRP.h"
+#include "CShadowBakeRP.h"
 
 namespace Skylicht
 {
-	CShadowMapBaseRP::CShadowMapBaseRP() :
+	CShadowBakeRP::CShadowBakeRP() :
 		m_currentLight(NULL),
 		m_bakeInUV0(false),
 		m_bakeDetailNormal(false)
@@ -11,7 +11,7 @@ namespace Skylicht
 
 	}
 
-	CShadowMapBaseRP::~CShadowMapBaseRP()
+	CShadowBakeRP::~CShadowBakeRP()
 	{
 
 	}

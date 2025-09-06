@@ -123,7 +123,6 @@ namespace Skylicht
 
 	void CDirectionalLightBakeRP::drawMeshBuffer(CMesh* mesh, int bufferID, CEntityManager* entity, int entityID, bool skinnedMesh)
 	{
-		// just render the render mesh
 		IMeshBuffer* mb = mesh->getMeshBuffer(bufferID);
 		if (mb != m_renderMesh)
 			return;

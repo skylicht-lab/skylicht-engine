@@ -96,8 +96,10 @@ namespace Skylicht
 
 	void CAreaLight::endUpdate()
 	{
-		m_cullingData->BBox.MaxEdge.set(m_radius + m_sizeX * 0.5f, m_radius + m_sizeY * 0.5f, 0.1f);
-		m_cullingData->BBox.MinEdge.set(-(m_radius + m_sizeX * 0.5f), -(m_radius + m_sizeY * 0.5f), -0.1f);
+		float sx = m_radius + m_sizeX;
+		float sy = m_radius + m_sizeY;
+		m_cullingData->BBox.MaxEdge.set(sx * 0.5f, sy * 0.5f, m_radius);
+		m_cullingData->BBox.MinEdge.set(-sx * 0.5f, -sy * 0.5f, 0.0f);
 
 		CTransform* t = m_gameObject->getTransform();
 		if (t->hasChanged() || m_needValidate)
@@ -106,6 +108,33 @@ namespace Skylicht
 			core::matrix4 transform = t->calcWorldTransform();
 			transform.rotateVect(m_direction);
 			m_direction.normalize();
+
+			float x = m_radius + m_sizeX * 0.5f;
+			float y = m_radius + m_sizeY * 0.5f;
+
+			core::vector3df points[8]
+			{
+				core::vector3df(-x, -y, 0.0f),
+				core::vector3df(-x, y, 0.0f),
+				core::vector3df(x, y, 0.0f),
+				core::vector3df(x, -y, 0.0f),
+
+				core::vector3df(-x, -y, m_radius),
+				core::vector3df(-x, y, m_radius),
+				core::vector3df(x, y, m_radius),
+				core::vector3df(x, -y, m_radius)
+			};
+
+			const core::matrix4& world = m_gameObject->getWorldTransform();
+			for (int i = 0; i < 8; i++)
+			{
+				world.transformVect(points[i]);
+				if (i == 0)
+					m_worldBounds.reset(points[i]);
+				else
+					m_worldBounds.addInternalPoint(points[i]);
+			}
+
 			m_needValidate = false;
 		}
 	}

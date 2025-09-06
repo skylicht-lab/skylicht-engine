@@ -98,13 +98,14 @@ namespace Skylicht
 
 				float x = m_areaLight->getSizeX() * 0.5f;
 				float y = m_areaLight->getSizeY() * 0.5f;
+				float r = 0.0f;
 
 				core::vector3df points[4]
 				{
-					core::vector3df(-x, -y, 0.0f),
-					core::vector3df(-x, y, 0.0f),
-					core::vector3df(x, y, 0.0f),
-					core::vector3df(x, -y, 0.0f)
+					core::vector3df(-x, -y, r),
+					core::vector3df(-x, y, r),
+					core::vector3df(x, y, r),
+					core::vector3df(x, -y, r)
 				};
 				for (int i = 0; i < 4; i++)
 					world.transformVect(points[i]);

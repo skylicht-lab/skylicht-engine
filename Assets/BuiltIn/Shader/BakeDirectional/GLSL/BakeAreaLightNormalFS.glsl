@@ -55,8 +55,8 @@ vec3 arealight(
 	float len = length(sum);
 	vec3 dir = v0 - position;
     vec3 lightNormal = cross(v1 - v0, v3 - v0);
-    if (dot(dir, lightNormal) < 0.0)
-		len = 0.0;
+	float t = step(dot(dir, lightNormal), 0);
+	len = len * t;
 	return max(0.0, len) * lightColor.rgb * lightColor.a;
 }
 void main(void)

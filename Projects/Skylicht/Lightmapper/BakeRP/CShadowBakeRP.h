@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class CShadowMapBaseRP : public CShadowMapRP
+	class CShadowBakeRP : public CShadowMapRP
 	{
 	protected:
 		CLight* m_currentLight;
@@ -37,9 +37,9 @@ namespace Skylicht
 		bool m_bakeInUV0;
 		bool m_bakeDetailNormal;
 	public:
-		CShadowMapBaseRP();
+		CShadowBakeRP();
 
-		virtual ~CShadowMapBaseRP();
+		virtual ~CShadowBakeRP();
 
 		inline void setCurrentLight(CLight* light)
 		{

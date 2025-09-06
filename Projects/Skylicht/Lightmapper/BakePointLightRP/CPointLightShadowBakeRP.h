@@ -24,13 +24,13 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "BakeRP/CShadowMapBaseRP.h"
+#include "BakeRP/CShadowBakeRP.h"
 #include "Lighting/CPointLight.h"
 #include "Lighting/CSpotLight.h"
 
 namespace Skylicht
 {
-	class CPointLightShadowBakeRP : public CShadowMapBaseRP
+	class CPointLightShadowBakeRP : public CShadowBakeRP
 	{
 	protected:
 		core::aabbox3df m_cullingBox;
