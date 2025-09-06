@@ -616,8 +616,10 @@ namespace Skylicht
 						{
 							m_lsm->update(lightPosition, areaLight->getRadius(), areaLight->getWorldBounds());
 
+							areaLight->setShadowMatrices(m_lsm->getShadowMatrices());
+
 							// note: clear while 0xFFFFFFFF for max depth value
-							driver->setRenderTargetArray(depth, 0, true, true, SColor(255, 255, 255, 255));
+							driver->setRenderTarget(depth, true, true, SColor(255, 255, 255, 255));
 							driver->setTransform(video::ETS_PROJECTION, m_lsm->getProjectionMatrices());
 							driver->setTransform(video::ETS_VIEW, m_lsm->getViewMatrices());
 

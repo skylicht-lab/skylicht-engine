@@ -315,6 +315,20 @@ namespace Skylicht
 			shader->setColor(matRender, uniform->UniformShaderID, vertexShader, color, intensity);
 		}
 		break;
+		case AREA_LIGHT_SHADOW_MATRIX:
+		{
+			int lightId = core::clamp(uniform->ValueIndex, 0, 3);
+			if (g_areaLight[lightId] != NULL)
+			{
+				float* shadowMatrix = g_areaLight[lightId]->getShadowMatrices();
+
+				if (vertexShader == true)
+					matRender->setShaderVariable(uniform->UniformShaderID, shadowMatrix, uniform->SizeOfUniform, video::EST_VERTEX_SHADER);
+				else
+					matRender->setShaderVariable(uniform->UniformShaderID, shadowMatrix, uniform->SizeOfUniform, video::EST_PIXEL_SHADER);
+			}
+		}
+		break;
 		case LIGHT_AMBIENT:
 		{
 			shader->setColor(matRender, uniform->UniformShaderID, vertexShader, s_lightAmbient, 1.0f);

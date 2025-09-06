@@ -449,7 +449,9 @@ namespace Skylicht
 			core::array<CGameObject*>& allChilds = m_viewpointZone->getArrayChilds(true);
 			for (u32 i = 0, n = allChilds.size(); i < n; i++)
 				allChilds[i]->setCullingLayer(layer);
+
 			m_viewpointCamera->setCullingMask(layer);
+			m_editorCamera->setCullingMask(~layer);
 
 			// add handle renderer
 			CEntityManager* entityMgr = m_scene->getEntityManager();

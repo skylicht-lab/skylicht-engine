@@ -95,7 +95,7 @@ namespace Skylicht
 		radius = ceil(radius * 16.0f) / 16.0f;
 
 		m_nearOffset = 1.0f;
-		m_farValue = lightRadius;
+		m_farValue = lightRadius * 2.0f;
 
 		// Find bounding box that fits the sphere
 		core::vector3df radius3(radius, radius, radius);
@@ -108,10 +108,6 @@ namespace Skylicht
 		// Compute bounding box for culling
 		m_frustumBox.MinEdge = center - radius3;
 		m_frustumBox.MaxEdge = center + radius3;
-
-		// Fix: object shadow culling above camera
-		core::vector3df highCameraPos = center - m_lightDirection * radius * 2.0f;
-		m_frustumBox.addInternalPoint(highCameraPos);
 
 		// Add the near offset to the Z value of the cascade extents to make sure the orthographic frustum captures the entire frustum split (else it will exhibit cut-off issues).
 		core::matrix4 ortho;

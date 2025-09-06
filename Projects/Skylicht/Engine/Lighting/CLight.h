@@ -97,6 +97,7 @@ namespace Skylicht
 
 		ITexture* m_shadowTex;
 
+		float* m_shadowMatrices;
 	public:
 		CLight();
 
@@ -265,6 +266,13 @@ namespace Skylicht
 		inline void setShadowTexture(ITexture* tex)
 		{
 			m_shadowTex = tex;
+		}
+
+		void setShadowMatrices(float* m);
+
+		inline float* getShadowMatrices()
+		{
+			return m_shadowMatrices;
 		}
 	};
 }

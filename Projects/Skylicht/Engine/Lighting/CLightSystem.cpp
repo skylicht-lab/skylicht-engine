@@ -51,6 +51,7 @@ namespace Skylicht
 	{
 		m_pointLights.set_used(0);
 		m_spotLights.set_used(0);
+		m_areaLights.set_used(0);
 		m_dirLights.set_used(0);
 
 		if (!m_group)
@@ -76,14 +77,17 @@ namespace Skylicht
 			{
 				switch (lightData->LightType)
 				{
-				case 0:
+				case CLight::DirectionalLight:
 					m_dirLights.push_back(lightData);
 					break;
-				case 1:
+				case CLight::PointLight:
 					m_pointLights.push_back(lightData);
 					break;
-				case 2:
+				case CLight::SpotLight:
 					m_spotLights.push_back(lightData);
+					break;
+				case CLight::AreaLight:
+					m_areaLights.push_back(lightData);
 					break;
 				default:
 					break;
@@ -119,9 +123,11 @@ namespace Skylicht
 		{
 			m_currentPLight[i] = CShaderLighting::getPointLight(i);
 			m_currentSLight[i] = CShaderLighting::getSpotLight(i);
+			m_currentALight[i] = CShaderLighting::getAreaLight(i);
 
 			CShaderLighting::setPointLight(NULL, i);
 			CShaderLighting::setSpotLight(NULL, i);
+			CShaderLighting::setAreaLight(NULL, i);
 		}
 
 		SDistanceLightEntry entry;
@@ -172,38 +178,10 @@ namespace Skylicht
 		core::vector3df position = transform->getWorldPosition();
 
 		// point light
-		m_sorts.set_used(0);
 		lights = m_pointLights.pointer();
 		lightCount = m_pointLights.size();
 
-		for (int i = 0; i < lightCount; i++)
-		{
-			CLight* light = lights[i]->Light;
-			u32 lightLayer = light->getLightLayers();
-
-			if (objLayer & lightLayer)
-			{
-				entry.Data = lights[i];
-				entry.Light = light;
-				entry.Distance = lights[i]->LightPosition.getDistanceFromSQ(position);
-
-				int n = m_sorts.size();
-				if (n == 0 || entry.Distance > m_sorts[n - 1].Distance)
-					m_sorts.push_back(entry);
-				else
-				{
-					// insert sort by distance
-					for (int i = 0; i < n; i++)
-					{
-						if (entry.Distance < m_sorts[i].Distance)
-						{
-							m_sorts.insert(entry, i);
-							break;
-						}
-					}
-				}
-			}
-		}
+		sortLights(position, objLayer, lights, lightCount);
 
 		lightCount = m_sorts.size();
 		lightCount = core::min_(lightCount, 4);
@@ -211,9 +189,32 @@ namespace Skylicht
 			CShaderLighting::setPointLight((CPointLight*)m_sorts[i].Light, i);
 
 		// spotlight
-		m_sorts.set_used(0);
 		lights = m_spotLights.pointer();
 		lightCount = m_spotLights.size();
+
+		sortLights(position, objLayer, lights, lightCount);
+
+		lightCount = m_sorts.size();
+		lightCount = core::min_(lightCount, 4);
+		for (int i = 0; i < lightCount; i++)
+			CShaderLighting::setSpotLight((CSpotLight*)m_sorts[i].Light, i);
+
+		// area light
+		lights = m_areaLights.pointer();
+		lightCount = m_areaLights.size();
+
+		sortLights(position, objLayer, lights, lightCount);
+
+		lightCount = m_sorts.size();
+		lightCount = core::min_(lightCount, 4);
+		for (int i = 0; i < lightCount; i++)
+			CShaderLighting::setAreaLight((CAreaLight*)m_sorts[i].Light, i);
+	}
+
+	void CLightSystem::sortLights(const core::vector3df& position, u32 objLayer, CLightCullingData** lights, int lightCount)
+	{
+		SDistanceLightEntry entry;
+		m_sorts.set_used(0);
 
 		for (int i = 0; i < lightCount; i++)
 		{
@@ -243,11 +244,6 @@ namespace Skylicht
 				}
 			}
 		}
-
-		lightCount = m_sorts.size();
-		lightCount = core::min_(lightCount, 4);
-		for (int i = 0; i < lightCount; i++)
-			CShaderLighting::setSpotLight((CSpotLight*)m_sorts[i].Light, i);
 	}
 
 	void CLightSystem::onEndSetupLight()
@@ -258,6 +254,7 @@ namespace Skylicht
 		{
 			CShaderLighting::setPointLight(m_currentPLight[i], i);
 			CShaderLighting::setSpotLight(m_currentSLight[i], i);
+			CShaderLighting::setAreaLight(m_currentALight[i], i);
 		}
 	}
 }

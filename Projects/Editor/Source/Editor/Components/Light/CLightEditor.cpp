@@ -28,6 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Lighting/CDirectionalLight.h"
 #include "Lighting/CPointLight.h"
 #include "Lighting/CSpotLight.h"
+#include "Lighting/CAreaLight.h"
 
 #include "Editor/Space/Property/CSpaceProperty.h"
 
@@ -38,6 +39,7 @@ namespace Skylicht
 		EDITOR_REGISTER(CLightEditor, CDirectionalLight);
 		EDITOR_REGISTER(CLightEditor, CPointLight);
 		EDITOR_REGISTER(CLightEditor, CSpotLight);
+		EDITOR_REGISTER(CLightEditor, CAreaLight);
 
 		CLightEditor::CLightEditor()
 		{

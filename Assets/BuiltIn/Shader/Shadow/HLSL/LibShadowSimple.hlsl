@@ -1,3 +1,5 @@
+// Note: LibShadowSimple use shadowMapTexture is texture 2d
+
 // thanks savegame (https://github.com/skylicht-lab/skylicht-engine/issues/130)
 #define RAND(co) (float2(frac(sin(dot(co.xy, kRandom1)) * kRandom2), frac(sin(dot(co.yx, kRandom1)) * kRandom2)) * kRandom3)
 #define COMPARE(uv, compare) (step(compare, uShadowMap.SampleLevel(uShadowMapSampler, uv, 0).r))

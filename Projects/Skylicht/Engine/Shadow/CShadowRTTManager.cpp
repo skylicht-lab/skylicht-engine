@@ -119,12 +119,15 @@ namespace Skylicht
 		// New light depth
 		int size = 512;
 
+		if (texture2d)
+			size = 1024;
+
 		SDepthShadowRTT* d = new SDepthShadowRTT();
 		d->Light = light;
 		d->Tex2D = texture2d;
 
 		if (texture2d)
-			d->Texture = getVideoDriver()->addRenderTargetTextureArray(core::dimension2du(size, size), 1, "DepthMap", video::ECF_R32F);
+			d->Texture = getVideoDriver()->addRenderTargetTexture(core::dimension2du(size, size), "DepthMap", video::ECF_R32F);
 		else
 			d->Texture = getVideoDriver()->addRenderTargetCubeTexture(core::dimension2du(size, size), "CubeDepthMap", video::ECF_R32F);
 
@@ -169,12 +172,15 @@ namespace Skylicht
 		// New light depth
 		int size = 512;
 
+		if (texture2d)
+			size = 1024;
+
 		SDepthShadowRTT* d = new SDepthShadowRTT();
 		d->Light = light;
 		d->Tex2D = texture2d;
 
 		if (texture2d)
-			d->Texture = getVideoDriver()->addRenderTargetTextureArray(core::dimension2du(size, size), 1, "DepthMap", video::ECF_R32F);
+			d->Texture = getVideoDriver()->addRenderTargetTexture(core::dimension2du(size, size), "DepthMap", video::ECF_R32F);
 		else
 			d->Texture = getVideoDriver()->addRenderTargetCubeTexture(core::dimension2du(size, size), "CubeDepthMap", video::ECF_R32F);
 

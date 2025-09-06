@@ -33,6 +33,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Lighting/CDirectionalLight.h"
 #include "Lighting/CPointLight.h"
 #include "Lighting/CSpotLight.h"
+#include "Lighting/CAreaLight.h"
 
 namespace Skylicht
 {
@@ -48,6 +49,7 @@ namespace Skylicht
 
 		core::array<CLightCullingData*> m_pointLights;
 		core::array<CLightCullingData*> m_spotLights;
+		core::array<CLightCullingData*> m_areaLights;
 		core::array<CLightCullingData*> m_dirLights;
 
 		CEntityGroup* m_group;
@@ -55,6 +57,7 @@ namespace Skylicht
 		CDirectionalLight* m_currentDLight;
 		CPointLight* m_currentPLight[4];
 		CSpotLight* m_currentSLight[4];
+		CAreaLight* m_currentALight[4];
 
 		core::array<SDistanceLightEntry> m_sorts;
 
@@ -78,5 +81,10 @@ namespace Skylicht
 		void onBeginSetupLight(CRenderMeshData* data, CWorldTransformData* transform);
 
 		void onEndSetupLight();
+
+	protected:
+
+		void sortLights(const core::vector3df& position, u32 objLayer, CLightCullingData** lights, int lightCount);
+
 	};
 }

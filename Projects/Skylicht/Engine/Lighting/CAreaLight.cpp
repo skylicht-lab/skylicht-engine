@@ -39,10 +39,6 @@ namespace Skylicht
 		m_sizeY(1.0f),
 		m_needRenderShadowDepth(true)
 	{
-		// default 2 bounce
-		m_bakeBounce = 2;
-		m_castShadow = true;
-
 		setIntensity(3.5f);
 		setRadius(1.5f);
 	}

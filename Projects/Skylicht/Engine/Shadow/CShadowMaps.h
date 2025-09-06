@@ -59,27 +59,27 @@ namespace Skylicht
 
 		void update(CCamera* camera, const core::vector3df& lightDir);
 
-		const core::aabbox3df& getFrustumBox()
+		inline const core::aabbox3df& getFrustumBox()
 		{
 			return m_frustumBox;
 		}
 
-		const core::matrix4& getViewMatrices()
+		inline const core::matrix4& getViewMatrices()
 		{
 			return m_viewMatrices;
 		}
 
-		const core::matrix4& getProjectionMatrices()
+		inline const core::matrix4& getProjectionMatrices()
 		{
 			return m_projMatrices;
 		}
 
-		float* getShadowDistance()
+		inline float* getShadowDistance()
 		{
 			return m_farBounds;
 		}
 
-		float* getShadowMatrices()
+		inline float* getShadowMatrices()
 		{
 			return m_shadowMatrices;
 		}

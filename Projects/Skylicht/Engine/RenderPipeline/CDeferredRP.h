@@ -139,6 +139,7 @@ namespace Skylicht
 		int m_spotLightShadowShader;
 
 		int m_areaLightShader;
+		int m_areaLightShadowShader;
 
 		float m_indirectMultipler;
 		float m_directMultipler;

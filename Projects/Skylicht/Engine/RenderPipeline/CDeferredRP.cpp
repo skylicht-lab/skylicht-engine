@@ -259,6 +259,7 @@ namespace Skylicht
 		m_spotLightShader = shaderMgr->getShaderIDByName("SGSpotLight");
 		m_spotLightShadowShader = shaderMgr->getShaderIDByName("SGSpotLightShadow");
 		m_areaLightShader = shaderMgr->getShaderIDByName("SGAreaLight");
+		m_areaLightShadowShader = shaderMgr->getShaderIDByName("SGAreaLightShadow");
 
 		m_lightPass.MaterialType = m_pointLightShader;
 		m_lightPass.setTexture(0, m_position);
@@ -637,81 +638,91 @@ namespace Skylicht
 						!light->isAffectingDefaultObjects())
 						continue;
 
-					bool renderLight = true;
-
 					if (s_bakeMode == true && s_bakeLMMode == true)
 					{
 						u32 lightBounce = light->getBounce();
 						if (s_bakeBounce < totalBounce - lightBounce)
-							renderLight = false;
+							continue;
 					}
 
 					// no render shadow on bake light
 					if (s_bakeMode == false && light->getRenderLightType() == CLight::Baked)
-						renderLight = false;
+						continue;
 
-					if (renderLight == true)
+					float rx, ry, rw, rh;
+					getRenderLightRect(camera, listLight[i]->TransformBBox, rx, ry, rw, rh, renderW, renderH);
+
+					if (rw <= 1.0f || rh <= 1.0f)
+						continue;
+
+					int lightType = light->getLightTypeId();
+					if (lightType == CLight::AreaLight)
 					{
-						float rx, ry, rw, rh;
-						getRenderLightRect(camera, listLight[i]->TransformBBox, rx, ry, rw, rh, renderW, renderH);
+						CAreaLight* areaLight = dynamic_cast<CAreaLight*>(light);
+						CShaderLighting::setAreaLight(areaLight, 0);
 
-						if (rw <= 1.0f || rh <= 1.0f)
-							continue;
-
-						int lightType = light->getLightTypeId();
-						if (lightType == CLight::AreaLight)
+						if (areaLight->isCastShadow())
 						{
-							CAreaLight* areaLight = dynamic_cast<CAreaLight*>(light);
-							CShaderLighting::setAreaLight(areaLight, 0);
-
+							ITexture* depthTexture = shadowRTT->createGetDepth(areaLight);
+							m_lightPass.MaterialType = m_areaLightShadowShader;
+							m_lightPass.TextureLayer[3].TextureWrapU = video::ETC_CLAMP_TO_BORDER;
+							m_lightPass.TextureLayer[3].TextureWrapV = video::ETC_CLAMP_TO_BORDER;
+							m_lightPass.TextureLayer[3].BorderColor.set(1.0f, 1.0f, 1.0f, 1.0f);
+							m_lightPass.setTexture(3, depthTexture);
+						}
+						else
+						{
 							m_lightPass.MaterialType = m_areaLightShader;
 							m_lightPass.setTexture(3, NULL);
-
-							beginRender2D(renderW, renderH);
-							renderBufferToTarget(rx, ry, rw, rh, rx, ry, rw, rh, m_lightPass);
 						}
-						else if (lightType == CLight::SpotLight)
+
+						beginRender2D(renderW, renderH);
+						renderBufferToTarget(rx, ry, rw, rh, rx, ry, rw, rh, m_lightPass);
+					}
+					else if (lightType == CLight::SpotLight)
+					{
+						CSpotLight* spotLight = dynamic_cast<CSpotLight*>(light);
+						CShaderLighting::setSpotLight(spotLight, 0);
+
+						if (spotLight->isCastShadow())
 						{
-							CSpotLight* spotLight = dynamic_cast<CSpotLight*>(light);
-							CShaderLighting::setSpotLight(spotLight, 0);
-
-							if (spotLight->isCastShadow())
-							{
-								ITexture* depthTexture = shadowRTT->createGetDepthCube(light);
-
-								m_lightPass.MaterialType = m_spotLightShadowShader;
-								m_lightPass.setTexture(3, depthTexture);
-							}
-							else
-							{
-								m_lightPass.MaterialType = m_spotLightShader;
-								m_lightPass.setTexture(3, NULL);
-							}
-
-							beginRender2D(renderW, renderH);
-							renderBufferToTarget(rx, ry, rw, rh, rx, ry, rw, rh, m_lightPass);
+							ITexture* depthTexture = shadowRTT->createGetDepthCube(light);
+							m_lightPass.MaterialType = m_spotLightShadowShader;
+							m_lightPass.TextureLayer[3].TextureWrapU = video::ETC_REPEAT;
+							m_lightPass.TextureLayer[3].TextureWrapV = video::ETC_REPEAT;
+							m_lightPass.setTexture(3, depthTexture);
 						}
-						else if (lightType == CLight::PointLight)
+						else
 						{
-							CPointLight* pointLight = dynamic_cast<CPointLight*>(light);
-							CShaderLighting::setPointLight(pointLight, 0);
-
-							if (pointLight->isCastShadow())
-							{
-								ITexture* depthTexture = shadowRTT->createGetDepthCube(light);
-
-								m_lightPass.MaterialType = m_pointLightShadowShader;
-								m_lightPass.setTexture(3, depthTexture);
-							}
-							else
-							{
-								m_lightPass.MaterialType = m_pointLightShader;
-								m_lightPass.setTexture(3, NULL);
-							}
-
-							beginRender2D(renderW, renderH);
-							renderBufferToTarget(rx, ry, rw, rh, rx, ry, rw, rh, m_lightPass);
+							m_lightPass.MaterialType = m_spotLightShader;
+							m_lightPass.setTexture(3, NULL);
 						}
+
+						beginRender2D(renderW, renderH);
+						renderBufferToTarget(rx, ry, rw, rh, rx, ry, rw, rh, m_lightPass);
+					}
+					else if (lightType == CLight::PointLight)
+					{
+						CPointLight* pointLight = dynamic_cast<CPointLight*>(light);
+						CShaderLighting::setPointLight(pointLight, 0);
+
+						if (pointLight->isCastShadow())
+						{
+							ITexture* depthTexture = shadowRTT->createGetDepthCube(light);
+
+							m_lightPass.MaterialType = m_pointLightShadowShader;
+							m_lightPass.TextureLayer[3].TextureWrapU = video::ETC_REPEAT;
+							m_lightPass.TextureLayer[3].TextureWrapV = video::ETC_REPEAT;
+							m_lightPass.setTexture(3, depthTexture);
+						}
+						else
+						{
+							m_lightPass.MaterialType = m_pointLightShader;
+							m_lightPass.setTexture(3, NULL);
+						}
+
+						beginRender2D(renderW, renderH);
+						renderBufferToTarget(rx, ry, rw, rh, rx, ry, rw, rh, m_lightPass);
 					}
 				}
 			}

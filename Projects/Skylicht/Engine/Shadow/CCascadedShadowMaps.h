@@ -64,32 +64,32 @@ namespace Skylicht
 
 		void update(CCamera *camera, const core::vector3df& lightDir);
 
-		const core::aabbox3df& getFrustumBox(int cascaded)
+		inline const core::aabbox3df& getFrustumBox(int cascaded)
 		{
 			return m_frustumBox[cascaded];
 		}
 
-		int getSplitCount()
+		inline int getSplitCount()
 		{
 			return m_splitCount;
 		}
 
-		const core::matrix4& getViewMatrices(int i)
+		inline const core::matrix4& getViewMatrices(int i)
 		{
 			return m_viewMatrices[i];
 		}
 
-		const core::matrix4& getProjectionMatrices(int i)
+		inline const core::matrix4& getProjectionMatrices(int i)
 		{
 			return m_projMatrices[i];
 		}
 
-		float* getShadowDistance()
+		inline float* getShadowDistance()
 		{
 			return m_farBounds;
 		}
 
-		float* getShadowMatrices()
+		inline float* getShadowMatrices()
 		{
 			return m_shadowMatrices;
 		}

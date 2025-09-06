@@ -44,7 +44,8 @@ namespace Skylicht
 		m_renderType(CLight::Mixed),
 		m_needValidate(true),
 		m_cullingData(NULL),
-		m_shadowTex(NULL)
+		m_shadowTex(NULL),
+		m_shadowMatrices(NULL)
 	{
 		setRadius(3.0f);
 	}
@@ -53,6 +54,9 @@ namespace Skylicht
 	{
 		if (CShadowRTTManager::getInstance())
 			CShadowRTTManager::getInstance()->onLightRemoved(this);
+
+		if (m_shadowMatrices)
+			delete m_shadowMatrices;
 	}
 
 	CObjectSerializable* CLight::createSerializable()
@@ -101,5 +105,12 @@ namespace Skylicht
 		box.addInternalPoint(p + core::vector3df(-m_radius, -m_radius, -m_radius));
 
 		return box;
+	}
+
+	void CLight::setShadowMatrices(float* m)
+	{
+		if (!m_shadowMatrices)
+			m_shadowMatrices = new float[16];
+		memcpy(m_shadowMatrices, m, sizeof(float) * 16);
 	}
 }
