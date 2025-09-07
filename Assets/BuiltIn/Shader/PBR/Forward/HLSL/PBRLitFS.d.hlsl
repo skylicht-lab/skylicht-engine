@@ -237,8 +237,6 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 lightContribution = computeLightContribution(n, uLightDirection.xyz, input.worldViewDir, F0, lambert, sRGB(uLightColor.rgb), VdotN, roughness, metalness);
 #endif	
 	
-#endif
-
 #if defined(SHADOW)
 	lightContribution *= visibility;
 #endif

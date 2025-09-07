@@ -18,7 +18,6 @@ uniform vec2 uLightSize;
 uniform vec4 uLightColor;
 
 #ifdef SHADOW
-uniform vec4 uShadowBias;
 uniform mat4 uShadowMatrix;
 #endif
 

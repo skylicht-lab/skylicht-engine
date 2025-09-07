@@ -28,14 +28,24 @@ float shadowSimple(const vec4 shadowCoord)
 	vec3 shadowUV = shadowCoord.xyz / shadowCoord.w;
 
 	depth = shadowUV.z;
-	depth -= uShadowBias.x;
 	
+#if defined(SHADOW_BIAS)
+	depth -= SHADOW_BIAS;
+#else	
+	depth -= uShadowBias.x;
+#endif
+
 	vec2 uv = shadowUV.xy;
 	
 #if defined(HARD_SHADOW)
 	return COMPARE(uv, depth);
 #else
+	
+#if defined(SHADOW_SIZE)
+	float size = 1.0/SHADOW_SIZE;
+#else
 	float size = 1.0/2048.0;
+#endif
 
 #if defined(PCF_NOISE)
 	vec2 off;

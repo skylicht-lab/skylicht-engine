@@ -27,7 +27,6 @@ cbuffer cbPerFrame
 	float2 uLightSize;
 	float4 uLightColor;
 #ifdef SHADOW
-	float4 uShadowBias;
 	float4x4 uShadowMatrix;
 #endif
 };
