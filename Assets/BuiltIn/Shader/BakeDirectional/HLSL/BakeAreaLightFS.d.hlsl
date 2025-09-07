@@ -1,3 +1,6 @@
+Texture2D uShadowMap : register(t0);
+SamplerState uShadowMapSampler : register(s0);
+
 #if defined(NORMAL_MAP)	
 Texture2D uTexNormalMap : register(t1);
 SamplerState uTexNormalMapSampler : register(s1);
@@ -23,9 +26,10 @@ cbuffer cbPerFrame
 	float3 uLightDirY;
 	float2 uLightSize;
 	float4 uLightColor;
+	float4x4 uShadowMatrix;
 };
 
-#include "../../Light/HLSL/LibAreaLight.hlsl"
+#include "../../Light/HLSL/LibAreaLightShadow.hlsl"
 
 float4 main(PS_INPUT input) : SV_TARGET
 {
@@ -39,7 +43,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 worldNormal = input.worldNormal;
 #endif
 
-	float3 directionalLightColor = arealight(
+	float3 directionalLightColor = arealightShadow(
 		input.worldPosition, 
 		worldNormal,
 		float3(0.0, 100.0, 0.0), 

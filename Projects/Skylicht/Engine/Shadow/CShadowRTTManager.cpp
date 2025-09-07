@@ -119,9 +119,6 @@ namespace Skylicht
 		// New light depth
 		int size = 512;
 
-		if (texture2d)
-			size = 1024;
-
 		SDepthShadowRTT* d = new SDepthShadowRTT();
 		d->Light = light;
 		d->Tex2D = texture2d;
@@ -171,9 +168,6 @@ namespace Skylicht
 
 		// New light depth
 		int size = 512;
-
-		if (texture2d)
-			size = 1024;
 
 		SDepthShadowRTT* d = new SDepthShadowRTT();
 		d->Light = light;

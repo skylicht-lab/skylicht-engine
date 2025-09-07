@@ -46,11 +46,8 @@ float3 arealight(const float3 position,
 	
 	float len = length(sum);
 	
-	float3 dir = v0 - position;
-    float3 lightNormal = cross(v1 - v0, v3 - v0);
-    
-	float t = step(dot(dir, lightNormal), 0);
-	len = len * t;	
+	float3 lightNormal = -normalize(cross(v1 - v0, v3 - v0));
+	len = len * max(dot(normal, lightNormal), 0.0);
 	
 	return max(0.0, len) * lightColor.rgb * lightColor.a;
 }

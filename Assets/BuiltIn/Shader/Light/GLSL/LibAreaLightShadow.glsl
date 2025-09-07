@@ -49,11 +49,8 @@ vec3 arealightShadow(
 	
 	float len = length(sum);
 	
-	vec3 dir = v0 - position;
-    vec3 lightNormal = cross(v1 - v0, v3 - v0);
-    
-	float t = step(dot(dir, lightNormal), 0);
-	len = len * t;	
+	vec3 lightNormal = -normalize(cross(v1 - v0, v3 - v0));   
+	len = len * max(dot(normal, lightNormal), 0.0);
 	
 	vec4 shadowCoord = uShadowMatrix * vec4(position, 1.0);
 	len = len * shadowSimple(shadowCoord);

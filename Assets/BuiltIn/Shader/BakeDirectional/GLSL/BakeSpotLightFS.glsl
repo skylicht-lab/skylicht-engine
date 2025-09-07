@@ -41,7 +41,7 @@ vec3 spotlightShadow(
 	vec3 H = normalize(direction + viewDir);
 	float NdotE = max(0.0,dot(normal, H));
 	float specular = pow(NdotE, 10.0 + 100.0 * gloss) * spec;
-	float bias = 0.2;
+	float bias = 0.05;
 	float d = distance - bias;
 	float shadow = 0.0;
 	float samples = 2.0;

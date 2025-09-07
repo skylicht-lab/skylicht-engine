@@ -1,5 +1,7 @@
 precision highp float;
-precision highp samplerCube;
+precision highp sampler2D;
+
+uniform sampler2D uShadowMap;
 
 #if defined(NORMAL_MAP)
 uniform sampler2D uTexNormal;
@@ -20,10 +22,11 @@ uniform vec3 uLightDirX;
 uniform vec3 uLightDirY;
 uniform vec2 uLightSize;
 uniform vec4 uLightColor;
+uniform mat4 uShadowMatrix;
 
 out vec4 FragColor;
 
-#include "../../Light/GLSL/LibAreaLight.glsl"
+#include "../../Light/GLSL/LibAreaLightShadow.glsl"
 
 void main(void)
 {
@@ -37,7 +40,7 @@ void main(void)
 	vec3 worldNormal = varWorldNormal;
 #endif
 
-	vec3 directionalLightColor = arealight(
+	vec3 directionalLightColor = arealightShadow(
 		varWorldPosition, 
 		worldNormal,
 		vec3(0.0, 100.0, 0.0), 

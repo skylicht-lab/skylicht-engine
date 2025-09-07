@@ -43,7 +43,7 @@ vec3 spotlightShadow(
 	float specular = pow(NdotE, 10.0 + 100.0 * gloss) * spec;
 
 	// Shadow
-	float bias = 0.2;
+	float bias = 0.05;
 	float d = distance - bias;
 
 #if defined(HARD_SHADOW)

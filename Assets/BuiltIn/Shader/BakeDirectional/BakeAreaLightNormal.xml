@@ -4,12 +4,15 @@
 			<uniform name="uWorldMatrix" type="WORLD" value="0" float="16" matrix="true"/>
 		</vs>
 		<fs>
-			<uniform name="uTexNormal" type="DEFAULT_VALUE" value="1" float="1" directX="false"/>
+			<uniform name="uShadowMap" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
+			<uniform name="uTexNormal" type="DEFAULT_VALUE" value="1" float="1" directX="false"/>			
+			
 			<uniform name="uLightPosition" type="AREA_LIGHT_POSITION" value="0" float="4"/>
 			<uniform name="uLightDirX" type="AREA_LIGHT_DIR_X" value="0" float="3"/>
 			<uniform name="uLightDirY" type="AREA_LIGHT_DIR_Y" value="0" float="3"/>
 			<uniform name="uLightSize" type="AREA_LIGHT_SIZE" value="0" float="2"/>
 			<uniform name="uLightColor" type="AREA_LIGHT_COLOR" value="1.0,1.0,1.0,1.0" float="4"/>
+			<uniform name="uShadowMatrix" type="AREA_LIGHT_SHADOW_MATRIX" value="0" float="16" matrix="true"/>
 		</fs>
 	</uniforms>
 	<resources>
