@@ -92,11 +92,16 @@ namespace Skylicht
 		if (lightTypeId == CLight::DirectionalLight)
 		{
 			m_sm->update(camera, m_lightDirection, m_bound);
+
+			m_renderShadowState = CShadowMapRP::DirectionLight;
 		}
 		else if (lightTypeId == CLight::AreaLight)
 		{
 			CAreaLight* areaLight = dynamic_cast<CAreaLight*>(light);
 			m_sm->update(areaLight->getPosition(), areaLight->getRadius(), areaLight->getWorldBounds());
+			areaLight->setShadowMatrices(m_sm->getShadowMatrices());
+
+			m_renderShadowState = CShadowMapRP::AreaLight;
 		}
 
 		setCamera(camera);
@@ -108,9 +113,6 @@ namespace Skylicht
 			entityManager->update();
 
 		CShaderShadow::setShadowMapRP(this);
-
-		// render directional light shadow
-		m_renderShadowState = CShadowMapRP::DirectionLight;
 
 		IVideoDriver* driver = getVideoDriver();
 

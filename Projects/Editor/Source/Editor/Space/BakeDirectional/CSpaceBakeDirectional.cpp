@@ -66,7 +66,9 @@ namespace Skylicht
 			m_shadowRP(NULL),
 			m_bakeLightRP(NULL),
 			m_shadowPLRP(NULL),
-			m_bakePointLightRP(NULL)
+			m_bakePointLightRP(NULL),
+			m_shadowALRP(NULL),
+			m_bakeAreaLightRP(NULL)
 		{
 			m_progressBar = new GUI::CProgressBar(window);
 			m_progressBar->dock(GUI::EPosition::Top);
@@ -100,6 +102,12 @@ namespace Skylicht
 
 			if (m_bakePointLightRP)
 				delete m_bakePointLightRP;
+
+			if (m_shadowALRP)
+				delete m_shadowALRP;
+
+			if (m_bakeAreaLightRP)
+				delete m_bakeAreaLightRP;
 
 			IVideoDriver* driver = getVideoDriver();
 
@@ -207,6 +215,7 @@ namespace Skylicht
 			// setup target for pipeline
 			m_bakeLightRP->setRenderMesh(mb, normalMap, m_subMesh, m_directionLightBake, numTargetTexture);
 			m_bakePointLightRP->setRenderMesh(mb, normalMap, m_subMesh, m_pointLightBake, numTargetTexture);
+			m_bakeAreaLightRP->setRenderMesh(mb, normalMap, m_subMesh, m_pointLightBake, numTargetTexture);
 
 			// set camera view
 			core::vector3df center = box.getCenter();
@@ -236,6 +245,13 @@ namespace Skylicht
 					m_shadowRP->render(NULL, bakeCamera, entityMgr, core::recti());
 
 					CShaderShadow::setShadowBias(oldBias);
+				}
+				else if (light->getLightTypeId() == CLight::AreaLight)
+				{
+					m_shadowALRP->setCurrentLight(light);
+					m_shadowALRP->setBakeInUV0(m_bakeUV0);
+					m_shadowALRP->setBakeDetailNormal(m_bakeDetailNormal);
+					m_shadowALRP->render(NULL, bakeCamera, entityMgr, core::recti());
 				}
 				else
 				{
@@ -352,6 +368,7 @@ namespace Skylicht
 			// setup target for pipeline
 			m_bakeLightRP->setRenderMesh(mb, normalMap, m_subMesh, m_directionLightBake, numTargetTexture);
 			m_bakePointLightRP->setRenderMesh(mb, normalMap, m_subMesh, m_pointLightBake, numTargetTexture);
+			m_bakeAreaLightRP->setRenderMesh(mb, normalMap, m_subMesh, m_pointLightBake, numTargetTexture);
 
 			// set camera view
 			core::vector3df center = box.getCenter();
@@ -382,6 +399,13 @@ namespace Skylicht
 					m_shadowRP->render(NULL, bakeCamera, entityMgr, core::recti());
 
 					CShaderShadow::setShadowBias(oldBias);
+				}
+				else if (light->getLightTypeId() == CLight::AreaLight)
+				{
+					m_shadowALRP->setCurrentLight(light);
+					m_shadowALRP->setBakeInUV0(m_bakeUV0);
+					m_shadowALRP->setBakeDetailNormal(m_bakeDetailNormal);
+					m_shadowALRP->render(NULL, bakeCamera, entityMgr, core::recti());
 				}
 				else
 				{
@@ -577,6 +601,15 @@ namespace Skylicht
 			m_bakePointLightRP = new CPointLightBakeRP();
 			m_bakePointLightRP->initRender(m_bakeSize, m_bakeSize);
 			m_shadowPLRP->setNextPipeLine(m_bakePointLightRP);
+
+			// area light
+			m_shadowALRP = new CShadowMapBakeRP();
+			m_shadowALRP->setShadowMapSize(1024);
+			m_shadowALRP->initRender(m_bakeSize, m_bakeSize);
+
+			m_bakeAreaLightRP = new CAreaLightBakeRP();
+			m_bakeAreaLightRP->initRender(m_bakeSize, m_bakeSize);
+			m_shadowALRP->setNextPipeLine(m_bakeAreaLightRP);
 
 			m_state = Init;
 		}

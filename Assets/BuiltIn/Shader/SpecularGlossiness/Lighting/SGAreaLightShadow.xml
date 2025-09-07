@@ -22,6 +22,6 @@
 	</resources>
 	<customUI>
 	</customUI>
-	<shader type="GLSL" vs="GLSL/SGPointLightVS.glsl" fs="GLSL/SGAreaLightShadowFS.glsl" fs_source="GLSL/SGAreaLightFS.d.glsl" define="SHADOW;SHADOW_SIZE 512.0;SHADOW_BIAS 0.003"/>
-	<shader type="HLSL" vs="HLSL/SGPointLightVS.hlsl" fs="HLSL/SGAreaLightShadowFS.hlsl" fs_source="HLSL/SGAreaLightFS.d.hlsl" define="SHADOW;SHADOW_SIZE 512.0;SHADOW_BIAS 0.003"/>
+	<shader type="GLSL" vs="GLSL/SGPointLightVS.glsl" fs="GLSL/SGAreaLightShadowFS.glsl" fs_source="GLSL/SGAreaLightFS.d.glsl" define="SHADOW;SHADOW_SIZE 512.0;SHADOW_BIAS 0.005"/>
+	<shader type="HLSL" vs="HLSL/SGPointLightVS.hlsl" fs="HLSL/SGAreaLightShadowFS.hlsl" fs_source="HLSL/SGAreaLightFS.d.hlsl" define="SHADOW;SHADOW_SIZE 512.0;SHADOW_BIAS 0.005"/>
 </shaderConfig>

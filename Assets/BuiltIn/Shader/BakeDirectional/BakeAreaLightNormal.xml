@@ -19,6 +19,6 @@
 	</resources>
 	<customUI>
 	</customUI>
-	<shader type="GLSL" vs="GLSL/BakeLightLMNormalVS.glsl" fs="GLSL/BakeAreaLightNormalFS.glsl" fs_source="GLSL/BakeAreaLightFS.d.glsl" define="LM,NORMAL_MAP"/>
-	<shader type="HLSL" vs="HLSL/BakeLightLMNormalVS.hlsl" fs="HLSL/BakeAreaLightNormalFS.hlsl" fs_source="HLSL/BakeAreaLightFS.d.hlsl" define="LM,NORMAL_MAP"/>
+	<shader type="GLSL" vs="GLSL/BakeLightLMNormalVS.glsl" fs="GLSL/BakeAreaLightNormalFS.glsl" fs_source="GLSL/BakeAreaLightFS.d.glsl" define="LM;NORMAL_MAP;SHADOW;SHADOW_SIZE 1024.0;SHADOW_BIAS 0.005"/>
+	<shader type="HLSL" vs="HLSL/BakeLightLMNormalVS.hlsl" fs="HLSL/BakeAreaLightNormalFS.hlsl" fs_source="HLSL/BakeAreaLightFS.d.hlsl" define="LM;NORMAL_MAP;SHADOW;SHADOW_SIZE 1024.0;SHADOW_BIAS 0.005"/>
 </shaderConfig>

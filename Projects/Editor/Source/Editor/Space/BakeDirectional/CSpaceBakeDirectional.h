@@ -38,6 +38,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "BakeDirectionalRP/CDirectionalLightBakeRP.h"
 #include "BakePointLightRP/CPointLightShadowBakeRP.h"
 #include "BakePointLightRP/CPointLightBakeRP.h"
+#include "BakeAreaLightRP/CAreaLightBakeRP.h"
 
 #define MAX_LIGHTMAP_ATLAS 10
 
@@ -86,6 +87,9 @@ namespace Skylicht
 
 			CPointLightShadowBakeRP* m_shadowPLRP;
 			CPointLightBakeRP* m_bakePointLightRP;
+
+			CShadowMapBakeRP* m_shadowALRP;
+			CAreaLightBakeRP* m_bakeAreaLightRP;
 
 			ITexture* m_directionLightBake[MAX_LIGHTMAP_ATLAS];
 			ITexture* m_pointLightBake[MAX_LIGHTMAP_ATLAS];

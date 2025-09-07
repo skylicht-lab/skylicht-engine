@@ -44,6 +44,11 @@ namespace Skylicht
 
 		virtual void render(ITexture* target, CCamera* camera, CEntityManager* entityManager, const core::recti& viewport, int cubeFaceId = -1, IRenderPipeline* lastRP = NULL);
 
+		void setShadowMapSize(int size)
+		{
+			m_shadowMapSize = size;
+		}
+
 		void setBound(const core::aabbox3df& bound)
 		{
 			m_bound = bound;

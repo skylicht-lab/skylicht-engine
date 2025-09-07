@@ -43,7 +43,8 @@ namespace Skylicht
 	{
 		for (SDepthShadowRTT* d : m_depthStatic)
 		{
-			d->Light->setShadowTexture(NULL);
+			if (d->Light)
+				d->Light->setShadowTexture(NULL);
 			getVideoDriver()->removeTexture(d->Texture);
 			delete d;
 		}
@@ -51,6 +52,8 @@ namespace Skylicht
 
 		for (SDepthShadowRTT* d : m_depthDynamic)
 		{
+			if (d->Light)
+				d->Light->setShadowTexture(NULL);
 			getVideoDriver()->removeTexture(d->Texture);
 			delete d;
 		}

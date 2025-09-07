@@ -166,15 +166,16 @@ namespace Skylicht
 		irrMaterial.BackfaceCulling = false;
 		irrMaterial.FrontfaceCulling = false;
 
-		/*
-		CShadowRTTManager* shadowRTT = CShadowRTTManager::getInstance();
-		ITexture* depthTexture = shadowRTT->createGetPointLightDepth(currentLight);
+		ITexture* depthTexture = shadowRP->getDepthTexture();
+		depthTexture->regenerateMipMapLevels();
 
 		irrMaterial.TextureLayer[0].Texture = depthTexture;
 		irrMaterial.TextureLayer[0].BilinearFilter = false;
 		irrMaterial.TextureLayer[0].TrilinearFilter = false;
 		irrMaterial.TextureLayer[0].AnisotropicFilter = 0;
-		*/
+		irrMaterial.TextureLayer[0].TextureWrapU = video::ETC_CLAMP_TO_BORDER;
+		irrMaterial.TextureLayer[0].TextureWrapV = video::ETC_CLAMP_TO_BORDER;
+		irrMaterial.TextureLayer[0].BorderColor.set(1.0f, 1.0f, 1.0f, 1.0f);
 
 		bool inUV0 = shadowRP->isBakeInUV0();
 
@@ -185,7 +186,6 @@ namespace Skylicht
 			irrMaterial.TextureLayer[1].TrilinearFilter = false;
 			irrMaterial.TextureLayer[1].AnisotropicFilter = 8;
 
-			// have normal map shader
 			irrMaterial.MaterialType = inUV0 ? m_lightNUV0 : m_lightN;
 		}
 		else
