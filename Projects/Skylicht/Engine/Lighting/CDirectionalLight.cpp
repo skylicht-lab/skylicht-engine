@@ -85,9 +85,10 @@ namespace Skylicht
 		if (m_enable)
 		{
 			CDirectionalLight* currentLight = CShaderLighting::getDirectionalLight();
+
 			if (currentLight == NULL)
 			{
-				if (isAffectingDefaultObjects())
+				if (isAffectingDefaultObjects() && m_gameObject->isVisible())
 					CShaderLighting::setDirectionalLight(this);
 			}
 			else
@@ -99,7 +100,7 @@ namespace Skylicht
 				}
 				else
 				{
-					if (!isAffectingDefaultObjects())
+					if (!isAffectingDefaultObjects() || !currentLight->getGameObject()->isVisible())
 						CShaderLighting::setDirectionalLight(NULL);
 				}
 			}

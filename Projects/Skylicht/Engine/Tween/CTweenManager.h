@@ -20,6 +20,17 @@ namespace Skylicht
 		std::vector<CTween*> m_tweens;
 		std::vector<CTween*> m_insert;
 		std::vector<CTween*> m_remove;
+
+		struct SDelayCall
+		{
+			float Time;
+			std::function<void()> Function;
+		};
+
+		std::vector<SDelayCall*> m_delayCalls;
+		std::vector<SDelayCall*> m_insertCalls;
+		std::vector<SDelayCall*> m_removeCalls;
+
 	public:
 		CTweenManager();
 
@@ -30,5 +41,7 @@ namespace Skylicht
 		void addTween(CTween* tween);
 
 		void removeTween(CTween* tween);
+
+		void addDelayCall(float time, std::function<void()> function);
 	};
 }

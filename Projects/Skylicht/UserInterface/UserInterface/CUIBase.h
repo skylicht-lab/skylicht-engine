@@ -188,6 +188,11 @@ namespace Skylicht
 
 			void removeMotions(EMotionEvent event);
 
+			std::vector<CMotion*>& getMotions(EMotionEvent event)
+			{
+				return m_motions[(int)event];
+			}
+
 			void convertToUICoordinate(float& pointerX, float& pointerY);
 
 			void convertWorldToLocal(CGUIElement* element, float& x, float& y);

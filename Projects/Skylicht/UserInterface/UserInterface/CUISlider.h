@@ -38,6 +38,7 @@ namespace Skylicht
 			CGUIElement* m_handle;
 			CGUIMask* m_mask;
 
+			CUIBase* m_bgHander;
 			CUIBase* m_buttonHander;
 
 			float m_value;
@@ -67,7 +68,6 @@ namespace Skylicht
 			void updateDrag();
 
 			void onEndDrag();
-
 		};
 	}
 }

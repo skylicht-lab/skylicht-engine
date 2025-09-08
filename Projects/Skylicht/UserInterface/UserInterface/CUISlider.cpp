@@ -38,6 +38,7 @@ namespace Skylicht
 			m_handle(NULL),
 			m_mask(NULL),
 			m_buttonHander(NULL),
+			m_bgHander(NULL),
 			m_value(1.0f),
 			m_handleWidth(0.0f)
 		{
@@ -76,6 +77,26 @@ namespace Skylicht
 							if (pointerDown)
 								updateDrag();
 						};
+
+					m_bgHander = new UI::CUIBase(container, m_background);
+					m_bgHander->OnPointerDown = [&](float pointerX, float pointerY)
+						{
+							CUIEventManager::getInstance()->setCapture(m_bgHander);
+							onBeginDrag();
+
+							m_offset.set(m_handleWidth * 0.5f, m_offset.Y);
+							updateDrag();
+						};
+					m_bgHander->OnPointerUp = [&](float pointerX, float pointerY)
+						{
+							CUIEventManager::getInstance()->setCapture(NULL);
+							onEndDrag();
+						};
+					m_bgHander->OnPointerMove = [&](float pointerX, float pointerY, bool pointerDown)
+						{
+							if (pointerDown)
+								updateDrag();
+						};
 				}
 			}
 		}
@@ -84,6 +105,9 @@ namespace Skylicht
 		{
 			if (m_buttonHander)
 				m_buttonHander->remove();
+
+			if (m_bgHander)
+				m_bgHander->remove();
 		}
 
 		void CUISlider::onBeginDrag()
