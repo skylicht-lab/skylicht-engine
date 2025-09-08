@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CAreaLight.h"
+#include "Transform/CWorldInverseTransformData.h"
 
 #include "GameObject/CGameObject.h"
 #include "Material/Shader/ShaderCallback/CShaderLighting.h"
@@ -55,6 +56,8 @@ namespace Skylicht
 		m_cullingData = entity->addData<CLightCullingData>();
 		m_cullingData->Light = this;
 		m_cullingData->LightType = CLight::AreaLight;
+
+		entity->addData<CWorldInverseTransformData>();
 
 		m_gameObject->setEnableEndUpdate(true);
 	}

@@ -44,7 +44,7 @@ namespace Skylicht
 	bool CBaseRP::s_bakeLMMode = false;
 
 	u32 CBaseRP::s_bakeBounce = 0;
-	u32 CBaseRP::s_maxLight = 16;
+	u32 CBaseRP::s_maxLight = 32;
 
 	SColor CBaseRP::s_clearColor;
 
@@ -852,6 +852,11 @@ namespace Skylicht
 	void CBaseRP::setClearColor(const SColor& c)
 	{
 		s_clearColor = c;
+	}
+
+	void CBaseRP::setMaxLight(u32 maxLights)
+	{
+		s_maxLight = maxLights;
 	}
 
 	void CBaseRP::setTarget(ITexture* target, int faceId)
