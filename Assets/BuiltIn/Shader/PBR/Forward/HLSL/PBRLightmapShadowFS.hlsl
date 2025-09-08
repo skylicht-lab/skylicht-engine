@@ -108,7 +108,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 n = input.worldNormal;
 	float depth = length(input.depth);
 	float visibility = shadow(input.shadowCoord, depth);
-	visibility = min(visibility, lightMap.a);
+	visibility = min(visibility, lightmap.a);
 	float roughness = rmaMap.r;
 	float metalness = rmaMap.g;
 	float ao = rmaMap.b;

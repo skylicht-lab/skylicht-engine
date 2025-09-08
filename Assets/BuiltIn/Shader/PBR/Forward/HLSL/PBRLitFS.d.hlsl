@@ -206,7 +206,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float depth = length(input.depth);
 	float visibility = shadow(input.shadowCoord, depth);
 #ifdef LM
-	visibility = min(visibility, lightMap.a);
+	visibility = min(visibility, lightmap.a);
 #endif
 #endif
 

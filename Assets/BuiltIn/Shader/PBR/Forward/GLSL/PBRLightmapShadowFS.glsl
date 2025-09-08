@@ -97,7 +97,7 @@ void main(void)
 	vec3 n = vWorldNormal;
 	float depth = length(vDepth);
 	float visibility = shadow(vShadowCoord, depth);
-	visibility = min(visibility, lightMap.a);
+	visibility = min(visibility, lightmap.a);
 	float roughness = rmaMap.r;
 	float metalness = rmaMap.g;
 	float ao = rmaMap.b;

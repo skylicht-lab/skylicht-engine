@@ -186,7 +186,7 @@ void main(void)
 	float depth = length(vDepth);
 	float visibility = shadow(vShadowCoord, depth);
 #ifdef LM
-	visibility = min(visibility, lightMap.a);
+	visibility = min(visibility, lightmap.a);
 #endif
 #endif
 
