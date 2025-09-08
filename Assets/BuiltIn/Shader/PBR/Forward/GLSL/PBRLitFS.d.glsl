@@ -185,6 +185,9 @@ void main(void)
 	// shadow
 	float depth = length(vDepth);
 	float visibility = shadow(vShadowCoord, depth);
+#ifdef LM
+	visibility = min(visibility, lightMap.a);
+#endif
 #endif
 
 	// Solver metallic
