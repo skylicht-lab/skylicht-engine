@@ -12,7 +12,12 @@ file(GLOB_RECURSE imgui_source
 
 setup_project_group("${imgui_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_library(Imgui STATIC ${imgui_source})
+add_library(Imgui ${ENGINE_SHARED_OR_STATIC_LIB} ${imgui_source})
+
+if (BUILD_SHARED_LIBS)
+	set_target_properties(Imgui PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS true)
+	add_definitions(-DIMGUI_EXPORTS)
+endif()
 
 set_target_properties(Imgui PROPERTIES VERSION ${SKYLICHT_VERSION})
 
