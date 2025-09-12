@@ -131,6 +131,8 @@ namespace Skylicht
 
 		core::vector3df getPosition();
 
+		void copyProjection(CCamera* target);
+
 		void lookAt(const core::vector3df& position, const core::vector3df& target, const core::vector3df& up);
 
 		void lookAt(const core::vector3df& target, const core::vector3df& up);

@@ -158,6 +158,20 @@ namespace Skylicht
 		return core::vector3df();
 	}
 
+	void CCamera::copyProjection(CCamera* target)
+	{
+		m_farValue = target->m_farValue;
+		m_nearValue = target->m_nearValue;
+		m_fov = target->m_fov;
+		m_projectionType = target->m_projectionType;
+		m_orthoScale = target->m_orthoScale;
+		m_orthoUIW = target->m_orthoUIW;
+		m_orthoUIH = target->m_orthoUIH;
+		m_aspect = target->m_aspect;
+
+		recalculateProjectionMatrix();
+	}
+
 	void CCamera::lookAt(const core::vector3df& position, const core::vector3df& target, const core::vector3df& up)
 	{
 		CTransformEuler* t = m_gameObject->getTransformEuler();
@@ -234,7 +248,6 @@ namespace Skylicht
 	void CCamera::recalculateProjectionMatrix()
 	{
 		core::dimension2du screenSize = getVideoDriver()->getCurrentRenderTargetSize();
-
 		if (m_customOrthoSize)
 		{
 			screenSize.Width = (u32)m_orthoUIW;
@@ -242,7 +255,6 @@ namespace Skylicht
 		}
 
 		float aspect = (float)screenSize.Width / (float)screenSize.Height;
-
 		m_viewportAspect = aspect;
 
 		if (m_aspect > 0)

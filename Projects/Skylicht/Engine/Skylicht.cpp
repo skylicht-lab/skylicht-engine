@@ -113,6 +113,7 @@ namespace Skylicht
 
 		// reset random time
 		os::Randomizer::reset(os::Timer::getRealTime());
+		srand(time(NULL));
 	}
 
 	void releaseSkylicht()
