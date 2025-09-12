@@ -79,7 +79,14 @@ namespace Skylicht
 			core::vector3df l = CVector::reflect(lookAt, m_plane.Normal);
 			l.normalize();
 
-			m_camera->copyProjection(m_targetCamera);
+			if (m_camera->getNearValue() != m_targetCamera->getNearValue() ||
+				m_camera->getFarValue() != m_targetCamera->getFarValue() ||
+				m_camera->getFOV() != m_targetCamera->getFOV() ||
+				m_camera->getProjectionType() != m_targetCamera->getProjectionType())
+			{
+				m_camera->copyProjection(m_targetCamera);
+			}
+
 			m_camera->lookAt(p, p + l, Transform::Oy);
 			m_camera->recalculateViewMatrix();
 		}
