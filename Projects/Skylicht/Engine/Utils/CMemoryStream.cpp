@@ -69,13 +69,14 @@ namespace Skylicht
 			return false;
 
 		unsigned int expectedSize = m_size + writeSize;
-		if (expectedSize < m_totalSize)
+		if (expectedSize <= m_totalSize)
 			return true;
 
 		unsigned int newSize = expectedSize * 2;
 
 		unsigned char* newMemory = new unsigned char[newSize];
-		memcpy(newMemory, m_memory, m_size);
+		if (m_size)
+			memcpy(newMemory, m_memory, m_size);
 		delete m_memory;
 
 		m_memory = newMemory;

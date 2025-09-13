@@ -37,17 +37,7 @@ else()
 	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${SKYLICHT_ENGINE_BIN_DIR}/${ARCHITECTURE} CACHE PATH "Single output directory for building executables.")
 endif()
 
-# debug/release
-if (NOT CMAKE_BUILD_TYPE)
-	# set(CMAKE_BUILD_TYPE "Debug")
-	set(CMAKE_BUILD_TYPE "Release")
-endif()
-
 message(STATUS "- System: ${CMAKE_SYSTEM_NAME} - BuildType: ${CMAKE_BUILD_TYPE}")
-
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
-endif()
 
 set(CMAKE_CXX_STANDARD 17)
 

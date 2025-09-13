@@ -162,7 +162,7 @@ jobs:
       - name: Package
         run: |
           mkdir Build
-          ls -l Bin/Release
+          ls -l Bin/x86_64/Release
           version=$(cat "Version.txt")
           file_version=${version//./_}
           output=SkylichtDemo_${file_version}_MacOS.zip
