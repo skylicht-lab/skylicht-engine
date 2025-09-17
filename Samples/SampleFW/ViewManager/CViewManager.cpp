@@ -25,9 +25,9 @@ void CViewManager::initViewLayer(int numLayer)
 
 void CViewManager::releaseAllLayer()
 {
-	for (CViewLayer*& layer : m_viewLayers)
+	for (int i = (int)m_viewLayers.size() - 1; i >= 0; i--)
 	{
-		delete layer;
+		delete m_viewLayers[i];
 	}
 	m_viewLayers.clear();
 }

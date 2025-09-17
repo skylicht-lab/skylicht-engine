@@ -400,7 +400,7 @@ namespace Skylicht
 			if (index >= total)
 				return;
 
-			if (total >= 2)
+			if (total >= 2 && index != total - 1)
 			{
 				for (IParticleCallback* cb : m_callback)
 					cb->OnSwapParticleData(m_particles[index], m_particles.getLast());

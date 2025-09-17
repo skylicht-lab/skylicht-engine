@@ -43,7 +43,9 @@ namespace Skylicht
 			m_customMaterial(NULL),
 			m_useCustomMaterial(false),
 			m_emission(true),
-			m_emissionIntensity(1.0f)
+			m_emissionIntensity(1.0f),
+			m_billboard(true),
+			m_upVector(0.0f, 1.0f, 0.0f)
 		{
 			setLength(1.0f);
 
@@ -324,10 +326,14 @@ namespace Skylicht
 					}
 
 					// look
-					core::vector3df lookdir = pos1 - campos;
-					if (lookdir.getLength() < 0.2f)
-						continue;
-					lookdir.normalize();
+					core::vector3df lookdir = m_upVector;
+					if (m_billboard)
+					{
+						lookdir = campos - pos1;
+						if (lookdir.getLength() < 0.2f)
+							continue;
+						lookdir.normalize();
+					}
 
 					// view angle
 					f32 angle = lookdir.dotProduct(direction);

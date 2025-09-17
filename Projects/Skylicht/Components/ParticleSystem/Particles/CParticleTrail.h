@@ -122,6 +122,10 @@ namespace Skylicht
 
 			float m_emissionIntensity;
 
+			bool m_billboard;
+
+			core::vector3df m_upVector;
+
 		public:
 			CParticleTrail(CGroup* group);
 
@@ -254,6 +258,26 @@ namespace Skylicht
 			inline float getEmissionIntensity()
 			{
 				return m_emissionIntensity;
+			}
+
+			inline void setBillboard(bool b)
+			{
+				m_billboard = b;
+			}
+
+			inline bool isBillboard()
+			{
+				return m_billboard;
+			}
+
+			inline void setUpVector(const core::vector3df& up)
+			{
+				m_upVector = up;
+			}
+
+			const core::vector3df& getUpVector()
+			{
+				return m_upVector;
 			}
 
 		protected:
