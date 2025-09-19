@@ -369,6 +369,11 @@ namespace Skylicht
 			return m_entity->isVisible();
 		}
 
+		inline CEntity* getEntity()
+		{
+			return m_entity;
+		}
+
 		void notifyChanged();
 
 		CGUIElement* getChildBefore(CGUIElement* object);

@@ -53,7 +53,9 @@ namespace Skylicht
 
 	IMPLEMENT_DATA_TYPE_INDEX(CGUIChildLayoutData);
 
-	CGUIChildLayoutData::CGUIChildLayoutData()
+	CGUIChildLayoutData::CGUIChildLayoutData() :
+		Parent(NULL),
+		Order(0)
 	{
 
 	}

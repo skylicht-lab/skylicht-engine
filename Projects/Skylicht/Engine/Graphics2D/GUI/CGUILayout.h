@@ -58,6 +58,8 @@ namespace Skylicht
 
 		virtual void render(CCamera* camera);
 
+		virtual void update(CCamera* camera);
+
 		inline void setAlign(CGUILayoutData::EAlignType type)
 		{
 			m_layoutData->AlignType = type;
@@ -88,5 +90,7 @@ namespace Skylicht
 		virtual CObjectSerializable* createSerializable();
 
 		virtual void loadSerializable(CObjectSerializable* object);
+
+		void updateChildOrder();
 	};
 }

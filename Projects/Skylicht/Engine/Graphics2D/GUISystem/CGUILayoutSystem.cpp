@@ -43,7 +43,6 @@ namespace Skylicht
 		m_guiTransform.reset();
 		m_guiAlign.reset();
 		m_guiLayout.reset();
-		m_guiLayoutTransform.reset();
 		m_parentLayout.reset();
 	}
 
@@ -92,9 +91,14 @@ namespace Skylicht
 
 				// add for layout system
 				m_guiLayout.push(childLayout);
-				m_guiLayoutTransform.push(t);
 			}
 		}
+
+		// sort child layout order instead of entity order
+		CGUIChildLayoutData** layout = m_guiLayout.pointer();
+		std::sort(layout, layout + m_guiLayout.count(), [](const CGUIChildLayoutData* a, const CGUIChildLayoutData* b) {
+			return a->Order < b->Order;
+			});
 	}
 
 	void CGUILayoutSystem::init(CEntityManager* entityManager)
@@ -112,13 +116,13 @@ namespace Skylicht
 	void CGUILayoutSystem::updateLayout()
 	{
 		CGUIChildLayoutData** layouts = m_guiLayout.pointer();
-		CGUITransformData** transforms = m_guiLayoutTransform.pointer();
 
 		int numEntity = m_guiLayout.count();
 		for (int i = 0; i < numEntity; i++)
 		{
 			CGUIChildLayoutData* layout = layouts[i];
-			CGUITransformData* transform = transforms[i];
+
+			CGUITransformData* transform = GET_ENTITY_DATA(layout->Entity, CGUITransformData);
 			CGUILayoutData* parentLayoutInfo = layout->Parent;
 
 			if (!parentLayoutInfo)
@@ -183,7 +187,8 @@ namespace Skylicht
 		for (int i = 0; i < numEntity; i++)
 		{
 			CGUIChildLayoutData* layout = layouts[i];
-			CGUITransformData* transform = transforms[i];
+			CGUITransformData* transform = GET_ENTITY_DATA(layout->Entity, CGUITransformData);
+
 			CGUILayoutData* parentLayoutInfo = layout->Parent;
 
 			if (!parentLayoutInfo)

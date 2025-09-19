@@ -52,6 +52,12 @@ namespace Skylicht
 		CGUIElement::render(camera);
 	}
 
+	void CGUILayout::update(CCamera* camera)
+	{
+		updateChildOrder();
+		CGUIElement::update(camera);
+	}
+
 	CObjectSerializable* CGUILayout::createSerializable()
 	{
 		CObjectSerializable* object = CGUIElement::createSerializable();
@@ -80,5 +86,16 @@ namespace Skylicht
 		m_layoutData->FitChildrenSize = object->get<bool>("fitChildrenSize", false);
 		m_layoutData->LayoutCenter = object->get<bool>("layoutCenter", false);
 		m_layoutData->LayoutMiddle = object->get<bool>("layoutMiddle", false);
+	}
+
+	void CGUILayout::updateChildOrder()
+	{
+		int order = 0;
+		for (CGUIElement* child : m_childs)
+		{
+			CGUIChildLayoutData* childLayout = GET_ENTITY_DATA(child->getEntity(), CGUIChildLayoutData);
+			if (childLayout)
+				childLayout->Order = order++;
+		}
 	}
 }

@@ -82,6 +82,8 @@ namespace Skylicht
 
 		CGUILayoutData* Parent;
 
+		int Order;
+
 	public:
 		CGUIChildLayoutData();
 
