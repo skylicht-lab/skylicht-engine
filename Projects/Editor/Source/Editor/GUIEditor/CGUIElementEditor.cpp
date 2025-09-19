@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CGUIElementEditor.h"
 #include "Editor/Space/Property/CSpaceProperty.h"
+#include "Editor/CEditor.h"
 
 namespace Skylicht
 {
@@ -50,6 +51,7 @@ namespace Skylicht
 
 		void CGUIElementEditor::closeGUI()
 		{
+			m_alignment = NULL;
 			CGUIEditor::closeGUI();
 		}
 
@@ -62,6 +64,34 @@ namespace Skylicht
 			serializableToControl(m_guiData, ui, layout);
 			group->setExpand(true);
 
+			group = ui->addGroup("Alignment", this);
+			layout = ui->createBoxLayout(group);
+
+			ui->addButton(layout, L"Set center position")->OnPress = [&, gui](GUI::CBase* button)
+				{
+					core::rectf nativeRect = gui->getNativeRect();
+					float w = nativeRect.getWidth();
+					float h = nativeRect.getHeight();
+					nativeRect = core::rectf(
+						-w * 0.5f, -h * 0.5f,
+						w * 0.5f, h * 0.5f
+					);
+					gui->setRect(nativeRect);
+					updateProperty();
+				};
+
+			ui->addButton(layout, L"Set default position")->OnPress = [&, gui](GUI::CBase* button)
+				{
+					core::rectf nativeRect = gui->getNativeRect();
+					float w = nativeRect.getWidth();
+					float h = nativeRect.getHeight();
+					nativeRect = core::rectf(0.0, 0.0f, w, h);
+					gui->setRect(nativeRect);
+					updateProperty();
+				};
+			group->setExpand(true);
+
+			m_alignment = group;
 			onUpdateValue(NULL);
 		}
 
@@ -100,7 +130,39 @@ namespace Skylicht
 					break;
 				}
 				showEditorMargin(dock);
+
+				if (m_alignment)
+				{
+					if (dock == EGUIDock::NoDock)
+						m_alignment->setHidden(false);
+					else
+						m_alignment->setHidden(true);
+				}
 			}
+		}
+
+		void CGUIElementEditor::updateProperty()
+		{
+			CObjectSerializable* data = getData();
+			if (data)
+			{
+				core::rectf rect = m_gui->getRect();
+
+				CFloatProperty* rx = dynamic_cast<CFloatProperty*>(data->getProperty("rectX"));
+				rx->set(rect.UpperLeftCorner.X);
+				CFloatProperty* ry = dynamic_cast<CFloatProperty*>(data->getProperty("rectY"));
+				ry->set(rect.UpperLeftCorner.Y);
+				CFloatProperty* rw = dynamic_cast<CFloatProperty*>(data->getProperty("rectW"));
+				rw->set(rect.getWidth());
+				CFloatProperty* rh = dynamic_cast<CFloatProperty*>(data->getProperty("rectH"));
+				rh->set(rect.getHeight());
+
+				rx->OnChanged();
+				ry->OnChanged();
+				rw->OnChanged();
+				rh->OnChanged();
+			}
+			CEditor::getInstance()->refresh();
 		}
 	}
 }

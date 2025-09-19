@@ -55,14 +55,6 @@ namespace Skylicht
 					gui->setRect(nativeRect);
 					updateProperty();
 				};
-
-			ui->addButton(layout, L"Set center position")->OnPress = [&, gui](GUI::CBase* button)
-				{
-					core::rectf nativeRect = gui->getNativeRect();
-					nativeRect -= core::vector2df(nativeRect.getWidth() * 0.5f, nativeRect.getHeight() * 0.5f);
-					gui->setRect(nativeRect);
-					updateProperty();
-				};
 			group->setExpand(true);
 		}
 

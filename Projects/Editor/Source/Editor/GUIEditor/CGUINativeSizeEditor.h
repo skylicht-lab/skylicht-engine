@@ -44,6 +44,7 @@ namespace Skylicht
 			virtual void initGUI(CGUIElement* gui, CSpaceProperty* ui);
 
 		protected:
+
 			void updateProperty();
 		};
 	}

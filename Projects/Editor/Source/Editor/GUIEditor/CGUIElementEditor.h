@@ -36,6 +36,7 @@ namespace Skylicht
 		protected:
 			EGUIDock m_lastDock;
 
+			GUI::CCollapsibleGroup* m_alignment;
 		public:
 			CGUIElementEditor();
 
@@ -48,6 +49,11 @@ namespace Skylicht
 			virtual void update();
 
 			virtual void onUpdateValue(CObjectSerializable* object);
+
+		protected:
+
+			void updateProperty();
+
 		};
 	}
 }

@@ -135,6 +135,12 @@ namespace Skylicht
 				CGUIChildLayoutData* childLayout = m_entity->addData<CGUIChildLayoutData>();
 				childLayout->Parent = parentLayout;
 			}
+			else
+			{
+				CGUIChildLayoutData* l = GET_ENTITY_DATA(m_entity, CGUIChildLayoutData);
+				if (l != NULL)
+					m_entity->removeData<CGUIChildLayoutData>();
+			}
 		}
 		else
 		{
