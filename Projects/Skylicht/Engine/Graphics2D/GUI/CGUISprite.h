@@ -118,6 +118,8 @@ namespace Skylicht
 			return m_stretch;
 		}
 
+		void reloadSpriteFrame();
+
 		void setFrameSource(const char* spritePath, const char* frameName, const char* editorFileRef = NULL);
 
 		void setAutoRotate(bool rotate, float rotateAngle, float framePerSec);

@@ -246,5 +246,38 @@ namespace Skylicht
 		CGUIElement* getGUIByPath(const char* path);
 
 		CGUIElement* getGUIByPath(CGUIElement* search, const char* path);
+
+		template<typename T>
+		std::vector<T*> getElementsInChild(bool addThis);
 	};
+
+	template<typename T>
+	std::vector<T*> CCanvas::getElementsInChild(bool addThis)
+	{
+		std::vector<T*> result;
+		std::queue<CGUIElement*> queueObjs;
+
+		if (addThis == true)
+			queueObjs.push(m_root);
+		else
+		{
+			for (CGUIElement*& obj : m_root->getChilds())
+				queueObjs.push(obj);
+		}
+
+		while (queueObjs.size() != 0)
+		{
+			CGUIElement* obj = queueObjs.front();
+			queueObjs.pop();
+
+			T* type = dynamic_cast<T*>(obj);
+			if (type != NULL)
+				result.push_back(type);
+
+			for (CGUIElement*& child : obj->m_childs)
+				queueObjs.push(child);
+		}
+
+		return result;
+	}
 }

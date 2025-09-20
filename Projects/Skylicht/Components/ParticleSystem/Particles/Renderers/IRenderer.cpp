@@ -35,7 +35,6 @@ namespace Skylicht
 	{
 		IRenderer::IRenderer(ERenderer type) :
 			m_type(type),
-			m_texture(NULL),
 			m_material(NULL),
 			m_customMaterial(NULL),
 			m_useCustomMaterial(false),

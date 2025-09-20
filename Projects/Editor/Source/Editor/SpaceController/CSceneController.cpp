@@ -45,7 +45,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Entity/CEntityHandleData.h"
 
 #include "SpriteDraw/CSprite.h"
-
+#include "ParticleSystem/CParticleComponent.h"
 #include "ResourceSettings/CMeshExportSettings.h"
 
 #if BUILD_SKYLICHT_PHYSIC
@@ -360,7 +360,28 @@ namespace Skylicht
 
 		void CSceneController::doReplaceTexture(ITexture* oldTexture, ITexture* newTexture)
 		{
+			CZone* zone = m_scene->getZone(0);
 
+			std::vector<Particle::CParticleComponent*> listParticles = zone->getComponentsInChild<Particle::CParticleComponent>(false);
+			for (Particle::CParticleComponent* ps : listParticles)
+			{
+				for (u32 i = 0, n = ps->getNumOfGroup(); i < n; i++)
+				{
+					Particle::CGroup* g = ps->getGroup(i);
+					Particle::IRenderer* renderer = g->getRenderer();
+					if (renderer)
+					{
+						CMaterial* mat;
+						mat = renderer->getDefaultMaterial();
+						if (mat)
+							mat->replaceTexture(oldTexture, newTexture);
+
+						mat = renderer->getCustomMaterial();
+						if (mat)
+							mat->replaceTexture(oldTexture, newTexture);
+					}
+				}
+			}
 		}
 
 		void CSceneController::deleteScene()

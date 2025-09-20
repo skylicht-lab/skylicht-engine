@@ -73,5 +73,7 @@ namespace Skylicht
 		void releaseSpriteResource(const char* path);
 
 		CSpriteFrame* getSpriteResource(const char* path);
+
+		void replaceTexture(ITexture* oldTexture, ITexture* newTexture);
 	};
 }

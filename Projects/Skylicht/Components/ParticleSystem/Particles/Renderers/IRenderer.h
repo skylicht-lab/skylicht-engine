@@ -54,7 +54,6 @@ namespace Skylicht
 			float m_emissionIntensity;
 
 			std::string m_texturePath;
-			ITexture* m_texture;
 
 			u32 m_atlasNx;
 			u32 m_atlasNy;
@@ -79,6 +78,16 @@ namespace Skylicht
 			}
 
 			CMaterial* getMaterial();
+
+			inline CMaterial* getDefaultMaterial()
+			{
+				return m_material;
+			}
+
+			inline CMaterial* getCustomMaterial()
+			{
+				return m_customMaterial;
+			}
 
 			void setTexturePath(const char* path);
 

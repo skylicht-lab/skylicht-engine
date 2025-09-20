@@ -34,6 +34,10 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Graphics2D/CGUIExporter.h"
 #include "Graphics2D/CGUIImporter.h"
 
+#include "Graphics2D/GUI/CGUIImage.h"
+#include "Graphics2D/GUI/CGUISprite.h"
+#include "Graphics2D/GUI/CGUIFitSprite.h"
+
 namespace Skylicht
 {
 	namespace Editor
@@ -979,12 +983,29 @@ namespace Skylicht
 
 		void CGUIDesignController::doSpriteChange(const char* resource)
 		{
+			if (m_guiCanvas)
+			{
+				std::vector<CGUISprite*> listSprite = m_guiCanvas->getElementsInChild<CGUISprite>(false);
+				for (CGUISprite* s : listSprite)
+					s->reloadSpriteFrame();
 
+				std::vector<CGUIFitSprite*> listFitSprite = m_guiCanvas->getElementsInChild<CGUIFitSprite>(false);
+				for (CGUIFitSprite* s : listFitSprite)
+					s->reloadSpriteFrame();
+			}
 		}
 
 		void CGUIDesignController::doReplaceTexture(ITexture* oldTexture, ITexture* newTexture)
 		{
-
+			if (m_guiCanvas)
+			{
+				std::vector<CGUIImage*> listImages = m_guiCanvas->getElementsInChild<CGUIImage>(false);
+				for (CGUIImage* img : listImages)
+				{
+					if (img->getImage() == oldTexture)
+						img->setImage(newTexture);
+				}
+			}
 		}
 	}
 }

@@ -301,6 +301,7 @@ namespace Skylicht
 						ITexture* newTexture = textureMgr->getTexture(path.c_str());
 
 						CMaterialManager::getInstance()->replaceTexture(oldTexture, newTexture);
+						CSpriteManager::getInstance()->replaceTexture(oldTexture, newTexture);
 						CSceneController::getInstance()->doReplaceTexture(oldTexture, newTexture);
 						CGUIDesignController::getInstance()->doReplaceTexture(oldTexture, newTexture);
 
@@ -355,10 +356,6 @@ namespace Skylicht
 						spriteMgr->loadSprite(path.c_str());
 						CGUIDesignController::getInstance()->doSpriteChange(path.c_str());
 					}
-				}
-				else if (CFontManager::isFontExt(ext.c_str()))
-				{
-
 				}
 			}
 		}

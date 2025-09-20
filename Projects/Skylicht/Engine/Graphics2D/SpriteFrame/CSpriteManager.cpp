@@ -176,4 +176,20 @@ namespace Skylicht
 			return NULL;
 		return it->second;
 	}
+
+	void CSpriteManager::replaceTexture(ITexture* oldTexture, ITexture* newTexture)
+	{
+		for (auto i : m_spriteList)
+		{
+			CSpriteFrame* sprite = i->Sprite;
+			for (SFrame* frame : sprite->getFrames())
+			{
+				if (frame->Image)
+				{
+					if (frame->Image->Texture == oldTexture)
+						frame->Image->Texture = newTexture;
+				}
+			}
+		}
+	}
 }
