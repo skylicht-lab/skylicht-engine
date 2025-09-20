@@ -10,6 +10,7 @@ namespace Skylicht
 	class SKYLICHT_API CTween
 	{
 	protected:
+		bool m_useScaledTime;
 		float m_time;
 		float m_delay;
 		float m_endDelay;
@@ -122,6 +123,16 @@ namespace Skylicht
 		inline float getPercentValue()
 		{
 			return m_percentValue;
+		}
+
+		inline void setUseScaledTime(bool b)
+		{
+			m_useScaledTime = b;
+		}
+
+		inline bool isUseScaledTime()
+		{
+			return m_useScaledTime;
 		}
 	};
 }

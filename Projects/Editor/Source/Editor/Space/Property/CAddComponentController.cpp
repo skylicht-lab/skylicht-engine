@@ -130,7 +130,7 @@ namespace Skylicht
 		{
 			if (m_changed)
 			{
-				m_inputTimeout = m_inputTimeout - getTimeStep();
+				m_inputTimeout = m_inputTimeout - getNonScaledTimestep();
 				if (m_inputTimeout <= 0.0f)
 				{
 					m_inputTimeout = 0.0f;

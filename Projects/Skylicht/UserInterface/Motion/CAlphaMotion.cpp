@@ -85,6 +85,7 @@ namespace Skylicht
 				{
 					m_tween = NULL;
 				};
+			m_tween->setUseScaledTime(false);
 
 			CTweenManager::getInstance()->addTween(m_tween);
 		}

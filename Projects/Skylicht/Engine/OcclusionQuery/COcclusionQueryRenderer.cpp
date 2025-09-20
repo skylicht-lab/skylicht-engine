@@ -215,7 +215,7 @@ namespace Skylicht
 		CWorldTransformData** transforms = m_transforms.pointer();
 		int numEntity = m_query.count();
 
-		m_timeDelay = m_timeDelay - getTimeStep();
+		m_timeDelay = m_timeDelay - getNonScaledTimestep();
 
 		if (numEntity > 0 && m_timeDelay <= 0)
 		{

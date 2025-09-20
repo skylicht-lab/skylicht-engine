@@ -51,7 +51,7 @@ namespace Skylicht
 		if (!m_camera->isInputReceiverEnabled())
 			return;
 
-		f32 timeDiff = getTimeStep();
+		f32 timeDiff = m_camera->isUseScaledTime() ? getTimeStep() : getNonScaledTimestep();
 
 		// skip lag
 		const float delta = 1000.0f / 20.0f;

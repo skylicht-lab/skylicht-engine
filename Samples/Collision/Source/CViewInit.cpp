@@ -171,6 +171,7 @@ void CViewInit::onUpdate()
 		std::vector<std::string> listBundles;
 		listBundles.push_back("Common.zip");
 		listBundles.push_back("TankScene.zip");
+		listBundles.push_back("TankSceneResource.zip");
 		listBundles.push_back(getApplication()->getTexturePackageName("TankScene"));
 
 #ifdef __EMSCRIPTEN__

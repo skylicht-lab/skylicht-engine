@@ -43,7 +43,8 @@ namespace Skylicht
 		m_customOrthoSize(false),
 		m_orthoUIH(0.0f),
 		m_orthoUIW(0.0f),
-		m_viewportAspect(1.0f)
+		m_viewportAspect(1.0f),
+		m_useScaledTime(true)
 	{
 	}
 

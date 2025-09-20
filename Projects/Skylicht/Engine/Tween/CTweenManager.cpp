@@ -17,7 +17,7 @@ namespace Skylicht
 
 	void CTweenManager::update()
 	{
-		float ts = getTimeStep();
+		float ts = getNonScaledTimestep();
 
 		// delay call
 		m_delayCalls.insert(m_delayCalls.end(), m_insertCalls.begin(), m_insertCalls.end());

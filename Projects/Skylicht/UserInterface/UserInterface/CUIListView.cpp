@@ -257,9 +257,11 @@ namespace Skylicht
 
 		void CUIListView::updateInertia()
 		{
+			float ts = getNonScaledTimestep();
+
 			if (fabs(m_speed) > 0.2f)
 			{
-				float dec = fabs(m_speed) * core::min_<float>(0.9f, 0.01f * getTimeStep());
+				float dec = fabs(m_speed) * core::min_<float>(0.9f, 0.01f * ts);
 
 				if (m_speed > 0)
 					m_speed = m_speed - dec;
@@ -278,7 +280,7 @@ namespace Skylicht
 			}
 			else
 			{
-				float dec = core::min_<float>(0.9f, 0.005f * getTimeStep());
+				float dec = core::min_<float>(0.9f, 0.005f * ts);
 
 				if (m_offset > 0.0f)
 				{

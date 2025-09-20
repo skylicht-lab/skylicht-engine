@@ -161,7 +161,17 @@ namespace Skylicht
 
 	SKYLICHT_API void setTimeStep(float timestep);
 
+	SKYLICHT_API void setTotalTime(float t);
+
+	SKYLICHT_API float getNonScaledTimestep();
+
 	SKYLICHT_API float getTotalTime();
 
-	SKYLICHT_API void setTotalTime(float t);
+	SKYLICHT_API void enableFixedTimeStep(bool b);
+
+	SKYLICHT_API void setFixedTimeStep(float s);
+
+	SKYLICHT_API void setTimeScale(float scale);
+
+	SKYLICHT_API float getTimeScale();
 }

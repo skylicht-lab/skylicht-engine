@@ -99,6 +99,8 @@ namespace Skylicht
 
 		u32 m_cullingMask;
 
+		bool m_useScaledTime;
+
 	public:
 		CCamera();
 
@@ -243,6 +245,16 @@ namespace Skylicht
 		inline bool isInputReceiverEnabled()
 		{
 			return m_inputReceiver;
+		}
+
+		inline void setUseScaledTime(bool b)
+		{
+			m_useScaledTime = b;
+		}
+
+		inline bool isUseScaledTime()
+		{
+			return m_useScaledTime;
 		}
 
 		DECLARE_GETTYPENAME(CCamera)

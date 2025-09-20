@@ -5,6 +5,7 @@
 namespace Skylicht
 {
 	CTween::CTween() :
+		m_useScaledTime(true),
 		m_time(0.0f),
 		m_delay(0.0f),
 		m_endDelay(0.0f),
@@ -32,7 +33,7 @@ namespace Skylicht
 
 	void CTween::update()
 	{
-		m_time = m_time + getTimeStep();
+		m_time = m_time + m_useScaledTime ? getTimeStep() : getNonScaledTimestep();
 		if (m_time < m_delay)
 		{
 			if (OnDelay != nullptr)

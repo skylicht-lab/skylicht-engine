@@ -87,5 +87,15 @@ namespace Skylicht
 
 	extern float getTimeStep();
 
+	extern float getNonScaledTimestep();
+
 	extern float getTotalTime();
+
+	extern void enableFixedTimeStep(bool b);
+
+	extern void setFixedTimeStep(float s);
+
+	extern void setTimeScale(float scale);
+
+	extern float getTimeScale();
 }

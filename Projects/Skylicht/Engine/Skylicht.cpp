@@ -69,8 +69,12 @@ namespace Skylicht
 
 	IrrlichtDevice* g_device = NULL;
 	IVideoDriver* g_video = NULL;
+
 	float g_timestep = 0.0f;
 	float g_totalTime = 0.0f;
+	float g_timescale = 1.0f;
+	float g_fixedTimeStep = 16.666f;
+	bool g_useFixedTimeStep = false;
 
 	void initSkylicht(IrrlichtDevice* device, bool server)
 	{
@@ -177,6 +181,13 @@ namespace Skylicht
 	float getTimeStep()
 	{
 		// return the current time step (milisecond)
+		float ts = g_useFixedTimeStep ? g_useFixedTimeStep : g_timestep;
+		return ts * g_timescale;
+	}
+
+	float getNonScaledTimestep()
+	{
+		// return the current time step (milisecond)
 		return g_timestep;
 	}
 
@@ -193,5 +204,25 @@ namespace Skylicht
 	void setTotalTime(float t)
 	{
 		g_totalTime = t;
+	}
+
+	void enableFixedTimeStep(bool b)
+	{
+		g_useFixedTimeStep = b;
+	}
+
+	void setFixedTimeStep(float s)
+	{
+		g_fixedTimeStep = s;
+	}
+
+	void setTimeScale(float scale)
+	{
+		g_timescale = scale;
+	}
+
+	float getTimeScale()
+	{
+		return g_timescale;
 	}
 }

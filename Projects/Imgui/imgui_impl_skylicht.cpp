@@ -106,7 +106,7 @@ void ImGui_Impl_Skylicht_NewFrame()
 {
 	// Setup time step
 	ImGuiIO& io = ImGui::GetIO();
-	io.DeltaTime = Skylicht::getTimeStep() / 1000.0f;
+	io.DeltaTime = Skylicht::getNonScaledTimestep() / 1000.0f;
 
 	// Start the frame
 	ImGui::NewFrame();

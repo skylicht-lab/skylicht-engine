@@ -97,7 +97,7 @@ namespace Skylicht
 		{
 			if (m_scene)
 				delete m_scene;
-			
+
 			if (m_shadowRP)
 			{
 				delete m_shadowRP;
@@ -110,9 +110,9 @@ namespace Skylicht
 		{
 			int w = 128;
 			int h = 128;
-			
+
 			m_rtt = getVideoDriver()->addRenderTargetTexture(core::dimension2du(w, h), "rt", video::ECF_A8R8G8B8);
-						
+
 			m_shadowRP = new CShadowMapRP();
 			m_shadowRP->enableUpdateEntity(true);
 			m_shadowRP->setNoShadowCascade();
@@ -123,7 +123,7 @@ namespace Skylicht
 			m_rp->enableUpdateEntity(false);
 
 			m_shadowRP->setNextPipeLine(m_rp);
-						
+
 			m_scene = new CScene();
 			CZone* zone = m_scene->createZone();
 
@@ -173,7 +173,6 @@ namespace Skylicht
 				SFileNode* node = (*m_fileIterator);
 
 				importPath(node);
-
 				m_lastFile = node->Path;
 
 				++m_fileIterator;
@@ -234,7 +233,10 @@ namespace Skylicht
 		void CAssetImporter::add(const char* path)
 		{
 			std::string bundle = m_assetManager->getBundleName(path);
-			m_files.push_back(m_assetManager->addFileNode(bundle, path));
+
+			SFileNode* node = m_assetManager->addFileNode(bundle, path);
+			if (node)
+				m_files.push_back(node);
 
 			m_fileID = 0;
 			m_total = (u32)m_files.size();
@@ -252,7 +254,6 @@ namespace Skylicht
 				SFileNode* node = (*m_fileIterator);
 
 				importPath(node);
-
 				m_lastFile = node->Path;
 
 				++m_fileIterator;
