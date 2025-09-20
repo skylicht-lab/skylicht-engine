@@ -291,6 +291,10 @@ namespace Skylicht
 				{
 					if (data->Name == "GUIHierarchyNode")
 					{
+						CGUIHierachyNode* dragNode = (CGUIHierachyNode*)data->UserData;
+						if (dragNode->isChild(node))
+							return false;
+
 						return true;
 					}
 					return false;

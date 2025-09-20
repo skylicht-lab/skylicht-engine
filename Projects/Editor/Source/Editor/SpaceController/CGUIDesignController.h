@@ -174,6 +174,10 @@ namespace Skylicht
 
 			CGUIHierachyNode* selectOnHierachy(CGUIElement* gui, bool callEvent);
 
+			void doSpriteChange(const char* resource);
+
+			void doReplaceTexture(ITexture* oldTexture, ITexture* newTexture);
+
 		protected:
 
 			void rebuildGUIHierachy(CGUIElement* parent, CGUIHierachyNode* parentNode);

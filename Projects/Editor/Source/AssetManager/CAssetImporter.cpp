@@ -36,8 +36,11 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "TextureManager/CTextureManager.h"
 #include "Material/CMaterialManager.h"
 #include "MeshManager/CMeshManager.h"
+#include "Graphics2D/SpriteFrame/CSpriteManager.h"
+#include "Graphics2D/SpriteFrame/CFontManager.h"
 
 #include "Editor/SpaceController/CSceneController.h"
+#include "Editor/SpaceController/CGUIDesignController.h"
 
 #include "LightProbes/CLightProbes.h"
 
@@ -297,8 +300,9 @@ namespace Skylicht
 						textureMgr->removeTexture(oldTexture);
 						ITexture* newTexture = textureMgr->getTexture(path.c_str());
 
-						// update for all materials
 						CMaterialManager::getInstance()->replaceTexture(oldTexture, newTexture);
+						CSceneController::getInstance()->doReplaceTexture(oldTexture, newTexture);
+						CGUIDesignController::getInstance()->doReplaceTexture(oldTexture, newTexture);
 
 						oldTexture->drop();
 					}
@@ -339,6 +343,22 @@ namespace Skylicht
 						materialMgr->unloadMaterial(path.c_str());
 						CSceneController::getInstance()->doMaterialChange(path.c_str());
 					}
+				}
+				else if (CSpriteManager::isSpriteExt(ext.c_str()))
+				{
+					CSpriteManager* spriteMgr = CSpriteManager::getInstance();
+					CSpriteFrame* sprite = spriteMgr->getSpriteResource(path.c_str());
+					if (sprite)
+					{
+						// loadload sprite & reload
+						spriteMgr->releaseSprite(sprite);
+						spriteMgr->loadSprite(path.c_str());
+						CGUIDesignController::getInstance()->doSpriteChange(path.c_str());
+					}
+				}
+				else if (CFontManager::isFontExt(ext.c_str()))
+				{
+
 				}
 			}
 		}

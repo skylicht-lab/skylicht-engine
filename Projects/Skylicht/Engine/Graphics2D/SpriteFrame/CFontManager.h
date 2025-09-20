@@ -47,6 +47,10 @@ namespace Skylicht
 
 		virtual ~CFontManager();
 
+		static std::vector<std::string> getFontExts();
+
+		static bool isFontExt(const char* ext);
+
 		CFontSource* loadFontSource(const char* path);
 
 		CFontSource* getFontById(const char* id);

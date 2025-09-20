@@ -175,6 +175,8 @@ namespace Skylicht
 
 			void doMaterialChange(const char* resource);
 
+			void doReplaceTexture(ITexture* oldTexture, ITexture* newTexture);
+
 			const std::string& getScenePath()
 			{
 				return m_scenePath;

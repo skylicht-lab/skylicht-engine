@@ -32,6 +32,21 @@ namespace Skylicht
 {
 	IMPLEMENT_SINGLETON(CSpriteManager);
 
+	std::vector<std::string> CSpriteManager::getSpriteExts()
+	{
+		std::vector<std::string> spriteExts = { "spritedata" };
+		return spriteExts;
+	}
+
+	bool CSpriteManager::isSpriteExt(const char* ext)
+	{
+		std::vector<std::string> listExt = getSpriteExts();
+		for (auto s : listExt)
+			if (s == ext)
+				return true;
+		return false;
+	}
+
 	CSpriteManager::CSpriteManager()
 	{
 
@@ -145,5 +160,20 @@ namespace Skylicht
 		os::Printer::log(log);
 
 		delete sprite;
+	}
+
+	void CSpriteManager::releaseSpriteResource(const char* path)
+	{
+		CSpriteFrame* sprite = getSpriteResource(path);
+		if (sprite)
+			releaseSprite(sprite);
+	}
+
+	CSpriteFrame* CSpriteManager::getSpriteResource(const char* path)
+	{
+		auto it = m_pathToSprite.find(path);
+		if (it == m_pathToSprite.end())
+			return NULL;
+		return it->second;
 	}
 }

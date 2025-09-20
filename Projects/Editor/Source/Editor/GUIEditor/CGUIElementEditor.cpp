@@ -69,7 +69,7 @@ namespace Skylicht
 
 			ui->addButton(layout, L"Set center position")->OnPress = [&, gui](GUI::CBase* button)
 				{
-					core::rectf nativeRect = gui->getNativeRect();
+					core::rectf nativeRect = gui->getRect();
 					float w = nativeRect.getWidth();
 					float h = nativeRect.getHeight();
 					nativeRect = core::rectf(
@@ -82,7 +82,7 @@ namespace Skylicht
 
 			ui->addButton(layout, L"Set default position")->OnPress = [&, gui](GUI::CBase* button)
 				{
-					core::rectf nativeRect = gui->getNativeRect();
+					core::rectf nativeRect = gui->getRect();
 					float w = nativeRect.getWidth();
 					float h = nativeRect.getHeight();
 					nativeRect = core::rectf(0.0, 0.0f, w, h);

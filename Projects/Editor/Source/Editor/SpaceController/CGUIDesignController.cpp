@@ -976,5 +976,15 @@ namespace Skylicht
 		{
 			m_history->redo();
 		}
+
+		void CGUIDesignController::doSpriteChange(const char* resource)
+		{
+
+		}
+
+		void CGUIDesignController::doReplaceTexture(ITexture* oldTexture, ITexture* newTexture)
+		{
+
+		}
 	}
 }

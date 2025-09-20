@@ -358,6 +358,11 @@ namespace Skylicht
 			}
 		}
 
+		void CSceneController::doReplaceTexture(ITexture* oldTexture, ITexture* newTexture)
+		{
+
+		}
+
 		void CSceneController::deleteScene()
 		{
 			if (m_scene)

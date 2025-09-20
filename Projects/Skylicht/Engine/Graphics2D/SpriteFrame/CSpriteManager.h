@@ -58,6 +58,10 @@ namespace Skylicht
 
 		virtual ~CSpriteManager();
 
+		static std::vector<std::string> getSpriteExts();
+
+		static bool isSpriteExt(const char* ext);
+
 		CSpriteFrame* loadSprite(const char* path);
 
 		CSpriteFrame* getSpriteById(const char* id);
@@ -65,5 +69,9 @@ namespace Skylicht
 		void releaseSprite(const char* category);
 
 		void releaseSprite(CSpriteFrame* sprite);
+
+		void releaseSpriteResource(const char* path);
+
+		CSpriteFrame* getSpriteResource(const char* path);
 	};
 }

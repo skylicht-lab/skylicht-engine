@@ -31,6 +31,21 @@ namespace Skylicht
 {
 	IMPLEMENT_SINGLETON(CFontManager);
 
+	std::vector<std::string> CFontManager::getFontExts()
+	{
+		std::vector<std::string> fontExts = { "font" };
+		return fontExts;
+	}
+
+	bool CFontManager::isFontExt(const char* ext)
+	{
+		std::vector<std::string> listExt = getFontExts();
+		for (auto s : listExt)
+			if (s == ext)
+				return true;
+		return false;
+	}
+
 	CFontManager::CFontManager()
 	{
 
