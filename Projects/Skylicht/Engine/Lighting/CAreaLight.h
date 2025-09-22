@@ -28,6 +28,12 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief This object holds the parameters for area lights.
+	/// @ingroup Lighting
+	/// 
+	/// @image html Lighting/area_light.jpg width=1200px
+	/// 
+	/// @see CShaderLighting
 	class SKYLICHT_API CAreaLight : public CLight
 	{
 	protected:

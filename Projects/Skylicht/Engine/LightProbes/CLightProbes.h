@@ -31,7 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 	/// @brief Light probes are objects that store SH illumination. These SH values are baked from environmental texture maps, such as a skybox or skydome.
-	/// @ingroup Lighting
+	/// @ingroup IndirectLighting
 	/// 
 	/// You can use Lightmapper::CLightmapper to bake light into CLightProbes, 
 	/// or you can also bake it directly from Skylicht-Editor once you have set up the Sky environment.

@@ -50,6 +50,14 @@ namespace Skylicht
 		X2048
 	};
 
+	/// @brief The object class enables mapping reflection onto the Object.
+	/// @ingroup IndirectLighting
+	/// 
+	/// CReflectionProbe supports loading reflection images from a texture file, or it can be baked directly from the 3D scene.
+	/// 
+	/// You can use Skylicht-Editor to select a texture, bake, or save the baked results to a reflection cube texture.
+	/// 
+	/// @image html Lighting/reflection-probe.jpg "PBR-shaded materials will select the nearest Reflection Probe" width=1200px
 	class SKYLICHT_API CReflectionProbe : public CComponentSystem
 	{
 	protected:

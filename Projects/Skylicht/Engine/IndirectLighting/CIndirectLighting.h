@@ -32,7 +32,7 @@ namespace Skylicht
 	class CEntity;
 
 	/// @brief This object holds the parameters for indirect lighting like SH or AmbientColor or Lightmap.
-	/// @ingroup Lighting
+	/// @ingroup IndirectLighting
 	/// 
 	/// The component stores parameters related to indirect light. 
 	/// 

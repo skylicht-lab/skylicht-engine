@@ -65,7 +65,7 @@ namespace irr
   */
 
 /**
-  * @defgroup Components Main components
+  * @defgroup Components Components
   * @brief It is a group that includes the component objects within the engine.
   */
 
@@ -89,6 +89,12 @@ namespace irr
 
  /**
  * @defgroup Lighting Lighting
+ * @ingroup Components
+ * @brief This group contains all the objects related to lighting.
+ */
+
+ /**
+ * @defgroup IndirectLighting Indirect Lighting
  * @ingroup Components
  * @brief This group contains all the objects related to lighting.
  */
