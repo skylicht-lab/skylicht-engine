@@ -100,12 +100,12 @@ namespace Skylicht
 		CEntity** entities = Entity->getEntityManager()->getEntities();
 		CWorldTransformData* parent = NULL;
 
-		if (AttachParentIndex > 0)
+		if (AttachParentIndex >= 0)
 		{
 			CEntity* parentEntity = entities[AttachParentIndex];
 			parent = GET_ENTITY_DATA(parentEntity, CWorldTransformData);
 		}
-		else
+		else if (ParentIndex >= 0)
 		{
 			CEntity* parentEntity = entities[ParentIndex];
 			parent = GET_ENTITY_DATA(parentEntity, CWorldTransformData);
