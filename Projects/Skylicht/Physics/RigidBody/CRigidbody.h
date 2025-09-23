@@ -55,6 +55,7 @@ namespace Skylicht
 		protected:
 			bool m_isDynamic;
 			float m_mass;
+			float m_restitution;
 
 			float m_friction;
 			float m_rollingFriction;
@@ -118,6 +119,17 @@ namespace Skylicht
 			{
 				return m_mass;
 			}
+
+			void setRestitution(float s);
+
+			inline float getRestitution()
+			{
+				return m_restitution;
+			}
+
+			void setCcdSweptSphereRadius(float r = 0.0f);
+
+			void setCcdMotionThreshold(float m = 0.0f);
 
 			bool initRigidbody();
 

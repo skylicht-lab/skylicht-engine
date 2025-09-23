@@ -17,6 +17,7 @@ namespace Skylicht
 		CRigidbody::CRigidbody() :
 			m_mass(1.0f),
 			m_friction(0.5f),
+			m_restitution(0.0f),
 			m_rollingFriction(0.0f),
 			m_spinningFriction(0.0f),
 			m_isDynamic(true),
@@ -124,8 +125,40 @@ namespace Skylicht
 #ifdef USE_BULLET_PHYSIC_ENGINE
 			if (m_rigidBody)
 			{
-				btVector3 localInertia(0, 0, 0);
-				m_rigidBody->setMassProps(m_mass, localInertia);
+				btVector3 inertia;
+				m_rigidBody->getCollisionShape()->calculateLocalInertia(m_mass, inertia);
+				m_rigidBody->setMassProps(m_mass, inertia);
+			}
+#endif
+		}
+
+		void CRigidbody::setRestitution(float s)
+		{
+			m_restitution = s;
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_rigidBody)
+			{
+				m_rigidBody->setRestitution(s);
+			}
+#endif
+		}
+
+		void CRigidbody::setCcdSweptSphereRadius(float r)
+		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_rigidBody)
+			{
+				m_rigidBody->setCcdSweptSphereRadius(r);
+			}
+#endif
+		}
+
+		void CRigidbody::setCcdMotionThreshold(float m)
+		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_rigidBody)
+			{
+				m_rigidBody->setCcdMotionThreshold(m);
 			}
 #endif
 		}
