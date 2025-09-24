@@ -66,7 +66,7 @@ void CMoveAgent::updateComponent()
 		}
 
 		core::vector3df velocity = newPosition - position;
-		newPosition = m_obstacle->collide(position, velocity);
+		newPosition = m_obstacle->collide(position, velocity, m_agentRadius);
 	}
 
 	transform->setPosition(newPosition + heightOffset);

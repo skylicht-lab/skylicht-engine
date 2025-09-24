@@ -18,7 +18,7 @@ if (BUILD_EXAMPLES AND BUILD_SKYLICHT_LIGHMAPPER)
 	
 	subdirs(Samples/DrawPrimitives)
 
-	if (BUILD_RECAST_GRAPH)
+	if (BUILD_SKYLICHT_GRAPH)
 	subdirs(Samples/Graph)
 	endif()
 	

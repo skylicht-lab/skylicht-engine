@@ -137,7 +137,7 @@ namespace Skylicht
 			}
 		}
 
-		core::vector3df CObstacleAvoidance::collide(const core::vector3df& position, const core::vector3df& vel, float stepHeight, int recursionDepth)
+		core::vector3df CObstacleAvoidance::collide(const core::vector3df& position, const core::vector3df& vel, float radius, float stepHeight, int recursionDepth)
 		{
 			if (recursionDepth >= 2)
 			{
@@ -156,6 +156,9 @@ namespace Skylicht
 			core::vector3df r = vel;
 			r.normalize();
 
+			core::vector3df offset = r * radius;
+			core::vector3df velocity = vel + offset;
+
 			for (u32 i = 0, n = m_segments.size(); i < n; i++)
 			{
 				core::line3df& s = segs[i];
@@ -167,12 +170,12 @@ namespace Skylicht
 					continue;
 
 				float t = 0.0f;
-				int intersection = isectRaySeg(position, vel, s.start, s.end, t);
+				int intersection = isectRaySeg(position, velocity, s.start, s.end, t);
 				if (intersection)
 				{
 					if (t < tmin)
 					{
-						intersectionPoint = position + vel * t;
+						intersectionPoint = position + velocity * t;
 						intersectionSeg = &s;
 						tmin = t;
 					}
@@ -192,11 +195,14 @@ namespace Skylicht
 				if (d < 0.0f)
 					intersectionNormal *= -1.0f;
 
-				core::vector3df destinationPoint = position + vel;
-				newDestinationPoint = destinationPoint - (intersectionNormal * vel.getLength() * (1.0f - tmin));
+				core::vector3df destinationPoint = position + velocity;
+				newDestinationPoint = destinationPoint - (intersectionNormal * velocity.getLength() * (1.0f - tmin));
+
+				newDestinationPoint -= offset;
+				intersectionPoint -= offset;
 
 				core::vector3df newVel = newDestinationPoint - intersectionPoint;
-				newDestinationPoint = collide(intersectionPoint - r * 0.01f, newVel, stepHeight, recursionDepth + 1);
+				newDestinationPoint = collide(intersectionPoint - r * 0.01f, newVel, radius, stepHeight, recursionDepth + 1);
 			}
 			else
 			{

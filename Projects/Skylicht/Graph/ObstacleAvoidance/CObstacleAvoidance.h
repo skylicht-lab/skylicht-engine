@@ -69,7 +69,7 @@ namespace Skylicht
 
 			bool isLineHit(const core::vector3df& a, const core::vector3df& b, float h, float& outT);
 
-			core::vector3df collide(const core::vector3df& position, const core::vector3df& vel, float stepHeight = 0.3f, int recursionDepth = 0);
+			core::vector3df collide(const core::vector3df& position, const core::vector3df& vel, float radius = 0.0f, float stepHeight = 0.3f, int recursionDepth = 0);
 		};
 	}
 }
