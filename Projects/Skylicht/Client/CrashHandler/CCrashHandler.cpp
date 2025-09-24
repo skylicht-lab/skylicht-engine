@@ -27,6 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CApplication.h"
 #include "Utils/CStringImp.h"
+#include "Utils/CPath.h"
 
 #ifdef USE_CRASHHANDLER
 #define MAX_STACK_DEPTH 64
@@ -38,7 +39,7 @@ namespace Skylicht
 #ifdef USE_CRASHHANDLER
 	HANDLE g_process = nullptr;
 
-	bool resolve(DWORD64 addr, std::string& functionName)
+	bool resolveAddrName(DWORD64 addr, std::string& functionName)
 	{
 		if (g_process == nullptr)
 			return false;
@@ -48,7 +49,9 @@ namespace Skylicht
 		if (SymFromAddr(g_process, (DWORD64)addr, &disp, &symbol) == false)
 			return false;
 
-		functionName = symbol.Name;
+		functionName = std::to_string(addr);
+		functionName += ": ";
+		functionName += symbol.Name;
 
 		char undecoratedName[MAX_UNDECORATEDNAME_LENGTH];
 		memset(undecoratedName, 0, MAX_UNDECORATEDNAME_LENGTH);
@@ -57,7 +60,9 @@ namespace Skylicht
 		if (UnDecorateSymbolName(symbol.Name, (LPSTR)undecoratedName, MAX_UNDECORATEDNAME_LENGTH, UNDECORATE_FLAGS) == false)
 			return true;
 
-		functionName = undecoratedName;
+		functionName = std::to_string(addr);
+		functionName += ": ";
+		functionName += undecoratedName;
 
 		IMAGEHLP_LINE line;
 		memset(&line, 0, sizeof(IMAGEHLP_LINE));
@@ -73,6 +78,133 @@ namespace Skylicht
 		functionName += std::to_string(line.LineNumber);
 
 		return true;
+	}
+
+	std::string resolveAddr(const std::string& line)
+	{
+		std::string result;
+
+		try
+		{
+			size_t pos = 0;
+			DWORD64 addr = (DWORD64)std::stoll(line, &pos);
+			if (pos == line.length())
+			{
+				std::string name;
+				if (resolveAddrName(addr, name))
+					result = name;
+				else
+					result = line;
+			}
+		}
+		catch (const std::out_of_range& e)
+		{
+			result = line;
+		}
+		catch (const std::invalid_argument& e)
+		{
+			result = line;
+		}
+
+		return result;
+	}
+
+	void resolveFile(const wchar_t* dumpFile, const wchar_t* resultFile)
+	{
+		HANDLE hFile = CreateFile(
+			dumpFile,
+			GENERIC_READ,
+			FILE_SHARE_READ,
+			NULL,
+			OPEN_EXISTING,
+			FILE_ATTRIBUTE_NORMAL,
+			NULL
+		);
+
+		if (hFile == INVALID_HANDLE_VALUE)
+			return;
+
+		DWORD fileSizeHigh = 0;
+		DWORD fileSizeLow = GetFileSize(hFile, &fileSizeHigh);
+		if (fileSizeLow == INVALID_FILE_SIZE && GetLastError() != NO_ERROR)
+		{
+			CloseHandle(hFile);
+			return;
+		}
+
+		if (fileSizeHigh > 0)
+		{
+			// large file > 4gb
+			CloseHandle(hFile);
+			return;
+		}
+
+		std::string fileContent;
+		fileContent.resize(fileSizeLow);
+
+		DWORD bytesRead = 0;
+		BOOL readResult = ReadFile(
+			hFile,
+			&fileContent[0],
+			fileSizeLow,
+			&bytesRead,
+			NULL
+		);
+
+		if (!readResult || bytesRead != fileSizeLow)
+			return;
+
+		CloseHandle(hFile);
+
+		std::string resolveData;
+		
+		/*
+		const int pathSize = 2048;
+		char searchPath[pathSize];
+		if (SymGetSearchPath(GetCurrentProcess(), searchPath, pathSize))
+		{
+			resolveData += "PDB: ";
+			resolveData += searchPath;
+			resolveData += "\n";
+		}
+		*/
+
+		std::string currentLine;
+		for (char c : fileContent)
+		{
+			if (c == '\n')
+			{
+				if (!currentLine.empty())
+				{
+					resolveData += resolveAddr(currentLine);
+					resolveData += "\n";
+				}
+				currentLine.clear();
+			}
+			else if (c != '\r')
+			{
+				currentLine += c;
+			}
+		}
+
+		if (!currentLine.empty())
+			resolveData += resolveAddr(currentLine);
+
+		if (resolveData.size() > 0)
+		{
+			HANDLE hDumpFile = CreateFile(resultFile,
+				GENERIC_WRITE,
+				FILE_SHARE_WRITE,
+				0,
+				CREATE_ALWAYS,
+				0,
+				0);
+
+			DWORD dwBytesWritten;
+			WriteFile(hDumpFile, resolveData.c_str(), (DWORD)resolveData.size(), &dwBytesWritten, NULL);
+
+			CloseHandle(hDumpFile);
+		}
 	}
 
 	static LONG WINAPI dump(EXCEPTION_POINTERS* exp)
@@ -95,28 +227,31 @@ namespace Skylicht
 		int stackFrame = CaptureStackBackTrace(0, MAX_STACK_DEPTH, callstackAddress, nullptr);
 
 		HANDLE hDumpFile = CreateFile(szFileName, GENERIC_WRITE, FILE_SHARE_WRITE, 0, CREATE_ALWAYS, 0, 0);
-		std::string buffer, funcName;
+		std::string buffer;
 
 		buffer = "CRASH HANDLER\n\n";
 
 		for (int i = 0; i < stackFrame; i++)
 		{
-			if (resolve((DWORD64)callstackAddress[i], funcName))
-			{
-				buffer += funcName;
-				buffer += "\n";
-			}
-			else
-			{
-				buffer += std::to_string((DWORD64)callstackAddress[i]);
-				buffer += "\n";
-			}
+			buffer += std::to_string((DWORD64)callstackAddress[i]);
+			buffer += "\n";
 		}
 
 		DWORD dwBytesWritten;
 		WriteFile(hDumpFile, buffer.c_str(), (DWORD)buffer.size(), &dwBytesWritten, NULL);
 
 		CloseHandle(hDumpFile);
+
+		wchar_t szResult[MAX_PATH];
+		swprintf(szResult, MAX_PATH, L"%s-%04d-%02d%02d-%02d%02d.txt",
+			appName.c_str(),
+			time.wYear,
+			time.wMonth,
+			time.wDay,
+			time.wHour,
+			time.wMinute);
+
+		resolveFile(szFileName, szResult);
 
 		return EXCEPTION_EXECUTE_HANDLER;
 	}
@@ -150,6 +285,45 @@ namespace Skylicht
 		DWORD SYM_OPTIONS = SYMOPT_DEFERRED_LOADS | SYMOPT_LOAD_LINES | SYMOPT_PUBLICS_ONLY;
 		SymSetOptions(SYM_OPTIONS);
 		SymInitialize(g_process, NULL, TRUE);
+#endif
+	}
+
+	void CCrashHandler::resolveDumpFiles()
+	{
+#ifdef USE_CRASHHANDLER
+		WIN32_FIND_DATAA findFileData;
+		HANDLE hFind = INVALID_HANDLE_VALUE;
+
+		std::string searchPath = ".\\*.dmp";
+
+		hFind = FindFirstFileA(searchPath.c_str(), &findFileData);
+
+		if (hFind == INVALID_HANDLE_VALUE)
+			return;
+
+		std::vector<std::string> dumpFiles;
+		do
+		{
+			if (strcmp(findFileData.cFileName, ".") != 0 && strcmp(findFileData.cFileName, "..") != 0)
+			{
+				if (!(findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+				{
+					dumpFiles.push_back(findFileData.cFileName);
+				}
+			}
+		} while (FindNextFileA(hFind, &findFileData) != 0);
+
+		FindClose(hFind);
+
+		for (auto s : dumpFiles)
+		{
+			std::string r = CPath::replaceFileExt(s, ".txt");
+
+			std::wstring src = CStringImp::convertUTF8ToUnicode(s.c_str());
+			std::wstring dst = CStringImp::convertUTF8ToUnicode(r.c_str());
+
+			resolveFile(src.c_str(), dst.c_str());
+		}
 #endif
 	}
 }

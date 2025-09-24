@@ -45,6 +45,9 @@ namespace Skylicht
 		virtual ~CCrashHandler();
 
 		void init();
+
+		// Symbol resolution can only correctly resolve function names with the .pdb file.
+		void resolveDumpFiles();
 	};
 
 #ifdef USE_CRASHHANDLER
