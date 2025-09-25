@@ -58,7 +58,7 @@ namespace Skylicht
 
 			static void updateObjectToUI(CGUIElement* object, CGUIHierachyNode* node);
 
-			void updateTreeNode(CGUIElement* object);
+			void updateTreeNode(CGUIElement* object, bool rebuildAllTree = false);
 
 			CGUIHierachyNode* getNodeByObject(CGUIElement* object);
 

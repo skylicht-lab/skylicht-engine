@@ -115,7 +115,7 @@ namespace Skylicht
 				node->setTextColor(GUI::SGUIColor(255, 150, 150, 150));
 		}
 
-		void CGUIHierarchyController::updateTreeNode(CGUIElement* object)
+		void CGUIHierarchyController::updateTreeNode(CGUIElement* object, bool rebuildAllTree)
 		{
 			if (m_node == NULL)
 				return;
@@ -129,11 +129,14 @@ namespace Skylicht
 					node->OnUpdate(node);
 
 				// rebuild-gui child of entity
-				std::vector<CGUIHierachyNode*>& childs = node->getChilds();
-				for (CGUIHierachyNode* child : childs)
+				if (rebuildAllTree)
 				{
-					if (child->getTagDataType() == CGUIHierachyNode::GUIElement)
-						buildTreeNode(node->getGUINode(), child);
+					std::vector<CGUIHierachyNode*>& childs = node->getChilds();
+					for (CGUIHierachyNode* child : childs)
+					{
+						if (child->getTagDataType() == CGUIHierachyNode::GUIElement)
+							buildTreeNode(node->getGUINode(), child);
+					}
 				}
 			}
 		}
