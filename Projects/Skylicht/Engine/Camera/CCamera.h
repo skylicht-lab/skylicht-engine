@@ -87,6 +87,8 @@ namespace Skylicht
 		float m_orthoUIW;
 		float m_orthoUIH;
 
+		bool m_projectionChanged;
+
 		float m_orthoScale;
 
 		core::vector3df m_up;
@@ -153,7 +155,7 @@ namespace Skylicht
 		inline void setNearValue(float f)
 		{
 			m_nearValue = f;
-			recalculateProjectionMatrix();
+			m_projectionChanged = true;
 		}
 
 		inline float getNearValue()
@@ -164,7 +166,7 @@ namespace Skylicht
 		inline void setFarValue(float f)
 		{
 			m_farValue = f;
-			recalculateProjectionMatrix();
+			m_projectionChanged = true;
 		}
 
 		inline float getFarValue()
@@ -175,7 +177,7 @@ namespace Skylicht
 		inline void setFOV(float fov)
 		{
 			m_fov = fov;
-			recalculateProjectionMatrix();
+			m_projectionChanged = true;
 		}
 
 		inline float getFOV()
@@ -207,7 +209,7 @@ namespace Skylicht
 		inline void setAspect(float f)
 		{
 			m_aspect = f;
-			recalculateProjectionMatrix();
+			m_projectionChanged = true;
 		}
 
 		inline float getAspect()

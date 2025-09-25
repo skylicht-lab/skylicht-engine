@@ -44,7 +44,8 @@ namespace Skylicht
 		m_orthoUIH(0.0f),
 		m_orthoUIW(0.0f),
 		m_viewportAspect(1.0f),
-		m_useScaledTime(true)
+		m_useScaledTime(true),
+		m_projectionChanged(true)
 	{
 	}
 
@@ -75,8 +76,10 @@ namespace Skylicht
 
 		// Update projection matrix
 		const core::dimension2du& screenSize = getVideoDriver()->getCurrentRenderTargetSize();
-		if (m_screenSize != screenSize)
+		if (m_screenSize != screenSize || m_projectionChanged)
+		{
 			recalculateProjectionMatrix();
+		}
 
 		core::vector3df position;
 
@@ -326,5 +329,6 @@ namespace Skylicht
 		}
 
 		m_screenSize = screenSize;
+		m_projectionChanged = false;
 	}
 }

@@ -34,7 +34,13 @@ namespace Skylicht
 	CCameraBrain::CCameraBrain() :
 		m_camera(NULL),
 		m_targetCamera(NULL),
-		m_blend(0.0f)
+		m_blend(0.0f),
+		m_viewFov(60.0f),
+		m_viewNear(0.05f),
+		m_viewFar(1500.0f),
+		m_lastFov(60.0f),
+		m_lastNear(0.05f),
+		m_lastFar(1500.0f)
 	{
 		m_lookAt.set(0.0f, 0.0f, 1.0f);
 		m_upVector.set(0.0f, 1.0f, 0.0f);
@@ -61,9 +67,15 @@ namespace Skylicht
 	void CCameraBrain::setTargetCamera(CCamera* cam, float blendTarget)
 	{
 		m_targetCamera = cam;
+
 		m_lastPosition = m_position;
 		m_lastLookAt = m_lookAt;
 		m_lastUpVector = m_upVector;
+
+		m_lastFov = m_viewFov;
+		m_lastNear = m_viewNear;
+		m_lastFar = m_viewFar;
+
 		m_blend = blendTarget;
 	}
 
@@ -77,20 +89,36 @@ namespace Skylicht
 		core::vector3df lookAt = m_targetCamera->getLookVector();
 		core::vector3df upVector = m_targetCamera->getUpVector();
 
+		float viewFov = m_targetCamera->getFOV();
+		float viewNear = m_targetCamera->getNearValue();
+		float viewFar = m_targetCamera->getFarValue();
+
 		if (m_blend < 1.0f)
 		{
 			m_position = CVector::lerp(m_lastPosition, position, m_blend);
 			m_lookAt = CVector::slerp(m_lastLookAt, lookAt, m_blend);
 			m_upVector = CVector::slerp(m_lastUpVector, upVector, m_blend);
+
+			m_viewFov = m_lastFov + (m_viewFov - m_lastFov) * m_blend;
+			m_viewNear = m_lastNear + (m_viewNear - m_lastNear) * m_blend;;
+			m_viewFar = m_lastFar + (m_viewFar - m_lastFar) * m_blend;;
 		}
 		else
 		{
 			m_position = position;
 			m_lookAt = lookAt;
 			m_upVector = upVector;
+
+			m_viewFov = viewFov;
+			m_viewNear = viewNear;
+			m_viewFar = viewFar;
 		}
 
+		m_camera->setFOV(m_viewFov);
+		m_camera->setNearValue(m_viewNear);
+		m_camera->setFarValue(m_viewFar);
+
 		m_camera->lookAt(m_position, m_position + m_lookAt, m_upVector);
-		m_camera->recalculateViewMatrix();
+		m_camera->endUpdate();
 	}
 }

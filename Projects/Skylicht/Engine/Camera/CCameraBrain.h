@@ -95,9 +95,17 @@ namespace Skylicht
 		core::vector3df m_lookAt;
 		core::vector3df m_upVector;
 
+		float m_viewFov;
+		float m_viewNear;
+		float m_viewFar;
+
 		core::vector3df m_lastPosition;
 		core::vector3df m_lastLookAt;
 		core::vector3df m_lastUpVector;
+
+		float m_lastFov;
+		float m_lastNear;
+		float m_lastFar;
 
 	public:
 		CCameraBrain();
