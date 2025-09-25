@@ -100,7 +100,7 @@ namespace Skylicht
 
 			bool isInitialized();
 
-			void updatePhysics(float timestepSec);
+			void updatePhysics(float timestepSec, int step = 1);
 
 			void syncTransformToPhysics();
 

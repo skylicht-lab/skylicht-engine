@@ -250,12 +250,12 @@ namespace Skylicht
 #endif
 		}
 
-		void CPhysicsEngine::updatePhysics(float timestepSec)
+		void CPhysicsEngine::updatePhysics(float timestepSec, int step)
 		{
 #ifdef USE_BULLET_PHYSIC_ENGINE
 			if (m_dynamicsWorld)
 			{
-				m_dynamicsWorld->stepSimulation(timestepSec);
+				m_dynamicsWorld->stepSimulation(timestepSec, step);
 
 				syncTransforms();
 
