@@ -69,6 +69,7 @@ namespace Skylicht
 			btRigidBody* m_rigidBody;
 			btCollisionShape* m_shape;
 #endif
+			int m_tag;
 
 		public:
 			CRigidbody();
@@ -84,6 +85,16 @@ namespace Skylicht
 			virtual CObjectSerializable* createSerializable();
 
 			virtual void loadSerializable(CObjectSerializable* object);
+
+			inline void setTag(int i)
+			{
+				m_tag = i;
+			}
+
+			inline int getTag()
+			{
+				return m_tag;
+			}
 
 			void setDynamic(bool b);
 
@@ -126,6 +137,8 @@ namespace Skylicht
 			{
 				return m_restitution;
 			}
+
+			void setSleepingThresholds(float linear, float angular);
 
 			void setCcdSweptSphereRadius(float r = 0.0f);
 
@@ -180,6 +193,14 @@ namespace Skylicht
 			void applyPushImpulse(const core::vector3df& impulse, const core::vector3df& localPosition);
 
 			void applyTorqueTurnImpulse(const core::vector3df& torqueImpulse);
+
+			core::vector3df getLinearVelocity();
+
+			core::vector3df getAngularVelocity();
+
+			void setLinearVelocity(const core::vector3df& v);
+
+			void setAngularVelocity(const core::vector3df& v);
 
 			inline bool needUpdateTransform()
 			{

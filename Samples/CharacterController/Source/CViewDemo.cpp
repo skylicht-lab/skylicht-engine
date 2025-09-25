@@ -14,9 +14,10 @@
 #include "CImguiManager.h"
 #include "imgui.h"
 
+#include "Debug/CSceneDebug.h"
 
-
-CViewDemo::CViewDemo()
+CViewDemo::CViewDemo() :
+	m_player(NULL)
 {
 
 }
@@ -74,16 +75,45 @@ void CViewDemo::initObjects()
 			if (collide->getCollisionType() == Physics::ICollisionObject::RigidBody)
 			{
 				Physics::CRigidbody* body = (Physics::CRigidbody*)collide;
-				if (body->isDynamic())
+
+				core::vector3df myPosition = m_player->getPosition();
+				core::vector3df test(0.0f, -1.4f, 0.0f);
+
+				// Check if character is on box
+				bool isOnBody = false;
+				Physics::SAllRaycastResult result;
+				if (Physics::CPhysicsEngine::getInstance()->rayTest(myPosition, myPosition + test, result))
 				{
-					core::vector3df force = m_player->getLinearVelocity();
-					force.normalize();
+					for (int i = 0, n = result.Bodies.size(); i < n; i++)
+					{
+						if (result.Bodies[i] == body)
+						{
+							isOnBody = true;
+							break;
+						}
+					}
+				}
 
-					// add a force to rigidbody
-					force *= 20.0f;
+				if (body->getTag() == 1)
+				{
+					if (isOnBody)
+					{
+						body->setDynamic(false);
+					}
+					else
+					{
 
-					body->setState(Physics::CRigidbody::Activate);
-					body->applyForce(force, core::vector3df());
+						body->setDynamic(true);
+
+						core::vector3df force = m_player->getLinearVelocity();
+						force.normalize();
+
+						// add a force to rigidbody
+						force *= 20.0f;
+
+						body->setState(Physics::CRigidbody::Activate);
+						body->applyForce(force, core::vector3df());
+					}
 				}
 			}
 		};
@@ -131,7 +161,23 @@ void CViewDemo::initObjects()
 		body->setPosition(core::vector3df(randomX, 20.0f, randomZ));
 		body->setRotation(core::vector3df(ramdonRot, ramdonRot, ramdonRot));
 		body->setLocalScale(core::vector3df(randomScale, randomScale, randomScale));
+		body->setSleepingThresholds(2.0f, 2.0f);
+		// body->setCcdMotionThreshold(1.0f);
+		// body->setCcdSweptSphereRadius(randomScale + 1.0f);
 		body->syncTransform();
+		body->setTag(1);
+
+		body->OnCollision = [body](
+			Physics::ICollisionObject* a,
+			Physics::ICollisionObject* b,
+			Physics::SCollisionContactPoint* point,
+			int numContact) {
+				Physics::CRigidbody::EActivationState state = body->getState();
+
+				// Change box state so rigid body doesn't vibrate when player stands up
+				if (body->isDynamic() && state == Physics::CRigidbody::Sleep)
+					body->setDynamic(false);
+			};
 
 		m_boxs.push_back(body);
 	}
@@ -149,8 +195,13 @@ void CViewDemo::onUpdate()
 	if (scene != NULL)
 	{
 		// update physics
-		float timestepSec = getTimeStep() / 1000.0f;
-		Physics::CPhysicsEngine::getInstance()->updatePhysics(timestepSec);
+		float ts = getTimeStep();
+
+		Physics::CPhysicsEngine* physicsEngine = Physics::CPhysicsEngine::getInstance();
+		int physicsStep = 2;
+		float f = 1.0f / (float)physicsStep;
+		for (int i = 0; i < physicsStep; i++)
+			physicsEngine->updatePhysics(ts * 0.001f * f, 2);
 
 		scene->update();
 

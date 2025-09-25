@@ -22,7 +22,8 @@ namespace Skylicht
 			m_spinningFriction(0.0f),
 			m_isDynamic(true),
 			m_needUpdateTransform(true),
-			m_drawDebug(false)
+			m_drawDebug(false),
+			m_tag(0)
 #ifdef USE_BULLET_PHYSIC_ENGINE
 			, m_shape(NULL),
 			m_rigidBody(NULL)
@@ -139,6 +140,16 @@ namespace Skylicht
 			if (m_rigidBody)
 			{
 				m_rigidBody->setRestitution(s);
+			}
+#endif
+		}
+
+		void CRigidbody::setSleepingThresholds(float linear, float angular)
+		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_rigidBody)
+			{
+				m_rigidBody->setSleepingThresholds(linear, angular);
 			}
 #endif
 		}
@@ -565,6 +576,50 @@ namespace Skylicht
 			if (m_rigidBody)
 			{
 				m_rigidBody->applyTorqueTurnImpulse(btVector3(torqueImpulse.X, torqueImpulse.Y, torqueImpulse.Z));
+			}
+#endif
+		}
+
+		core::vector3df CRigidbody::getLinearVelocity()
+		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_rigidBody)
+			{
+				const btVector3& v = m_rigidBody->getLinearVelocity();
+				return Bullet::bulletVectorToIrrVector(v);
+			}
+#endif
+			return core::vector3df();
+		}
+
+		core::vector3df CRigidbody::getAngularVelocity()
+		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_rigidBody)
+			{
+				const btVector3& v = m_rigidBody->getAngularVelocity();
+				return Bullet::bulletVectorToIrrVector(v);
+			}
+#endif
+			return core::vector3df();
+		}
+
+		void CRigidbody::setLinearVelocity(const core::vector3df& v)
+		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_rigidBody)
+			{
+				m_rigidBody->setLinearVelocity(Bullet::irrVectorToBulletVector(v));
+			}
+#endif
+		}
+
+		void CRigidbody::setAngularVelocity(const core::vector3df& v)
+		{
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			if (m_rigidBody)
+			{
+				m_rigidBody->setAngularVelocity(Bullet::irrVectorToBulletVector(v));
 			}
 #endif
 		}
