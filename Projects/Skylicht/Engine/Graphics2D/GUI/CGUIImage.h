@@ -63,6 +63,13 @@ namespace Skylicht
 
 		void setImage(ITexture* texture);
 
+		void setImageResource(const char* path, const char* editorRefId);
+
+		const char* getResourceId()
+		{
+			return m_id.c_str();
+		}
+
 		inline ITexture* getImage()
 		{
 			return m_image;

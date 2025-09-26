@@ -94,7 +94,7 @@ namespace Skylicht
 
 		protected:
 
-			void importPath(const SFileNode* node);
+			void importPath(SFileNode* node);
 
 			void saveModelThumbnail(const char* id, const char* path);
 		};

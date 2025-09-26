@@ -86,6 +86,10 @@ namespace Skylicht
 			m_canvasSettingController = new CCanvasSettingController(editor, m_canvasSettingMenu);
 			btn->OnPress = BIND_LISTENER(&CSpaceGUIDesign::onSetting, this);
 
+			m_toolBar->addSpace();
+			btn = m_toolBar->addButton(L"Sync GUID", GUI::ESystemIcon::Refresh, true);
+			btn->OnPress = BIND_LISTENER(&CSpaceGUIDesign::onSyncGUID, this);
+
 			m_textMousePos = new GUI::CLabel(m_toolBar);
 			m_toolBar->addControl(m_textMousePos, true);
 			m_textMousePos->setPadding(GUI::SPadding(0.0f, 3.0f, 0.0f, 0.0f));
@@ -535,6 +539,15 @@ namespace Skylicht
 		{
 			m_canvasSettingMenu->open(base);
 			m_canvasSettingController->onShow();
+		}
+
+		void CSpaceGUIDesign::onSyncGUID(GUI::CBase* base)
+		{
+			GUI::CMessageBox* msgBox = new GUI::CMessageBox(m_window->getCanvas(), GUI::CMessageBox::YesNo);
+			msgBox->setMessage("Are you sure you want to update all resources according to the file ID?", "");
+			msgBox->OnYes = [](GUI::CBase* button) {
+				CGUIDesignController::getInstance()->syncGUID();
+				};
 		}
 
 		void CSpaceGUIDesign::onNew(GUI::CBase* base)

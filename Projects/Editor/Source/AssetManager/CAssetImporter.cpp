@@ -266,7 +266,7 @@ namespace Skylicht
 			m_assetManager->getThumbnail()->save();
 		}
 
-		void CAssetImporter::importPath(const SFileNode* node)
+		void CAssetImporter::importPath(SFileNode* node)
 		{
 			std::string path = node->Path;
 
@@ -358,6 +358,9 @@ namespace Skylicht
 					}
 				}
 			}
+
+			// read meta
+			node->GUID = m_assetManager->getMetaGUID(path.c_str());
 		}
 
 		void CAssetImporter::saveModelThumbnail(const char* id, const char* path)

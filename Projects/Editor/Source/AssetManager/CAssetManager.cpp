@@ -506,6 +506,117 @@ namespace Skylicht
 			return result;
 		}
 
+		std::string CAssetManager::getMetaGUID(const char* path)
+		{
+			std::string result;
+			std::string ext = CPath::getFileNameExt(path);
+
+			if (ext == "spritedata")
+			{
+				io::IXMLReader* xmlReader = getIrrlichtDevice()->getFileSystem()->createXMLReader(path);
+				if (xmlReader == NULL)
+					return result;
+
+				bool end = false;
+				while (xmlReader->read() && !end)
+				{
+					switch (xmlReader->getNodeType())
+					{
+					case io::EXN_ELEMENT:
+					{
+						std::wstring nodeName = xmlReader->getNodeName();
+						if (nodeName == L"sprite")
+						{
+							const wchar_t* id = xmlReader->getAttributeValue(L"id");
+							if (id)
+								result = CStringImp::convertUnicodeToUTF8(id);
+							end = true;
+						}
+					}
+					break;
+					case io::EXN_TEXT:
+					{
+					}
+					break;
+					default:
+						break;
+					}
+				};
+
+				xmlReader->drop();
+			}
+			else if (ext == "font")
+			{
+				io::IXMLReader* xmlReader = getIrrlichtDevice()->getFileSystem()->createXMLReader(path);
+				if (xmlReader == NULL)
+					return result;
+
+				bool end = false;
+				while (xmlReader->read() && !end)
+				{
+					switch (xmlReader->getNodeType())
+					{
+					case io::EXN_ELEMENT:
+					{
+						std::wstring nodeName = xmlReader->getNodeName();
+						if (nodeName == L"string")
+						{
+							const wchar_t* name = xmlReader->getAttributeValue(L"name");
+							if (name)
+							{
+								std::wstring attrName = name;
+								if (attrName == L"guid")
+								{
+									const wchar_t* id = xmlReader->getAttributeValue(L"value");
+									if (id)
+										result = CStringImp::convertUnicodeToUTF8(id);
+									end = true;
+								}
+							}
+						}
+					}
+					break;
+					case io::EXN_TEXT:
+					{
+					}
+					break;
+					default:
+						break;
+					}
+				};
+
+				xmlReader->drop();
+			}
+			else
+			{
+				std::string meta = path;
+				meta += ".meta";
+
+				CAssetResource* asset = NULL;
+
+				std::string ext = CPath::getFileNameExt(path);
+				ext = CStringImp::toLower(ext);
+
+				if (CTextureManager::getInstance()->isTextureExt(ext.c_str()))
+					asset = new CTextureSettings();
+				else if (CMeshManager::getInstance()->isMeshExt(ext.c_str()))
+					asset = new CMeshExportSettings();
+				else
+					asset = new CAssetResource("CAssetResource");
+
+				if (!CSerializableLoader::loadSerializable(meta.c_str(), asset))
+				{
+					delete asset;
+					return std::string();
+				}
+
+				result = asset->GUID.get();
+				delete asset;
+			}
+
+			return result;
+		}
+
 		bool CAssetManager::newFolderAsset(const char* path)
 		{
 			if (fs::create_directory(path))
@@ -527,6 +638,16 @@ namespace Skylicht
 			if (i == m_pathToFile.end())
 				return NULL;
 			return i->second;
+		}
+
+		SFileNode* CAssetManager::getFileNodeByGUID(const char* guid)
+		{
+			for (SFileNode* f : m_files)
+			{
+				if (f->GUID == guid)
+					return f;
+			}
+			return NULL;
 		}
 
 		void CAssetManager::registerFileLoader(const char* ext, IFileLoader* loader)

@@ -35,6 +35,7 @@ namespace Skylicht
 	{
 		struct SFileNode
 		{
+			std::string GUID;
 			std::string Bundle;
 			std::string Path;
 			std::string FullPath;
@@ -102,6 +103,7 @@ namespace Skylicht
 
 			std::map<std::string, IFileLoader*> m_fileLoader;
 			std::map<std::string, SFileNode*> m_pathToFile;
+
 			std::list<SFileNode*> m_files;
 
 			CThumbnailDb m_thumbnail;
@@ -163,6 +165,8 @@ namespace Skylicht
 
 			SFileNode* getFileNodeByPath(const char* path);
 
+			SFileNode* getFileNodeByGUID(const char* guid);
+
 		public:
 
 			void deleteChildAsset(const char* folderPath);
@@ -176,6 +180,8 @@ namespace Skylicht
 			std::string getBundleName(const char* path);
 
 			std::string getGenerateMetaGUID(const char* path);
+
+			std::string getMetaGUID(const char* path);
 
 		public:
 

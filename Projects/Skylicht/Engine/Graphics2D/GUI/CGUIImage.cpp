@@ -91,6 +91,19 @@ namespace Skylicht
 			setSourceRect(0, 0, (float)m_image->getSize().Width, (float)m_image->getSize().Height);
 	}
 
+	void CGUIImage::setImageResource(const char* path, const char* editorRefId)
+	{
+		ITexture* t = CTextureManager::getInstance()->getTexture(path);
+		if (t)
+		{
+			setImage(t);
+
+			m_resource = path;
+			if (editorRefId)
+				m_id = editorRefId;
+		}
+	}
+
 	CObjectSerializable* CGUIImage::createSerializable()
 	{
 		CObjectSerializable* object = CGUIElement::createSerializable();

@@ -111,6 +111,8 @@ namespace Skylicht
 
 			void onSetting(GUI::CBase* base);
 
+			void onSyncGUID(GUI::CBase* base);
+
 			void onNew(GUI::CBase* base);
 
 			void newGUI();

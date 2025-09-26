@@ -981,6 +981,56 @@ namespace Skylicht
 			m_history->redo();
 		}
 
+		void CGUIDesignController::syncGUID()
+		{
+			if (m_guiCanvas)
+			{
+				CAssetManager* assetMgr = CAssetManager::getInstance();
+
+				std::vector<CGUISprite*> listSprite = m_guiCanvas->getElementsInChild<CGUISprite>(false);
+				for (CGUISprite* s : listSprite)
+				{
+					SFileNode* sprite = assetMgr->getFileNodeByGUID(s->getSpriteId());
+					SFileNode* frame = assetMgr->getFileNodeByGUID(s->getFrameId());
+
+					if (sprite && frame)
+					{
+						std::string frameName = CPath::getFileNameNoExt(frame->Path);
+						s->setFrameSource(sprite->Path.c_str(), frameName.c_str(), frame->Path.c_str());
+					}
+				}
+
+				std::vector<CGUIFitSprite*> listFitSprite = m_guiCanvas->getElementsInChild<CGUIFitSprite>(false);
+				for (CGUIFitSprite* s : listFitSprite)
+				{
+					SFileNode* sprite = assetMgr->getFileNodeByGUID(s->getSpriteId());
+					SFileNode* frame = assetMgr->getFileNodeByGUID(s->getFrameId());
+
+					if (sprite && frame)
+					{
+						std::string frameName = CPath::getFileNameNoExt(frame->Path);
+						s->setFrameSource(sprite->Path.c_str(), frameName.c_str(), frame->Path.c_str());
+					}
+				}
+
+				std::vector<CGUIImage*> listImages = m_guiCanvas->getElementsInChild<CGUIImage>(false);
+				for (CGUIImage* i : listImages)
+				{
+					SFileNode* img = assetMgr->getFileNodeByGUID(i->getResourceId());
+					if (img)
+						i->setImageResource(img->Path.c_str(), img->GUID.c_str());
+				}
+
+				std::vector<CGUIText*> listTexts = m_guiCanvas->getElementsInChild<CGUIText>(false);
+				for (CGUIText* t : listTexts)
+				{
+					SFileNode* font = assetMgr->getFileNodeByGUID(t->getFontId().c_str());
+					if (font)
+						t->setFontSource(font->Path.c_str());
+				}
+			}
+		}
+
 		void CGUIDesignController::doSpriteChange(const char* resource)
 		{
 			if (m_guiCanvas)

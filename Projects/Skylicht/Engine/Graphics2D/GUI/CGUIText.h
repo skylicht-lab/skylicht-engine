@@ -220,6 +220,11 @@ namespace Skylicht
 
 		void setFontSource(const char* fontSource);
 
+		const std::string& getFontId()
+		{
+			return m_fontGUID;
+		}
+
 		DECLARE_GETTYPENAME(CGUIText)
 
 		virtual CObjectSerializable* createSerializable();
