@@ -120,6 +120,11 @@ namespace Skylicht
 
 		void setTargetCamera(CCamera* cam, float blendTarget = 1.0f);
 
+		inline CCamera* getCamera()
+		{
+			return m_camera;
+		}
+
 		inline CCamera* getTargetCamera()
 		{
 			return m_targetCamera;

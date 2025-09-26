@@ -119,6 +119,12 @@ namespace Skylicht
 			m_linkComponent.clear();
 		}
 
+		template<class T>
+		inline T* getComponent()
+		{
+			return m_gameObject->getComponent<T>();
+		}
+
 		DECLARE_GETTYPENAME(CComponentSystem)
 	};
 }

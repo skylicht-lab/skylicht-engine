@@ -281,6 +281,7 @@ void CViewDemo::onGUI()
 				body->setPosition(core::vector3df(randomX, 20.0f, randomZ));
 				body->setRotation(core::vector3df(ramdonRot, ramdonRot, ramdonRot));
 				body->activate();
+				body->setDynamic(true);
 				body->syncTransform();
 			}
 		}
