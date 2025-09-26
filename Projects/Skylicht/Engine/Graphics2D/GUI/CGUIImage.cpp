@@ -95,13 +95,11 @@ namespace Skylicht
 	{
 		ITexture* t = CTextureManager::getInstance()->getTexture(path);
 		if (t)
-		{
 			setImage(t);
 
-			m_resource = path;
-			if (editorRefId)
-				m_id = editorRefId;
-		}
+		m_resource = path;
+		if (editorRefId)
+			m_id = editorRefId;
 	}
 
 	CObjectSerializable* CGUIImage::createSerializable()

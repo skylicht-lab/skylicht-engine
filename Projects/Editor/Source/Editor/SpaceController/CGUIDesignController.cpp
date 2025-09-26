@@ -38,6 +38,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Graphics2D/GUI/CGUISprite.h"
 #include "Graphics2D/GUI/CGUIFitSprite.h"
 
+#include "ResourceSettings/CTextureSettings.h"
+
 namespace Skylicht
 {
 	namespace Editor
@@ -981,6 +983,21 @@ namespace Skylicht
 			m_history->redo();
 		}
 
+		std::string CGUIDesignController::getSpritePath(const char* framePath)
+		{
+			std::string meta = framePath;
+			meta += ".meta";
+
+			std::string result;
+
+			CTextureSettings* t = new CTextureSettings();
+			if (t->load(meta.c_str()))
+				result = t->SpritePath.get();
+
+			delete t;
+			return result;
+		}
+
 		void CGUIDesignController::syncGUID()
 		{
 			if (m_guiCanvas)
@@ -990,26 +1007,42 @@ namespace Skylicht
 				std::vector<CGUISprite*> listSprite = m_guiCanvas->getElementsInChild<CGUISprite>(false);
 				for (CGUISprite* s : listSprite)
 				{
-					SFileNode* sprite = assetMgr->getFileNodeByGUID(s->getSpriteId());
 					SFileNode* frame = assetMgr->getFileNodeByGUID(s->getFrameId());
-
-					if (sprite && frame)
+					if (frame)
 					{
-						std::string frameName = CPath::getFileNameNoExt(frame->Path);
-						s->setFrameSource(sprite->Path.c_str(), frameName.c_str(), frame->Path.c_str());
+						std::string spritePath;
+						SFileNode* sprite = assetMgr->getFileNodeByGUID(s->getSpriteId());
+						if (!sprite)
+							spritePath = getSpritePath(frame->Path.c_str());
+						else
+							spritePath = sprite->Path;
+
+						if (!spritePath.empty())
+						{
+							std::string frameName = CPath::getFileNameNoExt(frame->Path);
+							s->setFrameSource(spritePath.c_str(), frameName.c_str(), frame->Path.c_str());
+						}
 					}
 				}
 
 				std::vector<CGUIFitSprite*> listFitSprite = m_guiCanvas->getElementsInChild<CGUIFitSprite>(false);
 				for (CGUIFitSprite* s : listFitSprite)
 				{
-					SFileNode* sprite = assetMgr->getFileNodeByGUID(s->getSpriteId());
 					SFileNode* frame = assetMgr->getFileNodeByGUID(s->getFrameId());
-
-					if (sprite && frame)
+					if (frame)
 					{
-						std::string frameName = CPath::getFileNameNoExt(frame->Path);
-						s->setFrameSource(sprite->Path.c_str(), frameName.c_str(), frame->Path.c_str());
+						std::string spritePath;
+						SFileNode* sprite = assetMgr->getFileNodeByGUID(s->getSpriteId());
+						if (!sprite)
+							spritePath = getSpritePath(frame->Path.c_str());
+						else
+							spritePath = sprite->Path;
+
+						if (!spritePath.empty())
+						{
+							std::string frameName = CPath::getFileNameNoExt(frame->Path);
+							s->setFrameSource(spritePath.c_str(), frameName.c_str(), frame->Path.c_str());
+						}
 					}
 				}
 

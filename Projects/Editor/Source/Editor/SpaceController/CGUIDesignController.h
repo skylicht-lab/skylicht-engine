@@ -172,6 +172,8 @@ namespace Skylicht
 
 			void syncGUID();
 
+			std::string getSpritePath(const char* framePath);
+
 			void applySelected(std::vector<CSelectObject*> ids);
 
 			CGUIHierachyNode* selectOnHierachy(CGUIElement* gui, bool callEvent);
