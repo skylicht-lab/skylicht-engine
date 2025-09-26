@@ -112,13 +112,24 @@ namespace Skylicht
 						KeyData.KeyState[EKey::KEY_CONTROL] = event.KeyInput.Control;
 						KeyData.KeyState[EKey::KEY_SHIFT] = event.KeyInput.Shift;
 #endif
-						
-						if (event.KeyInput.Char != 0 && !isKeyDown(EKey::KEY_MENU) && event.KeyInput.PressedDown)
+
+						wchar_t pressChar = event.KeyInput.Char;
+						int inputKey = (int)event.KeyInput.Key;
+#ifdef LINUX
+						if (event.KeyInput.Control)
+						{							
+							if (inputKey>= (int)EKey::KEY_KEY_A && inputKey <= (int)EKey::KEY_KEY_Z)
+								pressChar = 'a' + (wchar_t)(event.KeyInput.Key - EKey::KEY_KEY_A);							
+							else if (inputKey >= (int)EKey::KEY_KEY_0 && inputKey <= (int)EKey::KEY_KEY_9)
+								pressChar = '0' + (wchar_t)(event.KeyInput.Key - EKey::KEY_KEY_0);
+						}
+#endif						
+						if (pressChar != 0 && !isKeyDown(EKey::KEY_MENU) && event.KeyInput.PressedDown)
 						{
-							inputCharacter(event.KeyInput.Char);
+							inputCharacter(pressChar);
 						}
 							
-						inputKeyEvent((EKey)event.KeyInput.Key, event.KeyInput.PressedDown);
+						inputKeyEvent((EKey)inputKey, event.KeyInput.PressedDown);
 						break;
 					}
 					break;

@@ -303,6 +303,9 @@ namespace Skylicht
 
 		void CSceneController::doMeshChange(const char* resource)
 		{
+			if (m_scene == NULL)
+				return;
+				
 			CZone* zone = m_scene->getZone(0);
 
 			CHierarchyController* hierachyController = NULL;
@@ -341,6 +344,9 @@ namespace Skylicht
 
 		void CSceneController::doMaterialChange(const char* resource)
 		{
+			if (m_scene == NULL)
+				return;
+
 			CZone* zone = m_scene->getZone(0);
 
 			std::vector<CRenderMesh*> listRenderMesh = zone->getComponentsInChild<CRenderMesh>(false);
@@ -360,6 +366,9 @@ namespace Skylicht
 
 		void CSceneController::doReplaceTexture(ITexture* oldTexture, ITexture* newTexture)
 		{
+			if (m_scene == NULL)
+				return;
+
 			CZone* zone = m_scene->getZone(0);
 
 			std::vector<Particle::CParticleComponent*> listParticles = zone->getComponentsInChild<Particle::CParticleComponent>(false);
