@@ -30,79 +30,79 @@ namespace irr
 }
 
 /**
- * @defgroup Materials Materials, Shaders and Textures
- * @brief Discover the building blocks of visual fidelity: materials, shaders, and textures. These classes empower you to craft stunning surfaces and effects in your scenes.
- */
-
- /**
- * @defgroup Graphics2D 2D Graphics and Drawing
- * @brief Everything you need for vibrant 2D experiences — from sprites and fonts to powerful drawing utilities.
- */
+* @defgroup Materials Materials, Shaders and Textures
+* @brief Contains classes related to **materials, shaders, and textures**.
+*/
 
 /**
- * @defgroup GUI User Interface (GUI)
- * @brief Create interactive and dynamic interfaces for your application. This group includes all the classes needed to build beautiful, responsive GUIs using Canvas and related components.
- */
+* @defgroup Graphics2D 2D Graphics and Drawing
+* @brief A collection of object classes that handle **sprite, font**, and the core graphics objects for 2D drawing.
+*/
 
 /**
- * @defgroup GameObject Scene and Game Object System
- * @brief Dive into the heart of your game’s world. This group organizes everything related to 3D scenes, game objects, and their orchestration in rendering and gameplay.
- */
+* @defgroup GUI User Interface (GUI)
+* @brief Includes display classes for the **Canvas** and other GUI elements.
+*/
 
 /**
- * @defgroup ECS Entity Component System (ECS)
- * @brief Power up your architecture with flexible, efficient ECS. Find everything you need to build scalable, data-driven game logic using entities and components.
- */
+* @defgroup GameObject Scene and Game Object System
+* @brief Object classes used for **scene construction** and 3D rendering.
+*/
 
 /**
- * @defgroup Mesh Mesh Loading and Management
- * @brief Seamlessly import, manage, and export 3D models in formats like .fbx, .dae, and .obj. These tools make integrating assets into your engine effortless.
- */
+* @defgroup ECS Entity Component System (ECS)
+* @brief Objects designed to support the **Entity Component System (ECS) architecture**.
+*/
 
 /**
- * @defgroup RP Render Pipeline
- * @brief Unlock the full potential of rendering: manage how your 3D scenes are drawn to the screen or textures, and customize the visual output with advanced pipeline features.
- */
+* @defgroup Mesh Mesh Loading and Management
+* @brief Classes used to **load models** (such as .fbx, .dae, and .obj) into the engine, as well as to export them to other formats.
+*/
 
 /**
- * @defgroup Components Engine Components
- * @brief The essential toolkit for extending your engine with reusable behaviors and functions. This is where modularity and flexibility meet.
- */
+* @defgroup RP Render Pipeline
+* @brief Object classes that **execute the 3D scene rendering** process to the screen or a texture.
+*/
 
 /**
- * @defgroup Camera Camera System
- * @ingroup Components
- * @brief Take control of your perspective: this group provides classes and utilities for managing cameras, viewpoints, and cinematic movement in 3D space.
- */
+* @defgroup Components Engine Components
+* @brief The core collection of **component objects** within the engine.
+*/
 
 /**
- * @defgroup Transform Transformations
- * @ingroup Components
- * @brief Shape your world with precision — position, rotation, and scaling for every GameObject. These classes help you orchestrate movement and spatial relationships.
- */
+* @defgroup Camera Camera System
+* @ingroup Components
+* @brief Includes classes for **managing and controlling the camera**.
+*/
 
 /**
- * @defgroup RenderMesh 3D Model Rendering
- * @ingroup Components
- * @brief Bring your models to life on screen! This group covers everything needed to render complex meshes, both static and animated, with full material and shader support.
- */
+* @defgroup Transform Transformations
+* @ingroup Components
+* @brief Objects used to set the **Transform** (position, rotation, scale) for a GameObject.
+*/
 
 /**
- * @defgroup Lighting Lighting System
- * @ingroup Components
- * @brief Illuminate your worlds with realistic and artistic lighting. Find all the tools for direct, indirect, and atmospheric lighting effects here.
- */
+* @defgroup RenderMesh 3D Model Rendering
+* @ingroup Components
+* @brief Components for **displaying and rendering models** on the screen.
+*/
 
 /**
- * @defgroup IndirectLighting Indirect Lighting
- * @ingroup Components
- * @brief Go beyond basic illumination — simulate natural and global light interactions for truly immersive environments.
- */
+* @defgroup Lighting Lighting System
+* @ingroup Components
+* @brief Gathers all objects related to the **lighting** mechanism.
+*/
 
 /**
- * @defgroup Debug Debugging and Visualization Tools
- * @brief Make development easier and more insightful! Use these helper objects to visualize, debug, and analyze your scenes directly within the engine.
- */
+* @defgroup IndirectLighting Indirect Lighting
+* @ingroup Components
+* @brief Gathers all objects and components related to **simulating indirect light**.
+*/
+
+/**
+* @defgroup Debug Debug
+* @brief Helper objects used to **draw overlays** on the scene for debugging purposes.
+*/
 
 /*! \mainpage Skylicht-Engine API documentation
  *
