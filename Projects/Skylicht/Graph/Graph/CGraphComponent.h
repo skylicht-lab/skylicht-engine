@@ -33,7 +33,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	/// @brief The namespace includes classes for graphs and pathfinding.
+	/// @brief Offers tools for graph structures and pathfinding algorithms.
 	namespace Graph
 	{
 		class CGraphComponent : public CComponentSystem

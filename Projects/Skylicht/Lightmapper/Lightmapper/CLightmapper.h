@@ -32,7 +32,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	/// @brief The namespace includes classes that support baking lighting into Spherical Harmonics (SH) or Lightmap data.
+	/// @brief Supports classes for baking lighting into Spherical Harmonics (SH) or Lightmap data.
 	namespace Lightmapper
 	{
 		class CLightmapper

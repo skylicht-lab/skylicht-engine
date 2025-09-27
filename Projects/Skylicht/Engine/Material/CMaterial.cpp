@@ -742,8 +742,6 @@ namespace Skylicht
 		updateShaderParams();
 	}
 
-	// PUBLIC FOR USE
-
 	void CMaterial::applyMaterial(SMaterial& mat)
 	{
 		loadDefaultTexture();
@@ -766,19 +764,14 @@ namespace Skylicht
 
 	void CMaterial::changeShader(CShader* shader)
 	{
-		// save current shader params
 		saveExtraParams();
 
-		// new shader path
 		m_shaderPath = shader->getSource();
 
-		// init default params
 		initMaterial();
 
-		// try load from extra params
 		reloadExtraParams(m_shaderPath.c_str());
 
-		// update params
 		updateShaderParams();
 	}
 

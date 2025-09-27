@@ -38,7 +38,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	/// @brief The namespace contains classes for the User Interface (UI).
+	/// @brief Classes used to build the User Interface (UI).
 	namespace UI
 	{
 		class CUIContainer;

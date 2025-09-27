@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	/// @brief The namespace contains classes for thread handling.
+	/// @brief The foundation for thread and process handling.
 	namespace System
 	{
 		class IThreadCallback

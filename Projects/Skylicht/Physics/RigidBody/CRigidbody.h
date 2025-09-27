@@ -36,7 +36,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	/// @brief The namespace contains classes related to physics and colliders.
+	/// @brief Core functionality for physics simulations and colliders.
 	namespace Physics
 	{
 		class CRigidbody : public ICollisionObject

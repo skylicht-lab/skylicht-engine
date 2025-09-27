@@ -81,21 +81,65 @@ using namespace irr::video;
 
 namespace Skylicht
 {
+	/**
+	 * @brief Get the currently active Irrlicht device.
+	 * @return Pointer to the IrrlichtDevice instance used by Skylicht Engine.
+	 */
 	extern IrrlichtDevice* getIrrlichtDevice();
 
+	/**
+	 * @brief Get the video driver used for rendering.
+	 * @return Pointer to the IVideoDriver instance.
+	 */
 	extern IVideoDriver* getVideoDriver();
 
+	/**
+	 * @brief Get the current time step in milliseconds, scaled by the time scale.
+	 *
+	 * If fixed time step is enabled, returns the fixed time step instead.
+	 * @return The time step value in milliseconds.
+	 */
 	extern float getTimeStep();
 
+	/**
+	 * @brief Get the current time step in milliseconds, without time scale applied.
+	 * @return The raw (unscaled) time step value in milliseconds.
+	 */
 	extern float getNonScaledTimestep();
 
+	/**
+	 * @brief Get the total elapsed application time in milliseconds.
+	 * @return The total time since application start.
+	 */
 	extern float getTotalTime();
 
+	/**
+	 * @brief Enable or disable the use of fixed time step for updates.
+	 *
+	 * When enabled, the engine will use a fixed time step for all updates instead of the dynamically calculated time step.
+	 * @param b True to enable fixed time step, false to disable.
+	 */
 	extern void enableFixedTimeStep(bool b);
 
+	/**
+	 * @brief Set the value of the fixed time step in milliseconds.
+	 *
+	 * @param s The fixed time step to use.
+	 */
 	extern void setFixedTimeStep(float s);
 
+	/**
+	 * @brief Set the time scale multiplier for time-based updates.
+	 *
+	 * This allows for slow-motion or speed-up effects by scaling the time step value.
+	 * @param scale The time scale multiplier.
+	 */
 	extern void setTimeScale(float scale);
 
+	/**
+	 * @brief Get the current time scale multiplier.
+	 *
+	 * @return The time scale value.
+	 */
 	extern float getTimeScale();
 }

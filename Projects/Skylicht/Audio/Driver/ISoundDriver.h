@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	/// @brief The namespace contains classes related to audio.
+	/// @brief Handles all core audio functionality.
 	namespace Audio
 	{
 		class ISoundDriver
