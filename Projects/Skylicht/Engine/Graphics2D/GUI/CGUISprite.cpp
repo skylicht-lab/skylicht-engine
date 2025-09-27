@@ -209,8 +209,6 @@ namespace Skylicht
 		object->autoRelease(frame);
 
 		object->autoRelease(new CBoolProperty(object, "stretch", m_stretch));
-		object->autoRelease(new CBoolProperty(object, "centerModule", m_isCenter));
-
 		return object;
 	}
 
@@ -220,7 +218,6 @@ namespace Skylicht
 		CGUIElement::loadSerializable(object);
 
 		m_stretch = object->get("stretch", false);
-		bool isCenter = object->get("centerModule", false);
 
 		if (frame != NULL)
 		{
@@ -239,15 +236,8 @@ namespace Skylicht
 					sprite = spriteMgr->loadSprite(m_sprite.c_str());
 
 				if (sprite && sprite->getId() == m_spriteId)
-				{
 					m_frame = sprite->getFrameById(m_guid.c_str());
-				}
 			}
 		}
-
-		if (isCenter)
-			setAlignCenterModule();
-		else
-			setAlignModuleDefault();
 	}
 }
