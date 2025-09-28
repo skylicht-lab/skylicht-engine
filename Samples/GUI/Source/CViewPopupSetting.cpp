@@ -28,7 +28,7 @@ void CViewPopupSetting::onInit()
 	CCanvas* canvas = m_popup->addComponent<CCanvas>();
 
 	CGUIImporter::loadGUI("SampleGUIDemo/Setting.gui", canvas);
-	canvas->applyScaleGUI(1.0f);
+	canvas->applyGUIScale(1.0f);
 	canvas->setSortDepth(2);
 
 	UI::CUIContainer* uiContainer = m_popup->addComponent<UI::CUIContainer>();

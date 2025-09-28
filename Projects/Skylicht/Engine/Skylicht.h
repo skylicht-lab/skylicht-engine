@@ -40,7 +40,7 @@ namespace irr
 */
 
 /**
-* @defgroup GUI User Interface (GUI)
+* @defgroup GUI Graphical User Interface (GUI)
 * @brief Includes display classes for the **Canvas** and other GUI elements.
 */
 

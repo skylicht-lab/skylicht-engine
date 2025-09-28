@@ -18,7 +18,6 @@ namespace Skylicht
 		m_nullTexture(NULL)
 	{
 		m_currentPackage = GlobalPackage;
-		m_loadCommonPos = 0;
 	}
 
 	CTextureManager::~CTextureManager()
@@ -214,7 +213,7 @@ namespace Skylicht
 	{
 		std::string realPath;
 
-		if (!findRealTexturePath(path, realPath))
+		if (!resolveTexturePath(path, realPath))
 			return false;
 
 		return true;
@@ -268,7 +267,7 @@ namespace Skylicht
 	bool CTextureManager::isTextureLoaded(const char* path)
 	{
 		std::string realPath;
-		if (!findRealTexturePath(path, realPath))
+		if (!resolveTexturePath(path, realPath))
 			return false;
 
 		for (STexturePackage* t : m_textureList)
@@ -281,7 +280,7 @@ namespace Skylicht
 		return false;
 	}
 
-	bool CTextureManager::findRealTexturePath(const char* path, std::string& result)
+	bool CTextureManager::resolveTexturePath(const char* path, std::string& result)
 	{
 		char ansiPath[1024];
 
@@ -358,7 +357,7 @@ namespace Skylicht
 	ITexture* CTextureManager::getTexture(const char* path)
 	{
 		std::string realPath;
-		if (!findRealTexturePath(path, realPath))
+		if (!resolveTexturePath(path, realPath))
 			return NULL;
 
 		IVideoDriver* driver = getVideoDriver();
@@ -415,7 +414,7 @@ namespace Skylicht
 			std::string realPath;
 			IImage* image = NULL;
 
-			bool loadImage = findRealTexturePath(paths[i].c_str(), realPath);
+			bool loadImage = resolveTexturePath(paths[i].c_str(), realPath);
 
 			if (loadImage == true)
 			{

@@ -291,7 +291,7 @@ void CViewInit::createCanvasText(CZone* zone, const char* text, const core::vect
 	rootGUI->setScale(core::vector3df(-0.004f, -0.004f, 0.004f));
 	rootGUI->setPosition(position);
 
-	canvas->enable3DBillboard(true);
+	canvas->setEnable3DBillboard(true);
 
 	// set mask only for camera3d
 	// culling bit: 10

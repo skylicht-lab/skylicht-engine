@@ -233,7 +233,7 @@ namespace Skylicht
 			{
 				CGameObject* canvasObj = m_scene->searchObjectInChild(L"GUICanvas");
 				CCanvas* canvas = canvasObj->getComponent<CCanvas>();
-				canvas->removeAllElement();
+				canvas->removeAllElements();
 				m_gizmos->onRemove();
 
 				if (CGUIImporter::beginImport(path, canvas) == true)
@@ -589,7 +589,7 @@ namespace Skylicht
 		{
 			CGameObject* canvasObj = m_scene->searchObjectInChild(L"GUICanvas");
 			CCanvas* canvas = canvasObj->getComponent<CCanvas>();
-			canvas->removeAllElement();
+			canvas->removeAllElements();
 			m_gizmos->onRemove();
 
 			CGUIDesignController* controller = CGUIDesignController::getInstance();

@@ -116,7 +116,7 @@ namespace Skylicht
 						m_groupContext->setHidden(true);
 
 						// delete and save material
-						CMaterialManager::getInstance()->deleteMaterial(m_materials, m_materialContext);
+						CMaterialManager::getInstance()->removeAndDeleteMaterial(m_materials, m_materialContext);
 
 						// save material					
 						CMaterialManager::getInstance()->saveMaterial(m_materials, m_path.c_str());
@@ -320,7 +320,7 @@ namespace Skylicht
 			ui->addButton(layout, L"Add new material")->OnPress = [&](GUI::CBase* button)
 				{
 					// Add new material
-					CMaterialManager::getInstance()->createMaterial(m_materials);
+					CMaterialManager::getInstance()->createAndAddMaterial(m_materials);
 
 					// save material
 					CMaterialManager::getInstance()->saveMaterial(m_materials, m_path.c_str());

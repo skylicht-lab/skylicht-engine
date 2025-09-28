@@ -33,7 +33,7 @@ void CViewHeader::onInit()
 	CCanvas* canvas = header->addComponent<CCanvas>();
 
 	CGUIImporter::loadGUI("SampleGUIDemo/Header.gui", canvas);
-	canvas->applyScaleGUI(1.0f);
+	canvas->applyGUIScale(1.0f);
 	canvas->setSortDepth(1);
 
 	UI::CUIContainer* uiContainer = header->addComponent<UI::CUIContainer>();

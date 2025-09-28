@@ -111,11 +111,11 @@ namespace Skylicht
 		void unloadMaterial(const char* filename);
 
 		/**
-		 * @brief Create a new material and add it to the given material array. If the array contains at least one material, the new material will inherit its material path.
+		 * @brief Create a new material and add it to the given material array.
 		 * @param materials ArrayMaterial to add the new material to.
 		 * @return Pointer to the newly created material.
 		 */
-		CMaterial* createMaterial(ArrayMaterial& materials);
+		CMaterial* createAndAddMaterial(ArrayMaterial& materials);
 
 		/**
 		 * @brief Replace all occurrences of an old texture with a new texture in all managed materials.
@@ -129,7 +129,7 @@ namespace Skylicht
 		 * @param materials ArrayMaterial containing the material.
 		 * @param material Pointer to the material to delete.
 		 */
-		void deleteMaterial(ArrayMaterial& materials, CMaterial* material);
+		void removeAndDeleteMaterial(ArrayMaterial& materials, CMaterial* material);
 
 		/**
 		 * @brief Save a set of materials to a material file, serializing their parameters, textures, and properties.

@@ -44,7 +44,7 @@ void CViewDemo::onInit()
 	m_canvas = leftPanel->addComponent<CCanvas>();
 
 	CGUIImporter::loadGUI("SampleGUIDemo/Main.gui", m_canvas);
-	m_canvas->applyScaleGUI(1.0f);
+	m_canvas->applyGUIScale(1.0f);
 	m_canvas->setSortDepth(0);
 
 	// Apply mask for panel items

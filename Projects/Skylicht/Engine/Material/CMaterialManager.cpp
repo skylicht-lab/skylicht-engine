@@ -384,13 +384,13 @@ namespace Skylicht
 		return result;
 	}
 
-	CMaterial* CMaterialManager::createMaterial(ArrayMaterial& materials)
+	CMaterial* CMaterialManager::createAndAddMaterial(ArrayMaterial& materials)
 	{
 		CMaterial* material = new CMaterial("NewMaterial", "BuiltIn/Shader/Basic/TextureColor.xml");
 		material->setPackage(CTextureManager::getInstance()->getCurrentPackage());
 		materials.push_back(material);
 
-		if (materials.size() >= 2)
+		if (materials.size() >= 1)
 		{
 			const char* path = materials[0]->getMaterialPath();
 			material->setMaterialPath(path);
@@ -411,7 +411,7 @@ namespace Skylicht
 		}
 	}
 
-	void CMaterialManager::deleteMaterial(ArrayMaterial& materials, CMaterial* material)
+	void CMaterialManager::removeAndDeleteMaterial(ArrayMaterial& materials, CMaterial* material)
 	{
 		std::string cachePath = material->getMaterialPath();
 

@@ -38,7 +38,7 @@ namespace Skylicht
 		m_sortDepth(0),
 		m_scaleGUI(1.0f),
 		m_haveScaleGUI(false),
-		m_enable3DBillboard(false),
+		m_is3DBillboard(false),
 		m_renderCamera(NULL),
 		m_currentMask(NULL),
 		IsInEditor(false),
@@ -113,7 +113,7 @@ namespace Skylicht
 			m_root->setRect(m_rect);
 
 			if (m_haveScaleGUI)
-				applyScaleGUI(m_scaleGUI);
+				applyGUIScale(m_scaleGUI);
 		}
 	}
 
@@ -287,7 +287,7 @@ namespace Skylicht
 			matData[15] = 1.0f;
 		}
 
-		if (m_enable3DBillboard == true && camera->getProjectionType() != CCamera::OrthoUI)
+		if (m_is3DBillboard == true && camera->getProjectionType() != CCamera::OrthoUI)
 		{
 			// rotation canvas to billboard
 			world = billboardMatrix;
@@ -366,12 +366,12 @@ namespace Skylicht
 		return result;
 	}
 
-	void CCanvas::removeAllElement()
+	void CCanvas::removeAllElements()
 	{
 		m_root->removeAllChilds();
 	}
 
-	void CCanvas::applyScaleGUI(float widthOrHeight)
+	void CCanvas::applyGUIScale(float widthOrHeight)
 	{
 		if (m_defaultRect.getWidth() == 0.0f || m_defaultRect.getHeight() == 0.0f)
 			return;
@@ -402,7 +402,7 @@ namespace Skylicht
 		updateEntities();
 	}
 
-	void CCanvas::resetScaleGUI()
+	void CCanvas::resetGUIScale()
 	{
 		m_haveScaleGUI = false;
 

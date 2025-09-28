@@ -28,19 +28,50 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	/// @brief The object class supports exporting Canvas objects to files or data
+	/// @brief Utility class for exporting Canvas and GUI element trees to files or serializable data.
 	/// @ingroup Graphics2D
+	/// 
+	/// CGUIExporter can be used to save a CCanvas to an XML file, or convert GUI elements to  
+	/// serializable objects for other forms of storage or transfer.It supports recursive export 
+	/// of child elements and can generate info files listing all element paths.
+	///
+	/// Example usage :
+	/// @code
+	/// CGUIExporter::save("ui_layout.gui", canvas);
+	/// @endcode
 	class SKYLICHT_API CGUIExporter
 	{
 	public:
+		/**
+		* @brief Save the specified canvas and its elements to a file (XML format).
+		* Also generates a secondary info file with element paths.
+		* @param file The path to save the file.
+		* @param canvas Pointer to the canvas to export.
+		* @return True if successful, false otherwise.
+		*/
 		static bool save(const char* file, CCanvas* canvas);
 
+		/**
+		 * @brief Create a serializable object representing the GUI element and its hierarchy.
+		 * @param ui Pointer to the root GUI element.
+		 * @return Pointer to the root CObjectSerializable.
+		 */
 		static CObjectSerializable* createSerializable(CGUIElement* ui);
 
 	private:
 
+		/**
+		 * @brief Recursively add all child GUI elements to the serializable parent.
+		 * @param parent Parent GUI element.
+		 * @param parents Parent CObjectSerializable.
+		 */
 		static void addChild(CGUIElement* parent, CObjectSerializable* parents);
 
+		/**
+		 * @brief Save an info file listing all GUI element names and paths.
+		 * @param file Path to save the info file.
+		 * @param data Root serializable object.
+		 */
 		static void saveGUIPath(const char* file, CObjectSerializable* data);
 	};
 }

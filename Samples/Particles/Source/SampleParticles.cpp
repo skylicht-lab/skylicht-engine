@@ -113,7 +113,7 @@ void SampleParticles::createCanvasText(const char *text, const core::vector3df& 
 	rootGUI->setScale(core::vector3df(-0.004f, -0.004f, 0.004f));
 	rootGUI->setPosition(position);
 
-	canvas->enable3DBillboard(true);
+	canvas->setEnable3DBillboard(true);
 
 	m_label = guiText;
 }

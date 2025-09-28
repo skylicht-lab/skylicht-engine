@@ -225,7 +225,7 @@ namespace Skylicht
 
 			core::matrix4 world;
 
-			if (canvas->isEnable3DBillboard() == true && camera->getProjectionType() != CCamera::OrthoUI)
+			if (canvas->is3DBillboardEnabled() == true && camera->getProjectionType() != CCamera::OrthoUI)
 			{
 				// rotation canvas to billboard
 				world = billboardMatrix;
