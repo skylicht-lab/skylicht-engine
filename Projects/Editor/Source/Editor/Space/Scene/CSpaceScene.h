@@ -120,7 +120,7 @@ namespace Skylicht
 			GUI::CToggleGroup* m_groupTransform;
 			GUI::CToggleGroup* m_groupCameraView;
 
-			bool m_enableRender;
+			bool m_renderEnabled;
 			bool m_enableRenderGrid;
 
 			bool m_waitHotKeyRelease;
@@ -188,7 +188,7 @@ namespace Skylicht
 
 			inline void enableRender(bool b)
 			{
-				m_enableRender = b;
+				m_renderEnabled = b;
 			}
 
 			void enableRenderGrid(bool b);

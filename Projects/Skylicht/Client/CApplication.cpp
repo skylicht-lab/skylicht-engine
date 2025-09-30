@@ -69,7 +69,8 @@ namespace Skylicht
 	}
 
 	CApplication::CApplication() :
-		m_pauseTime(0),
+		m_fps(0),
+		m_lastUpdateTime(0),
 		m_width(0),
 		m_height(0),
 		m_runGame(false)
@@ -112,7 +113,7 @@ namespace Skylicht
 		if (event.EventType == EET_LOG_TEXT_EVENT)
 		{
 #ifdef ANDROID
-			__android_log_print(ANDROID_LOG_INFO, "skylicht_client.so", "%s", event.LogEvent.Text);
+			__android_log_print(ANDROID_LOG_INFO, "skylicht", "%s", event.LogEvent.Text);
 #endif
 			CConsoleLog* log = CConsoleLog::getInstance();
 			if (log->isEnable())
@@ -166,7 +167,7 @@ namespace Skylicht
 
 #ifdef ANDROID
 		char androidLog[1024];
-		for (const std::string& apk: CBuildConfig::getInstance()->APKPath)
+		for (const std::string& apk : CBuildConfig::getInstance()->APKPath)
 		{
 			sprintf(androidLog, "Init file archive %s", apk.c_str());
 			os::Printer::log(androidLog);
@@ -231,7 +232,6 @@ namespace Skylicht
 
 		m_lastUpdateTime = now;
 
-		// update skylicht timestep
 		setTimeStep(m_timeStep);
 
 		m_totalTime = m_totalTime + m_timeStep;
@@ -243,10 +243,11 @@ namespace Skylicht
 #ifdef BUILD_SKYLICHT_AUDIO
 		Audio::updateSkylichtAudio();
 #endif
+
 		// application receiver
 		sendEventToAppReceiver(AppEventUpdate);
 
-		if (m_enableRender == true)
+		if (m_renderEnabled == true)
 		{
 			// clear screen
 			m_driver->setRenderTarget(NULL);
@@ -283,11 +284,11 @@ namespace Skylicht
 				tmp += L" Primitive: ";
 				tmp += m_driver->getPrimitiveCountDrawn();
 
+				tmp += L", drawcall: ";
+				tmp += m_driver->getDrawCall();
+
 				tmp += L", texBind: ";
 				tmp += m_driver->getTextureChange();
-
-				tmp += L", numTextureLoaded: ";
-				tmp += m_driver->getTextureCount();
 
 				m_device->setWindowCaption(tmp.c_str());
 			}
@@ -415,11 +416,6 @@ namespace Skylicht
 		}
 	}
 
-	// updateTouch
-	// action:
-	//	+ 0:	TouchDown
-	//	+ 1:	TouchUp
-	//	+ 2:	TouchMove
 	void CApplication::updateTouch(long touchID, int x, int y, int action)
 	{
 		if (m_device == NULL)
@@ -437,10 +433,6 @@ namespace Skylicht
 		CTouchManager::getInstance()->touchEvent(touch, x, y, touchID);
 	}
 
-	// updateJoystick
-	// action:
-	// + 0: Press
-	// + 1: Release
 	void CApplication::updateJoystick(int deviceID, int key, int action)
 	{
 		CJoystick::getInstance()->keyEvent(deviceID, key, action == 0);
@@ -480,22 +472,10 @@ namespace Skylicht
 			return;
 		}
 
-		char mac[512] = { 0 };
+		char mac[1024] = { 0 };
 		CStringImp::convertUnicodeToUTF8(string, mac);
 
-		for (int i = 0, n = (int)strlen(mac); i < n; i++)
-		{
-			char c = mac[i];
-			bool isAnsi = (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_';
-			if (!isAnsi)
-				mac[i] = '_';
-		}
-
-		char logString[1025];
-		sprintf(logString, "DeviceID: %s", mac);
-		os::Printer::log(logString);
-
-		CBuildConfig::getInstance()->DeviceID = mac;
+		setDeviceID(mac);
 	}
 
 	void CApplication::setDeviceID(const char* string)

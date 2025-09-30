@@ -181,7 +181,7 @@ namespace Skylicht
 	float getTimeStep()
 	{
 		// return the current time step (milisecond)
-		float ts = g_useFixedTimeStep ? g_useFixedTimeStep : g_timestep;
+		float ts = g_useFixedTimeStep ? g_fixedTimeStep : g_timestep;
 		return ts * g_timescale;
 	}
 

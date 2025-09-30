@@ -80,7 +80,7 @@ namespace Skylicht
 			m_gizmosRenderer(NULL),
 			m_selectingRenderer(NULL),
 			m_selectObjectSystem(NULL),
-			m_enableRender(true),
+			m_renderEnabled(true),
 			m_enableRenderGrid(true),
 			m_enableHandles(true),
 			m_waitHotKeyRelease(false),
@@ -821,7 +821,7 @@ namespace Skylicht
 				getVideoDriver()->enableScissor(false);
 				getVideoDriver()->clearZBuffer();
 
-				if (m_enableRender)
+				if (m_renderEnabled)
 				{
 					// setup scene viewport
 					GUI::SPoint position = base->localPosToCanvas();

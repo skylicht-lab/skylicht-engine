@@ -40,13 +40,14 @@ namespace Skylicht
 	CBaseApp::CBaseApp() :
 		m_device(NULL),
 		m_driver(NULL),
+		m_fileSystem(NULL),
 		m_timeStep(1.0f),
 		m_totalTime(0.0f),
 		m_limitFPS(-1),
 		m_showFPS(false),
 		m_clearColor(255, 0, 0, 0),
 		m_clearScreenTime(0.0f),
-		m_enableRender(true),
+		m_renderEnabled(true),
 		m_enableRunWhenPause(false)
 	{
 #ifdef USE_VISUAL_LEAK_DETECTOR
@@ -221,21 +222,12 @@ namespace Skylicht
 		return ratio;
 	}
 
-	bool CBaseApp::isHD()
-	{
-#ifdef LINUX_SERVER	
-		return false;
-#else
-		return CGraphics2D::getInstance()->isHD();
-#endif
-	}
-
 	bool CBaseApp::isWideScreen()
 	{
-#ifndef LINUX_SERVER
-		return CGraphics2D::getInstance()->isWideScreen();
-#else
+#ifdef LINUX_SERVER
 		return false;
+#else
+		return CGraphics2D::getInstance()->isWideScreen();
 #endif
 	}
 }
