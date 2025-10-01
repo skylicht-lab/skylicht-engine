@@ -52,7 +52,7 @@ namespace Skylicht
 		m_drawMask = false;
 
 		float z = 0.0f;
-		if (camera->getProjectionType() != CCamera::OrthoUI)
+		if (camera && camera->getProjectionType() != CCamera::OrthoUI)
 			z = 0.1f;
 
 		m_topLeft.set(r.UpperLeftCorner.X, r.UpperLeftCorner.Y, z);

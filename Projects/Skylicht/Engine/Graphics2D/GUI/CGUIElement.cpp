@@ -134,6 +134,8 @@ namespace Skylicht
 			{
 				CGUIChildLayoutData* childLayout = m_entity->addData<CGUIChildLayoutData>();
 				childLayout->Parent = parentLayout;
+
+				m_parent->update(NULL);
 			}
 			else
 			{
@@ -167,6 +169,7 @@ namespace Skylicht
 			if (m_childs[i] == child)
 			{
 				m_childs.erase(m_childs.begin() + i);
+				notifyChanged();
 				return true;
 			}
 		}
@@ -206,6 +209,7 @@ namespace Skylicht
 			delete child;
 
 		m_childs.clear();
+		notifyChanged();
 	}
 
 	const core::rectf CGUIElement::getNativeRect()
