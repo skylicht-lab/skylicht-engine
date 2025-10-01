@@ -157,17 +157,6 @@ namespace Skylicht
 		CloseHandle(hFile);
 
 		std::string resolveData;
-		
-		/*
-		const int pathSize = 2048;
-		char searchPath[pathSize];
-		if (SymGetSearchPath(GetCurrentProcess(), searchPath, pathSize))
-		{
-			resolveData += "PDB: ";
-			resolveData += searchPath;
-			resolveData += "\n";
-		}
-		*/
 
 		std::string currentLine;
 		for (char c : fileContent)
@@ -177,6 +166,10 @@ namespace Skylicht
 				if (!currentLine.empty())
 				{
 					resolveData += resolveAddr(currentLine);
+					resolveData += "\n";
+				}
+				else
+				{
 					resolveData += "\n";
 				}
 				currentLine.clear();
@@ -317,7 +310,7 @@ namespace Skylicht
 
 		for (auto s : dumpFiles)
 		{
-			std::string r = CPath::replaceFileExt(s, ".txt");
+			std::string r = CPath::replaceFileExt(s, ".log");
 
 			std::wstring src = CStringImp::convertUTF8ToUnicode(s.c_str());
 			std::wstring dst = CStringImp::convertUTF8ToUnicode(r.c_str());
