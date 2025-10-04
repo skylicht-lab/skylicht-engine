@@ -228,7 +228,7 @@ namespace Skylicht
 				binormals.push_back(binormal);
 			}
 
-			// bake sh			
+			// bake sh
 			CLightmapper::getInstance()->bakeAtPosition(
 				camera,
 				rp,

@@ -39,10 +39,6 @@ namespace Skylicht
 			core::array<CGroup*> Groups;
 			core::array<CSubGroup*> SubGroups;
 			core::array<CGroup*> AllGroups;
-
-			u32 RequestUpdate;
-			u32 Updated;
-
 		public:
 			CParticleBufferData();
 

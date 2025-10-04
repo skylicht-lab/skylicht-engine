@@ -73,8 +73,6 @@ namespace Skylicht
 			};
 			m_bias.setM(biasGL);
 		}
-
-		m_updateEntity = false;
 	}
 
 	CRenderToTextureRP::~CRenderToTextureRP()
@@ -154,15 +152,7 @@ namespace Skylicht
 				core::matrix4 mvp = driver->getTransform(video::ETS_PROJECTION) * driver->getTransform(video::ETS_VIEW);
 				g_rttMatrix[m_id] = m_bias * mvp;
 
-				if (m_updateEntity == true)
-				{
-					entityManager->update();
-					entityManager->cullingAndRender();
-				}
-				else
-				{
-					entityManager->cullingAndRender();
-				}
+				entityManager->cullingAndRender();
 			}
 
 			if (m_autoGenerateMipmap)

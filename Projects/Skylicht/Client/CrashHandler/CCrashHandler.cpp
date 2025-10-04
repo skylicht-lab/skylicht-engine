@@ -37,6 +37,7 @@ https://github.com/skylicht-lab/skylicht-engine
 namespace Skylicht
 {
 #ifdef USE_CRASHHANDLER
+	bool g_enableResolve = true;
 	HANDLE g_process = nullptr;
 
 	bool resolveAddrName(DWORD64 addr, std::string& functionName)
@@ -235,16 +236,23 @@ namespace Skylicht
 
 		CloseHandle(hDumpFile);
 
-		wchar_t szResult[MAX_PATH];
-		swprintf(szResult, MAX_PATH, L"%s-%04d-%02d%02d-%02d%02d.txt",
-			appName.c_str(),
-			time.wYear,
-			time.wMonth,
-			time.wDay,
-			time.wHour,
-			time.wMinute);
+		if (g_enableResolve)
+		{
+			wchar_t szResult[MAX_PATH];
+			swprintf(szResult, MAX_PATH, L"%s-%04d-%02d%02d-%02d%02d.txt",
+				appName.c_str(),
+				time.wYear,
+				time.wMonth,
+				time.wDay,
+				time.wHour,
+				time.wMinute);
 
-		resolveFile(szFileName, szResult);
+			resolveFile(szFileName, szResult);
+		}
+
+		CCrashHandler* crashHander = CCrashHandler::getInstance();
+		if (crashHander->OnCrashHandler != nullptr)
+			crashHander->OnCrashHandler();
 
 		return EXCEPTION_EXECUTE_HANDLER;
 	}
@@ -278,6 +286,13 @@ namespace Skylicht
 		DWORD SYM_OPTIONS = SYMOPT_DEFERRED_LOADS | SYMOPT_LOAD_LINES | SYMOPT_PUBLICS_ONLY;
 		SymSetOptions(SYM_OPTIONS);
 		SymInitialize(g_process, NULL, TRUE);
+#endif
+	}
+
+	void CCrashHandler::enableResolve(bool b)
+	{
+#ifdef USE_CRASHHANDLER
+		g_enableResolve = b;
 #endif
 	}
 

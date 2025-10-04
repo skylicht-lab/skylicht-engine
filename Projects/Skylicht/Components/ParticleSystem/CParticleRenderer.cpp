@@ -25,9 +25,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "Entity/CEntityManager.h"
 #include "CParticleRenderer.h"
+
 #include "Material/Shader/ShaderCallback/CShaderParticle.h"
 #include "Material/Shader/ShaderCallback/CShaderMaterial.h"
-
 #include "Material/Shader/ShaderCallback/CShaderSH.h"
 #include "Material/Shader/ShaderCallback/CShaderLighting.h"
 
@@ -51,37 +51,15 @@ namespace Skylicht
 			if (m_group == NULL)
 			{
 				const u32 particle[] = GET_LIST_ENTITY_DATA(CParticleBufferData);
-				m_group = entityManager->createGroupFromVisible(particle, 1);
+				m_group = entityManager->findGroup(particle, 1);
+				if (!m_group)
+					m_group = entityManager->createGroupFromVisible(particle, 1);
 			}
 		}
 
 		void CParticleRenderer::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 		{
-			entities = m_group->getEntities();
-			numEntity = m_group->getEntityCount();
 
-			for (int i = 0; i < numEntity; i++)
-			{
-				CEntity* entity = entities[i];
-
-				CParticleBufferData* particleData = GET_ENTITY_DATA(entity, CParticleBufferData);
-
-				// update bbox for culling
-				// use last frame data
-				CCullingBBoxData* box = GET_ENTITY_DATA(entity, CCullingBBoxData);
-
-				CGroup** groups = particleData->AllGroups.pointer();
-				for (u32 i = 0, n = particleData->AllGroups.size(); i < n; i++)
-				{
-					CGroup* g = groups[i];
-					if (i == 0)
-						box->BBox = g->getBBox();
-					else
-						box->BBox.addInternalBox(g->getBBox());
-				}
-
-				box->NeedValidate = true;
-			}
 		}
 
 		void CParticleRenderer::init(CEntityManager* entityManager)
@@ -91,14 +69,28 @@ namespace Skylicht
 
 		void CParticleRenderer::update(CEntityManager* entityManager)
 		{
-			if (entityManager->getRenderPipeline()->getType() == IRenderPipeline::ShadowMap)
-				return;
 
+		}
+
+		void CParticleRenderer::render(CEntityManager* entityManager)
+		{
+
+		}
+
+		const core::matrix4& CParticleRenderer::getTransformNoRotate(const core::matrix4& world)
+		{
+			m_transform.makeIdentity();
+			m_transform.setTranslation(world.getTranslation());
+			m_transform.setScale(world.getScale());
+			return m_transform;
+		}
+
+		void CParticleRenderer::renderTransparent(CEntityManager* entityManager)
+		{
 			if (m_group->getEntityCount() == 0)
 				return;
 
 			IVideoDriver* driver = getVideoDriver();
-
 			irr::core::matrix4 invModelView;
 			{
 				irr::core::matrix4 modelView(driver->getTransform(video::ETS_VIEW));
@@ -122,53 +114,13 @@ namespace Skylicht
 				CEntity* entity = entities[i];
 
 				CParticleBufferData* data = GET_ENTITY_DATA(entity, CParticleBufferData);
-				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
-
-				if (data->Updated != data->RequestUpdate)
-				{
-					// todo: fix pause particle if the code don't call CParticleComponent::update function
-					data->Updated = data->RequestUpdate;
-
-					// update group before render
-					for (u32 j = 0, m = data->AllGroups.size(); j < m; j++)
-					{
-						data->AllGroups[j]->setParentWorldMatrix(transform->World);
-						data->AllGroups[j]->update(true);
-					}
-				}
-			}
-		}
-
-		void CParticleRenderer::render(CEntityManager* entityManager)
-		{
-
-		}
-
-		const core::matrix4& CParticleRenderer::getTransformNoRotate(const core::matrix4& world)
-		{
-			m_transform.makeIdentity();
-			m_transform.setTranslation(world.getTranslation());
-			m_transform.setScale(world.getScale());
-			return m_transform;
-		}
-
-		void CParticleRenderer::renderTransparent(CEntityManager* entityManager)
-		{
-			if (m_group->getEntityCount() == 0)
-				return;
-
-			CEntity** entities = m_group->getEntities();
-			int numEntity = m_group->getEntityCount();
-
-			for (int i = 0; i < numEntity; i++)
-			{
-				CEntity* entity = entities[i];
-
-				CParticleBufferData* data = GET_ENTITY_DATA(entity, CParticleBufferData);
 				CCullingData* culling = GET_ENTITY_DATA(entity, CCullingData);
 
 				if (culling->Visible == true)
 				{
+					for (u32 j = 0, m = data->AllGroups.size(); j < m; j++)
+						data->AllGroups[j]->updateForRenderer();
+
 					CIndirectLightingData* lightingData = GET_ENTITY_DATA(entity, CIndirectLightingData);
 					if (lightingData != NULL)
 						lightingData->applyShader();

@@ -31,9 +31,7 @@ namespace Skylicht
 	{
 		IMPLEMENT_DATA_TYPE_INDEX(CParticleBufferData);
 
-		CParticleBufferData::CParticleBufferData() :
-			RequestUpdate(0),
-			Updated(0)
+		CParticleBufferData::CParticleBufferData()
 		{
 
 		}

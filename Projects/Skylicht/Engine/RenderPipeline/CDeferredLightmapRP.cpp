@@ -411,15 +411,8 @@ namespace Skylicht
 		if (useCustomViewport)
 			driver->setViewPort(customViewport);
 
-		if (m_updateEntity == true)
-		{
-			entityManager->update();
-			entityManager->cullingAndRender();
-		}
-		else
-		{
-			entityManager->cullingAndRender();
-		}
+		entityManager->cullingAndRender();
+
 		m_isIndirectPass = false;
 
 		// baked direction lighting pass

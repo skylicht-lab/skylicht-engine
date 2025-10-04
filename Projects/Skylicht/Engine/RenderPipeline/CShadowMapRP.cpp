@@ -487,9 +487,6 @@ namespace Skylicht
 		entityManager->setCamera(camera);
 		entityManager->setRenderPipeline(this);
 
-		if (m_updateEntity == true)
-			entityManager->update();
-
 		CShaderShadow::setShadowMapRP(this);
 		m_renderShadowState = CShadowMapRP::DirectionLight;
 

@@ -385,7 +385,7 @@ void CViewInit::onRender()
 
 			CGameObject* bakeCameraObj = scene->getZone(0)->createEmptyObject();
 			CCamera* bakeCamera = bakeCameraObj->addComponent<CCamera>();
-			scene->updateAddRemoveObject();
+			scene->update();
 
 			// hide objects
 			// that fix the probes ambient is brigther because plane color affect on it

@@ -163,10 +163,8 @@ namespace Skylicht
 			return p;
 		}
 
-		void CGroup::update(bool visible)
+		void CGroup::update()
 		{
-			visible = visible && Visible;
-
 			float dt = getTimeStep();
 
 			updateLaunchEmitter();
@@ -174,7 +172,7 @@ namespace Skylicht
 			CParticle* particles = m_particles.pointer();
 			u32 numParticles = m_particles.size();
 
-			if (visible == true)
+			if (Visible)
 			{
 				// update particle system
 				m_particleSystem->update(particles, numParticles, this, dt);
@@ -216,11 +214,18 @@ namespace Skylicht
 				}
 			}
 
-			particles = m_particles.pointer();
-			numParticles = m_particles.size();
+			bornParticle();
+		}
+
+		void CGroup::updateForRenderer()
+		{
+			float dt = getTimeStep();
+
+			CParticle* particles = m_particles.pointer();
+			u32 numParticles = m_particles.size();
 
 			// update instancing buffer
-			if (visible == true && m_renderer != NULL)
+			if (Visible && m_renderer != NULL)
 			{
 				if (m_renderer->needUpdateMesh())
 				{
@@ -235,8 +240,6 @@ namespace Skylicht
 				else
 					m_cpuBufferSystem->update(particles, numParticles, this, dt);
 			}
-
-			bornParticle();
 		}
 
 		void CGroup::updateLaunchEmitter()

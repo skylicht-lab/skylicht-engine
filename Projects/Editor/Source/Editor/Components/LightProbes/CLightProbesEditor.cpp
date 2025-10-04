@@ -80,7 +80,7 @@ namespace Skylicht
 
 					CGameObject* bakeCameraObj = zone->createEmptyObject();
 					CCamera* bakeCamera = bakeCameraObj->addComponent<CCamera>();
-					scene->updateAddRemoveObject();
+					scene->update();
 
 					std::vector<core::vector3df> positions;
 					std::vector<Lightmapper::CSH9> probes;
@@ -90,8 +90,6 @@ namespace Skylicht
 
 					if (probesComponent->getPositions(positions) > 0)
 					{
-						entityMgr->update();
-
 						Lightmapper::CLightmapper::getInstance()->initBaker(32);
 						Lightmapper::CLightmapper::getInstance()->bakeProbes(
 							positions,

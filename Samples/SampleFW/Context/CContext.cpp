@@ -70,12 +70,10 @@ CBaseRP* CContext::initRenderPipeline(int w, int h, bool postEffect, bool enable
 	// 2nd
 	m_rendering = new CDeferredRP();
 	m_rendering->initRender(w, h);
-	m_rendering->enableUpdateEntity(false);
 
 	// 3rd
 	m_forwardRP = new CForwardRP(false);
 	m_forwardRP->initRender(w, h);
-	m_forwardRP->enableUpdateEntity(false);
 
 	// link rp
 	m_shadowMapRendering->setNextPipeLine(m_rendering);
@@ -124,7 +122,6 @@ CBaseRP* CContext::initShadowForwarderPipeline(int w, int h, bool postEffect)
 
 	// 2rd
 	m_forwardRP = new CForwardRP(false);
-	m_forwardRP->enableUpdateEntity(false);
 
 	// link rp
 	m_shadowMapRendering->setNextPipeLine(m_forwardRP);
@@ -154,12 +151,10 @@ CBaseRP* CContext::initLightmapRenderPipeline(int w, int h, bool postEffect)
 	// 1nd
 	m_lightmapRP = new CDeferredLightmapRP();
 	m_lightmapRP->initRender(w, h);
-	m_lightmapRP->enableUpdateEntity(true);
 
 	// 3rd
 	m_forwardRP = new CForwardRP(false);
 	m_forwardRP->initRender(w, h);
-	m_forwardRP->enableUpdateEntity(false);
 
 	// link rp
 	m_lightmapRP->setNextPipeLine(m_forwardRP);

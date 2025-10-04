@@ -52,6 +52,7 @@ namespace Skylicht
 		m_camera(NULL),
 		m_renderPipeline(NULL),
 		m_systemChanged(true),
+		m_rendererChanged(true),
 		m_needSortEntities(true)
 	{
 		addCustomGroup(new CGroupVisible());
@@ -433,7 +434,7 @@ namespace Skylicht
 	{
 		updateRemoveEntity();
 
-		if (m_systemChanged == true)
+		if (m_systemChanged)
 			sortSystem();
 
 		if (m_needSortEntities)
@@ -489,10 +490,10 @@ namespace Skylicht
 
 	void CEntityManager::render()
 	{
-		if (m_systemChanged == true)
+		if (m_rendererChanged)
 		{
 			sortRenderer();
-			m_systemChanged = false;
+			m_rendererChanged = false;
 		}
 
 		for (IRenderSystem*& s : m_sortRender)
@@ -532,10 +533,10 @@ namespace Skylicht
 			s->beginQuery(this);
 		}
 
-		if (m_systemChanged == true)
+		if (m_rendererChanged)
 		{
 			sortRenderer();
-			m_systemChanged = false;
+			m_rendererChanged = false;
 		}
 
 		CEntity** entities = m_alives.pointer();

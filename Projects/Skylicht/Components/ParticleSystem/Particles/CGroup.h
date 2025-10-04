@@ -149,7 +149,9 @@ namespace Skylicht
 
 			virtual ~CGroup();
 
-			void update(bool visible);
+			void update();
+
+			void updateForRenderer();
 
 			void setGravityRotation(const core::vector3df& euler);
 

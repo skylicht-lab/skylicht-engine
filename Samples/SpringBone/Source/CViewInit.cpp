@@ -244,7 +244,7 @@ void CViewInit::onRender()
 
 			CGameObject* bakeCameraObj = scene->getZone(0)->createEmptyObject();
 			CCamera* bakeCamera = bakeCameraObj->addComponent<CCamera>();
-			scene->updateAddRemoveObject();
+			scene->update();
 
 			// bake light probe
 			Lightmapper::CLightmapper* lm = Lightmapper::CLightmapper::getInstance();

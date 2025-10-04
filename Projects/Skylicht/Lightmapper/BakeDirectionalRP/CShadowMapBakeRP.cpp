@@ -109,11 +109,7 @@ namespace Skylicht
 		entityManager->setCamera(camera);
 		entityManager->setRenderPipeline(this);
 
-		if (m_updateEntity == true)
-			entityManager->update();
-
 		CShaderShadow::setShadowMapRP(this);
-
 		IVideoDriver* driver = getVideoDriver();
 
 		// Render depth

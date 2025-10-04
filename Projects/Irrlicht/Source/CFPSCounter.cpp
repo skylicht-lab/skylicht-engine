@@ -13,7 +13,7 @@ namespace video
 
 
 CFPSCounter::CFPSCounter()
-	:FPS(60), Primitive(0), StartTime(0), FramesCounted(0), 
+	:FPS(60), DrawCall(0), Primitive(0), StartTime(0), FramesCounted(0), 
 	TextureChangedCount(0), TextureChangedCounted(0),
 	PrimitivesCounted(0), TextureChangedCountAverage(0), PrimitiveAverage(0), PrimitiveTotal(0)
 {

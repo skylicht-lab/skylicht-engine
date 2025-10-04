@@ -568,11 +568,9 @@ namespace Skylicht
 			if (useCustomViewport)
 				driver->setViewPort(customViewport);
 
-			if (m_updateEntity == true)
-				entityManager->update();
-
 			if (g_enableRenderIndirect == true)
 				entityManager->cullingAndRender();
+
 			m_isIndirectPass = false;
 		}
 

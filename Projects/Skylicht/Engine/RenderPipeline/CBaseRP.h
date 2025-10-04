@@ -42,7 +42,6 @@ namespace Skylicht
 		float m_viewport2DH;
 
 		SMaterial m_unbindMaterial;
-		bool m_updateEntity;
 
 		int m_textureColorShaderID;
 
@@ -102,11 +101,6 @@ namespace Skylicht
 		static void setMaxLight(u32 maxLights);
 
 		void unbindRTT();
-
-		void enableUpdateEntity(bool b)
-		{
-			m_updateEntity = b;
-		}
 
 	protected:
 

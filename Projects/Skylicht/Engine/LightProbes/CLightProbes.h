@@ -53,10 +53,12 @@ namespace Skylicht
 	/// std::vector<Lightmapper::CSH9> probes;
 	/// std::vector<core::vector3df> results;
 	/// 
+	/// 
+	/// scene->update();
+	/// 
 	/// CEntityManager* entityMgr = scene->getEntityManager();
 	/// if (probesComponent->getPositions(positions) > 0)
 	/// {
-	/// 	entityMgr->update();
 	/// 	Lightmapper::CLightmapper::getInstance()->initBaker(32);
 	/// 	Lightmapper::CLightmapper::getInstance()->bakeProbes(
 	/// 		positions,

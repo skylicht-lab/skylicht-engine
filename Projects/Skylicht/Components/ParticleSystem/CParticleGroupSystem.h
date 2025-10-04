@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2024 Skylicht Technology CO., LTD
+Copyright (c) 2020 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,60 +24,42 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Utils/CSingleton.h"
-#include <functional>
+#include "Entity/IEntityData.h"
+#include "Entity/IEntitySystem.h"
+#include "Entity/CEntityGroup.h"
 
-#ifdef USE_CRASHHANDLER
-#include <Windows.h>
-#include <Dbghelp.h>
-
-#pragma comment(lib, "Dbghelp.lib")
-#endif
+#include "Culling/CCullingBBoxData.h"
+#include "Culling/CCullingData.h"
+#include "Culling/CVisibleData.h"
+#include "Transform/CWorldTransformData.h"
+#include "Transform/CWorldInverseTransformData.h"
+#include "ParticleSystem/CParticleBufferData.h"
 
 namespace Skylicht
 {
-	class CCrashHandler
+	namespace Particle
 	{
-	protected:
-		std::function<void()> OnCrashHandler;
-
-	public:
-		DECLARE_SINGLETON(CCrashHandler)
-
-		CCrashHandler();
-
-		virtual ~CCrashHandler();
-
-		void init();
-
-		void enableResolve(bool b);
-
-		// Symbol resolution can only correctly resolve function names with the .pdb file.
-		void resolveDumpFiles();
-	};
-
-#ifdef USE_CRASHHANDLER
-	class SymbolBuffer : public SYMBOL_INFO
-	{
-	public:
-		SymbolBuffer()
+		class COMPONENT_API CParticleGroupSystem : public IEntitySystem
 		{
-			MaxNameLen = MaxStringLength;
-			SizeOfStruct = sizeof(SYMBOL_INFO);
-		}
+		protected:
+			CEntityGroup* m_group;
+			core::matrix4 m_transform;
 
-		~SymbolBuffer()
-		{
+		public:
+			CParticleGroupSystem();
 
-		}
+			virtual ~CParticleGroupSystem();
 
-	private:
-		static constexpr size_t MaxStringLength = 512;
+			virtual void beginQuery(CEntityManager* entityManager);
 
-	private:
+			virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity);
 
-		wchar_t buffer[MaxStringLength];
+			virtual void init(CEntityManager* entityManager);
 
-	};
-#endif
+			virtual void update(CEntityManager* entityManager);
+
+		protected:
+
+		};
+	}
 }

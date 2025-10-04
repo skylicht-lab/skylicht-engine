@@ -49,8 +49,7 @@ namespace Skylicht
 	SColor CBaseRP::s_clearColor;
 
 	CBaseRP::CBaseRP() :
-		m_next(NULL),
-		m_updateEntity(true)
+		m_next(NULL)
 	{
 		const core::dimension2du& size = getVideoDriver()->getCurrentRenderTargetSize();
 		m_viewport2DW = (float)size.Width;

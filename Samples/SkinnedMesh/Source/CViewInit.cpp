@@ -337,7 +337,7 @@ void CViewInit::onRender()
 
 			CGameObject* bakeCameraObj = scene->getZone(0)->createEmptyObject();
 			CCamera* bakeCamera = bakeCameraObj->addComponent<CCamera>();
-			scene->updateAddRemoveObject();
+			scene->update();
 
 			core::vector3df pos(0.0f, 0.0f, 0.0f);
 

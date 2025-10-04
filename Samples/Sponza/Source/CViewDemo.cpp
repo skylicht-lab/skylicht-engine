@@ -65,7 +65,7 @@ void CViewDemo::onRender()
 	{
 		CGameObject* bakeCameraObj = context->getActiveZone()->createEmptyObject();
 		CCamera* bakeCamera = bakeCameraObj->addComponent<CCamera>();
-		scene->updateAddRemoveObject();
+		scene->update();
 
 		CLightmapper::getInstance()->initBaker(32);
 

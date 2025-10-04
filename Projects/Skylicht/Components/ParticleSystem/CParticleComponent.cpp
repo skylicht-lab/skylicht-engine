@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CParticleBufferData.h"
+#include "CParticleGroupSystem.h"
 #include "CParticleRenderer.h"
 #include "CParticleComponent.h"
 
@@ -71,8 +72,10 @@ namespace Skylicht
 			entity->addData<CCullingData>();
 			entity->addData<CCullingBBoxData>();
 
-			// add renderer system
-			m_gameObject->getEntityManager()->addRenderSystem<CParticleRenderer>();
+			// add particle system
+			CEntityManager* entityMgr = m_gameObject->getEntityManager();
+			entityMgr->addSystem<CParticleGroupSystem>();
+			entityMgr->addRenderSystem<CParticleRenderer>();
 		}
 
 		void CParticleComponent::startComponent()
@@ -85,7 +88,7 @@ namespace Skylicht
 
 		void CParticleComponent::updateComponent()
 		{
-			m_data->RequestUpdate++;
+
 		}
 
 		CObjectSerializable* CParticleComponent::createSerializable()

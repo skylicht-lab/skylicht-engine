@@ -104,6 +104,7 @@ namespace Skylicht
 		std::vector<IEntityManagerCallback*> m_callbacks;
 
 		bool m_systemChanged;
+		bool m_rendererChanged;
 		bool m_needSortEntities;
 
 		CCamera* m_camera;
@@ -300,7 +301,7 @@ namespace Skylicht
 
 		newSystem->setSystemOrder(order);
 
-		m_systemChanged = true;
+		m_rendererChanged = true;
 
 		return newSystem;
 	}

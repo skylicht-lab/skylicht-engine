@@ -48,26 +48,14 @@ namespace Skylicht
 		if (m_group == NULL)
 		{
 			const u32 type[] = GET_LIST_ENTITY_DATA(CTransformComponentData);
-			m_group = entityManager->createGroupFromVisible(type, 1);
+			m_group = entityManager->createGroup(type, 1);
 		}
-	}
 
-	void CComponentTransformSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
-	{
-
-	}
-
-	void CComponentTransformSystem::init(CEntityManager* entityManager)
-	{
-
-	}
-
-	void CComponentTransformSystem::update(CEntityManager* entityManager)
-	{
+		// we need update before CGroupTransform
 		CEntity** entities = m_group->getEntities();
-		u32 numEntity = m_group->getEntityCount();
+		int numEntity = m_group->getEntityCount();
 
-		for (u32 i = 0; i < numEntity; i++)
+		for (int i = 0; i < numEntity; i++)
 		{
 			CEntity* entity = entities[i];
 
@@ -91,5 +79,20 @@ namespace Skylicht
 				transform->IsWorldTransform = transformComponent->isWorldTransform();
 			}
 		}
+	}
+
+	void CComponentTransformSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
+	{
+
+	}
+
+	void CComponentTransformSystem::init(CEntityManager* entityManager)
+	{
+
+	}
+
+	void CComponentTransformSystem::update(CEntityManager* entityManager)
+	{
+
 	}
 }

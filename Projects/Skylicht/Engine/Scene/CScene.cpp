@@ -295,6 +295,9 @@ namespace Skylicht
 					obj->endUpdate();
 			}
 		}
+
+		// update ecs system
+		m_entityManager->update();
 	}
 
 	CObjectSerializable* CScene::createSerializable()

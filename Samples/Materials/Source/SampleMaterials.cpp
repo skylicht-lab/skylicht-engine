@@ -146,7 +146,7 @@ void SampleMaterials::onRender()
 
 		CGameObject *bakeCameraObj = m_scene->getZone(0)->createEmptyObject();
 		CCamera *bakeCamera = bakeCameraObj->addComponent<CCamera>();
-		m_scene->updateAddRemoveObject();
+		m_scene->update();
 
 		core::vector3df pos(0.0f, 0.0f, 0.0f);
 
