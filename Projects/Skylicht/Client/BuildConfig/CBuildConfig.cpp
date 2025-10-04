@@ -56,4 +56,22 @@ namespace Skylicht
 	{
 
 	}
+
+	std::string CBuildConfig::getDataPath(const char* shortPath)
+	{
+		std::string path = DataFolder;
+		if (!path.empty())
+			path += "/";
+		path += shortPath;
+		return path;
+	}
+
+	std::string CBuildConfig::getSavePath(const char* shortPath)
+	{
+		std::string path = SaveFolder;
+		if (!path.empty())
+			path += "/";
+		path += shortPath;
+		return path;
+	}
 }

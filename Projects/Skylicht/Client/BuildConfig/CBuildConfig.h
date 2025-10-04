@@ -38,7 +38,12 @@ namespace Skylicht
 
 		~CBuildConfig();
 
+		std::string getDataPath(const char* shortPath);
+
+		std::string getSavePath(const char* shortPath);
+
 		std::string SaveFolder;
+
 		std::string DataFolder;
 
 		std::string SyncCloudFolder;
@@ -46,11 +51,15 @@ namespace Skylicht
 		std::string AppID;
 
 		std::string DeviceID;
+
 		std::string OSVersion;
+
 		std::string Factory;
+
 		std::string Model;
 
 		std::vector<std::string> APKPath;
+
 		std::string Version;
 	};
 

@@ -38,7 +38,7 @@ namespace Skylicht
 {
 	class CCrashHandler
 	{
-	protected:
+	public:
 		std::function<void()> OnCrashHandler;
 
 	public:
