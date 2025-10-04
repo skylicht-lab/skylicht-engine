@@ -551,7 +551,7 @@ namespace Skylicht
 
 		void CSpaceScene::onResize(float w, float h)
 		{
-			initRenderPipeline(w, h);
+
 		}
 
 		void CSpaceScene::onRenderResize(GUI::CBase* base)
@@ -698,12 +698,10 @@ namespace Skylicht
 					// 2nd
 					m_rendering = new CDeferredRP();
 					m_rendering->initRender(w, h);
-					m_rendering->enableUpdateEntity(false);
 
 					// 3rd
 					m_forwardRP = new CForwardRP(false);
 					m_forwardRP->initRender(w, h);
-					m_forwardRP->enableUpdateEntity(false);
 
 					// link rp
 					m_shadowMapRendering->setNextPipeLine(m_rendering);
@@ -741,7 +739,6 @@ namespace Skylicht
 				if (m_viewpointRP == NULL)
 				{
 					CForwardRP* vpRP = new CForwardRP(false);
-					vpRP->enableUpdateEntity(true);
 					vpRP->initRender(w, h);
 					m_viewpointRP = vpRP;
 				}
@@ -754,7 +751,6 @@ namespace Skylicht
 				{
 					CNullForwarderPipeline* nullRP = new CNullForwarderPipeline();
 					nullRP->initRender(w, h);
-					nullRP->enableUpdateEntity(false);
 					m_nullRP = nullRP;
 				}
 				else
@@ -766,7 +762,6 @@ namespace Skylicht
 				{
 					CDiffuseLightRenderPipeline* lightRP = new CDiffuseLightRenderPipeline();
 					lightRP->initRender(w, h);
-					lightRP->enableUpdateEntity(false);
 					lightRP->setNextPipeLine(m_nullRP);
 					m_lightRP = lightRP;
 				}

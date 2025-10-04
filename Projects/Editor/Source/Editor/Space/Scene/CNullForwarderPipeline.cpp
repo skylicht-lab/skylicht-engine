@@ -43,16 +43,7 @@ namespace Skylicht
 			setCamera(camera);
 			entityManager->setCamera(camera);
 			entityManager->setRenderPipeline(this);
-
-			if (m_updateEntity == true)
-			{
-				entityManager->update();
-				entityManager->cullingAndRender();
-			}
-			else
-			{
-				entityManager->cullingAndRender();
-			}
+			entityManager->cullingAndRender();
 
 			onNext(currentTarget, camera, entityManager, viewport, cubeFaceId);
 		}

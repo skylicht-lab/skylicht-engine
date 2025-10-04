@@ -117,13 +117,11 @@ namespace Skylicht
 			m_rtt = getVideoDriver()->addRenderTargetTexture(core::dimension2du(w, h), "rt", video::ECF_A8R8G8B8);
 
 			m_shadowRP = new CShadowMapRP();
-			m_shadowRP->enableUpdateEntity(true);
 			m_shadowRP->setNoShadowCascade();
 			m_shadowRP->initRender(w, h);
 
 			m_rp = new CDiffuseLightRenderPipeline();
 			m_rp->initRender(w, h);
-			m_rp->enableUpdateEntity(false);
 
 			m_shadowRP->setNextPipeLine(m_rp);
 

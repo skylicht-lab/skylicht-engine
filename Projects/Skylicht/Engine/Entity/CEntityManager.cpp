@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CEntityManager.h"
 
-#include "Transform/CTransformComponentSystem.h"
+#include "Transform/CGroupComponent.h"
 #include "Transform/CWorldTransformSystem.h"
 #include "Transform/CWorldInverseTransformSystem.h"
 #include "RenderMesh/CMeshRenderer.h"
@@ -55,10 +55,11 @@ namespace Skylicht
 		m_rendererChanged(true),
 		m_needSortEntities(true)
 	{
-		addCustomGroup(new CGroupVisible());
+		CGroupVisible* groupVisible = new CGroupVisible();
+		addCustomGroup(groupVisible);
+		addCustomGroup(new CGroupComponent(groupVisible));
 
 		// core engine systems
-		addSystem<CComponentTransformSystem>();
 		addSystem<CWorldTransformSystem>();
 		addSystem<CWorldInverseTransformSystem>();
 		addSystem<CJointAnimationSystem>();

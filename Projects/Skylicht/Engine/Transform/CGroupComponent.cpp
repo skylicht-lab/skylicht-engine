@@ -2,10 +2,10 @@
 !@
 MIT License
 
-Copyright (c) 2019 Skylicht Technology CO., LTD
+Copyright (c) 2022 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -23,50 +23,52 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "Culling/CVisibleData.h"
+#include "CGroupComponent.h"
 #include "Entity/CEntityManager.h"
-#include "CTransform.h"
-#include "CWorldTransformData.h"
-#include "CTransformComponentData.h"
-#include "CTransformComponentSystem.h"
 
 namespace Skylicht
 {
-	CComponentTransformSystem::CComponentTransformSystem() :
-		m_group(NULL)
+	CGroupComponent::CGroupComponent(CEntityGroup* parent) :
+		CEntityGroup(NULL, 0)
+	{
+		m_parentGroup = parent;
+		m_dataTypes.push_back(DATA_TYPE_INDEX(CTransformComponentData));
+	}
+
+	CGroupComponent::~CGroupComponent()
 	{
 
 	}
 
-	CComponentTransformSystem::~CComponentTransformSystem()
+	void CGroupComponent::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 	{
+		CEntity** allEntities = entityManager->getEntities();
 
-	}
-
-	void CComponentTransformSystem::beginQuery(CEntityManager* entityManager)
-	{
-		if (m_group == NULL)
+		if (m_parentGroup)
 		{
-			const u32 type[] = GET_LIST_ENTITY_DATA(CTransformComponentData);
-			m_group = entityManager->createGroup(type, 1);
+			numEntity = m_parentGroup->getEntityCount();
+			entities = m_parentGroup->getEntities();
 		}
 
-		// we need update before CGroupTransform
-		CEntity** entities = m_group->getEntities();
-		int numEntity = m_group->getEntityCount();
+		m_entities.reset();
+
+		CEntity* entity;
+		CWorldTransformData* transform;
+		CTransformComponentData* component;
+		CTransform* transformComponent;
 
 		for (int i = 0; i < numEntity; i++)
 		{
-			CEntity* entity = entities[i];
+			entity = entities[i];
 
-			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
-			CTransformComponentData* component = GET_ENTITY_DATA(entity, CTransformComponentData);
+			component = GET_ENTITY_DATA(entity, CTransformComponentData);
+			if (!component)
+				continue;
 
-			CTransform* transformComponent = component->TransformComponent;
+			transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 
-			if (component != NULL
-				&& transformComponent != NULL
-				&& transformComponent->hasChanged())
+			transformComponent = component->TransformComponent;
+			if (transformComponent != NULL && transformComponent->hasChanged())
 			{
 				// copy transform to relative matrix
 				transformComponent->getRelativeTransform(transform->Relative);
@@ -79,20 +81,9 @@ namespace Skylicht
 				transform->IsWorldTransform = transformComponent->isWorldTransform();
 			}
 		}
-	}
 
-	void CComponentTransformSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
-	{
-
-	}
-
-	void CComponentTransformSystem::init(CEntityManager* entityManager)
-	{
-
-	}
-
-	void CComponentTransformSystem::update(CEntityManager* entityManager)
-	{
-
+		// notify alway update this group
+		m_needQuery = true;
+		m_needValidate = true;
 	}
 }

@@ -51,12 +51,6 @@ namespace Skylicht
 
 		void CSelectObjectSystem::beginQuery(CEntityManager* entityManager)
 		{
-			if (entityManager->getCamera() != m_camera)
-			{
-				m_skipUpdate = true;
-				return;
-			}
-
 			m_results.set_used(0);
 			m_collision.set_used(0);
 			m_transform.set_used(0);
@@ -66,23 +60,6 @@ namespace Skylicht
 
 		void CSelectObjectSystem::onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity)
 		{
-			if (m_skipUpdate)
-			{
-				// just set transform changed
-				for (int i = 0; i < numEntity; i++)
-				{
-					CEntity* entity = entities[i];
-
-					CSelectObjectData* collisionData = GET_ENTITY_DATA(entity, CSelectObjectData);
-					if (collisionData != NULL)
-					{
-						CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
-						collisionData->TransformChanged |= transform->NeedValidate;
-					}
-				}
-				return;
-			}
-
 			for (int i = 0; i < numEntity; i++)
 			{
 				CEntity* entity = entities[i];
@@ -116,13 +93,11 @@ namespace Skylicht
 
 		void CSelectObjectSystem::update(CEntityManager* entityManager)
 		{
-			if (m_skipUpdate)
+			if (!m_camera)
 				return;
 
 			CSelectObjectData** collisions = m_collision.pointer();
 			CWorldTransformData** transforms = m_transform.pointer();
-
-			CCamera* camera = entityManager->getCamera();
 
 			std::map<CGameObject*, core::aabbox3df>& selectedBox = m_gameObjBBox;
 			selectedBox.clear();
@@ -145,7 +120,7 @@ namespace Skylicht
 				}
 
 				// 1. Detect by bounding box
-				const SViewFrustum& frust = camera->getViewFrustum();
+				const SViewFrustum& frust = m_camera->getViewFrustum();
 				bool visible = collision->TransformBBox.intersectsWithBox(frust.getBoundingBox());
 
 				if (visible)

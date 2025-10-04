@@ -223,12 +223,14 @@ namespace Skylicht
 			CSelection::getInstance()->clear();
 			CGUIHandles::getInstance()->end();
 			m_selectID = "";
+			m_gui = NULL;
 		}
 
 		void CGUITransformGizmos::refresh()
 		{
 			CGUIHandles::getInstance()->end();
 			m_selectID = "";
+			m_gui = NULL;
 		}
 
 		void CGUITransformGizmos::onNotify(ISubject* subject, IObserver* from)

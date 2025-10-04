@@ -167,6 +167,8 @@ namespace Skylicht
 		{
 			float dt = getTimeStep();
 
+			bornParticle();
+
 			updateLaunchEmitter();
 
 			CParticle* particles = m_particles.pointer();
@@ -213,8 +215,6 @@ namespace Skylicht
 					m_bbox.addInternalPoint(p.Position);
 				}
 			}
-
-			bornParticle();
 		}
 
 		void CGroup::updateForRenderer()
