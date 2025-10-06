@@ -126,6 +126,14 @@ file(GLOB_RECURSE kdtree_source
 	./kdtree/**.h)
 setup_project_group("${kdtree_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 
+if (BUILD_SKYLICHT_NETWORK)
+file(GLOB_RECURSE easywsclient_source 
+	./easywsclient/**.cpp 
+	./easywsclient/**.hpp
+	./easywsclient/**.h)
+setup_project_group("${easywsclient_source}" ${CMAKE_CURRENT_SOURCE_DIR})
+endif()
+
 add_library(ThirdParty ${ENGINE_SHARED_OR_STATIC_LIB}
 	${aes_gladman_source} 
 	${bzip2_source}
@@ -139,6 +147,7 @@ add_library(ThirdParty ${ENGINE_SHARED_OR_STATIC_LIB}
 	${freetype_source}
 	${libmpg123_source}
 	${kdtree_source}
+	${easywsclient_source}
 )
 
 set_target_properties(ThirdParty PROPERTIES VERSION ${SKYLICHT_VERSION})
@@ -151,15 +160,15 @@ if (BUILD_OPENSSL)
 		set(openssl_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/lib/Android/${ANDROID_ABI}")
 	else()
 		message(FATAL_ERROR "Please config the SSL library folder.")
-	endif()
-
-	target_link_directories(ThirdParty PRIVATE ${openssl_lib_path})
+	endif()	
 
 	set (SSL_SCOPE PUBLIC)
 
 	if (BUILD_SHARED_LIBS)
 	set (SSL_SCOPE PRIVATE)
 	endif()
+
+	target_link_directories(ThirdParty ${SSL_SCOPE} ${openssl_lib_path})
 
 	if (MSVC)
 	target_link_libraries(ThirdParty ${SSL_SCOPE} crypto.lib ssl.lib Crypt32.lib)

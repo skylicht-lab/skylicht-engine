@@ -15,8 +15,6 @@ limitations under the License.
 
 */
 
-#include "pch.h"
-
 #ifndef __EMSCRIPTEN__
 
 #ifdef _WIN32

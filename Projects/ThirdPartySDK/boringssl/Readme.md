@@ -6,7 +6,7 @@
 C:\sdk>git clone "https://boringssl.googlesource.com/boringssl"
 ```
 
-# Build tool
+## Build tool
 
 NASM: https://www.nasm.us
 
