@@ -1,8 +1,8 @@
 include_directories(
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Network
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Include
+	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty
 	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/curl/include
-	${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdParty/easywsclient
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/System
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Engine
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Crypto

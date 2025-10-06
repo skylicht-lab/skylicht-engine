@@ -4,7 +4,7 @@
 
 #ifndef __EMSCRIPTEN__
 
-#include "easywsclient.hpp"
+#include "easywsclient/easywsclient.hpp"
 #include <functional>
 
 namespace Skylicht
