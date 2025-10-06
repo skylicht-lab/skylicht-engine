@@ -138,17 +138,6 @@ if (BUILD_SDL AND MSVC)
 	link_directories(${sdl_lib_path})
 endif()
 
-if (BUILD_OPENSSL AND MSVC)
-	if (CMAKE_CL_64)
-		set(openssl_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/x64")
-		set(openssl_dll_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/x64/*.dll")
-	else()
-		set(openssl_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/x86")
-		set(openssl_dll_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/x86/*.dll")
-	endif()	
-	link_directories(${openssl_lib_path})
-endif()
-
 if (MINGW OR CYGWIN)
 	# .rc build
 	set(CMAKE_RC_COMPILER_INIT windres)
@@ -262,8 +251,20 @@ if (BUILD_IMGUI)
 endif()
 
 # OpenSSL
-if (BUILD_OPENSSL AND MSVC)
-	target_link_libraries(SkylichtEditor crypto.lib decrepit.lib ssl.lib Crypt32.lib)
+if (BUILD_OPENSSL)
+	if (MSVC)
+		set(openssl_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/lib/Windows/${ARCHITECTURE}")
+	else()
+		message(FATAL_ERROR "Please config the SSL library folder.")
+	endif()
+
+	target_link_directories(SkylichtEditor PUBLIC ${openssl_lib_path})
+
+	if (MSVC)
+	target_link_libraries(SkylichtEditor crypto.lib ssl.lib Crypt32.lib)
+	else()
+	target_link_libraries(SkylichtEditor crypto ssl)
+	endif()
 endif()
 
 # Emscripten

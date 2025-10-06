@@ -2,30 +2,36 @@
 
 - Please read [BUILDING.md](https://boringssl.googlesource.com/boringssl/+/HEAD/BUILDING.md)
 
+```console
+C:\sdk>git clone "https://boringssl.googlesource.com/boringssl"
+```
+
 ## Windows
 
 ### Step 1: Install tool
-Ninja: https://ninja-build.org
-
 NASM: https://www.nasm.us
+Ninja: https://ninja-build.org
 
 And set ENV PATH for ninja and nasm
 
 ### Step 2: Build
 
-From Window/Search: "x64 Native Tools Command Prompt for VS 2022" or "x86 Native Tools Command Prompt for VS 2022"
-
+- x86 version:
 ```console
-C:\sdk\boringssl>cmake -GNinja -B build_x64
-C:\sdk\boringssl>ninja -C build_x64
+C:\sdk\boringssl>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 17 2022" -A x64
 ```
-On visual studio you should remove the -WX flag in CMakelist.txt if the compile fails.
+
+- x86 version:
+```console
+cd C:\sdk\boringssl
+C:\sdk\boringssl>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 17 2022" -A Win32
+```
 
 ## Android
 
 From Run: "cmd"
 
 ```console
-C:\sdk\boringssl>cmake -DANDROID_ABI=armeabi-v7a -DANDROID_PLATFORM=android-21 -DCMAKE_TOOLCHAIN_FILE=%ANDROID_NDK%/build/cmake/android.toolchain.cmake -GNinja -B build_android
+C:\sdk\boringssl>cmake -DCMAKE_BUILD_TYPE=Release -DANDROID_ABI=armeabi-v7a -DANDROID_PLATFORM=android-21 -DCMAKE_TOOLCHAIN_FILE=%ANDROID_NDK%/build/cmake/android.toolchain.cmake -GNinja -B build_android
 C:\sdk\boringssl>cmake --build ./build_android
 ```

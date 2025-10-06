@@ -178,18 +178,6 @@ if (BUILD_SDL AND MSVC)
 		set(sdl_dll_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/SDL/lib/x86/*.dll")
 	endif()	
 	link_directories(${sdl_lib_path})
-endif()	
-
-
-if (BUILD_OPENSSL AND MSVC)
-	if (CMAKE_CL_64)
-		set(openssl_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/x64")
-		set(openssl_dll_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/x64/*.dll")
-	else()
-		set(openssl_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/x86")
-		set(openssl_dll_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/x86/*.dll")
-	endif()	
-	link_directories(${openssl_lib_path})
 endif()
 
 if (MINGW OR CYGWIN)
@@ -361,8 +349,24 @@ if (BUILD_SPINE_RUNTIMES)
 endif()
 
 # OpenSSL
-if (BUILD_OPENSSL AND MSVC)
-	target_link_libraries(SampleLightmapping crypto.lib decrepit.lib ssl.lib Crypt32.lib)
+if (BUILD_OPENSSL)
+	if (MSVC)
+		set(openssl_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/lib/Windows/${ARCHITECTURE}")
+	elseif (CMAKE_SYSTEM_NAME STREQUAL Android)
+		set(openssl_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/lib/Android/${ANDROID_ABI}")
+	elseif (CMAKE_SYSTEM_NAME STREQUAL iOS)
+		set(openssl_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/lib/iOS/${PLATFORM}")
+	else()
+		message(FATAL_ERROR "Please config the SSL library folder.")
+	endif()
+
+	target_link_directories(SampleLightmapping PUBLIC ${openssl_lib_path})
+
+	if (MSVC)
+	target_link_libraries(SampleLightmapping crypto.lib ssl.lib Crypt32.lib)
+	else()
+	target_link_libraries(SampleLightmapping crypto ssl)
+	endif()
 endif()
 
 # Emscripten

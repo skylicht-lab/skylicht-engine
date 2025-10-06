@@ -1,21 +1,21 @@
-/* Copyright (c) 2014, Google Inc.
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
- * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
+// Copyright 2014 The BoringSSL Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #ifndef OPENSSL_HEADER_AEAD_H
 #define OPENSSL_HEADER_AEAD_H
 
-#include <openssl/base.h>
+#include <openssl/base.h>   // IWYU pragma: export
 
 #if defined(__cplusplus)
 extern "C" {
@@ -138,12 +138,10 @@ OPENSSL_EXPORT const EVP_AEAD *EVP_aead_aes_128_ctr_hmac_sha256(void);
 // authentication. See |EVP_aead_aes_128_ctr_hmac_sha256| for details.
 OPENSSL_EXPORT const EVP_AEAD *EVP_aead_aes_256_ctr_hmac_sha256(void);
 
-// EVP_aead_aes_128_gcm_siv is AES-128 in GCM-SIV mode. See
-// https://tools.ietf.org/html/draft-irtf-cfrg-gcmsiv-02
+// EVP_aead_aes_128_gcm_siv is AES-128 in GCM-SIV mode. See RFC 8452.
 OPENSSL_EXPORT const EVP_AEAD *EVP_aead_aes_128_gcm_siv(void);
 
-// EVP_aead_aes_256_gcm_siv is AES-256 in GCM-SIV mode. See
-// https://tools.ietf.org/html/draft-irtf-cfrg-gcmsiv-02
+// EVP_aead_aes_256_gcm_siv is AES-256 in GCM-SIV mode. See RFC 8452.
 OPENSSL_EXPORT const EVP_AEAD *EVP_aead_aes_256_gcm_siv(void);
 
 // EVP_aead_aes_128_gcm_randnonce is AES-128 in Galois Counter Mode with
@@ -180,9 +178,23 @@ OPENSSL_EXPORT const EVP_AEAD *EVP_aead_aes_128_ccm_bluetooth(void);
 // v1.0.
 OPENSSL_EXPORT const EVP_AEAD *EVP_aead_aes_128_ccm_bluetooth_8(void);
 
+// EVP_aead_aes_128_ccm_matter is AES-128-CCM with M=16 and L=2 (16-byte tags
+// and 13-byte nonces), as used in the Matter specification.
+OPENSSL_EXPORT const EVP_AEAD *EVP_aead_aes_128_ccm_matter(void);
+
 // EVP_has_aes_hardware returns one if we enable hardware support for fast and
 // constant-time AES-GCM.
 OPENSSL_EXPORT int EVP_has_aes_hardware(void);
+
+// EVP_aead_aes_128_eax is AES-128 in EAX mode. Nonce size is either 12 or 16
+// bytes, tag length is 16 bytes.
+// See https://doi.org/10.1007/978-3-540-25937-4_25.
+OPENSSL_EXPORT const EVP_AEAD *EVP_aead_aes_128_eax(void);
+
+// EVP_aead_aes_256_eax is AES-256 in EAX mode. Nonce size is either 12 or 16
+// bytes, tag length is 16 bytes.
+// See https://doi.org/10.1007/978-3-540-25937-4_25.
+OPENSSL_EXPORT const EVP_AEAD *EVP_aead_aes_256_eax(void);
 
 
 // Utility functions.
@@ -208,19 +220,19 @@ OPENSSL_EXPORT size_t EVP_AEAD_max_tag_len(const EVP_AEAD *aead);
 // AEAD operations.
 
 union evp_aead_ctx_st_state {
-  uint8_t opaque[580];
+  uint8_t opaque[560];
   uint64_t alignment;
 };
 
-// An EVP_AEAD_CTX represents an AEAD algorithm configured with a specific key
-// and message-independent IV.
-typedef struct evp_aead_ctx_st {
+// An evp_aead_ctx_st (typedefed as |EVP_AEAD_CTX| in base.h) represents an AEAD
+// algorithm configured with a specific key and message-independent IV.
+struct evp_aead_ctx_st {
   const EVP_AEAD *aead;
   union evp_aead_ctx_st_state state;
   // tag_len may contain the actual length of the authentication tag if it is
   // known at initialization time.
   uint8_t tag_len;
-} EVP_AEAD_CTX;
+};
 
 // EVP_AEAD_MAX_KEY_LENGTH contains the maximum key length used by
 // any AEAD defined in this header.
@@ -354,12 +366,10 @@ OPENSSL_EXPORT int EVP_AEAD_CTX_open(const EVP_AEAD_CTX *ctx, uint8_t *out,
 // If |in| and |out| alias then |out| must be == |in|. |out_tag| may not alias
 // any other argument.
 OPENSSL_EXPORT int EVP_AEAD_CTX_seal_scatter(
-    const EVP_AEAD_CTX *ctx, uint8_t *out,
-    uint8_t *out_tag, size_t *out_tag_len, size_t max_out_tag_len,
-    const uint8_t *nonce, size_t nonce_len,
-    const uint8_t *in, size_t in_len,
-    const uint8_t *extra_in, size_t extra_in_len,
-    const uint8_t *ad, size_t ad_len);
+    const EVP_AEAD_CTX *ctx, uint8_t *out, uint8_t *out_tag,
+    size_t *out_tag_len, size_t max_out_tag_len, const uint8_t *nonce,
+    size_t nonce_len, const uint8_t *in, size_t in_len, const uint8_t *extra_in,
+    size_t extra_in_len, const uint8_t *ad, size_t ad_len);
 
 // EVP_AEAD_CTX_open_gather decrypts and authenticates |in_len| bytes from |in|
 // and authenticates |ad_len| bytes from |ad| using |in_tag_len| bytes of
@@ -398,13 +408,13 @@ OPENSSL_EXPORT const EVP_AEAD *EVP_AEAD_CTX_aead(const EVP_AEAD_CTX *ctx);
 OPENSSL_EXPORT const EVP_AEAD *EVP_aead_aes_128_cbc_sha1_tls(void);
 OPENSSL_EXPORT const EVP_AEAD *EVP_aead_aes_128_cbc_sha1_tls_implicit_iv(void);
 
+OPENSSL_EXPORT const EVP_AEAD *EVP_aead_aes_128_cbc_sha256_tls(void);
+
 OPENSSL_EXPORT const EVP_AEAD *EVP_aead_aes_256_cbc_sha1_tls(void);
 OPENSSL_EXPORT const EVP_AEAD *EVP_aead_aes_256_cbc_sha1_tls_implicit_iv(void);
 
 OPENSSL_EXPORT const EVP_AEAD *EVP_aead_des_ede3_cbc_sha1_tls(void);
 OPENSSL_EXPORT const EVP_AEAD *EVP_aead_des_ede3_cbc_sha1_tls_implicit_iv(void);
-
-OPENSSL_EXPORT const EVP_AEAD *EVP_aead_null_sha1_tls(void);
 
 // EVP_aead_aes_128_gcm_tls12 is AES-128 in Galois Counter Mode using the TLS
 // 1.2 nonce construction.
