@@ -143,6 +143,25 @@ add_library(ThirdParty ${ENGINE_SHARED_OR_STATIC_LIB}
 
 set_target_properties(ThirdParty PROPERTIES VERSION ${SKYLICHT_VERSION})
 
+# OpenSSL
+if (BUILD_OPENSSL)
+	if (MSVC)
+		set(openssl_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/lib/Windows/${ARCHITECTURE}")
+	elseif (CMAKE_SYSTEM_NAME STREQUAL Android)
+		set(openssl_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/lib/Android/${ANDROID_ABI}")
+	else()
+		message(FATAL_ERROR "Please config the SSL library folder.")
+	endif()
+
+	target_link_directories(ThirdParty PUBLIC ${openssl_lib_path})
+
+	if (MSVC)
+	target_link_libraries(ThirdParty crypto.lib ssl.lib Crypt32.lib)
+	else()
+	target_link_libraries(ThirdParty crypto ssl)
+	endif()
+endif()
+
 if (BUILD_SHARED_LIBS)
 set_target_properties(ThirdParty PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS true)
 
@@ -155,18 +174,6 @@ endif()
 if (INSTALL_LIBS OR BUILD_SHARED_LIBS)
 	if (MSVC OR CYGWIN OR MINGW)
 		target_link_libraries(ThirdParty PRIVATE ws2_32)
-	endif()
-
-	if (BUILD_OPENSSL AND MSVC)	
-		target_link_libraries(ThirdParty PRIVATE crypto.lib decrepit.lib ssl.lib Crypt32.lib)
-		if (CMAKE_CL_64)
-			set(openssl_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/x64")
-			set(openssl_dll_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/x64/*.dll")
-		else()
-			set(openssl_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/x86")
-			set(openssl_dll_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/x86/*.dll")
-		endif()
-		target_link_directories(ThirdParty PRIVATE ${openssl_lib_path})
 	endif()
 endif()
 

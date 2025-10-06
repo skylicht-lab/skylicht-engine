@@ -348,27 +348,6 @@ if (BUILD_SPINE_RUNTIMES)
 	target_link_libraries(SampleLightmapping SpineRuntimes)
 endif()
 
-# OpenSSL
-if (BUILD_OPENSSL)
-	if (MSVC)
-		set(openssl_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/lib/Windows/${ARCHITECTURE}")
-	elseif (CMAKE_SYSTEM_NAME STREQUAL Android)
-		set(openssl_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/lib/Android/${ANDROID_ABI}")
-	elseif (CMAKE_SYSTEM_NAME STREQUAL iOS)
-		set(openssl_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/lib/iOS/${PLATFORM}")
-	else()
-		message(FATAL_ERROR "Please config the SSL library folder.")
-	endif()
-
-	target_link_directories(SampleLightmapping PUBLIC ${openssl_lib_path})
-
-	if (MSVC)
-	target_link_libraries(SampleLightmapping crypto.lib ssl.lib Crypt32.lib)
-	else()
-	target_link_libraries(SampleLightmapping crypto ssl)
-	endif()
-endif()
-
 # Emscripten
 if (BUILD_EMSCRIPTEN)
 	message(STATUS "Setting build in data: ${CMAKE_CURRENT_BINARY_DIR}")

@@ -117,10 +117,16 @@ if (BUILD_SKYLICHT_NETWORK)
 		add_definitions(-DCURL_STATICLIB)
 		add_definitions(-DHTTP_ONLY)
 		add_definitions(-DBUILDING_LIBCURL)
+		
 		# enable openssl for https
 		if (MSVC)
 			set(BUILD_OPENSSL ON)
-			add_definitions(-DUSE_OPENSSL)
+		elseif (CMAKE_SYSTEM_NAME STREQUAL Android)
+			set(BUILD_OPENSSL ON)
+		endif()
+		
+		if (BUILD_OPENSSL)
+		add_definitions(-DUSE_OPENSSL)
 		endif()
 	endif()
 else()
