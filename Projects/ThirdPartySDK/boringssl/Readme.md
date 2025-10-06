@@ -6,17 +6,17 @@
 C:\sdk>git clone "https://boringssl.googlesource.com/boringssl"
 ```
 
-## Windows
+# Build tool
 
-### Step 1: Install tool
 NASM: https://www.nasm.us
+
 Ninja: https://ninja-build.org
 
-And set ENV PATH for ninja and nasm
+## Windows
 
 ### Step 2: Build
 
-- x86 version:
+- x64 version:
 ```console
 C:\sdk\boringssl>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 17 2022" -A x64
 ```
@@ -29,9 +29,26 @@ C:\sdk\boringssl>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 17 2022" -A W
 
 ## Android
 
-From Run: "cmd"
+From Windows + R: "cmd"
+
+`build_ssl_android_platform.cmd`
 
 ```console
-C:\sdk\boringssl>cmake -DCMAKE_BUILD_TYPE=Release -DANDROID_ABI=armeabi-v7a -DANDROID_PLATFORM=android-21 -DCMAKE_TOOLCHAIN_FILE=%ANDROID_NDK%/build/cmake/android.toolchain.cmake -GNinja -B build_android
-C:\sdk\boringssl>cmake --build ./build_android
+cd boringssl
+cmake -DCMAKE_BUILD_TYPE=Release -DANDROID_ABI=%ABI% -DANDROID_PLATFORM=android-21 -DCMAKE_TOOLCHAIN_FILE=%ANDROID_NDK%/build/cmake/android.toolchain.cmake -GNinja -B build_%ABI%
+cmake --build ./build_%ABI%
+cd ..
+```
+
+`build_ssl_android.cmd`
+
+```console
+set ABI=armeabi-v7a
+call build_ssl_android_platform.cmd
+set ABI=arm64-v8a
+call build_ssl_android_platform.cmd
+set ABI=x86
+call build_ssl_android_platform.cmd
+set ABI=x86_64
+call build_ssl_android_platform.cmd
 ```

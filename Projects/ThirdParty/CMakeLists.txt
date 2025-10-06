@@ -153,12 +153,12 @@ if (BUILD_OPENSSL)
 		message(FATAL_ERROR "Please config the SSL library folder.")
 	endif()
 
-	target_link_directories(ThirdParty PUBLIC ${openssl_lib_path})
+	target_link_directories(ThirdParty PRIVATE ${openssl_lib_path})
 
 	if (MSVC)
-	target_link_libraries(ThirdParty crypto.lib ssl.lib Crypt32.lib)
+	target_link_libraries(ThirdParty PRIVATE crypto.lib ssl.lib Crypt32.lib)
 	else()
-	target_link_libraries(ThirdParty crypto ssl)
+	target_link_libraries(ThirdParty PRIVATE crypto ssl)
 	endif()
 endif()
 
