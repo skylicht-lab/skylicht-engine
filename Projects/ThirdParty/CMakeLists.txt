@@ -155,10 +155,16 @@ if (BUILD_OPENSSL)
 
 	target_link_directories(ThirdParty PRIVATE ${openssl_lib_path})
 
+	set (SSL_SCOPE PUBLIC)
+
+	if (BUILD_SHARED_LIBS)
+	set (SSL_SCOPE PRIVATE)
+	endif()
+
 	if (MSVC)
-	target_link_libraries(ThirdParty PRIVATE crypto.lib ssl.lib Crypt32.lib)
+	target_link_libraries(ThirdParty ${SSL_SCOPE} crypto.lib ssl.lib Crypt32.lib)
 	else()
-	target_link_libraries(ThirdParty PRIVATE crypto ssl)
+	target_link_libraries(ThirdParty ${SSL_SCOPE} crypto ssl)
 	endif()
 endif()
 
