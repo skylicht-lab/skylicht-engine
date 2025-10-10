@@ -226,7 +226,7 @@ namespace Skylicht
 			float attenuation[4] = { 0 };
 
 			int lightId = core::clamp(uniform->ValueIndex, 0, 3);
-			if (g_spotLight != NULL)
+			if (g_spotLight[lightId] != NULL)
 			{
 				// set attenuation
 				attenuation[0] = cosf(g_spotLight[lightId]->getSplotCutoff() * core::DEGTORAD * 0.5f);

@@ -14,7 +14,7 @@ void main(void)
 {
 	vec4 diffuseMap = texture(uTexDiffuse, vTexCoord0.xy);
 	vec4 shinyMap = texture(uTexShiny, vTexCoord1.xy);
-	vec4 color = diffuseMap * uColor * vColor;
-	vec3 result = color.rgb + shinyMap.rgb;
-	FragColor = vec4(result, diffuseMap.a);
+	vec3 color = diffuseMap.rgb * uColor.rgb * vColor.rgb;
+	vec3 result = color + shinyMap.rgb;
+	FragColor = vec4(result, diffuseMap.a * vColor.a);
 }
