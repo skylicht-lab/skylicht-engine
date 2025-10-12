@@ -36,12 +36,11 @@ namespace Skylicht
 		}
 
 		// Main entry — dispatch based on type
-		void CEmscriptenHttpRequest::sendRequest() override
+		void CEmscriptenHttpRequest::sendRequest()
 		{
 			m_isCancel = false;
 			m_httpCode = -1;
 			m_downloading = 0;
-			m_sizeBuffer = 0;
 			m_total = 0;
 
 			m_requestTimeOut = 15000; // 15s, same default
@@ -237,7 +236,7 @@ namespace Skylicht
 			self->m_httpCode = fetch->status;
 			if (self->m_dataStream && fetch->numBytes > 0 && fetch->data)
 			{
-				self->m_dataStream->write(fetch->data, (unsigned int)fetch->numBytes);
+				self->m_dataStream->write((void*)fetch->data, (unsigned int)fetch->numBytes);
 				self->m_dataStream->endStream();
 			}
 			// Done with the request

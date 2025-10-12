@@ -40,7 +40,7 @@ namespace Skylicht
 
 			virtual unsigned long getSpeedDownload()
 			{
-				return m_bytePerSecond
+				return m_bytePerSecond;
 			}
 
 		private:
