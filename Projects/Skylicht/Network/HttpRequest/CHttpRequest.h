@@ -41,131 +41,117 @@ namespace Skylicht
 {
 	namespace Network
 	{
-		class CHttpRequest: public IHttpRequest
+		class CHttpRequest : public IHttpRequest
 		{
 		protected:
 			// curl handle
 			CURL* m_curl;
 			CURLM* m_multiHandle;
-			
+
 			void* m_formpost;
 			void* m_lastptr;
-			
-			// total size download
-			unsigned long m_downloading;
-			unsigned long m_total;
+
 			int m_needContinue;
-			
+
 			bool m_sendRequest;
-			
+
 			bool m_cancel;
 			bool m_isTimeOut;
-			
+
 			unsigned char* m_downloadBuffer;
 			unsigned long m_sizeBuffer;
-			
+
 			void* m_md5Context;
 			char m_hashString[HASHSTRING_SIZE];
-			
+
 			unsigned long m_requestTime;
 			unsigned long m_time;
 			unsigned long m_revcTime;
 			unsigned long m_currentTime;
 			unsigned long m_requestTimeOut;
-			
+
 			unsigned long m_totalBytePerSecond;
 			unsigned long m_bytePerSecond;
-			
+
 			std::string m_postField;
 			std::string m_sessionFile;
-			
+
 			curl_slist* m_headerlist;
-			
+
 			bool m_checkTimeout;
-			
+
 		public:
 			CHttpRequest(IHttpStream* stream);
-			
+
 			virtual ~CHttpRequest();
-			
+
 			static void globalInit();
-			
+
 			static void globalFree();
-			
+
 			static std::string urlEncode(const std::string& s);
-			
+
 			inline void setSessionFile(const char* session)
 			{
 				m_sessionFile = session;
 			}
-			
+
 			void sendRequestByPost();
 			void sendRequestByPostJson();
 			void sendRequestByGet();
 			void sendRequestByPut();
 			void sendRequestByDelete();
-			
+
 			virtual void sendRequest();
-			
+
+			virtual bool updateRequest();
+
 			inline bool isSendRequest()
 			{
 				return m_sendRequest;
 			}
-			
-			bool updateRequest();
-			
+
 			bool checkTimeOut();
-			
+
 			inline bool isTimeOut()
 			{
 				return m_isTimeOut;
 			}
-			
+
 			inline unsigned long getRequestTime()
 			{
 				return m_currentTime - m_requestTime;
 			}
-			
+
 			void onRevcData(unsigned char* lpData, unsigned long size, unsigned long num);
-			
+
 			void onReadData(unsigned char* lpData, unsigned long size, unsigned long num);
-			
-			inline unsigned long getByteDownload()
-			{
-				return m_downloading;
-			}
-			
-			inline unsigned long getSpeedDownload()
+
+			virtual unsigned long getSpeedDownload()
 			{
 				return m_bytePerSecond;
 			}
-			
-			inline void updateStatusDownload(unsigned long downLoad, unsigned long total)
-			{
-				m_downloading = downLoad;
-				m_total = total;
-			}
-			
-			inline void cancel()
+
+			virtual void cancel()
 			{
 				m_cancel = true;
 			}
-			
-			inline bool isCancel()
+
+			virtual bool isCancel()
 			{
 				return m_cancel;
 			}
-			
+
 			inline const char* getCurrentHashString()
 			{
 				return m_hashString;
 			}
-			
+
 			inline long getCurrentTimeOut()
 			{
 				return m_currentTime - m_revcTime;
 			}
-			
+
 			inline long getTimeOut()
 			{
 				return m_requestTimeOut;

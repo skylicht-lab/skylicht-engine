@@ -25,41 +25,58 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "IHttpRequest.h"
 
+#ifdef __EMSCRIPTEN__
+#include "CEmscriptenHttpRequest.h"
+#else
+#include "CHttpRequest.h"
+#endif
+
 namespace Skylicht
 {
 	namespace Network
 	{
-		IHttpRequest::IHttpRequest(IHttpStream* stream):
-		m_dataStream(stream),
-		m_userData(NULL),
-		m_requestType(IHttpRequest::Get),
-		m_httpCode(-1),
-		m_requestID(-1)
+		IHttpRequest* IHttpRequest::create(IHttpStream* stream)
 		{
-			
+#ifdef __EMSCRIPTEN__
+			return new CEmscriptenHttpRequest(stream);
+#else
+			return new CHttpRequest(stream);
+#endif
 		}
-		
+
+		IHttpRequest::IHttpRequest(IHttpStream* stream) :
+			m_dataStream(stream),
+			m_userData(NULL),
+			m_requestType(IHttpRequest::Get),
+			m_httpCode(-1),
+			m_requestID(-1),
+			m_downloading(0),
+			m_total(0)
+		{
+
+		}
+
 		IHttpRequest::~IHttpRequest()
 		{
 			if (m_dataStream)
 				delete m_dataStream;
 		}
-		
+
 		void IHttpRequest::addFormRequest(const char* name, const char* value)
 		{
 			m_post.push_back(SForm());
 			SForm& form = m_post.back();
-			
+
 			form.Name = name;
 			form.Value = value;
 			form.File = false;
 		}
-		
+
 		void IHttpRequest::addFormFileRequest(const char* name, const char* value)
 		{
 			m_post.push_back(SForm());
 			SForm& form = m_post.back();
-			
+
 			form.Name = name;
 			form.Value = value;
 			form.File = true;

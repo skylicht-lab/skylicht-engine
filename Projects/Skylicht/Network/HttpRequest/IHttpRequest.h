@@ -42,96 +42,132 @@ namespace Skylicht
 				Put,
 				Delete
 			};
-			
+
 			struct SForm
 			{
 				std::string	Name;
 				std::string Value;
 				bool File;
-				
+
 				SForm()
 				{
 					File = false;
 				}
 			};
-			
+
 		protected:
 			std::string m_url;
-			
+
 			int m_httpCode;
 			int m_requestID;
-			
+
 			ERequestType m_requestType;
 			IHttpStream* m_dataStream;
-			
+
+			// total size download
+			unsigned long m_downloading;
+			unsigned long m_total;
+
 			std::vector<SForm> m_post;
 			void* m_userData;
-			
+
 			std::vector<std::string> m_headers;
 		public:
 			IHttpRequest(IHttpStream* stream);
-			
+
 			virtual ~IHttpRequest();
-			
+
+			static IHttpRequest* create(IHttpStream* stream);
+
 			void addFormRequest(const char* name, const char* value);
-			
+
 			void addFormFileRequest(const char* name, const char* value);
-			
+
 			virtual void sendRequest() = 0;
-			
+
+			virtual bool updateRequest() = 0;
+
+			virtual void cancel() = 0;
+
+			virtual bool isCancel()
+			{
+				return false;
+			}
+
+			virtual unsigned long getSpeedDownload()
+			{
+				return 0;
+			}
+
 			inline void setURL(const char* url)
 			{
 				m_url = url;
 			}
-			
+
 			inline const std::string& getURL()
 			{
 				return m_url;
 			}
-			
+
 			inline void setSendRequestType(ERequestType type)
 			{
 				m_requestType = type;
 			}
-			
+
 			inline void setUserData(void* data)
 			{
 				m_userData = data;
 			}
-			
+
 			inline void* getUserData()
 			{
 				return m_userData;
 			}
-			
+
 			inline void clearHeader()
 			{
 				m_headers.clear();
 			}
-			
+
 			inline void addHeader(const char* header)
 			{
 				m_headers.push_back(header);
 			}
-			
+
 			inline int getResponseCode()
 			{
 				return m_httpCode;
 			}
-			
+
 			inline IHttpStream* getStream()
 			{
 				return m_dataStream;
 			}
-			
+
 			inline void setRequestID(int id)
 			{
 				m_requestID = id;
 			}
-			
+
 			inline int getRequestID()
 			{
 				return m_requestID;
+			}
+
+			inline unsigned long getByteDownload()
+			{
+				return m_downloading;
+			}
+
+			inline unsigned long getTotalByteDownload()
+			{
+				return m_total;
+			}
+
+			inline void updateStatusDownload(unsigned long downLoad, unsigned long total)
+			{
+				m_downloading = downLoad;
+				m_total = total;
 			}
 		};
 	}

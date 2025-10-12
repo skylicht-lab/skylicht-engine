@@ -57,6 +57,7 @@ namespace Skylicht
 		CSpaceScene::CSpaceScene(GUI::CWindow* window, CEditor* editor) :
 			CSpace(window, editor),
 			m_scene(NULL),
+			m_rendering(NULL),
 			m_renderRP(NULL),
 			m_shadowMapRendering(NULL),
 			m_forwardRP(NULL),

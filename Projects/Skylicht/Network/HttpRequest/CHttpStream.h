@@ -36,50 +36,50 @@ namespace Skylicht
 		{
 		protected:
 			CMemoryStream* m_memory;
-			
+
 		public:
 			CHttpStream(unsigned int datasize = 65536);
-			
+
 			virtual ~CHttpStream();
-			
+
 			virtual void write(void* data, unsigned int size);
-			
+
 			virtual const unsigned char* getData();
-			
+
 			virtual unsigned int getDataSize();
-			
+
 			virtual const char* getStreamPath()
 			{
 				return NULL;
 			}
-			
+
 		};
-		
+
 		class CHttpFileStream : public IHttpStream
 		{
 		protected:
 			io::IWriteFile* m_file;
 			std::string m_filePath;
-			
+
 		public:
 			CHttpFileStream(const char* fileName);
-			
+
 			virtual ~CHttpFileStream();
-			
+
 			virtual void write(void* data, unsigned int size);
-			
+
 			virtual void endStream();
-			
+
 			virtual const unsigned char* getData()
 			{
 				return NULL;
 			}
-			
+
 			virtual unsigned int getDataSize()
 			{
 				return 0;
 			}
-			
+
 			virtual const char* getStreamPath()
 			{
 				return m_filePath.c_str();
