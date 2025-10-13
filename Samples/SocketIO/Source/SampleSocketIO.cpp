@@ -115,14 +115,31 @@ void SampleSocketIO::onInitApp()
 	m_io = new CSocketIO("localhost:8080");
 
 	m_io->OnConnected = [&]()
-	{
-		m_logs.push_back("[success] Connected");
-	};
+		{
+			m_logs.push_back("[success] Connected");
+		};
 
 	m_io->OnConnectFailed = [&]()
-	{
-		m_logs.push_back("[error] Could not open connection to the localhost:8080");
-	};
+		{
+			m_logs.push_back("[error] Could not open connection to the localhost:8080");
+			m_logs.push_back("Retry in 3 seconds");
+
+			CTweenManager::getInstance()->addDelayCall(3000.0f, [&]()
+				{
+					m_io->init();
+				});
+		};
+
+	m_io->OnDisconnected = [&]()
+		{
+			m_logs.push_back("[error] Disconnected");
+			m_logs.push_back("Retry in 3 seconds");
+
+			CTweenManager::getInstance()->addDelayCall(3000.0f, [&]()
+				{
+					m_io->init();
+				});
+		};
 
 	m_io->init();
 }
@@ -139,49 +156,49 @@ void SampleSocketIO::onUpdate()
 		// on receive message
 		// see Samples/SocketIOServer/index.js
 		m_io->OnMessage = [&](const std::string& msg)
-		{
-			Json::Reader reader;
-			Json::Value obj;
-
-			reader.parse(msg, obj);
-
-			const Json::Value& message = obj[(Json::UInt)0];
-			const Json::Value& data = obj[(Json::UInt)1];
-
-			if (message.asString() == "message")
 			{
-				std::string user = data["user"].asCString();
-				std::string chatMsg = data["message"].asCString();
+				Json::Reader reader;
+				Json::Value obj;
 
-				std::string log;
+				reader.parse(msg, obj);
 
-				if (user == m_io->getSocketID())
-					log = user + "[me]:" + chatMsg;
-				else
-					log = user + "# :" + chatMsg;
+				const Json::Value& message = obj[(Json::UInt)0];
+				const Json::Value& data = obj[(Json::UInt)1];
 
-				m_logs.push_back(log);
-			}
-			else if (message.asString() == "join")
-			{
-				std::string user = data["user"].asCString();
-				std::string log;
-				log = user + "join the chat room";
-				m_logs.push_back(log);
-			}
-			else if (message.asString() == "left")
-			{
-				std::string user = data["user"].asCString();
-				std::string log;
-				log = user + "has left the chat room";
-				m_logs.push_back(log);
-			}
-		};
+				if (message.asString() == "message")
+				{
+					std::string user = data["user"].asCString();
+					std::string chatMsg = data["message"].asCString();
+
+					std::string log;
+
+					if (user == m_io->getSocketID())
+						log = user + "[me]:" + chatMsg;
+					else
+						log = user + "# :" + chatMsg;
+
+					m_logs.push_back(log);
+				}
+				else if (message.asString() == "join")
+				{
+					std::string user = data["user"].asCString();
+					std::string log;
+					log = user + "join the chat room";
+					m_logs.push_back(log);
+				}
+				else if (message.asString() == "left")
+				{
+					std::string user = data["user"].asCString();
+					std::string log;
+					log = user + "has left the chat room";
+					m_logs.push_back(log);
+				}
+			};
 
 		m_io->OnMessageAsk = [&](const std::string& msg, int id)
-		{
-			m_logs.push_back(msg);
-		};
+			{
+				m_logs.push_back(msg);
+			};
 	}
 
 	CImguiManager::getInstance()->onNewFrame();

@@ -39,6 +39,8 @@ namespace Skylicht
 			{
 			}
 
+			virtual void reset() = 0;
+
 			virtual void write(void* data, unsigned int size) = 0;
 
 			virtual const unsigned char* getData() = 0;

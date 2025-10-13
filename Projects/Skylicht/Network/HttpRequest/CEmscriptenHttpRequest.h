@@ -43,6 +43,11 @@ namespace Skylicht
 				return m_bytePerSecond;
 			}
 
+			virtual bool isTimeOut()
+			{
+				return m_isTimeOut;
+			}
+
 		private:
 
 			std::string buildBody(bool json);
@@ -73,6 +78,7 @@ namespace Skylicht
 
 		private:
 			bool m_isCancel;
+			bool m_isTimeOut;
 
 			unsigned long m_requestTime;
 			unsigned long m_time;

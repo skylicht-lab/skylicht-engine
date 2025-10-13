@@ -94,6 +94,8 @@ namespace Skylicht
 				return false;
 			}
 
+			virtual bool isTimeOut() = 0;
+
 			virtual unsigned long getSpeedDownload()
 			{
 				return 0;

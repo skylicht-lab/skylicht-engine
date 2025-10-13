@@ -42,6 +42,8 @@ namespace Skylicht
 
 			virtual ~CHttpStream();
 
+			virtual void reset();
+
 			virtual void write(void* data, unsigned int size);
 
 			virtual const unsigned char* getData();

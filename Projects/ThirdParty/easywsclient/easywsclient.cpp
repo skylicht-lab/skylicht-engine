@@ -126,11 +126,11 @@ namespace { // private module-only namespace
 	class _DummyWebSocket : public easywsclient::WebSocket
 	{
 	public:
-		void poll(int timeout) { }
-		void send(const std::string& message) { }
-		void sendPing() { }
-		void close() { }
-		void _dispatch(Callback& callable) { }
+		void poll(int timeout) {}
+		void send(const std::string& message) {}
+		void sendPing() {}
+		void close() {}
+		void _dispatch(std::function<void(const std::string&)>& callable) {}
 		readyStateValues getReadyState() const { return CLOSED; }
 		// Google change: provide low-level frame-sending.
 		virtual void sendData(Opcode opcode, const std::string& message, bool fin) {}
@@ -257,7 +257,7 @@ namespace { // private module-only namespace
 		// lambda:
 		//template<class Callable>
 		//void dispatch(Callable callable)
-		virtual void _dispatch(WebSocket::Callback& callable) {
+		virtual void _dispatch(std::function<void(const std::string&)>& callable) {
 			// 
 			while (true) {
 				wsheader_type ws;
@@ -314,12 +314,12 @@ namespace { // private module-only namespace
 					std::string data(rxbuf.begin() + ws.header_size, rxbuf.begin() + ws.header_size + (size_t)ws.N);
 					callable((const std::string)data);
 				}
-				else if (ws.opcode == PING) 
+				else if (ws.opcode == PING)
 				{
 					if (messageStream)
 						fprintf(messageStream, "Receive Ping.\n");
 				}
-				else if (ws.opcode == PONG) 
+				else if (ws.opcode == PONG)
 				{
 					if (messageStream)
 						fprintf(messageStream, "Receive Pong.\n");

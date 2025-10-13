@@ -24,7 +24,7 @@ SampleHttpRequest::SampleHttpRequest() :
 
 	m_scrollToBottom = true;
 	m_autoScroll = true;
-	strcpy(m_inputBuffer, "https://www.google.com");
+	strcpy(m_inputBuffer, "");
 }
 
 SampleHttpRequest::~SampleHttpRequest()
@@ -124,13 +124,15 @@ void SampleHttpRequest::onUpdate()
 		if (requestId > 0)
 		{
 			int code = m_httpRequest->getResponseCode();
+			std::string url = m_httpRequest->getURL() + std::string(": ");
+
 			if (code <= 0)
 			{
-				m_logs.push_back(std::string("[error] ") + std::to_string(code));
+				m_logs.push_back(std::string("[error] ") + url + std::to_string(code));
 			}
 			else
 			{
-				m_logs.push_back(std::string("[success] ") + std::to_string(code));
+				m_logs.push_back(std::string("[success] ") + url + std::to_string(code));
 
 				const unsigned char* data = stream->getData();
 				int size = stream->getDataSize();
@@ -152,6 +154,8 @@ void SampleHttpRequest::onUpdate()
 							line += data[i];
 						}
 					}
+					if (!line.empty())
+						m_logs.push_back(line);
 				}
 			}
 
@@ -182,7 +186,7 @@ void SampleHttpRequest::onImGui()
 		return;
 	}
 
-	const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing(); // 1 separator, 1 input text
+	const float footer_height_to_reserve = 16.0f * ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing(); // 1 separator, 1 input text
 	ImGui::BeginChild("ScrollingRegion", ImVec2(0, -footer_height_to_reserve), false, ImGuiWindowFlags_HorizontalScrollbar); // Leave room for 1 separator + 1 InputText
 
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 1)); // Tighten spacing
@@ -216,36 +220,89 @@ void SampleHttpRequest::onImGui()
 	ImGui::EndChild();
 	ImGui::Separator();
 
-	// Chat command-line
-	bool reclaimFocus = false;
-	if (ImGui::InputText("Url", m_inputBuffer, IM_ARRAYSIZE(m_inputBuffer), ImGuiInputTextFlags_EnterReturnsTrue))
+	// See Sample/HttpServer/Readme.txt for more information about the test server
+	static bool testLocalServer = true;
+	ImGui::Checkbox("Test local server", &testLocalServer);
+
+	if (testLocalServer)
 	{
-		m_httpRequest->setRequestID(1);
-		m_httpRequest->setURL(m_inputBuffer);
-		m_httpRequest->sendRequest();
-		reclaimFocus = true;
+		strcpy(m_inputBuffer, "http://localhost:8080");
+
+		static int methodId = 0;
+		const char* methods[] = { "GET", "POST", "PUT", "DELETE" };
+		ImGui::Combo("Method", &methodId, methods, IM_ARRAYSIZE(methods), IM_ARRAYSIZE(methods));
+
+		if (ImGui::Button("Send request"))
+		{
+			if (methodId == 0)
+			{
+				m_httpRequest->setSendRequestType(Network::IHttpRequest::Get);
+			}
+			else if (methodId == 1)
+			{
+				m_httpRequest->setSendRequestType(Network::IHttpRequest::PostJson);
+				m_httpRequest->addFormRequest("name", "Skylicht");
+			}
+			else if (methodId == 2)
+			{
+				m_httpRequest->setSendRequestType(Network::IHttpRequest::Put);
+				m_httpRequest->addFormRequest("name", "Skylicht");
+			}
+			else if (methodId == 3)
+			{
+				m_httpRequest->setSendRequestType(Network::IHttpRequest::Delete);
+				m_httpRequest->addFormRequest("name", "Skylicht");
+			}
+
+			m_httpRequest->setRequestID(1);
+			m_httpRequest->setURL(m_inputBuffer);
+			m_httpRequest->sendRequest();
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Clear"))
+		{
+			m_logs.clear();
+		}
 	}
-
-	ImGui::SameLine();
-
-	if (ImGui::Button("Send request"))
+	else
 	{
-		m_httpRequest->setRequestID(1);
-		m_httpRequest->setURL(m_inputBuffer);
-		m_httpRequest->sendRequest();
+		if (strcmp(m_inputBuffer, "http://localhost:8080") == 0)
+			strcpy(m_inputBuffer, "https://www.google.com");
+
+		// Chat command-line
+		bool reclaimFocus = false;
+		if (ImGui::InputText("Url", m_inputBuffer, IM_ARRAYSIZE(m_inputBuffer), ImGuiInputTextFlags_EnterReturnsTrue))
+		{
+			m_httpRequest->setRequestID(1);
+			m_httpRequest->setURL(m_inputBuffer);
+			m_httpRequest->sendRequest();
+			reclaimFocus = true;
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Send request"))
+		{
+			m_httpRequest->setRequestID(1);
+			m_httpRequest->setURL(m_inputBuffer);
+			m_httpRequest->setSendRequestType(Network::IHttpRequest::Get);
+			m_httpRequest->sendRequest();
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Clear"))
+		{
+			m_logs.clear();
+		}
+
+		// Auto-focus on window apparition
+		ImGui::SetItemDefaultFocus();
+		if (reclaimFocus)
+			ImGui::SetKeyboardFocusHere(-1); // Auto focus previous widget
 	}
-
-	ImGui::SameLine();
-
-	if (ImGui::Button("Clear"))
-	{
-		m_logs.clear();
-	}
-
-	// Auto-focus on window apparition
-	ImGui::SetItemDefaultFocus();
-	if (reclaimFocus)
-		ImGui::SetKeyboardFocusHere(-1); // Auto focus previous widget
 
 	ImGui::End();
 }

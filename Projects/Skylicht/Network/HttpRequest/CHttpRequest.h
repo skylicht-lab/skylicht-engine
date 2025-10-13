@@ -113,7 +113,7 @@ namespace Skylicht
 
 			bool checkTimeOut();
 
-			inline bool isTimeOut()
+			virtual bool isTimeOut()
 			{
 				return m_isTimeOut;
 			}

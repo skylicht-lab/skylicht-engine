@@ -42,6 +42,11 @@ namespace Skylicht
 			delete m_memory;
 		}
 
+		void CHttpStream::reset()
+		{
+			m_memory->resetWrite();
+		}
+
 		void CHttpStream::write(void* data, unsigned int size)
 		{
 			m_memory->writeData(data, size);

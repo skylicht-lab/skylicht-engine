@@ -165,6 +165,28 @@ namespace Skylicht
 
 		void CHttpRequest::sendRequest()
 		{
+			m_httpCode = -1;
+			m_downloading = 0;
+			m_total = 0;
+			m_sizeBuffer = 0;
+
+			m_bytePerSecond = 0;
+			m_totalBytePerSecond = 0;
+
+			m_isTimeOut = false;
+			m_cancel = false;
+
+			m_requestTime = os::Timer::getTime();
+			m_time = m_requestTime;
+			m_revcTime = m_requestTime;
+			m_currentTime = m_requestTime;
+
+			m_dataStream->reset();
+
+			// calc hash data revc
+			memset(m_hashString, 0, HASHSTRING_SIZE);
+			md5_init((MD5_CTX*)m_md5Context);
+
 			if (m_requestType == Post)
 				sendRequestByPost();
 			else if (m_requestType == PostJson)
@@ -284,22 +306,6 @@ namespace Skylicht
 			curl_multi_remove_handle(m_multiHandle, m_curl);
 			curl_multi_add_handle(m_multiHandle, m_curl);
 			curl_multi_perform(m_multiHandle, &m_needContinue);
-
-			m_httpCode = -1;
-			m_downloading = 0;
-			m_sizeBuffer = 0;
-
-			m_bytePerSecond = 0;
-			m_totalBytePerSecond = 0;
-
-			m_requestTime = os::Timer::getTime();
-			m_time = m_requestTime;
-			m_revcTime = m_requestTime;
-			m_currentTime = m_requestTime;
-
-			// calc hash data revc
-			memset(m_hashString, 0, HASHSTRING_SIZE);
-			md5_init((MD5_CTX*)m_md5Context);
 		}
 
 		void CHttpRequest::sendRequestByPost()
@@ -384,22 +390,6 @@ namespace Skylicht
 			curl_multi_remove_handle(m_multiHandle, m_curl);
 			curl_multi_add_handle(m_multiHandle, m_curl);
 			curl_multi_perform(m_multiHandle, &m_needContinue);
-
-			m_httpCode = -1;
-			m_downloading = 0;
-			m_sizeBuffer = 0;
-
-			m_bytePerSecond = 0;
-			m_totalBytePerSecond = 0;
-
-			m_requestTime = os::Timer::getTime();
-			m_time = m_requestTime;
-			m_revcTime = m_requestTime;
-			m_currentTime = m_requestTime;
-
-			// calc hash data revc
-			memset(m_hashString, 0, HASHSTRING_SIZE);
-			md5_init((MD5_CTX*)m_md5Context);
 		}
 
 		void CHttpRequest::sendRequestByPostJson()
@@ -470,22 +460,6 @@ namespace Skylicht
 			curl_multi_remove_handle(m_multiHandle, m_curl);
 			curl_multi_add_handle(m_multiHandle, m_curl);
 			curl_multi_perform(m_multiHandle, &m_needContinue);
-
-			m_httpCode = -1;
-			m_downloading = 0;
-			m_sizeBuffer = 0;
-
-			m_bytePerSecond = 0;
-			m_totalBytePerSecond = 0;
-
-			m_requestTime = os::Timer::getTime();
-			m_time = m_requestTime;
-			m_revcTime = m_requestTime;
-			m_currentTime = m_requestTime;
-
-			// calc hash data revc
-			memset(m_hashString, 0, HASHSTRING_SIZE);
-			md5_init((MD5_CTX*)m_md5Context);
 		}
 
 		void CHttpRequest::sendRequestByGet()
@@ -513,22 +487,6 @@ namespace Skylicht
 			curl_multi_remove_handle(m_multiHandle, m_curl);
 			curl_multi_add_handle(m_multiHandle, m_curl);
 			curl_multi_perform(m_multiHandle, &m_needContinue);
-
-			m_httpCode = -1;
-			m_downloading = 0;
-			m_sizeBuffer = 0;
-
-			m_bytePerSecond = 0;
-			m_totalBytePerSecond = 0;
-
-			m_requestTime = os::Timer::getTime();
-			m_time = m_requestTime;
-			m_revcTime = m_requestTime;
-			m_currentTime = m_requestTime;
-
-			// calc hash data revc
-			memset(m_hashString, 0, HASHSTRING_SIZE);
-			md5_init((MD5_CTX*)m_md5Context);
 		}
 
 		bool CHttpRequest::checkTimeOut()

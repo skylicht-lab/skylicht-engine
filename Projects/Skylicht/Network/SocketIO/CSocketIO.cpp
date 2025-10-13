@@ -3,7 +3,7 @@
 #ifndef __EMSCRIPTEN__
 
 #include "CSocketIO.h"
-#include "HttpRequest/CHttpRequest.h"
+#include "HttpRequest/CHttpStream.h"
 
 #include "Utils/CStringImp.h"
 #include "Utils/CDateTimeUtils.h"
@@ -12,10 +12,6 @@ namespace Skylicht
 {
 	namespace Network
 	{
-		int g_wsID = 0;
-
-		CSocketIO* g_currentIO = NULL;
-
 		typedef enum {
 			IO_OPEN = '0', ///< Sent from the server when a new transport is opened (recheck)
 			IO_CLOSE = '1', ///< Request the close of this transport but does not shutdown the connection itself.
@@ -36,11 +32,8 @@ namespace Skylicht
 			IO_MSG_BINARY_ACK = '6',
 		} EIOMessageType;
 
-		void handle_ws_message(const std::string& message)
+		void handle_ws_message(const std::string& message, CSocketIO* io)
 		{
-			if (g_currentIO == NULL)
-				return;
-
 			// std::string log = "[Websocket] raw message: ";
 			// log += message;
 			// os::Printer::log(log.c_str());
@@ -53,13 +46,13 @@ namespace Skylicht
 					// handshake socket.io 4 protocol
 
 					// now send message connect to socket io
-					g_currentIO->getWebSocket()->send("40");
+					io->getWebSocket()->send("40");
 				}
 				else if (message[0] == IO_PING)
 				{
 					// receive ping (2)
 					// send pong (3) to keep connection
-					g_currentIO->getWebSocket()->send("3");	// IO_PONG
+					io->getWebSocket()->send("3");	// IO_PONG
 				}
 				else if (message.length() > 2)
 				{
@@ -68,7 +61,7 @@ namespace Skylicht
 						if (message[1] == IO_MSG_CONNECT)
 						{
 							// receive socket id
-							g_currentIO->onConnected();
+							io->onConnected();
 
 							// parse sid in 40{sid:"xxxxx"};
 							char id[512];
@@ -77,20 +70,20 @@ namespace Skylicht
 							{
 								if (CStringImp::getBlock(id, message.c_str(), "\"", pos + 1) > 0)
 								{
-									g_currentIO->setSocketID(id);
+									io->setSocketID(id);
 								}
 							}
 						}
 						else if (message[1] == IO_MSG_DISCONNECT)
 						{
 							// receive disconnected
-							g_currentIO->onDisconnected();
+							io->onDisconnected();
 						}
 						else if (message[1] == IO_MSG_EVENT)
 						{
 							// receive event
 							std::string data = message.c_str() + 2;
-							g_currentIO->onMessage(data);
+							io->onMessage(data);
 						}
 						else if (message[1] == IO_MSG_ACK)
 						{
@@ -104,32 +97,35 @@ namespace Skylicht
 								CStringImp::mid(id, data.c_str(), 0, pos);
 
 								data = data.c_str() + pos;
-								g_currentIO->onMessageAsk(data, atoi(id));
+								io->onMessageAsk(data, atoi(id));
 							}
 						}
 					}
 				}
 			}
 		}
-	
+
 		CSocketIO::CSocketIO(const char* url)
 		{
 			m_httpRequest = NULL;
 			m_url = url;
 			m_sendTimeout = 0.0f;
 			m_ws = NULL;
-			
+
 			m_state = None;
 			m_connected = false;
-			
+
 			m_bufferData = new char[2 * 1024 * 1024];
 		}
-		
+
 		CSocketIO::~CSocketIO()
 		{
 			delete m_bufferData;
+
+			if (m_ws)
+				delete m_ws;
 		}
-		
+
 		void CSocketIO::updateRequest()
 		{
 			bool finish = m_httpRequest->updateRequest();
@@ -137,22 +133,22 @@ namespace Skylicht
 			{
 				int responseCode = m_httpRequest->getResponseCode();
 				IHttpStream* stream = m_httpRequest->getStream();
-				
+
 				const char* responseData = NULL;
 				int responseSize = 0;
-				
+
 				if (stream)
 				{
 					responseData = (const char*)stream->getData();
 					responseSize = (int)stream->getDataSize();
 				}
-				
+
 				char log[512];
 				sprintf(log, "[Websocket] response: %s", responseData);
 				os::Printer::log(log);
-				
+
 				std::string sessionID;
-				
+
 				if (responseCode == 200)
 				{
 					const char* sid = "\"sid\":\"";
@@ -160,20 +156,20 @@ namespace Skylicht
 					if (pos > 0)
 					{
 						pos = pos + (int)strlen(sid);
-						
+
 						int posEnd = CStringImp::find<const char>(responseData + pos, "\"");
 						if (posEnd > 0)
 						{
 							char id[64];
 							CStringImp::mid<char, const char>(id, responseData, pos, pos + posEnd);
-							
+
 							std::string wsURL = "ws://" + m_url + "/socket.io/?transport=websocket&EIO=4&sid=" + id;
 							std::string httpURL = "http://" + m_url;
-							
+
 							setWSURL(wsURL.c_str());
 							setOriginURL(httpURL.c_str());
 							startServices();
-							
+
 							m_state = UpdateSocket;
 						}
 					}
@@ -182,7 +178,7 @@ namespace Skylicht
 				{
 					os::Printer::log("[Websocket] Error 400");
 					m_state = None;
-					
+
 					if (OnConnectFailed != nullptr)
 						OnConnectFailed();
 				}
@@ -190,40 +186,40 @@ namespace Skylicht
 				{
 					os::Printer::log("[Websocket] Can't connect WS");
 					m_state = None;
-					
+
 					if (OnConnectFailed != nullptr)
 						OnConnectFailed();
 				}
-				
+
 				delete m_httpRequest;
 				m_httpRequest = NULL;
 			}
 		}
-		
+
 		void CSocketIO::onConnected()
 		{
 			m_connected = true;
 			if (OnConnected != nullptr)
 				OnConnected();
 		}
-		
+
 		void CSocketIO::onDisconnected()
 		{
 			m_connected = false;
 			if (OnDisconnected != nullptr)
 				OnDisconnected();
 		}
-		
+
 		void CSocketIO::onMessage(const std::string& msg)
 		{
 			std::string log = "[Websocket] message: ";
 			log += msg;
 			os::Printer::log(log.c_str());
-			
+
 			if (OnMessage != nullptr)
 				OnMessage(msg);
 		}
-		
+
 		void CSocketIO::onMessageAsk(const std::string& msg, int id)
 		{
 			std::string log = "[Websocket] message: ";
@@ -231,15 +227,13 @@ namespace Skylicht
 			log += ":";
 			log += msg;
 			os::Printer::log(log.c_str());
-			
+
 			if (OnMessageAsk != nullptr)
 				OnMessageAsk(msg, id);
 		}
-		
+
 		void CSocketIO::update()
 		{
-			g_currentIO = this;
-			
 			if (m_state == RequestSocketIO)
 			{
 				updateRequest();
@@ -247,9 +241,9 @@ namespace Skylicht
 			else if (m_state == UpdateSocket)
 			{
 				m_ws->poll(1);
-				m_ws->dispatch(handle_ws_message);
-				
-				if (m_ws->getReadyState() == easywsclient::WebSocket::CLOSED)
+				m_ws->dispatch(std::bind(handle_ws_message, std::placeholders::_1, this));
+
+				if (m_ws->isClosed())
 				{
 					os::Printer::log("[Websocket] closed");
 					m_state = Closed;
@@ -261,34 +255,39 @@ namespace Skylicht
 					}
 				}
 			}
-			
-			g_currentIO = NULL;
 		}
-		
+
 		void CSocketIO::forceSend()
 		{
-			
+
 		}
-		
+
 		void CSocketIO::init()
 		{
 			if (m_url.empty() == true)
 				os::Printer::log("[Websocket] Can not init WS with empty url\n");
-			
+
 			// run http services
 			std::string httpURL = std::string("http://") + m_url + std::string("/socket.io/?transport=polling&EIO=4");
-			
-			m_httpRequest = new CHttpRequest(new CHttpStream());
+
+			if (m_httpRequest)
+				delete m_httpRequest;
+
+			m_httpRequest = IHttpRequest::create(new CHttpStream());
 			m_httpRequest->setURL(httpURL.c_str());
-			m_httpRequest->sendRequestByGet();
-			
+			m_httpRequest->setSendRequestType(IHttpRequest::Get);
+			m_httpRequest->sendRequest();
+
 			m_state = RequestSocketIO;
 		}
-		
+
 		bool CSocketIO::startServices()
 		{
-			m_ws = easywsclient::WebSocket::from_url(m_wsURL.c_str(), m_wsOriginURL.c_str());
 			if (m_ws)
+				delete m_ws;
+
+			m_ws = IWebsocket::create();
+			if (m_ws->connect(m_wsURL, m_wsOriginURL))
 			{
 				m_ws->send("2probe");
 				m_ws->send("5");
@@ -298,21 +297,21 @@ namespace Skylicht
 				if (OnConnectFailed != nullptr)
 					OnConnectFailed();
 			}
-			
+
 			return true;
 		}
-		
+
 		bool CSocketIO::isConnected()
 		{
 			return m_connected;
 		}
-		
+
 		void CSocketIO::sendMessage(const char* message)
 		{
 			if (m_ws && m_connected)
 				m_ws->send(message);
 		}
-		
+
 		void CSocketIO::emit(const char* type, bool ack, int askID)
 		{
 			if (ack)
@@ -321,68 +320,68 @@ namespace Skylicht
 				sprintf(m_bufferData, "42[\"%s\"]", type);
 			sendMessage(m_bufferData);
 		}
-		
+
 		void CSocketIO::emit(const char* type, const char* param, const char* value, bool ack, int askID)
 		{
 			if (ack)
 				sprintf(m_bufferData, "42/,%d[\"%s\",{\"%s\":%s}]", askID, type, param, value);
 			else
 				sprintf(m_bufferData, "42[\"%s\",{\"%s\":%s}]", type, param, value);
-			
+
 			sendMessage(m_bufferData);
 		}
-		
+
 		void CSocketIO::emit(const char* type, const char* param, const std::string& value, bool ack, int askID)
 		{
 			emit(type, param, value.c_str(), ack, askID);
 		}
-		
+
 		void CSocketIO::emit(const char* type, std::map<std::string, std::string>& params, bool ack, int askID)
 		{
 			std::string textParams;
-			
+
 			int n = 0;
-			
+
 			std::map<std::string, std::string>::iterator i = params.begin(), end = params.end();
 			while (i != end)
 			{
 				const std::string& p = (*i).first;
 				const std::string& v = (*i).second;
-				
+
 				sprintf(m_bufferData, "\"%s\":%s", p.c_str(), v.c_str());
-				
+
 				if (n > 0)
 					textParams += ",";
-				
+
 				textParams += m_bufferData;
-				
+
 				++i;
 				n++;
 			}
-			
+
 			if (ack)
 				sprintf(m_bufferData, "42/,%d[\"%s\",{%s}]", askID, type, textParams.c_str());
 			else
 				sprintf(m_bufferData, "42[\"%s\",{%s}]", type, textParams.c_str());
-			
+
 			sendMessage(m_bufferData);
 		}
-		
+
 		std::string CSocketIO::toStringParam(const char* s)
 		{
 			std::string value = "\"";
 			value += s;
 			value += "\"";
-			
+
 			return value;
 		}
-		
+
 		std::string CSocketIO::toStringParam(const std::string& s)
 		{
 			std::string value = "\"";
 			value += s;
 			value += "\"";
-			
+
 			return value;
 		}
 	}

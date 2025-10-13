@@ -38,6 +38,7 @@ namespace Skylicht
 		// Main entry — dispatch based on type
 		void CEmscriptenHttpRequest::sendRequest()
 		{
+			m_isTimeOut = false;
 			m_isCancel = false;
 			m_httpCode = -1;
 			m_downloading = 0;
@@ -47,6 +48,8 @@ namespace Skylicht
 			m_totalBytePerSecond = 0;
 			m_bytePerSecond = 0;
 			m_requestTime = m_time = m_revcTime = m_currentTime = os::Timer::getTime();
+
+			m_dataStream->reset();
 
 			switch (m_requestType)
 			{
@@ -77,6 +80,7 @@ namespace Skylicht
 
 			if (getCurrentTimeOut() > getTimeOut())
 			{
+				m_isTimeOut = true;
 				return true;
 			}
 
