@@ -32,49 +32,54 @@ namespace Skylicht
 		CHttpStream::CHttpStream(unsigned int datasize)
 		{
 			m_memory = new CMemoryStream(datasize);
-			
+
 			// erase data
 			memset(m_memory->getData(), 0, datasize);
 		}
-		
+
 		CHttpStream::~CHttpStream()
 		{
 			delete m_memory;
 		}
-		
+
+		void CHttpStream::reset()
+		{
+			m_memory->resetWrite();
+		}
+
 		void CHttpStream::write(void* data, unsigned int size)
 		{
 			m_memory->writeData(data, size);
 		}
-		
+
 		const unsigned char* CHttpStream::getData()
 		{
 			return m_memory->getData();
 		}
-		
+
 		unsigned int CHttpStream::getDataSize()
 		{
 			return m_memory->getSize();
 		}
-		
-		
+
+
 		CHttpFileStream::CHttpFileStream(const char* fileName)
 		{
 			m_file = getIrrlichtDevice()->getFileSystem()->createAndWriteFile(fileName);
 			m_filePath = fileName;
 		}
-		
+
 		CHttpFileStream::~CHttpFileStream()
 		{
 			endStream();
 		}
-		
+
 		void CHttpFileStream::write(void* data, unsigned int size)
 		{
 			if (m_file)
 				m_file->write(data, size);
 		}
-		
+
 		void CHttpFileStream::endStream()
 		{
 			if (m_file)

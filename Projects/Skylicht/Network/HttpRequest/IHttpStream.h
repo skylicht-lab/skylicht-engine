@@ -32,21 +32,23 @@ namespace Skylicht
 		{
 		public:
 			IHttpStream()
-			{				
+			{
 			}
-			
+
 			virtual ~IHttpStream()
 			{
 			}
-			
+
+			virtual void reset() = 0;
+
 			virtual void write(void* data, unsigned int size) = 0;
-			
+
 			virtual const unsigned char* getData() = 0;
-			
+
 			virtual unsigned int getDataSize() = 0;
-			
+
 			virtual const char* getStreamPath() = 0;
-			
+
 			virtual void endStream()
 			{
 			}

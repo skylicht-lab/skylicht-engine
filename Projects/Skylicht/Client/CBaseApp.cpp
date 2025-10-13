@@ -152,9 +152,7 @@ namespace Skylicht
 	io::path CBaseApp::getBuiltInPath(const char* name)
 	{
 #ifdef __EMSCRIPTEN__
-		// path from ./PrjEmscripten/Projects/MainApp
-		std::string assetPath = std::string("BuiltIn/") + std::string(name);
-		return io::path(assetPath.c_str());
+		return io::path(name);
 #elif defined(WINDOWS_STORE)
 		std::string assetPath = std::string("Assets\\") + std::string(name);
 		return io::path(assetPath.c_str());

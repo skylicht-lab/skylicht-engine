@@ -13,6 +13,7 @@
 #include <stdio.h>
 
 #include <string>
+#include <functional>
 
 namespace easywsclient {
 
@@ -37,20 +38,15 @@ namespace easywsclient {
 		static pointer from_url_no_mask(const std::string& url, const std::string& origin = std::string());
 
 		// Interfaces:
-		virtual ~WebSocket() { }
+		virtual ~WebSocket() {}
 		virtual void poll(int timeout = 0) = 0; // timeout in milliseconds
 		virtual void send(const std::string& message) = 0;
 		virtual void sendPing() = 0;
 		virtual void close() = 0;
 		virtual readyStateValues getReadyState() const = 0;
-		template<class Callable>
-		void dispatch(Callable callable) { // N.B. this is compatible with both C++11 lambdas, functors and C function pointers
-			struct _Callback : public Callback {
-				Callable& callable;
-				_Callback(Callable& callable) : callable(callable) { }
-				void operator()(const std::string& message) { callable(message); }
-			};
-			_Callback callback(callable);
+
+		void dispatch(std::function<void(const std::string&)> callback) {
+
 			_dispatch(callback);
 		}
 
@@ -66,13 +62,9 @@ namespace easywsclient {
 		static void setMessageStream(FILE* stream) { messageStream = stream; }
 
 	protected:
-		struct Callback {
-			// Google change: add virtual destructor.
-			virtual ~Callback() {}
-			virtual void operator()(const std::string& message) = 0;
-		};
 		static FILE* messageStream;
-		virtual void _dispatch(Callback& callable) = 0;
+
+		virtual void _dispatch(std::function<void(const std::string&)>& callable) = 0;
 	};
 
 } // namespace easywsclient

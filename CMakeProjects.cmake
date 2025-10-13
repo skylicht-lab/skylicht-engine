@@ -27,6 +27,11 @@ if (BUILD_EXAMPLES AND BUILD_SKYLICHT_LIGHMAPPER)
 	endif()
 	
 	subdirs(Samples/HelloWorld)
+	
+	if (BUILD_SKYLICHT_NETWORK)
+	subdirs(Samples/HttpRequest)
+	endif()
+	
 	subdirs(Samples/Instancing)
 	
 	if (BUILD_SKYLICHT_AUDIO)
@@ -73,9 +78,9 @@ if (BUILD_EXAMPLES AND BUILD_SKYLICHT_LIGHMAPPER)
 		endif()
 		
 		subdirs(Samples/Shader)
-		
-		if (BUILD_SKYLICHT_NETWORK)
-		subdirs(Samples/SocketIO)
-		endif()
-	endif()	
+	endif()
+	
+	if (BUILD_SKYLICHT_NETWORK)
+	subdirs(Samples/SocketIO)
+	endif()
 endif()
