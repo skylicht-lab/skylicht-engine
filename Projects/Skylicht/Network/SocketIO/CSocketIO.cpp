@@ -32,17 +32,12 @@ namespace Skylicht
 
 		void handle_ws_message(const std::string& message, CSocketIO* io)
 		{
-			// std::string log = "[Websocket] raw message: ";
-			// log += message;
-			// os::Printer::log(log.c_str());
-
 			if (message.length() > 1)
 			{
 				if (message == "3probe")
 				{
 					// https://github.com/socketio/socket.io-protocol
 					// handshake socket.io 4 protocol
-
 					// now send message connect to socket io
 					io->getWebSocket()->send("40");
 				}
@@ -142,7 +137,7 @@ namespace Skylicht
 				}
 
 				char log[512];
-				sprintf(log, "[Websocket] response: %s", responseData);
+				sprintf(log, "[CSocketIO] response: %s", responseData);
 				os::Printer::log(log);
 
 				std::string sessionID;
@@ -174,7 +169,7 @@ namespace Skylicht
 				}
 				else if (responseCode == 400)
 				{
-					os::Printer::log("[Websocket] Error 400");
+					os::Printer::log("[CSocketIO] Error 400");
 					m_state = None;
 
 					if (OnConnectFailed != nullptr)
@@ -182,7 +177,7 @@ namespace Skylicht
 				}
 				else
 				{
-					os::Printer::log("[Websocket] Can't connect WS");
+					os::Printer::log("[CSocketIO] Can't connect WS");
 					m_state = None;
 
 					if (OnConnectFailed != nullptr)
@@ -210,7 +205,7 @@ namespace Skylicht
 
 		void CSocketIO::onMessage(const std::string& msg)
 		{
-			std::string log = "[Websocket] message: ";
+			std::string log = "[CSocketIO] message: ";
 			log += msg;
 			os::Printer::log(log.c_str());
 
@@ -220,7 +215,7 @@ namespace Skylicht
 
 		void CSocketIO::onMessageAsk(const std::string& msg, int id)
 		{
-			std::string log = "[Websocket] message: ";
+			std::string log = "[CSocketIO] message: ";
 			log += std::to_string(id);
 			log += ":";
 			log += msg;
@@ -243,7 +238,7 @@ namespace Skylicht
 
 				if (m_ws->isClosed())
 				{
-					os::Printer::log("[Websocket] closed");
+					os::Printer::log("[CSocketIO] closed");
 					m_state = Closed;
 					if (m_connected)
 					{
@@ -263,7 +258,7 @@ namespace Skylicht
 		void CSocketIO::init()
 		{
 			if (m_url.empty() == true)
-				os::Printer::log("[Websocket] Can not init WS with empty url\n");
+				os::Printer::log("[CSocketIO] Can not init WS with empty url\n");
 
 			// run http services
 			std::string httpURL = std::string("http://") + m_url + std::string("/socket.io/?transport=polling&EIO=4");
@@ -285,19 +280,20 @@ namespace Skylicht
 				delete m_ws;
 
 			m_ws = IWebsocket::create();
-			if (m_ws->connect(m_wsURL, m_wsOriginURL))
-			{
-				os::Printer::log("[CSocketIO] connected");
-				m_ws->send("2probe");
-				m_ws->send("5");
-			}
-			else
-			{
-				if (OnConnectFailed != nullptr)
-					OnConnectFailed();
-			}
 
-			return true;
+			m_ws->OnConnected = [&]()
+				{
+					m_ws->send("2probe");
+					m_ws->send("5");
+				};
+
+			m_ws->OnConnectFailed = [&]()
+				{
+					if (OnConnectFailed != nullptr)
+						OnConnectFailed();
+				};
+
+			return m_ws->connect(m_wsURL, m_wsOriginURL);
 		}
 
 		bool CSocketIO::isConnected()

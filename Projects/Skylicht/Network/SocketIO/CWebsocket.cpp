@@ -26,7 +26,20 @@ namespace Skylicht
 		bool CWebsocket::connect(const std::string& url, const std::string& origin)
 		{
 			m_ws = easywsclient::WebSocket::from_url(url.c_str(), origin.c_str());
-			return m_ws != NULL;
+
+			bool ret = m_ws != NULL;
+			if (ret)
+			{
+				if (OnConnected != nullptr)
+					OnConnected();
+			}
+			else
+			{
+				if (OnConnectFailed != nullptr)
+					OnConnectFailed();
+			}
+
+			return ret;
 		}
 
 		void CWebsocket::send(const std::string& message)

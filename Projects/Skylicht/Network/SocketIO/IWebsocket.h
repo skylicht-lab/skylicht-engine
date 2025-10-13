@@ -12,6 +12,10 @@ namespace Skylicht
 		class IWebsocket
 		{
 		public:
+			std::function<void()> OnConnected;
+			std::function<void()> OnConnectFailed;
+
+		public:
 			IWebsocket();
 
 			virtual ~IWebsocket();

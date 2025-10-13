@@ -68,15 +68,18 @@ namespace Skylicht
 
 		void CEmscriptenWebsocket::poll(int timeout)
 		{
-			// Event-driven trong browser; giữ API-compatible.
+
 		}
 
 		void CEmscriptenWebsocket::dispatch(std::function<void(const std::string&)> callable)
 		{
-			if (!callable) return;
+			if (!callable)
+				return;
+
 			while (!m_messages.empty())
 			{
 				std::string msg = std::move(m_messages.back());
+
 				m_messages.pop_back();
 				callable(msg);
 			}
@@ -95,6 +98,8 @@ namespace Skylicht
 			auto* self = reinterpret_cast<CEmscriptenWebsocket*>(userData);
 			self->m_open = true;
 			self->m_closed = false;
+			if (self->OnConnected != nullptr)
+				self->OnConnected();
 			return EM_TRUE;
 		}
 
@@ -104,6 +109,8 @@ namespace Skylicht
 			auto* self = reinterpret_cast<CEmscriptenWebsocket*>(userData);
 			self->m_closed = true;
 			self->m_open = false;
+			if (self->OnConnectFailed != nullptr)
+				self->OnConnectFailed();
 			return EM_TRUE;
 		}
 
@@ -118,14 +125,14 @@ namespace Skylicht
 
 		EM_BOOL CEmscriptenWebsocket::onMessage(int, const EmscriptenWebSocketMessageEvent* e, void* userData)
 		{
-			os::Printer::log("[Websocket] onMessage");
 			auto* self = reinterpret_cast<CEmscriptenWebsocket*>(userData);
-			if (!self) return EM_TRUE;
+			if (!self)
+				return EM_TRUE;
 
 			if (e->numBytes > 0 && e->data)
 			{
 				const char* data = reinterpret_cast<const char*>(e->data);
-				self->m_messages.emplace_back(std::string(data, data + e->numBytes));
+				self->m_messages.emplace_back(std::string(data));
 			}
 			return EM_TRUE;
 		}
