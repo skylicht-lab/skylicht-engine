@@ -2,6 +2,7 @@
 #include "IWebsocket.h"
 
 #ifdef __EMSCRIPTEN__
+#include "CEmscriptenWebsocket.h"
 #else
 #include "CWebsocket.h"
 #endif
@@ -13,7 +14,7 @@ namespace Skylicht
 		IWebsocket* IWebsocket::create()
 		{
 #ifdef __EMSCRIPTEN__
-			return NULL;
+			return new CEmscriptenWebsocket();
 #else
 			return new CWebsocket();
 #endif

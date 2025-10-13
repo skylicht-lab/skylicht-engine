@@ -103,14 +103,24 @@ namespace Skylicht
 		{
 			if (json)
 			{
-				// Serialize { "k":"v" } from m_post (skip entries marked as File)
+				// Serialize { 'k':'v' } from m_post (skip entries marked as File)
 				std::string out = "{";
 				bool first = true;
 				for (const auto& f : m_post)
 				{
-					if (f.File) continue; // not supported here
-					if (!first) out += ","; else first = false;
-					out += "\"" + escapeJson(f.Name) + "\":\"" + escapeJson(f.Value) + "\"";
+					if (f.File)
+						continue; // not supported here
+
+					if (!first)
+						out += ",";
+					else
+						first = false;
+
+					out += "\"";
+					out += escapeJson(f.Name);
+					out += "\":\"";
+					out += escapeJson(f.Value);
+					out += "\"";
 				}
 				out += "}";
 				return out;
@@ -187,14 +197,13 @@ namespace Skylicht
 			m_headerPtrs.clear();
 
 			// If sending a body, set proper content-type default unless user supplied one
-			std::string body;
 			if (!strcmp(method, "POST") || !strcmp(method, "PUT"))
 			{
-				body = buildBody(json);
-				if (!body.empty())
+				m_bodyBuffer = buildBody(json);
+				if (!m_bodyBuffer.empty())
 				{
-					attr.requestData = body.c_str();
-					attr.requestDataSize = (int)body.size();
+					attr.requestData = m_bodyBuffer.c_str();
+					attr.requestDataSize = (int)m_bodyBuffer.size();
 				}
 
 				bool hasCT = false;

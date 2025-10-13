@@ -78,9 +78,9 @@ if (BUILD_EXAMPLES AND BUILD_SKYLICHT_LIGHMAPPER)
 		endif()
 		
 		subdirs(Samples/Shader)
-		
-		if (BUILD_SKYLICHT_NETWORK)
-		subdirs(Samples/SocketIO)
-		endif()
-	endif()	
+	endif()
+	
+	if (BUILD_SKYLICHT_NETWORK)
+	subdirs(Samples/SocketIO)
+	endif()
 endif()

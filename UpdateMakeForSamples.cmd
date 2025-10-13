@@ -9,6 +9,7 @@ python Scripts\update_cmake.py SampleDrawPrimitives Samples\DrawPrimitives
 python Scripts\update_cmake.py SampleGraph Samples\Graph
 python Scripts\update_cmake.py SampleGUI Samples\GUI
 python Scripts\update_cmake.py SampleHelloWorld Samples\HelloWorld
+python Scripts\update_cmake.py SampleHttpRequest Samples\HttpRequest
 python Scripts\update_cmake.py SampleInstancing Samples\Instancing
 python Scripts\update_cmake.py SampleLightmap Samples\Lightmap
 python Scripts\update_cmake.py SampleLightmapping Samples\Lightmapping

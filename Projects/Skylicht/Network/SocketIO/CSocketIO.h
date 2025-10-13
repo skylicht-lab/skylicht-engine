@@ -2,8 +2,6 @@
 
 #include "pch.h"
 
-#ifndef __EMSCRIPTEN__
-
 #include "HttpRequest/IHttpRequest.h"
 #include "SocketIO/IWebsocket.h"
 #include <functional>
@@ -112,5 +110,3 @@ namespace Skylicht
 		};
 	}
 }
-
-#endif

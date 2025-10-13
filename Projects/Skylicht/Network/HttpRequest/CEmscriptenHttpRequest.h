@@ -77,6 +77,8 @@ namespace Skylicht
 			}
 
 		private:
+			std::string m_bodyBuffer;
+
 			bool m_isCancel;
 			bool m_isTimeOut;
 

@@ -1,7 +1,5 @@
 #include "pch.h"
 
-#ifndef __EMSCRIPTEN__
-
 #include "CSocketIO.h"
 #include "HttpRequest/CHttpStream.h"
 
@@ -289,6 +287,7 @@ namespace Skylicht
 			m_ws = IWebsocket::create();
 			if (m_ws->connect(m_wsURL, m_wsOriginURL))
 			{
+				os::Printer::log("[CSocketIO] connected");
 				m_ws->send("2probe");
 				m_ws->send("5");
 			}
@@ -386,5 +385,3 @@ namespace Skylicht
 		}
 	}
 }
-
-#endif

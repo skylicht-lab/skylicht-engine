@@ -350,12 +350,9 @@ endif()
 
 # Emscripten
 if (BUILD_EMSCRIPTEN)
-	message(STATUS "Setting build in data: ${CMAKE_CURRENT_BINARY_DIR}")
-	file(COPY "${SKYLICHT_ENGINE_BIN_DIR}/BuiltIn" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
-	
 	message(STATUS "Setting compilation target to WASM")
 	set(CMAKE_EXECUTABLE_SUFFIX ".wasm.html")
-	set_target_properties(SampleBoidSystemVAT PROPERTIES LINK_FLAGS "-s USE_SDL=2 -s USE_WEBGL2=1 -s FORCE_FILESYSTEM=1 -s FETCH=1 -s ALLOW_MEMORY_GROWTH=1 -s EXPORTED_FUNCTIONS=['_main','_main_resize'] -s EXPORTED_RUNTIME_METHODS=['ccall'] --preload-file ./BuiltIn --shell-file ${template_path}/Platforms/Emscripten/Shell/shell.html --disable-shared -s WASM=1 -s BINARYEN_METHOD='native-wasm'")
+	set_target_properties(SampleBoidSystemVAT PROPERTIES LINK_FLAGS "-s USE_SDL=2 -s USE_WEBGL2=1 -s FORCE_FILESYSTEM=1 -s FETCH=1 -s ALLOW_MEMORY_GROWTH=1 -s EXPORTED_FUNCTIONS=['_main','_main_resize'] -s EXPORTED_RUNTIME_METHODS=['ccall'] -lwebsocket.js --preload-file ${SKYLICHT_ENGINE_BIN_DIR}/BuiltIn@ --shell-file ${template_path}/Platforms/Emscripten/Shell/shell.html --disable-shared -s WASM=1 -s BINARYEN_METHOD='native-wasm'")
 	
 	set(project_name SampleBoidSystemVAT)
 	configure_file(${template_path}/Platforms/Emscripten/Index.html ${SKYLICHT_ENGINE_BIN_DIR}/Index.html)
