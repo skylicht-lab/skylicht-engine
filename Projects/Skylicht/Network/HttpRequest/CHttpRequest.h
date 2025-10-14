@@ -35,7 +35,6 @@ https://github.com/skylicht-lab/skylicht-engine
 
 // 100kb buffer download
 #define DOWNLOADBUFFER_SIZE 102400
-#define HASHSTRING_SIZE	35
 
 namespace Skylicht
 {
@@ -60,9 +59,6 @@ namespace Skylicht
 
 			unsigned char* m_downloadBuffer;
 			unsigned long m_sizeBuffer;
-
-			void* m_md5Context;
-			char m_hashString[HASHSTRING_SIZE];
 
 			unsigned long m_requestTime;
 			unsigned long m_time;
@@ -140,11 +136,6 @@ namespace Skylicht
 			virtual bool isCancel()
 			{
 				return m_cancel;
-			}
-
-			inline const char* getCurrentHashString()
-			{
-				return m_hashString;
 			}
 
 			inline long getCurrentTimeOut()

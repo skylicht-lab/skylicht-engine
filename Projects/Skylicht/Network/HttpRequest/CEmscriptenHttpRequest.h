@@ -52,10 +52,6 @@ namespace Skylicht
 
 			std::string buildBody(bool json);
 
-			static std::string escapeJson(const std::string& s);
-
-			static std::string urlEncode(const std::string& s);
-
 			void startFetch(const char* method, bool json);
 
 			static void OnSuccess(emscripten_fetch_t* fetch);

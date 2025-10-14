@@ -133,9 +133,6 @@ namespace Skylicht
 
 			// timeout is 15s
 			m_requestTimeOut = 15000;
-
-			m_md5Context = new MD5_CTX();
-			memset(m_hashString, 0, 32);
 		}
 
 		CHttpRequest::~CHttpRequest()
@@ -160,7 +157,6 @@ namespace Skylicht
 			}
 
 			curl_easy_cleanup(m_curl);
-			delete m_md5Context;
 		}
 
 		void CHttpRequest::sendRequest()
@@ -182,10 +178,6 @@ namespace Skylicht
 			m_currentTime = m_requestTime;
 
 			m_dataStream->reset();
-
-			// calc hash data revc
-			memset(m_hashString, 0, HASHSTRING_SIZE);
-			md5_init((MD5_CTX*)m_md5Context);
 
 			if (m_requestType == Post)
 				sendRequestByPost();
@@ -274,10 +266,6 @@ namespace Skylicht
 			m_time = m_requestTime;
 			m_revcTime = m_requestTime;
 			m_currentTime = m_requestTime;
-
-			// calc hash data revc
-			memset(m_hashString, 0, HASHSTRING_SIZE);
-			md5_init((MD5_CTX*)m_md5Context);
 		}
 
 		void CHttpRequest::sendRequestByDelete()
@@ -325,7 +313,6 @@ namespace Skylicht
 
 				if (pForm.File == false)
 				{
-					// form
 					curl_formadd
 					(
 						(curl_httppost**)&m_formpost, (curl_httppost**)&m_lastptr,
@@ -333,17 +320,6 @@ namespace Skylicht
 						CURLFORM_COPYCONTENTS, pForm.Value.c_str(),
 						CURLFORM_END
 					);
-
-					if (m_postField.empty())
-						m_postField = "{";
-					else
-						m_postField += ",";
-
-					m_postField += "\"";
-					m_postField += pForm.Name;
-					m_postField += "\":\"";
-					m_postField += pForm.Value;
-					m_postField += "\"";
 				}
 				else
 				{
@@ -360,9 +336,6 @@ namespace Skylicht
 
 				i++;
 			}
-
-			if (m_postField.empty() == false)
-				m_postField += "}";
 
 			m_sendRequest = true;
 
@@ -416,7 +389,7 @@ namespace Skylicht
 						m_postField += ",";
 					}
 
-					sprintf(format, "\"%s\":\"%s\"", pForm.Name.c_str(), pForm.Value.c_str());
+					sprintf(format, "\"%s\":\"%s\"", escapeJson(pForm.Name).c_str(), escapeJson(pForm.Value).c_str());
 					m_postField += format;
 
 					first = false;
@@ -492,10 +465,7 @@ namespace Skylicht
 		bool CHttpRequest::checkTimeOut()
 		{
 			if (getCurrentTimeOut() > getTimeOut())
-			{
-				m_hashString[0] = 0;
 				return false;
-			}
 			return true;
 		}
 
@@ -592,9 +562,6 @@ namespace Skylicht
 			{
 				m_downloadBuffer[m_sizeBuffer] = 0;
 
-				// update hash
-				md5_update((MD5_CTX*)m_md5Context, m_downloadBuffer, m_sizeBuffer);
-
 				// write file
 				if (m_dataStream)
 				{
@@ -604,30 +571,6 @@ namespace Skylicht
 
 				m_sizeBuffer = 0;
 			}
-
-			// calc hash
-			memset(m_hashString, 0, HASHSTRING_SIZE);
-			unsigned char digest[16]; // 16*8 = 128bit
-			md5_final((MD5_CTX*)m_md5Context, digest);
-
-			// get hash string
-			for (int i = 0; i < 16; ++i)
-			{
-				unsigned char nChar = digest[i];
-				char& hex1 = m_hashString[i << 1];
-				char& hex2 = m_hashString[(i << 1) + 1];
-				hex1 = (nChar & 0xF0) >> 4;
-				hex2 = (nChar & 0x0F);
-
-				if (0 <= hex1 && hex1 <= 9) hex1 += '0';    //0 => 48 inascii
-				if (10 <= hex1 && hex1 <= 15) hex1 += 'A' - 10; //A => 65 inascii
-				if (0 <= hex2 && hex2 <= 9) hex2 += '0';
-				if (10 <= hex2 && hex2 <= 15) hex2 += 'A' - 10;
-			}
-			m_hashString[32] = 0;
-
-			for (int i = 0; i < HASHSTRING_SIZE; i++)
-				m_hashString[i] = tolower(m_hashString[i]);
 
 			return true;
 		}
@@ -640,10 +583,6 @@ namespace Skylicht
 
 			if (m_sizeBuffer + size > DOWNLOADBUFFER_SIZE)
 			{
-				// update hash
-				md5_update((MD5_CTX*)m_md5Context, m_downloadBuffer, m_sizeBuffer);
-
-				// flush
 				if (m_dataStream)
 					m_dataStream->write((void*)m_downloadBuffer, (unsigned int)m_sizeBuffer);
 

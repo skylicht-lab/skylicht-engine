@@ -103,7 +103,7 @@ namespace Skylicht
 		{
 			if (json)
 			{
-				// Serialize { 'k':'v' } from m_post (skip entries marked as File)
+				// Serialize { "k":"v" } from m_post (skip entries marked as File)
 				std::string out = "{";
 				bool first = true;
 				for (const auto& f : m_post)
@@ -132,52 +132,18 @@ namespace Skylicht
 				for (size_t i = 0; i < m_post.size(); ++i)
 				{
 					const auto& f = m_post[i];
-					if (f.File) continue; // TODO: multipart/form-data
-					if (!out.empty()) out += '&';
+					if (f.File)
+						continue; // TODO: multipart/form-data
+
+					if (!out.empty())
+						out += '&';
+
 					out += urlEncode(f.Name);
 					out += '=';
 					out += urlEncode(f.Value);
 				}
 				return out;
 			}
-		}
-
-		std::string CEmscriptenHttpRequest::escapeJson(const std::string& s)
-		{
-			std::string o; o.reserve(s.size());
-			for (char c : s)
-			{
-				switch (c)
-				{
-				case '\\': o += "\\\\"; break;
-				case '"':  o += "\\\""; break;
-				case '\n': o += "\\n"; break;
-				case '\r': o += "\\r"; break;
-				case '\t': o += "\\t"; break;
-				default:    o += c; break;
-				}
-			}
-			return o;
-		}
-
-		std::string CEmscriptenHttpRequest::urlEncode(const std::string& s)
-		{
-			// Minimal percent-encoder for web builds (covers space and a-zA-Z0-9-_.* ~)
-			static auto isUnreserved = [](unsigned char ch) {
-				return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') || ch == '-' || ch == '_' || ch == '.' || ch == '*' || ch == '~';
-				};
-			std::string out; out.reserve(s.size() * 3);
-			for (unsigned char ch : s)
-			{
-				if (isUnreserved(ch)) out += (char)ch;
-				else if (ch == ' ') out += '+'; // classic form encoding
-				else {
-					char buf[4];
-					snprintf(buf, sizeof(buf), "%02X", ch);
-					out += '%'; out += buf;
-				}
-			}
-			return out;
 		}
 
 		void CEmscriptenHttpRequest::startFetch(const char* method, bool json)

@@ -81,5 +81,43 @@ namespace Skylicht
 			form.Value = value;
 			form.File = true;
 		}
+
+		std::string IHttpRequest::escapeJson(const std::string& s)
+		{
+			std::string o; o.reserve(s.size());
+			for (char c : s)
+			{
+				switch (c)
+				{
+				case '\\': o += "\\\\"; break;
+				case '"':  o += "\\\""; break;
+				case '\n': o += "\\n"; break;
+				case '\r': o += "\\r"; break;
+				case '\t': o += "\\t"; break;
+				default:    o += c; break;
+				}
+			}
+			return o;
+		}
+
+		std::string IHttpRequest::urlEncode(const std::string& s)
+		{
+			// Minimal percent-encoder for web builds (covers space and a-zA-Z0-9-_.* ~)
+			static auto isUnreserved = [](unsigned char ch) {
+				return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') || ch == '-' || ch == '_' || ch == '.' || ch == '*' || ch == '~';
+				};
+			std::string out; out.reserve(s.size() * 3);
+			for (unsigned char ch : s)
+			{
+				if (isUnreserved(ch)) out += (char)ch;
+				else if (ch == ' ') out += '+'; // classic form encoding
+				else {
+					char buf[4];
+					snprintf(buf, sizeof(buf), "%02X", ch);
+					out += '%'; out += buf;
+				}
+			}
+			return out;
+		}
 	}
 }

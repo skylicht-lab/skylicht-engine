@@ -28,7 +28,6 @@
 		//var spinnerElement = document.getElementById('spinner');
 
 		var Module = {
-			noInitialRun: true,
 			preRun: [],
 			postRun: [],
 			print: (function () {
@@ -88,7 +87,8 @@
 			monitorRunDependencies: function (left) {
 				this.totalDependencies = Math.max(this.totalDependencies, left);
 				Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies - left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
-			}
+			},
+			arguments: [String(canvas.width), String(canvas.height)]
 		};
 
 		Module.setStatus('Downloading...');
@@ -102,12 +102,6 @@
 	</script>
 	<script src='@project_name@.wasm.js'></script>
 	<script type='text/javascript'>
-		// add params to C wasm and run function main(argc, argv)
-		arguments_.push(canvas.width.toString());
-		arguments_.push(canvas.height.toString());
-		shouldRunNow = true;
-		run();
-
 		// event window resize
 		window.addEventListener("resize", onResize);
 		function onResize() {

@@ -72,6 +72,7 @@ namespace Skylicht
 			void* m_userData;
 
 			std::vector<std::string> m_headers;
+
 		public:
 			IHttpRequest(IHttpStream* stream);
 
@@ -171,6 +172,10 @@ namespace Skylicht
 				m_downloading = downLoad;
 				m_total = total;
 			}
+
+			static std::string escapeJson(const std::string& s);
+
+			static std::string urlEncode(const std::string& s);
 		};
 	}
 }
