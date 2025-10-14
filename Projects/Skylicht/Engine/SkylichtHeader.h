@@ -79,6 +79,11 @@ using namespace irr::video;
 #include <fstream>
 #include <string>
 
+#ifdef ANDROID
+#include <android/log.h>
+#include <jni.h>
+#endif
+
 namespace Skylicht
 {
 	/**
@@ -142,4 +147,34 @@ namespace Skylicht
 	 * @return The time scale value.
 	 */
 	extern float getTimeScale();
+
+#ifdef ANDROID
+	/*
+	* @brief Get the JNI environment for Android platform.
+	*
+	* @return Pointer to the JNIEnv instance.
+	*/
+	extern JNIEnv* getJniEnv();
+
+	/*
+	* @brief Set the JNI environment for Android platform.
+	*
+	* @param env Pointer to the JNIEnv instance.
+	*/
+	extern void setJniEnv(JNIEnv* env);
+
+	/*
+	* @brief Get the main activity object for Android platform.
+	*
+	* @return The jobject representing the main activity.
+	*/
+	extern jobject getMainActivity();
+
+	/*
+	* @brief Set the main activity object for Android platform.
+	*
+	* @param activity The jobject representing the main activity.
+	*/
+	extern void setMainActivity(jobject activity);
+#endif
 }

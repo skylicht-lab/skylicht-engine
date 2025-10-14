@@ -24,12 +24,14 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #ifdef ANDROID
 #include <android/log.h>
+#include <jni.h>
 
 #include "stdafx.h"
 #include "CApplication.h"
 #include "JavaClassDefined.h"
 
 #include "BuildConfig/CBuildConfig.h"
+#include "SkylichtHeader.h"
 
 void installApplication(const std::vector<std::string>& argv);
 
@@ -44,6 +46,16 @@ extern "C" {
 
 	int g_width = -1;
 	int g_height = -1;
+
+	void applicationSetJniEnv(JNIEnv* jni)
+	{
+		setJniEnv(jni);
+	}
+	
+	void applicationSetMainActivity(jobject activity)
+	{
+		setMainActivity(activity);
+	}
 
 	void applicationExitApp();
 
@@ -257,6 +269,6 @@ extern "C" {
 		CBuildConfig::getInstance()->Factory = manu;
 		CBuildConfig::getInstance()->Model = model;
 		CBuildConfig::getInstance()->OSVersion = os;
-	}	
+	}
 }
 #endif

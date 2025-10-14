@@ -225,4 +225,30 @@ namespace Skylicht
 	{
 		return g_timescale;
 	}
+
+#ifdef ANDROID
+	jobject g_androidActivity = NULL;
+
+	JNIEnv* g_androidJni = NULL;
+
+	JNIEnv* getJniEnv()
+	{
+		return g_androidJni;
+	}
+
+	jobject getMainActivity()
+	{
+		return g_androidActivity;
+	}
+
+	void setJniEnv(JNIEnv* env)
+	{
+		g_androidJni = env;
+	}
+
+	void setMainActivity(jobject activity)
+	{
+		g_androidActivity = activity;
+	}
+#endif
 }

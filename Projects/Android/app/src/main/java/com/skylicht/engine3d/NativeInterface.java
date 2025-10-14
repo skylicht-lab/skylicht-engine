@@ -1,5 +1,7 @@
 package com.skylicht.engine3d;
 
+import android.app.Activity;
+
 public class NativeInterface {
     public static NativeInterface sInstance = null;
 
@@ -49,6 +51,8 @@ public class NativeInterface {
 
     public native boolean onBack();
 
+    public native void setMainActivity(Activity act);
+
     public static void systemGC() {
         System.gc();
     }
@@ -66,6 +70,6 @@ public class NativeInterface {
     }
 
     static {
-        System.loadLibrary("MechTest");
+        System.loadLibrary("SampleSkinnedMesh");
     }
 }

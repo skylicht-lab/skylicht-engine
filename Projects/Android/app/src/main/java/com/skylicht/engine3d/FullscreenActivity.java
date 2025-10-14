@@ -97,6 +97,8 @@ public class FullscreenActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        NativeInterface.getInstance().setMainActivity(this);
+
         // asset pack manager
         mAssetPackManager = AssetPackManagerFactory.getInstance(getApplicationContext());
 
