@@ -359,7 +359,10 @@ namespace Skylicht
 				visits.clear();
 				std::vector<CGUIElement*>& childs = gui->getChilds();
 				for (CGUIElement* e : childs)
-					visits.push_back(e);
+				{
+					if (e->isVisible())
+						visits.push_back(e);
+				}
 			}
 		}
 

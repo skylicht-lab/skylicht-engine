@@ -4,6 +4,10 @@ precision highp float;
 precision mediump float;
 #endif
 
+#if defined(SHADOW) || defined(LM)
+precision highp sampler2DArray;
+#endif
+
 #ifndef NO_TEXTURE
 uniform sampler2D uTexAlbedo;
 #ifndef NO_NORMAL_MAP
