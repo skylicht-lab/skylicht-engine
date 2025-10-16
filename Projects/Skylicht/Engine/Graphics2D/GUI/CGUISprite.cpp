@@ -80,8 +80,6 @@ namespace Skylicht
 
 				setRotation(rot);
 				m_animationTime = m_frameSpeed;
-
-				setAlignCenterModule();
 			}
 		}
 	}

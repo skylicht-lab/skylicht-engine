@@ -7,4 +7,6 @@
     <string name="permission_denied">Permission denied</string>
     <string name="write_permission_denied">You have denied to read/write on storage.\nSo, the game will stop.</string>
     <string name="change">Change</string>
+    <string name="app_id" translatable="false">your_appid</string>
+    <string name="pgs_server_client_id" translatable="false">your_web_client_id.apps.googleusercontent.com</string>
 </resources>
