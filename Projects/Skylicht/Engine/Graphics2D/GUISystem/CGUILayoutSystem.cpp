@@ -59,7 +59,10 @@ namespace Skylicht
 			CGUILayoutData* l = GET_ENTITY_DATA(e, CGUILayoutData);
 
 			if (t->HasChanged || (w->Parent && w->Parent->HasChanged))
+			{
 				w->HasChanged = true;
+				t->HasChanged = false;
+			}
 
 			if (l)
 			{
@@ -151,8 +154,10 @@ namespace Skylicht
 			CGUILayoutData* l = parentLayouts[i];
 			CGUITransformData* t = GET_ENTITY_DATA(l->Entity, CGUITransformData);
 
-			l->ChildsWidth = l->ChildsWidth - l->Spacing;
-			l->ChildsHeight = l->ChildsHeight - l->Spacing;
+			if (l->AlignType == CGUILayoutData::Horizontal || l->AlignType == CGUILayoutData::HorizontalRight)
+				l->ChildsWidth = l->ChildsWidth - l->Spacing;
+			if (l->AlignType == CGUILayoutData::Vertical || l->AlignType == CGUILayoutData::VerticalBottom)
+				l->ChildsHeight = l->ChildsHeight - l->Spacing;
 
 			float w = t->getRect().getWidth();
 			float h = t->getRect().getHeight();
@@ -443,7 +448,6 @@ namespace Skylicht
 				}
 
 				// notify transform updated
-				t->HasChanged = false;
 				w->HasChanged = false;
 			}
 		}

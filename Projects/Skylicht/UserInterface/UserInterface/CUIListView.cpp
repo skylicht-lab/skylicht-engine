@@ -81,6 +81,22 @@ namespace Skylicht
 			return NULL;
 		}
 
+		CGUIElement* CUIListView::addItem(CObjectSerializable* data)
+		{
+			CGUIElement* item = CGUIImporter::importGUI(m_element->getCanvas(), m_element, data);
+			item->setMask(m_mask);
+			m_items.push_back(item);
+			return item;
+		}
+
+		void CUIListView::enableMask(bool b)
+		{
+			if (m_mask)
+			{
+				m_mask->setVisible(b);
+			}
+		}
+
 		bool CUIListView::removeItem(CGUIElement* item)
 		{
 			auto i = m_items.begin(), end = m_items.end();

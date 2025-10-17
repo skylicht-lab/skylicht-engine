@@ -208,7 +208,7 @@ namespace Skylicht
 				entity->applyCurrentMask(parentMask);
 
 			CGUIMask* mask = entity->getCurrentMask();
-			if (mask != NULL)
+			if (mask != NULL && mask->isVisible())
 			{
 				if (m_currentMask != mask)
 				{
@@ -226,7 +226,7 @@ namespace Skylicht
 			// update render order for UI Hitest
 			entity->m_renderOrder = renderOrder++;
 
-			if (mask != NULL)
+			if (mask != NULL && mask->isVisible())
 				mask->endMaskTest();
 
 			// we use stack to render parent -> child

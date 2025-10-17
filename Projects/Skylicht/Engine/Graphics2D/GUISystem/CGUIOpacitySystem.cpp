@@ -95,17 +95,15 @@ namespace Skylicht
 		{
 			CGUIRenderData* r = renderData[i];
 
-			if (r->AffectOpacityInChild)
-			{
-				r->m_opacity = r->Color.getAlpha() / 255.0f;
-			}
-			else
-			{
-				CWorldTransformData* w = transformData[i];
+			CWorldTransformData* w = transformData[i];
 
-				CGUIRenderData* parentData = GET_ENTITY_DATA(w->Parent->Entity, CGUIRenderData);
-				r->m_opacity = parentData->m_opacity;
-			}
+			// get parent opacity
+			CGUIRenderData* parentData = GET_ENTITY_DATA(w->Parent->Entity, CGUIRenderData);
+			r->m_opacity = parentData->m_opacity;
+
+			// apply own opacity
+			if (r->AffectOpacityInChild)
+				r->m_opacity = r->m_opacity * r->Color.getAlpha() / 255.0f;
 		}
 	}
 }

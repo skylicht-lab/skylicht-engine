@@ -61,6 +61,10 @@ namespace Skylicht
 
 			CGUIElement* addItem();
 
+			CGUIElement* addItem(CObjectSerializable* data);
+
+			void enableMask(bool b);
+
 			bool removeItem(CGUIElement* item);
 
 			void clear();
