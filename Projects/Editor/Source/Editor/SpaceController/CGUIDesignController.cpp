@@ -414,15 +414,17 @@ namespace Skylicht
 					"SampleGUI/!Sprites/checkbox.png");
 				background->setAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
 
-				r.LowerRightCorner.X = 24.0f;
-				r.LowerRightCorner.Y = 24.0f;
+				r.UpperLeftCorner.X = -12.0f;
+				r.UpperLeftCorner.Y = -12.0f;
+				r.LowerRightCorner.X = 12.0f;
+				r.LowerRightCorner.Y = 12.0f;
 				CGUISprite* checked = parentNode->getCanvas()->createSprite(newNode, r, NULL);
 				checked->setName(L"Checked");
 				checked->setFrameSource(
 					"SampleGUI/SampleGUI.spritedata",
 					"checkbox-center",
 					"SampleGUI/!Sprites/checkbox-center.png");
-				checked->setAlignCenterModule();
+				checked->setStretch(true);
 				checked->setPosition(core::vector3df(32.0f, 32.0f, 0.0f));
 			}
 			else if (command == L"UI Switch")

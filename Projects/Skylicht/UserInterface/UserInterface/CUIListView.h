@@ -104,6 +104,22 @@ namespace Skylicht
 				return m_itemSpacing;
 			}
 
+			inline float getOffset()
+			{
+				return m_offset;
+			}
+
+			inline void setOffset(float offset)
+			{
+				m_speed = 0.0f;
+				m_offset = offset;
+			}
+
+			inline float getMaxOffset()
+			{
+				return m_maxOffset;
+			}
+
 		protected:
 
 			virtual void updateLimitOffset();

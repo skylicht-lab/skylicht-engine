@@ -98,6 +98,8 @@ namespace Skylicht
 								updateDrag();
 						};
 				}
+
+				setValue(0.5f, false);
 			}
 		}
 
