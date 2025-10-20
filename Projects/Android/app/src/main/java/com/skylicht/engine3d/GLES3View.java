@@ -44,19 +44,23 @@ public class GLES3View extends GLSurfaceView {
 
             NativeInterface.getInstance().mainTouchUp(event.getPointerId(i), touchX, touchY);
         } else if (actionCode == MotionEvent.ACTION_DOWN) {
-            // only 1 touch
-            int i = 0;
+            int i = event.getActionIndex();
+
             int touchX = (int) (event.getX(i) * GameInstance.ScreenScale);
             int touchY = (int) (event.getY(i) * GameInstance.ScreenScale);
 
             NativeInterface.getInstance().mainTouchDown(event.getPointerId(i), touchX, touchY);
+
+            setPressed(true);
         } else if (actionCode == MotionEvent.ACTION_UP) {
-            // only 1 touch
-            int i = 0;
+            int i = event.getActionIndex();
+
             int touchX = (int) (event.getX(i) * GameInstance.ScreenScale);
             int touchY = (int) (event.getY(i) * GameInstance.ScreenScale);
 
             NativeInterface.getInstance().mainTouchUp(event.getPointerId(i), touchX, touchY);
+
+            setPressed(false);
         } else if (actionCode == MotionEvent.ACTION_CANCEL) {
             int numPointer = event.getPointerCount();
             for (int i = 0; i < numPointer; i++) {
@@ -65,6 +69,7 @@ public class GLES3View extends GLSurfaceView {
 
                 NativeInterface.getInstance().mainTouchUp(event.getPointerId(i), touchX, touchY);
             }
+            setPressed(false);
         } else if (actionCode == MotionEvent.ACTION_MOVE) {
             int numPointer = event.getPointerCount();
             for (int i = 0; i < numPointer; i++) {
