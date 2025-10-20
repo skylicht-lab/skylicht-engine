@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CTextBillboardManager.h"
 
+#include "TextureManager/CTextureManager.h"
 #include "Graphics2D/SpriteFrame/CSpriteFont.h"
 #include "Utils/CStringImp.h"
 
@@ -177,8 +178,15 @@ namespace Skylicht
 	{
 		if (!m_defaultFont)
 		{
+			CTextureManager* textureMgr = CTextureManager::getInstance();
+			std::string lastPackage = textureMgr->getCurrentPackage();
+
+			textureMgr->setCurrentPackage(textureMgr->getGlobalName());
+
 			CSpriteFont* spriteFont = new CSpriteFont();
 			spriteFont->loadFont("BuiltIn/Fonts/droidsans-18.fnt");
+
+			textureMgr->setCurrentPackage(lastPackage.c_str());
 
 			m_defaultFont = spriteFont;
 		}
