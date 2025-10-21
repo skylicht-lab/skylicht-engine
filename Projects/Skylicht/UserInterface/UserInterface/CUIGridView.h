@@ -31,6 +31,26 @@ namespace Skylicht
 {
 	namespace UI
 	{
+		/**
+		* @brief Grid view control (list view with multi-column layout).
+		*
+		* @ingroup UI
+		* 
+		* `CUIGridView` extends `CUIListView` to arrange items in a two-dimensional
+		* grid instead of a single row/column. Items are positioned using horizontal
+		* and vertical spacing values; scrolling and input behavior are inherited
+		* from `CUIListView`.
+		*
+		* The class overrides the limit and layout update hooks:
+		* - `updateLimitOffset()` recalculates maximum scroll offset for a grid.
+		* - `updateItemPosition()` places items into rows and columns using the
+		*   configured spacing.
+		*
+		* @note `CUIGridView` reuses the `m_baseItem` template from `CUIListView`
+		*       to create each grid cell.
+		*
+		* @see CUIListView
+		*/
 		class CUIGridView : public CUIListView
 		{
 		protected:
@@ -38,6 +58,15 @@ namespace Skylicht
 			float m_itemSpacingY;
 
 		public:
+			/**
+			* @brief Create a grid view.
+			* @param container Parent `CUIContainer` that owns this control.
+			* @param element Root `CGUIElement` node for the grid view.
+			* @param baseItem Template `CGUIElement` used to instantiate grid cells.
+			*
+			* The `baseItem` is duplicated/cloned to create each grid entry (same
+			* behaviour as `CUIListView`).
+			*/
 			CUIGridView(CUIContainer* container, CGUIElement* element, CGUIElement* baseItem);
 
 			virtual ~CUIGridView();
@@ -46,6 +75,13 @@ namespace Skylicht
 
 			virtual void updateItemPosition();
 
+			/**
+			* @brief Set spacing between items on X and Y axes.
+			* @param x Horizontal spacing (pixels / world units).
+			* @param y Vertical spacing (pixels / world units).
+			*
+			* This affects how `updateItemPosition()` arranges items in the grid.
+			*/
 			inline void setItemSpacing(float x, float y)
 			{
 				m_itemSpacingX = x;

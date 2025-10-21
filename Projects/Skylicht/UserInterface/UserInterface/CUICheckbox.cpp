@@ -46,6 +46,17 @@ namespace Skylicht
 			}
 		}
 
+		CUICheckbox::CUICheckbox(CUIContainer* container, CGUIElement* element, CGUIElement* bg, CGUIElement* checked) :
+			CUIBase(container, element),
+			m_background(bg),
+			m_checked(checked),
+			m_toggleStatus(false),
+			m_tween(NULL)
+		{
+			if (m_checked)
+				m_checked->setVisible(false);
+		}
+
 		CUICheckbox::~CUICheckbox()
 		{
 			stopTween();

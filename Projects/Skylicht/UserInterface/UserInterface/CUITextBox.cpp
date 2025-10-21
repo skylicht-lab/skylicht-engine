@@ -48,6 +48,17 @@ namespace Skylicht
 			}
 		}
 
+		CUITextBox::CUITextBox(CUIContainer* container, CGUIElement* element, CGUIElement* background, CGUIText* text) :
+			CUIBase(container, element),
+			m_background(background),
+			m_text(text),
+			m_editable(true),
+			m_maxLength(64)
+		{
+			if (m_text)
+				m_text->setEnableTextFormnat(false);
+		}
+
 		CUITextBox::~CUITextBox()
 		{
 

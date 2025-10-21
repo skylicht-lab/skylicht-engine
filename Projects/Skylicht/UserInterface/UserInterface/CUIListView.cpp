@@ -71,7 +71,7 @@ namespace Skylicht
 
 		CGUIElement* CUIListView::addItem()
 		{
-			if (m_itemSerializable)
+			if (m_element && m_itemSerializable)
 			{
 				CGUIElement* item = CGUIImporter::importGUI(m_element->getCanvas(), m_element, m_itemSerializable);
 				item->setMask(m_mask);
@@ -83,10 +83,14 @@ namespace Skylicht
 
 		CGUIElement* CUIListView::addItem(CObjectSerializable* data)
 		{
-			CGUIElement* item = CGUIImporter::importGUI(m_element->getCanvas(), m_element, data);
-			item->setMask(m_mask);
-			m_items.push_back(item);
-			return item;
+			if (m_element)
+			{
+				CGUIElement* item = CGUIImporter::importGUI(m_element->getCanvas(), m_element, data);
+				item->setMask(m_mask);
+				m_items.push_back(item);
+				return item;
+			}
+			return NULL;
 		}
 
 		void CUIListView::enableMask(bool b)
@@ -139,6 +143,11 @@ namespace Skylicht
 			CUIBase::onPointerDown(pointerX, pointerY);
 
 			CUIEventManager::getInstance()->setCapture(this);
+
+			m_lastPointerX = pointerX;
+			m_lastPointerY = pointerY;
+			m_pointerX = pointerX;
+			m_pointerY = pointerY;
 		}
 
 		void CUIListView::onPointerUp(float pointerX, float pointerY)

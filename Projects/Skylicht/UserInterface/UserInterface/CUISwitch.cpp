@@ -56,6 +56,26 @@ namespace Skylicht
 			}
 		}
 
+		CUISwitch::CUISwitch(CUIContainer* container, CGUIElement* element, CGUIElement* bg, CGUIElement* handle, CGUIElement* on) :
+			CUIBase(container, element),
+			m_background(bg),
+			m_handle(handle),
+			m_on(on),
+			m_toggleStatus(false),
+			m_tween(NULL),
+			m_onColor(255, 255, 255, 255),
+			m_offColor(255, 255, 255, 255)
+		{
+			if (m_handle)
+				m_offPosition = m_handle->getPosition();
+
+			if (m_on)
+			{
+				m_onPosition = m_on->getPosition();
+				m_on->setVisible(false);
+			}
+		}
+
 		CUISwitch::~CUISwitch()
 		{
 			stopTween();

@@ -52,6 +52,27 @@ namespace Skylicht
 			}
 		}
 
+		CUIProgressBar::CUIProgressBar(CUIContainer* container, CGUIElement* element, CGUIElement* bg, CGUIElement* loading) :
+			CUIBase(container, element),
+			m_background(bg),
+			m_loading(loading),
+			m_mask(NULL)
+		{
+			if (m_element)
+			{
+				CCanvas* canvas = getCanvas();
+
+				const core::rectf& r = m_element->getRect();
+				m_mask = m_element->getCanvas()->createMask(m_element, core::rectf(0.0f, 0.0f, r.getWidth(), r.getHeight()));
+
+				if (m_background)
+					element->bringToNext(m_mask, m_background, true);
+
+				if (m_loading)
+					m_loading->setMask(m_mask);
+			}
+		}
+
 		CUIProgressBar::~CUIProgressBar()
 		{
 
@@ -59,6 +80,7 @@ namespace Skylicht
 
 		void CUIProgressBar::setPercent(float f)
 		{
+			f = core::clamp(f, 0.0f, 1.0f);
 			core::rectf maskRect = m_element->getRect();
 			maskRect.LowerRightCorner.Y = maskRect.getHeight();
 			maskRect.LowerRightCorner.X = maskRect.getWidth() * f;

@@ -109,6 +109,11 @@ namespace irr
 * @brief Helper objects used to **draw overlays** on the scene for debugging purposes.
 */
 
+/**
+* @defgroup UI User Interface
+* @brief This is a support group for working with interactive user interfaces such as buttons, checkboxes, textboxes, etc...
+*/
+
 /*! \mainpage Skylicht-Engine API documentation
  *
  * \section intro Introduction

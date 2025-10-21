@@ -45,14 +45,38 @@ namespace Skylicht
 			if (m_element)
 			{
 				CCanvas* canvas = getCanvas();
-				m_background = canvas->getGUIByPath(element, "Background");
-				m_fillBar = canvas->getGUIByPath(element, "FillBar");
-				m_handle = canvas->getGUIByPath(element, "Handle");
+				m_background = canvas->getGUIByPath(m_element, "Background");
+				m_fillBar = canvas->getGUIByPath(m_element, "FillBar");
+				m_handle = canvas->getGUIByPath(m_element, "Handle");
+
+				init();
+			}
+		}
+
+		CUISlider::CUISlider(CUIContainer* container, CGUIElement* element, CGUIElement* bg, CGUIElement* fillbar, CGUIElement* handle) :
+			CUIBase(container, element),
+			m_background(bg),
+			m_fillBar(fillbar),
+			m_handle(handle),
+			m_mask(NULL),
+			m_buttonHander(NULL),
+			m_bgHander(NULL),
+			m_value(1.0f),
+			m_handleWidth(0.0f)
+		{
+			init();
+		}
+
+		void CUISlider::init()
+		{
+			if (m_element)
+			{
+				CCanvas* canvas = getCanvas();
 
 				m_mask = canvas->createMask(m_element, m_element->getRect());
 
 				if (m_background)
-					element->bringToNext(m_mask, m_background, true);
+					m_element->bringToNext(m_mask, m_background, true);
 
 				if (m_fillBar)
 					m_fillBar->setMask(m_mask);
@@ -61,7 +85,7 @@ namespace Skylicht
 				{
 					m_handleWidth = m_handle->getWidth();
 
-					m_buttonHander = new UI::CUIBase(container, m_handle);
+					m_buttonHander = new UI::CUIBase(m_container, m_handle);
 					m_buttonHander->OnPointerDown = [&](float pointerX, float pointerY)
 						{
 							CUIEventManager::getInstance()->setCapture(m_buttonHander);
@@ -78,7 +102,7 @@ namespace Skylicht
 								updateDrag();
 						};
 
-					m_bgHander = new UI::CUIBase(container, m_background);
+					m_bgHander = new UI::CUIBase(m_container, m_background);
 					m_bgHander->OnPointerDown = [&](float pointerX, float pointerY)
 						{
 							CUIEventManager::getInstance()->setCapture(m_bgHander);

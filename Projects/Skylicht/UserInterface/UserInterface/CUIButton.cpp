@@ -44,6 +44,16 @@ namespace Skylicht
 			}
 		}
 
+		CUIButton::CUIButton(CUIContainer* container, CGUIElement* element, CGUIElement* bg, CGUIText* text) :
+			CUIBase(container, element),
+			m_background(bg),
+			m_text(text),
+			m_isToggle(false),
+			m_toggleStatus(false)
+		{
+
+		}
+
 		CUIButton::~CUIButton()
 		{
 
