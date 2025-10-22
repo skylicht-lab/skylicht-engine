@@ -31,6 +31,8 @@
 #include "PhysicsEngine/CPhysicsEngine.h"
 #endif
 
+#include "CrashHandler/CCrashHandler.h"
+
 void installApplication(const std::vector<std::string>& argv)
 {
 	SkylichtEditor* app = new SkylichtEditor();
@@ -100,6 +102,10 @@ void SkylichtEditor::onInitApp()
 	app->showFPS(false);
 	app->enableRunWhenPause(true);
 	app->showDebugConsole();
+
+#ifdef WIN32
+	CCrashHandler::getInstance()->resolveDumpFiles();
+#endif
 }
 
 void SkylichtEditor::onUpdate()

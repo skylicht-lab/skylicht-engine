@@ -535,6 +535,12 @@ namespace Skylicht
 
 				if (params.size() == 4)
 				{
+					if (params[0].empty() ||
+						params[1].empty() ||
+						params[2].empty() ||
+						params[3].empty())
+						return;
+
 					m_color.R = (unsigned char)std::stoi(params[0]);
 					m_color.G = (unsigned char)std::stoi(params[1]);
 					m_color.B = (unsigned char)std::stoi(params[2]);

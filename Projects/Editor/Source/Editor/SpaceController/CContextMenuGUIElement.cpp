@@ -66,6 +66,7 @@ namespace Skylicht
 			addMenu->addSeparator();
 			addMenu->addItem(L"UI Button");
 			addMenu->addItem(L"UI Button (Shiny)");
+			addMenu->addItem(L"UI Glow Border");
 			addMenu->addItem(L"UI Icon Button");
 			addMenu->addItem(L"UI Slider");
 			addMenu->addItem(L"UI Input");

@@ -284,6 +284,25 @@ namespace Skylicht
 				text->setTextAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
 				text->setFontSource("SampleGUI/Fonts/Roboto-Bold.font");
 			}
+			else if (command == L"UI Glow Border")
+			{
+				r.LowerRightCorner.X = 200.0f;
+				r.LowerRightCorner.Y = 200.0f;
+
+				nameHint = L"Border";
+
+				CGUIFitSprite* bg = parentNode->getCanvas()->createFitSprite(parentNode, r, NULL);
+				bg->setName(L"Background");
+				bg->setFrameSource(
+					"SampleGUI/SampleGUI.spritedata",
+					"border_outglow",
+					"SampleGUI/!Sprites/border_outglow.png");
+				bg->setDock(EGUIDock::NoDock);
+				bg->setAnchor(CGUIFitSprite::AnchorAll, 30.0, 30.0f, 30.0f, 30.0f);
+				bg->setMaterialSource("BuiltIn/Textures/GlowBorder.mat");
+
+				newNode = bg;
+			}
 			else if (command == L"UI Icon Button")
 			{
 				r.LowerRightCorner.X = 64.0f;

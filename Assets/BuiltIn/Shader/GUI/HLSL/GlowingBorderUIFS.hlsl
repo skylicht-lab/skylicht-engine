@@ -1,8 +1,8 @@
 Texture2D uTexDiffuse : register(t0);
 SamplerState uTexDiffuseSampler : register(s0);
 
-Texture2D uTexShiny : register(t1);
-SamplerState uTexShinySampler : register(s1);
+Texture2D uTexGlow : register(t1);
+SamplerState uTexGlowSampler : register(s1);
 
 struct PS_INPUT
 {
@@ -20,8 +20,7 @@ cbuffer cbPerFrame
 float4 main(PS_INPUT input) : SV_TARGET
 {	
 	float4 diffuseMap = uTexDiffuse.Sample(uTexDiffuseSampler, input.tex0);
-	float4 shinyMap = uTexShiny.Sample(uTexShinySampler, input.tex1);
-	float4 result = diffuseMap * input.color;
-	result.rgb = result.rgb + (shinyMap.rgb * uColor.rgb);
-	return result;
+	float4 flowMap = uTexGlow.Sample(uTexGlowSampler, input.tex1);
+	
+	return diffuseMap * flowMap * uColor * input.color;
 }
