@@ -9,7 +9,7 @@
         <Params>
             <Param name='uColor' floatSize='4' floatValue='1.000000,1.000000,1.000000,1.000000'/>
             <Param name='uUVScale' floatSize='4' floatValue='1.000000,1.000000,0.000000,0.000000'/>
-            <Param name='uData' floatSize='4' floatValue='4.000000,0.000000,0.000000,0.000000'/>
+            <Param name='uData' floatSize='2' floatValue='4.000000,0.000000,0.000000,0.000000'/>
         </Params>
         <Properties>
             <Property name='ZBuffer' value='LessEqual'/>
