@@ -58,7 +58,7 @@ namespace Skylicht
 				if (m_pointerId == -1)
 					m_pointerId = mouseId;
 
-				if (m_pointerId = mouseId)
+				if (m_pointerId == mouseId)
 				{
 					m_pointerX = event.MouseInput.X;
 					m_pointerY = event.MouseInput.Y;
@@ -107,6 +107,8 @@ namespace Skylicht
 
 					if (m_pointerId == mouseId)
 						m_pointerId = -1;
+
+					m_pointerIsUsed.erase(mouseId);
 				}
 
 				if (!base)

@@ -15,8 +15,7 @@ namespace Skylicht
 			m_canvas(NULL),
 			m_skip(NULL),
 			m_inMotion(false),
-			m_outMotion(false),
-			m_pointerDown(false)
+			m_outMotion(false)
 		{
 
 		}
@@ -233,7 +232,8 @@ namespace Skylicht
 					if (m_hover)
 					{
 						m_hover->onPointerOut(mouseID, mouseX, mouseY);
-						if (m_hover->isPointerDown())
+
+						if (m_hover->isPointerDown() && m_hover->getPointerId() == mouseID)
 							m_hover->onPointerUp(mouseID, mouseX, mouseY);
 
 						m_hover = NULL;
@@ -251,27 +251,22 @@ namespace Skylicht
 					if (m_hover)
 					{
 						m_hover->onPointerOut(mouseID, mouseX, mouseY);
-						if (m_hover->isPointerDown())
+
+						if (m_hover->isPointerDown() && m_hover->getPointerId() == mouseID)
 							m_hover->onPointerUp(mouseID, mouseX, mouseY);
 					}
 
 					m_hover = m_raycastUIObjects[0];
 					m_hover->onPointerHover(mouseID, mouseX, mouseY);
-
-					// if drag over
-					if (m_pointerDown)
-						m_hover->onPointerDown(mouseID, mouseX, mouseY);
 				}
 
 				if (event.MouseInput.Event == EMIE_LMOUSE_PRESSED_DOWN)
 				{
-					m_pointerDown = true;
 					if (m_hover)
 						m_hover->onPointerDown(mouseID, mouseX, mouseY);
 				}
 				else if (event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
 				{
-					m_pointerDown = false;
 					m_skip = NULL;
 					if (m_hover)
 					{
@@ -310,14 +305,12 @@ namespace Skylicht
 
 				if (event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
 				{
-					m_pointerDown = false;
 					m_skip = NULL;
 					capture->onPointerUp(mouseID, mouseX, mouseY);
 					capture->onPressed();
 				}
 				else if (event.MouseInput.Event == EMIE_LMOUSE_PRESSED_DOWN)
 				{
-					m_pointerDown = true;
 					capture->onPointerDown(mouseID, mouseX, mouseY);
 				}
 				else
@@ -336,9 +329,7 @@ namespace Skylicht
 				m_hover->onPointerOut(pointerId, x, y);
 				m_hover = NULL;
 			}
-
 			m_skip = NULL;
-			m_pointerDown = false;
 		}
 
 		void CUIContainer::cancelPointerDown(CUIBase* base, int pointerId, float pointerX, float pointerY)

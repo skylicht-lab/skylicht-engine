@@ -71,6 +71,8 @@ namespace Skylicht
 			int m_pointerX;
 			int m_pointerY;
 
+			std::map<int, bool> m_pointerIsUsed;
+
 		public:
 			/** @brief Constructor. Initializes internal state. */
 			CUIEventManager();
@@ -155,6 +157,21 @@ namespace Skylicht
 			inline int getPointerId()
 			{
 				return m_pointerId;
+			}
+
+			/** @brief Check whether a given pointer ID is currently in use. */
+			inline bool isPointerIdUsed(int pointerId)
+			{
+				auto it = m_pointerIsUsed.find(pointerId);
+				if (it != m_pointerIsUsed.end())
+					return it->second;
+				return false;
+			}
+
+			/** @brief Set whether a given pointer ID is currently in use. */
+			inline void setPointerIdUsed(int pointerId, bool used)
+			{
+				m_pointerIsUsed[pointerId] = used;
 			}
 		};
 	}
