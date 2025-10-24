@@ -34,7 +34,7 @@ namespace Skylicht
 		 * @brief Button control built on top of `CUIBase`.
 		 *
 		 * @ingroup UI
-		 * 
+		 *
 		 * `CUIButton` provides a simple button implementation with optional toggle behavior,
 		 * a background element and a `CGUIText` label. It handles pointer hover/out and
 		 * pressed events and exposes callbacks for toggle changes.
@@ -112,9 +112,9 @@ namespace Skylicht
 			 */
 			void setLabelAndChangeWidth(const wchar_t* string, float addition);
 
-			virtual void onPointerHover(float pointerX, float pointerY);
+			virtual void onPointerHover(int pointerId, float pointerX, float pointerY);
 
-			virtual void onPointerOut(float pointerX, float pointerY);
+			virtual void onPointerOut(int pointerId, float pointerX, float pointerY);
 
 			virtual void onPressed();
 

@@ -45,7 +45,7 @@ namespace Skylicht
 
 		/**
 		 * @brief Base wrapper class that connects a UI container and a GUI element.
-		 * 
+		 *
 		 * @ingroup UI
 		 *
 		 * CUIBase represents a UI object hosted inside a CUIContainer and backed by a CGUIElement.
@@ -69,6 +69,7 @@ namespace Skylicht
 
 			std::vector<CMotion*> m_motions[(int)EMotionEvent::NumEvent];
 
+			bool m_multiTouch;
 			bool m_enable;
 			bool m_visible;
 
@@ -78,6 +79,7 @@ namespace Skylicht
 			bool m_skipPointerEventWhenDrag;
 			bool m_continueGameEvent;
 
+			int m_pointerId;
 			float m_pointerDownX;
 			float m_pointerDownY;
 
@@ -137,6 +139,30 @@ namespace Skylicht
 			inline bool isVisible()
 			{
 				return m_visible;
+			}
+
+			/** @brief Enable multitouch for this ui object */
+			inline void setMultiTouch(bool b)
+			{
+				m_multiTouch = b;
+			}
+
+			/** @brief Returns true if multi-touch is enabled for this ui object. */
+			inline bool isMultiTouch()
+			{
+				return m_multiTouch;
+			}
+
+			/** @brief Get the pointer ID associated with this UI object. */
+			inline int getPointerId()
+			{
+				return m_pointerId;
+			}
+
+			/** @brief Set the pointer ID for this UI object. */
+			inline void setPointerId(int id)
+			{
+				m_pointerId = id;
 			}
 
 			/**
@@ -202,38 +228,43 @@ namespace Skylicht
 
 			/**
 			 * @brief Called when pointer enters or hovers over the element.
+			 * @param pointerId ID of the pointer device.
 			 * @param pointerX World X coordinate of pointer.
 			 * @param pointerY World Y coordinate of pointer.
 			 */
-			virtual void onPointerHover(float pointerX, float pointerY);
+			virtual void onPointerHover(int pointerId, float pointerX, float pointerY);
 
 			/**
 			 * @brief Called when pointer leaves the element.
+			 * @param pointerId ID of the pointer device.
 			 * @param pointerX World X coordinate at time of out event.
 			 * @param pointerY World Y coordinate at time of out event.
 			 */
-			virtual void onPointerOut(float pointerX, float pointerY);
+			virtual void onPointerOut(int pointerId, float pointerX, float pointerY);
 
 			/**
 			 * @brief Called when pointer is pressed down on the element.
+			 * @param pointerId ID of the pointer device.
 			 * @param pointerX World X coordinate where press occurred.
 			 * @param pointerY World Y coordinate where press occurred.
 			 */
-			virtual void onPointerDown(float pointerX, float pointerY);
+			virtual void onPointerDown(int pointerId, float pointerX, float pointerY);
 
 			/**
 			 * @brief Called when pointer is released over the element.
+			 * @param pointerId ID of the pointer device.
 			 * @param pointerX World X coordinate where release occurred.
 			 * @param pointerY World Y coordinate where release occurred.
 			 */
-			virtual void onPointerUp(float pointerX, float pointerY);
+			virtual void onPointerUp(int pointerId, float pointerX, float pointerY);
 
 			/**
 			 * @brief Called when pointer moves while over or dragging the element.
+			 * @param pointerId ID of the pointer device.
 			 * @param pointerX World X coordinate of pointer.
 			 * @param pointerY World Y coordinate of pointer.
 			 */
-			virtual void onPointerMove(float pointerX, float pointerY);
+			virtual void onPointerMove(int pointerId, float pointerX, float pointerY);
 
 			/**
 			 * @brief Called when the element is considered "pressed" (high-level event).

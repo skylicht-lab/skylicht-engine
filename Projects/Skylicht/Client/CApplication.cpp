@@ -306,11 +306,13 @@ namespace Skylicht
 			m_device->getTimer()->tick();
 
 			float limitTime = 1000.0f / (float)m_limitFPS;
-			long  frameTime = m_device->getTimer()->getTime() - m_lastUpdateTime;
+			long frameTime = m_device->getTimer()->getTime() - m_lastUpdateTime;
 			sleepTime = (long)limitTime - frameTime;
 
 			if (sleepTime > 0)
 				m_device->sleep((u32)sleepTime);
+			else
+				m_device->sleep((u32)limitTime);
 		}
 		else
 		{

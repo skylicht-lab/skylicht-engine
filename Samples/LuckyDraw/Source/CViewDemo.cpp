@@ -370,7 +370,6 @@ void CViewDemo::checkToShowListLuckyPeople()
 		m_list->clear();
 
 		CGUIElement* listElement = m_list->getElement();
-		core::rectf itemRect = core::rectf(0.0f, 0.0f, listElement->getWidth(), 50.0f);
 
 		for (SPeople& p : m_people)
 		{
@@ -378,6 +377,7 @@ void CViewDemo::checkToShowListLuckyPeople()
 			{
 				CGUIElement* element = m_list->addItem();
 
+				core::rectf itemRect = core::rectf(0.0f, 0.0f, listElement->getWidth(), 50.0f);
 				CGUIText* nameText = m_canvas->createText(element, itemRect, m_textMedium2Font);
 				nameText->setPosition(core::vector3df(200.0f, 0.0f, 0.0f));
 
@@ -507,9 +507,6 @@ void CViewDemo::onUpdate()
 	CScene* scene = context->getScene();
 	if (scene != NULL)
 	{
-		// update list lucky people
-		m_list->update();
-
 		// update scroller
 		m_controller->update();
 

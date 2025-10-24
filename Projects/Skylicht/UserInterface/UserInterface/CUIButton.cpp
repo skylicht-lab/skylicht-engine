@@ -105,7 +105,7 @@ namespace Skylicht
 				setToggle(!m_toggleStatus);
 		}
 
-		void CUIButton::onPointerHover(float pointerX, float pointerY)
+		void CUIButton::onPointerHover(int pointerId, float pointerX, float pointerY)
 		{
 			if (m_isToggle && m_toggleStatus)
 			{
@@ -115,11 +115,11 @@ namespace Skylicht
 			}
 			else
 			{
-				CUIBase::onPointerHover(pointerX, pointerY);
+				CUIBase::onPointerHover(pointerId, pointerX, pointerY);
 			}
 		}
 
-		void CUIButton::onPointerOut(float pointerX, float pointerY)
+		void CUIButton::onPointerOut(int pointerId, float pointerX, float pointerY)
 		{
 			if (m_isToggle && m_toggleStatus)
 			{
@@ -129,7 +129,7 @@ namespace Skylicht
 			}
 			else
 			{
-				CUIBase::onPointerOut(pointerX, pointerY);
+				CUIBase::onPointerOut(pointerId, pointerX, pointerY);
 			}
 		}
 	}

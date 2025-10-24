@@ -141,11 +141,11 @@ namespace Skylicht
 
 		protected:
 
-			virtual void onPointerDown(float pointerX, float pointerY);
+			virtual void onPointerDown(int pointerId, float pointerX, float pointerY);
 
-			virtual void onPointerUp(float pointerX, float pointerY);
+			virtual void onPointerUp(int pointerId, float pointerX, float pointerY);
 
-			virtual void onPointerMove(float pointerX, float pointerY);
+			virtual void onPointerMove(int pointerId, float pointerX, float pointerY);
 
 			/**
 			* @brief Apply pointer movement to the underlying element.

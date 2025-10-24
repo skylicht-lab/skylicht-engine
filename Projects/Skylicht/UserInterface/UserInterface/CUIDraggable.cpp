@@ -45,27 +45,33 @@ namespace Skylicht
 
 		}
 
-		void CUIDraggable::onPointerDown(float pointerX, float pointerY)
+		void CUIDraggable::onPointerDown(int pointerId, float pointerX, float pointerY)
 		{
-			CUIBase::onPointerDown(pointerX, pointerY);
+			if (m_pointerId == -1)
+			{
+				CUIBase::onPointerDown(pointerId, pointerX, pointerY);
 
-			CUIEventManager::getInstance()->setCapture(this);
-			onBeginDrag();
+				CUIEventManager::getInstance()->setCapture(this);
+				onBeginDrag();
+			}
 		}
 
-		void CUIDraggable::onPointerUp(float pointerX, float pointerY)
+		void CUIDraggable::onPointerUp(int pointerId, float pointerX, float pointerY)
 		{
-			CUIBase::onPointerUp(pointerX, pointerY);
+			if (m_pointerId == pointerId)
+			{
+				CUIBase::onPointerUp(pointerId, pointerX, pointerY);
 
-			CUIEventManager::getInstance()->setCapture(NULL);
-			onEndDrag();
+				CUIEventManager::getInstance()->setCapture(NULL);
+				onEndDrag();
+			}
 		}
 
-		void CUIDraggable::onPointerMove(float pointerX, float pointerY)
+		void CUIDraggable::onPointerMove(int pointerId, float pointerX, float pointerY)
 		{
-			CUIBase::onPointerMove(pointerX, pointerY);
+			CUIBase::onPointerMove(pointerId, pointerX, pointerY);
 
-			if (m_isPointerDown)
+			if (m_isPointerDown && m_pointerId == pointerId)
 				updateDrag();
 		}
 

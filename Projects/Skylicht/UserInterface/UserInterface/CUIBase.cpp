@@ -33,12 +33,14 @@ namespace Skylicht
 		CUIBase::CUIBase(CUIContainer* container, CGUIElement* element) :
 			m_container(container),
 			m_element(element),
+			m_multiTouch(false),
 			m_enable(true),
 			m_visible(true),
 			m_isPointerHover(false),
 			m_isPointerDown(false),
 			m_continueGameEvent(false),
 			m_skipPointerEventWhenDrag(false),
+			m_pointerId(-1),
 			m_pointerDownX(0.0f),
 			m_pointerDownY(0.0f)
 		{
@@ -125,7 +127,7 @@ namespace Skylicht
 			return m_rectTransform;
 		}
 
-		void CUIBase::onPointerHover(float pointerX, float pointerY)
+		void CUIBase::onPointerHover(int pointerId, float pointerX, float pointerY)
 		{
 			m_isPointerHover = true;
 			startMotion(EMotionEvent::PointerHover);
@@ -134,7 +136,7 @@ namespace Skylicht
 				OnPointerHover(pointerX, pointerY);
 		}
 
-		void CUIBase::onPointerOut(float pointerX, float pointerY)
+		void CUIBase::onPointerOut(int pointerId, float pointerX, float pointerY)
 		{
 			m_isPointerHover = false;
 			startMotion(EMotionEvent::PointerOut);
@@ -143,38 +145,46 @@ namespace Skylicht
 				OnPointerOut(pointerX, pointerY);
 		}
 
-		void CUIBase::onPointerDown(float pointerX, float pointerY)
+		void CUIBase::onPointerDown(int pointerId, float pointerX, float pointerY)
 		{
-			m_isPointerDown = true;
-			m_pointerDownX = pointerX;
-			m_pointerDownY = pointerY;
+			if (m_pointerId == -1)
+			{
+				m_isPointerDown = true;
+				m_pointerId = pointerId;
+				m_pointerDownX = pointerX;
+				m_pointerDownY = pointerY;
 
-			startMotion(EMotionEvent::PointerDown);
+				startMotion(EMotionEvent::PointerDown);
 
-			if (OnPointerDown != nullptr)
-				OnPointerDown(pointerX, pointerY);
+				if (OnPointerDown != nullptr)
+					OnPointerDown(pointerX, pointerY);
+			}
 		}
 
-		void CUIBase::onPointerUp(float pointerX, float pointerY)
+		void CUIBase::onPointerUp(int pointerId, float pointerX, float pointerY)
 		{
-			m_isPointerDown = false;
-			startMotion(EMotionEvent::PointerUp);
+			if (m_pointerId == pointerId)
+			{
+				m_isPointerDown = false;
+				m_pointerId = -1;
+				startMotion(EMotionEvent::PointerUp);
 
-			if (OnPointerUp != nullptr)
-				OnPointerUp(pointerX, pointerY);
+				if (OnPointerUp != nullptr)
+					OnPointerUp(pointerX, pointerY);
+			}
 		}
 
-		void CUIBase::onPointerMove(float pointerX, float pointerY)
+		void CUIBase::onPointerMove(int pointerId, float pointerX, float pointerY)
 		{
 			if (OnPointerMove != nullptr)
 				OnPointerMove(pointerX, pointerY, m_isPointerDown);
 
-			if (m_skipPointerEventWhenDrag && m_isPointerDown)
+			if (m_skipPointerEventWhenDrag && m_isPointerDown && m_pointerId == pointerId)
 			{
 				if (fabsf(pointerX - m_pointerDownX) > 10.0f ||
 					fabsf(pointerY - m_pointerDownY) > 10.0f)
 				{
-					m_container->cancelPointerDown(this, pointerX, pointerY);
+					m_container->cancelPointerDown(this, pointerId, pointerX, pointerY);
 				}
 			}
 		}

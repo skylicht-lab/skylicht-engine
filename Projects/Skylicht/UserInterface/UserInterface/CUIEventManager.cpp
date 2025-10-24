@@ -53,17 +53,16 @@ namespace Skylicht
 			{
 				f32 mouseX = (f32)event.MouseInput.X;
 				f32 mouseY = (f32)event.MouseInput.Y;
+				int mouseId = event.MouseInput.ID;
 
-				m_pointerX = event.MouseInput.X;
-				m_pointerY = event.MouseInput.Y;
+				if (m_pointerId == -1)
+					m_pointerId = mouseId;
 
-				if (m_pointerId != -1 && event.MouseInput.ID != m_pointerId)
-					return true;
-
-				if (event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
-					m_pointerId = -1;
-				else
-					m_pointerId = event.MouseInput.ID;
+				if (m_pointerId = mouseId)
+				{
+					m_pointerX = event.MouseInput.X;
+					m_pointerY = event.MouseInput.Y;
+				}
 
 				std::vector<CUIContainer*> list = m_containers;
 
@@ -84,7 +83,7 @@ namespace Skylicht
 					for (CUIContainer* ui : list)
 					{
 						if (captureContainer != ui)
-							ui->onPointerOut(mouseX, mouseY);
+							ui->onPointerOut(mouseId, mouseX, mouseY);
 					}
 				}
 				else
@@ -97,13 +96,18 @@ namespace Skylicht
 						}
 						else
 						{
-							ui->onPointerOut(mouseX, mouseY);
+							ui->onPointerOut(mouseId, mouseX, mouseY);
 						}
 					}
 				}
 
 				if (event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
+				{
 					setFocus(base);
+
+					if (m_pointerId == mouseId)
+						m_pointerId = -1;
+				}
 
 				if (!base)
 					return true;

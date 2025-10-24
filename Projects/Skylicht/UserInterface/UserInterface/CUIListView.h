@@ -34,7 +34,7 @@ namespace Skylicht
 		 * @brief Scrollable list view control.
 		 *
 		 * @ingroup UI
-		 * 
+		 *
 		 * `CUIListView` displays a list of item elements and provides basic scrolling
 		 * with inertia, spring-back when over-scrolled, and optional masking.
 		 *
@@ -143,11 +143,11 @@ namespace Skylicht
 
 			virtual void update();
 
-			virtual void onPointerDown(float pointerX, float pointerY);
+			virtual void onPointerDown(int pointerId, float pointerX, float pointerY);
 
-			virtual void onPointerUp(float pointerX, float pointerY);
+			virtual void onPointerUp(int pointerId, float pointerX, float pointerY);
 
-			virtual void onPointerMove(float pointerX, float pointerY);
+			virtual void onPointerMove(int pointerId, float pointerX, float pointerY);
 
 			/** @brief Set vertical layout mode. */
 			inline void setVertical(bool b)

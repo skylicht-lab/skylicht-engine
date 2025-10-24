@@ -174,6 +174,8 @@ namespace Skylicht
 
 				f32 mouseX = (f32)event.MouseInput.X;
 				f32 mouseY = (f32)event.MouseInput.Y;
+				int mouseID = event.MouseInput.ID;
+
 				core::vector3df mousePos(mouseX, mouseY, 0.0f);
 
 				for (CUIBase* base : m_arrayUIObjects)
@@ -188,6 +190,11 @@ namespace Skylicht
 						continue;
 
 					if (base == m_skip)
+						continue;
+
+					if (!base->isMultiTouch() &&
+						base->getPointerId() != -1 &&
+						base->getPointerId() != CUIEventManager::getInstance()->getPointerId())
 						continue;
 
 					CCanvas* canvas = base->getElement()->getCanvas();
@@ -218,16 +225,16 @@ namespace Skylicht
 						m_raycastUIObjects.push_back(base);
 					}
 
-					base->onPointerMove(mouseX, mouseY);
+					base->onPointerMove(mouseID, mouseX, mouseY);
 				}
 
 				if (m_raycastUIObjects.size() == 0)
 				{
 					if (m_hover)
 					{
-						m_hover->onPointerOut(mouseX, mouseY);
+						m_hover->onPointerOut(mouseID, mouseX, mouseY);
 						if (m_hover->isPointerDown())
-							m_hover->onPointerUp(mouseX, mouseY);
+							m_hover->onPointerUp(mouseID, mouseX, mouseY);
 
 						m_hover = NULL;
 					}
@@ -243,24 +250,24 @@ namespace Skylicht
 				{
 					if (m_hover)
 					{
-						m_hover->onPointerOut(mouseX, mouseY);
+						m_hover->onPointerOut(mouseID, mouseX, mouseY);
 						if (m_hover->isPointerDown())
-							m_hover->onPointerUp(mouseX, mouseY);
+							m_hover->onPointerUp(mouseID, mouseX, mouseY);
 					}
 
 					m_hover = m_raycastUIObjects[0];
-					m_hover->onPointerHover(mouseX, mouseY);
+					m_hover->onPointerHover(mouseID, mouseX, mouseY);
 
 					// if drag over
 					if (m_pointerDown)
-						m_hover->onPointerDown(mouseX, mouseY);
+						m_hover->onPointerDown(mouseID, mouseX, mouseY);
 				}
 
 				if (event.MouseInput.Event == EMIE_LMOUSE_PRESSED_DOWN)
 				{
 					m_pointerDown = true;
 					if (m_hover)
-						m_hover->onPointerDown(mouseX, mouseY);
+						m_hover->onPointerDown(mouseID, mouseX, mouseY);
 				}
 				else if (event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
 				{
@@ -268,7 +275,7 @@ namespace Skylicht
 					m_skip = NULL;
 					if (m_hover)
 					{
-						m_hover->onPointerUp(mouseX, mouseY);
+						m_hover->onPointerUp(mouseID, mouseX, mouseY);
 						m_hover->onPressed();
 					}
 				}
@@ -299,33 +306,34 @@ namespace Skylicht
 			{
 				f32 mouseX = (f32)event.MouseInput.X;
 				f32 mouseY = (f32)event.MouseInput.Y;
+				int mouseID = event.MouseInput.ID;
 
 				if (event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
 				{
 					m_pointerDown = false;
 					m_skip = NULL;
-					capture->onPointerUp(mouseX, mouseY);
+					capture->onPointerUp(mouseID, mouseX, mouseY);
 					capture->onPressed();
 				}
 				else if (event.MouseInput.Event == EMIE_LMOUSE_PRESSED_DOWN)
 				{
 					m_pointerDown = true;
-					capture->onPointerDown(mouseX, mouseY);
+					capture->onPointerDown(mouseID, mouseX, mouseY);
 				}
 				else
 				{
-					capture->onPointerMove(mouseX, mouseY);
+					capture->onPointerMove(mouseID, mouseX, mouseY);
 				}
 			}
 
 			return capture;
 		}
 
-		void CUIContainer::onPointerOut(float x, float y)
+		void CUIContainer::onPointerOut(int pointerId, float x, float y)
 		{
 			if (m_hover)
 			{
-				m_hover->onPointerOut(x, y);
+				m_hover->onPointerOut(pointerId, x, y);
 				m_hover = NULL;
 			}
 
@@ -333,11 +341,11 @@ namespace Skylicht
 			m_pointerDown = false;
 		}
 
-		void CUIContainer::cancelPointerDown(CUIBase* base, float pointerX, float pointerY)
+		void CUIContainer::cancelPointerDown(CUIBase* base, int pointerId, float pointerX, float pointerY)
 		{
 			if (m_hover == base)
 			{
-				m_hover->onPointerOut(pointerX, pointerY);
+				m_hover->onPointerOut(pointerId, pointerX, pointerY);
 				m_hover = NULL;
 			}
 			m_skip = base;

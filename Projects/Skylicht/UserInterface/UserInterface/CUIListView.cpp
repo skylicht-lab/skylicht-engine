@@ -138,33 +138,42 @@ namespace Skylicht
 			return m_items[id];
 		}
 
-		void CUIListView::onPointerDown(float pointerX, float pointerY)
+		void CUIListView::onPointerDown(int pointerId, float pointerX, float pointerY)
 		{
-			CUIBase::onPointerDown(pointerX, pointerY);
+			if (m_pointerId == -1)
+			{
+				CUIBase::onPointerDown(pointerId, pointerX, pointerY);
 
-			CUIEventManager::getInstance()->setCapture(this);
+				CUIEventManager::getInstance()->setCapture(this);
 
-			m_lastPointerX = pointerX;
-			m_lastPointerY = pointerY;
-			m_pointerX = pointerX;
-			m_pointerY = pointerY;
+				m_lastPointerX = pointerX;
+				m_lastPointerY = pointerY;
+				m_pointerX = pointerX;
+				m_pointerY = pointerY;
+			}
 		}
 
-		void CUIListView::onPointerUp(float pointerX, float pointerY)
+		void CUIListView::onPointerUp(int pointerId, float pointerX, float pointerY)
 		{
-			CUIBase::onPointerUp(pointerX, pointerY);
+			if (m_pointerId == pointerId)
+			{
+				CUIBase::onPointerUp(pointerId, pointerX, pointerY);
 
-			CUIEventManager::getInstance()->setCapture(NULL);
+				CUIEventManager::getInstance()->setCapture(NULL);
+			}
 		}
 
-		void CUIListView::onPointerMove(float pointerX, float pointerY)
+		void CUIListView::onPointerMove(int pointerId, float pointerX, float pointerY)
 		{
-			CUIBase::onPointerMove(pointerX, pointerY);
+			CUIBase::onPointerMove(pointerId, pointerX, pointerY);
 
-			m_lastPointerX = m_pointerX;
-			m_lastPointerY = m_pointerY;
-			m_pointerX = pointerX;
-			m_pointerY = pointerY;
+			if (m_isPointerDown && m_pointerId == pointerId)
+			{
+				m_lastPointerX = m_pointerX;
+				m_lastPointerY = m_pointerY;
+				m_pointerX = pointerX;
+				m_pointerY = pointerY;
+			}
 		}
 
 		void CUIListView::update()

@@ -39,7 +39,7 @@ namespace Skylicht
 		* @brief Central UI event router and input processor.
 		*
 		* @ingroup UI
-		* 
+		*
 		* CUIEventManager implements IEventProcessor and acts as the global bridge
 		* between low-level engine input events (SEvent) and the UI system
 		* (CUIContainer / CUIBase). It manages a list of active UI containers,
@@ -149,6 +149,12 @@ namespace Skylicht
 			inline int getPointerY()
 			{
 				return m_pointerY;
+			}
+
+			/** @brief Get the current pointer ID (for multi-pointer systems). */
+			inline int getPointerId()
+			{
+				return m_pointerId;
 			}
 		};
 	}

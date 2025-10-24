@@ -97,7 +97,7 @@ namespace Skylicht
 			return 0;
 		}
 
-		void CUITextBox::onPointerHover(float pointerX, float pointerY)
+		void CUITextBox::onPointerHover(int pointerId, float pointerX, float pointerY)
 		{
 			if (!m_isPointerHover)
 			{
@@ -105,47 +105,53 @@ namespace Skylicht
 				cursorControl->setActiveIcon(gui::ECI_IBEAM);
 			}
 
-			CUIBase::onPointerHover(pointerX, pointerY);
+			CUIBase::onPointerHover(pointerId, pointerX, pointerY);
 		}
 
-		void CUITextBox::onPointerOut(float pointerX, float pointerY)
+		void CUITextBox::onPointerOut(int pointerId, float pointerX, float pointerY)
 		{
-			CUIBase::onPointerOut(pointerX, pointerY);
+			CUIBase::onPointerOut(pointerId, pointerX, pointerY);
 
 			gui::ICursorControl* cursorControl = getIrrlichtDevice()->getCursorControl();
 			cursorControl->setActiveIcon(gui::ECI_NORMAL);
 		}
 
-		void CUITextBox::onPointerDown(float pointerX, float pointerY)
+		void CUITextBox::onPointerDown(int pointerId, float pointerX, float pointerY)
 		{
-			CUIBase::onPointerDown(pointerX, pointerY);
-
-			if (m_text)
+			if (m_pointerId == -1)
 			{
-				int l, c;
-				m_text->getClosestCharacter(pointerX, pointerY, l, c);
+				CUIBase::onPointerDown(pointerId, pointerX, pointerY);
 
-				m_text->showCaret(true);
-				m_text->setCaret(l, c);
+				if (m_text)
+				{
+					int l, c;
+					m_text->getClosestCharacter(pointerX, pointerY, l, c);
 
-				CUIEventManager* eventMgr = CUIEventManager::getInstance();
-				eventMgr->setFocus(this);
-				eventMgr->setCapture(this);
+					m_text->showCaret(true);
+					m_text->setCaret(l, c);
+
+					CUIEventManager* eventMgr = CUIEventManager::getInstance();
+					eventMgr->setFocus(this);
+					eventMgr->setCapture(this);
+				}
 			}
 		}
 
-		void CUITextBox::onPointerUp(float pointerX, float pointerY)
+		void CUITextBox::onPointerUp(int pointerId, float pointerX, float pointerY)
 		{
-			CUIBase::onPointerUp(pointerX, pointerY);
+			if (pointerId == m_pointerId)
+			{
+				CUIBase::onPointerUp(pointerId, pointerX, pointerY);
 
-			if (m_text)
-				CUIEventManager::getInstance()->setCapture(NULL);
+				if (m_text)
+					CUIEventManager::getInstance()->setCapture(NULL);
+			}
 		}
 
-		void CUITextBox::onPointerMove(float pointerX, float pointerY)
+		void CUITextBox::onPointerMove(int pointerId, float pointerX, float pointerY)
 		{
-			CUIBase::onPointerMove(pointerX, pointerY);
-			if (m_isPointerDown && m_text)
+			CUIBase::onPointerMove(pointerId, pointerX, pointerY);
+			if (m_isPointerDown && m_pointerId == pointerId && m_text)
 			{
 				int l, c;
 				m_text->getClosestCharacter(pointerX, pointerY, l, c);

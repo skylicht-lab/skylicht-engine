@@ -34,7 +34,7 @@ namespace Skylicht
 		* @brief Single-line / multi-line editable text box control.
 		*
 		* @ingroup UI
-		* 
+		*
 		* `CUITextBox` wraps a `CGUIText` element and provides basic text editing
 		* behaviour: caret management, text insertion/deletion, keyboard navigation,
 		* and mouse caret placement. The control forwards focus and capture to the
@@ -155,15 +155,15 @@ namespace Skylicht
 				return m_maxLength;
 			}
 
-			virtual void onPointerHover(float pointerX, float pointerY);
+			virtual void onPointerHover(int pointerId, float pointerX, float pointerY);
 
-			virtual void onPointerOut(float pointerX, float pointerY);
+			virtual void onPointerOut(int pointerId, float pointerX, float pointerY);
 
-			virtual void onPointerDown(float pointerX, float pointerY);
+			virtual void onPointerDown(int pointerId, float pointerX, float pointerY);
 
-			virtual void onPointerUp(float pointerX, float pointerY);
+			virtual void onPointerUp(int pointerId, float pointerX, float pointerY);
 
-			virtual void onPointerMove(float pointerX, float pointerY);
+			virtual void onPointerMove(int pointerId, float pointerX, float pointerY);
 
 			virtual void onLostFocus();
 

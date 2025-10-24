@@ -37,7 +37,7 @@ namespace Skylicht
 		* @brief Top-level UI container and event router.
 		*
 		* @ingroup UI
-		* 
+		*
 		* `CUIContainer` manages a collection of `CUIBase` objects and acts as the
 		* bridge between low-level input events (irrlicht `SEvent`) and high-level
 		* UI interactions. Responsibilities include:
@@ -149,24 +149,26 @@ namespace Skylicht
 
 			/**
 			* @brief Notify container that pointer left the given position.
+			* @param pointerId ID of the pointer that moved out.
 			* @param x World X coordinate of pointer out.
 			* @param y World Y coordinate of pointer out.
 			*
 			* This will clear hover state and forward onPointerOut to the previously
 			* hovered child if any.
 			*/
-			virtual void onPointerOut(float x, float y);
+			virtual void onPointerOut(int pointerId, float x, float y);
 
 			/**
 			* @brief Cancel an active pointer down on a child.
 			* @param base Pointer to the child where pointer down should be cancelled.
+			* @param pointerId ID of the pointer to cancel.
 			* @param pointerX Last known pointer X (world).
 			* @param pointerY Last known pointer Y (world).
 			*
 			* This is used to abort press interactions when another system needs to
 			* interrupt the ongoing pointer down state.
 			*/
-			virtual void cancelPointerDown(CUIBase* base, float pointerX, float pointerY);
+			virtual void cancelPointerDown(CUIBase* base, int pointerId, float pointerX, float pointerY);
 
 			/** @brief Start the "in" motion sequence and set internal state. */
 			void startInMotion();
