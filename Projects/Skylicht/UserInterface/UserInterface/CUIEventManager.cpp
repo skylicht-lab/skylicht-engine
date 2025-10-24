@@ -107,8 +107,6 @@ namespace Skylicht
 
 					if (m_pointerId == mouseId)
 						m_pointerId = -1;
-
-					m_pointerIsUsed.erase(mouseId);
 				}
 
 				if (!base)
