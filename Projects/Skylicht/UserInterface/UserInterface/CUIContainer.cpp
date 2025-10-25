@@ -270,8 +270,9 @@ namespace Skylicht
 					m_skip = NULL;
 					if (m_hover)
 					{
+						if (m_hover->isPointerDown() && m_hover->getPointerId() == mouseID)
+							m_hover->onPressed();
 						m_hover->onPointerUp(mouseID, mouseX, mouseY);
-						m_hover->onPressed();
 					}
 				}
 
@@ -306,8 +307,9 @@ namespace Skylicht
 				if (event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
 				{
 					m_skip = NULL;
+					if (capture->isPointerDown() && capture->getPointerId() == mouseID)
+						capture->onPressed();
 					capture->onPointerUp(mouseID, mouseX, mouseY);
-					capture->onPressed();
 				}
 				else if (event.MouseInput.Event == EMIE_LMOUSE_PRESSED_DOWN)
 				{
