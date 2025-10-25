@@ -80,6 +80,9 @@ namespace Skylicht
 			viewportH = (float)viewport.getHeight();
 		}
 
+		if (viewportW <= 0.0f || viewportH <= 0.0f)
+			return;
+
 		beginRender2D(viewportW, viewportH);
 
 		CCamera* camera = entityManager->getCamera();
