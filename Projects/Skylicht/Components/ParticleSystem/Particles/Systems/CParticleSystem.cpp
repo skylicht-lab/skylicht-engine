@@ -48,7 +48,7 @@ namespace Skylicht
 
 			CParticle* p;
 
-// #pragma omp parallel for private(p)
+			// #pragma omp parallel for private(p)
 			for (int i = 0; i < num; i++)
 			{
 				p = particles + i;
@@ -73,33 +73,31 @@ namespace Skylicht
 			CParticle* p;
 			float* params;
 
-			// model
 			std::vector<CModel*>& listModel = group->getModels();
 
-			std::vector<EParticleParams> listParams;
-			std::vector<CInterpolator*> listModelInterpolators;
-
-			for (CModel* m : listModel)
-			{
-				listParams.push_back(m->getType());
-
-				CInterpolator* i = m->getInterpolator();
-				if (i && !i->empty())
-					listModelInterpolators.push_back(i);
-				else
-					listModelInterpolators.push_back(NULL);
-			}
-
-			// list model and param
-			u32 numModels = (u32)listModel.size();
 			CModel** models = listModel.data();
-			EParticleParams* paramTypes = listParams.data();
-			CInterpolator** modelInterpolators = listModelInterpolators.data();
+			u32 numModels = (u32)listModel.size();
+
+			EParticleParams* paramTypes = new EParticleParams[numModels];
+			CInterpolator** modelInterpolators = new CInterpolator * [numModels];
+
+			for (u32 i = 0; i < numModels; i++)
+			{
+				CModel* m = models[i];
+
+				paramTypes[i] = m->getType();
+
+				CInterpolator* it = m->getInterpolator();
+				if (it && !it->empty())
+					modelInterpolators[i] = it;
+				else
+					modelInterpolators[i] = NULL;
+			}
 
 			float f, x, y;
 			EParticleParams t;
 
-// #pragma omp parallel for private(p, params, f, x, y, t)
+			// #pragma omp parallel for private(p, params, f, x, y, t)
 			for (int i = 0; i < num; i++)
 			{
 				p = particles + i;
@@ -166,6 +164,9 @@ namespace Skylicht
 					}
 				}
 			}
+
+			delete[] paramTypes;
+			delete[] modelInterpolators;
 		}
 	}
 }

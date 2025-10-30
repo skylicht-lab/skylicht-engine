@@ -33,7 +33,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "LightProbes/CLightProbeData.h"
 #include "Culling/CVisibleData.h"
 
-#include "kdtree.h"
+#include "Utils/CKDTree3f.h"
 
 namespace Skylicht
 {
@@ -45,7 +45,7 @@ namespace Skylicht
 		core::array<CLightProbeData*> m_probes;
 		core::array<CWorldTransformData*> m_probePositions;
 
-		kdtree* m_kdtree;
+		CKDTree3f* m_kdtree;
 
 		bool m_probeChange;
 

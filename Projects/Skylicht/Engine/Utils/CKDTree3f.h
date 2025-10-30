@@ -2,7 +2,7 @@
 !@
 MIT License
 
-Copyright (c) 2020 Skylicht Technology CO., LTD
+Copyright (c) 2025 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
@@ -24,43 +24,66 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Entity/IEntityData.h"
-#include "Entity/IRenderSystem.h"
-#include "Entity/CEntityGroup.h"
-#include "CReflectionProbeData.h"
-#include "Transform/CWorldTransformData.h"
-#include "IndirectLighting/CIndirectLightingData.h"
-
-#include "Utils/CKDTree3f.h"
+#include <vector>
 
 namespace Skylicht
 {
-	class SKYLICHT_API CReflectionProbeSystem : public IEntitySystem
+	class CKDTree3f
 	{
-	protected:
-		CFastArray<CReflectionProbeData*> m_probes;
-		CFastArray<CWorldTransformData*> m_probePositions;
-
-		CFastArray<CIndirectLightingData*> m_entities;
-		CFastArray<CWorldTransformData*> m_entitiesPositions;
-
-		CKDTree3f* m_kdtree;
-		bool m_probeChange;
-
-		CEntityGroup* m_groupLighting;
-		CEntityGroup* m_groupProbes;
-
 	public:
-		CReflectionProbeSystem();
+		struct SKDNode
+		{
+			float Pos[3];
+			void* Data;
+			int Dir;
 
-		virtual ~CReflectionProbeSystem();
+			SKDNode* Left;
+			SKDNode* Right;
+		};
 
-		virtual void beginQuery(CEntityManager* entityManager);
+	protected:
+		SKDNode* m_root;
 
-		virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity);
+	private:
+		// Simple block allocator to reduce per-node new/delete cost
+		std::vector<SKDNode*> m_blocks;
+		SKDNode* m_currentBlock;
+		size_t m_blockIndex;
+		static constexpr size_t NODE_BLOCK_SIZE = 1024;
 
-		virtual void init(CEntityManager* entityManager);
+		core::array<SKDNode*> m_stack;
+	public:
+		CKDTree3f();
 
-		virtual void update(CEntityManager* entityManager);
+		virtual ~CKDTree3f();
+
+		inline void insert(const core::vector3df& pos, void* data)
+		{
+			insert(pos.X, pos.Y, pos.Z, data);
+		}
+
+		void insert(float x, float y, float z, void* data);
+
+		void clear();
+
+		inline SKDNode* nearest(const core::vector3df& pos)
+		{
+			return nearest(pos.X, pos.Y, pos.Z);
+		}
+
+		SKDNode* nearest(float x, float y, float z);
+
+		SKDNode* nearest(const float* pos);
+
+		inline int nearestRange(const core::vector3df& pos, float range, core::array<SKDNode*>& outResults)
+		{
+			return nearestRange(&pos.X, range, outResults);
+		}
+
+		int nearestRange(const float* pos, float range, core::array<SKDNode*>& outResults);
+
+	private:
+
+		SKDNode* allocNode(float x, float y, float z, void* data, int dir);
 	};
 }

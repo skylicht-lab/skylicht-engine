@@ -33,12 +33,12 @@ namespace Skylicht
 		m_groupLighting(NULL),
 		m_groupProbes(NULL)
 	{
-		m_kdtree = kd_create(3);
+		m_kdtree = new CKDTree3f();
 	}
 
 	CIndirectLightingSystem::~CIndirectLightingSystem()
 	{
-		kd_free(m_kdtree);
+		delete m_kdtree;
 	}
 
 	void CIndirectLightingSystem::beginQuery(CEntityManager* entityManager)
@@ -120,7 +120,7 @@ namespace Skylicht
 	{
 		if (m_probeChange)
 		{
-			kd_clear(m_kdtree);
+			m_kdtree->clear();
 
 			u32 n = m_probePositions.size();
 
@@ -130,7 +130,7 @@ namespace Skylicht
 			for (u32 i = 0; i < n; i++)
 			{
 				f32* m = worlds[i]->World.pointer();
-				kd_insert3f(m_kdtree, m[12], m[13], m[14], data[i]);
+				m_kdtree->insert(m[12], m[13], m[14], data[i]);
 			}
 		}
 
@@ -142,7 +142,9 @@ namespace Skylicht
 		CIndirectLightingData** data = m_entities.pointer();
 
 		float* m;
-		kdres* res;
+
+		CKDTree3f::SKDNode* node;
+
 		CLightProbeData* probe;
 		CIndirectLightingData* indirectData;
 
@@ -158,10 +160,10 @@ namespace Skylicht
 			m = worlds[i]->World.pointer();
 
 			// query nearst probe
-			res = kd_nearest3f(m_kdtree, m[12], m[13], m[14]);
-			if (res != NULL && !kd_res_end(res))
+			node = m_kdtree->nearest(m);
+			if (node)
 			{
-				probe = (CLightProbeData*)kd_res_item_data(res);
+				probe = (CLightProbeData*)node->Data;
 				if (probe != NULL)
 				{
 					// get indirectData
@@ -177,7 +179,6 @@ namespace Skylicht
 					*indirectData->Intensity = probe->Intensity * *indirectData->CustomIntensity;
 					indirectData->InvalidateProbe = false;
 				}
-				kd_res_free(res);
 			}
 		}
 

@@ -33,12 +33,12 @@ namespace Skylicht
 		m_groupLighting(NULL),
 		m_groupProbes(NULL)
 	{
-		m_kdtree = kd_create(3);
+		m_kdtree = new CKDTree3f();
 	}
 
 	CReflectionProbeSystem::~CReflectionProbeSystem()
 	{
-		kd_free(m_kdtree);
+		delete m_kdtree;
 	}
 
 	void CReflectionProbeSystem::beginQuery(CEntityManager* entityManager)
@@ -122,7 +122,7 @@ namespace Skylicht
 	{
 		if (m_probeChange)
 		{
-			kd_clear(m_kdtree);
+			m_kdtree->clear();
 
 			u32 n = m_probePositions.count();
 
@@ -132,7 +132,7 @@ namespace Skylicht
 			for (u32 i = 0; i < n; i++)
 			{
 				f32* m = worlds[i]->World.pointer();
-				kd_insert3f(m_kdtree, m[12], m[13], m[14], data[i]);
+				m_kdtree->insert(m[12], m[13], m[14], data[i]);
 			}
 
 			m_probeChange = false;
@@ -145,7 +145,10 @@ namespace Skylicht
 		CIndirectLightingData** lightings = m_entities.pointer();
 
 		float* m;
-		kdres* res;
+
+		CKDTree3f::SKDNode* node;
+		core::array<CKDTree3f::SKDNode*> nodes;
+
 		CReflectionProbeData* probe;
 		CIndirectLightingData* indirectData;
 
@@ -155,12 +158,12 @@ namespace Skylicht
 		{
 			m = positions[i]->World.pointer();
 
-			// query nearst probe
-			res = kd_nearest3f(m_kdtree, m[12], m[13], m[14]);
-			if (res != NULL && !kd_res_end(res))
+			// query nearest probe
+			node = m_kdtree->nearest(m[12], m[13], m[14]);
+			if (node)
 			{
 				// get probe data
-				probe = (CReflectionProbeData*)kd_res_item_data(res);
+				probe = (CReflectionProbeData*)node->Data;
 				if (probe != NULL)
 				{
 					if (probe->LightLayers & lightings[i]->LightLayers)
@@ -172,19 +175,19 @@ namespace Skylicht
 						found = true;
 					}
 				}
-				kd_res_free(res);
 			}
 
 			if (found)
 				continue;
 
 			// search in 100m
-			res = kd_nearest_range3f(m_kdtree, m[12], m[13], m[14], 10000.0f);
-			if (res != NULL)
+			int ret = m_kdtree->nearestRange(&m[12], 10000.0f, nodes);
+			if (ret > 0)
 			{
-				while (!kd_res_end(res))
+				for (u32 nodeId = 0, numNode = nodes.size(); nodeId < numNode; nodeId++)
 				{
-					probe = (CReflectionProbeData*)kd_res_item_data(res);
+					// get probe data
+					probe = (CReflectionProbeData*)nodes[nodeId]->Data;
 					if (probe != NULL)
 					{
 						if (probe->LightLayers & lightings[i]->LightLayers)
@@ -196,9 +199,7 @@ namespace Skylicht
 							break;
 						}
 					}
-					kd_res_next(res);
 				}
-				kd_res_free(res);
 			}
 		}
 	}

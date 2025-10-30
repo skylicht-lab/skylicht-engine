@@ -118,14 +118,6 @@ file(GLOB_RECURSE libmpg123_source
 setup_project_group("${libmpg123_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 endif()
 
-#kdtree
-file(GLOB_RECURSE kdtree_source 
-	./kdtree/**.cpp 
-	./kdtree/**.hpp 
-	./kdtree/**.c 
-	./kdtree/**.h)
-setup_project_group("${kdtree_source}" ${CMAKE_CURRENT_SOURCE_DIR})
-
 if (BUILD_SKYLICHT_NETWORK)
 file(GLOB_RECURSE easywsclient_source 
 	./easywsclient/**.cpp 
