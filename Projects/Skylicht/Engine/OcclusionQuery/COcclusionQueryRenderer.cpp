@@ -33,7 +33,7 @@ namespace Skylicht
 {
 	COcclusionQueryRenderer::COcclusionQueryRenderer() :
 		m_group(NULL),
-		m_queryDelay(0.0f),
+		m_queryDelay(60.0f),
 		m_timeDelay(0.0f)
 	{
 		m_renderPass = IRenderSystem::OcclusionQuery;
@@ -217,13 +217,15 @@ namespace Skylicht
 
 		m_timeDelay = m_timeDelay - getNonScaledTimestep();
 
-		if (numEntity > 0 && m_timeDelay <= 0)
+		if (numEntity > 0)
 		{
-			m_timeDelay = m_queryDelay;
+			if (m_timeDelay <= 0)
+			{
+				m_timeDelay = m_queryDelay;
+				driver->runAllOcclusionQueries(false);
+			}
 
-			driver->runAllOcclusionQueries(false);
-			driver->updateAllOcclusionQueries();
-
+			driver->updateAllOcclusionQueries(false);
 			for (int i = 0; i < numEntity; i++)
 			{
 				COcclusionQueryData* data = queryData[i];
