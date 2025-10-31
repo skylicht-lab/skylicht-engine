@@ -45,6 +45,8 @@ namespace Skylicht
 			CEntityGroup* m_group;
 			core::matrix4 m_transform;
 
+			core::vector3df m_billboardUp;
+			core::vector3df m_billboardLook;
 		public:
 			CParticleRenderer();
 

@@ -40,6 +40,7 @@ namespace Skylicht
 			LifeMin(1.0f),
 			LifeMax(2.0f),
 			GravityValue(0.0f),
+			UseOrientationAsBillboard(false),
 			OrientationNormal(1.0f, 0.0f, 0.0f),
 			OrientationUp(0.0f, 1.0f, 0.0f),
 			Name(L"Group"),

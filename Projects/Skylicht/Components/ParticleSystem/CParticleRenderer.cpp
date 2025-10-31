@@ -97,14 +97,11 @@ namespace Skylicht
 				modelView.getInversePrimitive(invModelView); // wont work for odd modelview matrices (but should happen in very special cases)
 			}
 
-			core::vector3df look(invModelView[8], invModelView[9], invModelView[10]);
-			core::vector3df up(invModelView[4], invModelView[5], invModelView[6]);
+			m_billboardLook.set(invModelView[8], invModelView[9], invModelView[10]);
+			m_billboardUp.set(invModelView[4], invModelView[5], invModelView[6]);
 
-			look.normalize();
-			up.normalize();
-
-			CShaderParticle::setViewUp(up);
-			CShaderParticle::setViewLook(look);
+			m_billboardLook.normalize();
+			m_billboardUp.normalize();
 
 			CEntity** entities = m_group->getEntities();
 			int numEntity = m_group->getEntityCount();
@@ -167,6 +164,7 @@ namespace Skylicht
 			for (u32 i = 0, n = data->AllGroups.size(); i < n; i++)
 			{
 				CGroup* g = groups[i];
+
 				if (g->getCurrentParticleCount() > 0 && g->Visible)
 				{
 					IRenderer* renderer = g->getRenderer();
@@ -209,6 +207,17 @@ namespace Skylicht
 		{
 			IMeshBuffer* buffer = NULL;
 			IRenderer* renderer = group->getRenderer();
+
+			if (group->UseOrientationAsBillboard)
+			{
+				CShaderParticle::setViewUp(group->OrientationUp);
+				CShaderParticle::setViewLook(group->OrientationNormal);
+			}
+			else
+			{
+				CShaderParticle::setViewUp(m_billboardUp);
+				CShaderParticle::setViewLook(m_billboardLook);
+			}
 
 			if (renderer->useInstancing() == true)
 			{

@@ -135,6 +135,7 @@ namespace Skylicht
 			core::vector3df Gravity;
 			core::vector3df OrientationNormal;
 			core::vector3df OrientationUp;
+			bool UseOrientationAsBillboard;
 
 			std::wstring Name;
 			bool Visible;
