@@ -215,20 +215,20 @@ namespace Skylicht
 				m_stack.push_back(farNode);
 		}
 
-		if (outResults.empty())
-			return 0;
+		if (outResults.size() > 1)
+		{
+			CKDTree3f::SKDNode** begin = outResults.pointer();
+			CKDTree3f::SKDNode** end = begin + outResults.size();
 
-		CKDTree3f::SKDNode** begin = outResults.pointer();
-		CKDTree3f::SKDNode** end = begin + outResults.size();
-
-		// sort by distance ascending (computed relative to pos)
-		std::sort(begin, end, [pos](SKDNode* a, SKDNode* b) {
-			float ad0 = a->Pos[0] - pos[0]; float ad1 = a->Pos[1] - pos[1]; float ad2 = a->Pos[2] - pos[2];
-			float bd0 = b->Pos[0] - pos[0]; float bd1 = b->Pos[1] - pos[1]; float bd2 = b->Pos[2] - pos[2];
-			float da = ad0 * ad0 + ad1 * ad1 + ad2 * ad2;
-			float db = bd0 * bd0 + bd1 * bd1 + bd2 * bd2;
-			return da < db;
-			});
+			// sort by distance ascending (computed relative to pos)
+			std::sort(begin, end, [pos](SKDNode* a, SKDNode* b) {
+				float ad0 = a->Pos[0] - pos[0]; float ad1 = a->Pos[1] - pos[1]; float ad2 = a->Pos[2] - pos[2];
+				float bd0 = b->Pos[0] - pos[0]; float bd1 = b->Pos[1] - pos[1]; float bd2 = b->Pos[2] - pos[2];
+				float da = ad0 * ad0 + ad1 * ad1 + ad2 * ad2;
+				float db = bd0 * bd0 + bd1 * bd1 + bd2 * bd2;
+				return da < db;
+				});
+		}
 
 		return outResults.size();
 	}

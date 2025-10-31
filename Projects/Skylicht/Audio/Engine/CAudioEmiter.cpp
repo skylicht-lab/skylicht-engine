@@ -43,6 +43,24 @@ namespace Skylicht
 {
 	namespace Audio
 	{
+		std::string getFileName(const std::string& fullPath)
+		{
+			size_t pos_slash = fullPath.find_last_of('/');
+			size_t pos_backslash = fullPath.find_last_of('\\');
+
+			size_t final_start_pos = std::string::npos;
+
+			if (pos_slash != std::string::npos && pos_backslash != std::string::npos)
+				final_start_pos = pos_slash > pos_backslash ? pos_slash : pos_backslash;
+			else if (pos_slash != std::string::npos)
+				final_start_pos = pos_slash;
+			else if (pos_backslash != std::string::npos)
+				final_start_pos = pos_backslash;
+			if (final_start_pos == std::string::npos)
+				return fullPath;
+			return fullPath.substr(final_start_pos + 1);
+		}
+
 		IAudioDecoder::EDecoderType CAudioEmitter::getDecode(const char* fileName)
 		{
 			char ext[512] = { 0 };
@@ -68,6 +86,7 @@ namespace Skylicht
 		{
 			initDefaultValue();
 
+			m_name = "Stream";
 			m_decodeType = type;
 			m_driver = driver;
 
@@ -80,6 +99,7 @@ namespace Skylicht
 			initDefaultValue();
 
 			m_fileName = file;
+			m_name = getFileName(m_fileName);
 			m_cache = cache;
 
 			m_decodeType = getDecode(file);
@@ -140,7 +160,7 @@ namespace Skylicht
 				}
 				delete m_buffer;
 			}
-			
+
 			if (m_decoder)
 				delete m_decoder;
 
@@ -153,10 +173,10 @@ namespace Skylicht
 		void CAudioEmitter::updateSourceBuffer()
 		{
 			bool reallocation = false;
-			
+
 			if (m_allocBufferSize < m_source->getBufferSize())
 				reallocation = true;
-			
+
 			m_bufferSize = m_source->getBufferSize();
 			m_bufferLengthTime = m_source->getBufferLength();
 
@@ -165,20 +185,20 @@ namespace Skylicht
 				if (m_decodeBuffer)
 					delete m_decodeBuffer;
 				m_decodeBuffer = new unsigned char[(int)(m_bufferSize * SKYLICHTAUDIO_MAX_PITCH)];
-				
+
 				for (int i = 0; i < m_numBuffer; i++)
 				{
 					if (m_buffer[i])
 						delete m_buffer[i];
-					
+
 					m_buffer[i] = new unsigned char[m_bufferSize];
 					memset(m_buffer[i], 0, m_bufferSize);
 				}
-				
+
 				m_allocBufferSize = m_bufferSize;
 			}
 		}
-	
+
 		EStatus CAudioEmitter::initEmitter()
 		{
 			// state 0
@@ -246,13 +266,13 @@ namespace Skylicht
 
 					// init decode buffer
 					m_numBuffer = sourceParam.NumBuffer;
-					
+
 					m_buffer = new unsigned char* [m_numBuffer];
 					for (int i = 0; i < m_numBuffer; i++)
 						m_buffer[i] = NULL;
-						
+
 					updateSourceBuffer();
-					
+
 					m_state = ISoundSource::StateStopped;
 				}
 				else
@@ -415,7 +435,7 @@ namespace Skylicht
 
 						memset(m_buffer[m_currentBuffer], 0, m_allocBufferSize);
 						memset(m_decodeBuffer, 0, (int)(m_allocBufferSize * SKYLICHTAUDIO_MAX_PITCH));
-						
+
 						decodeResult = m_decoder->decode(m_decodeBuffer, pitchSize);
 
 						STrackParams trackParam;

@@ -41,7 +41,7 @@ namespace Skylicht
 			WaitData,
 			EndStream,
 		};
-		
+
 		class IAudioDecoder
 		{
 		public:
@@ -52,46 +52,54 @@ namespace Skylicht
 				RawWav,	// use for micro, video audio
 				Num
 			};
-			
+
 		protected:
 			bool m_loop;
-			
+
 			IStream* m_stream;
-			
+
+			std::string m_name;
+
 		public:
 			IAudioDecoder(IStream* stream)
 			{
 				m_loop = false;
 				m_stream = stream;
+				m_name = "Unknown";
 			}
-			
+
 			virtual ~IAudioDecoder()
 			{
 			}
-			
+
 			virtual EStatus initDecode() = 0;
-			
+
 			virtual EStatus decode(void* outputBuffer, int bufferSize) = 0;
-			
+
 			virtual float getCurrentTime() = 0;
-			
+
 			virtual int seek(int bufferSize) = 0;
-			
+
 			virtual void setLoop(bool loop)
 			{
 				m_loop = loop;
 			}
-			
+
 			virtual bool isLoop()
 			{
 				return m_loop;
 			}
-			
+
 			virtual void getTrackParam(STrackParams* track) = 0;
-			
+
 			virtual void stopStream()
 			{
-				
+
+			}
+
+			inline std::string getName()
+			{
+				return m_name;
 			}
 		};
 	}

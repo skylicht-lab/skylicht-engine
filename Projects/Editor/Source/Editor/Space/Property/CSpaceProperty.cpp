@@ -443,6 +443,21 @@ namespace Skylicht
 			return labelControl;
 		}
 
+		GUI::CLabel* CSpaceProperty::addValueLabel(GUI::CBoxLayout* boxLayout, const wchar_t* name)
+		{
+			GUI::CLayoutVertical* layout = boxLayout->beginVertical();
+
+			GUI::CLabel* labelControl = new GUI::CLabel(layout);
+			labelControl->setString(name);
+			labelControl->setTextAlignment(GUI::TextRight);
+
+			GUI::CLabel* valueControl = new GUI::CLabel(layout);
+			valueControl->setTextAlignment(GUI::TextLeft);
+
+			boxLayout->endVertical();
+			return valueControl;
+		}
+
 		GUI::CButton* CSpaceProperty::addButton(GUI::CBoxLayout* boxLayout, const wchar_t* label)
 		{
 			GUI::CLayoutVertical* layout = boxLayout->beginVertical();

@@ -31,6 +31,10 @@
 #include "PhysicsEngine/CPhysicsEngine.h"
 #endif
 
+#ifdef BUILD_SKYLICHT_AUDIO
+#include "SkylichtAudio.h"
+#endif
+
 #include "CrashHandler/CCrashHandler.h"
 
 void installApplication(const std::vector<std::string>& argv)
@@ -69,6 +73,10 @@ SkylichtEditor::SkylichtEditor() :
 	physicsEngine->initPhysics();
 	physicsEngine->IsInEditor = true;
 #endif
+
+#ifdef BUILD_SKYLICHT_AUDIO
+	Audio::initSkylichtAudio();
+#endif
 }
 
 SkylichtEditor::~SkylichtEditor()
@@ -81,6 +89,10 @@ SkylichtEditor::~SkylichtEditor()
 
 	Editor::GUI::Context::destroyGUI();
 	Editor::CEditor::releaseInstance();
+
+#ifdef BUILD_SKYLICHT_AUDIO
+	Audio::releaseSkylichtAudio();
+#endif
 
 #ifdef BUILD_SKYLICHT_PHYSIC
 	Physics::CPhysicsEngine::releaseInstance();
@@ -140,7 +152,7 @@ void SkylichtEditor::onUpdate()
 		CShaderManager::getInstance()->initBasicShader();
 		CShaderManager::getInstance()->initSGDeferredShader();
 
-		// import project		
+		// import project
 		m_editor->initImportGUI();
 
 		// change state loading
@@ -173,6 +185,10 @@ void SkylichtEditor::onUpdate()
 		Editor::GUI::Context::update(currentTime);
 		break;
 	}
+
+#ifdef BUILD_SKYLICHT_AUDIO
+	Audio::updateSkylichtAudio();
+#endif
 }
 
 void SkylichtEditor::onRender()

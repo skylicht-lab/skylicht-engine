@@ -124,6 +124,8 @@ namespace Skylicht
 
 			GUI::CLabel* addLabel(GUI::CBoxLayout* boxLayout, const wchar_t* label, GUI::ETextAlign align = GUI::TextCenter);
 
+			GUI::CLabel* addValueLabel(GUI::CBoxLayout* boxLayout, const wchar_t* name);
+
 			GUI::CButton* addButton(GUI::CBoxLayout* boxLayout, const wchar_t* label);
 
 			GUI::CButton* addButton(GUI::CLayout* layout, const wchar_t* label);
