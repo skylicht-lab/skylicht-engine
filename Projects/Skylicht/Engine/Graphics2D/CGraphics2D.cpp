@@ -257,6 +257,13 @@ namespace Skylicht
 
 			flush();
 		}
+
+		// clear the texture
+		for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
+		{
+			m_2dMaterial.setTexture(i, NULL);
+			m_customMaterial.setTexture(i, NULL);
+		}
 	}
 
 	void CGraphics2D::beginRenderGUI(const core::matrix4& projection, const core::matrix4& view)
@@ -275,6 +282,13 @@ namespace Skylicht
 	{
 		// flush to screen
 		flush();
+
+		// clear the texture
+		for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
+		{
+			m_2dMaterial.setTexture(i, NULL);
+			m_customMaterial.setTexture(i, NULL);
+		}
 	}
 
 	void CGraphics2D::prepareBuffer()
