@@ -301,10 +301,7 @@ namespace Skylicht
 
 		CUIBase* CUIContainer::OnProcessEvent(const SEvent& event, CUIBase* capture)
 		{
-			if (!m_enable)
-				return NULL;
-
-			if (m_hover != capture)
+			if (!m_enable || !capture)
 				return NULL;
 
 			if (event.EventType == EET_MOUSE_INPUT_EVENT)

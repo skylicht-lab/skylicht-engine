@@ -50,9 +50,13 @@ namespace Skylicht
 		void CUIEventManager::setMultiTouchCapture(int pointerId, CUIBase* base)
 		{
 			if (base == NULL)
+			{
 				m_multiTouchCapture.erase(pointerId);
+			}
 			else
+			{
 				m_multiTouchCapture[pointerId] = base;
+			}
 		}
 
 		bool CUIEventManager::OnProcessEvent(const SEvent& event)
@@ -62,7 +66,7 @@ namespace Skylicht
 				f32 mouseX = (f32)event.MouseInput.X;
 				f32 mouseY = (f32)event.MouseInput.Y;
 				int mouseId = event.MouseInput.ID;
-
+				
 				if (m_pointerId == -1)
 					m_pointerId = mouseId;
 
