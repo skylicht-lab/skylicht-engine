@@ -233,9 +233,7 @@ namespace Skylicht
 			float rightGain = m_rightGain * m_gain * m_distanceGain * gain;
 			
 			int sampleValue = 0;
-			float fract = 0.0f;
 			
-			// do not need mix
 			if (m_gain > 0.0f && m_distanceGain > 0.0f && m_pitch >= SKYLICHTAUDIO_MIN_PITCH && m_pitch <= SKYLICHTAUDIO_MAX_PITCH)
 			{
 				if (m_trackParams.NumChannels == 2)
@@ -244,15 +242,14 @@ namespace Skylicht
 					for (int i = 0; i < nbSample; ++i)
 					{
 						sample = (int)currentSample;
-						fract = currentSample - sample;
 						
 						// left
-						sampleValue = (int)(sourceBuffer[sample * 2] * (1.0f - fract) + sourceBuffer[sample * 2 + 2] * fract);
+						sampleValue = (int)(sourceBuffer[sample * 2]);
 						*buffer += (int)(sampleValue * leftGain);
 						++buffer;
 						
 						// right
-						sampleValue = (int)(sourceBuffer[sample * 2 + 1] * (1.0f - fract) + sourceBuffer[sample * 2 + 3] * fract);
+						sampleValue = (int)(sourceBuffer[sample * 2 + 1]);
 						*buffer += (int)(sampleValue * rightGain);
 						++buffer;
 						
@@ -265,9 +262,8 @@ namespace Skylicht
 					for (int i = 0; i < nbSample; i++)
 					{
 						sample = (int)currentSample;
-						fract = currentSample - sample;
 						
-						sampleValue = (int)(sourceBuffer[sample] * (1.0f - fract) + sourceBuffer[sample + 1] * fract);
+						sampleValue = (int)(sourceBuffer[sample]);
 						
 						// left
 						*buffer += (int)(sampleValue * leftGain);
