@@ -89,8 +89,8 @@ namespace Skylicht
 					{
 						base = it->second;
 						
-						CUIContainer* captureContainer = m_capture->getContainer();
-						captureContainer->OnProcessEvent(event, m_capture);
+						CUIContainer* captureContainer = base->getContainer();
+						captureContainer->OnProcessEvent(event, base);
 
 						for (CUIContainer* ui : list)
 						{
