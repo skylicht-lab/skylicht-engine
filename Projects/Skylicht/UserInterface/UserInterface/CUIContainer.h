@@ -70,6 +70,7 @@ namespace Skylicht
 			bool m_inMotion;
 			bool m_outMotion;
 
+			bool m_pointerDown;
 		public:
 			/**
 			* @brief Callback invoked when in-motion sequence finishes.

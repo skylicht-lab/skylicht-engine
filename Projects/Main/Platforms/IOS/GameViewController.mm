@@ -23,7 +23,7 @@ SkylichtApplication* _angleApplication = NULL;
     [super viewDidLoad];
     
     _view = (MTKView *)self.view;
-    
+	_view.multipleTouchEnabled = YES;
     _view.backgroundColor = UIColor.blackColor;
     _renderer = [[Renderer alloc] initWithMetalKitView:_view];
 
@@ -84,7 +84,7 @@ SkylichtApplication* _angleApplication = NULL;
 
 - (int)getTouchId:(UITouch*)touch
 {
-    long pointer = (long)touch;
+	long pointer = (long)[touch hash];
     int touchId = (int)(pointer % 32000);
     return touchId;
 }
@@ -111,7 +111,7 @@ SkylichtApplication* _angleApplication = NULL;
     {
         int touchId = [self getTouchId:touch];
         CGPoint cursor = [touch locationInView:[self view]];
-        
+		
         if (_angleApplication)
             _angleApplication->onTouchMove(touchId, (int)(cursor.x*scale), (int)(cursor.y*scale));
     }

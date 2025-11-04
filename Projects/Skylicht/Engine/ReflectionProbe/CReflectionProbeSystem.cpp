@@ -181,7 +181,7 @@ namespace Skylicht
 				continue;
 
 			// search in 100m
-			int ret = m_kdtree->nearestRange(&m[12], 10000.0f, nodes);
+			int ret = m_kdtree->nearestRange(&m[12], 100.0f, nodes);
 			if (ret > 0)
 			{
 				for (u32 nodeId = 0, numNode = nodes.size(); nodeId < numNode; nodeId++)

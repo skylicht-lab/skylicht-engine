@@ -148,7 +148,7 @@ namespace Skylicht
 			virtual void onPointerUp(int pointerId, float pointerX, float pointerY);
 
 			virtual void onPointerMove(int pointerId, float pointerX, float pointerY);
-
+			
 			/** @brief Set vertical layout mode. */
 			inline void setVertical(bool b)
 			{
@@ -195,6 +195,11 @@ namespace Skylicht
 				return m_maxOffset;
 			}
 
+			virtual bool acceptDragFocus()
+			{
+				return true;
+			}
+			
 		protected:
 
 			/**

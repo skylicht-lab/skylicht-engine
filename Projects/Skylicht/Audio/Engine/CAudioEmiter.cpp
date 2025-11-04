@@ -454,6 +454,7 @@ namespace Skylicht
 						float pitch = pitchSize / (float)m_bufferSize;
 
 						float fract = 0.0f;
+						short s1, s2;
 
 						if (trackParam.NumChannels == 2)
 						{
@@ -463,12 +464,18 @@ namespace Skylicht
 								sample = (int)currentSample;
 								fract = currentSample - sample;
 
+								s1 = src[sample * 2];
+								s2 = (i == nbSample - 1) ? s1 : src[sample * 2 + 2];
+								
 								// left
-								*dest = (short)(src[sample * 2] * (1.0f - fract) + src[sample * 2 + 2] * fract);
+								*dest = (short)(s1 * (1.0f - fract) + s2 * fract);
 								++dest;
+								
+								s1 = src[sample * 2 + 1];
+								s2 = (i == nbSample - 1) ? s1 : src[sample * 2 + 3];
 
 								// right
-								*dest = (short)(src[sample * 2 + 1] * (1.0f - fract) + src[sample * 2 + 3] * fract);
+								*dest = (short)(s1 * (1.0f - fract) + s2 * fract);
 								++dest;
 
 								currentSample = i * pitch;
@@ -481,9 +488,12 @@ namespace Skylicht
 							{
 								sample = (int)currentSample;
 								fract = currentSample - sample;
+								
+								s1 = src[sample];
+								s2 = (i == nbSample - 1) ? s1 : src[sample + 1];
 
 								// mix
-								*dest = (short)(src[sample] * (1.0f - fract) + src[sample + 1] * fract);
+								*dest = (short)(s1 * (1.0f - fract) + s2 * fract);
 								++dest;
 
 								currentSample = i * pitch;

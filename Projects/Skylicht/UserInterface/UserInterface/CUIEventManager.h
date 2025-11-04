@@ -67,6 +67,8 @@ namespace Skylicht
 			CUIBase* m_capture;
 			CUIBase* m_focus;
 
+			std::map<int, CUIBase*> m_multiTouchCapture;
+			
 			int m_pointerId;
 			int m_pointerX;
 			int m_pointerY;
@@ -123,6 +125,8 @@ namespace Skylicht
 			{
 				m_capture = base;
 			}
+			
+			void setMultiTouchCapture(int pointerId, CUIBase* base);
 
 			/**
 			* @brief Set keyboard/focus to a given UI element.

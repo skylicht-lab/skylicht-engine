@@ -15,7 +15,8 @@ namespace Skylicht
 			m_canvas(NULL),
 			m_skip(NULL),
 			m_inMotion(false),
-			m_outMotion(false)
+			m_outMotion(false),
+			m_pointerDown(false)
 		{
 
 		}
@@ -258,16 +259,24 @@ namespace Skylicht
 
 					m_hover = m_raycastUIObjects[0];
 					m_hover->onPointerHover(mouseID, mouseX, mouseY);
+					
+					// Drag over on UIListView, UIGridView
+					if (m_pointerDown && m_hover->acceptDragFocus())
+						m_hover->onPointerDown(mouseID, mouseX, mouseY);
 				}
 
 				if (event.MouseInput.Event == EMIE_LMOUSE_PRESSED_DOWN)
 				{
 					if (m_hover)
 						m_hover->onPointerDown(mouseID, mouseX, mouseY);
+					
+					m_pointerDown = true;
 				}
 				else if (event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
 				{
 					m_skip = NULL;
+					m_pointerDown = false;
+					
 					if (m_hover)
 					{
 						if (m_hover->isPointerDown() && m_hover->getPointerId() == mouseID)
@@ -307,12 +316,16 @@ namespace Skylicht
 				if (event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
 				{
 					m_skip = NULL;
+					m_pointerDown = false;
+					
 					if (capture->isPointerDown() && capture->getPointerId() == mouseID)
 						capture->onPressed();
 					capture->onPointerUp(mouseID, mouseX, mouseY);
 				}
 				else if (event.MouseInput.Event == EMIE_LMOUSE_PRESSED_DOWN)
 				{
+					m_pointerDown = true;
+					
 					capture->onPointerDown(mouseID, mouseX, mouseY);
 				}
 				else

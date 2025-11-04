@@ -46,6 +46,14 @@ namespace Skylicht
 		{
 			CEventManager::getInstance()->unRegisterProcessorEvent(this);
 		}
+	
+		void CUIEventManager::setMultiTouchCapture(int pointerId, CUIBase* base)
+		{
+			if (base == NULL)
+				m_multiTouchCapture.erase(pointerId);
+			else
+				m_multiTouchCapture[pointerId] = base;
+		}
 
 		bool CUIEventManager::OnProcessEvent(const SEvent& event)
 		{
@@ -72,8 +80,28 @@ namespace Skylicht
 					});
 
 				CUIBase* base = NULL;
+				bool sendEventToOtherUI = true;
+				
+				if (m_multiTouchCapture.size() > 0)
+				{
+					auto it = m_multiTouchCapture.find(mouseId);
+					if (it != m_multiTouchCapture.end())
+					{
+						base = it->second;
+						
+						CUIContainer* captureContainer = m_capture->getContainer();
+						captureContainer->OnProcessEvent(event, m_capture);
 
-				if (m_capture)
+						for (CUIContainer* ui : list)
+						{
+							if (captureContainer != ui)
+								ui->onPointerOut(mouseId, mouseX, mouseY);
+						}
+						
+						sendEventToOtherUI = false;
+					}
+				}
+				else if (m_capture)
 				{
 					base = m_capture;
 
@@ -85,8 +113,11 @@ namespace Skylicht
 						if (captureContainer != ui)
 							ui->onPointerOut(mouseId, mouseX, mouseY);
 					}
+					
+					sendEventToOtherUI = false;
 				}
-				else
+				
+				if (sendEventToOtherUI)
 				{
 					for (CUIContainer* ui : list)
 					{

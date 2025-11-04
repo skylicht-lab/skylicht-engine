@@ -365,6 +365,10 @@ namespace Skylicht
 			 */
 			void convertLocalToWorld(CGUIElement* element, float& x, float& y);
 
+			virtual bool acceptDragFocus()
+			{
+				return false;
+			}
 		};
 	}
 }
