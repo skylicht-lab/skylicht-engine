@@ -228,4 +228,9 @@ namespace Skylicht
 		return CGraphics2D::getInstance()->isWideScreen();
 #endif
 	}
+
+	void CBaseApp::setLimitFPS(int fps)
+	{
+		m_limitFPS = fps;
+	}
 }

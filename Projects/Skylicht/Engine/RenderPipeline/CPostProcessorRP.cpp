@@ -45,7 +45,6 @@ namespace Skylicht
 		m_blurUpFilter(NULL),
 		m_bloomFilter(NULL),
 		m_fxaaFilter(NULL),
-		m_numTarget(0),
 		m_bloomThreshold(0.9f),
 		m_bloomIntensity(1.0f),
 		m_lastFrameBuffer(NULL)
@@ -96,29 +95,21 @@ namespace Skylicht
 
 		if (m_bloomEffect == true || m_fxaa == true)
 		{
-			m_rtt[0] = driver->addRenderTargetTexture(m_size, "rtt_0", ECF_A16B16G16R16F);
-			m_rtt[1] = driver->addRenderTargetTexture(m_size, "rtt_1", ECF_A16B16G16R16F);
+			core::dimension2du s = m_size;
+			m_rtt[0] = driver->addRenderTargetTexture(s, "rtt_0", ECF_A16B16G16R16F);
+			m_rtt[1] = driver->addRenderTargetTexture(s, "rtt_1", ECF_A16B16G16R16F);
 
+			s = s / 2;
 			if (m_bloomEffect == true)
 			{
-				m_numTarget = 2;
-				core::dimension2du s = m_size;
-				// do
-				// {
 				s = s / 2;
-
-				// round for 4
-				s.Width = (s.Width / 4) * 4;
-				s.Height = (s.Height / 4) * 4;
-
-				m_rtt[m_numTarget++] = driver->addRenderTargetTexture(s, "rtt", ECF_A16B16G16R16F);
-				// } while (s.Height > 512 && m_numTarget < 4);
+				m_rtt[2] = driver->addRenderTargetTexture(s, "rtt", ECF_A16B16G16R16F);
 			}
 		}
 
 		if (m_screenSpaceReflection || m_enableLastFrameTexture)
 		{
-			m_lastFrameBuffer = driver->addRenderTargetTexture(m_size, "last_frame", ECF_A8R8G8B8);
+			m_lastFrameBuffer = driver->addRenderTargetTexture(m_size / 2, "last_frame", ECF_A8R8G8B8);
 
 			driver->setRenderTarget(m_lastFrameBuffer, true, false);
 			driver->setRenderTarget(NULL, true, false);
@@ -275,25 +266,7 @@ namespace Skylicht
 			brightFilter(color, m_rtt[1], emission);
 
 			blurDown(1, 2);
-
-			if (m_numTarget > 4)
-			{
-				blurDown(2, 3);
-				blurDown(3, 4);
-				blurUp(4, 3);
-				blurUp(3, 2);
-				blurUp(2, 1);
-			}
-			else if (m_numTarget > 3)
-			{
-				blurDown(2, 3);
-				blurUp(3, 2);
-				blurUp(2, 1);
-			}
-			else
-			{
-				blurUp(2, 1);
-			}
+			blurUp(2, 1);
 
 			// bloom
 			m_bloomFilter->setTexture(0, color);
@@ -410,7 +383,7 @@ namespace Skylicht
 
 		// test to target
 		/*
-		ITexture* tex = m_rtt[1];
+		ITexture* tex = m_rtt[0];
 		SMaterial t;
 		t.setTexture(0, tex);
 		t.MaterialType = CShaderManager::getInstance()->getShaderIDByName("TextureLinearRGB");

@@ -23,7 +23,7 @@ SkylichtApplication* _angleApplication = NULL;
     [super viewDidLoad];
     
     _view = (MTKView *)self.view;
-	_view.multipleTouchEnabled = YES;
+    _view.multipleTouchEnabled = YES;
     _view.backgroundColor = UIColor.blackColor;
     _renderer = [[Renderer alloc] initWithMetalKitView:_view];
 
@@ -56,7 +56,7 @@ SkylichtApplication* _angleApplication = NULL;
     NSLog(@"Set bundle id: %@", bundle);
     _angleApplication->setBundleId(bundleID);
     
-    // create folder
+    // create save folder
     NSFileManager* fileManager = [NSFileManager defaultManager];
     if([fileManager fileExistsAtPath:savePath] == NO)
     {

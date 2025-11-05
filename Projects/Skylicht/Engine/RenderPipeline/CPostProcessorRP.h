@@ -77,8 +77,6 @@ namespace Skylicht
 		ITexture* m_lastFrameBuffer;
 		ITexture* m_rtt[10];
 
-		int m_numTarget;
-
 		SMaterial m_finalPass;
 		SMaterial m_finalManualExposurePass;
 		SMaterial m_linearPass;

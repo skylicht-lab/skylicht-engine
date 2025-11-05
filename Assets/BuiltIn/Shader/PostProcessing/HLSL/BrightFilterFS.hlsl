@@ -16,11 +16,6 @@ cbuffer cbPerFrame
 	float4 uCurve;
 };
 
-float brightness(float3 c)
-{
-	return max(max(c.r, c.g), c.b);
-}
-
 float4 main(PS_INPUT input) : SV_TARGET
 {
 	float3 m = uSourceTex.Sample(uSourceTexSampler, input.tex0).rgb;
@@ -28,7 +23,8 @@ float4 main(PS_INPUT input) : SV_TARGET
 	
 	float3 e = uSourceEmission.Sample(uSourceEmissionSampler, input.tex0).rgb;
 	
-	float br = brightness(m);
+	// brightness
+	float br = max(max(m.r, m.g), m.b);
 
 	// Under-threshold part: quadratic curve
 	float rq = clamp(br - uCurve.x, 0.0, uCurve.y);

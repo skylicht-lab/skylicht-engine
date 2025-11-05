@@ -281,9 +281,14 @@ namespace Skylicht
 		 * @brief Set the FPS limit for the application.
 		 * @param fps Target FPS value, -1 for unlimited
 		 */
-		void setLimitFPS(int fps)
+		void setLimitFPS(int fps);
+
+		/**
+		* @brief Get the FPS limit.
+		*/
+		inline int getLimitFPS()
 		{
-			m_limitFPS = fps;
+			return m_limitFPS;
 		}
 
 		/**
