@@ -70,6 +70,6 @@ public class NativeInterface {
     }
 
     static {
-        System.loadLibrary("SampleSkinnedMesh");
+        System.loadLibrary("MechArena");
     }
 }

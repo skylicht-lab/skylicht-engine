@@ -10,8 +10,6 @@
 
 #import "Renderer.h"
 
-static const NSUInteger MaxBuffersInFlight = 3;
-
 @implementation Renderer
 {
     AngleApplication *_angleApplication;

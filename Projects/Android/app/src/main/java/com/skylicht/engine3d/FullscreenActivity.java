@@ -5,10 +5,8 @@ import android.annotation.SuppressLint;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 
 import com.google.android.play.core.assetpacks.AssetPackLocation;
 import com.google.android.play.core.assetpacks.AssetPackManager;
@@ -21,8 +19,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.Uri;
@@ -37,9 +33,6 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -62,12 +55,7 @@ public class FullscreenActivity extends AppCompatActivity {
             // Note that some of these constants are new as of API 16 (Jelly Bean)
             // and API 19 (KitKat). It is safe to use them, as they are inlined
             // at compile-time and do nothing on earlier devices.
-            mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+            mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         }
     };
 
@@ -108,8 +96,8 @@ public class FullscreenActivity extends AppCompatActivity {
         final ApplicationInfo applicationInfo = this.getApplicationInfo();
         NativeInterface.getInstance().addApkPath(applicationInfo.sourceDir);
 
-        String []bundles = {"appdata"};
-        for (String bundle: bundles) {
+        String[] bundles = {"appdata"};
+        for (String bundle : bundles) {
             AssetPackLocation assetPackPath = mAssetPackManager.getPackLocation(bundle);
             if (assetPackPath != null) {
                 int packMethod = assetPackPath.packStorageMethod();
@@ -122,8 +110,7 @@ public class FullscreenActivity extends AppCompatActivity {
                 } else {
                     Log.w("Skylicht", "The engine only supports install-time asset: " + bundle);
                 }
-            }
-            else {
+            } else {
                 Log.w("Skylicht", "Asset not found: " + bundle);
             }
         }
@@ -159,12 +146,7 @@ public class FullscreenActivity extends AppCompatActivity {
         mContentView = new GLES3View(getApplication());
         setContentView(mContentView);
 
-        mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
         // Code below is to handle presses of Volume up or Volume down.
         // Without this, after pressing volume buttons, the navigation bar will
@@ -173,6 +155,7 @@ public class FullscreenActivity extends AppCompatActivity {
 
         mVisible = true;
 
+        PlayGamesSignIn.getInstance().init(this);
     }
 
     @Override
@@ -267,16 +250,14 @@ public class FullscreenActivity extends AppCompatActivity {
     }
 
     public void openURL(final String url) {
-        FullscreenActivity.this.runOnUiThread(
-                () -> {
-                    try {
-                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                        startActivity(browserIntent);
-                    } catch (Exception ignored) {
+        FullscreenActivity.this.runOnUiThread(() -> {
+            try {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                startActivity(browserIntent);
+            } catch (Exception ignored) {
 
-                    }
-                }
-        );
+            }
+        });
     }
 
     /**
@@ -307,8 +288,7 @@ public class FullscreenActivity extends AppCompatActivity {
         String downloadFolder = getApplicationContext().getExternalFilesDir("download").getAbsolutePath();
         if (createFolder(downloadFolder)) {
             NativeInterface.getInstance().setDownloadFolder(downloadFolder);
-        }
-        else {
+        } else {
             Log.w("Skylicht", "Can not create data folder: " + downloadFolder);
         }
     }
@@ -345,23 +325,14 @@ public class FullscreenActivity extends AppCompatActivity {
             }
         };
 
-        AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle(R.string.write_access)
-                .setMessage(R.string.write_permission_rationale)
-                .setPositiveButton(android.R.string.ok, listener)
-                .setCancelable(false)
-                .create();
+        AlertDialog dialog = new AlertDialog.Builder(this).setTitle(R.string.write_access).setMessage(R.string.write_permission_rationale).setPositiveButton(android.R.string.ok, listener).setCancelable(false).create();
         dialog.show();
     }
 
-    ActivityResultLauncher<String> launcherPermission = registerForActivityResult(
-            new ActivityResultContracts.RequestPermission(),
-            result -> {
-                if (result)
-                    GameInstance.HaveReadWritePermission = true;
-                else
-                    onWritePermissionDenied(false);
-            });
+    ActivityResultLauncher<String> launcherPermission = registerForActivityResult(new ActivityResultContracts.RequestPermission(), result -> {
+        if (result) GameInstance.HaveReadWritePermission = true;
+        else onWritePermissionDenied(false);
+    });
 
     void requestWritePermission() {
         // ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, PERM_REQUEST_READWRITE);
@@ -400,22 +371,14 @@ public class FullscreenActivity extends AppCompatActivity {
                 runOnUiThread(() -> gotoSettings());
             };
 
-            AlertDialog dialog = new AlertDialog.Builder(this)
-                    .setTitle(R.string.permission_denied)
-                    .setMessage(R.string.write_permission_denied)
-                    .setPositiveButton(android.R.string.ok, listener)
-                    .setNeutralButton(R.string.change, listener)
-                    .setCancelable(false)
-                    .create();
+            AlertDialog dialog = new AlertDialog.Builder(this).setTitle(R.string.permission_denied).setMessage(R.string.write_permission_denied).setPositiveButton(android.R.string.ok, listener).setNeutralButton(R.string.change, listener).setCancelable(false).create();
             dialog.show();
         } else {
             runOnUiThread(() -> gotoSettings());
         }
     }
 
-    ActivityResultLauncher<Intent> launcherSetting = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> checkReadWritePermission());
+    ActivityResultLauncher<Intent> launcherSetting = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> checkReadWritePermission());
 
     private void gotoSettings() {
         final Intent intent;
