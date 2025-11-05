@@ -9,11 +9,6 @@ in vec2	varTexCoord0;
 
 out vec4 FragColor;
 
-float brightness(vec3 c)
-{
-	return max(max(c.r, c.g), c.b);
-}
-
 void main(void)
 {
 	vec3 m = texture(uSourceTex, varTexCoord0.xy).rgb;
@@ -21,7 +16,8 @@ void main(void)
 	
 	vec3 e = texture(uSourceEmission, varTexCoord0.xy).rgb;
 	
-	float br = brightness(m);
+	// brightness
+	float br = max(max(m.r, m.g), m.b);
 
 	// Under-threshold part: quadratic curve
 	float rq = clamp(br - uCurve.x, 0.0, uCurve.y);
