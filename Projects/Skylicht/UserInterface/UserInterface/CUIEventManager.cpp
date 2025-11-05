@@ -26,6 +26,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CUIEventManager.h"
 #include "CUIContainer.h"
 
+#include "Control/CTouchManager.h"
+
 namespace Skylicht
 {
 	namespace UI
@@ -66,6 +68,9 @@ namespace Skylicht
 				f32 mouseX = (f32)event.MouseInput.X;
 				f32 mouseY = (f32)event.MouseInput.Y;
 				int mouseId = event.MouseInput.ID;
+				
+				if (CTouchManager::getInstance()->getTouchIdentify(mouseId) != CTouchIdentify::Nothing)
+					return true;
 				
 				if (m_pointerId == -1)
 					m_pointerId = mouseId;

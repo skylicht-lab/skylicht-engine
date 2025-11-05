@@ -121,13 +121,13 @@ namespace Skylicht
 			 * @brief Enable or disable this UI object.
 			 * @param b true to enable, false to disable.
 			 */
-			void setEnable(bool b);
+			virtual void setEnable(bool b);
 
 			/**
 			 * @brief Set visibility of this UI object.
 			 * @param b true to make visible, false to hide.
 			 */
-			void setVisible(bool b);
+			virtual void setVisible(bool b);
 
 			/** @brief Returns true if the object is enabled. */
 			inline bool isEnable()
