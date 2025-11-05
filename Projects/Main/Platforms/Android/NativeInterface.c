@@ -86,13 +86,12 @@ JNIEXPORT void JNICALL JNI_FUNCTION(NativeInterface_mainInitApp)(JNIEnv* env, jo
 	__android_log_print(ANDROID_LOG_INFO, JNI_APPNAME, "Native Application Init");
 
 	g_jniEnv = env;
-		
+	(*g_javaVM)->AttachCurrentThread(g_javaVM, &g_jniEnv, NULL);
+
 	jclass local = (*env)->FindClass(env, JNI_CLASSNAME(NativeInterface));
 	g_classNativeInterface = (jclass)(*env)->NewGlobalRef(env, local);
 
-	(*g_javaVM)->AttachCurrentThread(g_javaVM, &g_jniEnv, NULL);
-
-	g_quitApplication = (*g_jniEnv)->GetStaticMethodID(g_jniEnv, g_classNativeInterface, "quitApplication", "()V");	
+	g_quitApplication = (*g_jniEnv)->GetStaticMethodID(g_jniEnv, g_classNativeInterface, "quitApplication", "()V");
 	g_openURL = (*g_jniEnv)->GetStaticMethodID(g_jniEnv, g_classNativeInterface, "openURL", "(Ljava/lang/String;)V");
 	g_isNetworkAvailable = (*g_jniEnv)->GetStaticMethodID(g_jniEnv, g_classNativeInterface, "isNetworkAvailable", "()Z");
 	g_systemGC = (*g_jniEnv)->GetStaticMethodID(g_jniEnv, g_classNativeInterface, "systemGC", "()V");
