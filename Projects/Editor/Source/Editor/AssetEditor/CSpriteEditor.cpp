@@ -85,9 +85,9 @@ namespace Skylicht
 
 			std::string exportPath = path;
 			ui->addButton(layout, L"Export Sprite")->OnPress = [&, p = exportPath](GUI::CBase* button)
-			{
-				exportSprite(p.c_str());
-			};
+				{
+					exportSprite(p.c_str());
+				};
 
 			group->setExpand(true);
 		}
@@ -98,6 +98,7 @@ namespace Skylicht
 				return;
 
 			std::vector<std::string> folders;
+			std::vector<SPNGInfo*> pngsInfo;
 			std::vector<std::string> pngs;
 
 			CArrayTypeSerializable<CFolderPathProperty>& listFolders = m_settings->ImagesFolder;
@@ -111,8 +112,25 @@ namespace Skylicht
 			for (std::string& folder : folders)
 			{
 				std::string discovery = assetManager->getAssetFolder() + "/" + folder;
-				findAllPNG(discovery.c_str(), pngs);
+				findAllPNG(discovery.c_str(), pngsInfo);
 			}
+
+			// need sort to optimize the atlas image
+			std::sort(pngsInfo.begin(), pngsInfo.end(),
+				[](SPNGInfo*& a, SPNGInfo*& b)
+				{
+					int sa = a->Width * a->Height;
+					int sb = b->Width * b->Height;
+					return sa > sb;
+				}
+			);
+
+			for (SPNGInfo* info : pngsInfo)
+			{
+				pngs.push_back(info->Path);
+				delete info;
+			}
+			pngsInfo.clear();
 
 			// show dialog export sprite
 			// see CSpaceExportSprite
@@ -126,7 +144,7 @@ namespace Skylicht
 			);
 		}
 
-		void CSpriteEditor::findAllPNG(const char* path, std::vector<std::string>& pngs)
+		void CSpriteEditor::findAllPNG(const char* path, std::vector<SPNGInfo*>& pngs)
 		{
 			CAssetManager* mgr = CAssetManager::getInstance();
 
@@ -143,10 +161,54 @@ namespace Skylicht
 					std::string ext = CStringImp::toLower(CPath::getFileNameExt(path));
 					if (ext == "png")
 					{
-						pngs.push_back(mgr->getShortPath(path.c_str()));
+						const char* pngPath = path.c_str();
+						int w, h;
+						if (readWidthHeight(pngPath, w, h))
+						{
+							SPNGInfo* pngInfo = new SPNGInfo();
+							pngInfo->Width = w;
+							pngInfo->Height = h;
+							pngInfo->Path = mgr->getShortPath(pngPath);
+							pngs.push_back(pngInfo);
+						}
 					}
 				}
 			}
+		}
+
+		uint32_t read_big_endian_32(std::ifstream& file)
+		{
+			uint32_t value;
+			file.read(reinterpret_cast<char*>(&value), 4);
+			return ntohl(value);
+		}
+
+		bool CSpriteEditor::readWidthHeight(const char* path, int& width, int& height)
+		{
+			std::ifstream file(path, std::ios::binary);
+			if (!file.is_open()) {
+				return false;
+			}
+
+			file.seekg(8, std::ios::beg);
+			file.seekg(8, std::ios::cur);
+
+			try {
+				width = read_big_endian_32(file);
+			}
+			catch (...) {
+				return false;
+			}
+
+			try {
+				height = read_big_endian_32(file);
+			}
+			catch (...) {
+				return false;
+			}
+
+			file.close();
+			return true;
 		}
 
 		CSpriteExportSettings* CSpriteEditor::createGetSpriteExportSetting(const char* path)

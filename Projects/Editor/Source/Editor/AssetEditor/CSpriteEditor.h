@@ -36,6 +36,12 @@ namespace Skylicht
 		protected:
 			CSpriteExportSettings* m_settings;
 
+			struct SPNGInfo
+			{
+				std::string Path;
+				int Width;
+				int Height;
+			};
 		public:
 			CSpriteEditor();
 
@@ -51,7 +57,9 @@ namespace Skylicht
 
 			void exportSprite(const char* path);
 
-			void findAllPNG(const char* path, std::vector<std::string>& pngs);
+			void findAllPNG(const char* path, std::vector<SPNGInfo*>& pngs);
+
+			bool readWidthHeight(const char* path, int& width, int& height);
 
 			DECLARE_GETTYPENAME(CSpriteEditor)
 		};
