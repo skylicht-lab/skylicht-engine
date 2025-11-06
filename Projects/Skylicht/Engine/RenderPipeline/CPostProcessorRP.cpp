@@ -95,15 +95,23 @@ namespace Skylicht
 
 		if (m_bloomEffect == true || m_fxaa == true)
 		{
-			core::dimension2du s = m_size;
-			m_rtt[0] = driver->addRenderTargetTexture(s, "rtt_0", ECF_A16B16G16R16F);
-			m_rtt[1] = driver->addRenderTargetTexture(s, "rtt_1", ECF_A16B16G16R16F);
+			m_rtt[0] = driver->addRenderTargetTexture(m_size, "rtt_0", ECF_A16B16G16R16F);
+			m_rtt[1] = driver->addRenderTargetTexture(m_size, "rtt_1", ECF_A16B16G16R16F);
 
-			s = s / 2;
+			core::dimension2du s = m_size;
 			if (m_bloomEffect == true)
 			{
 				s = s / 2;
+				// round for 4
+				s.Width = (s.Width / 4) * 4;
+				s.Height = (s.Height / 4) * 4;
 				m_rtt[2] = driver->addRenderTargetTexture(s, "rtt", ECF_A16B16G16R16F);
+
+				s = s / 2;
+				// round for 4
+				s.Width = (s.Width / 4) * 4;
+				s.Height = (s.Height / 4) * 4;
+				m_rtt[3] = driver->addRenderTargetTexture(s, "rtt", ECF_A16B16G16R16F);
 			}
 		}
 
@@ -263,14 +271,14 @@ namespace Skylicht
 		// BLOOM
 		if (m_bloomEffect && emission)
 		{
-			brightFilter(color, m_rtt[1], emission);
+			brightFilter(color, m_rtt[2], emission);
 
-			blurDown(1, 2);
-			blurUp(2, 1);
+			blurDown(2, 3);
+			blurUp(3, 2);
 
 			// bloom
 			m_bloomFilter->setTexture(0, color);
-			m_bloomFilter->setTexture(1, m_rtt[1]);
+			m_bloomFilter->setTexture(1, m_rtt[2]);
 			m_bloomFilter->applyMaterial(m_effectPass);
 
 			m_bloomFilter->setUniform("uBloomIntensity", m_bloomIntensity);
@@ -383,7 +391,7 @@ namespace Skylicht
 
 		// test to target
 		/*
-		ITexture* tex = m_rtt[0];
+		ITexture* tex = m_rtt[3];
 		SMaterial t;
 		t.setTexture(0, tex);
 		t.MaterialType = CShaderManager::getInstance()->getShaderIDByName("TextureLinearRGB");

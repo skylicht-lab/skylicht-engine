@@ -11,10 +11,10 @@ out vec4 FragColor;
 
 void main(void)
 {
-	vec3 m = texture(uSourceTex, varTexCoord0.xy).rgb;
+	vec3 m = textureLod(uSourceTex, varTexCoord0.xy, 0.0).rgb;
 	m = min(m, vec3(4.0, 4.0, 4.0));
 	
-	vec3 e = texture(uSourceEmission, varTexCoord0.xy).rgb;
+	vec3 e = textureLod(uSourceEmission, varTexCoord0.xy, 0.0).rgb;
 	
 	// brightness
 	float br = max(max(m.r, m.g), m.b);

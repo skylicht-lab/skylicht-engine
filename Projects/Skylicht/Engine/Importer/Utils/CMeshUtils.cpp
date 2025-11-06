@@ -64,11 +64,86 @@ namespace Skylicht
 
 			// replace
 			buffer->setVertexBuffer(vertexBuffer, j);
+
+			vertexBuffer->drop();
 		}
 
 		// change Vertex Descriptor
 		buffer->setVertexDescriptor(getVideoDriver()->getVertexDescriptor(video::EVT_TANGENTS));
 
+		for (u32 j = 0; j < buffer->getVertexBufferCount(); ++j)
+		{
+			IMeshManipulator* mh = getIrrlichtDevice()->getSceneManager()->getMeshManipulator();
+			mh->recalculateTangents(buffer);
+
+			CVertexBuffer<video::S3DVertexTangents>* vertexBuffer = (CVertexBuffer<video::S3DVertexTangents>*)buffer->getVertexBuffer(j);
+			const u32 vtxCnt = vertexBuffer->getVertexCount();
+			video::S3DVertexTangents* v = (video::S3DVertexTangents*)vertexBuffer->getVertices();
+
+			for (u32 i = 0; i != vtxCnt; ++i)
+				v[i].VertexData.set(1.0f, (float)i);
+		}
+
+		updateTangentBinormal(buffer, flipNormal);
+	}
+
+	void CMeshUtils::convertToSkinTangentVertices(IMeshBuffer* buffer, bool flipNormal)
+	{
+		// replace the buffer
+		for (u32 j = 0; j < buffer->getVertexBufferCount(); ++j)
+		{
+			CVertexBuffer<video::S3DVertexSkinTangents>* vertexBuffer = new CVertexBuffer<video::S3DVertexSkinTangents>();
+			CMeshUtils::copyVertices(buffer->getVertexBuffer(j), vertexBuffer);
+			buffer->setVertexBuffer(vertexBuffer, j);
+			vertexBuffer->drop();
+		}
+
+		buffer->setVertexDescriptor(getVideoDriver()->getVertexDescriptor(video::EVT_SKIN_TANGENTS));
+
+		for (u32 j = 0; j < buffer->getVertexBufferCount(); ++j)
+		{
+			IMeshManipulator* mh = getIrrlichtDevice()->getSceneManager()->getMeshManipulator();
+			mh->recalculateTangents(buffer);
+
+			CVertexBuffer<video::S3DVertexSkinTangents>* vertexBuffer = (CVertexBuffer<video::S3DVertexSkinTangents>*)buffer->getVertexBuffer(j);
+			const u32 vtxCnt = vertexBuffer->getVertexCount();
+			video::S3DVertexSkinTangents* v = (video::S3DVertexSkinTangents*)vertexBuffer->getVertices();
+
+			for (u32 i = 0; i != vtxCnt; ++i)
+				v[i].VertexData.set(1.0f, (float)i);
+		}
+
+		updateSkinTangentBinormal(buffer);
+
+		// assign skin material
+		buffer->getMaterial().MaterialType = CShaderManager::getInstance()->getShaderIDByName("Skin");
+	}
+
+	void CMeshUtils::convertToSkinVertices(IMeshBuffer* buffer)
+	{
+		// change vertex descriptor
+		buffer->setVertexDescriptor(getVideoDriver()->getVertexDescriptor(video::EVT_SKIN));
+
+		for (u32 i = 0; i < buffer->getVertexBufferCount(); ++i)
+		{
+			CVertexBuffer<video::S3DVertexSkin>* vertexBuffer = new CVertexBuffer<video::S3DVertexSkin>();
+
+			// copy vertex data
+			CMeshUtils::copyVertices(buffer->getVertexBuffer(i), vertexBuffer);
+
+			// replace the buffer
+			buffer->setVertexBuffer(vertexBuffer, i);
+
+			// drop reference
+			vertexBuffer->drop();
+		}
+
+		// assign skin material
+		buffer->getMaterial().MaterialType = CShaderManager::getInstance()->getShaderIDByName("Skin");
+	}
+
+	void CMeshUtils::updateTangentBinormal(IMeshBuffer* buffer, bool flipNormal)
+	{
 		for (u32 j = 0; j < buffer->getVertexBufferCount(); ++j)
 		{
 			// todo calc tangent & binormal
@@ -79,15 +154,6 @@ namespace Skylicht
 			u32 i;
 			video::S3DVertexTangents* v = (video::S3DVertexTangents*)vertexBuffer->getVertices();
 
-			// (1)
-			// Use irrlicht compute			
-			IMeshManipulator* mh = getIrrlichtDevice()->getSceneManager()->getMeshManipulator();
-			mh->recalculateTangents(buffer);
-
-			for (i = 0; i != vtxCnt; ++i)
-				v[i].VertexData.set(1.0f, (float)i);
-
-			// (2)
 			for (i = 0; i != vtxCnt; ++i)
 			{
 				core::vector3df n = v[i].Normal;
@@ -95,9 +161,9 @@ namespace Skylicht
 				core::vector3df t2 = v[i].Binormal;
 
 				// hard code to fix some error on model
-				if (t.getLengthSQ() == 0)
+				if (t.getLengthSQ() == 0.0f)
 				{
-					if (t2.getLengthSQ() != 0)
+					if (t2.getLengthSQ() != 0.0f)
 						t = n.crossProduct(t2);
 					else
 					{
@@ -130,28 +196,11 @@ namespace Skylicht
 				v[i].Binormal.normalize();
 				v[i].Normal.normalize();
 			}
-
-			// drop reference
-			vertexBuffer->drop();
 		}
 	}
 
-	void CMeshUtils::convertToSkinTangentVertices(IMeshBuffer* buffer, bool flipNormal)
+	void CMeshUtils::updateSkinTangentBinormal(IMeshBuffer* buffer, bool flipNormal)
 	{
-		// replace the buffer
-		for (u32 j = 0; j < buffer->getVertexBufferCount(); ++j)
-		{
-			CVertexBuffer<video::S3DVertexSkinTangents>* vertexBuffer = new CVertexBuffer<video::S3DVertexSkinTangents>();
-
-			// copy vertex data
-			CMeshUtils::copyVertices(buffer->getVertexBuffer(j), vertexBuffer);
-
-			// replace
-			buffer->setVertexBuffer(vertexBuffer, j);
-		}
-
-		buffer->setVertexDescriptor(getVideoDriver()->getVertexDescriptor(video::EVT_SKIN_TANGENTS));
-
 		for (u32 j = 0; j < buffer->getVertexBufferCount(); ++j)
 		{
 			// todo calc tangent & binormal
@@ -162,23 +211,6 @@ namespace Skylicht
 			u32 i;
 			video::S3DVertexSkinTangents* v = (video::S3DVertexSkinTangents*)vertexBuffer->getVertices();
 
-			u16* idx16 = NULL;
-			u32* idx32 = NULL;
-
-			if (buffer->getIndexBuffer()->getType() == video::EIT_16BIT)
-				idx16 = (u16*)buffer->getIndexBuffer()->getIndices();
-			else
-				idx32 = (u32*)buffer->getIndexBuffer()->getIndices();
-
-			// (1)
-			// Use irrlicht compute			
-			IMeshManipulator* mh = getIrrlichtDevice()->getSceneManager()->getMeshManipulator();
-			mh->recalculateTangents(buffer);
-
-			for (i = 0; i != vtxCnt; ++i)
-				v[i].VertexData.set(1.f, (float)i);
-
-			// (2)
 			for (i = 0; i != vtxCnt; ++i)
 			{
 				core::vector3df n = v[i].Normal;
@@ -200,38 +232,6 @@ namespace Skylicht
 				v[i].Binormal.normalize();
 				v[i].Normal.normalize();
 			}
-
-			// replace the buffer
-			buffer->setVertexBuffer(vertexBuffer, j);
-
-			// drop reference
-			vertexBuffer->drop();
 		}
-
-		// assign skin material
-		buffer->getMaterial().MaterialType = CShaderManager::getInstance()->getShaderIDByName("Skin");
-	}
-
-	void CMeshUtils::convertToSkinVertices(IMeshBuffer* buffer)
-	{
-		// change vertex descriptor
-		buffer->setVertexDescriptor(getVideoDriver()->getVertexDescriptor(video::EVT_SKIN));
-
-		for (u32 i = 0; i < buffer->getVertexBufferCount(); ++i)
-		{
-			CVertexBuffer<video::S3DVertexSkin>* vertexBuffer = new CVertexBuffer<video::S3DVertexSkin>();
-
-			// copy vertex data
-			CMeshUtils::copyVertices(buffer->getVertexBuffer(i), vertexBuffer);
-
-			// replace the buffer
-			buffer->setVertexBuffer(vertexBuffer, i);
-
-			// drop reference
-			vertexBuffer->drop();
-		}
-
-		// assign skin material
-		buffer->getMaterial().MaterialType = CShaderManager::getInstance()->getShaderIDByName("Skin");
 	}
 }

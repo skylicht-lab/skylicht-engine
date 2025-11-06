@@ -29,12 +29,16 @@ namespace Skylicht
 	class SKYLICHT_API CMeshUtils
 	{
 	public:
-		static void copyVertices(IVertexBuffer *srcBuffer, IVertexBuffer *dstBuffer);
+		static void copyVertices(IVertexBuffer* srcBuffer, IVertexBuffer* dstBuffer);
 
 		static void convertToTangentVertices(IMeshBuffer* buffer, bool flipNormal = false);
 
 		static void convertToSkinVertices(IMeshBuffer* buffer);
 
 		static void convertToSkinTangentVertices(IMeshBuffer* buffer, bool flipNormal = false);
+
+		static void updateTangentBinormal(IMeshBuffer* buffer, bool flipNormal = false);
+
+		static void updateSkinTangentBinormal(IMeshBuffer* buffer, bool flipNormal = false);
 	};
 }

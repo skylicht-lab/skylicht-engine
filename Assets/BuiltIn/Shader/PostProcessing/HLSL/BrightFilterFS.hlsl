@@ -18,10 +18,10 @@ cbuffer cbPerFrame
 
 float4 main(PS_INPUT input) : SV_TARGET
 {
-	float3 m = uSourceTex.Sample(uSourceTexSampler, input.tex0).rgb;
+	float3 m = uSourceTex.SampleLevel(uSourceTexSampler, input.tex0, 0.0).rgb;
 	m = min(m, float3(4.0, 4.0, 4.0));
 	
-	float3 e = uSourceEmission.Sample(uSourceEmissionSampler, input.tex0).rgb;
+	float3 e = uSourceEmission.SampleLevel(uSourceEmissionSampler, input.tex0, 0.0).rgb;
 	
 	// brightness
 	float br = max(max(m.r, m.g), m.b);
