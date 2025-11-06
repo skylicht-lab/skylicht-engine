@@ -1,4 +1,4 @@
-<shaderConfig name="TransparentColor" baseShader="TRANSPARENT_ALPHA_CHANNEL">
+<shaderConfig name="Transparent" baseShader="TRANSPARENT_ALPHA_CHANNEL">
 	<instancing vertex="standard" shader="TransparentInstancing" instancingVertex="standard_color"/>
 	<dependent shader="TransparentInstancing.xml"/>
 	<uniforms>
@@ -9,12 +9,14 @@
 		<fs>
 			<uniform name="uTexDiffuse" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
 			<uniform name="uColor" type="MATERIAL_PARAM" valueIndex="1" value="1.0, 1.0, 1.0, 1.0" float="4"/>
+			<uniform name="uColorIntensity" type="MATERIAL_PARAM" valueIndex="3" value="1.0, 1.0, 1.0, 1.0" float="4"/>
 		</fs>
 	</uniforms>
 	<customUI>
 		<ui control="UIGroup" name="Texture">
 			<ui control="UITexture" name="uTexDiffuse" autoReplace="_diff.tga"/>
 			<ui control="UIColor" name="uColor"/>
+			<ui control="UIFloat4" name="uColorIntensity" elementName="R;G;B;A" min="0" max="3"/>
 		</ui>
 		<ui control="UIGroup" name="Customize">
 			<ui control="UIFloat4" name="uUVScale" elementName="UV ScaleX;UV ScaleY;UV OffsetX;UV OffsetY"/>

@@ -1,9 +1,8 @@
-<shaderConfig name="TransparentAddtive" baseShader="TRANSPARENT_ADD_COLOR">
-	<instancing vertex="standard" shader="TransparentAddtiveInstancing" instancingVertex="standard_color"/>
-	<dependent shader="TransparentAddtiveInstancing.xml"/>
+<shaderConfig name="SkinTransparent" baseShader="TRANSPARENT_ALPHA_CHANNEL">
 	<uniforms>
 		<vs>
 			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+			<uniform name="uBoneMatrix" type="BONE_MATRIX" value="0" float="16" array="64" matrix="true"/>
 			<uniform name="uUVScale" type="MATERIAL_PARAM" valueIndex="0" value="1.0, 1.0, 0.0, 0.0" float="4"/>
 		</vs>
 		<fs>
@@ -22,6 +21,6 @@
 			<ui control="UIFloat4" name="uUVScale" elementName="UV ScaleX;UV ScaleY;UV OffsetX;UV OffsetY"/>
 		</ui>
 	</customUI>
-	<shader type="GLSL" vs="GLSL/TransparentColorVS.glsl" fs="GLSL/TransparentColorFS.glsl"/>
-	<shader type="HLSL" vs="HLSL/TransparentColorVS.hlsl" fs="HLSL/TransparentColorFS.hlsl"/>
+	<shader type="GLSL" vs="GLSL/SkinTransparentColorVS.glsl" fs="GLSL/TransparentColorFS.glsl"/>
+	<shader type="HLSL" vs="HLSL/SkinTransparentColorVS.hlsl" fs="HLSL/TransparentColorFS.hlsl"/>
 </shaderConfig>

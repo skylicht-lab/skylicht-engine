@@ -19,12 +19,13 @@ cbuffer cbPerObject
 {
 	float4x4 uMvpMatrix;
 	float4x4 uBoneMatrix[64];
+	float4 uUVScale;
 };
 
 VS_OUTPUT main(VS_INPUT input)
 {
 	VS_OUTPUT output;
-
+	
 	float4x4 skinMatrix;
 	float4 skinPosition;
 	//float4 skinNormal;
@@ -51,6 +52,7 @@ VS_OUTPUT main(VS_INPUT input)
 
 	output.pos = mul(skinPosition, uMvpMatrix);
 	output.color = input.color;
-	output.tex0 = input.tex0;
+	output.tex0 = input.tex0 * uUVScale.xy + uUVScale.zw;;
+
 	return output;
 }
