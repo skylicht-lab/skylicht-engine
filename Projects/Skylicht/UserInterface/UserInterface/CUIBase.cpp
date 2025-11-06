@@ -42,9 +42,13 @@ namespace Skylicht
 			m_skipPointerEventWhenDrag(false),
 			m_pointerId(-1),
 			m_pointerDownX(0.0f),
-			m_pointerDownY(0.0f)
+			m_pointerDownY(0.0f),
+			m_userData(NULL)
 		{
 			m_container->addChild(this);
+
+			for (int i = 0; i < 4; i++)
+				m_soundId[i] = 0;
 		}
 
 		CUIBase::~CUIBase()
@@ -134,6 +138,9 @@ namespace Skylicht
 
 			if (OnPointerHover != nullptr)
 				OnPointerHover(pointerX, pointerY);
+
+			if (m_container->OnHover != nullptr)
+				m_container->OnHover(this);
 		}
 
 		void CUIBase::onPointerOut(int pointerId, float pointerX, float pointerY)
@@ -193,6 +200,9 @@ namespace Skylicht
 		{
 			if (OnPressed != nullptr)
 				OnPressed(this);
+
+			if (m_container->OnPressed != nullptr)
+				m_container->OnPressed(this);
 		}
 
 		void CUIBase::onFocus()

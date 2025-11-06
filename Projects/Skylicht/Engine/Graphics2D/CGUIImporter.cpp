@@ -181,6 +181,9 @@ namespace Skylicht
 								data->parseSerializable(reader);
 								guiObject->loadSerializable(data);
 								delete data;
+
+								if (canvas->OnGUILoaded != nullptr)
+									canvas->OnGUILoaded(guiObject);
 							}
 							else
 							{
@@ -454,6 +457,9 @@ namespace Skylicht
 				}
 			}
 		}
+
+		if (canvas->OnGUILoaded != nullptr)
+			canvas->OnGUILoaded(element);
 
 		return element;
 	}

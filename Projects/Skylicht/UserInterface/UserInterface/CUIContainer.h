@@ -71,6 +71,11 @@ namespace Skylicht
 			bool m_outMotion;
 
 			bool m_pointerDown;
+
+		public:
+			std::function<void(CUIBase*)> OnPressed;
+			std::function<void(CUIBase*)> OnHover;
+
 		public:
 			/**
 			* @brief Callback invoked when in-motion sequence finishes.

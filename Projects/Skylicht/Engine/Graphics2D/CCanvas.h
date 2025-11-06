@@ -126,6 +126,10 @@ namespace Skylicht
 		bool DrawOutline;
 
 	public:
+
+		std::function<void(CGUIElement*)> OnGUILoaded;
+
+	public:
 		/**
 		 * @brief Constructor.
 		 */

@@ -83,6 +83,10 @@ namespace Skylicht
 			float m_pointerDownX;
 			float m_pointerDownY;
 
+			int m_soundId[4];
+
+			void* m_userData;
+
 		public:
 			std::function<void(float, float)> OnPointerHover;
 			std::function<void(float, float)> OnPointerOut;
@@ -365,9 +369,70 @@ namespace Skylicht
 			 */
 			void convertLocalToWorld(CGUIElement* element, float& x, float& y);
 
+			/**
+			 * @brief Whether this UI element should accept drag-focus when the pointer is already down
+			 * and the user drags over it.
+			 *
+			 * When the pointer press starts on one control and the user drags over another control,
+			 * the container (`CUIContainer`) may call `onPointerDown(...)` on the hovered element if
+			 * it "accepts drag focus". This lets controls like list or grid views start scrolling/
+			 * handling a drag while the pointer is still pressed.
+			 *
+			 * Default behaviour returns false so only the originally pressed control receives the
+			 * pointer down. Subclasses that should grab the drag interaction (e.g. `CUIListView`)
+			 * should override this to return true.
+			 */
 			virtual bool acceptDragFocus()
 			{
 				return false;
+			}
+
+			/**
+			 * @brief Set the sound id associated with this UI object.
+			 *
+			 * The sound id can be used by the UI system to play feedback (e.g. on press
+			 * or hover). Interpretation/lookup of the id is the caller/container's
+			 * responsibility.
+			 *
+			 * @param soundId Application-defined sound identifier.
+			 */
+			inline void setSoundId(int slot, int soundId)
+			{
+				m_soundId[slot] = soundId;
+			}
+
+			/**
+			 * @brief Get the sound id associated with this UI object.
+			 *
+			 * @return The currently set sound id (implementation-defined meaning).
+			 */
+			inline int getSoundId(int slot)
+			{
+				return m_soundId[slot];
+			}
+
+			/**
+			 * @brief Attach an application-defined pointer to this UI object.
+			 *
+			 * This is a convenience for storing arbitrary user data or context related to
+			 * the control. Ownership and lifetime are managed by the caller — the UI
+			 * system only stores/returns the raw pointer.
+			 *
+			 * @param data Pointer to user-defined data (may be nullptr).
+			 */
+			inline void setUserData(void* data)
+			{
+				m_userData = data;
+			}
+
+			/**
+			 * @brief Retrieve the pointer previously set via `setUserData`.
+			 *
+			 * @return The stored user data pointer, or `nullptr` if none was set.
+			 */
+			void* getUserData()
+			{
+				return m_userData;
 			}
 		};
 	}
