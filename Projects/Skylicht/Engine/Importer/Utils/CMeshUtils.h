@@ -39,6 +39,9 @@ namespace Skylicht
 
 		static void updateTangentBinormal(IMeshBuffer* buffer, bool flipNormal = false);
 
-		static void updateSkinTangentBinormal(IMeshBuffer* buffer, bool flipNormal = false);
+	protected:
+
+		static void updateTangentBinormal(IVertexBuffer* buffer, bool haveUV2, bool flipNormal = false);
+
 	};
 }

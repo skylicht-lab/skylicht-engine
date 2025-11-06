@@ -176,17 +176,36 @@ namespace Skylicht
 			}
 		}
 
-		uint32_t read_big_endian_32(std::ifstream& file)
+		bool is_little_endian()
 		{
-			uint32_t value;
+			u16 test = 0x0001;
+			return (*(uint8_t*)&test == 0x01);
+		}
+
+		u32 be_to_host_32(u32 val)
+		{
+			if (is_little_endian())
+			{
+				return ((val & 0xFF000000) >> 24) |
+					((val & 0x00FF0000) >> 8) |
+					((val & 0x0000FF00) << 8) |
+					((val & 0x000000FF) << 24);
+			}
+			return val;
+		}
+
+		u32 read_big_endian_32(std::ifstream& file)
+		{
+			u32 value;
 			file.read(reinterpret_cast<char*>(&value), 4);
-			return ntohl(value);
+			return be_to_host_32(value);
 		}
 
 		bool CSpriteEditor::readWidthHeight(const char* path, int& width, int& height)
 		{
 			std::ifstream file(path, std::ios::binary);
-			if (!file.is_open()) {
+			if (!file.is_open())
+			{
 				return false;
 			}
 
@@ -194,14 +213,14 @@ namespace Skylicht
 			file.seekg(8, std::ios::cur);
 
 			try {
-				width = read_big_endian_32(file);
+				width = (int)read_big_endian_32(file);
 			}
 			catch (...) {
 				return false;
 			}
 
 			try {
-				height = read_big_endian_32(file);
+				height = (int)read_big_endian_32(file);
 			}
 			catch (...) {
 				return false;

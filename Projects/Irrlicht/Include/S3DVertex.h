@@ -30,7 +30,7 @@ enum E_VERTEX_TYPE
 
 	//! Skylicht support hardware skinning
 	EVT_SKIN,
-	EVT_SKIN_TANGENTS,	
+	EVT_SKIN_TANGENTS,
 	EVT_2TCOORDS_TANGENTS,
 	EVT_SKIN_2TCOORDS_TANGENTS,
 	//! Null
@@ -44,7 +44,7 @@ const char* const sBuiltInVertexTypeNames[] =
 	"2tcoords",
 	"tangents",
 	"skin",
-	"skintangents",	
+	"skintangents",
 	"2tcoordstangents",
 	"skin2tcoordtangents",
 	0
@@ -75,7 +75,7 @@ struct S3DVertex
 	SColor Color;
 
 	//! Texture coordinates
-	core::vector2d<f32> TCoords;	
+	core::vector2d<f32> TCoords;
 
 	bool operator==(const S3DVertex& other) const
 	{

@@ -113,7 +113,7 @@ namespace Skylicht
 				v[i].VertexData.set(1.0f, (float)i);
 		}
 
-		updateSkinTangentBinormal(buffer);
+		updateTangentBinormal(buffer);
 
 		// assign skin material
 		buffer->getMaterial().MaterialType = CShaderManager::getInstance()->getShaderIDByName("Skin");
@@ -146,92 +146,85 @@ namespace Skylicht
 	{
 		for (u32 j = 0; j < buffer->getVertexBufferCount(); ++j)
 		{
-			// todo calc tangent & binormal
-			CVertexBuffer<video::S3DVertexTangents>* vertexBuffer = (CVertexBuffer<video::S3DVertexTangents>*)buffer->getVertexBuffer(j);
+			IVertexBuffer* vb = buffer->getVertexBuffer(j);
+			video::E_VERTEX_TYPE vtType = buffer->getVertexType();
 
-			const u32 vtxCnt = vertexBuffer->getVertexCount();
+			bool haveUV2 = false;
 
-			u32 i;
-			video::S3DVertexTangents* v = (video::S3DVertexTangents*)vertexBuffer->getVertices();
+			if (vtType != video::EVT_TANGENTS &&
+				vtType != video::EVT_SKIN_TANGENTS &&
+				vtType != video::EVT_2TCOORDS_TANGENTS &&
+				vtType != video::EVT_SKIN_2TCOORDS_TANGENTS)
+				continue;
 
-			for (i = 0; i != vtxCnt; ++i)
-			{
-				core::vector3df n = v[i].Normal;
-				core::vector3df t = v[i].Tangent;
-				core::vector3df t2 = v[i].Binormal;
+			if (vtType == video::EVT_2TCOORDS_TANGENTS ||
+				vtType == video::EVT_SKIN_2TCOORDS_TANGENTS)
+				haveUV2 = true;
 
-				// hard code to fix some error on model
-				if (t.getLengthSQ() == 0.0f)
-				{
-					if (t2.getLengthSQ() != 0.0f)
-						t = n.crossProduct(t2);
-					else
-					{
-						core::vector3df t1 = n.crossProduct(core::vector3df(0.0f, 0.0f, 1.0f));
-						core::vector3df t2 = n.crossProduct(core::vector3df(0.0f, 1.0f, 0.0f));
-
-						if (t1.getLength() > t2.getLength())
-						{
-							t = t1;
-						}
-						else
-						{
-							t = t2;
-						}
-					}
-				}
-
-				v[i].Tangent = t - (n * n.dotProduct(t));
-
-				float w = n.crossProduct(t).dotProduct(t2) < 0.0f ? -1.0f : 1.0f;
-				v[i].Binormal = n.crossProduct(t);
-
-				// need test this condition
-				if (flipNormal == true)
-					v[i].VertexData.X = -w;
-				else
-					v[i].VertexData.X = w;
-
-				v[i].Tangent.normalize();
-				v[i].Binormal.normalize();
-				v[i].Normal.normalize();
-			}
+			updateTangentBinormal(vb, haveUV2, flipNormal);
 		}
 	}
 
-	void CMeshUtils::updateSkinTangentBinormal(IMeshBuffer* buffer, bool flipNormal)
+	void CMeshUtils::updateTangentBinormal(IVertexBuffer* vb, bool haveUV2, bool flipNormal)
 	{
-		for (u32 j = 0; j < buffer->getVertexBufferCount(); ++j)
+		// todo calc tangent & binormal
+		const u32 vtxCnt = vb->getVertexCount();
+
+		u32 i;
+		u32 vtxSize = vb->getVertexSize();
+		unsigned char* vtx = (unsigned char*)vb->getVertices();
+
+		core::vector3df* n;
+		core::vector3df* tangent;
+		core::vector3df* binormal;
+		core::vector2df* vdata;
+
+		for (i = 0; i < vtxCnt; ++i)
 		{
-			// todo calc tangent & binormal
-			CVertexBuffer<video::S3DVertexSkinTangents>* vertexBuffer = (CVertexBuffer<video::S3DVertexSkinTangents>*)buffer->getVertexBuffer(j);
+			S3DVertexTangents* vt1 = (S3DVertexTangents*)vtx;
+			S3DVertex2TCoordsTangents* vt2 = (S3DVertex2TCoordsTangents*)vtx;
 
-			const u32 vtxCnt = vertexBuffer->getVertexCount();
+			n = haveUV2 ? &vt2->Normal : &vt1->Normal;
+			tangent = haveUV2 ? &vt2->Tangent : &vt1->Tangent;
+			binormal = haveUV2 ? &vt2->Binormal : &vt1->Binormal;
+			vdata = haveUV2 ? &vt2->VertexData : &vt1->VertexData;
 
-			u32 i;
-			video::S3DVertexSkinTangents* v = (video::S3DVertexSkinTangents*)vertexBuffer->getVertices();
+			core::vector3df t = *tangent;
+			core::vector3df t2 = *binormal;
 
-			for (i = 0; i != vtxCnt; ++i)
+			// hard code to fix some error on model
+			if (t.getLengthSQ() == 0.0f)
 			{
-				core::vector3df n = v[i].Normal;
-				core::vector3df t = v[i].Tangent;
-				core::vector3df t2 = v[i].Binormal;
-
-				v[i].Tangent = (t - n * n.dotProduct(t));
-
-				float w = n.crossProduct(t).dotProduct(t2) < 0.0f ? -1.0f : 1.0f;
-				v[i].Binormal = n.crossProduct(t);
-
-				// need test this condition
-				if (flipNormal == true)
-					v[i].VertexData.X = -w;
+				if (t2.getLengthSQ() != 0.0f)
+					t = n->crossProduct(t2);
 				else
-					v[i].VertexData.X = w;
+				{
+					core::vector3df t1 = n->crossProduct(core::vector3df(0.0f, 0.0f, 1.0f));
+					core::vector3df t2 = n->crossProduct(core::vector3df(0.0f, 1.0f, 0.0f));
 
-				v[i].Tangent.normalize();
-				v[i].Binormal.normalize();
-				v[i].Normal.normalize();
+					if (t1.getLength() > t2.getLength())
+					{
+						t = t1;
+					}
+					else
+					{
+						t = t2;
+					}
+				}
 			}
+
+			*tangent = t - (*n * n->dotProduct(t));
+
+			float w = n->crossProduct(t).dotProduct(t2) < 0.0f ? -1.0f : 1.0f;
+			*binormal = n->crossProduct(t);
+
+			// need test this condition
+			vdata->X = flipNormal ? -w : w;
+
+			tangent->normalize();
+			binormal->normalize();
+
+			vtx += vtxSize;
 		}
 	}
 }

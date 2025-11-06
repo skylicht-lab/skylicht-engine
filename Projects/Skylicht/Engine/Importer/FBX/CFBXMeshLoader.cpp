@@ -645,10 +645,7 @@ namespace Skylicht
 					IMeshManipulator* mh = getIrrlichtDevice()->getSceneManager()->getMeshManipulator();
 					mh->recalculateTangents(mb);
 
-					if (isSkinnedMesh)
-						CMeshUtils::updateSkinTangentBinormal(mb, flipNormalMap);
-					else
-						CMeshUtils::updateTangentBinormal(mb, flipNormalMap);
+					CMeshUtils::updateTangentBinormal(mb, flipNormalMap);
 				}
 
 				mb->recalculateBoundingBox();
