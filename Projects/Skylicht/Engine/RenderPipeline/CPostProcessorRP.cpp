@@ -96,7 +96,9 @@ namespace Skylicht
 		if (m_bloomEffect == true || m_fxaa == true)
 		{
 			m_rtt[0] = driver->addRenderTargetTexture(m_size, "rtt_0", ECF_A16B16G16R16F);
-			m_rtt[1] = driver->addRenderTargetTexture(m_size, "rtt_1", ECF_A16B16G16R16F);
+
+			if (m_fxaa)
+				m_rtt[1] = driver->addRenderTargetTexture(m_size, "rtt_1", ECF_A16B16G16R16F);
 
 			core::dimension2du s = m_size;
 			if (m_bloomEffect == true)

@@ -341,10 +341,12 @@ namespace Skylicht
 		ITexture* textureA = materialA->getTexture(0);
 		ITexture* textureB = materialB->getTexture(0);
 
-		// if no texture
-		if (textureA == NULL || textureB == NULL)
+		if (textureA == NULL || textureB == NULL || textureA == textureB)
 		{
-			if (materialA == materialB)
+			CShader* shaderA = materialA->getShader();
+			CShader* shaderB = materialB->getShader();
+
+			if (shaderA == shaderB || materialA == materialB)
 			{
 				// compare mesh
 				IMeshBuffer* mbA = meshA->MeshBuffers[0];
@@ -352,22 +354,12 @@ namespace Skylicht
 
 				if (mbA == mbB)
 					return 0;
+
+				return mbA < mbB ? -1 : 1;
 			}
 
-			return materialA < materialB ? -1 : 1;
-		}
-
-		// sort by texture 0
-		if (textureA == textureB)
-		{
-			// compare mesh
-			IMeshBuffer* mbA = meshA->MeshBuffers[0];
-			IMeshBuffer* mbB = meshB->MeshBuffers[0];
-
-			if (mbA == mbB)
-				return 0;
-
-			return mbA < mbB ? -1 : 1;
+			// compare by shader
+			return shaderA < shaderB ? -1 : 1;
 		}
 
 		return textureA < textureB ? -1 : 1;
