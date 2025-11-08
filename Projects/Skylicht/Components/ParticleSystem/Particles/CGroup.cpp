@@ -333,13 +333,6 @@ namespace Skylicht
 					p.Rotation.Y = p.StartValue[t];
 				else if (t == Particle::RotateZ)
 					p.Rotation.Z = p.StartValue[t];
-				else if (t == Particle::FrameIndex)
-				{
-					if (!m->isRandomEnd())
-					{
-						p.EndValue[t] = p.StartValue[t];
-					}
-				}
 
 				p.Params[t] = p.StartValue[t];
 			}
