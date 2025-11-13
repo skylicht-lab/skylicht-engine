@@ -91,7 +91,23 @@ namespace Skylicht
 				float sx = SizeX * params[ScaleX] * 0.5f;
 				float sy = SizeY * params[ScaleY] * 0.5f;
 
-				if (m_billboardType == Billboard)
+				if (m_billboardType == Frontal)
+				{
+					look = p->Velocity;
+					look.normalize();
+					sideQuad.set(0.0f, 0.0f, 1.0f);
+
+					f32 angle = look.dotProduct(sideQuad);
+					if (angle < 0.9999f && angle > -0.9999f)
+						sideQuad.set(1.0f, 0.0f, 1.0f);
+					else
+						sideQuad.set(0.0f, 0.0f, 1.0f);
+
+					up = look.crossProduct(sideQuad);
+				}
+
+				if (m_billboardType == Billboard ||
+					m_billboardType == Frontal)
 				{
 					float rotation = p->Rotation.Z;
 					float cosA = cosf(rotation);
@@ -209,6 +225,7 @@ namespace Skylicht
 			CObjectSerializable* object = IRenderer::createSerializable();
 			CEnumProperty<EBillboardType>* billboardType = new CEnumProperty<EBillboardType>(object, "billboardType", m_billboardType);
 			billboardType->addEnumString("Billboard", EBillboardType::Billboard);
+			billboardType->addEnumString("Frontal", EBillboardType::Frontal);
 			billboardType->addEnumString("RotateY", EBillboardType::RotateY);
 
 			CEnumProperty<ETransparentType>* transparentType = new CEnumProperty<ETransparentType>(object, "transparentType", m_transparentType);

@@ -37,6 +37,7 @@ namespace Skylicht
 			enum EBillboardType
 			{
 				Billboard,
+				Frontal,
 				RotateY
 			};
 
