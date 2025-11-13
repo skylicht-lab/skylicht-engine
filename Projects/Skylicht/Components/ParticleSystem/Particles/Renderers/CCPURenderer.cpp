@@ -23,16 +23,17 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CBillboardAdditiveRenderer.h"
+#include "CCPURenderer.h"
 #include "Material/Shader/ShaderCallback/CShaderParticle.h"
 
 namespace Skylicht
 {
 	namespace Particle
 	{
-		CBillboardAdditiveRenderer::CBillboardAdditiveRenderer() :
-			IRenderer(BillboardAddtive),
-			m_billboardType(Billboard)
+		CCPURenderer::CCPURenderer() :
+			IRenderer(CPURenderer),
+			m_billboardType(Billboard),
+			m_transparentType(Addtive)
 		{
 			m_useInstancing = false;
 
@@ -43,19 +44,19 @@ namespace Skylicht
 			setTexturePath("BuiltIn/Textures/NullTexture.png");
 		}
 
-		CBillboardAdditiveRenderer::~CBillboardAdditiveRenderer()
+		CCPURenderer::~CCPURenderer()
 		{
 			m_material->drop();
 		}
 
-		void CBillboardAdditiveRenderer::getParticleBuffer(IMeshBuffer* buffer)
+		void CCPURenderer::getParticleBuffer(IMeshBuffer* buffer)
 		{
 			// no need update buffer, just update material
 			m_needUpdateMesh = false;
 			m_material->applyMaterial();
 		}
 
-		void CBillboardAdditiveRenderer::updateParticleBuffer(IMeshBuffer* buffer, CParticle* particles, int num)
+		void CCPURenderer::updateParticleBuffer(IMeshBuffer* buffer, CParticle* particles, int num)
 		{
 			IVertexBuffer* vtx = buffer->getVertexBuffer();
 			IIndexBuffer* idx = buffer->getIndexBuffer();
@@ -203,19 +204,34 @@ namespace Skylicht
 			buffer->setDirty();
 		}
 
-		CObjectSerializable* CBillboardAdditiveRenderer::createSerializable()
+		CObjectSerializable* CCPURenderer::createSerializable()
 		{
 			CObjectSerializable* object = IRenderer::createSerializable();
 			CEnumProperty<EBillboardType>* billboardType = new CEnumProperty<EBillboardType>(object, "billboardType", m_billboardType);
 			billboardType->addEnumString("Billboard", EBillboardType::Billboard);
 			billboardType->addEnumString("RotateY", EBillboardType::RotateY);
+
+			CEnumProperty<ETransparentType>* transparentType = new CEnumProperty<ETransparentType>(object, "transparentType", m_transparentType);
+			transparentType->addEnumString("Addtive", ETransparentType::Addtive);
+			transparentType->addEnumString("Transparent", ETransparentType::Transparent);
 			return object;
 		}
 
-		void CBillboardAdditiveRenderer::loadSerializable(CObjectSerializable* object)
+		void CCPURenderer::loadSerializable(CObjectSerializable* object)
 		{
 			IRenderer::loadSerializable(object);
 			m_billboardType = object->get<EBillboardType>("billboardType", EBillboardType::Billboard);
+
+			ETransparentType transparentType = object->get<ETransparentType>("transparentType", ETransparentType::Addtive);
+
+			if (transparentType != m_transparentType)
+			{
+				if (transparentType == ETransparentType::Addtive)
+					m_material->changeShader("BuiltIn/Shader/Particle/ParticleAdditive.xml");
+				else
+					m_material->changeShader("BuiltIn/Shader/Particle/ParticleTransparent.xml");
+			}
+			m_transparentType = transparentType;
 		}
 	}
 }

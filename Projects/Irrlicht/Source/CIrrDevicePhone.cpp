@@ -15,8 +15,6 @@
 #include <thread>
 #endif
 
-#include <time.h> // for TIMER_ABSTIME
-
 #include "COSOperator.h"
 
 namespace irr
@@ -108,6 +106,7 @@ void CIrrDevicePhone::sleep(u32 timeMs, bool pauseTimer)
 	if (pauseTimer && !wasStopped)
 		Timer->stop();
 
+#if defined(_IRR_ANDROID_PLATFORM_)
 	struct timespec request;
 	if (clock_gettime(CLOCK_MONOTONIC, &request) != -1) 
 	{
@@ -132,6 +131,13 @@ void CIrrDevicePhone::sleep(u32 timeMs, bool pauseTimer)
 		ts.tv_nsec = (long)(timeMs % 1000) * 1000000;
 		nanosleep(&ts, NULL);
 	}
+#else
+	// iOS
+	struct timespec ts;
+	ts.tv_sec = (time_t)(timeMs / 1000);
+	ts.tv_nsec = (long)(timeMs % 1000) * 1000000;
+	nanosleep(&ts, NULL);
+#endif
 
 	if (pauseTimer && !wasStopped)
 		Timer->start();

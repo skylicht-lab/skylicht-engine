@@ -231,8 +231,8 @@ void SampleParticlesExplosion::initParticleSystem(Particle::CParticleComponent* 
 	// GROUP: FLAME
 	Particle::CGroup* flameGroup = ps->createParticleGroup();
 
-	// Billboard render use is slower but render additive look better
-	Particle::CBillboardAdditiveRenderer* flame = factory->createBillboardAdditiveRenderer();
+	// CPU renderer use is slower but render additive look better
+	Particle::CCPURenderer* flame = factory->createCPURenderer();
 
 	//Particle::CQuadRenderer *flame = factory->createQuadRenderer();
 	//flame->setMaterialType(Particle::Additive, Particle::Camera);

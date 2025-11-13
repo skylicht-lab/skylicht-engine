@@ -35,7 +35,7 @@ namespace Skylicht
 		enum ERenderer
 		{
 			Quad,
-			BillboardAddtive,
+			CPURenderer,
 			MeshInstancing
 		};
 
@@ -130,7 +130,7 @@ namespace Skylicht
 				else if (m_type == MeshInstancing)
 					return L"Mesh (Instancing)";
 				else
-					return L"CPU Billboard";
+					return L"CPU Renderer";
 			}
 
 			virtual CObjectSerializable* createSerializable();

@@ -29,7 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Emitters/CEmitter.h"
 
 #include "Renderers/CQuadRenderer.h"
-#include "Renderers/CBillboardAdditiveRenderer.h"
+#include "Renderers/CCPURenderer.h"
 #include "Renderers/CMeshParticleRenderer.h"
 
 #include "Zones/CPoint.h"
@@ -75,7 +75,7 @@ namespace Skylicht
 
 			CQuadRenderer* createQuadRenderer();
 
-			CBillboardAdditiveRenderer* createBillboardAdditiveRenderer();
+			CCPURenderer* createCPURenderer();
 
 			CMeshParticleRenderer* createMeshParticleRenderer();
 

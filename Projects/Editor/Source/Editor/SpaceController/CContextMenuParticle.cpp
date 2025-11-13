@@ -95,7 +95,7 @@ namespace Skylicht
 
 			m_menuGroup->addItemByPath(L"Renderer/Quad (Instancing)");
 			m_menuGroup->addItemByPath(L"Renderer/Mesh (Instancing)");
-			m_menuGroup->addItemByPath(L"Renderer/CPU Billboard");
+			m_menuGroup->addItemByPath(L"Renderer/CPU Renderer");
 			m_menuGroup->addItemByPath(L"Renderer/No Renderer");
 
 			subMenu = m_menuGroup->getItemByPath(L"Renderer");
@@ -114,7 +114,7 @@ namespace Skylicht
 			m_menuRenderer->OnCommand = BIND_LISTENER(&CContextMenuParticle::OnContextMenuGroupCommand, this);
 			m_menuRenderer->addItem(L"Quad (Instancing)");
 			m_menuRenderer->addItem(L"Mesh (Instancing)");
-			m_menuRenderer->addItem(L"CPU Billboard");
+			m_menuRenderer->addItem(L"CPU Renderer");
 			m_menuRenderer->addItem(L"No Renderer");
 
 			m_menuEmitters = new GUI::CMenu(canvas);
@@ -297,7 +297,7 @@ namespace Skylicht
 			std::vector<GUI::CMenuItem*> items;
 			items.push_back(menu->searchItemByLabel(L"Quad (Instancing)"));
 			items.push_back(menu->searchItemByLabel(L"Mesh (Instancing)"));
-			items.push_back(menu->searchItemByLabel(L"CPU Billboard"));
+			items.push_back(menu->searchItemByLabel(L"CPU Renderer"));
 			items.push_back(menu->searchItemByLabel(L"No Renderer"));
 
 			for (GUI::CMenuItem* i : items)
@@ -319,7 +319,7 @@ namespace Skylicht
 						items[1]->setIcon(GUI::ESystemIcon::Check);
 					else
 					{
-						Particle::CBillboardAdditiveRenderer* billboardRenderer = dynamic_cast<Particle::CBillboardAdditiveRenderer*>(renderer);
+						Particle::CCPURenderer* billboardRenderer = dynamic_cast<Particle::CCPURenderer*>(renderer);
 						if (billboardRenderer)
 							items[2]->setIcon(GUI::ESystemIcon::Check);
 					}
@@ -465,18 +465,18 @@ namespace Skylicht
 					propretyController->setProperty(NULL);
 				}
 			}
-			else if (command == L"CPU Billboard")
+			else if (command == L"CPU Renderer")
 			{
 				Particle::IRenderer* renderer = m_group->getRenderer();
-				Particle::CBillboardAdditiveRenderer* billboardRenderer = dynamic_cast<Particle::CBillboardAdditiveRenderer*>(renderer);
-				if (billboardRenderer)
+				Particle::CCPURenderer* cpuRenderer = dynamic_cast<Particle::CCPURenderer*>(renderer);
+				if (cpuRenderer)
 				{
 					return;
 				}
 				else
 				{
 					factory->deleteRenderer(renderer);
-					m_group->setRenderer(factory->createBillboardAdditiveRenderer());
+					m_group->setRenderer(factory->createCPURenderer());
 					propretyController->setProperty(NULL);
 				}
 			}

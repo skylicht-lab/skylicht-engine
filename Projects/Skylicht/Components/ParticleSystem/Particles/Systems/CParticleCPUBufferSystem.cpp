@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "ParticleSystem/Particles/CParticle.h"
 #include "ParticleSystem/Particles/CGroup.h"
 
-#include "ParticleSystem/Particles/Renderers/CBillboardAdditiveRenderer.h"
+#include "ParticleSystem/Particles/Renderers/CCPURenderer.h"
 
 namespace Skylicht
 {
@@ -44,10 +44,10 @@ namespace Skylicht
 
 		}
 
-		void CParticleCPUBufferSystem::update(CParticle *particles, int num, CGroup *group, float dt)
+		void CParticleCPUBufferSystem::update(CParticle* particles, int num, CGroup* group, float dt)
 		{
-			CBillboardAdditiveRenderer *billboard = dynamic_cast<CBillboardAdditiveRenderer*>(group->getRenderer());
-			IMeshBuffer *mb = group->getParticleBuffer()->getMeshBuffer();
+			CCPURenderer* billboard = dynamic_cast<CCPURenderer*>(group->getRenderer());
+			IMeshBuffer* mb = group->getParticleBuffer()->getMeshBuffer();
 
 			if (billboard != NULL)
 			{

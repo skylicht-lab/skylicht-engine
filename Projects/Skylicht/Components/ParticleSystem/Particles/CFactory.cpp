@@ -99,9 +99,9 @@ namespace Skylicht
 			return r;
 		}
 
-		CBillboardAdditiveRenderer* CFactory::createBillboardAdditiveRenderer()
+		CCPURenderer* CFactory::createCPURenderer()
 		{
-			CBillboardAdditiveRenderer* r = new CBillboardAdditiveRenderer();
+			CCPURenderer* r = new CCPURenderer();
 			m_renderers.push_back(r);
 			return r;
 		}
@@ -277,8 +277,8 @@ namespace Skylicht
 			IRenderer* renderer = NULL;
 			if (attributeName == L"CQuadRenderer")
 				renderer = createQuadRenderer();
-			else if (attributeName == L"CBillboardAdditiveRenderer")
-				renderer = createBillboardAdditiveRenderer();
+			else if (attributeName == L"CCPURenderer")
+				renderer = createCPURenderer();
 			else if (attributeName == L"CMeshParticleRenderer")
 				renderer = createMeshParticleRenderer();
 			return renderer;

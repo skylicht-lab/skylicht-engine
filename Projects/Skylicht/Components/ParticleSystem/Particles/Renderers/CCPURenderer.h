@@ -31,7 +31,7 @@ namespace Skylicht
 {
 	namespace Particle
 	{
-		class COMPONENT_API CBillboardAdditiveRenderer : public IRenderer
+		class COMPONENT_API CCPURenderer : public IRenderer
 		{
 		public:
 			enum EBillboardType
@@ -40,16 +40,23 @@ namespace Skylicht
 				RotateY
 			};
 
+			enum ETransparentType
+			{
+				Addtive,
+				Transparent
+			};
+
 		protected:
 			static const u32 NB_INDICES_PER_QUAD = 6;
 			static const u32 NB_VERTICES_PER_QUAD = 4;
 
 			EBillboardType m_billboardType;
+			ETransparentType m_transparentType;
 
 		public:
-			CBillboardAdditiveRenderer();
+			CCPURenderer();
 
-			virtual ~CBillboardAdditiveRenderer();
+			virtual ~CCPURenderer();
 
 			virtual void getParticleBuffer(IMeshBuffer* buffer);
 
@@ -69,7 +76,7 @@ namespace Skylicht
 				m_billboardType = type;
 			}
 
-			DECLARE_GETTYPENAME(CBillboardAdditiveRenderer)
+			DECLARE_GETTYPENAME(CCPURenderer)
 		};
 	}
 }

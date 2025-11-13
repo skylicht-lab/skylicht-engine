@@ -290,7 +290,7 @@ void CViewInit::initFireParticle(Particle::CParticleComponent* ps)
 	Particle::CGroup* fireGroup = ps->createParticleGroup();
 
 	// Billboard render use is slower but render additive look better
-	Particle::CBillboardAdditiveRenderer* fire = factory->createBillboardAdditiveRenderer();
+	Particle::CCPURenderer* fire = factory->createCPURenderer();
 
 	// Particle::CQuadRenderer *fire = factory->createQuadRenderer();
 	// fire->setMaterialType(Particle::Additive, Particle::Camera);
@@ -380,7 +380,7 @@ void CViewInit::initFireParticle(Particle::CParticleComponent* ps)
 	// GROUP: SMOKE
 	Particle::CGroup* smokeGroup = ps->createParticleGroup();
 
-	Particle::CBillboardAdditiveRenderer* smoke = factory->createBillboardAdditiveRenderer();
+	Particle::CCPURenderer* smoke = factory->createCPURenderer();
 
 	// Particle::CQuadRenderer *smoke = factory->createQuadRenderer();
 	// smoke->setMaterialType(Particle::Additive, Particle::Camera);
