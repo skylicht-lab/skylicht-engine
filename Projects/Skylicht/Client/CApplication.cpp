@@ -53,6 +53,10 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "SkylichtAudio.h"
 #endif
 
+#ifdef BUILD_SKYLICHT_UI
+#include "UserInterface/CUIEventManager.h"
+#endif
+
 // Crash hander
 #ifdef USE_CRASHHANDLER
 #include "CrashHandler/CCrashHandler.h"
@@ -377,6 +381,11 @@ namespace Skylicht
 	void CApplication::resetTouch()
 	{
 		CTouchManager::getInstance()->resetTouch();
+
+#ifdef BUILD_SKYLICHT_UI
+		if (UI::CUIEventManager::getInstance())
+			UI::CUIEventManager::getInstance()->resetTouch();
+#endif
 	}
 
 	void CApplication::notifyResizeWin(int w, int h)

@@ -26,6 +26,10 @@ if (BUILD_SKYLICHT_NETWORK)
 include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Network)
 endif()
 
+if (BUILD_SKYLICHT_UI)
+include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/UserInterface)
+endif()
+
 file(GLOB_RECURSE skylicht_client_source 
 	./**.cpp 
 	./**.c 

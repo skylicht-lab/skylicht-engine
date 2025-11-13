@@ -15,6 +15,8 @@
 #include <thread>
 #endif
 
+#include <time.h> // for TIMER_ABSTIME
+
 #include "COSOperator.h"
 
 namespace irr
@@ -107,11 +109,10 @@ void CIrrDevicePhone::sleep(u32 timeMs, bool pauseTimer)
 		Timer->stop();
 
 	struct timespec request;
-
 	if (clock_gettime(CLOCK_MONOTONIC, &request) != -1) 
 	{
 		const long NS_PER_SEC = 1000000000L;
-		const long NS_PER_MS  1000000L;
+		const long NS_PER_MS = 1000000L;
 
 		long add_ns = timeMs * NS_PER_MS;
 		request.tv_nsec += add_ns;
@@ -123,6 +124,13 @@ void CIrrDevicePhone::sleep(u32 timeMs, bool pauseTimer)
 		}
 
 		clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &request, NULL);
+	}
+	else
+	{
+		struct timespec ts;
+		ts.tv_sec = (time_t)(timeMs / 1000);
+		ts.tv_nsec = (long)(timeMs % 1000) * 1000000;
+		nanosleep(&ts, NULL);
 	}
 
 	if (pauseTimer && !wasStopped)
