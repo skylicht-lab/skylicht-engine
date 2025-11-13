@@ -132,7 +132,7 @@ namespace Skylicht
 
 					CUIEventManager* eventMgr = CUIEventManager::getInstance();
 					eventMgr->setFocus(this);
-					eventMgr->setCapture(this);
+					eventMgr->setCapture(m_pointerId, this);
 				}
 			}
 		}
@@ -141,10 +141,10 @@ namespace Skylicht
 		{
 			if (pointerId == m_pointerId)
 			{
-				CUIBase::onPointerUp(pointerId, pointerX, pointerY);
-
 				if (m_text)
-					CUIEventManager::getInstance()->setCapture(NULL);
+					CUIEventManager::getInstance()->setCapture(m_pointerId, NULL);
+
+				CUIBase::onPointerUp(pointerId, pointerX, pointerY);
 			}
 		}
 

@@ -35,11 +35,7 @@ namespace Skylicht
 		IMPLEMENT_SINGLETON(CUIEventManager);
 
 		CUIEventManager::CUIEventManager() :
-			m_pointerId(-1),
-			m_capture(NULL),
-			m_focus(NULL),
-			m_pointerX(0),
-			m_pointerY(0)
+			m_focus(NULL)
 		{
 			CEventManager::getInstance()->registerProcessorEvent("CUIEventManager", this);
 		}
@@ -48,7 +44,7 @@ namespace Skylicht
 		{
 			CEventManager::getInstance()->unRegisterProcessorEvent(this);
 		}
-	
+
 		void CUIEventManager::setMultiTouchCapture(int pointerId, CUIBase* base)
 		{
 			if (base == NULL)
@@ -68,18 +64,12 @@ namespace Skylicht
 				f32 mouseX = (f32)event.MouseInput.X;
 				f32 mouseY = (f32)event.MouseInput.Y;
 				int mouseId = event.MouseInput.ID;
-				
+
 				if (CTouchManager::getInstance()->getTouchIdentify(mouseId) != CTouchIdentify::Nothing)
 					return true;
-				
-				if (m_pointerId == -1)
-					m_pointerId = mouseId;
 
-				if (m_pointerId == mouseId)
-				{
-					m_pointerX = event.MouseInput.X;
-					m_pointerY = event.MouseInput.Y;
-				}
+				core::vector2di pointer(event.MouseInput.X, event.MouseInput.Y);
+				m_pointers[mouseId] = pointer;
 
 				std::vector<CUIContainer*> list = m_containers;
 
@@ -90,14 +80,14 @@ namespace Skylicht
 
 				CUIBase* base = NULL;
 				bool sendEventToOtherUI = true;
-				
+
 				if (m_multiTouchCapture.size() > 0)
 				{
 					auto it = m_multiTouchCapture.find(mouseId);
 					if (it != m_multiTouchCapture.end())
 					{
 						base = it->second;
-						
+
 						CUIContainer* captureContainer = base->getContainer();
 						captureContainer->OnProcessEvent(event, base);
 
@@ -106,26 +96,11 @@ namespace Skylicht
 							if (captureContainer != ui)
 								ui->onPointerOut(mouseId, mouseX, mouseY);
 						}
-						
+
 						sendEventToOtherUI = false;
 					}
 				}
-				else if (m_capture)
-				{
-					base = m_capture;
 
-					CUIContainer* captureContainer = m_capture->getContainer();
-					captureContainer->OnProcessEvent(event, m_capture);
-
-					for (CUIContainer* ui : list)
-					{
-						if (captureContainer != ui)
-							ui->onPointerOut(mouseId, mouseX, mouseY);
-					}
-					
-					sendEventToOtherUI = false;
-				}
-				
 				if (sendEventToOtherUI)
 				{
 					for (CUIContainer* ui : list)
@@ -144,9 +119,7 @@ namespace Skylicht
 				if (event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
 				{
 					setFocus(base);
-
-					if (m_pointerId == mouseId)
-						m_pointerId = -1;
+					m_pointers.erase(mouseId);
 				}
 
 				if (!base)
@@ -164,6 +137,15 @@ namespace Skylicht
 			}
 
 			return true;
+		}
+
+		void CUIEventManager::resetTouch()
+		{
+			m_multiTouchCapture.clear();
+			m_pointers.clear();
+
+			for (auto container : m_containers)
+				container->resetTouch();
 		}
 
 		void CUIEventManager::registerUIContainer(CUIContainer* container)

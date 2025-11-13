@@ -86,37 +86,41 @@ namespace Skylicht
 					m_handleWidth = m_handle->getWidth();
 
 					m_buttonHander = new UI::CUIBase(m_container, m_handle);
-					m_buttonHander->OnPointerDown = [&](float pointerX, float pointerY)
+					m_buttonHander->OnPointerDown = [&](int pointer, float pointerX, float pointerY)
 						{
-							CUIEventManager::getInstance()->setCapture(m_buttonHander);
+							m_pointerId = pointer;
+							CUIEventManager::getInstance()->setCapture(pointer, m_buttonHander);
 							onBeginDrag();
 						};
-					m_buttonHander->OnPointerUp = [&](float pointerX, float pointerY)
+					m_buttonHander->OnPointerUp = [&](int pointer, float pointerX, float pointerY)
 						{
-							CUIEventManager::getInstance()->setCapture(NULL);
+							m_pointerId = -1;
+							CUIEventManager::getInstance()->setCapture(pointer, NULL);
 							onEndDrag();
 						};
-					m_buttonHander->OnPointerMove = [&](float pointerX, float pointerY, bool pointerDown)
+					m_buttonHander->OnPointerMove = [&](int pointer, float pointerX, float pointerY, bool pointerDown)
 						{
 							if (pointerDown)
 								updateDrag();
 						};
 
 					m_bgHander = new UI::CUIBase(m_container, m_background);
-					m_bgHander->OnPointerDown = [&](float pointerX, float pointerY)
+					m_bgHander->OnPointerDown = [&](int pointer, float pointerX, float pointerY)
 						{
-							CUIEventManager::getInstance()->setCapture(m_bgHander);
+							m_pointerId = pointer;
+							CUIEventManager::getInstance()->setCapture(pointer, m_bgHander);
 							onBeginDrag();
 
 							m_offset.set(m_handleWidth * 0.5f, m_offset.Y);
 							updateDrag();
 						};
-					m_bgHander->OnPointerUp = [&](float pointerX, float pointerY)
+					m_bgHander->OnPointerUp = [&](int pointer, float pointerX, float pointerY)
 						{
-							CUIEventManager::getInstance()->setCapture(NULL);
+							m_pointerId = -1;
+							CUIEventManager::getInstance()->setCapture(pointer, NULL);
 							onEndDrag();
 						};
-					m_bgHander->OnPointerMove = [&](float pointerX, float pointerY, bool pointerDown)
+					m_bgHander->OnPointerMove = [&](int pointer, float pointerX, float pointerY, bool pointerDown)
 						{
 							if (pointerDown)
 								updateDrag();
@@ -140,12 +144,16 @@ namespace Skylicht
 		{
 			CCanvas* canvas = getCanvas();
 			CCamera* camera = canvas->getRenderCamera();
+
 			if (camera == NULL)
 				return;
 
+			if (m_pointerId == -1)
+				return;
+
 			CUIEventManager* eventMgr = CUIEventManager::getInstance();
-			float pointerX = (float)eventMgr->getPointerX();
-			float pointerY = (float)eventMgr->getPointerY();
+			float pointerX = (float)eventMgr->getPointerX(m_pointerId);
+			float pointerY = (float)eventMgr->getPointerY(m_pointerId);
 
 			convertToUICoordinate(pointerX, pointerY);
 			convertWorldToLocal(m_handle, pointerX, pointerY);
@@ -159,9 +167,12 @@ namespace Skylicht
 			if (camera == NULL)
 				return;
 
+			if (m_pointerId == -1)
+				return;
+
 			CUIEventManager* eventMgr = CUIEventManager::getInstance();
-			float pointerX = (float)eventMgr->getPointerX();
-			float pointerY = (float)eventMgr->getPointerY();
+			float pointerX = (float)eventMgr->getPointerX(m_pointerId);
+			float pointerY = (float)eventMgr->getPointerY(m_pointerId);
 
 			convertToUICoordinate(pointerX, pointerY);
 			convertWorldToLocal(m_element, pointerX, pointerY);

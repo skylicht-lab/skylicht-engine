@@ -111,7 +111,7 @@ namespace Skylicht
 			{
 				m_isPointerHover = true;
 				if (OnPointerHover != nullptr)
-					OnPointerHover(pointerX, pointerY);
+					OnPointerHover(pointerId, pointerX, pointerY);
 			}
 			else
 			{
@@ -125,7 +125,7 @@ namespace Skylicht
 			{
 				m_isPointerHover = false;
 				if (OnPointerOut != nullptr)
-					OnPointerOut(pointerX, pointerY);
+					OnPointerOut(pointerId, pointerX, pointerY);
 			}
 			else
 			{

@@ -51,7 +51,7 @@ namespace Skylicht
 			{
 				CUIBase::onPointerDown(pointerId, pointerX, pointerY);
 
-				CUIEventManager::getInstance()->setCapture(this);
+				CUIEventManager::getInstance()->setCapture(m_pointerId, this);
 				onBeginDrag();
 			}
 		}
@@ -60,9 +60,8 @@ namespace Skylicht
 		{
 			if (m_pointerId == pointerId)
 			{
+				CUIEventManager::getInstance()->setCapture(m_pointerId, NULL);
 				CUIBase::onPointerUp(pointerId, pointerX, pointerY);
-
-				CUIEventManager::getInstance()->setCapture(NULL);
 				onEndDrag();
 			}
 		}
@@ -70,7 +69,6 @@ namespace Skylicht
 		void CUIDraggable::onPointerMove(int pointerId, float pointerX, float pointerY)
 		{
 			CUIBase::onPointerMove(pointerId, pointerX, pointerY);
-
 			if (m_isPointerDown && m_pointerId == pointerId)
 				updateDrag();
 		}
@@ -82,9 +80,12 @@ namespace Skylicht
 			if (camera == NULL)
 				return;
 
+			if (m_pointerId == -1)
+				return;
+
 			CUIEventManager* eventMgr = CUIEventManager::getInstance();
-			float pointerX = (float)eventMgr->getPointerX();
-			float pointerY = (float)eventMgr->getPointerY();
+			float pointerX = (float)eventMgr->getPointerX(m_pointerId);
+			float pointerY = (float)eventMgr->getPointerY(m_pointerId);
 
 			convertToUICoordinate(pointerX, pointerY);
 			convertWorldToLocal(m_element, pointerX, pointerY);
@@ -102,9 +103,12 @@ namespace Skylicht
 			if (camera == NULL)
 				return;
 
+			if (m_pointerId == -1)
+				return;
+
 			CUIEventManager* eventMgr = CUIEventManager::getInstance();
-			float pointerX = (float)eventMgr->getPointerX();
-			float pointerY = (float)eventMgr->getPointerY();
+			float pointerX = (float)eventMgr->getPointerX(m_pointerId);
+			float pointerY = (float)eventMgr->getPointerY(m_pointerId);
 
 			convertToUICoordinate(pointerX, pointerY);
 			convertWorldToLocal(m_element->getParent(), pointerX, pointerY);

@@ -103,14 +103,27 @@ void CIrrDevicePhone::sleep(u32 timeMs, bool pauseTimer)
 #else
 	const bool wasStopped = Timer ? Timer->isStopped() : true;
 
-	struct timespec ts;
-	ts.tv_sec = (time_t) (timeMs / 1000);
-	ts.tv_nsec = (long) (timeMs % 1000) * 1000000;
-
 	if (pauseTimer && !wasStopped)
 		Timer->stop();
 
-	nanosleep(&ts, NULL);
+	struct timespec request;
+
+	if (clock_gettime(CLOCK_MONOTONIC, &request) != -1) 
+	{
+		const long NS_PER_SEC = 1000000000L;
+		const long NS_PER_MS  1000000L;
+
+		long add_ns = timeMs * NS_PER_MS;
+		request.tv_nsec += add_ns;
+
+		if (request.tv_nsec >= NS_PER_SEC) 
+		{
+			request.tv_sec += request.tv_nsec / NS_PER_SEC;
+			request.tv_nsec %= NS_PER_SEC;
+		}
+
+		clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &request, NULL);
+	}
 
 	if (pauseTimer && !wasStopped)
 		Timer->start();

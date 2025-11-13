@@ -70,7 +70,7 @@ namespace Skylicht
 			bool m_inMotion;
 			bool m_outMotion;
 
-			bool m_pointerDown;
+			std::map<int, bool>m_pointerDown;
 
 		public:
 			std::function<void(CUIBase*)> OnPressed;
@@ -99,6 +99,8 @@ namespace Skylicht
 			virtual void initComponent();
 
 			virtual void updateComponent();
+
+			void resetTouch();
 
 			/**
 			* @brief Get the associated canvas.
@@ -197,6 +199,9 @@ namespace Skylicht
 			{
 				return m_enable;
 			}
+
+			/** @brief Check the pointer id is down */
+			inline bool isPointerDown(int id);
 		};
 	}
 }

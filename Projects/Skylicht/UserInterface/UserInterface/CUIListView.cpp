@@ -144,7 +144,7 @@ namespace Skylicht
 			{
 				CUIBase::onPointerDown(pointerId, pointerX, pointerY);
 
-				CUIEventManager::getInstance()->setCapture(this);
+				CUIEventManager::getInstance()->setCapture(m_pointerId, this);
 
 				m_lastPointerX = pointerX;
 				m_lastPointerY = pointerY;
@@ -157,9 +157,8 @@ namespace Skylicht
 		{
 			if (m_pointerId == pointerId)
 			{
+				CUIEventManager::getInstance()->setCapture(m_pointerId, NULL);
 				CUIBase::onPointerUp(pointerId, pointerX, pointerY);
-
-				CUIEventManager::getInstance()->setCapture(NULL);
 			}
 		}
 

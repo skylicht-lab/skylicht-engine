@@ -15,8 +15,7 @@ namespace Skylicht
 			m_canvas(NULL),
 			m_skip(NULL),
 			m_inMotion(false),
-			m_outMotion(false),
-			m_pointerDown(false)
+			m_outMotion(false)
 		{
 
 		}
@@ -98,6 +97,24 @@ namespace Skylicht
 			{
 				if (base->isVisible())
 					base->update();
+			}
+		}
+
+		bool CUIContainer::isPointerDown(int id)
+		{
+			if (m_pointerDown.find(id) == m_pointerDown.end())
+				return false;
+			return m_pointerDown[id];
+		}
+
+		void CUIContainer::resetTouch()
+		{
+			m_hover = NULL;
+			m_pointerDown.clear();
+
+			for (CUIBase* base : m_arrayUIObjects)
+			{
+				base->resetTouch();
 			}
 		}
 
@@ -192,9 +209,7 @@ namespace Skylicht
 					if (base == m_skip)
 						continue;
 
-					if (!base->isMultiTouch() &&
-						base->getPointerId() != -1 &&
-						base->getPointerId() != CUIEventManager::getInstance()->getPointerId())
+					if (base->getPointerId() != -1 && base->getPointerId() != mouseID)
 						continue;
 
 					CCanvas* canvas = base->getElement()->getCanvas();
@@ -259,9 +274,9 @@ namespace Skylicht
 
 					m_hover = m_raycastUIObjects[0];
 					m_hover->onPointerHover(mouseID, mouseX, mouseY);
-					
+
 					// Drag over on UIListView, UIGridView
-					if (m_pointerDown && m_hover->acceptDragFocus())
+					if (isPointerDown(mouseID) && m_hover->acceptDragFocus())
 						m_hover->onPointerDown(mouseID, mouseX, mouseY);
 				}
 
@@ -269,14 +284,14 @@ namespace Skylicht
 				{
 					if (m_hover)
 						m_hover->onPointerDown(mouseID, mouseX, mouseY);
-					
-					m_pointerDown = true;
+
+					m_pointerDown[mouseID] = true;
 				}
 				else if (event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
 				{
 					m_skip = NULL;
-					m_pointerDown = false;
-					
+					m_pointerDown.erase(mouseID);
+
 					if (m_hover)
 					{
 						if (m_hover->isPointerDown() && m_hover->getPointerId() == mouseID)
@@ -288,7 +303,7 @@ namespace Skylicht
 				if (m_hover && !m_hover->isEnable())
 				{
 					// if call setEnable(false) on pointerEvent
-					m_hover->resetPointer();
+					m_hover->resetTouch();
 					m_hover = NULL;
 				}
 
@@ -313,16 +328,16 @@ namespace Skylicht
 				if (event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
 				{
 					m_skip = NULL;
-					m_pointerDown = false;
-					
+					m_pointerDown.erase(mouseID);
+
 					if (capture->isPointerDown() && capture->getPointerId() == mouseID)
 						capture->onPressed();
 					capture->onPointerUp(mouseID, mouseX, mouseY);
 				}
 				else if (event.MouseInput.Event == EMIE_LMOUSE_PRESSED_DOWN)
 				{
-					m_pointerDown = true;
-					
+					m_pointerDown[mouseID] = true;
+
 					capture->onPointerDown(mouseID, mouseX, mouseY);
 				}
 				else

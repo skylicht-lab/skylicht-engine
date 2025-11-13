@@ -69,7 +69,6 @@ namespace Skylicht
 
 			std::vector<CMotion*> m_motions[(int)EMotionEvent::NumEvent];
 
-			bool m_multiTouch;
 			bool m_enable;
 			bool m_visible;
 
@@ -88,11 +87,11 @@ namespace Skylicht
 			void* m_userData;
 
 		public:
-			std::function<void(float, float)> OnPointerHover;
-			std::function<void(float, float)> OnPointerOut;
-			std::function<void(float, float)> OnPointerDown;
-			std::function<void(float, float)> OnPointerUp;
-			std::function<void(float, float, bool)> OnPointerMove;
+			std::function<void(int, float, float)> OnPointerHover;
+			std::function<void(int, float, float)> OnPointerOut;
+			std::function<void(int, float, float)> OnPointerDown;
+			std::function<void(int, float, float)> OnPointerUp;
+			std::function<void(int, float, float, bool)> OnPointerMove;
 
 			std::function<void(CUIBase*)> OnPressed;
 			std::function<void(CUIBase*)> OnFocus;
@@ -145,18 +144,6 @@ namespace Skylicht
 				return m_visible;
 			}
 
-			/** @brief Enable multitouch for this ui object */
-			inline void setMultiTouch(bool b)
-			{
-				m_multiTouch = b;
-			}
-
-			/** @brief Returns true if multi-touch is enabled for this ui object. */
-			inline bool isMultiTouch()
-			{
-				return m_multiTouch;
-			}
-
 			/** @brief Get the pointer ID associated with this UI object. */
 			inline int getPointerId()
 			{
@@ -168,6 +155,9 @@ namespace Skylicht
 			{
 				m_pointerId = id;
 			}
+
+			/** @brief Reset pointer internal state (hover/down). */
+			void resetTouch();
 
 			/**
 			 * @brief Control whether input events continue to the game layer.
@@ -287,9 +277,6 @@ namespace Skylicht
 			 * @param event Original SEvent from the engine input system.
 			 */
 			virtual void onKeyEvent(const SEvent& event);
-
-			/** @brief Reset pointer internal state (hover/down). */
-			void resetPointer();
 
 			/**
 			 * @brief Start motions associated with a specific motion event.

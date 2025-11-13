@@ -64,14 +64,11 @@ namespace Skylicht
 		protected:
 			std::vector<CUIContainer*> m_containers;
 
-			CUIBase* m_capture;
 			CUIBase* m_focus;
 
 			std::map<int, CUIBase*> m_multiTouchCapture;
-			
-			int m_pointerId;
-			int m_pointerX;
-			int m_pointerY;
+			std::map<int, core::vector2di> m_pointers;
+
 
 		public:
 			/** @brief Constructor. Initializes internal state. */
@@ -113,20 +110,12 @@ namespace Skylicht
 			*/
 			void unregisterUIContainer(CUIContainer* container);
 
-			/**
-			* @brief Set the element that currently captures pointer input.
-			*
-			* When a CUIBase has capture it will receive pointer move/up events
-			* even if the pointer moves outside the original hit area.
-			*
-			* @param base UI element to capture pointer input, or nullptr to release capture.
-			*/
-			inline void setCapture(CUIBase* base)
-			{
-				m_capture = base;
-			}
-			
 			void setMultiTouchCapture(int pointerId, CUIBase* base);
+
+			inline void setCapture(int pointerId, CUIBase* base)
+			{
+				setMultiTouchCapture(pointerId, base);
+			}
 
 			/**
 			* @brief Set keyboard/focus to a given UI element.
@@ -144,22 +133,19 @@ namespace Skylicht
 			}
 
 			/** @brief Get the last known pointer world X coordinate. */
-			inline int getPointerX()
+			inline int getPointerX(int id)
 			{
-				return m_pointerX;
+				return m_pointers[id].X;
 			}
 
 			/** @brief Get the last known pointer world Y coordinate. */
-			inline int getPointerY()
+			inline int getPointerY(int id)
 			{
-				return m_pointerY;
+				return m_pointers[id].Y;
 			}
 
-			/** @brief Get the current pointer ID (for multi-pointer systems). */
-			inline int getPointerId()
-			{
-				return m_pointerId;
-			}
+			/** @brief Should call when resume application */
+			void resetTouch();
 		};
 	}
 }

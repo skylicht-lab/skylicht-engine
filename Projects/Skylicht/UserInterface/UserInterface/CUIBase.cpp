@@ -33,7 +33,6 @@ namespace Skylicht
 		CUIBase::CUIBase(CUIContainer* container, CGUIElement* element) :
 			m_container(container),
 			m_element(element),
-			m_multiTouch(false),
 			m_enable(true),
 			m_visible(true),
 			m_isPointerHover(false),
@@ -59,6 +58,15 @@ namespace Skylicht
 
 			for (int i = 0, n = (int)EMotionEvent::NumEvent; i < n; i++)
 				removeMotions((EMotionEvent)i);
+		}
+
+		void CUIBase::resetTouch()
+		{
+			m_isPointerHover = false;
+			m_isPointerDown = false;
+			m_pointerId = -1;
+			m_pointerDownX = 0.0f;
+			m_pointerDownY = 0.0f;
 		}
 
 		void CUIBase::remove()
@@ -137,7 +145,7 @@ namespace Skylicht
 			startMotion(EMotionEvent::PointerHover);
 
 			if (OnPointerHover != nullptr)
-				OnPointerHover(pointerX, pointerY);
+				OnPointerHover(pointerId, pointerX, pointerY);
 
 			if (m_container->OnHover != nullptr)
 				m_container->OnHover(this);
@@ -149,7 +157,7 @@ namespace Skylicht
 			startMotion(EMotionEvent::PointerOut);
 
 			if (OnPointerOut != nullptr)
-				OnPointerOut(pointerX, pointerY);
+				OnPointerOut(pointerId, pointerX, pointerY);
 		}
 
 		void CUIBase::onPointerDown(int pointerId, float pointerX, float pointerY)
@@ -164,7 +172,7 @@ namespace Skylicht
 				startMotion(EMotionEvent::PointerDown);
 
 				if (OnPointerDown != nullptr)
-					OnPointerDown(pointerX, pointerY);
+					OnPointerDown(pointerId, pointerX, pointerY);
 			}
 		}
 
@@ -177,14 +185,14 @@ namespace Skylicht
 				startMotion(EMotionEvent::PointerUp);
 
 				if (OnPointerUp != nullptr)
-					OnPointerUp(pointerX, pointerY);
+					OnPointerUp(pointerId, pointerX, pointerY);
 			}
 		}
 
 		void CUIBase::onPointerMove(int pointerId, float pointerX, float pointerY)
 		{
 			if (OnPointerMove != nullptr)
-				OnPointerMove(pointerX, pointerY, m_isPointerDown);
+				OnPointerMove(pointerId, pointerX, pointerY, m_isPointerDown);
 
 			if (m_skipPointerEventWhenDrag && m_isPointerDown && m_pointerId == pointerId)
 			{
@@ -333,12 +341,6 @@ namespace Skylicht
 			for (CMotion* m : motions)
 				delete m;
 			motions.clear();
-		}
-
-		void CUIBase::resetPointer()
-		{
-			m_isPointerHover = false;
-			m_isPointerDown = false;
 		}
 
 		void CUIBase::convertToUICoordinate(float& pointerX, float& pointerY)
