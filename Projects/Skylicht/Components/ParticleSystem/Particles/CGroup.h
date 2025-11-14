@@ -205,12 +205,7 @@ namespace Skylicht
 				return m_emitters;
 			}
 
-			void removeEmitter(CEmitter* e)
-			{
-				std::vector<CEmitter*>::iterator i = std::find(m_emitters.begin(), m_emitters.end(), e);
-				if (i != m_emitters.end())
-					m_emitters.erase(i);
-			}
+			void removeEmitter(CEmitter* e);
 
 			void addCallback(IParticleCallback* cb)
 			{

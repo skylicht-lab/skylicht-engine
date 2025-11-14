@@ -189,12 +189,12 @@ namespace Skylicht
 
 		void CQuadRenderer::loadSerializable(CObjectSerializable* object)
 		{
-			IRenderer::loadSerializable(object);
-
 			EBaseShaderType shaderType = object->get<EBaseShaderType>("shaderType", EBaseShaderType::Additive);
 			EBillboardType billboardType = object->get<EBillboardType>("billboardType", EBillboardType::Camera);
 
 			setMaterialType(shaderType, billboardType);
+
+			IRenderer::loadSerializable(object);
 		}
 	}
 }

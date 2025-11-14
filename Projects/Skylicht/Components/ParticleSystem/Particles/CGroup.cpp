@@ -344,6 +344,15 @@ namespace Skylicht
 				cb->OnParticleBorn(p);
 		}
 
+		void CGroup::removeEmitter(CEmitter* e)
+		{
+			std::vector<CEmitter*>::iterator i = std::find(m_emitters.begin(), m_emitters.end(), e);
+			if (i != m_emitters.end())
+				m_emitters.erase(i);
+
+			m_launch.clear();
+		}
+
 		int CGroup::addParticleByEmitter(CEmitter* emitter, const core::vector3df& position, const core::vector3df& subEmitterDirection)
 		{
 			CParticle* p = create(1);

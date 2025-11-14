@@ -38,6 +38,7 @@ namespace Skylicht
 			{
 				Billboard,
 				Frontal,
+				Velocity,
 				RotateY
 			};
 
