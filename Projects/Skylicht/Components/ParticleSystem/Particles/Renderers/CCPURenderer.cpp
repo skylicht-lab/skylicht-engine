@@ -83,6 +83,10 @@ namespace Skylicht
 
 			core::vector2df uvScale, uvOffset;
 
+			bool isIndices32 = idx->getType() == irr::video::EIT_32BIT;
+			irr::u32* indices32 = reinterpret_cast<irr::u32*>(idx->getIndices());
+			irr::u16* indices16 = reinterpret_cast<irr::u16*>(idx->getIndices());
+
 			for (int i = 0; i < num; i++)
 			{
 				p = particles + i;
@@ -99,7 +103,7 @@ namespace Skylicht
 
 					f32 angle = look.dotProduct(sideQuad);
 					if (angle < 0.9999f && angle > -0.9999f)
-						sideQuad.set(1.0f, 0.0f, 1.0f);
+						sideQuad.set(1.0f, 0.0f, 0.0f);
 					else
 						sideQuad.set(0.0f, 0.0f, 1.0f);
 
@@ -193,27 +197,25 @@ namespace Skylicht
 				offset = i * 6;
 
 				// setup indices
-				if (idx->getType() == irr::video::EIT_32BIT)
+				if (isIndices32)
 				{
-					irr::u32* indices = reinterpret_cast<irr::u32*>(idx->getIndices());
-					indices[offset] = offsetVertex;
-					indices[offset + 1] = offsetVertex + 1;
-					indices[offset + 2] = offsetVertex + 2;
+					indices32[offset] = offsetVertex;
+					indices32[offset + 1] = offsetVertex + 1;
+					indices32[offset + 2] = offsetVertex + 2;
 
-					indices[offset + 3] = offsetVertex;
-					indices[offset + 4] = offsetVertex + 2;
-					indices[offset + 5] = offsetVertex + 3;
+					indices32[offset + 3] = offsetVertex;
+					indices32[offset + 4] = offsetVertex + 2;
+					indices32[offset + 5] = offsetVertex + 3;
 				}
-				else if (idx->getType() == irr::video::EIT_16BIT)
+				else
 				{
-					irr::u16* indices = reinterpret_cast<irr::u16*>(idx->getIndices());
-					indices[offset] = offsetVertex;
-					indices[offset + 1] = offsetVertex + 1;
-					indices[offset + 2] = offsetVertex + 2;
+					indices16[offset] = offsetVertex;
+					indices16[offset + 1] = offsetVertex + 1;
+					indices16[offset + 2] = offsetVertex + 2;
 
-					indices[offset + 3] = offsetVertex;
-					indices[offset + 4] = offsetVertex + 2;
-					indices[offset + 5] = offsetVertex + 3;
+					indices16[offset + 3] = offsetVertex;
+					indices16[offset + 4] = offsetVertex + 2;
+					indices16[offset + 5] = offsetVertex + 3;
 				}
 			}
 

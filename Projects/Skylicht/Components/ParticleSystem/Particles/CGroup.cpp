@@ -44,7 +44,8 @@ namespace Skylicht
 			OrientationNormal(1.0f, 0.0f, 0.0f),
 			OrientationUp(0.0f, 1.0f, 0.0f),
 			Name(L"Group"),
-			Visible(true)
+			Visible(true),
+			Optimized(true)
 		{
 			m_particleSystem = new CParticleSystem();
 
@@ -82,6 +83,7 @@ namespace Skylicht
 			CObjectSerializable* object = CParticleSerializable::createSerializable();
 			object->autoRelease(new CStringProperty(object, "name", CStringImp::convertUnicodeToUTF8(Name.c_str()).c_str()));
 			object->autoRelease(new CBoolProperty(object, "visible", Visible));
+			object->autoRelease(new CBoolProperty(object, "optimize", Optimized));
 			object->autoRelease(new CFloatProperty(object, "friction", Friction, 0.0f));
 			object->autoRelease(new CFloatProperty(object, "lifeMin", LifeMin, 0.0f));
 			object->autoRelease(new CFloatProperty(object, "lifeMax", LifeMax, 0.0f));
@@ -98,6 +100,7 @@ namespace Skylicht
 
 			Name = CStringImp::convertUTF8ToUnicode(object->get("name", std::string()).c_str());
 			Visible = object->get("visible", true);
+			Optimized = object->get("optimize", true);
 			Friction = object->get("friction", 0.0f);
 			LifeMin = object->get("lifeMin", 1.0f);
 			LifeMax = object->get("lifeMax", 2.0f);
@@ -397,18 +400,28 @@ namespace Skylicht
 			if (index >= total)
 				return;
 
-			if (total >= 2 && index != total - 1)
+			if (Optimized)
+			{
+				// Quick particle removal sometimes causes a flickering bug on transparent
+				if (total >= 2 && index != total - 1)
+				{
+					for (IParticleCallback* cb : m_callback)
+						cb->OnSwapParticleData(m_particles[index], m_particles.getLast());
+
+					m_particles[index].swap(m_particles.getLast());
+				}
+
+				for (IParticleCallback* cb : m_callback)
+					cb->OnParticleDead(m_particles.getLast());
+
+				m_particles.set_used(total - 1);
+			}
+			else
 			{
 				for (IParticleCallback* cb : m_callback)
-					cb->OnSwapParticleData(m_particles[index], m_particles.getLast());
-
-				m_particles[index].swap(m_particles.getLast());
+					cb->OnParticleDead(m_particles[index]);
+				m_particles.erase(index);
 			}
-
-			for (IParticleCallback* cb : m_callback)
-				cb->OnParticleDead(m_particles.getLast());
-
-			m_particles.set_used(total - 1);
 		}
 
 		CModel* CGroup::createModel(const std::wstring& attributeName)

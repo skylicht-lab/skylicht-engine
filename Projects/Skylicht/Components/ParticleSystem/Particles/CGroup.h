@@ -140,6 +140,8 @@ namespace Skylicht
 			std::wstring Name;
 			bool Visible;
 
+			bool Optimized;
+
 		protected:
 			core::matrix4 m_parentWorld;
 			core::matrix4 m_world;
