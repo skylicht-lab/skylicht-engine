@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CGUIImporter.h"
+#include "CGUIFactory.h"
 #include "Graphics2D/CGraphics2D.h"
 #include "Utils/CStringImp.h"
 #include "Serializable/CSerializableLoader.h"
@@ -73,7 +74,7 @@ namespace Skylicht
 						if (parent)
 						{
 							// create null object, that will load data in later
-							element = canvas->createNullElement(parent, attributeName.c_str());
+							element = createElementByType(attributeName.c_str(), canvas, parent);
 						}
 						else
 						{
@@ -297,8 +298,8 @@ namespace Skylicht
 				{
 					attributeName = reader->getAttributeValue(L"type");
 
-					CGUIElement* element = canvas->createNullElement(canvas->getRootElement(), attributeName.c_str());
-					if (element != NULL)
+					CGUIElement* element = createElementByType(attributeName.c_str(), canvas, canvas->getRootElement());
+					if (element)
 					{
 						if (obj)
 						{
@@ -399,16 +400,16 @@ namespace Skylicht
 					}
 					else
 					{
-						CGUIElement* element = canvas->createNullElement(canvas->getRootElement(), attributeName.c_str());
-						if (element == NULL)
-							return false;
+						CGUIElement* element = createElementByType(attributeName.c_str(), canvas, canvas->getRootElement());
+						if (element)
+						{
+							CObjectSerializable* newObj = element->createSerializable();
+							element->remove();
 
-						CObjectSerializable* newObj = element->createSerializable();
-						element->remove();
-
-						loadObjStep(newObj, canvas, reader);
-						obj->addProperty(newObj);
-						obj->autoRelease(newObj);
+							loadObjStep(newObj, canvas, reader);
+							obj->addProperty(newObj);
+							obj->autoRelease(newObj);
+						}
 					}
 				}
 				break;
@@ -430,9 +431,9 @@ namespace Skylicht
 		if (obj == NULL)
 			return NULL;
 
-		const std::string& type = obj->Name;
+		std::wstring type = CStringImp::convertUTF8ToUnicode(obj->Name.c_str());
 
-		CGUIElement* element = canvas->createNullElement(parent, type.c_str());
+		CGUIElement* element = createElementByType(type.c_str(), canvas, parent);
 		if (!element)
 			return NULL;
 
@@ -560,5 +561,17 @@ namespace Skylicht
 			if (bg)
 				bg->setColor(SColor(0, 0, 0, 0));
 		}
+	}
+
+	CGUIElement* CGUIImporter::createElementByType(const wchar_t* type, CCanvas* canvas, CGUIElement* parent)
+	{
+		CGUIElement* element = canvas->createNullElement(parent, type);
+		if (!element)
+		{
+			std::string elementType = CStringImp::convertUnicodeToUTF8(type);
+			element = CGUIFactory::getInstance()->createGUI(elementType.c_str(), parent);
+		}
+
+		return element;
 	}
 }

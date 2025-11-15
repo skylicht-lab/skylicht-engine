@@ -106,6 +106,11 @@ namespace Skylicht
 		void initApplication(IrrlichtDevice* device);
 
 		/**
+		 * @brief Initialize the application external plugin.
+		 */
+		void initPlugin();
+
+		/**
 		 * @brief Destroy the application and release resources.
 		 */
 		void destroyApplication();

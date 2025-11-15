@@ -31,12 +31,14 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CGUIDesignController.h"
 #include "Selection/CSelection.h"
 #include "Graphics2D/CCanvas.h"
+#include "Graphics2D/CGUIFactory.h"
 #include "Graphics2D/CGUIExporter.h"
 #include "Graphics2D/CGUIImporter.h"
 
 #include "Graphics2D/GUI/CGUIImage.h"
 #include "Graphics2D/GUI/CGUISprite.h"
 #include "Graphics2D/GUI/CGUIFitSprite.h"
+#include "ParticleSystem/CGUIParticle.h"
 
 #include "ResourceSettings/CTextureSettings.h"
 
@@ -256,6 +258,19 @@ namespace Skylicht
 				fitSprite->setAnchor(CGUIFitSprite::AnchorAll, 20.0, 20.0f, 20.0f, 20.0f);
 
 				newNode = fitSprite;
+			}
+			else if (command == L"GUI Particle")
+			{
+				nameHint = L"Particle";
+				newNode = CGUIFactory::getInstance()->createGUI("CGUIParticle", parentNode);
+				if (newNode)
+				{
+					newNode->setRect(r);
+
+					Particle::CGUIParticle* guiParticle = dynamic_cast<Particle::CGUIParticle*>(newNode);
+					if (guiParticle)
+						guiParticle->setParticle("SampleGUI/Particle/SampleGUI.particle", true);
+				}
 			}
 			else if (command == L"UI Button" || command == L"UI Button (Shiny)")
 			{

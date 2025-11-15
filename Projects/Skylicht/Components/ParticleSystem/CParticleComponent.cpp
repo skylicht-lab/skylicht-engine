@@ -94,7 +94,7 @@ namespace Skylicht
 		CObjectSerializable* CParticleComponent::createSerializable()
 		{
 			CObjectSerializable* object = CComponentSystem::createSerializable();
-			object->autoRelease(new CFilePathProperty(object, "source", m_sourcePath.c_str(), ".particle"));
+			object->autoRelease(new CFilePathProperty(object, "source", m_sourcePath.c_str(), "particle"));
 			return object;
 		}
 

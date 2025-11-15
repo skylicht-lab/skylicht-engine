@@ -57,6 +57,10 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "UserInterface/CUIEventManager.h"
 #endif
 
+#ifdef BUILD_SKYLICHT_COMPONENTS
+#include "ParticleSystem/CGUIParticle.h"
+#endif
+
 // Crash hander
 #ifdef USE_CRASHHANDLER
 #include "CrashHandler/CCrashHandler.h"
@@ -169,6 +173,8 @@ namespace Skylicht
 		// init skylicht component
 		Skylicht::initSkylicht(m_device);
 
+		initPlugin();
+
 #ifdef ANDROID
 		char androidLog[1024];
 		for (const std::string& apk : CBuildConfig::getInstance()->APKPath)
@@ -180,6 +186,13 @@ namespace Skylicht
 #endif
 
 		m_runGame = true;
+	}
+
+	void CApplication::initPlugin()
+	{
+#ifdef BUILD_SKYLICHT_COMPONENTS
+		Particle::CGUIParticle::registerPlugin();
+#endif
 	}
 
 	void CApplication::destroyApplication()

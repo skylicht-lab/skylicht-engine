@@ -65,6 +65,8 @@ namespace Skylicht
 		{
 			core::vector3df r;
 			float r2 = m_radius * m_radius;
+			if (m_radius <= 0.0f)
+				return;
 
 			do
 			{

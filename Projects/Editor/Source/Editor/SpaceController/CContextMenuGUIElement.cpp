@@ -63,6 +63,7 @@ namespace Skylicht
 			addMenu->addItem(L"GUI Mask");
 			addMenu->addItem(L"GUI Layout");
 			addMenu->addItem(L"GUI Fit Sprite");
+			addMenu->addItem(L"GUI Particle");
 			addMenu->addSeparator();
 			addMenu->addItem(L"UI Button");
 			addMenu->addItem(L"UI Button (Shiny)");

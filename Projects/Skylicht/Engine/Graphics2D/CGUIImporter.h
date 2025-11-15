@@ -149,5 +149,7 @@ namespace Skylicht
 		 * @return True if loading is finished.
 		 */
 		static bool loadObjChilds(CObjectSerializable* obj, CCanvas* canvas, io::IXMLReader* reader);
+
+		static CGUIElement* createElementByType(const wchar_t* type, CCanvas* canvas, CGUIElement* parent);
 	};
 }
