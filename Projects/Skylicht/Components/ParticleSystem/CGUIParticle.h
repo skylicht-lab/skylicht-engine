@@ -66,6 +66,8 @@ namespace Skylicht
 
 			void stopParticle();
 
+			void reload();
+
 			inline Particle::CParticleComponent* getParticle()
 			{
 				return m_ps;

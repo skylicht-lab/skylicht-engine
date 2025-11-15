@@ -60,6 +60,15 @@ namespace Skylicht
 					Particle::CGUIParticle* ps = dynamic_cast<Particle::CGUIParticle*>(gui);
 					ps->stopParticle();
 				};
+
+			layout->addSpace(20.0f);
+
+			ui->addButton(layout, L"Reload")->OnPress = [&, gui](GUI::CBase* button)
+				{
+					Particle::CGUIParticle* ps = dynamic_cast<Particle::CGUIParticle*>(gui);
+					ps->reload();
+				};
+
 			group->setExpand(true);
 		}
 	}

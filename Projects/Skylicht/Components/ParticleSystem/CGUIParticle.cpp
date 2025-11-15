@@ -81,9 +81,10 @@ namespace Skylicht
 				CShaderParticle::setViewUp(m_billboardUp);
 				CShaderParticle::setViewLook(m_billboardLook);
 
-				for (u32 i = 0, n = m_ps->getNumOfGroup(); i < n; i++)
+				CParticleBufferData* data = m_ps->getData();
+				for (u32 i = 0, n = data->AllGroups.size(); i < n; i++)
 				{
-					Particle::CGroup* group = m_ps->getGroup(i);
+					Particle::CGroup* group = data->AllGroups[i];
 					group->update();
 					group->updateForRenderer();
 				}
@@ -111,8 +112,9 @@ namespace Skylicht
 
 				driver->setTransform(video::ETS_WORLD, world);
 
-				for (u32 i = 0, n = m_ps->getNumOfGroup(); i < n; i++)
-					renderParticleBuffer(m_ps->getGroup(i));
+				CParticleBufferData* data = m_ps->getData();
+				for (u32 i = 0, n = data->AllGroups.size(); i < n; i++)
+					renderParticleBuffer(data->AllGroups[i]);
 
 				driver->setTransform(video::ETS_WORLD, defaultWorld);
 			}
@@ -203,9 +205,7 @@ namespace Skylicht
 			std::string source = object->get<std::string>("source", "");
 
 			if (m_source != source && !source.empty())
-			{
 				setParticle(source.c_str(), m_autoPlay);
-			}
 		}
 
 		void CGUIParticle::setParticle(const char* source, bool autoPlay)
@@ -242,6 +242,15 @@ namespace Skylicht
 		{
 			if (m_ps)
 				m_ps->Stop();
+		}
+
+		void CGUIParticle::reload()
+		{
+			if (!m_source.empty())
+			{
+				std::string s = m_source;
+				setParticle(s.c_str(), m_autoPlay);
+			}
 		}
 	}
 }
