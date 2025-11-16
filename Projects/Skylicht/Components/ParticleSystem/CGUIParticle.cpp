@@ -78,7 +78,7 @@ namespace Skylicht
 			{
 				m_billboardUp = camera ? camera->getUpVector() : Transform::Oy;
 				m_billboardLook = camera ? camera->getLookVector() : Transform::Oz;
-				if (!camera)
+				if (camera)
 					m_billboardLook.Y -= 0.001f;
 
 				CShaderParticle::setViewUp(m_billboardUp);
@@ -132,11 +132,13 @@ namespace Skylicht
 
 		void CGUIParticle::renderParticleBuffer(Particle::CGroup* g)
 		{
+			IRenderer* renderer = g->getRenderer();
+			if (!renderer)
+				return;
+
 			IVideoDriver* driver = getVideoDriver();
 			CGraphics2D* graphics = CGraphics2D::getInstance();
-
 			IMeshBuffer* buffer = NULL;
-			IRenderer* renderer = g->getRenderer();
 
 			if (g->UseOrientationAsBillboard)
 			{
@@ -165,22 +167,13 @@ namespace Skylicht
 
 			if (buffer && buffer->getIndexBuffer()->getIndexCount() > 0)
 			{
-				SColorf color = CShaderMaterial::getColorIntensity();
-				float intensity = renderer->getEmissionIntensity();
-
-				CShaderMaterial::setColorIntensity(SColorf(intensity, intensity, intensity));
 				CShaderParticle::setOrientationUp(g->OrientationUp);
 				CShaderParticle::setOrientationNormal(g->OrientationNormal);
 
 				video::SMaterial& mat = buffer->getMaterial();
-
-				if (renderer != NULL)
-				{
-					CMaterial* material = renderer->getMaterial();
-					material->updateTexture(mat);
-
-					CShaderMaterial::setMaterial(material);
-				}
+				CMaterial* material = renderer->getMaterial();
+				material->updateTexture(mat);
+				CShaderMaterial::setMaterial(material);
 
 				// sync z buffer
 				u8 defaultZ = mat.ZBuffer;
@@ -190,7 +183,6 @@ namespace Skylicht
 				driver->drawMeshBuffer(buffer);
 
 				mat.ZBuffer = defaultZ;
-				CShaderMaterial::setColorIntensity(color);
 			}
 		}
 
@@ -200,7 +192,7 @@ namespace Skylicht
 
 			object->autoRelease(new CFilePathProperty(object, "source", m_source.c_str(), "particle"));
 			object->autoRelease(new CFloatProperty(object, "particleScale", m_particleScale, 1.0f, 1000.0f));
-			object->autoRelease(new CFloatProperty(object, "depthZ", m_depthZ, 0.0f, 1000.0f));
+			object->autoRelease(new CFloatProperty(object, "depthZ", m_depthZ, -0.0f, 100.0f));
 			object->autoRelease(new CBoolProperty(object, "autoPlay", m_autoPlay));
 
 			return object;
