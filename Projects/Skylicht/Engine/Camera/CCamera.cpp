@@ -323,8 +323,7 @@ namespace Skylicht
 		else if (m_projectionType == CCamera::OrthoUI)
 		{
 			core::matrix4 orthoMatrix;
-			// note: min z == -10.0f for render particles
-			orthoMatrix.buildProjectionMatrixOrthoLH((f32)screenSize.Width, -(f32)(screenSize.Height), -10.0f, m_farValue);
+			orthoMatrix.buildProjectionMatrixOrthoLH((f32)screenSize.Width, -(f32)(screenSize.Height), -1.0f, m_farValue);
 			orthoMatrix.setTranslation(core::vector3df(-1.0f, 1.0f, 0.0f));
 			m_viewArea.setTransform(video::ETS_PROJECTION, orthoMatrix);
 		}

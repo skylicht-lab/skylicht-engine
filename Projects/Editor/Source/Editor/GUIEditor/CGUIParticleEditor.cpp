@@ -61,7 +61,7 @@ namespace Skylicht
 					ps->stopParticle();
 				};
 
-			layout->addSpace(20.0f);
+			layout->addSpace(5.0f);
 
 			ui->addButton(layout, L"Reload")->OnPress = [&, gui](GUI::CBase* button)
 				{

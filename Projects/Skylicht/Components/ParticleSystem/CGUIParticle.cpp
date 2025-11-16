@@ -48,7 +48,8 @@ namespace Skylicht
 			CGUIElement(canvas, parent),
 			m_ps(NULL),
 			m_autoPlay(true),
-			m_particleScale(100.0f)
+			m_particleScale(100.0f),
+			m_depthZ(10.0f)
 		{
 
 		}
@@ -56,7 +57,9 @@ namespace Skylicht
 		CGUIParticle::CGUIParticle(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect) :
 			CGUIElement(canvas, parent, rect),
 			m_ps(NULL),
-			m_autoPlay(true)
+			m_autoPlay(true),
+			m_particleScale(100.0f),
+			m_depthZ(10.0f)
 		{
 
 		}
@@ -107,7 +110,14 @@ namespace Skylicht
 
 				core::matrix4 local;
 				local.setScale(core::vector3df(m_particleScale, -m_particleScale, m_particleScale));
-				local.setTranslation(core::vector3df(getWidth() * 0.5f, getHeight() * 0.5f, 0.0f));
+
+				const core::rectf& r = m_guiTransform->Rect;
+
+				local.setTranslation(core::vector3df(
+					r.UpperLeftCorner.X + r.getWidth() * 0.5f,
+					r.UpperLeftCorner.Y + r.getHeight() * 0.5f,
+					m_depthZ)
+				);
 				world *= local;
 
 				driver->setTransform(video::ETS_WORLD, world);
@@ -190,6 +200,7 @@ namespace Skylicht
 
 			object->autoRelease(new CFilePathProperty(object, "source", m_source.c_str(), "particle"));
 			object->autoRelease(new CFloatProperty(object, "particleScale", m_particleScale, 1.0f, 1000.0f));
+			object->autoRelease(new CFloatProperty(object, "depthZ", m_depthZ, 0.0f, 1000.0f));
 			object->autoRelease(new CBoolProperty(object, "autoPlay", m_autoPlay));
 
 			return object;
@@ -200,6 +211,7 @@ namespace Skylicht
 			CGUIElement::loadSerializable(object);
 
 			m_autoPlay = object->get("autoPlay", true);
+			m_depthZ = object->get("depthZ", 10.0f);
 			m_particleScale = object->get("particleScale", 100.0f);
 
 			std::string source = object->get<std::string>("source", "");

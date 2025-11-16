@@ -37,6 +37,7 @@ namespace Skylicht
 			std::string m_source;
 			bool m_autoPlay;
 			float m_particleScale;
+			float m_depthZ;
 
 			Particle::CParticleComponent* m_ps;
 
