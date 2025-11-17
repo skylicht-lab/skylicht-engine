@@ -82,7 +82,6 @@ namespace Skylicht
 	protected:
 
 		void initDefferredMaterial();
-		void disableFloatTextureFilter(SMaterial& m);
 
 	public:
 		CDeferredLightmapRP();

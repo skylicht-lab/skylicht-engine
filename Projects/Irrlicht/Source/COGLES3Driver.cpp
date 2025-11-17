@@ -1575,9 +1575,11 @@ namespace irr
 					}
 					else
 					{
-						// disable mipmap
-						glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-						glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+						bool useLinear = (material.TextureLayer[i].BilinearFilter || material.TextureLayer[i].TrilinearFilter || material.TextureLayer[i].AnisotropicFilter > 1);
+
+						// no mipmap
+						glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, useLinear ? GL_LINEAR : GL_NEAREST);
+						glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, useLinear ? GL_LINEAR : GL_NEAREST);
 					}
 				}
 				else if (CurrentTexture[i]->getTextureType() == ETT_TEXTURE_ARRAY)
@@ -1605,10 +1607,11 @@ namespace irr
 					{
 						// Some device not support float linear 
 						// GL_OES_texture_float_linear
+						bool useLinear = (material.TextureLayer[i].BilinearFilter || material.TextureLayer[i].TrilinearFilter || material.TextureLayer[i].AnisotropicFilter > 1);
 
-						// disable mipmap
-						glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-						glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+						// no mipmap
+						glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, useLinear ? GL_LINEAR : GL_NEAREST);
+						glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, useLinear ? GL_LINEAR : GL_NEAREST);
 					}
 
 					// wrap mode
@@ -1670,7 +1673,7 @@ namespace irr
 					}
 
 					// Pham Hong Duc
-					// AnisotropicFilter is defalt TrilinearFilter
+					// AnisotropicFilter is default TrilinearFilter
 					if (CurrentTexture[i] && CurrentTexture[i]->hasMipMaps() == true)
 					{
 						if (material.TextureLayer[i].AnisotropicFilter > 1 &&
@@ -1686,15 +1689,13 @@ namespace irr
 					}
 					else
 					{
-						// Some device not support float linear 
+						// Some device not support float linear
 						// GL_OES_texture_float_linear
+						bool useLinear = (material.TextureLayer[i].BilinearFilter || material.TextureLayer[i].TrilinearFilter || material.TextureLayer[i].AnisotropicFilter > 1);
 
-						// default no mipmap
-						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-						tmpTexture->getStatesCache().BilinearFilter = false;
-						tmpTexture->getStatesCache().TrilinearFilter = false;
-						tmpTexture->getStatesCache().MipMapStatus = false;
+						// no mipmap
+						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, useLinear ? GL_LINEAR : GL_NEAREST);
+						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, useLinear ? GL_LINEAR : GL_NEAREST);
 					}
 
 					if (FeatureAvailable[IRR_EXT_texture_filter_anisotropic] &&

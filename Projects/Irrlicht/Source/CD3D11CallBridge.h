@@ -200,7 +200,7 @@ public:
 	void setDepthStencilState(const SD3D11_DEPTH_STENCIL_DESC& depthStencilDesc);
 	void setRasterizerState(const SD3D11_RASTERIZER_DESC& rasterizerDesc);
 
-	void setShaderResources(SD3D11_SAMPLER_DESC SamplerDesc[MATERIAL_MAX_TEXTURES], ITexture* shaderViews[MATERIAL_MAX_TEXTURES]);
+	void setShaderResources(SD3D11_SAMPLER_DESC SamplerDesc[MATERIAL_MAX_TEXTURES], ITexture* shaderViews[MATERIAL_MAX_TEXTURES], bool reset);
 	void setPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY top);
 	void setInputLayout(IVertexDescriptor* vtxDescriptor, IMaterialRenderer* r);
 

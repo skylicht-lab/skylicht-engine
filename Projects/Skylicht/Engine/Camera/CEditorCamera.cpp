@@ -415,7 +415,19 @@ namespace Skylicht
 				m_mouseWhell = true;
 			}
 			break;
-
+		case EET_GAME_RESUME:
+		{
+			m_leftMousePress = false;
+			m_rightMousePress = false;
+			m_mayaLeftMousePress = false;
+			m_mayaRightMousePress = false;
+			m_midMousePress = false;
+			m_mouseWhell = false;
+			m_altKeyDown = false;
+			m_shiftKeyDown = false;
+			m_ctrlKeyDown = false;
+		}
+		break;
 		default:
 			break;
 		}

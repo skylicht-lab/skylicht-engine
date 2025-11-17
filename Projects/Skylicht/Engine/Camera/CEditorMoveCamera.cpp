@@ -61,6 +61,12 @@ namespace Skylicht
 				}
 			}
 			break;
+		case EET_GAME_RESUME:
+		{
+			for (int i = 0; i < DirectionCount; i++)
+				m_input[i] = false;
+		}
+		break;
 		default:
 			break;
 		}

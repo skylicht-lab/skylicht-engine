@@ -563,14 +563,14 @@ void CD3D11CallBridge::setBlendState(const SD3D11_BLEND_DESC& blendDesc)
 }
 
 
-void CD3D11CallBridge::setShaderResources(SD3D11_SAMPLER_DESC samplerDesc[MATERIAL_MAX_TEXTURES], ITexture* currentTextures[MATERIAL_MAX_TEXTURES])
+void CD3D11CallBridge::setShaderResources(SD3D11_SAMPLER_DESC samplerDesc[MATERIAL_MAX_TEXTURES], ITexture* currentTextures[MATERIAL_MAX_TEXTURES], bool reset)
 {
 	texturesChanged = 0;
 	samplersChanged = 0;
 
 	for(u32 i = 0; i < MATERIAL_MAX_TEXTURES; ++i)
 	{
-		if(SamplerDesc[i] != samplerDesc[i])
+		if(SamplerDesc[i] != samplerDesc[i] || reset)
 		{
 			SamplerDesc[i] = samplerDesc[i];
 
@@ -579,7 +579,7 @@ void CD3D11CallBridge::setShaderResources(SD3D11_SAMPLER_DESC samplerDesc[MATERI
 			samplersChanged |= (1 << i);
 		}
 
-		if(CurrentTextures[i] != currentTextures[i])
+		if(CurrentTextures[i] != currentTextures[i] || reset)
 		{
 			CurrentTextures[i] = currentTextures[i];
 

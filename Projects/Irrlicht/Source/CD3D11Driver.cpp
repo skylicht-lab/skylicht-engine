@@ -1046,6 +1046,7 @@ namespace irr
 				{
 					Context->VSSetShaderResources(i, 1, views);
 					Context->PSSetShaderResources(i, 1, views);
+					SamplerDesc[i].reset();
 				}
 				ResetRenderStates = true;
 				RendererTransformChanged = true;
@@ -1132,6 +1133,7 @@ namespace irr
 				{
 					Context->VSSetShaderResources(i, 1, views);
 					Context->PSSetShaderResources(i, 1, views);
+					SamplerDesc[i].reset();
 				}
 
 				int mapFace[] =
@@ -1618,7 +1620,7 @@ namespace irr
 				if (Material.MaterialType >= 0 && Material.MaterialType < numMaterialRenderers)
 					MaterialRenderers[Material.MaterialType].Renderer->OnSetMaterial(Material, LastMaterial, true, this);
 
-				BridgeCalls->setShaderResources(SamplerDesc, CurrentTexture);
+				BridgeCalls->setShaderResources(SamplerDesc, CurrentTexture, shaderChanged);
 
 				LastMaterial = Material;
 			}

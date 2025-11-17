@@ -78,8 +78,7 @@ namespace Skylicht
 			{
 				m_billboardUp = camera ? camera->getUpVector() : Transform::Oy;
 				m_billboardLook = camera ? camera->getLookVector() : Transform::Oz;
-				if (camera)
-					m_billboardLook.Y -= 0.001f;
+				m_billboardLook.Y = m_billboardLook.Y - 0.001f;
 
 				CShaderParticle::setViewUp(m_billboardUp);
 				CShaderParticle::setViewLook(m_billboardLook);
@@ -207,9 +206,10 @@ namespace Skylicht
 			m_particleScale = object->get("particleScale", 100.0f);
 
 			std::string source = object->get<std::string>("source", "");
-
 			if (m_source != source && !source.empty())
 				setParticle(source.c_str(), m_autoPlay);
+
+			m_source = source;
 		}
 
 		void CGUIParticle::setParticle(const char* source, bool autoPlay)

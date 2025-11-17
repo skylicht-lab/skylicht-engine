@@ -151,7 +151,6 @@ namespace Skylicht
 
 		void initDefferredMaterial();
 		void initLightMaterial();
-		void disableFloatTextureFilter(SMaterial& m);
 
 	public:
 		CDeferredRP();

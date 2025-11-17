@@ -370,6 +370,11 @@ namespace Skylicht
 			// application receiver
 			sendEventToAppReceiver(AppEventPause);
 
+			// post event
+			SEvent event;
+			event.EventType = EET_GAME_PAUSE;
+			getIrrlichtDevice()->postEventFromUser(event);
+
 			os::Printer::log("CApplication::pause finished");
 		}
 	}
@@ -384,6 +389,12 @@ namespace Skylicht
 
 			// application receiver
 			sendEventToAppReceiver(AppEventResume);
+
+			// post event
+			SEvent event;
+			event.EventType = EET_GAME_RESUME;
+			getIrrlichtDevice()->postEventFromUser(event);
+
 			m_runGame = true;
 
 			os::Printer::log("CApplication::resume finished");

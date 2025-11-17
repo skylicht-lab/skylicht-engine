@@ -172,50 +172,15 @@ namespace Skylicht
 		// indirect light color
 		m_directionalLightPass.setTexture(5, m_indirect);
 
-		// turn off mipmap on float texture	
-		m_directionalLightPass.TextureLayer[1].BilinearFilter = false;
-		m_directionalLightPass.TextureLayer[1].TrilinearFilter = false;
-		m_directionalLightPass.TextureLayer[1].AnisotropicFilter = 0;
-
-		m_directionalLightPass.TextureLayer[2].BilinearFilter = false;
-		m_directionalLightPass.TextureLayer[2].TrilinearFilter = false;
-		m_directionalLightPass.TextureLayer[2].AnisotropicFilter = 0;
-
-		m_directionalLightPass.TextureLayer[4].BilinearFilter = false;
-		m_directionalLightPass.TextureLayer[4].TrilinearFilter = false;
-		m_directionalLightPass.TextureLayer[4].AnisotropicFilter = 0;
-
-		m_directionalLightPass.TextureLayer[5].BilinearFilter = false;
-		m_directionalLightPass.TextureLayer[5].TrilinearFilter = false;
-		m_directionalLightPass.TextureLayer[5].AnisotropicFilter = 0;
+		// turn off mipmap on float texture
+		disableTextureBilinear(m_directionalLightPass, 1);
+		disableTextureBilinear(m_directionalLightPass, 2);
+		disableTextureBilinear(m_directionalLightPass, 4);
+		disableTextureBilinear(m_directionalLightPass, 5);
 
 		// disable Z
 		m_directionalLightPass.ZBuffer = video::ECFN_DISABLED;
 		m_directionalLightPass.ZWriteEnable = false;
-	}
-
-	void CDeferredLightmapRP::disableFloatTextureFilter(SMaterial& m)
-	{
-		// turn off mipmap on float texture	
-		m.TextureLayer[0].BilinearFilter = false;
-		m.TextureLayer[0].TrilinearFilter = false;
-		m.TextureLayer[0].AnisotropicFilter = 0;
-
-		m.TextureLayer[1].BilinearFilter = false;
-		m.TextureLayer[1].TrilinearFilter = false;
-		m.TextureLayer[1].AnisotropicFilter = 0;
-
-		m.TextureLayer[2].BilinearFilter = false;
-		m.TextureLayer[2].TrilinearFilter = false;
-		m.TextureLayer[2].AnisotropicFilter = 0;
-
-		m.TextureLayer[3].BilinearFilter = false;
-		m.TextureLayer[3].TrilinearFilter = false;
-		m.TextureLayer[3].AnisotropicFilter = 0;
-
-		// disable Z
-		m.ZBuffer = video::ECFN_DISABLED;
-		m.ZWriteEnable = false;
 	}
 
 	void CDeferredLightmapRP::enableTestIndirect(bool b)

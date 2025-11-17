@@ -202,9 +202,7 @@ namespace Skylicht
 						irrMaterial.setTexture(textureID, shadowRP->getDepthTexture());
 
 						// disable mipmap
-						irrMaterial.TextureLayer[textureID].BilinearFilter = false;
-						irrMaterial.TextureLayer[textureID].TrilinearFilter = false;
-						irrMaterial.TextureLayer[textureID].AnisotropicFilter = 0;
+						disableTextureBilinear(irrMaterial, textureID);
 
 						irrMaterial.TextureLayer[textureID].TextureWrapU = video::ETC_CLAMP_TO_BORDER;
 						irrMaterial.TextureLayer[textureID].TextureWrapV = video::ETC_CLAMP_TO_BORDER;
@@ -856,6 +854,31 @@ namespace Skylicht
 	void CBaseRP::setMaxLight(u32 maxLights)
 	{
 		s_maxLight = maxLights;
+	}
+
+	void CBaseRP::disableTextureBilinear(SMaterial& m, int slot)
+	{
+		m.TextureLayer[slot].BilinearFilter = false;
+		m.TextureLayer[slot].TrilinearFilter = false;
+		m.TextureLayer[slot].AnisotropicFilter = 0;
+	}
+
+	void CBaseRP::enableTextureBilinear(SMaterial& m, int slot)
+	{
+		m.TextureLayer[slot].BilinearFilter = true;
+		m.TextureLayer[slot].TrilinearFilter = false;
+		m.TextureLayer[slot].AnisotropicFilter = 0;
+	}
+
+	void CBaseRP::updateTextureFilter(SMaterial& m)
+	{
+		for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
+		{
+			if (m.getTexture(i) && m.getTexture(i)->hasMipMaps())
+				enableTextureBilinear(m, i);
+			else
+				disableTextureBilinear(m, i);
+		}
 	}
 
 	void CBaseRP::setTarget(ITexture* target, int faceId)

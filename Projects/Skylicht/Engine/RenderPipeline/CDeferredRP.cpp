@@ -225,22 +225,12 @@ namespace Skylicht
 		// indirect light color
 		m_directionalLightPass.setTexture(5, m_indirect);
 
-		// turn off mipmap on float texture	
-		m_directionalLightPass.TextureLayer[1].BilinearFilter = false;
-		m_directionalLightPass.TextureLayer[1].TrilinearFilter = false;
-		m_directionalLightPass.TextureLayer[1].AnisotropicFilter = 0;
+		// turn off mipmap on float texture
+		disableTextureBilinear(m_directionalLightPass, 1);
+		disableTextureBilinear(m_directionalLightPass, 2);
+		disableTextureBilinear(m_directionalLightPass, 4);
+		disableTextureBilinear(m_directionalLightPass, 6);
 
-		m_directionalLightPass.TextureLayer[2].BilinearFilter = false;
-		m_directionalLightPass.TextureLayer[2].TrilinearFilter = false;
-		m_directionalLightPass.TextureLayer[2].AnisotropicFilter = 0;
-
-		m_directionalLightPass.TextureLayer[4].BilinearFilter = false;
-		m_directionalLightPass.TextureLayer[4].TrilinearFilter = false;
-		m_directionalLightPass.TextureLayer[4].AnisotropicFilter = 0;
-
-		m_directionalLightPass.TextureLayer[6].BilinearFilter = false;
-		m_directionalLightPass.TextureLayer[6].TrilinearFilter = false;
-		m_directionalLightPass.TextureLayer[6].AnisotropicFilter = 0;
 		m_directionalLightPass.TextureLayer[6].TextureWrapU = video::ETC_CLAMP_TO_BORDER;
 		m_directionalLightPass.TextureLayer[6].TextureWrapV = video::ETC_CLAMP_TO_BORDER;
 		m_directionalLightPass.TextureLayer[6].BorderColor.set(1.0f, 1.0f, 1.0f, 1.0f);
@@ -266,31 +256,15 @@ namespace Skylicht
 		m_lightPass.setTexture(1, m_normal);
 		m_lightPass.setTexture(2, m_data);
 
-		disableFloatTextureFilter(m_lightPass);
-	}
-
-	void CDeferredRP::disableFloatTextureFilter(SMaterial& m)
-	{
-		// turn off mipmap on float texture	
-		m.TextureLayer[0].BilinearFilter = false;
-		m.TextureLayer[0].TrilinearFilter = false;
-		m.TextureLayer[0].AnisotropicFilter = 0;
-
-		m.TextureLayer[1].BilinearFilter = false;
-		m.TextureLayer[1].TrilinearFilter = false;
-		m.TextureLayer[1].AnisotropicFilter = 0;
-
-		m.TextureLayer[2].BilinearFilter = false;
-		m.TextureLayer[2].TrilinearFilter = false;
-		m.TextureLayer[2].AnisotropicFilter = 0;
-
-		m.TextureLayer[3].BilinearFilter = false;
-		m.TextureLayer[3].TrilinearFilter = false;
-		m.TextureLayer[3].AnisotropicFilter = 0;
+		// turn off mipmap on float texture
+		disableTextureBilinear(m_lightPass, 0);
+		disableTextureBilinear(m_lightPass, 1);
+		disableTextureBilinear(m_lightPass, 2);
+		disableTextureBilinear(m_lightPass, 3);
 
 		// disable Z
-		m.ZBuffer = video::ECFN_DISABLED;
-		m.ZWriteEnable = false;
+		m_lightPass.ZBuffer = video::ECFN_DISABLED;
+		m_lightPass.ZWriteEnable = false;
 	}
 
 	void CDeferredRP::enableTestIndirect(bool b)

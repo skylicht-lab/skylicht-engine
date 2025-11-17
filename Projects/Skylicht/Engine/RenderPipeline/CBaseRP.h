@@ -104,6 +104,12 @@ namespace Skylicht
 
 	protected:
 
+		void disableTextureBilinear(SMaterial& m, int slot);
+
+		void enableTextureBilinear(SMaterial& m, int slot);
+
+		void updateTextureFilter(SMaterial& m);
+
 		void setTarget(ITexture* target, int faceId);
 
 		void drawSceneToTexture(ITexture* target, CCamera* camera, CEntityManager* entityMgr, bool allPipeline);
