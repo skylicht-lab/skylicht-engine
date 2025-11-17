@@ -34,10 +34,11 @@ namespace Skylicht
 {
 	namespace UI
 	{
-		CUIListView::CUIListView(CUIContainer* container, CGUIElement* element, CGUIElement* baseItem) :
+		CUIListView::CUIListView(CUIContainer* container, CGUIElement* element, CGUIElement* baseItem, CGUIElement* listElement) :
 			CUIBase(container, element),
 			m_vertical(true),
 			m_mask(NULL),
+			m_listElement(listElement),
 			m_baseItem(baseItem),
 			m_itemSerializable(NULL),
 			m_offset(0.0f),
@@ -52,7 +53,10 @@ namespace Skylicht
 		{
 			if (m_element)
 			{
-				m_mask = m_element->getCanvas()->createMask(m_element, m_element->getRect());
+				if (!m_listElement)
+					m_listElement = m_element;
+
+				m_mask = m_listElement->getCanvas()->createMask(m_listElement, m_listElement->getRect());
 				m_mask->setDock(EGUIDock::DockFill);
 
 				if (m_baseItem)
@@ -71,9 +75,9 @@ namespace Skylicht
 
 		CGUIElement* CUIListView::addItem()
 		{
-			if (m_element && m_itemSerializable)
+			if (m_listElement && m_itemSerializable)
 			{
-				CGUIElement* item = CGUIImporter::importGUI(m_element->getCanvas(), m_element, m_itemSerializable);
+				CGUIElement* item = CGUIImporter::importGUI(m_listElement->getCanvas(), m_listElement, m_itemSerializable);
 				item->setMask(m_mask);
 				m_items.push_back(item);
 				return item;
@@ -83,9 +87,9 @@ namespace Skylicht
 
 		CGUIElement* CUIListView::addItem(CObjectSerializable* data)
 		{
-			if (m_element)
+			if (m_listElement)
 			{
-				CGUIElement* item = CGUIImporter::importGUI(m_element->getCanvas(), m_element, data);
+				CGUIElement* item = CGUIImporter::importGUI(m_listElement->getCanvas(), m_listElement, data);
 				item->setMask(m_mask);
 				m_items.push_back(item);
 				return item;
@@ -191,7 +195,7 @@ namespace Skylicht
 			{
 				if (m_vertical)
 				{
-					float height = m_element->getHeight();
+					float height = m_listElement->getHeight();
 					m_springOffset = height * 0.2f;
 
 					for (CGUIElement* item : m_items)
@@ -203,7 +207,7 @@ namespace Skylicht
 				}
 				else
 				{
-					float width = m_element->getWidth();
+					float width = m_listElement->getWidth();
 					m_springOffset = width * 0.2f;
 
 					for (CGUIElement* item : m_items)
@@ -246,7 +250,7 @@ namespace Skylicht
 		{
 			if (m_isPointerDown)
 			{
-				const core::vector3df& scale = m_element->getCanvas()->getRootScale();
+				const core::vector3df& scale = m_listElement->getCanvas()->getRootScale();
 
 				if (m_vertical)
 					m_speed = (m_pointerY - m_lastPointerY) / scale.Y;

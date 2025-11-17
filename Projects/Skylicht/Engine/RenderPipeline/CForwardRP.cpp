@@ -56,8 +56,8 @@ namespace Skylicht
 			core::dimension2du s = m_size / 2;
 
 			// round for 4
-			s.Width = (s.Width / 4) * 4;
-			s.Height = (s.Height / 4) * 4;
+			s.Width = core::max_<u32>((s.Width / 4) * 4, 4);
+			s.Height = core::max_<u32>((s.Height / 4) * 4, 4);
 			m_emission = getVideoDriver()->addRenderTargetTexture(m_size, "emission", ECF_A16B16G16R16F);
 		}
 	}

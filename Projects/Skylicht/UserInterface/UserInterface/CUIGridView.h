@@ -63,11 +63,12 @@ namespace Skylicht
 			* @param container Parent `CUIContainer` that owns this control.
 			* @param element Root `CGUIElement` node for the grid view.
 			* @param baseItem Template `CGUIElement` used to instantiate grid cells.
+			* @param listElement The list display items (if null, it will be element).
 			*
 			* The `baseItem` is duplicated/cloned to create each grid entry (same
 			* behaviour as `CUIListView`).
 			*/
-			CUIGridView(CUIContainer* container, CGUIElement* element, CGUIElement* baseItem);
+			CUIGridView(CUIContainer* container, CGUIElement* element, CGUIElement* baseItem, CGUIElement* listElement = NULL);
 
 			virtual ~CUIGridView();
 

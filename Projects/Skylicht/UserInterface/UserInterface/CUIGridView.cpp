@@ -34,8 +34,8 @@ namespace Skylicht
 {
 	namespace UI
 	{
-		CUIGridView::CUIGridView(CUIContainer* container, CGUIElement* element, CGUIElement* baseItem) :
-			CUIListView(container, element, baseItem),
+		CUIGridView::CUIGridView(CUIContainer* container, CGUIElement* element, CGUIElement* baseItem, CGUIElement* listElement) :
+			CUIListView(container, element, baseItem, listElement),
 			m_itemSpacingX(0.0f),
 			m_itemSpacingY(0.0f)
 		{
@@ -54,8 +54,8 @@ namespace Skylicht
 
 			if (m_items.size() > 0)
 			{
-				float height = m_element->getHeight();
-				float width = m_element->getWidth();
+				float height = m_listElement->getHeight();
+				float width = m_listElement->getWidth();
 
 				float x = 0.0f;
 				float y = 0.0f;
@@ -125,8 +125,8 @@ namespace Skylicht
 		{
 			float x = 0.0f, y = 0.0f;
 
-			float width = m_element->getWidth();
-			float height = m_element->getHeight();
+			float width = m_listElement->getWidth();
+			float height = m_listElement->getHeight();
 
 			if (m_vertical)
 			{

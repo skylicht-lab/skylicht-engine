@@ -870,17 +870,6 @@ namespace Skylicht
 		m.TextureLayer[slot].AnisotropicFilter = 0;
 	}
 
-	void CBaseRP::updateTextureFilter(SMaterial& m)
-	{
-		for (int i = 0; i < MATERIAL_MAX_TEXTURES; i++)
-		{
-			if (m.getTexture(i) && m.getTexture(i)->hasMipMaps())
-				enableTextureBilinear(m, i);
-			else
-				disableTextureBilinear(m, i);
-		}
-	}
-
 	void CBaseRP::setTarget(ITexture* target, int faceId)
 	{
 		IVideoDriver* driver = getVideoDriver();

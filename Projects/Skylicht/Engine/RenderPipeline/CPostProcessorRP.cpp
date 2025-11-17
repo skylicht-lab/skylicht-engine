@@ -103,16 +103,17 @@ namespace Skylicht
 			core::dimension2du s = m_size;
 			if (m_bloomEffect == true)
 			{
-				s = s / 2;
+				s = s / 4;
+
 				// round for 4
-				s.Width = (s.Width / 4) * 4;
-				s.Height = (s.Height / 4) * 4;
+				s.Width = core::max_<u32>((s.Width / 4) * 4, 4);
+				s.Height = core::max_<u32>((s.Height / 4) * 4, 4);
 				m_rtt[2] = driver->addRenderTargetTexture(s, "rtt", ECF_A16B16G16R16F);
 
 				s = s / 2;
 				// round for 4
-				s.Width = (s.Width / 4) * 4;
-				s.Height = (s.Height / 4) * 4;
+				s.Width = core::max_<u32>((s.Width / 4) * 4, 4);
+				s.Height = core::max_<u32>((s.Height / 4) * 4, 4);
 				m_rtt[3] = driver->addRenderTargetTexture(s, "rtt", ECF_A16B16G16R16F);
 			}
 		}

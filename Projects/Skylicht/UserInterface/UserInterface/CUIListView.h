@@ -54,6 +54,7 @@ namespace Skylicht
 
 			std::vector<CGUIElement*> m_items;
 
+			CGUIElement* m_listElement;
 			CGUIElement* m_baseItem;
 			CObjectSerializable* m_itemSerializable;
 
@@ -75,10 +76,11 @@ namespace Skylicht
 			 * @param container Parent `CUIContainer` that owns this control.
 			 * @param element Root `CGUIElement` node for the list view.
 			 * @param baseItem Template `CGUIElement` used to instantiate new items.
+			 * @param listElement The list display items (if null, it will be element).
 			 *
 			 * The `baseItem` is duplicated/cloned (implementation detail) to create list entries.
 			 */
-			CUIListView(CUIContainer* container, CGUIElement* element, CGUIElement* baseItem);
+			CUIListView(CUIContainer* container, CGUIElement* element, CGUIElement* baseItem, CGUIElement* listElement = NULL);
 
 			virtual ~CUIListView();
 
@@ -148,7 +150,7 @@ namespace Skylicht
 			virtual void onPointerUp(int pointerId, float pointerX, float pointerY);
 
 			virtual void onPointerMove(int pointerId, float pointerX, float pointerY);
-			
+
 			/** @brief Set vertical layout mode. */
 			inline void setVertical(bool b)
 			{
@@ -199,7 +201,7 @@ namespace Skylicht
 			{
 				return true;
 			}
-			
+
 		protected:
 
 			/**
