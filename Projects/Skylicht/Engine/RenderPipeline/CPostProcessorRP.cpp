@@ -103,7 +103,10 @@ namespace Skylicht
 			core::dimension2du s = m_size;
 			if (m_bloomEffect == true)
 			{
-				s = s / 4;
+				if (core::max_(m_size.Width, m_size.Height) > 1600)
+					s = s / 4;
+				else
+					s = s / 2;
 
 				// round for 4
 				s.Width = core::max_<u32>((s.Width / 4) * 4, 4);
