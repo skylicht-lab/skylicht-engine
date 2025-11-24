@@ -65,6 +65,7 @@ namespace Skylicht
 		m_spotLightShader(0),
 		m_spotLightShadowShader(0),
 		m_areaLightShader(0),
+		m_areaLightShadowShader(0),
 		m_lightmapArrayShader(0),
 		m_lightmapVertexShader(0),
 		m_lightmapSHShader(0),

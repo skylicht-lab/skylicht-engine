@@ -157,7 +157,7 @@ namespace Skylicht
 	void CSkeleton::setAnimation(CAnimationClip* clip, bool loop, float from, float duration, bool pause)
 	{
 		if (duration < 0.0f)
-			duration = 0.0f;
+			duration = clip->Duration;
 
 		bool updateAnimationData = false;
 		if (m_clip != clip)
@@ -186,7 +186,7 @@ namespace Skylicht
 		}
 
 		m_timeline.From = 0.0f;
-		m_timeline.Duration = 0.0f;
+		m_timeline.Duration = clip->Duration;
 		m_timeline.Frame = 0.0f;
 		m_timeline.Loop = loop;
 		m_timeline.Pause = pause;
