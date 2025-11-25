@@ -212,6 +212,18 @@ namespace Skylicht
 		notifyChanged();
 	}
 
+	bool CGUIElement::isVisibleInHierarchy()
+	{
+		CGUIElement* p = this;
+		while (p != NULL)
+		{
+			if (!p->isVisible())
+				return false;
+			p = p->m_parent;
+		}
+		return true;
+	}
+
 	const core::rectf CGUIElement::getNativeRect()
 	{
 		return getRect();

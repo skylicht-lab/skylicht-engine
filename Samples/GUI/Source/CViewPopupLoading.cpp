@@ -34,6 +34,8 @@ void CViewPopupLoading::onInit()
 
 	UI::CUIContainer* uiContainer = m_popup->addComponent<UI::CUIContainer>();
 
+	UI::CUIBase* disableTouch = new UI::CUIBase(uiContainer, canvas->getGUIByPath("Canvas/Container/Background"));
+
 	m_progressBar = new UI::CUIProgressBar(uiContainer, canvas->getGUIByPath("Canvas/Container/Dialog/ProgressBar"));
 	m_progressBar->setPercent(0.0f);
 

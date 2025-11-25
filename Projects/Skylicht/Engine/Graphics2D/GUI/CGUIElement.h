@@ -369,6 +369,8 @@ namespace Skylicht
 			return m_entity->isVisible();
 		}
 
+		bool isVisibleInHierarchy();
+
 		inline CEntity* getEntity()
 		{
 			return m_entity;

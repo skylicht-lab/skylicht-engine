@@ -200,7 +200,7 @@ namespace Skylicht
 					if (base->getElement() == NULL)
 						continue;
 
-					if (!base->getElement()->isVisible())
+					if (!base->getElement()->isVisibleInHierarchy())
 						continue;
 
 					if (!base->isEnable() || !base->isVisible())
