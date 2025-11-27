@@ -15,164 +15,164 @@
 #include <utility>
 
 AngleApplication::AngleApplication(std::string name,
-                                     int argc,
-                                     char **argv,
-                                     EGLint glesMajorVersion,
-                                     EGLint glesMinorVersion,
-                                     uint32_t width,
-                                     uint32_t height)
-    : mName(std::move(name)),
-      mWidth(width),
-      mHeight(height),
-      mRunning(false),
-      mFrameCount(0),
-      mGLWindow(nullptr),
-      mEGLWindow(nullptr),
-      mOSWindow(nullptr),
-      mDriverType(angle::GLESDriverType::AngleEGL)
+								   int argc,
+								   char **argv,
+								   EGLint glesMajorVersion,
+								   EGLint glesMinorVersion,
+								   uint32_t width,
+								   uint32_t height)
+: mName(std::move(name)),
+mWidth(width),
+mHeight(height),
+mRunning(false),
+mFrameCount(0),
+mGLWindow(nullptr),
+mEGLWindow(nullptr),
+mOSWindow(nullptr),
+mDriverType(angle::GLESDriverType::AngleEGL)
 {
-    mPlatformParams.renderer = EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE;
-    mPlatformParams.deviceType = EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE;
-
-    mOSWindow = OSWindow::New();
-
-    // Load EGL library so we can initialize the display.
-    mGLWindow = mEGLWindow = EGLWindow::New(glesMajorVersion, glesMinorVersion);
-    mEntryPointsLib.reset(angle::OpenSharedLibrary(ANGLE_EGL_LIBRARY_NAME, angle::SearchType::ModuleDir));
+	mPlatformParams.renderer = EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE;
+	mPlatformParams.deviceType = EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE;
+	
+	mOSWindow = OSWindow::New();
+	
+	// Load EGL library so we can initialize the display.
+	mGLWindow = mEGLWindow = EGLWindow::New(glesMajorVersion, glesMinorVersion);
+	mEntryPointsLib.reset(angle::OpenSharedLibrary(ANGLE_EGL_LIBRARY_NAME, angle::SearchType::ModuleDir));
 }
 
 AngleApplication::~AngleApplication()
 {
-    destroy();
-    
-    GLWindowBase::Delete(&mGLWindow);
-    OSWindow::Delete(&mOSWindow);
+	destroy();
+	
+	GLWindowBase::Delete(&mGLWindow);
+	OSWindow::Delete(&mOSWindow);
 }
 
 bool AngleApplication::initialize()
 {
-    if (!mOSWindow->initialize(mName, mWidth, mHeight))
-    {
-        return false;
-    }
-
-    mOSWindow->setVisible(true);
-
-    ConfigParameters configParams;
-    configParams.redBits     = 8;
-    configParams.greenBits   = 8;
-    configParams.blueBits    = 8;
-    configParams.alphaBits   = 8;
-    configParams.depthBits   = 24;
-    configParams.stencilBits = 8;
-
-    if (!mGLWindow->initializeGL(mOSWindow, mEntryPointsLib.get(), mDriverType, mPlatformParams, configParams))
-    {
-        return false;
-    }
-
-    // Disable vsync
-    if (!mGLWindow->setSwapInterval(0))
-    {
-        return false;
-    }
-    
-    return true;
+	if (!mOSWindow->initialize(mName, mWidth, mHeight))
+	{
+		return false;
+	}
+	
+	mOSWindow->setVisible(true);
+	
+	ConfigParameters configParams;
+	configParams.redBits     = 8;
+	configParams.greenBits   = 8;
+	configParams.blueBits    = 8;
+	configParams.alphaBits   = 8;
+	configParams.depthBits   = 24;
+	configParams.stencilBits = 8;
+	
+	if (!mGLWindow->initializeGL(mOSWindow, mEntryPointsLib.get(), mDriverType, mPlatformParams, configParams))
+	{
+		return false;
+	}
+	
+	// Disable vsync
+	if (!mGLWindow->setSwapInterval(0))
+	{
+		return false;
+	}
+	
+	return true;
 }
 
-void AngleApplication::destroy() 
+void AngleApplication::destroy()
 {
-    mGLWindow->destroyGL();
-    mOSWindow->destroy();
+	mGLWindow->destroyGL();
+	mOSWindow->destroy();
 }
 
 void AngleApplication::step(float dt, double totalTime) {}
 
 void AngleApplication::draw()
 {
-    // Set the viewport
-    int w = getWindow()->getWidth();
-    int h = getWindow()->getHeight();
-    glViewport(0, 0, w, h);
-
-    // Clear the color buffer
-    glClearColor(1.0f,0.0f,0.0f,1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+	// Set the viewport
+	int w = getWindow()->getWidth();
+	int h = getWindow()->getHeight();
+	glViewport(0, 0, w, h);
+	
+	// Clear the color buffer
+	glClearColor(1.0f,0.0f,0.0f,1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
 }
 
 
 void AngleApplication::swap()
 {
-    mGLWindow->swap();
+	mGLWindow->swap();
 }
 
 OSWindow *AngleApplication::getWindow() const
 {
-    return mOSWindow;
+	return mOSWindow;
 }
 
 EGLConfig AngleApplication::getConfig() const
 {
-    return mEGLWindow->getConfig();
+	return mEGLWindow->getConfig();
 }
 
 EGLDisplay AngleApplication::getDisplay() const
 {
-    return mEGLWindow->getDisplay();
+	return mEGLWindow->getDisplay();
 }
 
 EGLSurface AngleApplication::getSurface() const
 {
-    return mEGLWindow->getSurface();
+	return mEGLWindow->getSurface();
 }
 
 EGLContext AngleApplication::getContext() const
 {
-    return mEGLWindow->getContext();
+	return mEGLWindow->getContext();
 }
 
 
 void AngleApplication::exit()
 {
-    
+	
 }
 
 bool AngleApplication::popEvent(Event *event)
 {
-    return mOSWindow->popEvent(event);
+	return mOSWindow->popEvent(event);
 }
 
 void AngleApplication::onKeyUp(const Event::KeyEvent &keyEvent)
 {
-    // Default no-op.
+	// Default no-op.
 }
 
 void AngleApplication::onKeyDown(const Event::KeyEvent &keyEvent)
 {
-    // Default no-op.
+	// Default no-op.
 }
 
 void AngleApplication::onMouseMoved(const Event::MouseMoveEvent &mouseEvent)
 {
-    // Default no-op.
+	// Default no-op.
 }
 
 void AngleApplication::onMouseButtonPressed(const Event::MouseButtonEvent &mouseEvent)
 {
-    // Default no-op.
+	// Default no-op.
 }
 
 void AngleApplication::onMouseButtonRelease(const Event::MouseButtonEvent &mouseEvent)
 {
-    // Default no-op.
+	// Default no-op.
 }
 
 void AngleApplication::onWheel(const Event::MouseWheelEvent &wheelEvent)
 {
-    // Default no-op.
+	// Default no-op.
 }
 
 void AngleApplication::onResized(int width, int height)
 {
-    mOSWindow->resize(width, height);
+	mOSWindow->resize(width, height);
 }

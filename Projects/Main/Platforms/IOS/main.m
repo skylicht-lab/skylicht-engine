@@ -9,8 +9,8 @@
 #import "AppDelegate.h"
 
 int main(int argc, char * argv[]) {
-    @autoreleasepool {
-        NSString * appDelegateClassName = NSStringFromClass([AppDelegate class]);
-        return UIApplicationMain(argc, argv, nil, appDelegateClassName);
-    }
+	@autoreleasepool {
+		NSString * appDelegateClassName = NSStringFromClass([AppDelegate class]);
+		return UIApplicationMain(argc, argv, nil, appDelegateClassName);
+	}
 }

@@ -66,6 +66,10 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CrashHandler/CCrashHandler.h"
 #endif
 
+#include "SignIn/CPlayGamesSignIn.h"
+#include "SignIn/CGameCenterSignIn.h"
+#include "TextField/CIOSTextField.h"
+
 CBaseApp* g_app = NULL;
 Skylicht::CBuildConfig* g_config = Skylicht::CBuildConfig::createGetInstance();
 
@@ -193,6 +197,27 @@ namespace Skylicht
 #ifdef BUILD_SKYLICHT_COMPONENTS
 		Particle::CGUIParticle::registerPlugin();
 #endif
+		
+#ifdef ANDROID
+		CPlayGamesSignIn::createGetInstance();
+#endif
+		
+#ifdef IOS
+		CGameCenterSignIn::createGetInstance();
+		CIOSTextField::createGetInstance();
+#endif
+	}
+
+	void CApplication::releasePlugin()
+	{
+#ifdef ANDROID
+		CPlayGamesSignIn::releaseInstance();
+#endif
+		
+#ifdef IOS
+		CGameCenterSignIn::releaseInstance();
+		CIOSTextField::releaseInstance();
+#endif
 	}
 
 	void CApplication::destroyApplication()
@@ -205,6 +230,8 @@ namespace Skylicht
 
 		// release skylicht component
 		Skylicht::releaseSkylicht();
+		
+		releasePlugin();
 	}
 
 	void CApplication::onInit()

@@ -2,6 +2,7 @@ include_directories(
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/UserInterface
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Include
 	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Engine
+	${SKYLICHT_ENGINE_PROJECT_DIR}/Skylicht/Client
 )
 
 file(GLOB_RECURSE skylicht_ui 

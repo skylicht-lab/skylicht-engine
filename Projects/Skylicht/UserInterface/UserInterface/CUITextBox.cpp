@@ -27,6 +27,10 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CUITextBox.h"
 #include "CUIEventManager.h"
 
+#if defined(ANDROID) || defined(IOS)
+#include "TextField/ITextField.h"
+#endif
+
 namespace Skylicht
 {
 	namespace UI
@@ -121,7 +125,26 @@ namespace Skylicht
 			if (m_pointerId == -1)
 			{
 				CUIBase::onPointerDown(pointerId, pointerX, pointerY);
-
+				
+#if defined(IOS) || defined(ANDROID)
+				ITextField *textField = getOSTextField();
+				if (textField)
+				{
+					int height = m_maxLength > 40 ? 100: 50;
+					
+					textField->show(m_text->getText(), m_maxLength, height);
+					textField->OnDone = [&](std::string text){
+						m_text->setText(text.c_str());
+						if (OnTextChanged != nullptr)
+							OnTextChanged(this);
+					};
+					textField->OnChanged = [&](std::string text){
+						m_text->setText(text.c_str());
+						if (OnTextChanged != nullptr)
+							OnTextChanged(this);
+					};
+				}
+#else
 				if (m_text)
 				{
 					int l, c;
@@ -134,6 +157,7 @@ namespace Skylicht
 					eventMgr->setFocus(this);
 					eventMgr->setCapture(m_pointerId, this);
 				}
+#endif
 			}
 		}
 
@@ -141,9 +165,10 @@ namespace Skylicht
 		{
 			if (pointerId == m_pointerId)
 			{
+#if !defined(IOS) && !defined(ANDROID)
 				if (m_text)
 					CUIEventManager::getInstance()->setCapture(m_pointerId, NULL);
-
+#endif
 				CUIBase::onPointerUp(pointerId, pointerX, pointerY);
 			}
 		}
@@ -151,12 +176,15 @@ namespace Skylicht
 		void CUITextBox::onPointerMove(int pointerId, float pointerX, float pointerY)
 		{
 			CUIBase::onPointerMove(pointerId, pointerX, pointerY);
+			
+#if !defined(IOS) && !defined(ANDROID)
 			if (m_isPointerDown && m_pointerId == pointerId && m_text)
 			{
 				int l, c;
 				m_text->getClosestCharacter(pointerX, pointerY, l, c);
 				m_text->setCaret(l, c);
 			}
+#endif
 		}
 
 		void CUITextBox::onLostFocus()
@@ -171,6 +199,7 @@ namespace Skylicht
 			if (!m_text)
 				return;
 
+#if !defined(IOS) && !defined(ANDROID)
 			if (event.KeyInput.PressedDown)
 			{
 				bool onChar = true;
@@ -346,6 +375,7 @@ namespace Skylicht
 						m_text->insert(event.KeyInput.Char);
 				}
 			}
+#endif
 		}
 	}
 }

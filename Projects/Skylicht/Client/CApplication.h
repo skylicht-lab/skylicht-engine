@@ -111,6 +111,11 @@ namespace Skylicht
 		void initPlugin();
 
 		/**
+		 * @brief Release the application external plugin.
+		 */
+		void releasePlugin();
+		
+		/**
 		 * @brief Destroy the application and release resources.
 		 */
 		void destroyApplication();

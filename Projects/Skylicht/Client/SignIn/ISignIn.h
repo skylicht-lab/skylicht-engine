@@ -18,4 +18,6 @@ namespace Skylicht
 
 		virtual void signIn() = 0;
 	};
+
+	ISignIn* getOSSignIn();
 }
