@@ -52,6 +52,13 @@ void textfield_on_done(const char* text);
 }
 
 - (void)setupCustomInputView {
+	UILayoutGuide *safeAreaGuide;
+	if (@available(iOS 11.0, *)) {
+		safeAreaGuide = self.view.safeAreaLayoutGuide;
+	} else {
+		safeAreaGuide = (UILayoutGuide *)self.view;
+	}
+	
 	// 1. Container
 	self.inputContainerView = [[UIView alloc] init];
 	self.inputContainerView.backgroundColor = [UIColor colorWithWhite:0.95 alpha:1.0];
@@ -80,8 +87,8 @@ void textfield_on_done(const char* text);
 	self.inputContainerBottomConstraint = [self.inputContainerView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor constant:0];
 	
 	[NSLayoutConstraint activateConstraints:@[
-		[self.inputContainerView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor],
-		[self.inputContainerView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
+		[self.inputContainerView.leadingAnchor constraintEqualToAnchor:safeAreaGuide.leadingAnchor],
+		[self.inputContainerView.trailingAnchor constraintEqualToAnchor:safeAreaGuide.trailingAnchor],
 		[self.inputContainerView.heightAnchor constraintEqualToConstant:g_requestHeight],
 		self.inputContainerBottomConstraint,
 		
