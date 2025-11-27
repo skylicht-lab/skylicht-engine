@@ -168,11 +168,11 @@ namespace Skylicht
 			}
 			else if (m_touch[i].touchEvent == CTouchManager::TouchUp)
 			{
-				// identity touch
-				m_touchIdentify.touchRelease(i, (int)m_touch[i].touchID);
-
 				event.MouseInput.Event = irr::EMIE_LMOUSE_LEFT_UP;
 				device->postEventFromUser(event);
+				
+				// identity touch
+				m_touchIdentify.touchRelease(i, (int)m_touch[i].touchID);
 			}
 		}
 
