@@ -1,3 +1,5 @@
+#ifdef IOS
+
 #include "GameCenterSignIn.h"
 
 #import <GameKit/GameKit.h>
@@ -36,3 +38,5 @@ void gamecenter_signIn()
 		}
 	};
 }
+
+#endif

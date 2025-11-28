@@ -1,3 +1,5 @@
+#ifdef IOS
+
 #import "InputOverlayViewController.h"
 #include <string>
 
@@ -207,3 +209,5 @@ void textfield_on_done(const char* text);
 }
 
 @end
+
+#endif
