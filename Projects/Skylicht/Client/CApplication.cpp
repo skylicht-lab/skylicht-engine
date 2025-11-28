@@ -69,6 +69,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "SignIn/CPlayGamesSignIn.h"
 #include "SignIn/CGameCenterSignIn.h"
 #include "TextField/CIOSTextField.h"
+#include "TextField/CAndroidTextField.h"
 
 CBaseApp* g_app = NULL;
 Skylicht::CBuildConfig* g_config = Skylicht::CBuildConfig::createGetInstance();
@@ -200,6 +201,7 @@ namespace Skylicht
 		
 #ifdef ANDROID
 		CPlayGamesSignIn::createGetInstance();
+		CAndroidTextField::createGetInstance();
 #endif
 		
 #ifdef IOS

@@ -2,6 +2,7 @@
 #include "ITextField.h"
 
 #include "CIOSTextField.h"
+#include "CAndroidTextField.h"
 
 namespace Skylicht
 {
@@ -17,6 +18,8 @@ namespace Skylicht
 	{
 #if defined(IOS)
 		return CIOSTextField::getInstance();
+#elif defined(ANDROID)
+		return CAndroidTextField::getInstance();
 #else
 		return NULL;
 #endif

@@ -75,7 +75,6 @@ public class FullscreenActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
 
         super.onCreate(savedInstanceState);
@@ -155,7 +154,9 @@ public class FullscreenActivity extends AppCompatActivity {
 
         mVisible = true;
 
+        // Init native plugin
         PlayGamesSignIn.getInstance().init(this);
+        TextField.getInstance().init(this);
     }
 
     @Override
@@ -226,7 +227,9 @@ public class FullscreenActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
         mContentView.onResume();
+
         createSaveFolder();
         NativeInterface.getInstance().mainResumeApp(1);
     }

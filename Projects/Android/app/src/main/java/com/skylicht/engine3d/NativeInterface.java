@@ -70,6 +70,6 @@ public class NativeInterface {
     }
 
     static {
-        System.loadLibrary("MechArena");
+        System.loadLibrary("SampleGUI");
     }
 }
