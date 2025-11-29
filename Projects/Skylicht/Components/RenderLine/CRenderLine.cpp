@@ -122,13 +122,35 @@ namespace Skylicht
 
 	void CRenderLine::setPoints(const std::vector<core::vector3df>& position)
 	{
-		removeAllEntities();
-
-		for (const core::vector3df& p : position)
+		if (m_entities.size() == position.size())
 		{
-			CEntity* entity = createEntity();
-			CWorldTransformData* world = GET_ENTITY_DATA(entity, CWorldTransformData);
-			world->Relative.setTranslation(p);
+			for (int i = 0, n = (int)m_entities.size(); i < n; i++)
+			{
+				CWorldTransformData* world = GET_ENTITY_DATA(m_entities[i], CWorldTransformData);
+				world->Relative.setTranslation(position[i]);
+			}
+		}
+		else if (m_entities.size() < position.size())
+		{
+			removeAllEntities();
+
+			for (const core::vector3df& p : position)
+			{
+				CEntity* entity = createEntity();
+				CWorldTransformData* world = GET_ENTITY_DATA(entity, CWorldTransformData);
+				world->Relative.setTranslation(p);
+			}
+		}
+		else
+		{
+			for (int i = (int)position.size(), n = (int)m_entities.size(); i < n; i++)
+				CEntityHandler::removeEntity(m_entities[i]);
+
+			for (int i = 0, n = (int)m_entities.size(); i < n; i++)
+			{
+				CWorldTransformData* world = GET_ENTITY_DATA(m_entities[i], CWorldTransformData);
+				world->Relative.setTranslation(position[i]);
+			}
 		}
 
 		updateData();
