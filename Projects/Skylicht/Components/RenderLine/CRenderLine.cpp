@@ -329,6 +329,7 @@ namespace Skylicht
 				m_culling->BBox.addInternalPoint(t->getRelativePosition());
 		}
 
+		m_lineData->NeedValidate = true;
 		m_lineData->Width = m_lineWidth;
 		m_lineData->Billboard = m_billboard;
 		m_lineData->Material = getMaterial();
