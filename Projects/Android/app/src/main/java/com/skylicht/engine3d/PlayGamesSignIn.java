@@ -42,7 +42,6 @@ public class PlayGamesSignIn {
 
     private void requestCode(String serverClientId) {
         Log.w("Skylicht", "Request code: " + serverClientId);
-
         PlayersClient players = PlayGames.getPlayersClient(GameInstance.Activity);
         players.getCurrentPlayer().addOnSuccessListener((Player p) -> {
             String playerId = p.getPlayerId();

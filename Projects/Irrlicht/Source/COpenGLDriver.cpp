@@ -2247,13 +2247,11 @@ void COpenGLDriver::setTextureRenderStates(const SMaterial& material, bool reset
 				{
 					glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 					glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
 					glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_ANISOTROPY_EXT,
 						material.TextureLayer[i].AnisotropicFilter > 1 ? core::min_(MaxAnisotropy, material.TextureLayer[i].AnisotropicFilter) : 1);
 				}
 				else
 				{
-					// enable mipmap
 					glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 					glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 				}
@@ -2261,8 +2259,6 @@ void COpenGLDriver::setTextureRenderStates(const SMaterial& material, bool reset
 			else
 			{
 				bool useLinear = (material.TextureLayer[i].BilinearFilter || material.TextureLayer[i].TrilinearFilter || material.TextureLayer[i].AnisotropicFilter > 1);
-
-				// no mipmap
 				glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, useLinear ? GL_LINEAR : GL_NEAREST);
 				glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, useLinear ? GL_LINEAR : GL_NEAREST);
 			}
@@ -2277,13 +2273,11 @@ void COpenGLDriver::setTextureRenderStates(const SMaterial& material, bool reset
 				{
 					glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 					glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
 					glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAX_ANISOTROPY_EXT,
 						material.TextureLayer[i].AnisotropicFilter > 1 ? core::min_(MaxAnisotropy, material.TextureLayer[i].AnisotropicFilter) : 1);
 				}
 				else
 				{
-					// enable mipmap
 					glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 					glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 				}
@@ -2291,8 +2285,6 @@ void COpenGLDriver::setTextureRenderStates(const SMaterial& material, bool reset
 			else
 			{
 				bool useLinear = (material.TextureLayer[i].BilinearFilter || material.TextureLayer[i].TrilinearFilter || material.TextureLayer[i].AnisotropicFilter > 1);
-
-				// no mipmap
 				glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, useLinear ? GL_LINEAR : GL_NEAREST);
 				glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, useLinear ? GL_LINEAR : GL_NEAREST);
 			}
@@ -2355,46 +2347,6 @@ void COpenGLDriver::setTextureRenderStates(const SMaterial& material, bool reset
 			}
 #endif
 
-			if (!tmpTexture->getStatesCache().IsCached || material.TextureLayer[i].BilinearFilter != tmpTexture->getStatesCache().BilinearFilter ||
-				material.TextureLayer[i].TrilinearFilter != tmpTexture->getStatesCache().TrilinearFilter)
-			{
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-					(material.TextureLayer[i].BilinearFilter || material.TextureLayer[i].TrilinearFilter) ? GL_LINEAR : GL_NEAREST);
-
-				tmpTexture->getStatesCache().BilinearFilter = material.TextureLayer[i].BilinearFilter;
-				tmpTexture->getStatesCache().TrilinearFilter = material.TextureLayer[i].TrilinearFilter;
-			}
-
-			if (material.UseMipMaps && CurrentTexture[i]->hasMipMaps())
-			{
-				if (!tmpTexture->getStatesCache().IsCached || material.TextureLayer[i].BilinearFilter != tmpTexture->getStatesCache().BilinearFilter ||
-					material.TextureLayer[i].TrilinearFilter != tmpTexture->getStatesCache().TrilinearFilter || !tmpTexture->getStatesCache().MipMapStatus)
-				{
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-						material.TextureLayer[i].TrilinearFilter ? GL_LINEAR_MIPMAP_LINEAR :
-						material.TextureLayer[i].BilinearFilter ? GL_LINEAR_MIPMAP_NEAREST :
-						GL_NEAREST_MIPMAP_NEAREST);
-
-					tmpTexture->getStatesCache().BilinearFilter = material.TextureLayer[i].BilinearFilter;
-					tmpTexture->getStatesCache().TrilinearFilter = material.TextureLayer[i].TrilinearFilter;
-					tmpTexture->getStatesCache().MipMapStatus = true;
-				}
-			}
-			else
-			{
-				if (!tmpTexture->getStatesCache().IsCached || material.TextureLayer[i].BilinearFilter != tmpTexture->getStatesCache().BilinearFilter ||
-					material.TextureLayer[i].TrilinearFilter != tmpTexture->getStatesCache().TrilinearFilter || tmpTexture->getStatesCache().MipMapStatus)
-				{
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-						(material.TextureLayer[i].BilinearFilter || material.TextureLayer[i].TrilinearFilter) ? GL_LINEAR : GL_NEAREST);
-
-					tmpTexture->getStatesCache().BilinearFilter = material.TextureLayer[i].BilinearFilter;
-					tmpTexture->getStatesCache().TrilinearFilter = material.TextureLayer[i].TrilinearFilter;
-					tmpTexture->getStatesCache().MipMapStatus = false;
-				}
-			}
-
-#ifdef GL_EXT_texture_filter_anisotropic
 			// Pham Hong Duc
 			// AnisotropicFilter is defalt TrilinearFilter
 			if (CurrentTexture[i] && CurrentTexture[i]->hasMipMaps() == true)
@@ -2403,11 +2355,47 @@ void COpenGLDriver::setTextureRenderStates(const SMaterial& material, bool reset
 					material.TextureLayer[i].BilinearFilter == false &&
 					material.TextureLayer[i].TrilinearFilter == false)
 				{
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-					tmpTexture->getStatesCache().BilinearFilter = false;
-					tmpTexture->getStatesCache().TrilinearFilter = true;
-					tmpTexture->getStatesCache().MipMapStatus = true;
+					if (!tmpTexture->getStatesCache().IsCached ||
+						!tmpTexture->getStatesCache().MipMapStatus ||
+						material.TextureLayer[i].BilinearFilter != tmpTexture->getStatesCache().BilinearFilter ||
+						material.TextureLayer[i].TrilinearFilter != tmpTexture->getStatesCache().TrilinearFilter)
+					{
+						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+						tmpTexture->getStatesCache().BilinearFilter = material.TextureLayer[i].BilinearFilter;
+						tmpTexture->getStatesCache().TrilinearFilter = material.TextureLayer[i].TrilinearFilter;
+						tmpTexture->getStatesCache().MipMapStatus = true;
+					}
+
+					if (FeatureAvailable[IRR_EXT_texture_filter_anisotropic] &&
+						(!tmpTexture->getStatesCache().IsCached ||
+							material.TextureLayer[i].AnisotropicFilter != tmpTexture->getStatesCache().AnisotropicFilter))
+					{
+						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT,
+							material.TextureLayer[i].AnisotropicFilter > 1 ? core::min_(MaxAnisotropy, material.TextureLayer[i].AnisotropicFilter) : 1);
+
+						tmpTexture->getStatesCache().AnisotropicFilter = material.TextureLayer[i].AnisotropicFilter;
+					}
+				}
+				else
+				{
+					if (!tmpTexture->getStatesCache().IsCached ||
+						!tmpTexture->getStatesCache().MipMapStatus ||
+						material.TextureLayer[i].BilinearFilter != tmpTexture->getStatesCache().BilinearFilter ||
+						material.TextureLayer[i].TrilinearFilter != tmpTexture->getStatesCache().TrilinearFilter)
+					{
+						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+							material.TextureLayer[i].TrilinearFilter ? GL_LINEAR_MIPMAP_LINEAR :
+							material.TextureLayer[i].BilinearFilter ? GL_LINEAR_MIPMAP_NEAREST :
+							GL_NEAREST_MIPMAP_NEAREST);
+
+						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+							(material.TextureLayer[i].BilinearFilter || material.TextureLayer[i].TrilinearFilter) ? GL_LINEAR : GL_NEAREST);
+
+						tmpTexture->getStatesCache().BilinearFilter = material.TextureLayer[i].BilinearFilter;
+						tmpTexture->getStatesCache().TrilinearFilter = material.TextureLayer[i].TrilinearFilter;
+						tmpTexture->getStatesCache().MipMapStatus = true;
+					}
 				}
 			}
 			else
@@ -2417,17 +2405,11 @@ void COpenGLDriver::setTextureRenderStates(const SMaterial& material, bool reset
 				// default no mipmap
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, useLinear ? GL_LINEAR : GL_NEAREST);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, useLinear ? GL_LINEAR : GL_NEAREST);
-			}
 
-			if (FeatureAvailable[IRR_EXT_texture_filter_anisotropic] &&
-				(!tmpTexture->getStatesCache().IsCached || material.TextureLayer[i].AnisotropicFilter != tmpTexture->getStatesCache().AnisotropicFilter))
-			{
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT,
-					material.TextureLayer[i].AnisotropicFilter>1 ? core::min_(MaxAnisotropy, material.TextureLayer[i].AnisotropicFilter) : 1);
-
-				tmpTexture->getStatesCache().AnisotropicFilter = material.TextureLayer[i].AnisotropicFilter;
+				tmpTexture->getStatesCache().BilinearFilter = material.TextureLayer[i].BilinearFilter;
+				tmpTexture->getStatesCache().TrilinearFilter = material.TextureLayer[i].TrilinearFilter;
+				tmpTexture->getStatesCache().MipMapStatus = false;
 			}
-#endif
 
 			if (!tmpTexture->getStatesCache().IsCached || material.TextureLayer[i].TextureWrapU != tmpTexture->getStatesCache().WrapU)
 			{

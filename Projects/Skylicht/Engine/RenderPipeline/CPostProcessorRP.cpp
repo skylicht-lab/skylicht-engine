@@ -429,12 +429,6 @@ namespace Skylicht
 		material->applyMaterial(m_effectPass);
 		material->updateShaderParams();
 
-		for (int i = 0; i < 2; i++)
-		{
-			m_effectPass.TextureLayer[i].TextureWrapU = ETC_CLAMP_TO_BORDER;
-			m_effectPass.TextureLayer[i].TextureWrapV = ETC_CLAMP_TO_BORDER;
-		}
-
 		CShaderMaterial::setMaterial(material);
 
 		const core::dimension2du& toSize = toTarget->getSize();

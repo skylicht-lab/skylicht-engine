@@ -74,6 +74,7 @@ namespace video
 		"GL_EXT_texture_storage",
 		"GL_EXT_texture_type_2_10_10_10_REV",
 		"GL_EXT_unpack_subimage",
+		"GL_EXT_texture_border_clamp",
 		"GL_FJ_shader_binary_GCCSO",
 		"GL_IMG_multisampled_render_to_texture",
 		"GL_IMG_program_binary",

@@ -2,8 +2,6 @@ package com.skylicht.engine3d;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Intent;
-import android.os.Debug;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
@@ -14,11 +12,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 
 public class TextField {
     public static TextField sInstance = null;

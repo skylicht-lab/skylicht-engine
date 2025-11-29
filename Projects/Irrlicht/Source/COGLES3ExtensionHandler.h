@@ -86,6 +86,7 @@ namespace irr
 				IRR_EXT_texture_storage, // 108
 				IRR_EXT_texture_type_2_10_10_10_REV, // 42
 				IRR_EXT_unpack_subimage, // 90
+				IRR_EXT_texture_border_clamp,
 				IRR_FJ_shader_binary_GCCSO, // 114
 				IRR_IMG_multisampled_render_to_texture, // 74
 				IRR_IMG_program_binary, // 67

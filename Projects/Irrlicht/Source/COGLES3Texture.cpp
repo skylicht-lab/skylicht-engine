@@ -732,7 +732,6 @@ namespace irr
 					Driver->getBridgeCalls()->setTexture(0);
 				}
 
-				glEnable(GL_TEXTURE_2D);
 				glGenerateMipmap(GL_TEXTURE_2D);
 
 				HasMipMaps = true;
