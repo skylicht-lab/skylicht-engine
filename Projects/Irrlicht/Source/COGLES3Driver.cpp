@@ -1620,12 +1620,15 @@ namespace irr
 					glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, getTextureWrapMode(material.TextureLayer[i].TextureWrapV));
 					
 					// border clamp
-					if (material.TextureLayer[i].TextureWrapU == ETC_CLAMP_TO_BORDER ||
-						material.TextureLayer[i].TextureWrapV == ETC_CLAMP_TO_BORDER)
+					if (FeatureAvailable[IRR_EXT_texture_border_clamp])
 					{
-						const SColorf &color = material.TextureLayer[i].BorderColor;
-						GLfloat borderColor[] = { color.r, color.g, color.b, color.a };
-						glTexParameterfv(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_BORDER_COLOR, borderColor);
+						if (material.TextureLayer[i].TextureWrapU == ETC_CLAMP_TO_BORDER ||
+							material.TextureLayer[i].TextureWrapV == ETC_CLAMP_TO_BORDER)
+						{
+							const SColorf &color = material.TextureLayer[i].BorderColor;
+							GLfloat borderColor[] = { color.r, color.g, color.b, color.a };
+							glTexParameterfv(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_BORDER_COLOR, borderColor);
+						}
 					}
 				}
 				else
