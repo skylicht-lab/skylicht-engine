@@ -257,6 +257,22 @@ namespace Skylicht
 #endif
 		}
 
+		void CRigidbody::setCollisionGroupAndFilter(int group, int filter)
+		{
+			ICollisionObject::setCollisionGroupAndFilter(group, filter);
+
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			CPhysicsEngine* engine = CPhysicsEngine::getInstance();
+			if (engine == NULL || !engine->isInitialized() || !m_rigidBody)
+				return;
+
+			// update collision filter
+			btBroadphaseProxy* proxy = m_rigidBody->getBroadphaseProxy();
+			proxy->m_collisionFilterGroup = m_group;
+			proxy->m_collisionFilterMask = m_filter;
+#endif
+		}
+
 		void CRigidbody::releaseRigidbody()
 		{
 #ifdef USE_BULLET_PHYSIC_ENGINE

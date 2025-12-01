@@ -30,7 +30,9 @@ namespace Skylicht
 	namespace Physics
 	{
 		ICollisionObject::ICollisionObject() :
-			m_collisionType(ICollisionObject::Unknown)
+			m_collisionType(ICollisionObject::Unknown),
+			m_group(1),
+			m_filter(-1)
 		{
 
 		}
@@ -38,6 +40,12 @@ namespace Skylicht
 		ICollisionObject::~ICollisionObject()
 		{
 
+		}
+
+		void ICollisionObject::setCollisionGroupAndFilter(int group, int filter)
+		{
+			m_group = group;
+			m_filter = filter;
 		}
 	}
 }

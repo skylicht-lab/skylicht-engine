@@ -56,6 +56,8 @@ namespace Skylicht
 
 			virtual void updateComponent();
 
+			virtual void setCollisionGroupAndFilter(int group, int filter);
+
 			bool initCharacter(float stepHeight);
 
 			void releaseCharacter();

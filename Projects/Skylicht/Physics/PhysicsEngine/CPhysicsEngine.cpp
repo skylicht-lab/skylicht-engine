@@ -146,7 +146,7 @@ namespace Skylicht
 			m_bodies.push_back(b);
 
 			// add rigid body
-			m_dynamicsWorld->addRigidBody(b->BulletBody);
+			m_dynamicsWorld->addRigidBody(b->BulletBody, body->getCollisionGroup(), body->getCollisionFilter());
 #endif
 		}
 
@@ -196,8 +196,8 @@ namespace Skylicht
 
 			// add character
 			m_dynamicsWorld->addCollisionObject(b->GhostObject,
-				btBroadphaseProxy::CharacterFilter,
-				btBroadphaseProxy::AllFilter);
+				character->getCollisionGroup(),
+				character->getCollisionFilter());
 			m_dynamicsWorld->addCharacter(b->BulletCharacter);
 #endif
 		}

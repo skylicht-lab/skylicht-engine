@@ -47,6 +47,7 @@ namespace Skylicht
 #endif
 		{
 			m_collisionType = ICollisionObject::Character;
+			m_group = btBroadphaseProxy::CharacterFilter;
 		}
 
 		CCharacterController::~CCharacterController()
@@ -148,6 +149,22 @@ namespace Skylicht
 				delete m_shape;
 				m_shape = NULL;
 			}
+#endif
+		}
+
+		void CCharacterController::setCollisionGroupAndFilter(int group, int filter)
+		{
+			ICollisionObject::setCollisionGroupAndFilter(group, filter);
+
+#ifdef USE_BULLET_PHYSIC_ENGINE
+			CPhysicsEngine* engine = CPhysicsEngine::getInstance();
+			if (engine == NULL || !engine->isInitialized() || !m_ghostObject)
+				return;
+
+			// update collision filter
+			btBroadphaseProxy* proxy = m_ghostObject->getBroadphaseHandle();
+			proxy->m_collisionFilterGroup = m_group;
+			proxy->m_collisionFilterMask = m_filter;
 #endif
 		}
 

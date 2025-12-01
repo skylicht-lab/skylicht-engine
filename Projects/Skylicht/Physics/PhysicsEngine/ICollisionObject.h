@@ -49,16 +49,31 @@ namespace Skylicht
 		protected:
 			ECollisionType m_collisionType;
 
+			int m_group;
+			int m_filter;
+
 		public:
 			ICollisionObject();
 
 			virtual ~ICollisionObject();
+
+			virtual void setCollisionGroupAndFilter(int group, int filter);
 
 			std::function<void(ICollisionObject*, ICollisionObject*, SCollisionContactPoint*, int)> OnCollision;
 
 			inline ECollisionType getCollisionType()
 			{
 				return m_collisionType;
+			}
+
+			inline int getCollisionGroup()
+			{
+				return m_group;
+			}
+
+			inline int getCollisionFilter()
+			{
+				return m_filter;
 			}
 		};
 	}

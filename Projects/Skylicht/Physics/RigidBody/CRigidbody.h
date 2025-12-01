@@ -70,7 +70,6 @@ namespace Skylicht
 			btCollisionShape* m_shape;
 #endif
 			int m_tag;
-
 		public:
 			CRigidbody();
 
@@ -85,6 +84,8 @@ namespace Skylicht
 			virtual CObjectSerializable* createSerializable();
 
 			virtual void loadSerializable(CObjectSerializable* object);
+
+			virtual void setCollisionGroupAndFilter(int group, int filter);
 
 			inline void setTag(int i)
 			{
