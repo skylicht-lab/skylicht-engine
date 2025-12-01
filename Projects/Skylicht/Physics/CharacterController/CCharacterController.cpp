@@ -47,7 +47,11 @@ namespace Skylicht
 #endif
 		{
 			m_collisionType = ICollisionObject::Character;
+#ifdef USE_BULLET_PHYSIC_ENGINE
 			m_group = btBroadphaseProxy::CharacterFilter;
+#else
+			m_group = 32;
+#endif
 		}
 
 		CCharacterController::~CCharacterController()
