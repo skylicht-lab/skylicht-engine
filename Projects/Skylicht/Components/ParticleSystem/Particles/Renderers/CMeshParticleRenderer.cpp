@@ -126,6 +126,12 @@ namespace Skylicht
 			}
 		}
 
+		void CMeshParticleRenderer::setVelocityDirection(bool b)
+		{
+			m_velocityDirection = b;
+			setMaterialType(m_baseShaderType);
+		}
+
 		void CMeshParticleRenderer::setMaterialType(EBaseShaderType shader)
 		{
 			m_baseShaderType = shader;

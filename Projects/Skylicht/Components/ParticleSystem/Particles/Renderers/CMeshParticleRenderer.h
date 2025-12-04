@@ -70,7 +70,39 @@ namespace Skylicht
 
 			bool loadMesh(const char* meshFile);
 
+			void setVelocityDirection(bool b);
+
 			void setMaterialType(EBaseShaderType shader);
+
+			inline const SColor& getDissolveColor()
+			{
+				return m_dissolveColor;
+			}
+
+			inline void setDissolveColor(const SColor& c)
+			{
+				m_dissolveColor = c;
+			}
+
+			inline core::vector3df& getNoiseScale()
+			{
+				return m_noiseScale;
+			}
+
+			inline void setNoiseScale(const core::vector3df& n)
+			{
+				m_noiseScale = n;
+			}
+
+			inline float getDissolveCutoff()
+			{
+				return m_dissolve;
+			}
+
+			inline void setDissolveCutoff(float d)
+			{
+				m_dissolve = d;
+			}
 
 		protected:
 
