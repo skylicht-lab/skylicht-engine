@@ -46,11 +46,16 @@ float4x4 constructMatrix(float3 position, float3 zAxis, float3 scale, float3 rot
 		0.0, 0.0, 0.0, 1.0
 	);
 	
+	/*
 	float3 yTemp = float3(0.0, 1.0, 0.0);
 	
 	// vel (z) is y up
 	if (abs(dot(zAxis, yTemp)) > 0.999) 
 		yTemp = float3(0.0, 0.0, 1.0f);
+	*/
+	float dot_abs = abs(dot(zAxis, float3(0.0, 1.0, 0.0)));
+	float mask = saturate(ceil(dot_abs - 0.999));
+	float3 yTemp = float3(0.0, 1.0 - mask, mask);
 	
 	float3 xAxis = normalize(cross(yTemp, zAxis));
 	float3 yAxis = normalize(cross(zAxis, xAxis));
