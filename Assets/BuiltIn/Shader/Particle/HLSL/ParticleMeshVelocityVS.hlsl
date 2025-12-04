@@ -29,10 +29,9 @@ cbuffer cbPerObject
 	float4x4 uWorld;
 };
 
-// copilot: Can you find me the code construct the float4x4 from position and scale
-float4x4 constructMatrix(float3 position, float3 scale, float3 rotation) 
+float4x4 constructMatrix(float3 position, float3 zAxis, float3 scale, float3 rotation) 
 {
-	// Rotation part
+	// rotate
 	float cosYaw = cos(rotation.z);
 	float sinYaw = sin(rotation.z);
 	float cosPitch = cos(rotation.y);
@@ -47,27 +46,39 @@ float4x4 constructMatrix(float3 position, float3 scale, float3 rotation)
 		0.0, 0.0, 0.0, 1.0
 	);
 	
-	// Scale & Translation part
-	float4x4 translationMatrix = float4x4(
-		scale.x, 0.0, 0.0, 0.0,
-		0.0, scale.y, 0.0, 0.0,
-		0.0, 0.0, scale.z, 0.0,
+	float3 yTemp = float3(0.0, 1.0, 0.0);
+	
+	// vel (z) is y up
+	if (abs(dot(zAxis, yTemp)) > 0.999) 
+		yTemp = float3(0.0, 0.0, 1.0f);
+	
+	float3 xAxis = normalize(cross(yTemp, zAxis));
+	float3 yAxis = normalize(cross(zAxis, xAxis));
+	
+	xAxis *= scale.x;
+	yAxis *= scale.y;
+	zAxis *= scale.z;
+	
+	float4x4 m = float4x4(
+		xAxis.x, xAxis.y, xAxis.z, 0.0,
+		yAxis.x, yAxis.y, yAxis.z, 0.0,
+		zAxis.x, zAxis.y, zAxis.z, 0.0,
 		position.x, position.y, position.z, 1.0
 	);
 	
-	// Combine them
-	return mul(rotationMatrix, translationMatrix);
+	return mul(rotationMatrix, m);
 }
 
 VS_OUTPUT main(VS_INPUT input)
 {
 	VS_OUTPUT output;
 	
-	float4x4 world = mul(constructMatrix(input.particlePos.xyz, input.particleSize.xyz, input.particleRotation.xyz), uWorld);
-	
+	float3 vel = normalize(input.particleVelocity.xyz);
+	float4x4 world = mul(constructMatrix(input.particlePos.xyz, vel, input.particleSize.xyz, input.particleRotation.xyz), uWorld);
+		
 	float4 worldPos = mul(input.pos, world);
 	float4 worldNormal = mul(float4(input.norm, 0.0), world);
-	
+		
 	output.pos = mul(worldPos, uVPMatrix);
 	output.vertexPos = input.pos.xyz;
 	output.worldNormal = normalize(worldNormal.xyz);

@@ -36,7 +36,8 @@ namespace Skylicht
 			m_baseShaderType(Soild),
 			m_dissolve(0.04),
 			m_noiseScale(5.0f, 5.0f, 5.0f),
-			m_dissolveColor(255, 255, 150, 75)
+			m_dissolveColor(255, 255, 150, 75),
+			m_velocityDirection(false)
 		{
 			m_meshBuffer = new CMeshBuffer<S3DVertex>(getVideoDriver()->getVertexDescriptor(EVT_STANDARD), EIT_16BIT);
 
@@ -80,6 +81,8 @@ namespace Skylicht
 		{
 			CObjectSerializable* object = IRenderer::createSerializable();
 
+			object->autoRelease(new CBoolProperty(object, "velocityDirection", m_velocityDirection));
+
 			CEnumProperty<EBaseShaderType>* shaderType = new CEnumProperty<EBaseShaderType>(object, "shaderType", m_baseShaderType);
 			shaderType->setUIHeader("Default Material");
 			shaderType->addEnumString("Soild", EBaseShaderType::Soild);
@@ -105,6 +108,8 @@ namespace Skylicht
 		{
 			IRenderer::loadSerializable(object);
 
+			m_velocityDirection = object->get<bool>("velocityDirection", false);
+
 			m_noiseScale = object->get<core::vector3df>("noiseScale", core::vector3df(10.0f, 10.0f, 10.0f));
 			m_dissolve = object->get<float>("dissolver", 0.04f);
 			m_dissolveColor = object->get<SColor>("dissolverColor", SColor(255, 255, 150, 75));
@@ -125,14 +130,28 @@ namespace Skylicht
 		{
 			m_baseShaderType = shader;
 
-			if (m_baseShaderType == Soild)
-				m_material->changeShader("BuiltIn/Shader/Particle/ParticleMesh.xml");
-			else if (m_baseShaderType == SoildColor)
-				m_material->changeShader("BuiltIn/Shader/Particle/ParticleMeshColor.xml");
-			else if (m_baseShaderType == Additive)
-				m_material->changeShader("BuiltIn/Shader/Particle/ParticleMeshAddtive.xml");
-			else if (m_baseShaderType == Transparent)
-				m_material->changeShader("BuiltIn/Shader/Particle/ParticleMeshTransparent.xml");
+			if (m_velocityDirection)
+			{
+				if (m_baseShaderType == Soild)
+					m_material->changeShader("BuiltIn/Shader/Particle/ParticleMeshVelocity.xml");
+				else if (m_baseShaderType == SoildColor)
+					m_material->changeShader("BuiltIn/Shader/Particle/ParticleMeshVelocityColor.xml");
+				else if (m_baseShaderType == Additive)
+					m_material->changeShader("BuiltIn/Shader/Particle/ParticleMeshVelocityAddtive.xml");
+				else if (m_baseShaderType == Transparent)
+					m_material->changeShader("BuiltIn/Shader/Particle/ParticleMeshVelocityTransparent.xml");
+			}
+			else
+			{
+				if (m_baseShaderType == Soild)
+					m_material->changeShader("BuiltIn/Shader/Particle/ParticleMesh.xml");
+				else if (m_baseShaderType == SoildColor)
+					m_material->changeShader("BuiltIn/Shader/Particle/ParticleMeshColor.xml");
+				else if (m_baseShaderType == Additive)
+					m_material->changeShader("BuiltIn/Shader/Particle/ParticleMeshAddtive.xml");
+				else if (m_baseShaderType == Transparent)
+					m_material->changeShader("BuiltIn/Shader/Particle/ParticleMeshTransparent.xml");
+			}
 
 			if (m_baseShaderType == Soild || m_baseShaderType == SoildColor)
 			{

@@ -1,0 +1,22 @@
+<shaderConfig name="ParticleMeshVelocityTransparent" baseShader="TRANSPARENT_ALPHA_CHANNEL">
+	<uniforms>
+		<vs>
+			<uniform name="uVPMatrix" type="VIEW_PROJECTION" value="0" float="16" matrix="true"/>
+			<uniform name="uWorld" type="WORLD" value="0" float="16" matrix="true"/>
+		</vs>
+		<fs>
+			<uniform name="uTexture" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
+			<uniform name="uColorIntensity" type="COLOR_INTENSITY" value="1.0, 1.0, 1.0, 1.0" float="4"/>
+			<uniform name="uLightColor" type="LIGHT_COLOR" value="1.0,1.0,1.0,1.0" float="4"/>
+			<uniform name="uLightDirection" type="WORLD_LIGHT_DIRECTION" value="0" float="4"/>
+			<uniform name="uSHConst" type="SH_CONST" value="0" float="4" array="4"/>
+		</fs>
+	</uniforms>
+	<customUI>
+		<ui control="UIGroup" name="Texture">
+			<ui control="UITexture" name="uTexture"/>
+		</ui>
+	</customUI>
+	<shader type="GLSL" vs="GLSL/ParticleMeshVelocityVS.glsl" fs="GLSL/ParticleMeshAddtiveFS.glsl" fs_source="GLSL/ParticleMeshFS.d.glsl" define="LIGHTING"/>
+	<shader type="HLSL" vs="HLSL/ParticleMeshVelocityVS.hlsl" fs="HLSL/ParticleMeshAddtiveFS.hlsl" fs_source="HLSL/ParticleMeshFS.d.hlsl" define="LIGHTING"/>
+</shaderConfig>

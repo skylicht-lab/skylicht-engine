@@ -1,4 +1,4 @@
-<shaderConfig name="ParticleMeshColor" baseShader="SOLID">
+<shaderConfig name="ParticleMeshVelocityColor" baseShader="SOLID">
 	<uniforms>
 		<vs>
 			<uniform name="uVPMatrix" type="VIEW_PROJECTION" value="0" float="16" matrix="true"/>
@@ -15,6 +15,6 @@
 	</uniforms>
 	<customUI>
 	</customUI>
-	<shader type="GLSL" vs="GLSL/ParticleMeshVS.glsl" fs="GLSL/ParticleMeshColorFS.glsl" fs_source="GLSL/ParticleMeshFS.d.glsl" define="SOILD_COLOR;LIGHTING;DISSOLVE"/>
-	<shader type="HLSL" vs="HLSL/ParticleMeshVS.hlsl" fs="HLSL/ParticleMeshColorFS.hlsl" fs_source="HLSL/ParticleMeshFS.d.hlsl" define="SOILD_COLOR;LIGHTING;DISSOLVE"/>
+	<shader type="GLSL" vs="GLSL/ParticleMeshVelocityVS.glsl" fs="GLSL/ParticleMeshColorFS.glsl" fs_source="GLSL/ParticleMeshFS.d.glsl" define="SOILD_COLOR;LIGHTING;DISSOLVE"/>
+	<shader type="HLSL" vs="HLSL/ParticleMeshVelocityVS.hlsl" fs="HLSL/ParticleMeshColorFS.hlsl" fs_source="HLSL/ParticleMeshFS.d.hlsl" define="SOILD_COLOR;LIGHTING;DISSOLVE"/>
 </shaderConfig>

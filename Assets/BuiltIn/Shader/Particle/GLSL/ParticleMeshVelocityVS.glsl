@@ -19,14 +19,13 @@ out vec4 varColor;
 out vec3 varWorldNormal;
 out vec3 varVertexPos;
 
-// Copilot: can you help me write the code construct mat4 (GLSL) from position, scale
-// Can you help me write the code construct mat4 from rotation (yaw, pitch, roll)
-mat4 constructMat4(vec3 position, vec3 scale, vec3 rotation) 
+mat4 constructMat4(vec3 position, vec3 zAxis, vec3 scale, vec3 rotation) 
 {
+	// rotate
 	float cosYaw = cos(rotation.z);
 	float sinYaw = sin(rotation.z);	
 	float cosPitch = cos(rotation.y);
-	float sinPitch = sin(rotation.y);	
+	float sinPitch = sin(rotation.y);
 	float cosRoll = cos(rotation.x);
 	float sinRoll = sin(rotation.x);
 
@@ -37,14 +36,27 @@ mat4 constructMat4(vec3 position, vec3 scale, vec3 rotation)
 		0.0, 0.0, 0.0, 1.0
 	);
 	
-	mat4 translationMatrix = mat4(
-		scale.x, 0.0, 0.0, 0.0,
-		0.0, scale.y, 0.0, 0.0,
-		0.0, 0.0, scale.z, 0.0,
+	vec3 yTemp = vec3(0.0, 1.0, 0.0);
+	
+	// vel (z) is y up
+	if (abs(dot(zAxis, yTemp)) > 0.999) 
+		yTemp = vec3(0.0, 0.0, 1.0);
+	
+	vec3 xAxis = normalize(cross(yTemp, zAxis));
+	vec3 yAxis = normalize(cross(zAxis, xAxis));
+	
+	xAxis *= scale.x;
+	yAxis *= scale.y;
+	zAxis *= scale.z;
+
+	mat4 m = mat4(
+		xAxis.x, xAxis.y, xAxis.z, 0.0,
+		yAxis.x, yAxis.y, yAxis.z, 0.0,
+		zAxis.x, zAxis.y, zAxis.z, 0.0,
 		position.x, position.y, position.z, 1.0
 	);
-
-	return translationMatrix * rotationMatrix;
+	
+	return m * rotationMatrix;
 }
 
 void main(void)
@@ -52,7 +64,9 @@ void main(void)
 	varTexCoord0 = inTexCoord0 * inParticleUVScale + inParticleUVOffset;
 	varColor = inParticleColor / 255.0;	
 
-	mat4 world = uWorld * constructMat4(inParticlePosition.xyz, inParticleSize.xyz, inParticleRotation.xyz);
+	vec3 vel = normalize(inParticleVelocity.xyz);
+
+	mat4 world = uWorld * constructMat4(inParticlePosition.xyz, vel, inParticleSize.xyz, inParticleRotation.xyz);
 
 	vec4 worldPos = world * inPosition;
 	vec4 worldNormal = world * vec4(inNormal, 1.0);

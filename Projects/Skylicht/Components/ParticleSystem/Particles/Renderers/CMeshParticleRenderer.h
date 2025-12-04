@@ -53,6 +53,8 @@ namespace Skylicht
 			SColor m_dissolveColor;
 			float m_dissolve;
 
+			bool m_velocityDirection;
+
 		public:
 			CMeshParticleRenderer();
 
