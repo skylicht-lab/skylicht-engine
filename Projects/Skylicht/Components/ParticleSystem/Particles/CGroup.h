@@ -147,6 +147,7 @@ namespace Skylicht
 			core::matrix4 m_world;
 			core::aabbox3df m_bbox;
 
+			int m_frameUpdate;
 		public:
 			CGroup();
 
@@ -314,6 +315,17 @@ namespace Skylicht
 			core::array<CParticle>& getParticles()
 			{
 				return m_particles;
+			}
+
+			inline int getFrameUpdate()
+			{
+				return m_frameUpdate;
+			}
+
+			inline void updateFrame(int frame)
+			{
+				// sync frame from CParticleComponent
+				m_frameUpdate = frame;
 			}
 
 			DECLARE_GETTYPENAME(CGroup)

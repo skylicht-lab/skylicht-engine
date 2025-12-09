@@ -87,7 +87,13 @@ namespace Skylicht
 				for (u32 i = 0, n = data->AllGroups.size(); i < n; i++)
 				{
 					Particle::CGroup* group = data->AllGroups[i];
-					group->update();
+
+					if (group->getFrameUpdate() != m_ps->getFrameUpdated())
+					{
+						group->update();
+						group->updateFrame(m_ps->getFrameUpdated());
+					}
+
 					group->updateForRenderer();
 				}
 			}

@@ -41,6 +41,8 @@ namespace Skylicht
 
 			std::string m_sourcePath;
 
+			int m_frameUpdate;
+
 		public:
 			CParticleComponent();
 
@@ -109,6 +111,11 @@ namespace Skylicht
 			bool load();
 
 			bool save();
+
+			inline int getFrameUpdated()
+			{
+				return m_frameUpdate;
+			}
 
 			CGroup* duplicateGroup(CGroup* group);
 

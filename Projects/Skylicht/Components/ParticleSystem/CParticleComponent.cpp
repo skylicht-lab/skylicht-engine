@@ -47,7 +47,8 @@ namespace Skylicht
 		CATEGORY_COMPONENT(CParticleComponent, "Particle", "Particle");
 
 		CParticleComponent::CParticleComponent() :
-			m_data(NULL)
+			m_data(NULL),
+			m_frameUpdate(0)
 		{
 
 		}
@@ -88,7 +89,9 @@ namespace Skylicht
 
 		void CParticleComponent::updateComponent()
 		{
-
+			// todo
+			// Fix for update many time in GUIParticle
+			m_frameUpdate++;
 		}
 
 		CObjectSerializable* CParticleComponent::createSerializable()

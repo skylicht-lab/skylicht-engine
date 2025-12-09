@@ -168,6 +168,20 @@ namespace Skylicht
 
 		void setTarget(CSkeleton* skeleton);
 
+		inline CSkeleton* getTarget()
+		{
+			return m_target;
+		}
+
+		inline std::vector<CSkeleton*>& getBlending()
+		{
+			return m_blending;
+		}
+
+		void addBlending(CSkeleton* skeleton);
+
+		void removeBlending(CSkeleton* skeleton);
+
 		void drawDebug(const core::matrix4& transform, const SColor& c);
 
 		void drawDebugDefaultSkeleton(const core::matrix4& transform, const SColor& c);
@@ -185,9 +199,5 @@ namespace Skylicht
 		void doAddtive(CSkeleton* skeleton, bool first);
 
 		void doReplace(CSkeleton* skeleton, bool first);
-
-		void addBlending(CSkeleton* skeleton);
-
-		void removeBlending(CSkeleton* skeleton);
 	};
 }

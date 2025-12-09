@@ -45,7 +45,8 @@ namespace Skylicht
 			OrientationUp(0.0f, 1.0f, 0.0f),
 			Name(L"Group"),
 			Visible(true),
-			Optimized(true)
+			Optimized(true),
+			m_frameUpdate(0)
 		{
 			m_particleSystem = new CParticleSystem();
 

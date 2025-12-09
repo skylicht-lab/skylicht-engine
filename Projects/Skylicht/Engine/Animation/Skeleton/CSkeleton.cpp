@@ -408,7 +408,8 @@ namespace Skylicht
 			m_target->removeBlending(this);
 
 		m_target = skeleton;
-		m_target->addBlending(this);
+		if (m_target)
+			m_target->addBlending(this);
 	}
 
 	void CSkeleton::addBlending(CSkeleton* skeleton)
