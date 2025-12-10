@@ -17,14 +17,13 @@ namespace Skylicht
 
 	void CTweenManager::update()
 	{
-		float ts = getNonScaledTimestep();
-
 		// delay call
 		m_delayCalls.insert(m_delayCalls.end(), m_insertCalls.begin(), m_insertCalls.end());
 		m_insertCalls.clear();
 
 		for (SDelayCall* delayCall : m_delayCalls)
 		{
+			float ts = delayCall->UseScaleTime ? getTimeStep() : getNonScaledTimestep();
 			delayCall->Time = delayCall->Time - ts;
 			if (delayCall->Time <= 0.0f)
 			{
@@ -82,6 +81,9 @@ namespace Skylicht
 		}
 
 		m_insert.push_back(tween);
+
+		// run 1 frame
+		tween->run();
 	}
 
 	void CTweenManager::removeTween(CTween* tween)
@@ -95,12 +97,13 @@ namespace Skylicht
 		m_remove.push_back(tween);
 	}
 
-	void CTweenManager::addDelayCall(float time, std::function<void()> function)
+	void CTweenManager::addDelayCall(float time, std::function<void()> function, bool useScaleTime)
 	{
 		m_insertCalls.push_back(new SDelayCall());
 
 		SDelayCall* delayCall = m_insertCalls.back();
 		delayCall->Time = time;
 		delayCall->Function = function;
+		delayCall->UseScaleTime = useScaleTime;
 	}
 }

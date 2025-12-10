@@ -44,6 +44,8 @@ namespace Skylicht
 
 		void update();
 
+		void run();
+
 		void stop();
 
 		virtual void updateValue() = 0;

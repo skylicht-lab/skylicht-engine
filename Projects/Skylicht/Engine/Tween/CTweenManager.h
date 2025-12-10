@@ -24,6 +24,7 @@ namespace Skylicht
 		struct SDelayCall
 		{
 			float Time;
+			bool UseScaleTime;
 			std::function<void()> Function;
 		};
 
@@ -42,6 +43,6 @@ namespace Skylicht
 
 		void removeTween(CTween* tween);
 
-		void addDelayCall(float time, std::function<void()> function);
+		void addDelayCall(float time, std::function<void()> function, bool useScaleTime = true);
 	};
 }
