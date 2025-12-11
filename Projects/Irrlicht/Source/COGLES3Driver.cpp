@@ -1568,8 +1568,8 @@ namespace irr
 				// fix for some device not support float linear filter
 				bool useNearest = false;
 				ECOLOR_FORMAT fm = CurrentTexture[i]->getColorFormat();
-				if (!FeatureAvailable[IRR_OES_texture_float_linear] && fm >= ECF_R16F && fm <= ECF_D24S8)
-					useNearest = true;
+				if (fm >= ECF_R16F && fm <= ECF_D24S8)
+					useNearest = !FeatureAvailable[IRR_OES_texture_float_linear] && !FeatureAvailable[IRR_OES_texture_half_float_linear];
 
 				if (CurrentTexture[i]->getTextureType() == ETT_TEXTURE_CUBE)
 				{
