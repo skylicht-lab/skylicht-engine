@@ -39,6 +39,6 @@
 			<ui control="UIFloat4" name="uEmissive" elementName="Intensity R;Intensity G;Intensity B;Intensity"/>
 		</ui>
 	</customUI>
-	<shader type="GLSL" vs="GLSL/PBRSkinNoNormalShadowVS.glsl" vs_source="GLSL/PBRSkinVS.d.glsl" fs="GLSL/PBRSkinNoNormalShadowFS.glsl" fs_source="GLSL/PBRLitFS.d.glsl" define="NO_NORMAL_MAP;SHADOW;OPTIMIZE_SHADOW"/>
-	<shader type="HLSL" vs="HLSL/PBRSkinNoNormalShadowVS.hlsl" vs_source="HLSL/PBRSkinVS.d.hlsl" fs="HLSL/PBRSkinNoNormalShadowFS.hlsl" fs_source="HLSL/PBRLitFS.d.hlsl" define="NO_NORMAL_MAP;SHADOW;OPTIMIZE_SHADOW"/>
+	<shader type="GLSL" vs="GLSL/PBRSkinNoNormalShadowVS.glsl" vs_source="GLSL/PBRSkinVS.d.glsl" fs="GLSL/PBRSkinNoNormalShadowFS.glsl" fs_source="GLSL/PBRLitFS.d.glsl" define="EMISSIVE;NO_NORMAL_MAP;SHADOW;OPTIMIZE_SHADOW"/>
+	<shader type="HLSL" vs="HLSL/PBRSkinNoNormalShadowVS.hlsl" vs_source="HLSL/PBRSkinVS.d.hlsl" fs="HLSL/PBRSkinNoNormalShadowFS.hlsl" fs_source="HLSL/PBRLitFS.d.hlsl" define="EMISSIVE;NO_NORMAL_MAP;SHADOW;OPTIMIZE_SHADOW"/>
 </shaderConfig>
