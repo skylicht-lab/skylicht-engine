@@ -78,7 +78,7 @@ namespace Skylicht
 				std::vector<std::string> m_nextHistory;
 
 			public:
-				COpenSaveDialog(CBase* base, EDialogType type, const char* root, const char* folder, const char* filter = "xml;*");
+				COpenSaveDialog(CBase* base, EDialogType type, const char* root, const char* folder, const char* filter = "xml;csv", bool filterAll = false);
 
 				virtual ~COpenSaveDialog();
 
@@ -100,7 +100,7 @@ namespace Skylicht
 				std::string getRelativePath(const char* folder);
 
 				void browseFolder(const char* folder, bool addHistory = true);
-				
+
 				void onClickFile(CBase* base);
 				void onDbClickFile(CBase* base);
 

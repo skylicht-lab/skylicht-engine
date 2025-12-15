@@ -92,7 +92,8 @@ void CViewInit::loadConfig()
 {
 	CXMLSpreadsheet xlsText;
 
-	if (xlsText.open("Luckydraw/text.xml") == true)
+	//if (xlsText.open("Luckydraw/text.xml") == true)
+	if (xlsText.openCSV("Luckydraw/text.csv") == true)
 	{
 		CLocalize::getInstance()->init(&xlsText);
 		CLocalize::getInstance()->setLanguage(ELanguage::EN);
@@ -161,16 +162,16 @@ void CViewInit::onUpdate()
 
 		m_initState = CViewInit::InitScene;
 #endif
-    }
+	}
 	break;
 	case CViewInit::InitScene:
 	{
 		loadConfig();
 		initScene();
 		m_initState = CViewInit::Finished;
-        
+
 #if !defined(__EMSCRIPTEN__)
-        CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
+		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 #endif
 	}
 	break;
@@ -187,7 +188,7 @@ void CViewInit::onUpdate()
 	}
 	break;
 	}
-	}
+}
 
 void CViewInit::onRender()
 {
@@ -213,8 +214,8 @@ bool CViewInit::OnEvent(const SEvent& event)
 	{
 		if (event.MouseInput.Event == EMIE_LMOUSE_LEFT_UP)
 		{
-            if (m_initState == CViewInit::Finished)
-                CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
+			if (m_initState == CViewInit::Finished)
+				CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 		}
 	}
 

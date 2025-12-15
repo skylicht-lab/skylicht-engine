@@ -34,10 +34,21 @@ namespace Skylicht
 		namespace GUI
 		{
 			CInputResourceBox::CInputResourceBox(CBase* base) :
-				CTextBox(base)
+				CTextBox(base),
+				m_browseButton(NULL)
 			{
 				showIcon(GUI::ESystemIcon::File);
 				setEditable(false);
+
+				CBase* panel = m_innerPanel;
+				m_innerPanel = NULL;
+				m_browseButton = new GUI::CIconButton(this);
+				m_browseButton->setPadding(GUI::SPadding(-2.0f, -2.0f));
+				m_browseButton->setSize(16.0f, 16.0f);
+				m_browseButton->setMargin(GUI::SMargin(5.0f, 0.0f, 0.0f, 0.0f));
+				m_browseButton->setIcon(GUI::ESystemIcon::ResFolder);
+				m_browseButton->setHidden(true);
+				m_innerPanel = panel;
 			}
 
 			CInputResourceBox::~CInputResourceBox()
@@ -45,9 +56,22 @@ namespace Skylicht
 
 			}
 
+			void CInputResourceBox::layout()
+			{
+				CTextBox::layout();
+
+				if (!m_browseButton->isHidden())
+					m_browseButton->setPos(width() - m_closeButton->width() - 2.0f, 2.0f);
+			}
+
 			void CInputResourceBox::onMouseClickRight(float x, float y, bool down)
 			{
 				CBase::onMouseClickRight(x, y, down);
+			}
+
+			void CInputResourceBox::showBrowseButton(bool b)
+			{
+				m_browseButton->setHidden(!b);
 			}
 		}
 	}

@@ -12,6 +12,8 @@
 #include "CopyPaste/CCopyPaste.h"
 #include "CopyPaste/CCopyPasteUI.h"
 
+#include "Localize/CLocalize.h"
+
 #include "Lightmapper/CLightmapper.h"
 #include "LightProbes/CLightProbeRender.h"
 #include "ReflectionProbe/CReflectionProbeRender.h"
@@ -64,6 +66,7 @@ SkylichtEditor::SkylichtEditor() :
 	Editor::CSelecting::createGetInstance();
 	Editor::CCopyPaste::createGetInstance();
 	Editor::CCopyPasteUI::createGetInstance();
+	Editor::CLocalize::createGetInstance();
 
 	CLightProbeRender::showProbe(true);
 	CReflectionProbeRender::showProbe(true);
@@ -98,6 +101,7 @@ SkylichtEditor::~SkylichtEditor()
 	Physics::CPhysicsEngine::releaseInstance();
 #endif
 
+	Editor::CLocalize::releaseInstance();
 	Editor::CCopyPasteUI::releaseInstance();
 	Editor::CCopyPaste::releaseInstance();
 	Editor::CSelecting::releaseInstance();

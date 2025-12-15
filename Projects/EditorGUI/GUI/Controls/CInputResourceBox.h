@@ -35,6 +35,7 @@ namespace Skylicht
 			class CInputResourceBox : public CTextBox
 			{
 			protected:
+				CIconButton* m_browseButton;
 
 			public:
 				CInputResourceBox(CBase* base);
@@ -43,6 +44,14 @@ namespace Skylicht
 
 				virtual void onMouseClickRight(float x, float y, bool down);
 
+				virtual void layout();
+
+				void showBrowseButton(bool b);
+
+				inline CButton* getBrowseButton()
+				{
+					return m_browseButton;
+				}
 			};
 		}
 	}

@@ -68,7 +68,7 @@ namespace Skylicht
 		struct SRow
 		{
 			u32 Index;
-			std::list<SCell*> Cells;
+			std::vector<SCell*> Cells;
 
 			~SRow()
 			{
@@ -86,9 +86,14 @@ namespace Skylicht
 			int NumCol;
 			std::string Name;
 			std::wstring NameUnicode;
-			std::list<SRow*> Rows;
+			std::vector<SRow*> Rows;
 
 			~SSheet()
+			{
+				clear();
+			}
+
+			void clear()
 			{
 				for (SRow* r : Rows)
 				{
@@ -109,6 +114,8 @@ namespace Skylicht
 		bool open(const char* file);
 
 		bool open(io::IXMLReader* xmlReader);
+
+		bool openCSV(const char* file);
 
 		inline u32 getSheetCount()
 		{
@@ -134,5 +141,12 @@ namespace Skylicht
 		std::list<SCell*> getRange(SSheet* sheet, const char* from, const char* to);
 
 		bool convertCellName(const char* cellName, u32& row, u32& col);
+
+		void clear();
+
+	protected:
+
+		void splitCsvLine(const std::string& line, char delimiter, std::vector<std::string>& cells);
+
 	};
 }

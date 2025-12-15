@@ -49,7 +49,7 @@ namespace Skylicht
 	{
 		namespace GUI
 		{
-			COpenSaveDialog::COpenSaveDialog(CBase* base, EDialogType type, const char* root, const char* folder, const char* filter) :
+			COpenSaveDialog::COpenSaveDialog(CBase* base, EDialogType type, const char* root, const char* folder, const char* filter, bool filterAll) :
 				CDialogWindow(base, 0.0f, 0.0f, 760.0f, 400.0f),
 				m_type(type),
 				m_folder(folder),
@@ -63,10 +63,20 @@ namespace Skylicht
 
 				for (size_t i = 0, n = m_filter.size(); i < n; i++)
 				{
-					if (i == 0)
-						m_enableFilter.push_back(true);
+					if (filterAll)
+					{
+						if (m_filter[i] == "*")
+							m_enableFilter.push_back(false);
+						else
+							m_enableFilter.push_back(true);
+					}
 					else
-						m_enableFilter.push_back(false);
+					{
+						if (i == 0)
+							m_enableFilter.push_back(true);
+						else
+							m_enableFilter.push_back(false);
+					}
 				}
 
 				switch (type)
@@ -169,11 +179,11 @@ namespace Skylicht
 				boxLayout->setPadding(GUI::SPadding(0.0, 5.0, 0.0, 0.0));
 				for (size_t i = 0, n = m_filter.size(); i < n; i++)
 				{
-					addCheckItemOnMenu(boxLayout, CStringImp::convertUTF8ToUnicode(m_filter[i].c_str()).c_str(), i == 0 ? true : false,
+					addCheckItemOnMenu(boxLayout, CStringImp::convertUTF8ToUnicode(m_filter[i].c_str()).c_str(), m_enableFilter[i],
 						[&, i](CBase* check)
 						{
 							CCheckBox* cb = dynamic_cast<CCheckBox*>(check);
-							m_filter[i] = cb->getToggle();
+							m_enableFilter[i] = cb->getToggle();
 							refresh();
 						});
 				}
@@ -464,6 +474,11 @@ namespace Skylicht
 					{
 						browseFolder(file.c_str());
 					}
+					else
+					{
+						if (m_type == COpenSaveDialog::Open)
+							onSaveOpen(base);
+					}
 				}
 			}
 
@@ -598,10 +613,10 @@ namespace Skylicht
 						CMessageBox* msb = new CMessageBox(getCanvas(), CMessageBox::YesNoCancel);
 						msb->setMessage("Are you sure to save override this file?", filename);
 						msb->OnYes = [save = OnSave, fullPath = path](CBase* base)
-						{
-							if (save != nullptr)
-								save(fullPath);
-						};
+							{
+								if (save != nullptr)
+									save(fullPath);
+							};
 						return;
 					}
 

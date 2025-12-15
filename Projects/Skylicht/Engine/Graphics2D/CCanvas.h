@@ -598,6 +598,11 @@ namespace Skylicht
 		 */
 		template<typename T>
 		std::vector<T*> getElementsInChild(bool addThis);
+
+		/**
+		* @brief Find all CGUIText* and update localized text
+		*/
+		void updateLocalizedText(std::function<void(CGUIText*)>& localizedFunc);
 	};
 
 	template<typename T>

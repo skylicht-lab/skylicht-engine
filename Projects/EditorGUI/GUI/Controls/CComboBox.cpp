@@ -81,14 +81,18 @@ namespace Skylicht
 					theme->drawComboBoxButton(r, ThemeConfig::TextBoxButtonColor, ThemeConfig::White);
 			}
 
-			void CComboBox::setListValue(const std::vector<std::wstring>& list)
+			void CComboBox::clear()
 			{
 				m_list.clear();
 				m_menuItems.clear();
 
 				m_menu->releaseChildren();
-
 				m_selectIndex = 0;
+			}
+
+			void CComboBox::setListValue(const std::vector<std::wstring>& list)
+			{
+				clear();
 
 				for (const std::wstring& s : list)
 				{

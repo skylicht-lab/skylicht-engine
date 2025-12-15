@@ -25,7 +25,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "pch.h"
 #include "CCanvasSettingController.h"
 #include "Editor/SpaceController/CGUIDesignController.h"
+#include "Editor/SpaceController/CAssetPropertyController.h"
 #include "GUI/Utils/CTabableGroup.h"
+#include "Localize/CLocalize.h"
 
 namespace Skylicht
 {
@@ -85,6 +87,79 @@ namespace Skylicht
 			m_checkboxOutline->OnChanged = BIND_LISTENER(&CCanvasSettingController::onCheckBoxOutline, this);
 			boxLayout->endVertical();
 
+			boxLayout->addSpace(5.0f);
+
+			layout = boxLayout->beginVertical();
+			label = new GUI::CLabel(layout);
+			label->setPadding(GUI::SMargin(0.0f, 2.0, 0.0f, 0.0f));
+			label->setString("Text localization");
+			label->setTextAlignment(GUI::TextRight);
+
+			CGUIDesignController* controller = CGUIDesignController::getInstance();
+
+			GUI::CInputResourceBox* inputFileLocalize = new GUI::CInputResourceBox(layout);
+			inputFileLocalize->showIcon(GUI::ESystemIcon::File);
+			inputFileLocalize->showBrowseButton(true);
+			inputFileLocalize->getBrowseButton()->OnPress = [&, canvas = editor->getRootCanvas(), controller, inputFileLocalize](GUI::CBase* btn)
+				{
+					std::string p = controller->getLocalizePath();
+					std::string assetFolder = p.empty() ? CAssetManager::getInstance()->getAssetFolder() : CPath::getFolderPath(p);
+
+					GUI::COpenSaveDialog* dialog = new GUI::COpenSaveDialog(canvas, GUI::COpenSaveDialog::Open, assetFolder.c_str(), assetFolder.c_str(), "xml;csv", true);
+					dialog->OnOpen = [&, inputFileLocalize](std::string path)
+						{
+							path = CAssetManager::getInstance()->getShortPath(path.c_str());
+							onChangeLocalize(path);
+
+							std::string fileName = CPath::getFileName(path.c_str());
+							if (fileName.size() > 0)
+								inputFileLocalize->setString(CStringImp::convertUTF8ToUnicode(fileName.c_str()));
+						};
+				};
+
+			std::string fileName = CPath::getFileName(controller->getLocalizePath().c_str());
+			if (fileName.size() > 0)
+				inputFileLocalize->setString(CStringImp::convertUTF8ToUnicode(fileName.c_str()));
+			else
+			{
+				std::vector<std::string> exts;
+				exts.push_back("xml");
+				exts.push_back("csv");
+
+				std::string extString = "None (";
+				for (int i = 0, n = (int)exts.size(); i < n; i++)
+				{
+					extString += ".";
+					extString += exts[i];
+					if (i < n - 1)
+						extString += ", ";
+				}
+				extString += ")";
+				inputFileLocalize->setString(CStringImp::convertUTF8ToUnicode(extString.c_str()));
+			}
+
+			inputFileLocalize->OnPressed = [controller](GUI::CBase* base)
+				{
+					std::string path = controller->getLocalizePath();
+					if (!path.empty())
+						CAssetPropertyController::getInstance()->browseAsset(path.c_str());
+				};
+			boxLayout->endVertical();
+
+			m_languageLayout = boxLayout->beginVertical();
+			label = new GUI::CLabel(m_languageLayout);
+			label->setPadding(GUI::SMargin(0.0f, 2.0, 0.0f, 0.0f));
+			label->setString("Language");
+			label->setTextAlignment(GUI::TextRight);
+
+			m_languageBox = new GUI::CComboBox(m_languageLayout);
+			m_languageBox->OnChanged = [&, controller](GUI::CBase* base) {
+				u32 index = m_languageBox->getSelectIndex();
+				controller->setLanguage(index);
+				};
+			boxLayout->endVertical();
+			m_languageLayout->setHidden(true);
+
 			boxLayout->addSpace(20.0f);
 
 			layout = boxLayout->beginVertical();
@@ -128,9 +203,34 @@ namespace Skylicht
 					m_inputWidth->setValue(w, false);
 					m_inputHeight->setValue(h, false);
 					m_checkboxOutline->setToggle(canvas->DrawOutline);
+
+					showLanguage();
 				}
 			}
 			enableTabGroup();
+		}
+
+		void CCanvasSettingController::showLanguage()
+		{
+			CLocalize* localize = CLocalize::getInstance();
+			if (localize->getLanguages().size() > 0)
+			{
+				std::vector<std::wstring> list;
+				for (const std::string& lang : localize->getLanguages())
+					list.push_back(CStringImp::convertUTF8ToUnicode(lang.c_str()));
+				list.erase(list.begin());
+
+				if (list.size() > 0)
+				{
+					m_languageBox->setListValue(list);
+					m_languageBox->setSelectIndex(localize->getLanguage(), false);
+					m_languageLayout->setHidden(false);
+				}
+			}
+			else
+			{
+				m_languageLayout->setHidden(true);
+			}
 		}
 
 		void CCanvasSettingController::enableTabGroup()
@@ -194,6 +294,14 @@ namespace Skylicht
 					canvas->DrawOutline = m_checkboxOutline->getToggle();
 				}
 			}
+		}
+
+		void CCanvasSettingController::onChangeLocalize(std::string src)
+		{
+			CGUIDesignController* controller = CGUIDesignController::getInstance();
+			controller->initLocalizePath(src.c_str());
+
+			showLanguage();
 		}
 	}
 }

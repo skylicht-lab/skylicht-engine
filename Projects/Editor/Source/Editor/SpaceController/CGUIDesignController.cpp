@@ -40,6 +40,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Graphics2D/GUI/CGUIFitSprite.h"
 #include "ParticleSystem/CGUIParticle.h"
 
+#include "Localize/CLocalize.h"
 #include "ResourceSettings/CTextureSettings.h"
 
 namespace Skylicht
@@ -1125,6 +1126,19 @@ namespace Skylicht
 						img->setImage(newTexture);
 				}
 			}
+		}
+
+		void CGUIDesignController::initLocalizePath(const char* path)
+		{
+			m_localizePath = path;
+
+			CLocalize::getInstance()->init(path);
+			setLanguage(0);
+		}
+
+		void CGUIDesignController::setLanguage(u32 id)
+		{
+			CLocalize::getInstance()->setLanguage(id);
 		}
 	}
 }

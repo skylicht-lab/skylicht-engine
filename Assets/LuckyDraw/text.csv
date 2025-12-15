@@ -1,0 +1,12 @@
+STRING_ID,LANG_EN,LANG_VN
+TXT_SPIN,SPIN,QUAY SỐ
+TXT_STOP,STOP,DỪNG
+TXT_ACCEPT,ACCEPT,NHẬN GIẢI
+TXT_IGNORE,IGNORE,BỎ GIẢI
+TXT_LUCKY_PEOPLE_ID,Lucky people %d,Người may mắn số %d
+TXT_CONGRAT_PEOPLE_ID,Congratulation!\nPeople with number: %d,Chúc mừng!\nNgười may mắn số: %d
+TXT_CLICK_TO_CONTINUE,Click to continue...,Click để tiếp tục
+TXT_PRIZE_0,SPECIAL PRIZE,Giải Đặc Biệt
+TXT_PRIZE_1,1ST PRIZE,Giải Nhất
+TXT_PRIZE_2,2ND PRIZE,Giải Nhì
+TXT_PRIZE_3,3RD PRIZE,Giải Ba

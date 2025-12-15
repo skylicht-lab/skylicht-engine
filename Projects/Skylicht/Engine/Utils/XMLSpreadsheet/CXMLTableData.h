@@ -73,7 +73,7 @@ namespace Skylicht
 		template<class T>
 		u32 fetchData(std::vector<T*>& data, u32 fromRow, int count)
 		{
-			std::list<CXMLSpreadsheet::SRow*>::iterator i = m_sheet->Rows.begin(), end = m_sheet->Rows.end();
+			std::vector<CXMLSpreadsheet::SRow*>::iterator i = m_sheet->Rows.begin(), end = m_sheet->Rows.end();
 			while (i != end)
 			{
 				CXMLSpreadsheet::SRow* row = (*i);
@@ -97,7 +97,7 @@ namespace Skylicht
 					return 0;
 				}
 
-				std::list<CXMLSpreadsheet::SCell*>::iterator j = row->Cells.begin(), e = row->Cells.end();
+				std::vector<CXMLSpreadsheet::SCell*>::iterator j = row->Cells.begin(), e = row->Cells.end();
 				while (j != e)
 				{
 					CXMLSpreadsheet::SCell* cell = (*j);

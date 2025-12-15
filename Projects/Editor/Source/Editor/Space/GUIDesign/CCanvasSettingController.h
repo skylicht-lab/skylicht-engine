@@ -42,7 +42,8 @@ namespace Skylicht
 			GUI::CNumberInput* m_inputWidth;
 			GUI::CNumberInput* m_inputHeight;
 			GUI::CCheckBox* m_checkboxOutline;
-
+			GUI::CComboBox* m_languageBox;
+			GUI::CLayout* m_languageLayout;
 		public:
 			CCanvasSettingController(CEditor* editor, GUI::CMenu* menu);
 
@@ -62,11 +63,15 @@ namespace Skylicht
 
 			void onCheckBoxOutline(GUI::CBase* base);
 
+			void onChangeLocalize(std::string src);
+
 		private:
 
 			void enableTabGroup();
 
 			void clearTabGroup();
+
+			void showLanguage();
 		};
 	}
 }

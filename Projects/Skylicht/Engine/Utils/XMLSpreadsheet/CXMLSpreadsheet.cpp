@@ -28,6 +28,11 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include <time.h> 
 
+#include <iostream>
+#include <vector>
+#include <string>
+#include <sstream>
+
 namespace Skylicht
 {
 	CXMLSpreadsheet::CXMLSpreadsheet()
@@ -37,6 +42,11 @@ namespace Skylicht
 
 	CXMLSpreadsheet::~CXMLSpreadsheet()
 	{
+		clear();
+	}
+
+	void CXMLSpreadsheet::clear()
+	{
 		for (SSheet* s : m_sheets)
 		{
 			delete s;
@@ -44,9 +54,9 @@ namespace Skylicht
 		m_sheets.clear();
 	}
 
-	bool CXMLSpreadsheet::open(const char *file)
+	bool CXMLSpreadsheet::open(const char* file)
 	{
-		io::IXMLReader *xmlReader = getIrrlichtDevice()->getFileSystem()->createXMLReader(file);
+		io::IXMLReader* xmlReader = getIrrlichtDevice()->getFileSystem()->createXMLReader(file);
 		if (xmlReader == NULL)
 			return false;
 
@@ -56,7 +66,7 @@ namespace Skylicht
 		return result;
 	}
 
-	bool CXMLSpreadsheet::open(io::IXMLReader *xmlReader)
+	bool CXMLSpreadsheet::open(io::IXMLReader* xmlReader)
 	{
 		wchar_t textw[1024 * 4];
 		char text[1024 * 4];
@@ -65,9 +75,11 @@ namespace Skylicht
 		int row = -1;
 		int col = -1;
 
-		SSheet *currentSheet = NULL;
+		SSheet* currentSheet = NULL;
 		SRow* currentRow = NULL;
 		SCell* currentCell = NULL;
+
+		clear();
 
 		while (xmlReader->read())
 		{
@@ -78,7 +90,7 @@ namespace Skylicht
 				std::wstring nodeName = xmlReader->getNodeName();
 				if (nodeName == L"Worksheet")
 				{
-					const wchar_t *ssName = xmlReader->getAttributeValue(L"ss:Name");
+					const wchar_t* ssName = xmlReader->getAttributeValue(L"ss:Name");
 
 					currentSheet = new SSheet();
 					m_sheets.push_back(currentSheet);
@@ -97,8 +109,8 @@ namespace Skylicht
 					if (currentSheet == NULL)
 						return false;
 
-					const wchar_t *ssColCount = xmlReader->getAttributeValue(L"ss:ExpandedColumnCount");
-					const wchar_t *ssRowCount = xmlReader->getAttributeValue(L"ss:ExpandedRowCount");
+					const wchar_t* ssColCount = xmlReader->getAttributeValue(L"ss:ExpandedColumnCount");
+					const wchar_t* ssRowCount = xmlReader->getAttributeValue(L"ss:ExpandedRowCount");
 
 					if (ssColCount != NULL)
 					{
@@ -117,7 +129,7 @@ namespace Skylicht
 					if (currentSheet == NULL)
 						return false;
 
-					const wchar_t *ssIndex = xmlReader->getAttributeValue(L"ss:Index");
+					const wchar_t* ssIndex = xmlReader->getAttributeValue(L"ss:Index");
 					if (ssIndex == NULL)
 					{
 						row++;
@@ -138,7 +150,7 @@ namespace Skylicht
 					if (currentRow == NULL)
 						return false;
 
-					const wchar_t *ssIndex = xmlReader->getAttributeValue(L"ss:Index");
+					const wchar_t* ssIndex = xmlReader->getAttributeValue(L"ss:Index");
 					if (ssIndex == NULL)
 					{
 						col++;
@@ -180,7 +192,7 @@ namespace Skylicht
 					if (currentCell == NULL)
 						return false;
 
-					const wchar_t *data = xmlReader->getNodeData();
+					const wchar_t* data = xmlReader->getNodeData();
 
 					CStringImp::copy(text, data);
 					currentCell->Value = text;
@@ -253,28 +265,11 @@ namespace Skylicht
 
 	CXMLSpreadsheet::SCell* CXMLSpreadsheet::getCell(SSheet* sheet, u32 row, u32 col)
 	{
-		for (SRow* r : sheet->Rows)
-		{
-			if (r->Index == row)
-			{
-				for (SCell* c : r->Cells)
-				{
-					if (c->Col == col)
-					{
-						return c;
-					}
-				}
-			}
-			else if (r->Index > row)
-			{
-				return NULL;
-			}
-		}
-
-		return NULL;
+		SRow* r = sheet->Rows[row];
+		return r->Cells[col];
 	}
 
-	CXMLSpreadsheet::SCell* CXMLSpreadsheet::getCell(SSheet* sheet, const char *cellName)
+	CXMLSpreadsheet::SCell* CXMLSpreadsheet::getCell(SSheet* sheet, const char* cellName)
 	{
 		u32 row, col;
 		if (convertCellName(cellName, row, col))
@@ -323,7 +318,7 @@ namespace Skylicht
 		return result;
 	}
 
-	std::list<CXMLSpreadsheet::SCell*> CXMLSpreadsheet::getRange(SSheet* sheet, const char *from, const char *to)
+	std::list<CXMLSpreadsheet::SCell*> CXMLSpreadsheet::getRange(SSheet* sheet, const char* from, const char* to)
 	{
 		u32 fromRow;
 		u32 fromCol;
@@ -336,7 +331,7 @@ namespace Skylicht
 		return getRange(sheet, fromRow, fromCol, toRow, toCol);
 	}
 
-	bool CXMLSpreadsheet::convertCellName(const char *cellName, u32& row, u32 &col)
+	bool CXMLSpreadsheet::convertCellName(const char* cellName, u32& row, u32& col)
 	{
 		row = 0;
 		col = 0;
@@ -382,5 +377,123 @@ namespace Skylicht
 
 		row = atoi(rowName) - 1;
 		return true;
+	}
+
+	bool CXMLSpreadsheet::openCSV(const char* file)
+	{
+		io::IReadFile* readFile = getIrrlichtDevice()->getFileSystem()->createAndOpenFile(file);
+		if (!readFile)
+			return false;
+
+		long fileSize = readFile->getSize();
+		char* data = new char[fileSize + 1];
+		readFile->read(data, fileSize);
+		data[fileSize] = 0;
+
+		clear();
+
+		SSheet* sheet = new SSheet();
+		m_sheets.push_back(sheet);
+
+		std::istringstream input;
+		input.str(data);
+
+		std::string line;
+		int rowId = (int)sheet->Rows.size();
+		int numCol = sheet->NumCol;
+
+		while (std::getline(input, line, '\n'))
+		{
+			if (!line.empty() && line.back() == '\r')
+				line.pop_back();
+
+			if (line.empty())
+				continue;
+
+			std::vector<std::string> cells;
+			splitCsvLine(line, ',', cells);
+
+			if (cells.size() > 0)
+			{
+				SRow* row = new SRow();
+				row->Index = rowId++;
+
+				int colId = 0;
+				for (const std::string& s : cells)
+				{
+					SCell* c = new SCell();
+					c->Row = rowId;
+					c->Col = colId++;
+					c->Type = EPropertyDataType::String;
+					c->Value = s;
+					c->UnicodeValue = CStringImp::convertUTF8ToUnicode(s.c_str());
+					row->Cells.push_back(c);
+
+					numCol = core::max_(colId, numCol);
+				}
+
+				sheet->Rows.push_back(row);
+			}
+		}
+
+		sheet->NumRow = rowId;
+		sheet->NumCol = numCol;
+
+		delete[]data;
+		readFile->drop();
+		return true;
+	}
+
+	void CXMLSpreadsheet::splitCsvLine(const std::string& line, char delimiter, std::vector<std::string>& cells)
+	{
+		std::string cell;
+		std::stringstream ss(line);
+
+		std::vector<std::string> cols;
+		while (std::getline(ss, cell, delimiter))
+		{
+			cols.push_back(cell);
+		}
+
+		// combine string in " data "
+		std::string temp;
+		bool combine = false;
+
+		for (const std::string& c : cols)
+		{
+			int len = (int)c.size();
+			if (len >= 2)
+			{
+				if (c[0] == '\"')
+				{
+					combine = true;
+					temp += c;
+				}
+				else if (c[len - 1] == '\"')
+				{
+					temp += ",";
+					temp += c;
+					temp.erase(temp.begin());
+					temp.pop_back();
+					cells.push_back(temp);
+					combine = false;
+					temp.clear();
+				}
+				else
+				{
+					if (combine)
+					{
+						temp += ",";
+						temp += c;
+					}
+					else
+						cells.push_back(c);
+				}
+			}
+			else
+			{
+				cells.push_back(c);
+			}
+		}
 	}
 }

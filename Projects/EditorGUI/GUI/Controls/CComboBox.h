@@ -52,6 +52,8 @@ namespace Skylicht
 
 				virtual void renderUnder();
 
+				void clear();
+
 				void setListValue(const std::vector<std::wstring>& list);
 
 				void addItem(const std::wstring& value);

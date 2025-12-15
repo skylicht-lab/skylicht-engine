@@ -63,6 +63,8 @@ namespace Skylicht
 
 			CGUIEditorHistory* m_history;
 
+			std::string m_localizePath;
+
 		public:
 			CGUIDesignController();
 
@@ -181,6 +183,15 @@ namespace Skylicht
 			void doSpriteChange(const char* resource);
 
 			void doReplaceTexture(ITexture* oldTexture, ITexture* newTexture);
+
+			void initLocalizePath(const char* path);
+
+			void setLanguage(u32 id);
+
+			const std::string& getLocalizePath()
+			{
+				return m_localizePath;
+			}
 
 		protected:
 

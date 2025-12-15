@@ -749,4 +749,25 @@ namespace Skylicht
 
 		return ret;
 	}
+
+	void CCanvas::updateLocalizedText(std::function<void(CGUIText*)>& localizedFunc)
+	{
+		std::queue<CGUIElement*> queueObjs;
+
+		for (CGUIElement*& obj : m_root->getChilds())
+			queueObjs.push(obj);
+
+		while (queueObjs.size() != 0)
+		{
+			CGUIElement* obj = queueObjs.front();
+			queueObjs.pop();
+
+			CGUIText* guiText = dynamic_cast<CGUIText*>(obj);
+			if (guiText)
+				localizedFunc(guiText);
+
+			for (CGUIElement*& child : obj->m_childs)
+				queueObjs.push(child);
+		}
+	}
 }
