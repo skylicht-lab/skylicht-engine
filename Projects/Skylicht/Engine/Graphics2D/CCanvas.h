@@ -129,6 +129,8 @@ namespace Skylicht
 
 		std::function<void(CGUIElement*)> OnGUILoaded;
 
+		std::function<void(CGUIText*)> OnLocalize;
+
 	public:
 		/**
 		 * @brief Constructor.
@@ -600,9 +602,10 @@ namespace Skylicht
 		std::vector<T*> getElementsInChild(bool addThis);
 
 		/**
-		* @brief Find all CGUIText* and update localized text
+		* @brief Find all CGUIText* and update localized text,
+		* the event OnLocalize must bind to the localize function
 		*/
-		void updateLocalizedText(std::function<void(CGUIText*)>& localizedFunc);
+		void updateLocalizedText();
 	};
 
 	template<typename T>

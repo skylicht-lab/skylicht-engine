@@ -69,6 +69,10 @@ namespace Skylicht
 		int m_charSpacePadding;
 		int m_linePadding;
 
+		bool m_strim;
+
+		std::string m_defaultText;
+
 		std::string m_text;
 		std::wstring m_textw;
 		ArrayInt m_textFormat;
@@ -167,6 +171,15 @@ namespace Skylicht
 			return m_text.c_str();
 		}
 
+		const char* getDefaultText()
+		{
+			return m_defaultText.c_str();
+		}
+
+		void setDefaultText(const char* text);
+
+		void setDefaultText(const wchar_t* text);
+
 		const wchar_t* getTextW()
 		{
 			return m_textw.c_str();
@@ -185,6 +198,11 @@ namespace Skylicht
 		inline int getTextLength()
 		{
 			return (int)m_textw.size();
+		}
+
+		inline bool isStrim()
+		{
+			return m_strim;
 		}
 
 		inline void setEnableTextFormnat(bool b)

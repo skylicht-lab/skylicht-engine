@@ -392,8 +392,14 @@ namespace Skylicht
 
 		clear();
 
-		SSheet* sheet = new SSheet();
-		m_sheets.push_back(sheet);
+		SSheet* sheet = NULL;
+		if (m_sheets.size() > 0)
+			sheet = m_sheets[0];
+		else
+		{
+			sheet = new SSheet();
+			m_sheets.push_back(sheet);
+		}
 
 		std::istringstream input;
 		input.str(data);

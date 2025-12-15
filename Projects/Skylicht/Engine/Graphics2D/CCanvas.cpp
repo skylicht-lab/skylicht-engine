@@ -750,8 +750,11 @@ namespace Skylicht
 		return ret;
 	}
 
-	void CCanvas::updateLocalizedText(std::function<void(CGUIText*)>& localizedFunc)
+	void CCanvas::updateLocalizedText()
 	{
+		if (OnLocalize == nullptr)
+			return;
+
 		std::queue<CGUIElement*> queueObjs;
 
 		for (CGUIElement*& obj : m_root->getChilds())
@@ -764,7 +767,7 @@ namespace Skylicht
 
 			CGUIText* guiText = dynamic_cast<CGUIText*>(obj);
 			if (guiText)
-				localizedFunc(guiText);
+				OnLocalize(guiText);
 
 			for (CGUIElement*& child : obj->m_childs)
 				queueObjs.push(child);

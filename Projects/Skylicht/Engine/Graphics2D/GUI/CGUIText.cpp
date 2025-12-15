@@ -37,6 +37,7 @@ namespace Skylicht
 		TextHorizontal(EGUIHorizontalAlign::Left),
 		m_multiLine(true),
 		m_centerRotate(false),
+		m_strim(false),
 		m_charPadding(0),
 		m_charSpacePadding(0),
 		m_linePadding(0),
@@ -67,6 +68,7 @@ namespace Skylicht
 		TextHorizontal(EGUIHorizontalAlign::Left),
 		m_multiLine(true),
 		m_centerRotate(false),
+		m_strim(false),
 		m_charPadding(0),
 		m_charSpacePadding(0),
 		m_linePadding(0),
@@ -366,6 +368,18 @@ namespace Skylicht
 		}
 
 		m_updateTextRender = true;
+	}
+
+	void CGUIText::setDefaultText(const char* text)
+	{
+		m_defaultText = text;
+		setText(text);
+	}
+
+	void CGUIText::setDefaultText(const wchar_t* text)
+	{
+		m_defaultText = CStringImp::convertUnicodeToUTF8(text);
+		setText(text);
 	}
 
 	int CGUIText::getCharWidth(wchar_t c)
@@ -749,6 +763,8 @@ namespace Skylicht
 			m_lastWidth = rect.getWidth();
 			m_lastHeight = rect.getHeight();
 			m_updateTextRender = true;
+			if (m_strim && !m_defaultText.empty())
+				setTextStrim(m_defaultText.c_str());
 		}
 
 		if (m_updateTextRender == true)
@@ -1131,6 +1147,8 @@ namespace Skylicht
 		horizontalAlign->addEnumString("Right", EGUIHorizontalAlign::Right);
 		object->autoRelease(horizontalAlign);
 
+		object->autoRelease(new CBoolProperty(object, "strim", m_strim));
+
 		object->autoRelease(new CFilePathProperty(object, "font", m_fontSource.c_str(), "font"));
 
 		if (m_fontData)
@@ -1140,7 +1158,7 @@ namespace Skylicht
 		fontGUID->setHidden(true);
 		object->autoRelease(fontGUID);
 
-		object->autoRelease(new CStringProperty(object, "text", m_text.c_str()));
+		object->autoRelease(new CStringProperty(object, "text", m_defaultText.c_str()));
 		object->autoRelease(new CStringProperty(object, "textId", m_textId.c_str()));
 
 		return object;
@@ -1158,6 +1176,8 @@ namespace Skylicht
 		TextVertical = object->get<EGUIVerticalAlign>("textVerticle", EGUIVerticalAlign::Top);
 		TextHorizontal = object->get<EGUIHorizontalAlign>("textHorizontal", EGUIHorizontalAlign::Left);
 
+		m_strim = object->get("strim", false);
+
 		m_fontSource = object->get<std::string>("font", std::string(""));
 		m_fontGUID = object->get<std::string>("font.guid", std::string(""));
 
@@ -1174,10 +1194,22 @@ namespace Skylicht
 		}
 
 		std::string value = object->get<std::string>("text", std::string(""));
-		setText(value.c_str());
+		m_defaultText = value;
 
 		value = object->get<std::string>("textId", std::string(""));
 		setTextId(value.c_str());
+
+		if (m_canvas->OnLocalize != nullptr)
+		{
+			m_canvas->OnLocalize(this);
+		}
+		else
+		{
+			if (m_strim)
+				setTextStrim(m_defaultText.c_str());
+			else
+				setText(m_defaultText.c_str());
+		}
 
 		m_updateTextRender = true;
 	}

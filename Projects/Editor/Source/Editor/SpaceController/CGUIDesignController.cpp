@@ -58,7 +58,8 @@ namespace Skylicht
 			m_guiCanvas(NULL),
 			m_guiCamera(NULL),
 			m_scene(NULL),
-			m_history(NULL)
+			m_history(NULL),
+			m_enableLocalize(true)
 		{
 			CAssetManager::getInstance()->registerFileLoader("gui", this);
 		}
@@ -1139,6 +1140,52 @@ namespace Skylicht
 		void CGUIDesignController::setLanguage(u32 id)
 		{
 			CLocalize::getInstance()->setLanguage(id);
+			updateAllTexts();
+		}
+
+		void CGUIDesignController::enableLocalize(bool b)
+		{
+			m_enableLocalize = b;
+			updateAllTexts();
+		}
+
+		void CGUIDesignController::updateAllTexts()
+		{
+			if (m_guiCanvas)
+			{
+				m_guiCanvas->OnLocalize = [&](CGUIText* text)
+					{
+						if (m_enableLocalize)
+						{
+							std::string textId = text->getTextId();
+							if (textId.empty())
+								return;
+
+							const char* localizeText = CLocalize::getInstance()->getString(textId.c_str());
+							if (!localizeText)
+							{
+								if (text->isStrim())
+									text->setTextStrim(text->getDefaultText());
+								else
+									text->setText(text->getDefaultText());
+								return;
+							}
+
+							if (text->isStrim())
+								text->setTextStrim(localizeText);
+							else
+								text->setText(localizeText);
+						}
+						else
+						{
+							if (text->isStrim())
+								text->setTextStrim(text->getDefaultText());
+							else
+								text->setText(text->getDefaultText());
+						}
+					};
+				m_guiCanvas->updateLocalizedText();
+			}
 		}
 	}
 }

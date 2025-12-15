@@ -50,6 +50,8 @@ namespace Skylicht
 			label->setTextAlignment(GUI::TextLeft);
 			boxLayout->endVertical();
 
+			///////////////////
+
 			layout = boxLayout->beginVertical();
 			label = new GUI::CLabel(layout);
 			label->setPadding(GUI::SMargin(0.0f, 2.0, 0.0f, 0.0f));
@@ -61,6 +63,8 @@ namespace Skylicht
 			m_inputWidth->setValue(1920.0f, false);
 			m_inputWidth->OnTextChanged = BIND_LISTENER(&CCanvasSettingController::onChanged, this);
 			boxLayout->endVertical();
+
+			///////////////////
 
 			layout = boxLayout->beginVertical();
 			label = new GUI::CLabel(layout);
@@ -74,6 +78,8 @@ namespace Skylicht
 			m_inputHeight->OnTextChanged = BIND_LISTENER(&CCanvasSettingController::onChanged, this);
 			boxLayout->endVertical();
 
+			///////////////////
+
 			boxLayout->addSpace(5.0f);
 
 			layout = boxLayout->beginVertical();
@@ -86,6 +92,8 @@ namespace Skylicht
 			m_checkboxOutline = new GUI::CCheckBox(checkBoxContainer);
 			m_checkboxOutline->OnChanged = BIND_LISTENER(&CCanvasSettingController::onCheckBoxOutline, this);
 			boxLayout->endVertical();
+
+			///////////////////
 
 			boxLayout->addSpace(5.0f);
 
@@ -146,6 +154,8 @@ namespace Skylicht
 				};
 			boxLayout->endVertical();
 
+			///////////////////
+
 			m_languageLayout = boxLayout->beginVertical();
 			label = new GUI::CLabel(m_languageLayout);
 			label->setPadding(GUI::SMargin(0.0f, 2.0, 0.0f, 0.0f));
@@ -159,6 +169,21 @@ namespace Skylicht
 				};
 			boxLayout->endVertical();
 			m_languageLayout->setHidden(true);
+
+			///////////////////
+
+			layout = boxLayout->beginVertical();
+			label = new GUI::CLabel(layout);
+			label->setPadding(GUI::SMargin(0.0f, 2.0, 0.0f, 0.0f));
+			label->setString("Enable localize");
+			label->setTextAlignment(GUI::TextRight);
+
+			checkBoxContainer = new GUI::CBase(layout);
+			m_checkboxLocalize = new GUI::CCheckBox(checkBoxContainer);
+			m_checkboxLocalize->OnChanged = BIND_LISTENER(&CCanvasSettingController::onCheckBoxLocalize, this);
+			boxLayout->endVertical();
+
+			///////////////////
 
 			boxLayout->addSpace(20.0f);
 
@@ -189,7 +214,8 @@ namespace Skylicht
 
 		void CCanvasSettingController::onShow()
 		{
-			CScene* scene = CGUIDesignController::getInstance()->getScene();
+			CGUIDesignController* controller = CGUIDesignController::getInstance();
+			CScene* scene = controller->getScene();
 			CGameObject* canvasObj = scene->searchObjectInChild(L"GUICanvas");
 			if (canvasObj)
 			{
@@ -204,6 +230,7 @@ namespace Skylicht
 					m_inputHeight->setValue(h, false);
 					m_checkboxOutline->setToggle(canvas->DrawOutline);
 
+					m_checkboxLocalize->setToggle(controller->isEnableLocalize());
 					showLanguage();
 				}
 			}
@@ -218,7 +245,6 @@ namespace Skylicht
 				std::vector<std::wstring> list;
 				for (const std::string& lang : localize->getLanguages())
 					list.push_back(CStringImp::convertUTF8ToUnicode(lang.c_str()));
-				list.erase(list.begin());
 
 				if (list.size() > 0)
 				{
@@ -302,6 +328,12 @@ namespace Skylicht
 			controller->initLocalizePath(src.c_str());
 
 			showLanguage();
+		}
+
+		void CCanvasSettingController::onCheckBoxLocalize(GUI::CBase* base)
+		{
+			CGUIDesignController* controller = CGUIDesignController::getInstance();
+			controller->enableLocalize(m_checkboxLocalize->getToggle());
 		}
 	}
 }

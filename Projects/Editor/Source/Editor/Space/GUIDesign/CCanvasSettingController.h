@@ -44,6 +44,7 @@ namespace Skylicht
 			GUI::CCheckBox* m_checkboxOutline;
 			GUI::CComboBox* m_languageBox;
 			GUI::CLayout* m_languageLayout;
+			GUI::CCheckBox* m_checkboxLocalize;
 		public:
 			CCanvasSettingController(CEditor* editor, GUI::CMenu* menu);
 
@@ -64,6 +65,8 @@ namespace Skylicht
 			void onCheckBoxOutline(GUI::CBase* base);
 
 			void onChangeLocalize(std::string src);
+
+			void onCheckBoxLocalize(GUI::CBase* base);
 
 		private:
 

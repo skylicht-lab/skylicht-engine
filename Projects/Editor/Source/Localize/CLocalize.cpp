@@ -52,8 +52,7 @@ namespace Skylicht
 			auto it = m_strToRow.find(id);
 			if (it == m_strToRow.end())
 				return NULL;
-
-			return it->second->Cells[1 + m_language]->Value.c_str();
+			return it->second->Cells[m_language]->Value.c_str();
 		}
 	}
 }

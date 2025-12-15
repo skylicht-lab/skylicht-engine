@@ -65,6 +65,8 @@ namespace Skylicht
 
 			std::string m_localizePath;
 
+			bool m_enableLocalize;
+
 		public:
 			CGUIDesignController();
 
@@ -188,12 +190,21 @@ namespace Skylicht
 
 			void setLanguage(u32 id);
 
+			void enableLocalize(bool b);
+
+			inline bool isEnableLocalize()
+			{
+				return m_enableLocalize;
+			}
+
 			const std::string& getLocalizePath()
 			{
 				return m_localizePath;
 			}
 
 		protected:
+
+			void updateAllTexts();
 
 			void rebuildGUIHierachy(CGUIElement* parent, CGUIHierachyNode* parentNode);
 
