@@ -487,7 +487,7 @@ namespace Skylicht
 	{
 		std::vector<std::string> textureFolders;
 		ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial(
-			m_materialFile.c_str(),
+			material,
 			true,
 			textureFolders
 		);

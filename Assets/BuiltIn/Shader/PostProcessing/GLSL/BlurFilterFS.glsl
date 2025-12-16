@@ -13,23 +13,23 @@ const float weights[3] = float[3](0.25, 0.5, 0.25);
 
 void main(void)
 {
-	vec3 sum = vec3(0.0, 0.0, 0.0);
+	vec4 sum = vec4(0.0, 0.0, 0.0, 0.0);
 
-	sum += textureLod(uSourceTex, varTexCoord0 + vec2(-1.0 * uTexelSize.x, 0.0), 0.0).rgb * weights[0];
-	sum += textureLod(uSourceTex, varTexCoord0, 0.0).rgb * weights[1];
-	sum += textureLod(uSourceTex, varTexCoord0 + vec2(1.0 * uTexelSize.x, 0.0), 0.0).rgb * weights[2];
+	sum += textureLod(uSourceTex, varTexCoord0 + vec2(-1.0 * uTexelSize.x, 0.0), 0.0) * weights[0];
+	sum += textureLod(uSourceTex, varTexCoord0, 0.0) * weights[1];
+	sum += textureLod(uSourceTex, varTexCoord0 + vec2(1.0 * uTexelSize.x, 0.0), 0.0) * weights[2];
 
 	/*
-	sum += textureLod(uSourceTex, varTexCoord0 + vec2(-4.0 * uTexelSize.x, 0.0), 0.0).rgb * weights[0];
-	sum += textureLod(uSourceTex, varTexCoord0 + vec2(-3.0 * uTexelSize.x, 0.0), 0.0).rgb * weights[1];
-	sum += textureLod(uSourceTex, varTexCoord0 + vec2(-2.0 * uTexelSize.x, 0.0), 0.0).rgb * weights[2];
-	sum += textureLod(uSourceTex, varTexCoord0 + vec2(-1.0 * uTexelSize.x, 0.0), 0.0).rgb * weights[3];
-	sum += textureLod(uSourceTex, varTexCoord0, 0.0).rgb * weights[4];
-	sum += textureLod(uSourceTex, varTexCoord0 + vec2(1.0 * uTexelSize.x, 0.0), 0.0).rgb * weights[5];
-	sum += textureLod(uSourceTex, varTexCoord0 + vec2(2.0 * uTexelSize.x, 0.0), 0.0).rgb * weights[6];
-	sum += textureLod(uSourceTex, varTexCoord0 + vec2(3.0 * uTexelSize.x, 0.0), 0.0).rgb * weights[7];
-	sum += textureLod(uSourceTex, varTexCoord0 + vec2(4.0 * uTexelSize.x, 0.0), 0.0).rgb * weights[8];
+	sum += textureLod(uSourceTex, varTexCoord0 + vec2(-4.0 * uTexelSize.x, 0.0), 0.0) * weights[0];
+	sum += textureLod(uSourceTex, varTexCoord0 + vec2(-3.0 * uTexelSize.x, 0.0), 0.0) * weights[1];
+	sum += textureLod(uSourceTex, varTexCoord0 + vec2(-2.0 * uTexelSize.x, 0.0), 0.0) * weights[2];
+	sum += textureLod(uSourceTex, varTexCoord0 + vec2(-1.0 * uTexelSize.x, 0.0), 0.0) * weights[3];
+	sum += textureLod(uSourceTex, varTexCoord0, 0.0) * weights[4];
+	sum += textureLod(uSourceTex, varTexCoord0 + vec2(1.0 * uTexelSize.x, 0.0), 0.0) * weights[5];
+	sum += textureLod(uSourceTex, varTexCoord0 + vec2(2.0 * uTexelSize.x, 0.0), 0.0) * weights[6];
+	sum += textureLod(uSourceTex, varTexCoord0 + vec2(3.0 * uTexelSize.x, 0.0), 0.0) * weights[7];
+	sum += textureLod(uSourceTex, varTexCoord0 + vec2(4.0 * uTexelSize.x, 0.0), 0.0) * weights[8];
 	*/
 	
-	FragColor = vec4(sum, 1.0);
+	FragColor = sum;
 }

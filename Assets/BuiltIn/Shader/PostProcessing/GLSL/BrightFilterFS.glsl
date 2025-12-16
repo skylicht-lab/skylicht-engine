@@ -11,7 +11,8 @@ out vec4 FragColor;
 
 void main(void)
 {
-	vec3 m = textureLod(uSourceTex, varTexCoord0.xy, 0.0).rgb;
+	vec4 src = textureLod(uSourceTex, varTexCoord0.xy, 0.0);
+	vec3 m = src.rgb;
 	m = min(m, vec3(4.0, 4.0, 4.0));
 	
 	vec3 e = textureLod(uSourceEmission, varTexCoord0.xy, 0.0).rgb;
@@ -26,5 +27,5 @@ void main(void)
 	// Combine and apply the brightness response curve.
 	m *= max(rq, br - uCurve.w) / max(br, 1e-5);
 
-	FragColor = vec4(m + e, 1.0);
+	FragColor = vec4(m + e, src.a);
 }

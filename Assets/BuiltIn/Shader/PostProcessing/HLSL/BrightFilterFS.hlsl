@@ -18,7 +18,8 @@ cbuffer cbPerFrame
 
 float4 main(PS_INPUT input) : SV_TARGET
 {
-	float3 m = uSourceTex.SampleLevel(uSourceTexSampler, input.tex0, 0.0).rgb;
+	float4 src = uSourceTex.SampleLevel(uSourceTexSampler, input.tex0, 0.0);
+	float3 m = src.rgb;
 	m = min(m, float3(4.0, 4.0, 4.0));
 	
 	float3 e = uSourceEmission.SampleLevel(uSourceEmissionSampler, input.tex0, 0.0).rgb;
@@ -33,5 +34,5 @@ float4 main(PS_INPUT input) : SV_TARGET
 	// Combine and apply the brightness response curve.
 	m *= max(rq, br - uCurve.w) / max(br, 1e-5);
 
-	return float4(m + e, 1.0);
+	return float4(m + e, src.a);
 }
