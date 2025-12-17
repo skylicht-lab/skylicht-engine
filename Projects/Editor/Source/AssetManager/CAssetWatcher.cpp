@@ -181,7 +181,9 @@ namespace Skylicht
 				std::string bundle = m_assetManager->getBundleName(path.c_str());
 
 				// add file or folder
-				m_files.push_back(m_assetManager->addFileNode(bundle, path));
+				SFileNode* node = m_assetManager->addFileNode(bundle, path);
+				if (node)
+					m_files.push_back(node);
 			}
 
 			for (std::string& path : m_modify)

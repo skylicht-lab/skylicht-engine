@@ -172,9 +172,11 @@ namespace Skylicht
 			for (int j = 0; j < count; j++)
 			{
 				SFileNode* node = (*m_fileIterator);
-
-				importPath(node);
-				m_lastFile = node->Path;
+				if (node)
+				{
+					importPath(node);
+					m_lastFile = node->Path;
+				}
 
 				++m_fileIterator;
 				++m_fileID;
@@ -253,9 +255,11 @@ namespace Skylicht
 			while (m_fileIterator != m_fileIteratorEnd)
 			{
 				SFileNode* node = (*m_fileIterator);
-
-				importPath(node);
-				m_lastFile = node->Path;
+				if (node)
+				{
+					importPath(node);
+					m_lastFile = node->Path;
+				}
 
 				++m_fileIterator;
 				++m_fileID;
