@@ -238,6 +238,16 @@ namespace Skylicht
 
 		void setFontSource(const char* fontSource);
 
+		CFontSource* getFontSourceData()
+		{
+			return m_fontData;
+		}
+
+		const std::string& getFontSource()
+		{
+			return m_fontSource;
+		}
+
 		const std::string& getFontId()
 		{
 			return m_fontGUID;
