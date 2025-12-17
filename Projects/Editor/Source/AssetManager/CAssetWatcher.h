@@ -56,7 +56,7 @@ namespace Skylicht
 
 			bool needReImport()
 			{
-				return m_add.size() > 0 || m_files.size() > 0 || m_delete.size() > 0;
+				return m_add.size() > 0 || m_files.size() > 0 || m_delete.size() > 0 || m_modify.size() > 0;
 			}
 
 			void lock();

@@ -192,6 +192,8 @@ namespace Skylicht
 
 			void enableLocalize(bool b);
 
+			void doLanguageChange(const char* path);
+
 			inline bool isEnableLocalize()
 			{
 				return m_enableLocalize;

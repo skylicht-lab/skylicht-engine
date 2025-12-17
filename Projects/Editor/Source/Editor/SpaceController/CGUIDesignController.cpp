@@ -1149,6 +1149,15 @@ namespace Skylicht
 			updateAllTexts();
 		}
 
+		void CGUIDesignController::doLanguageChange(const char* path)
+		{
+			if (m_localizePath == path)
+			{
+				CLocalize::getInstance()->init(path);
+				updateAllTexts();
+			}
+		}
+
 		void CGUIDesignController::updateAllTexts()
 		{
 			if (m_guiCanvas)

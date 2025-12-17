@@ -23,6 +23,8 @@ namespace Skylicht
 		void CLocalize::init(const char* src)
 		{
 			std::string ext = CPath::getFileNameExt(src);
+			m_dataSheet.clear();
+
 			if (ext == "csv")
 				m_dataSheet.openCSV(src);
 			else

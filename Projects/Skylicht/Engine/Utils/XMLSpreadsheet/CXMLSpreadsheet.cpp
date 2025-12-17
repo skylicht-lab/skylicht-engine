@@ -390,8 +390,6 @@ namespace Skylicht
 		readFile->read(data, fileSize);
 		data[fileSize] = 0;
 
-		clear();
-
 		SSheet* sheet = NULL;
 		if (m_sheets.size() > 0)
 			sheet = m_sheets[0];

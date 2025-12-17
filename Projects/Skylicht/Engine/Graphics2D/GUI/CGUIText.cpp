@@ -373,13 +373,11 @@ namespace Skylicht
 	void CGUIText::setDefaultText(const char* text)
 	{
 		m_defaultText = text;
-		setText(text);
 	}
 
 	void CGUIText::setDefaultText(const wchar_t* text)
 	{
 		m_defaultText = CStringImp::convertUnicodeToUTF8(text);
-		setText(text);
 	}
 
 	int CGUIText::getCharWidth(wchar_t c)

@@ -117,6 +117,22 @@ namespace Skylicht
 				}
 
 				if (addToDelete)
+				{
+					i = m_modify.begin();
+					end = m_modify.end();
+					while (i != end)
+					{
+						if (*i == path)
+						{
+							m_modify.erase(i);
+							addToDelete = false;
+							break;
+						}
+						++i;
+					}
+				}
+
+				if (addToDelete)
 					m_delete.push_back(path);
 			}
 			break;
@@ -125,7 +141,31 @@ namespace Skylicht
 				// log += "Modified: ";
 				// log += path;
 				// os::Printer::log(log.c_str());
-				m_modify.push_back(path);
+				bool addToModify = true;
+
+				for (auto p : m_add)
+				{
+					if (p == path)
+					{
+						addToModify = false;
+						break;
+					}
+				}
+
+				if (addToModify)
+				{
+					for (auto p : m_modify)
+					{
+						if (p == path)
+						{
+							addToModify = false;
+							break;
+						}
+					}
+				}
+
+				if (addToModify)
+					m_modify.push_back(path);
 			}
 			break;
 			default:
@@ -171,6 +211,13 @@ namespace Skylicht
 					SFileNode* node = m_assetManager->getFileNodeByPath(path.c_str());
 					if (node)
 						m_files.push_back(node);
+					else
+					{
+						std::string sortPath = m_assetManager->getShortPath(path.c_str());
+						node = m_assetManager->getFileNodeByPath(sortPath.c_str());
+						if (node)
+							m_files.push_back(node);
+					}
 				}
 			}
 

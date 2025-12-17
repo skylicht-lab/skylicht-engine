@@ -355,6 +355,10 @@ namespace Skylicht
 						CGUIDesignController::getInstance()->doSpriteChange(path.c_str());
 					}
 				}
+				else if (ext == "csv")
+				{
+					CGUIDesignController::getInstance()->doLanguageChange(path.c_str());
+				}
 			}
 
 			// read meta
