@@ -238,6 +238,8 @@ namespace Skylicht
 
 		void setFontSource(const char* fontSource);
 
+		void setCustomFont(IFont* font);
+
 		CFontSource* getFontSourceData()
 		{
 			return m_fontData;

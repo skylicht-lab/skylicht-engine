@@ -1226,6 +1226,12 @@ namespace Skylicht
 		m_updateTextRender = true;
 	}
 
+	void CGUIText::setCustomFont(IFont* font)
+	{
+		m_customfont = font;
+		m_updateTextRender = true;
+	}
+
 	void CGUIText::getClosestCharacter(float posX, float posY, int& line, int& character)
 	{
 		line = 0;

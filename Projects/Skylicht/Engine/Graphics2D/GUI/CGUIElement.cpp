@@ -42,7 +42,8 @@ namespace Skylicht
 		m_enableMaterial(false),
 		m_materialId(0),
 		m_renderOrder(0),
-		m_applyCurrentMask(NULL)
+		m_applyCurrentMask(NULL),
+		m_tagInt(0)
 	{
 		CEntityPrefab* entityPrefab = m_canvas->getEntityManager();
 		m_entity = entityPrefab->createEntity();
@@ -66,7 +67,8 @@ namespace Skylicht
 		m_enableMaterial(false),
 		m_materialId(0),
 		m_renderOrder(0),
-		m_applyCurrentMask(NULL)
+		m_applyCurrentMask(NULL),
+		m_tagInt(0)
 	{
 		CEntityPrefab* entityPrefab = m_canvas->getEntityManager();
 		m_entity = entityPrefab->createEntity();

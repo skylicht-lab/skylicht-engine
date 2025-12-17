@@ -76,6 +76,9 @@ namespace Skylicht
 
 		std::string m_materialFile;
 
+		int m_tagInt;
+		std::string m_tagString;
+
 	public:
 
 		std::function<void(CGUIElement*)> OnRender;
@@ -126,6 +129,26 @@ namespace Skylicht
 		inline const char* getID()
 		{
 			return m_entity->getID().c_str();
+		}
+
+		inline void setTagInt(int i)
+		{
+			m_tagInt = i;
+		}
+
+		inline void setTagString(const char* s)
+		{
+			m_tagString = s;
+		}
+
+		inline int getTagInt()
+		{
+			return m_tagInt;
+		}
+
+		inline const std::string& getTagString()
+		{
+			return m_tagString;
 		}
 
 		void setName(const wchar_t* name);
