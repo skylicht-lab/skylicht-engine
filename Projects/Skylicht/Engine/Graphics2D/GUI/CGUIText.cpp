@@ -1214,22 +1214,45 @@ namespace Skylicht
 
 	void CGUIText::setFontSource(const char* fontSource)
 	{
-		m_fontSource = fontSource;
-
-		m_fontData = CFontManager::getInstance()->loadFontSource(m_fontSource.c_str());
-		if (m_fontData)
+		if (m_fontSource != fontSource)
 		{
-			m_fontData->initFont();
-			m_fontGUID = m_fontData->getGUID();
-		}
+			m_fontSource = fontSource;
 
-		m_updateTextRender = true;
+			m_fontData = CFontManager::getInstance()->loadFontSource(m_fontSource.c_str());
+			if (m_fontData)
+			{
+				m_fontData->initFont();
+				m_fontGUID = m_fontData->getGUID();
+			}
+
+			m_updateTextRender = true;
+		}
+	}
+
+	void CGUIText::setFontSource(CFontSource* fontData)
+	{
+		if (m_fontData != fontData)
+		{
+			m_fontSource = fontData->getPath();
+
+			m_fontData = fontData;
+			if (m_fontData)
+			{
+				m_fontData->initFont();
+				m_fontGUID = m_fontData->getGUID();
+			}
+
+			m_updateTextRender = true;
+		}
 	}
 
 	void CGUIText::setCustomFont(IFont* font)
 	{
-		m_customfont = font;
-		m_updateTextRender = true;
+		if (m_customfont != font)
+		{
+			m_customfont = font;
+			m_updateTextRender = true;
+		}
 	}
 
 	void CGUIText::getClosestCharacter(float posX, float posY, int& line, int& character)
