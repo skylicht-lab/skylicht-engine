@@ -204,9 +204,9 @@ namespace Skylicht
 				return m_localizePath;
 			}
 
-		protected:
-
 			void updateAllTexts();
+
+		protected:
 
 			void rebuildGUIHierachy(CGUIElement* parent, CGUIHierachyNode* parentNode);
 

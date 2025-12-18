@@ -36,7 +36,6 @@ namespace Skylicht
 			CXMLSpreadsheet::SSheet* sheet = m_dataSheet.getSheet(0);
 			m_langs.clear();
 			m_strToRow.clear();
-			m_language = 0;
 
 			if (sheet->Rows.size() > 0)
 			{
@@ -47,6 +46,9 @@ namespace Skylicht
 				for (CXMLSpreadsheet::SRow* r : sheet->Rows)
 					m_strToRow[r->Cells[0]->Value] = r;
 			}
+
+			if (m_language >= (int)m_langs.size())
+				m_language = 0;
 		}
 
 		const char* CLocalize::getString(const char* id)
