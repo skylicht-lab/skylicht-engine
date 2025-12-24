@@ -96,6 +96,8 @@ namespace Skylicht
 
 			bool IsPlaying();
 
+			void clearParticles();
+
 			u32 getTotalParticle();
 
 			inline const char* getSourcePath()

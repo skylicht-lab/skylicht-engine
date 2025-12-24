@@ -168,6 +168,23 @@ namespace Skylicht
 			return p;
 		}
 
+		void CGroup::clearParticles()
+		{
+			CParticle* particles = m_particles.pointer();
+			u32 numParticles = m_particles.size();
+
+			for (u32 i = 0; i < numParticles; i++)
+			{
+				CParticle& p = particles[i];
+				p.Life = -1.0f;
+
+				for (IParticleCallback* cb : m_callback)
+					cb->OnParticleDead(p);
+			}
+
+			m_particles.set_used(0);
+		}
+
 		void CGroup::update()
 		{
 			float dt = getTimeStep();

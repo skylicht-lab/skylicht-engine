@@ -705,6 +705,15 @@ namespace Skylicht
 			}
 		}
 
+		void CParticleComponent::clearParticles()
+		{
+			CGroup** groups = m_data->Groups.pointer();
+			for (u32 i = 0, n = m_data->Groups.size(); i < n; i++)
+			{
+				groups[i]->clearParticles();
+			}
+		}
+
 		bool CParticleComponent::IsPlaying()
 		{
 			CGroup** groups = m_data->Groups.pointer();

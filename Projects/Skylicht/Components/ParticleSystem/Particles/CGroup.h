@@ -153,6 +153,8 @@ namespace Skylicht
 
 			virtual ~CGroup();
 
+			void clearParticles();
+
 			void update();
 
 			void updateForRenderer();
