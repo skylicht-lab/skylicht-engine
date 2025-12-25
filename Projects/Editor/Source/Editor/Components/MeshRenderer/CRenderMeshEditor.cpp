@@ -40,12 +40,93 @@ namespace Skylicht
 
 		CRenderMeshEditor::~CRenderMeshEditor()
 		{
+			clearBlendShape();
+		}
 
+		void CRenderMeshEditor::clearBlendShape()
+		{
+			for (auto b : m_blendshapes)
+			{
+				delete b;
+			}
+			m_blendshapes.clear();
+		}
+
+		CRenderMeshEditor::SBlendShapeData* CRenderMeshEditor::createGetBlendShapeByName(const char* name)
+		{
+			for (SBlendShapeData* blendShape : m_blendshapes)
+			{
+				if (blendShape->Name == name)
+				{
+					return blendShape;
+				}
+			}
+
+			SBlendShapeData* newBlendShape = new SBlendShapeData();
+			newBlendShape->Name = name;
+			m_blendshapes.push_back(newBlendShape);
+			return newBlendShape;
 		}
 
 		void CRenderMeshEditor::initGUI(CComponentSystem* target, CSpaceProperty* ui)
 		{
 			CDefaultEditor::initGUI(target, ui);
+		}
+
+		void CRenderMeshEditor::initCustomGUI(GUI::CBoxLayout* layout, CSpaceProperty* ui)
+		{
+			CDefaultEditor::initCustomGUI(layout, ui);
+
+			clearBlendShape();
+
+			CRenderMesh* renderMesh = (CRenderMesh*)m_component;
+			std::vector<CRenderMeshData*>& renderers = renderMesh->getRenderers();
+			for (CRenderMeshData* renderer : renderers)
+			{
+				core::array<CBlendShape*>& listBlendShape = renderer->getMesh()->BlendShape;
+				for (u32 i = 0, n = listBlendShape.size(); i < n; i++)
+				{
+					CBlendShape* b = listBlendShape[i];
+					SBlendShapeData* blendShapeData = createGetBlendShapeByName(b->Name.c_str());
+					blendShapeData->BlendShapes.push_back(b);
+					blendShapeData->Weight = b->Weight;
+				}
+			}
+
+			if (m_blendshapes.size() > 0)
+			{
+				GUI::CCollapsibleGroup* group = ui->addSubGroup(layout);
+				group->getHeader()->setLabel(L"Blendshapes");
+
+				GUI::CBoxLayout* childLayout = ui->createBoxLayout(group);
+
+				for (u32 i = 0, n = m_blendshapes.size(); i < n; i++)
+				{
+					SBlendShapeData* blendShape = m_blendshapes[i];
+
+					CSubject<float>* subject = new CSubject<float>(blendShape->Weight);
+					CObserver* observer = new CObserver();
+					observer->Notify = [&, blendShape, s = subject, o = observer](ISubject* subject, IObserver* from)
+						{
+							if (from != o)
+							{
+								float v = s->get();
+
+								blendShape->Weight = v;
+								for (CBlendShape* shape : blendShape->BlendShapes)
+								{
+									shape->Weight = v;
+								}
+							}
+						};
+					subject->addObserver(observer, true);
+
+					std::wstring wname = CStringImp::convertUTF8ToUnicode(blendShape->Name.c_str());
+					ui->addSlider(childLayout, wname.c_str(), subject, 0.0f, 1.0f);
+
+					m_subjects.push_back(subject);
+				}
+			}
 		}
 
 		void CRenderMeshEditor::initCustomValueGUI(CObjectSerializable* obj, CValueProperty* data, GUI::CBoxLayout* boxLayout, CSpaceProperty* ui)

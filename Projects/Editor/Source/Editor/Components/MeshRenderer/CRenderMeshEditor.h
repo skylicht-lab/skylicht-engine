@@ -36,12 +36,28 @@ namespace Skylicht
 	{
 		class CRenderMeshEditor : public CDefaultEditor
 		{
+		protected:
+			struct SBlendShapeData
+			{
+				std::string Name;
+				float Weight;
+				std::vector<CBlendShape*> BlendShapes;
+			};
+
+			std::vector<SBlendShapeData*> m_blendshapes;
+
 		public:
 			CRenderMeshEditor();
 
 			virtual ~CRenderMeshEditor();
 
+			void clearBlendShape();
+
+			SBlendShapeData* createGetBlendShapeByName(const char* name);
+
 			virtual void initGUI(CComponentSystem* target, CSpaceProperty* spaceProperty);
+
+			virtual void initCustomGUI(GUI::CBoxLayout* layout, CSpaceProperty* ui);
 
 			virtual void initCustomValueGUI(CObjectSerializable* obj, CValueProperty* data, GUI::CBoxLayout* layout, CSpaceProperty* ui);
 

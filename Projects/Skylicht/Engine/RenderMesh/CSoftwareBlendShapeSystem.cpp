@@ -66,7 +66,7 @@ namespace Skylicht
 			CEntity* entity = entities[i];
 
 			CCullingData* culling = GET_ENTITY_DATA(entity, CCullingData);
-			if (culling != NULL && culling->Visible == false)
+			if (culling != NULL && culling->CameraCulled)
 				continue;
 
 			CRenderMeshData* renderer = GET_ENTITY_DATA(entity, CRenderMeshData);

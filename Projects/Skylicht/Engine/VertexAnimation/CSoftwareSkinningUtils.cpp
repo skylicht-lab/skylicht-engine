@@ -427,8 +427,8 @@ namespace Skylicht
 			IMeshBuffer* resultMeshBuffer = blendShape->getMeshBuffer(i);
 			IVertexBuffer* resultVertexBuffer = resultMeshBuffer->getVertexBuffer(0);
 
-			video::S3DVertexSkinTangents* vertex = NULL;
-			video::S3DVertexSkinTangents* resultVertex = NULL;
+			video::S3DVertexTangents* vertex = NULL;
+			video::S3DVertexTangents* resultVertex = NULL;
 
 			core::vector3df* srcPos, * dstPos, * srcNormal, * dstNormal;
 
@@ -455,8 +455,9 @@ namespace Skylicht
 				if (weight == 0.0f)
 					continue;
 
-				vertex = (video::S3DVertexSkinTangents*)originalVertexbuffer->getVertices();
-				resultVertex = (video::S3DVertexSkinTangents*)resultVertexBuffer->getVertices();
+				u32 vtxSize = originalVertexbuffer->getVertexSize();
+				unsigned char* dataSrc = (unsigned char*)originalVertexbuffer->getVertices();
+				unsigned char* dataDst = (unsigned char*)resultVertexBuffer->getVertices();
 
 				vtxId = blendShape->VtxId.const_pointer();
 				size = blendShape->Offset.size() - 1;
@@ -465,6 +466,9 @@ namespace Skylicht
 
 				for (int i = 0; i < numVertex; i++)
 				{
+					vertex = (video::S3DVertexTangents*)dataSrc;
+					resultVertex = (video::S3DVertexTangents*)dataDst;
+
 					ix = vtxId[(int)(vertex->VertexData.Y)];
 					if (ix != size)
 					{
@@ -495,12 +499,13 @@ namespace Skylicht
 						dstNormal->Z = dstNormal->Z * invLength;
 #endif
 					}
-					++resultVertex;
-					++vertex;
-					}
+
+					dataSrc += vtxSize;
+					dataDst += vtxSize;
 				}
 			}
+		}
 
 		blendShape->setDirty(EBT_VERTEX);
-		}
 	}
+}
