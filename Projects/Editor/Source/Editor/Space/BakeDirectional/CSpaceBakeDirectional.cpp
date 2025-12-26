@@ -188,6 +188,7 @@ namespace Skylicht
 
 			int numTargetTexture = 1;
 			m_subMesh[0] = mb;
+			m_subMesh[0]->grab();
 
 			// init render target
 			for (int i = 0; i < numTargetTexture; i++)
