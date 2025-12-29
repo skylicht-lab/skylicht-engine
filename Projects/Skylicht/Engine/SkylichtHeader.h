@@ -78,6 +78,7 @@ using namespace irr::video;
 #include <queue>
 #include <fstream>
 #include <string>
+#include <cstdint>
 
 #ifdef ANDROID
 #include <android/log.h>
