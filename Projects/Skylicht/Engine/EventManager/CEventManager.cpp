@@ -103,7 +103,10 @@ namespace Skylicht
 		for (eventProcessorType p : m_eventProcessors)
 		{
 			if (p.second->OnProcessEvent(event) == false)
+			{
 				enableEvent = false;
+				break;
+			}
 		}
 
 		if (enableEvent == false)
