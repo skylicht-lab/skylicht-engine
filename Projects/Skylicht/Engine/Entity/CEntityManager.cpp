@@ -314,7 +314,7 @@ namespace Skylicht
 		}
 
 		if (n > 0)
-			notifyUpdateSortEntities();
+			m_needSortEntities = true;
 
 		m_delayRemove.set_used(0);
 	}
