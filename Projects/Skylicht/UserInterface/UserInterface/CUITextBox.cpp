@@ -125,24 +125,24 @@ namespace Skylicht
 			if (m_pointerId == -1)
 			{
 				CUIBase::onPointerDown(pointerId, pointerX, pointerY);
-				
+
 #if defined(IOS) || defined(ANDROID)
-				ITextField *textField = getOSTextField();
+				ITextField* textField = getOSTextField();
 				if (textField)
 				{
-					int height = m_maxLength > 40 ? 100: 50;
-					
+					int height = m_maxLength > 40 ? 100 : 50;
+
 					textField->show(m_text->getText(), m_maxLength, height);
-					textField->OnDone = [&](std::string text){
+					textField->OnDone = [&](std::string text) {
 						m_text->setText(text.c_str());
 						if (OnTextChanged != nullptr)
 							OnTextChanged(this);
-					};
-					textField->OnChanged = [&](std::string text){
+						};
+					textField->OnChanged = [&](std::string text) {
 						m_text->setText(text.c_str());
 						if (OnTextChanged != nullptr)
 							OnTextChanged(this);
-					};
+						};
 				}
 #else
 				if (m_text)
@@ -152,6 +152,7 @@ namespace Skylicht
 
 					m_text->showCaret(true);
 					m_text->setCaret(l, c);
+					m_continueKeyEvent = false;
 
 					CUIEventManager* eventMgr = CUIEventManager::getInstance();
 					eventMgr->setFocus(this);
@@ -176,7 +177,7 @@ namespace Skylicht
 		void CUITextBox::onPointerMove(int pointerId, float pointerX, float pointerY)
 		{
 			CUIBase::onPointerMove(pointerId, pointerX, pointerY);
-			
+
 #if !defined(IOS) && !defined(ANDROID)
 			if (m_isPointerDown && m_pointerId == pointerId && m_text)
 			{
@@ -190,6 +191,7 @@ namespace Skylicht
 		void CUITextBox::onLostFocus()
 		{
 			m_text->showCaret(false);
+			m_continueKeyEvent = true;
 		}
 
 		void CUITextBox::onKeyEvent(const SEvent& event)

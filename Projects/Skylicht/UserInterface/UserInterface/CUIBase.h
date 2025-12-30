@@ -77,6 +77,7 @@ namespace Skylicht
 
 			bool m_skipPointerEventWhenDrag;
 			bool m_continueGameEvent;
+			bool m_continueKeyEvent;
 
 			int m_pointerId;
 			float m_pointerDownX;
@@ -172,6 +173,11 @@ namespace Skylicht
 			inline bool isContinueGameEvent()
 			{
 				return m_continueGameEvent;
+			}
+
+			inline bool isContinueKeyEvent()
+			{
+				return m_continueKeyEvent;
 			}
 
 			/**

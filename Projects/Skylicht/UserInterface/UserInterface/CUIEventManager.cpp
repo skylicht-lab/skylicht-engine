@@ -132,7 +132,7 @@ namespace Skylicht
 				if (m_focus)
 				{
 					m_focus->onKeyEvent(event);
-					return m_focus->isContinueGameEvent();
+					return m_focus->isContinueKeyEvent();
 				}
 			}
 

@@ -38,6 +38,7 @@ namespace Skylicht
 			m_isPointerHover(false),
 			m_isPointerDown(false),
 			m_continueGameEvent(false),
+			m_continueKeyEvent(true),
 			m_skipPointerEventWhenDrag(false),
 			m_pointerId(-1),
 			m_pointerDownX(0.0f),
