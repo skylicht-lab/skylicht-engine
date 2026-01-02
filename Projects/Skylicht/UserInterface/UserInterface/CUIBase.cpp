@@ -197,8 +197,8 @@ namespace Skylicht
 
 			if (m_skipPointerEventWhenDrag && m_isPointerDown && m_pointerId == pointerId)
 			{
-				if (fabsf(pointerX - m_pointerDownX) > 10.0f ||
-					fabsf(pointerY - m_pointerDownY) > 10.0f)
+				if (fabsf(pointerX - m_pointerDownX) > 3.0f ||
+					fabsf(pointerY - m_pointerDownY) > 3.0f)
 				{
 					m_container->cancelPointerDown(this, pointerId, pointerX, pointerY);
 				}

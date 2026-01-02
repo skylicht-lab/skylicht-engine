@@ -364,6 +364,7 @@ namespace Skylicht
 			if (m_hover == base)
 			{
 				m_hover->onPointerOut(pointerId, pointerX, pointerY);
+				m_hover->resetTouch();
 				m_hover = NULL;
 			}
 			m_skip = base;
