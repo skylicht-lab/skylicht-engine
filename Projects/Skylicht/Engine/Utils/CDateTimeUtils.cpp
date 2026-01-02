@@ -27,6 +27,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include <ctime>
 
+#define STARTYEAR 1970
+
 #define DAYSPERWEEK (7)
 #define DAYSPERNORMYEAR (365U)
 #define DAYSPERLEAPYEAR (366U)
@@ -45,17 +47,6 @@ namespace Skylicht
 		{31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
 	};
 
-	// getSecondByDate
-	// Input     : int fromYear (ie, 1970)
-	// Input     : int ptr to returned month
-	// Input     : int ptr to returned day
-	// Input     : int ptr to returned years since fromYear
-	// Input     : int ptr to returned hour
-	// Input     : int ptr to returned minute
-	// Input     : int ptr to returned seconds
-	//
-	// Converts MM/DD/YY HH:MM:SS to actual seconds since fromYear.
-	// fromYear year is assumed at Jan 1, 00:00:01am.
 	unsigned long CDateTimeUtils::getSecondByDate(int fromYear, int month, int day, int years, int hour, int minute, int second)
 	{
 		unsigned long secs = 0;
@@ -98,10 +89,15 @@ namespace Skylicht
 		return secs;
 	}
 
+	unsigned long CDateTimeUtils::getSecondByDate(const ITimer::RealTimeDate& date)
+	{
+		return getSecondByDate(STARTYEAR, date.Month, date.Day, date.Year, date.Hour, date.Minute, date.Second);
+	}
+
 	unsigned long CDateTimeUtils::getTimeBySecond()
 	{
 		ITimer::RealTimeDate dateTime = os::Timer::getRealTimeAndDate();
-		return getSecondByDate(1970, dateTime.Month, dateTime.Day, dateTime.Year, dateTime.Hour, dateTime.Minute, dateTime.Second);
+		return getSecondByDate(STARTYEAR, dateTime.Month, dateTime.Day, dateTime.Year, dateTime.Hour, dateTime.Minute, dateTime.Second);
 	}
 
 	ITimer::RealTimeDate CDateTimeUtils::getDateBySecond(unsigned long second)
