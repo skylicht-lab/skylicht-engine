@@ -238,6 +238,9 @@ namespace Skylicht
 
 	void CGUIText::setTextStrim(const char* text)
 	{
+		if (!m_font)
+			return setText(text);
+
 		int numUnicode = CStringImp::getUnicodeStringSize(text);
 
 		wchar_t* textw = new wchar_t[numUnicode];
@@ -294,6 +297,9 @@ namespace Skylicht
 
 	void CGUIText::setTextStrim(const wchar_t* text)
 	{
+		if (!m_font)
+			return setText(text);
+
 		int numUnicode = CStringImp::length<const wchar_t>(text);
 
 		wchar_t* textw = new wchar_t[numUnicode];
@@ -382,6 +388,9 @@ namespace Skylicht
 
 	int CGUIText::getCharWidth(wchar_t c)
 	{
+		if (!m_font)
+			return 0;
+
 		std::wstring string;
 		ArrayInt format;
 
@@ -1196,6 +1205,11 @@ namespace Skylicht
 
 		value = object->get<std::string>("textId", std::string(""));
 		setTextId(value.c_str());
+
+		// should init font
+		m_font = getCurrentFont();
+		if (m_font)
+			initFont(m_font);
 
 		if (m_canvas->OnLocalize != nullptr)
 		{
