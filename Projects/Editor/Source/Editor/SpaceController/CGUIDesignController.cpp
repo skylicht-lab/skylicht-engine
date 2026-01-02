@@ -864,6 +864,7 @@ namespace Skylicht
 		void CGUIDesignController::newGUI()
 		{
 			m_guiFilePath = "";
+			CPropertyController::getInstance()->setProperty(NULL);
 		}
 
 		bool CGUIDesignController::needSave()
@@ -1168,7 +1169,13 @@ namespace Skylicht
 						{
 							std::string textId = text->getTextId();
 							if (textId.empty())
+							{
+								if (text->isStrim())
+									text->setTextStrim(text->getDefaultText());
+								else
+									text->setText(text->getDefaultText());
 								return;
+							}
 
 							const char* localizeText = CLocalize::getInstance()->getString(textId.c_str());
 							if (!localizeText)
