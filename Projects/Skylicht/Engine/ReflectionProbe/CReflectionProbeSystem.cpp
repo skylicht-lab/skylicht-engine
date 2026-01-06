@@ -157,6 +157,7 @@ namespace Skylicht
 		for (u32 i = 0, n = m_entities.count(); i < n; i++)
 		{
 			m = positions[i]->World.pointer();
+			found = false;
 
 			// query nearest probe
 			node = m_kdtree->nearest(m[12], m[13], m[14]);
