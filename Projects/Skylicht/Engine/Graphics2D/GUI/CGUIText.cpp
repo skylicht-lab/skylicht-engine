@@ -1091,6 +1091,10 @@ namespace Skylicht
 
 				for (int j = begin; j < lastSpace; j++)
 				{
+					// inorge at first line
+					if (split.size() != 0 && modules.size() == 0 && lpString[j] == ' ')
+						continue;
+
 					SModuleOffset* c = m_font->getCharacterModule((int)lpString[j]);
 					if (c != NULL)
 					{
@@ -1120,6 +1124,10 @@ namespace Skylicht
 
 		for (int j = begin; j < i; j++)
 		{
+			// if the begin line is space
+			if (split.size() != 0 && modules.size() == 0 && lpString[j] == ' ')
+				continue;
+
 			SModuleOffset* c = m_font->getCharacterModule((int)lpString[j]);
 			if (c != NULL)
 			{
