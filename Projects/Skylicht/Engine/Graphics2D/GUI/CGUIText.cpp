@@ -770,8 +770,6 @@ namespace Skylicht
 			m_lastWidth = rect.getWidth();
 			m_lastHeight = rect.getHeight();
 			m_updateTextRender = true;
-			if (m_strim && !m_defaultText.empty())
-				setTextStrim(m_defaultText.c_str());
 		}
 
 		if (m_updateTextRender == true)
