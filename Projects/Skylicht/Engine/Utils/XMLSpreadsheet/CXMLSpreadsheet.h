@@ -146,7 +146,8 @@ namespace Skylicht
 
 	protected:
 
-		void splitCsvLine(const std::string& line, char delimiter, std::vector<std::string>& cells);
+		bool splitCsvLine(const std::string& line, char delimiter, std::vector<std::string>& cells);
 
+		bool combineLine(std::vector<std::string>& cols, std::vector<std::string>& cells);
 	};
 }

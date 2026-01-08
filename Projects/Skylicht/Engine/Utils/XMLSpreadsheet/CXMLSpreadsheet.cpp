@@ -414,8 +414,20 @@ namespace Skylicht
 			if (line.empty())
 				continue;
 
+			bool needMoreLine = false;
 			std::vector<std::string> cells;
-			splitCsvLine(line, ',', cells);
+			do
+			{
+				needMoreLine = splitCsvLine(line, ',', cells);
+				if (needMoreLine)
+				{
+					std::getline(input, line, '\n');
+					if (!line.empty() && line.back() == '\r')
+						line.pop_back();
+					if (line.empty())
+						break;
+				}
+			} while (needMoreLine);
 
 			if (cells.size() > 0)
 			{
@@ -448,7 +460,7 @@ namespace Skylicht
 		return true;
 	}
 
-	void CXMLSpreadsheet::splitCsvLine(const std::string& line, char delimiter, std::vector<std::string>& cells)
+	bool CXMLSpreadsheet::splitCsvLine(const std::string& line, char delimiter, std::vector<std::string>& cells)
 	{
 		std::string cell;
 		std::stringstream ss(line);
@@ -459,9 +471,23 @@ namespace Skylicht
 			cols.push_back(cell);
 		}
 
-		// combine string in " data "
+		return combineLine(cols, cells);
+	}
+
+	bool CXMLSpreadsheet::combineLine(std::vector<std::string>& cols, std::vector<std::string>& cells)
+	{
+		// combine string in " data " or many lines
 		std::string temp;
 		bool combine = false;
+		bool newLine = false;
+
+		if (cells.size() > 0)
+		{
+			combine = true;
+			newLine = true;
+			temp = cells.back();
+			cells.pop_back();
+		}
 
 		for (const std::string& c : cols)
 		{
@@ -471,24 +497,27 @@ namespace Skylicht
 				if (c[0] == '\"')
 				{
 					combine = true;
+					newLine = false;
 					temp += c;
 				}
 				else if (c[len - 1] == '\"')
 				{
-					temp += ",";
+					temp += newLine ? "\n" : ",";
 					temp += c;
 					temp.erase(temp.begin());
 					temp.pop_back();
 					cells.push_back(temp);
 					combine = false;
+					newLine = false;
 					temp.clear();
 				}
 				else
 				{
 					if (combine)
 					{
-						temp += ",";
+						temp += newLine ? "\n" : ",";
 						temp += c;
+						newLine = false;
 					}
 					else
 						cells.push_back(c);
@@ -499,5 +528,10 @@ namespace Skylicht
 				cells.push_back(c);
 			}
 		}
+
+		if (combine && !temp.empty())
+			cells.push_back(temp);
+
+		return combine;
 	}
 }
