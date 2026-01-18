@@ -50,7 +50,7 @@ namespace Skylicht
 			m_value = v;
 		}
 
-		inline const T& get()
+		inline const T& get() const
 		{
 			return m_value;
 		}

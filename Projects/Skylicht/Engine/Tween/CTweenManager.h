@@ -44,5 +44,7 @@ namespace Skylicht
 		void removeTween(CTween* tween);
 
 		void addDelayCall(float time, std::function<void()> function, bool useScaleTime = true);
+
+		void clearDelayCall();
 	};
 }

@@ -106,4 +106,15 @@ namespace Skylicht
 		delayCall->Function = function;
 		delayCall->UseScaleTime = useScaleTime;
 	}
+
+	void CTweenManager::clearDelayCall()
+	{
+		for (SDelayCall* delayCall : m_insertCalls)
+			delete delayCall;
+		m_insertCalls.clear();
+
+		for (SDelayCall* delayCall : m_delayCalls)
+			delete delayCall;
+		m_delayCalls.clear();
+	}
 }
