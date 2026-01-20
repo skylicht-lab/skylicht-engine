@@ -214,20 +214,26 @@ namespace Skylicht
 				{
 					// clear last mask to apply new mask
 					if (m_currentMask)
-						m_currentMask->clearMask();
+						m_currentMask->endMaskTest();
 					m_currentMask = mask;
 				}
 				mask->applyParentClip(parentMask);
 				mask->beginMaskTest(camera);
+			}
+			else
+			{
+				// clear last mask
+				if (m_currentMask)
+				{
+					m_currentMask->endMaskTest();
+					m_currentMask = NULL;
+				}
 			}
 
 			entity->render(camera);
 
 			// update render order for UI Hitest
 			entity->m_renderOrder = renderOrder++;
-
-			if (mask != NULL && mask->isVisible())
-				mask->endMaskTest();
 
 			// we use stack to render parent -> child
 			// so we must inverse render position because stack = Last-In First-Out (LIFO)

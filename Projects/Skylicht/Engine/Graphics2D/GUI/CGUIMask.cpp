@@ -111,5 +111,7 @@ namespace Skylicht
 	{
 		// end depth test
 		CGraphics2D::getInstance()->endDepthTest();
+
+		m_drawMask = false;
 	}
 }
