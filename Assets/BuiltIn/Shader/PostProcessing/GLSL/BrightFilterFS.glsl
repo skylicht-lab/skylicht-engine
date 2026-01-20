@@ -1,4 +1,4 @@
-precision mediump float;
+precision highp float;
 
 uniform sampler2D uSourceTex;
 uniform sampler2D uSourceEmission;

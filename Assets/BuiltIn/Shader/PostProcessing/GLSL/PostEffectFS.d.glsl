@@ -1,4 +1,4 @@
-precision mediump float;
+precision highp float;
 precision highp sampler2D;
 precision highp sampler2DArray;
 
