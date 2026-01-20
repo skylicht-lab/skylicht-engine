@@ -25,6 +25,8 @@ SkylichtApplication* _angleApplication = NULL;
 	_view = (MTKView *)self.view;
 	_view.multipleTouchEnabled = YES;
 	_view.backgroundColor = UIColor.blackColor;
+	_view.preferredFramesPerSecond = 60;
+	
 	_renderer = [[Renderer alloc] initWithMetalKitView:_view];
 	
 	[_renderer mtkView:_view drawableSizeWillChange:_view.drawableSize];
@@ -78,6 +80,11 @@ SkylichtApplication* _angleApplication = NULL;
 - (void)dealloc
 {
 	delete _angleApplication;
+}
+
+- (void)setLimitFPS: (int)fps
+{
+	_view.preferredFramesPerSecond = fps;
 }
 
 #pragma mark - touches methods
@@ -160,3 +167,16 @@ SkylichtApplication* _angleApplication = NULL;
 	[[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillTerminateNotification object:nil];
 }
 @end
+
+void application_setFPS(int fps)
+{
+	UIViewController *rootVC = [[[UIApplication sharedApplication]keyWindow]rootViewController];
+	if ([rootVC isKindOfClass:[GameViewController class]])
+	{
+		GameViewController *gameVC = (GameViewController *)rootVC;
+		if (fps <= 0)
+			[gameVC setLimitFPS:60];
+		else
+			[gameVC setLimitFPS:fps];
+	}
+}

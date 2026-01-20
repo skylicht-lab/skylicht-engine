@@ -35,6 +35,10 @@ https://github.com/skylicht-lab/skylicht-engine
 #endif
 #endif
 
+#ifdef IOS
+void application_setFPS(int fps);
+#endif
+
 namespace Skylicht
 {
 	CBaseApp::CBaseApp() :
@@ -232,5 +236,9 @@ namespace Skylicht
 	void CBaseApp::setLimitFPS(int fps)
 	{
 		m_limitFPS = fps;
+		
+#ifdef IOS
+		application_setFPS(fps);
+#endif
 	}
 }
