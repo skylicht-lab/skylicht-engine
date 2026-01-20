@@ -67,6 +67,9 @@ namespace Skylicht
 		if (parent == NULL || parent == this)
 			return;
 
+		if (parent->isVisible() == false)
+			return;
+
 		if (m_topLeft.X < parent->m_topLeft.X)
 			m_topLeft.X = parent->m_topLeft.X;
 		if (m_topLeft.Y < parent->m_topLeft.Y)

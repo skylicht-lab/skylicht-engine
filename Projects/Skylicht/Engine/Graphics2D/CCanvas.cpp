@@ -240,6 +240,13 @@ namespace Skylicht
 			for (int i = (int)entity->m_childs.size() - 1; i >= 0; i--)
 				renderEntity.push(entity->m_childs[i]);
 		}
+
+		// flush last mask
+		if (m_currentMask)
+		{
+			m_currentMask->endMaskTest();
+			m_currentMask = NULL;
+		}
 	}
 
 	CGUIElement* CCanvas::getHitTest(CCamera* camera, float x, float y, const core::recti& viewport)
