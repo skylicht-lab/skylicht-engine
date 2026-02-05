@@ -1,4 +1,5 @@
-<shaderConfig name="PBRSkinNoNormal" baseShader="SOLID" softwareSkinning="PBR">
+<shaderConfig name="PBRSkinNoNormal" baseShader="SOLID" softwareSkinning="PBRNoNormalMap">
+	<dependent shader="PBRNoNormalMap.xml"/>
 	<uniforms>
 		<vs>
 			<uniform name="uMvpMatrix" type="WORLD_VIEW_PROJECTION" value="0" float="16" matrix="true"/>
