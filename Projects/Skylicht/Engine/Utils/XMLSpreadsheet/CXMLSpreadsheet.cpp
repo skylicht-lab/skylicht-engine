@@ -390,6 +390,16 @@ namespace Skylicht
 		readFile->read(data, fileSize);
 		data[fileSize] = 0;
 
+		char* readData = data;
+		if (fileSize > 3 &&
+			(u8)data[0] == 0xEF &&
+			(u8)data[1] == 0xBB &&
+			(u8)data[2] == 0xBF)
+		{
+			// found UTF8-BOM
+			readData = data + 3;
+		}
+
 		SSheet* sheet = NULL;
 		if (m_sheets.size() > 0)
 			sheet = m_sheets[0];
@@ -400,7 +410,7 @@ namespace Skylicht
 		}
 
 		std::istringstream input;
-		input.str(data);
+		input.str(readData);
 
 		std::string line;
 		int rowId = (int)sheet->Rows.size();
