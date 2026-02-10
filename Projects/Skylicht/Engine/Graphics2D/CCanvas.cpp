@@ -216,9 +216,10 @@ namespace Skylicht
 					if (m_currentMask)
 						m_currentMask->endMaskTest();
 					m_currentMask = mask;
+
+					mask->applyParentClip(parentMask);
+					mask->beginMaskTest(camera);
 				}
-				mask->applyParentClip(parentMask);
-				mask->beginMaskTest(camera);
 			}
 			else
 			{
