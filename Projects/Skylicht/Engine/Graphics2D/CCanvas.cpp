@@ -202,10 +202,12 @@ namespace Skylicht
 		world.transformVect(p1);
 		world.transformVect(p2);
 
+		const core::rectf& screen = m_root->getRect();
+
 		float x = 0.0f;
 		float y = 0.0f;
-		float w = m_rect.getWidth();
-		float h = m_rect.getHeight();
+		float w = screen.getWidth();
+		float h = screen.getHeight();
 
 		int code1 = computeCode(p1.X, p1.Y, x, y, w, h);
 		int code2 = computeCode(p2.X, p2.Y, x, y, w, h);
