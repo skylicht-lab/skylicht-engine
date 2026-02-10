@@ -69,7 +69,7 @@ namespace Skylicht
 		return img;
 	}
 
-	SModuleOffset* CGlyphFont::getCharacterModule(int character)
+	SModuleOffset* CGlyphFont::getCharacterModule(wchar_t character)
 	{
 		int fontSize = CGlyphFreetype::sizePtToPx(m_fontSizePt);
 		u32 key = (fontSize << 16) | (u16)character;

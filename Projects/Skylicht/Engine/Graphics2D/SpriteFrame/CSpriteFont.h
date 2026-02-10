@@ -48,6 +48,6 @@ namespace Skylicht
 
 		bool loadFont(const char* fileName);
 
-		virtual SModuleOffset* getCharacterModule(int character);
+		virtual SModuleOffset* getCharacterModule(wchar_t character);
 	};
 }

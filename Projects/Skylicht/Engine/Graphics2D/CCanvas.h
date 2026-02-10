@@ -606,6 +606,8 @@ namespace Skylicht
 		* the event OnLocalize must bind to the localize function
 		*/
 		void updateLocalizedText();
+
+		bool isClipped(CGUIElement* element);
 	};
 
 	template<typename T>

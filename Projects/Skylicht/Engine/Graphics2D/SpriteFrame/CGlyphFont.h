@@ -50,7 +50,7 @@ namespace Skylicht
 	protected:
 		float m_fontSizePt;
 
-		std::map<int, SModuleOffset*> m_moduleOffset;
+		std::map<u32, SModuleOffset*> m_moduleOffset;
 
 		std::string m_fontName;
 
@@ -76,7 +76,7 @@ namespace Skylicht
 			return m_fontName.c_str();
 		}
 
-		virtual SModuleOffset* getCharacterModule(int character);
+		virtual SModuleOffset* getCharacterModule(wchar_t character);
 
 		virtual void getListModule(const wchar_t* string, std::vector<int>& format, std::vector<SModuleOffset*>& output, std::vector<int>& outputFormat);
 

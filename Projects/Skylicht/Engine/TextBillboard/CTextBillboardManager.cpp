@@ -66,7 +66,7 @@ namespace Skylicht
 			return;
 
 		// get text height
-		SModuleOffset* moduleCharA = m_font->getCharacterModule((int)'A');
+		SModuleOffset* moduleCharA = m_font->getCharacterModule((wchar_t)'A');
 		if (moduleCharA)
 		{
 			m_textHeight = moduleCharA->OffsetY + moduleCharA->Module->H;
@@ -96,7 +96,7 @@ namespace Skylicht
 				}
 			}
 
-			SModuleOffset* c = m_font->getCharacterModule((int)lpString[i]);
+			SModuleOffset* c = m_font->getCharacterModule(lpString[i]);
 			if (c != NULL)
 			{
 				modules.push_back(c);

@@ -199,7 +199,7 @@ namespace Skylicht
 		return true;
 	}
 
-	SModuleOffset* CSpriteFont::getCharacterModule(int character)
+	SModuleOffset* CSpriteFont::getCharacterModule(wchar_t character)
 	{
 		if (m_frames.size() == 0)
 			return NULL;

@@ -111,7 +111,7 @@ namespace Skylicht
 	void CGUIText::initFont(IFont* font)
 	{
 		// get text height
-		SModuleOffset* moduleCharA = font->getCharacterModule((int)'A');
+		SModuleOffset* moduleCharA = font->getCharacterModule((wchar_t)'A');
 		if (moduleCharA)
 		{
 			m_textHeight = (int)moduleCharA->OffsetY + (int)moduleCharA->Module->H;
@@ -937,7 +937,7 @@ namespace Skylicht
 
 			while (lpString[i] != 0)
 			{
-				SModuleOffset* c = m_font->getCharacterModule((int)lpString[i]);
+				SModuleOffset* c = m_font->getCharacterModule(lpString[i]);
 				if (c != NULL)
 				{
 					modules.push_back(c);
@@ -996,7 +996,7 @@ namespace Skylicht
 				// loop all string on sentence
 				for (int j = begin; j < i; j++)
 				{
-					SModuleOffset* c = m_font->getCharacterModule((int)lpString[j]);
+					SModuleOffset* c = m_font->getCharacterModule(lpString[j]);
 					if (c != NULL)
 					{
 						modules.push_back(c);
@@ -1029,7 +1029,7 @@ namespace Skylicht
 					// loop all string on sentence
 					for (int j = begin; j < i; j++)
 					{
-						SModuleOffset* c = m_font->getCharacterModule((int)lpString[j]);
+						SModuleOffset* c = m_font->getCharacterModule(lpString[j]);
 						if (c != NULL)
 						{
 							modules.push_back(c);
@@ -1053,7 +1053,7 @@ namespace Skylicht
 				}
 			}
 
-			SModuleOffset* c = m_font->getCharacterModule((int)lpString[i]);
+			SModuleOffset* c = m_font->getCharacterModule(lpString[i]);
 			if (c == NULL)
 			{
 				i++;
@@ -1093,7 +1093,7 @@ namespace Skylicht
 					if (split.size() != 0 && modules.size() == 0 && lpString[j] == ' ')
 						continue;
 
-					SModuleOffset* c = m_font->getCharacterModule((int)lpString[j]);
+					SModuleOffset* c = m_font->getCharacterModule(lpString[j]);
 					if (c != NULL)
 					{
 						modules.push_back(c);
@@ -1126,7 +1126,7 @@ namespace Skylicht
 			if (split.size() != 0 && modules.size() == 0 && lpString[j] == ' ')
 				continue;
 
-			SModuleOffset* c = m_font->getCharacterModule((int)lpString[j]);
+			SModuleOffset* c = m_font->getCharacterModule(lpString[j]);
 			if (c != NULL)
 			{
 				modules.push_back(c);

@@ -1902,7 +1902,7 @@ namespace Skylicht
 			if (lpString[i] != (int)'\n' &&
 				lpString[i] != (int)'\r')
 			{
-				SModuleOffset* c = font->getCharacterModule((int)lpString[i]);
+				SModuleOffset* c = font->getCharacterModule(lpString[i]);
 				if (c != NULL)
 				{
 					modules.push_back(c);
@@ -1952,7 +1952,7 @@ namespace Skylicht
 		float textOffsetY = 0.0f;
 
 		// get text height
-		SModuleOffset* moduleCharA = font->getCharacterModule((int)'A');
+		SModuleOffset* moduleCharA = font->getCharacterModule((wchar_t)'A');
 		if (moduleCharA)
 		{
 			textHeight = moduleCharA->OffsetY + moduleCharA->Module->H;
@@ -1968,7 +1968,7 @@ namespace Skylicht
 			if (string[i] != (int)'\n' &&
 				string[i] != (int)'\r')
 			{
-				SModuleOffset* c = font->getCharacterModule((int)string[i]);
+				SModuleOffset* c = font->getCharacterModule(string[i]);
 				if (c != NULL)
 				{
 					listModule.push_back(c);

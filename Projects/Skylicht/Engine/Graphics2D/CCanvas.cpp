@@ -169,6 +169,55 @@ namespace Skylicht
 		}
 	}
 
+	const int INSIDE = 0; // 0000
+	const int LEFT = 1;   // 0001
+	const int RIGHT = 2;  // 0010
+	const int BOTTOM = 4; // 0100
+	const int TOP = 8;    // 1000
+
+	int computeCode(float px, float py, float x, float y, float w, float h)
+	{
+		int code = INSIDE;
+
+		if (px < x)
+			code |= LEFT;
+		else if (px > w)
+			code |= RIGHT;
+		if (py < y)
+			code |= TOP;
+		else if (py > h)
+			code |= BOTTOM;
+
+		return code;
+	}
+
+	bool CCanvas::isClipped(CGUIElement* element)
+	{
+		const core::matrix4& world = element->getAbsoluteTransform();
+		const core::rectf& r = element->getRect();
+
+		core::vector3df p1(r.UpperLeftCorner.X, r.UpperLeftCorner.Y, 0.0f);
+		core::vector3df p2(r.LowerRightCorner.X, r.LowerRightCorner.Y, 0.0f);
+
+		world.transformVect(p1);
+		world.transformVect(p2);
+
+		float x = 0.0f;
+		float y = 0.0f;
+		float w = m_rect.getWidth();
+		float h = m_rect.getHeight();
+
+		int code1 = computeCode(p1.X, p1.Y, x, y, w, h);
+		int code2 = computeCode(p2.X, p2.Y, x, y, w, h);
+
+		if ((code1 == 0) && (code2 == 0))
+			return false;
+		else if (code1 & code2)
+			return true;
+
+		return false;
+	}
+
 	void CCanvas::render(CCamera* camera)
 	{
 		m_renderCamera = camera;
@@ -231,7 +280,9 @@ namespace Skylicht
 				}
 			}
 
-			entity->render(camera);
+			// check clipped and render
+			if (!isClipped(entity))
+				entity->render(camera);
 
 			// update render order for UI Hitest
 			entity->m_renderOrder = renderOrder++;
