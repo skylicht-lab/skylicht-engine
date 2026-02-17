@@ -150,6 +150,9 @@ namespace Skylicht
 
 				CUIEventManager::getInstance()->setCapture(m_pointerId, this);
 
+				convertToUICoordinate(pointerX, pointerY);
+				convertWorldToLocal(m_element, pointerX, pointerY);
+				
 				m_lastPointerX = pointerX;
 				m_lastPointerY = pointerY;
 				m_pointerX = pointerX;
@@ -172,8 +175,9 @@ namespace Skylicht
 
 			if (m_isPointerDown && m_pointerId == pointerId)
 			{
-				m_lastPointerX = m_pointerX;
-				m_lastPointerY = m_pointerY;
+				convertToUICoordinate(pointerX, pointerY);
+				convertWorldToLocal(m_element, pointerX, pointerY);
+								
 				m_pointerX = pointerX;
 				m_pointerY = pointerY;
 			}
@@ -250,12 +254,10 @@ namespace Skylicht
 		{
 			if (m_isPointerDown)
 			{
-				const core::vector3df& scale = m_listElement->getCanvas()->getRootScale();
-
 				if (m_vertical)
-					m_speed = (m_pointerY - m_lastPointerY) / scale.Y;
+					m_speed = (m_pointerY - m_lastPointerY);
 				else
-					m_speed = (m_pointerX - m_lastPointerX) / scale.X;
+					m_speed = (m_pointerX - m_lastPointerX);
 
 				updateStopSpeed();
 
