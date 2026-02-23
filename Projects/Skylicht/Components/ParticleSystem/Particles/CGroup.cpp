@@ -381,11 +381,11 @@ namespace Skylicht
 			{
 				emitter->generateVelocity(*p, emitter->getZone(), this);
 
-				initParticleModel(*p);
-
 				p->LastPosition = position;
 				p->Position = position;
 				p->SubEmitterDirection = subEmitterDirection;
+				
+				initParticleModel(*p);
 			}
 
 			return (int)p->Index;
@@ -401,11 +401,11 @@ namespace Skylicht
 			{
 				emitter->generateVelocity(*p, emitter->getZone(), this);
 
-				initParticleModel(*p);
-
 				p->LastPosition = position;
 				p->Position = position;
 				p->Velocity = velocity;
+				
+				initParticleModel(*p);
 			}
 
 			return (int)p->Index;
