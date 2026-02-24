@@ -17,7 +17,7 @@ def replace_text(file, find, replace):
 def main():
     # Check param
     if len(sys.argv) < 3:
-        print("Missing params: python create_project.py <project_name> <project_sub_path>")
+        print("Missing params: python create_project.py <project_name> <project_sub_path> <class_name>")
         return
 
     # Check current folder
@@ -31,6 +31,10 @@ def main():
 
     project_name = project_name.replace(' ', '_')
     project_path = project_path.replace('\\', '/')
+
+    class_name = project_name;
+    if len(sys.argv) >= 4:
+        class_name = sys.argv[3]
 
     print("Create project: %s at %s" % (project_name, project_path))
 
@@ -61,10 +65,10 @@ def main():
         source_h = project_path + "/Source/" + project_name + ".h"
         source_cpp = project_path + "/Source/" + project_name + ".cpp"
         shutil.copy("Scripts/Template.h", source_h)
-        replace_text(source_h, "@project_name@", project_name)
+        replace_text(source_h, "@project_name@", class_name)
 
         shutil.copy("Scripts/Template.cpp", source_cpp)
-        replace_text(source_cpp, "@project_name@", project_name)
+        replace_text(source_cpp, "@project_name@", class_name)
 
         with open('Version.txt') as f:
             version = f.read().replace('\n', '')
