@@ -351,9 +351,6 @@ namespace video
 		//! \param enable: If true, enable the clipping plane else disable it.
 		virtual void enableClipPlane(u32 index, bool enable) _IRR_OVERRIDE_;
 
-		//! Returns the graphics card vendor name.
-		virtual core::stringc getVendorInfo() _IRR_OVERRIDE_ {return VendorName;}
-
 		//! Returns the maximum texture size supported.
 		virtual core::dimension2du getMaxTextureSize() const _IRR_OVERRIDE_;
 
@@ -521,8 +518,6 @@ namespace video
 		core::array<SUserClipPlane> UserClipPlanes;
 
 		core::dimension2d<u32> CurrentRendertargetSize;
-
-		core::stringc VendorName;
 
 		core::matrix4 TextureFlipMatrix;
 

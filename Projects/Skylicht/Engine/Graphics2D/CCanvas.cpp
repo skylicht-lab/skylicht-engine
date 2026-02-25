@@ -817,6 +817,35 @@ namespace Skylicht
 		return ret;
 	}
 
+	CGUIElement* CCanvas::searchGUI(const char* name)
+	{
+		if (m_root->getChilds().size() == 0)
+			return NULL;
+
+		return searchGUI(m_root, name);
+	}
+
+	CGUIElement* CCanvas::searchGUI(CGUIElement* search, const char* name)
+	{
+		std::queue<CGUIElement*> queue;
+		queue.push(search);
+
+		while (queue.size() > 0)
+		{
+			CGUIElement* element = queue.front();
+			queue.pop();
+
+			if (CStringImp::comp(element->getName(), name) == 0)
+				return element;
+
+			std::vector<CGUIElement*>& childs = element->getChilds();
+			for (CGUIElement* gui : childs)
+				queue.push(gui);
+		}
+
+		return NULL;
+	}
+
 	void CCanvas::updateLocalizedText()
 	{
 		if (OnLocalize == nullptr)

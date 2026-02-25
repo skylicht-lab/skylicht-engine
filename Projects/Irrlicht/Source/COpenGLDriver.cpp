@@ -993,6 +993,7 @@ bool COpenGLDriver::genericDriverInit()
 	{
 		os::Printer::log(reinterpret_cast<const c8*>(renderer), reinterpret_cast<const c8*>(vendor), ELL_INFORMATION);
 		VendorName = reinterpret_cast<const c8*>(vendor);
+		GPUName = reinterpret_cast<const c8*>(renderer);
 	}
 
 	u32 i;
@@ -1000,8 +1001,8 @@ bool COpenGLDriver::genericDriverInit()
 	// load extensions
 	initExtensions(Params.Stencilbuffer);
 
-    if (!BridgeCalls)
-        BridgeCalls = new COpenGLCallBridge(this);
+	if (!BridgeCalls)
+		BridgeCalls = new COpenGLCallBridge(this);
 
 	if (queryFeature(EVDF_ARB_GLSL))
 	{

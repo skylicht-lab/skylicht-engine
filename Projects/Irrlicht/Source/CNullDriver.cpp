@@ -87,7 +87,9 @@ IImageWriter* createImageWriterPPM();
 CNullDriver::CNullDriver(io::IFileSystem* io, const core::dimension2d<u32>& screenSize)
 : FileSystem(io), MeshManipulator(0), ViewPort(0,0,0,0), ScissorRect(0,0,0,0), ScreenSize(screenSize),
 	PrimitivesDrawn(0), TextureChangedCount(0), DrawCall(0), MinVertexCountForVBO(128), TextureCreationFlags(0),
-	AllowZWriteOnTransparent(false), DefaultFrameBuffer(0), RendererTransformChanged(true), EnableScissor(false)
+	AllowZWriteOnTransparent(false), DefaultFrameBuffer(0), RendererTransformChanged(true), EnableScissor(false),
+	VendorName("Not available on this driver."),
+	GPUName("Not available on this driver.")
 {
 	#ifdef _DEBUG
 	setDebugName("CNullDriver");

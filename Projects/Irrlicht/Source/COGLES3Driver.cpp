@@ -536,6 +536,7 @@ namespace irr
 			{
 				os::Printer::log(reinterpret_cast<const c8*>(renderer), reinterpret_cast<const c8*>(vendor), ELL_INFORMATION);
 				VendorName = reinterpret_cast<const c8*>(vendor);
+				GPUName = reinterpret_cast<const c8*>(renderer);
 			}
 
 			u32 i;

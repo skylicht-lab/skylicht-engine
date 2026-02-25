@@ -585,12 +585,27 @@ namespace Skylicht
 		CGUIElement* getGUIByPath(const char* path);
 
 		/**
+		* @brief Find a GUI element by name.
+		* @param name Name of the element to find.
+		* @return Pointer to CGUIElement, or NULL if not found.
+		*/
+		CGUIElement* searchGUI(const char* name);
+
+		/**
 		 * @brief Find a GUI element by path starting from a specific element.
 		 * @param search Starting element.
 		 * @param path String path.
 		 * @return Pointer to CGUIElement, or NULL if not found.
 		 */
 		CGUIElement* getGUIByPath(CGUIElement* search, const char* path);
+
+		/**
+		* @brief Find a GUI element by name starting from a specific element.
+		* @param search Starting element.
+		* @param name Name of the element to find.
+		* @return Pointer to CGUIElement, or NULL if not found.
+		*/
+		CGUIElement* searchGUI(CGUIElement* search, const char* name);
 
 		/**
 		 * @brief Find all child elements of a certain type.

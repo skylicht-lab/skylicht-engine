@@ -240,9 +240,6 @@ namespace video
 		//! Used by CD3D11MaterialRenderer to get clip plane and status
 		virtual void getClipPlane(u32 index, core::plane3df& plane, bool& enable);
 
-		//! Returns the graphics card vendor name.
-		virtual core::stringc getVendorInfo() {return VendorName;}
-
 		//! Get the current color format of the color buffer
 		/** \return Color format of the color buffer. */
 		virtual ECOLOR_FORMAT getColorFormat() const;
@@ -384,9 +381,7 @@ namespace video
 		u32 MaxActiveLights;
 
 		core::array<CD3D11HardwareBuffer*> HardwareBuffer;
-
-		core::stringc VendorName;
-		core::stringc GPUName;
+		
 		u16 VendorID;
 
 		CD3D11CallBridge* BridgeCalls;

@@ -544,8 +544,8 @@ namespace video
 		virtual void enableClipPlane(u32 index, bool enable) _IRR_OVERRIDE_;
 
 		//! Returns the graphics card vendor name.
-		virtual core::stringc getVendorInfo() _IRR_OVERRIDE_ {return "Not available on this driver.";}
-		virtual core::stringc getGPUName() _IRR_OVERRIDE_ {return "Not available on this driver.";}
+		virtual core::stringc getVendorInfo() _IRR_OVERRIDE_ { return VendorName; }
+		virtual core::stringc getGPUName() _IRR_OVERRIDE_ { return GPUName;}
 
 		//! Set the minimum number of vertices for which a hw buffer will be created
 		/** \param count Number of vertices to set as minimum. */
@@ -780,6 +780,10 @@ namespace video
 
 		//! Skylicht add for cache
 		bool RendererTransformChanged;
+
+		core::stringc VendorName;
+		core::stringc GPUName;
+
 	};
 
 } // end namespace video
