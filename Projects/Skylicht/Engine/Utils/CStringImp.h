@@ -726,40 +726,48 @@ namespace Skylicht
 		}
 		static wchar_t utf8Char2Unicode(const char*& str)
 		{
-			char c = *str++;
-			if ((c & 0x80) == 0)
-				return c;
+			const unsigned char* p = (const unsigned char*)str;
+			unsigned char c = *p++;
 
-			if (((c & 0xc0) == 0x80) || ((c & 0xfe) == 0xfe))
+			wchar_t result;
+			int extraBytes = 0;
+
+			if (c <= 0x7F)
 			{
-				// I hope it should never happen
-				return static_cast<unsigned char>(c);
+				result = c;
+			}
+			else if ((c & 0xE0) == 0xC0)
+			{
+				result = c & 0x1F;
+				extraBytes = 1;
+			}
+			else if ((c & 0xF0) == 0xE0)
+			{
+				result = c & 0x0F;
+				extraBytes = 2;
+			}
+			else if ((c & 0xF8) == 0xF0)
+			{
+				result = c & 0x07;
+				extraBytes = 3;
+			}
+			else
+			{
+				str++;
+				return L'?';
 			}
 
-#pragma warning( disable : 4309 )
-			char mask = 0xe0, value = 0xc0;
-#pragma warning( default : 4309 )
-
-			int i;
-			for (i = 1; i < 6; ++i)
+			for (int i = 0; i < extraBytes; ++i)
 			{
-				if ((c & mask) == value)
+				unsigned char nextByte = *p;
+				if ((nextByte & 0xC0) != 0x80)
 					break;
-				value = mask;
-				mask >>= 1;
+
+				result = (result << 6) | (nextByte & 0x3F);
+				p++;
 			}
 
-			wchar_t result = c & ~mask;
-			for (; i > 0; --i)
-			{
-				c = *str++;
-				if ((c & 0xc0) != 0x80)
-				{
-					// I hope should never happen
-				}
-				result <<= 6;
-				result |= c & 0x3f;
-			}
+			str = (const char*)p;
 			return result;
 		}
 
@@ -815,7 +823,7 @@ namespace Skylicht
 
 			while (src[k])
 			{
-				wchar_t c = src[k];
+				unsigned int c = (unsigned int)src[k];
 
 				if (c <= 0x007F)
 				{
@@ -826,16 +834,22 @@ namespace Skylicht
 					dst[l++] = 0xC0 | ((c >> 6) & 0x1F);
 					dst[l++] = 0x80 | (c & 0x3F);
 				}
-				else
+				else if (c <= 0xFFFF)
 				{
 					dst[l++] = 0xE0 | ((c >> 12) & 0x0F);
+					dst[l++] = 0x80 | ((c >> 6) & 0x3F);
+					dst[l++] = 0x80 | (c & 0x3F);
+				}
+				else if (c <= 0x10FFFF)
+				{
+					dst[l++] = 0xF0 | ((c >> 18) & 0x07);
+					dst[l++] = 0x80 | ((c >> 12) & 0x3F);
 					dst[l++] = 0x80 | ((c >> 6) & 0x3F);
 					dst[l++] = 0x80 | (c & 0x3F);
 				}
 
 				k++;
 			}
-
 			dst[l] = 0;
 		}
 
