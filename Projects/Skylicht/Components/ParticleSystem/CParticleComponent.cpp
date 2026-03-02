@@ -702,6 +702,7 @@ namespace Skylicht
 				{
 					e->stop();
 				}
+				groups[i]->clearImmortalParticles();
 			}
 		}
 

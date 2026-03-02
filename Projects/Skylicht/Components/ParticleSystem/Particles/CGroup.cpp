@@ -39,6 +39,7 @@ namespace Skylicht
 			Friction(0.0f),
 			LifeMin(1.0f),
 			LifeMax(2.0f),
+			Immortal(false),
 			GravityValue(0.0f),
 			UseOrientationAsBillboard(false),
 			OrientationNormal(1.0f, 0.0f, 0.0f),
@@ -88,6 +89,7 @@ namespace Skylicht
 			object->autoRelease(new CFloatProperty(object, "friction", Friction, 0.0f));
 			object->autoRelease(new CFloatProperty(object, "lifeMin", LifeMin, 0.0f));
 			object->autoRelease(new CFloatProperty(object, "lifeMax", LifeMax, 0.0f));
+			object->autoRelease(new CBoolProperty(object, "immortal", Immortal));
 			object->autoRelease(new CFloatProperty(object, "gravityValue", GravityValue));
 			object->autoRelease(new CVector3Property(object, "gravityRotation", GravityRotation * core::RADTODEG));
 			object->autoRelease(new CVector3Property(object, "particleRotation", ParticleRotation * core::RADTODEG));
@@ -105,6 +107,7 @@ namespace Skylicht
 			Friction = object->get("friction", 0.0f);
 			LifeMin = object->get("lifeMin", 1.0f);
 			LifeMax = object->get("lifeMax", 2.0f);
+			Immortal = object->get("immortal", false);
 			GravityValue = object->get("gravityValue", 1.0f);
 
 			core::vector3df g = object->get("gravityRotation", core::vector3df());
@@ -183,6 +186,19 @@ namespace Skylicht
 			}
 
 			m_particles.set_used(0);
+		}
+
+		void CGroup::clearImmortalParticles()
+		{
+			CParticle* particles = m_particles.pointer();
+			u32 numParticles = m_particles.size();
+
+			for (u32 i = 0; i < numParticles; i++)
+			{
+				CParticle& p = particles[i];
+				if (p.Immortal)
+					p.Life = -1.0f;
+			}
 		}
 
 		void CGroup::update()
@@ -384,7 +400,7 @@ namespace Skylicht
 				p->LastPosition = position;
 				p->Position = position;
 				p->SubEmitterDirection = subEmitterDirection;
-				
+
 				initParticleModel(*p);
 			}
 
@@ -404,7 +420,7 @@ namespace Skylicht
 				p->LastPosition = position;
 				p->Position = position;
 				p->Velocity = velocity;
-				
+
 				initParticleModel(*p);
 			}
 

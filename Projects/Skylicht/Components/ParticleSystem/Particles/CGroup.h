@@ -127,6 +127,7 @@ namespace Skylicht
 			float Friction;
 			float LifeMin;
 			float LifeMax;
+			bool Immortal;
 
 			float GravityValue;
 			core::vector3df GravityRotation;
@@ -154,6 +155,8 @@ namespace Skylicht
 			virtual ~CGroup();
 
 			void clearParticles();
+
+			void clearImmortalParticles();
 
 			void update();
 
@@ -350,6 +353,7 @@ namespace Skylicht
 			{
 				p.Age = 0.0f;
 				p.Life = random(LifeMin, LifeMax);
+				p.Immortal = Immortal;
 				p.LifeTime = p.Life;
 				p.HaveRotate = false;
 			}
