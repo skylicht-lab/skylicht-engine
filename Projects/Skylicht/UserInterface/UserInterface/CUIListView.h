@@ -100,6 +100,14 @@ namespace Skylicht
 			CGUIElement* addItem(CObjectSerializable* data);
 
 			/**
+			* @brief Get the current mask element used for clipping the list viewport.
+			*/
+			CGUIMask* getMask()
+			{
+				return m_mask;
+			}
+
+			/**
 			 * @brief Enable or disable visual masking for the list viewport.
 			 * @param b true to enable the mask (clip children), false to disable.
 			 */
