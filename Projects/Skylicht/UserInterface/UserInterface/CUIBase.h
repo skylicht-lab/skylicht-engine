@@ -226,6 +226,8 @@ namespace Skylicht
 			/** @brief Returns a pointer to the internal rect transform (4 corners). */
 			core::vector3df* getRectTransform();
 
+			void getRectTransform(CGUIElement* element, core::vector3df* t);
+
 			/**
 			 * @brief Called when pointer enters or hovers over the element.
 			 * @param pointerId ID of the pointer device.

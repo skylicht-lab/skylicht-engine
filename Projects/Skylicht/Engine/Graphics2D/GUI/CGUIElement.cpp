@@ -606,4 +606,19 @@ namespace Skylicht
 	{
 		return m_canvas->getGUIByPath(this, path);
 	}
+
+	CGUIMask* CGUIElement::getParentMask()
+	{
+		CGUIElement* p = this;
+		while (p != m_canvas->getRootElement())
+		{
+			CGUIMask* m = p->getMask();
+
+			if (m)
+				return m;
+
+			p = p->getParent();
+		}
+		return NULL;
+	}
 }

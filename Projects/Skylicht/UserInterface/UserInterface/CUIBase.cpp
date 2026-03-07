@@ -140,6 +140,34 @@ namespace Skylicht
 			return m_rectTransform;
 		}
 
+		void CUIBase::getRectTransform(CGUIElement* element, core::vector3df* t)
+		{
+			CCanvas* canvas = element->getCanvas();
+
+			CCamera* camera = canvas->getRenderCamera();
+			if (camera == NULL)
+				return;
+
+			const core::matrix4& world = canvas->getRenderWorldTransform();
+			const core::matrix4& elementTranform = element->getAbsoluteTransform();
+
+			// real world transform
+			core::matrix4 worldElementTransform = world * elementTranform;
+
+			core::rectf r = element->getRect();
+
+			t[0].set(r.UpperLeftCorner.X, r.UpperLeftCorner.Y, 0.0f);
+			t[1].set(r.LowerRightCorner.X, r.UpperLeftCorner.Y, 0.0f);
+			t[2].set(r.UpperLeftCorner.X, r.LowerRightCorner.Y, 0.0f);
+			t[3].set(r.LowerRightCorner.X, r.LowerRightCorner.Y, 0.0f);
+
+			for (int i = 0; i < 4; i++)
+			{
+				// get real 3d position
+				worldElementTransform.transformVect(t[i]);
+			}
+		}
+
 		void CUIBase::onPointerHover(int pointerId, float pointerX, float pointerY)
 		{
 			m_isPointerHover = true;

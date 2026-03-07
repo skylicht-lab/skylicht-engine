@@ -354,6 +354,8 @@ namespace Skylicht
 			return m_mask;
 		}
 
+		CGUIMask* getParentMask();
+
 		inline void setMask(CGUIMask* mask)
 		{
 			m_mask = mask;

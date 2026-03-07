@@ -237,7 +237,35 @@ namespace Skylicht
 
 					if (t1.isPointInside(mousePos) == true || t2.isPointInside(mousePos) == true)
 					{
-						m_raycastUIObjects.push_back(base);
+						bool acceptTouch = true;
+
+						CGUIMask* mask = base->getElement()->getParentMask();
+						if (mask)
+						{
+							// check the touch is inside mask or not?
+							core::vector3df r[4];
+							base->getRectTransform(mask, r);
+
+							for (int i = 0; i < 4; i++)
+							{
+								CProjective::getScreenCoordinatesFrom3DPosition(
+									camera, r[i],
+									p2d[i].X,
+									p2d[i].Y,
+									vp.getWidth(),
+									vp.getHeight());
+								p2d[i].Z = 0.0f;
+							}
+
+							t1.set(p2d[0], p2d[1], p2d[2]);
+							t2.set(p2d[2], p2d[1], p2d[3]);
+
+							if (!t1.isPointInside(mousePos) && !t2.isPointInside(mousePos))
+								acceptTouch = false;
+						}
+
+						if (acceptTouch)
+							m_raycastUIObjects.push_back(base);
 					}
 
 					base->onPointerMove(mouseID, mouseX, mouseY);
