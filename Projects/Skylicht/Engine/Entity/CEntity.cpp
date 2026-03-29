@@ -136,8 +136,11 @@ namespace Skylicht
 
 			// see: CIndirectLightingSystem, CReflectionProbeSystem
 			CWorldTransformData* transformData = GET_ENTITY_DATA(this, CWorldTransformData);
-			transformData->HasChanged = true;
-			transformData->NeedValidate = true;
+			if (transformData)
+			{
+				transformData->HasChanged = true;
+				transformData->NeedValidate = true;
+			}
 
 			m_visible = b;
 		}
