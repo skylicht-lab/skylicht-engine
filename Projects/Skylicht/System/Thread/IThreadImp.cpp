@@ -39,7 +39,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #ifdef WINDOWS_STORE
 #include <thread>
 #endif
-#elif defined(EMSCRIPTEN)
+#elif defined(__EMSCRIPTEN__)
 #include <sys/time.h>
 #else		
 #include <sys/time.h>
@@ -87,7 +87,7 @@ namespace Skylicht
 			// Win32
 			Sleep(time);
 			//#endif
-	#elif defined(EMSCRIPTEN)
+	#elif defined(__EMSCRIPTEN__)
 			
 	#else
 			struct timespec ts;

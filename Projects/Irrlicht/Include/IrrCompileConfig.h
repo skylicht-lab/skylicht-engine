@@ -79,7 +79,7 @@
 	#define _IRR_COMPILE_WITH_X11_DEVICE_
 #endif
 
-#ifdef EMSCRIPTEN
+#ifdef __EMSCRIPTEN__
 	#define _IRR_WEBASM_PLATFORM_
 	#define _IRR_COMPILE_WITH_OGLES3_
 	#define _IRR_COMPILE_WITH_SDL_DEVICE_

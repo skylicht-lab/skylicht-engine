@@ -26,7 +26,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #if defined(ANDROID)
 	#define USE_PTHREAD
-#elif defined(EMSCRIPTEN)
+#elif defined(__EMSCRIPTEN__)
 	// no thread support on webgl
 #elif defined(IOS)
 	#define USE_PTHREAD

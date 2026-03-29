@@ -480,7 +480,7 @@ namespace irr
 				{
 					// FIXME: Implement more precise window control
 				case SDL_WINDOWEVENT_SIZE_CHANGED:
-#ifndef EMSCRIPTEN
+#ifndef __EMSCRIPTEN__
 					// SKYLICHT: Need post an event to application, I will fix it later...
 					// FIXME: Check if the window is game window
 					if ((SDL_event.window.data1 != (int)Width) || (SDL_event.window.data2 != (int)Height))
@@ -981,7 +981,7 @@ namespace irr
 
 	void CIrrDeviceSDL2::onWindowResize(u32 w, u32 h)
 	{
-#ifdef EMSCRIPTEN
+#ifdef __EMSCRIPTEN__
 		Width = w;
 		Height = h;
 		resizeWindow(w, h);

@@ -89,7 +89,7 @@
 #  include "config-android.h"
 #endif
 
-#if defined(LINUX) || defined(CYGWIN) || defined(EMSCRIPTEN)
+#if defined(LINUX) || defined(CYGWIN) || defined(__EMSCRIPTEN__)
 #  include "config-linux.h"
 #endif
 
