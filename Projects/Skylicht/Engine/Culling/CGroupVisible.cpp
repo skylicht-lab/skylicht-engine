@@ -55,7 +55,7 @@ namespace Skylicht
 			CVisibleData* visible = GET_ENTITY_DATA(entity, CVisibleData);
 			CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
 
-			visible->SelfVisible = entities[i]->isVisible();
+			visible->SelfVisible = entity->isVisible();
 			visible->Visible = visible->SelfVisible;
 			visible->Culled = false;
 

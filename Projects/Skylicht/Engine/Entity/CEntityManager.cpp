@@ -163,6 +163,7 @@ namespace Skylicht
 			CEntity* entity = m_unused[last];
 			initDefaultData(entity);
 			entity->setAlive(true);
+			entity->setVisible(true);
 
 			m_unused.erase(last);
 
@@ -189,13 +190,41 @@ namespace Skylicht
 		entities.reallocate(num);
 		entities.set_used(0);
 
-		for (int i = 0; i < num; i++)
+		if (m_unused.size() >= num)
 		{
-			CEntity* entity = new CEntity(this);
-			initDefaultData(entity);
+			std::vector<CEntity*> temp;
 
-			m_entities.push_back(entity);
-			entities.push_back(entity);
+			for (int i = 0; i < num; i++)
+			{
+				int last = (int)m_unused.size() - 1;
+
+				CEntity* entity = m_unused[last];
+				initDefaultData(entity);
+				entity->setAlive(true);
+				entity->setVisible(true);
+
+				m_unused.erase(last);
+
+				temp.push_back(entity);
+			}
+
+			std::sort(temp.begin(), temp.end(), [](CEntity*& a, CEntity*& b) {
+				return a->getIndex() < b->getIndex();
+				});
+
+			for (CEntity* entity : temp)
+				entities.push_back(entity);
+		}
+		else
+		{
+			for (int i = 0; i < num; i++)
+			{
+				CEntity* entity = new CEntity(this);
+				initDefaultData(entity);
+
+				m_entities.push_back(entity);
+				entities.push_back(entity);
+			}
 		}
 
 		CEntity** result = entities.pointer();
