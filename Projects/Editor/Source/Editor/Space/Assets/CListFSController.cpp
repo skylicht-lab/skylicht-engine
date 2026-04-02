@@ -137,6 +137,7 @@ namespace Skylicht
 
 					m_listFS->invalidate();
 					m_listFS->recurseLayout();
+					m_listFS->layout();
 					m_listFS->scrollToItem(item);
 
 					result = item;

@@ -21,6 +21,9 @@
 *.out
 *.app
 
+# Files
+/Assets/Window.xml
+
 # Build folder
 /Bin/
 /PrjMac/
@@ -41,4 +44,5 @@
 /Doc/
 /build/
 /.vscode/
+/.vs/
 node_modules/

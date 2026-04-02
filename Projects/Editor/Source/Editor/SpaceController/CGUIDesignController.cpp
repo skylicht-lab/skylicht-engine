@@ -978,7 +978,7 @@ namespace Skylicht
 			CSelectObject* lastSelected = selection->getLastSelected();
 			if (lastSelected == NULL)
 			{
-				CCopyPasteUI::getInstance()->paste(m_guiCanvas->getRootElement());
+				newUIs = CCopyPasteUI::getInstance()->paste(m_guiCanvas->getRootElement());
 			}
 			else
 			{
@@ -987,17 +987,22 @@ namespace Skylicht
 					CGUIElement* gui = m_guiCanvas->getGUIByID(lastSelected->getID().c_str());
 					if (gui)
 					{
-						CCopyPasteUI::getInstance()->paste(gui->getParent());
+						newUIs = CCopyPasteUI::getInstance()->paste(gui->getParent());
 					}
 					else
 					{
-						CCopyPasteUI::getInstance()->paste(m_guiCanvas->getRootElement());
+						newUIs = CCopyPasteUI::getInstance()->paste(m_guiCanvas->getRootElement());
 					}
 				}
 			}
 
 			selection->clear();
-			selection->addSelect(newUIs);
+
+			for (CGUIElement* obj : newUIs)
+			{
+				CSelectObject* selectedObject = selection->addSelect(obj);
+				selectedObject->addObserver(this);
+			}
 		}
 
 		void CGUIDesignController::onDuplicate()

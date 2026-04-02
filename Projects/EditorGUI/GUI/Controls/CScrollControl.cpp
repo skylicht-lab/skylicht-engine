@@ -159,7 +159,7 @@ namespace Skylicht
 				}
 				else if (p.Y + item->height() > height())
 				{
-					scrollVerticalOffset(p.Y + item->height() - height());
+					scrollVerticalOffset(p.Y + item->height() - height() * 0.5f);
 				}
 
 				updateScrollBar();
