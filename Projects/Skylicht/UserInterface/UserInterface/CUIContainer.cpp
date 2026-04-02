@@ -132,17 +132,37 @@ namespace Skylicht
 
 		bool CUIContainer::removeChild(CUIBase* base)
 		{
+			bool ret = false;
 			std::vector<CUIBase*>::iterator i = m_arrayUIObjects.begin(), end = m_arrayUIObjects.end();
 			while (i != end)
 			{
 				if (*i == base)
 				{
+					if (m_hover == base)
+						m_hover = NULL;
+
+					if (m_skip == base)
+						m_skip = NULL;
+
 					m_arrayUIObjects.erase(i);
-					return true;
+					ret = true;
+					break;
 				}
 				++i;
 			}
-			return false;
+
+			i = m_raycastUIObjects.begin(), end = m_raycastUIObjects.end();
+			while (i != end)
+			{
+				if (*i == base)
+				{
+					m_raycastUIObjects.erase(i);
+					break;
+				}
+				++i;
+			}
+
+			return ret;
 		}
 
 		void CUIContainer::removeChildsByGUI(CGUIElement* element)
@@ -157,7 +177,12 @@ namespace Skylicht
 
 				CUIBase* base = getChildByGUI(element);
 				if (base)
+				{
+					if (m_hover == base)
+						m_hover = NULL;
+
 					base->remove();
+				}
 
 				std::vector<CGUIElement*>& childs = element->getChilds();
 				for (CGUIElement* e : childs)
