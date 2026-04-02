@@ -302,7 +302,7 @@ namespace Skylicht
 					{
 						m_hover->onPointerOut(mouseID, mouseX, mouseY);
 
-						if (m_hover->isPointerDown() && m_hover->getPointerId() == mouseID)
+						if (m_hover && m_hover->isPointerDown() && m_hover->getPointerId() == mouseID)
 							m_hover->onPointerUp(mouseID, mouseX, mouseY);
 
 						m_hover = NULL;
@@ -321,7 +321,7 @@ namespace Skylicht
 					{
 						m_hover->onPointerOut(mouseID, mouseX, mouseY);
 
-						if (m_hover->isPointerDown() && m_hover->getPointerId() == mouseID)
+						if (m_hover && m_hover->isPointerDown() && m_hover->getPointerId() == mouseID)
 							m_hover->onPointerUp(mouseID, mouseX, mouseY);
 					}
 
@@ -349,7 +349,9 @@ namespace Skylicht
 					{
 						if (m_hover->isPointerDown() && m_hover->getPointerId() == mouseID)
 							m_hover->onPressed();
-						m_hover->onPointerUp(mouseID, mouseX, mouseY);
+
+						if (m_hover)
+							m_hover->onPointerUp(mouseID, mouseX, mouseY);
 					}
 				}
 
