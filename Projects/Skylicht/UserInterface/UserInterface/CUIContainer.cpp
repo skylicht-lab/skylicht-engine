@@ -30,8 +30,11 @@ namespace Skylicht
 			{
 				CUIBase* base = m_arrayUIObjects[0];
 				m_arrayUIObjects.erase(m_arrayUIObjects.begin());
-				base->remove();
+				delete base;
 			}
+
+			for (CUIBase* base : m_removed)
+				delete base;
 		}
 
 		void CUIContainer::initComponent()
@@ -98,6 +101,10 @@ namespace Skylicht
 				if (base->isVisible())
 					base->update();
 			}
+
+			for (CUIBase* base : m_removed)
+				delete base;
+			m_removed.clear();
 		}
 
 		bool CUIContainer::isPointerDown(int id)
@@ -161,6 +168,9 @@ namespace Skylicht
 				}
 				++i;
 			}
+
+			if (ret)
+				m_removed.push_back(base);
 
 			return ret;
 		}
