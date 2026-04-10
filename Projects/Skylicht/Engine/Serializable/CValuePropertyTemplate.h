@@ -269,6 +269,83 @@ namespace Skylicht
 		}
 	};
 
+	class SKYLICHT_API CDoubleProperty : public CValuePropertyTemplate<double>
+	{
+	public:
+		double Min;
+		double Max;
+		bool ClampMin;
+		bool ClampMax;
+
+	public:
+		CDoubleProperty() :
+			CDoubleProperty(NULL, "CDoubleProperty")
+		{
+
+		}
+
+		CDoubleProperty(CObjectSerializable* owner, const char* name) :
+			CValuePropertyTemplate(owner, Double, name),
+			ClampMin(false),
+			ClampMax(false),
+			Min(-FLT_MAX),
+			Max(FLT_MAX)
+		{
+			set(0.0);
+		}
+
+		CDoubleProperty(CObjectSerializable* owner, const char* name, double value) :
+			CValuePropertyTemplate(owner, Double, name),
+			ClampMin(false),
+			ClampMax(false),
+			Min(-FLT_MAX),
+			Max(FLT_MAX)
+		{
+			set(value);
+		}
+
+		CDoubleProperty(CObjectSerializable* owner, const char* name, double value, double min, double max) :
+			CValuePropertyTemplate(owner, Double, name),
+			ClampMin(true),
+			ClampMax(true),
+			Min(min),
+			Max(max)
+		{
+			set(value);
+		}
+
+		CDoubleProperty(CObjectSerializable* owner, const char* name, double value, double min) :
+			CValuePropertyTemplate(owner, Double, name),
+			ClampMin(true),
+			ClampMax(false),
+			Min(min),
+			Max(FLT_MAX)
+		{
+			set(value);
+		}
+
+		virtual void serialize(io::IAttributes* io)
+		{
+			io->addDouble(Name.c_str(), m_value);
+		}
+
+		virtual void deserialize(io::IAttributes* io)
+		{
+			m_value = io->getAttributeAsDouble(Name.c_str(), m_value);
+		}
+
+		virtual CValueProperty* clone()
+		{
+			CDoubleProperty* value = new CDoubleProperty(NULL, Name.c_str());
+			value->m_value = m_value;
+			value->Min = Min;
+			value->Max = Max;
+			value->ClampMin = ClampMin;
+			value->ClampMax = ClampMax;
+			return value;
+		}
+	};
+
 	class SKYLICHT_API CStringProperty : public CValuePropertyTemplate<std::string>
 	{
 	public:

@@ -40,6 +40,7 @@ public:
 	virtual s32 getInt()				{ return 0; }
 	virtual u32 getUInt()				{ return 0; }
 	virtual f32 getFloat()				{ return 0; }
+	virtual f64 getDouble()				{ return 0; }
 	virtual video::SColorf getColorf()		{ return video::SColorf(1.0f,1.0f,1.0f,1.0f); }
 	virtual video::SColor getColor()		{ return video::SColor(255,255,255,255); }
 	virtual core::stringc getString()		{ return core::stringc(getStringW().c_str()); }
@@ -70,6 +71,7 @@ public:
 	virtual void setInt(s32 intValue)			{};
 	virtual void setUInt(u32 intValue)			{};
 	virtual void setFloat(f32 floatValue)		{};
+	virtual void setDouble(f64 floatValue) {};
 	virtual void setString(const char* text)	{};
 	virtual void setString(const wchar_t* text){ setString(core::stringc(text).c_str()); };
 	virtual void setArray(const core::array<core::stringw>& arr )	{};

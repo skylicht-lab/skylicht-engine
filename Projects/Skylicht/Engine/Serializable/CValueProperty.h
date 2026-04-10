@@ -37,7 +37,7 @@ namespace Skylicht
 		Integer,
 		UInteger,
 		Float,
-		Decimal,
+		Double,
 		DateTime,
 		Bool,
 		Vector3,

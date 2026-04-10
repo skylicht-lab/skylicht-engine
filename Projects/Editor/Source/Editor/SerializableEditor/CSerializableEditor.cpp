@@ -276,6 +276,92 @@ namespace Skylicht
 						m_subjects.push_back(subject);
 					}
 				}
+				else if (valueProperty->getType() == EPropertyDataType::Double)
+				{
+					CDoubleProperty* value = dynamic_cast<CDoubleProperty*>(valueProperty);
+					if (value->ClampMin && value->ClampMax)
+					{
+						// add slider control on Limit Float
+						CSubject<float>* subject = new CSubject<float>((float)value->get());
+						CObserver* observer = new CObserver();
+						observer->Notify = [&, object, value, s = subject, o = observer](ISubject* subject, IObserver* from)
+							{
+								if (from != o)
+								{
+									float v = s->get();
+									value->set((double)v);
+									s->set(v);
+									onUpdateValue(object);
+								}
+							};
+						subject->addObserver(observer, true);
+
+						valueProperty->OnSetHidden = [s = subject, o = observer](bool hide)
+							{
+								s->setEnable(!hide);
+								s->notify(o);
+							};
+
+						valueProperty->OnChanged = [value, subject, observer]()
+							{
+								subject->set((float)value->get());
+								subject->notify(observer);
+							};
+
+						ui->addSlider(layout, ui->getPrettyName(value->Name), subject, (float)value->Min, (float)value->Max);
+						m_subjects.push_back(subject);
+					}
+					else
+					{
+						CSubject<float>* subject = new CSubject<float>((float)value->get());
+						CObserver* observer = new CObserver();
+						observer->Notify = [&, object, value, s = subject, o = observer](ISubject* subject, IObserver* from)
+							{
+								if (from != o)
+								{
+									float v = s->get();
+									bool notifyUI = false;
+
+									if (value->ClampMin && v < value->Min)
+									{
+										v = value->Min;
+										notifyUI = true;
+									}
+									if (value->ClampMax && v > value->Max)
+									{
+										v = value->Max;
+										notifyUI = true;
+									}
+
+									value->set((double)v);
+
+									if (notifyUI)
+									{
+										s->set(v);
+										s->notify(o);
+									}
+
+									onUpdateValue(object);
+								}
+							};
+						subject->addObserver(observer, true);
+
+						valueProperty->OnSetHidden = [s = subject, o = observer](bool hide)
+							{
+								s->setEnable(!hide);
+								s->notify(o);
+							};
+
+						valueProperty->OnChanged = [value, subject, observer]()
+							{
+								subject->set((float)value->get());
+								subject->notify(observer);
+							};
+
+						ui->addNumberInput(layout, ui->getPrettyName(value->Name), subject, 0.01f);
+						m_subjects.push_back(subject);
+					}
+				}
 				else if (valueProperty->getType() == EPropertyDataType::Integer)
 				{
 					CIntProperty* value = dynamic_cast<CIntProperty*>(valueProperty);

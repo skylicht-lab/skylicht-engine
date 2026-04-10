@@ -128,6 +128,31 @@ public:
 
 	/*
 
+		Double Attribute
+
+	*/
+
+	//! Adds an attribute as double
+	virtual void addDouble(const c8* attributeName, f64 value);
+
+	//! Sets a attribute as double value
+	virtual void setAttribute(const c8* attributeName, f64 value);
+
+	//! Gets an attribute as double value
+	//! \param attributeName: Name of the attribute to get.
+	//! \param defaultNotFound Value returned when attributeName was not found
+	//! \return Returns value of the attribute previously set by setAttribute()
+	virtual f64 getAttributeAsDouble(const c8* attributeName, irr::f64 defaultNotFound = 0.0);
+
+	//! Gets an attribute as double value
+	//! \param index: Index value, must be between 0 and getAttributeCount()-1.
+	virtual f64 getAttributeAsDouble(s32 index);
+
+	//! Sets an attribute as float value
+	virtual void setAttribute(s32 index, f64 value);
+
+	/*
+
 		String Attribute
 
 	*/

@@ -37,6 +37,11 @@ public:
 		return BoolValue ? 1.0f : 0.0f;
 	}
 
+	virtual f64 getDouble() _IRR_OVERRIDE_
+	{
+		return BoolValue ? 1.0 : 0.0;
+	}
+
 	virtual bool getBool() _IRR_OVERRIDE_
 	{
 		return BoolValue;
@@ -53,6 +58,11 @@ public:
 	}
 
 	virtual void setFloat(f32 floatValue) _IRR_OVERRIDE_
+	{
+		BoolValue = (floatValue != 0);
+	}
+
+	virtual void setDouble(f64 floatValue) _IRR_OVERRIDE_
 	{
 		BoolValue = (floatValue != 0);
 	}
@@ -106,6 +116,11 @@ public:
 		return (f32)Value;
 	}
 
+	virtual f64 getDouble() _IRR_OVERRIDE_
+	{
+		return (f64)Value;
+	}
+
 	virtual bool getBool() _IRR_OVERRIDE_
 	{
 		return (Value != 0);
@@ -130,6 +145,11 @@ public:
 	{
 		Value = (s32)floatValue;
 	};
+
+	virtual void setDouble(f64 floatValue) _IRR_OVERRIDE_
+	{
+		Value = (s32)floatValue;
+	}
 
 	virtual void setString(const char* text) _IRR_OVERRIDE_
 	{
@@ -174,6 +194,11 @@ public:
 		return (f32)Value;
 	}
 
+	virtual f64 getDouble() _IRR_OVERRIDE_
+	{
+		return (f64)Value;
+	}
+
 	virtual bool getBool() _IRR_OVERRIDE_
 	{
 		return (Value != 0);
@@ -196,8 +221,13 @@ public:
 
 	virtual void setFloat(f32 floatValue) _IRR_OVERRIDE_
 	{
-		Value = (s32)floatValue;
+		Value = (u32)floatValue;
 	};
+
+	virtual void setDouble(f64 floatValue) _IRR_OVERRIDE_
+	{
+		Value = (u32)floatValue;
+	}
 
 	virtual void setString(const char* text) _IRR_OVERRIDE_
 	{
@@ -244,6 +274,11 @@ public:
 		return Value;
 	}
 
+	virtual f64 getDouble() _IRR_OVERRIDE_
+	{
+		return (f64)Value;
+	}
+
 	virtual bool getBool() _IRR_OVERRIDE_
 	{
 		return (Value != 0);
@@ -269,6 +304,11 @@ public:
 		Value = floatValue;
 	}
 
+	virtual void setDouble(f64 floatValue) _IRR_OVERRIDE_
+	{
+		Value = (f32)floatValue;
+	}
+
 	virtual void setString(const char* text) _IRR_OVERRIDE_
 	{
 		Value = core::fast_atof(text);
@@ -279,13 +319,90 @@ public:
 		return EAT_FLOAT;
 	}
 
-
 	virtual const wchar_t* getTypeString() const _IRR_OVERRIDE_
 	{
 		return L"float";
 	}
 
 	f32 Value;
+};
+
+class CDoubleAttribute : public IAttribute
+{
+public:
+
+	CDoubleAttribute(const char* name, f64 value)
+	{
+		Name = name;
+		setDouble(value);
+	}
+
+	virtual s32 getInt() _IRR_OVERRIDE_
+	{
+		return (s32)Value;
+	}
+
+	virtual u32 getUInt() _IRR_OVERRIDE_
+	{
+		return (u32)Value;
+	}
+
+	virtual f32 getFloat() _IRR_OVERRIDE_
+	{
+		return (f32)Value;
+	}
+
+	virtual f64 getDouble() _IRR_OVERRIDE_
+	{
+		return Value;
+	}
+
+	virtual bool getBool() _IRR_OVERRIDE_
+	{
+		return (Value != 0);
+	}
+
+	virtual core::stringw getStringW() _IRR_OVERRIDE_
+	{
+		return core::stringw((double)Value);
+	}
+
+	virtual void setInt(s32 intValue) _IRR_OVERRIDE_
+	{
+		Value = (f32)intValue;
+	}
+
+	virtual void setUInt(u32 intValue) _IRR_OVERRIDE_
+	{
+		Value = (f32)intValue;
+	}
+
+	virtual void setFloat(f32 floatValue) _IRR_OVERRIDE_
+	{
+		Value = (f64)floatValue;
+	}
+
+	virtual void setDouble(f64 floatValue) _IRR_OVERRIDE_
+	{
+		Value = floatValue;
+	}
+
+	virtual void setString(const char* text) _IRR_OVERRIDE_
+	{
+		Value = atof(text);
+	}
+
+	virtual E_ATTRIBUTE_TYPE getType() const _IRR_OVERRIDE_
+	{
+		return EAT_DOUBLE;
+	}
+
+	virtual const wchar_t* getTypeString() const _IRR_OVERRIDE_
+	{
+		return L"double";
+	}
+
+	f64 Value;
 };
 
 

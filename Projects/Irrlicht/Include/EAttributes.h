@@ -21,6 +21,7 @@ enum E_ATTRIBUTE_TYPE
 
 	// float attribute
 	EAT_FLOAT,
+	EAT_DOUBLE,
 
 	// string attribute
 	EAT_STRING,

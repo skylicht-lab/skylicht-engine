@@ -199,6 +199,65 @@ namespace Skylicht
 						m_subjects.push_back(subject);
 					}
 				}
+				else if (valueProperty->getType() == EPropertyDataType::Double)
+				{
+					CDoubleProperty* value = dynamic_cast<CDoubleProperty*>(valueProperty);
+					if (value->ClampMin && value->ClampMax)
+					{
+						// add slider control on Limit Float
+						CSubject<float>* subject = new CSubject<float>((float)value->get());
+						CObserver* observer = new CObserver();
+						observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
+							{
+								if (from != o)
+								{
+									float v = s->get();
+									value->set((double)v);
+									s->set(v);
+									updateData();
+								}
+							};
+						subject->addObserver(observer, true);
+						ui->addSlider(layout, ui->getPrettyName(value->Name), subject, (float)value->Min, (float)value->Max);
+					}
+					else
+					{
+						CSubject<float>* subject = new CSubject<float>((float)value->get());
+						CObserver* observer = new CObserver();
+						observer->Notify = [&, value, s = subject, o = observer](ISubject* subject, IObserver* from)
+							{
+								if (from != o)
+								{
+									float v = s->get();
+									bool notifyUI = false;
+
+									if (value->ClampMin && v < value->Min)
+									{
+										v = (float)value->Min;
+										notifyUI = true;
+									}
+									if (value->ClampMax && v > value->Max)
+									{
+										v = (float)value->Max;
+										notifyUI = true;
+									}
+
+									value->set((double)v);
+
+									if (notifyUI)
+									{
+										s->set(v);
+										s->notify(o);
+									}
+
+									updateData();
+								}
+							};
+						subject->addObserver(observer, true);
+						ui->addNumberInput(layout, ui->getPrettyName(value->Name), subject, 0.01f);
+						m_subjects.push_back(subject);
+					}
+				}
 				else if (valueProperty->getType() == EPropertyDataType::Integer)
 				{
 					CIntProperty* value = dynamic_cast<CIntProperty*>(valueProperty);

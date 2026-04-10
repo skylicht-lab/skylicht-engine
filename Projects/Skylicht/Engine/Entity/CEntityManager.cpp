@@ -357,7 +357,7 @@ namespace Skylicht
 		}
 		else
 		{
-			if (t->Parent && t->Parent->Depth == -1)
+			if (t->Parent->Depth == -1)
 				t->Depth = getDepth(t->Parent) + 1;
 			else
 				t->Depth = t->Parent->Depth + 1;
@@ -449,10 +449,6 @@ namespace Skylicht
 			{
 				int priorityA = (int)a->getSystemOrder();
 				int priorityB = (int)b->getSystemOrder();
-
-				if (priorityA == priorityB)
-					return a->getSystemOrder() < b->getSystemOrder();
-
 				return priorityA < priorityB;
 			}
 		} customLess;

@@ -223,6 +223,9 @@ namespace Skylicht
 			case io::EAT_FLOAT:
 				valueProperty = new CFloatProperty(object, name, attributes->getAttributeAsFloat(i));
 				break;
+			case io::EAT_DOUBLE:
+				valueProperty = new CDoubleProperty(object, name, attributes->getAttributeAsDouble(i));
+				break;
 			case io::EAT_BOOL:
 				valueProperty = new CBoolProperty(object, name, attributes->getAttributeAsBool(i));
 				break;

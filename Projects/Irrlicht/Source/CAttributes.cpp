@@ -331,6 +331,15 @@ void CAttributes::setAttribute(const c8* attributeName, f32 value)
 		Attributes.push_back(new CFloatAttribute(attributeName, value));
 }
 
+void CAttributes::setAttribute(const c8* attributeName, f64 value)
+{
+	IAttribute* att = getAttributeP(attributeName);
+	if (att)
+		att->setDouble(value);
+	else
+		Attributes.push_back(new CDoubleAttribute(attributeName, value));
+}
+
 //! Gets a attribute as integer value
 //! \param attributeName: Name of the attribute to get.
 //! \return Returns value of the attribute previously set by setAttribute() as float value
@@ -340,6 +349,15 @@ f32 CAttributes::getAttributeAsFloat(const c8* attributeName, irr::f32 defaultNo
 	IAttribute* att = getAttributeP(attributeName);
 	if (att)
 		return att->getFloat();
+
+	return defaultNotFound;
+}
+
+f64 CAttributes::getAttributeAsDouble(const c8* attributeName, irr::f64 defaultNotFound)
+{
+	IAttribute* att = getAttributeP(attributeName);
+	if (att)
+		return att->getDouble();
 
 	return defaultNotFound;
 }
@@ -698,6 +716,14 @@ f32 CAttributes::getAttributeAsFloat(s32 index)
 		return 0.f;
 }
 
+f64 CAttributes::getAttributeAsDouble(s32 index)
+{
+	if ((u32)index < Attributes.size())
+		return Attributes[index]->getDouble();
+	else
+		return 0.0;
+}
+
 //! Gets an attribute as color
 //! \param index: Index value, must be between 0 and getAttributeCount()-1.
 video::SColor CAttributes::getAttributeAsColor(s32 index)
@@ -840,6 +866,11 @@ void CAttributes::addFloat(const c8* attributeName, f32 value)
 	Attributes.push_back(new CFloatAttribute(attributeName, value));
 }
 
+void CAttributes::addDouble(const c8* attributeName, f64 value)
+{
+	Attributes.push_back(new CDoubleAttribute(attributeName, value));
+}
+
 //! Adds an attribute as string
 void CAttributes::addString(const c8* attributeName, const char* value)
 {
@@ -967,6 +998,12 @@ void CAttributes::setAttribute(s32 index, f32 value)
 {
 	if ((u32)index < Attributes.size())
 		Attributes[index]->setFloat(value);
+}
+
+void CAttributes::setAttribute(s32 index, f64 value)
+{
+	if ((u32)index < Attributes.size())
+		Attributes[index]->setDouble(value);
 }
 
 //! Sets a attribute as color

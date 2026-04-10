@@ -175,7 +175,7 @@ namespace Skylicht
 
 					std::wstring ssType = xmlReader->getAttributeValue(L"ss:Type");
 					if (ssType == L"Number")
-						currentCell->Type = Decimal;
+						currentCell->Type = Double;
 					else if (ssType == L"DateTime")
 						currentCell->Type = DateTime;
 					else
@@ -200,7 +200,7 @@ namespace Skylicht
 					CStringImp::convertUTF8ToUnicode(text, textw);
 					currentCell->UnicodeValue = textw;
 
-					if (currentCell->Type == Decimal)
+					if (currentCell->Type == Double)
 					{
 						currentCell->NumberInt = atoi(text);
 						currentCell->NumberFloat = (float)atof(text);
