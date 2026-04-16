@@ -59,6 +59,8 @@ option(BUILD_SDL "Build with Simple DirectMedia Layer is a cross-platform develo
 
 option(USE_OPENMP "Use openmp for multithread optimize" ON)
 
+option(USE_PRECISE_FLOATINGPOINT "Use precise floating point math for synchronization" OFF)
+
 include(SkylichtConfig.cmake)
 
 include(PlatformConfig.cmake)
@@ -180,6 +182,11 @@ if (BUILD_ANDROID)
 	add_compile_options(-Wno-narrowing)
 	add_compile_options(-fvisibility=hidden)
 	add_compile_options(-O3)
+	
+	if (USE_PRECISE_FLOATINGPOINT)
+		add_compile_options(-fno-fast-math)
+		add_compile_options(-ffp-model=precise)
+	endif()
 endif()
 
 # visual studio
@@ -210,12 +217,26 @@ elseif (MSVC)
 		add_definitions(-D_WIN64)
 	endif()
 	
-	option(USE_MSVC_FAST_FLOATINGPOINT "Use MSVC /fp:fast option" ON)
-	if (USE_MSVC_FAST_FLOATINGPOINT)
-		  add_compile_options(/fp:fast)
+	if (USE_PRECISE_FLOATINGPOINT)
+		add_compile_options(/fp:precise)
+	else()
+		option(USE_MSVC_FAST_FLOATINGPOINT "Use MSVC /fp:fast option" ON)
+		if (USE_MSVC_FAST_FLOATINGPOINT)
+			add_compile_options(/fp:fast)
+		endif()
 	endif()
 
 	set(CMAKE_EXE_LINKER_FLAGS	"${CMAKE_EXE_LINKER_FLAGS} /MANIFEST:NO")
+else()
+	# other compilers (Linux, MacOS, ...)
+	if (USE_PRECISE_FLOATINGPOINT)
+		add_compile_options(-fno-fast-math)
+		if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+			add_compile_options(-fexcess-precision=standard)
+		elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
+			add_compile_options(-ffp-model=precise)
+		endif()
+	endif()
 endif()
 
 # install output
