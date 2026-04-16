@@ -792,7 +792,7 @@ namespace Skylicht
 								{
 									// update value
 									value->setGUID(textureSetting.getGUID());
-									value->setSprite(textureSetting.SpritePath.getString());
+									value->setSprite(textureSetting.SpritePath.cstr());
 
 									// apply image texture
 									updateData();
@@ -882,7 +882,7 @@ namespace Skylicht
 								if (CSerializableLoader::loadSerializable(meta.c_str(), &textureSetting))
 								{
 									// show on property
-									CSpriteFrame* spriteFrame = CSpriteManager::getInstance()->loadSprite(textureSetting.SpritePath.getString());
+									CSpriteFrame* spriteFrame = CSpriteManager::getInstance()->loadSprite(textureSetting.SpritePath.cstr());
 									if (spriteFrame)
 									{
 										errorSprite = false;
@@ -890,8 +890,8 @@ namespace Skylicht
 										// update value
 										value->set(shortPath.c_str());
 										value->setGUID(textureSetting.getGUID());
-										value->setSprite(textureSetting.SpritePath.getString());
-										value->setSpriteId(textureSetting.SpriteId.getString());
+										value->setSprite(textureSetting.SpritePath.cstr());
+										value->setSpriteId(textureSetting.SpriteId.cstr());
 
 										SFrame* frame = spriteFrame->getFrameById(textureSetting.getGUID());
 										if (frame)

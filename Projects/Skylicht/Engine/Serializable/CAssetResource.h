@@ -42,7 +42,7 @@ namespace Skylicht
 
 		inline const char* getGUID()
 		{
-			return GUID.getString();
+			return GUID.cstr();
 		}
 
 		virtual void deserialize(io::IAttributes* io);

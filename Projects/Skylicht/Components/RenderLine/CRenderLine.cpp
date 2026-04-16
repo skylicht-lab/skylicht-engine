@@ -251,7 +251,7 @@ namespace Skylicht
 
 			// set id
 			if (!entityData->Id.get().empty())
-				entity->setID(entityData->Id.getString());
+				entity->setID(entityData->Id.cstr());
 
 			// set transform
 			world->Relative = entityData->Transform.get();

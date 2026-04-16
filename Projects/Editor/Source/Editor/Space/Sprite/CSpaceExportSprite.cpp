@@ -99,7 +99,7 @@ namespace Skylicht
 				CTextureSettings textureSetting;
 				CSerializableLoader::loadSerializable(meta.c_str(), &textureSetting);
 
-				m_atlas->addFrame(name.c_str(), png.c_str(), textureSetting.GUID.getString());
+				m_atlas->addFrame(name.c_str(), png.c_str(), textureSetting.GUID.cstr());
 
 				CAssetManager* assetManager = CAssetManager::getInstance();
 				std::string folderPath = CPath::getFolderPath(m_path);

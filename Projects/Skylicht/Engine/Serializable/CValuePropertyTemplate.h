@@ -413,7 +413,13 @@ namespace Skylicht
 			set(value);
 		}
 
+		[[deprecated("Use cstr() instead")]]
 		const char* getString()
+		{
+			return m_value.c_str();
+		}
+
+		const char* cstr()
 		{
 			return m_value.c_str();
 		}
@@ -466,7 +472,13 @@ namespace Skylicht
 			set(value);
 		}
 
+		[[deprecated("Use cstr() instead")]]
 		const char* getString()
+		{
+			return m_value.c_str();
+		}
+
+		const char* cstr()
 		{
 			return m_value.c_str();
 		}
@@ -502,7 +514,13 @@ namespace Skylicht
 
 		}
 
+		[[deprecated("Use cstr() instead")]]
 		const char* getString()
+		{
+			return m_value.c_str();
+		}
+
+		const char* cstr()
 		{
 			return m_value.c_str();
 		}

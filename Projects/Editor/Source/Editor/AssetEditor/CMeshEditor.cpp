@@ -95,7 +95,7 @@ namespace Skylicht
 
 					CEntityPrefab* prefab = CMeshManager::getInstance()->loadModel(
 						p.c_str(),
-						m_settings->TextureFolder.getString(),
+						m_settings->TextureFolder.cstr(),
 						true,
 						m_settings->FlipNormal.get(),
 						m_settings->UseUV2.get());
@@ -115,11 +115,11 @@ namespace Skylicht
 			ui->addButton(layout, L"Export Material")->OnPress = [&, p = modelPath](GUI::CBase* button)
 				{
 					std::string outout = CPath::replaceFileExt(p, ".mat");
-					std::string textureFolder = m_settings->TextureFolder.getString();
+					std::string textureFolder = m_settings->TextureFolder.get();
 
 					CEntityPrefab* prefab = CMeshManager::getInstance()->loadModel(
 						p.c_str(),
-						m_settings->TextureFolder.getString(),
+						m_settings->TextureFolder.cstr(),
 						m_settings->UseNormalMap.get(),
 						m_settings->FlipNormal.get(),
 						m_settings->UseUV2.get());

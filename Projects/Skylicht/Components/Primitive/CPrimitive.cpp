@@ -183,7 +183,7 @@ namespace Skylicht
 
 				// set id
 				if (!primitiveData->Id.get().empty())
-					entity->setID(primitiveData->Id.getString());
+					entity->setID(primitiveData->Id.cstr());
 
 				// set transform
 				CWorldTransformData* world = GET_ENTITY_DATA(entity, CWorldTransformData);

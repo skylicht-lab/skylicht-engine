@@ -131,7 +131,7 @@ namespace Skylicht
 				if (trailData == NULL)
 					return;
 
-				std::wstring name = CStringImp::convertUTF8ToUnicode(trailData->Name.getString());
+				std::wstring name = CStringImp::convertUTF8ToUnicode(trailData->Name.cstr());
 
 				CGroup* group = particle->getData()->getGroupByName(name.c_str());
 				if (group)

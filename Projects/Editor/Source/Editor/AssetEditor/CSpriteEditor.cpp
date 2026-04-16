@@ -105,7 +105,7 @@ namespace Skylicht
 			for (int i = 0, n = listFolders.getElementCount(); i < n; i++)
 			{
 				CFolderPathProperty* value = dynamic_cast<CFolderPathProperty*>(listFolders.getPropertyID(i));
-				folders.push_back(value->getString());
+				folders.push_back(value->cstr());
 			}
 
 			CAssetManager* assetManager = CAssetManager::getInstance();
@@ -135,7 +135,7 @@ namespace Skylicht
 			// show dialog export sprite
 			// see CSpaceExportSprite
 			CEditor::getInstance()->exportSprite(
-				m_settings->GUID.getString(),
+				m_settings->GUID.cstr(),
 				path,
 				pngs,
 				m_settings->Width.get(),
