@@ -182,11 +182,6 @@ if (BUILD_ANDROID)
 	add_compile_options(-Wno-narrowing)
 	add_compile_options(-fvisibility=hidden)
 	add_compile_options(-O3)
-	
-	if (USE_PRECISE_FLOATINGPOINT)
-		add_compile_options(-fno-fast-math)
-		add_compile_options(-ffp-model=precise)
-	endif()
 endif()
 
 # visual studio
@@ -220,10 +215,7 @@ elseif (MSVC)
 	if (USE_PRECISE_FLOATINGPOINT)
 		add_compile_options(/fp:precise)
 	else()
-		option(USE_MSVC_FAST_FLOATINGPOINT "Use MSVC /fp:fast option" ON)
-		if (USE_MSVC_FAST_FLOATINGPOINT)
-			add_compile_options(/fp:fast)
-		endif()
+		add_compile_options(/fp:fast)
 	endif()
 
 	set(CMAKE_EXE_LINKER_FLAGS	"${CMAKE_EXE_LINKER_FLAGS} /MANIFEST:NO")
