@@ -137,7 +137,16 @@ namespace Skylicht
 					else
 					{
 						CStringImp::copy(text, ssIndex);
-						row = atoi(text) - 1;
+						int nextRow = atoi(text) - 1;
+
+						for (int i = row + 1; i < nextRow; i++)
+						{
+							SRow* emptyRow = new SRow();
+							emptyRow->Index = i;
+							currentSheet->Rows.push_back(emptyRow);
+						}
+
+						row = nextRow;
 					}
 
 					currentRow = new SRow();
@@ -158,7 +167,17 @@ namespace Skylicht
 					else
 					{
 						CStringImp::copy(text, ssIndex);
-						col = atoi(text) - 1;
+						int nextCol = atoi(text) - 1;
+
+						for (int i = col + 1; i < nextCol; i++)
+						{
+							SCell* emptyCell = new SCell();
+							emptyCell->Row = row;
+							emptyCell->Col = i;
+							currentRow->Cells.push_back(emptyCell);
+						}
+
+						col = nextCol;
 					}
 
 					currentCell = new SCell();
@@ -266,6 +285,8 @@ namespace Skylicht
 	CXMLSpreadsheet::SCell* CXMLSpreadsheet::getCell(SSheet* sheet, u32 row, u32 col)
 	{
 		SRow* r = sheet->Rows[row];
+		if (col >= r->Cells.size())
+			return NULL;
 		return r->Cells[col];
 	}
 

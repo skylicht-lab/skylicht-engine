@@ -64,7 +64,7 @@ void testSpreadsheet()
 
 		// test get range
 		std::list<CXMLSpreadsheet::SCell*> list = excel.getRange(excel[0], "A1", "E1");
-		TEST_ASSERT_THROW(list.size() == 4);
+		TEST_ASSERT_THROW(list.size() == 5);
 
 		list = excel.getRange(excel[0], "A1", "E8");
 		TEST_ASSERT_THROW(list.size() > 0);
