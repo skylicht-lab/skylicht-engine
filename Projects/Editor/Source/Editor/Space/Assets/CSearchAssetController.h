@@ -56,6 +56,8 @@ namespace Skylicht
 
 			void hideSearchUI();
 
+			void close();
+
 			void unchange();
 
 			void search(const std::wstring& string);

@@ -1171,7 +1171,9 @@ namespace Skylicht
 		fontGUID->setHidden(true);
 		object->autoRelease(fontGUID);
 
-		object->autoRelease(new CStringProperty(object, "text", m_defaultText.c_str()));
+		const char* text = m_defaultText.empty() ? m_text.c_str() : m_defaultText.c_str();
+
+		object->autoRelease(new CStringProperty(object, "text", text));
 		object->autoRelease(new CStringProperty(object, "textId", m_textId.c_str()));
 
 		return object;

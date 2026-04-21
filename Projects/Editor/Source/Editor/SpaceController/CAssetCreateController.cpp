@@ -38,6 +38,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Scene/CSceneExporter.h"
 #include "ResourceSettings/CSpriteExportSettings.h"
 #include "Graphics2D/CGUIExporter.h"
+#include "Graphics2D/CGUIImporter.h"
 #include "Graphics2D/SpriteFrame/CFontSource.h"
 #include "Serializable/CFileArraySerializable.h"
 #include "Serializable/CTextureArraySerializable.h"
@@ -244,6 +245,36 @@ namespace Skylicht
 					}
 				}
 			}
+		}
+
+		void CAssetCreateController::createTemplateUI(CGUIElement* element, const char* saveFolder)
+		{
+			CAssetManager* assetMgr = CAssetManager::getInstance();
+			std::string currentFolder = saveFolder == NULL ? getCurrentFolder() : saveFolder;
+
+			std::string ext = ".uielement";
+			std::string fileName;
+			fileName += std::string("/");
+			fileName += std::string(element->getName()) + ext;
+			std::string fullPath = currentFolder + fileName;
+			if (assetMgr->isExist(fullPath.c_str()))
+			{
+				fileName = std::string("/") + std::string(element->getName()) + std::string("%02d") + ext;
+				fullPath = assetMgr->generateAssetPath(fileName.c_str(), currentFolder.c_str());
+			}
+
+			// save .uielement
+			CObjectSerializable* data = CGUIExporter::createSerializable(element);
+			data->save(fullPath.c_str());
+			delete data;
+
+			// log the path of template
+			os::Printer::log(fullPath.c_str());
+
+			// import to editor
+			std::string shortPath = assetMgr->getShortPath(fullPath.c_str());
+
+			importAndSelect(shortPath.c_str());
 		}
 
 		void CAssetCreateController::createTemplate(CGameObject* obj, const char* saveFolder)

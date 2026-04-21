@@ -305,7 +305,7 @@ namespace Skylicht
 		{
 			if (m_scene == NULL)
 				return;
-				
+
 			CZone* zone = m_scene->getZone(0);
 
 			CHierarchyController* hierachyController = NULL;
@@ -714,28 +714,29 @@ namespace Skylicht
 
 		void CSceneController::refresh()
 		{
-			CSelection* selection = CSelection::getInstance();
-
-			CSelectObject* selectedObject = selection->getLastSelected();
-			if (selectedObject != NULL)
-				selectedObject->removeAllObserver();
-			else
-				return;
-
 			// refresh gizmos
 			if (m_gizmos)
 				m_gizmos->refresh();
 
 			CHandles::getInstance()->reset();
 
-			// Set property & event
-			CPropertyController* propertyController = CPropertyController::getInstance();
+			CSelection* selection = CSelection::getInstance();
+			CSelectObject* selectedObject = selection->getLastSelected();
+			if (selectedObject == NULL)
+				return;
 
-			// Update property
-			propertyController->setProperty(selectedObject);
+			if (selectedObject->getType() != CSelectObject::GUIElement)
+			{
+				selectedObject->removeAllObserver();
 
-			// Register observer because we removed
-			selectedObject->addObserver(this);
+				// Set property & event
+				// Update property
+				CPropertyController* propertyController = CPropertyController::getInstance();
+				propertyController->setProperty(selectedObject);
+
+				// Register observer because we removed
+				selectedObject->addObserver(this);
+			}
 		}
 
 		void CSceneController::setGizmos(CGizmos* gizmos)

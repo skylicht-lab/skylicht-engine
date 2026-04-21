@@ -32,9 +32,11 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Editor/SpaceController/CAssetPropertyController.h"
 #include "Editor/SpaceController/CAssetCreateController.h"
 #include "Editor/SpaceController/CSceneController.h"
+#include "Editor/SpaceController/CGUIDesignController.h"
 #include "Editor/CEditor.h"
 
 #include "Editor/Space/Hierarchy/CHierachyNode.h"
+#include "Editor/Space/GUIHierarchy/CGUIHierachyNode.h"
 
 namespace Skylicht
 {
@@ -125,6 +127,12 @@ namespace Skylicht
 
 		GUI::CBase* CListFSController::scrollAndSelectPath(const char* path)
 		{
+			if (m_searching)
+			{
+				m_searchController->close();
+				m_searching = false;
+			}
+
 			GUI::CButton* result = NULL;
 
 			std::list<GUI::CButton*> items = m_listFS->getAllItems();
@@ -368,6 +376,11 @@ namespace Skylicht
 				color = GUI::SGUIColor(255, 110, 170, 255);
 				return GUI::ESystemIcon::ObjectBox;
 			}
+			else if (ext == "uielement")
+			{
+				color = GUI::SGUIColor(255, 110, 170, 255);
+				return GUI::ESystemIcon::FileDocument;
+			}
 			else if (CMeshManager::isMeshExt(ext.c_str()))
 			{
 				return GUI::ESystemIcon::Res3D;
@@ -397,7 +410,7 @@ namespace Skylicht
 
 		void CListFSController::clearThumbnail()
 		{
-			for (ITexture* texture: m_thumbnails)
+			for (ITexture* texture : m_thumbnails)
 				texture->drop();
 			m_thumbnails.clear();
 			CAssetManager::getInstance()->getThumbnail()->clearTextures();
@@ -420,6 +433,10 @@ namespace Skylicht
 							return true;
 						}
 					}
+					else if (data->Name == "GUIHierarchyNode")
+					{
+						return true;
+					}
 					return false;
 				};
 			item->OnDrop = [&, item](GUI::SDragDropPackage* data, float mouseX, float mouseY)
@@ -439,6 +456,23 @@ namespace Skylicht
 							else
 							{
 								CSceneController::getInstance()->onCreateTemplate(obj, m_currentFolder.c_str());
+							}
+						}
+					}
+					else if (data->Name == "GUIHierarchyNode")
+					{
+						CGUIHierachyNode* dragNode = (CGUIHierachyNode*)data->UserData;
+						CGUIElement* element = (CGUIElement*)dragNode->getTagData();
+						if (element)
+						{
+							if (item->getTagBool() == true)
+							{
+								const std::string& folder = item->getTagString();
+								CGUIDesignController::getInstance()->onCreateTemplate(element, folder.c_str());
+							}
+							else
+							{
+								CGUIDesignController::getInstance()->onCreateTemplate(element, m_currentFolder.c_str());
 							}
 						}
 					}
@@ -469,7 +503,7 @@ namespace Skylicht
 					// close searching
 					if (m_searching)
 					{
-						m_searchController->hideSearchUI();
+						m_searchController->close();
 						m_searching = false;
 					}
 				}

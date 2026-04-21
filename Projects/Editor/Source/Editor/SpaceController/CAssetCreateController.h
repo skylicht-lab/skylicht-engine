@@ -71,6 +71,8 @@ namespace Skylicht
 
 			void importAndSelect(const char* path);
 
+			void createTemplateUI(CGUIElement* element, const char* saveFolder = NULL);
+
 		protected:
 
 			void syncTemplateIdToAllChild(CGameObject* gameObject);

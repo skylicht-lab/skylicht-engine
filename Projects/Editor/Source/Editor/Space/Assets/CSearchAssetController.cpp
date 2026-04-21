@@ -110,6 +110,15 @@ namespace Skylicht
 			m_inputSearch->setString(m_searchString);
 		}
 
+		void CSearchAssetController::close()
+		{
+			m_inputTimeout = 0.0f;
+			m_changed = false;
+			m_searchString = L"";
+			m_inputSearch->setString(m_searchString);
+			m_searchInfo->setHidden(true);
+		}
+
 		void CSearchAssetController::unchange()
 		{
 			m_changed = false;

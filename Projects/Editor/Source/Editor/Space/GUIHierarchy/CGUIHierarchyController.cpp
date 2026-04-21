@@ -300,6 +300,21 @@ namespace Skylicht
 
 						return true;
 					}
+					else if (data->Name == "ListFSItem")
+					{
+						GUI::CListRowItem* rowItem = (GUI::CListRowItem*)data->UserData;
+						bool isFolder = rowItem->getTagBool();
+						if (isFolder)
+							return false;
+
+						std::string path = rowItem->getTagString();
+						std::string fileExt = CPath::getFileNameExt(path);
+						fileExt = CStringImp::toLower(fileExt);
+						if (fileExt == "uielement")
+						{
+							return true;
+						}
+					}
 					return false;
 				};
 
@@ -381,14 +396,67 @@ namespace Skylicht
 									moveToChild(dragNode, node);
 								}
 							}
+
 							dragNode->getGUINode()->setSelected(true);
 						}
 
 						history->saveStructureHistory(listGUIs);
 						history->enableAddSelectHistory(true);
 					}
+					else if (data->Name == "ListFSItem")
+					{
+						GUI::CListRowItem* fsItem = (GUI::CListRowItem*)data->UserData;
+
+						std::string path = fsItem->getTagString();
+						std::string fileExt = CPath::getFileNameExt(path);
+						fileExt = CStringImp::toLower(fileExt);
+
+						CGUIHierachyNode* newNode = NULL;
+						CGUIDesignController* guiDesignController = CGUIDesignController::getInstance();
+
+						CGUIElement* parent = NULL;
+
+						bool behind = false;
+						bool updateNodePosition = true;
+
+						if (fileExt == "uielement")
+						{
+							GUI::SPoint local = rowItem->canvasPosToLocal(GUI::SPoint(mouseX, mouseY));
+							if (local.Y < rowItem->height() * 0.25f)
+							{
+								parent = (CGUIElement*)node->getParent()->getTagData();
+								behind = false;
+							}
+							else if (local.Y > rowItem->height() * 0.75f)
+							{
+								parent = (CGUIElement*)node->getParent()->getTagData();
+								behind = true;
+							}
+							else
+							{
+								parent = (CGUIElement*)node->getTagData();
+								updateNodePosition = false;
+							}
+
+							if (parent)
+							{
+								CGUIDesignController* guiController = CGUIDesignController::getInstance();
+
+								CGUIElement* targetObject = guiController->createTemplateObject(path, parent);
+								updateTreeNode(targetObject);
+
+								newNode = m_node->getNodeByTag(targetObject);
+								if (newNode && updateNodePosition)
+								{
+									move(newNode, node, behind);
+									newNode->getGUINode()->setSelected(true);
+								}
+							}
+						}
+					}
 
 					rowItem->enableDrawLine(false, false);
+
 					editor->refresh();
 				};
 		}

@@ -43,6 +43,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Localize/CLocalize.h"
 #include "ResourceSettings/CTextureSettings.h"
 
+#include "CAssetCreateController.h"
+
 namespace Skylicht
 {
 	namespace Editor
@@ -289,7 +291,7 @@ namespace Skylicht
 					"button-small",
 					"SampleGUI/!Sprites/button-small.png");
 				bg->setDock(EGUIDock::DockFill);
-				bg->setAnchor(CGUIFitSprite::AnchorAll, 35.0, 35.0f, 35.0f, 35.0f);
+				bg->setAnchor(CGUIFitSprite::AnchorAll, 30.0, 30.0f, 30.0f, 30.0f);
 
 				if (command == L"UI Button (Shiny)")
 					bg->setMaterialSource("BuiltIn/Textures/Shiny.mat");
@@ -699,7 +701,26 @@ namespace Skylicht
 
 		void CGUIDesignController::refresh()
 		{
+			if (m_spaceDesign)
+				m_spaceDesign->getGizmos()->refresh();
 
+			CSelection* selection = CSelection::getInstance();
+			CSelectObject* selectedObject = selection->getLastSelected();
+			if (selectedObject == NULL)
+				return;
+
+			if (selectedObject->getType() == CSelectObject::GUIElement)
+			{
+				selectedObject->removeAllObserver();
+
+				// Set property & event
+				// Update property
+				CPropertyController* propertyController = CPropertyController::getInstance();
+				propertyController->setProperty(selectedObject);
+
+				// Register observer because we removed
+				selectedObject->addObserver(this);
+			}
 		}
 
 		void CGUIDesignController::onUpdateNode(CGUIHierachyNode* node)
@@ -792,6 +813,27 @@ namespace Skylicht
 				}
 				parent->bringToChild(element);
 			}
+		}
+
+		void CGUIDesignController::onCreateTemplate(CGUIElement* element, const char* folder)
+		{
+			CAssetCreateController::getInstance()->createTemplateUI(element, folder);
+		}
+
+		CGUIElement* CGUIDesignController::createTemplateObject(const std::string& path, CGUIElement* parent)
+		{
+			CObjectSerializable* data = CGUIImporter::loadGUIToSerializable(path.c_str(), m_guiCanvas);
+			CGUIElement* result = CGUIImporter::importGUI(m_guiCanvas, parent, data);
+			delete data;
+
+			if (result)
+			{
+				CGUIHierachyNode* parentNode = m_rootNode->getNodeByTag(parent);
+				if (parentNode != NULL)
+					createGUINode(parentNode, result);
+			}
+
+			return result;
 		}
 
 		void CGUIDesignController::applySelected(std::vector<CSelectObject*> ids)

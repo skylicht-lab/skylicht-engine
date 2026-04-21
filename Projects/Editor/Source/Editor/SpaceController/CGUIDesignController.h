@@ -174,6 +174,10 @@ namespace Skylicht
 
 			void onMoveStructure(CGUIElement* element, CGUIElement* parent, CGUIElement* before);
 
+			void onCreateTemplate(CGUIElement* element, const char* folder);
+
+			CGUIElement* createTemplateObject(const std::string& path, CGUIElement* parent);
+
 			void syncGUID();
 
 			std::string getSpritePath(const char* framePath);
