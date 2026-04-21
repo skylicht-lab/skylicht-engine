@@ -354,6 +354,7 @@ namespace Skylicht
 
 		void CSpaceProperty::addComponent(CComponentEditor* editor, CComponentSystem* component, bool autoRelease)
 		{
+			editor->closeGUI();
 			editor->initGUI(component, this);
 
 			if (autoRelease)
@@ -362,6 +363,7 @@ namespace Skylicht
 
 		void CSpaceProperty::addComponent(CComponentEditor* editor, CGameObject* gameobject)
 		{
+			editor->closeGUI();
 			editor->initGUI(gameobject, this);
 		}
 

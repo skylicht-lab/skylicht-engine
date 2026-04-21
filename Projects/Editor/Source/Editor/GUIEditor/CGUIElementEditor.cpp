@@ -40,7 +40,8 @@ namespace Skylicht
 		GUI_EDITOR_REGISTER(CGUIElementEditor, CGUIFitSprite);
 
 		CGUIElementEditor::CGUIElementEditor() :
-			m_lastDock(EGUIDock::NoDock)
+			m_lastDock(EGUIDock::NoDock),
+			m_alignment(NULL)
 		{
 
 		}

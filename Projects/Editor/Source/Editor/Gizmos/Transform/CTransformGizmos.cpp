@@ -42,14 +42,15 @@ namespace Skylicht
 			m_lastType(ETransformGizmo::Translate),
 			m_changed(false)
 		{
-			getSubjectTransformGizmos().addObserver(this);
+			CSubject<ETransformGizmo>* gizmos = getSubjectTransformGizmos();
+			gizmos->addObserver(this);
 
-			m_lastType = getSubjectTransformGizmos().get();
+			m_lastType = gizmos->get();
 		}
 
 		CTransformGizmos::~CTransformGizmos()
 		{
-			getSubjectTransformGizmos().removeObserver(this);
+			getSubjectTransformGizmos()->removeObserver(this);
 		}
 
 		void CTransformGizmos::onNotify(ISubject* subject, IObserver* from)
@@ -204,7 +205,7 @@ namespace Skylicht
 				return;
 			}
 
-			ETransformGizmo type = getSubjectTransformGizmos().get();
+			ETransformGizmo type = getSubjectTransformGizmos()->get();
 
 			if (selectObject->getID() != m_selectID && type != ETransformGizmo::None)
 			{
@@ -352,8 +353,9 @@ namespace Skylicht
 
 		void CTransformGizmos::onEnable()
 		{
-			getSubjectTransformGizmos().set(m_lastType);
-			getSubjectTransformGizmos().notify(this);
+			CSubject<ETransformGizmo>* gizmos = getSubjectTransformGizmos();
+			gizmos->set(m_lastType);
+			gizmos->notify(this);
 		}
 
 		void CTransformGizmos::onRemove()
@@ -362,7 +364,7 @@ namespace Skylicht
 			m_transform = NULL;
 			m_selectID = "";
 
-			m_lastType = getSubjectTransformGizmos().get();
+			m_lastType = getSubjectTransformGizmos()->get();
 
 			CHandles* handles = CHandles::getInstance();
 			if (handles != NULL)

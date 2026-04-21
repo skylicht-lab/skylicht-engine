@@ -40,7 +40,7 @@ namespace Skylicht
 			Scale
 		};
 
-		CSubject<ETransformGizmo>& getSubjectTransformGizmos();
+		CSubject<ETransformGizmo>* getSubjectTransformGizmos();
 
 		class CGizmos
 		{
@@ -56,6 +56,10 @@ namespace Skylicht
 			virtual void onRemove() = 0;
 
 			virtual void refresh() = 0;
+
+			static void createGlobalGizmos();
+
+			static void releaseGlobalGizmos();
 		};
 	}
 }

@@ -43,14 +43,14 @@ namespace Skylicht
 			m_lastType(ETransformGizmo::Translate),
 			changed(false)
 		{
-			getSubjectTransformGizmos().addObserver(this);
-
-			m_lastType = getSubjectTransformGizmos().get();
+			CSubject<ETransformGizmo>* gizmos = getSubjectTransformGizmos();
+			gizmos->addObserver(this);
+			m_lastType = gizmos->get();
 		}
 
 		CWorldTransformDataGizmos::~CWorldTransformDataGizmos()
 		{
-			getSubjectTransformGizmos().removeObserver(this);
+			getSubjectTransformGizmos()->removeObserver(this);
 		}
 
 		void CWorldTransformDataGizmos::onNotify(ISubject* subject, IObserver* from)
@@ -246,7 +246,7 @@ namespace Skylicht
 				return;
 			}
 
-			ETransformGizmo type = getSubjectTransformGizmos().get();
+			ETransformGizmo type = getSubjectTransformGizmos()->get();
 
 			if (type == ETransformGizmo::Translate)
 			{
@@ -417,8 +417,9 @@ namespace Skylicht
 
 		void CWorldTransformDataGizmos::onEnable()
 		{
-			getSubjectTransformGizmos().set(m_lastType);
-			getSubjectTransformGizmos().notify(this);
+			CSubject<ETransformGizmo>* gizmos = getSubjectTransformGizmos();
+			gizmos->set(m_lastType);
+			gizmos->notify(this);
 		}
 
 		void CWorldTransformDataGizmos::onRemove()
@@ -427,7 +428,7 @@ namespace Skylicht
 			m_transform = NULL;
 			m_selectID = "";
 
-			m_lastType = getSubjectTransformGizmos().get();
+			m_lastType = getSubjectTransformGizmos()->get();
 
 			CHandles* handles = CHandles::getInstance();
 			if (handles != NULL)

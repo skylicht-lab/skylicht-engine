@@ -57,6 +57,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "SpaceController/CTextureViewerController.h"
 
 #include "Handles/CHandles.h"
+#include "Gizmos/CGizmos.h"
 
 #include "AssetManager/CAssetManager.h"
 #include "Selection/CSelection.h"
@@ -102,6 +103,8 @@ namespace Skylicht
 			m_spriteIcon->updateTexture();
 
 			// init controller
+			CGizmos::createGlobalGizmos();
+
 			CSceneController::createGetInstance()->initContextMenu(m_canvas);
 			CGUIDesignController::createGetInstance()->initContextMenu(m_canvas);
 			CParticleController::createGetInstance()->initContextMenu(m_canvas);
@@ -121,8 +124,6 @@ namespace Skylicht
 
 		CEditor::~CEditor()
 		{
-			getSubjectTransformGizmos().removeAllObserver();
-
 			CSceneController::getInstance()->deleteScene();
 			CGUIDesignController::getInstance()->deleteScene();
 
@@ -136,7 +137,10 @@ namespace Skylicht
 			CParticleController::releaseInstance();
 			CSceneController::releaseInstance();
 			CSpriteController::releaseInstance();
+			CTextureViewerController::releaseInstance();
 			CGUIDesignController::releaseInstance();
+
+			CGizmos::releaseGlobalGizmos();
 
 			CProjectSettings::releaseInstance();
 			CEditorSetting::releaseInstance();

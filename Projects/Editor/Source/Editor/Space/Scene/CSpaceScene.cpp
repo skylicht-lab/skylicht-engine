@@ -162,7 +162,7 @@ namespace Skylicht
 				button->setIsToggle(false);
 			}
 
-			getSubjectTransformGizmos().addObserver(this);
+			getSubjectTransformGizmos()->addObserver(this);
 
 			toolbar->addSpace();
 
@@ -371,7 +371,7 @@ namespace Skylicht
 			delete m_snapSettingController;
 			delete m_cameraSettingController;
 
-			getSubjectTransformGizmos().removeObserver(this);
+			getSubjectTransformGizmos()->removeObserver(this);
 
 			CSceneController* sceneController = CSceneController::getInstance();
 			sceneController->setSpaceScene(NULL);
@@ -604,30 +604,30 @@ namespace Skylicht
 
 		void CSpaceScene::onToolbarTransform(GUI::CBase* base)
 		{
-			CSubject<ETransformGizmo>& gizmos = getSubjectTransformGizmos();
-			ETransformGizmo type = gizmos.get();
+			CSubject<ETransformGizmo>* gizmos = getSubjectTransformGizmos();
+			ETransformGizmo type = gizmos->get();
 
 			m_enableHandles = true;
 
 			if (base == m_toolbarButton[ESceneToolBar::Move] && type != ETransformGizmo::Translate)
 			{
-				gizmos.set(ETransformGizmo::Translate);
-				gizmos.notify(this);
+				gizmos->set(ETransformGizmo::Translate);
+				gizmos->notify(this);
 			}
 			else if (base == m_toolbarButton[ESceneToolBar::Rotate] && type != ETransformGizmo::Rotate)
 			{
-				gizmos.set(ETransformGizmo::Rotate);
-				gizmos.notify(this);
+				gizmos->set(ETransformGizmo::Rotate);
+				gizmos->notify(this);
 			}
 			else if (base == m_toolbarButton[ESceneToolBar::Scale] && type != ETransformGizmo::Scale)
 			{
-				gizmos.set(ETransformGizmo::Scale);
-				gizmos.notify(this);
+				gizmos->set(ETransformGizmo::Scale);
+				gizmos->notify(this);
 			}
 			else if (base == m_toolbarButton[ESceneToolBar::Select])
 			{
-				gizmos.set(ETransformGizmo::None);
-				gizmos.notify(this);
+				gizmos->set(ETransformGizmo::None);
+				gizmos->notify(this);
 				m_enableHandles = false;
 			}
 
@@ -661,10 +661,10 @@ namespace Skylicht
 			if (from == this)
 				return;
 
-			CSubject<ETransformGizmo>& gizmos = getSubjectTransformGizmos();
-			if (subject == &gizmos)
+			CSubject<ETransformGizmo>* gizmos = getSubjectTransformGizmos();
+			if (subject == gizmos)
 			{
-				ETransformGizmo type = gizmos.get();
+				ETransformGizmo type = gizmos->get();
 				switch (type)
 				{
 				case ETransformGizmo::None:

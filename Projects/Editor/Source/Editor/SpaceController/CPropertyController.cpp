@@ -215,7 +215,10 @@ namespace Skylicht
 				// GameObject property
 				CEntityDataEditor* editor = activator->getEntityDataEditorInstance(data->getTypeName().c_str());
 				if (editor != NULL)
+				{
+					editor->closeGUI();
 					editor->initGUI(data, space);
+				}
 			}
 		}
 
@@ -227,7 +230,10 @@ namespace Skylicht
 			// GUI property
 			CGUIEditor* editor = activator->getGUIEditorInstance(gui->getTypeName().c_str());
 			if (editor != NULL)
+			{
+				editor->closeGUI();
 				editor->initGUI(gui, space);
+			}
 		}
 
 		void CPropertyController::setParticleProperty(CSpaceProperty* spaceProperty, Particle::CParticleSerializable* ps, Particle::CParticleComponent* psComponent)
@@ -241,6 +247,7 @@ namespace Skylicht
 			spaceProperty->setLabel(label.c_str());
 
 			// Particle editor property
+			m_particleEditor->closeGUI();
 			m_particleEditor->initGUI(ps, spaceProperty);
 		}
 	}

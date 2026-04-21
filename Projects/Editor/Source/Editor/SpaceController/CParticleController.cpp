@@ -51,7 +51,8 @@ namespace Skylicht
 
 		CParticleController::~CParticleController()
 		{
-
+			if (m_contextMenuParticle)
+				delete m_contextMenuParticle;
 		}
 
 		void CParticleController::setSpaceParticle(CSpaceParticle* space)
