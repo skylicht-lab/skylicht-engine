@@ -94,6 +94,10 @@ namespace Skylicht
 							return true;
 						}
 					}
+					else if (data->Name == "GUIHierarchyNode")
+					{
+						return true;
+					}
 					return false;
 				};
 			inner->OnDrop = [&](GUI::SDragDropPackage* data, float mouseX, float mouseY)
@@ -106,6 +110,15 @@ namespace Skylicht
 						{
 							CGameObject* obj = (CGameObject*)dragNode->getTagData();
 							CSceneController::getInstance()->onCreateTemplate(obj, m_currentFolder.c_str());
+						}
+					}
+					else if (data->Name == "GUIHierarchyNode")
+					{
+						CGUIHierachyNode* dragNode = (CGUIHierachyNode*)data->UserData;
+						CGUIElement* element = (CGUIElement*)dragNode->getTagData();
+						if (element)
+						{
+							CGUIDesignController::getInstance()->onCreateTemplate(element, m_currentFolder.c_str());
 						}
 					}
 				};
