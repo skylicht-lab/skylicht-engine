@@ -34,13 +34,17 @@ namespace Skylicht
 		FitChildrenSize(false),
 		CurrentX(0.0f),
 		CurrentY(0.0f),
+		BeginX(0.0f),
+		BeginY(0.0f),
 		Spacing(0.0f),
-		MaxW(0.0f),
-		MaxH(0.0f),
+		IsWrap(false),
+		WrapSpacing(0.0f),
 		LayoutCenter(false),
 		LayoutMiddle(false),
 		ChildsWidth(0.0f),
-		ChildsHeight(0.0f)
+		ChildsHeight(0.0f),
+		WrapWidth(0.0f),
+		WrapHeight(0.0f)
 	{
 
 	}

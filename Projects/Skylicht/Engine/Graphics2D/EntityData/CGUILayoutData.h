@@ -46,22 +46,24 @@ namespace Skylicht
 		bool FitChildrenSize;
 
 		float CurrentX;
-
 		float CurrentY;
 
-		float MaxW;
-
-		float MaxH;
+		float BeginX;
+		float BeginY;
 
 		float Spacing;
 
-		bool LayoutCenter;
+		bool IsWrap;
+		float WrapSpacing;
 
+		bool LayoutCenter;
 		bool LayoutMiddle;
 
 		float ChildsWidth;
-
 		float ChildsHeight;
+
+		float WrapWidth;
+		float WrapHeight;
 
 	public:
 		CGUILayoutData();

@@ -62,17 +62,20 @@ namespace Skylicht
 	{
 		CObjectSerializable* object = CGUIElement::createSerializable();
 
-		CEnumProperty<CGUILayoutData::EAlignType>* alginType = new CEnumProperty<CGUILayoutData::EAlignType>(object, "layoutAlignType", m_layoutData->AlignType);
-		alginType->addEnumString("Vertical", CGUILayoutData::Vertical);
-		alginType->addEnumString("Horizontal", CGUILayoutData::Horizontal);
-		alginType->addEnumString("Vertical Bottom", CGUILayoutData::VerticalBottom);
-		alginType->addEnumString("Horizontal Right", CGUILayoutData::HorizontalRight);
-		object->autoRelease(alginType);
+		CEnumProperty<CGUILayoutData::EAlignType>* alignType = new CEnumProperty<CGUILayoutData::EAlignType>(object, "layoutAlignType", m_layoutData->AlignType);
+		alignType->addEnumString("Vertical", CGUILayoutData::Vertical);
+		alignType->addEnumString("Horizontal", CGUILayoutData::Horizontal);
+		alignType->addEnumString("Vertical Bottom", CGUILayoutData::VerticalBottom);
+		alignType->addEnumString("Horizontal Right", CGUILayoutData::HorizontalRight);
+		object->autoRelease(alignType);
 
 		object->autoRelease(new CFloatProperty(object, "spacing", m_layoutData->Spacing));
 		object->autoRelease(new CBoolProperty(object, "fitChildrenSize", m_layoutData->FitChildrenSize));
 		object->autoRelease(new CBoolProperty(object, "layoutCenter", m_layoutData->LayoutCenter));
 		object->autoRelease(new CBoolProperty(object, "layoutMiddle", m_layoutData->LayoutMiddle));
+
+		object->autoRelease(new CBoolProperty(object, "isWrap", m_layoutData->IsWrap));
+		object->autoRelease(new CFloatProperty(object, "wrapSpacing", m_layoutData->WrapSpacing));
 
 		return object;
 	}
@@ -82,10 +85,14 @@ namespace Skylicht
 		CGUIElement::loadSerializable(object);
 
 		m_layoutData->AlignType = object->get<CGUILayoutData::EAlignType>("layoutAlignType", CGUILayoutData::Vertical);
+
 		m_layoutData->Spacing = object->get<float>("spacing", 0);
 		m_layoutData->FitChildrenSize = object->get<bool>("fitChildrenSize", false);
 		m_layoutData->LayoutCenter = object->get<bool>("layoutCenter", false);
 		m_layoutData->LayoutMiddle = object->get<bool>("layoutMiddle", false);
+
+		m_layoutData->IsWrap = object->get<bool>("isWrap", false);
+		m_layoutData->WrapSpacing = object->get<float>("wrapSpacing", 0.0f);
 	}
 
 	void CGUILayout::updateChildOrder()

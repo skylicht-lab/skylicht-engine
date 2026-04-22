@@ -75,6 +75,21 @@ namespace Skylicht
 			return m_layoutData->Spacing;
 		}
 
+		inline void setWrap(bool b)
+		{
+			m_layoutData->IsWrap = b;
+		}
+
+		inline void setWrapSpacing(float space)
+		{
+			m_layoutData->WrapSpacing = space;
+		}
+
+		inline float getWrapSpacing()
+		{
+			return m_layoutData->WrapSpacing;
+		}
+
 		inline void setFitChildrenSize(bool b)
 		{
 			m_layoutData->FitChildrenSize = b;

@@ -71,8 +71,12 @@ namespace Skylicht
 				// reset
 				l->CurrentX = 0.0f;
 				l->CurrentY = 0.0f;
+				l->BeginX = 0.0f;
+				l->BeginY = 0.0f;
 				l->ChildsWidth = 0.0f;
 				l->ChildsHeight = 0.0f;
+				l->WrapWidth = 0.0f;
+				l->WrapHeight = 0.0f;
 			}
 
 			m_worldTransforms.push(w);
@@ -126,6 +130,7 @@ namespace Skylicht
 			CGUIChildLayoutData* layout = layouts[i];
 
 			CGUITransformData* transform = GET_ENTITY_DATA(layout->Entity, CGUITransformData);
+
 			CGUILayoutData* parentLayoutInfo = layout->Parent;
 
 			if (!parentLayoutInfo)
@@ -137,15 +142,55 @@ namespace Skylicht
 			float h = transform->Rect.getHeight();
 			float w = transform->Rect.getWidth();
 
-			if (parentLayoutInfo->AlignType == CGUILayoutData::Horizontal || parentLayoutInfo->AlignType == CGUILayoutData::HorizontalRight)
-				parentLayoutInfo->ChildsWidth = parentLayoutInfo->ChildsWidth + w + parentLayoutInfo->Spacing;
-			else
-				parentLayoutInfo->ChildsWidth = core::max_(parentLayoutInfo->ChildsWidth, w);
+			if (parentLayoutInfo->IsWrap)
+			{
+				CGUITransformData* parentTransform = GET_ENTITY_DATA(parentLayoutInfo->Entity, CGUITransformData);
+				float parentW = parentTransform->Rect.getWidth();
+				float parentH = parentTransform->Rect.getHeight();
 
-			if (parentLayoutInfo->AlignType == CGUILayoutData::Vertical || parentLayoutInfo->AlignType == CGUILayoutData::VerticalBottom)
-				parentLayoutInfo->ChildsHeight = parentLayoutInfo->ChildsHeight + h + parentLayoutInfo->Spacing;
+				if (parentLayoutInfo->AlignType == CGUILayoutData::Horizontal || parentLayoutInfo->AlignType == CGUILayoutData::HorizontalRight)
+				{
+					if (parentLayoutInfo->WrapWidth + w > parentW && parentLayoutInfo->WrapWidth > 0)
+					{
+						parentLayoutInfo->ChildsWidth = core::max_(parentLayoutInfo->ChildsWidth, parentLayoutInfo->WrapWidth - parentLayoutInfo->Spacing);
+						parentLayoutInfo->ChildsHeight = parentLayoutInfo->ChildsHeight + parentLayoutInfo->WrapHeight + parentLayoutInfo->WrapSpacing;
+						parentLayoutInfo->WrapWidth = w + parentLayoutInfo->Spacing;
+						parentLayoutInfo->WrapHeight = h;
+					}
+					else
+					{
+						parentLayoutInfo->WrapWidth = parentLayoutInfo->WrapWidth + w + parentLayoutInfo->Spacing;
+						parentLayoutInfo->WrapHeight = core::max_(parentLayoutInfo->WrapHeight, h);
+					}
+				}
+				else if (parentLayoutInfo->AlignType == CGUILayoutData::Vertical || parentLayoutInfo->AlignType == CGUILayoutData::VerticalBottom)
+				{
+					if (parentLayoutInfo->WrapHeight + h > parentH && parentLayoutInfo->WrapHeight > 0)
+					{
+						parentLayoutInfo->ChildsHeight = core::max_(parentLayoutInfo->ChildsHeight, parentLayoutInfo->WrapHeight - parentLayoutInfo->Spacing);
+						parentLayoutInfo->ChildsWidth = parentLayoutInfo->ChildsWidth + parentLayoutInfo->WrapWidth + parentLayoutInfo->WrapSpacing;
+						parentLayoutInfo->WrapHeight = h + parentLayoutInfo->Spacing;
+						parentLayoutInfo->WrapWidth = w;
+					}
+					else
+					{
+						parentLayoutInfo->WrapHeight = parentLayoutInfo->WrapHeight + h + parentLayoutInfo->Spacing;
+						parentLayoutInfo->WrapWidth = core::max_(parentLayoutInfo->WrapWidth, w);
+					}
+				}
+			}
 			else
-				parentLayoutInfo->ChildsHeight = core::max_(parentLayoutInfo->ChildsHeight, h);
+			{
+				if (parentLayoutInfo->AlignType == CGUILayoutData::Horizontal || parentLayoutInfo->AlignType == CGUILayoutData::HorizontalRight)
+					parentLayoutInfo->ChildsWidth = parentLayoutInfo->ChildsWidth + w + parentLayoutInfo->Spacing;
+				else
+					parentLayoutInfo->ChildsWidth = core::max_(parentLayoutInfo->ChildsWidth, w);
+
+				if (parentLayoutInfo->AlignType == CGUILayoutData::Vertical || parentLayoutInfo->AlignType == CGUILayoutData::VerticalBottom)
+					parentLayoutInfo->ChildsHeight = parentLayoutInfo->ChildsHeight + h + parentLayoutInfo->Spacing;
+				else
+					parentLayoutInfo->ChildsHeight = core::max_(parentLayoutInfo->ChildsHeight, h);
+			}
 		}
 
 		CGUILayoutData** parentLayouts = m_parentLayout.pointer();
@@ -154,10 +199,28 @@ namespace Skylicht
 			CGUILayoutData* l = parentLayouts[i];
 			CGUITransformData* t = GET_ENTITY_DATA(l->Entity, CGUITransformData);
 
-			if (l->AlignType == CGUILayoutData::Horizontal || l->AlignType == CGUILayoutData::HorizontalRight)
-				l->ChildsWidth = l->ChildsWidth - l->Spacing;
-			if (l->AlignType == CGUILayoutData::Vertical || l->AlignType == CGUILayoutData::VerticalBottom)
-				l->ChildsHeight = l->ChildsHeight - l->Spacing;
+			if (l->IsWrap)
+			{
+				if (l->AlignType == CGUILayoutData::Horizontal || l->AlignType == CGUILayoutData::HorizontalRight)
+				{
+					l->ChildsWidth = core::max_(l->ChildsWidth, l->WrapWidth - l->Spacing);
+					l->ChildsHeight = l->ChildsHeight + l->WrapHeight;
+				}
+				else
+				{
+					l->ChildsHeight = core::max_(l->ChildsHeight, l->WrapHeight - l->Spacing);
+					l->ChildsWidth = l->ChildsWidth + l->WrapWidth;
+				}
+				l->WrapWidth = 0.0f;
+				l->WrapHeight = 0.0f;
+			}
+			else
+			{
+				if (l->AlignType == CGUILayoutData::Horizontal || l->AlignType == CGUILayoutData::HorizontalRight)
+					l->ChildsWidth = l->ChildsWidth - l->Spacing;
+				if (l->AlignType == CGUILayoutData::Vertical || l->AlignType == CGUILayoutData::VerticalBottom)
+					l->ChildsHeight = l->ChildsHeight - l->Spacing;
+			}
 
 			float w = t->getRect().getWidth();
 			float h = t->getRect().getHeight();
@@ -187,6 +250,9 @@ namespace Skylicht
 				if (l->AlignType == CGUILayoutData::VerticalBottom)
 					l->CurrentY = h;
 			}
+
+			l->BeginX = l->CurrentX;
+			l->BeginY = l->CurrentY;
 		}
 
 		for (int i = 0; i < numEntity; i++)
@@ -205,8 +271,6 @@ namespace Skylicht
 			float h = transform->Rect.getHeight();
 			float w = transform->Rect.getWidth();
 
-			float sw = 0.0f, sh = 0.0f;
-
 			switch (parentLayoutInfo->AlignType)
 			{
 			case CGUILayoutData::Vertical:
@@ -214,31 +278,52 @@ namespace Skylicht
 				float x = parentLayoutInfo->CurrentX;
 				float y = parentLayoutInfo->CurrentY;
 
+				if (parentLayoutInfo->IsWrap)
+				{
+					CGUITransformData* parentTransform = GET_ENTITY_DATA(parentLayoutInfo->Entity, CGUITransformData);
+					float parentH = parentTransform->Rect.getHeight();
+					if (y + h > parentH && y > parentLayoutInfo->BeginY)
+					{
+						y = parentLayoutInfo->BeginY;
+						x = x + parentLayoutInfo->WrapWidth + parentLayoutInfo->WrapSpacing;
+						parentLayoutInfo->WrapWidth = 0.0f;
+					}
+					parentLayoutInfo->WrapWidth = core::max_(parentLayoutInfo->WrapWidth, w);
+				}
+
 				transform->setPosition(core::vector3df(x, y, 0.0f));
 
 				y = y + h;
 				y = y + parentLayoutInfo->Spacing;
 
 				parentLayoutInfo->CurrentY = y;
-				parentLayoutInfo->MaxW = core::max_(parentLayoutInfo->MaxW, w);
-				parentLayoutInfo->MaxH = y - parentLayoutInfo->Spacing;
+				parentLayoutInfo->CurrentX = x;
 			}
 			break;
 			case CGUILayoutData::VerticalBottom:
 			{
 				float x = parentLayoutInfo->CurrentX;
 				float y = parentLayoutInfo->CurrentY;
+
+				if (parentLayoutInfo->IsWrap)
+				{
+					if (y - h < 0.0f && y < parentLayoutInfo->BeginY)
+					{
+						y = parentLayoutInfo->BeginY;
+						x = x + parentLayoutInfo->WrapWidth + parentLayoutInfo->WrapSpacing;
+						parentLayoutInfo->WrapWidth = 0.0f;
+					}
+					parentLayoutInfo->WrapWidth = core::max_(parentLayoutInfo->WrapWidth, w);
+				}
+
 				y = y - h;
-				sh = sh + h;
 
 				transform->setPosition(core::vector3df(x, y, 0.0f));
 
 				y = y - parentLayoutInfo->Spacing;
-				sh = sh + parentLayoutInfo->Spacing;
 
 				parentLayoutInfo->CurrentY = y;
-				parentLayoutInfo->MaxW = core::max_(parentLayoutInfo->MaxW, w);
-				parentLayoutInfo->MaxH = sh - parentLayoutInfo->Spacing;
+				parentLayoutInfo->CurrentX = x;
 			}
 			break;
 			case CGUILayoutData::Horizontal:
@@ -246,14 +331,26 @@ namespace Skylicht
 				float x = parentLayoutInfo->CurrentX;
 				float y = parentLayoutInfo->CurrentY;
 
+				if (parentLayoutInfo->IsWrap)
+				{
+					CGUITransformData* parentTransform = GET_ENTITY_DATA(parentLayoutInfo->Entity, CGUITransformData);
+					float parentW = parentTransform->Rect.getWidth();
+					if (x + w > parentW && x > parentLayoutInfo->BeginX)
+					{
+						x = parentLayoutInfo->BeginX;
+						y = y + parentLayoutInfo->WrapHeight + parentLayoutInfo->WrapSpacing;
+						parentLayoutInfo->WrapHeight = 0.0f;
+					}
+					parentLayoutInfo->WrapHeight = core::max_(parentLayoutInfo->WrapHeight, h);
+				}
+
 				transform->setPosition(core::vector3df(x, y, 0.0f));
 
 				x = x + w;
 				x = x + parentLayoutInfo->Spacing;
 
 				parentLayoutInfo->CurrentX = x;
-				parentLayoutInfo->MaxH = core::max_(parentLayoutInfo->MaxH, h);
-				parentLayoutInfo->MaxW = x - parentLayoutInfo->Spacing;
+				parentLayoutInfo->CurrentY = y;
 			}
 			break;
 			case CGUILayoutData::HorizontalRight:
@@ -261,17 +358,25 @@ namespace Skylicht
 				float x = parentLayoutInfo->CurrentX;
 				float y = parentLayoutInfo->CurrentY;
 
+				if (parentLayoutInfo->IsWrap)
+				{
+					if (x - w < 0.0f && x < parentLayoutInfo->BeginX)
+					{
+						x = parentLayoutInfo->BeginX;
+						y = y + parentLayoutInfo->WrapHeight + parentLayoutInfo->WrapSpacing;
+						parentLayoutInfo->WrapHeight = 0.0f;
+					}
+					parentLayoutInfo->WrapHeight = core::max_(parentLayoutInfo->WrapHeight, h);
+				}
+
 				x = x - w;
-				sw = sw + w;
 
 				transform->setPosition(core::vector3df(x, y, 0.0f));
 
 				x = x - parentLayoutInfo->Spacing;
-				sw = sw + parentLayoutInfo->Spacing;
 
 				parentLayoutInfo->CurrentX = x;
-				parentLayoutInfo->MaxH = core::max_(parentLayoutInfo->MaxH, h);
-				parentLayoutInfo->MaxW = sw - parentLayoutInfo->Spacing;
+				parentLayoutInfo->CurrentY = y;
 			}
 			break;
 			}
