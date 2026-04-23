@@ -823,7 +823,7 @@ namespace Skylicht
 		CGUIElement* CGUIDesignController::createTemplateObject(const std::string& path, CGUIElement* parent)
 		{
 			CObjectSerializable* data = CGUIImporter::loadGUIToSerializable(path.c_str(), m_guiCanvas);
-			CGUIElement* result = CGUIImporter::importGUI(m_guiCanvas, parent, data);
+			CGUIElement* result = CGUIImporter::importGUI(m_guiCanvas, parent, data, true);
 			delete data;
 
 			if (result)
