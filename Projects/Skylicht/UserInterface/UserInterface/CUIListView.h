@@ -52,7 +52,8 @@ namespace Skylicht
 
 			CGUIMask* m_mask;
 
-			std::vector<CGUIElement*> m_items;
+			std::vector<CGUIElement*> m_allItems;
+			std::vector<CGUIElement*> m_visibleItems;
 
 			CGUIElement* m_listElement;
 			CGUIElement* m_baseItem;
@@ -141,7 +142,7 @@ namespace Skylicht
 			/** @brief Return number of items currently in the list. */
 			inline int getItemCount()
 			{
-				return (int)m_items.size();
+				return (int)m_allItems.size();
 			}
 
 			/**

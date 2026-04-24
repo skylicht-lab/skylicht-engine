@@ -52,7 +52,7 @@ namespace Skylicht
 			m_springOffset = 0.0f;
 			m_maxOffset = 0.0f;
 
-			if (m_items.size() > 0)
+			if (m_visibleItems.size() > 0)
 			{
 				float height = m_listElement->getHeight();
 				float width = m_listElement->getWidth();
@@ -67,7 +67,7 @@ namespace Skylicht
 					float lastItemHeight = 0.0f;
 					float itemHeight = 0.0f;
 
-					for (CGUIElement* item : m_items)
+					for (CGUIElement* item : m_visibleItems)
 					{
 						if (item->getHeight() > itemHeight)
 						{
@@ -96,7 +96,7 @@ namespace Skylicht
 					float lastItemWidth = 0.0f;
 					float itemWidth = 0.0f;
 
-					for (CGUIElement* item : m_items)
+					for (CGUIElement* item : m_visibleItems)
 					{
 						if (item->getWidth() > itemWidth)
 						{
@@ -142,7 +142,7 @@ namespace Skylicht
 			float itemWidth = 0.0f;
 			float itemHeight = 0.0f;
 
-			for (CGUIElement* item : m_items)
+			for (CGUIElement* item : m_visibleItems)
 			{
 				if (m_vertical)
 				{

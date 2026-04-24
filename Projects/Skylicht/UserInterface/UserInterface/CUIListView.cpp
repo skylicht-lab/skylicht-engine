@@ -79,7 +79,7 @@ namespace Skylicht
 			{
 				CGUIElement* item = CGUIImporter::importGUI(m_listElement->getCanvas(), m_listElement, m_itemSerializable);
 				item->setMask(m_mask);
-				m_items.push_back(item);
+				m_allItems.push_back(item);
 				return item;
 			}
 			return NULL;
@@ -91,7 +91,7 @@ namespace Skylicht
 			{
 				CGUIElement* item = CGUIImporter::importGUI(m_listElement->getCanvas(), m_listElement, data);
 				item->setMask(m_mask);
-				m_items.push_back(item);
+				m_allItems.push_back(item);
 				return item;
 			}
 			return NULL;
@@ -107,12 +107,12 @@ namespace Skylicht
 
 		bool CUIListView::removeItem(CGUIElement* item)
 		{
-			auto i = m_items.begin(), end = m_items.end();
+			auto i = m_allItems.begin(), end = m_allItems.end();
 			while (i != end)
 			{
 				if ((*i) == item)
 				{
-					m_items.erase(i);
+					m_allItems.erase(i);
 					m_container->removeChildsByGUI(item);
 					item->remove();
 					return true;
@@ -124,7 +124,7 @@ namespace Skylicht
 
 		void CUIListView::clear()
 		{
-			auto i = m_items.begin(), end = m_items.end();
+			auto i = m_allItems.begin(), end = m_allItems.end();
 			while (i != end)
 			{
 				CGUIElement* item = (*i);
@@ -132,14 +132,14 @@ namespace Skylicht
 				item->remove();
 				++i;
 			}
-			m_items.clear();
+			m_allItems.clear();
 		}
 
 		CGUIElement* CUIListView::getItem(int id)
 		{
-			if (id < 0 || id >= m_items.size())
+			if (id < 0 || id >= m_allItems.size())
 				return NULL;
-			return m_items[id];
+			return m_allItems[id];
 		}
 
 		void CUIListView::onPointerDown(int pointerId, float pointerX, float pointerY)
@@ -152,7 +152,7 @@ namespace Skylicht
 
 				convertToUICoordinate(pointerX, pointerY);
 				convertWorldToLocal(m_element, pointerX, pointerY);
-				
+
 				m_lastPointerX = pointerX;
 				m_lastPointerY = pointerY;
 				m_pointerX = pointerX;
@@ -177,7 +177,7 @@ namespace Skylicht
 			{
 				convertToUICoordinate(pointerX, pointerY);
 				convertWorldToLocal(m_element, pointerX, pointerY);
-								
+
 				m_pointerX = pointerX;
 				m_pointerY = pointerY;
 			}
@@ -185,6 +185,13 @@ namespace Skylicht
 
 		void CUIListView::update()
 		{
+			m_visibleItems.clear();
+			for (CGUIElement* item : m_allItems)
+			{
+				if (item->isVisible())
+					m_visibleItems.push_back(item);
+			}
+
 			updateLimitOffset();
 			updateItemPosition();
 			updateItemMovement();
@@ -195,14 +202,14 @@ namespace Skylicht
 			m_springOffset = 0.0f;
 			m_maxOffset = 0.0f;
 
-			if (m_items.size() > 0)
+			if (m_visibleItems.size() > 0)
 			{
 				if (m_vertical)
 				{
 					float height = m_listElement->getHeight();
 					m_springOffset = height * 0.2f;
 
-					for (CGUIElement* item : m_items)
+					for (CGUIElement* item : m_visibleItems)
 						m_maxOffset = m_maxOffset + item->getHeight() + m_itemSpacing;
 
 					m_maxOffset = m_maxOffset - height;
@@ -214,7 +221,7 @@ namespace Skylicht
 					float width = m_listElement->getWidth();
 					m_springOffset = width * 0.2f;
 
-					for (CGUIElement* item : m_items)
+					for (CGUIElement* item : m_visibleItems)
 						m_maxOffset = m_maxOffset + item->getWidth() + m_itemSpacing;
 
 					m_maxOffset = m_maxOffset - width;
@@ -239,7 +246,7 @@ namespace Skylicht
 				y = 0.0f;
 			}
 
-			for (CGUIElement* item : m_items)
+			for (CGUIElement* item : m_visibleItems)
 			{
 				item->setPosition(core::vector3df(x, y, 0.0f));
 
