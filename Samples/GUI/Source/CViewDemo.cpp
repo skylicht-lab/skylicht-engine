@@ -4,14 +4,13 @@
 #include "imgui.h"
 #include "CImguiManager.h"
 
+#include "CLocalize.h"
 #include "Context/CContext.h"
 #include "Graphics2D/CGUIImporter.h"
 
 CViewDemo::CViewDemo() :
-	m_uiContainer(NULL),
 	m_listTab(NULL),
 	m_listItems(NULL),
-	m_canvas(NULL),
 	m_txtTitle(NULL),
 	m_btnShowHideItems(NULL),
 	m_itemsPanel(NULL),
@@ -32,19 +31,7 @@ CViewDemo::~CViewDemo()
 
 void CViewDemo::onInit()
 {
-	CContext* context = CContext::getInstance();
-	CCamera* camera = context->getActiveCamera();
-
-	CScene* scene = context->getScene();
-	scene->updateIndexSearchObject();
-
-	CZone* zone = scene->getZone(0);
-
-	CGameObject* leftPanel = zone->createEmptyObject();
-	m_canvas = leftPanel->addComponent<CCanvas>();
-
-	CGUIImporter::loadGUI("SampleGUIDemo/Main.gui", m_canvas);
-	m_canvas->applyGUIScale(1.0f);
+	loadGUI("SampleGUIDemo/Main.gui", NULL);
 	m_canvas->setSortDepth(0);
 
 	// Apply mask for panel items
@@ -52,8 +39,6 @@ void CViewDemo::onInit()
 	m_itemsPanel = m_canvas->getGUIByPath("Canvas/Container/Items");
 	if (mask && m_itemsPanel)
 		m_itemsPanel->setMask(mask);
-
-	m_uiContainer = leftPanel->addComponent<UI::CUIContainer>();
 
 	m_txtTitle = dynamic_cast<CGUIText*>(m_canvas->getGUIByPath("Canvas/Container/Items/txtTabName"));
 
@@ -84,10 +69,7 @@ void CViewDemo::onInit()
 
 	// BUTTON: Show/Hide
 	m_btnShowHideItems = new UI::CUIButton(m_uiContainer, m_canvas->getGUIByPath("Canvas/Container/Items/btnShowHide"));
-	m_btnShowHideItems->addMotion(UI::EMotionEvent::PointerHover, new UI::CScaleMotion(1.2f, 1.2f, 1.0f));
-	m_btnShowHideItems->addMotion(UI::EMotionEvent::PointerOut, new UI::CScaleMotion());
-	m_btnShowHideItems->addMotion(UI::EMotionEvent::PointerDown, new UI::CScaleMotion(0.9f, 0.9f, 0.9f))->setTime(0.0f, 50.0f);
-	m_btnShowHideItems->addMotion(UI::EMotionEvent::PointerUp, new UI::CScaleMotion())->setTime(0.0f, 100.0f);
+	setThemeButtonScale(m_btnShowHideItems);
 	m_btnShowHideItems->OnPressed = std::bind(&CViewDemo::onShowHidePanel, this, std::placeholders::_1);
 }
 
@@ -144,7 +126,12 @@ void CViewDemo::addTabItem(SFrame* frame, const char* name)
 void CViewDemo::onSelectTab(UI::CUIBase* btn, const char* name)
 {
 	if (m_txtTitle)
-		m_txtTitle->setText(name);
+	{
+		std::string textId = "TXT_";
+		textId += name;
+		for (auto& c : textId) c = toupper(c);
+		m_txtTitle->setText(CLocalize::get(textId.c_str()));
+	}
 
 	m_tab = name;
 

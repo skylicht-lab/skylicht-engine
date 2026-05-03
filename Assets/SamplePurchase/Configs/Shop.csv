@@ -1,0 +1,13 @@
+iap,item,value,price,sprite,icon
+com.your_app.diamond01,Diamond,160,0.99,SamplePurchase/Items.spritedata,diamond_01
+com.your_app.diamond02,Diamond,1000,4.99,SamplePurchase/Items.spritedata,diamond_02
+com.your_app.diamond03,Diamond,2400,9.99,SamplePurchase/Items.spritedata,diamond_03
+com.your_app.diamond04,Diamond,5200,19.99,SamplePurchase/Items.spritedata,diamond_04
+com.your_app.diamond05,Diamond,14000,49.99,SamplePurchase/Items.spritedata,diamond_05
+com.your_app.diamond06,Diamond,30000,99.99,SamplePurchase/Items.spritedata,diamond_06
+com.your_app.gold01,Gold,20000,0.99,SamplePurchase/Items.spritedata,gold_01
+com.your_app.gold02,Gold,42000,4.99,SamplePurchase/Items.spritedata,gold_02
+com.your_app.gold03,Gold,110000,9.99,SamplePurchase/Items.spritedata,gold_03
+com.your_app.gold04,Gold,230000,19.99,SamplePurchase/Items.spritedata,gold_04
+com.your_app.gold05,Gold,380000,49.99,SamplePurchase/Items.spritedata,gold_05
+com.your_app.gold06,Gold,550000,99.99,SamplePurchase/Items.spritedata,gold_06

@@ -62,6 +62,10 @@ namespace Skylicht
 			return (u32)m_sheet->Rows.size();
 		}
 
+		u32 fetchData(std::function<CObjectSerializable* ()> creatorFunc, std::vector<CObjectSerializable*>& data, u32 fromRow, int count);
+
+		void copyRowToObject(CXMLSpreadsheet::SRow* row, CObjectSerializable* data);
+
 		template<class T>
 		void freeData(std::vector<T*>& data)
 		{
@@ -97,40 +101,7 @@ namespace Skylicht
 					return 0;
 				}
 
-				std::vector<CXMLSpreadsheet::SCell*>::iterator j = row->Cells.begin(), e = row->Cells.end();
-				while (j != e)
-				{
-					CXMLSpreadsheet::SCell* cell = (*j);
-					if (cell->Col < m_column.size())
-					{
-						const std::string& colName = m_column[cell->Col];
-						{
-							CValueProperty* value = objectSerizable->getProperty(colName.c_str());
-							if (value == NULL)
-								continue;
-
-							switch (value->getType())
-							{
-							case String:
-								(dynamic_cast<CStringProperty*>(value))->set(cell->Value.c_str());
-								break;
-							case Integer:
-								(dynamic_cast<CIntProperty*>(value))->set(cell->NumberInt);
-								break;
-							case Float:
-								(dynamic_cast<CFloatProperty*>(value))->set(cell->NumberFloat);
-								break;
-							case DateTime:
-								(dynamic_cast<CDateTimeProperty*>(value))->set(cell->Time);
-								break;
-							default:
-								break;
-							}
-						}
-					}
-
-					++j;
-				}
+				copyRowToObject(row, objectSerizable);
 
 				data.push_back(obj);
 

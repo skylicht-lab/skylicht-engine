@@ -1,10 +1,9 @@
 #pragma once
-#pragma once
 
 #include "Graphics2D/GUI/CGUIText.h"
-#include "ViewManager/CView.h"
+#include "CViewBase.h"
 
-class CViewHeader : public CView
+class CViewHeader : public CViewBase
 {
 protected:
 	CGUIText* m_txtUserName;

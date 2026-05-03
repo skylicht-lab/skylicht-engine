@@ -7,6 +7,7 @@
 
 #include "CViewInit.h"
 #include "CProfileData.h"
+#include "CLocalize.h"
 #include "UserInterface/CUIEventManager.h"
 
 void installApplication(const std::vector<std::string>& argv)
@@ -20,6 +21,7 @@ SampleGUI::SampleGUI()
 	CContext::createGetInstance();
 
 	CProfileData::createGetInstance();
+	CLocalize::createGetInstance();
 
 	// layer 0: Main GUI
 	// layer 1: Header
@@ -37,6 +39,7 @@ SampleGUI::~SampleGUI()
 	CContext::releaseInstance();
 
 	CProfileData::releaseInstance();
+	CLocalize::releaseInstance();
 
 	UI::CUIEventManager::releaseInstance();
 	CImguiManager::releaseInstance();

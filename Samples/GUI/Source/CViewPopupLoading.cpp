@@ -9,7 +9,6 @@
 #include "Tween/CTweenManager.h"
 
 CViewPopupLoading::CViewPopupLoading() :
-	m_popup(NULL),
 	m_progressBar(NULL)
 {
 
@@ -22,21 +21,12 @@ CViewPopupLoading::~CViewPopupLoading()
 
 void CViewPopupLoading::onInit()
 {
-	CScene* scene = CContext::getInstance()->getScene();
-	CZone* zone = scene->getZone(0);
+	loadGUI("SampleGUIDemo/Loading.gui", NULL);
+	m_canvas->setSortDepth(2);
 
-	m_popup = zone->createEmptyObject();
-	CCanvas* canvas = m_popup->addComponent<CCanvas>();
+	UI::CUIBase* disableTouch = new UI::CUIBase(m_uiContainer, m_canvas->getGUIByPath("Canvas/Container/Background"));
 
-	CGUIImporter::loadGUI("SampleGUIDemo/Loading.gui", canvas);
-	canvas->applyGUIScale(1.0f);
-	canvas->setSortDepth(2);
-
-	UI::CUIContainer* uiContainer = m_popup->addComponent<UI::CUIContainer>();
-
-	UI::CUIBase* disableTouch = new UI::CUIBase(uiContainer, canvas->getGUIByPath("Canvas/Container/Background"));
-
-	m_progressBar = new UI::CUIProgressBar(uiContainer, canvas->getGUIByPath("Canvas/Container/Dialog/ProgressBar"));
+	m_progressBar = new UI::CUIProgressBar(m_uiContainer, m_canvas->getGUIByPath("Canvas/Container/Dialog/ProgressBar"));
 	m_progressBar->setPercent(0.0f);
 
 	// fake load in 2s to demo ProgressBar
@@ -54,16 +44,14 @@ void CViewPopupLoading::onInit()
 		};
 	CTweenManager::getInstance()->addTween(t);
 
-	uiContainer->startInMotion();
+	m_uiContainer->startInMotion();
 }
 
 void CViewPopupLoading::close()
 {
-	UI::CUIContainer* uiContainer = m_popup->getComponent<UI::CUIContainer>();
-	uiContainer->startOutMotion();
-	uiContainer->OnMotionOutFinish = [&]()
+	m_uiContainer->startOutMotion();
+	m_uiContainer->OnMotionOutFinish = [&]()
 		{
-			m_popup->remove();
 			CViewManager::getInstance()->getLayer(2)->removeView(this);
 		};
 }

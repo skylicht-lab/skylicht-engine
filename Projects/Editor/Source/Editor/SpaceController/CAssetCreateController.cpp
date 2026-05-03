@@ -181,7 +181,9 @@ namespace Skylicht
 
 			CZone* zone = CSceneController::getInstance()->getScene()->getZone(0);
 			CGameObject* canvas = zone->createEmptyObject();
+
 			CCanvas* nullCanvas = canvas->addComponent<CCanvas>();
+			nullCanvas->setRect(core::rectf(0.0f, 0.0f, 1920.0f, 1080.0f));
 
 			CGUIExporter::save(fullPath.c_str(), nullCanvas);
 

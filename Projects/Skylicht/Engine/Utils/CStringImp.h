@@ -972,6 +972,70 @@ namespace Skylicht
 			return ret;
 		}
 
+		static std::string formatThousand(int n, bool useK, bool useM)
+		{
+			std::string s;
+			std::string dot;
+
+			bool addK = false;
+			bool addM = false;
+
+			if (useM && n > 1000000.0f)
+			{
+				int number = (int)(n / 1000000.0f);
+				char text[32];
+				sprintf(text, "%d", number);
+				s = text;
+
+				double d = n / 1000000.0 - (double)number;
+				if (d > 0.0f)
+				{
+					sprintf(text, ",%02d", (int)(d * 100.0));
+					dot = text;
+				}
+
+				addM = true;
+			}
+			else if (useK && n > 100000.0f)
+			{
+				int number = (int)(n / 1000.0f);
+				char text[32];
+				sprintf(text, "%d", number);
+				s = text;
+
+				double d = n / 1000.0 - (double)number;
+				if (d > 0.0f)
+				{
+					sprintf(text, ",%02d", (int)(d * 10.0));
+					dot = text;
+				}
+
+				addK = true;
+			}
+			else
+			{
+				s = std::to_string(n);
+			}
+
+			int n_len = (int)s.length();
+			int insert_count = 0;
+
+			if (n_len > 3)
+			{
+				for (int i = n_len - 3; i > 0; i -= 3)
+					s.insert(i, ".");
+			}
+
+			s += dot;
+
+			if (addM)
+				s += "M";
+			else if (addK)
+				s += "K";
+
+			return s;
+		}
+
 		static void replaceString(std::string& subject, const std::string& search, const std::string& replace)
 		{
 			size_t pos = 0;

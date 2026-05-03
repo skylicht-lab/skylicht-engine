@@ -473,6 +473,9 @@ namespace Skylicht
 					c->Col = colId++;
 					c->Type = EPropertyDataType::String;
 					c->Value = s;
+					c->NumberInt = atoi(s.c_str());
+					c->NumberFloat = (float)atof(s.c_str());
+					c->Time = atol(s.c_str());
 					c->UnicodeValue = CStringImp::convertUTF8ToUnicode(s.c_str());
 					row->Cells.push_back(c);
 

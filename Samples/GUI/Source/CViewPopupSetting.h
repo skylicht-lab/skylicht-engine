@@ -1,19 +1,15 @@
 #pragma once
 
-#include "ViewManager/CView.h"
+#include "CViewBase.h"
 #include "GameObject/CGameObject.h"
 
-#include "UserInterface/CUIContainer.h"
 #include "UserInterface/CUIProgressBar.h"
 #include "UserInterface/CUISlider.h"
 #include "UserInterface/CUISwitch.h"
 #include "UserInterface/CUICheckbox.h"
 
-class CViewPopupSetting : public CView
+class CViewPopupSetting : public CViewBase
 {
-protected:
-	CGameObject* m_popup;
-
 public:
 	CViewPopupSetting();
 

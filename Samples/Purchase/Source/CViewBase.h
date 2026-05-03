@@ -1,0 +1,30 @@
+#pragma once
+
+#include "ViewManager/CView.h"
+#include "UserInterface/CUIContainer.h"
+#include "UserInterface/CUIButton.h"
+
+class CViewBase : public CView
+{
+protected:
+	CGameObject* m_guiObj;
+	CCanvas* m_canvas;
+	UI::CUIContainer* m_uiContainer;
+
+public:
+	CViewBase();
+
+	virtual ~CViewBase();
+
+	void loadGUI(const char* gui, CScene* scene, float applyWidth = 0.0f);
+
+	void onUIPressed(UI::CUIBase* base);
+
+	void onLocalize(CGUIText* text);
+
+	void setThemeButton(UI::CUIButton* btn, float alpha = 0.8f);
+
+	void setThemeButtonScale(UI::CUIButton* btn);
+
+	void resetHoverButtonMotions(UI::CUIButton* btn, float alpha = 0.8f);
+};
