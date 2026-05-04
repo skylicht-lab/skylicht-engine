@@ -1,0 +1,18 @@
+STRING_ID,LANG_EN,LANG_VN
+TXT_WELCOME,Welcome!,Xin chào!
+TXT_USERNAME,Username,Người dùng
+TXT_LOADING,Loading,Đang tải
+TXT_TAB_NAME,Tab Name,Tên Tab
+TXT_ITEM,Item,Vật phẩm
+TXT_OK,OK,Đồng ý
+TXT_CANCEL,Cancel,Hủy
+TXT_ENTER_YOUR_NAME,Enter your name,Nhập tên của bạn
+TXT_WHAT_YOUR_NAME,What is your name?,Tên của bạn là gì?
+TXT_DEMO_SETTING,Demo Setting,Cài đặt Demo
+TXT_DEMO_SLIDER,Demo slider,Thanh trượt Demo
+TXT_DEMO_SWITCH,Demo switch,Công tắc Demo
+TXT_DEMO_CHECKBOX,Demo checkbox,Hộp kiểm Demo
+TXT_HAIR,Hair,Tóc
+TXT_SHIRT,Shirt,Áo
+TXT_PANT,Pant,Quần
+TXT_HEELS,Heels,Giày cao gót

@@ -1,15 +1,13 @@
 #pragma once
 
-#include "ViewManager/CView.h"
+#include "CViewBase.h"
 #include "GameObject/CGameObject.h"
 
-#include "UserInterface/CUIContainer.h"
 #include "UserInterface/CUIProgressBar.h"
 
-class CViewPopupLoading : public CView
+class CViewPopupLoading : public CViewBase
 {
 protected:
-	CGameObject* m_popup;
 	UI::CUIProgressBar* m_progressBar;
 
 public:

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ViewManager/CView.h"
+#include "CViewBase.h"
 #include "GameObject/CGameObject.h"
 
 #include "UserInterface/CUIContainer.h"
@@ -10,10 +10,9 @@
 
 #include "Tween/CTweenManager.h"
 
-class CViewDemo : public CView
+class CViewDemo : public CViewBase
 {
 protected:
-	UI::CUIContainer* m_uiContainer;
 	UI::CUIListView* m_listTab;
 	UI::CUIGridView* m_listItems;
 
@@ -24,7 +23,6 @@ protected:
 	CGUIElement* m_itemsPanel;
 
 	std::vector<UI::CUIButton*> m_listTabBtn;
-	CCanvas* m_canvas;
 
 	std::string m_tab;
 

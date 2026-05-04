@@ -10,6 +10,8 @@
 #include "GridPlane/CGridPlane.h"
 #include "SkySun/CSkySun.h"
 
+#include "CLocalize.h"
+
 #include "Graphics2D/CCanvas.h"
 
 CViewInit::CViewInit() :
@@ -189,6 +191,10 @@ void CViewInit::onUpdate()
 	case CViewInit::InitScene:
 	{
 		initScene();
+
+		CLocalize::getInstance()->init("SampleGUIDemo/Configs/Text.csv");
+		// CLocalize::getInstance()->setLanguage(ELanguage::VN);
+
 		m_initState = CViewInit::Finished;
 	}
 	break;

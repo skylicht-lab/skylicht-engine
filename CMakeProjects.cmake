@@ -47,6 +47,8 @@ if (BUILD_EXAMPLES AND BUILD_SKYLICHT_LIGHMAPPER)
 	subdirs(Samples/Physics)
 	endif()
 	
+	subdirs(Samples/Purchase)
+	
 	subdirs(Samples/SkinnedMesh)
 	subdirs(Samples/SkinnedMeshInstancing)
 	

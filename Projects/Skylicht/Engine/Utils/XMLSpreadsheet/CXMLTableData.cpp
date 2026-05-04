@@ -55,4 +55,74 @@ namespace Skylicht
 		i += index;
 		m_column.erase(i);
 	}
+
+	u32 CXMLTableData::fetchData(std::function<CObjectSerializable* ()> creatorFunc, std::vector<CObjectSerializable*>& data, u32 fromRow, int count)
+	{
+		std::vector<CXMLSpreadsheet::SRow*>::iterator i = m_sheet->Rows.begin(), end = m_sheet->Rows.end();
+		while (i != end)
+		{
+			CXMLSpreadsheet::SRow* row = (*i);
+			if (row->Index < fromRow)
+			{
+				++i;
+				continue;
+			}
+
+			if (count > 0)
+			{
+				if (row->Index >= fromRow + (u32)count)
+					break;
+			}
+
+			CObjectSerializable* objectSerizable = creatorFunc();
+			if (objectSerizable == NULL)
+				return 0;
+
+			copyRowToObject(row, objectSerizable);
+
+			data.push_back(objectSerizable);
+
+			++i;
+		}
+
+		return (u32)data.size();
+	}
+
+	void CXMLTableData::copyRowToObject(CXMLSpreadsheet::SRow* row, CObjectSerializable* data)
+	{
+		std::vector<CXMLSpreadsheet::SCell*>::iterator j = row->Cells.begin(), e = row->Cells.end();
+		while (j != e)
+		{
+			CXMLSpreadsheet::SCell* cell = (*j);
+			if (cell->Col < m_column.size())
+			{
+				const std::string& colName = m_column[cell->Col];
+				{
+					CValueProperty* value = data->getProperty(colName.c_str());
+					if (value == NULL)
+						continue;
+
+					switch (value->getType())
+					{
+					case String:
+						(dynamic_cast<CStringProperty*>(value))->set(cell->Value.c_str());
+						break;
+					case Integer:
+						(dynamic_cast<CIntProperty*>(value))->set(cell->NumberInt);
+						break;
+					case Float:
+						(dynamic_cast<CFloatProperty*>(value))->set(cell->NumberFloat);
+						break;
+					case DateTime:
+						(dynamic_cast<CDateTimeProperty*>(value))->set(cell->Time);
+						break;
+					default:
+						break;
+					}
+				}
+			}
+
+			++j;
+		}
+	}
 }

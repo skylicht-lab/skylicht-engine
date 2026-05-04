@@ -26,42 +26,22 @@ CViewHeader::~CViewHeader()
 
 void CViewHeader::onInit()
 {
-	CScene* scene = CContext::getInstance()->getScene();
-	CZone* zone = scene->getZone(0);
+	loadGUI("SampleGUIDemo/Header.gui", NULL);
+	m_canvas->setSortDepth(1);
 
-	CGameObject* header = zone->createEmptyObject();
-	CCanvas* canvas = header->addComponent<CCanvas>();
-
-	CGUIImporter::loadGUI("SampleGUIDemo/Header.gui", canvas);
-	canvas->applyGUIScale(1.0f);
-	canvas->setSortDepth(1);
-
-	UI::CUIContainer* uiContainer = header->addComponent<UI::CUIContainer>();
-
-	m_txtUserName = dynamic_cast<CGUIText*>(canvas->getGUIByPath("Canvas/Header/txtUserName"));
-	UI::CUIBase* btnUserName = new UI::CUIBase(uiContainer, m_txtUserName);
-	btnUserName->addMotion(UI::EMotionEvent::PointerHover, new UI::CColorMotion(SColor(255, 230, 90, 30)));
-	btnUserName->addMotion(UI::EMotionEvent::PointerOut, new UI::CColorMotion());
-	btnUserName->addMotion(UI::EMotionEvent::PointerDown, new UI::CAlphaMotion(0.8f))->setTime(0.0f, 0.0f);
-	btnUserName->addMotion(UI::EMotionEvent::PointerDown, new UI::CPositionMotion(2.0f, 2.0f, 0.0f))->setTime(0.0f, 50.0f);
-	btnUserName->addMotion(UI::EMotionEvent::PointerUp, new UI::CAlphaMotion())->setTime(0.0f, 50.0f);
-	btnUserName->addMotion(UI::EMotionEvent::PointerUp, new UI::CPositionMotion());
+	m_txtUserName = dynamic_cast<CGUIText*>(m_canvas->getGUIByPath("Canvas/Header/txtUserName"));
+	UI::CUIButton* btnUserName = new UI::CUIButton(m_uiContainer, m_txtUserName);
+	setThemeButton(btnUserName);
 	btnUserName->OnPressed = [](UI::CUIBase* base)
 		{
 			CViewManager::getInstance()->getLayer(2)->pushView<CViewPopupEnterName>();
 		};
 
-	UI::CUIBase* btnAvatar = new UI::CUIBase(uiContainer, canvas->getGUIByPath("Canvas/Header/Avatar"));
-	btnAvatar->addMotion(UI::EMotionEvent::PointerHover, new UI::CAlphaMotion(0.8f));
-	btnAvatar->addMotion(UI::EMotionEvent::PointerOut, new UI::CAlphaMotion());
-	btnAvatar->addMotion(UI::EMotionEvent::PointerDown, new UI::CScaleMotion(0.9f, 0.9f, 0.9f))->setTime(0.0f, 50.0f);
-	btnAvatar->addMotion(UI::EMotionEvent::PointerUp, new UI::CScaleMotion())->setTime(0.0f, 100.0f);
+	UI::CUIBase* btnAvatar = new UI::CUIBase(m_uiContainer, m_canvas->getGUIByPath("Canvas/Header/Avatar"));
+	setAlphaScale(btnAvatar);
 
-	UI::CUIButton* btnSetting = new UI::CUIButton(uiContainer, canvas->getGUIByPath("Canvas/Header/BtnSetting"));
-	btnSetting->addMotion(UI::EMotionEvent::PointerHover, btnSetting->getBackground(), new UI::CVisibleMotion(true));
-	btnSetting->addMotion(UI::EMotionEvent::PointerOut, btnSetting->getBackground(), new UI::CVisibleMotion());
-	btnSetting->addMotion(UI::EMotionEvent::PointerDown, new UI::CScaleMotion(0.9f, 0.9f, 0.9f))->setTime(0.0f, 50.0f);
-	btnSetting->addMotion(UI::EMotionEvent::PointerUp, new UI::CScaleMotion())->setTime(0.0f, 100.0f);
+	UI::CUIButton* btnSetting = new UI::CUIButton(m_uiContainer, m_canvas->getGUIByPath("Canvas/Header/BtnSetting"));
+	setThemeButtonScale(btnSetting);
 	btnSetting->OnPressed = [](UI::CUIBase* base)
 		{
 			CViewManager::getInstance()->getLayer(2)->pushView<CViewPopupSetting>();
