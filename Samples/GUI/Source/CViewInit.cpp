@@ -10,7 +10,7 @@
 #include "GridPlane/CGridPlane.h"
 #include "SkySun/CSkySun.h"
 
-#include "CLocalize.h"
+#include "Localize/CLocalize.h"
 
 #include "Graphics2D/CCanvas.h"
 

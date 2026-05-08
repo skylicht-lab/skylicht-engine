@@ -7,7 +7,7 @@
 
 #include "CViewInit.h"
 #include "CProfileData.h"
-#include "CLocalize.h"
+#include "Localize/CLocalize.h"
 #include "UserInterface/CUIEventManager.h"
 
 void installApplication(const std::vector<std::string>& argv)

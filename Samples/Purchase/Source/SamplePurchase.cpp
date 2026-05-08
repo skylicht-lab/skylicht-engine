@@ -9,7 +9,7 @@
 #include "CViewInit.h"
 #include "CProfileData.h"
 #include "CShopConfig.h"
-#include "CLocalize.h"
+#include "Localize/CLocalize.h"
 #include "CPurchase.h"
 
 void installApplication(const std::vector<std::string>& argv)

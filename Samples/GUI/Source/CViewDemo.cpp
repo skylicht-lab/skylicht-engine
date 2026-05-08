@@ -4,7 +4,7 @@
 #include "imgui.h"
 #include "CImguiManager.h"
 
-#include "CLocalize.h"
+#include "Localize/CLocalize.h"
 #include "Context/CContext.h"
 #include "Graphics2D/CGUIImporter.h"
 

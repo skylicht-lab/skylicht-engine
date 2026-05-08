@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CShopData.h"
-#include "CBaseConfig.h"
+#include "Config/CBaseConfig.h"
 #include "Utils/CSingleton.h"
 
 class CShopConfig : public CBaseConfig

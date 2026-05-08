@@ -10,7 +10,7 @@
 
 #include "CScroller.h"
 #include "CScrollerController.h"
-#include "CLocalize.h"
+#include "Localize/CLocalize.h"
 
 #define MAX_STATE 4
 

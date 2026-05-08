@@ -5,7 +5,7 @@
 #include "ViewManager/CViewManager.h"
 
 #include "CViewInit.h"
-#include "CLocalize.h"
+#include "Localize/CLocalize.h"
 
 #include "UserInterface/CUIEventManager.h"
 

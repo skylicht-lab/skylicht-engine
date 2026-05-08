@@ -2,7 +2,7 @@
 #include "CViewBase.h"
 #include "Context/CContext.h"
 #include "Graphics2D/CGUIImporter.h"
-#include "CLocalize.h"
+#include "Localize/CLocalize.h"
 
 CViewBase::CViewBase() :
 	m_guiObj(NULL),

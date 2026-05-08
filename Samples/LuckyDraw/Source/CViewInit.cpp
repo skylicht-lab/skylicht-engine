@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "CViewInit.h"
 #include "CViewDemo.h"
-#include "CLocalize.h"
+#include "Localize/CLocalize.h"
 
 #include "ViewManager/CViewManager.h"
 #include "Context/CContext.h"
@@ -90,14 +90,8 @@ void CViewInit::initScene()
 
 void CViewInit::loadConfig()
 {
-	CXMLSpreadsheet xlsText;
-
-	//if (xlsText.open("Luckydraw/text.xml") == true)
-	if (xlsText.openCSV("Luckydraw/text.csv") == true)
-	{
-		CLocalize::getInstance()->init(&xlsText);
-		CLocalize::getInstance()->setLanguage(ELanguage::EN);
-	}
+	CLocalize::getInstance()->init("Luckydraw/text.csv");
+	CLocalize::getInstance()->setLanguage(ELanguage::EN);
 }
 
 void CViewInit::onDestroy()

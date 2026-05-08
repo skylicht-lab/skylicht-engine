@@ -1,10 +1,9 @@
 #include "pch.h"
-#include "SkylichtEngine.h"
 #include "CLocalize.h"
 
 CDataText::CDataText() :
 	CObjectSerializable("CDataText"),
-	SRING_ID(this, "STRING_ID"),
+	STRING_ID(this, "STRING_ID"),
 	LANG_EN(this, "LANG_EN"),
 	LANG_VN(this, "LANG_VN")
 {
@@ -22,10 +21,10 @@ const char* CDataText::getString(ELanguage lang)
 	switch (lang)
 	{
 	case ELanguage::EN:
-		result = LANG_EN.getString();
+		result = LANG_EN.cstr();
 		break;
 	case ELanguage::VN:
-		result = LANG_VN.getString();
+		result = LANG_VN.cstr();
 		break;
 	default:
 		break;
@@ -43,22 +42,19 @@ CLocalize::CLocalize() :
 
 CLocalize::~CLocalize()
 {
-	for (CDataText* t : m_text)
-		delete t;
-	m_text.clear();
 	m_map.clear();
 }
 
-void CLocalize::init(CXMLSpreadsheet* excel)
+void CLocalize::init(const char* cfgFile)
 {
-	CXMLTableData table(excel->getSheet(0));
-	table.addColumn("STRING_ID");
-	table.addColumn("LANG_EN");
-	table.addColumn("LANG_VN");
-	table.fetchData(m_text, 1, -1);
+	CBaseConfig::init(cfgFile);
 
-	for (CDataText* t : m_text)
-		m_map[t->SRING_ID.get()] = t;
+	for (CObjectSerializable* data : m_data)
+	{
+		CDataText* t = dynamic_cast<CDataText*>(data);
+		if (t)
+			m_map[t->STRING_ID.get()] = t;
+	}
 }
 
 const char* CLocalize::getString(const char* id)
@@ -68,4 +64,23 @@ const char* CLocalize::getString(const char* id)
 		return "";
 
 	return (*i).second->getString(m_language);
+}
+
+const char* CLocalize::getString(ELanguage lang, const char* id)
+{
+	std::map<std::string, CDataText*>::iterator i = m_map.find(id);
+	if (i == m_map.end())
+		return "";
+
+	return (*i).second->getString(lang);
+}
+
+const char* CLocalize::get(const char* id)
+{
+	return CLocalize::getInstance()->getString(id);
+}
+
+const char* CLocalize::get(ELanguage lang, const char* id)
+{
+	return CLocalize::getInstance()->getString(lang, id);
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CBaseConfig.h"
+#include "Config/CBaseConfig.h"
 
 enum class ELanguage
 {
@@ -11,7 +11,7 @@ enum class ELanguage
 class CDataText : public CObjectSerializable
 {
 public:
-	CStringProperty SRING_ID;
+	CStringProperty STRING_ID;
 	CStringProperty LANG_EN;
 	CStringProperty LANG_VN;
 
@@ -26,7 +26,6 @@ public:
 class CLocalize : public CBaseConfig
 {
 protected:
-	std::vector<CDataText*> m_text;
 	std::map<std::string, CDataText*> m_map;
 
 	ELanguage m_language;

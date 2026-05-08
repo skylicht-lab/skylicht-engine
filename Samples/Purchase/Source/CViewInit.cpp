@@ -12,7 +12,7 @@
 #include "Primitive/CSphere.h"
 #include "SkySun/CSkySun.h"
 
-#include "CLocalize.h"
+#include "Localize/CLocalize.h"
 #include "CShopConfig.h"
 #include "CPurchase.h"
 

@@ -4,7 +4,7 @@
 #include "Context/CContext.h"
 #include "CShopConfig.h"
 #include "CShopData.h"
-#include "CLocalize.h"
+#include "Localize/CLocalize.h"
 #include "Utils/CStringImp.h"
 #include "Graphics2D/CGUIImporter.h"
 #include "Graphics2D/CGUIExporter.h"
