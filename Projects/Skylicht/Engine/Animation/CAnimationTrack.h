@@ -34,7 +34,7 @@ namespace Skylicht
 	public:
 		//! Frame time in seconds.
 		f32 Frame; // Second
-		
+
 		//! Value of the keyframe.
 		T Value;
 	};
@@ -246,11 +246,6 @@ namespace Skylicht
 		 * @return Pointer to CAnimationData.
 		 */
 		CAnimationData* getFrameData()
-		{
-			return m_data;
-		}
-	};
-}		CAnimationData* getFrameData()
 		{
 			return m_data;
 		}
