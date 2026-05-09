@@ -29,16 +29,17 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	/// @brief This object class supports managing multiple Sprites..
-	/// @ingroup Graphics2D
-	/// 
-	/// @code
-	/// CSpriteFrame* spriteFrame = CSpriteManager::getInstance()->loadSprite("sprite.spritedata");
-	/// @endcode
-	/// 
-	/// @see CSpriteFrame
-	class SKYLICHT_API CSpriteManager
-	{
+	/**
+	 * @brief This object class supports managing multiple Sprites..
+	 * @ingroup Graphics2D
+	 *
+	 * @code
+	 * CSpriteFrame* spriteFrame = CSpriteManager::getInstance()->loadSprite("sprite.spritedata");
+	 * @endcode
+	 *
+	 * @see CSpriteFrame
+	 */
+	class SKYLICHT_API CSpriteManager	{
 	public:
 		DECLARE_SINGLETON(CSpriteManager)
 

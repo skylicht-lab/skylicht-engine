@@ -30,6 +30,16 @@ namespace Skylicht
 {
 	namespace Physics
 	{
+		/**
+		 * @brief A capsule collision shape.
+		 * @ingroup Physics
+		 * 
+		 * Example:
+		 * @code
+		 * Physics::CCapsuleCollider* capsule = gameObject->addComponent<Physics::CCapsuleCollider>();
+		 * capsule->setCapsule(0.5f, 2.0f);
+		 * @endcode
+		 */
 		class CCapsuleCollider : public CCollider
 		{
 		protected:
@@ -47,16 +57,29 @@ namespace Skylicht
 
 			virtual void loadSerializable(CObjectSerializable* object);
 
+			/**
+			 * @brief Gets the radius of the capsule.
+			 * @return Radius value.
+			 */
 			inline float getRadius()
 			{
 				return m_radius;
 			}
 
+			/**
+			 * @brief Gets the height of the capsule.
+			 * @return Height value.
+			 */
 			inline float getHeight()
 			{
 				return m_height;
 			}
 
+			/**
+			 * @brief Sets the capsule dimensions.
+			 * @param radius Radius value.
+			 * @param height Height value.
+			 */
 			inline void setCapsule(float radius, float height)
 			{
 				m_radius = radius;

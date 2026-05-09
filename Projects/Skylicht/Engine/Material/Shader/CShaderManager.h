@@ -36,21 +36,22 @@ namespace Skylicht
 	class IShaderCallback;
 	class IShaderInstancing;
 
-	/// @brief Centralized manager for loading, caching, rebuilding, and controlling shader objects in Skylicht-Engine.
-	/// @ingroup Materials
-	/// 
-	/// Handles initialization of built - in shaders for various rendering pipelines(basic, deferred, forward, mobile, PBR, etc.),
-	/// manages shader instancing, uniform storage, and provides lookup functions for accessing shaders by name, path, or ID.
-	/// 
-	/// Allows for dynamic shader loading, rebuilding, and provides access to current rendering context (mesh / material).
-	/// 
-	/// Example usage :
-	/// @code
-	/// CShaderManager *shaderMgr = CShaderManager::getInstance();
-	/// shaderMgr->loadShader("BuiltIn/Shader/Transparent/Transparent.xml");
-	/// @endcode
-	class SKYLICHT_API CShaderManager
-	{
+	/**
+	 * @brief Centralized manager for loading, caching, rebuilding, and controlling shader objects in Skylicht-Engine.
+	 * @ingroup Materials
+	 *
+	 * Handles initialization of built - in shaders for various rendering pipelines(basic, deferred, forward, mobile, PBR, etc.),
+	 * manages shader instancing, uniform storage, and provides lookup functions for accessing shaders by name, path, or ID.
+	 *
+	 * Allows for dynamic shader loading, rebuilding, and provides access to current rendering context (mesh / material).
+	 *
+	 * Example usage :
+	 * @code
+	 * CShaderManager *shaderMgr = CShaderManager::getInstance();
+	 * shaderMgr->loadShader("BuiltIn/Shader/Transparent/Transparent.xml");
+	 * @endcode
+	 */
+	class SKYLICHT_API CShaderManager	{
 	public:
 		DECLARE_SINGLETON(CShaderManager)
 

@@ -33,13 +33,32 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/**
+	 * @brief Singleton manager for loading, caching, and exporting animations.
+	 * @ingroup Animation
+	 * 
+	 * Example: Loading and playing an animation
+	 * @code
+	 * // Load animation clip from file (.dae, .fbx, or .sanim)
+	 * CAnimationClip* clip = CAnimationManager::getInstance()->loadAnimation("Hero@Idle.sanim");
+	 * 
+	 * if (clip)
+	 * {
+	 *     // Apply to a skeleton
+	 *     skeleton->setAnimation(clip, true);
+	 * }
+	 * @endcode
+	 */
 	class SKYLICHT_API CAnimationManager
 	{
 	public:
 		DECLARE_SINGLETON(CAnimationManager)
 
 	protected:
+		//! Cached animation clips indexed by resource path.
 		std::map<std::string, CAnimationClip*> m_clips;
+		
+		//! Cached animation containers indexed by name.
 		std::map<std::string, CAnimation*> m_animations;
 
 	public:
@@ -47,23 +66,63 @@ namespace Skylicht
 
 		virtual ~CAnimationManager();
 
+		/**
+		 * @brief Creates or retrieves a named animation container.
+		 * @param name The unique name for the container.
+		 * @return Pointer to CAnimation.
+		 */
 		CAnimation* createAnimation(const char* name);
 
+		/**
+		 * @brief Gets a named animation container.
+		 * @param animName The name of the container.
+		 * @return Pointer to CAnimation, or NULL if not found.
+		 */
 		CAnimation* getAnimation(const char* animName)
 		{
 			return m_animations[animName];
 		}
 
+		/**
+		 * @brief Loads an animation clip from a file.
+		 * @param resource Path to the animation file (.dae, .fbx, .sanim).
+		 * @return Pointer to the loaded CAnimationClip, or NULL on failure.
+		 */
 		CAnimationClip* loadAnimation(const char* resource);
 
+		/**
+		 * @brief Loads an animation clip using a specific importer.
+		 * @param resource Path or identifier for the animation resource.
+		 * @param importer Pointer to the importer implementation.
+		 * @return Pointer to the loaded CAnimationClip, or NULL on failure.
+		 */
 		CAnimationClip* loadAnimation(const char* resource, IAnimationImporter* importer);
 
+		/**
+		 * @brief Exports an animation clip to a file.
+		 * @param clip Pointer to the clip to export.
+		 * @param output Destination file path.
+		 * @return True on success, false on failure.
+		 */
 		bool exportAnimation(CAnimationClip* clip, const char* output);
 
+		/**
+		 * @brief Exports an animation clip using a specific exporter.
+		 * @param clip Pointer to the clip to export.
+		 * @param output Destination file path.
+		 * @param exporter Pointer to the exporter implementation.
+		 * @return True on success, false on failure.
+		 */
 		bool exportAnimation(CAnimationClip* clip, const char* output, IAnimationExporter* exporter);
 
+		/**
+		 * @brief Releases all cached animation clips.
+		 */
 		void releaseAllClips();
 
+		/**
+		 * @brief Releases all cached animation containers.
+		 */
 		void releaseAllAnimations();
 	};
 }

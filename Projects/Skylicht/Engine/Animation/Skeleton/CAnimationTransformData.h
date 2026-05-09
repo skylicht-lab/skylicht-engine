@@ -32,36 +32,54 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief ECS data component that holds animation and transform state for an entity within a skeleton.
+	/// @ingroup Animation
 	class SKYLICHT_API CAnimationTransformData : public IEntityData
 	{
 	public:
+		//! Name of the bone or joint.
 		std::string Name;
 
+		//! Internal entity ID.
 		int ID;
+		
+		//! ID of the parent entity (-1 for root).
 		int ParentID;
+		
+		//! Hierarchy depth (0 for root).
 		int Depth;
 
+		//! Index of the bone in the hardware skinning buffer.
 		int BoneID;
 
-		// use to cancel animation
+		//! If true, animation evaluation is skipped for this entity.
 		bool DisableAnimation;
 
+		//! Blending weight for this specific bone.
 		float Weight;
 
-		// transform if the entity dont have animation
+		//! Default local position when no animation is playing.
 		core::vector3df DefaultPosition;
+		
+		//! Default local scale when no animation is playing.
 		core::vector3df DefaultScale;
+		
+		//! Default local rotation when no animation is playing.
 		core::quaternion DefaultRotation;
 
-		// transform get from animation track
+		//! Calculated local position from the animation track.
 		core::vector3df AnimPosition;
+		
+		//! Calculated local scale from the animation track.
 		core::vector3df AnimScale;
+		
+		//! Calculated local rotation from the animation track.
 		core::quaternion AnimRotation;
 
-		// handle of world transform
+		//! Pointer to the world transform ECS data for this entity.
 		CWorldTransformData* WorldTransform;
 
-		// current animation track
+		//! The animation track evaluator for this entity.
 		CAnimationTrack AnimationTrack;
 
 	public:
@@ -69,6 +87,9 @@ namespace Skylicht
 
 		virtual ~CAnimationTransformData();
 
+		/**
+		 * @brief Updates the relative matrix in WorldTransform using AnimPosition, AnimScale, and AnimRotation.
+		 */
 		void updateTransform();
 	};
 

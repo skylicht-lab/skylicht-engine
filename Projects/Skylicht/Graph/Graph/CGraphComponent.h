@@ -33,7 +33,10 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	/// @brief Offers tools for graph structures and pathfinding algorithms.
+	/**
+	 * @brief Component that manages the navigation lifecycle, including NavMesh generation and pathfinding.
+	 * @ingroup Graph
+	 */
 	namespace Graph
 	{
 		class CGraphComponent : public CComponentSystem

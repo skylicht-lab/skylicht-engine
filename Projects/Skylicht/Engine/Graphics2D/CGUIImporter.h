@@ -28,22 +28,24 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	/// @brief This object class helps initialize GUI components for the CCanvas from files and data.
-	/// @ingroup Graphics2D
-	/// The CGUIImporter class helps load, import, and initialize GUI components for a CCanvas,
-	/// from.gui files or serializable data, typically exported by CGUIExporter or designed in the Skylicht-Editor.
-	/// 
-	/// @see CCanvas
-	/// 
-	/// @code
-	/// CZone* zone = scene->getZone(0);
-	/// CGameObject* guiObj = zone->createEmptyObject();
-	/// CCanvas* canvas = guiObj->addComponent<CCanvas>();
-	/// float applyScale = 0.0f;
-	/// CGUIImporter::loadGUI("menu.gui", canvas);
-	/// canvas->applyGUIScale(applyScale);
-	/// canvas->updateEntities();
-	/// @endcode
+	/**
+	 * @brief This object class helps initialize GUI components for the CCanvas from files and data.
+	 * @ingroup Graphics2D
+	 * The CGUIImporter class helps load, import, and initialize GUI components for a CCanvas,
+	 * from .gui files or serializable data, typically exported by CGUIExporter or designed in the Skylicht-Editor.
+	 * 
+	 * @see CCanvas
+	 * 
+	 * @code
+	 * CZone* zone = scene->getZone(0);
+	 * CGameObject* guiObj = zone->createEmptyObject();
+	 * CCanvas* canvas = guiObj->addComponent<CCanvas>();
+	 * float applyScale = 0.0f;
+	 * CGUIImporter::loadGUI("menu.gui", canvas);
+	 * canvas->applyGUIScale(applyScale);
+	 * canvas->updateEntities();
+	 * @endcode
+	 */
 	class SKYLICHT_API CGUIImporter
 	{
 	public:

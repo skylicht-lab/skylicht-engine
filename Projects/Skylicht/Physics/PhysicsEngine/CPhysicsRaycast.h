@@ -31,31 +31,38 @@ namespace Skylicht
 {
 	namespace Physics
 	{
+		/**
+		 * @brief Result structure for a raycast that returns all hits.
+		 * @ingroup Physics
+		 */
 		struct SAllRaycastResult
 		{
-			core::array<CCollider*> Colliders;
-			core::array<CRigidbody*> Bodies;
+			core::array<CCollider*> Colliders; ///< Array of colliders hit by the ray.        
+			core::array<CRigidbody*> Bodies;   ///< Array of rigid bodies hit by the ray.     
 
-			core::vector3df RayFromWorld;
-			core::vector3df RayToWorld;
+			core::vector3df RayFromWorld; ///< Ray start position in world space.
+			core::vector3df RayToWorld;   ///< Ray end position in world space.
 
-			core::array<core::vector3df> HitNormalWorld;
-			core::array<core::vector3df> HitPointWorld;
-			core::array<float> HitFractions;
+			core::array<core::vector3df> HitNormalWorld; ///< Normals at hit points in world space.
+			core::array<core::vector3df> HitPointWorld;  ///< Hit positions in world space.   
+			core::array<float> HitFractions;             ///< Hit fractions (0 to 1) along the ray.
 		};
 
+		/**
+		 * @brief Result structure for a raycast that returns only the closest hit.
+		 * @ingroup Physics
+		 */
 		struct SClosestRaycastResult
 		{
-			CCollider* Collider;
-			CRigidbody* Body;
+			CCollider* Collider; ///< Closest collider hit by the ray.
+			CRigidbody* Body;     ///< Closest rigid body hit by the ray.
 
-			float ClosestHitFraction;
+			float ClosestHitFraction; ///< Closest hit fraction (0 to 1) along the ray.
 
-			core::vector3df RayFromWorld;
-			core::vector3df RayToWorld;
-			core::vector3df HitNormalWorld;
-			core::vector3df HitPointWorld;
+			core::vector3df RayFromWorld;   ///< Ray start position in world space.
+			core::vector3df RayToWorld;     ///< Ray end position in world space.
+			core::vector3df HitNormalWorld; ///< Normal at the hit point in world space.      
+			core::vector3df HitPointWorld;  ///< Hit position in world space.
 		};
 	}
 }
-

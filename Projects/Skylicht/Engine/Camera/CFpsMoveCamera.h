@@ -37,6 +37,9 @@ namespace Skylicht
 		public IEventReceiver
 	{
 	public:
+		/**
+		 * @brief Directions for FPS-style movement.
+		 */
 		enum EMoveDirection
 		{
 			MoveForward = 0,
@@ -46,6 +49,9 @@ namespace Skylicht
 			DirectionCount
 		};
 
+		/**
+		 * @brief Mapping between a direction and a keyboard key.
+		 */
 		struct SKeyMap
 		{
 			EMoveDirection Direction;
@@ -53,12 +59,16 @@ namespace Skylicht
 		};
 
 	protected:
+		//! Pointer to the CCamera component.
 		CCamera* m_camera;
 
+		//! List of key mappings for movement.
 		std::vector<SKeyMap> m_keyMap;
 
+		//! Array tracking the pressed state of each move direction.
 		bool m_input[DirectionCount];
 
+		//! Movement speed multiplier.
 		f32 m_moveSpeed;
 
 	public:
@@ -70,6 +80,9 @@ namespace Skylicht
 
 		virtual void updateComponent();
 
+		/**
+		 * @brief Updates the camera position based on input state. Called at the end of the frame.
+		 */
 		virtual void endUpdate();
 
 		virtual bool OnEvent(const SEvent& event);
@@ -78,11 +91,19 @@ namespace Skylicht
 
 	public:
 
+		/**
+		 * @brief Sets a custom key map for movement.
+		 * @param keyMap Vector of SKeyMap structures.
+		 */
 		inline void setKeyMap(const std::vector<SKeyMap>& keyMap)
 		{
 			m_keyMap = keyMap;
 		}
 
+		/**
+		 * @brief Sets the movement speed.
+		 * @param s Speed value.
+		 */
 		inline void setMoveSpeed(float s)
 		{
 			m_moveSpeed = s;

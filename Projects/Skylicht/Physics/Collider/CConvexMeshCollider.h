@@ -30,9 +30,14 @@ namespace Skylicht
 {
 	namespace Physics
 	{
+		/**
+		 * @brief A collision shape that represents the convex hull of a 3D mesh.
+		 * @ingroup Physics
+		 *
+		 * Automatically generates a simplified convex volume encompassing all vertices of the provided mesh.
+		 */
 		class CConvexMeshCollider : public CMeshCollider
-		{
-		protected:
+		{		protected:
 
 		public:
 			CConvexMeshCollider();

@@ -37,66 +37,68 @@ namespace Skylicht
 	/// @ingroup GameObject
 	/// 
 	/// A scene can be constructed programmatically, or you can use an Skylicht-Editor to create and arrange objects.
-	/// @image html GameObject/scene_editor.jpg "The image shows a scene built with Skylicht-Editor."
-	/// 
-	/// When a scene is created in the editor and saved as a .scene file, you can use CSceneImporter to load all the data back into CScene.
-	/// @code
-	/// CScene* scene = new CScene();
-	/// 
-	/// // declare component used in scene
-	/// // see: SampleScene/Demo.txt
-	/// USE_COMPONENT(CBoxCollider);
-	/// USE_COMPONENT(CCube);
-	/// USE_COMPONENT(CDirectionalLight);
-	/// USE_COMPONENT(CIndirectLighting);
-	/// USE_COMPONENT(CLightProbes);
-	/// USE_COMPONENT(CPlane);
-	/// USE_COMPONENT(CReflectionProbe);
-	/// USE_COMPONENT(CRenderMesh);
-	/// USE_COMPONENT(CRigidbody);
-	/// USE_COMPONENT(CSkySun);
-	/// USE_COMPONENT(CStaticPlaneCollider);
-	/// USE_COMPONENT(CTransformEuler);
-	/// ...
-	/// 
-	/// CSceneImporter::beginImportScene(scene, "SampleScene/Demo.scene");
-	/// 
-	/// bool finished = false;
-	/// char log[512];
-	/// do
-	/// {
-	/// 	finished = CSceneImporter::updateLoadScene())
-	/// 	sprintf(log, "Loading: %d%%", (int)(CSceneImporter::getLoadingPercent() * 100.0f));
-	///		os::Printer::log(log);
-	/// }
-	/// while (!finished);
-	/// @endcode
-	/// 
-	/// 
-	/// Additionally, in some cases, you can manually create a scene using code, as shown below:
-	/// @code
-	/// CScene *scene = new CScene();
-	/// CZone *zone = scene->createZone();
-	/// 
-	/// // Example add canvas
-	/// CGameObject* guiObj = zone->createEmptyObject();
-	/// CCanvas* canvas = guiObj->addComponent<CCanvas>();
-	/// 
-	/// // Example add camera
-	/// CGameObject* camObj = zone->createEmptyObject();
-	/// camObj->addComponent<CCamera>();
-	/// camObj->addComponent<CEditorCamera>()->setMoveSpeed(2.0f);
-	/// camObj->addComponent<CFpsMoveCamera>()->setMoveSpeed(1.0f);
-	/// 
-	/// // call update method for all objects
-	/// scene->update();
-	/// @endcode
-	/// 
-	/// @see CGameObject, CContainerObject, CZone, CSceneImporter
-	/// 
-	/// 
-	/// To render the scene to screen, you first need to set up the Render Pipeline, and then call render method from the Pipeline.
-	/// @see CShadowMapRP, CDeferredRP, CForwardRP, CPostProcessorRP
+	/**
+	 * @image html GameObject/scene_editor.jpg "The image shows a scene built with Skylicht-Editor."
+	 * 
+	 * When a scene is created in the editor and saved as a .scene file, you can use CSceneImporter to load all the data back into CScene.
+	 * @code
+	 * CScene* scene = new CScene();
+	 * 
+	 * // declare component used in scene
+	 * // see: SampleScene/Demo.txt
+	 * USE_COMPONENT(CBoxCollider);
+	 * USE_COMPONENT(CCube);
+	 * USE_COMPONENT(CDirectionalLight);
+	 * USE_COMPONENT(CIndirectLighting);
+	 * USE_COMPONENT(CLightProbes);
+	 * USE_COMPONENT(CPlane);
+	 * USE_COMPONENT(CReflectionProbe);
+	 * USE_COMPONENT(CRenderMesh);
+	 * USE_COMPONENT(CRigidbody);
+	 * USE_COMPONENT(CSkySun);
+	 * USE_COMPONENT(CStaticPlaneCollider);
+	 * USE_COMPONENT(CTransformEuler);
+	 * ...
+	 * 
+	 * CSceneImporter::beginImportScene(scene, "SampleScene/Demo.scene");
+	 * 
+	 * bool finished = false;
+	 * char log[512];
+	 * do
+	 * {
+	 * 	finished = CSceneImporter::updateLoadScene())
+	 * 	sprintf(log, "Loading: %d%%", (int)(CSceneImporter::getLoadingPercent() * 100.0f));
+	 *		os::Printer::log(log);
+	 * }
+	 * while (!finished);
+	 * @endcode
+	 * 
+	 * 
+	 * Additionally, in some cases, you can manually create a scene using code, as shown below:
+	 * @code
+	 * CScene *scene = new CScene();
+	 * CZone *zone = scene->createZone();
+	 * 
+	 * // Example add canvas
+	 * CGameObject* guiObj = zone->createEmptyObject();
+	 * CCanvas* canvas = guiObj->addComponent<CCanvas>();
+	 * 
+	 * // Example add camera
+	 * CGameObject* camObj = zone->createEmptyObject();
+	 * camObj->addComponent<CCamera>();
+	 * camObj->addComponent<CEditorCamera>()->setMoveSpeed(2.0f);
+	 * camObj->addComponent<CFpsMoveCamera>()->setMoveSpeed(1.0f);
+	 * 
+	 * // call update method for all objects
+	 * scene->update();
+	 * @endcode
+	 * 
+	 * @see CGameObject, CContainerObject, CZone, CSceneImporter
+	 * 
+	 * 
+	 * To render the scene to screen, you first need to set up the Render Pipeline, and then call render method from the Pipeline.
+	 * @see CShadowMapRP, CDeferredRP, CForwardRP, CPostProcessorRP
+	 */
 	class SKYLICHT_API CScene : public IEventReceiver
 	{
 	protected:

@@ -26,11 +26,16 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/// @brief Template for keyframe data.
+	/// @ingroup Animation
 	template<class T>
 	class SKYLICHT_API CKeyFrameData
 	{
 	public:
+		//! Frame time in seconds.
 		f32 Frame; // Second
+		
+		//! Value of the keyframe.
 		T Value;
 	};
 
@@ -38,14 +43,19 @@ namespace Skylicht
 	typedef CKeyFrameData<core::quaternion> CRotationKey;
 	typedef CKeyFrameData<core::vector3df> CScaleKey;
 
+	/// @brief Container for an array of keyframes with interpolation support.
+	/// @ingroup Animation
 	template<class T>
 	class SKYLICHT_API CArrayKeyFrame
 	{
 	public:
+		//! List of keyframes, sorted by time.
 		core::array<CKeyFrameData<T>> Data;
 
+		//! Default value used if no keyframes are present.
 		T Default;
 
+		//! Internal hint for optimizing keyframe searching.
 		int Hint;
 
 		CArrayKeyFrame() :
@@ -53,23 +63,43 @@ namespace Skylicht
 		{
 		}
 
+		/**
+		 * @brief Resets the search hint.
+		 */
 		inline void clearHint()
 		{
 			Hint = 0;
 		}
 
+		/**
+		 * @brief Finds the index of the keyframe at or just before the specified time.
+		 * @param frame Time in seconds.
+		 * @return Index in the Data array.
+		 */
 		int getIndex(f32 frame);
 
+		/**
+		 * @brief Gets the number of keyframes.
+		 * @return Size of Data array.
+		 */
 		inline u32 size()
 		{
 			return Data.size();
 		}
 
+		/**
+		 * @brief Returns the raw pointer to the keyframe data.
+		 * @return Pointer to CKeyFrameData<T>.
+		 */
 		inline CKeyFrameData<T>* pointer()
 		{
 			return Data.pointer();
 		}
 
+		/**
+		 * @brief Gets the time of the last keyframe.
+		 * @return Time in seconds.
+		 */
 		inline f32 getLastFrame()
 		{
 			if (Data.size() == 0)
@@ -119,6 +149,10 @@ namespace Skylicht
 		return foundPositionIndex;
 	}
 
+	/**
+	 * @brief Container for PRS (Position, Rotation, Scale) animation data.
+	 * @ingroup Animation
+	 */
 	class SKYLICHT_API CAnimationData
 	{
 	public:
@@ -131,15 +165,21 @@ namespace Skylicht
 		}
 	};
 
+	/**
+	 * @brief Handles interpolation and data retrieval for a single animation track.
+	 * @ingroup Animation
+	 */
 	class SKYLICHT_API CAnimationTrack
 	{
 	protected:
-
+		//! Pointer to the shared animation data.
 		CAnimationData* m_data;
 
 	public:
+		//! The name of the track.
 		std::string Name;
 
+		//! Whether this track currently has animation data.
 		bool HaveAnimation;
 
 	public:
@@ -147,15 +187,36 @@ namespace Skylicht
 
 		virtual ~CAnimationTrack();
 
+		/**
+		 * @brief Static utility for spherical linear interpolation between quaternions.
+		 * @param result Resulting quaternion.
+		 * @param q1 Start quaternion.
+		 * @param q2 End quaternion.
+		 * @param t Interpolation factor (0 to 1).
+		 */
 		static void quaternionSlerp(core::quaternion& result, core::quaternion q1, core::quaternion q2, float t);
 
+		/**
+		 * @brief Calculates the interpolated PRS data for a specific frame.
+		 * @param frame Time in seconds.
+		 * @param position [out] Interpolated position.
+		 * @param scale [out] Interpolated scale.
+		 * @param rotation [out] Interpolated rotation.
+		 */
 		void getFrameData(f32 frame,
 			core::vector3df& position,
 			core::vector3df& scale,
 			core::quaternion& rotation);
 
+		/**
+		 * @brief Gets the underlying animation data.
+		 * @return Pointer to CAnimationData.
+		 */
 		CAnimationData* getAnimData();
 
+		/**
+		 * @brief Clears all keyframe search hints and resets the track.
+		 */
 		void clearAllKeyFrame()
 		{
 			if (m_data)
@@ -171,12 +232,25 @@ namespace Skylicht
 			HaveAnimation = false;
 		}
 
+		/**
+		 * @brief Sets the source animation data for this track.
+		 * @param data Pointer to animation data.
+		 */
 		void setAnimationData(CAnimationData* data)
 		{
 			m_data = data;
 		}
 
+		/**
+		 * @brief Gets the underlying animation data.
+		 * @return Pointer to CAnimationData.
+		 */
 		CAnimationData* getFrameData()
+		{
+			return m_data;
+		}
+	};
+}		CAnimationData* getFrameData()
 		{
 			return m_data;
 		}

@@ -42,36 +42,41 @@ namespace Skylicht
 	/// You'll need to check if the input model has attributes like normals or texcoord2.
 	/// 
 	/// CRenderMesh supports instancing multiple objects, but the shader from the material must be linked to an instancing shader. 
-	/// If not, the model will not render.
-	/// You can find more information in CShader, or in some example shaders in `BuiltIn\Shader\Toon`, `BuiltIn\Shader\SpecularGlossiness\Deferred`
-	/// 
-	/// You can initialize CRenderMesh using either the Editor or code
-	/// @code
-	/// std::string folder = "SampleModels/BlendShape/";
-	/// std::string modelPath = "SampleModels/BlendShape/Cat.fbx";
-	/// std::string materialPath = "SampleModels/BlendShape/Cat.mat";
-	/// 
-	/// CEntityPrefab* model = CMeshManager::getInstance()->loadModel(modelPath.c_str(), folder.c_str());
-	/// if (model)
-	/// {
-	/// 	CGameObject* renderObj = scene->createEmptyObject();
-	/// 
-	/// 	CRenderMesh* renderer = renderObj->addComponent<CRenderMesh>();
-	/// 	renderer->initFromPrefab(model);
-	/// 
-	/// 	std::vector<std::string> folders;
-	/// 	ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial(
-	/// 		materialPath.c_str(),
-	/// 		true,
-	/// 		folders);
-	/// 
-	/// 	renderer->initMaterial(materials);
-	/// 
-	/// 	renderObj->addComponent<CIndirectLighting>();
-	/// }
-	/// @endcode
-	/// 
-	/// @see CEntityPrefab, CMaterial, CMeshManager, CMaterialManager
+	/**
+	 * @brief High-level component for rendering standard 3D models.
+	 * @ingroup RenderMesh
+	 * 
+	 * If not, the model will not render.
+	 * You can find more information in CShader, or in some example shaders in `BuiltIn\Shader\Toon`, `BuiltIn\Shader\SpecularGlossiness\Deferred`
+	 * 
+	 * You can initialize CRenderMesh using either the Editor or code
+	 * @code
+	 * std::string folder = "SampleModels/BlendShape/";
+	 * std::string modelPath = "SampleModels/BlendShape/Cat.fbx";
+	 * std::string materialPath = "SampleModels/BlendShape/Cat.mat";
+	 * 
+	 * CEntityPrefab* model = CMeshManager::getInstance()->loadModel(modelPath.c_str(), folder.c_str());
+	 * if (model)
+	 * {
+	 * 	CGameObject* renderObj = scene->createEmptyObject();
+	 * 
+	 * 	CRenderMesh* renderer = renderObj->addComponent<CRenderMesh>();
+	 * 	renderer->initFromPrefab(model);
+	 * 
+	 * 	std::vector<std::string> folders;
+	 * 	ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial(
+	 * 		materialPath.c_str(),
+	 * 		true,
+	 * 		folders);
+	 * 
+	 * 	renderer->initMaterial(materials);
+	 * 
+	 * 	renderObj->addComponent<CIndirectLighting>();
+	 * }
+	 * @endcode
+	 * 
+	 * @see CEntityPrefab, CMaterial, CMeshManager, CMaterialManager
+	 */
 	class SKYLICHT_API CRenderMesh : public CEntityHandler
 	{
 	protected:

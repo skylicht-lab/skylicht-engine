@@ -32,24 +32,27 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	/// @brief This is the object class that performs the draw call, but it only renders the depth to a texture to be used for shadow casting.
-	/// @ingroup RP
-	/// 
-	/// There are two options for drawing shadows: **Cascaded** and **NoCascaded**.
-	/// 
-	/// - With **Cascaded**, the shadow is drawn in a more complex way by rendering depth three times at different distances. However, the advantage is that the shadow is rendered more clearly.
-	/// 
-	/// - And with **NoCascaded**, the shadow depth draw call is performed only once. It's faster in terms of performance, but the shadow's effective distance is limited
-	/// 
-	/// The Shadow RP will automatically replace the shader with one that writes depth.
-	/// 
-	/// However, in some cases, you can use a custom shader for writing depth. 
-	/// You can replace the writeDepth shader option for your material by adding the shadowDepth property to the Shader's .xml file.
-	/// @code
-	/// <shaderConfig name="SkinToonVATInstancing2" baseShader="SOLID" shadowDepth="SDWSkinVATInstancing2">
-	/// @endcode
-	/// 
-	/// @see CDeferredRP, CForwardRP
+	/**
+	 * @brief Shadow mapping pipeline for generating depth maps.
+	 * @ingroup RP
+	 * 
+	 * Shadow mapping is a technique used to create shadows. It generates a depth map from the light's perspective. 
+	 * For directional light, Cascaded Shadow Mapping (CSM) is often used to maintain shadow quality over large areas.
+	 * 
+	 * - With **Cascaded**, the shadow is drawn in a more complex way by rendering depth three times at different distances. However, the advantage is that the shadow is rendered more clearly.
+	 * 
+	 * - And with **NoCascaded**, the shadow depth draw call is performed only once. It's faster in terms of performance, but the shadow's effective distance is limited
+	 * 
+	 * The Shadow RP will automatically replace the shader with one that writes depth.
+	 * 
+	 * However, in some cases, you can use a custom shader for writing depth. 
+	 * You can replace the writeDepth shader option for your material by adding the shadowDepth property to the Shader's .xml file.
+	 * @code
+	 * <shaderConfig name="SkinToonVATInstancing2" baseShader="SOLID" shadowDepth="SDWSkinVATInstancing2">
+	 * @endcode
+	 * 
+	 * @see CDeferredRP, CForwardRP
+	 */
 	class SKYLICHT_API CShadowMapRP :
 		public CBaseRP,
 		public IEventProcessor

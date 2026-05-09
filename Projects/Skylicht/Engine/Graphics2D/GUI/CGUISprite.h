@@ -29,25 +29,27 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	/// @brief This is the object class for displaying a frame image in sprite.
-	/// @ingroup GUI
-	/// 
-	/// @see CSpriteFrame
-	/// 
-	/// CGUISprite is used to render a frame from a sprite sheet in the GUI. It supports
-	/// features such as auto - rotation, stretching to fit its rectangle, alignment, offset,
-	/// and serialization. Managed by CCanvas, this element is useful for icons, buttons,
-	/// and other image - based GUI components.
-	/// 
-	/// Example usage:
-	/// @code
-	/// CSpriteFrame* sprite = CSpriteManager::getInstance()->loadSprite("Assets/SampleGUI/SampleGUI.spritedata")
-	/// SFrame* frame = sprite->getFrame("skylicht-icon");
-	/// 
-	/// CCanvas *canvas = gameobject->addComponent<CCanvas>();
-	/// core::rectf r(0.0f, 0.0f, 100.0f, 100.0f);
-	/// CGUISprite* gui = canvas->createSprite(r, frame);
-	/// @endcode
+	/**
+	 * @brief This is the object class for displaying a frame image in sprite.
+	 * @ingroup GUI
+	 *
+	 * @see CSpriteFrame
+	 *
+	 * CGUISprite is used to render a frame from a sprite sheet in the GUI. It supports
+	 * features such as auto - rotation, stretching to fit its rectangle, alignment, offset,
+	 * and serialization. Managed by CCanvas, this element is useful for icons, buttons,
+	 * and other image - based GUI components.
+	 *
+	 * Example usage:
+	 * @code
+	 * CSpriteFrame* sprite = CSpriteManager::getInstance()->loadSprite("Assets/SampleGUI/SampleGUI.spritedata")
+	 * SFrame* frame = sprite->getFrame("skylicht-icon");
+	 *
+	 * CCanvas *canvas = gameobject->addComponent<CCanvas>();
+	 * core::rectf r(0.0f, 0.0f, 100.0f, 100.0f);
+	 * CGUISprite* gui = canvas->createSprite(r, frame);
+	 * @endcode
+	 */
 	class SKYLICHT_API CGUISprite : public CGUIElement
 	{
 		friend class CCanvas;

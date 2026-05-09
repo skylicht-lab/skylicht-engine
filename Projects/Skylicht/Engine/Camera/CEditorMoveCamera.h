@@ -33,6 +33,9 @@ namespace Skylicht
 {
 	/// @brief The object class supports camera movement with arrow keys, but only when the right mouse button is pressed and held.
 	/// @ingroup Camera
+	/// 
+	/// This component extends CFpsMoveCamera by requiring a right-mouse-button press (via CEditorCamera)
+	/// to enable WASD/Arrow key movement, mimicking common 3D editor navigation.
 	class SKYLICHT_API CEditorMoveCamera : public CFpsMoveCamera
 	{
 	protected:

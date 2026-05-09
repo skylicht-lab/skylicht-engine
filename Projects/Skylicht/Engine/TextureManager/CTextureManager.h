@@ -31,13 +31,15 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	/// @brief Texture Manager class provides APIs to load, retrieve, check, and release textures within the engine
-	/// @ingroup Materials
-	/// 
-	/// Example usage:
-	/// @code
-	/// ITexture *texture = CTextureManager::getInstance()->getTexture("BuiltIn/Textures/Skylicht.png");
-	/// @endcode
+	/**
+	 * @brief Texture Manager class provides APIs to load, retrieve, check, and release textures within the engine
+	 * @ingroup Materials
+	 * 
+	 * Example usage:
+	 * @code
+	 * ITexture *texture = CTextureManager::getInstance()->getTexture("BuiltIn/Textures/Skylicht.png");
+	 * @endcode
+	 */
 	class SKYLICHT_API CTextureManager
 	{
 	public:

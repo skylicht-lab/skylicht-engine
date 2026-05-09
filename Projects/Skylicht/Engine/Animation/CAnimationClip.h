@@ -35,14 +35,24 @@ namespace Skylicht
 		CAnimationData Data;
 	};
 
+	/// @brief Represents an animation clip containing multiple animation tracks for different entities.
+	/// @ingroup Animation
 	class SKYLICHT_API CAnimationClip
 	{
 	public:
+		//! The name of the animation clip.
 		std::string AnimName;
+		
+		//! Duration of the clip in seconds.
 		float Duration; // Second
+		
+		//! Whether the clip should loop during playback.
 		bool Loop;
 
+		//! List of entity animations (tracks) within this clip.
 		std::vector<SEntityAnim*> AnimInfo;
+		
+		//! Map of entity animations indexed by entity name.
 		std::map<std::string, SEntityAnim*> AnimNameToInfo;
 
 		CAnimationClip()
@@ -57,6 +67,9 @@ namespace Skylicht
 			releaseAllAnim();
 		}
 
+		/**
+		 * @brief Releases and deletes all entity animations in this clip.
+		 */
 		void releaseAllAnim()
 		{
 			for (SEntityAnim* &i : AnimInfo)
@@ -67,6 +80,10 @@ namespace Skylicht
 			AnimNameToInfo.clear();
 		}
 
+		/**
+		 * @brief Adds an entity animation to the clip.
+		 * @param anim Pointer to the entity animation structure.
+		 */
 		void addAnim(SEntityAnim* anim)
 		{
 			for (SEntityAnim *&i : AnimInfo)
@@ -84,21 +101,40 @@ namespace Skylicht
 			AnimNameToInfo[anim->Name] = anim;
 		}
 
+		/**
+		 * @brief Gets the number of entity animations (tracks) in the clip.
+		 * @return Track count.
+		 */
 		int getNodeAnimCount()
 		{
 			return (int)AnimInfo.size();
 		}
 
+		/**
+		 * @brief Gets an entity animation by index.
+		 * @param i The track index.
+		 * @return Pointer to SEntityAnim.
+		 */
 		SEntityAnim* getAnimOfEntity(int i)
 		{
 			return AnimInfo[i];
 		}
 
+		/**
+		 * @brief Gets an entity animation by the name of the scene node/entity.
+		 * @param sceneNodeName The name of the entity.
+		 * @return Pointer to SEntityAnim, or NULL if not found.
+		 */
 		SEntityAnim* getAnimOfEntity(const std::string &sceneNodeName)
 		{
 			return AnimNameToInfo[sceneNodeName];
 		}
 
+		/**
+		 * @brief Gets the real-time length of the clip in milliseconds based on a target FPS.
+		 * @param baseFps The reference frames per second (default: 30).
+		 * @return Duration in milliseconds.
+		 */
 		float getRealTimeLength(float baseFps = 30.0f)
 		{
 			return Duration * 1000.0f / baseFps;

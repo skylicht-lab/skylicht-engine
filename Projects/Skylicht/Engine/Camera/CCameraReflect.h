@@ -37,9 +37,13 @@ namespace Skylicht
 		public ILateUpdate
 	{
 	protected:
+		//! Pointer to the main camera component being updated with reflected view.
 		CCamera* m_camera;
+		
+		//! The source camera to reflect.
 		CCamera* m_targetCamera;
 
+		//! The world plane to reflect against.
 		core::plane3df m_plane;
 
 	public:
@@ -53,13 +57,25 @@ namespace Skylicht
 
 		virtual void lateUpdate();
 
+		/**
+		 * @brief Sets the source camera to be reflected.
+		 * @param cam Pointer to the source camera.
+		 */
 		void setTargetCamera(CCamera* cam);
 
+		/**
+		 * @brief Gets the current source camera.
+		 * @return Pointer to CCamera.
+		 */
 		inline CCamera* getTargetCamera()
 		{
 			return m_targetCamera;
 		}
 
+		/**
+		 * @brief Sets the reflection plane in world space.
+		 * @param p Plane definition.
+		 */
 		inline void setPlane(const core::plane3df& p)
 		{
 			m_plane = p;

@@ -126,16 +126,18 @@ public:
 	/// Clears all log entries.
 	inline void resetLog() { if (m_logEnabled) doResetLog(); }
 
-	/// Logs a message.
-	///
-	/// Example:
-	/// @code
-	/// // Where ctx is an instance of rcContext and filepath is a char array.
-	/// ctx->log(RC_LOG_ERROR, "buildTiledNavigation: Could not load '%s'", filepath);
-	/// @endcode
-	/// 
-	/// @param[in]		category	The category of the message.
-	/// @param[in]		format		The message.
+	/**
+	 * Logs a message.
+	 *
+	 * Example:
+	 * @code
+	 * // Where ctx is an instance of rcContext and filepath is a char array.
+	 * ctx->log(RC_LOG_ERROR, "buildTiledNavigation: Could not load '%s'", filepath);
+	 * @endcode
+	 * 
+	 * @param[in]		category	The category of the message.
+	 * @param[in]		format		The message.
+	 */
 	void log(const rcLogCategory category, const char* format, ...);
 
 	/// Enables or disables the performance timers.

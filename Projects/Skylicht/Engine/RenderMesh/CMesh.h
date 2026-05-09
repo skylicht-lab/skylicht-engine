@@ -31,6 +31,23 @@ namespace Skylicht
 {
 	class CMaterial;
 
+	/**
+	 * @brief Represents a morph target (blend shape) for a mesh.
+	 * @ingroup RenderMesh
+	 * 
+	 * Example: Accessing and updating blend shapes
+	 * @code
+	 * CRenderMesh* renderMesh = gameObject->getComponent<CRenderMesh>();
+	 * for (CRenderMeshData* renderer : renderMesh->getRenderers())
+	 * {
+	 *     for (CBlendShape* shape : renderer->getMesh()->BlendShape)
+	 *     {
+	 *         if (shape->Name == "Smile")
+	 *             shape->Weight = 1.0f;
+	 *     }
+	 * }
+	 * @endcode
+	 */
 	class SKYLICHT_API CBlendShape : public IReferenceCounted
 	{
 	public:

@@ -30,9 +30,20 @@ namespace Skylicht
 {
 	namespace Physics
 	{
+		/**
+		 * @brief Optimized collision shape for static environment geometry.
+		 * @ingroup Physics
+		 *
+		 * Uses a Bounding Volume Hierarchy (BVH) for efficient collision detection against static meshes.
+		 * 
+		 * Example:
+		 * @code
+		 * Physics::CBvhMeshCollider* mesh = gameObject->addComponent<Physics::CBvhMeshCollider>();
+		 * mesh->setMeshSource("Assets/Models/StaticLevel.fbx");
+		 * @endcode
+		 */
 		class CBvhMeshCollider : public CMeshCollider
-		{
-		protected:
+		{		protected:
 
 		public:
 			CBvhMeshCollider();

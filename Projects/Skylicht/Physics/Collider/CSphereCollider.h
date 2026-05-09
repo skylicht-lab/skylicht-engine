@@ -30,6 +30,16 @@ namespace Skylicht
 {
 	namespace Physics
 	{
+		/**
+		 * @brief A sphere collision shape.
+		 * @ingroup Physics
+		 * 
+		 * Example:
+		 * @code
+		 * Physics::CSphereCollider* sphere = gameObject->addComponent<Physics::CSphereCollider>();
+		 * sphere->setRadius(0.5f);
+		 * @endcode
+		 */
 		class CSphereCollider : public CCollider
 		{
 		protected:
@@ -46,11 +56,19 @@ namespace Skylicht
 
 			virtual void loadSerializable(CObjectSerializable* object);
 
+			/**
+			 * @brief Gets the radius of the sphere.
+			 * @return Radius value.
+			 */
 			inline const float getRadius()
 			{
 				return m_radius;
 			}
 
+			/**
+			 * @brief Sets the radius of the sphere.
+			 * @param r Radius value.
+			 */
 			inline void setRadius(float r)
 			{
 				m_radius = r;

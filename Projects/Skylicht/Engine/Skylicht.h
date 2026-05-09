@@ -35,83 +35,93 @@ namespace irr
 }
 
 /**
-* @defgroup Materials Materials, Shaders and Textures
-* @brief Contains classes related to **materials, shaders, and textures**.
+* @defgroup Materials Materials & Textures
+* @brief Management of materials, shaders, and texture resources.
 */
 
 /**
-* @defgroup Graphics2D 2D Graphics and Drawing
-* @brief A collection of object classes that handle **sprite, font**, and the core graphics objects for 2D drawing.
+* @defgroup Graphics2D 2D Graphics
+* @brief Core objects for 2D drawing, sprites, and fonts.
 */
 
 /**
-* @defgroup GUI Graphical User Interface (GUI)
-* @brief Includes display classes for the **Canvas** and other GUI elements.
+* @defgroup GUI GUI System
+* @brief Base classes for canvases and 2D GUI elements.
 */
 
 /**
-* @defgroup GameObject Scene and Game Object System
-* @brief Object classes used for **scene construction** and 3D rendering.
+* @defgroup GameObject Scene Graph
+* @brief Objects for scene construction and game object management.
 */
 
 /**
-* @defgroup ECS Entity Component System (ECS)
-* @brief Objects designed to support the **Entity Component System (ECS) architecture**.
+* @defgroup ECS Entity Component System
+* @brief Core ECS architecture and entity management.
 */
 
 /**
-* @defgroup Mesh Mesh Loading and Management
-* @brief Classes used to **load models** (such as .fbx, .dae, and .obj) into the engine, as well as to export them to other formats.
+* @defgroup Mesh Mesh System
+* @brief Loading, management, and exporting of 3D models.
+*/
+
+/**
+* @defgroup Animation Animation System
+* @brief Skeletal animation, blending, and IK solvers.
 */
 
 /**
 * @defgroup RP Render Pipeline
-* @brief Object classes that **execute the 3D scene rendering** process to the screen or a texture.
+* @brief Rendering processes and pipeline configurations.
 */
 
 /**
-* @defgroup Components Engine Components
-* @brief The core collection of **component objects** within the engine.
+* @defgroup Components Core Components
+* @brief Essential component types for game objects.
 */
 
 /**
 * @defgroup Camera Camera System
 * @ingroup Components
-* @brief Includes classes for **managing and controlling the camera**.
+* @brief Components for camera management and control.
 */
 
 /**
-* @defgroup Transform Transformations
+* @defgroup Transform Transform System
 * @ingroup Components
-* @brief Objects used to set the **Transform** (position, rotation, scale) for a GameObject.
+* @brief Position, rotation, and scale management.
 */
 
 /**
-* @defgroup RenderMesh 3D Model Rendering
+* @defgroup RenderMesh Mesh Rendering
 * @ingroup Components
-* @brief Components for **displaying and rendering models** on the screen.
+* @brief Components for rendering 3D meshes.
 */
 
 /**
 * @defgroup Lighting Lighting System
 * @ingroup Components
-* @brief Gathers all objects related to the **lighting** mechanism.
+* @brief Direct lighting components and systems.
 */
 
 /**
 * @defgroup IndirectLighting Indirect Lighting
 * @ingroup Components
-* @brief Gathers all objects and components related to **simulating indirect light**.
+* @brief Baked lighting and spherical harmonics systems.
 */
 
 /**
-* @defgroup Debug Debug
-* @brief Helper objects used to **draw overlays** on the scene for debugging purposes.
+* @defgroup Debug Debug Utilities
+* @brief Tools for visual debugging and scene overlays.
 */
 
 /**
-* @defgroup UI User Interface
-* @brief This is a support group for working with interactive user interfaces such as buttons, checkboxes, textboxes, etc...
+* @defgroup Physics Physics Engine
+* @brief Integration with Bullet Physics for dynamics and collisions.
+*/
+
+/**
+* @defgroup UI UI Library
+* @brief High-level interactive UI controls and event handling.
 */
 
 /*! \mainpage Skylicht-Engine API documentation
@@ -130,21 +140,24 @@ namespace irr
  *
  * \section build How to build
  *
- * ## Prerequisites
+ * \subsection prereq Prerequisites
  * - <A HREF="https://cmake.org/download/">CMake</A> 3.12 or higher
  * - <A HREF="https://visualstudio.microsoft.com/downloads/">Visual Studio</A>
  * - <A HREF="https://www.python.org/downloads">Python</A> 3.x
  *
- * ## Build library
- * ### Static
+ * \subsection build_lib Build library
+ *
+ * \subsubsection build_static Static
  * You can call the build command `InstallLibVCPrj2022.cmd` in the BuildCommand directory after you have fully installed CMake and Visual Studio 2022.
+ * 
  * @code
  * C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 17 2022" -A x64 -DINSTALL_LIBS=ON
  * C:\skylicht-engine>cmake --build ./PrjVisualStudio --target install --config Debug
  * @endcode
  *
- * ### Dynamic dll
+ * \subsubsection build_dynamic Dynamic dll
  * You can call the build command `InstallSharedLibVCPrj2022.cmd` in the BuildCommand directory.
+ * 
  * @code
  * C:\skylicht-engine>cmake -S . -B ./PrjVisualStudio -G "Visual Studio 17 2022" -A x64 -DINSTALL_LIBS=ON -DBUILD_SHARED_LIBS=ON
  * C:\skylicht-engine>cmake --build ./PrjVisualStudio --target install --config Debug

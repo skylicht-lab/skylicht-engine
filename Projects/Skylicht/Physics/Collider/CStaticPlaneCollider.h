@@ -30,6 +30,10 @@ namespace Skylicht
 {
 	namespace Physics
 	{
+		/**
+		 * @brief A static infinite plane collision shape.
+		 * @ingroup Physics
+		 */
 		class CStaticPlaneCollider : public CCollider
 		{
 		protected:
@@ -47,18 +51,36 @@ namespace Skylicht
 
 			virtual void loadSerializable(CObjectSerializable* object);
 
+			/**
+			 * @brief Gets the normal of the plane.
+			 * @return Normal vector.
+			 */
 			const core::vector3df& getNormal()
 			{
 				return m_normal;
 			}
 
+			/**
+			 * @brief Gets the plane constant (distance from origin).
+			 * @return Constant value D.
+			 */
 			float getD()
 			{
 				return m_d;
 			}
 
+			/**
+			 * @brief Sets the plane using a normal and a constant.
+			 * @param normal Normal vector.
+			 * @param d Constant D.
+			 */
 			void setPlane(const core::vector3df& normal, float d);
 
+			/**
+			 * @brief Sets the plane using a normal and a point on the plane.
+			 * @param normal Normal vector.
+			 * @param origin A point on the plane.
+			 */
 			void setPlane(const core::vector3df& normal, const core::vector3df& origin);
 
 #ifdef USE_BULLET_PHYSIC_ENGINE

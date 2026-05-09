@@ -30,6 +30,16 @@ namespace Skylicht
 {
 	namespace Physics
 	{
+		/**
+		 * @brief A box collision shape.
+		 * @ingroup Physics
+		 * 
+		 * Example:
+		 * @code
+		 * Physics::CBoxCollider* box = gameObject->addComponent<Physics::CBoxCollider>();
+		 * box->setSize(core::vector3df(1.0f, 2.0f, 1.0f));
+		 * @endcode
+		 */
 		class CBoxCollider : public CCollider
 		{
 		protected:
@@ -46,11 +56,19 @@ namespace Skylicht
 
 			virtual void loadSerializable(CObjectSerializable* object);
 
+			/**
+			 * @brief Gets the size of the box.
+			 * @return Size vector.
+			 */
 			inline const core::vector3df& getSize()
 			{
 				return m_size;
 			}
 
+			/**
+			 * @brief Sets the size of the box.
+			 * @param s Size vector.
+			 */
 			inline void setSize(const core::vector3df& s)
 			{
 				m_size = s;

@@ -30,19 +30,44 @@ namespace Skylicht
 {
 	namespace Physics
 	{
+		/**
+		 * @brief Data structure containing information about a collision contact point.
+		 * @ingroup Physics
+		 */
 		struct SCollisionContactPoint
 		{
-			core::vector3df PositionWorldOnA;
-			core::vector3df PositionWorldOnB;
-			core::vector3df NormalWorldOnB;
+			core::vector3df PositionWorldOnA; ///< Contact point on object A in world space.  
+			core::vector3df PositionWorldOnB; ///< Contact point on object B in world space.  
+			core::vector3df NormalWorldOnB;   ///< Normal vector on object B at the contact point.
 		};
 
+		/**
+		 * @brief Base interface for all objects that can participate in collisions.
+		 * @ingroup Physics
+		 *
+		 * This includes rigid bodies and character controllers. It provides common
+		 * properties like collision groups, filters, and collision callbacks.
+		 * 
+		 * Example: Handling collisions
+		 * @code
+		 * Physics::CRigidbody* body = gameObject->getComponent<Physics::CRigidbody>();
+		 * body->OnCollision = [](Physics::ICollisionObject* a, Physics::ICollisionObject* b, Physics::SCollisionContactPoint* points, int numPoints) {
+		 *     os::Printer::log("Collision detected!");
+		 *     
+		 *     // Identify the other object
+		 *     // Physics::ICollisionObject* other = (a == body) ? b : a;
+		 * };
+		 * @endcode
+		 */
 		class ICollisionObject : public CComponentSystem
 		{
 		public:
+			/**
+			 * @brief Types of collision objects.
+			 * @ingroup Physics
+			 */
 			enum ECollisionType
-			{
-				Unknown,
+			{				Unknown,
 				RigidBody,
 				Character
 			};
@@ -57,20 +82,42 @@ namespace Skylicht
 
 			virtual ~ICollisionObject();
 
+			/**
+			 * @brief Sets the collision group and filter mask.
+			 * @param group Bitmask representing the collision group.
+			 * @param filter Bitmask representing which groups this object should collide with.
+			 */
 			virtual void setCollisionGroupAndFilter(int group, int filter);
 
+			/**
+			 * @brief Callback function triggered when a collision occurs.
+			 * 
+			 * Arguments: Object A, Object B, Contact points array, number of contact points.
+			 */
 			std::function<void(ICollisionObject*, ICollisionObject*, SCollisionContactPoint*, int)> OnCollision;
 
+			/**
+			 * @brief Gets the collision type.
+			 * @return ECollisionType value.
+			 */
 			inline ECollisionType getCollisionType()
 			{
 				return m_collisionType;
 			}
 
+			/**
+			 * @brief Gets the collision group bitmask.
+			 * @return Group bitmask.
+			 */
 			inline int getCollisionGroup()
 			{
 				return m_group;
 			}
 
+			/**
+			 * @brief Gets the collision filter bitmask.
+			 * @return Filter bitmask.
+			 */
 			inline int getCollisionFilter()
 			{
 				return m_filter;

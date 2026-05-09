@@ -35,6 +35,10 @@ namespace Skylicht
 {
 	namespace Physics
 	{
+		/**
+		 * @brief Implementation of Bullet's debug drawer using Skylicht's debug visualization system.
+		 * @ingroup Physics
+		 */
 		class CDrawDebug : public btIDebugDraw
 		{
 		protected:
@@ -47,6 +51,10 @@ namespace Skylicht
 
 			virtual ~CDrawDebug();
 
+			/**
+			 * @brief Sets whether to always draw debug information for all objects.
+			 * @param b True to always draw.
+			 */
 			inline void setAlwayDraw(bool b)
 			{
 				m_alwayDraw = b;
@@ -69,4 +77,4 @@ namespace Skylicht
 	}
 }
 
-#endif
+			#endif

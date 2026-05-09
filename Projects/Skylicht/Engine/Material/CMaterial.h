@@ -57,27 +57,29 @@ namespace Skylicht
 	/// 
 	/// From there, you can then drag texture files into the various uniform textures, or adjust the parameters defined within the shader .xml.
 	/// 
-	/// @image html Material/material.jpg
-	/// 
-	/// Materials are essential for the CRenderMesh component to display the model's appearance on the Skylicht-Engine
-	/// 
-	/// @image html RenderMesh/render-mesh-property.jpg width=1200px
-	/// 
-	/// 
-	/// You use CTextureManager to support loading .mat material files.
-	/// @code
-	/// std::vector<std::string> textureFolders;
-	/// ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial(
-	/// 	"SampleModels/BlendShape/Cat.mat",
-	/// 	true,
-	/// 	textureFolders
-	/// );
-	/// 
-	/// for (CMaterial* mat: materials)
-	/// {
-	/// 	printf("%s\n", mat->getName());
-	/// }
-	/// @endcode
+	/**
+	 * @image html Material/material.jpg
+	 * 
+	 * Materials are essential for the CRenderMesh component to display the model's appearance on the Skylicht-Engine
+	 * 
+	 * @image html RenderMesh/render-mesh-property.jpg width=1200px
+	 * 
+	 * 
+	 * You use CMaterialManager to support loading .mat material files.
+	 * @code
+	 * std::vector<std::string> textureFolders;
+	 * ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial(
+	 * 	"SampleModels/BlendShape/Cat.mat",
+	 * 	true,
+	 * 	textureFolders
+	 * );
+	 * 
+	 * for (CMaterial* mat: materials)
+	 * {
+	 * 	printf("%s\n", mat->getName());
+	 * }
+	 * @endcode
+	 */
 	class SKYLICHT_API CMaterial : public IReferenceCounted
 	{
 	public:

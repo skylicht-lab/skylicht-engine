@@ -30,6 +30,10 @@ namespace Skylicht
 {
 	namespace Physics
 	{
+		/**
+		 * @brief A cylinder collision shape.
+		 * @ingroup Physics
+		 */
 		class CCylinderCollider : public CCollider
 		{
 		protected:
@@ -46,11 +50,19 @@ namespace Skylicht
 
 			virtual void loadSerializable(CObjectSerializable* object);
 
+			/**
+			 * @brief Gets the half-extents of the cylinder.
+			 * @return Half-size vector.
+			 */
 			inline const core::vector3df& getHalfSize()
 			{
 				return m_halfSize;
 			}
 
+			/**
+			 * @brief Sets the half-extents of the cylinder.
+			 * @param s Half-size vector.
+			 */
 			inline void setHalfSize(const core::vector3df& s)
 			{
 				m_halfSize = s;

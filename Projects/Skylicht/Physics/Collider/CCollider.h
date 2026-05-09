@@ -36,12 +36,22 @@ namespace Skylicht
 {
 	namespace Physics
 	{
+		/**
+		 * @brief Base class for all collision shapes.
+		 * @ingroup Physics
+		 *
+		 * Colliders define the physical shape of a GameObject for collision detection.
+		 * They are used by CRigidbody and CCharacterController.
+		 */
 		class CCollider : public CComponentSystem
 		{
 		public:
+			/**
+			 * @brief Supported collider types.
+			 * @ingroup Physics
+			 */
 			enum EColliderType
-			{
-				Box,
+			{				Box,
 				Sphere,
 				Plane,
 				Cylinder,
@@ -70,34 +80,71 @@ namespace Skylicht
 
 			virtual void initComponent();
 
+			/**
+			 * @brief Gets the type of the collider.
+			 * @return EColliderType value.
+			 */
 			EColliderType getColliderType()
 			{
 				return m_colliderType;
 			}
 
 #ifdef USE_BULLET_PHYSIC_ENGINE
+			/**
+			 * @brief Initializes the Bullet collision shape.
+			 * @return Pointer to the initialized btCollisionShape.
+			 */
 			virtual btCollisionShape* initCollisionShape() = 0;
 
+			/**
+			 * @brief Releases the Bullet collision shape.
+			 */
 			virtual void dropCollisionShape();
 #endif
 
+			/**
+			 * @brief Triggers the initialization of the attached CRigidbody.
+			 */
 			void initRigidbody();
 
+			/**
+			 * @brief Clamps the size vector to ensure no negative dimensions.
+			 * @param size Vector to clamp.
+			 */
 			void clampSize(core::vector3df& size);
 
+			/**
+			 * @brief Checks if this collider type supports dynamic rigid bodies.
+			 * @return True if dynamic support is available.
+			 */
 			inline bool isDynamicSupport()
 			{
 				return m_dynamicSupport;
 			}
 
+			/**
+			 * @brief Generates a visual mesh representing the collision shape.
+			 * @param maxBBox The maximum bounding box for plane generation.
+			 * @return Pointer to the generated CMesh.
+			 */
 			CMesh* generateMesh(const core::aabbox3df& maxBBox);
 
+			/**
+			 * @brief Gets the axis-aligned bounding box of the collider in world space.
+			 * @return AABB in world space.
+			 */
 			core::aabbox3df getBBox();
 
 		protected:
 
+			/**
+			 * @brief Helper to generate a mesh from a primitive.
+			 */
 			CMesh* generateMesh(IMesh* primitive, bool tangent);
 
+			/**
+			 * @brief Helper to generate a plane mesh.
+			 */
 			CMesh* getPlane(const core::plane3df& plane, float sizeX, float sizeZ);
 
 		};

@@ -30,18 +30,19 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	/// @brief Singleton class for loading, caching, exporting, and managing materials in Skylicht-Engine.
-	/// @ingroup Materials
-	/// 
-	/// Provides functions to load materials from files, manage their lifetimes, export and save materials, replace textures, and initialize default materials from prefabs.
-	/// 
-	/// Example usage:
-	/// @code
-	/// std::vector<std::string> textureFolders;
-	/// ArrayMaterial material = CMaterialManager::getInstance()->loadMaterial("SampleAnimations/HeroArtwork/Hero.mat", true, textureFolders);
-	/// @endcode
-	class SKYLICHT_API CMaterialManager
-	{
+	/**
+	 * @brief Singleton class for loading, caching, exporting, and managing materials in Skylicht-Engine.
+	 * @ingroup Materials
+	 *
+	 * Provides functions to load materials from files, manage their lifetimes, export and save materials, replace textures, and initialize default materials from prefabs.
+	 *
+	 * Example usage:
+	 * @code
+	 * std::vector<std::string> textureFolders;
+	 * ArrayMaterial material = CMaterialManager::getInstance()->loadMaterial("SampleAnimations/HeroArtwork/Hero.mat", true, textureFolders);
+	 * @endcode
+	 */
+	class SKYLICHT_API CMaterialManager	{
 	public:
 		DECLARE_SINGLETON(CMaterialManager)
 

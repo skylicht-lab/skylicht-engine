@@ -32,9 +32,20 @@ namespace Skylicht
 {
 	namespace Physics
 	{
+		/**
+		 * @brief A collision shape generated from a 3D mesh prefab.
+		 * @ingroup Physics
+		 *
+		 * This uses GImpact for moving triangle meshes.
+		 * 
+		 * Example:
+		 * @code
+		 * Physics::CMeshCollider* mesh = gameObject->addComponent<Physics::CMeshCollider>();
+		 * mesh->setMeshSource("Assets/Models/MyMesh.fbx");
+		 * @endcode
+		 */
 		class CMeshCollider : public CCollider
-		{
-		protected:
+		{		protected:
 			std::string m_source;
 
 #ifdef USE_BULLET_PHYSIC_ENGINE
@@ -46,6 +57,9 @@ namespace Skylicht
 
 			virtual ~CMeshCollider();
 
+			/**
+			 * @brief Releases the internal triangle mesh data.
+			 */
 			void releaseMesh();
 
 			virtual void updateComponent();
@@ -54,23 +68,44 @@ namespace Skylicht
 
 			virtual void loadSerializable(CObjectSerializable* object);
 
+			/**
+			 * @brief Sets the source path for the mesh prefab.
+			 * @param source Path to the .dae, .fbx, or .obj file.
+			 */
 			inline void setMeshSource(const char* source)
 			{
 				m_source = source;
 			}
 
+			/**
+			 * @brief Gets the source path for the mesh prefab.
+			 * @return Path string.
+			 */
 			inline const char* getMeshSource()
 			{
 				return m_source.c_str();
 			}
 
+			/**
+			 * @brief Loads and returns the mesh prefab from the source path.
+			 * @return Pointer to CEntityPrefab.
+			 */
 			CEntityPrefab* getMeshPrefab();
 
+			/**
+			 * @brief Gets the world transform matrix of the collider.
+			 * @return 4x4 matrix.
+			 */
 			core::matrix4 getWorldTransform();
 
 #ifdef USE_BULLET_PHYSIC_ENGINE
 			virtual btCollisionShape* initCollisionShape();
 
+			/**
+			 * @brief Internal helper to initialize collision triangles from a prefab.
+			 * @param prefab The mesh prefab.
+			 * @param callback Callback to process each sub-mesh.
+			 */
 			void initFromPrefab(CEntityPrefab* prefab, std::function<void(const core::matrix4&, CMesh*)> callback);
 #endif
 

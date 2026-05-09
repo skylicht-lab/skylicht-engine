@@ -29,14 +29,45 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/**
+	 * @brief Component that manages and updates animation skeletons for a GameObject.
+	 * @ingroup Animation
+	 * 
+	 * This component acts as a container for one or more CSkeleton objects.
+	 * It is responsible for updating the animation state and applying transforms to the entities.
+	 * 
+	 * Example: Setting up animation layers
+	 * @code
+	 * CAnimationController* animController = gameObject->addComponent<CAnimationController>();
+	 * 
+	 * // Create base skeleton (output)
+	 * CSkeleton* result = animController->createSkeleton();
+	 * result->setAnimationType(CSkeleton::Blending);
+	 * animController->setOutput(result);
+	 * 
+	 * // Create a movement layer
+	 * CSkeleton* movement = animController->createSkeleton();
+	 * movement->setTarget(result);
+	 * 
+	 * // Create an action layer (e.g., Attack)
+	 * CSkeleton* attack = animController->createSkeleton();
+	 * attack->setTarget(result);
+	 * attack->setLayerType(CSkeleton::Replace); // Overrides movement
+	 * @endcode
+	 */
 	class SKYLICHT_API CAnimationController : public CComponentSystem
 	{
 	protected:
+		//! List of skeletons managed by this controller.
 		std::vector<CSkeleton*> m_skeletons;
 
+		//! The output skeleton which transforms are applied from.
 		CSkeleton* m_output;
 
+		//! Path to the primary animation file.
 		std::string m_animFile;
+		
+		//! Whether the default animation should loop.
 		bool m_loop;
 
 	public:
@@ -56,22 +87,47 @@ namespace Skylicht
 
 	public:
 
+		/**
+		 * @brief Creates a new skeleton managed by this controller, using the GameObject's entities.
+		 * @return Pointer to the newly created skeleton.
+		 */
 		CSkeleton* createSkeleton();
 
+		/**
+		 * @brief Creates a new skeleton managed by this controller, using the provided entities.
+		 * @param entities List of entities to initialize the skeleton with.
+		 * @return Pointer to the newly created skeleton.
+		 */
 		CSkeleton* createSkeleton(core::array<CEntity*>& entities);
 
+		/**
+		 * @brief Gets the number of skeletons managed by this controller.
+		 * @return Skeleton count.
+		 */
 		int getNumSkeleton()
 		{
 			return (int)m_skeletons.size();
 		}
 
+		/**
+		 * @brief Gets a skeleton by index.
+		 * @param id The skeleton index.
+		 * @return Pointer to the skeleton.
+		 */
 		CSkeleton* getSkeleton(int id)
 		{
 			return m_skeletons[id];
 		}
 
+		/**
+		 * @brief Releases all skeletons and clears the controller.
+		 */
 		void releaseAllSkeleton();
 
+		/**
+		 * @brief Sets the skeleton that will be used for final transform application.
+		 * @param skeleton Pointer to the output skeleton.
+		 */
 		inline void setOutput(CSkeleton* skeleton)
 		{
 			m_output = skeleton;

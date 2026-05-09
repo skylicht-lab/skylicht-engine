@@ -28,17 +28,19 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	/// @brief Utility class for exporting Canvas and GUI element trees to files or serializable data.
-	/// @ingroup Graphics2D
-	/// 
-	/// CGUIExporter can be used to save a CCanvas to an XML file, or convert GUI elements to  
-	/// serializable objects for other forms of storage or transfer.It supports recursive export 
-	/// of child elements and can generate info files listing all element paths.
-	///
-	/// Example usage :
-	/// @code
-	/// CGUIExporter::save("ui_layout.gui", canvas);
-	/// @endcode
+	/**
+	 * @brief Utility class for exporting Canvas and GUI element trees to files or serializable data.
+	 * @ingroup Graphics2D
+	 * 
+	 * CGUIExporter can be used to save a CCanvas to an XML file, or convert GUI elements to  
+	 * serializable objects for other forms of storage or transfer. It supports recursive export 
+	 * of child elements and can generate info files listing all element paths.
+	 *
+	 * Example usage :
+	 * @code
+	 * CGUIExporter::save("ui_layout.gui", canvas);
+	 * @endcode
+	 */
 	class SKYLICHT_API CGUIExporter
 	{
 	public:
