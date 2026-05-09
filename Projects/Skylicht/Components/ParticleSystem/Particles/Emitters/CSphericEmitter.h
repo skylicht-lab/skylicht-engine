@@ -30,6 +30,17 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		/**
+		 * @class CSphericEmitter
+		 * @ingroup ParticleSystem
+		 * @brief Emitter that shoots particles in a cone shape defined by two angles.
+		 * 
+		 * ### Example
+		 * @code
+		 * Particle::CSphericEmitter *emitter = factory->createSphericEmitter(core::vector3df(0, 1, 0), 0.0f, 45.0f * core::DEGTORAD);
+		 * group->addEmitter(emitter);
+		 * @endcode
+		 */
 		class COMPONENT_API CSphericEmitter : public CDirectionEmitter
 		{
 		protected:

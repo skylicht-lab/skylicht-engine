@@ -30,6 +30,11 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		/**
+		 * @class CStraightEmitter
+		 * @ingroup ParticleSystem
+		 * @brief Emitter that shoots particles in a fixed direction.
+		 */
 		class COMPONENT_API CStraightEmitter : public CDirectionEmitter
 		{
 		protected:

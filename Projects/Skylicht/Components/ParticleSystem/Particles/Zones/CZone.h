@@ -39,6 +39,11 @@ namespace Skylicht
 
 		COMPONENT_API void random_reset(s32 seed);
 
+		/**
+		 * @enum EZone
+		 * @ingroup ParticleSystem
+		 * @brief Available particle spawn zones.
+		 */
 		enum EZone
 		{
 			Point,
@@ -51,6 +56,11 @@ namespace Skylicht
 			NumOfZone
 		};
 
+		/**
+		 * @class CZone
+		 * @ingroup ParticleSystem
+		 * @brief Base class for zones where particles can be spawned.
+		 */
 		class COMPONENT_API CZone : public CParticleSerializable
 		{
 		protected:

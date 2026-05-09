@@ -30,6 +30,11 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		/**
+		 * @class CParentRelativeSystem
+		 * @ingroup ParticleSystem
+		 * @brief System used by CSubGroup to synchronize child particles with their parent particles.
+		 */
 		class COMPONENT_API CParentRelativeSystem : public ISystem
 		{
 		protected:

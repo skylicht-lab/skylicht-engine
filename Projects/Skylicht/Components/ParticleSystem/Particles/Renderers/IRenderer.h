@@ -32,6 +32,11 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		/**
+		 * @enum ERenderer
+		 * @ingroup ParticleSystem
+		 * @brief Available particle renderer types.
+		 */
 		enum ERenderer
 		{
 			Quad,
@@ -39,6 +44,11 @@ namespace Skylicht
 			MeshInstancing
 		};
 
+		/**
+		 * @class IRenderer
+		 * @ingroup ParticleSystem
+		 * @brief Base interface for particle renderers.
+		 */
 		class COMPONENT_API IRenderer : public CParticleSerializable
 		{
 		protected:

@@ -31,6 +31,23 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		/**
+		 * @class CGUIParticle
+		 * @ingroup ParticleSystem
+		 * @brief 2D GUI element that displays a 3D particle system.
+		 * @details Allows particle effects to be used within the UI canvas.
+		 * 
+		 * ### Example
+		 * @code
+		 * // You need to register the plugin first (e.g., in CApplication::initPlugin)
+		 * // CGUIParticle::registerPlugin();
+		 * 
+		 * // Then create a GUI particle element via factory
+		 * CGUIParticle *guiParticle = (CGUIParticle*)CGUIFactory::getInstance()->createGUI("CGUIParticle", parent);
+		 * guiParticle->setParticle("Particles/Magic.particle", true);
+		 * guiParticle->playParticle();
+		 * @endcode
+		 */
 		class CGUIParticle : public CGUIElement
 		{
 		protected:

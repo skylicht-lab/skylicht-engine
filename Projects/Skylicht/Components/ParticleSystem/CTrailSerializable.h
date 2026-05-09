@@ -28,6 +28,11 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/**
+	 * @class CTrailSerializable
+	 * @ingroup ParticleSystem
+	 * @brief Serialization helper for particle trails.
+	 */
 	class SKYLICHT_API CTrailSerializable : public CObjectSerializable
 	{
 	public:

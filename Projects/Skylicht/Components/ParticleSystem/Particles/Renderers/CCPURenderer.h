@@ -31,6 +31,12 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		/**
+		 * @class CCPURenderer
+		 * @ingroup ParticleSystem
+		 * @brief A non-instanced renderer that builds the particle vertex buffer on the CPU every frame.
+		 * @details Used for compatibility or when instancing is not supported.
+		 */
 		class COMPONENT_API CCPURenderer : public IRenderer
 		{
 		public:

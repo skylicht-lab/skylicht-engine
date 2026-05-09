@@ -32,6 +32,36 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		/**
+		 * @class CParticleComponent
+		 * @ingroup ParticleSystem
+		 * @brief Main component for creating and managing a particle system in Skylicht.
+		 * @details This component integrates the particle engine with the ECS architecture. 
+		 * It manages particle groups, emitters, and zones, and handles serialization to .particle files.
+		 * 
+		 * ### Example
+		 * @code
+		 * // Create a particle system object
+		 * CGameObject *psObj = zone->createEmptyObject();
+		 * Particle::CParticleComponent *ps = psObj->addComponent<Particle::CParticleComponent>();
+		 * 
+		 * // Setup a basic group with a quad renderer
+		 * Particle::CGroup *group = ps->createParticleGroup();
+		 * group->LifeMin = 1.0f;
+		 * group->LifeMax = 2.0f;
+		 * 
+		 * Particle::CFactory *factory = ps->getParticleFactory();
+		 * Particle::CQuadRenderer *renderer = factory->createQuadRenderer();
+		 * renderer->setTexturePath("Particles/Textures/point.png");
+		 * group->setRenderer(renderer);
+		 * 
+		 * // Setup a random emitter in a sphere zone
+		 * Particle::CEmitter *emitter = group->addEmitter(factory->createRandomEmitter());
+		 * emitter->setZone(factory->createSphereZone(core::vector3df(0,0,0), 1.0f));
+		 * emitter->setFlow(100.0f);
+		 * emitter->setForce(0.1f, 0.5f);
+		 * @endcode
+		 */
 		class COMPONENT_API CParticleComponent : public CComponentSystem
 		{
 		protected:

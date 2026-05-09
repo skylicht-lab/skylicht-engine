@@ -30,6 +30,11 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		/**
+		 * @class CCylinder
+		 * @ingroup ParticleSystem
+		 * @brief A zone that spawns particles within or on the surface of a cylinder.
+		 */
 		class COMPONENT_API CCylinder : public CPositionZone
 		{
 		protected:

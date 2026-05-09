@@ -39,6 +39,12 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		/**
+		 * @class CParticleRenderer
+		 * @ingroup ParticleSystem
+		 * @brief ECS render system for particles.
+		 * @details Handles the actual drawing of particles using the renderers assigned to each group.
+		 */
 		class COMPONENT_API CParticleRenderer : public IRenderSystem
 		{
 		protected:

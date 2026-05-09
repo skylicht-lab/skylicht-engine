@@ -120,6 +120,11 @@ namespace irr
 */
 
 /**
+* @defgroup ParticleSystem Particle System
+* @brief ECS-driven particle engine with instancing and trails.
+*/
+
+/**
 * @defgroup UI UI Library
 * @brief High-level interactive UI controls and event handling.
 */

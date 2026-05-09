@@ -30,6 +30,11 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		/**
+		 * @class CParticleSerializable
+		 * @ingroup ParticleSystem
+		 * @brief Base class for particle system objects that can be serialized to XML.
+		 */
 		class COMPONENT_API CParticleSerializable
 		{
 		public:

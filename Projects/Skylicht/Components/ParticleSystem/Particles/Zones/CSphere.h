@@ -30,6 +30,11 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		/**
+		 * @class CSphere
+		 * @ingroup ParticleSystem
+		 * @brief A zone that spawns particles within or on the surface of a sphere.
+		 */
 		class COMPONENT_API CSphere : public CPositionZone
 		{
 		protected:

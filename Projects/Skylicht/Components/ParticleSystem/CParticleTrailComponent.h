@@ -32,6 +32,25 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		/**
+		 * @class CParticleTrailComponent
+		 * @ingroup ParticleSystem
+		 * @brief Component for adding ribbon/trail effects to particles.
+		 * @details Connects to a CParticleComponent to generate smooth trails based on particle movement.
+		 * 
+		 * ### Example
+		 * @code
+		 * // Assuming ps is a CParticleComponent already attached to the object
+		 * Particle::CParticleTrailComponent *psTrail = psObj->addComponent<Particle::CParticleTrailComponent>();
+		 * 
+		 * // Add a trail to a specific particle group
+		 * Particle::CParticleTrail *trail = psTrail->addTrail(projectileGroup);
+		 * trail->setTexturePath("Particles/Textures/arcane_trail.png");
+		 * trail->setWidth(0.3f);
+		 * trail->setLength(2.0f);
+		 * trail->setEmission(true);
+		 * @endcode
+		 */
 		class COMPONENT_API CParticleTrailComponent : public CComponentSystem
 		{
 		protected:

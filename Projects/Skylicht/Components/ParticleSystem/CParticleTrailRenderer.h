@@ -37,6 +37,11 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		/**
+		 * @class CParticleTrailRenderer
+		 * @ingroup ParticleSystem
+		 * @brief ECS render system for particle trails.
+		 */
 		class COMPONENT_API CParticleTrailRenderer : public IRenderSystem
 		{
 		protected:

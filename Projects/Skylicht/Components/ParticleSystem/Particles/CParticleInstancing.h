@@ -28,6 +28,11 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		/**
+		 * @struct SParticleInstance
+		 * @ingroup ParticleSystem
+		 * @brief GPU instance data for hardware-accelerated particles.
+		 */
 		struct SParticleInstance
 		{
 			video::SVec4 Pos;
@@ -50,6 +55,11 @@ namespace Skylicht
 			}
 		};
 
+		/**
+		 * @class CParticleInstancing
+		 * @ingroup ParticleSystem
+		 * @brief Internal class for managing GPU instancing buffers for particles.
+		 */
 		class COMPONENT_API CParticleInstancing
 		{
 		protected:

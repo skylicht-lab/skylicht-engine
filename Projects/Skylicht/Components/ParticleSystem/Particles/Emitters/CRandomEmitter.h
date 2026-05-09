@@ -30,6 +30,11 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		/**
+		 * @class CRandomEmitter
+		 * @ingroup ParticleSystem
+		 * @brief Emitter that shoots particles in random directions.
+		 */
 		class COMPONENT_API CRandomEmitter : public CEmitter
 		{
 		public:

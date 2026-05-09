@@ -30,6 +30,11 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		/**
+		 * @class CParticleCPUBufferSystem
+		 * @ingroup ParticleSystem
+		 * @brief Internal system that updates the CPU mesh buffer with current particle data for non-instanced rendering.
+		 */
 		class COMPONENT_API CParticleCPUBufferSystem : public ISystem
 		{
 		public:

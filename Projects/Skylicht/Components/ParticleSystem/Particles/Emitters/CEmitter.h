@@ -34,6 +34,11 @@ namespace Skylicht
 		class CParticle;
 		class CGroup;
 
+		/**
+		 * @enum EEmitter
+		 * @ingroup ParticleSystem
+		 * @brief Available particle emitter types.
+		 */
 		enum EEmitter
 		{
 			Random,
@@ -43,6 +48,11 @@ namespace Skylicht
 			NumOfEmitter,
 		};
 
+		/**
+		 * @struct SBornData
+		 * @ingroup ParticleSystem
+		 * @brief Internal data for managing particle birth rates.
+		 */
 		struct SBornData
 		{
 			float LifeTime;
@@ -61,6 +71,12 @@ namespace Skylicht
 			}
 		};
 
+		/**
+		 * @class CEmitter
+		 * @ingroup ParticleSystem
+		 * @brief Base class for particle emitters.
+		 * @details Emitters control how many particles are born per second (Flow) and their initial velocity.
+		 */
 		class COMPONENT_API CEmitter : public CParticleSerializable
 		{
 		protected:

@@ -30,6 +30,11 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		/**
+		 * @class CPolyLine
+		 * @ingroup ParticleSystem
+		 * @brief A zone that spawns particles along a sequence of connected line segments.
+		 */
 		class COMPONENT_API CPolyLine : public CZone
 		{
 		protected:

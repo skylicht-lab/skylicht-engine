@@ -31,6 +31,11 @@ namespace Skylicht
 		class CParticle;
 		class CGroup;
 
+		/**
+		 * @class ISystem
+		 * @ingroup ParticleSystem
+		 * @brief Base interface for particle systems that update particle data.
+		 */
 		class COMPONENT_API ISystem
 		{
 		protected:

@@ -30,6 +30,11 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		/**
+		 * @class CRing
+		 * @ingroup ParticleSystem
+		 * @brief A zone that spawns particles within a 2D ring (annulus) in 3D space.
+		 */
 		class COMPONENT_API CRing : public CPositionZone
 		{
 		protected:

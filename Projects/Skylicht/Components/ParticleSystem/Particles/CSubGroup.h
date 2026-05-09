@@ -30,6 +30,20 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		/**
+		 * @class CSubGroup
+		 * @ingroup ParticleSystem
+		 * @brief A particle group that spawns particles from the positions of particles in a parent group.
+		 * @details Useful for sub-emitter effects like trails, explosions upon death, or complex multi-stage particles.
+		 * 
+		 * ### Example
+		 * @code
+		 * // Create a sub-group attached to projectileGroup
+		 * Particle::CSubGroup *arcaneGroup = ps->createParticleSubGroup(projectileGroup);
+		 * arcaneGroup->setFollowParentTransform(true);
+		 * arcaneGroup->syncParentParams(true, true); // Sync life and color
+		 * @endcode
+		 */
 		class COMPONENT_API CSubGroup :
 			public CGroup,
 			public IParticleCallback

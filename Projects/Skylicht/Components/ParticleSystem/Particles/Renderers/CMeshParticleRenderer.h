@@ -31,6 +31,19 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		/**
+		 * @class CMeshParticleRenderer
+		 * @ingroup ParticleSystem
+		 * @brief Renderer that uses hardware instancing to draw 3D meshes as particles.
+		 * 
+		 * ### Example
+		 * @code
+		 * Particle::CMeshParticleRenderer *renderer = factory->createMeshParticleRenderer();
+		 * renderer->loadMesh("Models/Stone/stone.fbx");
+		 * renderer->setMaterialType(Particle::CMeshParticleRenderer::Soild);
+		 * group->setRenderer(renderer);
+		 * @endcode
+		 */
 		class COMPONENT_API CMeshParticleRenderer : public IRenderer
 		{
 		public:

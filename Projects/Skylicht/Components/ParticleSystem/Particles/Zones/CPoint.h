@@ -30,6 +30,11 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		/**
+		 * @class CPoint
+		 * @ingroup ParticleSystem
+		 * @brief A zone that spawns particles at a single point.
+		 */
 		class COMPONENT_API CPoint : public CPositionZone
 		{
 		protected:

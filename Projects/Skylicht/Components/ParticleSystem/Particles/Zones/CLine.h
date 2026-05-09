@@ -30,6 +30,11 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		/**
+		 * @class CLine
+		 * @ingroup ParticleSystem
+		 * @brief A zone that spawns particles along a line segment.
+		 */
 		class COMPONENT_API CLine : public CZone
 		{
 		protected:

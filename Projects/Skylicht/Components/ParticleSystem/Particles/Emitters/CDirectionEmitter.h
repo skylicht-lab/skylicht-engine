@@ -30,6 +30,11 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		/**
+		 * @class CDirectionEmitter
+		 * @ingroup ParticleSystem
+		 * @brief Base class for emitters that have a primary emission direction.
+		 */
 		class COMPONENT_API CDirectionEmitter : public CEmitter
 		{
 		protected:

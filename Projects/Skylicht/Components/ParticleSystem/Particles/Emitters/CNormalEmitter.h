@@ -30,6 +30,11 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		/**
+		 * @class CNormalEmitter
+		 * @ingroup ParticleSystem
+		 * @brief Emitter that shoots particles along the surface normals of its zone.
+		 */
 		class COMPONENT_API CNormalEmitter : public CEmitter
 		{
 		protected:

@@ -30,6 +30,11 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		/**
+		 * @class CPositionZone
+		 * @ingroup ParticleSystem
+		 * @brief Base class for zones defined by a single position.
+		 */
 		class COMPONENT_API CPositionZone : public CZone
 		{
 		protected:

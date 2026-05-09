@@ -30,6 +30,12 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		/**
+		 * @class CParticleSystem
+		 * @ingroup ParticleSystem
+		 * @brief Core particle update system.
+		 * @details Handles gravity, friction, life time, and interpolation of CModel parameters.
+		 */
 		class COMPONENT_API CParticleSystem : public ISystem
 		{
 		public:

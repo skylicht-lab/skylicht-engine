@@ -51,6 +51,12 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		/**
+		 * @class CFactory
+		 * @ingroup ParticleSystem
+		 * @brief Factory class for creating emitters, zones, and renderers.
+		 * @details Accessed via CParticleComponent::getParticleFactory().
+		 */
 		class COMPONENT_API CFactory
 		{
 		protected:

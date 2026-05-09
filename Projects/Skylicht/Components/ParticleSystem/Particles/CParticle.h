@@ -30,6 +30,11 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		/**
+		 * @enum EParticleParams
+		 * @ingroup ParticleSystem
+		 * @brief IDs for particle parameters that can be animated over time.
+		 */
 		enum EParticleParams
 		{
 			Scale = 0,
@@ -51,6 +56,11 @@ namespace Skylicht
 			NumParams
 		};
 
+		/**
+		 * @class CParticle
+		 * @ingroup ParticleSystem
+		 * @brief Individual particle data structure.
+		 */
 		class COMPONENT_API CParticle
 		{
 		public:

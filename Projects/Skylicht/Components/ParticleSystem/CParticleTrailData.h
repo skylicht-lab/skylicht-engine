@@ -34,6 +34,11 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		/**
+		 * @class CParticleTrailData
+		 * @ingroup ParticleSystem
+		 * @brief ECS data structure holding trail information for an entity.
+		 */
 		class COMPONENT_API CParticleTrailData : public IEntityData
 		{
 		public:

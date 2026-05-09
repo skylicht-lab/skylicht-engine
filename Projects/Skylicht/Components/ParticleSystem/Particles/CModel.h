@@ -34,6 +34,12 @@ namespace Skylicht
 	{
 		class CGroup;
 
+		/**
+		 * @class CModel
+		 * @ingroup ParticleSystem
+		 * @brief Data model for animating a particle parameter (EParticleParams) over its lifetime.
+		 * @details Supports linear interpolation between start/end values or custom curves via CInterpolator.
+		 */
 		class COMPONENT_API CModel : public CParticleSerializable
 		{
 		protected:

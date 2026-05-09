@@ -30,6 +30,11 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		/**
+		 * @enum EBillboardType
+		 * @ingroup ParticleSystem
+		 * @brief Billboard orientation modes for quad particles.
+		 */
 		enum EBillboardType
 		{
 			Camera,
@@ -37,6 +42,11 @@ namespace Skylicht
 			FixOrientation
 		};
 
+		/**
+		 * @enum EBaseShaderType
+		 * @ingroup ParticleSystem
+		 * @brief Shader blending modes for quad particles.
+		 */
 		enum EBaseShaderType
 		{
 			Additive,
@@ -45,6 +55,19 @@ namespace Skylicht
 			TransparentAlpha
 		};
 
+		/**
+		 * @class CQuadRenderer
+		 * @ingroup ParticleSystem
+		 * @brief Optimized GPU instancing renderer for billboard particles.
+		 * 
+		 * ### Example
+		 * @code
+		 * Particle::CQuadRenderer *renderer = factory->createQuadRenderer();
+		 * renderer->setTexturePath("Particles/Textures/point.png");
+		 * renderer->setMaterialType(Particle::Additive, Particle::Camera);
+		 * group->setRenderer(renderer);
+		 * @endcode
+		 */
 		class COMPONENT_API CQuadRenderer : public IRenderer
 		{
 		protected:

@@ -47,6 +47,11 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		/**
+		 * @struct SLaunchParticle
+		 * @ingroup ParticleSystem
+		 * @brief Information about particles being launched by an emitter.
+		 */
 		struct SLaunchParticle
 		{
 			CEmitter* Emitter;
@@ -61,6 +66,11 @@ namespace Skylicht
 			}
 		};
 
+		/**
+		 * @class IParticleCallback
+		 * @ingroup ParticleSystem
+		 * @brief Interface for receiving particle lifecycle events.
+		 */
 		class COMPONENT_API IParticleCallback
 		{
 		public:
@@ -100,6 +110,24 @@ namespace Skylicht
 			}
 		};
 
+		/**
+		 * @class CGroup
+		 * @ingroup ParticleSystem
+		 * @brief Represents a group of particles with shared settings, emitters, and a renderer.
+		 * @details Groups manage the lifecycle of particles, their properties (life, friction, gravity), and the systems that affect them.
+		 * 
+		 * ### Example
+		 * @code
+		 * Particle::CGroup *group = ps->createParticleGroup();
+		 * group->LifeMin = 0.5f;
+		 * group->LifeMax = 1.0f;
+		 * group->Gravity.set(0.0f, -10.0f, 0.0f);
+		 * group->Friction = 0.5f;
+		 * 
+		 * // Setup color over life
+		 * group->createModel(Particle::ColorA)->setStart(1.0f)->setEnd(0.0f);
+		 * @endcode
+		 */
 		class COMPONENT_API CGroup : public CParticleSerializable
 		{
 		protected:

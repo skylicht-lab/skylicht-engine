@@ -30,6 +30,11 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		/**
+		 * @class CAABox
+		 * @ingroup ParticleSystem
+		 * @brief A zone that spawns particles within or on the surface of an Axis-Aligned Bounding Box.
+		 */
 		class COMPONENT_API CAABox : public CPositionZone
 		{
 		protected:

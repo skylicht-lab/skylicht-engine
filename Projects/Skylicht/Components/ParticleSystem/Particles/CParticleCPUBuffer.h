@@ -28,6 +28,11 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		/**
+		 * @class CParticleCPUBuffer
+		 * @ingroup ParticleSystem
+		 * @brief Internal class for managing particle mesh buffers on the CPU.
+		 */
 		class COMPONENT_API CParticleCPUBuffer
 		{
 		protected:

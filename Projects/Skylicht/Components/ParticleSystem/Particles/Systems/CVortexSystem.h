@@ -30,6 +30,19 @@ namespace Skylicht
 {
 	namespace Particle
 	{
+		/**
+		 * @class CVortexSystem
+		 * @ingroup ParticleSystem
+		 * @brief Custom system that applies a vortex (swirl) effect to particles.
+		 * 
+		 * ### Example
+		 * @code
+		 * Particle::CVortexSystem *vortex = new Particle::CVortexSystem(core::vector3df(0, 1, 0), core::vector3df(0, 1, 0), 0.5f, 0.2f);
+		 * vortex->setEyeAttractionSpeed(0.01f);
+		 * vortex->enableKillingParticle(true);
+		 * group->addSystem(vortex);
+		 * @endcode
+		 */
 		class COMPONENT_API CVortexSystem : public ISystem
 		{
 		protected:
