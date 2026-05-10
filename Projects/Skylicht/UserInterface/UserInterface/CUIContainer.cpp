@@ -275,7 +275,7 @@ namespace Skylicht
 						bool acceptTouch = true;
 
 						CGUIMask* mask = base->getElement()->getParentMask();
-						if (mask)
+						if (mask && mask->isVisible())
 						{
 							// check the touch is inside mask or not?
 							core::vector3df r[4];
