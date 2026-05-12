@@ -69,6 +69,11 @@ namespace Skylicht
 
 			virtual void loadSerializable(CObjectSerializable* object);
 
+			/**
+			 * @brief Add a ribbon trail effect to a particle group.
+			 * @param group Pointer to the target particle group.
+			 * @return Pointer to the created CParticleTrail.
+			 */
 			CParticleTrail* addTrail(CGroup* group);
 
 			DECLARE_GETTYPENAME(CParticleTrailComponent)

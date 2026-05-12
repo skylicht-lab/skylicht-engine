@@ -28,6 +28,18 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/**
+	 * @brief Component for rendering cube primitives.
+	 * 
+	 * ### Example
+	 * @code
+	 * CGameObject* cubeObj = zone->createEmptyObject();
+	 * CCube* cube = cubeObj->addComponent<CCube>();
+	 * cube->setColor(SColor(255, 255, 0, 0)); // Set color to red
+	 * @endcode
+	 * 
+	 * @ingroup Primitives
+	 */
 	class COMPONENT_API CCube : public CPrimitive
 	{
 	public:

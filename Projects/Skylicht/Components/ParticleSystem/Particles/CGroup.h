@@ -182,65 +182,136 @@ namespace Skylicht
 
 			virtual ~CGroup();
 
+			/**
+			 * @brief Kill all active particles in this group immediately.
+			 */
 			void clearParticles();
 
+			/**
+			 * @brief Kill all immortal particles.
+			 */
 			void clearImmortalParticles();
 
+			/**
+			 * @brief Update particle physics and logic systems. Called by CParticleGroupSystem.
+			 */
 			void update();
 
+			/**
+			 * @brief Update vertex buffers for rendering. Called by CParticleRenderer or CGUIParticle.
+			 */
 			void updateForRenderer();
 
+			/**
+			 * @brief Set the rotation of the gravity vector.
+			 * @param euler Euler angles in radians.
+			 */
 			void setGravityRotation(const core::vector3df& euler);
 
+			/**
+			 * @brief Set the fixed orientation for particles in this group.
+			 * @param euler Euler angles in radians.
+			 */
 			void setParticleRotation(const core::vector3df& euler);
 
+			/**
+			 * @brief Set the world matrix of the parent entity.
+			 * @param m Parent world matrix.
+			 */
 			inline void setParentWorldMatrix(const core::matrix4& m)
 			{
 				m_parentWorld = m;
 			}
 
+			/**
+			 * @brief Set the local-to-world matrix for this group.
+			 * @param m World matrix.
+			 */
 			inline void setWorldMatrix(const core::matrix4& m)
 			{
 				m_world = m;
 			}
 
+			/**
+			 * @brief Get the local-to-world matrix.
+			 * @return Matrix4 reference.
+			 */
 			inline const core::matrix4& getWorld()
 			{
 				return m_world;
 			}
 
+			/**
+			 * @brief Transform a local position to world space.
+			 * @param pos Local position.
+			 * @return World position.
+			 */
 			virtual core::vector3df getTransformPosition(const core::vector3df& pos);
 
+			/**
+			 * @brief Transform a local direction vector to world space.
+			 * @param vec Local vector.
+			 * @return World vector.
+			 */
 			virtual core::vector3df getTransformVector(const core::vector3df& vec);
 
+			/**
+			 * @brief Get the bounding box containing all active particles.
+			 * @return AABB reference.
+			 */
 			inline const core::aabbox3df& getBBox()
 			{
 				return m_bbox;
 			}
 
+			/**
+			 * @brief Get current particle count.
+			 * @return Active particle count.
+			 */
 			inline u32 getNumParticles()
 			{
 				return m_particles.size();
 			}
 
+			/**
+			 * @brief Get pointer to the internal particle array.
+			 * @return Pointer to CParticle array.
+			 */
 			inline CParticle* getParticlePointer()
 			{
 				return m_particles.pointer();
 			}
 
+			/**
+			 * @brief Add an emitter to this group.
+			 * @param e Pointer to the emitter.
+			 * @return Pointer to the added emitter.
+			 */
 			inline CEmitter* addEmitter(CEmitter* e)
 			{
 				m_emitters.push_back(e);
 				return e;
 			}
 
+			/**
+			 * @brief Get the list of emitters in this group.
+			 * @return Reference to emitter vector.
+			 */
 			inline std::vector<CEmitter*>& getEmitters()
 			{
 				return m_emitters;
 			}
 
+			/**
+			 * @brief Remove an emitter from this group.
+			 * @param e Pointer to the emitter.
+			 */
 			void removeEmitter(CEmitter* e);
 
+			/**
+			 * @brief Add a callback for particle lifecycle events.
+			 * @param cb Pointer to IParticleCallback.
+			 */
 			void addCallback(IParticleCallback* cb)
 			{
 				std::vector<IParticleCallback*>::iterator i = std::find(m_callback.begin(), m_callback.end(), cb);
@@ -248,6 +319,10 @@ namespace Skylicht
 					m_callback.push_back(cb);
 			}
 
+			/**
+			 * @brief Remove a lifecycle callback.
+			 * @param cb Pointer to IParticleCallback.
+			 */
 			void removeCallback(IParticleCallback* cb)
 			{
 				std::vector<IParticleCallback*>::iterator i = std::find(m_callback.begin(), m_callback.end(), cb);
@@ -255,106 +330,183 @@ namespace Skylicht
 					m_callback.erase(i);
 			}
 
+			/**
+			 * @brief Get all lifecycle callbacks.
+			 * @return Reference to callback vector.
+			 */
 			inline std::vector<IParticleCallback*>& getCallback()
 			{
 				return m_callback;
 			}
 
+			/**
+			 * @brief Add a logic system to affect particles in this group.
+			 * @param s Pointer to ISystem.
+			 */
 			inline void addSystem(ISystem* s)
 			{
 				m_systems.push_back(s);
 			}
 
+			/**
+			 * @brief Get all systems assigned to this group.
+			 * @return Reference to system vector.
+			 */
 			inline std::vector<ISystem*>& getSystems()
 			{
 				return m_systems;
 			}
 
-			void removeSystem(ISystem* s)
-			{
-				std::vector<ISystem*>::iterator i = std::find(m_systems.begin(), m_systems.end(), s);
-				if (i != m_systems.end())
-					m_systems.erase(i);
-			}
+			/**
+			 * @brief Remove a system from this group.
+			 * @param s Pointer to the system.
+			 */
+			void removeSystem(ISystem* s);
 
-			int addParticle(u32 emiterID, const core::vector3df& position, const core::vector3df& subEmitterDirection)
-			{
-				if (emiterID < m_emitters.size())
-				{
-					return addParticleByEmitter(m_emitters[emiterID], position, subEmitterDirection);
-				}
+			/**
+			 * @brief Manually spawn a particle using a specific emitter.
+			 * @param emiterID Index of the emitter.
+			 * @param position Initial world position.
+			 * @param subEmitterDirection Direction hint for sub-emitters.
+			 * @return Index of the new particle, or -1 if failed.
+			 */
+			int addParticle(u32 emiterID, const core::vector3df& position, const core::vector3df& subEmitterDirection);
 
-				return -1;
-			}
-
-			int addParticleVelocity(u32 emiterID, const core::vector3df& position, const core::vector3df& velocity)
-			{
-				if (emiterID < m_emitters.size())
-				{
-					return addParticleVelocityByEmitter(m_emitters[emiterID], position, velocity);
-				}
-
-				return -1;
-			}
+			/**
+			 * @brief Manually spawn a particle with specific velocity.
+			 * @param emiterID Index of the emitter.
+			 * @param position Initial world position.
+			 * @param velocity Initial world velocity.
+			 * @return Index of the new particle, or -1 if failed.
+			 */
+			int addParticleVelocity(u32 emiterID, const core::vector3df& position, const core::vector3df& velocity);
 
 			int addParticleByEmitter(CEmitter* emitter, const core::vector3df& position, const core::vector3df& subEmitterDirection);
 
 			int addParticleVelocityByEmitter(CEmitter* emitter, const core::vector3df& position, const core::vector3df& velocity);
 
+			/**
+			 * @brief Set the renderer used to draw particles in this group.
+			 * @param r Pointer to IRenderer.
+			 * @return Pointer to the set renderer.
+			 */
 			IRenderer* setRenderer(IRenderer* r);
 
+			/**
+			 * @brief Get the active renderer.
+			 * @return Pointer to IRenderer.
+			 */
 			inline IRenderer* getRenderer()
 			{
 				return m_renderer;
 			}
 
+			/**
+			 * @brief Get internal GPU instancing data (for instanced renderers).
+			 * @return Pointer to CParticleInstancing.
+			 */
 			CParticleInstancing* getIntancing()
 			{
 				return m_instancing;
 			}
 
+			/**
+			 * @brief Get internal CPU mesh buffer (for non-instanced renderers).
+			 * @return Pointer to CParticleCPUBuffer.
+			 */
 			CParticleCPUBuffer* getParticleBuffer()
 			{
 				return m_cpuBuffer;
 			}
 
+			/**
+			 * @brief Get current particle count. Same as getNumParticles().
+			 * @return Count of particles.
+			 */
 			inline u32 getCurrentParticleCount()
 			{
 				return m_particles.size();
 			}
 
+			/**
+			 * @brief Create or retrieve an animation model for a parameter by name.
+			 * @param attributeName Wstring identifier (e.g. L"Scale").
+			 * @return Pointer to CModel.
+			 */
 			CModel* createModel(const std::wstring& attributeName);
 
+			/**
+			 * @brief Create or retrieve an animation model for a parameter by enum ID.
+			 * @param param EParticleParams enum value.
+			 * @return Pointer to CModel.
+			 */
 			CModel* createModel(EParticleParams param);
 
+			/**
+			 * @brief Get an existing model for a parameter.
+			 * @param param EParticleParams enum value.
+			 * @return Pointer to CModel, or NULL if not found.
+			 */
 			CModel* getModel(EParticleParams param);
 
+			/**
+			 * @brief Delete an animation model.
+			 * @param param EParticleParams enum value.
+			 */
 			void deleteModel(EParticleParams param);
 
+			/**
+			 * @brief Get all models defined for this group.
+			 * @return Reference to model vector.
+			 */
 			std::vector<CModel*>& getModels()
 			{
 				return m_models;
 			}
 
+			/**
+			 * @brief Create a new interpolator for custom curve animation.
+			 * @return Pointer to CInterpolator.
+			 */
 			CInterpolator* createInterpolator();
 
+			/**
+			 * @brief Delete an interpolator.
+			 * @param interpolator Pointer to the interpolator.
+			 */
 			void deleteInterpolator(CInterpolator* interpolator);
 
+			/**
+			 * @brief Get all interpolators owned by this group.
+			 * @return Reference to interpolator vector.
+			 */
 			std::vector<CInterpolator*>& getInterpolators()
 			{
 				return m_interpolators;
 			}
 
+			/**
+			 * @brief Get the internal particle array.
+			 * @return Reference to particle array.
+			 */
 			core::array<CParticle>& getParticles()
 			{
 				return m_particles;
 			}
 
+			/**
+			 * @brief Get the frame index of the last update.
+			 * @return Frame index.
+			 */
 			inline int getFrameUpdate()
 			{
 				return m_frameUpdate;
 			}
 
+			/**
+			 * @brief Manually synchronize frame index.
+			 * @param frame Current frame index.
+			 */
 			inline void updateFrame(int frame)
 			{
 				// sync frame from CParticleComponent

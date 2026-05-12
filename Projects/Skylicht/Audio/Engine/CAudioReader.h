@@ -36,6 +36,12 @@ namespace Skylicht
 {
 	namespace Audio
 	{
+		/**
+		 * @brief Audio reader for decoding audio data to raw PCM wave data.
+		 * This class is intended for reading audio samples (e.g., for analysis, 
+		 * visualization, or custom processing) and does not support direct playback.
+		 * @ingroup Audio
+		 */
 		class CAudioReader
 		{
 		protected:
@@ -58,27 +64,56 @@ namespace Skylicht
 			
 			virtual ~CAudioReader();
 			
+			/**
+			 * @brief Initialize the reader and create the appropriate decoder.
+			 */
 			void initReader();
 			
+			/**
+			 * @brief Initialize the decoder.
+			 * @return Status of the initialization
+			 */
 			EStatus initDecoder();
 			
+			/**
+			 * @brief Read and decode audio data into a buffer as raw PCM samples.
+			 * @param data The destination buffer to store PCM data
+			 * @param size The amount of data to read in bytes
+			 * @return Status of the read operation
+			 */
 			EStatus readAudio(unsigned char* data, int size);
 			
+			/**
+			 * @brief Get the decoder type.
+			 * @return EDecoderType
+			 */
 			IAudioDecoder::EDecoderType getDecoderType()
 			{
 				return m_decodeType;
 			}
 			
+			/**
+			 * @brief Get the underlying decoder.
+			 * @return Pointer to IAudioDecoder
+			 */
 			IAudioDecoder* getDecoder()
 			{
 				return m_decoder;
 			}
 			
+			/**
+			 * @brief Get the underlying stream.
+			 * @return Pointer to IStream
+			 */
 			IStream* getStream()
 			{
 				return m_stream;
 			}
 			
+			/**
+			 * @brief Get the current state of the reader.
+			 * @return ESourceState
+			 */
 			ISoundSource::ESourceState getState()
 			{
 				return m_state;

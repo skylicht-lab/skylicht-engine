@@ -78,14 +78,32 @@ namespace Skylicht
 
 			virtual void loadSerializable(CObjectSerializable* object);
 
+			/**
+			 * @brief Assign a particle system to this GUI element.
+			 * @param source Path to the .particle file.
+			 * @param autoPlay Whether to start playback immediately.
+			 */
 			void setParticle(const char* source, bool autoPlay);
 
+			/**
+			 * @brief Start particle playback.
+			 */
 			void playParticle();
 
+			/**
+			 * @brief Stop particle playback.
+			 */
 			void stopParticle();
 
+			/**
+			 * @brief Reload the particle system from its source path.
+			 */
 			void reload();
 
+			/**
+			 * @brief Get the underlying 3D particle component.
+			 * @return Pointer to CParticleComponent.
+			 */
 			inline Particle::CParticleComponent* getParticle()
 			{
 				return m_ps;

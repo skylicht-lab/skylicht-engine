@@ -31,6 +31,10 @@ namespace Skylicht
 {
 	namespace Audio
 	{
+		/**
+		 * @brief Stream cursor for memory buffer access.
+		 * @ingroup Audio
+		 */
 		class CMemoryStreamCursor : public IStreamCursor
 		{
 		public:
@@ -50,6 +54,10 @@ namespace Skylicht
 			virtual bool readyReadData(int len);
 		};
 		
+		/**
+		 * @brief Audio stream that reads from a memory buffer.
+		 * @ingroup Audio
+		 */
 		class CMemoryStream : public IStream
 		{
 		protected:
@@ -61,6 +69,10 @@ namespace Skylicht
 			CMemoryStream(unsigned char *buffer, int size, bool takeOwnership = false);
 			virtual ~CMemoryStream();
 			
+			/**
+			 * @brief Create a new memory cursor.
+			 * @return Pointer to CMemoryStreamCursor
+			 */
 			virtual IStreamCursor* createCursor();
 		};
 	}

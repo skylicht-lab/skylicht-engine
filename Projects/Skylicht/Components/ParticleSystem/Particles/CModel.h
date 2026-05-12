@@ -67,18 +67,35 @@ namespace Skylicht
 
 			virtual void loadSerializable(CObjectSerializable* object);
 
+			/**
+			 * @brief Get the display name of the animated parameter.
+			 * @return Wstring identifier.
+			 */
 			const wchar_t* getName();
 
+			/**
+			 * @brief Get the enum ID of the parameter being animated.
+			 * @return EParticleParams enum.
+			 */
 			inline EParticleParams getType()
 			{
 				return m_type;
 			}
 
+			/**
+			 * @brief Get the group that owns this model.
+			 * @return Pointer to CGroup.
+			 */
 			inline CGroup* getGroup()
 			{
 				return m_group;
 			}
 
+			/**
+			 * @brief Set a fixed starting value for the parameter.
+			 * @param f The start value.
+			 * @return Pointer to this model (for chaining).
+			 */
 			inline CModel* setStart(float f)
 			{
 				m_start1 = f;
@@ -87,6 +104,12 @@ namespace Skylicht
 				return this;
 			}
 
+			/**
+			 * @brief Set a random starting range for the parameter.
+			 * @param f1 Minimum start value.
+			 * @param f2 Maximum start value.
+			 * @return Pointer to this model (for chaining).
+			 */
 			inline CModel* setStart(float f1, float f2)
 			{
 				m_start1 = f1;
@@ -95,6 +118,11 @@ namespace Skylicht
 				return this;
 			}
 
+			/**
+			 * @brief Set a fixed end value for the parameter.
+			 * @param f The end value.
+			 * @return Pointer to this model (for chaining).
+			 */
 			inline CModel* setEnd(float f)
 			{
 				m_end1 = f;
@@ -103,6 +131,12 @@ namespace Skylicht
 				return this;
 			}
 
+			/**
+			 * @brief Set a random end range for the parameter.
+			 * @param f1 Minimum end value.
+			 * @param f2 Maximum end value.
+			 * @return Pointer to this model (for chaining).
+			 */
 			inline CModel* setEnd(float f1, float f2)
 			{
 				m_end1 = f1;
@@ -111,75 +145,55 @@ namespace Skylicht
 				return this;
 			}
 
+			/**
+			 * @brief Check if interpolation to an end value is enabled.
+			 * @return True if interpolation is active.
+			 */
 			inline bool isEnableEndValue()
 			{
 				return m_enableEndValue;
 			}
 
+			/**
+			 * @brief Enable or disable interpolation to an end value.
+			 * @param b True to enable.
+			 */
 			inline void enableEndValue(bool b)
 			{
 				m_enableEndValue = b;
 			}
 
+			/**
+			 * @brief Check if the start value is randomized.
+			 * @return True if random.
+			 */
 			inline bool isRandomStart()
 			{
 				return m_randomStart;
 			}
 
+			/**
+			 * @brief Check if the end value is randomized.
+			 * @return True if random.
+			 */
 			inline bool isRandomEnd()
 			{
 				return m_randomEnd;
 			}
 
-			float getStartValue1()
-			{
-				return m_start1;
-			}
-
-			void setStartValue1(float f)
-			{
-				m_start1 = f;
-			}
-
-			float getStartValue2()
-			{
-				return m_start2;
-			}
-
-			void setStartValue2(float f)
-			{
-				m_start2 = f;
-			}
-
-			float getEndValue1()
-			{
-				return m_end1;
-			}
-
-			void setEndValue1(float f)
-			{
-				m_end1 = f;
-			}
-
-			float getEndValue2()
-			{
-				return m_end2;
-			}
-
-			void setEndValue2(float f)
-			{
-				m_end2 = f;
-			}
-
-			float getRandomStart();
-
-			float getRandomEnd();
-
+			/**
+			 * @brief Set a custom curve for interpolation over particle life.
+			 * @param interpolate Pointer to CInterpolator.
+			 */
 			inline void setInterpolator(CInterpolator* interpolate)
 			{
 				m_interpolator = interpolate;
 			}
 
+			/**
+			 * @brief Get the assigned custom curve.
+			 * @return Pointer to CInterpolator, or NULL if linear.
+			 */
 			inline CInterpolator* getInterpolator()
 			{
 				return m_interpolator;

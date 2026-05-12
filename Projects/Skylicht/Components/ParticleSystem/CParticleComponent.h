@@ -90,67 +90,154 @@ namespace Skylicht
 
 		public:
 
+			/**
+			 * @brief Get the factory used to create particle emitters, zones, and renderers.
+			 * @return Pointer to CFactory.
+			 */
 			CFactory* getParticleFactory()
 			{
 				return &m_factory;
 			}
 
+			/**
+			 * @brief Get the internal ECS data structure holding particle groups.
+			 * @return Pointer to CParticleBufferData.
+			 */
 			inline CParticleBufferData* getData()
 			{
 				return m_data;
 			}
 
+			/**
+			 * @brief Set the world transform for all particle groups in this system.
+			 * @param world The world matrix.
+			 */
 			void setGroupTransform(const core::matrix4& world);
 
+			/**
+			 * @brief Create a new particle group.
+			 * @return Pointer to the new CGroup.
+			 */
 			CGroup* createParticleGroup();
 
+			/**
+			 * @brief Create a new sub-group that follows particles from a parent group.
+			 * @param group Pointer to the parent group.
+			 * @return Pointer to the new CSubGroup.
+			 */
 			CSubGroup* createParticleSubGroup(CGroup* group);
 
+			/**
+			 * @brief Get the number of particle groups.
+			 * @return Count of groups.
+			 */
 			inline u32 getNumOfGroup()
 			{
 				return m_data->Groups.size();
 			}
 
+			/**
+			 * @brief Get a particle group by index.
+			 * @param i Index of the group.
+			 * @return Pointer to CGroup.
+			 */
 			inline CGroup* getGroup(int i)
 			{
 				return m_data->Groups[i];
 			}
 
+			/**
+			 * @brief Remove a particle group from the system.
+			 * @param group Pointer to the group to remove.
+			 */
 			void removeParticleGroup(CGroup* group);
 
+			/**
+			 * @brief Scale the particle emission flow and tank values globally.
+			 * @param f Scale factor (0.0 to 1.0).
+			 * @param includeSubGroup Whether to include sub-groups in the update.
+			 */
 			void updateParticleCountByPercentage(float f, bool includeSubGroup = false);
 
+			/**
+			 * @brief Start particle emission for all groups.
+			 */
 			void Play();
 
+			/**
+			 * @brief Stop particle emission for all groups.
+			 */
 			void Stop();
 
+			/**
+			 * @brief Check if any group has active particles.
+			 * @return True if particles are alive.
+			 */
 			bool IsPlaying();
 
+			/**
+			 * @brief Kill all active particles immediately.
+			 */
 			void clearParticles();
 
+			/**
+			 * @brief Get total count of active particles across all groups.
+			 * @return Total particle count.
+			 */
 			u32 getTotalParticle();
 
+			/**
+			 * @brief Get the path to the .particle source file.
+			 * @return File path string.
+			 */
 			inline const char* getSourcePath()
 			{
 				return m_sourcePath.c_str();
 			}
 
+			/**
+			 * @brief Set the path to the .particle source file.
+			 * @param path File path string.
+			 */
 			inline void setSourcePath(const char* path)
 			{
 				m_sourcePath = path;
 			}
 
+			/**
+			 * @brief Load the particle system configuration from the source path.
+			 * @return True if successful.
+			 */
 			bool load();
 
+			/**
+			 * @brief Save the particle system configuration to the source path.
+			 * @return True if successful.
+			 */
 			bool save();
 
+			/**
+			 * @brief Get the current frame update counter.
+			 * @return Frame index.
+			 */
 			inline int getFrameUpdated()
 			{
 				return m_frameUpdate;
 			}
 
+			/**
+			 * @brief Duplicate an existing particle group within this system.
+			 * @param group The group to duplicate.
+			 * @return Pointer to the new CGroup.
+			 */
 			CGroup* duplicateGroup(CGroup* group);
 
+			/**
+			 * @brief Duplicate an existing emitter into a group.
+			 * @param group Target group.
+			 * @param emitter Emitter to duplicate.
+			 * @return Pointer to the new CEmitter.
+			 */
 			CEmitter* duplicateEmitter(CGroup* group, CEmitter* emitter);
 
 			DECLARE_GETTYPENAME(CParticleComponent)

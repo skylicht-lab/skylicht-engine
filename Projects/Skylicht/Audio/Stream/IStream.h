@@ -31,30 +31,78 @@ namespace Skylicht
 {
 	namespace Audio
 	{
+		/**
+		 * @brief Interface for a stream cursor, providing seek and read operations on an audio stream.
+		 * @ingroup Audio
+		 */
 		class IStreamCursor
 		{
 		public:
+			/**
+			 * @brief Origin for seek operations.
+			 */
 			enum EOrigin
 			{
-				OriginStart,
-				OriginCurrent,
-				OriginEnd
+				OriginStart,   ///< Seek from the beginning of the stream
+				OriginCurrent, ///< Seek from the current position
+				OriginEnd      ///< Seek from the end of the stream
 			};
 		public:
 			virtual ~IStreamCursor()
 			{
 			}
 			
+			/**
+			 * @brief Move the cursor position.
+			 * @param pos Offset in bytes
+			 * @param origin Where to seek from
+			 * @return 0 on success, or -1 on error
+			 */
 			virtual int seek(int pos, EOrigin origin) = 0;
+
+			/**
+			 * @brief Get current cursor position.
+			 * @return Current position in bytes
+			 */
 			virtual int tell() = 0;
+
+			/**
+			 * @brief Read data from the stream.
+			 * @param buff Destination buffer
+			 * @param len Number of bytes to read
+			 * @return Number of bytes actually read
+			 */
 			virtual int read(unsigned char* buff, int len) = 0;
+
+			/**
+			 * @brief Check if the cursor is at the end of the stream.
+			 * @return True if at EOF
+			 */
 			virtual bool endOfStream() = 0;
+
+			/**
+			 * @brief Get total size of the stream.
+			 * @return Size in bytes
+			 */
 			virtual int size() = 0;
+
+			/**
+			 * @brief Check if a certain amount of data is ready to be read.
+			 * @param len Number of bytes to check
+			 * @return True if data is available
+			 */
 			virtual bool readyReadData(int len) = 0;
+
+			/**
+			 * @brief Trim read data from the stream (used in dynamic streams).
+			 */
 			virtual void trim() {}
 		};
 		
-		
+		/**
+		 * @brief Interface for an audio data stream (File, Memory, etc.).
+		 * @ingroup Audio
+		 */
 		class IStream
 		{
 		protected:
@@ -76,13 +124,24 @@ namespace Skylicht
 			{
 			}
 			
+			/**
+			 * @brief Create a new cursor for this stream.
+			 * @return Pointer to a new IStreamCursor
+			 */
 			virtual IStreamCursor* createCursor() = 0;
 			
+			/**
+			 * @brief Increment reference count.
+			 */
 			virtual void grab()
 			{
 				m_referenceCount++;
 			}
 			
+			/**
+			 * @brief Decrement reference count and delete if zero.
+			 * @return True if the object was deleted
+			 */
 			virtual bool drop()
 			{
 				m_referenceCount--;
@@ -94,27 +153,48 @@ namespace Skylicht
 				return false;
 			}
 			
+			/**
+			 * @brief Get expected sample rate (for recorder/procedural streams).
+			 * @return Sample rate in Hz
+			 */
 			int getSampleRate()
 			{
 				return m_sampleRate;
 			}
 			
+			/**
+			 * @brief Get number of channels (for recorder/procedural streams).
+			 * @return Number of channels
+			 */
 			int getChannels()
 			{
 				return m_channels;
 			}
 			
+			/**
+			 * @brief Set stream audio properties.
+			 * @param sampleRate Sample rate in Hz
+			 * @param channels Number of channels
+			 */
 			void setStreamAudio(int sampleRate, int channels)
 			{
 				m_sampleRate = sampleRate;
 				m_channels = channels;
 			}
 			
+			/**
+			 * @brief Upload new data to the stream (used in online/dynamic streams).
+			 * @param buffer Data buffer
+			 * @param size Size in bytes
+			 */
 			virtual void uploadData(unsigned char* buffer, int size)
 			{
 				
 			}
 			
+			/**
+			 * @brief Stop the stream and clear buffers.
+			 */
 			virtual void stopStream()
 			{
 				

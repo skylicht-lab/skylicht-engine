@@ -31,11 +31,33 @@ namespace Skylicht
 {
 	namespace Audio
 	{
+		/**
+		 * @brief Default factory for creating audio streams (Memory, File, Online).
+		 * @ingroup Audio
+		 */
 		class CStreamFactory : public IStreamFactory
 		{
 		public:
+			/**
+			 * @brief Create an audio stream from memory.
+			 * @param buffer The memory buffer
+			 * @param size Size of the buffer
+			 * @param takeOwnership If true, the stream will delete the buffer
+			 * @return Pointer to IStream
+			 */
 			virtual IStream* createStreamFromMemory(unsigned char* buffer, int size, bool takeOwnership);
+
+			/**
+			 * @brief Create an audio stream from a file.
+			 * @param fileName Path to the file
+			 * @return Pointer to IStream
+			 */
 			virtual IStream* createStreamFromFile(const char* fileName);
+
+			/**
+			 * @brief Create an online memory stream.
+			 * @return Pointer to IStream
+			 */
 			virtual IStream* createOnlineStream();
 		};
 	}

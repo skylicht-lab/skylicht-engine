@@ -28,6 +28,18 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/**
+	 * @brief Component for rendering sphere primitives.
+	 * 
+	 * ### Example
+	 * @code
+	 * CGameObject* sphereObj = zone->createEmptyObject();
+	 * CSphere* sphere = sphereObj->addComponent<CSphere>();
+	 * sphere->setColor(SColor(255, 0, 255, 0)); // Set color to green
+	 * @endcode
+	 * 
+	 * @ingroup Primitives
+	 */
 	class COMPONENT_API CSphere : public CPrimitive
 	{
 	public:

@@ -28,6 +28,19 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/**
+	 * @brief Component for rendering plane primitives.
+	 * 
+	 * ### Example
+	 * @code
+	 * CGameObject* planeObj = zone->createEmptyObject();
+	 * CPlane* plane = planeObj->addComponent<CPlane>();
+	 * // Planes are 1x1 by default, usually scaled up for floors
+	 * planeObj->getTransformEuler()->setScale(core::vector3df(100.0f, 1.0f, 100.0f));
+	 * @endcode
+	 * 
+	 * @ingroup Primitives
+	 */
 	class COMPONENT_API CPlane : public CPrimitive
 	{
 	public:

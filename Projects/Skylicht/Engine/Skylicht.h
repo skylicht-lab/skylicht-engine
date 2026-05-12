@@ -110,6 +110,12 @@ namespace irr
 */
 
 /**
+* @defgroup Primitives Primitive Components
+* @ingroup Components
+* @brief Basic 3D shapes (Cube, Sphere, Plane, Capsule, Cylinder) with custom materials and instancing support.
+*/
+
+/**
 * @defgroup Debug Debug Utilities
 * @brief Tools for visual debugging and scene overlays.
 */
@@ -117,6 +123,11 @@ namespace irr
 /**
 * @defgroup Physics Physics Engine
 * @brief Integration with Bullet Physics for dynamics and collisions.
+*/
+
+/**
+* @defgroup Audio Audio System
+* @brief Cross-platform 2D and 3D audio playback and streaming.
 */
 
 /**

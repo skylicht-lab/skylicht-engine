@@ -75,17 +75,41 @@ namespace Skylicht
 
 			virtual void loadSerializable(CObjectSerializable* object);
 
+			/**
+			 * @brief Get the display name of the zone type.
+			 * @return Wstring identifier.
+			 */
 			const wchar_t* getName();
 			
+			/**
+			 * @brief Get the zone type ID.
+			 * @return EZone enum.
+			 */
 			inline EZone getType()
 			{
 				return m_type;
 			}
 
+			/**
+			 * @brief Normalize a vector, or randomize it if it's zero-length.
+			 * @param v Vector to process.
+			 */
 			void normalizeOrRandomize(core::vector3df& v);
 
+			/**
+			 * @brief Generate a spawn position for a particle within this zone.
+			 * @param particle Target particle.
+			 * @param full If true, spawns anywhere in the volume; if false, usually spawns on the surface.
+			 * @param group Parent group.
+			 */
 			virtual void generatePosition(CParticle& particle, bool full, CGroup* group) = 0;
 
+			/**
+			 * @brief Compute the surface normal at a given point relative to the zone.
+			 * @param point The point in world space.
+			 * @param group Parent group.
+			 * @return Normal vector.
+			 */
 			virtual core::vector3df computeNormal(const core::vector3df& point, CGroup* group) = 0;
 
 			DECLARE_GETTYPENAME(CZone)

@@ -32,6 +32,10 @@ namespace Skylicht
 {
 	namespace Audio
 	{
+		/**
+		 * @brief Stream cursor for standard file access.
+		 * @ingroup Audio
+		 */
 		class CFileStreamCursor : public IStreamCursor
 		{
 		protected:
@@ -56,6 +60,10 @@ namespace Skylicht
 			virtual bool readyReadData(int len);
 		};
 		
+		/**
+		 * @brief Standard file stream implementation using C stdio (fopen).
+		 * @ingroup Audio
+		 */
 		class CFileStream : public IStream
 		{
 		protected:
@@ -67,8 +75,16 @@ namespace Skylicht
 			CFileStream(const char *fileName);
 			virtual ~CFileStream();
 			
+			/**
+			 * @brief Check if the file failed to open.
+			 * @return True if error
+			 */
 			bool isError();
 			
+			/**
+			 * @brief Create a new file cursor.
+			 * @return Pointer to CFileStreamCursor
+			 */
 			virtual IStreamCursor* createCursor();
 		};
 	}

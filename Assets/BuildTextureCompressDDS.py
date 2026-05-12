@@ -1,4 +1,5 @@
 import os
+import platform
 from tinydb import TinyDB, Query
 from PIL import Image
 import os.path
@@ -7,7 +8,20 @@ import json
 
 normalMap = ["_norm.", "_ddn.", "_n."]
 textureExt = [".tga"]
-compressTools = "..\\Tools\\NvTools\\nvcompress.exe"
+
+systemName = platform.system()
+appname = ""
+if systemName == "Windows":
+    appname = "win32/PVRTexToolCLI.exe"
+elif systemName == "Darwin":
+    appname = "darwin/PVRTexToolCLI"
+else:
+    appname = "linux/PVRTexToolCLI"
+
+compressTools = "../Tools/PVRTexTool/" + appname
+
+if systemName == "Windows":
+    compressTools = compressTools.replace("/", "\\")
 
 db = TinyDB('CacheDDS.json')
 fileQuery = Query()
@@ -17,22 +31,25 @@ print("COMPRESS TEXTURE TO DDS")
 print("Delete CacheDDS.json if you want rebuild all")
 print("---------------------------------------------")
 print("")
+print(compressTools)
 
 
 def compress(inputFile, outputFile):
-    format = "-bc1"
+    format = "BC1"
 
     im = Image.open(inputFile)
     if im.mode == "RGBA":
-        format = "-bc3"
+        format = "BC3"
 
     for nmExt in normalMap:
         if inputFile.find(nmExt) >= 0:
-            format = "-bc3"
+            format = "BC3"
 
     # call build tools
-    params = "%s -nocuda" % (format)
-    command = "%s %s %s %s" % (
+    # -f: format (BC1=DXT1, BC3=DXT5)
+    # -m: generate mipmaps
+    params = "-f %s -m" % (format)
+    command = "%s %s -i %s -o %s" % (
         compressTools, params, inputFile, outputFile
     )
     print(command)

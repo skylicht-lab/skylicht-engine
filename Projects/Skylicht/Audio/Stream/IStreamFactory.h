@@ -31,6 +31,30 @@ namespace Skylicht
 {
 	namespace Audio
 	{
+		/**
+		 * @brief Interface for stream factories. 
+		 * Register a custom factory to CAudioEngine to support different data sources (e.g. ZIP, Network).
+		 * @ingroup Audio
+		 * @code
+		 * // Example: Implementing a factory for ZIP archives using Irrlicht's file system
+		 * class CZipAudioStreamFactory : public Audio::CStreamFactory {
+		 * public:
+		 *     virtual Audio::IStream* createStreamFromFile(const char* fileName) {
+		 *         // Create a custom stream that reads from ZIP
+		 *         CZipAudioFileStream* file = new CZipAudioFileStream(fileName);
+		 *         if (file->isError()) {
+		 *             delete file;
+		 *             return NULL;
+		 *         }
+		 *         return file;
+		 *     }
+		 * };
+		 * 
+		 * // Registration
+		 * CZipAudioStreamFactory* factory = new CZipAudioStreamFactory();
+		 * Audio::CAudioEngine::getSoundEngine()->registerStreamFactory(factory);
+		 * @endcode
+		 */
 		class IStreamFactory
 		{
 		public:
@@ -38,8 +62,26 @@ namespace Skylicht
 			{
 			}
 			
+			/**
+			 * @brief Create an audio stream from a memory buffer.
+			 * @param buffer The memory buffer
+			 * @param size Size in bytes
+			 * @param takeOwnership If true, the factory/stream will delete the buffer
+			 * @return Pointer to IStream
+			 */
 			virtual IStream* createStreamFromMemory(unsigned char* buffer, int size, bool takeOwnership) = 0;
+
+			/**
+			 * @brief Create an audio stream from a file.
+			 * @param fileName Path to the file
+			 * @return Pointer to IStream
+			 */
 			virtual IStream* createStreamFromFile(const char* fileName) = 0;
+
+			/**
+			 * @brief Create a stream for dynamic/online data.
+			 * @return Pointer to IStream
+			 */
 			virtual IStream* createOnlineStream() = 0;
 		};
 	}
