@@ -49,17 +49,26 @@ namespace Skylicht
 			public IParticleCallback
 		{
 		protected:
+			/** @brief Pointer to the parent particle group. */
 			CGroup* m_parentGroup;
 
+			/** @brief System that syncs this group's particles to parent particles. */
 			ISystem* m_parentSystem;
 
+			/** @brief Spawn position (derived from parent particle). */
 			core::vector3df m_position;
+			/** @brief Spawn direction (derived from parent velocity). */
 			core::vector3df m_direction;
+			/** @brief Spawn rotation (derived from parent orientation). */
 			core::quaternion m_rotate;
 
+			/** @brief Whether particles should follow the parent's current position every frame. */
 			bool m_followParentTransform;
+			/** @brief Whether emitter orientation should be in world space or relative to parent. */
 			bool m_emitterWorldOrientation;
+			/** @brief Whether to sync child age/life with parent. */
 			bool m_syncLife;
+			/** @brief Whether to sync child color with parent. */
 			bool m_syncColor;
 
 		public:
@@ -67,37 +76,50 @@ namespace Skylicht
 
 			virtual ~CSubGroup();
 
+			/** @brief Initializes internal born data for all emitters based on current parent particles. */
 			void initParticles();
 
+			/** @brief Callback when a parent particle is born. */
 			virtual void OnParticleBorn(CParticle& p);
 
+			/** @brief Callback when a parent particle dies. */
 			virtual void OnParticleDead(CParticle& p);
 
+			/** @brief Callback when parent particle data is swapped in the array. */
 			virtual void OnSwapParticleData(CParticle& p1, CParticle& p2);
 
+			/** @brief Callback when the parent group is destroyed. */
 			virtual void OnGroupDestroy();
 
+			/** @brief Internal: updates launch emitters based on parent particles. */
 			virtual void updateLaunchEmitter();
 
+			/** @brief Internal: spawns new particles at parent positions. */
 			virtual void bornParticle();
 
+			/** @brief Transforms position from parent local space to world space. */
 			virtual core::vector3df getTransformPosition(const core::vector3df& pos);
 
+			/** @brief Transforms vector from parent local space to world space. */
 			virtual core::vector3df getTransformVector(const core::vector3df& vec);
 
+			/** @brief Enables/disables following the parent's movement. */
 			inline void setFollowParentTransform(bool b)
 			{
 				m_followParentTransform = b;
 				m_parentSystem->setEnable(b);
 			}
 
+			/** @brief Sets emitter orientation mode. */
 			inline void setEmitterWorldOrientation(bool b)
 			{
 				m_emitterWorldOrientation = b;
 			}
 
+			/** @brief Configures synchronization of life and color from parent. */
 			void syncParentParams(bool life, bool color);
 
+			/** @brief Gets the parent group. */
 			inline CGroup* getParentGroup()
 			{
 				return m_parentGroup;

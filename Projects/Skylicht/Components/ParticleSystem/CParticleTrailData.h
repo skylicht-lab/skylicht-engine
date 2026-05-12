@@ -42,6 +42,9 @@ namespace Skylicht
 		class COMPONENT_API CParticleTrailData : public IEntityData
 		{
 		public:
+			/**
+			 * @brief List of trails managed by this entity.
+			 */
 			core::array<CParticleTrail*> Trails;
 
 		public:
@@ -49,10 +52,22 @@ namespace Skylicht
 
 			virtual ~CParticleTrailData();
 
+			/**
+			 * @brief Creates and adds a new trail for a group.
+			 * @param group The particle group.
+			 * @return New trail instance.
+			 */
 			CParticleTrail* addTrail(CGroup* group);
 
+			/**
+			 * @brief Removes and deletes a specific trail.
+			 * @param group The trail to remove.
+			 */
 			void removeTrail(CParticleTrail* group);
 
+			/**
+			 * @brief Clears and deletes all trails.
+			 */
 			void removeAllTrail();
 		};
 

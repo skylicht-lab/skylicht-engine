@@ -38,7 +38,9 @@ namespace Skylicht
 		class COMPONENT_API CLine : public CZone
 		{
 		protected:
+			/** @brief Starting point of the segment. */
 			core::vector3df m_p1;
+			/** @brief Ending point of the segment. */
 			core::vector3df m_p2;
 
 		public:
@@ -50,20 +52,25 @@ namespace Skylicht
 
 			virtual void loadSerializable(CObjectSerializable* object);
 
+			/** @brief Updates the line segment coordinates. */
 			void setLine(const core::vector3df& p1, const core::vector3df& p2);
 
+			/** @brief Updates the line segment using an Irrlicht line. */
 			void setLine(const core::line3df& line)
 			{
 				setLine(line.start, line.end);
 			}
 
+			/** @brief Gets the segment as an Irrlicht line. */
 			core::line3df getLine()
 			{
 				return core::line3df(m_p1, m_p2);
 			}
 
+			/** @brief Implementation: spawns at a random point along the segment. */
 			virtual void generatePosition(CParticle& particle, bool full, CGroup* group);
 
+			/** @brief Implementation: computes normal relative to the nearest point on segment. */
 			virtual core::vector3df computeNormal(const core::vector3df& point, CGroup* group);
 
 			DECLARE_GETTYPENAME(CLine)

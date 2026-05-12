@@ -43,19 +43,25 @@ namespace Skylicht
 		class COMPONENT_API CModel : public CParticleSerializable
 		{
 		protected:
+			/** @brief The parameter type being animated. */
 			EParticleParams m_type;
 
+			/** @brief If true, picks a random start value between start1 and start2. */
 			bool m_randomStart;
 			float m_start1;
 			float m_start2;
 
+			/** @brief Whether to interpolate towards an end value. */
 			bool m_enableEndValue;
+			/** @brief If true, picks a random end value between end1 and end2. */
 			bool m_randomEnd;
 			float m_end1;
 			float m_end2;
 
+			/** @brief Parent group. */
 			CGroup* m_group;
 
+			/** @brief Optional custom curve for interpolation. */
 			CInterpolator* m_interpolator;
 
 		public:
@@ -67,35 +73,22 @@ namespace Skylicht
 
 			virtual void loadSerializable(CObjectSerializable* object);
 
-			/**
-			 * @brief Get the display name of the animated parameter.
-			 * @return Wstring identifier.
-			 */
+			/** @brief Gets the display name of the model. */
 			const wchar_t* getName();
 
-			/**
-			 * @brief Get the enum ID of the parameter being animated.
-			 * @return EParticleParams enum.
-			 */
+			/** @brief Gets the parameter type. */
 			inline EParticleParams getType()
 			{
 				return m_type;
 			}
 
-			/**
-			 * @brief Get the group that owns this model.
-			 * @return Pointer to CGroup.
-			 */
+			/** @brief Gets parent group. */
 			inline CGroup* getGroup()
 			{
 				return m_group;
 			}
 
-			/**
-			 * @brief Set a fixed starting value for the parameter.
-			 * @param f The start value.
-			 * @return Pointer to this model (for chaining).
-			 */
+			/** @brief Sets fixed start value. */
 			inline CModel* setStart(float f)
 			{
 				m_start1 = f;
@@ -104,12 +97,7 @@ namespace Skylicht
 				return this;
 			}
 
-			/**
-			 * @brief Set a random starting range for the parameter.
-			 * @param f1 Minimum start value.
-			 * @param f2 Maximum start value.
-			 * @return Pointer to this model (for chaining).
-			 */
+			/** @brief Sets random start range. */
 			inline CModel* setStart(float f1, float f2)
 			{
 				m_start1 = f1;
@@ -118,11 +106,7 @@ namespace Skylicht
 				return this;
 			}
 
-			/**
-			 * @brief Set a fixed end value for the parameter.
-			 * @param f The end value.
-			 * @return Pointer to this model (for chaining).
-			 */
+			/** @brief Sets fixed end value. */
 			inline CModel* setEnd(float f)
 			{
 				m_end1 = f;
@@ -131,12 +115,7 @@ namespace Skylicht
 				return this;
 			}
 
-			/**
-			 * @brief Set a random end range for the parameter.
-			 * @param f1 Minimum end value.
-			 * @param f2 Maximum end value.
-			 * @return Pointer to this model (for chaining).
-			 */
+			/** @brief Sets random end range. */
 			inline CModel* setEnd(float f1, float f2)
 			{
 				m_end1 = f1;
@@ -145,55 +124,83 @@ namespace Skylicht
 				return this;
 			}
 
-			/**
-			 * @brief Check if interpolation to an end value is enabled.
-			 * @return True if interpolation is active.
-			 */
+			/** @brief Checks if end value is enabled. */
 			inline bool isEnableEndValue()
 			{
 				return m_enableEndValue;
 			}
 
-			/**
-			 * @brief Enable or disable interpolation to an end value.
-			 * @param b True to enable.
-			 */
+			/** @brief Enables or disables interpolation to end value. */
 			inline void enableEndValue(bool b)
 			{
 				m_enableEndValue = b;
 			}
 
-			/**
-			 * @brief Check if the start value is randomized.
-			 * @return True if random.
-			 */
+			/** @brief Checks if start is random. */
 			inline bool isRandomStart()
 			{
 				return m_randomStart;
 			}
 
-			/**
-			 * @brief Check if the end value is randomized.
-			 * @return True if random.
-			 */
+			/** @brief Checks if end is random. */
 			inline bool isRandomEnd()
 			{
 				return m_randomEnd;
 			}
 
-			/**
-			 * @brief Set a custom curve for interpolation over particle life.
-			 * @param interpolate Pointer to CInterpolator.
-			 */
+			float getStartValue1()
+			{
+				return m_start1;
+			}
+
+			void setStartValue1(float f)
+			{
+				m_start1 = f;
+			}
+
+			float getStartValue2()
+			{
+				return m_start2;
+			}
+
+			void setStartValue2(float f)
+			{
+				m_start2 = f;
+			}
+
+			float getEndValue1()
+			{
+				return m_end1;
+			}
+
+			void setEndValue1(float f)
+			{
+				m_end1 = f;
+			}
+
+			float getEndValue2()
+			{
+				return m_end2;
+			}
+
+			void setEndValue2(float f)
+			{
+				m_end2 = f;
+			}
+
+			/** @brief Generates a random start value from range. */
+			float getRandomStart();
+
+			/** @brief Generates a random end value from range. */
+			float getRandomEnd();
+
+			/** @brief Sets a custom curve for parameter animation. */
 			inline void setInterpolator(CInterpolator* interpolate)
 			{
 				m_interpolator = interpolate;
 			}
 
-			/**
-			 * @brief Get the assigned custom curve.
-			 * @return Pointer to CInterpolator, or NULL if linear.
-			 */
+			/** @brief Gets current interpolator. */
 			inline CInterpolator* getInterpolator()
 			{
 				return m_interpolator;

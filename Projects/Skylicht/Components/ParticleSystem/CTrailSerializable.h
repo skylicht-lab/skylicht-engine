@@ -36,16 +36,27 @@ namespace Skylicht
 	class SKYLICHT_API CTrailSerializable : public CObjectSerializable
 	{
 	public:
+		/** @brief The name of the linked particle group. */
 		CStringProperty Name;
+		/** @brief Width of the trail ribbon. */
 		CFloatProperty Width;
+		/** @brief Maximum length of the trail. */
 		CFloatProperty Length;
+		/** @brief Length of each segment in the ribbon. */
 		CFloatProperty SegmentLength;
+		/** @brief Whether to immediately destroy the trail when its particle dies. */
 		CBoolProperty DestroyWhenParticleDead;
+		/** @brief Alpha reduction rate for trails left behind by dead particles. */
 		CFloatProperty DeadAlphaReduction;
+		/** @brief Path to the trail texture. */
 		CImageSourceProperty Texture;
+		/** @brief Whether to use a custom material file instead of the default. */
 		CBoolProperty UseCustomMaterial;
+		/** @brief Path to the custom material file. */
 		CFilePathProperty CustomMaterial;
+		/** @brief Whether the trail has emission (glow). */
 		CBoolProperty Emission;
+		/** @brief Intensity of the emission. */
 		CFloatProperty EmissionIntensity;
 
 	public:

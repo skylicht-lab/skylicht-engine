@@ -37,9 +37,9 @@ namespace Skylicht
 		 */
 		enum EBillboardType
 		{
-			Camera,
-			Velocity,
-			FixOrientation
+			Camera,			/**< faces camera. */
+			Velocity,		/**< aligned to movement direction. */
+			FixOrientation	/**< uses group orientation (OrientationNormal, OrientationUp). */
 		};
 
 		/**
@@ -49,10 +49,10 @@ namespace Skylicht
 		 */
 		enum EBaseShaderType
 		{
-			Additive,
-			Transparent,
-			AdditiveAlpha,
-			TransparentAlpha
+			Additive,			/**< Pure additive blending. */
+			Transparent,		/**< Standard alpha blending. */
+			AdditiveAlpha,		/**< Additive with alpha test. */
+			TransparentAlpha	/**< Transparent with alpha test. */
 		};
 
 		/**
@@ -82,15 +82,19 @@ namespace Skylicht
 
 			virtual ~CQuadRenderer();
 
+			/** @brief Prepares a single unit quad in the mesh buffer for instanced drawing. */
 			virtual void getParticleBuffer(IMeshBuffer* buffer);
 
+			/** @brief Changes the shader effect and orientation mode. */
 			void setMaterialType(EBaseShaderType shader, EBillboardType billboard);
 
+			/** @brief Gets current billboarding mode. */
 			inline EBillboardType getBillboardType()
 			{
 				return m_billboardType;
 			}
 
+			/** @brief Gets current shader mode. */
 			inline EBaseShaderType getBaseShaderType()
 			{
 				return m_baseShaderType;

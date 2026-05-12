@@ -34,10 +34,12 @@ namespace Skylicht
 		 * @class CNormalEmitter
 		 * @ingroup ParticleSystem
 		 * @brief Emitter that shoots particles along the surface normals of its zone.
+		 * @details Ideal for spawning particles from the surface of a sphere, box, or mesh zone.
 		 */
 		class COMPONENT_API CNormalEmitter : public CEmitter
 		{
 		protected:
+			/** @brief If true, shoots particles into the zone instead of out. */
 			bool m_inverted;
 
 		public:
@@ -49,16 +51,19 @@ namespace Skylicht
 
 			virtual void loadSerializable(CObjectSerializable* object);
 
+			/** @brief Configures inversion status. */
 			inline void setInverted(bool b)
 			{
 				m_inverted = b;
 			}
 
+			/** @brief Checks if inverted. */
 			inline bool isInverted()
 			{
 				return m_inverted;
 			}
 
+			/** @brief Implementation: shoots along the zone normal. */
 			virtual void generateVelocity(CParticle& particle, float speed, CZone* zone, CGroup* group);
 
 			DECLARE_GETTYPENAME(CNormalEmitter)

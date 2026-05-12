@@ -48,33 +48,50 @@ namespace Skylicht
 		 * @class IRenderer
 		 * @ingroup ParticleSystem
 		 * @brief Base interface for particle renderers.
+		 * @details Implementations define the visual shape of particles and how they are submitted to the GPU.
 		 */
 		class COMPONENT_API IRenderer : public CParticleSerializable
 		{
 		protected:
+			/** @brief Type of the renderer. */
 			ERenderer m_type;
 
+			/** @brief Default material for the particles. */
 			CMaterial* m_material;
+			/** @brief Optional custom material. */
 			CMaterial* m_customMaterial;
 
+			/** @brief Whether custom material is enabled. */
 			bool m_useCustomMaterial;
+			/** @brief Whether this renderer uses hardware instancing. */
 			bool m_useInstancing;
+			/** @brief Whether the particles have emission. */
 			bool m_emission;
+			/** @brief Depth test flag. */
 			bool m_ztest;
+			/** @brief Emission intensity multiplier. */
 			float m_emissionIntensity;
 
+			/** @brief Primary texture path. */
 			std::string m_texturePath;
 
+			/** @brief Atlas horizontal frame count. */
 			u32 m_atlasNx;
+			/** @brief Atlas vertical frame count. */
 			u32 m_atlasNy;
 
+			/** @brief Path to custom material file. */
 			std::string m_materialPath;
 
+			/** @brief Internal: flag to trigger mesh buffer updates. */
 			bool m_needUpdateMesh;
 
 		public:
+			/** @brief Default base scale X. */
 			float SizeX;
+			/** @brief Default base scale Y. */
 			float SizeY;
+			/** @brief Default base scale Z. */
 			float SizeZ;
 
 		public:
@@ -82,110 +99,70 @@ namespace Skylicht
 
 			virtual ~IRenderer();
 
-			/**
-			 * @brief Get the renderer type ID.
-			 * @return ERenderer enum.
-			 */
+			/** @brief Gets renderer type enum. */
 			inline ERenderer getType()
 			{
 				return m_type;
 			}
 
-			/**
-			 * @brief Get the active material.
-			 * @return Pointer to CMaterial.
-			 */
+			/** @brief Gets active material (custom or default). */
 			CMaterial* getMaterial();
 
-			/**
-			 * @brief Get the default internal material.
-			 * @return Pointer to CMaterial.
-			 */
+			/** @brief Gets default internal material. */
 			inline CMaterial* getDefaultMaterial()
 			{
 				return m_material;
 			}
 
-			/**
-			 * @brief Get the custom material path.
-			 * @return Path string.
-			 */
+			/** @brief Gets custom material if set. */
 			inline CMaterial* getCustomMaterial()
 			{
 				return m_customMaterial;
 			}
 
-			/**
-			 * @brief Set the texture path for the default material.
-			 * @param path Texture file path.
-			 */
+			/** @brief Loads and sets the main texture. */
 			void setTexturePath(const char* path);
 
-			/**
-			 * @brief Set a texture for a specific slot.
-			 * @param slot Texture slot index.
-			 * @param texture Pointer to ITexture.
-			 */
+			/** @brief Sets texture for a specific slot. */
 			void setTexture(int slot, ITexture* texture);
 
-			/**
-			 * @brief Enable or disable emission pass rendering.
-			 * @param b True to enable.
-			 */
+			/** @brief Enables/disables emission. */
 			inline void setEmission(bool b)
 			{
 				m_emission = b;
 			}
 
-			/**
-			 * @brief Check if emission is enabled.
-			 * @return True if enabled.
-			 */
+			/** @brief Checks emission status. */
 			inline bool isEmission()
 			{
 				return m_emission;
 			}
 
-			/**
-			 * @brief Check if this renderer uses GPU instancing.
-			 * @return True if instancing is used.
-			 */
+			/** @brief Checks instancing support. */
 			inline bool useInstancing()
 			{
 				return m_useInstancing;
 			}
 
-			/**
-			 * @brief Set the brightness for the emission pass.
-			 * @param b Intensity value.
-			 */
+			/** @brief Sets emission intensity. */
 			inline void setEmissionIntensity(float b)
 			{
 				m_emissionIntensity = b;
 			}
 
-			/**
-			 * @brief Get emission intensity.
-			 * @return Intensity value.
-			 */
+			/** @brief Gets emission intensity. */
 			inline float getEmissionIntensity()
 			{
 				return m_emissionIntensity;
 			}
 
-			/**
-			 * @brief Check if the internal mesh needs to be rebuilt.
-			 * @return True if dirty.
-			 */
+			/** @brief Checks if internal mesh requires rebuilding. */
 			inline bool needUpdateMesh()
 			{
 				return m_needUpdateMesh;
 			}
 
-			/**
-			 * @brief Get display name of the renderer.
-			 * @return Wstring identifier.
-			 */
+			/** @brief Gets display name. */
 			inline const wchar_t* getName()
 			{
 				if (m_type == Quad)
@@ -200,39 +177,37 @@ namespace Skylicht
 
 			virtual void loadSerializable(CObjectSerializable* object);
 
-			/**
-			 * @brief Copy particle data into the provided mesh buffer for rendering.
-			 * @param buffer Target mesh buffer.
-			 */
+			/** @brief Implementation: fills the mesh buffer with renderer-specific geometry. */
 			virtual void getParticleBuffer(IMeshBuffer* buffer) = 0;
 
-			/**
-			 * @brief Set texture atlas grid dimensions.
-			 * @param x Number of horizontal frames.
-			 * @param y Number of vertical frames.
-			 */
+			/** @brief Configures texture atlas dimensions. */
 			void setAtlas(u32 x, u32 y);
 
+			/** @brief Gets atlas column count. */
 			inline u32 getAtlasX()
 			{
 				return m_atlasNx;
 			}
 
+			/** @brief Gets atlas row count. */
 			inline u32 getAtlasY()
 			{
 				return m_atlasNy;
 			}
 
+			/** @brief Gets total frames in atlas. */
 			inline u32 getTotalFrames()
 			{
 				return m_atlasNx * m_atlasNy;
 			}
 
+			/** @brief Gets UV width of a single frame. */
 			inline float getFrameWidth()
 			{
 				return 1.0f / m_atlasNx;
 			}
 
+			/** @brief Gets UV height of a single frame. */
 			inline float getFrameHeight()
 			{
 				return 1.0f / m_atlasNy;

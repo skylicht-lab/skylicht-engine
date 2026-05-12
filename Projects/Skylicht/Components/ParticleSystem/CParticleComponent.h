@@ -65,12 +65,24 @@ namespace Skylicht
 		class COMPONENT_API CParticleComponent : public CComponentSystem
 		{
 		protected:
+			/**
+			 * @brief Cached pointer to the ECS entity data.
+			 */
 			CParticleBufferData* m_data;
 
+			/**
+			 * @brief Internal factory for creating particle objects.
+			 */
 			CFactory m_factory;
 
+			/**
+			 * @brief Path to the .particle source file.
+			 */
 			std::string m_sourcePath;
 
+			/**
+			 * @brief Frame counter for update synchronization.
+			 */
 			int m_frameUpdate;
 
 		public:
@@ -78,20 +90,35 @@ namespace Skylicht
 
 			virtual ~CParticleComponent();
 
+			/**
+			 * @brief Initializes component data and required ECS systems.
+			 */
 			virtual void initComponent();
 
+			/**
+			 * @brief Starts the component, loading the particle source if set.
+			 */
 			virtual void startComponent();
 
+			/**
+			 * @brief Updates the internal frame counter.
+			 */
 			virtual void updateComponent();
 
+			/**
+			 * @brief Creates a serializable object for property editing.
+			 */
 			virtual CObjectSerializable* createSerializable();
 
+			/**
+			 * @brief Loads properties from a serializable object.
+			 */
 			virtual void loadSerializable(CObjectSerializable* object);
 
 		public:
 
 			/**
-			 * @brief Get the factory used to create particle emitters, zones, and renderers.
+			 * @brief Gets the internal particle factory.
 			 * @return Pointer to CFactory.
 			 */
 			CFactory* getParticleFactory()
@@ -100,7 +127,7 @@ namespace Skylicht
 			}
 
 			/**
-			 * @brief Get the internal ECS data structure holding particle groups.
+			 * @brief Gets the ECS entity data holding particle groups.
 			 * @return Pointer to CParticleBufferData.
 			 */
 			inline CParticleBufferData* getData()
@@ -109,27 +136,26 @@ namespace Skylicht
 			}
 
 			/**
-			 * @brief Set the world transform for all particle groups in this system.
-			 * @param world The world matrix.
+			 * @brief Updates the transform of all particle groups.
+			 * @param world The new world matrix.
 			 */
 			void setGroupTransform(const core::matrix4& world);
 
 			/**
-			 * @brief Create a new particle group.
+			 * @brief Creates a new top-level particle group managed by this component.
 			 * @return Pointer to the new CGroup.
 			 */
 			CGroup* createParticleGroup();
 
 			/**
-			 * @brief Create a new sub-group that follows particles from a parent group.
-			 * @param group Pointer to the parent group.
+			 * @brief Creates a sub-group attached to a parent group.
+			 * @param group The parent group.
 			 * @return Pointer to the new CSubGroup.
 			 */
 			CSubGroup* createParticleSubGroup(CGroup* group);
 
 			/**
-			 * @brief Get the number of particle groups.
-			 * @return Count of groups.
+			 * @brief Gets the number of top-level groups.
 			 */
 			inline u32 getNumOfGroup()
 			{
@@ -137,9 +163,7 @@ namespace Skylicht
 			}
 
 			/**
-			 * @brief Get a particle group by index.
-			 * @param i Index of the group.
-			 * @return Pointer to CGroup.
+			 * @brief Retrieves a specific group by index.
 			 */
 			inline CGroup* getGroup(int i)
 			{
@@ -147,48 +171,44 @@ namespace Skylicht
 			}
 
 			/**
-			 * @brief Remove a particle group from the system.
-			 * @param group Pointer to the group to remove.
+			 * @brief Removes a specific group from the component.
 			 */
 			void removeParticleGroup(CGroup* group);
 
 			/**
-			 * @brief Scale the particle emission flow and tank values globally.
-			 * @param f Scale factor (0.0 to 1.0).
-			 * @param includeSubGroup Whether to include sub-groups in the update.
+			 * @brief Dynamically adjusts the emission rate of all emitters.
+			 * @param f Scaling factor (0.0 to 1.0).
+			 * @param includeSubGroup Whether to affect sub-groups.
 			 */
 			void updateParticleCountByPercentage(float f, bool includeSubGroup = false);
 
 			/**
-			 * @brief Start particle emission for all groups.
+			 * @brief Resets all emitters and starts playback.
 			 */
 			void Play();
 
 			/**
-			 * @brief Stop particle emission for all groups.
+			 * @brief Stops all emitters and clears immortal particles.
 			 */
 			void Stop();
 
 			/**
-			 * @brief Check if any group has active particles.
-			 * @return True if particles are alive.
+			 * @brief Checks if any particle is currently alive.
 			 */
 			bool IsPlaying();
 
 			/**
-			 * @brief Kill all active particles immediately.
+			 * @brief Immediately removes all active particles across all groups.
 			 */
 			void clearParticles();
 
 			/**
-			 * @brief Get total count of active particles across all groups.
-			 * @return Total particle count.
+			 * @brief Gets the total count of active particles in all groups.
 			 */
 			u32 getTotalParticle();
 
 			/**
-			 * @brief Get the path to the .particle source file.
-			 * @return File path string.
+			 * @brief Gets the current .particle file path.
 			 */
 			inline const char* getSourcePath()
 			{
@@ -196,8 +216,7 @@ namespace Skylicht
 			}
 
 			/**
-			 * @brief Set the path to the .particle source file.
-			 * @param path File path string.
+			 * @brief Sets the .particle file path.
 			 */
 			inline void setSourcePath(const char* path)
 			{
@@ -205,20 +224,19 @@ namespace Skylicht
 			}
 
 			/**
-			 * @brief Load the particle system configuration from the source path.
+			 * @brief Loads the particle system configuration from m_sourcePath.
 			 * @return True if successful.
 			 */
 			bool load();
 
 			/**
-			 * @brief Save the particle system configuration to the source path.
+			 * @brief Saves the current particle system configuration to m_sourcePath.
 			 * @return True if successful.
 			 */
 			bool save();
 
 			/**
-			 * @brief Get the current frame update counter.
-			 * @return Frame index.
+			 * @brief Gets the current frame update count.
 			 */
 			inline int getFrameUpdated()
 			{
@@ -226,17 +244,12 @@ namespace Skylicht
 			}
 
 			/**
-			 * @brief Duplicate an existing particle group within this system.
-			 * @param group The group to duplicate.
-			 * @return Pointer to the new CGroup.
+			 * @brief Clones a particle group.
 			 */
 			CGroup* duplicateGroup(CGroup* group);
 
 			/**
-			 * @brief Duplicate an existing emitter into a group.
-			 * @param group Target group.
-			 * @param emitter Emitter to duplicate.
-			 * @return Pointer to the new CEmitter.
+			 * @brief Clones an emitter within a group.
 			 */
 			CEmitter* duplicateEmitter(CGroup* group, CEmitter* emitter);
 
@@ -244,20 +257,44 @@ namespace Skylicht
 
 		protected:
 
+			/**
+			 * @brief Internal serialization helper.
+			 */
 			void saveGroups(CObjectSerializable* groups);
 
+			/**
+			 * @brief Internal serialization helper for a specific group.
+			 */
 			void saveGroup(Particle::CGroup* group, CObjectSerializable* object);
 
+			/**
+			 * @brief Internal XML loading helper for a specific group.
+			 */
 			void loadGroup(Particle::CGroup* group, io::IXMLReader* reader);
 
+			/**
+			 * @brief Internal serialization loading helper for a specific group.
+			 */
 			void loadGroup(Particle::CGroup* group, CObjectSerializable* object);
 
+			/**
+			 * @brief Internal XML loading helper for emitters.
+			 */
 			void loadEmitters(Particle::CGroup* group, io::IXMLReader* reader);
 
+			/**
+			 * @brief Internal XML loading helper for models.
+			 */
 			void loadModels(Particle::CGroup* group, io::IXMLReader* reader);
 
+			/**
+			 * @brief Internal XML loading helper for renderers.
+			 */
 			void loadRenderer(Particle::CGroup* group, io::IXMLReader* reader);
 
+			/**
+			 * @brief Internal XML loading helper for sub-groups.
+			 */
 			void loadSubGroups(Particle::CGroup* group, io::IXMLReader* reader);
 		};
 	}

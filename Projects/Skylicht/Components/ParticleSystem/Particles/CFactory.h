@@ -69,161 +69,70 @@ namespace Skylicht
 
 			virtual ~CFactory();
 
-			/**
-			 * @brief Create a random emitter that shoots particles in all directions.
-			 * @return Pointer to CRandomEmitter.
-			 */
+			/** @brief Creates a new Random emitter. */
 			CRandomEmitter* createRandomEmitter();
 
-			/**
-			 * @brief Create a straight emitter with a fixed direction.
-			 * @param direction Emission direction vector.
-			 * @return Pointer to CStraightEmitter.
-			 */
+			/** @brief Creates a new Straight emitter with a fixed direction. */
 			CStraightEmitter* createStraightEmitter(const core::vector3df& direction);
 
-			/**
-			 * @brief Create a spheric emitter that shoots particles within a cone.
-			 * @param direction Primary axis of the cone.
-			 * @param angleA Inner angle of the cone (in radians).
-			 * @param angleB Outer angle of the cone (in radians).
-			 * @return Pointer to CSphericEmitter.
-			 */
+			/** @brief Creates a new Spheric (cone) emitter. */
 			CSphericEmitter* createSphericEmitter(const core::vector3df& direction, float angleA, float angleB);
 
-			/**
-			 * @brief Create a normal emitter that shoots particles along zone surface normals.
-			 * @param inverted If true, shoots particles into the zone.
-			 * @return Pointer to CNormalEmitter.
-			 */
+			/** @brief Creates a new Normal emitter shooting along zone surfaces. */
 			CNormalEmitter* createNormalEmitter(bool inverted);
 
-			/**
-			 * @brief Delete an emitter and remove it from internal tracking.
-			 * @param e Pointer to the emitter to delete.
-			 */
+			/** @brief Deletes and removes an emitter. */
 			void deleteEmitter(CEmitter* e);
 
-			/**
-			 * @brief Create an optimized GPU quad renderer for billboard particles.
-			 * @return Pointer to CQuadRenderer.
-			 */
+			/** @brief Creates a GPU instanced quad renderer. */
 			CQuadRenderer* createQuadRenderer();
 
-			/**
-			 * @brief Create a CPU-based renderer (compatibility mode).
-			 * @return Pointer to CCPURenderer.
-			 */
+			/** @brief Creates a CPU-based quad renderer. */
 			CCPURenderer* createCPURenderer();
 
-			/**
-			 * @brief Create a hardware instancing renderer for 3D meshes.
-			 * @return Pointer to CMeshParticleRenderer.
-			 */
+			/** @brief Creates a GPU mesh instancing renderer. */
 			CMeshParticleRenderer* createMeshParticleRenderer();
 
-			/**
-			 * @brief Delete a renderer.
-			 * @param r Pointer to the renderer to delete.
-			 */
+			/** @brief Deletes and removes a renderer. */
 			void deleteRenderer(IRenderer* r);
 
-			/**
-			 * @brief Create a spawn zone by type.
-			 * @param type EZone enum value.
-			 * @return Pointer to the new CZone.
-			 */
+			/** @brief Creates a zone based on type enum. */
 			CZone* createZone(EZone type);
 
-			/**
-			 * @brief Create a point spawn zone at (0,0,0).
-			 * @return Pointer to CPoint.
-			 */
+			/** @brief Creates a Point zone at origin. */
 			CPoint* createPointZone();
 
-			/**
-			 * @brief Create a point spawn zone at a specific position.
-			 * @param pos Position vector.
-			 * @return Pointer to CPoint.
-			 */
+			/** @brief Creates a Point zone at specific position. */
 			CPoint* createPointZone(const core::vector3df& pos);
 
-			/**
-			 * @brief Create a spherical spawn zone.
-			 * @param pos Center position.
-			 * @param radius Sphere radius.
-			 * @return Pointer to CSphere.
-			 */
+			/** @brief Creates a Sphere zone. */
 			CSphere* createSphereZone(const core::vector3df& pos, float radius);
 
-			/**
-			 * @brief Create an axis-aligned box spawn zone.
-			 * @param pos Center position.
-			 * @param dimension Box dimensions (width, height, depth).
-			 * @return Pointer to CAABox.
-			 */
+			/** @brief Creates an Axis-Aligned Box zone. */
 			CAABox* createAABoxZone(const core::vector3df& pos, const core::vector3df& dimension);
 
-			/**
-			 * @brief Create a cylindrical spawn zone.
-			 * @param pos Center position.
-			 * @param direction Cylinder axis direction.
-			 * @param radius Cylinder radius.
-			 * @param length Cylinder length.
-			 * @return Pointer to CCylinder.
-			 */
+			/** @brief Creates a Cylinder zone. */
 			CCylinder* createCylinderZone(const core::vector3df& pos, const core::vector3df& direction, float radius, float length);
 
-			/**
-			 * @brief Create a line segment spawn zone.
-			 * @param p1 Start point.
-			 * @param p2 End point.
-			 * @return Pointer to CLine.
-			 */
+			/** @brief Creates a Line segment zone. */
 			CLine* createLineZone(const core::vector3df& p1, const core::vector3df& p2);
 
-			/**
-			 * @brief Create a poly-line spawn zone from a sequence of points.
-			 * @param points Array of position vectors.
-			 * @return Pointer to CPolyLine.
-			 */
+			/** @brief Creates a multi-segment PolyLine zone. */
 			CPolyLine* createPolyLineZone(const core::array<core::vector3df>& points);
 
-			/**
-			 * @brief Create a ring spawn zone in 3D space.
-			 * @param pos Center position.
-			 * @param normal Plane normal vector.
-			 * @param minRadius Inner radius.
-			 * @param maxRadius Outer radius.
-			 * @return Pointer to CRing.
-			 */
+			/** @brief Creates a 2D Ring zone in 3D space. */
 			CRing* createRingZone(const core::vector3df& pos, const core::vector3df& normal, float minRadius, float maxRadius);
 
-			/**
-			 * @brief Delete a zone.
-			 * @param z Pointer to the zone to delete.
-			 */
+			/** @brief Deletes and removes a zone. */
 			void deleteZone(CZone* z);
 
-			/**
-			 * @brief Create an emitter by type name (for serialization).
-			 * @param attributeName Wstring identifier.
-			 * @return Pointer to CEmitter.
-			 */
+			/** @brief Creates an emitter by its class name (for XML loading). */
 			CEmitter* createEmitter(const std::wstring& attributeName);
 
-			/**
-			 * @brief Create a zone by type name (for serialization).
-			 * @param attributeName Wstring identifier.
-			 * @return Pointer to CZone.
-			 */
+			/** @brief Creates a zone by its class name (for XML loading). */
 			CZone* createZone(const std::wstring& attributeName);
 
-			/**
-			 * @brief Create a renderer by type name (for serialization).
-			 * @param attributeName Wstring identifier.
-			 * @return Pointer to IRenderer.
-			 */
+			/** @brief Creates a renderer by its class name (for XML loading). */
 			IRenderer* createRenderer(const std::wstring& attributeName);
 		};
 	}

@@ -33,11 +33,12 @@ namespace Skylicht
 		/**
 		 * @class CPositionZone
 		 * @ingroup ParticleSystem
-		 * @brief Base class for zones defined by a single position.
+		 * @brief Base class for zones defined by a single world position.
 		 */
 		class COMPONENT_API CPositionZone : public CZone
 		{
 		protected:
+			/** @brief Relative position of the zone. */
 			core::vector3df m_position;
 
 		public:
@@ -45,11 +46,13 @@ namespace Skylicht
 
 			virtual ~CPositionZone();
 
+			/** @brief Sets relative position. */
 			inline void setPosition(const core::vector3df& pos)
 			{
 				m_position = pos;
 			}
 
+			/** @brief Gets relative position. */
 			inline const core::vector3df& getPosition()
 			{
 				return m_position;

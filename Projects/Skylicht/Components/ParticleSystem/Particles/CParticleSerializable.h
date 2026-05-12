@@ -34,6 +34,7 @@ namespace Skylicht
 		 * @class CParticleSerializable
 		 * @ingroup ParticleSystem
 		 * @brief Base class for particle system objects that can be serialized to XML.
+		 * @details Provides the virtual interface for creating and loading serializable data.
 		 */
 		class COMPONENT_API CParticleSerializable
 		{
@@ -42,8 +43,16 @@ namespace Skylicht
 
 			virtual ~CParticleSerializable();
 
+			/**
+			 * @brief Creates a serializable object for property editing or saving.
+			 * @return Pointer to a new CObjectSerializable instance.
+			 */
 			virtual CObjectSerializable* createSerializable();
 
+			/**
+			 * @brief Loads properties from a serializable object.
+			 * @param object The serializable data to load.
+			 */
 			virtual void loadSerializable(CObjectSerializable* object);
 
 			DECLARE_GETTYPENAME(CParticleSerializable)

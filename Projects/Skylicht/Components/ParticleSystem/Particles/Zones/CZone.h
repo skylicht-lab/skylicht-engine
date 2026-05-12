@@ -60,10 +60,12 @@ namespace Skylicht
 		 * @class CZone
 		 * @ingroup ParticleSystem
 		 * @brief Base class for zones where particles can be spawned.
+		 * @details Zones define the spatial boundaries (volume, surface, or line) for particle birth.
 		 */
 		class COMPONENT_API CZone : public CParticleSerializable
 		{
 		protected:
+			/** @brief Type of the zone. */
 			EZone m_type;
 
 		public:
@@ -75,41 +77,22 @@ namespace Skylicht
 
 			virtual void loadSerializable(CObjectSerializable* object);
 
-			/**
-			 * @brief Get the display name of the zone type.
-			 * @return Wstring identifier.
-			 */
+			/** @brief Gets display name. */
 			const wchar_t* getName();
 			
-			/**
-			 * @brief Get the zone type ID.
-			 * @return EZone enum.
-			 */
+			/** @brief Gets zone type. */
 			inline EZone getType()
 			{
 				return m_type;
 			}
 
-			/**
-			 * @brief Normalize a vector, or randomize it if it's zero-length.
-			 * @param v Vector to process.
-			 */
+			/** @brief Normalizes a vector or randomizes it if it is zero. */
 			void normalizeOrRandomize(core::vector3df& v);
 
-			/**
-			 * @brief Generate a spawn position for a particle within this zone.
-			 * @param particle Target particle.
-			 * @param full If true, spawns anywhere in the volume; if false, usually spawns on the surface.
-			 * @param group Parent group.
-			 */
+			/** @brief Generates a random position within or on the surface of the zone. */
 			virtual void generatePosition(CParticle& particle, bool full, CGroup* group) = 0;
 
-			/**
-			 * @brief Compute the surface normal at a given point relative to the zone.
-			 * @param point The point in world space.
-			 * @param group Parent group.
-			 * @return Normal vector.
-			 */
+			/** @brief Computes the surface normal at a specific point on the zone. */
 			virtual core::vector3df computeNormal(const core::vector3df& point, CGroup* group) = 0;
 
 			DECLARE_GETTYPENAME(CZone)

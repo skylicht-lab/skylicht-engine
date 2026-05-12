@@ -34,6 +34,7 @@ namespace Skylicht
 		 * @class CStraightEmitter
 		 * @ingroup ParticleSystem
 		 * @brief Emitter that shoots particles in a fixed direction.
+		 * @details All particles receive the same initial direction vector.
 		 */
 		class COMPONENT_API CStraightEmitter : public CDirectionEmitter
 		{
@@ -48,6 +49,7 @@ namespace Skylicht
 
 			virtual void loadSerializable(CObjectSerializable* object);
 
+			/** @brief Implementation: shoots along the fixed direction vector. */
 			virtual void generateVelocity(CParticle& particle, float speed, CZone* zone, CGroup* group);
 
 			DECLARE_GETTYPENAME(CStraightEmitter)

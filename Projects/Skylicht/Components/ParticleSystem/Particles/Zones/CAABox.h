@@ -38,6 +38,7 @@ namespace Skylicht
 		class COMPONENT_API CAABox : public CPositionZone
 		{
 		protected:
+			/** @brief Dimensions (width, height, depth) of the box. */
 			core::vector3df m_dimension;
 
 		public:
@@ -49,18 +50,22 @@ namespace Skylicht
 
 			virtual void loadSerializable(CObjectSerializable* object);
 
+			/** @brief Sets box dimensions. */
 			inline void setDimension(const core::vector3df& dimension)
 			{
 				m_dimension = dimension;
 			}
 
+			/** @brief Gets box dimensions. */
 			inline const core::vector3df& getDimension()
 			{
 				return m_dimension;
 			}
 
+			/** @brief Implementation: spawns within volume (full=true) or on surface (full=false). */
 			virtual void generatePosition(CParticle& particle, bool full, CGroup* group);
 
+			/** @brief Implementation: computes normal from center to point. */
 			virtual core::vector3df computeNormal(const core::vector3df& point, CGroup* group);
 
 			DECLARE_GETTYPENAME(CAABox)

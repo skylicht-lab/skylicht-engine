@@ -47,25 +47,36 @@ namespace Skylicht
 		class COMPONENT_API CMeshParticleRenderer : public IRenderer
 		{
 		public:
+			/**
+			 * @enum EBaseShaderType
+			 * @brief Blending modes for mesh particles.
+			 */
 			enum EBaseShaderType
 			{
-				Soild,
-				SoildColor,
-				Additive,
-				Transparent
+				Soild,			/**< Opaque mesh. */
+				SoildColor,		/**< Opaque with vertex color. */
+				Additive,		/**< Additive blending. */
+				Transparent		/**< Alpha blending. */
 			};
 
 		protected:
+			/** @brief Path to the source mesh file. */
 			std::string m_meshFile;
 
+			/** @brief Aggregated mesh buffer for instancing. */
 			IMeshBuffer* m_meshBuffer;
 
+			/** @brief Current shader mode. */
 			EBaseShaderType m_baseShaderType;
 
+			/** @brief Scale for dissolve noise effect. */
 			core::vector3df m_noiseScale;
+			/** @brief Edge color for dissolve effect. */
 			SColor m_dissolveColor;
+			/** @brief Cutoff value for dissolve effect. */
 			float m_dissolve;
 
+			/** @brief Whether to align mesh Z-axis to particle velocity. */
 			bool m_velocityDirection;
 
 		public:
@@ -73,6 +84,7 @@ namespace Skylicht
 
 			virtual ~CMeshParticleRenderer();
 
+			/** @brief Internal: merges prefab meshes into a single buffer. */
 			virtual void getParticleBuffer(IMeshBuffer* buffer);
 
 			virtual CObjectSerializable* createSerializable();
@@ -81,37 +93,46 @@ namespace Skylicht
 
 			DECLARE_GETTYPENAME(CMeshParticleRenderer)
 
+			/** @brief Loads a 3D model (FBX, DAE, OBJ) to be used as a particle. */
 			bool loadMesh(const char* meshFile);
 
+			/** @brief Enables/disables velocity-based orientation. */
 			void setVelocityDirection(bool b);
 
+			/** @brief Configures blending mode and shader. */
 			void setMaterialType(EBaseShaderType shader);
 
+			/** @brief Gets dissolve edge color. */
 			inline const SColor& getDissolveColor()
 			{
 				return m_dissolveColor;
 			}
 
+			/** @brief Sets dissolve edge color. */
 			inline void setDissolveColor(const SColor& c)
 			{
 				m_dissolveColor = c;
 			}
 
+			/** @brief Gets dissolve noise scale. */
 			inline core::vector3df& getNoiseScale()
 			{
 				return m_noiseScale;
 			}
 
+			/** @brief Sets dissolve noise scale. */
 			inline void setNoiseScale(const core::vector3df& n)
 			{
 				m_noiseScale = n;
 			}
 
+			/** @brief Gets current dissolve progression. */
 			inline float getDissolveCutoff()
 			{
 				return m_dissolve;
 			}
 
+			/** @brief Sets dissolve progression (0.0 to 1.0). */
 			inline void setDissolveCutoff(float d)
 			{
 				m_dissolve = d;
@@ -119,8 +140,10 @@ namespace Skylicht
 
 		protected:
 
+			/** @brief Internal: extracts static meshes from a prefab. */
 			void initFromPrefab(CEntityPrefab* prefab);
 
+			/** @brief Internal: adds a transformed mesh to the instancing buffer. */
 			void addMesh(const core::matrix4& transform, CMesh* mesh);
 
 		};

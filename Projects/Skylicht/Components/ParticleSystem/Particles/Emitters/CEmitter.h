@@ -51,14 +51,20 @@ namespace Skylicht
 		/**
 		 * @struct SBornData
 		 * @ingroup ParticleSystem
-		 * @brief Internal data for managing particle birth rates.
+		 * @brief Internal data for managing particle birth rates for sub-emitters.
+		 * @details Keeps track of individual tanks and flows when a sub-group spawns particles from parent particles.
 		 */
 		struct SBornData
 		{
+			/** @brief Accumulated life time of the emitter logic. */
 			float LifeTime;
+			/** @brief Maximum duration for the flow logic. */
 			float FlowLifeTime;
+			/** @brief Initial delay before birth starts. */
 			float WaitDelay;
+			/** @brief Fraction for sub-frame birth calculations. */
 			float Fraction;
+			/** @brief Remaining particles to be spawned from the "tank". */
 			s32 Tank;
 
 			SBornData()
@@ -76,38 +82,54 @@ namespace Skylicht
 		 * @ingroup ParticleSystem
 		 * @brief Base class for particle emitters.
 		 * @details Emitters control how many particles are born per second (Flow) and their initial velocity.
+		 * They can operate in "Flow" mode (continuous) or "Tank" mode (limited count).
 		 */
 		class COMPONENT_API CEmitter : public CParticleSerializable
 		{
 		protected:
 			int m_lastTank;
 			int m_defaultTank;
+			/** @brief Current particles remaining in the tank. */
 			int m_tank;
+			/** @brief Current birth rate (particles per second). */
 			float m_flow;
 			float m_lastFlow;
 			float m_defaultFlow;
+			/** @brief Duration of the flow logic before it stops. */
 			float m_flowLifeTime;
+			/** @brief Minimum magnitude of initial velocity. */
 			float m_forceMin;
+			/** @brief Maximum magnitude of initial velocity. */
 			float m_forceMax;
 			float m_fraction;
+			/** @brief Active status. */
 			bool m_active;
+			/** @brief Whether to spawn particles randomly within the zone volume. */
 			bool m_emitFullZone;
 
+			/** @brief Configured delay. */
 			float m_delay;
+			/** @brief Current waiting time for delay. */
 			float m_waitDelay;
+			/** @brief Total time elapsed since start. */
 			float m_lifeTime;
 
+			/** @brief Current reset timer. */
 			float m_reset;
+			/** @brief Min interval for auto-resetting the tank. */
 			float m_resetIntervalMin;
+			/** @brief Max interval for auto-resetting the tank. */
 			float m_resetIntervalMax;
 
+			/** @brief The spawn zone assigned to this emitter. */
 			CZone* m_zone;
 
+			/** @brief Type of the emitter. */
 			EEmitter m_type;
 
 		protected:
 
-			// sub emitter
+			/** @brief Internal: birth data for sub-emitters. */
 			core::array<SBornData> m_bornData;
 
 		public:
@@ -119,38 +141,26 @@ namespace Skylicht
 
 			virtual void loadSerializable(CObjectSerializable* object);
 
-			/**
-			 * @brief Check if this emitter has a primary emission direction.
-			 * @return True if directional.
-			 */
+			/** @brief Returns true if this emitter has a primary direction. */
 			virtual bool haveDirection()
 			{
 				return false;
 			}
 
-			/**
-			 * @brief Set the spawn zone for this emitter.
-			 * @param z Pointer to CZone.
-			 * @return Pointer to the set zone.
-			 */
+			/** @brief Sets the spawn zone. */
 			inline CZone* setZone(CZone* z)
 			{
 				m_zone = z;
 				return m_zone;
 			}
 
-			/**
-			 * @brief Get the spawn zone.
-			 * @return Pointer to CZone.
-			 */
+			/** @brief Gets the current spawn zone. */
 			inline CZone* getZone()
 			{
 				return m_zone;
 			}
 
-			/**
-			 * @brief Stop particle emission.
-			 */
+			/** @brief Stops the emitter immediately. */
 			inline void stop()
 			{
 				m_tank = 0;
@@ -159,34 +169,47 @@ namespace Skylicht
 				m_reset = 0.0f;
 			}
 
-			/**
-			 * @brief Set the total number of particles that can be emitted.
-			 * @param tank Particle count. Use -1 for infinite.
-			 */
+			/** @brief Sets the tank capacity and current value. */
 			inline void setTank(int tank)
 			{
 				m_tank = tank;
 				m_lastTank = tank;
 			}
 
-			/**
-			 * @brief Reset the tank and flow values to their defaults.
-			 */
+			/** @brief Resets the tank and flow logic. */
 			void resetTank();
 
-			/**
-			 * @brief Get remaining particles in the tank.
-			 * @return Particle count.
-			 */
+			/** @brief Gets current tank value. */
 			inline int getTank()
 			{
 				return m_tank;
 			}
 
-			/**
-			 * @brief Set the birth rate of particles.
-			 * @param flow Particles per second.
-			 */
+			/** @brief Gets last set tank value. */
+			inline int getLastTank()
+			{
+				return m_lastTank;
+			}
+
+			/** @brief Updates the persistent tank value without immediate reset. */
+			inline void setTankValue(int tank)
+			{
+				m_lastTank = tank;
+			}
+
+			/** @brief Gets default tank from serializable data. */
+			inline int getDefaultTank()
+			{
+				return m_defaultTank;
+			}
+
+			/** @brief Gets default flow from serializable data. */
+			inline float getDefaultFlow()
+			{
+				return m_defaultFlow;
+			}
+
+			/** @brief Sets continuous birth rate (particles per second). */
 			inline void setFlow(float flow)
 			{
 				m_flow = flow;
@@ -195,48 +218,32 @@ namespace Skylicht
 				m_lastFlow = flow;
 			}
 
-			/**
-			 * @brief Get current birth rate.
-			 * @return Particles per second.
-			 */
+			/** @brief Gets current flow rate. */
 			inline float getFlow()
 			{
 				return m_flow;
 			}
 
-			/**
-			 * @brief Enable or disable the emitter.
-			 * @param b True to activate.
-			 */
+			/** @brief Enables or disables the emitter. */
 			inline void setActive(bool b)
 			{
 				m_active = b;
 			}
 
-			/**
-			 * @brief Check if the emitter is active.
-			 * @return True if active.
-			 */
+			/** @brief Checks if emitter is active. */
 			inline bool isActive()
 			{
 				return m_active;
 			}
 
-			/**
-			 * @brief Set initial delay before emission starts.
-			 * @param timeSecond Delay in seconds.
-			 */
+			/** @brief Sets start delay in seconds. */
 			inline void setDelay(float timeSecond)
 			{
 				m_delay = timeSecond;
 				m_waitDelay = timeSecond;
 			}
 
-			/**
-			 * @brief Set the range of initial speeds for particles.
-			 * @param min Minimum speed.
-			 * @param max Maximum speed.
-			 */
+			/** @brief Sets initial velocity force range. */
 			inline void setForce(float min, float max)
 			{
 				if (min > max)
@@ -251,11 +258,19 @@ namespace Skylicht
 				}
 			}
 
-			/**
-			 * @brief Set an interval to automatically reset the tank (burst mode).
-			 * @param min Minimum interval in seconds.
-			 * @param max Maximum interval in seconds.
-			 */
+			/** @brief Gets min force. */
+			inline float getForceMin()
+			{
+				return m_forceMin;
+			}
+
+			/** @brief Gets max force. */
+			inline float getForceMax()
+			{
+				return m_forceMax;
+			}
+
+			/** @brief Sets interval for automatic tank resets. */
 			inline void setResetTankInterval(float min, float max)
 			{
 				if (min > max)
@@ -270,41 +285,65 @@ namespace Skylicht
 				}
 			}
 
-			/**
-			 * @brief Whether to spawn particles within the entire zone or only on its surface.
-			 * @param b True to spawn in full volume.
-			 */
+			/** @brief Sets volume spawn mode. */
 			inline void setEmitFullZone(bool b)
 			{
 				m_emitFullZone = b;
 			}
 
-			/**
-			 * @brief Get the emitter type ID.
-			 * @return EEmitter enum.
-			 */
+			/** @brief Checks volume spawn mode. */
+			inline bool isEmitFullZone()
+			{
+				return m_emitFullZone;
+			}
+
+			/** @brief Gets emitter type. */
 			inline EEmitter getType()
 			{
 				return m_type;
 			}
 
+			/** @brief Gets display name. */
 			const wchar_t* getName();
 
-			/**
-			 * @brief Calculate the number of particles to spawn in the current frame.
-			 * @param deltaTime Time step in milliseconds.
-			 * @return Spawn count.
-			 */
+			/** @brief Calculates how many particles should be born this frame. */
 			virtual u32 updateNumber(float deltaTime);
 
-			/**
-			 * @brief Internal: Generate velocity for a single particle based on speed.
-			 * @param particle Target particle.
-			 * @param speed Calculated speed value.
-			 * @param zone Spawn zone.
-			 * @param group Parent group.
-			 */
+			/** @brief Initializes birth data for sub-emitters. */
+			virtual void setBornData(SBornData& data);
+
+			/** @brief Internal: updates birth calculation for a specific sub-group particle index. */
+			inline u32 updateBornData(u32 index, float deltaTime)
+			{
+				return updateBornData(m_bornData[index], deltaTime);
+			}
+
+			/** @brief Internal: core logic for sub-emitter birth calculation. */
+			virtual u32 updateBornData(SBornData& data, float deltaTime);
+
+			/** @brief Clears sub-emitter birth records. */
+			inline void clearBornData()
+			{
+				m_bornData.clear();
+			}
+
+			/** @brief Generates initial velocity for a particle. */
+			void generateVelocity(CParticle& particle, CZone* zone, CGroup* group);
+
+			/** @brief Full emission logic: generates position and velocity. */
+			void emitParticle(CParticle& particle, CZone* zone, CGroup* group);
+
+			/** @brief Implementation-specific velocity generation. */
 			virtual void generateVelocity(CParticle& particle, float speed, CZone* zone, CGroup* group) = 0;
+
+			/** @brief Adds a new sub-emitter record. */
+			u32 addBornData();
+
+			/** @brief Swaps sub-emitter records (for array reordering). */
+			void swapBornData(int index1, int index2);
+
+			/** @brief Removes a sub-emitter record. */
+			void deleteBornData();
 
 			DECLARE_GETTYPENAME(CEmitter)
 		};

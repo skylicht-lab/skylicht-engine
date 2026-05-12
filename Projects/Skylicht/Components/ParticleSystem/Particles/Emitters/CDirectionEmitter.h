@@ -38,7 +38,9 @@ namespace Skylicht
 		class COMPONENT_API CDirectionEmitter : public CEmitter
 		{
 		protected:
+			/** @brief Fixed orientation for emission. */
 			core::quaternion m_rotation;
+			/** @brief Main emission direction. */
 			core::vector3df m_direction;
 
 		public:
@@ -51,15 +53,19 @@ namespace Skylicht
 				return true;
 			}
 
+			/** @brief Sets emission rotation and updates direction vector. */
 			virtual void setRotation(const core::quaternion& rotation);
 
+			/** @brief Gets current emission rotation. */
 			virtual const core::quaternion& getRotation()
 			{
 				return m_rotation;
 			}
 
+			/** @brief Sets emission direction vector and optionally updates rotation. */
 			virtual void setDirection(const core::vector3df& d, bool updateRotation = true);
 
+			/** @brief Gets current emission direction vector. */
 			inline const core::vector3df& getDirection()
 			{
 				return m_direction;

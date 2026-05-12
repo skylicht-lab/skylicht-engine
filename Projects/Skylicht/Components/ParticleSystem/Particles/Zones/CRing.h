@@ -38,8 +38,11 @@ namespace Skylicht
 		class COMPONENT_API CRing : public CPositionZone
 		{
 		protected:
+			/** @brief Normal vector defining the ring plane. */
 			core::vector3df m_normal;
+			/** @brief Inner radius. */
 			float m_minRadius;
+			/** @brief Outer radius. */
 			float m_maxRadius;
 
 		public:
@@ -51,31 +54,38 @@ namespace Skylicht
 
 			virtual void loadSerializable(CObjectSerializable* object);
 
+			/** @brief Sets plane orientation normal. */
 			inline void setNormal(const core::vector3df& d)
 			{
 				m_normal = d;
 				m_normal.normalize();
 			}
 
+			/** @brief Gets plane orientation normal. */
 			inline core::vector3df& getNormal()
 			{
 				return m_normal;
 			}
 
+			/** @brief Sets inner and outer radius range. */
 			void setRadius(float min, float max);
 
+			/** @brief Gets inner radius. */
 			inline float getMinRadius()
 			{
 				return m_minRadius;
 			}
 
+			/** @brief Gets outer radius. */
 			inline float getMaxRadius()
 			{
 				return m_maxRadius;
 			}
 
+			/** @brief Implementation: spawns randomly between min and max radius on the plane. */
 			virtual void generatePosition(CParticle& particle, bool full, CGroup* group);
 
+			/** @brief Implementation: normal is the plane normal. */
 			virtual core::vector3df computeNormal(const core::vector3df& point, CGroup* group);
 
 			DECLARE_GETTYPENAME(CRing)

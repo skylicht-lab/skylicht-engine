@@ -35,10 +35,12 @@ namespace Skylicht
 		 * @class ISystem
 		 * @ingroup ParticleSystem
 		 * @brief Base interface for particle systems that update particle data.
+		 * @details Systems are responsible for iterating over active particles and applying logic (physics, effects, buffer updates).
 		 */
 		class COMPONENT_API ISystem
 		{
 		protected:
+			/** @brief Whether the system is active. */
 			bool m_enable;
 
 		public:
@@ -53,13 +55,21 @@ namespace Skylicht
 
 			}
 
+			/** @brief Core update logic.
+			 * @param particles Pointer to the particle array.
+			 * @param num Number of active particles.
+			 * @param group The owner group.
+			 * @param dt Delta time in milliseconds.
+			 */
 			virtual void update(CParticle *particles, int num, CGroup *group, float dt) = 0;
 
+			/** @brief Enables or disables the system. */
 			inline void setEnable(bool b)
 			{
 				m_enable = b;
 			}
 
+			/** @brief Checks if the system is enabled. */
 			inline bool isEnable()
 			{
 				return m_enable;

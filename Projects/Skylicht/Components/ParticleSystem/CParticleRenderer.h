@@ -44,42 +44,58 @@ namespace Skylicht
 		 * @ingroup ParticleSystem
 		 * @brief ECS render system for particles.
 		 * @details Handles the actual drawing of particles using the renderers assigned to each group.
+		 * Supports standard, transparent, and emission passes.
 		 */
 		class COMPONENT_API CParticleRenderer : public IRenderSystem
 		{
 		protected:
+			/** @brief Cached entity group. */
 			CEntityGroup* m_group;
+			/** @brief Internal scratchpad matrix. */
 			core::matrix4 m_transform;
 
+			/** @brief Current billboard up vector. */
 			core::vector3df m_billboardUp;
+			/** @brief Current billboard look vector. */
 			core::vector3df m_billboardLook;
 		public:
 			CParticleRenderer();
 
 			virtual ~CParticleRenderer();
 
+			/** @brief ECS hook: establishes filters for entities with particle data. */
 			virtual void beginQuery(CEntityManager* entityManager);
 
+			/** @brief ECS hook: query implementation. */
 			virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity);
 
+			/** @brief ECS hook: initialization. */
 			virtual void init(CEntityManager* entityManager);
 
+			/** @brief ECS hook: per-frame updates. */
 			virtual void update(CEntityManager* entityManager);
 
+			/** @brief ECS hook: main render pass (standard/opaque). */
 			virtual void render(CEntityManager* entityManager);
 
+			/** @brief ECS hook: transparent render pass. */
 			virtual void renderTransparent(CEntityManager* entityManager);
 
+			/** @brief ECS hook: emission render pass. */
 			virtual void renderEmission(CEntityManager* entityManager);
 
 		protected:
 
+			/** @brief Internal helper to calculate transform without rotation. */
 			const core::matrix4& getTransformNoRotate(const core::matrix4& world);
 
+			/** @brief Internal: renders all groups for an entity. */
 			void renderParticleGroup(CParticleBufferData* data, const core::matrix4& world);
 
+			/** @brief Internal: renders emission groups for an entity. */
 			void renderParticleGroupEmission(CParticleBufferData* data, const core::matrix4& world);
 
+			/** @brief Internal: submits a specific group to the video driver. */
 			void renderGroup(IVideoDriver* driver, Particle::CGroup* group);
 		};
 	}

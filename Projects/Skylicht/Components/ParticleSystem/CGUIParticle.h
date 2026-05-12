@@ -51,57 +51,112 @@ namespace Skylicht
 		class CGUIParticle : public CGUIElement
 		{
 		protected:
+			/**
+			 * @brief The source path to the .particle file.
+			 */
 			std::string m_source;
+
+			/**
+			 * @brief Whether the particle system plays automatically upon loading.
+			 */
 			bool m_autoPlay;
+
+			/**
+			 * @brief Scaling factor for the 3D particle system in 2D UI space.
+			 */
 			float m_particleScale;
+
+			/**
+			 * @brief Depth value (Z) for rendering the particle system relative to the UI.
+			 */
 			float m_depthZ;
 
+			/**
+			 * @brief The underlying particle component instance.
+			 */
 			Particle::CParticleComponent* m_ps;
 
+			/**
+			 * @brief Cached up vector for billboarding.
+			 */
 			core::vector3df m_billboardUp;
+
+			/**
+			 * @brief Cached look vector for billboarding.
+			 */
 			core::vector3df m_billboardLook;
 
 		public:
+			/**
+			 * @brief Registers the CGUIParticle class to the CGUIFactory.
+			 */
 			static void registerPlugin();
 
+			/**
+			 * @brief Constructor.
+			 * @param canvas The parent canvas.
+			 * @param parent The parent GUI element.
+			 */
 			CGUIParticle(CCanvas* canvas, CGUIElement* parent);
 
+			/**
+			 * @brief Constructor with a predefined rectangle.
+			 * @param canvas The parent canvas.
+			 * @param parent The parent GUI element.
+			 * @param rect The element's rectangle.
+			 */
 			CGUIParticle(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect);
 
 			virtual ~CGUIParticle();
 
+			/**
+			 * @brief Updates the particle system animations.
+			 * @param camera The current rendering camera.
+			 */
 			virtual void update(CCamera* camera);
 
+			/**
+			 * @brief Renders the particle system into the 2D canvas.
+			 * @param camera The current rendering camera.
+			 */
 			virtual void render(CCamera* camera);
 
+			/**
+			 * @brief Creates a serializable object for property editing.
+			 * @return A new CObjectSerializable instance.
+			 */
 			virtual CObjectSerializable* createSerializable();
 
+			/**
+			 * @brief Loads properties from a serializable object.
+			 * @param object The serializable data.
+			 */
 			virtual void loadSerializable(CObjectSerializable* object);
 
 			/**
-			 * @brief Assign a particle system to this GUI element.
+			 * @brief Sets the particle system source file.
 			 * @param source Path to the .particle file.
-			 * @param autoPlay Whether to start playback immediately.
+			 * @param autoPlay If true, starts playing immediately.
 			 */
 			void setParticle(const char* source, bool autoPlay);
 
 			/**
-			 * @brief Start particle playback.
+			 * @brief Starts playback of the particle system.
 			 */
 			void playParticle();
 
 			/**
-			 * @brief Stop particle playback.
+			 * @brief Stops playback and clears existing particles.
 			 */
 			void stopParticle();
 
 			/**
-			 * @brief Reload the particle system from its source path.
+			 * @brief Reloads the particle system from the current source path.
 			 */
 			void reload();
 
 			/**
-			 * @brief Get the underlying 3D particle component.
+			 * @brief Returns the underlying particle component.
 			 * @return Pointer to CParticleComponent.
 			 */
 			inline Particle::CParticleComponent* getParticle()
@@ -113,6 +168,10 @@ namespace Skylicht
 
 		protected:
 
+			/**
+			 * @brief Renders a specific particle group.
+			 * @param g The particle group to render.
+			 */
 			void renderParticleBuffer(Particle::CGroup* g);
 
 		};

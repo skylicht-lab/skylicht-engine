@@ -46,12 +46,19 @@ namespace Skylicht
 		class COMPONENT_API CVortexSystem : public ISystem
 		{
 		protected:
+			/** @brief Center of the vortex. */
 			core::vector3df m_position;
+			/** @brief Axis of rotation. */
 			core::vector3df m_direction;
+			/** @brief Speed of rotation around the axis. */
 			float m_rotationSpeed;
+			/** @brief Speed at which particles are pulled toward the axis. */
 			float m_attractionSpeed;
+			/** @brief Speed at which particles move along the axis. */
 			float m_eyeAttractionSpeed;
+			/** @brief Radius of the vortex core. */
 			float m_eyeRadius;
+			/** @brief Whether to kill particles that reach the core. */
 			bool m_killingParticleEnabled;
 
 		public:
@@ -59,73 +66,88 @@ namespace Skylicht
 
 			virtual ~CVortexSystem();
 
+			/** @brief Implementation: applies vortex forces to particles. */
 			virtual void update(CParticle *particles, int num, CGroup *group, float dt);
 
+			/** @brief Gets center position. */
 			inline core::vector3df getPosition()
 			{
 				return m_position;
 			}
 
+			/** @brief Gets rotation axis. */
 			inline core::vector3df getDirection()
 			{
 				return m_direction;
 			}
 
+			/** @brief Sets center position. */
 			inline void setPosition(const core::vector3df& p)
 			{
 				m_position = p;
 			}
 
+			/** @brief Sets rotation axis. */
 			inline void setDirection(const core::vector3df& d)
 			{
 				m_direction = d;
 			}
 
+			/** @brief Gets rotation speed. */
 			inline float getRotateSpeed()
 			{
 				return m_rotationSpeed;
 			}
 
+			/** @brief Gets radial attraction speed. */
 			inline float getAttractionSpeed()
 			{
 				return m_attractionSpeed;
 			}
 
+			/** @brief Gets core radius. */
 			inline float getEyeRadius()
 			{
 				return m_eyeRadius;
 			}
 
+			/** @brief Sets rotation speed. */
 			inline void setRotateSpeed(float f)
 			{
 				m_rotationSpeed = f;
 			}
 
+			/** @brief Sets radial attraction speed. */
 			inline void setAttractionSpeed(float f)
 			{
 				m_attractionSpeed = f;
 			}
 
+			/** @brief Sets core radius. */
 			inline void setEyeRadius(float f)
 			{
 				m_eyeRadius = f;
 			}
 
+			/** @brief Sets axial attraction speed. */
 			inline void setEyeAttractionSpeed(float f)
 			{
 				m_eyeAttractionSpeed = f;
 			}
 
+			/** @brief Gets axial attraction speed. */
 			inline float getEyeAttractionSpeed()
 			{
 				return m_eyeAttractionSpeed;
 			}
 
+			/** @brief Checks if killing at core is enabled. */
 			inline bool isKillingParticle()
 			{
 				return m_killingParticleEnabled;
 			}
 
+			/** @brief Enables/disables killing particles at the core. */
 			inline void enableKillingParticle(bool b)
 			{
 				m_killingParticleEnabled = b;

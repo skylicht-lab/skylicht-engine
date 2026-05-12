@@ -34,6 +34,7 @@ namespace Skylicht
 		 * @class CRandomEmitter
 		 * @ingroup ParticleSystem
 		 * @brief Emitter that shoots particles in random directions.
+		 * @details Distributes initial velocity uniformly across a sphere.
 		 */
 		class COMPONENT_API CRandomEmitter : public CEmitter
 		{
@@ -42,6 +43,7 @@ namespace Skylicht
 			
 			virtual ~CRandomEmitter();
 
+			/** @brief Implementation: generates a random unit vector for velocity. */
 			virtual void generateVelocity(CParticle& particle, float speed, CZone* zone, CGroup *group);
 
 			DECLARE_GETTYPENAME(CRandomEmitter)

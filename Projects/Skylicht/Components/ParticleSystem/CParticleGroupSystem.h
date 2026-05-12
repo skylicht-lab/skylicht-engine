@@ -44,11 +44,14 @@ namespace Skylicht
 		 * @ingroup ParticleSystem
 		 * @brief ECS system responsible for updating particle positions and calculating bounding boxes.
 		 * @details This system processes entities with CParticleBufferData and updates the particle groups.
+		 * It also aggregates individual group bounding boxes into the entity's CCullingBBoxData.
 		 */
 		class COMPONENT_API CParticleGroupSystem : public IEntitySystem
 		{
 		protected:
+			/** @brief Cached entity group filtering for CParticleBufferData. */
 			CEntityGroup* m_group;
+			/** @brief Internal scratchpad matrix. */
 			core::matrix4 m_transform;
 
 		public:
@@ -56,12 +59,16 @@ namespace Skylicht
 
 			virtual ~CParticleGroupSystem();
 
+			/** @brief ECS hook: establishes entity filters. */
 			virtual void beginQuery(CEntityManager* entityManager);
 
+			/** @brief ECS hook: processes filtered entities to update bounding boxes. */
 			virtual void onQuery(CEntityManager* entityManager, CEntity** entities, int numEntity);
 
+			/** @brief ECS hook: initialization. */
 			virtual void init(CEntityManager* entityManager);
 
+			/** @brief ECS hook: main logic for particle movement and lifecycle. */
 			virtual void update(CEntityManager* entityManager);
 
 		protected:

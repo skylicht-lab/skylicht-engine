@@ -64,28 +64,44 @@ namespace Skylicht
 		class COMPONENT_API CParticle
 		{
 		public:
+			/** @brief Global index in the group's particle array. */
 			u32 Index;
+			/** @brief Index of the parent particle in a parent group (for sub-emitters). */
 			s32 ParentIndex;
 
+			/** @brief If true, this particle never dies from age. */
 			bool Immortal;
 
+			/** @brief Current values of animated parameters. @see EParticleParams */
 			float Params[NumParams];
+			/** @brief Initial values of animated parameters. */
 			float StartValue[NumParams];
+			/** @brief Targeted end values of animated parameters. */
 			float EndValue[NumParams];
 
+			/** @brief Time since birth in seconds. */
 			float Age;
+			/** @brief Remaining time to live in seconds. */
 			float Life;
+			/** @brief Total expected lifespan in seconds. */
 			float LifeTime;
 
+			/** @brief Optimization flag: whether this particle has active rotation logic. */
 			bool HaveRotate;
 
+			/** @brief Current world position. */
 			core::vector3df Position;
+			/** @brief Current world rotation (Euler). */
 			core::vector3df Rotation;
+			/** @brief Current movement velocity. */
 			core::vector3df Velocity;
 
+			/** @brief Position in the previous frame. */
 			core::vector3df LastPosition;
 
+			/** @brief Initial direction for sub-emitters if velocity is zero. */
 			core::vector3df SubEmitterDirection;
+			/** @brief Optional user-defined data. */
 			void* UserData;
 
 		public:
@@ -93,6 +109,7 @@ namespace Skylicht
 
 			virtual ~CParticle();
 
+			/** @brief Swaps all data with another particle instance. */
 			void swap(CParticle& p);
 		};
 	}

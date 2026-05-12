@@ -34,6 +34,7 @@ namespace Skylicht
 		 * @class CParticleInstancingSystem
 		 * @ingroup ParticleSystem
 		 * @brief Internal system that updates the GPU instancing buffer with current particle data.
+		 * @details Fills the SParticleInstance array with data for hardware-accelerated rendering.
 		 */
 		class COMPONENT_API CParticleInstancingSystem : public ISystem
 		{
@@ -42,6 +43,7 @@ namespace Skylicht
 
 			virtual ~CParticleInstancingSystem();
 
+			/** @brief Fills the GPU instancing buffer. */
 			virtual void update(CParticle *particles, int num, CGroup *group, float dt);
 		};
 	}

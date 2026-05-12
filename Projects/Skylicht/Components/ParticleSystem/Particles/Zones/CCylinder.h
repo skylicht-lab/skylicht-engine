@@ -38,8 +38,11 @@ namespace Skylicht
 		class COMPONENT_API CCylinder : public CPositionZone
 		{
 		protected:
+			/** @brief Central axis direction. */
 			core::vector3df m_direction;
+			/** @brief Radius of the cylinder. */
 			float m_radius;
+			/** @brief Length (height) along the axis. */
 			float m_length;
 
 		public:
@@ -54,39 +57,47 @@ namespace Skylicht
 
 			virtual void loadSerializable(CObjectSerializable* object);
 
+			/** @brief Sets central axis direction. */
 			inline void setDirection(const core::vector3df& direction)
 			{
 				m_direction = direction;
 				m_direction.normalize();
 			}
 
+			/** @brief Sets cylinder radius. */
 			inline void setRadius(float r)
 			{
 				m_radius = r;
 			}
 
+			/** @brief Sets cylinder length. */
 			inline void setLength(float l)
 			{
 				m_length = l;
 			}
 
+			/** @brief Gets axis direction. */
 			inline const core::vector3df& getDirection()
 			{
 				return m_direction;
 			}
 
+			/** @brief Gets radius. */
 			inline float getRadius()
 			{
 				return m_radius;
 			}
 
+			/** @brief Gets length. */
 			inline float getLength()
 			{
 				return m_length;
 			}
 
+			/** @brief Implementation: spawns within volume or on surface. */
 			virtual void generatePosition(CParticle& particle, bool full, CGroup* group);
 
+			/** @brief Implementation: computes surface normal. */
 			virtual core::vector3df computeNormal(const core::vector3df& point, CGroup* group);
 
 			DECLARE_GETTYPENAME(CCylinder)

@@ -44,12 +44,14 @@ namespace Skylicht
 		class COMPONENT_API CSphericEmitter : public CDirectionEmitter
 		{
 		protected:
+			/** @brief Minimum opening angle of the cone. */
 			float m_angleA;
+			/** @brief Maximum opening angle of the cone. */
 			float m_angleB;
 			float m_cosAngleMin;
 			float m_cosAngleMax;
 
-			// matrix 3x3
+			/** @brief Local rotation matrix for direction calculation. */
 			float m_matrix[9];
 		public:
 			CSphericEmitter();
@@ -60,20 +62,25 @@ namespace Skylicht
 
 			virtual void loadSerializable(CObjectSerializable* object);
 
+			/** @brief Sets cone axis and updates orientation matrix. */
 			virtual void setDirection(const core::vector3df& d, bool updateRotation = true);
 
+			/** @brief Sets opening angle range for the emission cone. */
 			void setAngles(float a, float b);
 
+			/** @brief Gets min angle. */
 			inline float getAngleA()
 			{
 				return m_angleA;
 			}
 
+			/** @brief Gets max angle. */
 			inline float getAngleB()
 			{
 				return m_angleB;
 			}
 
+			/** @brief Implementation: generates velocity within the cone. */
 			virtual void generateVelocity(CParticle& particle, float speed, CZone* zone, CGroup* group);
 
 			DECLARE_GETTYPENAME(CSphericEmitter)

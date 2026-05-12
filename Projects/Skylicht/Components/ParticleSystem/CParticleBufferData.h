@@ -42,30 +42,80 @@ namespace Skylicht
 		class COMPONENT_API CParticleBufferData : public IEntityData
 		{
 		public:
+			/**
+			 * @brief List of top-level particle groups.
+			 */
 			core::array<CGroup*> Groups;
+
+			/**
+			 * @brief List of sub-particle groups (attached to parent groups).
+			 */
 			core::array<CSubGroup*> SubGroups;
+
+			/**
+			 * @brief Flat list of all particle groups (Groups + SubGroups).
+			 */
 			core::array<CGroup*> AllGroups;
 		public:
 			CParticleBufferData();
 
 			virtual ~CParticleBufferData();
 
+			/**
+			 * @brief Clears all groups and sub-groups.
+			 */
 			void clear();
 
+			/**
+			 * @brief Creates a new top-level particle group.
+			 * @return Pointer to the new CGroup.
+			 */
 			CGroup* createGroup();
 
+			/**
+			 * @brief Finds a group by its name.
+			 * @param name The name of the group.
+			 * @return Pointer to CGroup if found, NULL otherwise.
+			 */
 			CGroup* getGroupByName(const wchar_t* name);
 
+			/**
+			 * @brief Creates a new sub-group attached to a parent group.
+			 * @param group The parent group.
+			 * @return Pointer to the new CSubGroup.
+			 */
 			CSubGroup* createSubGroup(CGroup* group);
 
+			/**
+			 * @brief Gets all sub-groups belonging to a specific parent.
+			 * @param parent The parent group.
+			 * @return Vector of CSubGroup pointers.
+			 */
 			std::vector<CSubGroup*> getSubGroup(CGroup* parent);
 
+			/**
+			 * @brief Removes and deletes a top-level group and its sub-groups.
+			 * @param group The group to remove.
+			 */
 			void removeGroup(CGroup* group);
 
+			/**
+			 * @brief Removes and deletes a specific sub-group.
+			 * @param group The sub-group to remove.
+			 */
 			void removeSubGroup(CSubGroup* group);
 
+			/**
+			 * @brief Reorders a group within the Groups list.
+			 * @param group The group to move.
+			 * @param target The target group for positioning.
+			 * @param behind If true, places it after the target; otherwise before.
+			 */
 			void bringToNext(CGroup* group, CGroup* target, bool behind);
 
+			/**
+			 * @brief Rebuilds the AllGroups flat list from Groups and SubGroups.
+			 */
 			void updateListGroup();
 		};
 

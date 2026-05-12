@@ -34,11 +34,14 @@ namespace Skylicht
 		 * @class CParentRelativeSystem
 		 * @ingroup ParticleSystem
 		 * @brief System used by CSubGroup to synchronize child particles with their parent particles.
+		 * @details Applies parent movement and optionally copies age/life/color parameters.
 		 */
 		class COMPONENT_API CParentRelativeSystem : public ISystem
 		{
 		protected:
+			/** @brief If true, child life is synced to parent life. */
 			bool m_syncLife;
+			/** @brief If true, child color is synced to parent color. */
 			bool m_syncColor;
 
 		public:
@@ -46,8 +49,10 @@ namespace Skylicht
 
 			virtual ~CParentRelativeSystem();
 
+			/** @brief Implementation: performs relative movement and parameter syncing. */
 			virtual void update(CParticle* particles, int num, CGroup* group, float dt);
 
+			/** @brief Configures synchronization parameters. */
 			void syncParams(bool life, bool color)
 			{
 				m_syncLife = life;

@@ -34,7 +34,7 @@ namespace Skylicht
 		 * @class CParticleSystem
 		 * @ingroup ParticleSystem
 		 * @brief Core particle update system.
-		 * @details Handles gravity, friction, life time, and interpolation of CModel parameters.
+		 * @details Handles gravity, friction, life time, and interpolation of CModel parameters for every group.
 		 */
 		class COMPONENT_API CParticleSystem : public ISystem
 		{
@@ -43,8 +43,10 @@ namespace Skylicht
 
 			virtual ~CParticleSystem();
 
+			/** @brief Specialized update that only processes particle age/life (used when group is hidden). */
 			void updateLifeTime(CParticle *particles, int num, CGroup *group, float dt);
 
+			/** @brief Implementation: standard particle physics and parameter animation. */
 			virtual void update(CParticle *particles, int num, CGroup *group, float dt);
 		};
 	}

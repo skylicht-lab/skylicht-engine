@@ -38,10 +38,15 @@ namespace Skylicht
 		class COMPONENT_API CPolyLine : public CZone
 		{
 		protected:
+			/** @brief List of vertices in the path. */
 			core::array<core::vector3df> m_point;
+			/** @brief Length of each segment. */
 			core::array<float> m_segments;
+			/** @brief Ratio of each vertex position along the total length. */
 			core::array<float> m_ratios;
+			/** @brief Total path length. */
 			float m_length;
+			/** @brief Default normal for the zone. */
 			core::vector3df m_normal;
 
 		public:
@@ -53,25 +58,31 @@ namespace Skylicht
 
 			virtual void loadSerializable(CObjectSerializable* object);
 
+			/** @brief Sets the path points and precalculates segments. */
 			void setLine(const core::array<core::vector3df>& point);
 
+			/** @brief Gets path vertices. */
 			core::array<core::vector3df>& getPoints()
 			{
 				return m_point;
 			}
 
+			/** @brief Gets vertex count. */
 			u32 getNumPoint()
 			{
 				return m_point.size();
 			}
 
+			/** @brief Sets constant normal for the polyline. */
 			inline void setNormal(const core::vector3df& normal)
 			{
 				m_normal = normal;
 			}
 
+			/** @brief Implementation: spawns at random position along the path. */
 			virtual void generatePosition(CParticle& particle, bool full, CGroup* group);
 
+			/** @brief Implementation: returns the constant normal. */
 			virtual core::vector3df computeNormal(const core::vector3df& point, CGroup* group);
 
 			DECLARE_GETTYPENAME(CPolyLine)

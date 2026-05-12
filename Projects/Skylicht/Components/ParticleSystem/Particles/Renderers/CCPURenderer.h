@@ -40,18 +40,26 @@ namespace Skylicht
 		class COMPONENT_API CCPURenderer : public IRenderer
 		{
 		public:
+			/**
+			 * @enum EBillboardType
+			 * @brief Orientation modes for particles generated on CPU.
+			 */
 			enum EBillboardType
 			{
-				Billboard,
-				Frontal,
-				Velocity,
-				RotateY
+				Billboard,	/**< Faces camera. */
+				Frontal,	/**< Oriented by velocity vector. */
+				Velocity,	/**< Faces camera but aligned to velocity. */
+				RotateY		/**< Faces camera but fixed to Y axis. */
 			};
 
+			/**
+			 * @enum ETransparentType
+			 * @brief Blending modes.
+			 */
 			enum ETransparentType
 			{
-				Addtive,
-				Transparent
+				Addtive,	/**< Additive blending (Additive.xml). */
+				Transparent	/**< Standard alpha blending (Transparent.xml). */
 			};
 
 		protected:
@@ -66,19 +74,23 @@ namespace Skylicht
 
 			virtual ~CCPURenderer();
 
+			/** @brief Prepares the mesh buffer for CPU updates. */
 			virtual void getParticleBuffer(IMeshBuffer* buffer);
 
+			/** @brief Rebuilds the entire vertex buffer on the CPU based on current particle positions. */
 			virtual void updateParticleBuffer(IMeshBuffer* buffer, CParticle* particles, int num);
 
 			virtual CObjectSerializable* createSerializable();
 
 			virtual void loadSerializable(CObjectSerializable* object);
 
+			/** @brief Gets current billboarding mode. */
 			inline EBillboardType getBillboardType()
 			{
 				return m_billboardType;
 			}
 
+			/** @brief Sets current billboarding mode. */
 			inline void setBillboardType(EBillboardType type)
 			{
 				m_billboardType = type;

@@ -32,15 +32,23 @@ namespace Skylicht
 		 * @struct SParticleInstance
 		 * @ingroup ParticleSystem
 		 * @brief GPU instance data for hardware-accelerated particles.
+		 * @details This structure is passed to the GPU for each particle when using CQuadRenderer or CMeshParticleRenderer.
 		 */
 		struct SParticleInstance
 		{
+			/** @brief World position. */
 			video::SVec4 Pos;
+			/** @brief Tint color. */
 			SColor Color;
+			/** @brief Scale for texture atlas frames. */
 			core::vector2df UVScale;
+			/** @brief Offset for texture atlas frames. */
 			core::vector2df UVOffset;
+			/** @brief World size. */
 			video::SVec4 Size;
+			/** @brief World rotation (Euler). */
 			video::SVec4 Rotation;
+			/** @brief Movement velocity. */
 			video::SVec4 Velocity;
 
 			bool operator==(const SParticleInstance& other) const
@@ -59,11 +67,14 @@ namespace Skylicht
 		 * @class CParticleInstancing
 		 * @ingroup ParticleSystem
 		 * @brief Internal class for managing GPU instancing buffers for particles.
+		 * @details Manages a vertex buffer containing SParticleInstance data.
 		 */
 		class COMPONENT_API CParticleInstancing
 		{
 		protected:
+			/** @brief The base mesh buffer (e.g. single quad or mesh). */
 			IMeshBuffer* m_meshBuffer;
+			/** @brief The dynamic vertex buffer containing instance data. */
 			CVertexBuffer<SParticleInstance>* m_instanceBuffer;
 
 		public:
@@ -71,11 +82,13 @@ namespace Skylicht
 
 			virtual ~CParticleInstancing();
 
+			/** @brief Gets the base geometry mesh buffer. */
 			inline IMeshBuffer* getMeshBuffer()
 			{
 				return m_meshBuffer;
 			}
 
+			/** @brief Gets the instance data buffer. */
 			inline CVertexBuffer<SParticleInstance>* getInstanceBuffer()
 			{
 				return m_instanceBuffer;

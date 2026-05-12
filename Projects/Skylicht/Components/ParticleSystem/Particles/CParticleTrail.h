@@ -84,46 +84,67 @@ namespace Skylicht
 			friend class CParticleTrailComponent;
 
 		protected:
+			/** @brief The group whose particles generate these trails. */
 			CGroup* m_group;
 
+			/** @brief Friendly name. */
 			std::wstring m_name;
 
+			/** @brief Active trails for live particles. */
 			core::array<STrailInfo> m_trails;
 
+			/** @brief Fading trails for dead particles. */
 			core::array<STrailInfo> m_deadTrails;
 
+			/** @brief Internal mesh buffer for the trail ribbon. */
 			IMeshBuffer* m_meshBuffer;
 
+			/** @brief Distance between ribbon segments. */
 			float m_segmentLength;
 
+			/** @brief Max number of segments per trail. */
 			u32 m_maxSegmentCount;
 
+			/** @brief Ribbon width. */
 			float m_width;
 
+			/** @brief Total trail length in units. */
 			float m_length;
 
+			/** @brief Current count of active trails. */
 			u32 m_trailCount;
 
+			/** @brief Whether to kill the trail immediately when its particle dies. */
 			bool m_destroyWhenParticleDead;
 
+			/** @brief Fading speed for dead trails. */
 			float m_deadAlphaReduction;
 
+			/** @brief Path to the ribbon texture. */
 			std::string m_texturePath;
 
+			/** @brief Default material for the ribbon. */
 			CMaterial* m_material;
 
+			/** @brief Optional custom material. */
 			CMaterial* m_customMaterial;
 
+			/** @brief Whether to use custom material. */
 			bool m_useCustomMaterial;
 
+			/** @brief Local-to-world transform. */
 			core::matrix4 m_world;
 
+			/** @brief Whether the trail has emission. */
 			bool m_emission;
 
+			/** @brief Emission intensity multiplier. */
 			float m_emissionIntensity;
 
+			/** @brief Whether the ribbon always faces the camera. */
 			bool m_billboard;
 
+			/** @brief Custom up vector if billboarding is disabled. */
 			core::vector3df m_upVector;
 
 		public:
@@ -131,143 +152,103 @@ namespace Skylicht
 
 			virtual ~CParticleTrail();
 
-			/**
-			 * @brief Update ribbon mesh buffers. Called by CParticleTrailRenderer.
-			 * @param camera Active camera for billboarding.
-			 */
+			/** @brief Updates ribbon geometry based on particle history and camera position. */
 			virtual void update(CCamera* camera);
 
+			/** @brief Callback: records new particle positions into trails. */
 			virtual void OnParticleUpdate(CParticle* particles, int num, CGroup* group, float dt);
 
+			/** @brief Callback: initializes trail for a new particle. */
 			virtual void OnParticleBorn(CParticle& p);
 
+			/** @brief Callback: moves trail to dead list for fading or removes it. */
 			virtual void OnParticleDead(CParticle& p);
 
+			/** @brief Callback: swaps trail indices when particles are reordered. */
 			virtual void OnSwapParticleData(CParticle& p1, CParticle& p2);
 
+			/** @brief Callback: handles parent group destruction. */
 			virtual void OnGroupDestroy();
 
-			/**
-			 * @brief Get the generated ribbon mesh buffer.
-			 * @return Pointer to IMeshBuffer.
-			 */
+			/** @brief Gets raw access to trail mesh. */
 			inline IMeshBuffer* getMeshBuffer()
 			{
 				return m_meshBuffer;
 			}
 
-			/**
-			 * @brief Get the trail material.
-			 * @return Pointer to CMaterial.
-			 */
+			/** @brief Gets active material. */
 			inline CMaterial* getMaterial()
 			{
 				return m_material;
 			}
 
-			/**
-			 * @brief Set the width of the ribbon.
-			 * @param f Width value.
-			 */
+			/** @brief Sets ribbon width. */
 			inline void setWidth(float f)
 			{
 				m_width = f;
 			}
 
-			/**
-			 * @brief Get ribbon width.
-			 * @return Width value.
-			 */
+			/** @brief Gets ribbon width. */
 			inline float getWidth()
 			{
 				return m_width;
 			}
 
-			/**
-			 * @brief Set distance between trail segments.
-			 * @param f Distance.
-			 */
+			/** @brief Sets segment separation distance. */
 			inline void setSegmentLength(float f)
 			{
 				m_segmentLength = f;
 			}
 
-			/**
-			 * @brief Get segment length.
-			 * @return Distance value.
-			 */
+			/** @brief Gets segment separation distance. */
 			inline float getSegmentLength()
 			{
 				return m_segmentLength;
 			}
 
-			/**
-			 * @brief Check if the trail is destroyed immediately when the particle dies.
-			 * @return True if destroyed.
-			 */
+			/** @brief Checks death destruction policy. */
 			inline bool isDestroyedWhenParticleDead()
 			{
 				return m_destroyWhenParticleDead;
 			}
 
-			/**
-			 * @brief Enable or disable immediate trail destruction upon particle death.
-			 * @param b True to destroy immediately; false to allow the trail to fade out.
-			 */
+			/** @brief Configures death destruction policy. */
 			inline void enableDestroyWhenParticleDead(bool b)
 			{
 				m_destroyWhenParticleDead = b;
 			}
 
-			/**
-			 * @brief Get the alpha fading speed for dead trails.
-			 * @return Fading speed.
-			 */
+			/** @brief Gets fading speed for dead trails. */
 			inline float getDeadAlphaReduction()
 			{
 				return m_deadAlphaReduction;
 			}
 
-			/**
-			 * @brief Set the alpha fading speed for dead trails.
-			 * @param a Fading speed.
-			 */
+			/** @brief Sets fading speed for dead trails. */
 			inline void setDeadAlphaReduction(float a)
 			{
 				m_deadAlphaReduction = a;
 			}
 
-			/**
-			 * @brief Enable or disable custom material for the trail.
-			 * @param b True to use custom material.
-			 */
+			/** @brief Enables/disables custom material. */
 			inline void enableCustomMaterial(bool b)
 			{
 				m_useCustomMaterial = b;
 			}
 
-			/**
-			 * @brief Set a custom material for the trail.
-			 * @param material Pointer to CMaterial.
-			 */
+			/** @brief Sets custom material. */
 			inline void setCustomMaterial(CMaterial* material)
 			{
 				m_customMaterial = material;
 			}
 
-			/**
-			 * @brief Check if custom material is enabled.
-			 * @return True if enabled.
-			 */
+			/** @brief Checks if custom material is active. */
 			inline bool useCustomMaterial()
 			{
 				return m_useCustomMaterial;
 			}
 
-			/**
-			 * @brief Get the path to the custom material.
-			 * @return Path string.
-			 */
+			/** @brief Gets path to custom material. */
 			inline const char* getCustomMaterial()
 			{
 				if (m_customMaterial)
@@ -275,10 +256,7 @@ namespace Skylicht
 				return "";
 			}
 
-			/**
-			 * @brief Get the name of the associated particle group.
-			 * @return Wstring name.
-			 */
+			/** @brief Gets name of linked group. */
 			inline const wchar_t* getGroupName()
 			{
 				if (m_group)
@@ -286,114 +264,73 @@ namespace Skylicht
 				return m_name.c_str();
 			}
 
-			/**
-			 * @brief Set the total visual length of the trail.
-			 * @param l Length value.
-			 */
+			/** @brief Sets max trail length. */
 			void setLength(float l);
 
-			/**
-			 * @brief Get total trail length.
-			 * @return Length value.
-			 */
+			/** @brief Gets max trail length. */
 			inline float getLength()
 			{
 				return m_length;
 			}
 
-			/**
-			 * @brief Set texture for the ribbon.
-			 * @param texture Pointer to ITexture.
-			 */
+			/** @brief Directly sets ribbon texture. */
 			void setTexture(ITexture* texture);
 
-			/**
-			 * @brief Apply current settings to the mesh buffer material.
-			 */
+			/** @brief Updates material parameters in the mesh buffer. */
 			void applyMaterial();
 
-			/**
-			 * @brief Load a texture from path.
-			 * @param path Texture file path.
-			 */
+			/** @brief Loads ribbon texture by path. */
 			void setTexturePath(const char* path);
 
-			/**
-			 * @brief Get active texture path.
-			 * @return Path string.
-			 */
+			/** @brief Gets ribbon texture path. */
 			inline const char* getTexturePath()
 			{
 				return m_texturePath.c_str();
 			}
 
-			/**
-			 * @brief Enable or disable emission pass.
-			 * @param b True to enable.
-			 */
+			/** @brief Enables/disables emission. */
 			inline void setEmission(bool b)
 			{
 				m_emission = b;
 			}
 
-			/**
-			 * @brief Check if emission is enabled.
-			 * @return True if enabled.
-			 */
+			/** @brief Checks if emission is enabled. */
 			inline bool isEmission()
 			{
 				return m_emission;
 			}
 
-			/**
-			 * @brief Set emission intensity for glowing effects.
-			 * @param f Intensity value.
-			 */
+			/** @brief Sets emission intensity. */
 			inline void setEmissionIntensity(float f)
 			{
 				m_emissionIntensity = f;
 			}
 
-			/**
-			 * @brief Get emission intensity.
-			 * @return Intensity value.
-			 */
+			/** @brief Gets emission intensity. */
 			inline float getEmissionIntensity()
 			{
 				return m_emissionIntensity;
 			}
 
-			/**
-			 * @brief Enable or disable billboarding (facing camera).
-			 * @param b True to enable.
-			 */
+			/** @brief Enables/disables camera billboarding. */
 			inline void setBillboard(bool b)
 			{
 				m_billboard = b;
 			}
 
-			/**
-			 * @brief Check if billboarding is enabled.
-			 * @return True if enabled.
-			 */
+			/** @brief Checks if billboarding is enabled. */
 			inline bool isBillboard()
 			{
 				return m_billboard;
 			}
 
-			/**
-			 * @brief Set the up-vector for non-billboarded ribbons.
-			 * @param up Direction vector.
-			 */
+			/** @brief Sets custom up vector for orientation. */
 			inline void setUpVector(const core::vector3df& up)
 			{
 				m_upVector = up;
 			}
 
-			/**
-			 * @brief Get current up-vector.
-			 * @return Direction vector reference.
-			 */
+			/** @brief Gets custom up vector. */
 			const core::vector3df& getUpVector()
 			{
 				return m_upVector;
@@ -401,8 +338,10 @@ namespace Skylicht
 
 		protected:
 
+			/** @brief Internal: manages fading of dead trails. */
 			void updateDeadTrail();
 
+			/** @brief Internal: sets world matrix. */
 			void setWorld(const core::matrix4& world)
 			{
 				m_world = world;

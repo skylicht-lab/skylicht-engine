@@ -38,6 +38,7 @@ namespace Skylicht
 		class COMPONENT_API CSphere : public CPositionZone
 		{
 		protected:
+			/** @brief Radius of the sphere. */
 			float m_radius;
 
 		public:
@@ -49,18 +50,22 @@ namespace Skylicht
 
 			virtual void loadSerializable(CObjectSerializable* object);
 
+			/** @brief Sets sphere radius. */
 			inline void setRadius(float r)
 			{
 				m_radius = r;
 			}
 
+			/** @brief Gets sphere radius. */
 			inline float getRadius()
 			{
 				return m_radius;
 			}
 
+			/** @brief Implementation: spawns within volume or on surface. */
 			virtual void generatePosition(CParticle& particle, bool full, CGroup* group);
 
+			/** @brief Implementation: normal points from center to point. */
 			virtual core::vector3df computeNormal(const core::vector3df& point, CGroup* group);
 
 			DECLARE_GETTYPENAME(CSphere)

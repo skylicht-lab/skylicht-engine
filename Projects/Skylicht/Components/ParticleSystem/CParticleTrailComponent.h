@@ -54,6 +54,9 @@ namespace Skylicht
 		class COMPONENT_API CParticleTrailComponent : public CComponentSystem
 		{
 		protected:
+			/**
+			 * @brief Cached pointer to the trail entity data.
+			 */
 			CParticleTrailData* m_data;
 
 		public:
@@ -61,18 +64,30 @@ namespace Skylicht
 
 			virtual ~CParticleTrailComponent();
 
+			/**
+			 * @brief Initializes component data and trail renderer system.
+			 */
 			virtual void initComponent();
 
+			/**
+			 * @brief Updates trail transforms based on parent entity world matrix.
+			 */
 			virtual void updateComponent();
 
+			/**
+			 * @brief Creates a serializable object for property editing.
+			 */
 			virtual CObjectSerializable* createSerializable();
 
+			/**
+			 * @brief Loads trail settings from a serializable object.
+			 */
 			virtual void loadSerializable(CObjectSerializable* object);
 
 			/**
-			 * @brief Add a ribbon trail effect to a particle group.
-			 * @param group Pointer to the target particle group.
-			 * @return Pointer to the created CParticleTrail.
+			 * @brief Adds a new trail effect linked to a specific particle group.
+			 * @param group The target particle group.
+			 * @return Pointer to the new CParticleTrail instance.
 			 */
 			CParticleTrail* addTrail(CGroup* group);
 

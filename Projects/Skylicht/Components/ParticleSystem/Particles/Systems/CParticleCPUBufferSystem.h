@@ -34,6 +34,7 @@ namespace Skylicht
 		 * @class CParticleCPUBufferSystem
 		 * @ingroup ParticleSystem
 		 * @brief Internal system that updates the CPU mesh buffer with current particle data for non-instanced rendering.
+		 * @details Invoked by CGroup to fill the CParticleCPUBuffer with calculated quad vertices.
 		 */
 		class COMPONENT_API CParticleCPUBufferSystem : public ISystem
 		{
@@ -42,6 +43,7 @@ namespace Skylicht
 
 			virtual ~CParticleCPUBufferSystem();
 
+			/** @brief Rebuilds the mesh buffer vertices based on particle positions. */
 			virtual void update(CParticle *particles, int num, CGroup *group, float dt);
 		};
 	}
