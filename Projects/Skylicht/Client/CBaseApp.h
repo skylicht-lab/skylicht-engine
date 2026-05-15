@@ -299,6 +299,11 @@ namespace Skylicht
 		{
 			m_enableRunWhenPause = b;
 		}
+
+		/**
+		 * @brief Open browse with url
+		 */
+		void openURL(const char* url);
 	};
 
 	extern CBaseApp* getApplication();

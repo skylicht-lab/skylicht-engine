@@ -10,6 +10,15 @@
 #include "BuildConfig/CBuildConfig.h"
 #include <Carbon/Carbon.h>
 
+#import <Cocoa/Cocoa.h>
+
+extern "C" void application_openURL(const char *url)
+{
+	NSString *urlString = [NSString stringWithUTF8String:url];
+	NSURL *nsurl = [NSURL URLWithString:urlString];
+	[[NSWorkspace sharedWorkspace] openURL:nsurl];
+}
+
 #ifndef TEST_APP
 
 int main(int argc, const char * argv[]) {
