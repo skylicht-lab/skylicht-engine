@@ -68,8 +68,11 @@ namespace Skylicht
 			l->onPurchaseFailed(productId, error);
 	}
 
-	IStoreController* getStoreController()
+	IStoreController* getStoreController(bool isTesting)
 	{
+		if (isTesting)
+			return CTestStoreController::getInstance();
+
 #if defined(ANDROID)
 		return CPlayStoreController::getInstance();
 #elif defined(IOS)

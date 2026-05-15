@@ -37,5 +37,5 @@ namespace Skylicht
 		void notifyPurchaseFailed(const char* productId, int error);
 	};
 
-	IStoreController* getStoreController();
+	IStoreController* getStoreController(bool isTesting = false);
 }
