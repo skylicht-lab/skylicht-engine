@@ -4,10 +4,20 @@
 #import <StoreKit/StoreKit.h>
 #import <Foundation/Foundation.h>
 
-void appstore_onInitialized();
-void appstore_onInitializeFailed(int error, const char* message);
-void appstore_onRestorePurchaseFailed(int error, const char* message);
-void appstore_onPurchaseSucceeded(const char* productId, const char* receipt);
+extern "C" {
+    void appstore_onInitialized();
+    void appstore_onInitializeFailed(int error, const char* message);
+    void appstore_onRestorePurchaseFailed(int error, const char* message);
+    void appstore_onPurchaseSucceeded(const char* productId, const char* receipt);
+    void appstore_onProductsReceived(const char** productIds,
+                                     const char** titles,
+                                     const char** descriptions,
+                                     const char** localizedPrices,
+                                     double* prices,
+                                     const char** currencyCodes,
+                                     int count);
+    void appstore_onPurchaseFailed(const char* productId, int error, const char* message);
+}
 
 @interface AppStoreManager : NSObject <SKProductsRequestDelegate, SKPaymentTransactionObserver>
 + (instancetype)sharedInstance;
@@ -66,15 +76,6 @@ void appstore_onPurchaseSucceeded(const char* productId, const char* receipt);
 - (void)paymentQueue:(SKPaymentQueue *)queue restoreCompletedTransactionsFailedWithError:(NSError *)error {
     appstore_onRestorePurchaseFailed((int)error.code, [[error localizedDescription] UTF8String]);
 }
-
-void appstore_onProductsReceived(const char** productIds,
-								 const char** titles,
-								 const char** descriptions,
-								 const char** localizedPrices,
-								 double* prices,
-								 const char** currencyCodes,
-								 int count);
-void appstore_onPurchaseFailed(const char* productId, int error, const char* message);
 
 #pragma mark - SKProductsRequestDelegate
 - (void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response {
@@ -149,6 +150,8 @@ void appstore_onPurchaseFailed(const char* productId, int error, const char* mes
 }
 @end
 
+extern "C" {
+
 void appstore_init()
 {
     [AppStoreManager sharedInstance];
@@ -172,6 +175,8 @@ void appstore_fetchAdditionalProducts(const char** productIds, int count)
         [identifiers addObject:[NSString stringWithUTF8String:productIds[i]]];
     }
     [[AppStoreManager sharedInstance] fetchProducts:identifiers];
+}
+
 }
 
 #endif

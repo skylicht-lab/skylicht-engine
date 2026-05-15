@@ -7,6 +7,7 @@ extern "C"
 	void playStore_restorePurchase();
 	void playStore_initiatePurchase(const char* productId);
 	void playStore_fetchAdditionalProducts(const char** productIds, int count);
+	void playStore_restart();
 
 	void playStore_onProductsReceived(const char** productIds,
 									  const char** titles,
@@ -28,25 +29,29 @@ extern "C"
 			p.CurrencyCode = currencyCodes[i];
 			products.push_back(p);
 		}
-		CPlayStoreController::getInstance()->notifyProductReceived(products);
+		Skylicht::CPlayStoreController::getInstance()->notifyProductReceived(products);
 	}
 
 	void playStore_onInitialized()
 	{
-		CPlayStoreController::getInstance()->notifyInitialized();
+		Skylicht::CPlayStoreController::getInstance()->notifyInitialized();
 	}
 	void playStore_onInitializeFailed(int error, const char* message)
 	{
-		CPlayStoreController::getInstance()->notifyInitializeFailed(error, message);
+		Skylicht::CPlayStoreController::getInstance()->notifyInitializeFailed(error, message);
+	}
+	void playStore_onRestorePurchaseFailed(int error, const char* message)
+	{
+		Skylicht::CPlayStoreController::getInstance()->notifyRestorePurchaseFailed(error, message);
 	}
 	void playStore_onPurchaseSucceeded(const char* productId, const char* receipt)
 	{
-		CPlayStoreController::getInstance()->notifyPurchaseSucceeded(productId, receipt);
+		Skylicht::CPlayStoreController::getInstance()->notifyPurchaseSucceeded(productId, receipt);
 	}
 
 	void playStore_onPurchaseFailed(const char* productId, int error, const char* message)
 	{
-		CPlayStoreController::getInstance()->notifyPurchaseFailed(productId, error, message);
+		Skylicht::CPlayStoreController::getInstance()->notifyPurchaseFailed(productId, error, message);
 	}
 };
 #endif
@@ -75,7 +80,6 @@ namespace Skylicht
 	void CPlayStoreController::restart()
 	{
 #ifdef ANDROID
-		extern void playStore_restart();
 		playStore_restart();
 #endif
 	}

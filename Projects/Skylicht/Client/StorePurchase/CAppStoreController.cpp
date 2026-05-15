@@ -2,67 +2,71 @@
 #include "CAppStoreController.h"
 
 #ifdef IOS
-void appstore_restorePurchase();
-void appstore_initiatePurchase(const char* productId);
-void appstore_fetchAdditionalProducts(const char** productIds, int count);
-
-void appstore_onProductsReceived(const char** productIds,
-								 const char** titles,
-								 const char** descriptions,
-								 const char** localizedPrices,
-								 double* prices,
-								 const char** currencyCodes,
-								 int count)
+extern "C"
 {
-	std::vector<SIAPProduct> products;
-	for (int i = 0; i < count; i++)
+	void appstore_init();
+	void appstore_restorePurchase();
+	void appstore_initiatePurchase(const char* productId);
+	void appstore_fetchAdditionalProducts(const char** productIds, int count);
+
+	void appstore_onProductsReceived(const char** productIds,
+									 const char** titles,
+									 const char** descriptions,
+									 const char** localizedPrices,
+									 double* prices,
+									 const char** currencyCodes,
+									 int count)
 	{
-		SIAPProduct p;
-		p.ProductId = productIds[i];
-		p.LocalizedTitle = titles[i];
-		p.LocalizedDescription = descriptions[i];
-		p.LocalizedPrice = localizedPrices[i];
-		p.PriceValue = prices[i];
-		p.CurrencyCode = currencyCodes[i];
-		products.push_back(p);
+		std::vector<SIAPProduct> products;
+		for (int i = 0; i < count; i++)
+		{
+			SIAPProduct p;
+			p.ProductId = productIds[i];
+			p.LocalizedTitle = titles[i];
+			p.LocalizedDescription = descriptions[i];
+			p.LocalizedPrice = localizedPrices[i];
+			p.PriceValue = prices[i];
+			p.CurrencyCode = currencyCodes[i];
+			products.push_back(p);
+		}
+		Skylicht::CAppStoreController::getInstance()->notifyProductReceived(products);
 	}
-	CAppStoreController::getInstance()->notifyProductReceived(products);
-}
 
-void appstore_onInitialized()
-{
-	CAppStoreController::getInstance()->notifyInitialized();
-}
+	void appstore_onInitialized()
+	{
+		Skylicht::CAppStoreController::getInstance()->notifyInitialized();
+	}
 
 	void appstore_onInitializeFailed(int error, const char* message)
 	{
-		CAppStoreController::getInstance()->notifyInitializeFailed(error, message);
+		Skylicht::CAppStoreController::getInstance()->notifyInitializeFailed(error, message);
 	}
 
 	void appstore_onRestorePurchaseFailed(int error, const char* message)
 	{
-		CAppStoreController::getInstance()->notifyRestorePurchaseFailed(error, message);
+		Skylicht::CAppStoreController::getInstance()->notifyRestorePurchaseFailed(error, message);
 	}
 
 	void appstore_onPurchaseSucceeded(const char* productId, const char* receipt)
 	{
-		CAppStoreController::getInstance()->notifyPurchaseSucceeded(productId, receipt);
+		Skylicht::CAppStoreController::getInstance()->notifyPurchaseSucceeded(productId, receipt);
 	}
 
 	void appstore_onPurchaseFailed(const char* productId, int error, const char* message)
 	{
-		CAppStoreController::getInstance()->notifyPurchaseFailed(productId, error, message);
+		Skylicht::CAppStoreController::getInstance()->notifyPurchaseFailed(productId, error, message);
 	}
+};
 #endif
 
 namespace Skylicht
 {
+
 	IMPLEMENT_SINGLETON(CAppStoreController);
 
 	CAppStoreController::CAppStoreController()
 	{
 #ifdef IOS
-		extern void appstore_init();
 		appstore_init();
 #endif
 	}
