@@ -8,6 +8,9 @@
 #import "GameViewController.h"
 #import "Renderer.h"
 
+#import <SystemConfiguration/SystemConfiguration.h>
+#import <netinet/in.h>
+
 #include "SkylichtApplication.h"
 
 SkylichtApplication* _angleApplication = NULL;
@@ -186,4 +189,27 @@ extern "C" void application_openURL(const char *url)
 	NSString *urlString = [NSString stringWithUTF8String:url];
 	NSURL *nsurl = [NSURL URLWithString:urlString];
 	[[UIApplication sharedApplication] openURL:nsurl options:@{} completionHandler:nil];
+}
+
+extern "C" bool application_isNetworkAvailable()
+{
+	struct sockaddr_in zeroAddress;
+	bzero(&zeroAddress, sizeof(zeroAddress));
+	zeroAddress.sin_len = sizeof(zeroAddress);
+	zeroAddress.sin_family = AF_INET;
+	
+	SCNetworkReachabilityRef reachability = SCNetworkReachabilityCreateWithAddress(kCFAllocatorDefault, (const struct sockaddr*)&zeroAddress);
+	if (reachability != NULL)
+	{
+		SCNetworkReachabilityFlags flags;
+		bool success = SCNetworkReachabilityGetFlags(reachability, &flags);
+		CFRelease(reachability);
+		if (success)
+		{
+			bool isReachable = ((flags & kSCNetworkReachabilityFlagsReachable) != 0);
+			bool needsConnection = ((flags & kSCNetworkReachabilityFlagsConnectionRequired) != 0);
+			return (isReachable && !needsConnection);
+		}
+	}
+	return false;
 }

@@ -304,6 +304,11 @@ namespace Skylicht
 		 * @brief Open browse with url
 		 */
 		void openURL(const char* url);
+
+		/**
+		* @brief Check network available or not?
+		*/
+		bool isNetworkAvailable();
 	};
 
 	extern CBaseApp* getApplication();

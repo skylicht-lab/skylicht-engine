@@ -41,8 +41,10 @@ extern "C" void application_setFPS(int fps);
 
 #ifdef ANDROID
 extern "C" void nativeInterface_openURL(const char* url);
+extern "C" int nativeInterface_applicationIsNetworkAvailable();
 #elif defined(IOS) || defined(MACOS)
 extern "C" void application_openURL(const char* url);
+extern "C" bool application_isNetworkAvailable();
 #elif defined(_WIN32) || defined(WIN32)
 #include <windows.h>
 #include <shellapi.h>
@@ -269,6 +271,17 @@ namespace Skylicht
 		(void)result;
 #else
 		os::Printer::log("[openWebURL] not yet implement");
+#endif
+	}
+
+	bool CBaseApp::isNetworkAvailable()
+	{
+#ifdef ANDROID
+		return nativeInterface_applicationIsNetworkAvailable() == 1;
+#elif defined(IOS)
+		return application_isNetworkAvailable();
+#else
+		return true;
 #endif
 	}
 }

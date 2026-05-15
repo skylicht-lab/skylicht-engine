@@ -73,6 +73,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "StorePurchase/CPlayStoreController.h"
 #include "StorePurchase/CAppStoreController.h"
 #include "StorePurchase/CTestStoreController.h"
+#include "InAppReview/CAndroidInAppReview.h"
+#include "InAppReview/CIOSInAppReview.h"
 
 CBaseApp* g_app = NULL;
 Skylicht::CBuildConfig* g_config = Skylicht::CBuildConfig::createGetInstance();
@@ -206,12 +208,14 @@ namespace Skylicht
 		CPlayGamesSignIn::createGetInstance();
 		CAndroidTextField::createGetInstance();
 		CPlayStoreController::createGetInstance();
+		CAndroidInAppReview::createGetInstance();
 #endif
 		
 #ifdef IOS
 		CGameCenterSignIn::createGetInstance();
 		CIOSTextField::createGetInstance();
 		CAppStoreController::createGetInstance();
+		CIOSInAppReview::createGetInstance();
 #endif
 
 #if !defined(ANDROID) && !defined(IOS)
@@ -224,12 +228,15 @@ namespace Skylicht
 #ifdef ANDROID
 		CPlayGamesSignIn::releaseInstance();
 		CPlayStoreController::releaseInstance();
+		CAndroidTextField::releaseInstance();
+		CAndroidInAppReview::releaseInstance();
 #endif
 		
 #ifdef IOS
 		CGameCenterSignIn::releaseInstance();
 		CIOSTextField::releaseInstance();
 		CAppStoreController::releaseInstance();
+		CIOSInAppReview::releaseInstance();
 #endif
 
 #if !defined(ANDROID) && !defined(IOS)
