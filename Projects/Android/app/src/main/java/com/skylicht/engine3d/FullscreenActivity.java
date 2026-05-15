@@ -158,6 +158,7 @@ public class FullscreenActivity extends AppCompatActivity {
         PlayGamesSignIn.getInstance().init(this);
         TextField.getInstance().init(this);
         PlayStoreController.getInstance().init(this);
+        InAppReview.getInstance().init(this);
     }
 
     @Override
