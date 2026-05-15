@@ -5,14 +5,14 @@
 
 namespace Skylicht
 {
-	class CTestStoreController : public IStoreController
+	class CPlayStoreController : public IStoreController
 	{
 	public:
-		CTestStoreController();
+		CPlayStoreController();
 
-		virtual ~CTestStoreController();
+		virtual ~CPlayStoreController();
 
-		DECLARE_SINGLETON(CTestStoreController)
+		DECLARE_SINGLETON(CPlayStoreController)
 
 		virtual void restorePurchase();
 

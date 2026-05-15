@@ -2,15 +2,40 @@
 
 #include <vector>
 #include <string>
+#include "SIAPProduct.h"
 
-class IStoreController
+class IStoreListener;
+
+namespace Skylicht
 {
-public:
-	virtual ~IStoreController() {}
+	class IStoreController
+	{
+	protected:
+		std::vector<IStoreListener*> m_listener;
 
-	virtual void restorePurchase() = 0;
+	public:
+		IStoreController();
+		virtual ~IStoreController();
 
-	virtual void initiatePurchase(const char* productId) = 0;
+		void addListener(IStoreListener* listener);
 
-	virtual void fetchAdditionalProducts(const std::vector<std::string>& productIds) = 0;
-};
+		void removeListener(IStoreListener* listener);
+
+		virtual void restorePurchase() = 0;
+
+		virtual void initiatePurchase(const char* productId) = 0;
+
+		virtual void fetchAdditionalProducts(const std::vector<std::string>& productIds) = 0;
+
+	protected:
+		void notifyInitialized(const std::vector<SIAPProduct>& products);
+
+		void notifyInitializeFailed(int error);
+
+		void notifyPurchaseSucceeded(const char* productId, const char* receipt);
+
+		void notifyPurchaseFailed(const char* productId, int error);
+	};
+
+	IStoreController* getStoreController();
+}
