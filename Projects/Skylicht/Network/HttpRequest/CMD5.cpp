@@ -52,7 +52,7 @@ namespace Skylicht
 			
 			result = md5string;
 			
-			delete fileData;
+			delete[] fileData;
 			fileObject->drop();
 			
 			return result;

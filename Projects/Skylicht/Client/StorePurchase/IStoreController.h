@@ -27,7 +27,7 @@ namespace Skylicht
 
 		virtual void fetchAdditionalProducts(const std::vector<std::string>& productIds) = 0;
 
-	protected:
+	public:
 		void notifyInitialized(const std::vector<SIAPProduct>& products);
 
 		void notifyInitializeFailed(int error);
