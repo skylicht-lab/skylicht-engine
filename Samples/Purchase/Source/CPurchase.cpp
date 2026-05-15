@@ -41,9 +41,7 @@ void CPurchase::init()
 void CPurchase::init(const std::vector<std::string>& productIds)
 {
 	if (m_controller != NULL)
-	{
 		m_controller->removeListener(this);
-	}
 
 	m_controller = getStoreController();
 	if (m_controller != NULL)

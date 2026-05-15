@@ -7,6 +7,7 @@ namespace Skylicht
 
 	CTestStoreController::CTestStoreController()
 	{
+		notifyInitialized();
 	}
 
 	CTestStoreController::~CTestStoreController()
@@ -38,8 +39,8 @@ namespace Skylicht
 			p.ProductId = id;
 			p.LocalizedTitle = id;
 			p.LocalizedDescription = id;
-			p.LocalizedPrice = "$0.99";
-			p.PriceValue = 0.99;
+			p.LocalizedPrice = "$0.00";
+			p.PriceValue = 0.0f;
 			p.CurrencyCode = "USD";
 			products.push_back(p);
 		}
