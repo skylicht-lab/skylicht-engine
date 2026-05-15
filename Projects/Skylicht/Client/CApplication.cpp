@@ -217,10 +217,7 @@ namespace Skylicht
 		CAppStoreController::createGetInstance();
 		CIOSInAppReview::createGetInstance();
 #endif
-
-#if !defined(ANDROID) && !defined(IOS)
 		CTestStoreController::createGetInstance();
-#endif
 	}
 
 	void CApplication::releasePlugin()
@@ -238,10 +235,7 @@ namespace Skylicht
 		CAppStoreController::releaseInstance();
 		CIOSInAppReview::releaseInstance();
 #endif
-
-#if !defined(ANDROID) && !defined(IOS)
 		CTestStoreController::releaseInstance();
-#endif
 	}
 
 	void CApplication::destroyApplication()

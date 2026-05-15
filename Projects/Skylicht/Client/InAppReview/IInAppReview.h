@@ -11,7 +11,7 @@ namespace Skylicht
 
 		virtual ~IInAppReview();
 
-		virtual void showInAppReview(bool isTesting) = 0;
+		virtual void showInAppReview(bool isTesting = false) = 0;
 	};
 
 	IInAppReview* getInAppReview();

@@ -14,6 +14,6 @@ namespace Skylicht
 
 		DECLARE_SINGLETON(CAndroidInAppReview)
 
-		virtual void showInAppReview(bool isTesting);
+		virtual void showInAppReview(bool isTesting = false);
 	};
 }
