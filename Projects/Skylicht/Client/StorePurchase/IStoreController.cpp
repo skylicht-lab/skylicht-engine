@@ -40,18 +40,32 @@ namespace Skylicht
 		}
 	}
 
-	void IStoreController::notifyInitialized(const std::vector<SIAPProduct>& products)
+	void IStoreController::notifyInitialized()
 	{
 		std::vector<IStoreListener*> listeners = m_listener;
 		for (IStoreListener* l : listeners)
-			l->onInitialized(this, products);
+			l->onInitialized(this);
 	}
 
-	void IStoreController::notifyInitializeFailed(int error)
+	void IStoreController::notifyProductReceived(const std::vector<SIAPProduct>& products)
 	{
 		std::vector<IStoreListener*> listeners = m_listener;
 		for (IStoreListener* l : listeners)
-			l->onInitializeFailed(error);
+			l->onProductReceived(this, products);
+	}
+
+	void IStoreController::notifyInitializeFailed(int error, const char* message)
+	{
+		std::vector<IStoreListener*> listeners = m_listener;
+		for (IStoreListener* l : listeners)
+			l->onInitializeFailed(error, message);
+	}
+
+	void IStoreController::notifyRestorePurchaseFailed(int error, const char* message)
+	{
+		std::vector<IStoreListener*> listeners = m_listener;
+		for (IStoreListener* l : listeners)
+			l->onRestorePurchaseFailed(error, message);
 	}
 
 	void IStoreController::notifyPurchaseSucceeded(const char* productId, const char* receipt)
@@ -61,11 +75,11 @@ namespace Skylicht
 			l->onPurchaseSucceeded(productId, receipt);
 	}
 
-	void IStoreController::notifyPurchaseFailed(const char* productId, int error)
+	void IStoreController::notifyPurchaseFailed(const char* productId, int error, const char* message)
 	{
 		std::vector<IStoreListener*> listeners = m_listener;
 		for (IStoreListener* l : listeners)
-			l->onPurchaseFailed(productId, error);
+			l->onPurchaseFailed(productId, error, message);
 	}
 
 	IStoreController* getStoreController(bool isTesting)

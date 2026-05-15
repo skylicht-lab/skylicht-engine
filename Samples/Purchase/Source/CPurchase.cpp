@@ -61,7 +61,7 @@ void CPurchase::purchase(const char* id)
 	}
 	else
 	{
-		onPurchaseFailed(id, -1);
+		onPurchaseFailed(id, -1, "No store controller");
 	}
 }
 
@@ -73,19 +73,25 @@ const SIAPProduct* CPurchase::getProduct(const char* id)
 	return NULL;
 }
 
-void CPurchase::onInitialized(IStoreController* controller, const std::vector<SIAPProduct>& products)
+void CPurchase::onInitialized(IStoreController* controller)
 {
 	m_controller = controller;
-
-	for (const SIAPProduct& p : products)
-	{
-		m_products[p.ProductId] = p;
-	}
 }
 
-void CPurchase::onInitializeFailed(int error)
+void CPurchase::onProductReceived(IStoreController* controller, const std::vector<SIAPProduct>& products)
+{
+	for (const SIAPProduct& p : products)
+		m_products[p.ProductId] = p;
+}
+
+void CPurchase::onInitializeFailed(int error, const char* message)
 {
 	// Handle initialization failure
+}
+
+void CPurchase::onRestorePurchaseFailed(int error, const char* message)
+{
+	// Handle restore purchase failure
 }
 
 void CPurchase::onPurchaseSucceeded(const char* productId, const char* receipt)
@@ -116,7 +122,7 @@ void CPurchase::onPurchaseSucceeded(const char* productId, const char* receipt)
 		OnPurchaseSuccess(std::string(productId), std::string(receipt));
 }
 
-void CPurchase::onPurchaseFailed(const char* productId, int error)
+void CPurchase::onPurchaseFailed(const char* productId, int error, const char* message)
 {
 	if (OnPurchaseFailed != nullptr)
 		OnPurchaseFailed(std::string(productId), error);

@@ -26,20 +26,22 @@ void appstore_onProductsReceived(const char** productIds,
 		p.CurrencyCode = currencyCodes[i];
 		products.push_back(p);
 	}
+	CAppStoreController::getInstance()->notifyProductReceived(products);
+}
 
-		if (count > 0)
-			CAppStoreController::getInstance()->notifyInitialized(products);
-	}
-
-	void appstore_onInitialized()
-	{
-		std::vector<SIAPProduct> products;
-		CAppStoreController::getInstance()->notifyInitialized(products);
-	}
+void appstore_onInitialized()
+{
+	CAppStoreController::getInstance()->notifyInitialized();
+}
 
 	void appstore_onInitializeFailed(int error, const char* message)
 	{
-		CAppStoreController::getInstance()->notifyInitializeFailed(error);
+		CAppStoreController::getInstance()->notifyInitializeFailed(error, message);
+	}
+
+	void appstore_onRestorePurchaseFailed(int error, const char* message)
+	{
+		CAppStoreController::getInstance()->notifyRestorePurchaseFailed(error, message);
 	}
 
 	void appstore_onPurchaseSucceeded(const char* productId, const char* receipt)
@@ -47,9 +49,9 @@ void appstore_onProductsReceived(const char** productIds,
 		CAppStoreController::getInstance()->notifyPurchaseSucceeded(productId, receipt);
 	}
 
-	void appstore_onPurchaseFailed(const char* productId, int error)
+	void appstore_onPurchaseFailed(const char* productId, int error, const char* message)
 	{
-		CAppStoreController::getInstance()->notifyPurchaseFailed(productId, error);
+		CAppStoreController::getInstance()->notifyPurchaseFailed(productId, error, message);
 	}
 #endif
 
@@ -59,7 +61,10 @@ namespace Skylicht
 
 	CAppStoreController::CAppStoreController()
 	{
-
+#ifdef IOS
+		extern void appstore_init();
+		appstore_init();
+#endif
 	}
 
 	CAppStoreController::~CAppStoreController()
@@ -71,6 +76,13 @@ namespace Skylicht
 	{
 #ifdef IOS
 		appstore_restorePurchase();
+#endif
+	}
+
+	void CAppStoreController::restart()
+	{
+#ifdef IOS
+		// iOS StoreKit is usually automatic, but we can re-request if needed
 #endif
 	}
 

@@ -28,28 +28,25 @@ extern "C"
 			p.CurrencyCode = currencyCodes[i];
 			products.push_back(p);
 		}
-
-		if (count > 0)
-			CPlayStoreController::getInstance()->notifyInitialized(products);
+		CPlayStoreController::getInstance()->notifyProductReceived(products);
 	}
 
 	void playStore_onInitialized()
 	{
-		std::vector<SIAPProduct> products;
-		CPlayStoreController::getInstance()->notifyInitialized(products);
+		CPlayStoreController::getInstance()->notifyInitialized();
 	}
 	void playStore_onInitializeFailed(int error, const char* message)
 	{
-		CPlayStoreController::getInstance()->notifyInitializeFailed(error);
+		CPlayStoreController::getInstance()->notifyInitializeFailed(error, message);
 	}
 	void playStore_onPurchaseSucceeded(const char* productId, const char* receipt)
 	{
 		CPlayStoreController::getInstance()->notifyPurchaseSucceeded(productId, receipt);
 	}
 
-	void playStore_onPurchaseFailed(const char* productId, int error)
+	void playStore_onPurchaseFailed(const char* productId, int error, const char* message)
 	{
-		CPlayStoreController::getInstance()->notifyPurchaseFailed(productId, error);
+		CPlayStoreController::getInstance()->notifyPurchaseFailed(productId, error, message);
 	}
 };
 #endif
@@ -72,6 +69,14 @@ namespace Skylicht
 	{
 #ifdef ANDROID
 		playStore_restorePurchase();
+#endif
+	}
+
+	void CPlayStoreController::restart()
+	{
+#ifdef ANDROID
+		extern void playStore_restart();
+		playStore_restart();
 #endif
 	}
 

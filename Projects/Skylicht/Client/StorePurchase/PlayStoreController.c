@@ -7,8 +7,9 @@
 
 extern void playStore_onInitialized();
 extern void playStore_onInitializeFailed(int error, const char* message);
+extern void playStore_onRestorePurchaseFailed(int error, const char* message);
 extern void playStore_onPurchaseSucceeded(const char* productId, const char* receipt);
-extern void playStore_onPurchaseFailed(const char* productId, int error);
+extern void playStore_onPurchaseFailed(const char* productId, int error, const char* message);
 
 extern const char *getJString(JNIEnv* env, jstring jstr);
 
@@ -17,6 +18,7 @@ extern JNIEnv* g_jniEnv;
 
 jclass g_classPlayStoreController = NULL;
 jmethodID g_restorePurchase;
+jmethodID g_restart;
 jmethodID g_initiatePurchase;
 jmethodID g_fetchAdditionalProducts;
 
@@ -28,6 +30,7 @@ JNIEXPORT void JNICALL JNI_FUNCTION(PlayStoreController_init)(JNIEnv* env, jobje
 	g_classPlayStoreController = (jclass)(*env)->NewGlobalRef(env, local);
 
 	g_restorePurchase = (*env)->GetStaticMethodID(env, g_classPlayStoreController, "restorePurchase", "()V");
+	g_restart = (*env)->GetStaticMethodID(env, g_classPlayStoreController, "restart", "()V");
 	g_initiatePurchase = (*env)->GetStaticMethodID(env, g_classPlayStoreController, "initiatePurchase", "(Ljava/lang/String;)V");
 	g_fetchAdditionalProducts = (*env)->GetStaticMethodID(env, g_classPlayStoreController, "fetchAdditionalProducts", "([Ljava/lang/String;)V");
 }
@@ -114,6 +117,13 @@ JNIEXPORT void JNICALL JNI_FUNCTION(PlayStoreController_onInitializeFailed)(JNIE
 	(*env)->ReleaseStringUTFChars(env, msg, cmsg);
 }
 
+JNIEXPORT void JNICALL JNI_FUNCTION(PlayStoreController_onRestorePurchaseFailed)(JNIEnv* env, jobject thiz, jint error, jstring message)
+{
+	const char *cmsg = getJString(env, message);
+	playStore_onRestorePurchaseFailed(error, cmsg);
+	(*env)->ReleaseStringUTFChars(env, message, cmsg);
+}
+
 JNIEXPORT void JNICALL JNI_FUNCTION(PlayStoreController_onPurchaseSucceeded)(JNIEnv* env, jobject thiz, jstring productId, jstring receipt)
 {
 	const char *cid = getJString(env, productId);
@@ -123,11 +133,13 @@ JNIEXPORT void JNICALL JNI_FUNCTION(PlayStoreController_onPurchaseSucceeded)(JNI
 	(*env)->ReleaseStringUTFChars(env, receipt, creceipt);
 }
 
-JNIEXPORT void JNICALL JNI_FUNCTION(PlayStoreController_onPurchaseFailed)(JNIEnv* env, jobject thiz, jstring productId, jint error)
+JNIEXPORT void JNICALL JNI_FUNCTION(PlayStoreController_onPurchaseFailed)(JNIEnv* env, jobject thiz, jstring productId, jint error, jstring message)
 {
 	const char *cid = getJString(env, productId);
-	playStore_onPurchaseFailed(cid, error);
+	const char *cmsg = getJString(env, message);
+	playStore_onPurchaseFailed(cid, error, cmsg);
 	(*env)->ReleaseStringUTFChars(env, productId, cid);
+	(*env)->ReleaseStringUTFChars(env, message, cmsg);
 }
 
 void playStore_restorePurchase()
@@ -136,6 +148,15 @@ void playStore_restorePurchase()
 	if (g_restorePurchase != NULL && g_classPlayStoreController != NULL)
 	{
 		(*g_jniEnv)->CallStaticVoidMethod(g_jniEnv, g_classPlayStoreController, g_restorePurchase);
+	}
+}
+
+void playStore_restart()
+{
+	(*g_javaVM)->AttachCurrentThread(g_javaVM, &g_jniEnv, NULL);
+	if (g_restart != NULL && g_classPlayStoreController != NULL)
+	{
+		(*g_jniEnv)->CallStaticVoidMethod(g_jniEnv, g_classPlayStoreController, g_restart);
 	}
 }
 

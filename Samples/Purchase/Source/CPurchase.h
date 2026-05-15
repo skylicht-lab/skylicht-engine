@@ -31,11 +31,15 @@ public:
 	const SIAPProduct* getProduct(const char* id);
 
 	// IStoreListener implementation
-	virtual void onInitialized(IStoreController* controller, const std::vector<SIAPProduct>& products);
+	virtual void onInitialized(IStoreController* controller);
 
-	virtual void onInitializeFailed(int error);
+	virtual void onProductReceived(IStoreController* controller, const std::vector<SIAPProduct>& products);
+
+	virtual void onInitializeFailed(int error, const char* message);
+
+	virtual void onRestorePurchaseFailed(int error, const char* message);
 
 	virtual void onPurchaseSucceeded(const char* productId, const char* receipt);
 
-	virtual void onPurchaseFailed(const char* productId, int error);
+	virtual void onPurchaseFailed(const char* productId, int error, const char* message);
 };

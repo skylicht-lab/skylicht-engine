@@ -44,6 +44,11 @@ public class PlayStoreController implements PurchasesUpdatedListener {
         startConnection();
     }
 
+    public static void restart() {
+        if (sInstance != null)
+            sInstance.startConnection();
+    }
+
     private void startConnection() {
         mBillingClient.startConnection(new BillingClientStateListener() {
             @Override
@@ -78,6 +83,8 @@ public class PlayStoreController implements PurchasesUpdatedListener {
                                 sInstance.handlePurchase(purchase);
                             }
                         }
+                    } else {
+                        sInstance.onRestorePurchaseFailed(billingResult.getResponseCode(), billingResult.getDebugMessage());
                     }
                 }
         );
@@ -113,7 +120,7 @@ public class PlayStoreController implements PurchasesUpdatedListener {
                 
                 sInstance.mBillingClient.launchBillingFlow(sInstance.mActivity, billingFlowParams);
             } else {
-                sInstance.onPurchaseFailed(productId, billingResult.getResponseCode());
+                sInstance.onPurchaseFailed(productId, billingResult.getResponseCode(), billingResult.getDebugMessage());
             }
         });
     }
@@ -206,6 +213,7 @@ public class PlayStoreController implements PurchasesUpdatedListener {
     public native void onInitialized();
     public native void onProductsReceived(String[] ids, String[] titles, String[] descriptions, String[] prices, double[] values, String[] currencies);
     public native void onInitializeFailed(int error, String message);
+    public native void onRestorePurchaseFailed(int error, String message);
     public native void onPurchaseSucceeded(String productId, String receipt);
-    public native void onPurchaseFailed(String productId, int error);
+    public native void onPurchaseFailed(String productId, int error, String message);
 }

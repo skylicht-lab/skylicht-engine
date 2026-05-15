@@ -6,8 +6,8 @@
 
 void appstore_onInitialized();
 void appstore_onInitializeFailed(int error, const char* message);
+void appstore_onRestorePurchaseFailed(int error, const char* message);
 void appstore_onPurchaseSucceeded(const char* productId, const char* receipt);
-void appstore_onPurchaseFailed(const char* productId, int error);
 
 @interface AppStoreManager : NSObject <SKProductsRequestDelegate, SKPaymentTransactionObserver>
 + (instancetype)sharedInstance;
@@ -27,6 +27,7 @@ void appstore_onPurchaseFailed(const char* productId, int error);
     dispatch_once(&onceToken, ^{
         sharedInstance = [[AppStoreManager alloc] init];
         [[SKPaymentQueue defaultQueue] addTransactionObserver:sharedInstance];
+        appstore_onInitialized();
     });
     return sharedInstance;
 }
@@ -51,10 +52,10 @@ void appstore_onPurchaseFailed(const char* productId, int error);
             SKPayment *payment = [SKPayment paymentWithProduct:targetProduct];
             [[SKPaymentQueue defaultQueue] addPayment:payment];
         } else {
-            appstore_onPurchaseFailed([productIdentifier UTF8String], 0);
+            appstore_onPurchaseFailed([productIdentifier UTF8String], 0, "Product not found");
         }
     } else {
-        appstore_onPurchaseFailed([productIdentifier UTF8String], -1);
+        appstore_onPurchaseFailed([productIdentifier UTF8String], -1, "In-app purchases are disabled");
     }
 }
 
@@ -63,7 +64,7 @@ void appstore_onPurchaseFailed(const char* productId, int error);
 }
 
 - (void)paymentQueue:(SKPaymentQueue *)queue restoreCompletedTransactionsFailedWithError:(NSError *)error {
-    appstore_onInitializeFailed((int)error.code, [[error localizedDescription] UTF8String]);
+    appstore_onRestorePurchaseFailed((int)error.code, [[error localizedDescription] UTF8String]);
 }
 
 void appstore_onProductsReceived(const char** productIds,
@@ -73,6 +74,7 @@ void appstore_onProductsReceived(const char** productIds,
 								 double* prices,
 								 const char** currencyCodes,
 								 int count);
+void appstore_onPurchaseFailed(const char* productId, int error, const char* message);
 
 #pragma mark - SKProductsRequestDelegate
 - (void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response {
@@ -135,7 +137,7 @@ void appstore_onProductsReceived(const char** productIds,
                 break;
             }
             case SKPaymentTransactionStateFailed: {
-                appstore_onPurchaseFailed([productId UTF8String], (int)transaction.error.code);
+                appstore_onPurchaseFailed([productId UTF8String], (int)transaction.error.code, [[transaction.error localizedDescription] UTF8String]);
                 [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
                 break;
             }
@@ -146,6 +148,11 @@ void appstore_onProductsReceived(const char** productIds,
     }
 }
 @end
+
+void appstore_init()
+{
+    [AppStoreManager sharedInstance];
+}
 
 void appstore_restorePurchase()
 {

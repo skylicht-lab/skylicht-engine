@@ -18,6 +18,11 @@ namespace Skylicht
 
 	}
 
+	void CTestStoreController::restart()
+	{
+		notifyInitialized();
+	}
+
 	void CTestStoreController::initiatePurchase(const char* productId)
 	{
 		// Always return success for test
@@ -38,6 +43,6 @@ namespace Skylicht
 			p.CurrencyCode = "USD";
 			products.push_back(p);
 		}
-		notifyInitialized(products);
+		notifyProductReceived(products);
 	}
 }
