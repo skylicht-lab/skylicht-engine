@@ -1,18 +1,11 @@
 #include "pch.h"
 #include "CPurchase.h"
-#include "StorePurchase/CTestStoreController.h"
 
 #include "CShopConfig.h"
 #include "CShopData.h"
 #include "CProfileData.h"
 #include "ViewManager/CViewManager.h"
 #include "CViewHeader.h"
-
-#if defined(SKYLICHT_ANDROID)
-// #include "CAndroidStoreController.h"
-#elif defined(SKYLICHT_IOS)
-// #include "CIOSStoreController.h"
-#endif
 
 IMPLEMENT_SINGLETON(CPurchase);
 
@@ -25,7 +18,10 @@ CPurchase::CPurchase() :
 CPurchase::~CPurchase()
 {
 	if (m_controller != NULL)
-		delete m_controller;
+	{
+		m_controller->removeListener(this);
+		m_controller = NULL;
+	}
 }
 
 void CPurchase::init()
@@ -46,18 +42,15 @@ void CPurchase::init(const std::vector<std::string>& productIds)
 {
 	if (m_controller != NULL)
 	{
-		delete m_controller;
-		m_controller = NULL;
+		m_controller->removeListener(this);
 	}
 
-	// Platform specific controller initialization will go here
-#if defined(SKYLICHT_ANDROID)
-	// m_controller = new CAndroidStoreController(this, productIds);
-#elif defined(SKYLICHT_IOS)
-	// m_controller = new CIOSStoreController(this, productIds);
-#else
-	m_controller = new CTestStoreController(this, productIds);
-#endif
+	m_controller = getStoreController();
+	if (m_controller != NULL)
+	{
+		m_controller->addListener(this);
+		m_controller->fetchAdditionalProducts(productIds);
+	}
 }
 
 void CPurchase::purchase(const char* id)
