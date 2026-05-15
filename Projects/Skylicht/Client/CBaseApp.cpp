@@ -36,7 +36,19 @@ https://github.com/skylicht-lab/skylicht-engine
 #endif
 
 #ifdef IOS
-void application_setFPS(int fps);
+extern "C" void application_setFPS(int fps);
+#endif
+
+#ifdef ANDROID
+extern "C" void nativeInterface_openURL(const char* url);
+#elif defined(IOS) || defined(MACOS)
+extern "C" void application_openURL(const char* url);
+#elif defined(_WIN32) || defined(WIN32)
+#include <windows.h>
+#include <shellapi.h>
+#elif LINUX
+#include <cstdlib>
+#include <string>
 #endif
 
 namespace Skylicht
@@ -236,9 +248,27 @@ namespace Skylicht
 	void CBaseApp::setLimitFPS(int fps)
 	{
 		m_limitFPS = fps;
-		
+
 #ifdef IOS
 		application_setFPS(fps);
+#endif
+	}
+
+	void CBaseApp::openURL(const char* url)
+	{
+#ifdef ANDROID
+		nativeInterface_openURL(url);
+#elif defined(IOS) || defined(MACOS)
+		application_openURL(url);
+#elif defined(_WIN32) || defined(WIN32)
+		ShellExecuteA(NULL, "open", url, NULL, NULL, SW_SHOWNORMAL);
+#elif LINUX
+		std::string cmd = "xdg-open ";
+		cmd += url;
+		int result = system(cmd.c_str());
+		(void)result;
+#else
+		os::Printer::log("[openWebURL] not yet implement");
 #endif
 	}
 }

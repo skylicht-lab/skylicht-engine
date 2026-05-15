@@ -168,7 +168,7 @@ SkylichtApplication* _angleApplication = NULL;
 }
 @end
 
-void application_setFPS(int fps)
+extern "C" void application_setFPS(int fps)
 {
 	UIViewController *rootVC = [[[UIApplication sharedApplication]keyWindow]rootViewController];
 	if ([rootVC isKindOfClass:[GameViewController class]])
@@ -179,4 +179,11 @@ void application_setFPS(int fps)
 		else
 			[gameVC setLimitFPS:fps];
 	}
+}
+
+extern "C" void application_openURL(const char *url)
+{
+	NSString *urlString = [NSString stringWithUTF8String:url];
+	NSURL *nsurl = [NSURL URLWithString:urlString];
+	[[UIApplication sharedApplication] openURL:nsurl options:@{} completionHandler:nil];
 }
