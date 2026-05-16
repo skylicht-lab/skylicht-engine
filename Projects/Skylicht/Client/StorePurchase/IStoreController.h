@@ -13,6 +13,8 @@ namespace Skylicht
 	protected:
 		std::vector<IStoreListener*> m_listener;
 
+		bool m_isInitialized;
+
 	public:
 		IStoreController();
 		virtual ~IStoreController();
@@ -29,10 +31,14 @@ namespace Skylicht
 
 		virtual void fetchAdditionalProducts(const std::vector<std::string>& productIds) = 0;
 
+		inline bool isInitialized() { return m_isInitialized; }
+
 	public:
 		void notifyInitialized();
 
 		void notifyProductReceived(const std::vector<SIAPProduct>& products);
+
+		void notifyFetchProductFailed(int error, const char* message);
 
 		void notifyInitializeFailed(int error, const char* message);
 

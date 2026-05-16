@@ -71,15 +71,15 @@ const SIAPProduct* CPurchase::getProduct(const char* id)
 	return NULL;
 }
 
-void CPurchase::onInitialized(IStoreController* controller)
-{
-	m_controller = controller;
-}
-
 void CPurchase::onProductReceived(IStoreController* controller, const std::vector<SIAPProduct>& products)
 {
 	for (const SIAPProduct& p : products)
 		m_products[p.ProductId] = p;
+}
+
+void CPurchase::onFetchProductFailed(IStoreController* controller, int error, const char* message)
+{
+	// Handle fetch product failure
 }
 
 void CPurchase::onInitializeFailed(int error, const char* message)

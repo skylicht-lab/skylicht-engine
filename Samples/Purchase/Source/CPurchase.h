@@ -31,9 +31,9 @@ public:
 	const SIAPProduct* getProduct(const char* id);
 
 	// IStoreListener implementation
-	virtual void onInitialized(IStoreController* controller);
-
 	virtual void onProductReceived(IStoreController* controller, const std::vector<SIAPProduct>& products);
+
+	virtual void onFetchProductFailed(IStoreController* controller, int error, const char* message);
 
 	virtual void onInitializeFailed(int error, const char* message);
 

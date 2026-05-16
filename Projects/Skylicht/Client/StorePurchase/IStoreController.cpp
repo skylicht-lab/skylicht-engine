@@ -8,7 +8,8 @@
 
 namespace Skylicht
 {
-	IStoreController::IStoreController()
+	IStoreController::IStoreController() :
+		m_isInitialized(false)
 	{
 
 	}
@@ -42,9 +43,7 @@ namespace Skylicht
 
 	void IStoreController::notifyInitialized()
 	{
-		std::vector<IStoreListener*> listeners = m_listener;
-		for (IStoreListener* l : listeners)
-			l->onInitialized(this);
+		m_isInitialized = true;
 	}
 
 	void IStoreController::notifyProductReceived(const std::vector<SIAPProduct>& products)
@@ -54,8 +53,17 @@ namespace Skylicht
 			l->onProductReceived(this, products);
 	}
 
+	void IStoreController::notifyFetchProductFailed(int error, const char* message)
+	{
+		std::vector<IStoreListener*> listeners = m_listener;
+		for (IStoreListener* l : listeners)
+			l->onFetchProductFailed(this, error, message);
+	}
+
 	void IStoreController::notifyInitializeFailed(int error, const char* message)
 	{
+		m_isInitialized = false;
+
 		std::vector<IStoreListener*> listeners = m_listener;
 		for (IStoreListener* l : listeners)
 			l->onInitializeFailed(error, message);

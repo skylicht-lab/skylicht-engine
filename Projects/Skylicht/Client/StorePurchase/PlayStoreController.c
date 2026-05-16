@@ -7,6 +7,7 @@
 
 extern void playStore_onInitialized();
 extern void playStore_onInitializeFailed(int error, const char* message);
+extern void playStore_onFetchProductFailed(int error, const char* message);
 extern void playStore_onRestorePurchaseFailed(int error, const char* message);
 extern void playStore_onPurchaseSucceeded(const char* productId, const char* receipt);
 extern void playStore_onPurchaseFailed(const char* productId, int error, const char* message);
@@ -114,6 +115,13 @@ JNIEXPORT void JNICALL JNI_FUNCTION(PlayStoreController_onInitializeFailed)(JNIE
 {
 	const char *cmsg = getJString(env, msg);
 	playStore_onInitializeFailed(error, cmsg);
+	(*env)->ReleaseStringUTFChars(env, msg, cmsg);
+}
+
+JNIEXPORT void JNICALL JNI_FUNCTION(PlayStoreController_onFetchProductFailed)(JNIEnv* env, jobject thiz, jint error, jstring msg)
+{
+	const char *cmsg = getJString(env, msg);
+	playStore_onFetchProductFailed(error, cmsg);
 	(*env)->ReleaseStringUTFChars(env, msg, cmsg);
 }
 

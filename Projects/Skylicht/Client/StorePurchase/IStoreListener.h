@@ -9,9 +9,9 @@ class IStoreListener
 public:
 	virtual ~IStoreListener() {}
 
-	virtual void onInitialized(IStoreController* controller) = 0;
-
 	virtual void onProductReceived(IStoreController* controller, const std::vector<SIAPProduct>& products) = 0;
+
+	virtual void onFetchProductFailed(IStoreController* controller, int error, const char* message) = 0;
 
 	virtual void onInitializeFailed(int error, const char* message) = 0;
 

@@ -42,6 +42,11 @@ extern "C"
 		Skylicht::CAppStoreController::getInstance()->notifyInitializeFailed(error, message);
 	}
 
+	void appstore_onFetchProductFailed(int error, const char* message)
+	{
+		Skylicht::CAppStoreController::getInstance()->notifyFetchProductFailed(error, message);
+	}
+
 	void appstore_onRestorePurchaseFailed(int error, const char* message)
 	{
 		Skylicht::CAppStoreController::getInstance()->notifyRestorePurchaseFailed(error, message);

@@ -40,6 +40,10 @@ extern "C"
 	{
 		Skylicht::CPlayStoreController::getInstance()->notifyInitializeFailed(error, message);
 	}
+	void playStore_onFetchProductFailed(int error, const char* message)
+	{
+		Skylicht::CPlayStoreController::getInstance()->notifyFetchProductFailed(error, message);
+	}
 	void playStore_onRestorePurchaseFailed(int error, const char* message)
 	{
 		Skylicht::CPlayStoreController::getInstance()->notifyRestorePurchaseFailed(error, message);

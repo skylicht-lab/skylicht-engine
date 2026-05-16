@@ -7,6 +7,7 @@
 extern "C" {
     void appstore_onInitialized();
     void appstore_onInitializeFailed(int error, const char* message);
+    void appstore_onFetchProductFailed(int error, const char* message);
     void appstore_onRestorePurchaseFailed(int error, const char* message);
     void appstore_onPurchaseSucceeded(const char* productId, const char* receipt);
     void appstore_onProductsReceived(const char** productIds,
@@ -37,12 +38,21 @@ extern "C" {
     dispatch_once(&onceToken, ^{
         sharedInstance = [[AppStoreManager alloc] init];
         [[SKPaymentQueue defaultQueue] addTransactionObserver:sharedInstance];
-        appstore_onInitialized();
+        
+        if ([SKPaymentQueue canMakePayments]) {
+            appstore_onInitialized();
+        } else {
+            appstore_onInitializeFailed(-1, "In-app purchases are disabled on this device");
+        }
     });
     return sharedInstance;
 }
 
 - (void)fetchProducts:(NSSet *)productIdentifiers {
+    if (_productsRequest) {
+        _productsRequest.delegate = nil;
+        [_productsRequest cancel];
+    }
     _productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:productIdentifiers];
     _productsRequest.delegate = self;
     [_productsRequest start];
@@ -115,10 +125,15 @@ extern "C" {
     free(localizedPrices);
     free(prices);
     free(currencyCodes);
+    
+    _productsRequest = nil;
 }
 
 - (void)request:(SKRequest *)request didFailWithError:(NSError *)error {
-    appstore_onInitializeFailed((int)error.code, [[error localizedDescription] UTF8String]);
+    if (request == _productsRequest) {
+        appstore_onFetchProductFailed((int)error.code, [[error localizedDescription] UTF8String]);
+        _productsRequest = nil;
+    }
 }
 
 #pragma mark - SKPaymentTransactionObserver

@@ -170,7 +170,7 @@ public class PlayStoreController implements PurchasesUpdatedListener {
                 }
                 sInstance.onProductsReceived(ids, titles, descriptions, prices, values, currencies);
             } else {
-                sInstance.onInitializeFailed(billingResult.getResponseCode(), billingResult.getDebugMessage());
+                sInstance.onFetchProductFailed(billingResult.getResponseCode(), billingResult.getDebugMessage());
             }
         });
     }
@@ -213,6 +213,7 @@ public class PlayStoreController implements PurchasesUpdatedListener {
     public native void onInitialized();
     public native void onProductsReceived(String[] ids, String[] titles, String[] descriptions, String[] prices, double[] values, String[] currencies);
     public native void onInitializeFailed(int error, String message);
+    public native void onFetchProductFailed(int error, String message);
     public native void onRestorePurchaseFailed(int error, String message);
     public native void onPurchaseSucceeded(String productId, String receipt);
     public native void onPurchaseFailed(String productId, int error, String message);
