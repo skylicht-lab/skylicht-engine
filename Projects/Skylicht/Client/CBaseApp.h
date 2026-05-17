@@ -192,9 +192,10 @@ namespace Skylicht
 		/**
 		 * @brief Get texture package name based on platform and compression support.
 		 * @param name Base texture name.
+		 * @param ext Base ext. (e.g ".zip", ".npk")
 		 * @return Package name (e.g., "DDS.zip", "ETC.zip").
 		 */
-		std::string getTexturePackageName(const char* name);
+		std::string getTexturePackageName(const char* name, const char* ext=".zip");
 
 		/**
 		 * @brief Show or hide FPS in window caption.

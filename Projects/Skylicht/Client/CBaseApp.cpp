@@ -185,32 +185,33 @@ namespace Skylicht
 #endif
 	}
 
-	std::string CBaseApp::getTexturePackageName(const char* name)
+	std::string CBaseApp::getTexturePackageName(const char* name, const char* ext)
 	{
 		std::string result = name;
 #ifdef __EMSCRIPTEN__
 		IVideoDriver* driver = getVideoDriver();
 		if (driver->queryFeature(EVDF_TEXTURE_COMPRESSED_DXT) == true)
-			result += "DDS.zip";
+			result += "DDS";
 		else
-			result += "ETC.zip";
+			result += "ETC";
 #elif defined(WINDOWS_STORE)
-		result += "DDS.zip";
+		result += "DDS";
 #elif defined(MACOS)
-		result += "DDS.zip";
+		result += "DDS";
 #elif defined(LINUX)
-		result += "DDS.zip";
+		result += "DDS";
 #elif defined(ANDROID)
-		result += "ETC.zip";
+		result += "ETC";
 #elif defined(IOS)
 #if defined(USE_ETC_TEXTURE)
-		result += "ETC.zip";
+		result += "ETC";
 #else
-		result += "PVR.zip";
+		result += "PVR";
 #endif
 #else
-		result += "DDS.zip";
+		result += "DDS";
 #endif
+		result += ext;
 		return result;
 	}
 
