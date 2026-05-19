@@ -41,7 +41,7 @@ extern "C" void application_setFPS(int fps);
 
 #ifdef ANDROID
 extern "C" void nativeInterface_openURL(const char* url);
-extern "C" int nativeInterface_applicationIsNetworkAvailable();
+extern "C" int nativeInterface_isNetworkAvailable();
 #elif defined(IOS) || defined(MACOS)
 extern "C" void application_openURL(const char* url);
 extern "C" bool application_isNetworkAvailable();
@@ -278,7 +278,7 @@ namespace Skylicht
 	bool CBaseApp::isNetworkAvailable()
 	{
 #ifdef ANDROID
-		return nativeInterface_applicationIsNetworkAvailable() == 1;
+		return nativeInterface_isNetworkAvailable() == 1;
 #elif defined(IOS)
 		return application_isNetworkAvailable();
 #else

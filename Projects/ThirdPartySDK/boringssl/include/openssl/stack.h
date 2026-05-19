@@ -47,6 +47,8 @@ extern "C" {
 // are |type| *. This macro makes the |sk_name_*| functions available.
 //
 // It is not necessary to use |DECLARE_STACK_OF| in files which use this macro.
+//
+// Must be used from the global namespace.
 #define DEFINE_NAMED_STACK_OF(name, type)                    \
   BORINGSSL_DEFINE_STACK_OF_IMPL(name, type *, const type *) \
   BORINGSSL_DEFINE_STACK_TRAITS(name, type, false)
@@ -55,15 +57,31 @@ extern "C" {
 // |type| *. This macro makes the |sk_type_*| functions available.
 //
 // It is not necessary to use |DECLARE_STACK_OF| in files which use this macro.
+//
+// Must be used from the global namespace.
 #define DEFINE_STACK_OF(type) DEFINE_NAMED_STACK_OF(type, type)
 
 // DEFINE_CONST_STACK_OF defines |STACK_OF(type)| to be a stack whose elements
 // are const |type| *. This macro makes the |sk_type_*| functions available.
 //
 // It is not necessary to use |DECLARE_STACK_OF| in files which use this macro.
+//
+// Must be used from the global namespace.
 #define DEFINE_CONST_STACK_OF(type)                                \
   BORINGSSL_DEFINE_STACK_OF_IMPL(type, const type *, const type *) \
   BORINGSSL_DEFINE_STACK_TRAITS(type, const type, true)
+
+// DEFINE_NAMESPACED_STACK_OF is same as |DEFINE_STACK_OF| but to be used for
+// internal stacks from within the bssl namespace.
+//
+// Such stacks then can only be accessed using |STACK_OF| if in the |bssl|
+// namespace or if the |bssl| namespace has been imported with a
+// using-directive.
+#define DEFINE_NAMESPACED_STACK_OF(type)                     \
+  BORINGSSL_DEFINE_STACK_OF_IMPL(type, type *, const type *) \
+  BSSL_NAMESPACE_END                                         \
+  BORINGSSL_DEFINE_STACK_TRAITS(type, type, false)           \
+  BSSL_NAMESPACE_BEGIN
 
 
 // Using stacks.
@@ -185,6 +203,12 @@ STACK_OF(SAMPLE) *sk_SAMPLE_dup(const STACK_OF(SAMPLE) *sk);
 // already sorted stack is a no-op.
 void sk_SAMPLE_sort(STACK_OF(SAMPLE) *sk);
 
+// sk_SAMPLE_sort_and_dedup sorts the elements of |sk| based on the comparison
+// function and removes duplicates. If |free_func| is not NULL, it is called on
+// every removed element.
+void sk_SAMPLE_sort_and_dedup(STACK_OF(SAMPLE) *sk,
+                              sk_SAMPLE_free_func free_func);
+
 // sk_SAMPLE_is_sorted returns one if |sk| is known to be sorted and zero
 // otherwise.
 int sk_SAMPLE_is_sorted(const STACK_OF(SAMPLE) *sk);
@@ -278,6 +302,9 @@ OPENSSL_EXPORT void *OPENSSL_sk_pop(OPENSSL_STACK *sk);
 OPENSSL_EXPORT OPENSSL_STACK *OPENSSL_sk_dup(const OPENSSL_STACK *sk);
 OPENSSL_EXPORT void OPENSSL_sk_sort(OPENSSL_STACK *sk,
                                     OPENSSL_sk_call_cmp_func call_cmp_func);
+OPENSSL_EXPORT void OPENSSL_sk_sort_and_dedup(
+    OPENSSL_STACK *sk, OPENSSL_sk_call_cmp_func call_cmp_func,
+    OPENSSL_sk_call_free_func call_free_func, OPENSSL_sk_free_func free_func);
 OPENSSL_EXPORT int OPENSSL_sk_is_sorted(const OPENSSL_STACK *sk);
 OPENSSL_EXPORT OPENSSL_sk_cmp_func
 OPENSSL_sk_set_cmp_func(OPENSSL_STACK *sk, OPENSSL_sk_cmp_func comp);
@@ -485,6 +512,13 @@ BSSL_NAMESPACE_END
     OPENSSL_sk_sort((OPENSSL_STACK *)sk, sk_##name##_call_cmp_func);           \
   }                                                                            \
                                                                                \
+  OPENSSL_INLINE void sk_##name##_sort_and_dedup(                              \
+      STACK_OF(name) *sk, sk_##name##_free_func free_func) {                   \
+    OPENSSL_sk_sort_and_dedup((OPENSSL_STACK *)sk, sk_##name##_call_cmp_func,  \
+                              sk_##name##_call_free_func,                      \
+                              (OPENSSL_sk_free_func)free_func);                \
+  }                                                                            \
+                                                                               \
   OPENSSL_INLINE int sk_##name##_is_sorted(const STACK_OF(name) *sk) {         \
     return OPENSSL_sk_is_sorted((const OPENSSL_STACK *)sk);                    \
   }                                                                            \
@@ -521,6 +555,7 @@ DEFINE_NAMED_STACK_OF(OPENSSL_STRING, char)
 #endif
 
 #if !defined(BORINGSSL_NO_CXX)
+// Work around consumers including our headers under extern "C".
 extern "C++" {
 
 #include <type_traits>
@@ -608,6 +643,20 @@ PushToStack(Stack *sk,
   // OPENSSL_sk_push takes ownership on success.
   elem.release();
   return true;
+}
+
+// Define begin() and end() for stack types so C++ range for loops work.
+// This pair of functions is for DEFINE_NAMESPACED_STACK_OF stacks, unlike
+// the other pair, which is for DEFINE_STACK_OF ones.
+template <typename Stack>
+inline bssl::internal::StackIterator<Stack> begin(const Stack *sk) {
+  return bssl::internal::StackIterator<Stack>(sk, 0);
+}
+
+template <typename Stack>
+inline bssl::internal::StackIterator<Stack> end(const Stack *sk) {
+  return bssl::internal::StackIterator<Stack>(
+      sk, OPENSSL_sk_num(reinterpret_cast<const OPENSSL_STACK *>(sk)));
 }
 
 BSSL_NAMESPACE_END

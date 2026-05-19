@@ -21,6 +21,19 @@ set(SKYLICHT_ENGINE_PROJECT_DIR ${SKYLICHT_ENGINE_SOURCE_DIR}/Projects)
 
 # architecture: x64, x86
 set(ARCHITECTURE ${CMAKE_CXX_COMPILER_ARCHITECTURE_ID})
+if(NOT ARCHITECTURE)
+    if(CMAKE_SYSTEM_PROCESSOR MATCHES "amd64.*|x86_64.*|AMD64.*")
+        set(ARCHITECTURE "x64")
+    elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "i686.*|i386.*|x86.*")
+        set(ARCHITECTURE "x86")
+    elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm64.*|aarch64.*")
+        set(ARCHITECTURE "arm64")
+    elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm.*")
+        set(ARCHITECTURE "arm")
+    else()
+        set(ARCHITECTURE ${CMAKE_SYSTEM_PROCESSOR})
+    endif()
+endif()
 
 # output
 if (CMAKE_SYSTEM_NAME STREQUAL Android)
@@ -113,6 +126,7 @@ if (BUILD_SKYLICHT_NETWORK)
 	# curl on/off
 	if (CMAKE_SYSTEM_NAME STREQUAL Emscripten)
 		set(BUILD_CURL OFF)
+		set(BUILD_OPENSSL OFF)
 	else()
 		set(BUILD_CURL ON)
 		add_definitions(-DHAVE_CURL)
@@ -121,9 +135,9 @@ if (BUILD_SKYLICHT_NETWORK)
 		add_definitions(-DBUILDING_LIBCURL)
 		
 		# enable openssl for https
-		if (MSVC)
-			set(BUILD_OPENSSL ON)
-		elseif (CMAKE_SYSTEM_NAME STREQUAL Android)
+		if (CYGWIN OR MINGW)
+			set(BUILD_OPENSSL OFF)
+		else()
 			set(BUILD_OPENSSL ON)
 		endif()
 		

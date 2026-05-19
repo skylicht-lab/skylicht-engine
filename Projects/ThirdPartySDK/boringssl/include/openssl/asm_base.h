@@ -40,14 +40,16 @@
 #if defined(__ASSEMBLER__)
 
 #if defined(BORINGSSL_PREFIX)
-#include <boringssl_prefix_symbols_asm.h>
-#endif
+#include <openssl/prefix_symbols_internal_S.h>
+#endif  // BORINGSSL_PREFIX
 
 #if defined(__ELF__)
 // Every ELF object file, even empty ones, should disable executable stacks. See
 // https://www.airs.com/blog/archives/518.
+// clang-format off
 .pushsection .note.GNU-stack, "", %progbits
 .popsection
+// clang-format on
 #endif
 
 #if defined(__CET__) && defined(OPENSSL_X86_64)
@@ -56,7 +58,7 @@
 // https://lpc.events/event/7/contributions/729/attachments/496/903/CET-LPC-2020.pdf
 //
 // cet.h defines _CET_ENDBR which is used to mark function entry points for IBT.
-// and adds the assembly marker. The value of _CET_ENDBR is made dependant on if
+// and adds the assembly marker. The value of _CET_ENDBR is made dependent on if
 // '-fcf-protection' is passed to the compiler. _CET_ENDBR is only required when
 // the function is the target of an indirect jump, but BoringSSL chooses to mark
 // all assembly entry points because it is easier, and allows BoringSSL's ABI
@@ -186,7 +188,9 @@
 #define AARCH64_VALIDATE_LINK_REGISTER
 #endif
 
-#if GNU_PROPERTY_AARCH64_POINTER_AUTH != 0 || GNU_PROPERTY_AARCH64_BTI != 0
+#if defined(__ELF__) && \
+    (GNU_PROPERTY_AARCH64_POINTER_AUTH != 0 || GNU_PROPERTY_AARCH64_BTI != 0)
+// clang-format off
 .pushsection .note.gnu.property, "a";
 .balign 8;
 .long 4;
@@ -198,6 +202,7 @@
 .long (GNU_PROPERTY_AARCH64_POINTER_AUTH | GNU_PROPERTY_AARCH64_BTI);
 .long 0;
 .popsection;
+// clang-format on
 #endif
 #endif  // ARM || AARCH64
 

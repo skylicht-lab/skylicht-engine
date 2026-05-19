@@ -22,6 +22,9 @@ extern "C" {
 #endif
 
 
+// SLH-DSA.
+
+
 // SLHDSA_SHA2_128S_PUBLIC_KEY_BYTES is the number of bytes in an
 // SLH-DSA-SHA2-128s public key.
 #define SLHDSA_SHA2_128S_PUBLIC_KEY_BYTES 32
@@ -34,17 +37,41 @@ extern "C" {
 // SLH-DSA-SHA2-128s signature.
 #define SLHDSA_SHA2_128S_SIGNATURE_BYTES 7856
 
+// SLHDSA_SHAKE_256F_PUBLIC_KEY_BYTES is the number of bytes in an
+// SLH-DSA-SHAKE-256f public key.
+#define SLHDSA_SHAKE_256F_PUBLIC_KEY_BYTES 64
+
+// SLHDSA_SHAKE_256F_PRIVATE_KEY_BYTES is the number of bytes in an
+// SLH-DSA-SHAKE-256f private key.
+#define SLHDSA_SHAKE_256F_PRIVATE_KEY_BYTES 128
+
+// SLHDSA_SHAKE_256F_SIGNATURE_BYTES is the number of bytes in an
+// SLH-DSA-SHAKE-256f signature.
+#define SLHDSA_SHAKE_256F_SIGNATURE_BYTES 49856
+
 // SLHDSA_SHA2_128S_generate_key generates a SLH-DSA-SHA2-128s key pair and
 // writes the result to |out_public_key| and |out_private_key|.
 OPENSSL_EXPORT void SLHDSA_SHA2_128S_generate_key(
     uint8_t out_public_key[SLHDSA_SHA2_128S_PUBLIC_KEY_BYTES],
     uint8_t out_private_key[SLHDSA_SHA2_128S_PRIVATE_KEY_BYTES]);
 
+// SLHDSA_SHAKE_256F_generate_key generates a SLH-DSA-SHAKE-256f key pair and
+// writes the result to |out_public_key| and |out_private_key|.
+OPENSSL_EXPORT void SLHDSA_SHAKE_256F_generate_key(
+    uint8_t out_public_key[SLHDSA_SHAKE_256F_PUBLIC_KEY_BYTES],
+    uint8_t out_private_key[SLHDSA_SHAKE_256F_PRIVATE_KEY_BYTES]);
+
 // SLHDSA_SHA2_128S_public_from_private writes the public key corresponding to
 // |private_key| to |out_public_key|.
 OPENSSL_EXPORT void SLHDSA_SHA2_128S_public_from_private(
     uint8_t out_public_key[SLHDSA_SHA2_128S_PUBLIC_KEY_BYTES],
     const uint8_t private_key[SLHDSA_SHA2_128S_PRIVATE_KEY_BYTES]);
+
+// SLHDSA_SHAKE_256F_public_from_private writes the public key corresponding to
+// |private_key| to |out_public_key|.
+OPENSSL_EXPORT void SLHDSA_SHAKE_256F_public_from_private(
+    uint8_t out_public_key[SLHDSA_SHAKE_256F_PUBLIC_KEY_BYTES],
+    const uint8_t private_key[SLHDSA_SHAKE_256F_PRIVATE_KEY_BYTES]);
 
 // SLHDSA_SHA2_128S_sign slowly generates a SLH-DSA-SHA2-128s signature of |msg|
 // using |private_key| and writes it to |out_signature|. The |context| argument
@@ -60,6 +87,20 @@ OPENSSL_EXPORT int SLHDSA_SHA2_128S_sign(
     const uint8_t *msg, size_t msg_len, const uint8_t *context,
     size_t context_len);
 
+// SLHDSA_SHAKE_256F_sign slowly generates a SLH-DSA-SHAKE-256f signature of
+// |msg| using |private_key| and writes it to |out_signature|. The |context|
+// argument is also signed over and can be used to include implicit contextual
+// information that isn't included in |msg|. The same value of |context| must be
+// presented to |SLHDSA_SHAKE_256F_verify| in order for the generated signature
+// to be considered valid. |context| and |context_len| may be |NULL| and 0 to
+// use an empty context (this is common). It returns 1 on success and 0 if
+// |context_len| is larger than 255.
+OPENSSL_EXPORT int SLHDSA_SHAKE_256F_sign(
+    uint8_t out_signature[SLHDSA_SHAKE_256F_SIGNATURE_BYTES],
+    const uint8_t private_key[SLHDSA_SHAKE_256F_PRIVATE_KEY_BYTES],
+    const uint8_t *msg, size_t msg_len, const uint8_t *context,
+    size_t context_len);
+
 // SLHDSA_SHA2_128S_verify verifies that |signature| is a valid
 // SLH-DSA-SHA2-128s signature of |msg| by |public_key|. The value of |context|
 // must equal the value that was passed to |SLHDSA_SHA2_128S_sign| when the
@@ -71,6 +112,17 @@ OPENSSL_EXPORT int SLHDSA_SHA2_128S_verify(
     const uint8_t *msg, size_t msg_len, const uint8_t *context,
     size_t context_len);
 
+// SLHDSA_SHAKE_256F_verify verifies that |signature| is a valid
+// SLH-DSA-SHAKE-256f signature of |msg| by |public_key|. The value of |context|
+// must equal the value that was passed to |SLHDSA_SHAKE_256F_sign| when the
+// signature was generated. It returns 1 if the signature is valid and 0
+// otherwise.
+OPENSSL_EXPORT int SLHDSA_SHAKE_256F_verify(
+    const uint8_t *signature, size_t signature_len,
+    const uint8_t public_key[SLHDSA_SHAKE_256F_PUBLIC_KEY_BYTES],
+    const uint8_t *msg, size_t msg_len, const uint8_t *context,
+    size_t context_len);
+
 
 // Prehashed SLH-DSA-SHA2-128s.
 //
@@ -79,10 +131,10 @@ OPENSSL_EXPORT int SLHDSA_SHA2_128S_verify(
 // wish. These functions should only be used when:
 //
 //   a) Compatibility with an external system that uses prehashed messages is
-//   required. (The general signature of a hash is not compatible with a
-//   "prehash" signature of the same hash.)
+//      required. (The general signature of a hash is not compatible with a
+//      "prehash" signature of the same hash.)
 //   b) A single private key is used to sign both prehashed and raw messages,
-//   and there's no other way to prevent ambiguity.
+//      and there's no other way to prevent ambiguity.
 
 // SLHDSA_SHA2_128S_prehash_sign slowly generates a SLH-DSA-SHA2-128s signature
 // of the prehashed |hashed_msg| using |private_key| and writes it to

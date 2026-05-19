@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#if !defined(OPENSSL_HEADER_BSSL_PKI_OCSP_H_)  && defined(__cplusplus)
+#ifndef OPENSSL_HEADER_BSSL_PKI_OCSP_H_
 #define OPENSSL_HEADER_BSSL_PKI_OCSP_H_
 
 #include <openssl/base.h>   // IWYU pragma: export
@@ -120,4 +120,4 @@ struct OPENSSL_EXPORT OCSPVerifyResult {
 
 BSSL_NAMESPACE_END
 
-#endif  // OPENSSL_HEADER_BSSL_PKI_OCSP_H_ && __cplusplus
+#endif  // OPENSSL_HEADER_BSSL_PKI_OCSP_H_

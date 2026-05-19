@@ -7,7 +7,22 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Restore LFS cache
+        uses: actions/cache@v3
+        id: lfs-windows-cache
+        with:
+          path: .git/lfs
+          key: lfs-windows-cache-v1
+      - name: Git LFS Pull
+        run: git lfs pull
+      - name: Restore EMSDK cache
+        uses: actions/cache@v3
+        id: emsdk-cache
+        with:
+          path: emsdk
+          key: emsdk-cache-v1
       - name: Install Dependencies
+        if: steps.emsdk-cache.outputs.cache-hit != 'true'
         shell: cmd
         run: |
           git clone https://github.com/emscripten-core/emsdk.git
@@ -69,6 +84,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Restore LFS cache
+        uses: actions/cache@v3
+        id: lfs-linux-cache
+        with:
+          path: .git/lfs
+          key: lfs-linux-cache-v1
+      - name: Git LFS Pull
+        run: git lfs pull
       - name: Install Dependencies
         run: |
           sudo apt-get update -y -qq
@@ -102,6 +125,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Restore LFS cache
+        uses: actions/cache@v3
+        id: lfs-linux-cache
+        with:
+          path: .git/lfs
+          key: lfs-linux-cache-v1
+      - name: Git LFS Pull
+        run: git lfs pull
       - name: Install Dependencies
         run: |
           sudo apt-get update -y -qq
@@ -149,7 +180,7 @@ jobs:
           cd Assets
           python BuildAssetBundles.py
           cd ..
-          cmake -S . -B ./PrjMac -G Xcode -DCMAKE_OSX_ARCHITECTURES=x86_64
+          cmake -S . -B ./PrjMac -G Xcode -DCMAKE_OSX_ARCHITECTURES=arm64
           cd PrjMac
           xcodebuild -configuration Release
           cd ..
@@ -162,7 +193,7 @@ jobs:
       - name: Package
         run: |
           mkdir Build
-          ls -l Bin/x86_64/Release
+          ls -l Bin/arm64/Release
           version=$(cat "Version.txt")
           file_version=${version//./_}
           output=SkylichtDemo_${file_version}_MacOS.zip
@@ -216,6 +247,14 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Restore LFS cache
+        uses: actions/cache@v3
+        id: lfs-windows-cache
+        with:
+          path: .git/lfs
+          key: lfs-windows-cache-v1
+      - name: Git LFS Pull
+        run: git lfs pull
       - name: Build
         shell: cmd
         run: |
@@ -238,6 +277,14 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Restore LFS cache
+        uses: actions/cache@v3
+        id: lfs-windows-cache
+        with:
+          path: .git/lfs
+          key: lfs-windows-cache-v1
+      - name: Git LFS Pull
+        run: git lfs pull
       - name: Build
         shell: cmd
         run: |
@@ -260,6 +307,14 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Restore LFS cache
+        uses: actions/cache@v3
+        id: lfs-windows-cache
+        with:
+          path: .git/lfs
+          key: lfs-windows-cache-v1
+      - name: Git LFS Pull
+        run: git lfs pull
       - name: Build Bundles
         shell: cmd
         run: |

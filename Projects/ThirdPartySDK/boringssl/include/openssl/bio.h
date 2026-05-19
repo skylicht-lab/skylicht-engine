@@ -42,10 +42,18 @@ OPENSSL_EXPORT BIO *BIO_new(const BIO_METHOD *method);
 
 // BIO_free decrements the reference count of |bio|. If the reference count
 // drops to zero, it calls the destroy callback, if present, on the method and
-// frees |bio| itself. It then repeats that for the next BIO in the chain, if
-// any.
+// frees |bio| itself. If |bio| is part of a chain (see |BIO_push|), this will
+// also free the next |BIO| in the chain, and so on.
 //
-// It returns one on success or zero otherwise.
+// It returns one if |bio| was NULL or freed. It returns zero if |bio| was
+// shared and some other owner still owns a reference count to it.
+//
+// WARNING: Do not use the return value. Returning zero is not a sign of an
+// error, nor an indication to retry the operation. |BIO| is a reference-counted
+// type. A given |BIO| object may be shared between multiple parts of an
+// application. To correctly track the reference count, without leaks or
+// use-after-free, each part of the application must release only the reference
+// counts it owns.
 OPENSSL_EXPORT int BIO_free(BIO *bio);
 
 // BIO_vfree performs the same actions as |BIO_free|, but has a void return
@@ -110,8 +118,12 @@ OPENSSL_EXPORT char *BIO_ptr_ctrl(BIO *bp, int cmd, long larg);
 OPENSSL_EXPORT long BIO_int_ctrl(BIO *bp, int cmd, long larg, int iarg);
 
 // BIO_reset resets |bio| to its initial state, the precise meaning of which
-// depends on the concrete type of |bio|. It returns one on success and zero
-// otherwise.
+// depends on the concrete type of |bio|. It normally returns one on success and
+// <= 0 otherwise. However, for file and fd BIOs, it returns zero on success and
+// a negative number on error.
+//
+// WARNING: This function's return value conventions differs from most functions
+// in this library.
 OPENSSL_EXPORT int BIO_reset(BIO *bio);
 
 // BIO_eof returns non-zero when |bio| has reached end-of-file. The precise
@@ -119,10 +131,13 @@ OPENSSL_EXPORT int BIO_reset(BIO *bio);
 // case of BIO_pair this always returns non-zero.
 OPENSSL_EXPORT int BIO_eof(BIO *bio);
 
-// BIO_set_flags ORs |flags| with |bio->flags|.
+// BIO_set_flags ORs |flags| with |bio->flags|. Unless otherwise documented,
+// flags are private to either BoringSSL or the custom |BIO_METHOD|.
 OPENSSL_EXPORT void BIO_set_flags(BIO *bio, int flags);
 
 // BIO_clear_flags ANDs |bio->flags| with the bitwise-complement of |flags|.
+// Unless otherwise documented, flags are private to either BoringSSL or the
+// custom |BIO_METHOD|.
 OPENSSL_EXPORT void BIO_clear_flags(BIO *bio, int flags);
 
 // BIO_test_flags returns |bio->flags| AND |flags|.
@@ -238,13 +253,14 @@ OPENSSL_EXPORT BIO *BIO_pop(BIO *bio);
 // no such BIO.
 OPENSSL_EXPORT BIO *BIO_next(BIO *bio);
 
-// BIO_free_all calls |BIO_free|.
-//
-// TODO(fork): update callers and remove.
-OPENSSL_EXPORT void BIO_free_all(BIO *bio);
-
 // BIO_find_type walks a chain of BIOs and returns the first that matches
 // |type|, which is one of the |BIO_TYPE_*| values.
+//
+// If |type & 0xff| is non-zero, i.e. |type| is a complete type and contains an
+// "index" component, the function looks for an exact match. If |type & 0xff| is
+// zero, i.e. |type| just specifies |BIO_TYPE_DESCRIPTOR|, |BIO_TYPE_FILTER|,
+// and |BIO_TYPE_SOURCE_SINK| bits, the function looks for any BIO whose type
+// contains at least one of those bits.
 OPENSSL_EXPORT BIO *BIO_find_type(BIO *bio, int type);
 
 // BIO_copy_next_retry sets the retry flags and |retry_reason| of |bio| from
@@ -493,8 +509,8 @@ OPENSSL_EXPORT int BIO_rw_filename(BIO *bio, const char *filename);
 // BIO_tell returns the file offset of |bio|, or a negative number on error or
 // if |bio| does not support the operation.
 //
-// TODO(https://crbug.com/boringssl/465): On platforms where |long| is 32-bit,
-// this function cannot report 64-bit offsets.
+// TODO(crbug.com/42290329): On platforms where |long| is 32-bit, this function
+// cannot report 64-bit offsets.
 OPENSSL_EXPORT long BIO_tell(BIO *bio);
 
 // BIO_seek sets the file offset of |bio| to |offset|. It returns a non-negative
@@ -505,8 +521,8 @@ OPENSSL_EXPORT long BIO_tell(BIO *bio);
 // WARNING: This function's return value conventions differs from most functions
 // in this library.
 //
-// TODO(https://crbug.com/boringssl/465): On platforms where |long| is 32-bit,
-// this function cannot handle 64-bit offsets.
+// TODO(crbug.com/42290329): On platforms where |long| is 32-bit, this function
+// cannot handle 64-bit offsets.
 OPENSSL_EXPORT long BIO_seek(BIO *bio, long offset);
 
 
@@ -630,7 +646,8 @@ OPENSSL_EXPORT int BIO_shutdown_wr(BIO *bio);
 // Consumers can create custom |BIO|s by filling in a |BIO_METHOD| and using
 // low-level control functions to set state.
 
-// BIO_get_new_index returns a new "type" value for a custom |BIO|.
+// BIO_get_new_index returns a new "type" value for a custom |BIO|, or -1 on
+// error.
 OPENSSL_EXPORT int BIO_get_new_index(void);
 
 // BIO_meth_new returns a newly-allocated |BIO_METHOD| or NULL on allocation
@@ -777,6 +794,10 @@ OPENSSL_EXPORT void *BIO_get_ex_data(const BIO *bio, int idx);
 
 
 // Deprecated functions.
+
+// BIO_free_all calls |BIO_free|. Code that targets BoringSSL does not need to
+// call a separate free function for |BIO|s that are part of a chain.
+OPENSSL_EXPORT void BIO_free_all(BIO *bio);
 
 typedef BIO_info_cb bio_info_cb;
 

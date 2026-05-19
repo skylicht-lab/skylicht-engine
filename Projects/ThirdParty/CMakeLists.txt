@@ -146,10 +146,20 @@ set_target_properties(ThirdParty PROPERTIES VERSION ${SKYLICHT_VERSION})
 
 # OpenSSL
 if (BUILD_OPENSSL)
+	string(TOLOWER "${ARCHITECTURE}" OS_ARCH)
+
 	if (MSVC)
-		set(openssl_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/lib/Windows/${ARCHITECTURE}")
+		set(openssl_lib_path_debug "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/lib/windows/debug/${OS_ARCH}")
+		set(openssl_lib_path_release "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/lib/windows/release/${OS_ARCH}")
 	elseif (CMAKE_SYSTEM_NAME STREQUAL Android)
-		set(openssl_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/lib/Android/${ANDROID_ABI}")
+		set(openssl_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/lib/android/${ANDROID_ABI}")
+	elseif (CMAKE_SYSTEM_NAME STREQUAL iOS)
+		string(TOLOWER "${PLATFORM}" OS_PLATFORM)
+		set(openssl_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/lib/ios/${OS_PLATFORM}")
+	elseif (CMAKE_SYSTEM_NAME STREQUAL Darwin)
+		set(openssl_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/lib/macos/${OS_ARCH}")
+	elseif (CMAKE_SYSTEM_NAME STREQUAL Linux)
+		set(openssl_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/lib/linux/${OS_ARCH}")
 	else()
 		message(FATAL_ERROR "Please config the SSL library folder.")
 	endif()	
@@ -157,16 +167,30 @@ if (BUILD_OPENSSL)
 	set (SSL_SCOPE PUBLIC)
 
 	if (BUILD_SHARED_LIBS)
-	set (SSL_SCOPE PRIVATE)
+		set (SSL_SCOPE PRIVATE)
 	endif()	
 
 	if (MSVC)
-	target_link_directories(ThirdParty ${SSL_SCOPE} ${openssl_lib_path})
-	target_link_libraries(ThirdParty ${SSL_SCOPE} crypto.lib ssl.lib Crypt32.lib)
+		target_link_libraries(ThirdParty ${SSL_SCOPE}
+			debug "${openssl_lib_path_debug}/ssl.lib"
+			debug "${openssl_lib_path_debug}/crypto.lib"
+			debug "${openssl_lib_path_debug}/pki.lib"
+			optimized "${openssl_lib_path_release}/ssl.lib"
+			optimized "${openssl_lib_path_release}/crypto.lib"
+			optimized "${openssl_lib_path_release}/pki.lib"
+			Crypt32.lib
+		)
+	elseif (USE_SYSTEM_OPENSSL)
+		target_link_libraries(ThirdParty ${SSL_SCOPE}
+			OpenSSL::SSL
+			OpenSSL::Crypto
+		)
 	else()
-	target_link_libraries(ThirdParty ${SSL_SCOPE}
-		${openssl_lib_path}/libcrypto.a 
-		${openssl_lib_path}/libssl.a)
+		target_link_libraries(ThirdParty ${SSL_SCOPE}
+			${openssl_lib_path}/libssl.a
+			${openssl_lib_path}/libcrypto.a
+			${openssl_lib_path}/libpki.a
+		)
 	endif()
 endif()
 
