@@ -41,6 +41,13 @@ if (BUILD_MACOS)
 	source_group("Source" FILES "${irrlicht_mac_source}")
 endif()
 
+if (BUILD_IOS)
+	# Add .mm source
+	file(GLOB irrlicht_ios_source 
+		./Source/iOS/**.mm)
+	source_group("Source" FILES "${irrlicht_ios_source}")
+endif()
+
 if(BUILD_MACOS OR BUILD_IOS)
 	include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/Angle/include)
 	include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/Irrlicht/Source/Angle)
@@ -58,6 +65,7 @@ endif()
 add_library(Irrlicht ${ENGINE_SHARED_OR_STATIC_LIB}
 	${irrlicht_source}
 	${irrlicht_mac_source}
+	${irrlicht_ios_source}
 	${irrlicht_angle_source}
 	${irrlicht_include})
 
@@ -92,6 +100,12 @@ endif()
 if (BUILD_MACOS)
 	target_link_libraries(Irrlicht "-framework CoreServices")
 	target_link_libraries(Irrlicht "-framework Cocoa")
+endif()
+
+# iOS frameworks
+if (BUILD_IOS)
+	target_link_libraries(Irrlicht "-framework UIKit")
+	target_link_libraries(Irrlicht "-framework Foundation")
 endif()
 
 # Android

@@ -30,6 +30,11 @@ extern void OSXCopyToClipboard(const char* text);
 extern char* OSXCopyFromClipboard();
 #endif
 
+#ifdef _IRR_IOS_PLATFORM_
+extern void iOSCopyToClipboard(const char* text);
+extern char* iOSCopyFromClipboard();
+#endif
+
 #ifdef _IRR_COMPILE_WITH_SDL_DEVICE_
 #include "CIrrDeviceSDL2.h"
 #endif
@@ -92,9 +97,10 @@ namespace irr
 		GlobalUnlock(clipbuffer);
 		SetClipboardData(CF_TEXT, clipbuffer);
 		CloseClipboard();
-#elif defined(_IRR_COMPILE_WITH_OSX_DEVICE_)		
+#elif defined(_IRR_COMPILE_WITH_OSX_DEVICE_)
 		OSXCopyToClipboard(text);
-		return 0;
+#elif defined(_IRR_IOS_PLATFORM_)
+		iOSCopyToClipboard(text);
 #elif defined(_IRR_COMPILE_WITH_X11_DEVICE_)
 		if (IrrDeviceLinux)
 			IrrDeviceLinux->copyToClipboard(text);
@@ -127,6 +133,8 @@ namespace irr
 
 #elif defined(_IRR_COMPILE_WITH_OSX_DEVICE_)
 		return OSXCopyFromClipboard();
+#elif defined(_IRR_IOS_PLATFORM_)
+		return iOSCopyFromClipboard();
 #elif defined(_IRR_COMPILE_WITH_X11_DEVICE_)
 		if (IrrDeviceLinux)
 			return IrrDeviceLinux->getTextFromClipboard();

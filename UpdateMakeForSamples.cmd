@@ -28,6 +28,7 @@ python Scripts\update_cmake.py SampleParticlesMagicSkill Samples\ParticlesMagicS
 python Scripts\update_cmake.py SampleParticlesVortex Samples\ParticlesVortex
 python Scripts\update_cmake.py SamplePBR Samples\PBR
 python Scripts\update_cmake.py SamplePhysics Samples\Physics
+python Scripts\update_cmake.py SamplePurchase Samples\Purchase
 python Scripts\update_cmake.py SampleShader Samples\Shader
 python Scripts\update_cmake.py SampleSkinnedMesh Samples\SkinnedMesh
 python Scripts\update_cmake.py SampleSkinnedMeshInstancing Samples\SkinnedMeshInstancing
