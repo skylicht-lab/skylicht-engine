@@ -32,7 +32,6 @@ namespace Skylicht
 	{
 		/**
 		 * @class CParticleCPUBufferSystem
-		 * @ingroup ParticleSystem
 		 * @brief Internal system that updates the CPU mesh buffer with current particle data for non-instanced rendering.
 		 * @details Invoked by CGroup to fill the CParticleCPUBuffer with calculated quad vertices.
 		 */

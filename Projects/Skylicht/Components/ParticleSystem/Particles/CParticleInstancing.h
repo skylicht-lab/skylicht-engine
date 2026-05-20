@@ -30,7 +30,6 @@ namespace Skylicht
 	{
 		/**
 		 * @struct SParticleInstance
-		 * @ingroup ParticleSystem
 		 * @brief GPU instance data for hardware-accelerated particles.
 		 * @details This structure is passed to the GPU for each particle when using CQuadRenderer or CMeshParticleRenderer.
 		 */

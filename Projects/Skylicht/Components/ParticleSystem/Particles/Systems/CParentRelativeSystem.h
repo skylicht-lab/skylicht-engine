@@ -32,7 +32,6 @@ namespace Skylicht
 	{
 		/**
 		 * @class CParentRelativeSystem
-		 * @ingroup ParticleSystem
 		 * @brief System used by CSubGroup to synchronize child particles with their parent particles.
 		 * @details Applies parent movement and optionally copies age/life/color parameters.
 		 */

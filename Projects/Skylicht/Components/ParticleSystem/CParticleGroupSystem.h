@@ -41,7 +41,6 @@ namespace Skylicht
 	{
 		/**
 		 * @class CParticleGroupSystem
-		 * @ingroup ParticleSystem
 		 * @brief ECS system responsible for updating particle positions and calculating bounding boxes.
 		 * @details This system processes entities with CParticleBufferData and updates the particle groups.
 		 * It also aggregates individual group bounding boxes into the entity's CCullingBBoxData.

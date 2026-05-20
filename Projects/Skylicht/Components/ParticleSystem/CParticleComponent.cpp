@@ -615,6 +615,9 @@ namespace Skylicht
 								newGroup->loadSerializable(data);
 								delete data;
 								loadGroup(newGroup, reader);
+
+								// loadGroup will read until end of group, so we need to decrease pos to avoid skip next group
+								pos--;
 							}
 						}
 					}

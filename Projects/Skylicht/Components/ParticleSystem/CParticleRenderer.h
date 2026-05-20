@@ -41,7 +41,6 @@ namespace Skylicht
 	{
 		/**
 		 * @class CParticleRenderer
-		 * @ingroup ParticleSystem
 		 * @brief ECS render system for particles.
 		 * @details Handles the actual drawing of particles using the renderers assigned to each group.
 		 * Supports standard, transparent, and emission passes.

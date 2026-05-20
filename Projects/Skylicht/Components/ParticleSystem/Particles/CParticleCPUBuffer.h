@@ -30,7 +30,6 @@ namespace Skylicht
 	{
 		/**
 		 * @class CParticleCPUBuffer
-		 * @ingroup ParticleSystem
 		 * @brief Internal class for managing particle mesh buffers on the CPU.
 		 * @details Holds a standard mesh buffer that is manually filled by CCPURenderer every frame.
 		 */
