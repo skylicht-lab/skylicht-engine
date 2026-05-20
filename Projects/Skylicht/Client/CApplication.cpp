@@ -71,6 +71,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "TextField/CIOSTextField.h"
 #include "TextField/CAndroidTextField.h"
 #include "Clipboard/CAndroidClipboard.h"
+#include "Clipboard/CDesktopClipboard.h"
 #include "StorePurchase/CPlayStoreController.h"
 #include "StorePurchase/CAppStoreController.h"
 #include "StorePurchase/CTestStoreController.h"
@@ -204,7 +205,7 @@ namespace Skylicht
 #ifdef BUILD_SKYLICHT_COMPONENTS
 		Particle::CGUIParticle::registerPlugin();
 #endif
-		
+
 #ifdef ANDROID
 		CPlayGamesSignIn::createGetInstance();
 		CAndroidTextField::createGetInstance();
@@ -212,13 +213,14 @@ namespace Skylicht
 		CPlayStoreController::createGetInstance();
 		CAndroidInAppReview::createGetInstance();
 #endif
-		
+
 #ifdef IOS
 		CGameCenterSignIn::createGetInstance();
 		CIOSTextField::createGetInstance();
 		CAppStoreController::createGetInstance();
 		CIOSInAppReview::createGetInstance();
 #endif
+		CDesktopClipboard::createGetInstance();
 		CTestStoreController::createGetInstance();
 	}
 
@@ -231,13 +233,15 @@ namespace Skylicht
 		CAndroidTextField::releaseInstance();
 		CAndroidInAppReview::releaseInstance();
 #endif
-		
+
 #ifdef IOS
 		CGameCenterSignIn::releaseInstance();
 		CIOSTextField::releaseInstance();
 		CAppStoreController::releaseInstance();
 		CIOSInAppReview::releaseInstance();
 #endif
+
+		CDesktopClipboard::releaseInstance();
 		CTestStoreController::releaseInstance();
 	}
 
@@ -251,7 +255,7 @@ namespace Skylicht
 
 		// release skylicht component
 		Skylicht::releaseSkylicht();
-		
+
 		releasePlugin();
 	}
 
