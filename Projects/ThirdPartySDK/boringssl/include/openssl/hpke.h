@@ -85,9 +85,12 @@ OPENSSL_EXPORT size_t EVP_HPKE_KEM_enc_len(const EVP_HPKE_KEM *kem);
 
 // The following constants are KDF identifiers.
 #define EVP_HPKE_HKDF_SHA256 0x0001
+#define EVP_HPKE_HKDF_SHA384 0x0002
 
-// The following functions are KDF algorithms which may be used with HPKE.
+// The following functions are KDF algorithms which may be used with HPKE. If
+// unsure, use |EVP_hpke_hkdf_sha256|.
 OPENSSL_EXPORT const EVP_HPKE_KDF *EVP_hpke_hkdf_sha256(void);
+OPENSSL_EXPORT const EVP_HPKE_KDF *EVP_hpke_hkdf_sha384(void);
 
 // EVP_HPKE_KDF_id returns the HPKE KDF identifier for |kdf|.
 OPENSSL_EXPORT uint16_t EVP_HPKE_KDF_id(const EVP_HPKE_KDF *kdf);
@@ -164,6 +167,13 @@ OPENSSL_EXPORT int EVP_HPKE_KEY_init(EVP_HPKE_KEY *key, const EVP_HPKE_KEM *kem,
 // EVP_HPKE_KEY_generate sets |key| to a newly-generated key using |kem|.
 OPENSSL_EXPORT int EVP_HPKE_KEY_generate(EVP_HPKE_KEY *key,
                                          const EVP_HPKE_KEM *kem);
+
+// EVP_HPKE_KEY_derive deterministically derives a key from |ikm| for use with
+// |kem| and initializes |key| with the result. It returns one on success and
+// zero on error. This corresponds to the DeriveKeyPair operation in RFC 9180.
+OPENSSL_EXPORT int EVP_HPKE_KEY_derive(EVP_HPKE_KEY *key,
+                                       const EVP_HPKE_KEM *kem,
+                                       const uint8_t *ikm, size_t ikm_len);
 
 // EVP_HPKE_KEY_kem returns the HPKE KEM used by |key|.
 OPENSSL_EXPORT const EVP_HPKE_KEM *EVP_HPKE_KEY_kem(const EVP_HPKE_KEY *key);

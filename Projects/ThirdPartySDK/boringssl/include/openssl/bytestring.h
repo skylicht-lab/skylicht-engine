@@ -161,6 +161,20 @@ OPENSSL_EXPORT int CBS_get_u24_length_prefixed(CBS *cbs, CBS *out);
 // one. Otherwise, it returns zero and leaves |cbs| unmodified.
 OPENSSL_EXPORT int CBS_get_until_first(CBS *cbs, CBS *out, uint8_t c);
 
+// CBS_get_until_first_of finds the first byte in |cbs| matching one of the
+// characters in |chars|, which is a NUL-terminated C string. If found, it sets
+// |*out| to the text before the match, advances |cbs| over it, and returns one.
+// Otherwise, it returns zero and leaves |cbs| unmodified.
+OPENSSL_EXPORT int CBS_get_until_first_of(CBS *cbs, CBS *out,
+                                          const char *chars);
+
+// CBS_get_until_first_not_of finds the first byte in |cbs| that does not match
+// any of the characters in |chars|, which is a NUL-terminated C string. If
+// found, it sets |*out| to the text before the match, advances |cbs| over it,
+// and returns one. Otherwise, it returns zero and leaves |cbs| unmodified.
+OPENSSL_EXPORT int CBS_get_until_first_not_of(CBS *cbs, CBS *out,
+                                              const char *chars);
+
 // CBS_get_u64_decimal reads a decimal integer from |cbs| and writes it to
 // |*out|. It stops reading at the end of the string, or the first non-digit
 // character. It returns one on success and zero on error. This function behaves
@@ -175,7 +189,7 @@ OPENSSL_EXPORT int CBS_get_u64_decimal(CBS *cbs, uint64_t *out);
 // compiler, the following functions act on tag-length-value elements in the
 // serialization itself. Thus the caller is responsible for looping over a
 // SEQUENCE, branching on CHOICEs or OPTIONAL fields, checking for trailing
-// data, and handling explict vs. implicit tagging.
+// data, and handling explicit vs. implicit tagging.
 //
 // Tags are represented as |CBS_ASN1_TAG| values in memory. The upper few bits
 // store the class and constructed bit, and the remaining bits store the tag
@@ -389,6 +403,22 @@ OPENSSL_EXPORT int CBS_is_valid_asn1_oid(const CBS *cbs);
 // OID components are too large.
 OPENSSL_EXPORT char *CBS_asn1_oid_to_text(const CBS *cbs);
 
+// CBS_is_valid_asn1_relative_oid returns one if |cbs| is a valid DER-encoded
+// ASN.1 RELATIVE-OID contents (not including the element framing) and zero
+// otherwise. This function tolerates arbitrarily large OID components.
+//
+// (This is actually the same as |CBS_is_valid_asn1_oid|, but is also exposed
+// under the relative_oid name for API symmetry.)
+OPENSSL_EXPORT int CBS_is_valid_asn1_relative_oid(const CBS *cbs);
+
+// CBS_asn1_relative_oid_to_text interprets |cbs| as DER-encoded ASN.1
+// RELATIVE-OID contents (not including the element framing) and returns the
+// ASCII representation (e.g., "32473.1") in a newly-allocated string, or NULL
+// on failure. The caller must release the result with |OPENSSL_free|.
+//
+// This function may fail if |cbs| is an invalid RELATIVE-OID, or if any
+// OID components are too large.
+OPENSSL_EXPORT char *CBS_asn1_relative_oid_to_text(const CBS *cbs);
 
 // CBS_parse_generalized_time returns one if |cbs| is a valid DER-encoded, ASN.1
 // GeneralizedTime body within the limitations imposed by RFC 5280, or zero
@@ -511,7 +541,7 @@ OPENSSL_EXPORT int CBB_flush(CBB *cbb);
 //
 // To avoid unfinalized length prefixes, it is a fatal error to call this on a
 // CBB with any active children.
-OPENSSL_EXPORT const uint8_t *CBB_data(const CBB *cbb);
+OPENSSL_EXPORT uint8_t *CBB_data(const CBB *cbb);
 
 // CBB_len returns the number of bytes written to |cbb|. It does not flush
 // |cbb|.
@@ -645,13 +675,29 @@ OPENSSL_EXPORT int CBB_add_asn1_bool(CBB *cbb, int value);
 // CBB_add_asn1_oid_from_text decodes |len| bytes from |text| as an ASCII OID
 // representation, e.g. "1.2.840.113554.4.1.72585", and writes the DER-encoded
 // contents to |cbb|. It returns one on success and zero on malloc failure or if
-// |text| was invalid. It does not include the OBJECT IDENTIFER framing, only
+// |text| was invalid. It does not include the OBJECT IDENTIFIER framing, only
 // the element's contents.
 //
 // This function considers OID strings with components which do not fit in a
 // |uint64_t| to be invalid.
 OPENSSL_EXPORT int CBB_add_asn1_oid_from_text(CBB *cbb, const char *text,
                                               size_t len);
+
+// CBB_add_asn1_relative_oid_from_text decodes |len| bytes from |text| as an
+// ASCII RELATIVE-OID representation, e.g. "32473.1", and writes the
+// DER-encoded contents to |cbb|. It returns one on success and zero on malloc
+// failure or if |text| was invalid. It does not include any framing, only the
+// element's contents.
+//
+// This function considers OID strings with components which do not fit in a
+// |uint64_t| to be invalid.
+OPENSSL_EXPORT int CBB_add_asn1_relative_oid_from_text(CBB *cbb,
+                                                       const char *text,
+                                                       size_t len);
+
+// CBB_add_asn1_oid_component appends a single OID component to |cbb|.
+// It returns one on success and zero on error.
+OPENSSL_EXPORT int CBB_add_asn1_oid_component(CBB *cbb, uint64_t value);
 
 // CBB_flush_asn1_set_of calls |CBB_flush| on |cbb| and then reorders the
 // contents for a DER-encoded ASN.1 SET OF type. It returns one on success and

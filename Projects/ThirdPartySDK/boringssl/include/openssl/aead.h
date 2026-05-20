@@ -169,7 +169,7 @@ OPENSSL_EXPORT const EVP_AEAD *EVP_aead_aes_128_gcm_randnonce(void);
 OPENSSL_EXPORT const EVP_AEAD *EVP_aead_aes_256_gcm_randnonce(void);
 
 // EVP_aead_aes_128_ccm_bluetooth is AES-128-CCM with M=4 and L=2 (4-byte tags
-// and 13-byte nonces), as decribed in the Bluetooth Core Specification v5.0,
+// and 13-byte nonces), as described in the Bluetooth Core Specification v5.0,
 // Volume 6, Part E, Section 1.
 OPENSSL_EXPORT const EVP_AEAD *EVP_aead_aes_128_ccm_bluetooth(void);
 
@@ -245,6 +245,12 @@ struct evp_aead_ctx_st {
 // EVP_AEAD_MAX_OVERHEAD contains the maximum overhead used by any AEAD
 // defined in this header.
 #define EVP_AEAD_MAX_OVERHEAD 64
+
+// EVP_AEAD_MAX_OPEN_OVERHEAD contains the maximum overhead that any AEAD
+// defined in this header can remove - even if no AEAD actually generates that
+// much, as non-canonical paddings exist (such as in TLS which allows 256 bytes
+// padding + 64 bytes MAC).
+#define EVP_AEAD_MAX_OPEN_OVERHEAD 320
 
 // EVP_AEAD_DEFAULT_TAG_LENGTH is a magic value that can be passed to
 // EVP_AEAD_CTX_init to indicate that the default tag length for an AEAD should
@@ -391,6 +397,149 @@ OPENSSL_EXPORT int EVP_AEAD_CTX_open_gather(
     size_t nonce_len, const uint8_t *in, size_t in_len, const uint8_t *in_tag,
     size_t in_tag_len, const uint8_t *ad, size_t ad_len);
 
+// crypto_ivec_st (aka |CRYPTO_IVEC|) combines a pointer to input data with its
+// length. It is usually passed as an array of length of at most
+// |CRYPTO_IOVEC_MAX|.
+struct crypto_ivec_st {
+  const uint8_t *in;
+  size_t len;
+};
+
+// crypto_iovec_st (aka |CRYPTO_IOVEC| combines a pointer to input data and a
+// pointer to an output buffer with their common length. It is usually passed
+// as an array of length of at most |CRYPTO_IOVEC_MAX|.
+struct crypto_iovec_st {
+  // |out| and |in| must be disjoint or equal
+  uint8_t *out;
+  const uint8_t *in;
+  size_t len;
+};
+
+// CRYPTO_IOVEC_MAX is the maximum number of entries in an |CRYPTO_IOVEC| or
+// |CRYPTO_IVEC| parameter.
+#define CRYPTO_IOVEC_MAX 16
+
+// EVP_AEAD_CTX_sealv encrypts and authenticates the |in| bytes from |iovec|
+// and authenticates the |aadvec| bytes. It writes the same amount of
+// ciphertext to the |out| pointers of |iovec| and the authentication tag to
+// |out_tag|. It returns one on success and zero otherwise.
+//
+// This function computes the same output as |EVP_AEAD_CTX_seal_scatter|, but
+// without requiring the input or output to be a contiguous buffer. The
+// individual input and output pieces are logically concatenated for a single
+// operation; their boundaries are not semantically significant and will not
+// impact the output.
+//
+// This function may be called concurrently with itself or any other seal/open
+// function on the same |EVP_AEAD_CTX|.
+//
+// Exactly |len| bytes are written to each |out| member of the |iovec|, and up
+// to |EVP_AEAD_max_overhead+extra_in_len| bytes to |out_tag|. On successful
+// return, |*out_tag_len| is set to the actual number of bytes written to
+// |out_tag|.
+//
+// The length of |nonce|, |nonce_len|, must be equal to the result of
+// |EVP_AEAD_nonce_length| for this AEAD.
+//
+// |EVP_AEAD_CTX_sealv| never results in a partial output. If |max_out_tag_len|
+// is insufficient, zero will be returned. If any error occurs, the |out|
+// members of the |iovec| and |out_tag| will be filled with zero bytes and
+// |*out_tag_len| set to zero.
+//
+// No output pointer may alias any other pointer passed to this function either
+// directly or via |iovec| and |aadvec|, with the one exception that it is
+// permitted for the same |iovec| member's |in| and |out| members to be equal
+// (in-place operation).
+//
+// |num_iovec| and |num_aadvec| must be <= |CRYPTO_IOVEC_MAX|.
+OPENSSL_EXPORT
+int EVP_AEAD_CTX_sealv(const EVP_AEAD_CTX *ctx, const CRYPTO_IOVEC *iovec,
+                       size_t num_iovec, uint8_t *out_tag, size_t *out_tag_len,
+                       size_t max_out_tag_len, const uint8_t *nonce,
+                       size_t nonce_len, const CRYPTO_IVEC *aadvec,
+                       size_t num_aadvec);
+
+// EVP_AEAD_CTX_openv authenticates the |in| bytes from |iovec| and |aadvec|,
+// and decrypts the |in| bytes to the |out| pointers of |iovec|. It returns one
+// on success and zero otherwise.
+//
+// This function computes the same output as |EVP_AEAD_CTX_open|, but without
+// requiring the input or output to be a contiguous buffer. The individual
+// input and output pieces are logically concatenated for a single operation;
+// their boundaries are not semantically significant and will not impact the
+// output.
+//
+// This function may (and usually will) output less than the total length of
+// |iovec|. In this case, it outputs to a prefix of |iovec|'s output space,
+// then returns the length of what was actually written.
+//
+// In AEADs with a fixed-length authentication tag, the tag is treated as if it
+// were appended to the ciphertext, and successful outputs will always be
+// exactly the tag length shorter. To open with a separate, detached tag,
+// either provide it as a separate |CRYPTO_IOVEC|, or use
+// |EVP_AEAD_CTX_openv_detached|. The latter may be more convenient, one does
+// not need consider the possibility of output to the final |CRYPTO_IOVEC|.
+//
+// This function may be called concurrently with itself or any other seal/open
+// function on the same |EVP_AEAD_CTX|.
+//
+// The length of |nonce|, |nonce_len|, must be equal to the result of
+// |EVP_AEAD_nonce_length| for this AEAD.
+//
+// |EVP_AEAD_CTX_openv| never results in a partial output. If any error occurs,
+// |out| will be filled with zero bytes and |*out_len| set to zero.
+//
+// No output pointer may alias any other pointer passed to this function either
+// directly or via |iovec| and |aadvec|, with the one exception that it is
+// permitted for the same |iovec| member's |in| and |out| members to be equal
+// (in-place operation).
+//
+// |num_iovec| and |num_aadvec| must be <= |CRYPTO_IOVEC_MAX|.
+OPENSSL_EXPORT
+int EVP_AEAD_CTX_openv(const EVP_AEAD_CTX *ctx, const CRYPTO_IOVEC *iovec,
+                       size_t num_iovec, size_t *out_total_bytes,
+                       const uint8_t *nonce, size_t nonce_len,
+                       const CRYPTO_IVEC *aadvec, size_t num_aadvec);
+
+// EVP_AEAD_CTX_openv_detached authenticates the |in| bytes from |iovec| and
+// |aadvec| using |in_tag_len| bytes of authentication tag from |in_tag|. If
+// successful, it writes the plaintext of the |in| bytes to the |out| pointers
+// of |iovec|. It returns one on success and zero otherwise.
+//
+// This function is usable with AEADs whose output can be split into a
+// ciphertext portion, with the same length as the plaintext, and a
+// fixed-length authentication tag. If the AEAD has a variable-length overhead,
+// this function will return zero. Such AEADs can only be used with
+// |EVP_AEAD_CTX_openv|.
+//
+// This function computes the same output as |EVP_AEAD_CTX_open|, but with a
+// detached tag and without requiring the input or output to be a contiguous
+// buffer. The individual input and output pieces are logically concatenated
+// for a single operation; their boundaries are not semantically significant
+// and will not impact the output.
+//
+// This function may be called concurrently with itself or any other seal/open
+// function on the same |EVP_AEAD_CTX|.
+//
+// The length of |nonce|, |nonce_len|, must be equal to the result of
+// |EVP_AEAD_nonce_length| for this AEAD.
+//
+// |EVP_AEAD_CTX_openv_detached| never results in a partial output. If any
+// error occurs, |out| will be filled with zero bytes.
+//
+// No output pointer may alias any other pointer passed to this function either
+// directly or via |iovec| and |aadvec|, with the one exception that it is
+// permitted for the same |iovec| member's |in| and |out| members to be equal
+// (in-place operation).
+//
+// |num_iovec| and |num_aadvec| must be <= |CRYPTO_IOVEC_MAX|.
+OPENSSL_EXPORT
+int EVP_AEAD_CTX_openv_detached(const EVP_AEAD_CTX *ctx,
+                                const CRYPTO_IOVEC *iovec, size_t num_iovec,
+                                const uint8_t *nonce, size_t nonce_len,
+                                const uint8_t *in_tag, size_t in_tag_len,
+                                const CRYPTO_IVEC *aadvec, size_t num_aadvec);
+
 // EVP_AEAD_CTX_aead returns the underlying AEAD for |ctx|, or NULL if one has
 // not been set.
 OPENSSL_EXPORT const EVP_AEAD *EVP_AEAD_CTX_aead(const EVP_AEAD_CTX *ctx);
@@ -460,6 +609,14 @@ OPENSSL_EXPORT int EVP_AEAD_CTX_get_iv(const EVP_AEAD_CTX *ctx,
 // |EVP_AEAD_CTX_seal_scatter| and writes it to |*out_tag_len|. It returns one
 // on success or zero on error. |in_len| and |extra_in_len| must equal the
 // arguments of the same names passed to |EVP_AEAD_CTX_seal_scatter|.
+//
+// To compute the exact byte length of the output written by
+// |EVP_AEAD_CTX_seal|, set |extra_in_len| to zero and add |in_len| to the
+// result.
+//
+// To compute the exact byte length of the tag written by |EVP_AEAD_CTX_sealv|,
+// set |in_len| to the sum of |len| over the entire |iovec|, and set
+// |extra_in_len| to zero.
 OPENSSL_EXPORT int EVP_AEAD_CTX_tag_len(const EVP_AEAD_CTX *ctx,
                                         size_t *out_tag_len,
                                         const size_t in_len,

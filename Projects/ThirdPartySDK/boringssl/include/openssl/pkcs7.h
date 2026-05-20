@@ -29,6 +29,7 @@ extern "C" {
 // This library contains functions for extracting information from PKCS#7
 // structures (RFC 2315).
 
+
 DECLARE_STACK_OF(CRYPTO_BUFFER)
 DECLARE_STACK_OF(X509)
 DECLARE_STACK_OF(X509_CRL)
@@ -176,8 +177,7 @@ OPENSSL_EXPORT int PKCS7_type_is_encrypted(const PKCS7 *p7);
 // PKCS7_type_is_enveloped returns zero.
 OPENSSL_EXPORT int PKCS7_type_is_enveloped(const PKCS7 *p7);
 
-// PKCS7_type_is_signed returns one. (We only supporte signed data
-// ContentInfos.)
+// PKCS7_type_is_signed returns one. (We only support signed data ContentInfos.)
 OPENSSL_EXPORT int PKCS7_type_is_signed(const PKCS7 *p7);
 
 // PKCS7_type_is_signedAndEnveloped returns zero.

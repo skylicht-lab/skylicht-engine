@@ -75,6 +75,17 @@ OPENSSL_EXPORT void RAND_reset_for_fuzzing(void);
 OPENSSL_EXPORT void RAND_get_system_entropy_for_custom_prng(uint8_t *buf,
                                                             size_t len);
 
+// RAND_maybe_reseed might reseed the PRNG if it's getting close to the reseed
+// limit. If it does so, it may briefly block other threads that are
+// concurrently calling `RAND_bytes`, but only for ~microseconds. Applications
+// may wish to periodically call this function to avoid hitting a reseed while
+// servicing a `RAND_bytes` call, which could happen from anywhere and take
+// milliseconds or more in FIPS configurations. _Most_ applications, however,
+// should ignore this and it only makes a difference in FIPS builds.
+//
+// Returns one if a reseed was performed and zero otherwise.
+OPENSSL_EXPORT int RAND_maybe_reseed(void);
+
 
 // Deprecated functions
 

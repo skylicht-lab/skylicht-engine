@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#if !defined(BSSL_PKI_SIGNATURE_VERIFY_CACHE_H_) && defined(__cplusplus)
+#ifndef BSSL_PKI_SIGNATURE_VERIFY_CACHE_H_
 #define BSSL_PKI_SIGNATURE_VERIFY_CACHE_H_
 
 #include <openssl/base.h>   // IWYU pragma: export
@@ -48,4 +48,4 @@ class OPENSSL_EXPORT SignatureVerifyCache {
 
 BSSL_NAMESPACE_END
 
-#endif  // BSSL_PKI_SIGNATURE_VERIFY_CACHE_H_ && __cplusplus
+#endif  // BSSL_PKI_SIGNATURE_VERIFY_CACHE_H_

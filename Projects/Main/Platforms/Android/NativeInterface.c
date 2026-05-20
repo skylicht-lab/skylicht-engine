@@ -349,7 +349,7 @@ void nativeInterface_openURL(const char *url)
 	}
 }
 
-int nativeInterface_applicationIsNetworkAvailable()
+int nativeInterface_isNetworkAvailable()
 {
 	(*g_javaVM)->AttachCurrentThread(g_javaVM, &g_jniEnv, NULL);
 

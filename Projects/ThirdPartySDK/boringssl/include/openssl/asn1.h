@@ -488,12 +488,6 @@ struct asn1_string_st {
   long flags;
 };
 
-// ASN1_STRING_FLAG_BITS_LEFT indicates, in a BIT STRING |ASN1_STRING|, that
-// flags & 0x7 contains the number of padding bits added to the BIT STRING
-// value. When not set, all trailing zero bits in the last byte are implicitly
-// treated as padding. This behavior is deprecated and should not be used.
-#define ASN1_STRING_FLAG_BITS_LEFT 0x08
-
 // ASN1_STRING_type_new returns a newly-allocated empty |ASN1_STRING| object of
 // type |type|, or NULL on error.
 OPENSSL_EXPORT ASN1_STRING *ASN1_STRING_type_new(int type);
@@ -561,12 +555,20 @@ OPENSSL_EXPORT int ASN1_STRING_cmp(const ASN1_STRING *a, const ASN1_STRING *b);
 // |data|. It returns one on success and zero on error. If |data| is NULL, it
 // updates the length and allocates the buffer as needed, but does not
 // initialize the contents.
+//
+// If |str| is a BIT STRING, this function sets the number of unused bits to
+// zero. |ASN1_BIT_STRING_set1| may be used to set a BIT STRING that is not a
+// whole number of bytes.
 OPENSSL_EXPORT int ASN1_STRING_set(ASN1_STRING *str, const void *data,
                                    ossl_ssize_t len);
 
 // ASN1_STRING_set0 sets the contents of |str| to |len| bytes from |data|. It
 // takes ownership of |data|, which must have been allocated with
 // |OPENSSL_malloc|.
+//
+// If |str| is a BIT STRING, this function sets the number of unused bits to
+// zero. |ASN1_BIT_STRING_set1| may be used to set a BIT STRING that is not a
+// whole number of bytes.
 OPENSSL_EXPORT void ASN1_STRING_set0(ASN1_STRING *str, void *data, int len);
 
 // The following functions call |ASN1_STRING_type_new| with the corresponding
@@ -720,7 +722,10 @@ OPENSSL_EXPORT int ASN1_mbstring_ncopy(ASN1_STRING **out, const uint8_t *in,
 // |mask|, |minsize|, and |maxsize| based on |nid|. When |nid| is a recognized
 // X.509 attribute type, it will pick a suitable ASN.1 string type and bounds.
 // For most attribute types, it preferentially chooses UTF8String. If |nid| is
-// unrecognized, it uses UTF8String by default.
+// unrecognized, it uses UTF8String by default. This function will also enforce
+// any known attribute-specific constraints on the sizes of the string and fail
+// if the size is invalid. In RFC 5280, these bounds are specified by
+// constraints like "SIZE (1..ub-common-name)" in ASN.1.
 //
 // Slightly unlike |ASN1_mbstring_ncopy|, this function interprets |out| and
 // returns its result as follows: If |out| is NULL, it returns a newly-allocated
@@ -754,7 +759,7 @@ OPENSSL_EXPORT ASN1_STRING *ASN1_STRING_set_by_NID(ASN1_STRING **out,
 //
 // WARNING: This function affects global state in the library. If two libraries
 // in the same address space register information for the same OID, one call
-// will fail. Prefer directly passing the desired parametrs to
+// will fail. Prefer directly passing the desired parameters to
 // |ASN1_mbstring_copy| or |ASN1_mbstring_ncopy| instead.
 OPENSSL_EXPORT int ASN1_STRING_TABLE_add(int nid, long minsize, long maxsize,
                                          unsigned long mask,
@@ -855,14 +860,10 @@ OPENSSL_EXPORT int i2d_DISPLAYTEXT(const ASN1_STRING *in, uint8_t **outp);
 // This library represents BIT STRINGs as |ASN1_STRING|s with type
 // |V_ASN1_BIT_STRING|. The data contains the encoded form of the BIT STRING,
 // including any padding bits added to round to a whole number of bytes, but
-// excluding the leading byte containing the number of padding bits. If
-// |ASN1_STRING_FLAG_BITS_LEFT| is set, the bottom three bits contains the
-// number of padding bits. For example, DER encodes the BIT STRING {1, 0} as
-// {0x06, 0x80 = 0b10_000000}. The |ASN1_STRING| representation has data of
-// {0x80} and flags of ASN1_STRING_FLAG_BITS_LEFT | 6. If
-// |ASN1_STRING_FLAG_BITS_LEFT| is unset, trailing zero bits are implicitly
-// removed. Callers should not rely this representation when constructing bit
-// strings. The padding bits in the |ASN1_STRING| data must be zero.
+// excluding the leading byte containing the number of padding bits. Instead,
+// the bottom three bits of |flags| contain the number of padding bits. For
+// example, DER encodes the BIT STRING {1, 0} as {0x06, 0x80 = 0b10_000000}. The
+// |ASN1_STRING| representation has data of {0x80} and flags of 6.
 
 // ASN1_BIT_STRING_new calls |ASN1_STRING_type_new| with |V_ASN1_BIT_STRING|.
 OPENSSL_EXPORT ASN1_BIT_STRING *ASN1_BIT_STRING_new(void);
@@ -908,27 +909,27 @@ OPENSSL_EXPORT int i2c_ASN1_BIT_STRING(const ASN1_BIT_STRING *in,
 // |ASN1_BIT_STRING*|.
 DECLARE_ASN1_ITEM(ASN1_BIT_STRING)
 
-// ASN1_BIT_STRING_num_bytes computes the length of |str| in bytes. If |str|'s
-// bit length is a multiple of 8, it sets |*out| to the byte length and returns
-// one. Otherwise, it returns zero.
-//
-// This function may be used with |ASN1_STRING_get0_data| to interpret |str| as
-// a byte string.
-OPENSSL_EXPORT int ASN1_BIT_STRING_num_bytes(const ASN1_BIT_STRING *str,
-                                             size_t *out);
+// ASN1_BIT_STRING_unused_bits returns the number of unused bits in the last
+// byte of |str|. If |str| is empty (i.e. |ASN1_STRING_length| is zero), this
+// always returns zero. Otherwise it returns a number between 0 and 7.
+OPENSSL_EXPORT uint8_t ASN1_BIT_STRING_unused_bits(const ASN1_BIT_STRING *str);
 
-// ASN1_BIT_STRING_set calls |ASN1_STRING_set|. It leaves flags unchanged, so
-// the caller must set the number of unused bits.
-//
-// TODO(davidben): Maybe it should? Wrapping a byte string in a bit string is a
-// common use case.
-OPENSSL_EXPORT int ASN1_BIT_STRING_set(ASN1_BIT_STRING *str,
-                                       const unsigned char *d,
+// ASN1_BIT_STRING_set calls |ASN1_STRING_set|.
+OPENSSL_EXPORT int ASN1_BIT_STRING_set(ASN1_BIT_STRING *str, const uint8_t *data,
                                        ossl_ssize_t length);
+
+// ASN1_BIT_STRING_set1 sets |str| to a BIT STRING containing |length| bytes
+// from |data|. It returns one on success and zero on error. The least
+// significant |unused_bits| of the last byte of |data| are removed from the bit
+// string. The removed bits must all be zero. |unused_bits| must be between 0
+// and 7, and must be 0 if |length| is zero.
+OPENSSL_EXPORT int ASN1_BIT_STRING_set1(ASN1_BIT_STRING *str,
+                                        const uint8_t *data, size_t length,
+                                        int unused_bits);
 
 // ASN1_BIT_STRING_set_bit sets bit |n| of |str| to one if |value| is non-zero
 // and zero if |value| is zero, resizing |str| as needed. It then truncates
-// trailing zeros in |str| to align with the DER represention for a bit string
+// trailing zeros in |str| to align with the DER representation for a bit string
 // with named bits. It returns one on success and zero on error. |n| is indexed
 // beginning from zero.
 OPENSSL_EXPORT int ASN1_BIT_STRING_set_bit(ASN1_BIT_STRING *str, int n,
@@ -1776,6 +1777,28 @@ OPENSSL_EXPORT int ASN1_object_size(int constructed, int length, int tag);
 
 
 // Deprecated functions.
+
+// ASN1_STRING_FLAG_BITS_LEFT does nothing. Historically, when a BIT STRING
+// lacked this flag, it enabled an implicit truncation behavior. This has since
+// been removed.
+//
+// TODO(crbug.com/443769299): Remove this when |ASN1_STRING| is opaque. For now,
+// we continue to set it in various codepaths, in case code is querying |flags|
+// manually, even though it does nothing.
+#define ASN1_STRING_FLAG_BITS_LEFT 0x08
+
+// ASN1_BIT_STRING_num_bytes computes the length of |str| in bytes. If |str|'s
+// bit length is a multiple of 8, it sets |*out| to the byte length and returns
+// one. Otherwise, it returns zero.
+//
+// This function may be used with |ASN1_STRING_get0_data| to interpret |str| as
+// a byte string.
+//
+// This function is no longer necessary. The byte length is always equal to
+// |ASN1_STRING_length| and callers can check for a whole number of bytes by
+// checking if |ASN1_BIT_STRING_unused_bits| is zero.
+OPENSSL_EXPORT int ASN1_BIT_STRING_num_bytes(const ASN1_BIT_STRING *str,
+                                             size_t *out);
 
 // ASN1_STRING_set_default_mask does nothing.
 OPENSSL_EXPORT void ASN1_STRING_set_default_mask(unsigned long mask);
