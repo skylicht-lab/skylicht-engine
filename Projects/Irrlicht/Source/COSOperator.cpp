@@ -26,13 +26,13 @@
 #endif
 
 #ifdef _IRR_COMPILE_WITH_OSX_DEVICE_
-extern void OSXCopyToClipboard(const char* text);
-extern char* OSXCopyFromClipboard();
+extern "C" void OSXCopyToClipboard(const char* text);
+extern "C" char* OSXCopyFromClipboard();
 #endif
 
 #ifdef _IRR_IOS_PLATFORM_
-extern void iOSCopyToClipboard(const char* text);
-extern char* iOSCopyFromClipboard();
+extern "C" void iOSCopyToClipboard(const char* text);
+extern "C" char* iOSCopyFromClipboard();
 #endif
 
 #ifdef _IRR_COMPILE_WITH_SDL_DEVICE_

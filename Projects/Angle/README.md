@@ -1,6 +1,8 @@
 # How to build Angle on MacOS
 
-Currently, Skylicht Engine use [Angle](https://github.com/google/angle) to simulation OpenGLES on MacOS and IOS.
+Currently, Skylicht Engine use [Angle](https://github.com/google/angle) to simulation OpenGLES on macOS and iOS.
+
+I created a separate [repository](https://github.com/skylicht-lab/angle-macos-prebuilt) to prebuild this library.
 
 ## Step 1: Get depot tools
 

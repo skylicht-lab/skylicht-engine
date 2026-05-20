@@ -1,11 +1,12 @@
-#if defined(_IRR_IOS_PLATFORM_)
 // Copyright (C) 2024 Skylicht
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
+#if defined(_IRR_IOS_PLATFORM_)
+
 #import <UIKit/UIKit.h>
 
-void iOSCopyToClipboard(const char *text)
+extern "C" void iOSCopyToClipboard(const char *text)
 {
 	NSString *str;
 	UIPasteboard *board;
@@ -18,7 +19,7 @@ void iOSCopyToClipboard(const char *text)
 	}
 }
 
-char* iOSCopyFromClipboard()
+extern "C" char* iOSCopyFromClipboard()
 {
 	NSString* str;
 	UIPasteboard* board;

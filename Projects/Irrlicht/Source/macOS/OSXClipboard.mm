@@ -1,4 +1,3 @@
-#if defined(MACOS)
 // Copyright (C) 2005-2006 Etienne Petitjean
 // Copyright (C) 2007-2012 Christian Stehno
 // This file is part of the "Irrlicht Engine".
@@ -6,7 +5,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-void OSXCopyToClipboard(const char *text)
+extern "C" void OSXCopyToClipboard(const char *text)
 {
 	NSString *str;
 	NSPasteboard *board;
@@ -20,7 +19,7 @@ void OSXCopyToClipboard(const char *text)
 	}
 }
 
-char* OSXCopyFromClipboard()
+extern "C" char* OSXCopyFromClipboard()
 {
 	NSString* str;
 	NSPasteboard* board;

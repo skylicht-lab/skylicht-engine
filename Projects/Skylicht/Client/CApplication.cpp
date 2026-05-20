@@ -70,6 +70,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "SignIn/CGameCenterSignIn.h"
 #include "TextField/CIOSTextField.h"
 #include "TextField/CAndroidTextField.h"
+#include "Clipboard/CAndroidClipboard.h"
 #include "StorePurchase/CPlayStoreController.h"
 #include "StorePurchase/CAppStoreController.h"
 #include "StorePurchase/CTestStoreController.h"
@@ -207,6 +208,7 @@ namespace Skylicht
 #ifdef ANDROID
 		CPlayGamesSignIn::createGetInstance();
 		CAndroidTextField::createGetInstance();
+		CAndroidClipboard::createGetInstance();
 		CPlayStoreController::createGetInstance();
 		CAndroidInAppReview::createGetInstance();
 #endif
@@ -225,6 +227,7 @@ namespace Skylicht
 #ifdef ANDROID
 		CPlayGamesSignIn::releaseInstance();
 		CPlayStoreController::releaseInstance();
+		CAndroidClipboard::releaseInstance();
 		CAndroidTextField::releaseInstance();
 		CAndroidInAppReview::releaseInstance();
 #endif
