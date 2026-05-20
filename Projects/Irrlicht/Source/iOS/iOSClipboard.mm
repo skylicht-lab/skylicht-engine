@@ -2,8 +2,9 @@
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in irrlicht.h
 
-#if defined(_IRR_IOS_PLATFORM_)
+#include "IrrCompileConfig.h"
 
+#if defined(_IRR_IOS_PLATFORM_)
 #import <UIKit/UIKit.h>
 
 extern "C" void iOSCopyToClipboard(const char *text)

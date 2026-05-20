@@ -325,6 +325,72 @@ namespace Skylicht
 				}
 				return true;
 			}
+
+			bool CListBase::onChar(u32 c)
+			{
+				if (isDisabled())
+					return false;
+
+				if (c < 32 || c > 126)
+					return CScrollControl::onChar(c);
+
+				wchar_t character = (wchar_t)c;
+				character = towlower(character);
+
+				std::list<CButton*> items = getAllItems();
+				CButton* currentSelected = getSelected();
+
+				bool foundCurrent = (currentSelected == NULL);
+				CButton* nextItem = NULL;
+				CButton* firstItem = NULL;
+
+				for (CButton* item : items)
+				{
+					if (item->isDisabled())
+						continue;
+
+					const std::wstring& label = item->getLabel();
+					if (label.empty())
+						continue;
+
+					wchar_t firstChar = towlower(label[0]);
+					if (firstChar == character)
+					{
+						if (firstItem == NULL)
+							firstItem = item;
+
+						if (foundCurrent)
+						{
+							nextItem = item;
+							break;
+						}
+					}
+
+					if (item == currentSelected)
+					{
+						foundCurrent = true;
+					}
+				}
+
+				CButton* targetItem = nextItem ? nextItem : firstItem;
+
+				if (targetItem && targetItem != currentSelected)
+				{
+					unSelectAll();
+					targetItem->setToggle(true);
+
+					if (OnSelected != nullptr)
+						OnSelected(targetItem);
+
+					if (OnSelectChange != nullptr)
+						OnSelectChange(targetItem);
+
+					scrollToItem(targetItem);
+					return true;
+				}
+
+				return CScrollControl::onChar(c);
+			}
 		}
 	}
 }

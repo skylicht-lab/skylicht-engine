@@ -63,6 +63,8 @@ namespace Skylicht
 
 				virtual bool onKeyEnd(bool down);
 
+				virtual bool onChar(u32 c);
+
 				inline void setMultiSelected(bool b)
 				{
 					m_multiSelected = b;

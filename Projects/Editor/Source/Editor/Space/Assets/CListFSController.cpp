@@ -220,7 +220,7 @@ namespace Skylicht
 
 		void CListFSController::OnKeyPress(GUI::CBase* control, int key, bool press)
 		{
-			GUI::CListBox* list = dynamic_cast<GUI::CListBox*>(control);
+			GUI::CListBase* list = dynamic_cast<GUI::CListBase*>(control);
 			if (list == NULL)
 				return;
 

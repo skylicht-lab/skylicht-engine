@@ -2,7 +2,9 @@
 // Copyright (C) 2007-2012 Christian Stehno
 // This file is part of the "Irrlicht Engine".
 // For conditions of distribution and use, see copyright notice in Irrlicht.h
+#include "IrrCompileConfig.h"
 
+#if defined(_IRR_OSX_PLATFORM_)
 #import <Cocoa/Cocoa.h>
 
 extern "C" void OSXCopyToClipboard(const char *text)

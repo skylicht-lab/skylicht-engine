@@ -12,17 +12,8 @@ environment:
       arch: x64
       toolchain: Cygwin
       configuration: Release
-      cmake_args: -B ./PrjCygwin -G "Unix Makefiles" -DBUILD_BULLET_PHYSIC_LIB=OFF -DBUILD_SHARED_LIBS=ON
+      cmake_args: -B ./PrjCygwin -G "Unix Makefiles" -DBUILD_BULLET_PHYSIC_LIB=OFF -DBUILD_EXAMPLES=OFF -DBUILD_SHARED_LIBS=ON 
       GIT_LFS_SKIP_SMUDGE: 1
-
-    # Win32/x86/Release
-    # - platform: Win32 x86
-    #   arch: x86
-    #   toolchain: MSVC
-    #   configuration: Release
-    #   cmake_args: -B ./PrjVisualStudio -G "Visual Studio 15 2017" -A Win32 -DBUILD_BULLET_PHYSIC_LIB=OFF -DBUILD_SHARED_LIBS=ON
-    #   cmake_build: /verbosity:minimal /maxcpucount
-    #   GIT_LFS_SKIP_SMUDGE: 1
 
 # clone directory
 clone_folder: C:\Projects\Skylicht_Engine
@@ -70,33 +61,6 @@ test_script:
 #  - path: Build\*.zip
 
 for:
-  # MSVC
-  - matrix:
-      only:
-        - toolchain: MSVC
-    build_script:
-      - cd Assets
-      - python BuildAssetBundles.py
-      - cd ..
-      - cmake --build ./PrjVisualStudio --config "%configuration%" -- %cmake_build%
-    after_build:
-      - mkdir Build
-      - dir Bin
-      - type Version.txt
-      - set /p CONFIG_VERSION=<Version.txt
-      - set file_version=%CONFIG_VERSION:.=_%_%APPVEYOR_BUILD_VERSION%
-      - set output_zip=SkylichtDemo_%file_version%_%toolchain%_%arch%.zip
-      - copy Bin\%configuration%\*.exe Bin
-      - cd Bin
-      - 7z a %output_zip% *.zip
-      - 7z a %output_zip% *.exe
-      - cd ..
-      - copy Bin\%output_zip% Build
-    test_script:
-      - cd PrjVisualStudio
-      - ctest -C %configuration% --verpose
-      - cd ..
-
   # Cygwin
   - matrix:
       only:
