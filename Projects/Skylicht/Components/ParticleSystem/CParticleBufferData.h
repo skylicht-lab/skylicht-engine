@@ -35,6 +35,7 @@ namespace Skylicht
 	{
 		/**
 		 * @class CParticleBufferData
+		 * @ingroup ParticleSystem
 		 * @brief ECS data structure holding particle groups for an entity.
 		 * @details This data is managed by CParticleComponent and processed by CParticleGroupSystem and CParticleRenderer.
 		 */

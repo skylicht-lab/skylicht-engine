@@ -559,7 +559,24 @@ namespace Skylicht
 			}
 			else
 			{
-				cells.push_back(c);
+				if (combine)
+				{
+					temp += newLine ? "\n" : ",";
+					temp += c;
+
+					if (c == "\"")
+					{
+						temp.erase(temp.begin());
+						temp.pop_back();
+					}
+
+					cells.push_back(temp);
+					combine = false;
+					newLine = false;
+					temp.clear();
+				}
+				else
+					cells.push_back(c);
 			}
 		}
 
