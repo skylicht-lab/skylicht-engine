@@ -1,6 +1,7 @@
 package com.skylicht.engine3d;
 
 import android.app.Activity;
+import android.os.Debug;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -27,6 +28,8 @@ public class PlayStoreController implements PurchasesUpdatedListener {
     private BillingClient mBillingClient;
     private Activity mActivity;
 
+    private String mProductId;
+
     static public PlayStoreController getInstance() {
         if (sInstance == null) sInstance = new PlayStoreController();
         return sInstance;
@@ -35,7 +38,7 @@ public class PlayStoreController implements PurchasesUpdatedListener {
     public void init(Activity context) {
         mActivity = context;
         init();
-        
+
         mBillingClient = BillingClient.newBuilder(context)
                 .setListener(this)
                 .enablePendingPurchases()
@@ -54,8 +57,10 @@ public class PlayStoreController implements PurchasesUpdatedListener {
             @Override
             public void onBillingSetupFinished(@NonNull BillingResult billingResult) {
                 if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
+                    Log.w("Skylicht", "Purchase init success!");
                     onInitialized();
                 } else {
+                    Log.w("Skylicht", "Purchase init fail: " + billingResult.getDebugMessage());
                     onInitializeFailed(billingResult.getResponseCode(), billingResult.getDebugMessage());
                 }
             }
@@ -91,8 +96,12 @@ public class PlayStoreController implements PurchasesUpdatedListener {
     }
 
     public static void initiatePurchase(String productId) {
-        if (sInstance == null || sInstance.mBillingClient == null) return;
+        if (sInstance == null || sInstance.mBillingClient == null) {
+            sInstance.onPurchaseFailed(productId,-1,"Billing library initialization failed");
+            return;
+        }
 
+        sInstance.mProductId = productId;
         List<QueryProductDetailsParams.Product> productList = new ArrayList<>();
         productList.add(QueryProductDetailsParams.Product.newBuilder()
                 .setProductId(productId)
@@ -117,10 +126,13 @@ public class PlayStoreController implements PurchasesUpdatedListener {
                 BillingFlowParams billingFlowParams = BillingFlowParams.newBuilder()
                         .setProductDetailsParamsList(productDetailsParamsList)
                         .build();
-                
+
                 sInstance.mBillingClient.launchBillingFlow(sInstance.mActivity, billingFlowParams);
             } else {
-                sInstance.onPurchaseFailed(productId, billingResult.getResponseCode(), billingResult.getDebugMessage());
+                String error = billingResult.getDebugMessage();
+                if (productDetailsList.isEmpty())
+                    error = "Product not found";
+                sInstance.onPurchaseFailed(productId, billingResult.getResponseCode(), error);
             }
         });
     }
@@ -183,8 +195,10 @@ public class PlayStoreController implements PurchasesUpdatedListener {
             }
         } else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.USER_CANCELED) {
             // Handle user cancel
+            onPurchaseFailed(mProductId, -2, "Cancel");
         } else {
             // Handle other errors
+            onPurchaseFailed(mProductId, billingResult.getResponseCode(), billingResult.getDebugMessage());
         }
     }
 

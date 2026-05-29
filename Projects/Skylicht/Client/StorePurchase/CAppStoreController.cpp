@@ -34,12 +34,12 @@ extern "C"
 
 	void appstore_onInitialized()
 	{
-		Skylicht::CAppStoreController::getInstance()->notifyInitialized();
+		Skylicht::CAppStoreController::createGetInstance()->notifyInitialized();
 	}
 
 	void appstore_onInitializeFailed(int error, const char* message)
 	{
-		Skylicht::CAppStoreController::getInstance()->notifyInitializeFailed(error, message);
+		Skylicht::CAppStoreController::createGetInstance()->notifyInitializeFailed(error, message);
 	}
 
 	void appstore_onFetchProductFailed(int error, const char* message)

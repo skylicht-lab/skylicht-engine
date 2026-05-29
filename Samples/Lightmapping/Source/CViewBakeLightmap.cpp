@@ -545,7 +545,7 @@ void CViewBakeLightmap::loadProgress()
 		u32 lmSize = stream->readUInt();
 		u32 numMeshBuffer = stream->readUInt();
 
-		if (driverType != driverType ||
+		if (driverType != readDriverType ||
 			numRenderers != m_numRenderers ||
 			numIndices != m_numIndices ||
 			numVertices != m_numVertices ||
@@ -577,7 +577,7 @@ void CViewBakeLightmap::loadProgress()
 		m_currentRasterisation = m_lmRasterize[rasterIndex];
 
 		delete stream;
-		delete data;
+		delete[]data;
 
 		file->drop();
 

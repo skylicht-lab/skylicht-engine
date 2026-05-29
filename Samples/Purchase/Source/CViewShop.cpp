@@ -62,6 +62,9 @@ void CViewShop::onInit()
 		m_minArrowX = layoutX + btnDiamondTab->getElement()->getPosition().X + btnDiamondTab->getElement()->getWidth() * 0.5f;
 		m_maxArrowX = layoutX + btnGoldTab->getElement()->getPosition().X + btnGoldTab->getElement()->getWidth() * 0.5f;
 	}
+
+	CPurchase::getInstance()->OnPurchaseFailed = [&](std::string iapId, int error) {
+		};
 }
 
 void CViewShop::onDestroy()

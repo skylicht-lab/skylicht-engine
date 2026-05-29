@@ -34,11 +34,11 @@ extern "C"
 
 	void playStore_onInitialized()
 	{
-		Skylicht::CPlayStoreController::getInstance()->notifyInitialized();
+		Skylicht::CPlayStoreController::createGetInstance()->notifyInitialized();
 	}
 	void playStore_onInitializeFailed(int error, const char* message)
 	{
-		Skylicht::CPlayStoreController::getInstance()->notifyInitializeFailed(error, message);
+		Skylicht::CPlayStoreController::createGetInstance()->notifyInitializeFailed(error, message);
 	}
 	void playStore_onFetchProductFailed(int error, const char* message)
 	{

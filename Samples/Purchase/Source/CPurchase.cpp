@@ -122,6 +122,10 @@ void CPurchase::onPurchaseSucceeded(const char* productId, const char* receipt)
 
 void CPurchase::onPurchaseFailed(const char* productId, int error, const char* message)
 {
+	char log[512];
+	sprintf(log, "Purchase failed for product %s with error %d: %s", productId, error, message);
+	os::Printer::log(log);
+
 	if (OnPurchaseFailed != nullptr)
 		OnPurchaseFailed(std::string(productId), error);
 }
