@@ -2,20 +2,17 @@
 #include "CAppStoreController.h"
 
 #ifdef IOS
+#include "AppStoreController.h"
+
 extern "C"
 {
-	void appstore_init();
-	void appstore_restorePurchase();
-	void appstore_initiatePurchase(const char* productId);
-	void appstore_fetchAdditionalProducts(const char** productIds, int count);
-
 	void appstore_onProductsReceived(const char** productIds,
-									 const char** titles,
-									 const char** descriptions,
-									 const char** localizedPrices,
-									 double* prices,
-									 const char** currencyCodes,
-									 int count)
+		const char** titles,
+		const char** descriptions,
+		const char** localizedPrices,
+		double* prices,
+		const char** currencyCodes,
+		int count)
 	{
 		std::vector<SIAPProduct> products;
 		for (int i = 0; i < count; i++)
