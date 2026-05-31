@@ -17,11 +17,14 @@ namespace Skylicht
 
 	public:
 		IStoreController();
+
 		virtual ~IStoreController();
 
 		void addListener(IStoreListener* listener);
 
 		void removeListener(IStoreListener* listener);
+
+		virtual void init() = 0;
 
 		virtual void restorePurchase() = 0;
 

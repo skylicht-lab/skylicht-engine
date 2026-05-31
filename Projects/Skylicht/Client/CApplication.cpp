@@ -217,11 +217,11 @@ namespace Skylicht
 #ifdef IOS
 		CGameCenterSignIn::createGetInstance();
 		CIOSTextField::createGetInstance();
-		CAppStoreController::createGetInstance();
+		CAppStoreController::createGetInstance()->init();
 		CIOSInAppReview::createGetInstance();
 #endif
 		CDesktopClipboard::createGetInstance();
-		CTestStoreController::createGetInstance();
+		CTestStoreController::createGetInstance()->init();
 	}
 
 	void CApplication::releasePlugin()

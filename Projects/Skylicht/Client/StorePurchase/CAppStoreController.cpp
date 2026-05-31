@@ -31,12 +31,12 @@ extern "C"
 
 	void appstore_onInitialized()
 	{
-		Skylicht::CAppStoreController::createGetInstance()->notifyInitialized();
+		Skylicht::CAppStoreController::getInstance()->notifyInitialized();
 	}
 
 	void appstore_onInitializeFailed(int error, const char* message)
 	{
-		Skylicht::CAppStoreController::createGetInstance()->notifyInitializeFailed(error, message);
+		Skylicht::CAppStoreController::getInstance()->notifyInitializeFailed(error, message);
 	}
 
 	void appstore_onFetchProductFailed(int error, const char* message)
@@ -68,14 +68,19 @@ namespace Skylicht
 
 	CAppStoreController::CAppStoreController()
 	{
-#ifdef IOS
-		appstore_init();
-#endif
+
 	}
 
 	CAppStoreController::~CAppStoreController()
 	{
 
+	}
+
+	void CAppStoreController::init()
+	{
+#ifdef IOS
+		appstore_init();
+#endif
 	}
 
 	void CAppStoreController::restorePurchase()

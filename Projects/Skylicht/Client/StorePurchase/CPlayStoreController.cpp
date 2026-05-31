@@ -74,6 +74,11 @@ namespace Skylicht
 
 	}
 
+	void CPlayStoreController::init()
+	{
+
+	}
+
 	void CPlayStoreController::restorePurchase()
 	{
 #ifdef ANDROID

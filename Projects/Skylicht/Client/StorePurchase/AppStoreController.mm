@@ -32,20 +32,23 @@ extern "C" {
     NSArray<SKProduct *> *_validProducts;
 }
 
-+ (instancetype)sharedInstance {
-    static AppStoreManager *sharedInstance = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        sharedInstance = [[AppStoreManager alloc] init];
-        [[SKPaymentQueue defaultQueue] addTransactionObserver:sharedInstance];
+static AppStoreManager *_sharedInstance = nil;
+
++ (void)initialize {
+    if (self == [AppStoreManager class]) {
+        _sharedInstance = [[AppStoreManager alloc] init];
+        [[SKPaymentQueue defaultQueue] addTransactionObserver:_sharedInstance];
         
         if ([SKPaymentQueue canMakePayments]) {
             appstore_onInitialized();
         } else {
             appstore_onInitializeFailed(-1, "In-app purchases are disabled on this device");
         }
-    });
-    return sharedInstance;
+    }
+}
+
++ (instancetype)sharedInstance {
+    return _sharedInstance;
 }
 
 - (void)fetchProducts:(NSSet *)productIdentifiers {
@@ -169,7 +172,7 @@ extern "C" {
 
 void appstore_init()
 {
-    [AppStoreManager sharedInstance];
+    [AppStoreManager initialize];
 }
 
 void appstore_restorePurchase()

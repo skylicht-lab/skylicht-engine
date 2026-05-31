@@ -7,6 +7,11 @@ namespace Skylicht
 
 	CTestStoreController::CTestStoreController()
 	{
+		
+	}
+
+	void CTestStoreController::init()
+	{
 		notifyInitialized();
 	}
 

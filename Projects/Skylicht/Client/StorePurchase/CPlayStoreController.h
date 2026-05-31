@@ -14,6 +14,8 @@ namespace Skylicht
 
 		DECLARE_SINGLETON(CPlayStoreController)
 
+		virtual void init();
+
 		virtual void restorePurchase();
 
 		virtual void restart();
