@@ -121,6 +121,101 @@ namespace Skylicht
 			return false;
 		}
 
+		bool CObstacleAvoidance::isCircleHit(const core::vector3df& a, float radius, float h, core::array<core::line3df>& out, float& outR)
+		{
+			core::line3df* segs = m_segments.pointer();
+			float radiusSq = radius * radius;
+			float minD2 = radiusSq;
+			bool hit = false;
+
+			for (u32 i = 0, n = m_segments.size(); i < n; i++)
+			{
+				core::line3df& s = segs[i];
+
+				if (fabsf(s.start.Y - a.Y) < h && fabsf(s.end.Y - a.Y) < h)
+				{
+					core::vector3df v = s.end - s.start;
+					v.Y = 0.0f;
+					core::vector3df w = a - s.start;
+					w.Y = 0.0f;
+
+					float l2 = v.X * v.X + v.Z * v.Z;
+					float t = 0.0f;
+					if (l2 > 0.0f)
+					{
+						t = (w.X * v.X + w.Z * v.Z) / l2;
+						if (t < 0.0f) t = 0.0f;
+						if (t > 1.0f) t = 1.0f;
+					}
+
+					float projX = s.start.X + t * v.X;
+					float projZ = s.start.Z + t * v.Z;
+
+					float dx = a.X - projX;
+					float dz = a.Z - projZ;
+					float d2 = dx * dx + dz * dz;
+
+					if (d2 <= radiusSq)
+					{
+						out.push_back(s);
+						if (d2 < minD2)
+							minD2 = d2;
+						hit = true;
+					}
+				}
+			}
+
+			if (hit)
+				outR = sqrtf(minD2);
+
+			return hit;
+		}
+
+		bool CObstacleAvoidance::isCircleHit(const core::vector3df& a, float radius, float h)
+		{
+			core::line3df* segs = m_segments.pointer();
+			float radiusSq = radius * radius;
+			float minD2 = radiusSq;
+			bool hit = false;
+
+			for (u32 i = 0, n = m_segments.size(); i < n; i++)
+			{
+				core::line3df& s = segs[i];
+
+				if (fabsf(s.start.Y - a.Y) < h && fabsf(s.end.Y - a.Y) < h)
+				{
+					core::vector3df v = s.end - s.start;
+					v.Y = 0.0f;
+					core::vector3df w = a - s.start;
+					w.Y = 0.0f;
+
+					float l2 = v.X * v.X + v.Z * v.Z;
+					float t = 0.0f;
+					if (l2 > 0.0f)
+					{
+						t = (w.X * v.X + w.Z * v.Z) / l2;
+						if (t < 0.0f) t = 0.0f;
+						if (t > 1.0f) t = 1.0f;
+					}
+
+					float projX = s.start.X + t * v.X;
+					float projZ = s.start.Z + t * v.Z;
+
+					float dx = a.X - projX;
+					float dz = a.Z - projZ;
+					float d2 = dx * dx + dz * dz;
+
+					if (d2 <= radiusSq)
+					{
+						hit = true;
+						break;
+					}
+				}
+			}
+
+			return hit;
+		}
+
 		void CObstacleAvoidance::copySegments(CObstacleAvoidance* toTarget, const core::aabbox3df& box)
 		{
 			core::line3df* segs = m_segments.pointer();
