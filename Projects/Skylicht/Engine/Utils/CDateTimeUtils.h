@@ -92,6 +92,27 @@ namespace Skylicht
 		static unsigned long getTimeBySecond();
 
 		/**
+		 * @brief Set the current synchronized server time in seconds.
+		 *
+		 * Stores the provided server time together with the current application timer
+		 * value. Later calls to `getServerTime` use the elapsed application time to
+		 * estimate the corresponding server time.
+		 *
+		 * @param serverTime Current server time in seconds.
+		 */
+		static void setServerTime(unsigned long serverTime);
+
+		/**
+		 * @brief Get the synchronized server time in seconds.
+		 *
+		 * If `setServerTime` has not been called, this returns 0. Otherwise it returns
+		 * the last server time plus the elapsed application time since synchronization.
+		 *
+		 * @return Current estimated server time in seconds, or 0 when not initialized.
+		 */
+		static unsigned long getServerTime();
+
+		/**
 		 * @brief Decompose a duration in seconds into days, hours, minutes and seconds.
 		 *
 		 * This converts a positive number of seconds into its equivalent component parts:

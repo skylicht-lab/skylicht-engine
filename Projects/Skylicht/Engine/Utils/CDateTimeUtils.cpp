@@ -47,6 +47,10 @@ namespace Skylicht
 		{31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
 	};
 
+	bool g_hasServerTime = false;
+	unsigned long g_serverTime = 0;
+	u32 g_serverTimeAppTimer = 0;
+
 	unsigned long CDateTimeUtils::getSecondByDate(int fromYear, int month, int day, int years, int hour, int minute, int second)
 	{
 		unsigned long secs = 0;
@@ -98,6 +102,22 @@ namespace Skylicht
 	{
 		ITimer::RealTimeDate dateTime = os::Timer::getRealTimeAndDate();
 		return getSecondByDate(STARTYEAR, dateTime.Month, dateTime.Day, dateTime.Year, dateTime.Hour, dateTime.Minute, dateTime.Second);
+	}
+
+	void CDateTimeUtils::setServerTime(unsigned long serverTime)
+	{
+		g_serverTime = serverTime;
+		g_serverTimeAppTimer = os::Timer::getTime();
+		g_hasServerTime = true;
+	}
+
+	unsigned long CDateTimeUtils::getServerTime()
+	{
+		if (g_hasServerTime == false)
+			return 0;
+
+		u32 elapsedTime = os::Timer::getTime() - g_serverTimeAppTimer;
+		return g_serverTime + (elapsedTime / 1000);
 	}
 
 	ITimer::RealTimeDate CDateTimeUtils::getDateBySecond(unsigned long second)

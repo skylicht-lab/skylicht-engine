@@ -9,8 +9,6 @@ Skylicht Engine is an evolution of the [Irrlicht Project](http://irrlicht.source
 
 Skylicht Engine is a super lightweight Game Engine that targets mobile platforms (Android, IOS). And, it's completely free.
 
-[API Reference](https://api.skylicht.com)
-
 <img src="Documents/Media/logo-landscape.png"/>
 
 # How to build the project
@@ -276,6 +274,7 @@ C:\skylicht-engine>cmake --build ./PrjVisualStudio --target install --config Deb
 ## How to integrate
 And then copy the resulting InstallLibs folder to another project.
 See the project example: https://github.com/skylicht-lab/hello-skylicht
+See the [API Reference](https://api.skylicht.com)
 
 # Roadmap
 - [Skylight Engine Core](https://github.com/skylicht-lab/skylicht-engine/issues/5)
