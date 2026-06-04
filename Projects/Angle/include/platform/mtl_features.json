@@ -151,21 +151,6 @@
             ]
         },
         {
-            "name": "intel_explicit_bool_cast_workaround",
-            "category": "Workarounds",
-            "description": [
-                "Insert explicit casts for float/double/unsigned/signed int on macOS 10.15 with Intel ",
-                "driver"
-            ]
-        },
-        {
-            "name": "intel_disable_fast_math",
-            "category": "Workarounds",
-            "description": [
-                "Disable fast math in atan and invariance cases when running below macOS 12.0"
-            ]
-        },
-        {
             "name": "allow_renderpass_without_attachment",
             "category": "Features",
             "description": [
@@ -354,32 +339,6 @@
             "issue": "http://anglebug.com/40644905"
         },
         {
-            "name": "compile_metal_shaders",
-            "category": "Features",
-            "description": [
-                "Compiles metal shaders using command line tools and saves to BlobCache. ",
-                "Requires using --no-sandbox and disabling enableParallelMtlLibraryCompilation."
-            ],
-            "issue": "http://crbug.com/1423136"
-        },
-        {
-            "name": "load_metal_shaders_from_blob_cache",
-            "category": "Features",
-            "description": [
-                "Loads metal shaders from blob cache. Useful if compile_metal_shaders was used to ",
-                "generate shaders."
-            ],
-            "issue": "http://crbug.com/1423136"
-        },
-        {
-            "name": "print_metal_shaders",
-            "category": "Features",
-            "description": [
-                "Prints the source to a shader before it's compiled."
-            ],
-            "issue": "http://crbug.com/1423136"
-        },
-        {
             "name": "generate_shareable_shaders",
             "category": "Features",
             "description": [
@@ -442,6 +401,14 @@
             "description": [
                 "Inject asm(\"\") statements into loop bodies to force all loops to be treated as ",
                 "having side effects and not optimized out."
+            ],
+            "issue": "http://crbug.com/1513738"
+        },
+        {
+            "name": "ensure_loop_forward_progress",
+            "category": "Features",
+            "description": [
+                "Inject statements into loop bodies when needed to ensure infinite loops are optimized out."
             ],
             "issue": "http://crbug.com/1513738"
         }

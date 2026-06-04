@@ -175,7 +175,7 @@ elseif (MSVC OR CYGWIN OR MINGW)
 		${template_path}/Platforms/Win32/Skylicht.rc
 	)
 elseif (BUILD_MACOS)
-	set(angle_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/Angle/out/MacOS/Release/${CMAKE_OSX_ARCHITECTURES}")
+	set(angle_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/Angle/lib/macos/${CMAKE_OSX_ARCHITECTURES}")
 	file(GLOB dylib_files "${angle_lib_path}/*.dylib")
 
 	add_executable(SkylichtEditor 
@@ -185,7 +185,7 @@ elseif (BUILD_MACOS)
 	
 	set_target_properties(SkylichtEditor PROPERTIES MACOSX_BUNDLE TRUE)
 	
-	set(angle_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/Angle/out/MacOS/Release/${CMAKE_OSX_ARCHITECTURES}")
+	set(angle_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/Angle/lib/macos/${CMAKE_OSX_ARCHITECTURES}")
 	
 	find_library(
 		LIBEGL 

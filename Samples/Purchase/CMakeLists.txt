@@ -219,7 +219,7 @@ elseif (MSVC OR CYGWIN OR MINGW)
 elseif (BUILD_MACOS)
 	file(GLOB resources_files "${SKYLICHT_ENGINE_BIN_DIR}/*.zip")
 
-	set(angle_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/Angle/out/MacOS/Release/${CMAKE_OSX_ARCHITECTURES}")
+	set(angle_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/Angle/lib/macos/${CMAKE_OSX_ARCHITECTURES}")
 	file(GLOB dylib_files "${angle_lib_path}/*.dylib")
 
 	add_executable(SamplePurchase 
@@ -278,7 +278,7 @@ elseif (BUILD_IOS)
 
 	file(GLOB resources_files "${SKYLICHT_ENGINE_BIN_DIR}/*.zip")
 
-	set(angle_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/Angle/out/IOS/Release/${IOS_PLATFORM}")
+	set(angle_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/Angle/lib/ios/${IOS_PLATFORM}")
 	file(GLOB angle_framework_files "${angle_lib_path}/*.framework")
 
 	set (framework_files "")

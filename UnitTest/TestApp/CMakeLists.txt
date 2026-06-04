@@ -52,7 +52,7 @@ endif()
 target_link_libraries(TestApp Client)
 
 if (BUILD_MACOS)
-	set(angle_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/Angle/out/MacOS/Release/${CMAKE_OSX_ARCHITECTURES}")
+	set(angle_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/Angle/lib/macos/${CMAKE_OSX_ARCHITECTURES}")
 	target_link_libraries(TestApp "-framework Cocoa")
 
 	add_custom_command(TARGET TestApp POST_BUILD COMMAND 

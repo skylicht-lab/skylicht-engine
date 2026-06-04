@@ -50,14 +50,6 @@
             ]
         },
         {
-            "name": "do_while_GLSL_causes_GPU_hang",
-            "category": "Workarounds",
-            "description": [
-                "Some GLSL constructs involving do-while loops cause GPU hangs"
-            ],
-            "issue": "http://crbug.com/644669"
-        },
-        {
             "name": "vertex_ID_does_not_include_base_vertex",
             "category": "Workarounds",
             "description": [
@@ -132,14 +124,6 @@
             "issue": "http://anglebug.com/42260492"
         },
         {
-            "name": "emulate_isnan_float",
-            "category": "Workarounds",
-            "description": [
-                "Using isnan() on highp float will get wrong answer"
-            ],
-            "issue": "http://crbug.com/650547"
-        },
-        {
             "name": "use_unused_blocks_with_standard_or_shared_layout",
             "category": "Workarounds",
             "description": [
@@ -152,14 +136,6 @@
             "description": [
                 "Fix spec difference between GLSL 4.1 or lower and ESSL3"
             ]
-        },
-        {
-            "name": "rewrite_float_unary_minus_operator",
-            "category": "Workarounds",
-            "description": [
-                "Using '-<float>' will get wrong answer"
-            ],
-            "issue": "http://crbug.com/308366"
         },
         {
             "name": "emulate_atan_2_float",
@@ -201,6 +177,22 @@
             ]
         },
         {
+            "name": "force_max_combined_shader_output_resources",
+            "category": "Features",
+            "description": [
+                "Force GL_MAX_COMBINED_SHADER_OUTPUT_RESOURCES to be the sum of GL_MAX_COMBINED_IMAGE_UNIFORMS, GL_MAX_COMBINED_SHADER_STORAGE_BLOCKS, and GL_MAX_COLOR_ATTACHMENTS"
+            ],
+            "issue": ""
+        },
+        {
+            "name": "dont_invalidate_incomplete_FBOs",
+            "category": "Workarounds",
+            "description": [
+                "Skip invalidation calls if the framebuffer is incomplete."
+            ],
+            "issue": "http://crbug.com/507508103"
+        },
+        {
             "name": "dont_use_loops_to_initialize_variables",
             "category": "Workarounds",
             "description": [
@@ -229,14 +221,6 @@
             "description": [
                 "Apply a vendor-specific transformation to explicit cubemap derivatives"
             ]
-        },
-        {
-            "name": "disable_blend_func_extended",
-            "category": "Workarounds",
-            "description": [
-                "ARB_blend_func_extended does not pass the tests"
-            ],
-            "issue": "http://anglebug.com/40644593"
         },
         {
             "name": "unsized_SRGB_read_pixels_doesnt_transform",
@@ -282,6 +266,14 @@
             "issue": "http://crbug.com/797243"
         },
         {
+            "name": "disable_MSAA_sample_count_1",
+            "category": "Workarounds",
+            "description": [
+                "Do not expose multisample sample count 1 to avoid driver bugs"
+            ],
+            "issue": "http://anglebug.com/467164245"
+        },
+        {
             "name": "allow_clear_for_robust_resource_init",
             "category": "Workarounds",
             "description": [
@@ -306,14 +298,6 @@
                 "work around pixel comparison failure."
             ],
             "issue": "https://crbug.com/705865"
-        },
-        {
-            "name": "clear_to_zero_or_one_broken",
-            "category": "Workarounds",
-            "description": [
-                "Clears when the clear color is all zeros or ones do not work."
-            ],
-            "issue": "https://crbug.com/710443"
         },
         {
             "name": "limit_max_3d_array_texture_size_to_1024",
@@ -473,6 +457,14 @@
                 "CopyTexImage2D spuriously returns errors on iOS when copying from renderbuffers."
             ],
             "issue": "https://anglebug.com/42263273"
+        },
+        {
+            "name": "force_luma_workaround_for_same_texture_CopyTexImage2D",
+            "category": "Workarounds",
+            "description": [
+                "Work around incorrect channel results in same-texture LUMA CopyTexImage2D."
+            ],
+            "issue": "https://anglebug.com/486067696"
         },
         {
             "name": "disable_GPU_switching_support",
@@ -795,6 +787,14 @@
             "issue": "https://anglebug.com/41488638"
         },
         {
+            "name": "emit_max_glsl_400_for_testing",
+            "category": "Workarounds",
+            "description": [
+                "Avoid GLSL versions above 4.0 for testing purposes."
+            ],
+            "issue": "https://anglebug.com/42267207"
+        },
+        {
             "name": "use_intermediate_texture_for_generate_mipmap",
             "category": "Workarounds",
             "description": [
@@ -844,6 +844,79 @@
                 "Disable GL_KHR_blend_equation_advanced due to various driver issues."
             ],
             "issue": "https://anglebug.com/42267098"
+        },
+        {
+            "name": "reset_sample_coverage_on_FBO_change",
+            "category": "Workarounds",
+            "description": [
+                "Some Adreno drivers assume incorrect glSampleCoverage if new FBO is bound with different sample count"
+            ],
+            "issue": "https://crbug.com/408364831"
+        },
+        {
+            "name": "disable_passthrough_shaders",
+            "category": "Workarounds",
+            "description": [
+                "Some ES2 Mali drivers are unable to query enough information from a linked program to use passthrough shaders."
+            ],
+            "issue": "https://crbug.com/451796659"
+        },
+        {
+            "name": "disable_clear_tex_image_for_robust_init",
+            "category": "Workarounds",
+            "description": [
+                "IMG drivers are unable to handle glClearTexImage with various format combinations."
+            ],
+            "issue": "https://crbug.com/465918231"
+        },
+        {
+            "name": "multiview_via_viewport_array",
+            "category": "Features",
+            "description": [
+                "Use ARB_shader_viewport_layer_array or NV_viewport_array2 to implement multiview"
+            ],
+            "issue": "http://anglebug.com/42260809"
+        },
+        {
+            "name": "validate_max_per_stage_uniform_blocks_at_compile_time",
+            "category": "Workarounds",
+            "description": [
+                "Validate GL_MAX_*_UNIFORM_BLOCKS at compile time instead of link time to work around compiler bugs."
+            ],
+            "issue": "http://crbug.com/475877320"
+        },
+        {
+            "name": "expand_fragment_outputs_to_vec4",
+            "category": "Workarounds",
+            "description": [
+                "Expand fragment shader outputs to 4 components to work around compiler bugs."
+            ],
+            "issue": "http://crbug.com/491732188"
+        },
+        {
+            "name": "recreate_mipmap_levels_before_generate",
+            "category": "Workarounds",
+            "description": [
+                "Before calling glGenerateMipmap on a mutable texture, recreate levels that the driver is ",
+                "supposed to recreate to work around driver bugs."
+            ],
+            "issue": "http://crbug.com/491732188"
+        },
+        {
+            "name": "limit_max_buffer_size_to_1gb",
+            "category": "Workarounds",
+            "description": [
+                "Some drivers have internal failures when attempting to allocate and initialize buffers larger than 1gb."
+            ],
+            "issue": "http://crbug.com/475877320"
+        },
+        {
+            "name": "recreate_fbo_upon_flush",
+            "category": "Workarounds",
+            "description": [
+                "Recreate FBO upon flush/finish/fencesync under certain conditions to work around driver bugs."
+            ],
+            "issue": "http://crbug.com/493747593"
         }
     ]
 }

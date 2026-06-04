@@ -39,12 +39,6 @@ struct FrontendFeatures : FeatureSetBase
         &members,
     };
 
-    FeatureInfo disableDrawBuffersIndexed = {
-        "disableDrawBuffersIndexed",
-        FeatureCategory::FrontendFeatures,
-        &members,
-    };
-
     FeatureInfo disableAnisotropicFiltering = {
         "disableAnisotropicFiltering",
         FeatureCategory::FrontendWorkarounds,
@@ -101,6 +95,12 @@ struct FrontendFeatures : FeatureSetBase
 
     FeatureInfo emulatePixelLocalStorage = {
         "emulatePixelLocalStorage",
+        FeatureCategory::FrontendFeatures,
+        &members,
+    };
+
+    FeatureInfo useIr = {
+        "useIr",
         FeatureCategory::FrontendFeatures,
         &members,
     };
@@ -177,15 +177,51 @@ struct FrontendFeatures : FeatureSetBase
         &members,
     };
 
-    FeatureInfo rejectWebglShadersWithUndefinedBehavior = {
-        "rejectWebglShadersWithUndefinedBehavior",
+    FeatureInfo alwaysEnableEmulatedMultidrawExtensions = {
+        "alwaysEnableEmulatedMultidrawExtensions",
         FeatureCategory::FrontendWorkarounds,
         &members,
     };
 
-    FeatureInfo alwaysEnableEmulatedMultidrawExtensions = {
-        "alwaysEnableEmulatedMultidrawExtensions",
-        FeatureCategory::FrontendWorkarounds,
+    FeatureInfo forcePassthroughShaders = {
+        "forcePassthroughShaders",
+        FeatureCategory::FrontendFeatures,
+        &members,
+    };
+
+    FeatureInfo clipCullDistanceBrokenWithPassthroughShaders = {
+        "clipCullDistanceBrokenWithPassthroughShaders",
+        FeatureCategory::FrontendFeatures,
+        &members,
+    };
+
+    FeatureInfo noperspectiveInterpolationBrokenWithPassthroughShaders = {
+        "noperspectiveInterpolationBrokenWithPassthroughShaders",
+        FeatureCategory::FrontendFeatures,
+        &members,
+    };
+
+    FeatureInfo forceDebugContexts = {
+        "forceDebugContexts",
+        FeatureCategory::FrontendFeatures,
+        &members,
+    };
+
+    FeatureInfo limitMaxBufferBytesTo1MB = {
+        "limitMaxBufferBytesTo1MB",
+        FeatureCategory::FrontendFeatures,
+        &members,
+    };
+
+    FeatureInfo limitMaxTextureBytesTo1MB = {
+        "limitMaxTextureBytesTo1MB",
+        FeatureCategory::FrontendFeatures,
+        &members,
+    };
+
+    FeatureInfo allowExtensionDisableAfterNonPpTokens = {
+        "allowExtensionDisableAfterNonPpTokens",
+        FeatureCategory::FrontendFeatures,
         &members,
     };
 
