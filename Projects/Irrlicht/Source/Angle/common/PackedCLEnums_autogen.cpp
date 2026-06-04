@@ -443,6 +443,16 @@ DeviceInfo FromCLenum<DeviceInfo>(CLenum from)
             return DeviceInfo::PipeSupport;
         case CL_DEVICE_LATEST_CONFORMANCE_VERSION_PASSED:
             return DeviceInfo::LatestConformanceVersionPassed;
+        case CL_DEVICE_INTEGER_DOT_PRODUCT_CAPABILITIES_KHR:
+            return DeviceInfo::IntegerDotProductCapabilities;
+        case CL_DEVICE_INTEGER_DOT_PRODUCT_ACCELERATION_PROPERTIES_8BIT_KHR:
+            return DeviceInfo::IntegerDotProductAccelerationProperties8bit;
+        case CL_DEVICE_INTEGER_DOT_PRODUCT_ACCELERATION_PROPERTIES_4x8BIT_PACKED_KHR:
+            return DeviceInfo::IntegerDotProductAccelerationProperties4x8bitPacked;
+        case CL_DEVICE_EXTERNAL_MEMORY_IMPORT_HANDLE_TYPES_KHR:
+            return DeviceInfo::ExternalMemoryImportHandleTypes;
+        case CL_DEVICE_EXTERNAL_MEMORY_IMPORT_ASSUME_LINEAR_IMAGES_HANDLE_TYPES_KHR:
+            return DeviceInfo::ExternalMemoryLinearImagesHandleTypes;
         default:
             return DeviceInfo::InvalidEnum;
     }
@@ -670,6 +680,16 @@ CLenum ToCLenum(DeviceInfo from)
             return CL_DEVICE_PIPE_SUPPORT;
         case DeviceInfo::LatestConformanceVersionPassed:
             return CL_DEVICE_LATEST_CONFORMANCE_VERSION_PASSED;
+        case DeviceInfo::IntegerDotProductCapabilities:
+            return CL_DEVICE_INTEGER_DOT_PRODUCT_CAPABILITIES_KHR;
+        case DeviceInfo::IntegerDotProductAccelerationProperties8bit:
+            return CL_DEVICE_INTEGER_DOT_PRODUCT_ACCELERATION_PROPERTIES_8BIT_KHR;
+        case DeviceInfo::IntegerDotProductAccelerationProperties4x8bitPacked:
+            return CL_DEVICE_INTEGER_DOT_PRODUCT_ACCELERATION_PROPERTIES_4x8BIT_PACKED_KHR;
+        case DeviceInfo::ExternalMemoryImportHandleTypes:
+            return CL_DEVICE_EXTERNAL_MEMORY_IMPORT_HANDLE_TYPES_KHR;
+        case DeviceInfo::ExternalMemoryLinearImagesHandleTypes:
+            return CL_DEVICE_EXTERNAL_MEMORY_IMPORT_ASSUME_LINEAR_IMAGES_HANDLE_TYPES_KHR;
         default:
             UNREACHABLE();
             return 0;
@@ -1007,6 +1027,21 @@ std::ostream &operator<<(std::ostream &os, DeviceInfo value)
         case DeviceInfo::LatestConformanceVersionPassed:
             os << "CL_DEVICE_LATEST_CONFORMANCE_VERSION_PASSED";
             break;
+        case DeviceInfo::IntegerDotProductCapabilities:
+            os << "CL_DEVICE_INTEGER_DOT_PRODUCT_CAPABILITIES_KHR";
+            break;
+        case DeviceInfo::IntegerDotProductAccelerationProperties8bit:
+            os << "CL_DEVICE_INTEGER_DOT_PRODUCT_ACCELERATION_PROPERTIES_8BIT_KHR";
+            break;
+        case DeviceInfo::IntegerDotProductAccelerationProperties4x8bitPacked:
+            os << "CL_DEVICE_INTEGER_DOT_PRODUCT_ACCELERATION_PROPERTIES_4x8BIT_PACKED_KHR";
+            break;
+        case DeviceInfo::ExternalMemoryImportHandleTypes:
+            os << "CL_DEVICE_EXTERNAL_MEMORY_IMPORT_HANDLE_TYPES_KHR";
+            break;
+        case DeviceInfo::ExternalMemoryLinearImagesHandleTypes:
+            os << "CL_DEVICE_EXTERNAL_MEMORY_IMPORT_ASSUME_LINEAR_IMAGES_HANDLE_TYPES_KHR";
+            break;
         default:
             os << "GL_INVALID_ENUM";
             break;
@@ -1081,6 +1116,124 @@ std::ostream &operator<<(std::ostream &os, EventInfo value)
 }
 
 template <>
+ExecutionStatus FromCLenum<ExecutionStatus>(CLenum from)
+{
+    switch (from)
+    {
+        case CL_COMPLETE:
+            return ExecutionStatus::Complete;
+        case CL_RUNNING:
+            return ExecutionStatus::Running;
+        case CL_SUBMITTED:
+            return ExecutionStatus::Submitted;
+        case CL_QUEUED:
+            return ExecutionStatus::Queued;
+        default:
+            return ExecutionStatus::InvalidEnum;
+    }
+}
+
+CLenum ToCLenum(ExecutionStatus from)
+{
+    switch (from)
+    {
+        case ExecutionStatus::Complete:
+            return CL_COMPLETE;
+        case ExecutionStatus::Running:
+            return CL_RUNNING;
+        case ExecutionStatus::Submitted:
+            return CL_SUBMITTED;
+        case ExecutionStatus::Queued:
+            return CL_QUEUED;
+        default:
+            UNREACHABLE();
+            return 0;
+    }
+}
+
+std::ostream &operator<<(std::ostream &os, ExecutionStatus value)
+{
+    switch (value)
+    {
+        case ExecutionStatus::Complete:
+            os << "CL_COMPLETE";
+            break;
+        case ExecutionStatus::Running:
+            os << "CL_RUNNING";
+            break;
+        case ExecutionStatus::Submitted:
+            os << "CL_SUBMITTED";
+            break;
+        case ExecutionStatus::Queued:
+            os << "CL_QUEUED";
+            break;
+        default:
+            os << "GL_INVALID_ENUM";
+            break;
+    }
+    return os;
+}
+
+template <>
+ExternalMemoryHandle FromCLenum<ExternalMemoryHandle>(CLenum from)
+{
+    switch (from)
+    {
+        case CL_EXTERNAL_MEMORY_HANDLE_OPAQUE_FD_KHR:
+            return ExternalMemoryHandle::OpaqueFd;
+        case CL_EXTERNAL_MEMORY_HANDLE_OPAQUE_WIN32_KHR:
+            return ExternalMemoryHandle::OpaqueWin32;
+        case CL_EXTERNAL_MEMORY_HANDLE_OPAQUE_WIN32_KMT_KHR:
+            return ExternalMemoryHandle::OpaqueWin32Kmt;
+        case CL_EXTERNAL_MEMORY_HANDLE_DMA_BUF_KHR:
+            return ExternalMemoryHandle::DmaBuf;
+        default:
+            return ExternalMemoryHandle::InvalidEnum;
+    }
+}
+
+CLenum ToCLenum(ExternalMemoryHandle from)
+{
+    switch (from)
+    {
+        case ExternalMemoryHandle::OpaqueFd:
+            return CL_EXTERNAL_MEMORY_HANDLE_OPAQUE_FD_KHR;
+        case ExternalMemoryHandle::OpaqueWin32:
+            return CL_EXTERNAL_MEMORY_HANDLE_OPAQUE_WIN32_KHR;
+        case ExternalMemoryHandle::OpaqueWin32Kmt:
+            return CL_EXTERNAL_MEMORY_HANDLE_OPAQUE_WIN32_KMT_KHR;
+        case ExternalMemoryHandle::DmaBuf:
+            return CL_EXTERNAL_MEMORY_HANDLE_DMA_BUF_KHR;
+        default:
+            UNREACHABLE();
+            return 0;
+    }
+}
+
+std::ostream &operator<<(std::ostream &os, ExternalMemoryHandle value)
+{
+    switch (value)
+    {
+        case ExternalMemoryHandle::OpaqueFd:
+            os << "CL_EXTERNAL_MEMORY_HANDLE_OPAQUE_FD_KHR";
+            break;
+        case ExternalMemoryHandle::OpaqueWin32:
+            os << "CL_EXTERNAL_MEMORY_HANDLE_OPAQUE_WIN32_KHR";
+            break;
+        case ExternalMemoryHandle::OpaqueWin32Kmt:
+            os << "CL_EXTERNAL_MEMORY_HANDLE_OPAQUE_WIN32_KMT_KHR";
+            break;
+        case ExternalMemoryHandle::DmaBuf:
+            os << "CL_EXTERNAL_MEMORY_HANDLE_DMA_BUF_KHR";
+            break;
+        default:
+            os << "GL_INVALID_ENUM";
+            break;
+    }
+    return os;
+}
+
+template <>
 FilterMode FromCLenum<FilterMode>(CLenum from)
 {
     switch (from)
@@ -1117,6 +1270,313 @@ std::ostream &operator<<(std::ostream &os, FilterMode value)
             break;
         case FilterMode::Linear:
             os << "CL_FILTER_LINEAR";
+            break;
+        default:
+            os << "GL_INVALID_ENUM";
+            break;
+    }
+    return os;
+}
+
+template <>
+ImageChannelOrder FromCLenum<ImageChannelOrder>(CLenum from)
+{
+    switch (from)
+    {
+        case CL_R:
+            return ImageChannelOrder::R;
+        case CL_A:
+            return ImageChannelOrder::A;
+        case CL_RG:
+            return ImageChannelOrder::RG;
+        case CL_RA:
+            return ImageChannelOrder::RA;
+        case CL_RGB:
+            return ImageChannelOrder::RGB;
+        case CL_RGBA:
+            return ImageChannelOrder::RGBA;
+        case CL_BGRA:
+            return ImageChannelOrder::BGRA;
+        case CL_ARGB:
+            return ImageChannelOrder::ARGB;
+        case CL_INTENSITY:
+            return ImageChannelOrder::Intensity;
+        case CL_LUMINANCE:
+            return ImageChannelOrder::Luminance;
+        case CL_Rx:
+            return ImageChannelOrder::Rx;
+        case CL_RGx:
+            return ImageChannelOrder::RGx;
+        case CL_RGBx:
+            return ImageChannelOrder::RGBx;
+        case CL_DEPTH:
+            return ImageChannelOrder::Depth;
+        case CL_sRGB:
+            return ImageChannelOrder::sRGB;
+        case CL_sRGBx:
+            return ImageChannelOrder::sRGBx;
+        case CL_sRGBA:
+            return ImageChannelOrder::sRGBA;
+        case CL_sBGRA:
+            return ImageChannelOrder::sBGRA;
+        case CL_ABGR:
+            return ImageChannelOrder::ABGR;
+        default:
+            return ImageChannelOrder::InvalidEnum;
+    }
+}
+
+CLenum ToCLenum(ImageChannelOrder from)
+{
+    switch (from)
+    {
+        case ImageChannelOrder::R:
+            return CL_R;
+        case ImageChannelOrder::A:
+            return CL_A;
+        case ImageChannelOrder::RG:
+            return CL_RG;
+        case ImageChannelOrder::RA:
+            return CL_RA;
+        case ImageChannelOrder::RGB:
+            return CL_RGB;
+        case ImageChannelOrder::RGBA:
+            return CL_RGBA;
+        case ImageChannelOrder::BGRA:
+            return CL_BGRA;
+        case ImageChannelOrder::ARGB:
+            return CL_ARGB;
+        case ImageChannelOrder::Intensity:
+            return CL_INTENSITY;
+        case ImageChannelOrder::Luminance:
+            return CL_LUMINANCE;
+        case ImageChannelOrder::Rx:
+            return CL_Rx;
+        case ImageChannelOrder::RGx:
+            return CL_RGx;
+        case ImageChannelOrder::RGBx:
+            return CL_RGBx;
+        case ImageChannelOrder::Depth:
+            return CL_DEPTH;
+        case ImageChannelOrder::sRGB:
+            return CL_sRGB;
+        case ImageChannelOrder::sRGBx:
+            return CL_sRGBx;
+        case ImageChannelOrder::sRGBA:
+            return CL_sRGBA;
+        case ImageChannelOrder::sBGRA:
+            return CL_sBGRA;
+        case ImageChannelOrder::ABGR:
+            return CL_ABGR;
+        default:
+            UNREACHABLE();
+            return 0;
+    }
+}
+
+std::ostream &operator<<(std::ostream &os, ImageChannelOrder value)
+{
+    switch (value)
+    {
+        case ImageChannelOrder::R:
+            os << "CL_R";
+            break;
+        case ImageChannelOrder::A:
+            os << "CL_A";
+            break;
+        case ImageChannelOrder::RG:
+            os << "CL_RG";
+            break;
+        case ImageChannelOrder::RA:
+            os << "CL_RA";
+            break;
+        case ImageChannelOrder::RGB:
+            os << "CL_RGB";
+            break;
+        case ImageChannelOrder::RGBA:
+            os << "CL_RGBA";
+            break;
+        case ImageChannelOrder::BGRA:
+            os << "CL_BGRA";
+            break;
+        case ImageChannelOrder::ARGB:
+            os << "CL_ARGB";
+            break;
+        case ImageChannelOrder::Intensity:
+            os << "CL_INTENSITY";
+            break;
+        case ImageChannelOrder::Luminance:
+            os << "CL_LUMINANCE";
+            break;
+        case ImageChannelOrder::Rx:
+            os << "CL_Rx";
+            break;
+        case ImageChannelOrder::RGx:
+            os << "CL_RGx";
+            break;
+        case ImageChannelOrder::RGBx:
+            os << "CL_RGBx";
+            break;
+        case ImageChannelOrder::Depth:
+            os << "CL_DEPTH";
+            break;
+        case ImageChannelOrder::sRGB:
+            os << "CL_sRGB";
+            break;
+        case ImageChannelOrder::sRGBx:
+            os << "CL_sRGBx";
+            break;
+        case ImageChannelOrder::sRGBA:
+            os << "CL_sRGBA";
+            break;
+        case ImageChannelOrder::sBGRA:
+            os << "CL_sBGRA";
+            break;
+        case ImageChannelOrder::ABGR:
+            os << "CL_ABGR";
+            break;
+        default:
+            os << "GL_INVALID_ENUM";
+            break;
+    }
+    return os;
+}
+
+template <>
+ImageChannelType FromCLenum<ImageChannelType>(CLenum from)
+{
+    switch (from)
+    {
+        case CL_SNORM_INT8:
+            return ImageChannelType::SnormInt8;
+        case CL_SNORM_INT16:
+            return ImageChannelType::SnormInt16;
+        case CL_UNORM_INT8:
+            return ImageChannelType::UnormInt8;
+        case CL_UNORM_INT16:
+            return ImageChannelType::UnormInt16;
+        case CL_UNORM_SHORT_565:
+            return ImageChannelType::UnormShort565;
+        case CL_UNORM_SHORT_555:
+            return ImageChannelType::UnormShort555;
+        case CL_UNORM_INT_101010:
+            return ImageChannelType::UnormInt101010;
+        case CL_SIGNED_INT8:
+            return ImageChannelType::SignedInt8;
+        case CL_SIGNED_INT16:
+            return ImageChannelType::SignedInt16;
+        case CL_SIGNED_INT32:
+            return ImageChannelType::SignedInt32;
+        case CL_UNSIGNED_INT8:
+            return ImageChannelType::UnsignedInt8;
+        case CL_UNSIGNED_INT16:
+            return ImageChannelType::UnsignedInt16;
+        case CL_UNSIGNED_INT32:
+            return ImageChannelType::UnsignedInt32;
+        case CL_HALF_FLOAT:
+            return ImageChannelType::HalfFloat;
+        case CL_FLOAT:
+            return ImageChannelType::Float;
+        case CL_UNORM_INT_101010_2:
+            return ImageChannelType::UnormInt101010_2;
+        default:
+            return ImageChannelType::InvalidEnum;
+    }
+}
+
+CLenum ToCLenum(ImageChannelType from)
+{
+    switch (from)
+    {
+        case ImageChannelType::SnormInt8:
+            return CL_SNORM_INT8;
+        case ImageChannelType::SnormInt16:
+            return CL_SNORM_INT16;
+        case ImageChannelType::UnormInt8:
+            return CL_UNORM_INT8;
+        case ImageChannelType::UnormInt16:
+            return CL_UNORM_INT16;
+        case ImageChannelType::UnormShort565:
+            return CL_UNORM_SHORT_565;
+        case ImageChannelType::UnormShort555:
+            return CL_UNORM_SHORT_555;
+        case ImageChannelType::UnormInt101010:
+            return CL_UNORM_INT_101010;
+        case ImageChannelType::SignedInt8:
+            return CL_SIGNED_INT8;
+        case ImageChannelType::SignedInt16:
+            return CL_SIGNED_INT16;
+        case ImageChannelType::SignedInt32:
+            return CL_SIGNED_INT32;
+        case ImageChannelType::UnsignedInt8:
+            return CL_UNSIGNED_INT8;
+        case ImageChannelType::UnsignedInt16:
+            return CL_UNSIGNED_INT16;
+        case ImageChannelType::UnsignedInt32:
+            return CL_UNSIGNED_INT32;
+        case ImageChannelType::HalfFloat:
+            return CL_HALF_FLOAT;
+        case ImageChannelType::Float:
+            return CL_FLOAT;
+        case ImageChannelType::UnormInt101010_2:
+            return CL_UNORM_INT_101010_2;
+        default:
+            UNREACHABLE();
+            return 0;
+    }
+}
+
+std::ostream &operator<<(std::ostream &os, ImageChannelType value)
+{
+    switch (value)
+    {
+        case ImageChannelType::SnormInt8:
+            os << "CL_SNORM_INT8";
+            break;
+        case ImageChannelType::SnormInt16:
+            os << "CL_SNORM_INT16";
+            break;
+        case ImageChannelType::UnormInt8:
+            os << "CL_UNORM_INT8";
+            break;
+        case ImageChannelType::UnormInt16:
+            os << "CL_UNORM_INT16";
+            break;
+        case ImageChannelType::UnormShort565:
+            os << "CL_UNORM_SHORT_565";
+            break;
+        case ImageChannelType::UnormShort555:
+            os << "CL_UNORM_SHORT_555";
+            break;
+        case ImageChannelType::UnormInt101010:
+            os << "CL_UNORM_INT_101010";
+            break;
+        case ImageChannelType::SignedInt8:
+            os << "CL_SIGNED_INT8";
+            break;
+        case ImageChannelType::SignedInt16:
+            os << "CL_SIGNED_INT16";
+            break;
+        case ImageChannelType::SignedInt32:
+            os << "CL_SIGNED_INT32";
+            break;
+        case ImageChannelType::UnsignedInt8:
+            os << "CL_UNSIGNED_INT8";
+            break;
+        case ImageChannelType::UnsignedInt16:
+            os << "CL_UNSIGNED_INT16";
+            break;
+        case ImageChannelType::UnsignedInt32:
+            os << "CL_UNSIGNED_INT32";
+            break;
+        case ImageChannelType::HalfFloat:
+            os << "CL_HALF_FLOAT";
+            break;
+        case ImageChannelType::Float:
+            os << "CL_FLOAT";
+            break;
+        case ImageChannelType::UnormInt101010_2:
+            os << "CL_UNORM_INT_101010_2";
             break;
         default:
             os << "GL_INVALID_ENUM";
@@ -1752,6 +2212,51 @@ std::ostream &operator<<(std::ostream &os, MemObjectType value)
 }
 
 template <>
+MemProperties FromCLenum<MemProperties>(CLenum from)
+{
+    switch (from)
+    {
+        case CL_MEM_DEVICE_HANDLE_LIST_KHR:
+            return MemProperties::ExternalMemoryHandleListStart;
+        case CL_MEM_DEVICE_HANDLE_LIST_END_KHR:
+            return MemProperties::ExternalMemoryHandleListEnd;
+        default:
+            return MemProperties::InvalidEnum;
+    }
+}
+
+CLenum ToCLenum(MemProperties from)
+{
+    switch (from)
+    {
+        case MemProperties::ExternalMemoryHandleListStart:
+            return CL_MEM_DEVICE_HANDLE_LIST_KHR;
+        case MemProperties::ExternalMemoryHandleListEnd:
+            return CL_MEM_DEVICE_HANDLE_LIST_END_KHR;
+        default:
+            UNREACHABLE();
+            return 0;
+    }
+}
+
+std::ostream &operator<<(std::ostream &os, MemProperties value)
+{
+    switch (value)
+    {
+        case MemProperties::ExternalMemoryHandleListStart:
+            os << "CL_MEM_DEVICE_HANDLE_LIST_KHR";
+            break;
+        case MemProperties::ExternalMemoryHandleListEnd:
+            os << "CL_MEM_DEVICE_HANDLE_LIST_END_KHR";
+            break;
+        default:
+            os << "GL_INVALID_ENUM";
+            break;
+    }
+    return os;
+}
+
+template <>
 PipeInfo FromCLenum<PipeInfo>(CLenum from)
 {
     switch (from)
@@ -1826,6 +2331,8 @@ PlatformInfo FromCLenum<PlatformInfo>(CLenum from)
             return PlatformInfo::ExtensionsWithVersion;
         case CL_PLATFORM_ICD_SUFFIX_KHR:
             return PlatformInfo::IcdSuffix;
+        case CL_PLATFORM_EXTERNAL_MEMORY_IMPORT_HANDLE_TYPES_KHR:
+            return PlatformInfo::ExternalMemory;
         default:
             return PlatformInfo::InvalidEnum;
     }
@@ -1853,6 +2360,8 @@ CLenum ToCLenum(PlatformInfo from)
             return CL_PLATFORM_EXTENSIONS_WITH_VERSION;
         case PlatformInfo::IcdSuffix:
             return CL_PLATFORM_ICD_SUFFIX_KHR;
+        case PlatformInfo::ExternalMemory:
+            return CL_PLATFORM_EXTERNAL_MEMORY_IMPORT_HANDLE_TYPES_KHR;
         default:
             UNREACHABLE();
             return 0;
@@ -1889,6 +2398,9 @@ std::ostream &operator<<(std::ostream &os, PlatformInfo value)
             break;
         case PlatformInfo::IcdSuffix:
             os << "CL_PLATFORM_ICD_SUFFIX_KHR";
+            break;
+        case PlatformInfo::ExternalMemory:
+            os << "CL_PLATFORM_EXTERNAL_MEMORY_IMPORT_HANDLE_TYPES_KHR";
             break;
         default:
             os << "GL_INVALID_ENUM";

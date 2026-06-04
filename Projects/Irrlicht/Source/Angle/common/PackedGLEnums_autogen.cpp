@@ -225,6 +225,114 @@ std::ostream &operator<<(std::ostream &os, BufferBinding value)
 }
 
 template <>
+BufferParam FromGLenum<BufferParam>(GLenum from)
+{
+    switch (from)
+    {
+        case GL_BUFFER_IMMUTABLE_STORAGE_EXT:
+            return BufferParam::ImmutableStorage;
+        case GL_BUFFER_STORAGE_FLAGS_EXT:
+            return BufferParam::StorageFlags;
+        case GL_BUFFER_SIZE:
+            return BufferParam::BufferSize;
+        case GL_BUFFER_USAGE:
+            return BufferParam::BufferUsage;
+        case GL_BUFFER_ACCESS_OES:
+            return BufferParam::BufferAccess;
+        case GL_BUFFER_MAPPED:
+            return BufferParam::BufferMapped;
+        case GL_BUFFER_ACCESS_FLAGS:
+            return BufferParam::BufferAccessFlags;
+        case GL_BUFFER_MAP_LENGTH:
+            return BufferParam::BufferMapLength;
+        case GL_BUFFER_MAP_OFFSET:
+            return BufferParam::BufferMapOffset;
+        case GL_MEMORY_SIZE_ANGLE:
+            return BufferParam::MemorySize;
+        case GL_RESOURCE_INITIALIZED_ANGLE:
+            return BufferParam::ResourceInitialized;
+        default:
+            return BufferParam::InvalidEnum;
+    }
+}
+
+GLenum ToGLenum(BufferParam from)
+{
+    switch (from)
+    {
+        case BufferParam::ImmutableStorage:
+            return GL_BUFFER_IMMUTABLE_STORAGE_EXT;
+        case BufferParam::StorageFlags:
+            return GL_BUFFER_STORAGE_FLAGS_EXT;
+        case BufferParam::BufferSize:
+            return GL_BUFFER_SIZE;
+        case BufferParam::BufferUsage:
+            return GL_BUFFER_USAGE;
+        case BufferParam::BufferAccess:
+            return GL_BUFFER_ACCESS_OES;
+        case BufferParam::BufferMapped:
+            return GL_BUFFER_MAPPED;
+        case BufferParam::BufferAccessFlags:
+            return GL_BUFFER_ACCESS_FLAGS;
+        case BufferParam::BufferMapLength:
+            return GL_BUFFER_MAP_LENGTH;
+        case BufferParam::BufferMapOffset:
+            return GL_BUFFER_MAP_OFFSET;
+        case BufferParam::MemorySize:
+            return GL_MEMORY_SIZE_ANGLE;
+        case BufferParam::ResourceInitialized:
+            return GL_RESOURCE_INITIALIZED_ANGLE;
+        default:
+            UNREACHABLE();
+            return 0;
+    }
+}
+
+std::ostream &operator<<(std::ostream &os, BufferParam value)
+{
+    switch (value)
+    {
+        case BufferParam::ImmutableStorage:
+            os << "GL_BUFFER_IMMUTABLE_STORAGE_EXT";
+            break;
+        case BufferParam::StorageFlags:
+            os << "GL_BUFFER_STORAGE_FLAGS_EXT";
+            break;
+        case BufferParam::BufferSize:
+            os << "GL_BUFFER_SIZE";
+            break;
+        case BufferParam::BufferUsage:
+            os << "GL_BUFFER_USAGE";
+            break;
+        case BufferParam::BufferAccess:
+            os << "GL_BUFFER_ACCESS_OES";
+            break;
+        case BufferParam::BufferMapped:
+            os << "GL_BUFFER_MAPPED";
+            break;
+        case BufferParam::BufferAccessFlags:
+            os << "GL_BUFFER_ACCESS_FLAGS";
+            break;
+        case BufferParam::BufferMapLength:
+            os << "GL_BUFFER_MAP_LENGTH";
+            break;
+        case BufferParam::BufferMapOffset:
+            os << "GL_BUFFER_MAP_OFFSET";
+            break;
+        case BufferParam::MemorySize:
+            os << "GL_MEMORY_SIZE_ANGLE";
+            break;
+        case BufferParam::ResourceInitialized:
+            os << "GL_RESOURCE_INITIALIZED_ANGLE";
+            break;
+        default:
+            os << "GL_INVALID_ENUM";
+            break;
+    }
+    return os;
+}
+
+template <>
 BufferUsage FromGLenum<BufferUsage>(GLenum from)
 {
     switch (from)
@@ -466,6 +574,79 @@ std::ostream &operator<<(std::ostream &os, ClipOrigin value)
             break;
         case ClipOrigin::UpperLeft:
             os << "GL_UPPER_LEFT_EXT";
+            break;
+        default:
+            os << "GL_INVALID_ENUM";
+            break;
+    }
+    return os;
+}
+
+template <>
+CombinerOp FromGLenum<CombinerOp>(GLenum from)
+{
+    switch (from)
+    {
+        case GL_NONE:
+            return CombinerOp::Undefined;
+        case GL_FRAGMENT_SHADING_RATE_COMBINER_OP_KEEP_EXT:
+            return CombinerOp::Keep;
+        case GL_FRAGMENT_SHADING_RATE_COMBINER_OP_REPLACE_EXT:
+            return CombinerOp::Replace;
+        case GL_FRAGMENT_SHADING_RATE_COMBINER_OP_MIN_EXT:
+            return CombinerOp::Min;
+        case GL_FRAGMENT_SHADING_RATE_COMBINER_OP_MAX_EXT:
+            return CombinerOp::Max;
+        case GL_FRAGMENT_SHADING_RATE_COMBINER_OP_MUL_EXT:
+            return CombinerOp::Mul;
+        default:
+            return CombinerOp::InvalidEnum;
+    }
+}
+
+GLenum ToGLenum(CombinerOp from)
+{
+    switch (from)
+    {
+        case CombinerOp::Undefined:
+            return GL_NONE;
+        case CombinerOp::Keep:
+            return GL_FRAGMENT_SHADING_RATE_COMBINER_OP_KEEP_EXT;
+        case CombinerOp::Replace:
+            return GL_FRAGMENT_SHADING_RATE_COMBINER_OP_REPLACE_EXT;
+        case CombinerOp::Min:
+            return GL_FRAGMENT_SHADING_RATE_COMBINER_OP_MIN_EXT;
+        case CombinerOp::Max:
+            return GL_FRAGMENT_SHADING_RATE_COMBINER_OP_MAX_EXT;
+        case CombinerOp::Mul:
+            return GL_FRAGMENT_SHADING_RATE_COMBINER_OP_MUL_EXT;
+        default:
+            UNREACHABLE();
+            return 0;
+    }
+}
+
+std::ostream &operator<<(std::ostream &os, CombinerOp value)
+{
+    switch (value)
+    {
+        case CombinerOp::Undefined:
+            os << "GL_NONE";
+            break;
+        case CombinerOp::Keep:
+            os << "GL_FRAGMENT_SHADING_RATE_COMBINER_OP_KEEP_EXT";
+            break;
+        case CombinerOp::Replace:
+            os << "GL_FRAGMENT_SHADING_RATE_COMBINER_OP_REPLACE_EXT";
+            break;
+        case CombinerOp::Min:
+            os << "GL_FRAGMENT_SHADING_RATE_COMBINER_OP_MIN_EXT";
+            break;
+        case CombinerOp::Max:
+            os << "GL_FRAGMENT_SHADING_RATE_COMBINER_OP_MAX_EXT";
+            break;
+        case CombinerOp::Mul:
+            os << "GL_FRAGMENT_SHADING_RATE_COMBINER_OP_MUL_EXT";
             break;
         default:
             os << "GL_INVALID_ENUM";
@@ -1292,6 +1473,93 @@ std::ostream &operator<<(std::ostream &os, MatrixType value)
 }
 
 template <>
+PlaneParameter FromGLenum<PlaneParameter>(GLenum from)
+{
+    switch (from)
+    {
+        case GL_PIXEL_LOCAL_INTERNAL_FORMAT_ANGLE:
+            return PlaneParameter::InternalFormat;
+        case GL_PIXEL_LOCAL_TEXTURE_NAME_ANGLE:
+            return PlaneParameter::TextureName;
+        case GL_PIXEL_LOCAL_TEXTURE_LEVEL_ANGLE:
+            return PlaneParameter::TextureLevel;
+        case GL_PIXEL_LOCAL_TEXTURE_LAYER_ANGLE:
+            return PlaneParameter::TextureLayer;
+        case GL_PIXEL_LOCAL_USAGE_ANGLE:
+            return PlaneParameter::Usage;
+        case GL_PIXEL_LOCAL_CLEAR_VALUE_FLOAT_ANGLE:
+            return PlaneParameter::ClearValueFloat;
+        case GL_PIXEL_LOCAL_CLEAR_VALUE_INT_ANGLE:
+            return PlaneParameter::ClearValueInt;
+        case GL_PIXEL_LOCAL_CLEAR_VALUE_UNSIGNED_INT_ANGLE:
+            return PlaneParameter::ClearValueUnsignedInt;
+        default:
+            return PlaneParameter::InvalidEnum;
+    }
+}
+
+GLenum ToGLenum(PlaneParameter from)
+{
+    switch (from)
+    {
+        case PlaneParameter::InternalFormat:
+            return GL_PIXEL_LOCAL_INTERNAL_FORMAT_ANGLE;
+        case PlaneParameter::TextureName:
+            return GL_PIXEL_LOCAL_TEXTURE_NAME_ANGLE;
+        case PlaneParameter::TextureLevel:
+            return GL_PIXEL_LOCAL_TEXTURE_LEVEL_ANGLE;
+        case PlaneParameter::TextureLayer:
+            return GL_PIXEL_LOCAL_TEXTURE_LAYER_ANGLE;
+        case PlaneParameter::Usage:
+            return GL_PIXEL_LOCAL_USAGE_ANGLE;
+        case PlaneParameter::ClearValueFloat:
+            return GL_PIXEL_LOCAL_CLEAR_VALUE_FLOAT_ANGLE;
+        case PlaneParameter::ClearValueInt:
+            return GL_PIXEL_LOCAL_CLEAR_VALUE_INT_ANGLE;
+        case PlaneParameter::ClearValueUnsignedInt:
+            return GL_PIXEL_LOCAL_CLEAR_VALUE_UNSIGNED_INT_ANGLE;
+        default:
+            UNREACHABLE();
+            return 0;
+    }
+}
+
+std::ostream &operator<<(std::ostream &os, PlaneParameter value)
+{
+    switch (value)
+    {
+        case PlaneParameter::InternalFormat:
+            os << "GL_PIXEL_LOCAL_INTERNAL_FORMAT_ANGLE";
+            break;
+        case PlaneParameter::TextureName:
+            os << "GL_PIXEL_LOCAL_TEXTURE_NAME_ANGLE";
+            break;
+        case PlaneParameter::TextureLevel:
+            os << "GL_PIXEL_LOCAL_TEXTURE_LEVEL_ANGLE";
+            break;
+        case PlaneParameter::TextureLayer:
+            os << "GL_PIXEL_LOCAL_TEXTURE_LAYER_ANGLE";
+            break;
+        case PlaneParameter::Usage:
+            os << "GL_PIXEL_LOCAL_USAGE_ANGLE";
+            break;
+        case PlaneParameter::ClearValueFloat:
+            os << "GL_PIXEL_LOCAL_CLEAR_VALUE_FLOAT_ANGLE";
+            break;
+        case PlaneParameter::ClearValueInt:
+            os << "GL_PIXEL_LOCAL_CLEAR_VALUE_INT_ANGLE";
+            break;
+        case PlaneParameter::ClearValueUnsignedInt:
+            os << "GL_PIXEL_LOCAL_CLEAR_VALUE_UNSIGNED_INT_ANGLE";
+            break;
+        default:
+            os << "GL_INVALID_ENUM";
+            break;
+    }
+    return os;
+}
+
+template <>
 PointParameter FromGLenum<PointParameter>(GLenum from)
 {
     switch (from)
@@ -1448,6 +1716,96 @@ std::ostream &operator<<(std::ostream &os, ProvokingVertexConvention value)
 }
 
 template <>
+QueryObjectParameter FromGLenum<QueryObjectParameter>(GLenum from)
+{
+    switch (from)
+    {
+        case GL_QUERY_RESULT:
+            return QueryObjectParameter::QueryResult;
+        case GL_QUERY_RESULT_AVAILABLE:
+            return QueryObjectParameter::QueryResultAvailable;
+        default:
+            return QueryObjectParameter::InvalidEnum;
+    }
+}
+
+GLenum ToGLenum(QueryObjectParameter from)
+{
+    switch (from)
+    {
+        case QueryObjectParameter::QueryResult:
+            return GL_QUERY_RESULT;
+        case QueryObjectParameter::QueryResultAvailable:
+            return GL_QUERY_RESULT_AVAILABLE;
+        default:
+            UNREACHABLE();
+            return 0;
+    }
+}
+
+std::ostream &operator<<(std::ostream &os, QueryObjectParameter value)
+{
+    switch (value)
+    {
+        case QueryObjectParameter::QueryResult:
+            os << "GL_QUERY_RESULT";
+            break;
+        case QueryObjectParameter::QueryResultAvailable:
+            os << "GL_QUERY_RESULT_AVAILABLE";
+            break;
+        default:
+            os << "GL_INVALID_ENUM";
+            break;
+    }
+    return os;
+}
+
+template <>
+QueryParameter FromGLenum<QueryParameter>(GLenum from)
+{
+    switch (from)
+    {
+        case GL_QUERY_COUNTER_BITS_EXT:
+            return QueryParameter::QueryCounterBits;
+        case GL_CURRENT_QUERY:
+            return QueryParameter::CurrentQuery;
+        default:
+            return QueryParameter::InvalidEnum;
+    }
+}
+
+GLenum ToGLenum(QueryParameter from)
+{
+    switch (from)
+    {
+        case QueryParameter::QueryCounterBits:
+            return GL_QUERY_COUNTER_BITS_EXT;
+        case QueryParameter::CurrentQuery:
+            return GL_CURRENT_QUERY;
+        default:
+            UNREACHABLE();
+            return 0;
+    }
+}
+
+std::ostream &operator<<(std::ostream &os, QueryParameter value)
+{
+    switch (value)
+    {
+        case QueryParameter::QueryCounterBits:
+            os << "GL_QUERY_COUNTER_BITS_EXT";
+            break;
+        case QueryParameter::CurrentQuery:
+            os << "GL_CURRENT_QUERY";
+            break;
+        default:
+            os << "GL_INVALID_ENUM";
+            break;
+    }
+    return os;
+}
+
+template <>
 QueryType FromGLenum<QueryType>(GLenum from)
 {
     switch (from)
@@ -1456,8 +1814,6 @@ QueryType FromGLenum<QueryType>(GLenum from)
             return QueryType::AnySamples;
         case GL_ANY_SAMPLES_PASSED_CONSERVATIVE:
             return QueryType::AnySamplesConservative;
-        case GL_COMMANDS_COMPLETED_CHROMIUM:
-            return QueryType::CommandsCompleted;
         case GL_PRIMITIVES_GENERATED_EXT:
             return QueryType::PrimitivesGenerated;
         case GL_TIME_ELAPSED_EXT:
@@ -1479,8 +1835,6 @@ GLenum ToGLenum(QueryType from)
             return GL_ANY_SAMPLES_PASSED;
         case QueryType::AnySamplesConservative:
             return GL_ANY_SAMPLES_PASSED_CONSERVATIVE;
-        case QueryType::CommandsCompleted:
-            return GL_COMMANDS_COMPLETED_CHROMIUM;
         case QueryType::PrimitivesGenerated:
             return GL_PRIMITIVES_GENERATED_EXT;
         case QueryType::TimeElapsed:
@@ -1505,9 +1859,6 @@ std::ostream &operator<<(std::ostream &os, QueryType value)
         case QueryType::AnySamplesConservative:
             os << "GL_ANY_SAMPLES_PASSED_CONSERVATIVE";
             break;
-        case QueryType::CommandsCompleted:
-            os << "GL_COMMANDS_COMPLETED_CHROMIUM";
-            break;
         case QueryType::PrimitivesGenerated:
             os << "GL_PRIMITIVES_GENERATED_EXT";
             break;
@@ -1519,6 +1870,208 @@ std::ostream &operator<<(std::ostream &os, QueryType value)
             break;
         case QueryType::TransformFeedbackPrimitivesWritten:
             os << "GL_TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN";
+            break;
+        default:
+            os << "GL_INVALID_ENUM";
+            break;
+    }
+    return os;
+}
+
+template <>
+SamplerParameter FromGLenum<SamplerParameter>(GLenum from)
+{
+    switch (from)
+    {
+        case GL_TEXTURE_MAG_FILTER:
+            return SamplerParameter::MagFilter;
+        case GL_TEXTURE_MIN_FILTER:
+            return SamplerParameter::MinFilter;
+        case GL_TEXTURE_WRAP_S:
+            return SamplerParameter::WrapS;
+        case GL_TEXTURE_WRAP_T:
+            return SamplerParameter::WrapT;
+        case GL_TEXTURE_WRAP_R:
+            return SamplerParameter::WrapR;
+        case GL_TEXTURE_MIN_LOD:
+            return SamplerParameter::MinLod;
+        case GL_TEXTURE_MAX_LOD:
+            return SamplerParameter::MaxLod;
+        case GL_TEXTURE_COMPARE_MODE:
+            return SamplerParameter::CompareMode;
+        case GL_TEXTURE_COMPARE_FUNC:
+            return SamplerParameter::CompareFunc;
+        case GL_TEXTURE_BORDER_COLOR:
+            return SamplerParameter::BorderColor;
+        case GL_TEXTURE_MAX_ANISOTROPY_EXT:
+            return SamplerParameter::MaxAnisotropy;
+        case GL_TEXTURE_SRGB_DECODE_EXT:
+            return SamplerParameter::SrgbDecode;
+        case GL_TEXTURE_LOD_BIAS_QCOM:
+            return SamplerParameter::LodBiasQCOM;
+        default:
+            return SamplerParameter::InvalidEnum;
+    }
+}
+
+GLenum ToGLenum(SamplerParameter from)
+{
+    switch (from)
+    {
+        case SamplerParameter::MagFilter:
+            return GL_TEXTURE_MAG_FILTER;
+        case SamplerParameter::MinFilter:
+            return GL_TEXTURE_MIN_FILTER;
+        case SamplerParameter::WrapS:
+            return GL_TEXTURE_WRAP_S;
+        case SamplerParameter::WrapT:
+            return GL_TEXTURE_WRAP_T;
+        case SamplerParameter::WrapR:
+            return GL_TEXTURE_WRAP_R;
+        case SamplerParameter::MinLod:
+            return GL_TEXTURE_MIN_LOD;
+        case SamplerParameter::MaxLod:
+            return GL_TEXTURE_MAX_LOD;
+        case SamplerParameter::CompareMode:
+            return GL_TEXTURE_COMPARE_MODE;
+        case SamplerParameter::CompareFunc:
+            return GL_TEXTURE_COMPARE_FUNC;
+        case SamplerParameter::BorderColor:
+            return GL_TEXTURE_BORDER_COLOR;
+        case SamplerParameter::MaxAnisotropy:
+            return GL_TEXTURE_MAX_ANISOTROPY_EXT;
+        case SamplerParameter::SrgbDecode:
+            return GL_TEXTURE_SRGB_DECODE_EXT;
+        case SamplerParameter::LodBiasQCOM:
+            return GL_TEXTURE_LOD_BIAS_QCOM;
+        default:
+            UNREACHABLE();
+            return 0;
+    }
+}
+
+std::ostream &operator<<(std::ostream &os, SamplerParameter value)
+{
+    switch (value)
+    {
+        case SamplerParameter::MagFilter:
+            os << "GL_TEXTURE_MAG_FILTER";
+            break;
+        case SamplerParameter::MinFilter:
+            os << "GL_TEXTURE_MIN_FILTER";
+            break;
+        case SamplerParameter::WrapS:
+            os << "GL_TEXTURE_WRAP_S";
+            break;
+        case SamplerParameter::WrapT:
+            os << "GL_TEXTURE_WRAP_T";
+            break;
+        case SamplerParameter::WrapR:
+            os << "GL_TEXTURE_WRAP_R";
+            break;
+        case SamplerParameter::MinLod:
+            os << "GL_TEXTURE_MIN_LOD";
+            break;
+        case SamplerParameter::MaxLod:
+            os << "GL_TEXTURE_MAX_LOD";
+            break;
+        case SamplerParameter::CompareMode:
+            os << "GL_TEXTURE_COMPARE_MODE";
+            break;
+        case SamplerParameter::CompareFunc:
+            os << "GL_TEXTURE_COMPARE_FUNC";
+            break;
+        case SamplerParameter::BorderColor:
+            os << "GL_TEXTURE_BORDER_COLOR";
+            break;
+        case SamplerParameter::MaxAnisotropy:
+            os << "GL_TEXTURE_MAX_ANISOTROPY_EXT";
+            break;
+        case SamplerParameter::SrgbDecode:
+            os << "GL_TEXTURE_SRGB_DECODE_EXT";
+            break;
+        case SamplerParameter::LodBiasQCOM:
+            os << "GL_TEXTURE_LOD_BIAS_QCOM";
+            break;
+        default:
+            os << "GL_INVALID_ENUM";
+            break;
+    }
+    return os;
+}
+
+template <>
+ShaderParameter FromGLenum<ShaderParameter>(GLenum from)
+{
+    switch (from)
+    {
+        case GL_SHADER_TYPE:
+            return ShaderParameter::ShaderType;
+        case GL_DELETE_STATUS:
+            return ShaderParameter::DeleteStatus;
+        case GL_COMPILE_STATUS:
+            return ShaderParameter::CompileStatus;
+        case GL_INFO_LOG_LENGTH:
+            return ShaderParameter::InfoLogLength;
+        case GL_SHADER_SOURCE_LENGTH:
+            return ShaderParameter::ShaderSourceLength;
+        case GL_COMPLETION_STATUS_KHR:
+            return ShaderParameter::CompletionStatus;
+        case GL_TRANSLATED_SHADER_SOURCE_LENGTH_ANGLE:
+            return ShaderParameter::TranslatedShaderSourceLength;
+        default:
+            return ShaderParameter::InvalidEnum;
+    }
+}
+
+GLenum ToGLenum(ShaderParameter from)
+{
+    switch (from)
+    {
+        case ShaderParameter::ShaderType:
+            return GL_SHADER_TYPE;
+        case ShaderParameter::DeleteStatus:
+            return GL_DELETE_STATUS;
+        case ShaderParameter::CompileStatus:
+            return GL_COMPILE_STATUS;
+        case ShaderParameter::InfoLogLength:
+            return GL_INFO_LOG_LENGTH;
+        case ShaderParameter::ShaderSourceLength:
+            return GL_SHADER_SOURCE_LENGTH;
+        case ShaderParameter::CompletionStatus:
+            return GL_COMPLETION_STATUS_KHR;
+        case ShaderParameter::TranslatedShaderSourceLength:
+            return GL_TRANSLATED_SHADER_SOURCE_LENGTH_ANGLE;
+        default:
+            UNREACHABLE();
+            return 0;
+    }
+}
+
+std::ostream &operator<<(std::ostream &os, ShaderParameter value)
+{
+    switch (value)
+    {
+        case ShaderParameter::ShaderType:
+            os << "GL_SHADER_TYPE";
+            break;
+        case ShaderParameter::DeleteStatus:
+            os << "GL_DELETE_STATUS";
+            break;
+        case ShaderParameter::CompileStatus:
+            os << "GL_COMPILE_STATUS";
+            break;
+        case ShaderParameter::InfoLogLength:
+            os << "GL_INFO_LOG_LENGTH";
+            break;
+        case ShaderParameter::ShaderSourceLength:
+            os << "GL_SHADER_SOURCE_LENGTH";
+            break;
+        case ShaderParameter::CompletionStatus:
+            os << "GL_COMPLETION_STATUS_KHR";
+            break;
+        case ShaderParameter::TranslatedShaderSourceLength:
+            os << "GL_TRANSLATED_SHADER_SOURCE_LENGTH_ANGLE";
             break;
         default:
             os << "GL_INVALID_ENUM";
@@ -1652,17 +2205,23 @@ ShadingRate FromGLenum<ShadingRate>(GLenum from)
     {
         case GL_NONE:
             return ShadingRate::Undefined;
-        case GL_SHADING_RATE_1X1_PIXELS_QCOM:
+        case GL_SHADING_RATE_1X1_PIXELS_EXT:
             return ShadingRate::_1x1;
-        case GL_SHADING_RATE_1X2_PIXELS_QCOM:
+        case GL_SHADING_RATE_1X2_PIXELS_EXT:
             return ShadingRate::_1x2;
-        case GL_SHADING_RATE_2X1_PIXELS_QCOM:
+        case GL_SHADING_RATE_1X4_PIXELS_EXT:
+            return ShadingRate::_1x4;
+        case GL_SHADING_RATE_2X1_PIXELS_EXT:
             return ShadingRate::_2x1;
-        case GL_SHADING_RATE_2X2_PIXELS_QCOM:
+        case GL_SHADING_RATE_2X2_PIXELS_EXT:
             return ShadingRate::_2x2;
-        case GL_SHADING_RATE_4X2_PIXELS_QCOM:
+        case GL_SHADING_RATE_2X4_PIXELS_EXT:
+            return ShadingRate::_2x4;
+        case GL_SHADING_RATE_4X1_PIXELS_EXT:
+            return ShadingRate::_4x1;
+        case GL_SHADING_RATE_4X2_PIXELS_EXT:
             return ShadingRate::_4x2;
-        case GL_SHADING_RATE_4X4_PIXELS_QCOM:
+        case GL_SHADING_RATE_4X4_PIXELS_EXT:
             return ShadingRate::_4x4;
         default:
             return ShadingRate::InvalidEnum;
@@ -1676,17 +2235,23 @@ GLenum ToGLenum(ShadingRate from)
         case ShadingRate::Undefined:
             return GL_NONE;
         case ShadingRate::_1x1:
-            return GL_SHADING_RATE_1X1_PIXELS_QCOM;
+            return GL_SHADING_RATE_1X1_PIXELS_EXT;
         case ShadingRate::_1x2:
-            return GL_SHADING_RATE_1X2_PIXELS_QCOM;
+            return GL_SHADING_RATE_1X2_PIXELS_EXT;
+        case ShadingRate::_1x4:
+            return GL_SHADING_RATE_1X4_PIXELS_EXT;
         case ShadingRate::_2x1:
-            return GL_SHADING_RATE_2X1_PIXELS_QCOM;
+            return GL_SHADING_RATE_2X1_PIXELS_EXT;
         case ShadingRate::_2x2:
-            return GL_SHADING_RATE_2X2_PIXELS_QCOM;
+            return GL_SHADING_RATE_2X2_PIXELS_EXT;
+        case ShadingRate::_2x4:
+            return GL_SHADING_RATE_2X4_PIXELS_EXT;
+        case ShadingRate::_4x1:
+            return GL_SHADING_RATE_4X1_PIXELS_EXT;
         case ShadingRate::_4x2:
-            return GL_SHADING_RATE_4X2_PIXELS_QCOM;
+            return GL_SHADING_RATE_4X2_PIXELS_EXT;
         case ShadingRate::_4x4:
-            return GL_SHADING_RATE_4X4_PIXELS_QCOM;
+            return GL_SHADING_RATE_4X4_PIXELS_EXT;
         default:
             UNREACHABLE();
             return 0;
@@ -1701,22 +2266,31 @@ std::ostream &operator<<(std::ostream &os, ShadingRate value)
             os << "GL_NONE";
             break;
         case ShadingRate::_1x1:
-            os << "GL_SHADING_RATE_1X1_PIXELS_QCOM";
+            os << "GL_SHADING_RATE_1X1_PIXELS_EXT";
             break;
         case ShadingRate::_1x2:
-            os << "GL_SHADING_RATE_1X2_PIXELS_QCOM";
+            os << "GL_SHADING_RATE_1X2_PIXELS_EXT";
+            break;
+        case ShadingRate::_1x4:
+            os << "GL_SHADING_RATE_1X4_PIXELS_EXT";
             break;
         case ShadingRate::_2x1:
-            os << "GL_SHADING_RATE_2X1_PIXELS_QCOM";
+            os << "GL_SHADING_RATE_2X1_PIXELS_EXT";
             break;
         case ShadingRate::_2x2:
-            os << "GL_SHADING_RATE_2X2_PIXELS_QCOM";
+            os << "GL_SHADING_RATE_2X2_PIXELS_EXT";
+            break;
+        case ShadingRate::_2x4:
+            os << "GL_SHADING_RATE_2X4_PIXELS_EXT";
+            break;
+        case ShadingRate::_4x1:
+            os << "GL_SHADING_RATE_4X1_PIXELS_EXT";
             break;
         case ShadingRate::_4x2:
-            os << "GL_SHADING_RATE_4X2_PIXELS_QCOM";
+            os << "GL_SHADING_RATE_4X2_PIXELS_EXT";
             break;
         case ShadingRate::_4x4:
-            os << "GL_SHADING_RATE_4X4_PIXELS_QCOM";
+            os << "GL_SHADING_RATE_4X4_PIXELS_EXT";
             break;
         default:
             os << "GL_INVALID_ENUM";
@@ -1928,6 +2502,8 @@ TextureEnvParameter FromGLenum<TextureEnvParameter>(GLenum from)
             return TextureEnvParameter::Op2Alpha;
         case GL_COORD_REPLACE_OES:
             return TextureEnvParameter::PointCoordReplace;
+        case GL_TEXTURE_LOD_BIAS_EXT:
+            return TextureEnvParameter::LodBias;
         default:
             return TextureEnvParameter::InvalidEnum;
     }
@@ -1975,6 +2551,8 @@ GLenum ToGLenum(TextureEnvParameter from)
             return GL_OPERAND2_ALPHA;
         case TextureEnvParameter::PointCoordReplace:
             return GL_COORD_REPLACE_OES;
+        case TextureEnvParameter::LodBias:
+            return GL_TEXTURE_LOD_BIAS_EXT;
         default:
             UNREACHABLE();
             return 0;
@@ -2042,6 +2620,9 @@ std::ostream &operator<<(std::ostream &os, TextureEnvParameter value)
         case TextureEnvParameter::PointCoordReplace:
             os << "GL_COORD_REPLACE_OES";
             break;
+        case TextureEnvParameter::LodBias:
+            os << "GL_TEXTURE_LOD_BIAS_EXT";
+            break;
         default:
             os << "GL_INVALID_ENUM";
             break;
@@ -2058,6 +2639,8 @@ TextureEnvTarget FromGLenum<TextureEnvTarget>(GLenum from)
             return TextureEnvTarget::Env;
         case GL_POINT_SPRITE_OES:
             return TextureEnvTarget::PointSprite;
+        case GL_TEXTURE_FILTER_CONTROL_EXT:
+            return TextureEnvTarget::TextureFilterControl;
         default:
             return TextureEnvTarget::InvalidEnum;
     }
@@ -2071,6 +2654,8 @@ GLenum ToGLenum(TextureEnvTarget from)
             return GL_TEXTURE_ENV;
         case TextureEnvTarget::PointSprite:
             return GL_POINT_SPRITE_OES;
+        case TextureEnvTarget::TextureFilterControl:
+            return GL_TEXTURE_FILTER_CONTROL_EXT;
         default:
             UNREACHABLE();
             return 0;
@@ -2086,6 +2671,208 @@ std::ostream &operator<<(std::ostream &os, TextureEnvTarget value)
             break;
         case TextureEnvTarget::PointSprite:
             os << "GL_POINT_SPRITE_OES";
+            break;
+        case TextureEnvTarget::TextureFilterControl:
+            os << "GL_TEXTURE_FILTER_CONTROL_EXT";
+            break;
+        default:
+            os << "GL_INVALID_ENUM";
+            break;
+    }
+    return os;
+}
+
+template <>
+TextureImageParameter FromGLenum<TextureImageParameter>(GLenum from)
+{
+    switch (from)
+    {
+        case GL_TEXTURE_WIDTH:
+            return TextureImageParameter::Width;
+        case GL_TEXTURE_HEIGHT:
+            return TextureImageParameter::Height;
+        case GL_TEXTURE_DEPTH:
+            return TextureImageParameter::Depth;
+        case GL_TEXTURE_INTERNAL_FORMAT:
+            return TextureImageParameter::InternalFormat;
+        case GL_TEXTURE_RED_SIZE:
+            return TextureImageParameter::RedSize;
+        case GL_TEXTURE_GREEN_SIZE:
+            return TextureImageParameter::GreenSize;
+        case GL_TEXTURE_BLUE_SIZE:
+            return TextureImageParameter::BlueSize;
+        case GL_TEXTURE_ALPHA_SIZE:
+            return TextureImageParameter::AlphaSize;
+        case GL_TEXTURE_DEPTH_SIZE:
+            return TextureImageParameter::DepthSize;
+        case GL_TEXTURE_STENCIL_SIZE:
+            return TextureImageParameter::StencilSize;
+        case GL_TEXTURE_SHARED_SIZE:
+            return TextureImageParameter::SharedSize;
+        case GL_TEXTURE_RED_TYPE:
+            return TextureImageParameter::RedType;
+        case GL_TEXTURE_GREEN_TYPE:
+            return TextureImageParameter::GreenType;
+        case GL_TEXTURE_BLUE_TYPE:
+            return TextureImageParameter::BlueType;
+        case GL_TEXTURE_ALPHA_TYPE:
+            return TextureImageParameter::AlphaType;
+        case GL_TEXTURE_DEPTH_TYPE:
+            return TextureImageParameter::DepthType;
+        case GL_TEXTURE_COMPRESSED:
+            return TextureImageParameter::Compressed;
+        case GL_TEXTURE_SAMPLES:
+            return TextureImageParameter::Samples;
+        case GL_TEXTURE_FIXED_SAMPLE_LOCATIONS:
+            return TextureImageParameter::FixedSampleLocations;
+        case GL_TEXTURE_BUFFER_DATA_STORE_BINDING:
+            return TextureImageParameter::BufferDataStoreBinding;
+        case GL_TEXTURE_BUFFER_OFFSET:
+            return TextureImageParameter::BufferOffset;
+        case GL_TEXTURE_BUFFER_SIZE:
+            return TextureImageParameter::BufferSize;
+        case GL_MEMORY_SIZE_ANGLE:
+            return TextureImageParameter::MemorySize;
+        case GL_RESOURCE_INITIALIZED_ANGLE:
+            return TextureImageParameter::ResourceInitialized;
+        default:
+            return TextureImageParameter::InvalidEnum;
+    }
+}
+
+GLenum ToGLenum(TextureImageParameter from)
+{
+    switch (from)
+    {
+        case TextureImageParameter::Width:
+            return GL_TEXTURE_WIDTH;
+        case TextureImageParameter::Height:
+            return GL_TEXTURE_HEIGHT;
+        case TextureImageParameter::Depth:
+            return GL_TEXTURE_DEPTH;
+        case TextureImageParameter::InternalFormat:
+            return GL_TEXTURE_INTERNAL_FORMAT;
+        case TextureImageParameter::RedSize:
+            return GL_TEXTURE_RED_SIZE;
+        case TextureImageParameter::GreenSize:
+            return GL_TEXTURE_GREEN_SIZE;
+        case TextureImageParameter::BlueSize:
+            return GL_TEXTURE_BLUE_SIZE;
+        case TextureImageParameter::AlphaSize:
+            return GL_TEXTURE_ALPHA_SIZE;
+        case TextureImageParameter::DepthSize:
+            return GL_TEXTURE_DEPTH_SIZE;
+        case TextureImageParameter::StencilSize:
+            return GL_TEXTURE_STENCIL_SIZE;
+        case TextureImageParameter::SharedSize:
+            return GL_TEXTURE_SHARED_SIZE;
+        case TextureImageParameter::RedType:
+            return GL_TEXTURE_RED_TYPE;
+        case TextureImageParameter::GreenType:
+            return GL_TEXTURE_GREEN_TYPE;
+        case TextureImageParameter::BlueType:
+            return GL_TEXTURE_BLUE_TYPE;
+        case TextureImageParameter::AlphaType:
+            return GL_TEXTURE_ALPHA_TYPE;
+        case TextureImageParameter::DepthType:
+            return GL_TEXTURE_DEPTH_TYPE;
+        case TextureImageParameter::Compressed:
+            return GL_TEXTURE_COMPRESSED;
+        case TextureImageParameter::Samples:
+            return GL_TEXTURE_SAMPLES;
+        case TextureImageParameter::FixedSampleLocations:
+            return GL_TEXTURE_FIXED_SAMPLE_LOCATIONS;
+        case TextureImageParameter::BufferDataStoreBinding:
+            return GL_TEXTURE_BUFFER_DATA_STORE_BINDING;
+        case TextureImageParameter::BufferOffset:
+            return GL_TEXTURE_BUFFER_OFFSET;
+        case TextureImageParameter::BufferSize:
+            return GL_TEXTURE_BUFFER_SIZE;
+        case TextureImageParameter::MemorySize:
+            return GL_MEMORY_SIZE_ANGLE;
+        case TextureImageParameter::ResourceInitialized:
+            return GL_RESOURCE_INITIALIZED_ANGLE;
+        default:
+            UNREACHABLE();
+            return 0;
+    }
+}
+
+std::ostream &operator<<(std::ostream &os, TextureImageParameter value)
+{
+    switch (value)
+    {
+        case TextureImageParameter::Width:
+            os << "GL_TEXTURE_WIDTH";
+            break;
+        case TextureImageParameter::Height:
+            os << "GL_TEXTURE_HEIGHT";
+            break;
+        case TextureImageParameter::Depth:
+            os << "GL_TEXTURE_DEPTH";
+            break;
+        case TextureImageParameter::InternalFormat:
+            os << "GL_TEXTURE_INTERNAL_FORMAT";
+            break;
+        case TextureImageParameter::RedSize:
+            os << "GL_TEXTURE_RED_SIZE";
+            break;
+        case TextureImageParameter::GreenSize:
+            os << "GL_TEXTURE_GREEN_SIZE";
+            break;
+        case TextureImageParameter::BlueSize:
+            os << "GL_TEXTURE_BLUE_SIZE";
+            break;
+        case TextureImageParameter::AlphaSize:
+            os << "GL_TEXTURE_ALPHA_SIZE";
+            break;
+        case TextureImageParameter::DepthSize:
+            os << "GL_TEXTURE_DEPTH_SIZE";
+            break;
+        case TextureImageParameter::StencilSize:
+            os << "GL_TEXTURE_STENCIL_SIZE";
+            break;
+        case TextureImageParameter::SharedSize:
+            os << "GL_TEXTURE_SHARED_SIZE";
+            break;
+        case TextureImageParameter::RedType:
+            os << "GL_TEXTURE_RED_TYPE";
+            break;
+        case TextureImageParameter::GreenType:
+            os << "GL_TEXTURE_GREEN_TYPE";
+            break;
+        case TextureImageParameter::BlueType:
+            os << "GL_TEXTURE_BLUE_TYPE";
+            break;
+        case TextureImageParameter::AlphaType:
+            os << "GL_TEXTURE_ALPHA_TYPE";
+            break;
+        case TextureImageParameter::DepthType:
+            os << "GL_TEXTURE_DEPTH_TYPE";
+            break;
+        case TextureImageParameter::Compressed:
+            os << "GL_TEXTURE_COMPRESSED";
+            break;
+        case TextureImageParameter::Samples:
+            os << "GL_TEXTURE_SAMPLES";
+            break;
+        case TextureImageParameter::FixedSampleLocations:
+            os << "GL_TEXTURE_FIXED_SAMPLE_LOCATIONS";
+            break;
+        case TextureImageParameter::BufferDataStoreBinding:
+            os << "GL_TEXTURE_BUFFER_DATA_STORE_BINDING";
+            break;
+        case TextureImageParameter::BufferOffset:
+            os << "GL_TEXTURE_BUFFER_OFFSET";
+            break;
+        case TextureImageParameter::BufferSize:
+            os << "GL_TEXTURE_BUFFER_SIZE";
+            break;
+        case TextureImageParameter::MemorySize:
+            os << "GL_MEMORY_SIZE_ANGLE";
+            break;
+        case TextureImageParameter::ResourceInitialized:
+            os << "GL_RESOURCE_INITIALIZED_ANGLE";
             break;
         default:
             os << "GL_INVALID_ENUM";
@@ -2223,7 +3010,7 @@ TextureTarget FromGLenum<TextureTarget>(GLenum from)
             return TextureTarget::_2DArray;
         case GL_TEXTURE_2D_MULTISAMPLE:
             return TextureTarget::_2DMultisample;
-        case GL_TEXTURE_2D_MULTISAMPLE_ARRAY_OES:
+        case GL_TEXTURE_2D_MULTISAMPLE_ARRAY:
             return TextureTarget::_2DMultisampleArray;
         case GL_TEXTURE_3D:
             return TextureTarget::_3D;
@@ -2265,7 +3052,7 @@ GLenum ToGLenum(TextureTarget from)
         case TextureTarget::_2DMultisample:
             return GL_TEXTURE_2D_MULTISAMPLE;
         case TextureTarget::_2DMultisampleArray:
-            return GL_TEXTURE_2D_MULTISAMPLE_ARRAY_OES;
+            return GL_TEXTURE_2D_MULTISAMPLE_ARRAY;
         case TextureTarget::_3D:
             return GL_TEXTURE_3D;
         case TextureTarget::External:
@@ -2310,7 +3097,7 @@ std::ostream &operator<<(std::ostream &os, TextureTarget value)
             os << "GL_TEXTURE_2D_MULTISAMPLE";
             break;
         case TextureTarget::_2DMultisampleArray:
-            os << "GL_TEXTURE_2D_MULTISAMPLE_ARRAY_OES";
+            os << "GL_TEXTURE_2D_MULTISAMPLE_ARRAY";
             break;
         case TextureTarget::_3D:
             os << "GL_TEXTURE_3D";
@@ -2366,7 +3153,7 @@ TextureType FromGLenum<TextureType>(GLenum from)
             return TextureType::_2DArray;
         case GL_TEXTURE_2D_MULTISAMPLE:
             return TextureType::_2DMultisample;
-        case GL_TEXTURE_2D_MULTISAMPLE_ARRAY_OES:
+        case GL_TEXTURE_2D_MULTISAMPLE_ARRAY:
             return TextureType::_2DMultisampleArray;
         case GL_TEXTURE_3D:
             return TextureType::_3D;
@@ -2398,7 +3185,7 @@ GLenum ToGLenum(TextureType from)
         case TextureType::_2DMultisample:
             return GL_TEXTURE_2D_MULTISAMPLE;
         case TextureType::_2DMultisampleArray:
-            return GL_TEXTURE_2D_MULTISAMPLE_ARRAY_OES;
+            return GL_TEXTURE_2D_MULTISAMPLE_ARRAY;
         case TextureType::_3D:
             return GL_TEXTURE_3D;
         case TextureType::External:
@@ -2433,7 +3220,7 @@ std::ostream &operator<<(std::ostream &os, TextureType value)
             os << "GL_TEXTURE_2D_MULTISAMPLE";
             break;
         case TextureType::_2DMultisampleArray:
-            os << "GL_TEXTURE_2D_MULTISAMPLE_ARRAY_OES";
+            os << "GL_TEXTURE_2D_MULTISAMPLE_ARRAY";
             break;
         case TextureType::_3D:
             os << "GL_TEXTURE_3D";
@@ -2500,6 +3287,86 @@ std::ostream &operator<<(std::ostream &os, TilingMode value)
             break;
         case TilingMode::Linear:
             os << "GL_LINEAR_TILING_EXT";
+            break;
+        default:
+            os << "GL_INVALID_ENUM";
+            break;
+    }
+    return os;
+}
+
+template <>
+UniformBlockParameter FromGLenum<UniformBlockParameter>(GLenum from)
+{
+    switch (from)
+    {
+        case GL_UNIFORM_BLOCK_BINDING:
+            return UniformBlockParameter::Binding;
+        case GL_UNIFORM_BLOCK_DATA_SIZE:
+            return UniformBlockParameter::DataSize;
+        case GL_UNIFORM_BLOCK_NAME_LENGTH:
+            return UniformBlockParameter::NameLength;
+        case GL_UNIFORM_BLOCK_ACTIVE_UNIFORMS:
+            return UniformBlockParameter::ActiveUniforms;
+        case GL_UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES:
+            return UniformBlockParameter::ActiveUniformIndices;
+        case GL_UNIFORM_BLOCK_REFERENCED_BY_VERTEX_SHADER:
+            return UniformBlockParameter::ReferencedByVertexShader;
+        case GL_UNIFORM_BLOCK_REFERENCED_BY_FRAGMENT_SHADER:
+            return UniformBlockParameter::ReferencedByFragmentShader;
+        default:
+            return UniformBlockParameter::InvalidEnum;
+    }
+}
+
+GLenum ToGLenum(UniformBlockParameter from)
+{
+    switch (from)
+    {
+        case UniformBlockParameter::Binding:
+            return GL_UNIFORM_BLOCK_BINDING;
+        case UniformBlockParameter::DataSize:
+            return GL_UNIFORM_BLOCK_DATA_SIZE;
+        case UniformBlockParameter::NameLength:
+            return GL_UNIFORM_BLOCK_NAME_LENGTH;
+        case UniformBlockParameter::ActiveUniforms:
+            return GL_UNIFORM_BLOCK_ACTIVE_UNIFORMS;
+        case UniformBlockParameter::ActiveUniformIndices:
+            return GL_UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES;
+        case UniformBlockParameter::ReferencedByVertexShader:
+            return GL_UNIFORM_BLOCK_REFERENCED_BY_VERTEX_SHADER;
+        case UniformBlockParameter::ReferencedByFragmentShader:
+            return GL_UNIFORM_BLOCK_REFERENCED_BY_FRAGMENT_SHADER;
+        default:
+            UNREACHABLE();
+            return 0;
+    }
+}
+
+std::ostream &operator<<(std::ostream &os, UniformBlockParameter value)
+{
+    switch (value)
+    {
+        case UniformBlockParameter::Binding:
+            os << "GL_UNIFORM_BLOCK_BINDING";
+            break;
+        case UniformBlockParameter::DataSize:
+            os << "GL_UNIFORM_BLOCK_DATA_SIZE";
+            break;
+        case UniformBlockParameter::NameLength:
+            os << "GL_UNIFORM_BLOCK_NAME_LENGTH";
+            break;
+        case UniformBlockParameter::ActiveUniforms:
+            os << "GL_UNIFORM_BLOCK_ACTIVE_UNIFORMS";
+            break;
+        case UniformBlockParameter::ActiveUniformIndices:
+            os << "GL_UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES";
+            break;
+        case UniformBlockParameter::ReferencedByVertexShader:
+            os << "GL_UNIFORM_BLOCK_REFERENCED_BY_VERTEX_SHADER";
+            break;
+        case UniformBlockParameter::ReferencedByFragmentShader:
+            os << "GL_UNIFORM_BLOCK_REFERENCED_BY_FRAGMENT_SHADER";
             break;
         default:
             os << "GL_INVALID_ENUM";

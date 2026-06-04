@@ -78,118 +78,123 @@ std::ostream &operator<<(std::ostream &os, ContextInfo value);
 
 enum class DeviceInfo : uint8_t
 {
-    Type                                = 0,
-    VendorID                            = 1,
-    MaxComputeUnits                     = 2,
-    MaxWorkItemDimensions               = 3,
-    MaxWorkGroupSize                    = 4,
-    MaxWorkItemSizes                    = 5,
-    PreferredVectorWidthChar            = 6,
-    PreferredVectorWidthShort           = 7,
-    PreferredVectorWidthInt             = 8,
-    PreferredVectorWidthLong            = 9,
-    PreferredVectorWidthFloat           = 10,
-    PreferredVectorWidthDouble          = 11,
-    MaxClockFrequency                   = 12,
-    AddressBits                         = 13,
-    MaxReadImageArgs                    = 14,
-    MaxWriteImageArgs                   = 15,
-    MaxMemAllocSize                     = 16,
-    Image2D_MaxWidth                    = 17,
-    Image2D_MaxHeight                   = 18,
-    Image3D_MaxWidth                    = 19,
-    Image3D_MaxHeight                   = 20,
-    Image3D_MaxDepth                    = 21,
-    ImageSupport                        = 22,
-    MaxParameterSize                    = 23,
-    MaxSamplers                         = 24,
-    MemBaseAddrAlign                    = 25,
-    MinDataTypeAlignSize                = 26,
-    SingleFpConfig                      = 27,
-    GlobalMemCacheType                  = 28,
-    GlobalMemCachelineSize              = 29,
-    GlobalMemCacheSize                  = 30,
-    GlobalMemSize                       = 31,
-    MaxConstantBufferSize               = 32,
-    MaxConstantArgs                     = 33,
-    LocalMemType                        = 34,
-    LocalMemSize                        = 35,
-    ErrorCorrectionSupport              = 36,
-    ProfilingTimerResolution            = 37,
-    EndianLittle                        = 38,
-    Available                           = 39,
-    CompilerAvailable                   = 40,
-    ExecutionCapabilities               = 41,
-    QueueOnHostProperties               = 42,
-    Name                                = 43,
-    Vendor                              = 44,
-    DriverVersion                       = 45,
-    Profile                             = 46,
-    Version                             = 47,
-    Extensions                          = 48,
-    Platform                            = 49,
-    DoubleFpConfig                      = 50,
-    HalfFpConfig                        = 51,
-    PreferredVectorWidthHalf            = 52,
-    HostUnifiedMemory                   = 53,
-    NativeVectorWidthChar               = 54,
-    NativeVectorWidthShort              = 55,
-    NativeVectorWidthInt                = 56,
-    NativeVectorWidthLong               = 57,
-    NativeVectorWidthFloat              = 58,
-    NativeVectorWidthDouble             = 59,
-    NativeVectorWidthHalf               = 60,
-    OpenCL_C_Version                    = 61,
-    LinkerAvailable                     = 62,
-    BuiltInKernels                      = 63,
-    ImageMaxBufferSize                  = 64,
-    ImageMaxArraySize                   = 65,
-    ParentDevice                        = 66,
-    PartitionMaxSubDevices              = 67,
-    PartitionProperties                 = 68,
-    PartitionAffinityDomain             = 69,
-    PartitionType                       = 70,
-    ReferenceCount                      = 71,
-    PreferredInteropUserSync            = 72,
-    PrintfBufferSize                    = 73,
-    ImagePitchAlignment                 = 74,
-    ImageBaseAddressAlignment           = 75,
-    MaxReadWriteImageArgs               = 76,
-    MaxGlobalVariableSize               = 77,
-    QueueOnDeviceProperties             = 78,
-    QueueOnDevicePreferredSize          = 79,
-    QueueOnDeviceMaxSize                = 80,
-    MaxOnDeviceQueues                   = 81,
-    MaxOnDeviceEvents                   = 82,
-    SVM_Capabilities                    = 83,
-    GlobalVariablePreferredTotalSize    = 84,
-    MaxPipeArgs                         = 85,
-    PipeMaxActiveReservations           = 86,
-    PipeMaxPacketSize                   = 87,
-    PreferredPlatformAtomicAlignment    = 88,
-    PreferredGlobalAtomicAlignment      = 89,
-    PreferredLocalAtomicAlignment       = 90,
-    IL_Version                          = 91,
-    MaxNumSubGroups                     = 92,
-    SubGroupIndependentForwardProgress  = 93,
-    NumericVersion                      = 94,
-    ExtensionsWithVersion               = 95,
-    ILsWithVersion                      = 96,
-    BuiltInKernelsWithVersion           = 97,
-    AtomicMemoryCapabilities            = 98,
-    AtomicFenceCapabilities             = 99,
-    NonUniformWorkGroupSupport          = 100,
-    OpenCL_C_AllVersions                = 101,
-    PreferredWorkGroupSizeMultiple      = 102,
-    WorkGroupCollectiveFunctionsSupport = 103,
-    GenericAddressSpaceSupport          = 104,
-    OpenCL_C_Features                   = 105,
-    DeviceEnqueueCapabilities           = 106,
-    PipeSupport                         = 107,
-    LatestConformanceVersionPassed      = 108,
+    Type                                                = 0,
+    VendorID                                            = 1,
+    MaxComputeUnits                                     = 2,
+    MaxWorkItemDimensions                               = 3,
+    MaxWorkGroupSize                                    = 4,
+    MaxWorkItemSizes                                    = 5,
+    PreferredVectorWidthChar                            = 6,
+    PreferredVectorWidthShort                           = 7,
+    PreferredVectorWidthInt                             = 8,
+    PreferredVectorWidthLong                            = 9,
+    PreferredVectorWidthFloat                           = 10,
+    PreferredVectorWidthDouble                          = 11,
+    MaxClockFrequency                                   = 12,
+    AddressBits                                         = 13,
+    MaxReadImageArgs                                    = 14,
+    MaxWriteImageArgs                                   = 15,
+    MaxMemAllocSize                                     = 16,
+    Image2D_MaxWidth                                    = 17,
+    Image2D_MaxHeight                                   = 18,
+    Image3D_MaxWidth                                    = 19,
+    Image3D_MaxHeight                                   = 20,
+    Image3D_MaxDepth                                    = 21,
+    ImageSupport                                        = 22,
+    MaxParameterSize                                    = 23,
+    MaxSamplers                                         = 24,
+    MemBaseAddrAlign                                    = 25,
+    MinDataTypeAlignSize                                = 26,
+    SingleFpConfig                                      = 27,
+    GlobalMemCacheType                                  = 28,
+    GlobalMemCachelineSize                              = 29,
+    GlobalMemCacheSize                                  = 30,
+    GlobalMemSize                                       = 31,
+    MaxConstantBufferSize                               = 32,
+    MaxConstantArgs                                     = 33,
+    LocalMemType                                        = 34,
+    LocalMemSize                                        = 35,
+    ErrorCorrectionSupport                              = 36,
+    ProfilingTimerResolution                            = 37,
+    EndianLittle                                        = 38,
+    Available                                           = 39,
+    CompilerAvailable                                   = 40,
+    ExecutionCapabilities                               = 41,
+    QueueOnHostProperties                               = 42,
+    Name                                                = 43,
+    Vendor                                              = 44,
+    DriverVersion                                       = 45,
+    Profile                                             = 46,
+    Version                                             = 47,
+    Extensions                                          = 48,
+    Platform                                            = 49,
+    DoubleFpConfig                                      = 50,
+    HalfFpConfig                                        = 51,
+    PreferredVectorWidthHalf                            = 52,
+    HostUnifiedMemory                                   = 53,
+    NativeVectorWidthChar                               = 54,
+    NativeVectorWidthShort                              = 55,
+    NativeVectorWidthInt                                = 56,
+    NativeVectorWidthLong                               = 57,
+    NativeVectorWidthFloat                              = 58,
+    NativeVectorWidthDouble                             = 59,
+    NativeVectorWidthHalf                               = 60,
+    OpenCL_C_Version                                    = 61,
+    LinkerAvailable                                     = 62,
+    BuiltInKernels                                      = 63,
+    ImageMaxBufferSize                                  = 64,
+    ImageMaxArraySize                                   = 65,
+    ParentDevice                                        = 66,
+    PartitionMaxSubDevices                              = 67,
+    PartitionProperties                                 = 68,
+    PartitionAffinityDomain                             = 69,
+    PartitionType                                       = 70,
+    ReferenceCount                                      = 71,
+    PreferredInteropUserSync                            = 72,
+    PrintfBufferSize                                    = 73,
+    ImagePitchAlignment                                 = 74,
+    ImageBaseAddressAlignment                           = 75,
+    MaxReadWriteImageArgs                               = 76,
+    MaxGlobalVariableSize                               = 77,
+    QueueOnDeviceProperties                             = 78,
+    QueueOnDevicePreferredSize                          = 79,
+    QueueOnDeviceMaxSize                                = 80,
+    MaxOnDeviceQueues                                   = 81,
+    MaxOnDeviceEvents                                   = 82,
+    SVM_Capabilities                                    = 83,
+    GlobalVariablePreferredTotalSize                    = 84,
+    MaxPipeArgs                                         = 85,
+    PipeMaxActiveReservations                           = 86,
+    PipeMaxPacketSize                                   = 87,
+    PreferredPlatformAtomicAlignment                    = 88,
+    PreferredGlobalAtomicAlignment                      = 89,
+    PreferredLocalAtomicAlignment                       = 90,
+    IL_Version                                          = 91,
+    MaxNumSubGroups                                     = 92,
+    SubGroupIndependentForwardProgress                  = 93,
+    NumericVersion                                      = 94,
+    ExtensionsWithVersion                               = 95,
+    ILsWithVersion                                      = 96,
+    BuiltInKernelsWithVersion                           = 97,
+    AtomicMemoryCapabilities                            = 98,
+    AtomicFenceCapabilities                             = 99,
+    NonUniformWorkGroupSupport                          = 100,
+    OpenCL_C_AllVersions                                = 101,
+    PreferredWorkGroupSizeMultiple                      = 102,
+    WorkGroupCollectiveFunctionsSupport                 = 103,
+    GenericAddressSpaceSupport                          = 104,
+    OpenCL_C_Features                                   = 105,
+    DeviceEnqueueCapabilities                           = 106,
+    PipeSupport                                         = 107,
+    LatestConformanceVersionPassed                      = 108,
+    IntegerDotProductCapabilities                       = 109,
+    IntegerDotProductAccelerationProperties8bit         = 110,
+    IntegerDotProductAccelerationProperties4x8bitPacked = 111,
+    ExternalMemoryImportHandleTypes                     = 112,
+    ExternalMemoryLinearImagesHandleTypes               = 113,
 
-    InvalidEnum = 109,
-    EnumCount   = 109,
+    InvalidEnum = 114,
+    EnumCount   = 114,
 };
 
 template <>
@@ -214,6 +219,38 @@ EventInfo FromCLenum<EventInfo>(CLenum from);
 CLenum ToCLenum(EventInfo from);
 std::ostream &operator<<(std::ostream &os, EventInfo value);
 
+enum class ExecutionStatus : uint8_t
+{
+    Complete  = 0,
+    Running   = 1,
+    Submitted = 2,
+    Queued    = 3,
+
+    InvalidEnum = 4,
+    EnumCount   = 4,
+};
+
+template <>
+ExecutionStatus FromCLenum<ExecutionStatus>(CLenum from);
+CLenum ToCLenum(ExecutionStatus from);
+std::ostream &operator<<(std::ostream &os, ExecutionStatus value);
+
+enum class ExternalMemoryHandle : uint8_t
+{
+    OpaqueFd       = 0,
+    OpaqueWin32    = 1,
+    OpaqueWin32Kmt = 2,
+    DmaBuf         = 3,
+
+    InvalidEnum = 4,
+    EnumCount   = 4,
+};
+
+template <>
+ExternalMemoryHandle FromCLenum<ExternalMemoryHandle>(CLenum from);
+CLenum ToCLenum(ExternalMemoryHandle from);
+std::ostream &operator<<(std::ostream &os, ExternalMemoryHandle value);
+
 enum class FilterMode : uint8_t
 {
     Nearest = 0,
@@ -227,6 +264,65 @@ template <>
 FilterMode FromCLenum<FilterMode>(CLenum from);
 CLenum ToCLenum(FilterMode from);
 std::ostream &operator<<(std::ostream &os, FilterMode value);
+
+enum class ImageChannelOrder : uint8_t
+{
+    R         = 0,
+    A         = 1,
+    RG        = 2,
+    RA        = 3,
+    RGB       = 4,
+    RGBA      = 5,
+    BGRA      = 6,
+    ARGB      = 7,
+    Intensity = 8,
+    Luminance = 9,
+    Rx        = 10,
+    RGx       = 11,
+    RGBx      = 12,
+    Depth     = 13,
+    sRGB      = 14,
+    sRGBx     = 15,
+    sRGBA     = 16,
+    sBGRA     = 17,
+    ABGR      = 18,
+
+    InvalidEnum = 19,
+    EnumCount   = 19,
+};
+
+template <>
+ImageChannelOrder FromCLenum<ImageChannelOrder>(CLenum from);
+CLenum ToCLenum(ImageChannelOrder from);
+std::ostream &operator<<(std::ostream &os, ImageChannelOrder value);
+
+enum class ImageChannelType : uint8_t
+{
+    SnormInt8        = 0,
+    SnormInt16       = 1,
+    UnormInt8        = 2,
+    UnormInt16       = 3,
+    UnormShort565    = 4,
+    UnormShort555    = 5,
+    UnormInt101010   = 6,
+    SignedInt8       = 7,
+    SignedInt16      = 8,
+    SignedInt32      = 9,
+    UnsignedInt8     = 10,
+    UnsignedInt16    = 11,
+    UnsignedInt32    = 12,
+    HalfFloat        = 13,
+    Float            = 14,
+    UnormInt101010_2 = 15,
+
+    InvalidEnum = 16,
+    EnumCount   = 16,
+};
+
+template <>
+ImageChannelType FromCLenum<ImageChannelType>(CLenum from);
+CLenum ToCLenum(ImageChannelType from);
+std::ostream &operator<<(std::ostream &os, ImageChannelType value);
 
 enum class ImageInfo : uint8_t
 {
@@ -378,6 +474,20 @@ MemObjectType FromCLenum<MemObjectType>(CLenum from);
 CLenum ToCLenum(MemObjectType from);
 std::ostream &operator<<(std::ostream &os, MemObjectType value);
 
+enum class MemProperties : uint8_t
+{
+    ExternalMemoryHandleListStart = 0,
+    ExternalMemoryHandleListEnd   = 1,
+
+    InvalidEnum = 2,
+    EnumCount   = 2,
+};
+
+template <>
+MemProperties FromCLenum<MemProperties>(CLenum from);
+CLenum ToCLenum(MemProperties from);
+std::ostream &operator<<(std::ostream &os, MemProperties value);
+
 enum class PipeInfo : uint8_t
 {
     PacketSize = 0,
@@ -404,9 +514,10 @@ enum class PlatformInfo : uint8_t
     NumericVersion        = 6,
     ExtensionsWithVersion = 7,
     IcdSuffix             = 8,
+    ExternalMemory        = 9,
 
-    InvalidEnum = 9,
-    EnumCount   = 9,
+    InvalidEnum = 10,
+    EnumCount   = 10,
 };
 
 template <>

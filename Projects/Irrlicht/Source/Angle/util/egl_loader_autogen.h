@@ -72,6 +72,8 @@
 #define eglPresentationTimeANDROID l_eglPresentationTimeANDROID
 #define eglCreateDeviceANGLE l_eglCreateDeviceANGLE
 #define eglReleaseDeviceANGLE l_eglReleaseDeviceANGLE
+#define eglLockVulkanQueueANGLE l_eglLockVulkanQueueANGLE
+#define eglUnlockVulkanQueueANGLE l_eglUnlockVulkanQueueANGLE
 #define eglAcquireExternalContextANGLE l_eglAcquireExternalContextANGLE
 #define eglReleaseExternalContextANGLE l_eglReleaseExternalContextANGLE
 #define eglQueryDisplayAttribANGLE l_eglQueryDisplayAttribANGLE
@@ -90,7 +92,6 @@
 #define eglQuerySurfacePointerANGLE l_eglQuerySurfacePointerANGLE
 #define eglCreateStreamProducerD3DTextureANGLE l_eglCreateStreamProducerD3DTextureANGLE
 #define eglStreamPostD3DTextureANGLE l_eglStreamPostD3DTextureANGLE
-#define eglSwapBuffersWithFrameTokenANGLE l_eglSwapBuffersWithFrameTokenANGLE
 #define eglGetMscRateANGLE l_eglGetMscRateANGLE
 #define eglExportVkImageANGLE l_eglExportVkImageANGLE
 #define eglWaitUntilWorkScheduledANGLE l_eglWaitUntilWorkScheduledANGLE
@@ -103,6 +104,7 @@
 #define eglCreatePlatformPixmapSurfaceEXT l_eglCreatePlatformPixmapSurfaceEXT
 #define eglCreatePlatformWindowSurfaceEXT l_eglCreatePlatformWindowSurfaceEXT
 #define eglGetPlatformDisplayEXT l_eglGetPlatformDisplayEXT
+#define eglQuerySupportedCompressionRatesEXT l_eglQuerySupportedCompressionRatesEXT
 #define eglDebugMessageControlKHR l_eglDebugMessageControlKHR
 #define eglLabelObjectKHR l_eglLabelObjectKHR
 #define eglQueryDebugKHR l_eglQueryDebugKHR
@@ -192,6 +194,8 @@ ANGLE_UTIL_EXPORT extern PFNEGLDUPNATIVEFENCEFDANDROIDPROC l_eglDupNativeFenceFD
 ANGLE_UTIL_EXPORT extern PFNEGLPRESENTATIONTIMEANDROIDPROC l_eglPresentationTimeANDROID;
 ANGLE_UTIL_EXPORT extern PFNEGLCREATEDEVICEANGLEPROC l_eglCreateDeviceANGLE;
 ANGLE_UTIL_EXPORT extern PFNEGLRELEASEDEVICEANGLEPROC l_eglReleaseDeviceANGLE;
+ANGLE_UTIL_EXPORT extern PFNEGLLOCKVULKANQUEUEANGLEPROC l_eglLockVulkanQueueANGLE;
+ANGLE_UTIL_EXPORT extern PFNEGLUNLOCKVULKANQUEUEANGLEPROC l_eglUnlockVulkanQueueANGLE;
 ANGLE_UTIL_EXPORT extern PFNEGLACQUIREEXTERNALCONTEXTANGLEPROC l_eglAcquireExternalContextANGLE;
 ANGLE_UTIL_EXPORT extern PFNEGLRELEASEEXTERNALCONTEXTANGLEPROC l_eglReleaseExternalContextANGLE;
 ANGLE_UTIL_EXPORT extern PFNEGLQUERYDISPLAYATTRIBANGLEPROC l_eglQueryDisplayAttribANGLE;
@@ -211,8 +215,6 @@ ANGLE_UTIL_EXPORT extern PFNEGLQUERYSURFACEPOINTERANGLEPROC l_eglQuerySurfacePoi
 ANGLE_UTIL_EXPORT extern PFNEGLCREATESTREAMPRODUCERD3DTEXTUREANGLEPROC
     l_eglCreateStreamProducerD3DTextureANGLE;
 ANGLE_UTIL_EXPORT extern PFNEGLSTREAMPOSTD3DTEXTUREANGLEPROC l_eglStreamPostD3DTextureANGLE;
-ANGLE_UTIL_EXPORT extern PFNEGLSWAPBUFFERSWITHFRAMETOKENANGLEPROC
-    l_eglSwapBuffersWithFrameTokenANGLE;
 ANGLE_UTIL_EXPORT extern PFNEGLGETMSCRATEANGLEPROC l_eglGetMscRateANGLE;
 ANGLE_UTIL_EXPORT extern PFNEGLEXPORTVKIMAGEANGLEPROC l_eglExportVkImageANGLE;
 ANGLE_UTIL_EXPORT extern PFNEGLWAITUNTILWORKSCHEDULEDANGLEPROC l_eglWaitUntilWorkScheduledANGLE;
@@ -227,6 +229,8 @@ ANGLE_UTIL_EXPORT extern PFNEGLCREATEPLATFORMPIXMAPSURFACEEXTPROC
 ANGLE_UTIL_EXPORT extern PFNEGLCREATEPLATFORMWINDOWSURFACEEXTPROC
     l_eglCreatePlatformWindowSurfaceEXT;
 ANGLE_UTIL_EXPORT extern PFNEGLGETPLATFORMDISPLAYEXTPROC l_eglGetPlatformDisplayEXT;
+ANGLE_UTIL_EXPORT extern PFNEGLQUERYSUPPORTEDCOMPRESSIONRATESEXTPROC
+    l_eglQuerySupportedCompressionRatesEXT;
 ANGLE_UTIL_EXPORT extern PFNEGLDEBUGMESSAGECONTROLKHRPROC l_eglDebugMessageControlKHR;
 ANGLE_UTIL_EXPORT extern PFNEGLLABELOBJECTKHRPROC l_eglLabelObjectKHR;
 ANGLE_UTIL_EXPORT extern PFNEGLQUERYDEBUGKHRPROC l_eglQueryDebugKHR;
@@ -261,7 +265,7 @@ typedef GenericProc(KHRONOS_APIENTRY *LoadProc)(const char *);
 ANGLE_UTIL_EXPORT void LoadUtilEGL(LoadProc loadProc);
 
 #if defined(__cplusplus)
-}       // extern "C"
+}  // extern "C"
 #endif  // defined(__cplusplus)
 
 #endif  // UTIL_EGL_LOADER_AUTOGEN_H_

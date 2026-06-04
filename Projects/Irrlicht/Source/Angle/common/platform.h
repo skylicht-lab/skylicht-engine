@@ -20,9 +20,6 @@
 #elif defined(ANDROID) && !defined(ANGLE_ANDROID_DMA_BUF)
 #    define ANGLE_PLATFORM_ANDROID 1
 #    define ANGLE_PLATFORM_POSIX 1
-#elif defined(__ggp__)
-#    define ANGLE_PLATFORM_GGP 1
-#    define ANGLE_PLATFORM_POSIX 1
 #elif defined(__linux__) || defined(EMSCRIPTEN)
 #    define ANGLE_PLATFORM_LINUX 1
 #    define ANGLE_PLATFORM_POSIX 1
@@ -114,8 +111,8 @@
 // Macro for hinting that an expression is likely to be true/false.
 #if !defined(ANGLE_LIKELY) || !defined(ANGLE_UNLIKELY)
 #    if defined(__GNUC__) || defined(__clang__)
-#        define ANGLE_LIKELY(x) __builtin_expect(!!(x), 1)
-#        define ANGLE_UNLIKELY(x) __builtin_expect(!!(x), 0)
+#        define ANGLE_LIKELY(x) __builtin_expect_with_probability(!!(x), 1, 0.9999)
+#        define ANGLE_UNLIKELY(x) __builtin_expect_with_probability(!!(x), 0, 0.9999)
 #    else
 #        define ANGLE_LIKELY(x) (x)
 #        define ANGLE_UNLIKELY(x) (x)
