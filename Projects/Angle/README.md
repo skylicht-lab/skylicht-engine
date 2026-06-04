@@ -98,7 +98,7 @@ autoninja -C out/Debug libEGL libGLESv2
 ```
 ### RESULT
 
-Copy **libEGL.dylib** and **libGLESv2.dylib** (in folder out/Release) to **Projects/Angle/out/MacOS/Release** and update include folder (.h).
+Copy **libEGL.dylib** and **libGLESv2.dylib** to **Projects/Angle/lib/macos/<arch>** and update include folder (.h).
 
 ## More infomation
 

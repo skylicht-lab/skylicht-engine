@@ -43,21 +43,23 @@ struct ANGLE_UTIL_EXPORT ConfigParameters
     int depthBits;
     int stencilBits;
 
-    Optional<bool> webGLCompatibility;
-    Optional<bool> robustResourceInit;
+    bool webGLCompatibility;
+    bool hardenedContext;
+    bool robustResourceInit;
 
     // EGLWindow-specific.
     EGLenum componentType;
     bool multisample;
     bool debug;
     bool noError;
-    Optional<bool> extensionsEnabled;
+    bool extensionsEnabled;
     bool bindGeneratesResource;
     bool clientArraysEnabled;
     bool robustAccess;
+    bool pbuffer;
     bool mutableRenderBuffer;
     EGLint samples;
-    Optional<bool> contextProgramCacheEnabled;
+    bool contextProgramCacheEnabled;
     EGLenum resetStrategy;
     EGLenum colorSpace;
     EGLint swapInterval;
@@ -139,6 +141,8 @@ class ANGLE_UTIL_EXPORT GLWindowBase : angle::NonCopyable
 
     virtual EGLint getEGLError()                                    = 0;
     virtual Display getCurrentDisplay()                             = 0;
+    virtual Surface getCurrentSurface(EGLint readdraw)              = 0;
+    virtual EGLContext getCurrentContext()                          = 0;
     virtual Surface createPbufferSurface(const EGLint *attrib_list) = 0;
     virtual EGLBoolean destroySurface(Surface surface)              = 0;
 
@@ -252,6 +256,8 @@ class ANGLE_UTIL_EXPORT EGLWindow : public GLWindowBase
 
     EGLint getEGLError() override;
     Display getCurrentDisplay() override;
+    Surface getCurrentSurface(EGLint readdraw) override;
+    EGLContext getCurrentContext() override;
     Surface createPbufferSurface(const EGLint *attrib_list) override;
     EGLBoolean destroySurface(Surface surface) override;
 

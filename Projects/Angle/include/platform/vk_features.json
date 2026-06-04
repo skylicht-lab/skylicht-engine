@@ -16,6 +16,14 @@
             "issue": "b/266235549"
         },
         {
+            "name": "allow_pipeline_statistics_for_primitives_generated_query",
+            "category": "Workarounds",
+            "description": [
+                "On devices where primitivesGeneratedQuery vulkan feature is not available, allows pipelineStatisticsQuery vulkan feature to substitute primitivesGeneratedQuery if it generates the same results as primitivesGeneratedQuery"
+            ],
+            "issue:": "b/333987915"
+        },
+        {
             "name": "bresenham_line_rasterization",
             "category": "Features",
             "description": [
@@ -34,6 +42,13 @@
             "category": "Workarounds",
             "description": [
                 "Force a fallback format for angle_end2end_tests"
+            ]
+        },
+        {
+            "name": "force_renderable_fallback_format",
+            "category": "Workarounds",
+            "description": [
+                "Force a fallback renderable format for angle_end2end_tests"
             ]
         },
         {
@@ -83,6 +98,14 @@
             ]
         },
         {
+            "name": "use_large_size_for_dynamic_buffers",
+            "category": "Workarounds",
+            "description": [
+                "Increase the size of the dynamic buffers used as streaming vertex buffers to allow more suballocation and reduce the allocation handle count."
+            ],
+            "issue": "http://issuetracker.google.com/485671640"
+        },
+        {
             "name": "supports_renderpass2",
             "category": "Features",
             "description": [
@@ -101,13 +124,6 @@
             "category": "Features",
             "description": [
                 "VkDevice supports the VK_ANDROID_external_memory_android_hardware_buffer extension"
-            ]
-        },
-        {
-            "name": "supports_GGP_frame_token",
-            "category": "Features",
-            "description": [
-                "VkDevice supports the VK_GGP_frame_token extension"
             ]
         },
         {
@@ -192,6 +208,14 @@
             ]
         },
         {
+            "name": "prefer_global_pipeline_cache",
+            "category": "Features",
+            "description": [
+                "The renderer's pipeline cache will be used instead of the separate caches per program."
+            ],
+            "issue": "http://anglebug.com/411442610"
+        },
+        {
             "name": "supports_YUV_sampler_conversion",
             "category": "Features",
             "description": [
@@ -239,6 +263,15 @@
             "issue": "http://anglebug.com/42262239"
         },
         {
+            "name": "uses_second_component_for_stencil_border_color",
+            "category": "Features",
+            "description": [
+                "Implementation utilizes second component of the INT custom border color ",
+                "for undefined format when sampling from a stencil texture."
+            ],
+            "issue": "http://issuetracker.google.com/390710636"
+        },
+        {
             "name": "supports_multi_draw_indirect",
             "category": "Features",
             "description": [
@@ -280,12 +313,28 @@
             "issue": "http://anglebug.com/42267057"
         },
         {
+            "name": "supports_device_fault",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the VK_EXT_device_fault extension"
+            ],
+            "issue": "http://issuetracker.google.com/399478440"
+        },
+        {
             "name": "supports_multiview",
             "category": "Features",
             "description": [
                 "VkDevice supports the VK_KHR_multiview extension"
             ],
             "issue": "http://anglebug.com/42264577"
+        },
+        {
+            "name": "supports_multiview_multisample_render_to_texture",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the VK_KHR_multiview and VK_EXT_multisampled_render_to_single_sampled extension"
+            ],
+            "issue": "http://anglebug.com/42261787"
         },
         {
             "name": "force_D16_tex_filter",
@@ -297,20 +346,14 @@
             "issue": "http://anglebug.com/42262115"
         },
         {
-            "name": "disable_flipping_blit_with_command",
+            "name": "avoid_invisible_window_swapchain_recreate",
             "category": "Workarounds",
             "description": [
-                "vkCmdBlitImage with flipped coordinates blits incorrectly."
+                "Do not recreate a swapchain when window is invisible even if its size is ",
+                "changed. This is a workaround for the bug when vkAcquireNextImageKHR constantly ",
+                "returns VK_ERROR_OUT_OF_DATE if recreate the swapchain while window is invisible."
             ],
-            "issue": "http://anglebug.com/42262161"
-        },
-        {
-            "name": "per_frame_window_size_query",
-            "category": "Workarounds",
-            "description": [
-                "Vulkan swapchain is not returning VK_ERROR_OUT_OF_DATE when window resizing"
-            ],
-            "issue": "http://anglebug.com/40096601, http://anglebug.com/42262286, http://anglebug.com/42262287"
+            "issue": "http://anglebug.com/397848903"
         },
         {
             "name": "pad_buffers_to_max_vertex_attrib_stride",
@@ -326,10 +369,18 @@
             "issue": "http://anglebug.com/42263049"
         },
         {
-            "name": "supports_external_memory_dma_buf_and_modifiers",
+            "name": "supports_external_memory_dma_buf",
             "category": "Features",
             "description": [
-                "VkDevice supports the VK_EXT_external_memory_dma_buf and VK_EXT_image_drm_format_modifier ",
+              "VkDevice supports the VK_EXT_external_memory_dma_buf",
+              "extensions"
+            ]
+        },
+        {
+            "name": "supports_image_drm_format_modifier",
+            "category": "Features",
+            "description": [
+              "VkDevice supports the VK_EXT_image_drm_format_modifier",
                 "extensions"
             ],
             "issue": "http://anglebug.com/42264767"
@@ -372,20 +423,20 @@
             "issue": "http://issuetracker.google.com/200067929"
         },
         {
+            "name": "prefer_GPU_for_copy_buffer_sub_data",
+            "category": "Features",
+            "description": [
+                "Prefer use GPU to do dirty region buffer update for glCopyBufferSubData."
+            ],
+            "issue": "https://issues.angleproject.org/issues/479982202"
+        },
+        {
             "name": "persistently_mapped_buffers",
             "category": "Features",
             "description": [
                 "Persistently map buffer memory to reduce map/unmap IOCTL overhead."
             ],
             "issue": "http://anglebug.com/40096464"
-        },
-        {
-            "name": "enable_pre_rotate_surfaces",
-            "category": "Features",
-            "description": [
-                "Enable Android pre-rotation for landscape applications"
-            ],
-            "issue": "http://anglebug.com/42262166"
         },
         {
             "name": "enable_precision_qualifiers",
@@ -421,22 +472,6 @@
                 "re-clearing the image"
             ],
             "issue": "http://anglebug.com/42265353"
-        },
-        {
-            "name": "async_command_queue",
-            "category": "Features",
-            "description": [
-                "Use CommandQueue worker thread to dispatch work to GPU."
-            ],
-            "issue": "http://anglebug.com/42262955"
-        },
-        {
-            "name": "slow_async_command_queue_for_testing",
-            "category": "Workarounds",
-            "description": [
-                "Artificially slow down async command queue for threading testing"
-            ],
-            "issue": "https://anglebug.com/40644850"
         },
         {
             "name": "supports_shader_float16",
@@ -562,13 +597,23 @@
             "issue": "http://anglebug.com/40644747"
         },
         {
-            "name": "wait_idle_before_swapchain_recreation",
+            "name": "destroy_old_swapchain_in_shared_present_mode",
             "category": "Workarounds",
             "description": [
-                "Before passing an oldSwapchain to VkSwapchainCreateInfoKHR, wait for queue to be idle. ",
-                "Works around a bug on platforms which destroy oldSwapchain in vkCreateSwapchainKHR."
+                "Instead of passing an oldSwapchain to VkSwapchainCreateInfoKHR, wait for queue to ",
+                "be idle and destroy the swapchain immediately. Works around a bug on platforms ",
+                "which may return VK_ERROR_NATIVE_WINDOW_IN_USE_KHR from vkCreateSwapchainKHR ",
+                "if use the oldSwapchain pointer."
             ],
-            "issue": "http://anglebug.com/42263629"
+            "issue": "http://anglebug.com/42262606"
+        },
+        {
+            "name": "disable_submit_commands_on_sync_status_check_for_testing",
+            "category": "Workarounds",
+            "description": [
+                "Disable implicit submission of commands in contexts of the sharegroup during ",
+                "GLSync status check. Used in some end2end tests."
+            ]
         },
         {
             "name": "force_texture_lod_offset_1",
@@ -613,14 +658,6 @@
             ]
         },
         {
-            "name": "compress_vertex_data",
-            "category": "Workarounds",
-            "description": [
-                "Compress vertex data to smaller data types when ",
-                "possible. Using this feature makes ANGLE non-conformant."
-            ]
-        },
-        {
             "name": "prefer_draw_clear_over_vkCmdClearAttachments",
             "category": "Workarounds",
             "description": [
@@ -654,20 +691,20 @@
             "issue": "http://anglebug.com/42263477"
         },
         {
-            "name": "prefer_driver_uniform_over_spec_const",
-            "category": "Features",
-            "description": [
-                "Prefer using driver uniforms instead of specialization constants."
-            ],
-            "issue": "http://anglebug.com/42265878"
-        },
-        {
             "name": "expose_non_conformant_extensions_and_versions",
             "category": "Workarounds",
             "description": [
                 "Expose GLES versions and extensions that are not conformant."
             ],
             "issue": "http://anglebug.com/42263914"
+        },
+        {
+            "name": "expose_ES32_for_testing",
+            "category": "Workarounds",
+            "description": [
+                "Expose GLES 3.2 for testing purposes on platforms that currently do not fully support it."
+            ],
+            "issue": "http://issuetracker.google.com/376899587"
         },
         {
             "name": "emulate_R32f_image_atomic_exchange",
@@ -678,20 +715,20 @@
             "issue": "http://anglebug.com/42264071"
         },
         {
-            "name": "force_fragment_shader_precision_highp_to_mediump",
-            "category": "Workarounds",
-            "description": [
-                "Forces highp precision in fragment shader to mediump."
-            ],
-            "issue": "https://issuetracker.google.com/184850002"
-        },
-        {
             "name": "prefer_submit_at_FBO_boundary",
             "category": "Workarounds",
             "description": [
                 "Submit commands to driver at each FBO boundary for performance improvements."
             ],
             "issue": "https://issuetracker.google.com/187425444"
+        },
+        {
+            "name": "force_submit_exceptions_at_FBO_boundary",
+            "category": "Workarounds",
+            "description": [
+                "Some commands force immediate submission at FBO boundary."
+            ],
+            "issue": "https://issuetracker.google.com/422507974"
         },
         {
             "name": "use_multiple_descriptors_for_external_formats",
@@ -942,6 +979,14 @@
             "issue": "http://anglebug.com/42264446"
         },
         {
+            "name": "use_primitive_topology_dynamic_state",
+            "category": "Workarounds",
+            "description": [
+                "Use the Primitive Topology dynamic state from VK_EXT_extended_dynamic_state"
+            ],
+            "issue": "http://anglebug.com/42264446"
+        },
+        {
             "name": "use_depth_test_enable_dynamic_state",
             "category": "Workarounds",
             "description": [
@@ -1030,6 +1075,14 @@
             "issue": "http://anglebug.com/42265647"
         },
         {
+            "name": "supports_primitive_fragment_shading_rate",
+            "category": "Features",
+            "description": [
+                "VkDevice supports primitiveFragmentShadingRate feature"
+            ],
+            "issue": "http://anglebug.com/397255625"
+        },
+        {
             "name": "supports_foveated_rendering",
             "category": "Features",
             "description": [
@@ -1061,14 +1114,6 @@
                 "sample qualifier"
             ],
             "issue": "http://anglebug.com/42265369"
-        },
-        {
-            "name": "explicitly_cast_mediump_float_to_16_bit",
-            "category": "Workarounds",
-            "description": [
-                "Explicitly cast mediump floating point values to 16 bit"
-            ],
-            "issue": "https://issuetracker.google.com/274859104"
         },
         {
             "name": "force_continuous_refresh_on_shared_present",
@@ -1114,7 +1159,7 @@
             "name": "supports_yuv_target",
             "category": "Features",
             "description": [
-                "VkDevice supports VK_ANDROID_render_to_external_format and VK_EXT_ycbcr_attachment"
+                "VkDevice supports VK_ANDROID_external_format_resolve with nullColorAttachmentWithExternalFormatResolve"
             ]
         },
         {
@@ -1149,6 +1194,15 @@
                 "VkDevice supports VK_EXT_rasterization_order_attachment_access extension"
             ],
             "issue": "https://anglebug.com/42266070"
+        },
+        {
+            "name": "add_framebuffer_fetch_barrier_on_use_mid_render_pass",
+            "category": "Workarounds",
+            "description": [
+                "When framebuffer fetch is used during the render pass, a barrier ",
+                "is added to ensure correctness"
+            ],
+            "issue": "https://issuetracker.google.com/423086584"
         },
         {
             "name": "egl_colorspace_attribute_passthrough",
@@ -1249,12 +1303,12 @@
             "issue": "https://anglebug.com/42265839"
         },
         {
-            "name": "has_effective_pipeline_cache_serialization",
+            "name": "skip_pipeline_cache_serialization",
             "category": "Features",
             "description": [
-                "Whether the implementation serializes the Vulkan pipeline cache effectively. ",
-                "On some implementations, pipeline cache serialization returns no data, so there ",
-                "is no benefit to serializing it"
+                "Whether to serialize the Vulkan pipeline cache data. ",
+                "On some implementations, pipeline cache serialization returns no data",
+                "or very big data,so there is no benefit to serializing it."
             ],
             "issue": "https://anglebug.com/42265839"
         },
@@ -1267,20 +1321,29 @@
             "issue": "http://anglebug.com/42263322"
         },
         {
+            "name": "sync_pipeline_cache_to_blob_cache_every_frame",
+            "category": "Workarounds",
+            "description": [
+                "Synchronize the Vulkan pipeline cache to the blob cache every frame",
+                "for testing purposes."
+            ],
+            "issue": "https://issuetracker.google.com/467732555"
+        },
+        {
+            "name": "enable_extra_submit_fence",
+            "category": "Workarounds",
+            "description": [
+                "Enable using a separate submit fence in the command batches."
+            ],
+            "issue": "https://issuetracker.google.com/384477641"
+        },
+        {
             "name": "supports_pipeline_protected_access",
             "category": "Features",
             "description": [
                 "VkDevice supports the VK_EXT_pipeline_protected_access extension"
             ],
             "issue": "https://anglebug.com/42266183"
-        },
-        {
-            "name": "supports_mixed_read_write_depth_stencil_layouts",
-            "category": "Features",
-            "description": [
-                "VkDevice supports the mixed read and write depth/stencil layouts introduced by VK_KHR_maintenance2"
-            ],
-            "issue": "https://anglebug.com/42266364"
         },
         {
             "name": "supports_maintenance5",
@@ -1305,6 +1368,14 @@
                 "VkDevice supports the VK_EXT_surface_maintenance1 and VK_EXT_swapchain_maintenance1 extensions"
             ],
             "issue": "https://anglebug.com/42266319"
+        },
+        {
+            "name": "swapchain_deferred_memory_allocation",
+            "category": "Workarounds",
+            "description": [
+                "Enable the usage of the deferred memory allocation flag for swapchain creation"
+            ],
+            "issue": "https://anglebug.com/499347835"
         },
         {
             "name": "supports_get_memory_requirements2",
@@ -1346,12 +1417,20 @@
             "issue": "https://issuetracker.google.com/253522366"
         },
         {
-            "name": "async_command_buffer_reset_and_garbage_cleanup",
+            "name": "async_garbage_cleanup",
             "category": "Features",
             "description": [
-                "Reset command buffer and cleanup garbage in async thread."
+                "cleanup garbage in async thread."
             ],
             "issue": "https://issuetracker.google.com/255411748"
+        },
+        {
+            "name": "async_command_buffer_reset",
+            "category": "Features",
+            "description": [
+                "Reset command buffer in async thread."
+            ],
+            "issue": "https://issuetracker.google.com/378718508"
         },
         {
             "name": "use_reset_command_buffer_bit_for_secondary_pools",
@@ -1444,6 +1523,23 @@
             "description": [
                 "When using VK_EXT_host_image_copy, allow VK_IMAGE_USAGE_HOST_TRANSFER_BIT_EXT even if",
                 "perf query indicates only optimalDeviceAccess, but not identicalMemoryLayout"
+            ]
+        },
+        {
+            "name": "force_host_image_copy_for_luma",
+            "category": "Features",
+            "description": [
+                "When using VK_EXT_host_image_copy, use VK_IMAGE_USAGE_HOST_TRANSFER_BIT_EXT for images created",
+                "for luminance/alpha textures"
+            ]
+        },
+        {
+            "name": "allow_host_image_copy_after_initial_upload",
+            "category": "Features",
+            "description": [
+                "When using VK_EXT_host_image_copy, do CPU copies also if data is uploaded to the texture after ",
+                "its initialization. This feature is best disabled for CPU-intensive workloads that do frequent ",
+                "uploads to the same texture."
             ]
         },
         {
@@ -1616,6 +1712,30 @@
                 "Uses VkEvent instead of VkCmdPipelineBarrier for image barriers"
             ],
             "issue": "https://issuetracker.google.com/336844257"
+        },
+        {
+            "name": "use_vkEvent_for_buffer_barrier",
+            "category": "Features",
+            "description": [
+                "Uses VkEvent instead of VkCmdPipelineBarrier for buffer barriers"
+            ],
+            "issue": "https://issues.angleproject.org/360274928"
+        },
+        {
+            "name": "is_vertex_sync_deferred",
+            "category": "Features",
+            "description": [
+                "Prefer VkEvent instead of VkCmdPipelineBarrier if vertex synchronization is deferred"
+            ],
+            "issue": "https://issues.angleproject.org/issues/414630743"
+        },
+        {
+            "name": "recycle_vkEvent",
+            "category": "Features",
+            "description": [
+                "Keep and recycle VkEvent instead of destroying when the last reference goes away"
+            ],
+            "issue": "https://issues.angleproject.org/409441956"
         },
         {
             "name": "supports_synchronization2",
@@ -1825,7 +1945,292 @@
             "description": [
                 "Whether cache the individual descriptorSet or not."
             ],
-            "issue": "angleproject:372268711"
+            "issue": "https://anglebug.com/372268711"
+        },
+        {
+            "name": "supports_image_compression_control",
+            "category": "Features",
+            "description": [
+                "VkDevice supports VK_EXT_image_compression_control"
+            ],
+            "issue": "https://anglebug.com/352364583"
+        },
+        {
+            "name": "supports_astc_sliced_3d",
+            "category": "Features",
+            "description": [
+                "Enable use of sliced_3d"
+            ],
+            "issue": "https://anglebug.com/378507964"
+        },
+        {
+            "name": "supports_texture_compression_astc_hdr",
+            "category": "Features",
+            "description": [
+                "VkDevice supports VK_EXT_texture_compression_astc_hdr extension"
+            ],
+            "issue": "https://anglebug.com/379186304"
+        },
+        {
+            "name": "supports_astc_decode_mode",
+            "category": "Features",
+            "description": [
+                "VkDevice supports VK_EXT_astc_decode_mode extension"
+            ],
+            "issue": "https://anglebug.com/419403188"
+        },
+        {
+            "name": "supports_astc_decode_mode_rgb9e5",
+            "category": "Features",
+            "description": [
+                "VkDevice supports VK_EXT_astc_decode_mode extension"
+            ],
+            "issue": "https://anglebug.com/419403188"
+        },
+        {
+            "name": "supports_astc_hdr_3d_textures",
+            "category": "Features",
+            "description": [
+                "Whether the device supports 3D textures with ASTC HDR compression"
+            ],
+            "issue": "https://anglebug.com/416095435"
+        },
+        {
+            "name": "supports_astc_3d",
+            "category": "Features",
+            "description": [
+                "VkDevice supports VK_EXT_texture_compression_astc_3d extension",
+                "Enable use of astc_3d"
+            ],
+            "issue": "https://anglebug.com/473593137"
+        },
+        {
+            "name": "supports_image_compression_control_swapchain",
+            "category": "Features",
+            "description": [
+                "VkDevice supports VK_EXT_image_compression_control_swapchain"
+            ],
+            "issue": "https://anglebug.com/375496226"
+        },
+        {
+            "name": "supports_angle_rgbx_internal_format",
+            "category": "Features",
+            "description": [
+                "Enable support for ANGLE_rgbx_internal_format extension"
+            ],
+            "issue": "https://anglebug.com/386749841"
+        },
+        {
+            "name": "supports_apple_clip_distance",
+            "category": "Features",
+            "description": [
+                "Enable support for GL_APPLE_clip_distance extension"
+            ],
+            "issue": "https://anglebug.com/386749841"
+        },
+        {
+            "name": "supports_uniform_buffer_standard_layout",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the VK_KHR_uniform_buffer_standard_layout and has UniformBufferStandardLayout feature"
+            ]
+        },
+        {
+            "name": "uses_native_builtin_cl_kernel",
+            "category": "Features",
+            "description": [
+                "Enable the use of native builtin kernel in place of the libclc version"
+            ]
+        },
+        {
+            "name": "supports_swapchain_mutable_format",
+            "category": "Features",
+            "description": [
+                "VkDevice supports VK_KHR_swapchain_mutable_format extension"
+            ],
+            "issue": "http://anglebug.com/386688871"
+        },
+        {
+            "name": "supports_clip_cull_distance_in_GS_and_TS",
+            "category": "Features",
+            "description": [
+                "Supports using clip/cull distance features in geometry and tessellation shaders"
+            ],
+            "issue": "http://anglebug.com/42264006"
+        },
+        {
+            "name": "supports_maintenance9",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the VK_KHR_maintenance9 extension"
+            ],
+            "issue": "https://anglebug.com/429339330"
+        },
+        {
+            "name": "supports_shader_integer_dot_product",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the VK_KHR_shader_integer_dot_product extension"
+            ]
+        },
+        {
+            "name": "convert_lowp_and_mediump_float_uniforms_to_16_bits",
+            "category": "Features",
+            "description": [
+                "transform lowp and mediump float uniforms into 16 bits"
+            ],
+            "issue": "http://anglebug.com/405795981"
+        },
+        {
+            "name": "supports_unified_image_layouts",
+            "category": "Features",
+            "description": [
+                "VkDevice supports VK_KHR_unified_image_layouts"
+            ],
+            "issue": "https://anglebug.com/422982681"
+        },
+        {
+            "name": "supports_global_priority",
+            "category": "Features",
+            "description": [
+                "VkDevice supports VK_EXT_global_priority"
+            ],
+            "issue": "https://anglebug.com/397474813"
+        },
+        {
+            "name": "supports_global_priority_query",
+            "category": "Features",
+            "description": [
+                "VkDevice supports VK_EXT_global_priority_query"
+            ],
+            "issue": "https://anglebug.com/397474813"
+        },
+        {
+            "name": "supports_buffer_device_address",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the VK_KHR_buffer_device_address and uses ",
+                "physical storage buffers instead of storage buffers"
+            ]
+        },
+        {
+            "name": "prefer_BGR565_to_RGB565",
+            "category": "Features",
+            "description": [
+                "Use BGR565 instead of RGB565 for performance reasons"
+            ],
+            "issue": "https://issuetracker.google.com/409867243"
+        },
+        {
+            "name": "cl_serialized_execution",
+            "category": "Features",
+            "description": [
+                "Force each OpenCL enqueue command to submit and wait for fence."
+            ]
+        },
+        {
+            "name": "externally_synchronize_pipeline_cache_access",
+            "category": "Workarounds",
+            "description": [
+                "Externally synchronize all pipeline cache accesses"
+            ],
+            "issue": "https://anglebug.com/445240187"
+        },
+        {
+            "name": "support_shader_pixel_local_storage_angle",
+            "category": "Features",
+            "description": [
+                "Enable support for GL_ANGLE_shader_pixel_local_storage extension"
+            ],
+            "issue": "https://anglebug.com/40096838"
+        },
+        {
+            "name": "debug_cl_dump_command_stream",
+            "category": "Features",
+            "description": [
+                "Dump OpenCL-Vulkan CommandBuffer stream to stdout."
+            ]
+        },
+        {
+            "name": "supports_shader_atomic_int64",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the VK_KHR_shader_atomic_int64 extension "
+            ]
+        },
+        {
+            "name": "supports_bind_vertex_buffers_2",
+            "category": "Features",
+            "description": [
+                "Using BindVertexBuffers2 is supported"
+            ],
+            "issue": "https://anglebug.com/474385503"
+        },
+        {
+            "name": "force_size_pointer_for_bound_vertex_buffers",
+            "category": "Features",
+            "description": [
+                "Make sure the pSizes pointer to BindVertexBuffers2 is provided"
+            ],
+            "issue": "https://anglebug.com/448047351"
+        },
+        {
+            "name": "support_fragment_shading_rate_ext_extensions",
+            "category": "Features",
+            "description": [
+                "Advertize support for these fragment shading rate extensions:",
+                "- GL_EXT_fragment_shading_rate",
+                "- GL_EXT_fragment_shading_rate_primitive",
+                "- GL_EXT_fragment_shading_rate_attachment"
+            ],
+            "issue": "https://anglebug.com/397255625"
+        },
+        {
+            "name": "drop_depth_stencil_clear_on_invalidate",
+            "category": "Workarounds",
+            "description": [
+                "There are old Unity titles that expect depth/stencil to be cleared for later re-use, ",
+                "so this we have to disable our optimization that drops the clears on invalidate."
+            ],
+            "issue": "https://issuetracker.google.com/462484277"
+        },
+        {
+            "name": "supports_tile_memory_heap",
+            "category": "Features",
+            "description": [
+                "VkDevice supports VK_QCOM_tile_memory_heap extension."
+            ],
+            "issue": "https://issuetracker.google.com/447633563"
+        },
+        {
+            "name": "simulate_tile_memory_for_testing",
+            "category": "Features",
+            "description": [
+                "Simulate VK_QCOM_tile_memory_heap for images on GPUs that do not support VK_QCOM_tile_memory_heap extension for testing purpose."
+            ],
+            "issue": "https://issuetracker.google.com/447633563"
+        },
+        {
+            "name": "supports_cl_khr_subgroups",
+            "category": "Features",
+            "description": [
+                "Enable the use of the cl_khr_subgroups OpenCL extension."
+            ]
+        },
+        {
+            "name": "cl_best_uniform_fit_WGS",
+            "category": "Features",
+            "description": [
+                "Optimization feature (for when OpenCL driver chooses WGS) to attempt best-fit WGS for the given global work size."
+            ]
+        },
+        {
+            "name": "supports_shader_demote_to_helper_invocation",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the VK_EXT_shader_demote_to_helper_invocation extension"
+            ],
+            "issue": "http://anglebug.com/490910899"
         }
     ]
 }

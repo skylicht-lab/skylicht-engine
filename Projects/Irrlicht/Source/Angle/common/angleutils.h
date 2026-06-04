@@ -29,6 +29,8 @@
 #include <thread>
 #include <vector>
 
+#include "common/unsafe_buffers.h"
+
 namespace angle
 {
 
@@ -37,11 +39,7 @@ using Microsoft::WRL::ComPtr;
 #endif  // defined(ANGLE_ENABLE_D3D9) || defined(ANGLE_ENABLE_D3D11)
 
 // Forward declaration. Implementation in system_utils.h
-#if defined(ANGLE_PLATFORM_LINUX) || defined(ANGLE_PLATFORM_WINDOWS)
-using ThreadId = uint64_t;
-#else
 using ThreadId = std::thread::id;
-#endif
 
 // A helper class to disallow copy and assignment operators
 class NonCopyable
@@ -60,36 +58,34 @@ extern const uintptr_t DirtyPointer;
 // AMD_performance_monitor helpers.
 constexpr char kPerfMonitorExtensionName[] = "GL_AMD_performance_monitor";
 
+struct PerfMonitorCounterInfo
+{
+    PerfMonitorCounterInfo() = default;
+    PerfMonitorCounterInfo(const char *name) : name(name) {}
+
+    std::string name;
+};
 struct PerfMonitorCounter
 {
-    PerfMonitorCounter();
-    ~PerfMonitorCounter();
+    PerfMonitorCounter() = default;
+    PerfMonitorCounter(uint64_t value) : value(value) {}
 
-    std::string name;
     uint64_t value;
 };
-using PerfMonitorCounters = std::vector<PerfMonitorCounter>;
+using PerfMonitorCountersInfo = std::vector<PerfMonitorCounterInfo>;
+using PerfMonitorCounters     = std::vector<PerfMonitorCounter>;
 
+struct PerfMonitorCounterGroupInfo
+{
+    std::string name;
+    PerfMonitorCountersInfo counters;
+};
 struct PerfMonitorCounterGroup
 {
-    PerfMonitorCounterGroup();
-    ~PerfMonitorCounterGroup();
-
-    std::string name;
     PerfMonitorCounters counters;
 };
-using PerfMonitorCounterGroups = std::vector<PerfMonitorCounterGroup>;
-
-uint32_t GetPerfMonitorCounterIndex(const PerfMonitorCounters &counters, const std::string &name);
-const PerfMonitorCounter &GetPerfMonitorCounter(const PerfMonitorCounters &counters,
-                                                const std::string &name);
-PerfMonitorCounter &GetPerfMonitorCounter(PerfMonitorCounters &counters, const std::string &name);
-uint32_t GetPerfMonitorCounterGroupIndex(const PerfMonitorCounterGroups &groups,
-                                         const std::string &name);
-const PerfMonitorCounterGroup &GetPerfMonitorCounterGroup(const PerfMonitorCounterGroups &groups,
-                                                          const std::string &name);
-PerfMonitorCounterGroup &GetPerfMonitorCounterGroup(PerfMonitorCounterGroups &groups,
-                                                    const std::string &name);
+using PerfMonitorCounterGroupsInfo = std::vector<PerfMonitorCounterGroupInfo>;
+using PerfMonitorCounterGroups     = std::vector<PerfMonitorCounterGroup>;
 
 struct PerfMonitorTriplet
 {
@@ -107,6 +103,7 @@ struct PerfMonitorTriplet
     FN(renderPasses)                               \
     FN(writeDescriptorSets)                        \
     FN(flushedOutsideRenderPassCommandBuffers)     \
+    FN(swapchainCreate)                            \
     FN(swapchainResolveInSubpass)                  \
     FN(swapchainResolveOutsideSubpass)             \
     FN(resolveImageCommands)                       \
@@ -149,19 +146,25 @@ struct PerfMonitorTriplet
     FN(textureDescriptorSetCacheHits)              \
     FN(textureDescriptorSetCacheMisses)            \
     FN(textureDescriptorSetCacheTotalSize)         \
+    FN(uniformBuffersDescriptorSetCacheHits)       \
+    FN(uniformBuffersDescriptorSetCacheMisses)     \
+    FN(uniformBuffersDescriptorSetCacheTotalSize)  \
     FN(shaderResourcesDescriptorSetCacheHits)      \
-    FN(deviceMemoryImageAllocationFallbacks)       \
-    FN(mutableTexturesUploaded)                    \
-    FN(fullImageClears)                            \
     FN(shaderResourcesDescriptorSetCacheMisses)    \
     FN(shaderResourcesDescriptorSetCacheTotalSize) \
+    FN(deviceMemoryImageAllocationFallbacks)       \
+    FN(tileMemoryImages)                           \
+    FN(fallbackFromTileMemory)                     \
+    FN(mutableTexturesUploaded)                    \
+    FN(fullImageClears)                            \
     FN(buffersGhosted)                             \
     FN(vertexArraySyncStateCalls)                  \
     FN(allocateNewBufferBlockCalls)                \
     FN(bufferSuballocationCalls)                   \
     FN(dynamicBufferAllocations)                   \
     FN(framebufferCacheSize)                       \
-    FN(pendingSubmissionGarbageObjects)
+    FN(pendingSubmissionGarbageObjects)            \
+    FN(graphicsDriverUniformsUpdated)
 
 #define ANGLE_DECLARE_PERF_COUNTER(COUNTER) uint64_t COUNTER;
 
@@ -184,11 +187,7 @@ template <typename T>
 class WrappedArray final : angle::NonCopyable
 {
   public:
-    template <size_t N>
-    constexpr WrappedArray(const T (&data)[N]) : mArray(&data[0]), mSize(N)
-    {}
-
-    constexpr WrappedArray() : mArray(nullptr), mSize(0) {}
+    constexpr WrappedArray() = default;
     constexpr WrappedArray(const T *data, size_t size) : mArray(data), mSize(size) {}
 
     WrappedArray(WrappedArray &&other) : WrappedArray()
@@ -197,14 +196,18 @@ class WrappedArray final : angle::NonCopyable
         std::swap(mSize, other.mSize);
     }
 
+    template <size_t N>
+    constexpr WrappedArray(const T (&data)[N]) : mArray(&data[0]), mSize(N)
+    {}
+
     ~WrappedArray() {}
 
     constexpr const T *get() const { return mArray; }
     constexpr size_t size() const { return mSize; }
 
   private:
-    const T *mArray;
-    size_t mSize;
+    const T *mArray = nullptr;
+    size_t mSize    = 0;
 };
 
 template <typename T, unsigned int N>
@@ -212,7 +215,8 @@ void SafeRelease(T (&resourceBlock)[N])
 {
     for (unsigned int i = 0; i < N; i++)
     {
-        SafeRelease(resourceBlock[i]);
+        // SAFETY: size deduced by compiler from template.
+        SafeRelease(ANGLE_UNSAFE_BUFFERS(resourceBlock[i]));
     }
 }
 
@@ -255,7 +259,8 @@ void SafeDeleteArray(T *&resource)
 template <typename T>
 inline bool StructLessThan(const T &a, const T &b)
 {
-    return (memcmp(&a, &b, sizeof(T)) < 0);
+    // SAFETY: both `a` and `b` are the same compiler-deduced size.
+    return ANGLE_UNSAFE_BUFFERS(memcmp(&a, &b, sizeof(T)) < 0);
 }
 
 // Provide a less-than function for comparing structs
@@ -263,13 +268,22 @@ inline bool StructLessThan(const T &a, const T &b)
 template <typename T>
 inline bool StructEquals(const T &a, const T &b)
 {
-    return (memcmp(&a, &b, sizeof(T)) == 0);
+    // SAFETY: both `a` and `b` are the same compiler-deduced size.
+    return ANGLE_UNSAFE_BUFFERS(memcmp(&a, &b, sizeof(T)) == 0);
 }
 
 template <typename T>
 inline void StructZero(T *obj)
 {
-    memset(obj, 0, sizeof(T));
+    // SAFETY: compiler-deduced size.
+    ANGLE_UNSAFE_BUFFERS(memset(obj, 0, sizeof(T)));
+}
+
+template <typename T>
+inline void StructCopy(T *dst, const T &src)
+{
+    // SAFETY: compiler-deduced size.
+    ANGLE_UNSAFE_BUFFERS(memcpy(dst, &src, sizeof(T)));
 }
 
 template <typename T>
@@ -277,19 +291,6 @@ inline bool IsMaskFlagSet(T mask, T flag)
 {
     // Handles multibit flags as well
     return (mask & flag) == flag;
-}
-
-inline const char *MakeStaticString(const std::string &str)
-{
-    // On the heap so that no destructor runs on application exit.
-    static std::set<std::string> *strings = new std::set<std::string>;
-    std::set<std::string>::iterator it    = strings->find(str);
-    if (it != strings->end())
-    {
-        return it->c_str();
-    }
-
-    return strings->insert(str).first->c_str();
 }
 
 std::string ArrayString(unsigned int i);
@@ -334,6 +335,8 @@ inline bool IsLittleEndian()
 #    define snprintf _snprintf
 #endif
 
+// Note: when adding internal formats, update IsAngleInternalFormat() so they aren't accidentally
+// accessible by the application.
 #define GL_A1RGB5_ANGLEX 0x6AC5
 #define GL_BGRX8_ANGLEX 0x6ABA
 #define GL_BGR565_ANGLEX 0x6ABB
@@ -346,6 +349,8 @@ inline bool IsLittleEndian()
 #define GL_BGRX8_SRGB_ANGLEX 0x6AFC
 // fake format for GL_ANGLE_rgbx_internal_format
 #define GL_RGBX8_SRGB_ANGLEX 0x6AFA
+
+#define GL_R10X6G10X6B10X6A10X6_UNORM_ANGLEX 0x6AFD
 
 // These are fake formats used to fit typeless D3D textures that can be bound to EGL pbuffers into
 // the format system (for extension EGL_ANGLE_d3d_texture_client_buffer):
@@ -400,9 +405,6 @@ inline bool IsLittleEndian()
 #define GL_RGB10_A2_SSCALED_ANGLEX 0x6AEC
 #define GL_RGB10_A2_USCALED_ANGLEX 0x6AED
 
-// EXT_texture_type_2_10_10_10_REV
-#define GL_RGB10_UNORM_ANGLEX 0x6AEE
-
 // These are fake formats for OES_vertex_type_10_10_10_2
 #define GL_A2_RGB10_UNORM_ANGLEX 0x6AEF
 #define GL_A2_RGB10_SNORM_ANGLEX 0x6AF0
@@ -416,14 +418,14 @@ inline bool IsLittleEndian()
 #define GL_X2_RGB10_SNORM_ANGLEX 0x6AF8
 
 #define ANGLE_CHECK_GL_ALLOC(context, result) \
-    ANGLE_CHECK(context, result, "Failed to allocate host memory", GL_OUT_OF_MEMORY)
+    ANGLE_CHECK(context, result, "Failed to allocate host memory.", GL_OUT_OF_MEMORY)
 
 #define ANGLE_CHECK_GL_MATH(context, result) \
     ANGLE_CHECK(context, result, "Integer overflow.", GL_INVALID_OPERATION)
 
 #define ANGLE_GL_UNREACHABLE(context) \
     UNREACHABLE();                    \
-    ANGLE_CHECK(context, false, "Unreachable Code.", GL_INVALID_OPERATION)
+    ANGLE_CHECK(context, false, "Unreachable code.", GL_INVALID_OPERATION)
 
 #if defined(ANGLE_WITH_LSAN)
 #    define ANGLE_SCOPED_DISABLE_LSAN() __lsan::ScopedDisabler lsanDisabler
