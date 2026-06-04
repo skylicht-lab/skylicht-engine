@@ -17,6 +17,10 @@ namespace Skylicht
 		virtual ~ISignIn();
 
 		virtual void signIn() = 0;
+
+		virtual void signOut() = 0;
+
+		virtual bool isSignedIn() = 0;
 	};
 
 	ISignIn* getOSSignIn();

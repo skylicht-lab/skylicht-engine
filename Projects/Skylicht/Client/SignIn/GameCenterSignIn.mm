@@ -39,4 +39,9 @@ void gamecenter_signIn()
 	};
 }
 
+bool gamecenter_isSignedIn()
+{
+	return [GKLocalPlayer localPlayer].isAuthenticated;
+}
+
 #endif

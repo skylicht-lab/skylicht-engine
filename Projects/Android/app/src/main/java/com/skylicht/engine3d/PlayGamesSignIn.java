@@ -13,6 +13,7 @@ public class PlayGamesSignIn {
     public static PlayGamesSignIn sInstance = null;
     private GamesSignInClient mGamesSignInClient;
     private String mClientId;
+    private boolean mIsSignedIn;
 
     static public PlayGamesSignIn getInstance() {
         if (sInstance == null) sInstance = new PlayGamesSignIn();
@@ -23,6 +24,7 @@ public class PlayGamesSignIn {
         PlayGamesSdk.initialize(context);
         mClientId = context.getString(R.string.pgs_server_client_id);
         mGamesSignInClient = PlayGames.getGamesSignInClient(context);
+        mIsSignedIn = false;
         init();
     }
 
@@ -31,8 +33,10 @@ public class PlayGamesSignIn {
             mGamesSignInClient.signIn().addOnCompleteListener(task -> {
                 boolean ok = task.isSuccessful() && task.getResult().isAuthenticated();
                 if (ok) {
+                    mIsSignedIn = true;
                     requestCode(mClientId);
                 } else {
+                    mIsSignedIn = false;
                     Log.w("Skylicht", "startSignIn - failed");
                     onSignInFailed("");
                 }
@@ -51,14 +55,29 @@ public class PlayGamesSignIn {
                 Log.w("Skylicht", "requestServerSideAccess: " + gamerName);
                 onSignInSuccess(playerId, gamerName, authCode);
             }).addOnFailureListener(e -> {
+                mIsSignedIn = false;
                 Log.w("Skylicht", e.getMessage());
                 onSignInFailed(e.getMessage());
             });
         });
     }
 
+    public void startSignOut() {
+        GameInstance.Activity.runOnUiThread(() -> {
+            mGamesSignInClient.signOut().addOnCompleteListener(task -> mIsSignedIn = false);
+        });
+    }
+
     public static void signIn() {
         PlayGamesSignIn.getInstance().startSignIn();
+    }
+
+    public static void signOut() {
+        PlayGamesSignIn.getInstance().startSignOut();
+    }
+
+    public static boolean isSignedIn() {
+        return PlayGamesSignIn.getInstance().mIsSignedIn;
     }
 
     public native void init();

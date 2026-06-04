@@ -3,6 +3,7 @@
 
 #ifdef IOS
 void gamecenter_signIn();
+bool gamecenter_isSignedIn();
 
 void gamecenter_signInSuccess(const char* playerId, const char* playerName, const char *code)
 {
@@ -35,6 +36,19 @@ namespace Skylicht
 		gamecenter_signIn();
 #else
 		OnSignInFailed(std::string());
+#endif
+	}
+
+	void CGameCenterSignIn::signOut()
+	{
+	}
+
+	bool CGameCenterSignIn::isSignedIn()
+	{
+#ifdef IOS
+		return gamecenter_isSignedIn();
+#else
+		return false;
 #endif
 	}
 }

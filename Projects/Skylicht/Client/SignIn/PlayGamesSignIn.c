@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #ifdef ANDROID
 #include <string.h>
+#include <stdbool.h>
 #include <jni.h>
 #include <android/log.h>
 #include "JavaClassDefined.h"
@@ -38,6 +39,8 @@ extern JNIEnv* g_jniEnv;
 
 jclass g_classPlayGamesSignIn = NULL;
 jmethodID g_signIn;
+jmethodID g_signOut;
+jmethodID g_isSignedIn;
 
 JNIEXPORT void JNICALL JNI_FUNCTION(PlayGamesSignIn_init)(JNIEnv* env, jobject thiz)
 {
@@ -47,6 +50,8 @@ JNIEXPORT void JNICALL JNI_FUNCTION(PlayGamesSignIn_init)(JNIEnv* env, jobject t
 	g_classPlayGamesSignIn = (jclass)(*env)->NewGlobalRef(env, local);
 
 	g_signIn = (*env)->GetStaticMethodID(env, g_classPlayGamesSignIn, "signIn", "()V");
+	g_signOut = (*env)->GetStaticMethodID(env, g_classPlayGamesSignIn, "signOut", "()V");
+	g_isSignedIn = (*env)->GetStaticMethodID(env, g_classPlayGamesSignIn, "isSignedIn", "()Z");
 }
 
 JNIEXPORT void JNICALL JNI_FUNCTION(PlayGamesSignIn_onSignInSuccess)(JNIEnv* env, jobject thiz, jstring id, jstring name, jstring authCode)
@@ -75,5 +80,29 @@ void playGamesSignIn_signIn()
 	{
 		(*g_jniEnv)->CallStaticVoidMethod(g_jniEnv, g_classPlayGamesSignIn, g_signIn);
 	}
+}
+
+void playGamesSignIn_signOut()
+{
+	(*g_javaVM)->AttachCurrentThread(g_javaVM, &g_jniEnv, NULL);
+
+	if (g_signOut != NULL && g_classPlayGamesSignIn != NULL)
+	{
+		(*g_jniEnv)->CallStaticVoidMethod(g_jniEnv, g_classPlayGamesSignIn, g_signOut);
+	}
+}
+
+bool playGamesSignIn_isSignedIn()
+{
+	jboolean ret = JNI_FALSE;
+
+	(*g_javaVM)->AttachCurrentThread(g_javaVM, &g_jniEnv, NULL);
+
+	if (g_isSignedIn != NULL && g_classPlayGamesSignIn != NULL)
+	{
+		ret = (*g_jniEnv)->CallStaticBooleanMethod(g_jniEnv, g_classPlayGamesSignIn, g_isSignedIn);
+	}
+
+	return ret == JNI_TRUE;
 }
 #endif

@@ -16,5 +16,9 @@ namespace Skylicht
 		DECLARE_SINGLETON(CGameCenterSignIn)
 
 		virtual void signIn();
+
+		virtual void signOut();
+
+		virtual bool isSignedIn();
 	};
 }

@@ -5,6 +5,8 @@
 extern "C"
 {
 	void playGamesSignIn_signIn();
+	void playGamesSignIn_signOut();
+	bool playGamesSignIn_isSignedIn();
 
 	void playGamesSignIn_onSignInSuccess(const char* id, const char* name, const char* code)
 	{
@@ -38,6 +40,22 @@ namespace Skylicht
 		playGamesSignIn_signIn();
 #else
 		OnSignInFailed(std::string());
+#endif
+	}
+
+	void CPlayGamesSignIn::signOut()
+	{
+#ifdef ANDROID
+		playGamesSignIn_signOut();
+#endif
+	}
+
+	bool CPlayGamesSignIn::isSignedIn()
+	{
+#ifdef ANDROID
+		return playGamesSignIn_isSignedIn();
+#else
+		return false;
 #endif
 	}
 }
