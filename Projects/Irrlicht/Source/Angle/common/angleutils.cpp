@@ -9,7 +9,6 @@
 #endif
 
 #include "common/angleutils.h"
-#include "common/SimpleMutex.h"
 #include "common/debug.h"
 
 #include <stdio.h>

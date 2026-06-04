@@ -37,7 +37,7 @@ source_group("Include" FILES "${irrlicht_include}")
 if (BUILD_MACOS)
 	# Add .mm source
 	file(GLOB irrlicht_mac_source 
-		./Source/MacOS/**.mm)
+		./Source/macOS/**.mm)
 	source_group("Source" FILES "${irrlicht_mac_source}")
 endif()
 

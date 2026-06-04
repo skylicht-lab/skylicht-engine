@@ -494,7 +494,7 @@ bool FindTestDataPath(const char *searchPath, char *dataPathOut, size_t maxDataP
 
         if (candidatePath.size() + 1 >= maxDataPathOutLen)
         {
-            ERR() << "FindTestDataPath: Path too long.";
+            // ERR() << "FindTestDataPath: Path too long.";
             return false;
         }
 

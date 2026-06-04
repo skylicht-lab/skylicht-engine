@@ -16,6 +16,7 @@
 
 #include <string.h>
 
+#include "common/debug.h"
 #include "common/hash_containers.h"
 #include "common/system_utils.h"
 #include "platform/Feature.h"
