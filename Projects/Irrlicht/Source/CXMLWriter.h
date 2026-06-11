@@ -65,11 +65,17 @@ namespace io
 	private:
 
 		void writeAttribute(const wchar_t* att, const wchar_t* name);
+		void writeUTF16(const wchar_t* text);
+		void writeUTF16(const wchar_t* text, u32 length);
+		void writeUTF16Literal(const c8* text);
+		void appendUTF16CodeUnit(u16 value);
+		void appendUTF16CodePoint(u32 codePoint);
 
 		IWriteFile* File;
 		s32 Tabs;
 
 		bool TextWrittenLast;
+		core::array<u8> UTF16Buffer;
 	};
 
 } // end namespace irr
@@ -78,4 +84,3 @@ namespace io
 #endif // _IRR_COMPILE_WITH_XML_
 
 #endif
-

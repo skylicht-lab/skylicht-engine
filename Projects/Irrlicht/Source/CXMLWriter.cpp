@@ -15,6 +15,80 @@ namespace irr
 namespace io
 {
 
+void CXMLWriter::appendUTF16CodeUnit(u16 value)
+{
+	UTF16Buffer.push_back(static_cast<u8>(value & 0xff));
+	UTF16Buffer.push_back(static_cast<u8>((value >> 8) & 0xff));
+}
+
+
+void CXMLWriter::appendUTF16CodePoint(u32 codePoint)
+{
+	if (codePoint > 0x10ffff)
+	{
+		appendUTF16CodeUnit(static_cast<u16>('?'));
+		return;
+	}
+
+	if (codePoint <= 0xffff)
+	{
+		appendUTF16CodeUnit(static_cast<u16>(codePoint));
+		return;
+	}
+
+	codePoint -= 0x10000;
+	appendUTF16CodeUnit(static_cast<u16>(0xd800 + (codePoint >> 10)));
+	appendUTF16CodeUnit(static_cast<u16>(0xdc00 + (codePoint & 0x3ff)));
+}
+
+
+void CXMLWriter::writeUTF16(const wchar_t* text)
+{
+	if (!text)
+		return;
+
+	writeUTF16(text, static_cast<u32>(wcslen(text)));
+}
+
+
+void CXMLWriter::writeUTF16(const wchar_t* text, u32 length)
+{
+	if (!File || !text || length == 0)
+		return;
+
+	UTF16Buffer.set_used(0);
+
+	if (sizeof(wchar_t) == 2)
+	{
+		UTF16Buffer.reallocate(length * 2, false);
+		for (u32 i = 0; i < length; ++i)
+			appendUTF16CodeUnit(static_cast<u16>(text[i]));
+	}
+	else
+	{
+		UTF16Buffer.reallocate(length * 4, false);
+		for (u32 i = 0; i < length; ++i)
+			appendUTF16CodePoint(static_cast<u32>(text[i]));
+	}
+
+	if (!UTF16Buffer.empty())
+		File->write(UTF16Buffer.const_pointer(), UTF16Buffer.size());
+}
+
+
+void CXMLWriter::writeUTF16Literal(const c8* text)
+{
+	if (!File || !text || !text[0])
+		return;
+
+	UTF16Buffer.set_used(0);
+
+	for (const c8* p = text; *p; ++p)
+		appendUTF16CodeUnit(static_cast<u8>(*p));
+
+	File->write(UTF16Buffer.const_pointer(), UTF16Buffer.size());
+}
+
 
 //! Constructor
 CXMLWriter::CXMLWriter(IWriteFile* file)
@@ -45,19 +119,10 @@ void CXMLWriter::writeXMLHeader()
 	if (!File)
 		return;
 
-	if (sizeof(wchar_t)==2)
-	{
-		const u16 h = 0xFEFF;
-		File->write(&h, 2);
-	}
-	else
-	{
-		const u32 h = 0x0000FEFF;
-		File->write(&h, sizeof(wchar_t));
-	}
+	const u8 bom[] = { 0xff, 0xfe };
+	File->write(bom, 2);
 
-	const wchar_t* const p = L"<?xml version=\"1.0\"?>";
-	File->write(p, wcslen(p)*sizeof(wchar_t));
+	writeUTF16Literal("<?xml version=\"1.0\"?>");
 
 	writeLineBreak();
 	TextWrittenLast = false;
@@ -79,13 +144,13 @@ void CXMLWriter::writeElement(const wchar_t* name, bool empty,
 	if (Tabs > 0)
 	{
 		for (int i=0; i<Tabs; ++i)
-			File->write(L"\t", sizeof(wchar_t));
+			writeUTF16Literal("\t");
 	}
 
 	// write name
 
-	File->write(L"<", sizeof(wchar_t));
-	File->write(name, wcslen(name)*sizeof(wchar_t));
+	writeUTF16Literal("<");
+	writeUTF16(name);
 
 	// write attributes
 
@@ -97,10 +162,10 @@ void CXMLWriter::writeElement(const wchar_t* name, bool empty,
 
 	// write closing tag
 	if (empty)
-		File->write(L" />", 3*sizeof(wchar_t));
+		writeUTF16Literal(" />");
 	else
 	{
-		File->write(L">", sizeof(wchar_t));
+		writeUTF16Literal(">");
 		++Tabs;
 	}
 
@@ -118,13 +183,13 @@ void CXMLWriter::writeElement(const wchar_t* name, bool empty,
 	if (Tabs > 0)
 	{
 		for (int i=0; i<Tabs; ++i)
-			File->write(L"\t", sizeof(wchar_t));
+			writeUTF16Literal("\t");
 	}
 
 	// write name
 
-	File->write(L"<", sizeof(wchar_t));
-	File->write(name, wcslen(name)*sizeof(wchar_t));
+	writeUTF16Literal("<");
+	writeUTF16(name);
 
 	// write attributes
 	u32 i=0;
@@ -133,10 +198,10 @@ void CXMLWriter::writeElement(const wchar_t* name, bool empty,
 
 	// write closing tag
 	if (empty)
-		File->write(L" />", 3*sizeof(wchar_t));
+		writeUTF16Literal(" />");
 	else
 	{
-		File->write(L">", sizeof(wchar_t));
+		writeUTF16Literal(">");
 		++Tabs;
 	}
 
@@ -149,11 +214,11 @@ void CXMLWriter::writeAttribute(const wchar_t* name, const wchar_t* value)
 	if (!name || !value)
 		return;
 
-	File->write(L" ", sizeof(wchar_t));
-	File->write(name, wcslen(name)*sizeof(wchar_t));
-	File->write(L"=\"", 2*sizeof(wchar_t));
+	writeUTF16Literal(" ");
+	writeUTF16(name);
+	writeUTF16Literal("=\"");
 	writeText(value);
-	File->write(L"\"", sizeof(wchar_t));
+	writeUTF16Literal("\"");
 }
 
 
@@ -163,9 +228,9 @@ void CXMLWriter::writeComment(const wchar_t* comment)
 	if (!File || !comment)
 		return;
 
-	File->write(L"<!--", 4*sizeof(wchar_t));
+	writeUTF16Literal("<!--");
 	writeText(comment);
-	File->write(L"-->", 3*sizeof(wchar_t));
+	writeUTF16Literal("-->");
 }
 
 
@@ -180,12 +245,12 @@ void CXMLWriter::writeClosingTag(const wchar_t* name)
 	if (Tabs > 0 && !TextWrittenLast)
 	{
 		for (int i=0; i<Tabs; ++i)
-			File->write(L"\t", sizeof(wchar_t));
+			writeUTF16Literal("\t");
 	}
 
-	File->write(L"</", 2*sizeof(wchar_t));
-	File->write(name, wcslen(name)*sizeof(wchar_t));
-	File->write(L">", sizeof(wchar_t));
+	writeUTF16Literal("</");
+	writeUTF16(name);
+	writeUTF16Literal(">");
 	TextWrittenLast = false;
 }
 
@@ -233,7 +298,7 @@ void CXMLWriter::writeText(const wchar_t* text)
 	}
 
 	// write new string
-	File->write(s.c_str(), s.size()*sizeof(wchar_t));
+	writeUTF16(s.c_str(), static_cast<u32>(s.size()));
 	TextWrittenLast = true;
 }
 
@@ -245,11 +310,11 @@ void CXMLWriter::writeLineBreak()
 		return;
 
 #if defined(_IRR_OSX_PLATFORM_)
-	File->write(L"\r", sizeof(wchar_t));
+	writeUTF16Literal("\r");
 #elif defined(_IRR_WINDOWS_API_)
-	File->write(L"\r\n", 2*sizeof(wchar_t));
+	writeUTF16Literal("\r\n");
 #else
-	File->write(L"\n", sizeof(wchar_t));
+	writeUTF16Literal("\n");
 #endif
 
 }
