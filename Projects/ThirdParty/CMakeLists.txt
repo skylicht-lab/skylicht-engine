@@ -149,8 +149,14 @@ if (BUILD_OPENSSL)
 	string(TOLOWER "${ARCHITECTURE}" OS_ARCH)
 
 	if (MSVC)
-		set(openssl_lib_path_debug "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/lib/windows/debug/${OS_ARCH}")
-		set(openssl_lib_path_release "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/lib/windows/release/${OS_ARCH}")
+		# Match BoringSSL libs with the selected MSVC runtime: /MD => md, /MT => mt
+		set(openssl_msvc_runtime "md")
+		if (NOT USE_MSVC_RUNTIME_LIBRARY_DLL)
+			set(openssl_msvc_runtime "mt")
+		endif()
+
+		set(openssl_lib_path_debug "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/lib/windows/${openssl_msvc_runtime}/debug/${OS_ARCH}")
+		set(openssl_lib_path_release "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/lib/windows/${openssl_msvc_runtime}/release/${OS_ARCH}")
 	elseif (CMAKE_SYSTEM_NAME STREQUAL Android)
 		set(openssl_lib_path "${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/lib/android/${ANDROID_ABI}")
 	elseif (CMAKE_SYSTEM_NAME STREQUAL iOS)

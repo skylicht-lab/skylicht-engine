@@ -4,7 +4,7 @@ on: [push]
 
 jobs:
   Emscripten:
-    runs-on: windows-latest
+    runs-on: windows-2022
     steps:
       - uses: actions/checkout@v2
       - name: Restore LFS cache
@@ -66,7 +66,7 @@ jobs:
     #    path: Build
 
   # Universal_Windows_Platform:
-  #   runs-on: windows-latest
+  #   runs-on: windows-2022
   #   steps:
   #     - uses: actions/checkout@v1
   #     - name: Build
@@ -77,7 +77,7 @@ jobs:
   #         cd ..
   #         mkdir PrjUWP
   #         mkdir PrjUWP\Projects
-  #         cmake -S . -B ./PrjUWP -G "Visual Studio 16 2019" -A x64 -DCMAKE_SYSTEM_NAME=WindowsStore -DCMAKE_SYSTEM_VERSION=10.0
+  #         cmake -S . -B ./PrjUWP -G "Visual Studio 17 2022" -A x64 -DCMAKE_SYSTEM_NAME=WindowsStore -DCMAKE_SYSTEM_VERSION=10.0
   #         cmake --build ./PrjUWP --config "Release"
 
   Linux-Static:
@@ -244,7 +244,7 @@ jobs:
     #    path: Build
 
   Windows-Static:
-    runs-on: windows-latest
+    runs-on: windows-2022
     steps:
       - uses: actions/checkout@v2
       - name: Restore LFS cache
@@ -274,7 +274,7 @@ jobs:
           dir Bin\x64\Release
 
   Windows-Shared:
-    runs-on: windows-latest
+    runs-on: windows-2022
     steps:
       - uses: actions/checkout@v2
       - name: Restore LFS cache
@@ -303,8 +303,38 @@ jobs:
         run: |
           dir Bin\x64\Release
 
+  Windows-Shared-MT:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v2
+      - name: Restore LFS cache
+        uses: actions/cache@v3
+        id: lfs-windows-cache
+        with:
+          path: .git/lfs
+          key: lfs-windows-cache-v1
+      - name: Git LFS Pull
+        run: git lfs pull
+      - name: Build
+        shell: cmd
+        run: |
+          cd Assets
+          python BuildAssetBundles.py
+          cd ..
+          cmake -S . -B ./PrjVisualStudio -G "Visual Studio 17 2022" -A x64 -DBUILD_SHARED_LIBS=ON -DUSE_MSVC_RUNTIME_LIBRARY_DLL=OFF
+          cmake --build ./PrjVisualStudio --config "Release"
+      - name: Unit Test
+        run: |
+          cd PrjVisualStudio
+          ctest -C Release
+          cat Testing/Temporary/LastTest.log
+          cd ..
+      - name: Package
+        run: |
+          dir Bin\x64\Release
+
   Windows-Shared-Smallest:
-    runs-on: windows-latest
+    runs-on: windows-2022
     steps:
       - uses: actions/checkout@v2
       - name: Restore LFS cache
