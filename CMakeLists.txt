@@ -3,6 +3,14 @@ cmake_minimum_required(VERSION 3.15)
 # cmake config
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
+# Use the first-class MSVC runtime setting instead of editing /MD and /MT flags.
+if (POLICY CMP0091)
+	# CMP0091 NEW tells CMake to honor CMAKE_MSVC_RUNTIME_LIBRARY /
+	# MSVC_RUNTIME_LIBRARY instead of baking /MD, /MT, ... into CMAKE_<LANG>_FLAGS.
+	# This must be set before project() enables the MSVC toolchain.
+	cmake_policy(SET CMP0091 NEW)
+endif()
+
 # cmake library
 include(CMake/CMakeVisualStudioSourceGroup.cmake)
 include(CMake/CMakeVisualStudioPCH.cmake)
@@ -73,6 +81,17 @@ option(BUILD_SDL "Build with Simple DirectMedia Layer is a cross-platform develo
 option(USE_OPENMP "Use openmp for multithread optimize" ON)
 
 option(USE_PRECISE_FLOATINGPOINT "Use precise floating point math for synchronization" OFF)
+
+if (MSVC)
+	# Select the MSVC CRT via CMake's runtime abstraction:
+	# ON  => /MD,  /MDd
+	# OFF => /MT,  /MTd
+	if (USE_MSVC_RUNTIME_LIBRARY_DLL)
+		set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+	else()
+		set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+	endif()
+endif()
 
 include(SkylichtConfig.cmake)
 
@@ -209,18 +228,6 @@ if (BUILD_WINDOWS_STORE)
 	endif()
 elseif (MSVC)
 	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-
-	if (NOT USE_MSVC_RUNTIME_LIBRARY_DLL)
-		#We statically link to reduce dependancies
-		foreach(flag_var CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO)
-			if (${flag_var} MATCHES "/MD")
-				string(REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
-			endif (${flag_var} MATCHES "/MD")
-			if (${flag_var} MATCHES "/MDd")
-				string(REGEX REPLACE "/MDd" "/MTd" ${flag_var} "${${flag_var}}")
-			endif (${flag_var} MATCHES "/MDd")
-		endforeach()
-	endif()	
 	
 	if (CMAKE_CL_64)
 		add_definitions(-D_WIN64)
