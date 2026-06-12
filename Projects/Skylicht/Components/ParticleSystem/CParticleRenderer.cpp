@@ -207,11 +207,13 @@ namespace Skylicht
 		{
 			IMeshBuffer* buffer = NULL;
 			IRenderer* renderer = group->getRenderer();
-
+            
 			if (group->UseOrientationAsBillboard)
 			{
-				CShaderParticle::setViewUp(group->OrientationUp);
-				CShaderParticle::setViewLook(group->OrientationNormal);
+                core::vector3df dUp = group->getTransformVector(group->OrientationUp);
+                core::vector3df dNormal = group->getTransformVector(group->OrientationNormal);
+				CShaderParticle::setViewUp(dUp);
+				CShaderParticle::setViewLook(dNormal);
 			}
 			else
 			{
@@ -235,8 +237,10 @@ namespace Skylicht
 
 			if (buffer && buffer->getIndexBuffer()->getIndexCount() > 0)
 			{
-				CShaderParticle::setOrientationUp(group->OrientationUp);
-				CShaderParticle::setOrientationNormal(group->OrientationNormal);
+                core::vector3df dUp = group->getTransformVector(group->OrientationUp);
+                core::vector3df dNormal = group->getTransformVector(group->OrientationNormal);
+                CShaderParticle::setOrientationUp(dUp);
+                CShaderParticle::setOrientationNormal(dNormal);
 
 				video::SMaterial& mat = buffer->getMaterial();
 

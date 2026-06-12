@@ -147,8 +147,10 @@ namespace Skylicht
 
 			if (g->UseOrientationAsBillboard)
 			{
-				CShaderParticle::setViewUp(g->OrientationUp);
-				CShaderParticle::setViewLook(g->OrientationNormal);
+                core::vector3df dUp = g->getTransformVector(g->OrientationUp);
+                core::vector3df dNormal = g->getTransformVector(g->OrientationNormal);
+                CShaderParticle::setViewUp(dUp);
+                CShaderParticle::setViewLook(dNormal);
 			}
 			else
 			{
@@ -172,8 +174,10 @@ namespace Skylicht
 
 			if (buffer && buffer->getIndexBuffer()->getIndexCount() > 0)
 			{
-				CShaderParticle::setOrientationUp(g->OrientationUp);
-				CShaderParticle::setOrientationNormal(g->OrientationNormal);
+                core::vector3df dUp = g->getTransformVector(g->OrientationUp);
+                core::vector3df dNormal = g->getTransformVector(g->OrientationNormal);
+                CShaderParticle::setOrientationUp(dUp);
+                CShaderParticle::setOrientationNormal(dNormal);
 
 				video::SMaterial& mat = buffer->getMaterial();
 				CMaterial* material = renderer->getMaterial();
