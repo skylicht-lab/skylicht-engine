@@ -405,11 +405,20 @@ namespace Skylicht
 
 				CGUIText* text = parentNode->getCanvas()->createText(newNode, r, NULL);
 				text->setName(L"Text");
-				text->setText(L"Enter text here");
+				text->setText(L"");
 				text->setDock(EGUIDock::DockFill);
 				text->setTextAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
 				text->setMargin(SMargin(5.0f, 5.0f, 5.0f, 5.0f));
 				text->setFontSource("SampleGUI/Fonts/Roboto.font");
+                
+                CGUIText* hint = parentNode->getCanvas()->createText(newNode, r, NULL);
+                hint->setName(L"Hint");
+                hint->setColor(SColor(255,100,100,100));
+                hint->setText(L"Enter text here");
+                hint->setDock(EGUIDock::DockFill);
+                hint->setTextAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
+                hint->setMargin(SMargin(5.0f, 5.0f, 5.0f, 5.0f));
+                hint->setFontSource("SampleGUI/Fonts/Roboto.font");
 			}
 			else if (command == L"UI List")
 			{

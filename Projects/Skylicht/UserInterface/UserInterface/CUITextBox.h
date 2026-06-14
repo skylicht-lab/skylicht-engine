@@ -61,10 +61,14 @@ namespace Skylicht
 		protected:
 			CGUIElement* m_background;
 			CGUIText* m_text;
+			CGUIText* m_hint;
+			bool m_hasFocus;
 
 			bool m_editable;
 
 			int m_maxLength;
+
+			void updateHintVisibility();
 
 		public:
 
@@ -78,7 +82,7 @@ namespace Skylicht
 
 		public:
 			/**
-			* @brief Create a `CUITextBox` by locating child elements named "Background" and "Text".
+			* @brief Create a `CUITextBox` by locating child elements named "Background", "Text", and "Hint".
 			* @param container Parent UI container that owns this control.
 			* @param element  Root `CGUIElement` for the control.
 			*
@@ -93,8 +97,9 @@ namespace Skylicht
 			* @param element    Root `CGUIElement` for the control.
 			* @param background Background element to use.
 			* @param text       `CGUIText` element used for rendering and editing.
+			* @param hint       `CGUIText` element used for showing hint text.
 			*/
-			CUITextBox(CUIContainer* container, CGUIElement* element, CGUIElement* background, CGUIText* text);
+			CUITextBox(CUIContainer* container, CGUIElement* element, CGUIElement* background, CGUIText* text, CGUIText* hint);
 
 			virtual ~CUITextBox();
 
@@ -121,6 +126,18 @@ namespace Skylicht
 			* @param text Wide string to set as content.
 			*/
 			void setText(const wchar_t* text);
+
+			/**
+			* @brief Set the hint text content (UTF-8 / narrow string).
+			* @param text C string to set as hint content.
+			*/
+			void setHintText(const char* text);
+
+			/**
+			* @brief Set the hint text content (wide string).
+			* @param text Wide string to set as hint content.
+			*/
+			void setHintText(const wchar_t* text);
 
 			/** @brief Get the current text (UTF-8 / narrow C string). Returns empty string if no `m_text`. */
 			const char* getText();
@@ -170,6 +187,8 @@ namespace Skylicht
 			virtual void onPointerUp(int pointerId, float pointerX, float pointerY);
 
 			virtual void onPointerMove(int pointerId, float pointerX, float pointerY);
+
+			virtual void onFocus();
 
 			virtual void onLostFocus();
 

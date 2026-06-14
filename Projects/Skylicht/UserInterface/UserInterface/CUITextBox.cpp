@@ -39,6 +39,8 @@ namespace Skylicht
 			CUIBase(container, element),
 			m_background(NULL),
 			m_text(NULL),
+			m_hint(NULL),
+			m_hasFocus(false),
 			m_editable(true),
 			m_maxLength(64)
 		{
@@ -49,18 +51,25 @@ namespace Skylicht
 				m_text = dynamic_cast<CGUIText*>(canvas->getGUIByPath(element, "Text"));
 				if (m_text)
 					m_text->setEnableTextFormnat(false);
+				m_hint = dynamic_cast<CGUIText*>(canvas->getGUIByPath(element, "Hint"));
 			}
+
+			updateHintVisibility();
 		}
 
-		CUITextBox::CUITextBox(CUIContainer* container, CGUIElement* element, CGUIElement* background, CGUIText* text) :
+		CUITextBox::CUITextBox(CUIContainer* container, CGUIElement* element, CGUIElement* background, CGUIText* text, CGUIText* hint) :
 			CUIBase(container, element),
 			m_background(background),
 			m_text(text),
+			m_hint(hint),
+			m_hasFocus(false),
 			m_editable(true),
 			m_maxLength(64)
 		{
 			if (m_text)
 				m_text->setEnableTextFormnat(false);
+
+			updateHintVisibility();
 		}
 
 		CUITextBox::~CUITextBox()
@@ -68,16 +77,45 @@ namespace Skylicht
 
 		}
 
+		void CUITextBox::updateHintVisibility()
+		{
+			if (!m_hint)
+				return;
+
+			const bool hasText = m_text != NULL && m_text->getTextLength() > 0;
+			m_hint->setVisible(!m_hasFocus && !hasText);
+		}
+
 		void CUITextBox::setText(const char* text)
 		{
 			if (m_text)
 				m_text->setText(text);
+
+			updateHintVisibility();
 		}
 
 		void CUITextBox::setText(const wchar_t* text)
 		{
 			if (m_text)
 				m_text->setText(text);
+
+			updateHintVisibility();
+		}
+
+		void CUITextBox::setHintText(const char* text)
+		{
+			if (m_hint)
+				m_hint->setText(text);
+
+			updateHintVisibility();
+		}
+
+		void CUITextBox::setHintText(const wchar_t* text)
+		{
+			if (m_hint)
+				m_hint->setText(text);
+
+			updateHintVisibility();
 		}
 
 		const char* CUITextBox::getText()
@@ -144,15 +182,18 @@ namespace Skylicht
 				if (textField && m_text)
 				{
 					int height = m_maxLength > 40 ? 100 : 50;
+					CUIEventManager::getInstance()->setFocus(this);
 
 					textField->show(m_text->getText(), m_maxLength, height, m_text->isPassword());
 					textField->OnDone = [&](std::string text) {
 						m_text->setText(text.c_str());
+						updateHintVisibility();
 						if (OnTextChanged != nullptr)
 							OnTextChanged(this);
 						};
 					textField->OnChanged = [&](std::string text) {
 						m_text->setText(text.c_str());
+						updateHintVisibility();
 						if (OnTextChanged != nullptr)
 							OnTextChanged(this);
 						};
@@ -201,10 +242,24 @@ namespace Skylicht
 #endif
 		}
 
+		void CUITextBox::onFocus()
+		{
+			m_hasFocus = true;
+			updateHintVisibility();
+
+			CUIBase::onFocus();
+		}
+
 		void CUITextBox::onLostFocus()
 		{
-			m_text->showCaret(false);
+			m_hasFocus = false;
+			if (m_text)
+				m_text->showCaret(false);
+
+			updateHintVisibility();
 			m_continueKeyEvent = true;
+
+			CUIBase::onLostFocus();
 		}
 
 		void CUITextBox::onKeyEvent(const SEvent& event)
@@ -346,6 +401,7 @@ namespace Skylicht
 					if (m_editable)
 					{
 						m_text->doBackspace();
+						updateHintVisibility();
 
 						updateCaret = false;
 						onChar = false;
@@ -358,6 +414,7 @@ namespace Skylicht
 					if (m_editable)
 					{
 						m_text->doDelete();
+						updateHintVisibility();
 
 						updateCaret = false;
 						onChar = false;
@@ -386,24 +443,26 @@ namespace Skylicht
 				}
 				else if (onChar && event.KeyInput.Char > 0)
 				{
-                    irr::EKEY_CODE key = event.KeyInput.Key;
-                    if (key != 0 &&
-                        key != irr::KEY_LMENU &&
-                        key != irr::KEY_RMENU &&
-                        key != irr::KEY_LSHIFT &&
-                        key != irr::KEY_RSHIFT &&
-                        key != irr::KEY_LSHIFT &&
-                        key != irr::KEY_CONTROL &&
-                        key != irr::KEY_LCONTROL &&
-                        key != irr::KEY_RCONTROL)
-                    {
-                        if (m_text->getTextLength() < m_maxLength)
-                            m_text->insert(event.KeyInput.Char);
-                    }
+					irr::EKEY_CODE key = event.KeyInput.Key;
+					if (key != 0 &&
+						key != irr::KEY_LMENU &&
+						key != irr::KEY_RMENU &&
+						key != irr::KEY_LSHIFT &&
+						key != irr::KEY_RSHIFT &&
+						key != irr::KEY_LSHIFT &&
+						key != irr::KEY_CONTROL &&
+						key != irr::KEY_LCONTROL &&
+						key != irr::KEY_RCONTROL)
+					{
+						if (m_text->getTextLength() < m_maxLength)
+						{
+							m_text->insert(event.KeyInput.Char);
+							updateHintVisibility();
+						}
+					}
+					}
 				}
-			}
 #endif
 		}
 	}
 }
-
