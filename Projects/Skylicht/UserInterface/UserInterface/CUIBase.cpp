@@ -55,7 +55,7 @@ namespace Skylicht
 		{
 			CUIEventManager* eventMgr = CUIEventManager::getInstance();
 			if (eventMgr && eventMgr->getFocus() == this)
-				eventMgr->setFocus(NULL);
+                eventMgr->clearFocus();
 
 			for (int i = 0, n = (int)EMotionEvent::NumEvent; i < n; i++)
 				removeMotions((EMotionEvent)i);

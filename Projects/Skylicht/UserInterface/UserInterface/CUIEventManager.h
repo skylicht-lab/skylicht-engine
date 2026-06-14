@@ -126,6 +126,9 @@ namespace Skylicht
 			*/
 			void setFocus(CUIBase* focus);
 
+            /** @brief Clear current focus */
+            void clearFocus();
+            
 			/** @brief Get the element that currently has keyboard/focus. */
 			inline CUIBase* getFocus()
 			{

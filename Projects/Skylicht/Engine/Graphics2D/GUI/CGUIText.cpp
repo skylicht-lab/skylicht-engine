@@ -48,7 +48,8 @@ namespace Skylicht
 		m_lastWidth(0.0f),
 		m_lastHeight(0.0f),
 		m_fontChanged(-1),
-		m_enableTextFormat(true)
+		m_enableTextFormat(true),
+		m_password(false)
 #ifdef HAVE_CARET
 		, m_showCaret(false),
 		m_setCaret(-1),
@@ -79,7 +80,8 @@ namespace Skylicht
 		m_lastWidth(0.0f),
 		m_lastHeight(0.0f),
 		m_fontChanged(-1),
-		m_enableTextFormat(true)
+		m_enableTextFormat(true),
+		m_password(false)
 #ifdef HAVE_CARET
 		, m_showCaret(false),
 		m_caretShader(0),
@@ -105,7 +107,6 @@ namespace Skylicht
 
 	CGUIText::~CGUIText()
 	{
-
 	}
 
 	void CGUIText::initFont(IFont* font)
@@ -386,6 +387,26 @@ namespace Skylicht
 		m_defaultText = CStringImp::convertUnicodeToUTF8(text);
 	}
 
+	void CGUIText::setPassword(bool b)
+	{
+		if (m_password == b)
+			return;
+
+		m_password = b;
+		m_updateTextRender = true;
+	}
+
+	wchar_t CGUIText::getDisplayCharacter(wchar_t c) const
+	{
+		if (!m_password)
+			return c;
+
+		if (c == L'\n' || c == L'\r')
+			return c;
+
+		return L'*';
+	}
+
 	int CGUIText::getCharWidth(wchar_t c)
 	{
 		if (!m_font)
@@ -394,7 +415,7 @@ namespace Skylicht
 		std::wstring string;
 		ArrayInt format;
 
-		string += c;
+		string += getDisplayCharacter(c);
 		format.push_back(0);
 
 		std::vector<SModuleOffset*>	listModule;
@@ -425,6 +446,7 @@ namespace Skylicht
 		int i = 0;
 		while (wtext[i] != 0)
 		{
+			wtext[i] = getDisplayCharacter(wtext[i]);
 			format.push_back(0);
 			++i;
 		}
@@ -455,10 +477,12 @@ namespace Skylicht
 	int CGUIText::getStringWidth(const wchar_t* wtext)
 	{
 		ArrayInt format;
+		std::wstring displayText;
 
 		int i = 0;
 		while (wtext[i] != 0)
 		{
+			displayText.push_back(getDisplayCharacter(wtext[i]));
 			format.push_back(0);
 			++i;
 		}
@@ -472,7 +496,7 @@ namespace Skylicht
 		if (font == NULL)
 			return stringWidth;
 
-		font->getListModule(wtext, format, listModule, listFormat);
+		font->getListModule(displayText.c_str(), format, listModule, listFormat);
 
 		for (int i = 0, n = (int)listModule.size(); i < n; i++)
 		{
@@ -580,19 +604,22 @@ namespace Skylicht
 		to = charPosition;
 
 		ArrayModuleOffset& string = m_arrayCharRender[line];
+		ArrayInt& id = m_arrayCharId[line];
 		int numCharacter = (int)string.size();
 
 		for (int i = 0; i < numCharacter; i++)
 		{
 			if (charPosition < numCharacter)
 			{
-				bool isCharacterGroup = isCharacter(string[charPosition]->Character);
+				int charId = id[charPosition];
+				bool isCharacterGroup = charId >= 0 && charId < (int)m_textw.size() ? isCharacter(m_textw[charId]) : false;
 
 				from = to = charPosition;
 				while (from > 0)
 				{
 					from--;
-					bool g = isCharacter(string[from]->Character);
+					charId = id[from];
+					bool g = charId >= 0 && charId < (int)m_textw.size() ? isCharacter(m_textw[charId]) : false;
 					if (g != isCharacterGroup)
 					{
 						from++;
@@ -602,7 +629,8 @@ namespace Skylicht
 
 				while (to < numCharacter)
 				{
-					bool g = isCharacter(string[to]->Character);
+					charId = id[to];
+					bool g = charId >= 0 && charId < (int)m_textw.size() ? isCharacter(m_textw[charId]) : false;
 					if (g != isCharacterGroup)
 					{
 						break;
@@ -937,7 +965,8 @@ namespace Skylicht
 
 			while (lpString[i] != 0)
 			{
-				SModuleOffset* c = m_font->getCharacterModule(lpString[i]);
+				wchar_t displayChar = getDisplayCharacter(lpString[i]);
+				SModuleOffset* c = m_font->getCharacterModule(displayChar);
 				if (c != NULL)
 				{
 					modules.push_back(c);
@@ -969,6 +998,7 @@ namespace Skylicht
 
 		const wchar_t* lpString = m_textw.c_str();
 		ArrayInt& lpFormat = m_textFormat;
+		bool password = isPassword();
 
 		if (m_font == NULL || lpString == NULL)
 		{
@@ -996,7 +1026,8 @@ namespace Skylicht
 				// loop all string on sentence
 				for (int j = begin; j < i; j++)
 				{
-					SModuleOffset* c = m_font->getCharacterModule(lpString[j]);
+					wchar_t displayChar = getDisplayCharacter(lpString[j]);
+					SModuleOffset* c = m_font->getCharacterModule(displayChar);
 					if (c != NULL)
 					{
 						modules.push_back(c);
@@ -1018,7 +1049,7 @@ namespace Skylicht
 				x = 0;
 				continue;
 			}
-			else if (lpString[i] == '\\')
+			else if (!password && lpString[i] == '\\')
 			{
 				if (lpString[i + 1] == 'n')
 				{
@@ -1029,7 +1060,8 @@ namespace Skylicht
 					// loop all string on sentence
 					for (int j = begin; j < i; j++)
 					{
-						SModuleOffset* c = m_font->getCharacterModule(lpString[j]);
+						wchar_t displayChar = getDisplayCharacter(lpString[j]);
+						SModuleOffset* c = m_font->getCharacterModule(displayChar);
 						if (c != NULL)
 						{
 							modules.push_back(c);
@@ -1053,15 +1085,16 @@ namespace Skylicht
 				}
 			}
 
-			SModuleOffset* c = m_font->getCharacterModule(lpString[i]);
-			if (c == NULL)
-			{
-				i++;
-				continue;
+				wchar_t displayChar = getDisplayCharacter(lpString[i]);
+				SModuleOffset* c = m_font->getCharacterModule(displayChar);
+				if (c == NULL)
+				{
+					i++;
+					continue;
 			}
 
 			// if found special character
-			if (lpString[i] == ' ')
+			if (displayChar == ' ')
 			{
 				lastSpace = i;
 				i++;
@@ -1083,24 +1116,25 @@ namespace Skylicht
 				ArrayInt fm;
 				ArrayInt p;
 
-				// ducph: fix stuck loop
-				if (begin == lastSpace)
-					lastSpace = i + 1;
+					// ducph: fix stuck loop
+					if (begin == lastSpace)
+						lastSpace = i + 1;
 
-				for (int j = begin; j < lastSpace; j++)
-				{
-					// inorge at first line
-					if (split.size() != 0 && modules.size() == 0 && lpString[j] == ' ')
-						continue;
-
-					SModuleOffset* c = m_font->getCharacterModule(lpString[j]);
-					if (c != NULL)
+					for (int j = begin; j < lastSpace; j++)
 					{
-						modules.push_back(c);
-						fm.push_back(lpFormat[j]);
-						p.push_back(j);
+						// inorge at first line
+						wchar_t displayChar = getDisplayCharacter(lpString[j]);
+						if (split.size() != 0 && modules.size() == 0 && displayChar == ' ')
+							continue;
+
+						SModuleOffset* c = m_font->getCharacterModule(displayChar);
+						if (c != NULL)
+						{
+							modules.push_back(c);
+							fm.push_back(lpFormat[j]);
+							p.push_back(j);
+						}
 					}
-				}
 
 				split.push_back(modules);
 				format.push_back(fm);
@@ -1123,10 +1157,11 @@ namespace Skylicht
 		for (int j = begin; j < i; j++)
 		{
 			// if the begin line is space
-			if (split.size() != 0 && modules.size() == 0 && lpString[j] == ' ')
+			wchar_t displayChar = getDisplayCharacter(lpString[j]);
+			if (split.size() != 0 && modules.size() == 0 && displayChar == ' ')
 				continue;
 
-			SModuleOffset* c = m_font->getCharacterModule(lpString[j]);
+			SModuleOffset* c = m_font->getCharacterModule(displayChar);
 			if (c != NULL)
 			{
 				modules.push_back(c);
@@ -1147,6 +1182,7 @@ namespace Skylicht
 		object->autoRelease(new CIntProperty(object, "charPadding", m_charPadding));
 		object->autoRelease(new CIntProperty(object, "charSpacePadding", m_charSpacePadding));
 		object->autoRelease(new CIntProperty(object, "linePadding", m_linePadding));
+		object->autoRelease(new CBoolProperty(object, "password", m_password));
 
 		CEnumProperty<EGUIVerticalAlign>* verticalAlign = new CEnumProperty<EGUIVerticalAlign>(object, "textVerticle", TextVertical);
 		verticalAlign->addEnumString("Top", EGUIVerticalAlign::Top);
@@ -1187,6 +1223,7 @@ namespace Skylicht
 		m_charPadding = object->get<int>("charPadding", 0);
 		m_charSpacePadding = object->get<int>("charSpacePadding", 0);
 		m_linePadding = object->get<int>("linePadding", 0);
+        m_password = object->get<bool>("password", false);
 
 		TextVertical = object->get<EGUIVerticalAlign>("textVerticle", EGUIVerticalAlign::Top);
 		TextHorizontal = object->get<EGUIHorizontalAlign>("textHorizontal", EGUIHorizontalAlign::Left);

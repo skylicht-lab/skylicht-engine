@@ -193,5 +193,12 @@ namespace Skylicht
 				m_focus->startMotion(UI::EMotionEvent::Focus);
 			}
 		}
+    
+        void CUIEventManager::clearFocus()
+        {
+            if (m_focus)
+                m_focus->onLostFocus();
+            m_focus = NULL;
+        }
 	}
 }

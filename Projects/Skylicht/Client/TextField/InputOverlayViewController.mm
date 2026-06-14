@@ -6,12 +6,14 @@
 std::string g_defaultText;
 int g_requestHeight = 50;
 int g_maxLength = 64;
+bool g_secureInput = false;
 
-void textfield_show(const char* text, int maxLength, int height)
+void textfield_show(const char* text, int maxLength, int height, bool password)
 {
 	g_defaultText = text;
 	g_requestHeight = height;
 	g_maxLength = maxLength;
+	g_secureInput = password;
 	
 	InputOverlayViewController *inputVC = [[InputOverlayViewController alloc] init];
 	inputVC.modalPresentationStyle = UIModalPresentationOverFullScreen;
@@ -74,6 +76,9 @@ void textfield_on_done(const char* text);
 	self.inputTextView.layer.borderWidth = 1.0;
 	self.inputTextView.layer.borderColor = [UIColor lightGrayColor].CGColor;
 	self.inputTextView.font = [UIFont systemFontOfSize:16];
+	self.inputTextView.secureTextEntry = g_secureInput;
+	self.inputTextView.autocorrectionType = UITextAutocorrectionTypeNo;
+	self.inputTextView.autocapitalizationType = UITextAutocapitalizationTypeNone;
 	self.inputTextView.delegate = self;
 	self.inputTextView.text = [NSString stringWithUTF8String:g_defaultText.c_str()];
 	[self.inputContainerView addSubview:self.inputTextView];

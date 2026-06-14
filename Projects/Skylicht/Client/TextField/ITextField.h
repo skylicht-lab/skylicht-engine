@@ -16,7 +16,7 @@ namespace Skylicht
 
 		virtual ~ITextField();
 
-		virtual void show(const char* text, int maxLength, int height) = 0;
+		virtual void show(const char* text, int maxLength, int height, bool password = false) = 0;
 	};
 
 	ITextField *getOSTextField();

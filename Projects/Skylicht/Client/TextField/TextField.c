@@ -23,6 +23,7 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #ifdef ANDROID
+#include <stdbool.h>
 #include <string.h>
 #include <jni.h>
 #include <android/log.h>
@@ -46,7 +47,7 @@ JNIEXPORT void JNICALL JNI_FUNCTION(TextField_init)(JNIEnv* env, jobject thiz)
 	jclass local = (*env)->FindClass(env, JNI_CLASSNAME(TextField));
 	g_classTextField = (jclass)(*env)->NewGlobalRef(env, local);
 
-	g_show = (*env)->GetStaticMethodID(env, g_classTextField, "show", "(Ljava/lang/String;II)V");
+	g_show = (*env)->GetStaticMethodID(env, g_classTextField, "show", "(Ljava/lang/String;IIZ)V");
 }
 
 JNIEXPORT void JNICALL JNI_FUNCTION(TextField_onChange)(JNIEnv* env, jobject thiz, jstring text)
@@ -63,7 +64,7 @@ JNIEXPORT void JNICALL JNI_FUNCTION(TextField_onDone)(JNIEnv* env, jobject thiz,
 	(*env)->ReleaseStringUTFChars(env, text, ctext);
 }
 
-void textfield_show(const char* text, int maxLength, int height)
+void textfield_show(const char* text, int maxLength, int height, bool password)
 {
 	if (g_show != NULL && g_classTextField != NULL)
 	{
@@ -75,7 +76,8 @@ void textfield_show(const char* text, int maxLength, int height)
 			g_show,
 			jniText,
 			maxLength,
-			height);
+			height,
+			password ? JNI_TRUE : JNI_FALSE);
 		
 		(*g_jniEnv)->DeleteLocalRef(g_jniEnv, jniText);
 	}

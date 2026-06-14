@@ -15,6 +15,6 @@ namespace Skylicht
 
 		DECLARE_SINGLETON(CIOSTextField)
 
-		virtual void show(const char* text, int maxLength, int height);
+		virtual void show(const char* text, int maxLength, int height, bool password = false);
 	};
 }

@@ -4,7 +4,7 @@
 #ifdef ANDROID
 extern "C"
 {
-	void textfield_show(const char* text, int maxLength, int height);
+	void textfield_show(const char* text, int maxLength, int height, bool password);
 
 	void textfield_on_change(const char* text)
 	{
@@ -32,13 +32,12 @@ CAndroidTextField::~CAndroidTextField()
 	
 }
 
-void CAndroidTextField::show(const char* text, int maxLength, int height)
+void CAndroidTextField::show(const char* text, int maxLength, int height, bool password)
 {
 #ifdef ANDROID
-	textfield_show(text, maxLength, height);
+	textfield_show(text, maxLength, height, password);
 #else
 	OnDone(std::string(text));
 #endif
 }
 }
-

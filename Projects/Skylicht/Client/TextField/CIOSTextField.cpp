@@ -2,7 +2,7 @@
 #include "CIOSTextField.h"
 
 #ifdef IOS
-void textfield_show(const char* text, int maxLength, int height);
+void textfield_show(const char* text, int maxLength, int height, bool password);
 
 void textfield_on_change(const char* text)
 {
@@ -29,13 +29,12 @@ CIOSTextField::~CIOSTextField()
 	
 }
 
-void CIOSTextField::show(const char* text, int maxLength, int height)
+void CIOSTextField::show(const char* text, int maxLength, int height, bool password)
 {
 #ifdef IOS
-	textfield_show(text, maxLength, height);
+	textfield_show(text, maxLength, height, password);
 #else
 	OnDone(std::string(text));
 #endif
 }
 }
-

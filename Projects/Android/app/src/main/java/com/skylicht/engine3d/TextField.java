@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.text.Editable;
 import android.text.InputFilter;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
@@ -28,6 +29,7 @@ public class TextField {
     public String Text;
     public int MaxLength;
     public int Height;
+    public boolean Password;
 
     public native void init();
 
@@ -35,17 +37,18 @@ public class TextField {
 
     public native void onDone(String text);
 
-    public static void show(String text, int maxLength, int height)
+    public static void show(String text, int maxLength, int height, boolean password)
     {
         GameInstance.Activity.runOnUiThread(()->{
-            getInstance().showInputActivity(text, maxLength, height);
+            getInstance().showInputActivity(text, maxLength, height, password);
         });
     }
 
-    public void showInputActivity(String text, int maxLength, int height) {
+    public void showInputActivity(String text, int maxLength, int height, boolean password) {
         Text = text;
         MaxLength = maxLength;
         Height = height;
+        Password = password;
 
         Dialog dialog = new Dialog(GameInstance.Activity);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -68,11 +71,15 @@ public class TextField {
         TextField textField = TextField.getInstance();
         int numLines = textField.Height / 50;
         Log.w("Skylicht", "Show text field, num line: " + numLines);
+        if (textField.Password) {
+            editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+        }
         editText.setText(textField.Text);
         editText.setMinLines(numLines);
         editText.setMaxLines(numLines);
         editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(textField.MaxLength)});
         editText.requestFocus();
+        editText.setSelection(editText.getText().length());
 
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -94,6 +94,19 @@ namespace Skylicht
 			return L"";
 		}
 
+        void CUITextBox::setPassword(bool b)
+        {
+            if (m_text)
+                return m_text->setPassword(b);
+        }
+        
+        bool CUITextBox::isPassword()
+        {
+            if (m_text)
+                return m_text->isPassword();
+            return false;
+        }
+    
 		int CUITextBox::getTextLength()
 		{
 			if (m_text)
@@ -128,11 +141,11 @@ namespace Skylicht
 
 #if defined(IOS) || defined(ANDROID)
 				ITextField* textField = getOSTextField();
-				if (textField)
+				if (textField && m_text)
 				{
 					int height = m_maxLength > 40 ? 100 : 50;
 
-					textField->show(m_text->getText(), m_maxLength, height);
+					textField->show(m_text->getText(), m_maxLength, height, m_text->isPassword());
 					textField->OnDone = [&](std::string text) {
 						m_text->setText(text.c_str());
 						if (OnTextChanged != nullptr)
@@ -373,13 +386,24 @@ namespace Skylicht
 				}
 				else if (onChar && event.KeyInput.Char > 0)
 				{
-					if (m_text->getTextLength() < m_maxLength)
-						m_text->insert(event.KeyInput.Char);
+                    irr::EKEY_CODE key = event.KeyInput.Key;
+                    if (key != 0 &&
+                        key != irr::KEY_LMENU &&
+                        key != irr::KEY_RMENU &&
+                        key != irr::KEY_LSHIFT &&
+                        key != irr::KEY_RSHIFT &&
+                        key != irr::KEY_LSHIFT &&
+                        key != irr::KEY_CONTROL &&
+                        key != irr::KEY_LCONTROL &&
+                        key != irr::KEY_RCONTROL)
+                    {
+                        if (m_text->getTextLength() < m_maxLength)
+                            m_text->insert(event.KeyInput.Char);
+                    }
 				}
 			}
 #endif
 		}
 	}
 }
-
 

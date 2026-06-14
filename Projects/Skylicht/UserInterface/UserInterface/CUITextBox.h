@@ -143,6 +143,12 @@ namespace Skylicht
 				return m_editable;
 			}
 
+            /** @brief Enable or disable user editing password. */
+            void setPassword(bool b);
+            
+            /** @brief Returns true when the control is password. */
+            bool isPassword();
+            
 			/** @brief Set maximum allowed characters that can be inserted. */
 			inline void setMaxLength(int l)
 			{

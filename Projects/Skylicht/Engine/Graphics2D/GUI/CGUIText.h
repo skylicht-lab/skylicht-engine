@@ -80,6 +80,7 @@ namespace Skylicht
 		ArrayInt m_textFormat;
 
 		bool m_enableTextFormat;
+		bool m_password;
 
 		std::string m_textId;
 		std::wstring m_textwId;
@@ -217,6 +218,13 @@ namespace Skylicht
 			return m_enableTextFormat;
 		}
 
+		void setPassword(bool b);
+
+        inline bool isPassword()
+        {
+            return m_password;
+        }
+
 		inline void setCharPadding(int charPadding)
 		{
 			m_charPadding = charPadding;
@@ -323,6 +331,8 @@ namespace Skylicht
 		void splitText(std::vector<ArrayModuleOffset>& split, std::vector<ArrayInt>& format, std::vector<ArrayInt>& id, int width);
 
 		void getClosestCharacter(float posX, int x, int y, int line, const core::matrix4& world, int& character);
+
+		wchar_t getDisplayCharacter(wchar_t c) const;
 
 		void initFont(IFont* font);
 
