@@ -458,10 +458,13 @@ namespace Skylicht
 						{
 							m_text->insert(event.KeyInput.Char);
 							updateHintVisibility();
+                            
+                            if (OnTextChanged != nullptr)
+                                OnTextChanged(this);
 						}
 					}
-					}
-				}
+                }
+            }
 #endif
 		}
 	}
