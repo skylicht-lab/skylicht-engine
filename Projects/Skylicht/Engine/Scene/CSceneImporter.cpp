@@ -357,7 +357,7 @@ namespace Skylicht
 
 	void CSceneImporter::reloadTemplate(CGameObject* obj, CObjectSerializable* templateData)
 	{
-		if (obj->getTypeName() != templateData->Name)
+		if (std::string(obj->getTypeName()) != templateData->Name)
 			return;
 
 		// save the transform
@@ -374,10 +374,10 @@ namespace Skylicht
 			for (int i = 0, n = obj->getComponentCount(); i < n; i++)
 			{
 				CComponentSystem* comp = obj->getComponentByPos(i);
-				CObjectSerializable* compProperty = components->getProperty<CObjectSerializable>(comp->getTypeName().c_str());
+				CObjectSerializable* compProperty = components->getProperty<CObjectSerializable>(comp->getTypeName());
 				if (compProperty == NULL)
 				{
-					if (!depComp->isDependentComponent(comp->getTypeName().c_str()))
+					if (!depComp->isDependentComponent(comp->getTypeName()))
 						remove.push_back(comp);
 				}
 			}

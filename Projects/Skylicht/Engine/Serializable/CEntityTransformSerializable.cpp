@@ -30,7 +30,7 @@ namespace Skylicht
 	SERIALIZABLE_REGISTER(CEntityTransformSerializable);
 
 	CEntityTransformSerializable::CEntityTransformSerializable() :
-		CObjectSerializable(getTypeName().c_str()),
+		CObjectSerializable(getTypeName()),
 		Id(this, "id"),
 		Transform(this, "transform")
 	{
@@ -38,7 +38,7 @@ namespace Skylicht
 	}
 
 	CEntityTransformSerializable::CEntityTransformSerializable(CObjectSerializable* parent) :
-		CObjectSerializable(getTypeName().c_str(), parent),
+		CObjectSerializable(getTypeName(), parent),
 		Id(this, "id"),
 		Transform(this, "transform")
 	{

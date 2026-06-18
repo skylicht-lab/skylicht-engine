@@ -84,7 +84,7 @@ namespace Skylicht
 
 	CObjectSerializable* CComponentSystem::createSerializable()
 	{
-		CObjectSerializable* object = new CObjectSerializable(getTypeName().c_str());
+		CObjectSerializable* object = new CObjectSerializable(getTypeName());
 		object->autoRelease(new CBoolProperty(object, "enable", isEnable()));
 		return object;
 	}
@@ -96,7 +96,7 @@ namespace Skylicht
 
 	int CComponentSystem::useComponent(CComponentSystem* used)
 	{
-		delete used;
+		// delete used;
 		return 1;
 	}
 }

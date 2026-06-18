@@ -31,7 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 	bool type##_activator = CActivator::createGetInstance()->registerType(#type, &type##CreateFunc)
 
 #define DECLARE_GETTYPENAME(type) \
-	virtual std::string getTypeName() {return #type;}
+	virtual const char* getTypeName() {return #type;}
 
 namespace Skylicht
 {

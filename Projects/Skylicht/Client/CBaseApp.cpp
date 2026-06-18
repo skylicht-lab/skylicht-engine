@@ -102,7 +102,7 @@ namespace Skylicht
 #endif
 	}
 
-	void CBaseApp::registerAppEvent(std::string name, IApplicationEventReceiver* pEvent)
+	void CBaseApp::registerAppEvent(const std::string& name, IApplicationEventReceiver* pEvent)
 	{
 		std::vector<appEventType>::iterator i = m_appEventReceivers.begin(), end = m_appEventReceivers.end();
 		while (i != end)

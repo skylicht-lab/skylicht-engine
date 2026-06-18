@@ -60,7 +60,7 @@ namespace Skylicht
 		{
 			CGUIEditor::initGUI(gui, ui);
 
-			GUI::CCollapsibleGroup* group = ui->addGroup(gui->getTypeName().c_str(), this);
+			GUI::CCollapsibleGroup* group = ui->addGroup(gui->getTypeName(), this);
 			GUI::CBoxLayout* layout = ui->createBoxLayout(group);
 			serializableToControl(m_guiData, ui, layout);
 			group->setExpand(true);

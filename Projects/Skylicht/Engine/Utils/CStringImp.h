@@ -28,7 +28,9 @@ https://github.com/skylicht-lab/skylicht-engine
 #include <string.h>
 #include <stdlib.h>
 #include <cwchar>
+#include <cwctype>
 #include <cstdarg>
+#include <string>
 #include <vector>
 
 namespace Skylicht
@@ -449,65 +451,13 @@ namespace Skylicht
 			return true;
 		}
 
-		static int splitString(const char* stringSplit, const char* search, std::vector<std::string>& result)
-		{
-			result.clear();
+		static int splitString(const char* stringSplit, const char* search, std::vector<std::string>& result);
 
-			char stringResult[512];
-			int i = 0;
+		static std::string replaceAll(std::string& string, const std::string& from, const std::string& to);
 
-			while (CStringImp::split<char>(stringResult, (char*)stringSplit, (char*)search, &i) == true)
-			{
-				trim<char>(stringResult);
-				result.push_back(stringResult);
-			}
+		static int splitString(const wchar_t* stringSplit, const wchar_t* search, std::vector<std::wstring>& result);
 
-			if (result.size() == 0)
-				result.push_back(stringSplit);
-
-			return (int)result.size();
-		}
-
-		static std::string replaceAll(std::string& string, const std::string& from, const std::string& to)
-		{
-			size_t start_pos = 0;
-			while ((start_pos = string.find(from, start_pos)) != std::string::npos) {
-				string.replace(start_pos, from.length(), to);
-				start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
-			}
-			return string;
-		}
-
-		static int splitString(const wchar_t* stringSplit, const wchar_t* search, std::vector<std::wstring>& result)
-		{
-			result.clear();
-
-			wchar_t stringResult[512];
-			int i = 0;
-
-			while (CStringImp::split<wchar_t>(stringResult, (wchar_t*)stringSplit, (wchar_t*)search, &i) == true)
-			{
-				trim<wchar_t>(stringResult);
-				result.push_back(stringResult);
-			}
-
-			if (result.size() == 0)
-				result.push_back(stringSplit);
-
-			return (int)result.size();
-		}
-
-		static bool format(char* lpString, const char* lpStringFormat, ...)
-		{
-			va_list listArgs;
-			va_start(listArgs, lpStringFormat);
-
-			int i = vsprintf(lpString, lpStringFormat, listArgs);
-			if (i == -1)
-				return false;
-
-			return true;
-		}
+		static bool format(char* lpString, const char* lpStringFormat, ...);
 
 		template<class T>
 		static bool parseToInt(T* lpString, int* result)
@@ -724,326 +674,40 @@ namespace Skylicht
 				}
 			}
 		}
-		static wchar_t utf8Char2Unicode(const char*& str)
-		{
-			const unsigned char* p = (const unsigned char*)str;
-			unsigned char c = *p++;
 
-			wchar_t result;
-			int extraBytes = 0;
+		static wchar_t utf8Char2Unicode(const char*& str);
 
-			if (c <= 0x7F)
-			{
-				result = c;
-			}
-			else if ((c & 0xE0) == 0xC0)
-			{
-				result = c & 0x1F;
-				extraBytes = 1;
-			}
-			else if ((c & 0xF0) == 0xE0)
-			{
-				result = c & 0x0F;
-				extraBytes = 2;
-			}
-			else if ((c & 0xF8) == 0xF0)
-			{
-				result = c & 0x07;
-				extraBytes = 3;
-			}
-			else
-			{
-				str++;
-				return L'?';
-			}
+		static unsigned short* getUnicodeString(const wchar_t* src);
 
-			for (int i = 0; i < extraBytes; ++i)
-			{
-				unsigned char nextByte = *p;
-				if ((nextByte & 0xC0) != 0x80)
-					break;
+		static void convertUTF8ToUnicode(const char* src, wchar_t* dst);
 
-				result = (result << 6) | (nextByte & 0x3F);
-				p++;
-			}
+		static int getUnicodeStringSize(const char* src);
 
-			str = (const char*)p;
-			return result;
-		}
+		static void convertUnicodeToUTF8(const wchar_t* src, char* dst);
 
-		static unsigned short* getUnicodeString(const wchar_t* src)
-		{
-			static unsigned short s_buffer[2048];
+		static int getUTF8StringSize(const wchar_t* src);
 
-			const wchar_t* t = src;
-			unsigned short* d = s_buffer;
+		static void replaceExt(char* lpPath, const char* lpExt);
 
-			while (*t)
-			{
-				*d = (unsigned short)*t;
-				d++;
-				t++;
-			}
+		static void replacePathExt(char* lpPath, const char* lpExt);
 
-			*d = 0;
-			return s_buffer;
-		}
+		static int findStringInList(std::vector<std::string>& listString, const char* find);
 
-		static void convertUTF8ToUnicode(const char* src, wchar_t* dst)
-		{
-			int t = 0;
+		static void replaceString(std::string& subject, const std::string& search, const std::string& replace);
 
-			const char* pos = src;
+		static const std::string& convertUnicodeToUTF8(const wchar_t* src);
 
-			while (*pos != 0)
-				dst[t++] = utf8Char2Unicode(pos);
+		static const std::wstring& convertUTF8ToUnicode(const char* src);
 
-			dst[t++] = 0;
-		}
+		static const std::string& toLower(const std::string& s);
 
-		static int getUnicodeStringSize(const char* src)
-		{
-			int t = 0;
+		static const std::wstring& toLower(const std::wstring& s);
 
-			const char* pos = src;
+		static const std::string& toUpper(const std::string& s);
 
-			while (*pos != 0)
-			{
-				utf8Char2Unicode(pos);
-				t++;
-			}
+		static const std::wstring& toUpper(const std::wstring& s);
 
-			return ++t;
-		}
-
-		static void convertUnicodeToUTF8(const wchar_t* src, char* dst)
-		{
-			int k = 0;
-			int l = 0;
-
-			while (src[k])
-			{
-				unsigned int c = (unsigned int)src[k];
-
-				if (c <= 0x007F)
-				{
-					dst[l++] = (char)c;
-				}
-				else if (c <= 0x07FF)
-				{
-					dst[l++] = 0xC0 | ((c >> 6) & 0x1F);
-					dst[l++] = 0x80 | (c & 0x3F);
-				}
-				else if (c <= 0xFFFF)
-				{
-					dst[l++] = 0xE0 | ((c >> 12) & 0x0F);
-					dst[l++] = 0x80 | ((c >> 6) & 0x3F);
-					dst[l++] = 0x80 | (c & 0x3F);
-				}
-				else if (c <= 0x10FFFF)
-				{
-					dst[l++] = 0xF0 | ((c >> 18) & 0x07);
-					dst[l++] = 0x80 | ((c >> 12) & 0x3F);
-					dst[l++] = 0x80 | ((c >> 6) & 0x3F);
-					dst[l++] = 0x80 | (c & 0x3F);
-				}
-
-				k++;
-			}
-			dst[l] = 0;
-		}
-
-		static int getUTF8StringSize(const wchar_t* src)
-		{
-			int k = 0;
-			int l = 0;
-
-			while (src[k])
-			{
-				wchar_t c = src[k];
-
-				if (c <= 0x007F)
-				{
-					l++;
-				}
-				else if (c <= 0x07FF)
-				{
-					l += 2;
-				}
-				else
-				{
-					l += 3;
-				}
-
-				k++;
-			}
-
-			return l;
-		}
-
-		static void replaceExt(char* lpPath, const char* lpExt)
-		{
-			char fileName[512] = { 0 };
-
-			CStringImp::getFileNameNoExt(fileName, lpPath);
-			CStringImp::copy(lpPath, fileName);
-			CStringImp::cat(lpPath, lpExt);
-		}
-
-		static void replacePathExt(char* lpPath, const char* lpExt)
-		{
-			char fileName[512] = { 0 };
-			char folder[512] = { 0 };
-
-			CStringImp::getFolderPath(folder, lpPath);
-			CStringImp::getFileNameNoExt(fileName, lpPath);
-			CStringImp::copy(lpPath, folder);
-
-			if (CStringImp::length(folder) > 0)
-				CStringImp::cat(lpPath, "/");
-
-			CStringImp::cat(lpPath, fileName);
-			CStringImp::cat(lpPath, lpExt);
-		}
-
-		static int findStringInList(std::vector<std::string>& listString, const char* find)
-		{
-			for (int i = 0, n = (int)listString.size(); i < n; i++)
-			{
-				if (listString[i] == find)
-				{
-					return i;
-				}
-			}
-			return -1;
-		}
-
-		static std::string convertUnicodeToUTF8(const wchar_t* src)
-		{
-			int size = getUTF8StringSize(src) + 1;
-			char* data = new char[size];
-			memset(data, 0, size);
-			convertUnicodeToUTF8(src, data);
-			std::string ret = data;
-			delete[]data;
-			return ret;
-		}
-
-		static std::wstring convertUTF8ToUnicode(const char* src)
-		{
-			int size = getUnicodeStringSize(src) + 1;
-			wchar_t* data = new wchar_t[size];
-			memset(data, 0, sizeof(wchar_t) * size);
-			convertUTF8ToUnicode(src, data);
-			std::wstring ret = data;
-			delete[]data;
-			return ret;
-		}
-
-		static std::string toLower(const std::string& s)
-		{
-			std::string ret;
-			for (const char& c : s)
-				ret += tolower(c);
-			return ret;
-		}
-
-		static std::wstring toLower(const std::wstring& s)
-		{
-			std::wstring ret;
-			for (const wchar_t& c : s)
-				ret += towlower(c);
-			return ret;
-		}
-
-		static std::string toUpper(const std::string& s)
-		{
-			std::string ret;
-			for (const char& c : s)
-				ret += toupper(c);
-			return ret;
-		}
-
-		static std::wstring toUpper(const std::wstring& s)
-		{
-			std::wstring ret;
-			for (const wchar_t& c : s)
-				ret += towupper(c);
-			return ret;
-		}
-
-		static std::string formatThousand(int n, bool useK, bool useM)
-		{
-			std::string s;
-			std::string dot;
-
-			bool addK = false;
-			bool addM = false;
-
-			if (useM && n > 1000000.0f)
-			{
-				int number = (int)(n / 1000000.0f);
-				char text[32];
-				sprintf(text, "%d", number);
-				s = text;
-
-				double d = n / 1000000.0 - (double)number;
-				if (d > 0.0f)
-				{
-					sprintf(text, ",%02d", (int)(d * 100.0));
-					dot = text;
-				}
-
-				addM = true;
-			}
-			else if (useK && n > 100000.0f)
-			{
-				int number = (int)(n / 1000.0f);
-				char text[32];
-				sprintf(text, "%d", number);
-				s = text;
-
-				double d = n / 1000.0 - (double)number;
-				if (d > 0.0f)
-				{
-					sprintf(text, ",%02d", (int)(d * 10.0));
-					dot = text;
-				}
-
-				addK = true;
-			}
-			else
-			{
-				s = std::to_string(n);
-			}
-
-			int n_len = (int)s.length();
-			int insert_count = 0;
-
-			if (n_len > 3)
-			{
-				for (int i = n_len - 3; i > 0; i -= 3)
-					s.insert(i, ".");
-			}
-
-			s += dot;
-
-			if (addM)
-				s += "M";
-			else if (addK)
-				s += "K";
-
-			return s;
-		}
-
-		static void replaceString(std::string& subject, const std::string& search, const std::string& replace)
-		{
-			size_t pos = 0;
-			while ((pos = subject.find(search, pos)) != std::string::npos) {
-				subject.replace(pos, search.length(), replace);
-				pos += replace.length();
-			}
-		}
+		static const std::string& formatThousand(int n, bool useK, bool useM);
 	};
 
 }

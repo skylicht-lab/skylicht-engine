@@ -64,9 +64,9 @@ namespace Skylicht
 			return false;
 		}
 
-		virtual std::string getTypeName()
+		virtual const char* getTypeName()
 		{
-			return std::string("IEntityData");
+			return "IEntityData";
 		}
 	};
 }

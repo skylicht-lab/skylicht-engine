@@ -54,11 +54,11 @@ namespace Skylicht
 
 		virtual ~CEventManager();
 
-		void registerEvent(std::string name, IEventReceiver* pEvent);
+		void registerEvent(const char* name, IEventReceiver* pEvent);
 
 		void unRegisterEvent(IEventReceiver* pEvent);
 
-		void registerProcessorEvent(std::string name, IEventProcessor* pEvent);
+		void registerProcessorEvent(const char* name, IEventProcessor* pEvent);
 
 		void unRegisterProcessorEvent(IEventProcessor* pEvent);
 

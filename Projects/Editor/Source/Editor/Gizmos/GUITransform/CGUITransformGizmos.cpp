@@ -177,7 +177,7 @@ namespace Skylicht
 			CEditorActivator* activator = CEditorActivator::getInstance();
 
 			// GUI property
-			CGUIEditor* editor = activator->getGUIEditorInstance(m_gui->getTypeName().c_str());
+			CGUIEditor* editor = activator->getGUIEditorInstance(m_gui->getTypeName());
 			if (editor != NULL)
 			{
 				CObjectSerializable* data = editor->getData();

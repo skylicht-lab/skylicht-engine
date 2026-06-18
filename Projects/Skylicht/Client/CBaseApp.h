@@ -262,7 +262,7 @@ namespace Skylicht
 		 * @param name Name of the receiver.
 		 * @param pEvent Pointer to IApplicationEventReceiver.
 		 */
-		void registerAppEvent(std::string name, IApplicationEventReceiver* pEvent);
+		void registerAppEvent(const std::string& name, IApplicationEventReceiver* pEvent);
 
 		/**
 		 * @brief Unregister an application event receiver.

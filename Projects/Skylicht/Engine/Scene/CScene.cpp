@@ -205,7 +205,7 @@ namespace Skylicht
 		return *pos;
 	}
 
-	void CScene::registerEvent(std::string name, IEventReceiver* pEvent)
+	void CScene::registerEvent(const char* name, IEventReceiver* pEvent)
 	{
 		std::vector<eventType>::iterator i = m_eventReceivers.begin(), end = m_eventReceivers.end();
 		while (i != end)
@@ -215,7 +215,7 @@ namespace Skylicht
 			++i;
 		}
 
-		m_eventReceivers.push_back(eventType(name, pEvent));
+		m_eventReceivers.push_back(eventType(std::string(name), pEvent));
 	}
 
 	void CScene::unRegisterEvent(IEventReceiver* pEvent)
@@ -302,7 +302,7 @@ namespace Skylicht
 
 	CObjectSerializable* CScene::createSerializable()
 	{
-		CObjectSerializable* object = new CObjectSerializable(getTypeName().c_str());
+		CObjectSerializable* object = new CObjectSerializable(getTypeName());
 		object->autoRelease(new CStringProperty(object, "name", getNameA()));
 		return object;
 	}

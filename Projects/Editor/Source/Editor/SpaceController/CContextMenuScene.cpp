@@ -203,7 +203,7 @@ namespace Skylicht
 		{
 			GUI::CMenuItem* item = NULL;
 
-			if (go->getTypeName() == "CZone")
+			if (std::string(go->getTypeName()) == "CZone")
 			{
 				item = menu->getItemByPath(L"Template");
 				item->setHidden(true);

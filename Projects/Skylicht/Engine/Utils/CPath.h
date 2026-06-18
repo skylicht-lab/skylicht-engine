@@ -29,21 +29,21 @@ namespace Skylicht
 	class SKYLICHT_API CPath
 	{
 	public:
-		static std::string getFileName(const std::string& path);
+		static const std::string& getFileName(const std::string& path);
 
-		static std::string getFileNameExt(const std::string& path);
+		static const std::string& getFileNameExt(const std::string& path);
 
-		static std::string getFileNameNoExt(const std::string& path);
+		static const std::string& getFileNameNoExt(const std::string& path);
 
-		static std::string replaceFileExt(const std::string& path, const std::string& ext);
+		static const std::string& replaceFileExt(const std::string& path, const std::string& ext);
 
-		static std::string getFolderPath(const std::string& path);
+		static const std::string& getFolderPath(const std::string& path);
 
-		static std::string getParentFolderPath(const std::string& path);
+		static const std::string& getParentFolderPath(const std::string& path);
 
-		static std::string normalizePath(const std::string& path);
+		static const std::string& normalizePath(const std::string& path);
 
-		static std::string getRelativePath(const std::string& path, const std::string& folder);
+		static const std::string& getRelativePath(const std::string& path, const std::string& folder);
 
 		static bool searchMatch(const std::string& path, const std::string& searchPattern);
 	};

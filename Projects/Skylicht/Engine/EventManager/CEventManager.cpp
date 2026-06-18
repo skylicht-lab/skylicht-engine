@@ -41,7 +41,7 @@ namespace Skylicht
 		m_eventProcessors.clear();
 	}
 
-	void CEventManager::registerEvent(std::string name, IEventReceiver* pEvent)
+	void CEventManager::registerEvent(const char* name, IEventReceiver* pEvent)
 	{
 		std::vector<eventType>::iterator i = m_eventReceivers.begin(), end = m_eventReceivers.end();
 		while (i != end)
@@ -51,7 +51,7 @@ namespace Skylicht
 			++i;
 		}
 
-		m_eventReceivers.push_back(eventType(name, pEvent));
+		m_eventReceivers.push_back(eventType(std::string(name), pEvent));
 	}
 
 	void CEventManager::unRegisterEvent(IEventReceiver* pEvent)
@@ -68,7 +68,7 @@ namespace Skylicht
 		}
 	}
 
-	void CEventManager::registerProcessorEvent(std::string name, IEventProcessor* pEvent)
+	void CEventManager::registerProcessorEvent(const char* name, IEventProcessor* pEvent)
 	{
 		std::vector<eventProcessorType>::iterator i = m_eventProcessors.begin(), end = m_eventProcessors.end();
 		while (i != end)
@@ -78,7 +78,7 @@ namespace Skylicht
 			++i;
 		}
 
-		m_eventProcessors.push_back(eventProcessorType(name, pEvent));
+		m_eventProcessors.push_back(eventProcessorType(std::string(name), pEvent));
 	}
 
 	void CEventManager::unRegisterProcessorEvent(IEventProcessor* pEvent)

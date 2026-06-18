@@ -29,8 +29,8 @@ namespace Skylicht
 	class SKYLICHT_API CRandomID
 	{
 	public:
-		static std::string generate(int len = 16);
+		static const std::string& generate(int len = 16);
 
-		static std::string hashID(const char* key);
+		static const std::string& hashID(const char* key);
 	};
 }

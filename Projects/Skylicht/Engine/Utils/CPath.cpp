@@ -28,60 +28,82 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	char tempPath[512];
-	char resultPath[512];
+	extern std::string g_tempString;
 
-	std::string CPath::getFileName(const std::string& path)
+	const std::string& CPath::getFileName(const std::string& path)
 	{
+		char tempPath[512];
+		char resultPath[512];
 		CStringImp::copy<char, const char>(tempPath, path.c_str());
 		CStringImp::getFileName<char, char>(resultPath, tempPath);
-		return resultPath;
+		g_tempString = resultPath;
+		return g_tempString;
 	}
 
-	std::string CPath::getFileNameExt(const std::string& path)
+	const std::string& CPath::getFileNameExt(const std::string& path)
 	{
+		char tempPath[512];
+		char resultPath[512];
 		CStringImp::copy<char, const char>(tempPath, path.c_str());
 		CStringImp::getFileNameExt<char, char>(resultPath, tempPath);
-		return resultPath;
+		g_tempString = resultPath;
+		return g_tempString;
 	}
 
-	std::string CPath::getFileNameNoExt(const std::string& path)
+	const std::string& CPath::getFileNameNoExt(const std::string& path)
 	{
+		char tempPath[512];
+		char resultPath[512];
 		CStringImp::copy<char, const char>(tempPath, path.c_str());
 		CStringImp::getFileNameNoExt<char, char>(resultPath, tempPath);
-		return resultPath;
+		g_tempString = resultPath;
+		return g_tempString;
 	}
 
-	std::string CPath::replaceFileExt(const std::string& path, const std::string& ext)
+	const std::string& CPath::replaceFileExt(const std::string& path, const std::string& ext)
 	{
+		char tempPath[512];
+		char resultPath[512];
 		CStringImp::copy<char, const char>(resultPath, path.c_str());
 		CStringImp::replacePathExt(resultPath, ext.c_str());
-		return resultPath;
+		g_tempString = resultPath;
+		return g_tempString;
 	}
 
-	std::string CPath::getFolderPath(const std::string& path)
+	const std::string& CPath::getFolderPath(const std::string& path)
 	{
+		char tempPath[512];
+		char resultPath[512];
 		CStringImp::copy<char, const char>(tempPath, path.c_str());
 		CStringImp::getFolderPath<char, char>(resultPath, tempPath);
-		return resultPath;
+		g_tempString = resultPath;
+		return g_tempString;
 	}
 
-	std::string CPath::getParentFolderPath(const std::string& path)
+	const std::string& CPath::getParentFolderPath(const std::string& path)
 	{
+		char tempPath[512];
+		char resultPath[512];
 		CStringImp::copy<char, const char>(tempPath, path.c_str());
 
 		int len = CStringImp::length(tempPath);
+		len = core::clamp(len, 0, 512);
+
 		while (len > 1 && tempPath[len - 1] == '\\' || tempPath[len - 1] == '/')
 		{
 			tempPath[--len] = 0;
 		}
 
 		CStringImp::getFolderPath<char, char>(resultPath, tempPath);
-		return resultPath;
+		g_tempString = resultPath;
+		return g_tempString;
 	}
 
-	std::string CPath::normalizePath(const std::string& path)
+	const std::string& CPath::normalizePath(const std::string& path)
 	{
+		char tempPath[512];
+		char resultPath[512];
+
 		std::vector<std::string> listFolder;
 		std::vector<std::string> finalFolder;
 
@@ -115,12 +137,14 @@ namespace Skylicht
 				finalPath = finalPath + "/";
 		}
 
-		return finalPath;
+		g_tempString = finalPath;
+		return g_tempString;
 	}
 
-	std::string CPath::getRelativePath(const std::string& path, const std::string& folder)
+	const std::string& CPath::getRelativePath(const std::string& path, const std::string& folder)
 	{
-		std::string result;
+		char tempPath[512];
+		char resultPath[512];
 
 		std::vector<std::string> listFolder;
 		std::vector<std::string> listFolderOfPath;
@@ -156,20 +180,22 @@ namespace Skylicht
 
 		}
 
+		g_tempString = "";
+
 		// add relative path
 		u32 j = i;
 		for (; i < listFolder.size(); ++i)
-			result += "../";
+			g_tempString += "../";
 
 		// add path to this file
 		for (; j < listFolderOfPath.size(); ++j)
 		{
-			result += listFolderOfPath[j];
-			result += "/";
+			g_tempString += listFolderOfPath[j];
+			g_tempString += "/";
 		}
 
-		result += filename;
-		return result;
+		g_tempString += filename;
+		return g_tempString;
 	}
 
 	bool CPath::searchMatch(const std::string& path, const std::string& searchPattern)

@@ -406,9 +406,11 @@ namespace Skylicht
 
 		for (int i = 0; i < numComponents; i++)
 		{
-			if (components[i]->getTypeName() == name)
+			std::string typeName = components[i]->getTypeName();
+
+			if (typeName == name)
 				return components[i];
-			else if (m_components[i]->getTypeName() == "CNullComponent")
+			else if (typeName == "CNullComponent")
 			{
 				// unsupport component
 				CNullComponent* nullComp = (CNullComponent*)m_components[i];
@@ -577,7 +579,7 @@ namespace Skylicht
 
 	CObjectSerializable* CGameObject::createSerializable()
 	{
-		CObjectSerializable* object = new CObjectSerializable(getTypeName().c_str());
+		CObjectSerializable* object = new CObjectSerializable(getTypeName());
 		object->autoRelease(new CStringProperty(object, "id", getID().c_str()));
 		object->autoRelease(new CStringProperty(object, "name", getNameA()));
 

@@ -30,7 +30,7 @@ namespace Skylicht
 	SERIALIZABLE_REGISTER(CProbeSerializable);
 
 	CProbeSerializable::CProbeSerializable() :
-		CObjectSerializable(getTypeName().c_str()),
+		CObjectSerializable(getTypeName()),
 		Id(this, "id"),
 		Transform(this, "transform")
 	{
@@ -44,7 +44,7 @@ namespace Skylicht
 	}
 
 	CProbeSerializable::CProbeSerializable(CObjectSerializable* parent) :
-		CObjectSerializable(getTypeName().c_str(), parent),
+		CObjectSerializable(getTypeName(), parent),
 		Id(this, "id"),
 		Transform(this, "transform")
 	{

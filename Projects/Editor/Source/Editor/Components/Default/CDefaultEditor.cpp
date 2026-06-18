@@ -84,7 +84,7 @@ namespace Skylicht
 			if (m_gameObject->isEnableEditorChange() && m_component != NULL)
 			{
 				// setup gui
-				std::string name = m_component->getTypeName().c_str();
+				std::string name = m_component->getTypeName();
 				if (!m_name.empty())
 					name = m_name;
 

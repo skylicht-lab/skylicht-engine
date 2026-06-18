@@ -27,23 +27,26 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	std::string CRandomID::generate(int len)
+	extern std::string g_tempString;
+
+	const std::string& CRandomID::generate(int len)
 	{
-		std::string randomString;
+		g_tempString.clear();
 		static const char alphanum[] = "0123456789abcdef";
 
-		randomString.reserve(len);
+		g_tempString.reserve(len);
 
 		for (int i = 0; i < len; ++i)
-			randomString += alphanum[os::Randomizer::rand() % (sizeof(alphanum) - 1)];
+			g_tempString += alphanum[os::Randomizer::rand() % (sizeof(alphanum) - 1)];
 
-		return randomString;
+		return g_tempString;
 	}
 
-	std::string CRandomID::hashID(const char* key)
+	const std::string& CRandomID::hashID(const char* key)
 	{
 		const std::hash<std::string> hasher;
 		const size_t hashResult = hasher(std::string(key));
-		return std::to_string(hashResult);
+		g_tempString = std::to_string(hashResult);
+		return g_tempString;
 	}
 }

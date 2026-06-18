@@ -41,7 +41,7 @@ namespace Skylicht
 
 		CObjectSerializable* CParticleSerializable::createSerializable()
 		{
-			CObjectSerializable* object = new CObjectSerializable(getTypeName().c_str());
+			CObjectSerializable* object = new CObjectSerializable(getTypeName());
 			return object;
 		}
 

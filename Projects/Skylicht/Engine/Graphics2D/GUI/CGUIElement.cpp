@@ -317,7 +317,7 @@ namespace Skylicht
 
 	CObjectSerializable* CGUIElement::createSerializable()
 	{
-		CObjectSerializable* object = new CObjectSerializable(getTypeName().c_str());
+		CObjectSerializable* object = new CObjectSerializable(getTypeName());
 
 		// element data
 		object->autoRelease(new CStringProperty(object, "id", getID()));

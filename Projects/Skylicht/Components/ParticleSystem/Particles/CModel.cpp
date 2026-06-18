@@ -71,18 +71,19 @@ namespace Skylicht
 
 		CModel::~CModel()
 		{
+			m_typeName = CStringImp::convertUnicodeToUTF8(g_modelName[(int)m_type]);
 		}
 
-		std::string CModel::getTypeName()
+		const char* CModel::getTypeName()
 		{
-			return CStringImp::convertUnicodeToUTF8(g_modelName[(int)m_type]);
+			return m_typeName.c_str();
 		}
 
 		CObjectSerializable* CModel::createSerializable()
 		{
 			CObjectSerializable* object = CParticleSerializable::createSerializable();
 
-			CStringProperty* name = new CStringProperty(object, "name", CStringImp::convertUnicodeToUTF8(getName()).c_str());
+			CStringProperty* name = new CStringProperty(object, "name", m_typeName.c_str());
 			name->setHidden(true);
 			object->autoRelease(name);
 

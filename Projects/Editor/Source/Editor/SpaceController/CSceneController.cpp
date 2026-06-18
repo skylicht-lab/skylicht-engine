@@ -507,7 +507,7 @@ namespace Skylicht
 				// add container child
 				node = parentNode->addChild();
 
-				if (container->getTypeName() == "CZone")
+				if (std::string(container->getTypeName()) == "CZone")
 				{
 					node->setTagData(object, CHierachyNode::Zone);
 					node->setIcon(GUI::ESystemIcon::Folder);
@@ -564,7 +564,7 @@ namespace Skylicht
 			CContainerObject* container = dynamic_cast<CContainerObject*>(object);
 			if (container)
 			{
-				if (container->getTypeName() == "CZone")
+				if (std::string(container->getTypeName()) == "CZone")
 				{
 					node->setTagData(object, CHierachyNode::Zone);
 					node->setIcon(GUI::ESystemIcon::Folder);

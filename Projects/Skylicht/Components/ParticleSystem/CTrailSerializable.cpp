@@ -31,7 +31,7 @@ namespace Skylicht
 	SERIALIZABLE_REGISTER(CTrailSerializable);
 
 	CTrailSerializable::CTrailSerializable() :
-		CObjectSerializable(getTypeName().c_str()),
+		CObjectSerializable(getTypeName()),
 		Name(this, "name"),
 		Width(this, "width"),
 		Length(this, "length"),
@@ -53,7 +53,7 @@ namespace Skylicht
 	}
 
 	CTrailSerializable::CTrailSerializable(CObjectSerializable* parent) :
-		CObjectSerializable(getTypeName().c_str(), parent),
+		CObjectSerializable(getTypeName(), parent),
 		Name(this, "name"),
 		Width(this, "width"),
 		Length(this, "length"),

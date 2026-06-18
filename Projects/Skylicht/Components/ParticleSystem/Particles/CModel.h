@@ -64,6 +64,8 @@ namespace Skylicht
 			/** @brief Optional custom curve for interpolation. */
 			CInterpolator* m_interpolator;
 
+			std::string m_typeName;
+
 		public:
 			CModel(CGroup* group, EParticleParams type);
 
@@ -206,7 +208,7 @@ namespace Skylicht
 				return m_interpolator;
 			}
 
-			virtual std::string getTypeName();
+			virtual const char* getTypeName();
 		};
 	}
 }

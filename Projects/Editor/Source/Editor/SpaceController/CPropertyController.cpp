@@ -150,7 +150,7 @@ namespace Skylicht
 			CEditorActivator* activator = CEditorActivator::getInstance();
 
 			// GameObject property
-			CComponentEditor* editor = activator->getEditorInstance(obj->getTypeName().c_str());
+			CComponentEditor* editor = activator->getEditorInstance(obj->getTypeName());
 			if (editor != NULL)
 				space->addComponent(editor, obj);
 
@@ -158,7 +158,7 @@ namespace Skylicht
 			ArrayComponent& listComponents = obj->getListComponent();
 			for (CComponentSystem* component : listComponents)
 			{
-				CComponentEditor* editor = activator->getEditorInstance(component->getTypeName().c_str());
+				CComponentEditor* editor = activator->getEditorInstance(component->getTypeName());
 				if (editor != NULL)
 				{
 					// custom editor
@@ -213,7 +213,7 @@ namespace Skylicht
 					continue;
 
 				// GameObject property
-				CEntityDataEditor* editor = activator->getEntityDataEditorInstance(data->getTypeName().c_str());
+				CEntityDataEditor* editor = activator->getEntityDataEditorInstance(data->getTypeName());
 				if (editor != NULL)
 				{
 					editor->closeGUI();
@@ -228,7 +228,7 @@ namespace Skylicht
 			CEditorActivator* activator = CEditorActivator::getInstance();
 
 			// GUI property
-			CGUIEditor* editor = activator->getGUIEditorInstance(gui->getTypeName().c_str());
+			CGUIEditor* editor = activator->getGUIEditorInstance(gui->getTypeName());
 			if (editor != NULL)
 			{
 				editor->closeGUI();
