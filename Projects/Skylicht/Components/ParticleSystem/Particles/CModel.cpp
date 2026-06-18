@@ -66,12 +66,12 @@ namespace Skylicht
 			m_enableEndValue(true),
 			m_interpolator(NULL)
 		{
-
+			m_typeName = CStringImp::convertUnicodeToUTF8(g_modelName[(int)m_type]);
 		}
 
 		CModel::~CModel()
 		{
-			m_typeName = CStringImp::convertUnicodeToUTF8(g_modelName[(int)m_type]);
+			
 		}
 
 		const char* CModel::getTypeName()
