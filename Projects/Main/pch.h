@@ -28,4 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include <irrlicht.h>
 #include <irrOS.h>
 
+// Override new operator for msvc MT, MTd
+#include "NewOperator.h"
+
 #include "CApplication.h"

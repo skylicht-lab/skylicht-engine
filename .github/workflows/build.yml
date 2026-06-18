@@ -303,7 +303,7 @@ jobs:
         run: |
           dir Bin\x64\Release
 
-  Windows-Static-MT:
+  Windows-Shared-MT:
     runs-on: windows-2022
     steps:
       - uses: actions/checkout@v2
@@ -321,7 +321,7 @@ jobs:
           cd Assets
           python BuildAssetBundles.py
           cd ..
-          cmake -S . -B ./PrjVisualStudio -G "Visual Studio 17 2022" -A x64 -DUSE_MSVC_RUNTIME_LIBRARY_DLL=OFF
+          cmake -S . -B ./PrjVisualStudio -G "Visual Studio 17 2022" -A x64 -DBUILD_SHARED_LIBS=ON -DUSE_MSVC_RUNTIME_LIBRARY_DLL=OFF
           cmake --build ./PrjVisualStudio --config "Release"
       - name: Unit Test
         run: |

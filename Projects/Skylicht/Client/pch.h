@@ -13,3 +13,4 @@
 #endif
 
 #include "AppInclude.h"
+#include "SkylichtConfig.h"

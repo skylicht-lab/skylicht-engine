@@ -96,7 +96,7 @@ namespace Skylicht
 
 	int CComponentSystem::useComponent(CComponentSystem* used)
 	{
-		// delete used;
+		delete used;
 		return 1;
 	}
 }
