@@ -55,7 +55,7 @@ namespace Skylicht
 		{
 			CUIEventManager* eventMgr = CUIEventManager::getInstance();
 			if (eventMgr && eventMgr->getFocus() == this)
-                eventMgr->clearFocus();
+				eventMgr->clearFocus();
 
 			for (int i = 0, n = (int)EMotionEvent::NumEvent; i < n; i++)
 				removeMotions((EMotionEvent)i);
@@ -296,6 +296,19 @@ namespace Skylicht
 					}
 				}
 			}
+		}
+
+		void CUIBase::stopMotion(EMotionEvent event)
+		{
+			if (!m_element)
+				return;
+
+			if (m_motions[(int)event].size() == 0)
+				return;
+
+			std::vector<CMotion*> motions = m_motions[(int)event];
+			for (CMotion* m : motions)
+				m->stop();
 		}
 
 		bool CUIBase::isMotionPlaying(EMotionEvent event)

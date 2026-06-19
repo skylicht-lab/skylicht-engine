@@ -21,4 +21,24 @@ namespace Json
 	{
 		delete value;
 	}
+
+	Json::FastWriter* createFastWriter()
+	{
+		return new Json::FastWriter();
+	}
+
+	Json::StyledWriter* createStyledWriter()
+	{
+		return new Json::StyledWriter();
+	}
+
+	Json::StyledStreamWriter* createStyledStreamWriter()
+	{
+		return new Json::StyledStreamWriter();
+	}
+
+	void destroyWriter(Json::Writer* writer)
+	{
+		delete writer;
+	}
 }

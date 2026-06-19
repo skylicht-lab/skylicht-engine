@@ -16,6 +16,14 @@ namespace Json
 	JSON_API Json::Value* createValue();
 
 	JSON_API void destroyValue(Json::Value* value);
+
+	JSON_API Json::FastWriter* createFastWriter();
+
+	JSON_API Json::StyledWriter* createStyledWriter();
+
+	JSON_API Json::StyledStreamWriter* createStyledStreamWriter();
+
+	JSON_API void destroyWriter(Json::Writer* writer);
 }
 
 #endif // JSON_JSON_H_INCLUDED

@@ -292,6 +292,11 @@ namespace Skylicht
 			 */
 			void startMotion(EMotionEvent event);
 
+			/** @brief Stop motions associated with a specific motion event.
+			 * @param event Motion event to stop (EMotionEvent).
+			 */
+			void stopMotion(EMotionEvent event);
+
 			/**
 			 * @brief Query whether any motion is currently playing for the given event.
 			 * @param event Motion event to query.
