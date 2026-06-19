@@ -138,6 +138,11 @@ namespace Skylicht
 			CConsoleLog* log = CConsoleLog::getInstance();
 			if (log->isEnable())
 				log->write(event.LogEvent.Text, event.LogEvent.Level);
+
+#ifdef USE_SHARED_HEAP_MEMORY
+			// When MSVC build MT or MTd, we use shared heap memory, so we can print log from other dlls
+			printf("%s\n", event.LogEvent.Text);
+#endif
 		}
 
 		if (event.EventType == EET_GAME_EXIT)
@@ -295,7 +300,9 @@ namespace Skylicht
 		const float maxTimeStep = 1000.0f / 15.0f;
 		if (m_timeStep > maxTimeStep)
 		{
-			printf("Warning: Low FPS: %f tpf, %f fps \n", m_timeStep, 1000.0f / m_timeStep);
+			char log[1024];
+			sprintf(log, "Warning: Low FPS: %f tpf, %f fps \n", m_timeStep, 1000.0f / m_timeStep);
+			os::Printer::log(log);
 			m_timeStep = maxTimeStep;
 		}
 
