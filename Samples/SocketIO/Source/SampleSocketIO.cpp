@@ -155,17 +155,20 @@ void SampleSocketIO::onUpdate()
 	{
 		// on receive message
 		// see Samples/SocketIOServer/index.js
-		m_io->OnMessage = [&](const std::string& msg)
+		m_io->OnMessage = [&](const std::string& jsonMsg)
 			{
-				Json::Reader reader;
-				Json::Value obj;
+				Json::Reader* reader = Json::createReader();
+				Json::Value* value = Json::createValue();
+				Json::Value& obj = *value;
 
-				reader.parse(msg, obj);
+				reader->parse(jsonMsg, obj);
 
 				const Json::Value& message = obj[(Json::UInt)0];
 				const Json::Value& data = obj[(Json::UInt)1];
 
-				if (message.asString() == "message")
+				std::string msg = message.type() == Json::stringValue ? message.asCString() : "";
+
+				if (msg == "message")
 				{
 					std::string user = data["user"].asCString();
 					std::string chatMsg = data["message"].asCString();
@@ -179,20 +182,23 @@ void SampleSocketIO::onUpdate()
 
 					m_logs.push_back(log);
 				}
-				else if (message.asString() == "join")
+				else if (msg == "join")
 				{
 					std::string user = data["user"].asCString();
 					std::string log;
 					log = user + "join the chat room";
 					m_logs.push_back(log);
 				}
-				else if (message.asString() == "left")
+				else if (msg == "left")
 				{
 					std::string user = data["user"].asCString();
 					std::string log;
 					log = user + "has left the chat room";
 					m_logs.push_back(log);
 				}
+
+				Json::destroyReader(reader);
+				Json::destroyValue(value);
 			};
 
 		m_io->OnMessageAsk = [&](const std::string& msg, int id)

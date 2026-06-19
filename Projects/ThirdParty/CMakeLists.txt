@@ -39,14 +39,12 @@ setup_project_group("${curl_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 endif()
 
 #json
-if (BUILD_JSON)
 file(GLOB_RECURSE json_source 
 	./json/**.cpp
 	./json/**.hpp
 	./json/**.c 
 	./json/**.h)
 setup_project_group("${json_source}" ${CMAKE_CURRENT_SOURCE_DIR})
-endif()
 
 #jpeglib
 file(GLOB_RECURSE jpeglib_source 
