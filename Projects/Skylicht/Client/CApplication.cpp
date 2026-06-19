@@ -300,9 +300,8 @@ namespace Skylicht
 		const float maxTimeStep = 1000.0f / 15.0f;
 		if (m_timeStep > maxTimeStep)
 		{
-			char log[1024];
-			sprintf(log, "Warning: Low FPS: %f tpf, %f fps \n", m_timeStep, 1000.0f / m_timeStep);
-			os::Printer::log(log);
+			// Use printf let Editor dont spam this message in console windows
+			printf("Warning: Low FPS: %f tpf, %f fps \n", m_timeStep, 1000.0f / m_timeStep);
 			m_timeStep = maxTimeStep;
 		}
 
