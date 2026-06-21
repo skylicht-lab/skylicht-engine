@@ -437,6 +437,10 @@ namespace Skylicht
 		bool CGraphQuery::findPath(CWalkingTileMap* map, STile* from, STile* to, core::array<STile*>& result)
 		{
 			result.clear();
+
+			if (from->AreaId != to->AreaId)
+				return false;
+
 			u32 numTile = map->getNumTile();
 
 			CDistancePriorityQueue queue;
@@ -471,7 +475,7 @@ namespace Skylicht
 				{
 					STile* nei = tile->Neighbours[i];
 
-					float neiDist = (nei->Position - tile->Position).getLength();
+					float neiDist = (nei->Position - tile->Position).getLengthSQ();
 					float currentDist = walkDistance + neiDist;
 
 					if (dist[nei->Id] < 0 || dist[nei->Id] > currentDist)
@@ -480,7 +484,7 @@ namespace Skylicht
 						// or have another link shorter
 						dist[nei->Id] = currentDist;
 
-						float length = currentDist + (to->Position - nei->Position).getLength();
+						float length = currentDist + (to->Position - nei->Position).getLengthSQ();
 						queue.push({ length, nei });
 
 						prev[nei->Id] = tile;

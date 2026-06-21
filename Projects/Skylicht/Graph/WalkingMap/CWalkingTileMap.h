@@ -190,7 +190,9 @@ namespace Skylicht
 
 			bool hitTris(const core::line3df& line, core::array<core::triangle3df>& tris, core::vector3df& outPoint);
 
-			void fillArea();
+			void fillTrisArea();
+
+			void fillTilesArea();
 		};
 	}
 }

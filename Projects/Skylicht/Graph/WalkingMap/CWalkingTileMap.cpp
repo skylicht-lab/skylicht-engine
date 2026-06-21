@@ -112,7 +112,7 @@ namespace Skylicht
 				t->C = ib->getIndex(i * 3 + 2);
 			}
 
-			fillArea();
+			fillTrisArea();
 
 			for (u32 i = 0; i < numTris; i++)
 			{
@@ -232,8 +232,14 @@ namespace Skylicht
 			{
 				STile* t = m_tiles[i];
 				t->Id = i;
+
+				// we should reset AreaId and refill after link Neighbours
+				t->AreaId = 0;
+
 				t->Tris.clear();
 			}
+
+			fillTilesArea();
 
 			// free data
 			for (u32 i = 0, n = m_tris.size(); i < n; i++)
@@ -241,7 +247,7 @@ namespace Skylicht
 			m_tris.clear();
 		}
 
-		void CWalkingTileMap::fillArea()
+		void CWalkingTileMap::fillTrisArea()
 		{
 			for (u32 i = 0, n = m_tris.size(); i < n; i++)
 			{
@@ -299,6 +305,45 @@ namespace Skylicht
 			}
 		}
 
+		void CWalkingTileMap::fillTilesArea()
+		{
+			int areaId = 1;
+			std::stack<STile*> stack;
+
+			for (u32 i = 0, n = m_tiles.size(); i < n; i++)
+			{
+				STile* t = m_tiles[i];
+				if (t->AreaId == 0)
+				{
+					t->AreaId = areaId;
+					t->Visit = true;
+					stack.push(t);
+
+					while (!stack.empty())
+					{
+						STile* t = stack.top();
+						stack.pop();
+
+						for (int j = 0, m = t->Neighbours.size(); j < m; j++)
+						{
+							STile* nei = t->Neighbours[j];
+							if (!nei->Visit)
+							{
+								stack.push(nei);
+								nei->Visit = true;
+								nei->AreaId = areaId;
+							}
+						}
+					}
+
+					areaId++;
+				}
+			}
+
+			for (u32 i = 0, n = m_tiles.size(); i < n; i++)
+				m_tiles[i]->Visit = false;
+		}
+
 		void CWalkingTileMap::beginGenerate(float tileWidth, float tileHeight, CMesh* navMesh, CObstacleAvoidance* obstacle)
 		{
 			generate(tileWidth, tileHeight, navMesh->getBoundingBox());
@@ -320,7 +365,7 @@ namespace Skylicht
 				t->C = ib->getIndex(i * 3 + 2);
 			}
 
-			fillArea();
+			fillTrisArea();
 
 			m_navMesh = navMesh;
 			m_obstacle = obstacle;
@@ -536,8 +581,14 @@ namespace Skylicht
 				{
 					STile* t = m_tiles[i];
 					t->Id = i;
+
+					// we should reset AreaId and refill after link Neighbours
+					t->AreaId = 0;
+
 					t->Tris.clear();
 				}
+
+				fillTilesArea();
 
 				// free data
 				for (u32 i = 0, n = m_tris.size(); i < n; i++)
@@ -672,8 +723,7 @@ namespace Skylicht
 					L"id", id.c_str(),
 					L"x", x.c_str(),
 					L"y", y.c_str(),
-					L"z", z.c_str(),
-					L"area", areaId.c_str());
+					L"z", z.c_str());
 				xmlWriter->writeLineBreak();
 
 				attrib->clear();
@@ -769,7 +819,7 @@ namespace Skylicht
 						tile->X = xmlReader->getAttributeValueAsInt(L"x");
 						tile->Y = xmlReader->getAttributeValueAsInt(L"y");
 						tile->Z = xmlReader->getAttributeValueAsInt(L"z");
-						tile->AreaId = xmlReader->getAttributeValueAsInt(L"area");
+						tile->AreaId = 0;
 
 						attrib->clear();
 						attrib->read(xmlReader);
@@ -853,6 +903,8 @@ namespace Skylicht
 				STileXYZ tile(t->X, t->Y, t->Z);
 				m_hashTiles[tile] = t;
 			}
+
+			fillTilesArea();
 
 			xmlReader->drop();
 			attrib->drop();
