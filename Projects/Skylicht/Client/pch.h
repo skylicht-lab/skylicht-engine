@@ -14,3 +14,4 @@
 
 #include "AppInclude.h"
 #include "SkylichtConfig.h"
+#include "NewOperator.h"
