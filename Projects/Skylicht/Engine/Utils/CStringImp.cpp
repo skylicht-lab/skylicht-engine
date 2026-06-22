@@ -321,39 +321,43 @@ namespace Skylicht
 
 	const std::string& CStringImp::toLower(const std::string& s)
 	{
-		g_tempString.clear();
+		std::string ret;
 		for (const char& c : s)
-			g_tempString += tolower(c);
+			ret += tolower(c);
+		g_tempString = ret;
 		return g_tempString;
 	}
 
 	const std::wstring& CStringImp::toLower(const std::wstring& s)
 	{
-		g_tempWString.clear();
+		std::wstring ret;
 		for (const wchar_t& c : s)
-			g_tempWString += towlower(c);
+			ret += towlower(c);
+		g_tempWString = ret;
 		return g_tempWString;
 	}
 
 	const std::string& CStringImp::toUpper(const std::string& s)
 	{
-		g_tempString.clear();
+		std::string ret;
 		for (const char& c : s)
-			g_tempString += toupper(c);
+			ret += toupper(c);
+		g_tempString = ret;
 		return g_tempString;
 	}
 
 	const std::wstring& CStringImp::toUpper(const std::wstring& s)
 	{
-		g_tempWString.clear();
+		std::wstring ret;
 		for (const wchar_t& c : s)
-			g_tempWString += towupper(c);
+			ret += towupper(c);
+		g_tempWString = ret;
 		return g_tempWString;
 	}
 
 	const std::string& CStringImp::formatThousand(int n, bool useK, bool useM)
 	{
-		g_tempString.clear();
+		std::string ret;
 		std::string dot;
 
 		bool addK = false;
@@ -364,7 +368,7 @@ namespace Skylicht
 			int number = (int)(n / 1000000.0f);
 			char text[32];
 			sprintf(text, "%d", number);
-			g_tempString = text;
+			ret = text;
 
 			double d = n / 1000000.0 - (double)number;
 			if (d > 0.0f)
@@ -380,7 +384,7 @@ namespace Skylicht
 			int number = (int)(n / 1000.0f);
 			char text[32];
 			sprintf(text, "%d", number);
-			g_tempString = text;
+			ret = text;
 
 			double d = n / 1000.0 - (double)number;
 			if (d > 0.0f)
@@ -393,25 +397,26 @@ namespace Skylicht
 		}
 		else
 		{
-			g_tempString = std::to_string(n);
+			ret = std::to_string(n);
 		}
 
-		int n_len = (int)g_tempString.length();
+		int n_len = (int)ret.length();
 		int insert_count = 0;
 
 		if (n_len > 3)
 		{
 			for (int i = n_len - 3; i > 0; i -= 3)
-				g_tempString.insert(i, ".");
+				ret.insert(i, ".");
 		}
 
-		g_tempString += dot;
+		ret += dot;
 
 		if (addM)
-			g_tempString += "M";
+			ret += "M";
 		else if (addK)
-			g_tempString += "K";
+			ret += "K";
 
+		g_tempString = ret;
 		return g_tempString;
 	}
 }
