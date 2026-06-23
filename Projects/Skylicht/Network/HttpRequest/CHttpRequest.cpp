@@ -479,32 +479,27 @@ namespace Skylicht
 			// get current time
 			m_currentTime = os::Timer::getTime();
 
-			int maxfd = -1;
-			fd_set fdread;
-			fd_set fdwrite;
-			fd_set fdexcep;
-			//long curl_timeo = -1;
-			struct timeval timeout;
-			int rc = 0;
+			CURLMcode result = CURLM_OK;
+			do
+			{
+				result = curl_multi_perform(m_multiHandle, &m_needContinue);
+			} while (result == CURLM_CALL_MULTI_PERFORM);
 
-			//char log[1024];
-			//sprintf(log, "Update request: %s", m_url.c_str());
-			//os::Printer::log(log);
+			if (result == CURLM_OK && m_needContinue == 1)
+			{
+				int numfds = 0;
+				result = curl_multi_wait(m_multiHandle, NULL, 0, 0, &numfds);
 
-			FD_ZERO(&fdread);
-			FD_ZERO(&fdwrite);
-			FD_ZERO(&fdexcep);
+				if (result == CURLM_OK)
+				{
+					do
+					{
+						result = curl_multi_perform(m_multiHandle, &m_needContinue);
+					} while (result == CURLM_CALL_MULTI_PERFORM);
+				}
+			}
 
-			timeout.tv_sec = 0;
-			timeout.tv_usec = 0;
-
-			curl_multi_fdset(m_multiHandle, &fdread, &fdwrite, &fdexcep, &maxfd);
-			CURLMcode result = curl_multi_perform(m_multiHandle, &m_needContinue);
-
-			if (m_needContinue == 1)
-				rc = select(maxfd + 1, &fdread, &fdwrite, &fdexcep, &timeout);
-
-			if (rc < 0)
+			if (result != CURLM_OK)
 			{
 				m_bytePerSecond = 0;
 				m_totalBytePerSecond = 0;
@@ -521,7 +516,7 @@ namespace Skylicht
 					os::Printer::log("CHttpRequest close connection\n");
 				}
 
-				// todo wait dns thread
+				os::Printer::log("CHttpRequest: curl multi update failed");
 				return false;
 			}
 
