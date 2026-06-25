@@ -235,6 +235,10 @@ elseif (MSVC)
 	if (CMAKE_CL_64)
 		add_definitions(-D_WIN64)
 	endif()
+
+	# Keep optimized Release builds debuggable by emitting compiler and linker PDBs.
+	add_compile_options("$<$<CONFIG:Release>:/Zi>")
+	add_link_options("$<$<CONFIG:Release>:/DEBUG:FULL>")
 	
 	if (USE_PRECISE_FLOATINGPOINT)
 		add_compile_options(/fp:precise)
