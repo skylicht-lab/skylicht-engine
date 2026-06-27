@@ -122,7 +122,7 @@ namespace Skylicht
 			m_isTimeOut = false;
 			m_checkTimeout = true;
 
-			m_downloadBuffer = new unsigned char[DOWNLOADBUFFER_SIZE];
+			m_downloadBuffer = new unsigned char[DOWNLOADBUFFER_SIZE + 1];
 			m_sizeBuffer = 0;
 			m_requestID = -1;
 
@@ -138,7 +138,7 @@ namespace Skylicht
 		CHttpRequest::~CHttpRequest()
 		{
 			if (m_downloadBuffer)
-				delete m_downloadBuffer;
+				delete[] m_downloadBuffer;
 
 			if (m_formpost)
 			{
@@ -485,21 +485,27 @@ namespace Skylicht
 				result = curl_multi_perform(m_multiHandle, &m_needContinue);
 			} while (result == CURLM_CALL_MULTI_PERFORM);
 
+			int rc = 0;
 			if (result == CURLM_OK && m_needContinue == 1)
 			{
-				int numfds = 0;
-				result = curl_multi_wait(m_multiHandle, NULL, 0, 0, &numfds);
+				int maxfd = -1;
+				fd_set fdread;
+				fd_set fdwrite;
+				fd_set fdexcep;
+				struct timeval timeout;
 
-				if (result == CURLM_OK)
-				{
-					do
-					{
-						result = curl_multi_perform(m_multiHandle, &m_needContinue);
-					} while (result == CURLM_CALL_MULTI_PERFORM);
-				}
+				FD_ZERO(&fdread);
+				FD_ZERO(&fdwrite);
+				FD_ZERO(&fdexcep);
+
+				timeout.tv_sec = 0;
+				timeout.tv_usec = 0;
+
+				curl_multi_fdset(m_multiHandle, &fdread, &fdwrite, &fdexcep, &maxfd);
+				rc = select(maxfd + 1, &fdread, &fdwrite, &fdexcep, &timeout);
 			}
 
-			if (result != CURLM_OK)
+			if (result != CURLM_OK || rc < 0)
 			{
 				m_bytePerSecond = 0;
 				m_totalBytePerSecond = 0;
