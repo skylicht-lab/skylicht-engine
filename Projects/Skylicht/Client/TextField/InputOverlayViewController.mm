@@ -10,7 +10,7 @@ bool g_secureInput = false;
 
 void textfield_show(const char* text, int maxLength, int height, bool password)
 {
-	g_defaultText = text;
+	g_defaultText = text != NULL ? text : "";
 	g_requestHeight = height;
 	g_maxLength = maxLength;
 	g_secureInput = password;
@@ -24,11 +24,12 @@ void textfield_show(const char* text, int maxLength, int height, bool password)
 void textfield_on_change(const char* text);
 void textfield_on_done(const char* text);
 
-@interface InputOverlayViewController () <UITextViewDelegate>
+@interface InputOverlayViewController () <UITextFieldDelegate>
 
-@property (nonatomic, strong) UITextView *inputTextView;
+@property (nonatomic, strong) UITextField *inputTextField;
 @property (nonatomic, strong) UIView *inputContainerView;
 @property (nonatomic, strong) NSLayoutConstraint *inputContainerBottomConstraint;
+@property (nonatomic, strong) UIButton *togglePasswordButton;
 
 @end
 
@@ -36,6 +37,7 @@ void textfield_on_done(const char* text);
 
 - (void)viewDidLoad {
 	[super viewDidLoad];
+	self.view.backgroundColor = [UIColor clearColor];
 	
 	[self setupCustomInputView];
 	
@@ -48,19 +50,14 @@ void textfield_on_done(const char* text);
 											 selector:@selector(keyboardWillHide:)
 												 name:UIKeyboardWillHideNotification
 											   object:nil];
-	
-	[[NSNotificationCenter defaultCenter] addObserver:self
-											 selector:@selector(textViewDidChangeNotification:)
-												 name:UITextViewTextDidChangeNotification
-											   object:self.inputTextView];
 }
 
 - (void)setupCustomInputView {
-	UILayoutGuide *safeAreaGuide;
+	NSLayoutXAxisAnchor *leadingAnchor = self.view.leadingAnchor;
+	NSLayoutXAxisAnchor *trailingAnchor = self.view.trailingAnchor;
 	if (@available(iOS 11.0, *)) {
-		safeAreaGuide = self.view.safeAreaLayoutGuide;
-	} else {
-		safeAreaGuide = (UILayoutGuide *)self.view;
+		leadingAnchor = self.view.safeAreaLayoutGuide.leadingAnchor;
+		trailingAnchor = self.view.safeAreaLayoutGuide.trailingAnchor;
 	}
 	
 	// 1. Container
@@ -69,19 +66,26 @@ void textfield_on_done(const char* text);
 	self.inputContainerView.translatesAutoresizingMaskIntoConstraints = NO;
 	[self.view addSubview:self.inputContainerView];
 	
-	// 2. UITextView
-	self.inputTextView = [[UITextView alloc] init];
-	self.inputTextView.translatesAutoresizingMaskIntoConstraints = NO;
-	self.inputTextView.layer.cornerRadius = 5.0;
-	self.inputTextView.layer.borderWidth = 1.0;
-	self.inputTextView.layer.borderColor = [UIColor lightGrayColor].CGColor;
-	self.inputTextView.font = [UIFont systemFontOfSize:16];
-	self.inputTextView.secureTextEntry = g_secureInput;
-	self.inputTextView.autocorrectionType = UITextAutocorrectionTypeNo;
-	self.inputTextView.autocapitalizationType = UITextAutocapitalizationTypeNone;
-	self.inputTextView.delegate = self;
-	self.inputTextView.text = [NSString stringWithUTF8String:g_defaultText.c_str()];
-	[self.inputContainerView addSubview:self.inputTextView];
+	// 2. UITextField
+	self.inputTextField = [[UITextField alloc] init];
+	self.inputTextField.translatesAutoresizingMaskIntoConstraints = NO;
+	self.inputTextField.borderStyle = UITextBorderStyleRoundedRect;
+	self.inputTextField.font = [UIFont systemFontOfSize:16];
+	self.inputTextField.autocorrectionType = UITextAutocorrectionTypeNo;
+	self.inputTextField.autocapitalizationType = UITextAutocapitalizationTypeNone;
+	self.inputTextField.returnKeyType = UIReturnKeyDone;
+	self.inputTextField.enablesReturnKeyAutomatically = NO;
+	self.inputTextField.delegate = self;
+	self.inputTextField.text = [NSString stringWithUTF8String:g_defaultText.c_str()];
+	self.inputTextField.secureTextEntry = g_secureInput;
+	[self.inputTextField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
+	[self.inputContainerView addSubview:self.inputTextField];
+	
+	if (g_secureInput) {
+		[self configurePasswordToggleButton];
+	} else {
+		self.inputTextField.clearButtonMode = UITextFieldViewModeWhileEditing;
+	}
 	
 	// 3. UIButton
 	UIButton *sendButton = [UIButton buttonWithType:UIButtonTypeSystem];
@@ -94,41 +98,87 @@ void textfield_on_done(const char* text);
 	self.inputContainerBottomConstraint = [self.inputContainerView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor constant:0];
 	
 	[NSLayoutConstraint activateConstraints:@[
-		[self.inputContainerView.leadingAnchor constraintEqualToAnchor:safeAreaGuide.leadingAnchor],
-		[self.inputContainerView.trailingAnchor constraintEqualToAnchor:safeAreaGuide.trailingAnchor],
-		[self.inputContainerView.heightAnchor constraintEqualToConstant:g_requestHeight],
+		[self.inputContainerView.leadingAnchor constraintEqualToAnchor:leadingAnchor],
+		[self.inputContainerView.trailingAnchor constraintEqualToAnchor:trailingAnchor],
+		[self.inputContainerView.heightAnchor constraintEqualToConstant:MAX(g_requestHeight, 50)],
 		self.inputContainerBottomConstraint,
 		
-		[self.inputTextView.topAnchor constraintEqualToAnchor:self.inputContainerView.topAnchor constant:5],
-		[self.inputTextView.bottomAnchor constraintEqualToAnchor:self.inputContainerView.bottomAnchor constant:-5],
-		[self.inputTextView.leadingAnchor constraintEqualToAnchor:self.inputContainerView.leadingAnchor constant:10],
+		[self.inputTextField.topAnchor constraintEqualToAnchor:self.inputContainerView.topAnchor constant:8],
+		[self.inputTextField.bottomAnchor constraintEqualToAnchor:self.inputContainerView.bottomAnchor constant:-8],
+		[self.inputTextField.leadingAnchor constraintEqualToAnchor:self.inputContainerView.leadingAnchor constant:10],
 		
 		[sendButton.trailingAnchor constraintEqualToAnchor:self.inputContainerView.trailingAnchor constant:-10],
-		[sendButton.centerYAnchor constraintEqualToAnchor:self.inputTextView.centerYAnchor],
+		[sendButton.centerYAnchor constraintEqualToAnchor:self.inputTextField.centerYAnchor],
 		[sendButton.widthAnchor constraintEqualToConstant:50],
 		
-		[self.inputTextView.trailingAnchor constraintEqualToAnchor:sendButton.leadingAnchor constant:-10],
+		[self.inputTextField.trailingAnchor constraintEqualToAnchor:sendButton.leadingAnchor constant:-10],
 	]];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
 	[super viewDidAppear:animated];
-	[self.inputTextView becomeFirstResponder];
+	[self.inputTextField becomeFirstResponder];
 }
 
 - (void)dealloc {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
+- (void)configurePasswordToggleButton {
+	self.togglePasswordButton = [UIButton buttonWithType:UIButtonTypeSystem];
+	self.togglePasswordButton.frame = CGRectMake(0.0, 0.0, 32.0, 32.0);
+	[self.togglePasswordButton addTarget:self action:@selector(togglePasswordVisibility) forControlEvents:UIControlEventTouchUpInside];
+	self.togglePasswordButton.accessibilityLabel = @"Toggle password visibility";
+	[self updatePasswordToggleButtonAppearance];
 	
-	NSString *currentText = textView.text;
+	self.inputTextField.rightView = self.togglePasswordButton;
+	self.inputTextField.rightViewMode = UITextFieldViewModeAlways;
+}
+
+- (void)updatePasswordToggleButtonAppearance {
+	if (@available(iOS 13.0, *)) {
+		NSString *imageName = self.inputTextField.secureTextEntry ? @"eye" : @"eye.slash";
+		UIImage *image = [UIImage systemImageNamed:imageName];
+		[self.togglePasswordButton setImage:image forState:UIControlStateNormal];
+		[self.togglePasswordButton setTitle:nil forState:UIControlStateNormal];
+	} else {
+		NSString *title = self.inputTextField.secureTextEntry ? @"Show" : @"Hide";
+		[self.togglePasswordButton setImage:nil forState:UIControlStateNormal];
+		[self.togglePasswordButton setTitle:title forState:UIControlStateNormal];
+		self.togglePasswordButton.titleLabel.font = [UIFont systemFontOfSize:12];
+	}
+}
+
+- (void)togglePasswordVisibility {
+	NSString *currentText = self.inputTextField.text ?: @"";
+	BOOL wasFirstResponder = self.inputTextField.isFirstResponder;
+	
+	if (wasFirstResponder) {
+		[self.inputTextField resignFirstResponder];
+	}
+	
+	self.inputTextField.secureTextEntry = !self.inputTextField.secureTextEntry;
+	self.inputTextField.text = currentText;
+	[self updatePasswordToggleButtonAppearance];
+	
+	if (wasFirstResponder) {
+		[self.inputTextField becomeFirstResponder];
+	}
+}
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)text {
+	NSString *currentText = textField.text ?: @"";
 	NSString *updatedText = [currentText stringByReplacingCharactersInRange:range withString:text];
 	
 	if (updatedText.length <= g_maxLength) {
 		return YES;
 	}
 	
+	return NO;
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+	[self sendInputTapped];
 	return NO;
 }
 
@@ -142,7 +192,12 @@ void textfield_on_done(const char* text);
 	NSTimeInterval duration = [userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue];
 	UIViewAnimationOptions curve = [userInfo[UIKeyboardAnimationCurveUserInfoKey] integerValue] << 16;
 	
-	CGFloat keyboardHeight = keyboardFrame.size.height - self.view.safeAreaInsets.bottom;
+	CGFloat bottomInset = 0.0f;
+	if (@available(iOS 11.0, *)) {
+		bottomInset = self.view.safeAreaInsets.bottom;
+	}
+	
+	CGFloat keyboardHeight = keyboardFrame.size.height - bottomInset;
 	
 	self.inputContainerBottomConstraint.constant = -keyboardHeight;
 	
@@ -165,21 +220,19 @@ void textfield_on_done(const char* text);
 	} completion:nil];
 }
 
-#pragma mark - UITextViewDelegate
+#pragma mark - UITextFieldDelegate
 
 - (void)sendInputTapped {
-	[self.inputTextView resignFirstResponder];
+	[self.inputTextField resignFirstResponder];
 	[self finishInputAndDismiss];
 	
-	NSString *text = self.inputTextView.text;
+	NSString *text = self.inputTextField.text ?: @"";
 	textfield_on_done([text UTF8String]);
 }
 
-- (void)textViewDidChangeNotification:(NSNotification *)notification {
-	if (notification.object == self.inputTextView) {
-		NSString *newText = self.inputTextView.text;
-		textfield_on_change([newText UTF8String]);
-	}
+- (void)textFieldDidChange:(UITextField *)textField {
+	NSString *newText = textField.text ?: @"";
+	textfield_on_change([newText UTF8String]);
 }
 
 /*
@@ -190,7 +243,7 @@ void textfield_on_done(const char* text);
  [self.view layoutIfNeeded];
  } completion:^(BOOL finished) {
  self.inputContainerView.hidden = YES;
- self.inputTextView.text = @"";
+ self.inputTextField.text = @"";
  }];
  }
  */
@@ -201,14 +254,14 @@ void textfield_on_done(const char* text);
 	if (touch.view == self.view) {
 		[self finishInputAndDismiss];
 		
-		NSString *text = self.inputTextView.text;
+		NSString *text = self.inputTextField.text ?: @"";
 		textfield_on_done([text UTF8String]);
 	}
 }
 
 - (void)finishInputAndDismiss {
-	// hide textView
-	[self.inputTextView resignFirstResponder];
+	// hide textField
+	[self.inputTextField resignFirstResponder];
 	
 	[self dismissViewControllerAnimated:YES completion:nil];
 }
