@@ -232,6 +232,11 @@ namespace Skylicht
 			m_systemChanged = true;
 		}
 
+        inline void notifyRendererOrderChanged()
+        {
+            m_rendererChanged = true;
+        }
+        
 	protected:
 
 		void initDefaultData(CEntity* entity);
