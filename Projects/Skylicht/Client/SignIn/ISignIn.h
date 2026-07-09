@@ -21,6 +21,12 @@ namespace Skylicht
 		virtual void signOut() = 0;
 
 		virtual bool isSignedIn() = 0;
+
+		inline void clearCalback()
+		{
+			OnSignInSuccess = nullptr;
+			OnSignInFailed = nullptr;
+		}
 	};
 
 	ISignIn* getOSSignIn();

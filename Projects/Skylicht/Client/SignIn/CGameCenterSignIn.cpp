@@ -5,14 +5,16 @@
 void gamecenter_signIn();
 bool gamecenter_isSignedIn();
 
-void gamecenter_signInSuccess(const char* playerId, const char* playerName, const char *code)
+void gamecenter_signInSuccess(const char* playerId, const char* playerName, const char* code)
 {
-	CGameCenterSignIn::getInstance()->OnSignInSuccess(std::string(playerId), std::string(playerName), std::string(code));
+	if (CGameCenterSignIn::getInstance()->OnSignInSuccess != nullptr)
+		CGameCenterSignIn::getInstance()->OnSignInSuccess(std::string(playerId), std::string(playerName), std::string(code));
 }
 
 void gamecenter_signInFailed(const char* message)
 {
-	CGameCenterSignIn::getInstance()->OnSignInFailed(std::string(message));
+	if (CGameCenterSignIn::getInstance()->OnSignInFailed != nullptr)
+		CGameCenterSignIn::getInstance()->OnSignInFailed(std::string(message));
 }
 #endif
 
@@ -35,7 +37,8 @@ namespace Skylicht
 #ifdef IOS
 		gamecenter_signIn();
 #else
-		OnSignInFailed(std::string());
+		if (OnSignInFailed != nullptr)
+			OnSignInFailed(std::string());
 #endif
 	}
 
