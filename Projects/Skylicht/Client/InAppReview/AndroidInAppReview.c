@@ -28,8 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include <android/log.h>
 #include "JavaClassDefined.h"
 
-extern JavaVM *g_javaVM;
-extern JNIEnv* g_jniEnv;
+extern JNIEnv* skylichtGetJniEnv();
 
 jclass g_classInAppReview = NULL;
 jmethodID g_showInAppReview = NULL;
@@ -46,11 +45,11 @@ JNIEXPORT void JNICALL JNI_FUNCTION(InAppReview_init)(JNIEnv* env, jobject thiz)
 
 void androidInAppReview_show(int isTesting)
 {
-	(*g_javaVM)->AttachCurrentThread(g_javaVM, &g_jniEnv, NULL);
+	JNIEnv* env = skylichtGetJniEnv();
 
-	if (g_showInAppReview != NULL && g_classInAppReview != NULL)
+	if (env != NULL && g_showInAppReview != NULL && g_classInAppReview != NULL)
 	{
-		(*g_jniEnv)->CallStaticVoidMethod(g_jniEnv, g_classInAppReview, g_showInAppReview, isTesting);
+		(*env)->CallStaticVoidMethod(env, g_classInAppReview, g_showInAppReview, isTesting);
 	}
 }
 #endif

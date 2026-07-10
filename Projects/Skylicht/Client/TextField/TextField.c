@@ -33,9 +33,7 @@ extern void textfield_on_change(const char* text);
 extern void textfield_on_done(const char* text);
 
 extern const char *getJString(JNIEnv* env, jstring jstr);
-
-extern JavaVM *g_javaVM;
-extern JNIEnv* g_jniEnv;
+extern JNIEnv* skylichtGetJniEnv();
 
 jclass g_classTextField = NULL;
 jmethodID g_show;
@@ -66,12 +64,11 @@ JNIEXPORT void JNICALL JNI_FUNCTION(TextField_onDone)(JNIEnv* env, jobject thiz,
 
 void textfield_show(const char* text, int maxLength, int height, bool password)
 {
-	if (g_show != NULL && g_classTextField != NULL)
+	JNIEnv* env = skylichtGetJniEnv();
+	if (env != NULL && g_show != NULL && g_classTextField != NULL)
 	{
-		jstring jniText = (*g_jniEnv)->NewStringUTF(g_jniEnv, text);
-		
-		(*g_javaVM)->AttachCurrentThread(g_javaVM, &g_jniEnv, NULL);
-		(*g_jniEnv)->CallStaticVoidMethod(g_jniEnv, 
+		jstring jniText = (*env)->NewStringUTF(env, text);
+		(*env)->CallStaticVoidMethod(env,
 			g_classTextField, 
 			g_show,
 			jniText,
@@ -79,7 +76,7 @@ void textfield_show(const char* text, int maxLength, int height, bool password)
 			height,
 			password ? JNI_TRUE : JNI_FALSE);
 		
-		(*g_jniEnv)->DeleteLocalRef(g_jniEnv, jniText);
+		(*env)->DeleteLocalRef(env, jniText);
 	}
 }
 #endif

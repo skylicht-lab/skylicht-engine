@@ -33,9 +33,7 @@ extern void playGamesSignIn_onSignInSuccess(const char* id, const char* name, co
 extern void playGamesSignIn_onSignInFailed(const char* message);
 
 extern const char *getJString(JNIEnv* env, jstring jstr);
-
-extern JavaVM *g_javaVM;
-extern JNIEnv* g_jniEnv;
+extern JNIEnv* skylichtGetJniEnv();
 
 jclass g_classPlayGamesSignIn = NULL;
 jmethodID g_signIn;
@@ -74,33 +72,32 @@ JNIEXPORT void JNICALL JNI_FUNCTION(PlayGamesSignIn_onSignInFailed)(JNIEnv* env,
 
 void playGamesSignIn_signIn()
 {
-	(*g_javaVM)->AttachCurrentThread(g_javaVM, &g_jniEnv, NULL);
+	JNIEnv* env = skylichtGetJniEnv();
 
-	if (g_signIn != NULL && g_classPlayGamesSignIn != NULL)
+	if (env != NULL && g_signIn != NULL && g_classPlayGamesSignIn != NULL)
 	{
-		(*g_jniEnv)->CallStaticVoidMethod(g_jniEnv, g_classPlayGamesSignIn, g_signIn);
+		(*env)->CallStaticVoidMethod(env, g_classPlayGamesSignIn, g_signIn);
 	}
 }
 
 void playGamesSignIn_signOut()
 {
-	(*g_javaVM)->AttachCurrentThread(g_javaVM, &g_jniEnv, NULL);
+	JNIEnv* env = skylichtGetJniEnv();
 
-	if (g_signOut != NULL && g_classPlayGamesSignIn != NULL)
+	if (env != NULL && g_signOut != NULL && g_classPlayGamesSignIn != NULL)
 	{
-		(*g_jniEnv)->CallStaticVoidMethod(g_jniEnv, g_classPlayGamesSignIn, g_signOut);
+		(*env)->CallStaticVoidMethod(env, g_classPlayGamesSignIn, g_signOut);
 	}
 }
 
 bool playGamesSignIn_isSignedIn()
 {
 	jboolean ret = JNI_FALSE;
+	JNIEnv* env = skylichtGetJniEnv();
 
-	(*g_javaVM)->AttachCurrentThread(g_javaVM, &g_jniEnv, NULL);
-
-	if (g_isSignedIn != NULL && g_classPlayGamesSignIn != NULL)
+	if (env != NULL && g_isSignedIn != NULL && g_classPlayGamesSignIn != NULL)
 	{
-		ret = (*g_jniEnv)->CallStaticBooleanMethod(g_jniEnv, g_classPlayGamesSignIn, g_isSignedIn);
+		ret = (*env)->CallStaticBooleanMethod(env, g_classPlayGamesSignIn, g_isSignedIn);
 	}
 
 	return ret == JNI_TRUE;

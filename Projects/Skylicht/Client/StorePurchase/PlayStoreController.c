@@ -13,9 +13,7 @@ extern void playStore_onPurchaseSucceeded(const char* productId, const char* rec
 extern void playStore_onPurchaseFailed(const char* productId, int error, const char* message);
 
 extern const char *getJString(JNIEnv* env, jstring jstr);
-
-extern JavaVM *g_javaVM;
-extern JNIEnv* g_jniEnv;
+extern JNIEnv* skylichtGetJniEnv();
 
 jclass g_classPlayStoreController = NULL;
 jmethodID g_restorePurchase;
@@ -152,48 +150,49 @@ JNIEXPORT void JNICALL JNI_FUNCTION(PlayStoreController_onPurchaseFailed)(JNIEnv
 
 void playStore_restorePurchase()
 {
-	(*g_javaVM)->AttachCurrentThread(g_javaVM, &g_jniEnv, NULL);
-	if (g_restorePurchase != NULL && g_classPlayStoreController != NULL)
+	JNIEnv* env = skylichtGetJniEnv();
+	if (env != NULL && g_restorePurchase != NULL && g_classPlayStoreController != NULL)
 	{
-		(*g_jniEnv)->CallStaticVoidMethod(g_jniEnv, g_classPlayStoreController, g_restorePurchase);
+		(*env)->CallStaticVoidMethod(env, g_classPlayStoreController, g_restorePurchase);
 	}
 }
 
 void playStore_restart()
 {
-	(*g_javaVM)->AttachCurrentThread(g_javaVM, &g_jniEnv, NULL);
-	if (g_restart != NULL && g_classPlayStoreController != NULL)
+	JNIEnv* env = skylichtGetJniEnv();
+	if (env != NULL && g_restart != NULL && g_classPlayStoreController != NULL)
 	{
-		(*g_jniEnv)->CallStaticVoidMethod(g_jniEnv, g_classPlayStoreController, g_restart);
+		(*env)->CallStaticVoidMethod(env, g_classPlayStoreController, g_restart);
 	}
 }
 
 void playStore_initiatePurchase(const char* productId)
 {
-	(*g_javaVM)->AttachCurrentThread(g_javaVM, &g_jniEnv, NULL);
-	if (g_initiatePurchase != NULL && g_classPlayStoreController != NULL)
+	JNIEnv* env = skylichtGetJniEnv();
+	if (env != NULL && g_initiatePurchase != NULL && g_classPlayStoreController != NULL)
 	{
-		jstring jproductId = (*g_jniEnv)->NewStringUTF(g_jniEnv, productId);
-		(*g_jniEnv)->CallStaticVoidMethod(g_jniEnv, g_classPlayStoreController, g_initiatePurchase, jproductId);
-		(*g_jniEnv)->DeleteLocalRef(g_jniEnv, jproductId);
+		jstring jproductId = (*env)->NewStringUTF(env, productId);
+		(*env)->CallStaticVoidMethod(env, g_classPlayStoreController, g_initiatePurchase, jproductId);
+		(*env)->DeleteLocalRef(env, jproductId);
 	}
 }
 
 void playStore_fetchAdditionalProducts(const char** productIds, int count)
 {
-	(*g_javaVM)->AttachCurrentThread(g_javaVM, &g_jniEnv, NULL);
-	if (g_fetchAdditionalProducts != NULL && g_classPlayStoreController != NULL)
+	JNIEnv* env = skylichtGetJniEnv();
+	if (env != NULL && g_fetchAdditionalProducts != NULL && g_classPlayStoreController != NULL)
 	{
-		jclass stringClass = (*g_jniEnv)->FindClass(g_jniEnv, "java/lang/String");
-		jobjectArray stringArray = (*g_jniEnv)->NewObjectArray(g_jniEnv, count, stringClass, NULL);
+		jclass stringClass = (*env)->FindClass(env, "java/lang/String");
+		jobjectArray stringArray = (*env)->NewObjectArray(env, count, stringClass, NULL);
 		for (int i = 0; i < count; i++)
 		{
-			jstring string = (*g_jniEnv)->NewStringUTF(g_jniEnv, productIds[i]);
-			(*g_jniEnv)->SetObjectArrayElement(g_jniEnv, stringArray, i, string);
-			(*g_jniEnv)->DeleteLocalRef(g_jniEnv, string);
+			jstring string = (*env)->NewStringUTF(env, productIds[i]);
+			(*env)->SetObjectArrayElement(env, stringArray, i, string);
+			(*env)->DeleteLocalRef(env, string);
 		}
-		(*g_jniEnv)->CallStaticVoidMethod(g_jniEnv, g_classPlayStoreController, g_fetchAdditionalProducts, stringArray);
-		(*g_jniEnv)->DeleteLocalRef(g_jniEnv, stringArray);
+		(*env)->CallStaticVoidMethod(env, g_classPlayStoreController, g_fetchAdditionalProducts, stringArray);
+		(*env)->DeleteLocalRef(env, stringArray);
+		(*env)->DeleteLocalRef(env, stringClass);
 	}
 }
 #endif

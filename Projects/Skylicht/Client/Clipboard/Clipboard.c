@@ -29,9 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "JavaClassDefined.h"
 
 extern const char *getJString(JNIEnv* env, jstring jstr);
-
-extern JavaVM *g_javaVM;
-extern JNIEnv* g_jniEnv;
+extern JNIEnv* skylichtGetJniEnv();
 
 jclass g_classClipboard = NULL;
 jmethodID g_copyToClipboard = NULL;
@@ -52,15 +50,18 @@ void clipboard_copy(const char* text)
 {
 	if (g_copyToClipboard != NULL && g_classClipboard != NULL)
 	{
-		(*g_javaVM)->AttachCurrentThread(g_javaVM, &g_jniEnv, NULL);
-		jstring jniText = (*g_jniEnv)->NewStringUTF(g_jniEnv, text);
+		JNIEnv* env = skylichtGetJniEnv();
+		if (env == NULL)
+			return;
+
+		jstring jniText = (*env)->NewStringUTF(env, text);
 		
-		(*g_jniEnv)->CallStaticVoidMethod(g_jniEnv, 
+		(*env)->CallStaticVoidMethod(env,
 			g_classClipboard, 
 			g_copyToClipboard,
 			jniText);
 		
-		(*g_jniEnv)->DeleteLocalRef(g_jniEnv, jniText);
+		(*env)->DeleteLocalRef(env, jniText);
 	}
 }
 
@@ -71,18 +72,21 @@ const char* clipboard_paste()
 
 	if (g_getTextFromClipboard != NULL && g_classClipboard != NULL)
 	{
-		(*g_javaVM)->AttachCurrentThread(g_javaVM, &g_jniEnv, NULL);
-		jstring jstr = (jstring)(*g_jniEnv)->CallStaticObjectMethod(g_jniEnv, 
+		JNIEnv* env = skylichtGetJniEnv();
+		if (env == NULL)
+			return s_clipboardBuffer;
+
+		jstring jstr = (jstring)(*env)->CallStaticObjectMethod(env,
 			g_classClipboard, 
 			g_getTextFromClipboard);
 
 		if (jstr != NULL)
 		{
-			const char *ctext = getJString(g_jniEnv, jstr);
+			const char *ctext = getJString(env, jstr);
 			strncpy(s_clipboardBuffer, ctext, 4095);
 			s_clipboardBuffer[4095] = 0;
-			(*g_jniEnv)->ReleaseStringUTFChars(g_jniEnv, jstr, ctext);
-			(*g_jniEnv)->DeleteLocalRef(g_jniEnv, jstr);
+			(*env)->ReleaseStringUTFChars(env, jstr, ctext);
+			(*env)->DeleteLocalRef(env, jstr);
 		}
 	}
 	return s_clipboardBuffer;

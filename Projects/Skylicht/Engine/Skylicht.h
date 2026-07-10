@@ -296,9 +296,16 @@ namespace Skylicht
 
 #ifdef ANDROID
 	/*
-	* @brief Get the JNI environment for Android platform.
+	* @brief Set the JavaVM used to resolve JNIEnv for the current Android thread.
 	*
-	* @return Pointer to the JNIEnv instance.
+	* @param vm Pointer to the process JavaVM instance.
+	*/
+	SKYLICHT_API void setJavaVM(JavaVM* vm);
+
+	/*
+	* @brief Get the JNI environment for the current Android thread.
+	*
+	* @return Pointer to the JNIEnv instance for the calling thread, or NULL if JavaVM is unavailable.
 	*/
 	SKYLICHT_API JNIEnv* getJniEnv();
 

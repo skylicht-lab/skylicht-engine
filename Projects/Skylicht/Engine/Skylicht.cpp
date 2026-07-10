@@ -230,22 +230,26 @@ namespace Skylicht
 
 #ifdef ANDROID
 	jobject g_androidActivity = NULL;
-
-	JNIEnv* g_androidJni = NULL;
-
-	JNIEnv* getJniEnv()
-	{
-		return g_androidJni;
-	}
+	JavaVM* g_androidJavaVM = NULL;
 
 	jobject getMainActivity()
 	{
 		return g_androidActivity;
 	}
 
-	void setJniEnv(JNIEnv* env)
+	void setJavaVM(JavaVM* vm)
 	{
-		g_androidJni = env;
+		g_androidJavaVM = vm;
+	}
+
+	JNIEnv* getJniEnv()
+	{
+		if (g_androidJavaVM == NULL)
+			return NULL;
+
+		JNIEnv* env = NULL;
+		g_androidJavaVM->AttachCurrentThread(&env, NULL);
+		return env;
 	}
 
 	void setMainActivity(jobject activity)
@@ -254,3 +258,15 @@ namespace Skylicht
 	}
 #endif
 }
+
+#ifdef ANDROID
+extern "C" SKYLICHT_API JNIEnv* skylichtGetJniEnv()
+{
+	return Skylicht::getJniEnv();
+}
+
+extern "C" SKYLICHT_API void skylichtSetJavaVM(JavaVM* vm)
+{
+	Skylicht::setJavaVM(vm);
+}
+#endif
