@@ -47,11 +47,6 @@ extern "C" {
 	int g_width = -1;
 	int g_height = -1;
 
-	void applicationSetJniEnv(JNIEnv* jni)
-	{
-		setJniEnv(jni);
-	}
-	
 	void applicationSetMainActivity(jobject activity)
 	{
 		setMainActivity(activity);

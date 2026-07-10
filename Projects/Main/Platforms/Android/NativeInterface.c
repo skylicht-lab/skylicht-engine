@@ -28,7 +28,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #include <android/log.h>
 #include "JavaClassDefined.h"
 
-void applicationSetJniEnv(JNIEnv* jni);
 void applicationSetMainActivity(jobject activity);
 void applicationInitApp(int w, int h);
 void applicationLoop();
@@ -51,8 +50,10 @@ void applicationSetDeviceID(const char *id);
 void applicationSetAndroidDeviceInfo(const char *manu, const char *model, const char *os);
 int applicationOnBack();
 
+extern JNIEnv* skylichtGetJniEnv();
+extern void skylichtSetJavaVM(JavaVM* vm);
+
 JavaVM *g_javaVM = NULL;
-JNIEnv* g_jniEnv = NULL;
 jobject g_activity = NULL;
 jclass g_classNativeInterface = NULL;
 
@@ -72,6 +73,7 @@ const char *getJString(JNIEnv* env, jstring jstr)
 
 jint JNI_OnLoad(JavaVM *vm, void *reserved) {
 	g_javaVM = vm;
+	skylichtSetJavaVM(vm);
 	return JNI_VERSION_1_4;
 }
 
@@ -85,26 +87,21 @@ JNIEXPORT void JNICALL JNI_FUNCTION(NativeInterface_mainInitApp)(JNIEnv* env, jo
 	// todo nothing
 	__android_log_print(ANDROID_LOG_INFO, JNI_APPNAME, "Native Application Init");
 
-	g_jniEnv = env;
-	(*g_javaVM)->AttachCurrentThread(g_javaVM, &g_jniEnv, NULL);
-
 	jclass local = (*env)->FindClass(env, JNI_CLASSNAME(NativeInterface));
 	g_classNativeInterface = (jclass)(*env)->NewGlobalRef(env, local);
 
-	g_quitApplication = (*g_jniEnv)->GetStaticMethodID(g_jniEnv, g_classNativeInterface, "quitApplication", "()V");
-	g_openURL = (*g_jniEnv)->GetStaticMethodID(g_jniEnv, g_classNativeInterface, "openURL", "(Ljava/lang/String;)V");
-	g_isNetworkAvailable = (*g_jniEnv)->GetStaticMethodID(g_jniEnv, g_classNativeInterface, "isNetworkAvailable", "()Z");
-	g_systemGC = (*g_jniEnv)->GetStaticMethodID(g_jniEnv, g_classNativeInterface, "systemGC", "()V");
+	g_quitApplication = (*env)->GetStaticMethodID(env, g_classNativeInterface, "quitApplication", "()V");
+	g_openURL = (*env)->GetStaticMethodID(env, g_classNativeInterface, "openURL", "(Ljava/lang/String;)V");
+	g_isNetworkAvailable = (*env)->GetStaticMethodID(env, g_classNativeInterface, "isNetworkAvailable", "()Z");
+	g_systemGC = (*env)->GetStaticMethodID(env, g_classNativeInterface, "systemGC", "()V");
 
 	__android_log_print(ANDROID_LOG_INFO, JNI_APPNAME, "Init jni OK");
-	applicationSetJniEnv(env);
 	applicationInitApp(width, height);
 }
 
 // native member function mainLoop
 JNIEXPORT void JNICALL JNI_FUNCTION(NativeInterface_mainLoop)(JNIEnv* env, jobject thiz)
 {
-	g_jniEnv = env;
 	applicationLoop();
 }
 
@@ -112,7 +109,6 @@ JNIEXPORT void JNICALL JNI_FUNCTION(NativeInterface_mainLoop)(JNIEnv* env, jobje
 JNIEXPORT void JNICALL JNI_FUNCTION(NativeInterface_mainExitApp)(JNIEnv* env, jobject thiz)
 {
 	__android_log_print(ANDROID_LOG_INFO, JNI_APPNAME, "Native Application Exit");
-	g_jniEnv = env;
 	applicationExitApp();
 }
 
@@ -121,7 +117,6 @@ JNIEXPORT void JNICALL JNI_FUNCTION(NativeInterface_mainExitApp)(JNIEnv* env, jo
 JNIEXPORT void JNICALL JNI_FUNCTION(NativeInterface_mainPauseApp)(JNIEnv* env, jobject thiz)
 {
 	__android_log_print(ANDROID_LOG_INFO, JNI_APPNAME, "Native Application Pause");
-	g_jniEnv = env;
 	applicationPauseApp();
 }
 
@@ -130,7 +125,6 @@ JNIEXPORT void JNICALL JNI_FUNCTION(NativeInterface_mainPauseApp)(JNIEnv* env, j
 JNIEXPORT void JNICALL JNI_FUNCTION(NativeInterface_mainResumeApp)(JNIEnv* env, jobject thiz, int showConnecting)
 {
 	__android_log_print(ANDROID_LOG_INFO, JNI_APPNAME, "Native Application Resume");
-	g_jniEnv = env;
 	applicationResumeApp(showConnecting);
 }
 
@@ -139,7 +133,6 @@ JNIEXPORT void JNICALL JNI_FUNCTION(NativeInterface_mainResumeApp)(JNIEnv* env, 
 JNIEXPORT void JNICALL JNI_FUNCTION(NativeInterface_mainReleaseDevice)(JNIEnv* env, jobject thiz)
 {
 	__android_log_print(ANDROID_LOG_INFO, JNI_APPNAME, "Native Application release device");
-	g_jniEnv = env;
 	applicationRelease();
 }
 
@@ -148,7 +141,6 @@ JNIEXPORT void JNICALL JNI_FUNCTION(NativeInterface_mainReleaseDevice)(JNIEnv* e
 JNIEXPORT void JNICALL JNI_FUNCTION(NativeInterface_mainResizeWindow)(JNIEnv* env, jobject thiz, int w, int h)
 {
 	__android_log_print(ANDROID_LOG_INFO, JNI_APPNAME, "Native Application resize: %d %d", w, h);
-	g_jniEnv = env;
 	applicationResizeWindow(w, h);
 }
 
@@ -302,12 +294,12 @@ JNIEXPORT void JNICALL JNI_FUNCTION(NativeInterface_setMainActivity)(JNIEnv *env
 
 void nativeInterface_quitApplication()
 {
-	(*g_javaVM)->AttachCurrentThread(g_javaVM, &g_jniEnv, NULL);
+	JNIEnv* env = skylichtGetJniEnv();
 
-	if (g_quitApplication != NULL && g_classNativeInterface != NULL)
+	if (env != NULL && g_quitApplication != NULL && g_classNativeInterface != NULL)
 	{
 		__android_log_print(ANDROID_LOG_INFO, JNI_APPNAME, "call NativeInterface::quitApplication");
-		(*g_jniEnv)->CallStaticVoidMethod(g_jniEnv, g_classNativeInterface, g_quitApplication);
+		(*env)->CallStaticVoidMethod(env, g_classNativeInterface, g_quitApplication);
 	}
 	else
 	{
@@ -317,12 +309,12 @@ void nativeInterface_quitApplication()
 
 void nativeInterface_systemGC()
 {
-	(*g_javaVM)->AttachCurrentThread(g_javaVM, &g_jniEnv, NULL);
+	JNIEnv* env = skylichtGetJniEnv();
 
-	if (g_systemGC != NULL && g_classNativeInterface != NULL)
+	if (env != NULL && g_systemGC != NULL && g_classNativeInterface != NULL)
 	{
 		__android_log_print(ANDROID_LOG_INFO, JNI_APPNAME, "call NativeInterface::systemGC");
-		(*g_jniEnv)->CallStaticVoidMethod(g_jniEnv, g_classNativeInterface, g_systemGC);
+		(*env)->CallStaticVoidMethod(env, g_classNativeInterface, g_systemGC);
 	}
 	else
 	{
@@ -332,16 +324,16 @@ void nativeInterface_systemGC()
 
 void nativeInterface_openURL(const char *url)
 {
-	(*g_javaVM)->AttachCurrentThread(g_javaVM, &g_jniEnv, NULL);
+	JNIEnv* env = skylichtGetJniEnv();
 
-	if (g_openURL != NULL && g_classNativeInterface != NULL)
+	if (env != NULL && g_openURL != NULL && g_classNativeInterface != NULL)
 	{
-		jstring jstringValue = (*g_jniEnv)->NewStringUTF(g_jniEnv, url);
+		jstring jstringValue = (*env)->NewStringUTF(env, url);
 
 		__android_log_print(ANDROID_LOG_INFO, JNI_APPNAME, "call NativeInterface::openURL");
-		(*g_jniEnv)->CallStaticVoidMethod(g_jniEnv, g_classNativeInterface, g_openURL, jstringValue);
+		(*env)->CallStaticVoidMethod(env, g_classNativeInterface, g_openURL, jstringValue);
 
-		(*g_jniEnv)->DeleteLocalRef(g_jniEnv, jstringValue);
+		(*env)->DeleteLocalRef(env, jstringValue);
 	}
 	else
 	{
@@ -351,11 +343,11 @@ void nativeInterface_openURL(const char *url)
 
 int nativeInterface_isNetworkAvailable()
 {
-	(*g_javaVM)->AttachCurrentThread(g_javaVM, &g_jniEnv, NULL);
+	JNIEnv* env = skylichtGetJniEnv();
 
-	if (g_isNetworkAvailable != NULL && g_classNativeInterface != NULL)
+	if (env != NULL && g_isNetworkAvailable != NULL && g_classNativeInterface != NULL)
 	{
-		jboolean ret = (*g_jniEnv)->CallStaticBooleanMethod(g_jniEnv, g_classNativeInterface, g_isNetworkAvailable);
+		jboolean ret = (*env)->CallStaticBooleanMethod(env, g_classNativeInterface, g_isNetworkAvailable);
 		return ret == JNI_TRUE ? 1 : 0;
 	}
 
