@@ -121,6 +121,11 @@ namespace irr
 */
 
 /**
+* @defgroup Utilities Utilities
+* @brief Common helper classes for strings, paths, serialization streams, math, IDs, and data parsing.
+*/
+
+/**
 * @defgroup Physics Physics Engine
 * @brief Integration with Bullet Physics for dynamics and collisions.
 */

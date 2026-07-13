@@ -26,11 +26,28 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/**
+	 * @brief Helper for generating random hexadecimal IDs and deterministic hash IDs.
+	 * @ingroup Utilities
+	 *
+	 * Returned string references point to a shared temporary buffer and should be copied
+	 * if the value must survive the next utility call that reuses that buffer.
+	 */
 	class SKYLICHT_API CRandomID
 	{
 	public:
+		/**
+		 * @brief Generate a random lowercase hexadecimal string.
+		 * @param len Number of characters to generate.
+		 * @return Generated ID string stored in the shared temporary buffer.
+		 */
 		static const std::string& generate(int len = 16);
 
+		/**
+		 * @brief Compute a numeric hash string for a key.
+		 * @param key Null-terminated input key.
+		 * @return Hash value converted to decimal text in the shared temporary buffer.
+		 */
 		static const std::string& hashID(const char* key);
 	};
 }

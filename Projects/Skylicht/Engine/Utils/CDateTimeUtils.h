@@ -29,6 +29,7 @@ namespace Skylicht
 	/**
 	 * @class CDateTimeUtils
 	 * @brief Utility functions for converting between date/time representations and seconds.
+	 * @ingroup Utilities
 	 *
 	 * CDateTimeUtils provides static helpers to:
 	 *  - Convert an `ITimer::RealTimeDate` or date components to a number of seconds.
@@ -101,6 +102,15 @@ namespace Skylicht
 		 * @param serverTime Current server time in seconds.
 		 */
 		static void setServerTime(unsigned long serverTime);
+
+		/**
+		 * @brief Clear the synchronized server time state.
+		 *
+		 * Resets the cached server time and marks the server time as unavailable.
+		 * After calling this function, `getServerTime` returns 0 until
+		 * `setServerTime` is called again.
+		 */
+		static void unsetServerTime();
 
 		/**
 		 * @brief Get the synchronized server time in seconds.

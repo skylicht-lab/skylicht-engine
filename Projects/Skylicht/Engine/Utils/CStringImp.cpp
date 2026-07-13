@@ -362,15 +362,17 @@ namespace Skylicht
 
 		bool addK = false;
 		bool addM = false;
+		bool negative = n < 0;
+		long long value = negative ? -(long long)n : (long long)n;
 
-		if (useM && n > 1000000.0f)
+		if (useM && value > 1000000)
 		{
-			int number = (int)(n / 1000000.0f);
+			int number = (int)(value / 1000000.0);
 			char text[32];
 			sprintf(text, "%d", number);
 			ret = text;
 
-			double d = n / 1000000.0 - (double)number;
+			double d = value / 1000000.0 - (double)number;
 			if (d > 0.0f)
 			{
 				sprintf(text, ",%02d", (int)(d * 100.0));
@@ -379,14 +381,14 @@ namespace Skylicht
 
 			addM = true;
 		}
-		else if (useK && n > 100000.0f)
+		else if (useK && value > 100000)
 		{
-			int number = (int)(n / 1000.0f);
+			int number = (int)(value / 1000.0);
 			char text[32];
 			sprintf(text, "%d", number);
 			ret = text;
 
-			double d = n / 1000.0 - (double)number;
+			double d = value / 1000.0 - (double)number;
 			if (d > 0.0f)
 			{
 				sprintf(text, ",%02d", (int)(d * 10.0));
@@ -399,6 +401,9 @@ namespace Skylicht
 		{
 			ret = std::to_string(n);
 		}
+
+		if (negative && (addM || addK))
+			ret.insert(0, "-");
 
 		int n_len = (int)ret.length();
 		int insert_count = 0;

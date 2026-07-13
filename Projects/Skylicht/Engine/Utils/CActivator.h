@@ -26,26 +26,53 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Utils/CSingleton.h"
 
+/**
+ * @brief Register an activator type with its default constructor.
+ *
+ * The registered type must derive from `Skylicht::IActivatorObject` and be
+ * default-constructible. The type is registered under its C++ type name string.
+ *
+ * @param type Concrete class type to register.
+ */
 #define ACTIVATOR_REGISTER(type)  \
 	IActivatorObject* type##CreateFunc() { return new type(); } \
 	bool type##_activator = CActivator::createGetInstance()->registerType(#type, &type##CreateFunc)
 
+ /**
+  * @brief Declare a virtual `getTypeName` implementation returning the class name.
+  * @param type Concrete class type name.
+  */
 #define DECLARE_GETTYPENAME(type) \
 	virtual const char* getTypeName() {return #type;}
 
 namespace Skylicht
 {
+	/**
+	 * @brief Base interface for objects created by `CActivator`.
+	 * @ingroup Utilities
+	 */
 	class SKYLICHT_API IActivatorObject
 	{
 	public:
+		/**
+		 * @brief Virtual destructor for polymorphic activator objects.
+		 */
 		virtual ~IActivatorObject()
 		{
 
 		}
 	};
 
+	/**
+	 * @brief Function pointer used to construct an activator object.
+	 * @return Newly allocated activator object. The caller owns the returned pointer.
+	 */
 	typedef IActivatorObject* (*ActivatorCreateInstance)();
 
+	/**
+	 * @brief Runtime factory that creates registered objects by type name.
+	 * @ingroup Utilities
+	 */
 	class SKYLICHT_API CActivator
 	{
 	public:
@@ -56,8 +83,19 @@ namespace Skylicht
 		std::vector<ActivatorCreateInstance> m_factoryFunc;
 
 	public:
+		/**
+		 * @brief Register a type name and constructor callback.
+		 * @param type Type name used as the factory key.
+		 * @param func Constructor callback.
+		 * @return True if the type was registered, false if the name already exists.
+		 */
 		bool registerType(const char* type, ActivatorCreateInstance func);
 
+		/**
+		 * @brief Create an instance of a registered type.
+		 * @param type Type name used during registration.
+		 * @return Newly allocated object, or null if the type is not registered.
+		 */
 		IActivatorObject* createInstance(const char* type);
 	};
 }

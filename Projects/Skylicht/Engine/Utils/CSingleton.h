@@ -24,11 +24,30 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+/**
+ * @brief Declare the standard singleton accessors for a class.
+ *
+ * Adds `createGetInstance`, `getInstance`, and `releaseInstance` declarations.
+ * Use `IMPLEMENT_SINGLETON` in one source file to define the storage and functions.
+ * @ingroup Utilities
+ *
+ * @param className Class type that owns the singleton instance.
+ */
 #define DECLARE_SINGLETON(className) \
 static className* createGetInstance();\
 static className* getInstance();\
 static void releaseInstance();
 
+ /**
+  * @brief Implement the standard singleton storage and accessors for a class.
+  *
+  * This macro creates one process-wide raw pointer named from `className`, lazily
+  * allocates it in `createGetInstance`, returns it in `getInstance`, and deletes it
+  * in `releaseInstance`.
+  * @ingroup Utilities
+  *
+  * @param className Class type previously declared with `DECLARE_SINGLETON`.
+  */
 #define IMPLEMENT_SINGLETON(className) \
 className* className##Instance = NULL;\
 className* className::createGetInstance()\

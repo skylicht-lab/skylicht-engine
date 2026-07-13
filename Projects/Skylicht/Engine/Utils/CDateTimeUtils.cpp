@@ -111,6 +111,13 @@ namespace Skylicht
 		g_hasServerTime = true;
 	}
 
+	void CDateTimeUtils::unsetServerTime()
+	{
+		g_serverTime = 0;
+		g_serverTimeAppTimer = 0;
+		g_hasServerTime = false;
+	}
+
 	unsigned long CDateTimeUtils::getServerTime()
 	{
 		if (g_hasServerTime == false)

@@ -26,25 +26,84 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/**
+	 * @brief Path manipulation helpers for engine resource and file paths.
+	 * @ingroup Utilities
+	 *
+	 * Most methods return a reference to a shared temporary string. Copy the returned
+	 * value before calling another utility that may reuse the same temporary buffer.
+	 */
 	class SKYLICHT_API CPath
 	{
 	public:
+		/**
+		 * @brief Get the file name, including extension, from a path.
+		 * @param path Input path.
+		 * @return File name stored in the shared temporary buffer.
+		 */
 		static const std::string& getFileName(const std::string& path);
 
+		/**
+		 * @brief Get only the extension from a file path.
+		 * @param path Input path.
+		 * @return Extension without the dot, or an empty string when no extension exists.
+		 */
 		static const std::string& getFileNameExt(const std::string& path);
 
+		/**
+		 * @brief Get the file name without its extension.
+		 * @param path Input path.
+		 * @return File name without extension.
+		 */
 		static const std::string& getFileNameNoExt(const std::string& path);
 
+		/**
+		 * @brief Replace the extension of a file path.
+		 * @param path Input path.
+		 * @param ext New extension.
+		 * @return Path with the new extension.
+		 */
 		static const std::string& replaceFileExt(const std::string& path, const std::string& ext);
 
+		/**
+		 * @brief Get the folder portion of a path.
+		 * @param path Input path.
+		 * @return Folder path without the file name.
+		 */
 		static const std::string& getFolderPath(const std::string& path);
 
+		/**
+		 * @brief Get the parent folder of a path or folder.
+		 * @param path Input path.
+		 * @return Parent folder path.
+		 */
 		static const std::string& getParentFolderPath(const std::string& path);
 
+		/**
+		 * @brief Normalize slashes and collapse `..` path elements.
+		 * @param path Input path.
+		 * @return Normalized path.
+		 */
 		static const std::string& normalizePath(const std::string& path);
 
+		/**
+		 * @brief Convert a path to be relative to a folder when they share a root.
+		 * @param path Absolute or base path to convert.
+		 * @param folder Folder used as the relative origin.
+		 * @return Relative path, or the original path when no shared root exists.
+		 */
 		static const std::string& getRelativePath(const std::string& path, const std::string& folder);
 
+		/**
+		 * @brief Match a file name against a simple wildcard pattern.
+		 *
+		 * Supports `?` for one character and `*` for a variable number of characters.
+		 * Matching is case-insensitive.
+		 *
+		 * @param path Path whose file name will be tested.
+		 * @param searchPattern Pattern to match.
+		 * @return True if the file name matches the pattern.
+		 */
 		static bool searchMatch(const std::string& path, const std::string& searchPattern);
 	};
 }

@@ -35,9 +35,24 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/**
+	 * @brief Low-level string helper functions used by engine utilities.
+	 * @ingroup Utilities
+	 *
+	 * Most template functions operate on null-terminated mutable buffers and assume
+	 * the destination buffer is large enough for the result. Functions returning
+	 * `const std::string&` or `const std::wstring&` use shared temporary storage and
+	 * should be copied before the next call that may reuse that storage.
+	 */
 	class SKYLICHT_API CStringImp
 	{
 	public:
+		/**
+		 * @brief Count characters before the null terminator.
+		 * @tparam T Character type.
+		 * @param pString Null-terminated string.
+		 * @return Character count, excluding the terminator.
+		 */
 		template <class T>
 		static int length(T* pString)
 		{
@@ -48,6 +63,14 @@ namespace Skylicht
 			return result;
 		}
 
+		/**
+		 * @brief Find a character in a null-terminated string.
+		 * @tparam T Character type.
+		 * @param pString String to search.
+		 * @param pCharSearch Character to find.
+		 * @param begin Start index.
+		 * @return Character index, or -1 when not found.
+		 */
 		template <class T>
 		static int find(T* pString, T pCharSearch, int begin = 0)
 		{
@@ -64,6 +87,14 @@ namespace Skylicht
 			return -1;
 		}
 
+		/**
+		 * @brief Find a substring in a null-terminated string.
+		 * @tparam T Character type.
+		 * @param pString String to search.
+		 * @param pKeySearch Null-terminated substring to find.
+		 * @param begin Start index.
+		 * @return First matching index, or -1 when not found.
+		 */
 		template <class T>
 		static int find(T* pString, T* pKeySearch, int begin = 0)
 		{
@@ -81,6 +112,11 @@ namespace Skylicht
 			return -1;
 		}
 
+		/**
+		 * @brief Remove leading whitespace characters from a mutable string.
+		 * @tparam T Character type.
+		 * @param pString String buffer to modify.
+		 */
 		template <class T>
 		static void trimleft(T* pString)
 		{
@@ -99,6 +135,11 @@ namespace Skylicht
 			}
 		}
 
+		/**
+		 * @brief Remove trailing whitespace characters from a mutable string.
+		 * @tparam T Character type.
+		 * @param pString String buffer to modify.
+		 */
 		template <class T>
 		static void trimright(T* pString)
 		{
@@ -114,6 +155,12 @@ namespace Skylicht
 			}
 		}
 
+		/**
+		 * @brief Remove leading occurrences of a character.
+		 * @tparam T Character type.
+		 * @param pString String buffer to modify.
+		 * @param delChar Character to trim.
+		 */
 		template <class T>
 		static void trimleft(T* pString, T delChar)
 		{
@@ -132,6 +179,12 @@ namespace Skylicht
 			}
 		}
 
+		/**
+		 * @brief Remove trailing occurrences of a character.
+		 * @tparam T Character type.
+		 * @param pString String buffer to modify.
+		 * @param delChar Character to trim.
+		 */
 		template <class T>
 		static void trimright(T* pString, T delChar)
 		{
@@ -147,6 +200,11 @@ namespace Skylicht
 			}
 		}
 
+		/**
+		 * @brief Remove leading and trailing whitespace characters.
+		 * @tparam T Character type.
+		 * @param pString String buffer to modify.
+		 */
 		template <class T>
 		static void trim(T* pString)
 		{
@@ -154,6 +212,12 @@ namespace Skylicht
 			CStringImp::trimright<T>(pString);
 		}
 
+		/**
+		 * @brief Remove leading and trailing occurrences of a character.
+		 * @tparam T Character type.
+		 * @param pString String buffer to modify.
+		 * @param delChar Character to trim.
+		 */
 		template <class T>
 		static void trim(T* pString, T delChar)
 		{
@@ -161,6 +225,14 @@ namespace Skylicht
 			CStringImp::trimright<T>(pString, delChar);
 		}
 
+		/**
+		 * @brief Count occurrences of a character.
+		 * @tparam T Character type.
+		 * @param pString String to scan.
+		 * @param entry Character to count.
+		 * @param begin Start index.
+		 * @return Number of occurrences.
+		 */
 		template <class T>
 		static int countEntry(T* pString, T entry, int begin = 0)
 		{
@@ -178,6 +250,14 @@ namespace Skylicht
 			return result;
 		}
 
+		/**
+		 * @brief Copy a null-terminated string while converting character type.
+		 * @tparam T1 Destination character type.
+		 * @tparam T2 Source character type.
+		 * @param pStringDst Destination buffer.
+		 * @param pStringSrc Source string, or null.
+		 * @return Number of characters copied, excluding the terminator.
+		 */
 		template <class T1, class T2>
 		static int copy(T1* pStringDst, T2* pStringSrc)
 		{
@@ -198,6 +278,10 @@ namespace Skylicht
 			return index;
 		}
 
+		/**
+		 * @brief Copy a source string into a destination string at an index.
+		 * @return New end index, or 0 when the input is invalid.
+		 */
 		template <class T1, class T2>
 		static int copyAt(T1* pStringDst, T2* pStringSrc, int at)
 		{
@@ -219,6 +303,10 @@ namespace Skylicht
 			return index;
 		}
 
+		/**
+		 * @brief Append a source string to a destination string.
+		 * @return Number of appended characters.
+		 */
 		template <class T1, class T2>
 		static int cat(T1* pStringDst, T2* pStringSrc)
 		{
@@ -237,6 +325,10 @@ namespace Skylicht
 			return i;
 		}
 
+		/**
+		 * @brief Compare two null-terminated strings by raw character bytes.
+		 * @return 0 if equal, a positive value if the first string is greater, otherwise negative.
+		 */
 		template <class T>
 		static int comp(T* pString1, T* pString2)
 		{
@@ -259,12 +351,24 @@ namespace Skylicht
 			return r;
 		}
 
+		/**
+		 * @brief Compare a fixed number of characters by raw character bytes.
+		 * @return Result of `memcmp`.
+		 */
 		template <class T>
 		static int comp(T* pString1, T* pString2, int len)
 		{
 			return memcmp(pString1, pString2, len * sizeof(T));
 		}
 
+		/**
+		 * @brief Copy a substring range.
+		 * @param pStringDst Destination buffer.
+		 * @param pStringSrc Source string.
+		 * @param begin First source index.
+		 * @param end One-past-last source index.
+		 * @return Number of copied characters.
+		 */
 		template <class T1, class T2>
 		static int mid(T1* pStringDst, T2* pStringSrc, int begin, int end)
 		{
@@ -280,8 +384,10 @@ namespace Skylicht
 			return i;
 		}
 
-		// getBlock
-		// Get string inside pBlock "@ ...... @"
+		/**
+		 * @brief Extract text between two occurrences of the same delimiter.
+		 * @return Index after the closing delimiter, or -1 when not found.
+		 */
 		template <class T1, class T2>
 		static int getBlock(T1* pStringDst, T2* pStringSrc, T2* pBlock, int begin = 0)
 		{
@@ -298,8 +404,10 @@ namespace Skylicht
 			return dwEnd + 1;
 		}
 
-		// findBlock
-		// Get string inside pBlock "{}" or "[]" "<>" ...
+		/**
+		 * @brief Extract text from a balanced block such as `{}` or `[]`.
+		 * @return Index after the closing delimiter, or -1 when no balanced block exists.
+		 */
 		template <class T1, class T2>
 		static int findBlock(T1* pStringDst, T2* pStringSrc, T2* pBlock, int begin = 0)
 		{
@@ -338,8 +446,10 @@ namespace Skylicht
 			return -1;
 		}
 
-		// findBlockString
-		// Get string inside pBlock "<begin>....<end>"
+		/**
+		 * @brief Extract text from a balanced block with string begin/end markers.
+		 * @return Index after the closing marker, or -1 when no balanced block exists.
+		 */
 		template <class T1, class T2>
 		static int findBlockString(T1* pStringDst, T2* pStringSrc, T2* pBlock1, T2* pBlock2, int begin = 0)
 		{
@@ -381,8 +491,11 @@ namespace Skylicht
 			return -1;
 		}
 
-		// inorgeLoopChar
-		// "this  is     my text  " -> "this is my text "
+		/**
+		 * @brief Collapse repeated occurrences of a character to a single occurrence.
+		 * @param pString String buffer to modify.
+		 * @param charLoop Repeated character to collapse.
+		 */
 		template<class T>
 		static void inorgeLoopChar(T* pString, T charLoop)
 		{
@@ -402,6 +515,14 @@ namespace Skylicht
 			}
 		}
 
+		/**
+		 * @brief Split a string incrementally using any character from a delimiter set.
+		 * @param lpStrResult Destination buffer for the current token.
+		 * @param lpStringSearch Source string.
+		 * @param lpStrSplit Null-terminated delimiter character set.
+		 * @param pos In/out current scan position.
+		 * @return True when a token was produced, false when no more tokens exist.
+		 */
 		template<class T>
 		static bool split(T* lpStrResult, const T* lpStringSearch, const T* lpStrSplit, int* pos)
 		{
@@ -451,14 +572,45 @@ namespace Skylicht
 			return true;
 		}
 
+		/**
+		 * @brief Split a narrow string into a vector.
+		 * @param stringSplit Delimiter characters.
+		 * @param search Source string.
+		 * @param result Receives split tokens.
+		 * @return Number of tokens.
+		 */
 		static int splitString(const char* stringSplit, const char* search, std::vector<std::string>& result);
 
+		/**
+		 * @brief Replace every occurrence of a substring.
+		 * @param string Source string to process.
+		 * @param from Substring to replace.
+		 * @param to Replacement text.
+		 * @return Replaced string.
+		 */
 		static std::string replaceAll(std::string& string, const std::string& from, const std::string& to);
 
+		/**
+		 * @brief Split a wide string into a vector.
+		 * @param stringSplit Delimiter characters.
+		 * @param search Source string.
+		 * @param result Receives split tokens.
+		 * @return Number of tokens.
+		 */
 		static int splitString(const wchar_t* stringSplit, const wchar_t* search, std::vector<std::wstring>& result);
 
+		/**
+		 * @brief Format text into a caller-provided buffer.
+		 * @param lpString Destination buffer.
+		 * @param lpStringFormat Printf-style format string.
+		 * @return True when formatting succeeds.
+		 */
 		static bool format(char* lpString, const char* lpStringFormat, ...);
 
+		/**
+		 * @brief Parse a signed integer from a string.
+		 * @return True when parsing succeeds.
+		 */
 		template<class T>
 		static bool parseToInt(T* lpString, int* result)
 		{
@@ -471,6 +623,10 @@ namespace Skylicht
 			return true;
 		}
 
+		/**
+		 * @brief Parse a floating-point value from a string.
+		 * @return True when parsing succeeds.
+		 */
 		template<class T>
 		static bool parseToFloat(T* lpString, float* result)
 		{
@@ -483,6 +639,10 @@ namespace Skylicht
 			return true;
 		}
 
+		/**
+		 * @brief Parse an unsigned integer from a string.
+		 * @return True when parsing succeeds.
+		 */
 		template<class T>
 		static bool parseToUInt(T* lpString, int* result)
 		{
@@ -495,6 +655,10 @@ namespace Skylicht
 			return true;
 		}
 
+		/**
+		 * @brief Parse a hexadecimal integer from a string.
+		 * @return True when parsing succeeds.
+		 */
 		template<class T>
 		static bool parseFromHex(T* lpString, int* result)
 		{
@@ -507,6 +671,9 @@ namespace Skylicht
 			return true;
 		}
 
+		/**
+		 * @brief Convert a mutable string to lowercase in place.
+		 */
 		template<class T>
 		static void toLower(T* lpString)
 		{
@@ -518,6 +685,9 @@ namespace Skylicht
 			}
 		}
 
+		/**
+		 * @brief Convert a mutable string to uppercase in place.
+		 */
 		template<class T>
 		static void toUpper(T* lpString)
 		{
@@ -529,6 +699,11 @@ namespace Skylicht
 			}
 		}
 
+		/**
+		 * @brief Extract the folder path from a file path.
+		 * @param dstString Destination buffer.
+		 * @param lpString Source path.
+		 */
 		template<class T1, class T2>
 		static void getFolderPath(T1* dstString, T2* lpString)
 		{
@@ -545,6 +720,11 @@ namespace Skylicht
 			dstString[i] = 0;
 		}
 
+		/**
+		 * @brief Extract the file name from a path.
+		 * @param dstString Destination buffer.
+		 * @param lpString Source path.
+		 */
 		template<class T1, class T2>
 		static void getFileName(T1* dstString, T2* lpString)
 		{
@@ -561,6 +741,11 @@ namespace Skylicht
 				CStringImp::copy<T1, T2>(dstString, lpString + i + 1);
 		}
 
+		/**
+		 * @brief Extract the file extension from a path.
+		 * @param dstString Destination buffer.
+		 * @param lpString Source path.
+		 */
 		template<class T1, class T2>
 		static void getFileNameExt(T1* dstString, T2* lpString)
 		{
@@ -588,6 +773,11 @@ namespace Skylicht
 				CStringImp::copy<T1, T2>(dstString, lpString + i + 1);
 		}
 
+		/**
+		 * @brief Extract the file name without extension from a path.
+		 * @param dstString Destination buffer.
+		 * @param lpString Source path.
+		 */
 		template<class T1, class T2>
 		static void getFileNameNoExt(T1* dstString, T2* lpString)
 		{
@@ -617,6 +807,11 @@ namespace Skylicht
 			}
 		}
 
+		/**
+		 * @brief Shorten a name to a maximum character count.
+		 *
+		 * When truncated, the last one or two characters are replaced with dots.
+		 */
 		template<class T>
 		static void shortName(T* dest, const T* name, int maxchar)
 		{
@@ -643,6 +838,13 @@ namespace Skylicht
 			//	dest[maxchar - 3] = (T)'.';
 		}
 
+		/**
+		 * @brief Replace all occurrences of text in a source buffer.
+		 * @param result Destination buffer.
+		 * @param string Source string.
+		 * @param search Text to find.
+		 * @param replace Replacement text.
+		 */
 		template<class T>
 		static void replaceText(T* result, const T* string, const T* search, const T* replace)
 		{
@@ -675,38 +877,127 @@ namespace Skylicht
 			}
 		}
 
+		/**
+		 * @brief Decode one UTF-8 character and advance the source pointer.
+		 * @param str In/out UTF-8 source pointer.
+		 * @return Decoded Unicode character.
+		 */
 		static wchar_t utf8Char2Unicode(const char*& str);
 
+		/**
+		 * @brief Convert a wide string to an unsigned 16-bit Unicode buffer.
+		 * @param src Source wide string.
+		 * @return Newly allocated or internal Unicode buffer as implemented by the source file.
+		 */
 		static unsigned short* getUnicodeString(const wchar_t* src);
 
+		/**
+		 * @brief Convert UTF-8 text to a wide-character buffer.
+		 * @param src UTF-8 source string.
+		 * @param dst Destination wide-character buffer.
+		 */
 		static void convertUTF8ToUnicode(const char* src, wchar_t* dst);
 
+		/**
+		 * @brief Calculate the wide-character length required for a UTF-8 string.
+		 * @param src UTF-8 source string.
+		 * @return Required wide-character count.
+		 */
 		static int getUnicodeStringSize(const char* src);
 
+		/**
+		 * @brief Convert wide-character text to UTF-8.
+		 * @param src Wide-character source string.
+		 * @param dst Destination UTF-8 buffer.
+		 */
 		static void convertUnicodeToUTF8(const wchar_t* src, char* dst);
 
+		/**
+		 * @brief Calculate the UTF-8 byte length required for a wide string.
+		 * @param src Wide-character source string.
+		 * @return Required byte count.
+		 */
 		static int getUTF8StringSize(const wchar_t* src);
 
+		/**
+		 * @brief Replace the extension portion of a file name in place.
+		 * @param lpPath Mutable path buffer.
+		 * @param lpExt New extension.
+		 */
 		static void replaceExt(char* lpPath, const char* lpExt);
 
+		/**
+		 * @brief Replace the extension portion of a full path in place.
+		 * @param lpPath Mutable path buffer.
+		 * @param lpExt New extension.
+		 */
 		static void replacePathExt(char* lpPath, const char* lpExt);
 
+		/**
+		 * @brief Find a string in a vector.
+		 * @param listString Vector to search.
+		 * @param find Text to find.
+		 * @return Index of the match, or -1 when not found.
+		 */
 		static int findStringInList(std::vector<std::string>& listString, const char* find);
 
+		/**
+		 * @brief Replace all occurrences of a substring in a `std::string`.
+		 * @param subject String to modify.
+		 * @param search Text to find.
+		 * @param replace Replacement text.
+		 */
 		static void replaceString(std::string& subject, const std::string& search, const std::string& replace);
 
+		/**
+		 * @brief Convert wide-character text to UTF-8 using shared temporary storage.
+		 * @param src Source wide string.
+		 * @return UTF-8 string in shared temporary storage.
+		 */
 		static const std::string& convertUnicodeToUTF8(const wchar_t* src);
 
+		/**
+		 * @brief Convert UTF-8 text to wide-character text using shared temporary storage.
+		 * @param src Source UTF-8 string.
+		 * @return Wide string in shared temporary storage.
+		 */
 		static const std::wstring& convertUTF8ToUnicode(const char* src);
 
+		/**
+		 * @brief Return a lowercase copy of a narrow string.
+		 * @param s Source string.
+		 * @return Lowercase text in shared temporary storage.
+		 */
 		static const std::string& toLower(const std::string& s);
 
+		/**
+		 * @brief Return a lowercase copy of a wide string.
+		 * @param s Source string.
+		 * @return Lowercase text in shared temporary storage.
+		 */
 		static const std::wstring& toLower(const std::wstring& s);
 
+		/**
+		 * @brief Return an uppercase copy of a narrow string.
+		 * @param s Source string.
+		 * @return Uppercase text in shared temporary storage.
+		 */
 		static const std::string& toUpper(const std::string& s);
 
+		/**
+		 * @brief Return an uppercase copy of a wide string.
+		 * @param s Source string.
+		 * @return Uppercase text in shared temporary storage.
+		 */
 		static const std::wstring& toUpper(const std::wstring& s);
 
+		/**
+		 * @brief Format a number with thousand separators or compact suffixes.
+		 * @param n Number to format.
+		 * @param useK Allow compact `K` suffix.
+		 * @param useM Allow compact `M` suffix.
+		 * @return Formatted number in shared temporary storage.
+		 */
 		static const std::string& formatThousand(int n, bool useK, bool useM);
 	};
 

@@ -26,13 +26,36 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	/**
+	 * @brief Utility functions for converting and parsing engine colors.
+	 * @ingroup Utilities
+	 */
 	class SKYLICHT_API CColor
 	{
 	public:
+		/**
+		 * @brief Apply a 2.2 gamma exponent to the RGB channels.
+		 * @param c Input color.
+		 * @return Converted color with the original alpha channel.
+		 */
 		static SColor toSRGB(const SColor& c);
 
+		/**
+		 * @brief Apply an inverse 2.2 gamma exponent to the RGB channels.
+		 * @param c Input color.
+		 * @return Converted color with the original alpha channel.
+		 */
 		static SColor toLinear(const SColor& c);
 
+		/**
+		 * @brief Parse a hexadecimal color string.
+		 *
+		 * Supports `RRGGBB` and `AARRGGBB` strings without a leading `#`.
+		 * Invalid lengths return opaque white.
+		 *
+		 * @param hex Hexadecimal color text.
+		 * @return Parsed color.
+		 */
 		static SColor fromHex(const char* hex);
 	};
 }
