@@ -44,12 +44,31 @@ namespace Skylicht
 	public:
 
 	protected:
+		/**
+		 * @brief Construct a rectangle element for a canvas and optional parent.
+		 * @param canvas Canvas that owns the element.
+		 * @param parent Parent element, or NULL for a root element.
+		 */
 		CGUIRect(CCanvas* canvas, CGUIElement* parent);
+
+		/**
+		 * @brief Construct a rectangle element with an initial rectangle.
+		 * @param canvas Canvas that owns the element.
+		 * @param parent Parent element, or NULL for a root element.
+		 * @param rect Initial local GUI rectangle.
+		 */
 		CGUIRect(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect);
 
 	public:
+		/**
+		 * @brief Destructor.
+		 */
 		virtual ~CGUIRect();
 
+		/**
+		 * @brief Render the rectangle element.
+		 * @param camera Camera used for GUI rendering.
+		 */
 		virtual void render(CCamera* camera);
 
 		DECLARE_GETTYPENAME(CGUIRect)

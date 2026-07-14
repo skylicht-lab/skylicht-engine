@@ -48,6 +48,12 @@ namespace Skylicht
 	{
 		friend class CCanvas;
 
+		/**
+		 * @brief Construct a mask element with an initial clip rectangle.
+		 * @param canvas Canvas that owns the element.
+		 * @param parent Parent element, or NULL for a root element.
+		 * @param rect Initial local GUI rectangle.
+		 */
 		CGUIMask(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect);
 
 		bool m_drawMask;
@@ -61,31 +67,92 @@ namespace Skylicht
 		float m_b;
 
 	public:
+		/**
+		 * @brief Destructor.
+		 */
 		virtual ~CGUIMask();
 
+		/**
+		 * @brief Update the mask clip rectangle before rendering.
+		 * @param camera Camera used for GUI rendering.
+		 */
 		virtual void update(CCamera* camera);
 
+		/**
+		 * @brief Render the mask element.
+		 * @param camera Camera used for GUI rendering.
+		 */
 		virtual void render(CCamera* camera);
 
+		/**
+		 * @brief Apply a parent mask so this mask is clipped by the parent clip region.
+		 * @param parent Parent mask to clip against.
+		 */
 		void applyParentClip(CGUIMask* parent);
 
+		/**
+		 * @brief Begin stencil or clip testing for this mask.
+		 * @param camera Camera used for GUI rendering.
+		 */
 		void beginMaskTest(CCamera* camera);
 
+		/**
+		 * @brief Draw the geometry that defines the mask region.
+		 * @param camera Camera used for GUI rendering.
+		 */
 		virtual void drawMask(CCamera* camera);
 
+		/**
+		 * @brief End stencil or clip testing for this mask.
+		 */
 		void endMaskTest();
 
+		/**
+		 * @brief Clear the pending draw-mask flag.
+		 */
 		inline void clearMask()
 		{
 			m_drawMask = false;
 		}
 
+		/**
+		 * @brief Enable or disable circular mask rendering.
+		 * @param b True to render the mask as a circle or ellipse.
+		 */
+		inline void enableCircleMask(bool b)
+		{
+			m_circleMask = b;
+		}
+
+		/**
+		 * @brief Set the angular range used to fill the circular mask.
+		 * @param a Start angle in degrees.
+		 * @param b End angle in degrees.
+		 */
+		inline void setFillAngle(float a, float b)
+		{
+			m_a = a;
+			m_b = b;
+		}
+
+		/**
+		 * @brief Create a serializable object that stores this mask state.
+		 * @return Serializable object.
+		 */
 		virtual CObjectSerializable* createSerializable();
 
+		/**
+		 * @brief Load mask state from a serializable object.
+		 * @param object Serializable object to read from.
+		 */
 		virtual void loadSerializable(CObjectSerializable* object);
 
 	protected:
 
+		/**
+		 * @brief Recalculate the world-space clip rectangle for this mask.
+		 * @param camera Camera used for GUI rendering.
+		 */
 		void updateClipRect(CCamera* camera);
 
 		DECLARE_GETTYPENAME(CGUIMask)

@@ -47,22 +47,54 @@ namespace Skylicht
 		float m_a;
 		float m_b;
 
+		/**
+		 * @brief Construct an ellipse element for a canvas and optional parent.
+		 * @param canvas Canvas that owns the element.
+		 * @param parent Parent element, or NULL for a root element.
+		 */
 		CGUIElipse(CCanvas* canvas, CGUIElement* parent);
+
+		/**
+		 * @brief Construct an ellipse element with an initial rectangle.
+		 * @param canvas Canvas that owns the element.
+		 * @param parent Parent element, or NULL for a root element.
+		 * @param rect Initial local GUI rectangle.
+		 */
 		CGUIElipse(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect);
 
 	public:
+		/**
+		 * @brief Destructor.
+		 */
 		virtual ~CGUIElipse();
 
+		/**
+		 * @brief Render the ellipse element.
+		 * @param camera Camera used for GUI rendering.
+		 */
 		virtual void render(CCamera* camera);
 
+		/**
+		 * @brief Set the angular range used to fill the ellipse.
+		 * @param a Start angle in degrees.
+		 * @param b End angle in degrees.
+		 */
 		inline void setFillAngle(float a, float b)
 		{
 			m_a = a;
 			m_b = b;
 		}
 
+		/**
+		 * @brief Create a serializable object that stores this ellipse state.
+		 * @return Serializable object.
+		 */
 		virtual CObjectSerializable* createSerializable();
 
+		/**
+		 * @brief Load ellipse state from a serializable object.
+		 * @param object Serializable object to read from.
+		 */
 		virtual void loadSerializable(CObjectSerializable* object);
 
 		DECLARE_GETTYPENAME(CGUIElipse)

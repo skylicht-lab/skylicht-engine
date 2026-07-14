@@ -72,54 +72,128 @@ namespace Skylicht
 		float m_anchorBottom;
 
 	protected:
+		/**
+		 * @brief Construct a fitted sprite element with an initial frame.
+		 * @param canvas Canvas that owns the element.
+		 * @param parent Parent element, or NULL for a root element.
+		 * @param frame Sprite frame to render.
+		 */
 		CGUIFitSprite(CCanvas* canvas, CGUIElement* parent, SFrame* frame);
+
+		/**
+		 * @brief Construct a fitted sprite element with an initial rectangle and frame.
+		 * @param canvas Canvas that owns the element.
+		 * @param parent Parent element, or NULL for a root element.
+		 * @param rect Initial local GUI rectangle.
+		 * @param frame Sprite frame to render.
+		 */
 		CGUIFitSprite(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect, SFrame* frame);
 
 	public:
+		/**
+		 * @brief Destructor.
+		 */
 		virtual ~CGUIFitSprite();
 
+		/**
+		 * @brief Update the fitted sprite element before rendering.
+		 * @param camera Camera used for GUI rendering.
+		 */
 		virtual void update(CCamera* camera);
 
+		/**
+		 * @brief Render the fitted sprite element.
+		 * @param camera Camera used for GUI rendering.
+		 */
 		virtual void render(CCamera* camera);
 
+		/**
+		 * @brief Reload the sprite frame from the stored sprite and frame identifiers.
+		 */
 		void reloadSpriteFrame();
 
+		/**
+		 * @brief Set the sprite asset and frame used by this element.
+		 * @param spritePath Path to the sprite data file.
+		 * @param frameName Name of the frame in the sprite.
+		 * @param editorFileRef Optional editor reference ID.
+		 */
 		void setFrameSource(const char* spritePath, const char* frameName, const char* editorFileRef = NULL);
 
+		/**
+		 * @brief Set the sprite frame directly.
+		 * @param frame Sprite frame to render.
+		 */
 		inline void setFrame(SFrame* frame)
 		{
 			m_frame = frame;
 		}
 
+		/**
+		 * @brief Get the current sprite frame.
+		 * @return Current sprite frame.
+		 */
 		inline SFrame* getFrame()
 		{
 			return m_frame;
 		}
 
+		/**
+		 * @brief Get the current frame name.
+		 * @return Frame name string.
+		 */
 		inline const char* getFrameName()
 		{
 			return m_frameName.c_str();
 		}
 
+		/**
+		 * @brief Get the sprite asset path or name.
+		 * @return Sprite asset string.
+		 */
 		inline const char* getSpriteName()
 		{
 			return m_sprite.c_str();
 		}
 
+		/**
+		 * @brief Get the serialized sprite ID.
+		 * @return Sprite ID string.
+		 */
 		inline const char* getSpriteId()
 		{
 			return m_spriteId.c_str();
 		}
 
+		/**
+		 * @brief Get the serialized frame ID.
+		 * @return Frame ID string.
+		 */
 		inline const char* getFrameId()
 		{
 			return m_guid.c_str();
 		}
 
+		/**
+		 * @brief Configure the fixed borders used when fitting the sprite.
+		 * @param type Anchor mode.
+		 * @param left Left border size.
+		 * @param right Right border size.
+		 * @param top Top border size.
+		 * @param bottom Bottom border size.
+		 */
 		void setAnchor(AnchorType type, float left, float right, float top, float bottom);
 
+		/**
+		 * @brief Create a serializable object that stores this fitted sprite state.
+		 * @return Serializable object.
+		 */
 		virtual CObjectSerializable* createSerializable();
 
+		/**
+		 * @brief Load fitted sprite state from a serializable object.
+		 * @param object Serializable object to read from.
+		 */
 		virtual void loadSerializable(CObjectSerializable* object);
 
 		DECLARE_GETTYPENAME(CGUIFitSprite)
