@@ -618,6 +618,9 @@ namespace Skylicht
 		if (writeFile == NULL)
 			return;
 
+		// unload this material first
+		unloadMaterial(matFile.c_str());
+
 		std::string buffer;
 		std::map<std::string, bool> saved;
 

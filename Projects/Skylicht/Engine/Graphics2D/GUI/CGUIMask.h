@@ -54,6 +54,12 @@ namespace Skylicht
 		core::vector3df m_topLeft;
 		core::vector3df m_bottomRight;
 
+		int m_vertexColorShader;
+
+		bool m_circleMask;
+		float m_a;
+		float m_b;
+
 	public:
 		virtual ~CGUIMask();
 
@@ -65,7 +71,7 @@ namespace Skylicht
 
 		void beginMaskTest(CCamera* camera);
 
-		void drawMask(CCamera* camera);
+		virtual void drawMask(CCamera* camera);
 
 		void endMaskTest();
 
@@ -73,6 +79,10 @@ namespace Skylicht
 		{
 			m_drawMask = false;
 		}
+
+		virtual CObjectSerializable* createSerializable();
+
+		virtual void loadSerializable(CObjectSerializable* object);
 
 	protected:
 

@@ -37,6 +37,9 @@ namespace Skylicht
 			EGUIDock m_lastDock;
 
 			GUI::CCollapsibleGroup* m_alignment;
+
+			CSubject<std::wstring>* m_subjectPath;
+			CSubject<std::wstring>* m_subjectId;
 		public:
 			CGUIElementEditor();
 

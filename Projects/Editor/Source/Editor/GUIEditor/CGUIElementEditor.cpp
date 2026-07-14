@@ -41,7 +41,9 @@ namespace Skylicht
 
 		CGUIElementEditor::CGUIElementEditor() :
 			m_lastDock(EGUIDock::NoDock),
-			m_alignment(NULL)
+			m_alignment(NULL),
+			m_subjectPath(NULL),
+			m_subjectId(NULL)
 		{
 
 		}
@@ -53,6 +55,8 @@ namespace Skylicht
 		void CGUIElementEditor::closeGUI()
 		{
 			m_alignment = NULL;
+			m_subjectPath = NULL;
+			m_subjectId = NULL;
 			CGUIEditor::closeGUI();
 		}
 
@@ -62,6 +66,17 @@ namespace Skylicht
 
 			GUI::CCollapsibleGroup* group = ui->addGroup(gui->getTypeName(), this);
 			GUI::CBoxLayout* layout = ui->createBoxLayout(group);
+
+			std::wstring path = gui->getPath();
+			m_subjectPath = new CSubject<std::wstring>(path);
+			ui->addTextBox(layout, L"Path", m_subjectPath, true);
+			m_subjects.push_back(m_subjectPath);
+
+			std::wstring id = CStringImp::convertUTF8ToUnicode(gui->getID()).c_str();
+			m_subjectId = new CSubject<std::wstring>(id);
+			ui->addTextBox(layout, L"GUID", m_subjectId, true);
+			m_subjects.push_back(m_subjectId);
+
 			serializableToControl(m_guiData, ui, layout);
 			group->setExpand(true);
 
@@ -104,6 +119,12 @@ namespace Skylicht
 		void CGUIElementEditor::onUpdateValue(CObjectSerializable* object)
 		{
 			CGUIEditor::onUpdateValue(object);
+
+			if (m_subjectPath)
+			{
+				m_subjectPath->set(m_gui->getPath());
+				m_subjectPath->notify(this);
+			}
 
 			EGUIDock dock = m_gui->getDock();
 			if (m_lastDock != dock || object == NULL)

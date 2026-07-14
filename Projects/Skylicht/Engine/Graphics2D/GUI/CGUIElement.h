@@ -81,6 +81,8 @@ namespace Skylicht
 		int m_tagInt;
 		std::string m_tagString;
 
+		std::string m_maskId;
+
 	public:
 
 		std::function<void(CGUIElement*)> OnRender;
@@ -156,6 +158,8 @@ namespace Skylicht
 		void setName(const wchar_t* name);
 
 		std::wstring getNameW();
+
+		std::wstring getPath();
 
 		void setParent(CGUIElement* parent);
 
@@ -357,6 +361,8 @@ namespace Skylicht
 		}
 
 		CGUIMask* getParentMask();
+
+		void setMaskId(const char* id);
 
 		inline void setMask(CGUIMask* mask)
 		{

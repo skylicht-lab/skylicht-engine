@@ -31,9 +31,13 @@ namespace Skylicht
 {
 	CGUIMask::CGUIMask(CCanvas* canvas, CGUIElement* parent, const core::rectf& rect) :
 		CGUIElement(canvas, parent, rect),
-		m_drawMask(false)
+		m_drawMask(false),
+		m_circleMask(false),
+		m_a(0.0f),
+		m_b(360.0f),
+		m_vertexColorShader(0)
 	{
-
+		m_vertexColorShader = CShaderManager::getInstance()->getShaderIDByName("VertexColorAlpha");
 	}
 
 	CGUIMask::~CGUIMask()
@@ -103,7 +107,21 @@ namespace Skylicht
 
 			// draw depth for mask
 			g->beginDrawDepth();
-			g->draw2DRectangle(m_topLeft, m_bottomRight, SColor(255, 0, 0, 0));
+
+			SColor color(255, 0, 0, 0);
+			if (m_circleMask)
+			{
+				if (m_vertexColorShader)
+					m_vertexColorShader = CShaderManager::getInstance()->getShaderIDByName("VertexColorAlpha");
+
+				core::rectf uv(0.0f, 0.0f, 1.0f, 1.0f);
+				g->addEclipseBatch(getRect(), uv, color, m_transform->World, m_vertexColorShader, m_a, m_b);
+			}
+			else
+			{
+				g->draw2DRectangle(m_topLeft, m_bottomRight, color);
+			}
+
 			g->endDrawDepth();
 		}
 
@@ -116,5 +134,22 @@ namespace Skylicht
 		CGraphics2D::getInstance()->endDepthTest();
 
 		m_drawMask = false;
+	}
+
+	CObjectSerializable* CGUIMask::createSerializable()
+	{
+		CObjectSerializable* object = CGUIElement::createSerializable();
+		object->autoRelease(new CBoolProperty(object, "circleMask", m_circleMask));
+		object->autoRelease(new CFloatProperty(object, "angleA", m_a, -360.0f, 360.0f));
+		object->autoRelease(new CFloatProperty(object, "angleB", m_b, -360.0f, 360.0f));
+		return object;
+	}
+
+	void CGUIMask::loadSerializable(CObjectSerializable* object)
+	{
+		CGUIElement::loadSerializable(object);
+		m_circleMask = object->get<bool>("circleMask", false);
+		m_a = object->get<float>("angleA", 0.0f);
+		m_b = object->get<float>("angleB", 360.0f);
 	}
 }

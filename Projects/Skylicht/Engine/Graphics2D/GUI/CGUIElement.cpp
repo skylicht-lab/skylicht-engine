@@ -103,6 +103,24 @@ namespace Skylicht
 		return CStringImp::convertUTF8ToUnicode(m_transform->Name.c_str());
 	}
 
+	std::wstring CGUIElement::getPath()
+	{
+		std::wstring parentPath;
+		std::wstring ret = getNameW();
+
+		CGUIElement* parent = m_parent;
+		CGUIElement* root = m_canvas->getRootElement();
+
+		while (parent != root)
+		{
+			parentPath = std::wstring(L"/") + parent->getNameW() + std::wstring(L"/");
+			ret = parentPath + ret;
+			parent = parent->getParent();
+		}
+
+		return ret;
+	}
+
 	void CGUIElement::setParent(CGUIElement* parent)
 	{
 		if (m_parent)
@@ -371,6 +389,9 @@ namespace Skylicht
 		object->autoRelease(new CIntProperty(object, "materialId", m_materialId, 0, (int)m_materials.size()));
 		object->autoRelease(new CFilePathProperty(object, "material", m_materialFile.c_str(), CMaterialManager::getMaterialExts()));
 
+		// mask
+		object->autoRelease(new CStringProperty(object, "maskId", m_maskId.c_str()));
+
 		return object;
 	}
 
@@ -415,6 +436,10 @@ namespace Skylicht
 		// materials
 		m_materialId = object->get<int>("materialId", 0);
 		std::string materialFile = object->get<std::string>("material", "");
+
+		// mask
+		m_maskId = object->get<std::string>("maskId", "");
+		setMaskId(m_maskId.c_str());
 
 		if (materialFile != m_materialFile)
 		{
@@ -605,6 +630,19 @@ namespace Skylicht
 	CGUIElement* CGUIElement::getGUIByPath(const char* path)
 	{
 		return m_canvas->getGUIByPath(this, path);
+	}
+
+	void CGUIElement::setMaskId(const char* id)
+	{
+		CGUIElement* element = m_canvas->getGUIByID(id);
+		if (element)
+		{
+			CGUIMask* mask = dynamic_cast<CGUIMask*>(element);
+			if (mask)
+				setMask(mask);
+		}
+		else
+			setMask(NULL);
 	}
 
 	CGUIMask* CGUIElement::getParentMask()

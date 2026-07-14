@@ -681,7 +681,7 @@ namespace Skylicht
 			}
 		}
 
-		void CSpaceProperty::addTextBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<std::wstring>* value)
+		void CSpaceProperty::addTextBox(GUI::CBoxLayout* boxLayout, const wchar_t* name, CSubject<std::wstring>* value, bool readOnly)
 		{
 			GUI::CLayout* layout = boxLayout->beginVertical();
 
@@ -718,6 +718,9 @@ namespace Skylicht
 				input->OnEndTextEdit = BIND_LISTENER(&CSpaceProperty::onEndEditValue, this);
 				input->addAccelerator("Ctrl + Z", [&](GUI::CBase* base) {this->OnHotkey(base, "Ctrl + Z"); });
 				input->addAccelerator("Ctrl + Y", [&](GUI::CBase* base) {this->OnHotkey(base, "Ctrl + Y"); });
+
+				if (readOnly)
+					input->setEditable(false);
 			}
 
 			boxLayout->endVertical();

@@ -67,6 +67,9 @@ namespace Skylicht
 
 			// close
 			CAssetEditor::closeGUI();
+
+			m_path.clear();
+			m_materials.clear();
 		}
 
 		void CMatEditor::OnSettingCommand(GUI::CBase* menu)
@@ -118,7 +121,7 @@ namespace Skylicht
 						// delete and save material
 						CMaterialManager::getInstance()->removeAndDeleteMaterial(m_materials, m_materialContext);
 
-						// save material					
+						// save material
 						CMaterialManager::getInstance()->saveMaterial(m_materials, m_path.c_str());
 					};
 			}
