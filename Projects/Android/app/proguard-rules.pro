@@ -19,3 +19,9 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Keep Android/JNI bridge classes stable. Native code and Android framework
+# entry points refer to this package by class and member names.
+-keep class com.skylicht.engine3d.** {
+    *;
+}

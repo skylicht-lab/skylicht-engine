@@ -3,14 +3,13 @@ plugins {
 }
 
 android {
-    buildToolsVersion '34.0.0'
-    compileSdk 34
+    compileSdk 36
     namespace "com.skylicht.engine3d"
     assetPacks = [":appdata"]
     defaultConfig {
         applicationId "com.yourteam.appname"
         minSdkVersion 26
-        targetSdkVersion 34
+        targetSdkVersion 36
         versionCode 1
         versionName "0.0.1"
 
@@ -18,7 +17,10 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
+            debuggable false
+            ndk.debugSymbolLevel = "FULL"
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -32,15 +34,15 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.3.0'
-    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'androidx.appcompat:appcompat:1.7.1'
+    implementation 'com.google.android.material:material:1.13.0'
     implementation 'com.google.android.gms:play-services-auth:21.2.0'
     implementation 'com.google.android.gms:play-services-games-v2:21.0.0'
     implementation 'com.google.android.gms:play-services-tasks:18.1.0'
     implementation 'com.google.android.play:asset-delivery:2.2.2'
     implementation 'com.android.billingclient:billing:9.1.0'
     implementation 'com.google.android.play:review:2.0.1'
-    implementation 'androidx.work:work-runtime:2.9.1'
+    implementation 'androidx.work:work-runtime:2.10.1'
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'

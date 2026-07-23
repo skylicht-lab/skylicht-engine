@@ -2,6 +2,8 @@ package com.skylicht.engine3d;
 
 import android.app.Activity;
 
+import java.util.Locale;
+
 public class NativeInterface {
     public static NativeInterface sInstance = null;
 
@@ -63,6 +65,10 @@ public class NativeInterface {
 
     public static boolean isNetworkAvailable() {
         return GameInstance.Activity.isNetworkAvailable();
+    }
+
+    public static String getDeviceLanguage() {
+        return Locale.getDefault().getLanguage();
     }
 
     public static void openURL(String url) {

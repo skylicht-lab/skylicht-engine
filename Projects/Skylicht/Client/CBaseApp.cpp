@@ -43,10 +43,14 @@ extern "C" void application_setFPS(int fps);
 extern "C" void nativeInterface_openURL(const char* url);
 extern "C" void nativeInterface_openApplicationSetting();
 extern "C" int nativeInterface_isNetworkAvailable();
+extern "C" const char* nativeInterface_getDeviceLanguage();
 #elif defined(IOS) || defined(MACOS)
 extern "C" void application_openURL(const char* url);
 extern "C" void application_openApplicationSetting();
 extern "C" bool application_isNetworkAvailable();
+#ifdef IOS
+extern "C" const char* application_getDeviceLanguage();
+#endif
 #elif defined(_WIN32) || defined(WIN32)
 #include <windows.h>
 #include <shellapi.h>
@@ -296,6 +300,22 @@ namespace Skylicht
 		application_openApplicationSetting();
 #else
 		os::Printer::log("[openApplicationSetting] not yet implement");
+#endif
+	}
+
+	std::string CBaseApp::getDeviceLanguage()
+	{
+#ifdef ANDROID
+		const char* language = nativeInterface_getDeviceLanguage();
+		// ISO_639_language_codes
+		return language ? std::string(language) : std::string("en");
+#elif defined(IOS)
+		const char* language = application_getDeviceLanguage();
+		// ISO_639_language_codes
+		return language ? std::string(language) : std::string("en");
+#else
+		// ISO_639_language_codes
+		return "en";
 #endif
 	}
 }

@@ -315,6 +315,13 @@ namespace Skylicht
 		* @brief Check network available or not?
 		*/
 		bool isNetworkAvailable();
+
+		/**
+		 * @brief Get the device language code from system settings.
+		 * @see ISO_639_language_codes
+		 * @return ISO language code such as "en", "vi", "ja", "ko".
+		 */
+		std::string getDeviceLanguage();
 	};
 
 	extern CBaseApp* getApplication();

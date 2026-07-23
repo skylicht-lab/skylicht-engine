@@ -61,6 +61,7 @@ jmethodID g_quitApplication = NULL;
 jmethodID g_openURL = NULL;
 jmethodID g_openApplicationSetting = NULL;
 jmethodID g_isNetworkAvailable = NULL;
+jmethodID g_getDeviceLanguage = NULL;
 jmethodID g_systemGC = NULL;
 
 const char *getJString(JNIEnv* env, jstring jstr)
@@ -95,6 +96,7 @@ JNIEXPORT void JNICALL JNI_FUNCTION(NativeInterface_mainInitApp)(JNIEnv* env, jo
 	g_openURL = (*env)->GetStaticMethodID(env, g_classNativeInterface, "openURL", "(Ljava/lang/String;)V");
 	g_openApplicationSetting = (*env)->GetStaticMethodID(env, g_classNativeInterface, "openApplicationSetting", "()V");
 	g_isNetworkAvailable = (*env)->GetStaticMethodID(env, g_classNativeInterface, "isNetworkAvailable", "()Z");
+	g_getDeviceLanguage = (*env)->GetStaticMethodID(env, g_classNativeInterface, "getDeviceLanguage", "()Ljava/lang/String;");
 	g_systemGC = (*env)->GetStaticMethodID(env, g_classNativeInterface, "systemGC", "()V");
 
 	__android_log_print(ANDROID_LOG_INFO, JNI_APPNAME, "Init jni OK");
@@ -369,5 +371,32 @@ int nativeInterface_isNetworkAvailable()
 	}
 
 	return 1;
+}
+
+const char* nativeInterface_getDeviceLanguage()
+{
+	static char language[16] = "en";
+	JNIEnv* env = skylichtGetJniEnv();
+
+	if (env != NULL && g_getDeviceLanguage != NULL && g_classNativeInterface != NULL)
+	{
+		jstring ret = (jstring)(*env)->CallStaticObjectMethod(env, g_classNativeInterface, g_getDeviceLanguage);
+		if (ret != NULL)
+		{
+			const char* value = (*env)->GetStringUTFChars(env, ret, NULL);
+			if (value != NULL)
+			{
+				if (value[0] != 0)
+				{
+					strncpy(language, value, sizeof(language) - 1);
+					language[sizeof(language) - 1] = 0;
+				}
+				(*env)->ReleaseStringUTFChars(env, ret, value);
+			}
+			(*env)->DeleteLocalRef(env, ret);
+		}
+	}
+
+	return language;
 }
 #endif
