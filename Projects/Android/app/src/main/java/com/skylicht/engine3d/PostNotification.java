@@ -27,8 +27,8 @@ public class PostNotification {
     public static final int PERMISSION_DENIED = 1;
     public static final int PERMISSION_ALLOWED = 2;
 
-    static final String CHANNEL_ID = "mech_arena_notification";
-    static final String CHANNEL_NAME = "Mech Arena";
+    static final String CHANNEL_ID = "skylicht_engine_notification";
+    static final String CHANNEL_NAME = "Skylicht Engine";
     static final String EXTRA_ID = "id";
     static final String EXTRA_TITLE = "title";
     static final String EXTRA_CONTENT = "content";

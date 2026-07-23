@@ -3,6 +3,7 @@ package com.skylicht.engine3d;
 import android.Manifest;
 import android.annotation.SuppressLint;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.ActionBar;
@@ -73,11 +74,24 @@ public class FullscreenActivity extends AppCompatActivity {
 
     AssetPackManager mAssetPackManager;
 
+    private final OnBackPressedCallback mBackPressedCallback = new OnBackPressedCallback(true) {
+        @Override
+        public void handleOnBackPressed() {
+            if (NativeInterface.getInstance().onBack()) {
+                setEnabled(false);
+                getOnBackPressedDispatcher().onBackPressed();
+                setEnabled(true);
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
 
         super.onCreate(savedInstanceState);
+
+        getOnBackPressedDispatcher().addCallback(this, mBackPressedCallback);
 
         // setup fullscreen
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -236,13 +250,6 @@ public class FullscreenActivity extends AppCompatActivity {
 
         createSaveFolder();
         NativeInterface.getInstance().mainResumeApp(1);
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (NativeInterface.getInstance().onBack()) {
-            super.onBackPressed();
-        }
     }
 
     /**
