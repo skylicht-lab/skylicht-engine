@@ -2,8 +2,6 @@
 #include "CIOSPostNotification.h"
 
 #if defined(IOS)
-#include "ViewManager/CViewManager.h"
-
 extern "C" {
 	void ios_checkPostNotificationPermissionAsync();
 	void ios_requestPostNotificationPermission();
@@ -54,22 +52,18 @@ namespace Skylicht
 
 	void CIOSPostNotification::onPermissionChecked(EPermission permission)
 	{
-		CViewManager::getInstance()->runInUI([this, permission]() {
-			if (m_checkPermissionCallback)
-			{
-				std::function<void(EPermission)> callback = m_checkPermissionCallback;
-				m_checkPermissionCallback = nullptr;
-				callback(permission);
-			}
-			});
+		if (m_checkPermissionCallback)
+		{
+			std::function<void(EPermission)> callback = m_checkPermissionCallback;
+			m_checkPermissionCallback = nullptr;
+			callback(permission);
+		}
 	}
 
 	void CIOSPostNotification::onPermissionUpdate(EPermission permission)
 	{
-		CViewManager::getInstance()->runInUI([this, permission]() {
-			if (OnPermissionUpdate)
-				OnPermissionUpdate(permission);
-			});
+		if (OnPermissionUpdate)
+			OnPermissionUpdate(permission);
 	}
 }
 

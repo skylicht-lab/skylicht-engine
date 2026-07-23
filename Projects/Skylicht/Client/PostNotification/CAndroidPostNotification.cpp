@@ -2,8 +2,6 @@
 #include "CAndroidPostNotification.h"
 
 #if defined(ANDROID)
-#include "ViewManager/CViewManager.h"
-
 extern "C" {
 	int android_checkPostNotificationPermission();
 	void android_requestPostNotificationPermission();
@@ -28,11 +26,9 @@ namespace Skylicht
 
 	void CAndroidPostNotification::checkPermissionAsync(std::function<void(EPermission)> callback)
 	{
-		CViewManager::getInstance()->runInUI([callback]() {
-			EPermission permission = (EPermission)android_checkPostNotificationPermission();
-			if (callback)
-				callback(permission);
-			});
+		EPermission permission = (EPermission)android_checkPostNotificationPermission();
+		if (callback)
+			callback(permission);
 	}
 
 	void CAndroidPostNotification::requestPermission()
@@ -57,10 +53,8 @@ namespace Skylicht
 
 	void CAndroidPostNotification::onPermissionUpdate(EPermission permission)
 	{
-		CViewManager::getInstance()->runInUI([this, permission]() {
-			if (OnPermissionUpdate)
-				OnPermissionUpdate(permission);
-			});
+		if (OnPermissionUpdate)
+			OnPermissionUpdate(permission);
 	}
 }
 
