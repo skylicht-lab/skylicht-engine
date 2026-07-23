@@ -160,6 +160,7 @@ public class FullscreenActivity extends AppCompatActivity {
         Clipboard.getInstance().init(this);
         PlayStoreController.getInstance().init(this);
         InAppReview.getInstance().init(this);
+        PostNotification.getInstance().init(this);
     }
 
     @Override
@@ -263,6 +264,13 @@ public class FullscreenActivity extends AppCompatActivity {
             } catch (Exception ignored) {
 
             }
+        });
+    }
+
+    public void openApplicationSetting() {
+        FullscreenActivity.this.runOnUiThread(() -> {
+            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", getPackageName(), null));
+            startActivity(intent);
         });
     }
 

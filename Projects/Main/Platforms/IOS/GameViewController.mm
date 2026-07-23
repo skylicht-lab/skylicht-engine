@@ -191,6 +191,14 @@ extern "C" void application_openURL(const char *url)
 	[[UIApplication sharedApplication] openURL:nsurl options:@{} completionHandler:nil];
 }
 
+extern "C" void application_openApplicationSetting()
+{
+	NSURL* url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+	UIApplication* application = [UIApplication sharedApplication];
+	if ([application canOpenURL:url])
+		[application openURL:url options:@{} completionHandler:nil];
+}
+
 extern "C" bool application_isNetworkAvailable()
 {
 	struct sockaddr_in zeroAddress;

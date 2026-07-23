@@ -59,6 +59,7 @@ jclass g_classNativeInterface = NULL;
 
 jmethodID g_quitApplication = NULL;
 jmethodID g_openURL = NULL;
+jmethodID g_openApplicationSetting = NULL;
 jmethodID g_isNetworkAvailable = NULL;
 jmethodID g_systemGC = NULL;
 
@@ -92,6 +93,7 @@ JNIEXPORT void JNICALL JNI_FUNCTION(NativeInterface_mainInitApp)(JNIEnv* env, jo
 
 	g_quitApplication = (*env)->GetStaticMethodID(env, g_classNativeInterface, "quitApplication", "()V");
 	g_openURL = (*env)->GetStaticMethodID(env, g_classNativeInterface, "openURL", "(Ljava/lang/String;)V");
+	g_openApplicationSetting = (*env)->GetStaticMethodID(env, g_classNativeInterface, "openApplicationSetting", "()V");
 	g_isNetworkAvailable = (*env)->GetStaticMethodID(env, g_classNativeInterface, "isNetworkAvailable", "()Z");
 	g_systemGC = (*env)->GetStaticMethodID(env, g_classNativeInterface, "systemGC", "()V");
 
@@ -338,6 +340,21 @@ void nativeInterface_openURL(const char *url)
 	else
 	{
 		__android_log_print(ANDROID_LOG_INFO, JNI_APPNAME, "can not call NativeInterface::openURL");
+	}
+}
+
+void nativeInterface_openApplicationSetting()
+{
+	JNIEnv* env = skylichtGetJniEnv();
+
+	if (env != NULL && g_openApplicationSetting != NULL && g_classNativeInterface != NULL)
+	{
+		__android_log_print(ANDROID_LOG_INFO, JNI_APPNAME, "call NativeInterface::openApplicationSetting");
+		(*env)->CallStaticVoidMethod(env, g_classNativeInterface, g_openApplicationSetting);
+	}
+	else
+	{
+		__android_log_print(ANDROID_LOG_INFO, JNI_APPNAME, "can not call NativeInterface::openApplicationSetting");
 	}
 }
 

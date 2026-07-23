@@ -69,6 +69,10 @@ public class NativeInterface {
         GameInstance.Activity.openURL(url);
     }
 
+    public static void openApplicationSetting() {
+        GameInstance.Activity.openApplicationSetting();
+    }
+
     static {
         System.loadLibrary("SampleGUI");
     }

@@ -13,6 +13,7 @@ import com.android.billingclient.api.BillingFlowParams;
 import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.ConsumeParams;
 import com.android.billingclient.api.ConsumeResponseListener;
+import com.android.billingclient.api.PendingPurchasesParams;
 import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.ProductDetailsResponseListener;
 import com.android.billingclient.api.Purchase;
@@ -41,7 +42,12 @@ public class PlayStoreController implements PurchasesUpdatedListener {
 
         mBillingClient = BillingClient.newBuilder(context)
                 .setListener(this)
-                .enablePendingPurchases()
+                .enablePendingPurchases(
+                        PendingPurchasesParams.newBuilder()
+                                .enableOneTimeProducts()
+                                .build()
+                )
+                .enableAutoServiceReconnection()
                 .build();
         
         startConnection();
@@ -112,7 +118,8 @@ public class PlayStoreController implements PurchasesUpdatedListener {
                 .setProductList(productList)
                 .build();
 
-        sInstance.mBillingClient.queryProductDetailsAsync(params, (billingResult, productDetailsList) -> {
+        sInstance.mBillingClient.queryProductDetailsAsync(params, (billingResult, productDetailsResult) -> {
+            List<ProductDetails> productDetailsList = productDetailsResult.getProductDetailsList();
             if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK && !productDetailsList.isEmpty()) {
                 ProductDetails productDetails = productDetailsList.get(0);
                 
@@ -152,7 +159,8 @@ public class PlayStoreController implements PurchasesUpdatedListener {
                 .setProductList(productList)
                 .build();
 
-        sInstance.mBillingClient.queryProductDetailsAsync(params, (billingResult, productDetailsList) -> {
+        sInstance.mBillingClient.queryProductDetailsAsync(params, (billingResult, productDetailsResult) -> {
+            List<ProductDetails> productDetailsList = productDetailsResult.getProductDetailsList();
             if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
                 int count = productDetailsList.size();
                 String[] ids = new String[count];

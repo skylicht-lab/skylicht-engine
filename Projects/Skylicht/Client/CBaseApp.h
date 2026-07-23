@@ -307,6 +307,11 @@ namespace Skylicht
 		void openURL(const char* url);
 
 		/**
+		 * @brief Open application setting screen.
+		 */
+		void openApplicationSetting();
+
+		/**
 		* @brief Check network available or not?
 		*/
 		bool isNetworkAvailable();
