@@ -35,16 +35,16 @@ class OPENSSL_EXPORT Certificate {
   ~Certificate();
   Certificate& operator=(const Certificate& other) = delete;
 
-  // FromDER returns a certificate from an DER-encoded X.509 object in |der|.
-  // In the event of a failure, it will return no value, and |out_diagnostic|
+  // FromDER returns a certificate from a DER-encoded X.509 object in `der`.
+  // In the event of a failure, it will return no value, and `out_diagnostic`
   // may be set to a string of human readable debugging information if
   // information about the failure is available.
   static std::unique_ptr<Certificate> FromDER(
       bssl::Span<const uint8_t> der, std::string *out_diagnostic);
 
   // FromPEM returns a certificate from the first CERTIFICATE PEM block in
-  // |pem|. In the event of a failure, it will return no value, and
-  // |out_diagnostic| may be set to a string of human readable debugging
+  // `pem`. In the event of a failure, it will return no value, and
+  // `out_diagnostic` may be set to a string of human readable debugging
   // information if information about the failure is available.
   static std::unique_ptr<Certificate> FromPEM(
       std::string_view pem, std::string *out_diagnostic);

@@ -32,7 +32,7 @@ struct ossl_param_st {
   size_t return_size;
 };
 
-// OSSL_PARAM_END is a terminating element in an array of |OSSL_PARAM|s.
+// OSSL_PARAM_END is a terminating element in an array of `OSSL_PARAM`s.
 #define OSSL_PARAM_END {NULL, 0, NULL, 0, 0}
 
 #if defined(__cplusplus)

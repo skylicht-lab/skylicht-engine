@@ -9,6 +9,7 @@ include_directories(
 )
 
 if (BUILD_OPENSSL)
+add_definitions(-DBORINGSSL_PREFIX=SKYLICHT)
 include_directories(${SKYLICHT_ENGINE_PROJECT_DIR}/ThirdPartySDK/boringssl/include)
 endif()
 

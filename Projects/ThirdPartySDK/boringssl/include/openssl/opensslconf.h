@@ -98,8 +98,8 @@
 // https://stackoverflow.com/questions/216510/extern-inline
 //
 // So in C, always use static inline, whereas in C++, use static inline
-// only if |BORINGSSL_ALWAYS_USE_STATIC_INLINE| is defined (which may be useful
-// for some FFI integrations in conjunction with |BORINGSSL_PREFIX|, as static
+// only if `BORINGSSL_ALWAYS_USE_STATIC_INLINE` is defined (which may be useful
+// for some FFI integrations in conjunction with `BORINGSSL_PREFIX`, as static
 // inline functions are local to the compilation unit and need no prefix).
 #if !defined(__cplusplus) && !defined(BORINGSSL_ALWAYS_USE_STATIC_INLINE)
 #define BORINGSSL_ALWAYS_USE_STATIC_INLINE

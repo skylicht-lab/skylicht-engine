@@ -26,8 +26,8 @@ extern "C" {
 /* Legacy ASN.1 library template definitions.
  *
  * This header is used to define new types in OpenSSL's ASN.1 implementation. It
- * is deprecated and will be unexported from the library. Use the new |CBS| and
- * |CBB| library in <openssl/bytestring.h> instead. */
+ * is deprecated and will be unexported from the library. Use the new `CBS` and
+ * `CBB` library in <openssl/bytestring.h> instead. */
 
 
 typedef struct ASN1_TEMPLATE_st ASN1_TEMPLATE;

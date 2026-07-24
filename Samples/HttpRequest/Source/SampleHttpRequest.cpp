@@ -226,7 +226,17 @@ void SampleHttpRequest::onImGui()
 
 	if (testLocalServer)
 	{
-		strcpy(m_inputBuffer, "http://localhost:8080");
+		if (strstr(m_inputBuffer, "localhost") == NULL)
+			strcpy(m_inputBuffer, "http://localhost:8080");
+
+		bool reclaimFocus = false;
+		if (ImGui::InputText("Url", m_inputBuffer, IM_ARRAYSIZE(m_inputBuffer), ImGuiInputTextFlags_EnterReturnsTrue))
+		{
+			m_httpRequest->setRequestID(1);
+			m_httpRequest->setURL(m_inputBuffer);
+			m_httpRequest->sendRequest();
+			reclaimFocus = true;
+		}
 
 		static int methodId = 0;
 		const char* methods[] = { "GET", "POST", "PUT", "DELETE" };

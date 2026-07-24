@@ -113,12 +113,12 @@ struct AllowRedeclaringConstructor {};
 }  // namespace internal
 
 // A Span<T> is a non-owning reference to a contiguous array of objects of type
-// |T|. Conceptually, a Span is a simple a pointer to |T| and a count of
+// `T`. Conceptually, a Span is a simple a pointer to `T` and a count of
 // elements accessible via that pointer. The elements referenced by the Span can
-// be mutated if |T| is mutable.
+// be mutated if `T` is mutable.
 //
-// A Span can be constructed from container types implementing |data()| and
-// |size()| methods. If |T| is constant, construction from a container type is
+// A Span can be constructed from container types implementing `data()` and
+// `size()` methods. If `T` is constant, construction from a container type is
 // implicit. This allows writing methods that accept data from some unspecified
 // container type:
 //
@@ -255,7 +255,7 @@ class Span : public internal::SpanStorage<T, N> {
 
  public:
   // NOTE: This method may abort() at runtime if pos or len are out of range.
-  // NOTE: As opposed to std::span, the |dynamic_extent| value of |len| is not
+  // NOTE: As opposed to std::span, the `dynamic_extent` value of `len` is not
   // magical here. This gets rid of a lot of runtime checks.
   constexpr Span<T> subspan(size_t pos, size_t len) const {
     // absl::Span throws an exception here. Note std::span and Chromium

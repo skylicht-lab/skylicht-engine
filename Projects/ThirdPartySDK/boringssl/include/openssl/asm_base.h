@@ -25,9 +25,9 @@
 // Every assembly file must include this header. Some linker features require
 // all object files to be tagged with some section metadata. This header file,
 // when included in assembly, adds that metadata. It also makes defines like
-// |OPENSSL_X86_64| available and includes the prefixing macros.
+// `OPENSSL_X86_64` available and includes the prefixing macros.
 //
-// Including this header in an assembly file imples:
+// Including this header in an assembly file implies:
 //
 // - The file does not require an executable stack.
 //
@@ -70,7 +70,7 @@
 
 #if defined(OPENSSL_ARM) || defined(OPENSSL_AARCH64)
 
-// We require the ARM assembler provide |__ARM_ARCH| from Arm C Language
+// We require the ARM assembler provide `__ARM_ARCH` from Arm C Language
 // Extensions (ACLE). This is supported in GCC 4.8+ and Clang 3.2+. MSVC does
 // not implement ACLE, but we require Clang's assembler on Windows.
 #if !defined(__ARM_ARCH)
@@ -92,12 +92,12 @@
 // features which require emitting a .note.gnu.property section with the
 // appropriate architecture-dependent feature bits set.
 //
-// |AARCH64_SIGN_LINK_REGISTER| and |AARCH64_VALIDATE_LINK_REGISTER| expand to
-// PACIxSP and AUTIxSP, respectively. |AARCH64_SIGN_LINK_REGISTER| should be
+// `AARCH64_SIGN_LINK_REGISTER` and `AARCH64_VALIDATE_LINK_REGISTER` expand to
+// PACIxSP and AUTIxSP, respectively. `AARCH64_SIGN_LINK_REGISTER` should be
 // used immediately before saving the LR register (x30) to the stack.
-// |AARCH64_VALIDATE_LINK_REGISTER| should be used immediately after restoring
-// it. Note |AARCH64_SIGN_LINK_REGISTER|'s modifications to LR must be undone
-// with |AARCH64_VALIDATE_LINK_REGISTER| before RET. The SP register must also
+// `AARCH64_VALIDATE_LINK_REGISTER` should be used immediately after restoring
+// it. Note `AARCH64_SIGN_LINK_REGISTER`'s modifications to LR must be undone
+// with `AARCH64_VALIDATE_LINK_REGISTER` before RET. The SP register must also
 // have the same value at the two points. For example:
 //
 //   .global f
@@ -110,11 +110,11 @@
 //     AARCH64_VALIDATE_LINK_REGISTER
 //     ret
 //
-// |AARCH64_VALID_CALL_TARGET| expands to BTI 'c'. Either it, or
-// |AARCH64_SIGN_LINK_REGISTER|, must be used at every point that may be an
+// `AARCH64_VALID_CALL_TARGET` expands to BTI 'c'. Either it, or
+// `AARCH64_SIGN_LINK_REGISTER`, must be used at every point that may be an
 // indirect call target. In particular, all symbols exported from a file must
 // begin with one of these macros. For example, a leaf function that does not
-// save LR can instead use |AARCH64_VALID_CALL_TARGET|:
+// save LR can instead use `AARCH64_VALID_CALL_TARGET`:
 //
 //   .globl return_zero
 //   return_zero:
@@ -123,7 +123,7 @@
 //     ret
 //
 // A non-leaf function which does not immediately save LR may need both macros
-// because |AARCH64_SIGN_LINK_REGISTER| appears late. For example, the function
+// because `AARCH64_SIGN_LINK_REGISTER` appears late. For example, the function
 // may jump to an alternate implementation before setting up the stack:
 //
 //   .globl with_early_jump
@@ -145,7 +145,7 @@
 //
 // These annotations are only required with indirect calls. Private symbols that
 // are only the target of direct calls do not require annotations. Also note
-// that |AARCH64_VALID_CALL_TARGET| is only valid for indirect calls (BLR), not
+// that `AARCH64_VALID_CALL_TARGET` is only valid for indirect calls (BLR), not
 // indirect jumps (BR). Indirect jumps in assembly are currently not supported
 // and would require a macro for BTI 'j'.
 //
@@ -205,6 +205,14 @@
 // clang-format on
 #endif
 #endif  // ARM || AARCH64
+
+#if defined(__APPLE__)
+// Require all Apple assembly to be compatible with `.subsections_via_symbols`.
+// Perlasm output will automatically no-op it by marking all non-initials with
+// `.alt_entry`. Other assembly must either do something similar or be
+// compatible with the optimization.
+.subsections_via_symbols
+#endif
 
 #endif  // __ASSEMBLER__
 

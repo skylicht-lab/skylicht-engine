@@ -85,8 +85,8 @@ extern "C" {
 #define TLSEXT_TYPE_quic_transport_parameters 57
 
 // TLSEXT_TYPE_quic_transport_parameters_standard is an alias for
-// |TLSEXT_TYPE_quic_transport_parameters|. Use
-// |TLSEXT_TYPE_quic_transport_parameters| instead.
+// `TLSEXT_TYPE_quic_transport_parameters`. Use
+// `TLSEXT_TYPE_quic_transport_parameters` instead.
 #define TLSEXT_TYPE_quic_transport_parameters_standard \
   TLSEXT_TYPE_quic_transport_parameters
 
@@ -180,7 +180,7 @@ extern "C" {
 // The following constants are equal to TLS cipher suite values, OR-d with
 // 0x03000000. This is part of OpenSSL's SSL 2.0 legacy. SSL 2.0 has long since
 // been removed from BoringSSL.
-// TODO(davidben): Define these in terms of |SSL_CIPHER_*| constants. The
+// TODO(davidben): Define these in terms of `SSL_CIPHER_*` constants. The
 // challenge is that existing code expects them to be defined in tls1.h, so we
 // must first merge tls1.h into ssl.h.
 #define TLS1_CK_PSK_WITH_AES_128_CBC_SHA 0x0300008C
@@ -208,15 +208,15 @@ extern "C" {
 #define TLS1_3_CK_AES_256_GCM_SHA384 0x03001302
 #define TLS1_3_CK_CHACHA20_POLY1305_SHA256 0x03001303
 
-// The following constants are legacy aliases of |TLS1_3_CK_*|.
+// The following constants are legacy aliases of `TLS1_3_CK_*`.
 // TODO(davidben): Migrate callers to the new name and remove these.
 #define TLS1_CK_AES_128_GCM_SHA256 TLS1_3_CK_AES_128_GCM_SHA256
 #define TLS1_CK_AES_256_GCM_SHA384 TLS1_3_CK_AES_256_GCM_SHA384
 #define TLS1_CK_CHACHA20_POLY1305_SHA256 TLS1_3_CK_CHACHA20_POLY1305_SHA256
 
-// The following constants are the OpenSSL names (see |SSL_CIPHER_get_name|) for
+// The following constants are the OpenSSL names (see `SSL_CIPHER_get_name`) for
 // various TLS ciphers. Prefer the standard name, returned from
-// |SSL_CIPHER_standard_name| and supported by |SSL_CTX_set_cipher_list|.
+// `SSL_CIPHER_standard_name` and supported by `SSL_CTX_set_cipher_list`.
 #define TLS1_TXT_PSK_WITH_AES_128_CBC_SHA "PSK-AES128-CBC-SHA"
 #define TLS1_TXT_PSK_WITH_AES_256_CBC_SHA "PSK-AES256-CBC-SHA"
 #define TLS1_TXT_ECDHE_PSK_WITH_AES_128_CBC_SHA "ECDHE-PSK-AES128-CBC-SHA"
