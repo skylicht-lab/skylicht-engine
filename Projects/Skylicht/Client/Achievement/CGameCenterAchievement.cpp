@@ -3,6 +3,7 @@
 
 #ifdef IOS
 void gamecenter_updateAchievement(const char* id, int step, float percent);
+void gamecenter_showDefaultAchievementsUI();
 #endif
 
 namespace Skylicht
@@ -21,6 +22,13 @@ namespace Skylicht
 	{
 #ifdef IOS
 		gamecenter_updateAchievement(id, step, percent);
+#endif
+	}
+
+	void CGameCenterAchievement::showDefaultAchievementsUI()
+	{
+#ifdef IOS
+		gamecenter_showDefaultAchievementsUI();
 #endif
 	}
 }

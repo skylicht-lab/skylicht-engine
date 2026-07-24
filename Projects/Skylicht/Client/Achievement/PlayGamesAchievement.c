@@ -32,6 +32,7 @@ extern JNIEnv* skylichtGetJniEnv();
 
 jclass g_classPlayGamesAchievement = NULL;
 jmethodID g_updateAchievement = NULL;
+jmethodID g_showDefaultAchievementsUI = NULL;
 
 JNIEXPORT void JNICALL JNI_FUNCTION(PlayGamesAchievement_init)(JNIEnv* env, jobject thiz)
 {
@@ -41,6 +42,7 @@ JNIEXPORT void JNICALL JNI_FUNCTION(PlayGamesAchievement_init)(JNIEnv* env, jobj
 	g_classPlayGamesAchievement = (jclass)(*env)->NewGlobalRef(env, local);
 
 	g_updateAchievement = (*env)->GetStaticMethodID(env, g_classPlayGamesAchievement, "updateAchievement", "(Ljava/lang/String;IF)V");
+	g_showDefaultAchievementsUI = (*env)->GetStaticMethodID(env, g_classPlayGamesAchievement, "showDefaultAchievementsUI", "()V");
 }
 
 void playGamesAchievement_updateAchievement(const char* id, int step, float percent)
@@ -55,6 +57,16 @@ void playGamesAchievement_updateAchievement(const char* id, int step, float perc
 		jstring jid = (*env)->NewStringUTF(env, id);
 		(*env)->CallStaticVoidMethod(env, g_classPlayGamesAchievement, g_updateAchievement, jid, step, percent);
 		(*env)->DeleteLocalRef(env, jid);
+	}
+}
+
+void playGamesAchievement_showDefaultAchievementsUI()
+{
+	JNIEnv* env = skylichtGetJniEnv();
+
+	if (env != NULL && g_showDefaultAchievementsUI != NULL && g_classPlayGamesAchievement != NULL)
+	{
+		(*env)->CallStaticVoidMethod(env, g_classPlayGamesAchievement, g_showDefaultAchievementsUI);
 	}
 }
 #endif

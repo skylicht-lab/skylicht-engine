@@ -15,5 +15,7 @@ namespace Skylicht
 		DECLARE_SINGLETON(CGameCenterAchievement)
 
 		virtual void updateAchievement(const char* id, int step, float percent);
+
+		virtual void showDefaultAchievementsUI();
 	};
 }

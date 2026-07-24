@@ -5,6 +5,7 @@
 extern "C"
 {
 	void playGamesAchievement_updateAchievement(const char* id, int step, float percent);
+	void playGamesAchievement_showDefaultAchievementsUI();
 };
 #endif
 
@@ -24,6 +25,13 @@ namespace Skylicht
 	{
 #ifdef ANDROID
 		playGamesAchievement_updateAchievement(id, step, percent);
+#endif
+	}
+
+	void CPlayGamesAchievement::showDefaultAchievementsUI()
+	{
+#ifdef ANDROID
+		playGamesAchievement_showDefaultAchievementsUI();
 #endif
 	}
 }

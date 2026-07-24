@@ -3,6 +3,21 @@
 #include "GameCenterAchievement.h"
 
 #import <GameKit/GameKit.h>
+#import <UIKit/UIKit.h>
+
+@interface SkylichtGameCenterAchievementDelegate : NSObject<GKGameCenterControllerDelegate>
+@end
+
+@implementation SkylichtGameCenterAchievementDelegate
+
+- (void)gameCenterViewControllerDidFinish:(GKGameCenterViewController*)gameCenterViewController
+{
+	[gameCenterViewController dismissViewControllerAnimated:YES completion:nil];
+}
+
+@end
+
+static SkylichtGameCenterAchievementDelegate* s_gameCenterAchievementDelegate = nil;
 
 void gamecenter_updateAchievement(const char* id, int step, float percent)
 {
@@ -30,6 +45,31 @@ void gamecenter_updateAchievement(const char* id, int step, float percent)
 	[GKAchievement reportAchievements:@[achievement] withCompletionHandler:^(NSError* error)
 	{
 	}];
+}
+
+void gamecenter_showDefaultAchievementsUI()
+{
+	dispatch_async(dispatch_get_main_queue(), ^
+	{
+		if ([GKLocalPlayer localPlayer].isAuthenticated == NO)
+			return;
+
+		GKGameCenterViewController* gameCenterViewController = [[GKGameCenterViewController alloc] init];
+		if (gameCenterViewController == nil)
+			return;
+
+		if (s_gameCenterAchievementDelegate == nil)
+			s_gameCenterAchievementDelegate = [[SkylichtGameCenterAchievementDelegate alloc] init];
+
+		gameCenterViewController.gameCenterDelegate = s_gameCenterAchievementDelegate;
+		gameCenterViewController.viewState = GKGameCenterViewControllerStateAchievements;
+
+		UIViewController* rootViewController = [[[UIApplication sharedApplication] keyWindow] rootViewController];
+		if (rootViewController == nil)
+			return;
+
+		[rootViewController presentViewController:gameCenterViewController animated:YES completion:nil];
+	});
 }
 
 #endif

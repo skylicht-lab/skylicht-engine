@@ -1,12 +1,15 @@
 package com.skylicht.engine3d;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.util.Log;
 
 import com.google.android.gms.games.AchievementsClient;
 import com.google.android.gms.games.PlayGames;
 
 public class PlayGamesAchievement {
+    private static final int RC_ACHIEVEMENTS = 9003;
+
     public static PlayGamesAchievement sInstance = null;
     private AchievementsClient mAchievementsClient;
 
@@ -35,8 +38,25 @@ public class PlayGamesAchievement {
         });
     }
 
+    public void startShowDefaultAchievementsUI() {
+        if (mAchievementsClient == null)
+            return;
+
+        GameInstance.Activity.runOnUiThread(() -> {
+            mAchievementsClient.getAchievementsIntent()
+                    .addOnSuccessListener((Intent intent) ->
+                            GameInstance.Activity.startActivityForResult(intent, RC_ACHIEVEMENTS))
+                    .addOnFailureListener(e ->
+                            Log.w("Skylicht", e != null ? e.getMessage() : "Show achievements failed"));
+        });
+    }
+
     public static void updateAchievement(String id, int step, float percent) {
         PlayGamesAchievement.getInstance().startUpdateAchievement(id, step, percent);
+    }
+
+    public static void showDefaultAchievementsUI() {
+        PlayGamesAchievement.getInstance().startShowDefaultAchievementsUI();
     }
 
     public native void init();

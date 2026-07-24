@@ -11,6 +11,8 @@ namespace Skylicht
 
 		// percent is in range 0.0f to 100.0f.
 		virtual void updateAchievement(const char* id, int step, float percent) = 0;
+
+		virtual void showDefaultAchievementsUI() = 0;
 	};
 
 	IAchievement* getOSAchievement();
