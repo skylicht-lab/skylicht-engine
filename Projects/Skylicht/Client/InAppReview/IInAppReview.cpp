@@ -17,9 +17,9 @@ namespace Skylicht
 	IInAppReview* getInAppReview()
 	{
 #if defined(IOS)
-		return CIOSInAppReview::getInstance();
+		return CIOSInAppReview::createGetInstance();
 #elif defined(ANDROID)
-		return CAndroidInAppReview::getInstance();
+		return CAndroidInAppReview::createGetInstance();
 #else
 		return NULL;
 #endif

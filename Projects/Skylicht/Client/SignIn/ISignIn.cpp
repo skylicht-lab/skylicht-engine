@@ -17,9 +17,9 @@ namespace Skylicht
 	ISignIn* getOSSignIn()
 	{
 #if defined(IOS)
-		return CGameCenterSignIn::getInstance();
+		return CGameCenterSignIn::createGetInstance();
 #elif defined(ANDROID)
-		return CPlayGamesSignIn::getInstance();
+		return CPlayGamesSignIn::createGetInstance();
 #else
 		return NULL;
 #endif

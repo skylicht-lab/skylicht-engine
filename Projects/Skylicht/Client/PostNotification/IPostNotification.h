@@ -34,6 +34,4 @@ namespace Skylicht
 	};
 
 	IPostNotification* getOSPostNotification();
-
-	void releaseOSPostNotification();
 }

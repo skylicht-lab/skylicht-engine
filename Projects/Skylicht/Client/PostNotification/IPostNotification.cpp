@@ -30,12 +30,4 @@ namespace Skylicht
 #endif
 	}
 
-	void releaseOSPostNotification()
-	{
-#if defined(IOS)
-		CIOSPostNotification::releaseInstance();
-#elif defined(ANDROID)
-		CAndroidPostNotification::releaseInstance();
-#endif
-	}
 }

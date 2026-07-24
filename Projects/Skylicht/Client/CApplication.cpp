@@ -77,6 +77,10 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "StorePurchase/CTestStoreController.h"
 #include "InAppReview/CAndroidInAppReview.h"
 #include "InAppReview/CIOSInAppReview.h"
+#include "Achievement/CPlayGamesAchievement.h"
+#include "Achievement/CGameCenterAchievement.h"
+#include "PostNotification/CAndroidPostNotification.h"
+#include "PostNotification/CIOSPostNotification.h"
 
 CBaseApp* g_app = NULL;
 Skylicht::CBuildConfig* g_config = Skylicht::CBuildConfig::createGetInstance();
@@ -213,17 +217,21 @@ namespace Skylicht
 
 #ifdef ANDROID
 		CPlayGamesSignIn::createGetInstance();
+		CPlayGamesAchievement::createGetInstance();
 		CAndroidTextField::createGetInstance();
 		CAndroidClipboard::createGetInstance();
 		CPlayStoreController::createGetInstance();
 		CAndroidInAppReview::createGetInstance();
+		CAndroidPostNotification::createGetInstance();
 #endif
 
 #ifdef IOS
 		CGameCenterSignIn::createGetInstance();
+		CGameCenterAchievement::createGetInstance();
 		CIOSTextField::createGetInstance();
 		CAppStoreController::createGetInstance()->init();
 		CIOSInAppReview::createGetInstance();
+		CIOSPostNotification::createGetInstance();
 #endif
 		CDesktopClipboard::createGetInstance();
 		CTestStoreController::createGetInstance()->init();
@@ -233,17 +241,21 @@ namespace Skylicht
 	{
 #ifdef ANDROID
 		CPlayGamesSignIn::releaseInstance();
+		CPlayGamesAchievement::releaseInstance();
 		CPlayStoreController::releaseInstance();
 		CAndroidClipboard::releaseInstance();
 		CAndroidTextField::releaseInstance();
 		CAndroidInAppReview::releaseInstance();
+		CAndroidPostNotification::releaseInstance();
 #endif
 
 #ifdef IOS
 		CGameCenterSignIn::releaseInstance();
+		CGameCenterAchievement::releaseInstance();
 		CIOSTextField::releaseInstance();
 		CAppStoreController::releaseInstance();
 		CIOSInAppReview::releaseInstance();
+		CIOSPostNotification::releaseInstance();
 #endif
 
 		CDesktopClipboard::releaseInstance();

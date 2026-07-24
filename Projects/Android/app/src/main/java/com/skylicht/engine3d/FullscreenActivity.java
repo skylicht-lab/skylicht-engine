@@ -170,6 +170,7 @@ public class FullscreenActivity extends AppCompatActivity {
 
         // Init native plugin
         PlayGamesSignIn.getInstance().init(this);
+        PlayGamesAchievement.getInstance().init(this);
         TextField.getInstance().init(this);
         Clipboard.getInstance().init(this);
         PlayStoreController.getInstance().init(this);

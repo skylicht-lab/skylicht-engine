@@ -93,14 +93,14 @@ namespace Skylicht
 	IStoreController* getStoreController(bool isTesting)
 	{
 		if (isTesting)
-			return CTestStoreController::getInstance();
+			return CTestStoreController::createGetInstance();
 
 #if defined(ANDROID)
-		return CPlayStoreController::getInstance();
+		return CPlayStoreController::createGetInstance();
 #elif defined(IOS)
-		return CAppStoreController::getInstance();
+		return CAppStoreController::createGetInstance();
 #else
-		return CTestStoreController::getInstance();
+		return CTestStoreController::createGetInstance();
 #endif
 	}
 }

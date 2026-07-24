@@ -17,9 +17,9 @@ namespace Skylicht
 	ITextField *getOSTextField()
 	{
 #if defined(IOS)
-		return CIOSTextField::getInstance();
+		return CIOSTextField::createGetInstance();
 #elif defined(ANDROID)
-		return CAndroidTextField::getInstance();
+		return CAndroidTextField::createGetInstance();
 #else
 		return NULL;
 #endif
