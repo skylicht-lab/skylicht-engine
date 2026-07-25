@@ -3,6 +3,7 @@
 
 #ifdef IOS
 void gamecenter_updateAchievement(const char* id, int step, float percent);
+void gamecenter_fetch();
 void gamecenter_showDefaultAchievementsUI();
 #endif
 
@@ -22,6 +23,16 @@ namespace Skylicht
 	{
 #ifdef IOS
 		gamecenter_updateAchievement(id, step, percent);
+#endif
+	}
+
+	void CGameCenterAchievement::fetch()
+	{
+#ifdef IOS
+		gamecenter_fetch();
+#else
+		if (OnFetchData != nullptr)
+			OnFetchData(std::vector<SAchievementInfo>());
 #endif
 	}
 

@@ -8,6 +8,7 @@ namespace Skylicht
 {
 	IAchievement::IAchievement()
 	{
+		OnFetchData = nullptr;
 	}
 
 	IAchievement::~IAchievement()

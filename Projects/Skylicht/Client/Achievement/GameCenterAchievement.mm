@@ -1,6 +1,7 @@
 #ifdef IOS
 
 #include "GameCenterAchievement.h"
+#include "CGameCenterAchievement.h"
 
 #import <GameKit/GameKit.h>
 #import <UIKit/UIKit.h>
@@ -69,6 +70,41 @@ void gamecenter_showDefaultAchievementsUI()
 			return;
 
 		[rootViewController presentViewController:gameCenterViewController animated:YES completion:nil];
+	});
+}
+
+void gamecenter_fetch()
+{
+	dispatch_async(dispatch_get_main_queue(), ^
+	{
+		if ([GKLocalPlayer localPlayer].isAuthenticated == NO)
+		{
+			if (Skylicht::CGameCenterAchievement::getInstance()->OnFetchData != nullptr)
+				Skylicht::CGameCenterAchievement::getInstance()->OnFetchData(std::vector<Skylicht::SAchievementInfo>());
+			return;
+		}
+
+		[GKAchievement loadAchievementsWithCompletionHandler:^(NSArray<GKAchievement*>* achievements, NSError* error)
+		{
+			std::vector<Skylicht::SAchievementInfo> data;
+
+			if (error == nil && achievements != nil)
+			{
+				for (GKAchievement* achievement in achievements)
+				{
+					Skylicht::SAchievementInfo info;
+					info.Id = achievement.identifier != nil ? [achievement.identifier UTF8String] : "";
+					info.Unlock = achievement.completed == YES;
+					info.Percent = (float)achievement.percentComplete;
+					info.CurrentSteps = 0;
+					info.TotalSteps = 0;
+					data.push_back(info);
+				}
+			}
+
+			if (Skylicht::CGameCenterAchievement::getInstance()->OnFetchData != nullptr)
+				Skylicht::CGameCenterAchievement::getInstance()->OnFetchData(data);
+		}];
 	});
 }
 
