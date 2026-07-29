@@ -31,7 +31,7 @@ vec3 pointlightShadow(
 	float NdotE = max(0.0,dot(normal, H));
 	float specular = pow(NdotE, 10.0 + 100.0 * gloss) * spec;
 	float bias = 0.05;
-	float d = distance - bias;
+	float d = (distance - bias) * lightAttenuation.y;
 	float shadow = 0.0;
 	float samples = 2.0;
 	float offset = 0.01;

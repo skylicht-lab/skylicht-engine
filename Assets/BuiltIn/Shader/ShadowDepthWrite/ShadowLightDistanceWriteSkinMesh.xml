@@ -7,6 +7,7 @@
 		</vs>
 		<fs>
 			<uniform name="uLightPosition" type="POINT_LIGHT_POSITION" value="0" float="4"/>
+			<uniform name="uLightAttenuation" type="POINT_LIGHT_ATTENUATION" value="0" float="4"/>
 		</fs>
 	</uniforms>
 	<shader type="GLSL" vs="GLSL/ShadowDepthWriteSkinMeshVS.glsl" fs="GLSL/ShadowLightDistanceWriteFS.glsl"/>

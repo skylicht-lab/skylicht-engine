@@ -31,7 +31,7 @@ float3 pointlightShadow(
 
 	// Shadow
 	float bias = 0.05;
-	float d = distance - bias;
+	float d = (distance - bias) * lightAttenuation.y;
 
 #if defined(HARD_SHADOW)
 	float sampledDistance = uPointLightShadowMap.SampleLevel(uPointLightShadowMapSampler, -lightDir, 0).r;

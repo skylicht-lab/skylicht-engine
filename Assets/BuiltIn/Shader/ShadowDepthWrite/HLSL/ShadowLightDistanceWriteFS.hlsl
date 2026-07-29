@@ -8,13 +8,14 @@ struct PS_INPUT
 cbuffer cbPerFrame
 {
 	float4 uLightPosition;
+	float4 uLightAttenuation;
 }
 
 float4 main(PS_INPUT input) : SV_TARGET
 {
 	float3 lightToVertex = input.worldPos.xyz - uLightPosition.xyz;
 
-	float lightToPixelDistance = length(lightToVertex);
+	float lightToPixelDistance = length(lightToVertex) * uLightAttenuation.y;
 
 	return lightToPixelDistance;
 }
