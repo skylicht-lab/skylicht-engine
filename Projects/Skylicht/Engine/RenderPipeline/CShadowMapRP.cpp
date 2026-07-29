@@ -462,6 +462,7 @@ namespace Skylicht
 
 		// use direction light
 		bool castShadow = true;
+		bool rendererUpdated = false;
 
 		CDirectionalLight* light = CShaderLighting::getMainShadowLight();
 		if (light == NULL)
@@ -506,7 +507,10 @@ namespace Skylicht
 				if (castShadow && light)
 				{
 					if (i == m_numCascade - 1)
+					{
 						entityManager->cullingAndRender();
+						rendererUpdated = true;
+					}
 					else
 						entityManager->render();
 				}
@@ -524,6 +528,7 @@ namespace Skylicht
 			if (castShadow)
 			{
 				entityManager->cullingAndRender();
+				rendererUpdated = true;
 			}
 		}
 
@@ -573,6 +578,10 @@ namespace Skylicht
 			getVideoDriver()->removeTexture(rtt);
 		}
 		*/
+
+		// fix bug: Disable shadow casting on DirectionLight will disable all lights
+		if (!rendererUpdated)
+			entityManager->updateRenderer();
 
 		bool renderTargetChanged = false;
 

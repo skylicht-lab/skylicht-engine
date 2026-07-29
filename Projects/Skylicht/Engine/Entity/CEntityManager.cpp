@@ -602,6 +602,29 @@ namespace Skylicht
 		}
 	}
 
+	void CEntityManager::updateRenderer()
+	{
+		for (IRenderSystem*& s : m_renders)
+		{
+			s->beginQuery(this);
+		}
+
+		if (m_rendererChanged)
+		{
+			sortRenderer();
+			m_rendererChanged = false;
+		}
+
+		CEntity** entities = m_alives.pointer();
+		int numEntity = m_alives.size();
+
+		for (IRenderSystem*& s : m_renders)
+		{
+			s->onQuery(this, entities, numEntity);
+			s->update(this);
+		}
+	}
+
 	void CEntityManager::renderEmission()
 	{
 		for (IRenderSystem*& s : m_sortRender)
