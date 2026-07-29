@@ -229,7 +229,7 @@ namespace Skylicht
 		CShaderLighting::setPointLight(NULL, 0);
 	}
 
-	void CPointLightBakeRP::drawInstancingMeshBuffer(CMesh* mesh, int bufferID, int materialRenderID, CEntityManager* entityMgr, int entityID, bool skinnedMesh)
+	void CPointLightBakeRP::drawInstancingMeshBuffer(CMesh* mesh, int bufferID, CShader* instancingShader, CEntityManager* entityMgr, int entityID, bool skinnedMesh)
 	{
 		// no render instancing mesh
 	}
