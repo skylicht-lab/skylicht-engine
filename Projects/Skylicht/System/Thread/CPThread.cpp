@@ -31,76 +31,93 @@ namespace Skylicht
 {
 	namespace System
 	{
-		CPThread::CPThread(IThreadCallback *callback) :
-		IThread(callback),
-		m_run(false)
+		CPThread::CPThread(IThreadCallback* callback) :
+			IThread(callback),
+			m_run(false),
+			m_started(false),
+			m_joined(false),
+			m_stopRequested(false)
 		{
 			pthread_mutex_init(&m_loopMutex, 0);
-			
+
 			int result = pthread_create(&m_pthread, 0, CPThread::run, this);
 			if (result != 0)
 			{
 				printf("CPThread::CPThread error in creating thread\n");
 			}
+			else
+			{
+				m_started = true;
+			}
 		}
-		
+
 		CPThread::~CPThread()
 		{
 			stop();
-			
+
 			pthread_mutex_destroy(&m_loopMutex);
 		}
-		
-		void* CPThread::run(void *param)
+
+		void* CPThread::run(void* param)
 		{
 			CPThread* p = (CPThread*)param;
 			p->update();
 			return 0;
 		}
-		
+
 		void CPThread::update()
 		{
 			if (m_callback == NULL)
 				return;
-			
+
 			// todo run thread
-			m_run = m_callback->enableThreadLoop();
-			
-			bool needUnlock = false;
-			if (m_run)
-			{
-				pthread_mutex_lock(&m_loopMutex);
-				needUnlock = true;
-			}
-			
+			bool run = m_callback->enableThreadLoop();
+
+			pthread_mutex_lock(&m_loopMutex);
+			m_run = m_stopRequested ? false : run;
+			pthread_mutex_unlock(&m_loopMutex);
+
 			m_callback->runThread();
-			
+
 			// callback
-			while (m_run)
+			while (true)
 			{
-				pthread_mutex_unlock(&m_loopMutex);
-				m_callback->updateThread();
 				pthread_mutex_lock(&m_loopMutex);
-			}
-			
-			if (needUnlock)
-			{
+				run = m_run;
 				pthread_mutex_unlock(&m_loopMutex);
+
+				if (run == false)
+					break;
+
+				m_callback->updateThread();
 			}
-			
+
+			pthread_mutex_lock(&m_loopMutex);
+			m_run = false;
+			pthread_mutex_unlock(&m_loopMutex);
+
 			// IThread::sleep(1);
 		}
-		
+
 		void CPThread::stop()
 		{
-			if (m_run)
+			bool needJoin = false;
+
+			pthread_mutex_lock(&m_loopMutex);
+			m_stopRequested = true;
+			m_run = false;
+			needJoin = m_started && !m_joined && pthread_equal(pthread_self(), m_pthread) == 0;
+			pthread_mutex_unlock(&m_loopMutex);
+
+			if (needJoin)
 			{
 				printf("CPThread::stop\n");
-				pthread_mutex_lock(&m_loopMutex);
-				m_run = false;
-				pthread_mutex_unlock(&m_loopMutex);
-				
 				pthread_join(m_pthread, 0);
+
+				pthread_mutex_lock(&m_loopMutex);
+				m_joined = true;
+				pthread_mutex_unlock(&m_loopMutex);
+
 				printf("CPThread::stop Thread is stop!\n");
 			}
 		}

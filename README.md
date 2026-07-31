@@ -276,10 +276,11 @@ And then copy the resulting InstallLibs folder to another project.
 See the project example: https://github.com/skylicht-lab/hello-skylicht
 See the [API Reference](https://api.skylicht.com)
 
-## Games Built with Skylicht
+## Game Built with Skylicht
 
+### Mech Survival
 <p align="center">
-  <img src="Documents/Media/Game/mech-survival.jpg" alt="Mech Survival" width="760">
+  <img src="Documents/Media/Game/mech-survival.jpg" alt="Mech Survival" width="50%">
 </p>
 
 <p align="center">

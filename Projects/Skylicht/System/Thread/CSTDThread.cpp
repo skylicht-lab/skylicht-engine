@@ -32,20 +32,25 @@ namespace Skylicht
 	namespace System
 	{
 		CSTDThread::CSTDThread(IThreadCallback* callback) :
-		IThread(callback),
-		m_run(false)
+			IThread(callback),
+			m_thread(NULL),
+			m_run(false),
+			m_started(false),
+			m_joined(false),
+			m_stopRequested(false)
 		{
 			printf("[CSTDThread] created\n");
 			m_thread = new std::thread(CSTDThread::run, this);
+			m_started = true;
 		}
-		
+
 		CSTDThread::~CSTDThread()
 		{
 			stop();
-			
+
 			delete m_thread;
 		}
-		
+
 		void CSTDThread::update()
 		{
 			if (m_callback == NULL)
@@ -53,52 +58,59 @@ namespace Skylicht
 				printf("[CSTDThread] quit - no Callback\n");
 				return;
 			}
-			
+
 			printf("[CSTDThread] run update\n");
-			
+
 			// run thread
-			m_run = m_callback->enableThreadLoop();
-			
-			bool needUnlock = false;
-			if (m_run)
-			{
-				m_loopMutex.lock();
-				needUnlock = true;
-			}
-			
+			bool run = m_callback->enableThreadLoop();
+
+			m_loopMutex.lock();
+			m_run = m_stopRequested ? false : run;
+			m_loopMutex.unlock();
+
 			m_callback->runThread();
-			
+
 			// callback
-			while (m_run)
+			while (true)
 			{
-				m_loopMutex.unlock();
-				m_callback->updateThread();
 				m_loopMutex.lock();
-			}
-			
-			if (needUnlock)
-			{
+				run = m_run;
 				m_loopMutex.unlock();
+
+				if (run == false)
+					break;
+
+				m_callback->updateThread();
 			}
-			
+
+			m_loopMutex.lock();
+			m_run = false;
+			m_loopMutex.unlock();
+
 			printf("[CSTDThread] end update\n");
-			
+
 			// IThread::sleep(1);
 		}
-		
+
 		void CSTDThread::stop()
 		{
-			if (m_run)
+			bool needJoin = false;
+
+			m_loopMutex.lock();
+			m_stopRequested = true;
+			m_run = false;
+			needJoin = m_started && !m_joined && m_thread != NULL && m_thread->joinable() && std::this_thread::get_id() != m_thread->get_id();
+			if (needJoin)
+				m_joined = true;
+			m_loopMutex.unlock();
+
+			if (needJoin)
 			{
-				m_loopMutex.lock();
-				m_run = false;
-				m_loopMutex.unlock();
-				
 				m_thread->join();
 				printf("[CSTDThread] stop!\n");
 			}
 		}
-		
+
 		void* CSTDThread::run(void* param)
 		{
 			CSTDThread* p = reinterpret_cast<CSTDThread*>(param);

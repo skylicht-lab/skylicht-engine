@@ -132,6 +132,7 @@ namespace Skylicht
 			m_bufferLengthTime = 0.0f;
 			m_currentBuffer = 0;
 			m_numBuffer = 0;
+			m_buffer = NULL;
 			m_decodeBuffer = NULL;
 
 			m_fadeGain = 0.0f;
@@ -149,16 +150,16 @@ namespace Skylicht
 				m_driver->destroyDriverSource(m_source);
 
 			if (m_decodeBuffer)
-				delete m_decodeBuffer;
+				delete[]m_decodeBuffer;
 
 			if (m_numBuffer > 0)
 			{
 				for (int i = 0; i < m_numBuffer; i++)
 				{
 					if (m_buffer[i] != NULL)
-						delete m_buffer[i];
+						delete[]m_buffer[i];
 				}
-				delete m_buffer;
+				delete[]m_buffer;
 			}
 
 			if (m_decoder)
@@ -183,13 +184,13 @@ namespace Skylicht
 			if (reallocation)
 			{
 				if (m_decodeBuffer)
-					delete m_decodeBuffer;
+					delete[]m_decodeBuffer;
 				m_decodeBuffer = new unsigned char[(int)(m_bufferSize * SKYLICHTAUDIO_MAX_PITCH)];
 
 				for (int i = 0; i < m_numBuffer; i++)
 				{
 					if (m_buffer[i])
-						delete m_buffer[i];
+						delete[]m_buffer[i];
 
 					m_buffer[i] = new unsigned char[m_bufferSize];
 					memset(m_buffer[i], 0, m_bufferSize);

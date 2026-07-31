@@ -39,33 +39,44 @@ namespace Skylicht
 		}
 
 		CWinThread::CWinThread(IThreadCallback* callback) :
-		IThread(callback),
-		m_run(false)
+			IThread(callback),
+			m_thread(NULL),
+			m_loopMutex(NULL),
+			m_threadID(0),
+			m_run(false),
+			m_started(false),
+			m_joined(false),
+			m_stopRequested(false)
 		{
 			printf("[CWinThread] created\n");
-			DWORD threadID;
+			m_loopMutex = CreateMutex(NULL, FALSE, NULL);
+
 			m_thread = CreateThread(
-									NULL,       // default security attributes
-									0,          // default stack size
-									(LPTHREAD_START_ROUTINE)threadFunction,
-									this,       // thread function arguments
-									0,          // default creation flags
-									&threadID); // receive thread identifier;
-			
+				NULL,       // default security attributes
+				0,          // default stack size
+				(LPTHREAD_START_ROUTINE)threadFunction,
+				this,       // thread function arguments
+				0,          // default creation flags
+				&m_threadID); // receive thread identifier;
+
 			if (m_thread == NULL)
 			{
 				printf("[CWinThread] Warning: init error: %d\n", GetLastError());
 			}
-			
-			m_loopMutex = CreateMutex(NULL, FALSE, NULL);
+			else
+			{
+				m_started = true;
+			}
 		}
 
 		CWinThread::~CWinThread()
 		{
 			stop();
-			
-			CloseHandle(m_thread);
-			CloseHandle(m_loopMutex);
+
+			if (m_thread != NULL)
+				CloseHandle(m_thread);
+			if (m_loopMutex != NULL)
+				CloseHandle(m_loopMutex);
 		}
 
 		void CWinThread::update()
@@ -75,47 +86,86 @@ namespace Skylicht
 				printf("[CWinThread] quit - no Callback\n");
 				return;
 			}
-			
+
 			printf("[CWinThread] run update\n");
-			
+
 			// run thread
-			m_run = m_callback->enableThreadLoop();
-			
-			bool needUnlock = false;
-			if (m_run)
+			bool run = m_callback->enableThreadLoop();
+
+			if (m_loopMutex != NULL)
 			{
 				WaitForSingleObject(m_loopMutex, INFINITE);
-				needUnlock = true;
+				m_run = m_stopRequested ? false : run;
+				ReleaseMutex(m_loopMutex);
 			}
-			
+			else
+			{
+				m_run = m_stopRequested ? false : run;
+			}
+
 			m_callback->runThread();
-			
+
 			// callback
-			while (m_run)
+			while (true)
 			{
-				ReleaseMutex(m_loopMutex);
+				if (m_loopMutex != NULL)
+				{
+					WaitForSingleObject(m_loopMutex, INFINITE);
+					run = m_run;
+					ReleaseMutex(m_loopMutex);
+				}
+				else
+				{
+					run = m_run;
+				}
+
+				if (run == false)
+					break;
+
 				m_callback->updateThread();
-				WaitForSingleObject(m_loopMutex, INFINITE);
 			}
-			
-			if (needUnlock)
+
+			if (m_loopMutex != NULL)
 			{
+				WaitForSingleObject(m_loopMutex, INFINITE);
+				m_run = false;
 				ReleaseMutex(m_loopMutex);
 			}
-			
+			else
+			{
+				m_run = false;
+			}
+
 			printf("[CWinThread] end update\n");
-			
+
 			// IThread::sleep(1);
 		}
 
 		void CWinThread::stop()
 		{
-			if (m_run)
+			bool needWait = false;
+
+			if (m_loopMutex != NULL)
 			{
 				WaitForSingleObject(m_loopMutex, INFINITE);
+				m_stopRequested = true;
 				m_run = false;
+				needWait = m_started && !m_joined && m_thread != NULL && GetCurrentThreadId() != m_threadID;
+				if (needWait)
+					m_joined = true;
 				ReleaseMutex(m_loopMutex);
-				
+			}
+			else
+			{
+				m_stopRequested = true;
+				m_run = false;
+				needWait = m_started && !m_joined && m_thread != NULL && GetCurrentThreadId() != m_threadID;
+				if (needWait)
+					m_joined = true;
+			}
+
+			if (needWait)
+			{
 				WaitForSingleObject(m_thread, INFINITE);
 				printf("[CWinThread] stop!\n");
 			}

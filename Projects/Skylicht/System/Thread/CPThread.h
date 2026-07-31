@@ -42,6 +42,10 @@ namespace Skylicht
 			pthread_mutex_t m_loopMutex;
 			
 			bool m_run;
+			bool m_started;
+			// Guard against joining the same pthread twice when stop() is called repeatedly.
+			bool m_joined;
+			bool m_stopRequested;
 		public:
 			CPThread(IThreadCallback *callback);
 			virtual ~CPThread();

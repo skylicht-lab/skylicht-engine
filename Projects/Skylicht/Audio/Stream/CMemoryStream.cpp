@@ -53,8 +53,11 @@ namespace Skylicht
 		
 		CMemoryStream::~CMemoryStream()
 		{
-			if (m_takeOwnership == false)
-				delete m_buffer;
+			if (!m_takeOwnership)
+			{
+				if (m_buffer != NULL)
+					delete[]m_buffer;
+			}
 		}
 		
 		IStreamCursor* CMemoryStream::createCursor()
@@ -122,6 +125,8 @@ namespace Skylicht
 			if (buff  && len > 0)
 			{
 				int remain = m_size - m_pos;
+				if (remain <= 0)
+					return 0;
 				
 				if (len > remain)
 					len = remain;
@@ -138,7 +143,7 @@ namespace Skylicht
 		
 		bool CMemoryStreamCursor::endOfStream()
 		{
-			return m_pos >= m_size - 1;
+			return m_pos >= m_size;
 		}
 		
 		int CMemoryStreamCursor::size()
@@ -148,7 +153,10 @@ namespace Skylicht
 		
 		bool CMemoryStreamCursor::readyReadData(int len)
 		{
-			return true;
+			if (len <= 0)
+				return true;
+
+			return m_pos >= 0 && m_pos <= m_size && len <= m_size - m_pos;
 		}
 	}
 }

@@ -42,6 +42,10 @@ namespace Skylicht
 			std::thread *m_thread;
 			std::mutex m_loopMutex;
 			bool m_run;
+			bool m_started;
+			// Guard against joining the same std::thread twice when stop() is called repeatedly.
+			bool m_joined;
+			bool m_stopRequested;
 			
 		public:
 			CSTDThread(IThreadCallback *callback);

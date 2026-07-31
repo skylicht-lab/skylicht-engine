@@ -40,7 +40,12 @@ namespace Skylicht
 		protected:
 			HANDLE m_thread;
 			HANDLE m_loopMutex;
+			DWORD m_threadID;
 			bool m_run;
+			bool m_started;
+			// Guard against waiting the same thread twice when stop() is called repeatedly.
+			bool m_joined;
+			bool m_stopRequested;
 			
 		public:
 			CWinThread(IThreadCallback* callback);
