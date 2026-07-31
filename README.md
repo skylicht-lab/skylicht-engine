@@ -276,6 +276,22 @@ And then copy the resulting InstallLibs folder to another project.
 See the project example: https://github.com/skylicht-lab/hello-skylicht
 See the [API Reference](https://api.skylicht.com)
 
+## Games Built with Skylicht
+
+<p align="center">
+  <img src="Documents/Media/Game/mech-survival.jpg" alt="Mech Survival" width="760">
+</p>
+
+<p align="center">
+  <a href="https://play.google.com/store/apps/details?id=com.skylicht.mech">
+    <img src="Documents/Media/Game/android-store.png" alt="Available on Google Play" height="54">
+  </a>
+  &nbsp;&nbsp;
+  <a href="https://apps.apple.com/us/app/mech-survival/id6737975030">
+    <img src="Documents/Media/Game/ios-store.png" alt="Download on the App Store" height="54">
+  </a>
+</p>
+
 # Roadmap
 - [Skylight Engine Core](https://github.com/skylicht-lab/skylicht-engine/issues/5)
 - [Engine Editor](https://github.com/skylicht-lab/skylicht-engine/issues/6)
