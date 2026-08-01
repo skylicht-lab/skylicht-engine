@@ -32,11 +32,11 @@ namespace Skylicht
 		///////////////////////////////////////////
 		// CMemoryStream
 		///////////////////////////////////////////
-		CMemoryStream::CMemoryStream(unsigned char *buffer, int size, bool takeOwnership)
+		CMemoryStream::CMemoryStream(unsigned char* buffer, int size, bool takeOwnership)
 		{
 			m_takeOwnership = takeOwnership;
 			m_size = size;
-			
+
 			if (takeOwnership)
 			{
 				m_buffer = buffer;
@@ -46,11 +46,11 @@ namespace Skylicht
 			{
 				m_buffer = new unsigned char[m_size];
 				m_size = size;
-				
+
 				memcpy(m_buffer, buffer, size);
 			}
 		}
-		
+
 		CMemoryStream::~CMemoryStream()
 		{
 			if (!m_takeOwnership)
@@ -59,51 +59,51 @@ namespace Skylicht
 					delete[]m_buffer;
 			}
 		}
-		
+
 		IStreamCursor* CMemoryStream::createCursor()
 		{
 			return new CMemoryStreamCursor(m_buffer, m_size);
 		}
-		
-		
+
+
 		///////////////////////////////////////////
 		// CMemoryStreamCursor
 		///////////////////////////////////////////
-		
-		CMemoryStreamCursor::CMemoryStreamCursor(unsigned char *buffer, int size)
+
+		CMemoryStreamCursor::CMemoryStreamCursor(unsigned char* buffer, int size)
 		{
 			m_buffer = buffer;
 			m_size = size;
 			m_pos = 0;
 		}
-		
+
 		CMemoryStreamCursor::~CMemoryStreamCursor()
 		{
 		}
-		
+
 		int CMemoryStreamCursor::seek(int pos, EOrigin origin)
 		{
 			int currentPosition = m_pos;
-			
+
 			switch (origin)
 			{
-				case OriginStart:
-				{
-					currentPosition = pos;
-					break;
-				}
-				case OriginCurrent:
-				{
-					currentPosition += pos;
-					break;
-				}
-				case OriginEnd:
-				{
-					currentPosition = m_size - pos;
-					break;
-				}
+			case OriginStart:
+			{
+				currentPosition = pos;
+				break;
 			}
-			
+			case OriginCurrent:
+			{
+				currentPosition += pos;
+				break;
+			}
+			case OriginEnd:
+			{
+				currentPosition = m_size - pos;
+				break;
+			}
+			}
+
 			if (currentPosition < 0 || currentPosition > m_size)
 			{
 				return -1;
@@ -114,23 +114,23 @@ namespace Skylicht
 				return m_pos;
 			}
 		}
-		
+
 		int CMemoryStreamCursor::tell()
 		{
 			return m_pos;
 		}
-		
+
 		int CMemoryStreamCursor::read(unsigned char* buff, int len)
 		{
-			if (buff  && len > 0)
+			if (buff && len > 0)
 			{
 				int remain = m_size - m_pos;
 				if (remain <= 0)
 					return 0;
-				
+
 				if (len > remain)
 					len = remain;
-				
+
 				memcpy(buff, m_buffer + m_pos, len);
 				m_pos += len;
 				return len;
@@ -140,23 +140,22 @@ namespace Skylicht
 				return 0;
 			}
 		}
-		
+
 		bool CMemoryStreamCursor::endOfStream()
 		{
 			return m_pos >= m_size;
 		}
-		
+
 		int CMemoryStreamCursor::size()
 		{
 			return m_size;
 		}
-		
+
 		bool CMemoryStreamCursor::readyReadData(int len)
 		{
-			if (len <= 0)
-				return true;
-
-			return m_pos >= 0 && m_pos <= m_size && len <= m_size - m_pos;
+			// alway return true because memory stream is always ready
+			// and the read function will clamp the len to the available data
+			return true;
 		}
 	}
 }

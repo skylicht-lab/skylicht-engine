@@ -135,6 +135,18 @@ void CViewDemo::onRender()
 	CImguiManager::getInstance()->onRender();
 }
 
+void CViewDemo::onResume()
+{
+	if (m_music != NULL && !m_music->isPlaying())
+		m_music->play();
+
+	if (m_sound != NULL && !m_sound->isPlaying())
+	{
+		m_sound->setLoop(true);
+		m_sound->play();
+	}
+}
+
 void CViewDemo::onPostRender()
 {
 

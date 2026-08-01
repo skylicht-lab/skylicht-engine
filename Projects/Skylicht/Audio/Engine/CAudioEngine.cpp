@@ -115,6 +115,15 @@ namespace Skylicht
 				m_thread = NULL;
 			}
 
+			std::vector<IThread*>::iterator thread = m_threadGarbage.begin(), endThread = m_threadGarbage.end();
+			while (thread != endThread)
+			{
+				(*thread)->stop();
+				delete (*thread);
+				++thread;
+			}
+			m_threadGarbage.clear();
+
 			// release emitter
 			destroyAllEmitter();
 
@@ -144,8 +153,8 @@ namespace Skylicht
 				// stop thread
 				if (m_thread != NULL)
 				{
-					m_thread->stop();
-					delete m_thread;
+					m_thread->stop(false);
+					m_threadGarbage.push_back(m_thread);
 					m_thread = NULL;
 				}
 

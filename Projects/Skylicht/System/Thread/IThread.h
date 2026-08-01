@@ -77,7 +77,7 @@ namespace Skylicht
 			
 			virtual void update() = 0;
 			
-			virtual void stop() = 0;
+			virtual void stop(bool waitJoined = true) = 0;
 			
 			static void sleep(unsigned int time);
 			

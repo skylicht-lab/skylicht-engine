@@ -141,7 +141,7 @@ namespace Skylicht
 			// IThread::sleep(1);
 		}
 
-		void CWinThread::stop()
+		void CWinThread::stop(bool waitJoined)
 		{
 			bool needWait = false;
 
@@ -150,7 +150,7 @@ namespace Skylicht
 				WaitForSingleObject(m_loopMutex, INFINITE);
 				m_stopRequested = true;
 				m_run = false;
-				needWait = m_started && !m_joined && m_thread != NULL && GetCurrentThreadId() != m_threadID;
+				needWait = waitJoined && m_started && !m_joined && m_thread != NULL && GetCurrentThreadId() != m_threadID;
 				if (needWait)
 					m_joined = true;
 				ReleaseMutex(m_loopMutex);
@@ -159,7 +159,7 @@ namespace Skylicht
 			{
 				m_stopRequested = true;
 				m_run = false;
-				needWait = m_started && !m_joined && m_thread != NULL && GetCurrentThreadId() != m_threadID;
+				needWait = waitJoined && m_started && !m_joined && m_thread != NULL && GetCurrentThreadId() != m_threadID;
 				if (needWait)
 					m_joined = true;
 			}
@@ -167,8 +167,9 @@ namespace Skylicht
 			if (needWait)
 			{
 				WaitForSingleObject(m_thread, INFINITE);
-				printf("[CWinThread] stop!\n");
 			}
+
+			printf("[CWinThread] stop!\n");
 		}
 	}
 }

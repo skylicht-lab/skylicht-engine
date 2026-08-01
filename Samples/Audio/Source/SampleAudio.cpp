@@ -5,11 +5,13 @@
 #include "ViewManager/CViewManager.h"
 #include "CImguiManager.h"
 
+#include "SkylichtAudio.h"
+
 #include "CViewInit.h"
 
 void installApplication(const std::vector<std::string>& argv)
 {
-	SampleAudio *app = new SampleAudio();
+	SampleAudio* app = new SampleAudio();
 	getApplication()->registerAppEvent("SampleAudio", app);
 }
 
@@ -68,12 +70,23 @@ void SampleAudio::onResume()
 {
 	// resume application
 	CViewManager::getInstance()->onResume();
+
+	Audio::CAudioEngine* audioEngine = Audio::CAudioEngine::getSoundEngine();
+	if (audioEngine)
+		audioEngine->resumeEngine();
 }
 
 void SampleAudio::onPause()
 {
 	// pause application
 	CViewManager::getInstance()->onPause();
+
+	Audio::CAudioEngine* audioEngine = Audio::CAudioEngine::getSoundEngine();
+	if (audioEngine)
+	{
+		audioEngine->pauseEngine();
+		audioEngine->stopAllSound();
+	}
 }
 
 void SampleAudio::onQuitApp()

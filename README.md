@@ -280,16 +280,16 @@ See the [API Reference](https://api.skylicht.com)
 
 ### Mech Survival
 <p align="center">
-  <img src="Documents/Media/Game/mech-survival.jpg" alt="Mech Survival" width="50%">
+  <img src="Documents/Media/Game/mech-survival.jpg" alt="Mech Survival" width="80%">
 </p>
 
 <p align="center">
   <a href="https://play.google.com/store/apps/details?id=com.skylicht.mech">
-    <img src="Documents/Media/Game/android-store.png" alt="Available on Google Play" height="54">
+    <img src="Documents/Media/Game/android-store.png" alt="Available on Google Play" height="32">
   </a>
-  &nbsp;&nbsp;
+  <br>
   <a href="https://apps.apple.com/us/app/mech-survival/id6737975030">
-    <img src="Documents/Media/Game/ios-store.png" alt="Download on the App Store" height="54">
+    <img src="Documents/Media/Game/ios-store.png" alt="Download on the App Store" height="32">
   </a>
 </p>
 

@@ -29,5 +29,7 @@ public:
 
 	virtual void onPostRender();
 
+	virtual void onResume();
+
 	void onGUI();
 };

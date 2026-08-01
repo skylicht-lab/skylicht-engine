@@ -92,14 +92,14 @@ namespace Skylicht
 			// IThread::sleep(1);
 		}
 
-		void CSTDThread::stop()
+		void CSTDThread::stop(bool waitJoined)
 		{
 			bool needJoin = false;
 
 			m_loopMutex.lock();
 			m_stopRequested = true;
 			m_run = false;
-			needJoin = m_started && !m_joined && m_thread != NULL && m_thread->joinable() && std::this_thread::get_id() != m_thread->get_id();
+			needJoin = waitJoined && m_started && !m_joined && m_thread != NULL && m_thread->joinable() && std::this_thread::get_id() != m_thread->get_id();
 			if (needJoin)
 				m_joined = true;
 			m_loopMutex.unlock();
@@ -107,8 +107,9 @@ namespace Skylicht
 			if (needJoin)
 			{
 				m_thread->join();
-				printf("[CSTDThread] stop!\n");
 			}
+
+			printf("[CSTDThread] stop!\n");
 		}
 
 		void* CSTDThread::run(void* param)

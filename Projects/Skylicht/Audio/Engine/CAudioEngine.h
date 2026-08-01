@@ -85,6 +85,8 @@ namespace Skylicht
 		protected:
 			IThread* m_thread;
 
+			std::vector<IThread*> m_threadGarbage;
+
 			IMutex* m_mutex;
 
 			ISoundDriver* m_driver;

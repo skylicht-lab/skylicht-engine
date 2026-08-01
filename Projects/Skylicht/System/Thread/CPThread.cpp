@@ -99,14 +99,14 @@ namespace Skylicht
 			// IThread::sleep(1);
 		}
 
-		void CPThread::stop()
+		void CPThread::stop(bool waitJoined)
 		{
 			bool needJoin = false;
 
 			pthread_mutex_lock(&m_loopMutex);
 			m_stopRequested = true;
 			m_run = false;
-			needJoin = m_started && !m_joined && pthread_equal(pthread_self(), m_pthread) == 0;
+			needJoin = waitJoined && m_started && !m_joined && pthread_equal(pthread_self(), m_pthread) == 0;
 			pthread_mutex_unlock(&m_loopMutex);
 
 			if (needJoin)
@@ -117,9 +117,9 @@ namespace Skylicht
 				pthread_mutex_lock(&m_loopMutex);
 				m_joined = true;
 				pthread_mutex_unlock(&m_loopMutex);
-
-				printf("CPThread::stop Thread is stop!\n");
 			}
+
+			printf("CPThread::stop Thread is stop!\n");
 		}
 	}
 }

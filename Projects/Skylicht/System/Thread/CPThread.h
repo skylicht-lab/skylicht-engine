@@ -52,7 +52,7 @@ namespace Skylicht
 			
 			virtual void update();
 			
-			virtual void stop();
+			virtual void stop(bool waitJoined = true);
 			
 			static void* run(void *param);
 		};
