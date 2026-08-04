@@ -188,15 +188,17 @@ namespace Skylicht
 					textField->OnDone = [&](std::string text) {
 						m_text->setText(text.c_str());
 						updateHintVisibility();
-						if (OnTextChanged != nullptr)
-							OnTextChanged(this);
-						};
+						auto callback = OnTextChanged;
+						if (callback != nullptr)
+							callback(this);
+					};
 					textField->OnChanged = [&](std::string text) {
 						m_text->setText(text.c_str());
 						updateHintVisibility();
-						if (OnTextChanged != nullptr)
-							OnTextChanged(this);
-						};
+						auto callback = OnTextChanged;
+						if (callback != nullptr)
+							callback(this);
+					};
 				}
 #else
 				if (m_text)
@@ -406,8 +408,9 @@ namespace Skylicht
 						updateCaret = false;
 						onChar = false;
 
-						if (OnTextChanged != nullptr)
-							OnTextChanged(this);
+						auto callback = OnTextChanged;
+						if (callback != nullptr)
+							callback(this);
 					}
 					break;
 				case irr::KEY_DELETE:
@@ -419,8 +422,9 @@ namespace Skylicht
 						updateCaret = false;
 						onChar = false;
 
-						if (OnTextChanged != nullptr)
-							OnTextChanged(this);
+						auto callback = OnTextChanged;
+						if (callback != nullptr)
+							callback(this);
 					}
 					break;
 				default:
@@ -459,8 +463,9 @@ namespace Skylicht
 							m_text->insert(event.KeyInput.Char);
 							updateHintVisibility();
                             
-                            if (OnTextChanged != nullptr)
-                                OnTextChanged(this);
+							auto callback = OnTextChanged;
+							if (callback != nullptr)
+								callback(this);
 						}
 					}
                 }

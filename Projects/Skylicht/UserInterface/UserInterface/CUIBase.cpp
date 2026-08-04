@@ -85,8 +85,9 @@ namespace Skylicht
 
 					if (!isMotionPlaying(eventId))
 					{
-						OnMotionFinish[i](this, eventId);
+						auto callback = OnMotionFinish[i];
 						OnMotionFinish[i] = nullptr;
+						callback(this, eventId);
 					}
 				}
 			}
@@ -169,29 +170,36 @@ namespace Skylicht
 
 		void CUIBase::onPointerHover(int pointerId, float pointerX, float pointerY)
 		{
+			auto containerCallback = m_container->OnHover;
+			auto callback = OnPointerHover;
+
 			m_isPointerHover = true;
 			startMotion(EMotionEvent::PointerHover);
 
-			if (m_container->OnHover != nullptr)
-				m_container->OnHover(this);
+			if (containerCallback != nullptr)
+				containerCallback(this);
 
-			if (OnPointerHover != nullptr)
-				OnPointerHover(pointerId, pointerX, pointerY);
+			if (callback != nullptr)
+				callback(pointerId, pointerX, pointerY);
 		}
 
 		void CUIBase::onPointerOut(int pointerId, float pointerX, float pointerY)
 		{
+			auto callback = OnPointerOut;
+
 			m_isPointerHover = false;
 			startMotion(EMotionEvent::PointerOut);
 
-			if (OnPointerOut != nullptr)
-				OnPointerOut(pointerId, pointerX, pointerY);
+			if (callback != nullptr)
+				callback(pointerId, pointerX, pointerY);
 		}
 
 		void CUIBase::onPointerDown(int pointerId, float pointerX, float pointerY)
 		{
 			if (m_pointerId == -1)
 			{
+				auto callback = OnPointerDown;
+
 				m_isPointerDown = true;
 				m_pointerId = pointerId;
 				m_pointerDownX = pointerX;
@@ -199,8 +207,8 @@ namespace Skylicht
 
 				startMotion(EMotionEvent::PointerDown);
 
-				if (OnPointerDown != nullptr)
-					OnPointerDown(pointerId, pointerX, pointerY);
+				if (callback != nullptr)
+					callback(pointerId, pointerX, pointerY);
 			}
 		}
 
@@ -208,19 +216,23 @@ namespace Skylicht
 		{
 			if (m_pointerId == pointerId)
 			{
+				auto callback = OnPointerUp;
+
 				m_isPointerDown = false;
 				m_pointerId = -1;
 				startMotion(EMotionEvent::PointerUp);
 
-				if (OnPointerUp != nullptr)
-					OnPointerUp(pointerId, pointerX, pointerY);
+				if (callback != nullptr)
+					callback(pointerId, pointerX, pointerY);
 			}
 		}
 
 		void CUIBase::onPointerMove(int pointerId, float pointerX, float pointerY)
 		{
-			if (OnPointerMove != nullptr)
-				OnPointerMove(pointerId, pointerX, pointerY, m_isPointerDown);
+			auto callback = OnPointerMove;
+
+			if (callback != nullptr)
+				callback(pointerId, pointerX, pointerY, m_isPointerDown);
 
 			if (m_skipPointerEventWhenDrag && m_isPointerDown && m_pointerId == pointerId)
 			{
@@ -234,29 +246,35 @@ namespace Skylicht
 
 		void CUIBase::onPressed()
 		{
-			if (m_container->OnPressed != nullptr)
-				m_container->OnPressed(this);
+			auto containerCallback = m_container->OnPressed;
+			auto callback = OnPressed;
 
-			if (OnPressed != nullptr)
-				OnPressed(this);
+			if (containerCallback != nullptr)
+				containerCallback(this);
+
+			if (callback != nullptr)
+				callback(this);
 		}
 
 		void CUIBase::onFocus()
 		{
-			if (OnFocus != nullptr)
-				OnFocus(this);
+			auto callback = OnFocus;
+			if (callback != nullptr)
+				callback(this);
 		}
 
 		void CUIBase::onLostFocus()
 		{
-			if (OnLostFocus != nullptr)
-				OnLostFocus(this);
+			auto callback = OnLostFocus;
+			if (callback != nullptr)
+				callback(this);
 		}
 
 		void CUIBase::onKeyEvent(const SEvent& event)
 		{
-			if (OnKeyEvent != nullptr)
-				OnKeyEvent(this, event);
+			auto callback = OnKeyEvent;
+			if (callback != nullptr)
+				callback(this, event);
 		}
 
 		void CUIBase::startMotion(EMotionEvent event)

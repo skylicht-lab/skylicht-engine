@@ -92,8 +92,9 @@ namespace Skylicht
 			m_offset.set(pointerX, pointerY);
 
 			m_oldPosition = m_element->getPosition();
-			if (OnBeginDrag != nullptr)
-				OnBeginDrag(this, m_oldPosition.X, m_oldPosition.Y);
+			auto callback = OnBeginDrag;
+			if (callback != nullptr)
+				callback(this, m_oldPosition.X, m_oldPosition.Y);
 		}
 
 		void CUIDraggable::updateDrag()
@@ -131,15 +132,17 @@ namespace Skylicht
 
 			m_element->setPosition(core::vector3df(currentX, currentY, m_oldPosition.Z));
 
-			if (OnDrag != nullptr)
-				OnDrag(this, currentX, currentY);
+			auto callback = OnDrag;
+			if (callback != nullptr)
+				callback(this, currentX, currentY);
 		}
 
 		void CUIDraggable::onEndDrag()
 		{
 			m_oldPosition = m_element->getPosition();
-			if (OnEndDrag != nullptr)
-				OnEndDrag(this, m_oldPosition.X, m_oldPosition.Y);
+			auto callback = OnEndDrag;
+			if (callback != nullptr)
+				callback(this, m_oldPosition.X, m_oldPosition.Y);
 		}
 	}
 }

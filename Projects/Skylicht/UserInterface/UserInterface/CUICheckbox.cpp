@@ -131,8 +131,9 @@ namespace Skylicht
 
 			if (invokeEvent)
 			{
-				if (OnChanged != nullptr)
-					OnChanged(this, m_toggleStatus);
+				auto callback = OnChanged;
+				if (callback != nullptr)
+					callback(this, m_toggleStatus);
 			}
 		}
 
@@ -143,8 +144,9 @@ namespace Skylicht
 			if (m_checked)
 				playTween();
 
-			if (OnChanged != nullptr)
-				OnChanged(this, m_toggleStatus);
+			auto callback = OnChanged;
+			if (callback != nullptr)
+				callback(this, m_toggleStatus);
 		}
 	}
 }

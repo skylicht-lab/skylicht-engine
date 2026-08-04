@@ -71,8 +71,9 @@ namespace Skylicht
 				if (isPlaying == false)
 				{
 					m_inMotion = false;
-					if (OnMotionInFinish != nullptr)
-						OnMotionInFinish();
+					auto callback = OnMotionInFinish;
+					if (callback != nullptr)
+						callback();
 				}
 			}
 
@@ -91,8 +92,9 @@ namespace Skylicht
 				if (isPlaying == false)
 				{
 					m_outMotion = false;
-					if (OnMotionOutFinish != nullptr)
-						OnMotionOutFinish();
+					auto callback = OnMotionOutFinish;
+					if (callback != nullptr)
+						callback();
 				}
 			}
 

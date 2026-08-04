@@ -94,8 +94,12 @@ namespace Skylicht
 		void CUIButton::setToggle(bool b, bool invokeEvent)
 		{
 			m_toggleStatus = b;
-			if (invokeEvent && OnToggle != nullptr)
-				OnToggle(this, b);
+			if (invokeEvent)
+			{
+				auto callback = OnToggle;
+				if (callback != nullptr)
+					callback(this, b);
+			}
 		}
 
 		void CUIButton::onPressed()
@@ -109,9 +113,11 @@ namespace Skylicht
 		{
 			if (m_isToggle && m_toggleStatus)
 			{
+				auto callback = OnPointerHover;
+
 				m_isPointerHover = true;
-				if (OnPointerHover != nullptr)
-					OnPointerHover(pointerId, pointerX, pointerY);
+				if (callback != nullptr)
+					callback(pointerId, pointerX, pointerY);
 			}
 			else
 			{
@@ -123,9 +129,11 @@ namespace Skylicht
 		{
 			if (m_isToggle && m_toggleStatus)
 			{
+				auto callback = OnPointerOut;
+
 				m_isPointerHover = false;
-				if (OnPointerOut != nullptr)
-					OnPointerOut(pointerId, pointerX, pointerY);
+				if (callback != nullptr)
+					callback(pointerId, pointerX, pointerY);
 			}
 			else
 			{

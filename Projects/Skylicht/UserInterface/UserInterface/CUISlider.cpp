@@ -206,8 +206,9 @@ namespace Skylicht
 
 			m_handle->setPosition(core::vector3df(currentX, currentY, currentZ));
 
-			if (OnChanged != nullptr)
-				OnChanged(this, m_value);
+			auto callback = OnChanged;
+			if (callback != nullptr)
+				callback(this, m_value);
 		}
 
 		void CUISlider::onEndDrag()
@@ -245,8 +246,9 @@ namespace Skylicht
 
 			if (invokeEvent)
 			{
-				if (OnChanged != nullptr)
-					OnChanged(this, m_value);
+				auto callback = OnChanged;
+				if (callback != nullptr)
+					callback(this, m_value);
 			}
 		}
 	}
