@@ -183,6 +183,15 @@ namespace Skylicht
 			/** @brief Start the "out" motion sequence and set internal state. */
 			void startOutMotion();
 
+			/** @brief Enable or disable the children*/
+			void setChildrenEnable(bool b);
+
+			/** @brief Get the list of all children*/
+			inline std::vector<CUIBase*>& getChildList()
+			{
+				return m_arrayUIObjects;
+			}
+
 			/** @brief Enable or disable the container processing. */
 			inline void setEnable(bool b)
 			{

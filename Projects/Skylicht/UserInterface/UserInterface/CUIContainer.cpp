@@ -446,10 +446,16 @@ namespace Skylicht
 
 		void CUIContainer::startOutMotion()
 		{
-			m_enable = false;
 			m_outMotion = true;
+			setChildrenEnable(false);
 			for (CUIBase* base : m_arrayUIObjects)
 				base->startMotion(UI::EMotionEvent::Out);
+		}
+
+		void CUIContainer::setChildrenEnable(bool b)
+		{
+			for (CUIBase* base : m_arrayUIObjects)
+				base->setEnable(b);
 		}
 	}
 }
