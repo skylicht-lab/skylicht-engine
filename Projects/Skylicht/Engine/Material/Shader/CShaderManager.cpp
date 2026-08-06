@@ -43,6 +43,8 @@ namespace Skylicht
 		BoneCount(0),
 		LightmapIndex(0)
 	{
+		for (int i = 0; i < 10; i++)
+			UBO[i] = NULL;
 	}
 
 	CShaderManager::~CShaderManager()

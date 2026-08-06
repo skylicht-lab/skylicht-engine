@@ -257,6 +257,7 @@ namespace Skylicht
 			"TIME",
 			"COLOR_INTENSITY",
 			"RENDER_TEXTURE_MATRIX",
+			"UNIFORM_BUFFER",
 			"NULL"
 		};
 
@@ -1321,6 +1322,21 @@ namespace Skylicht
 
 			break;
 		}
+		case UNIFORM_BUFFER:
+		{
+			CShaderManager* material = shaderManager;
+			int paramID = uniform.ValueIndex;
+			video::IHardwareBuffer* buffer = NULL;
+
+			if (paramID >= 0 && paramID < 10)
+				buffer = material->UBO[paramID];
+
+			if (vertexShader == true)
+				matRender->setShaderUBO(uniform.UniformShaderID, buffer, video::EST_VERTEX_SHADER);
+			else
+				matRender->setShaderUBO(uniform.UniformShaderID, buffer, video::EST_PIXEL_SHADER);
+		}
+		break;
 		case TEXTURE_MIPMAP_COUNT:
 		{
 			SMaterial* material = shaderManager->getCurrentMaterial();

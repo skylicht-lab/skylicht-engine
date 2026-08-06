@@ -51,7 +51,7 @@ namespace Skylicht
 	 * shaderMgr->loadShader("BuiltIn/Shader/Transparent/Transparent.xml");
 	 * @endcode
 	 */
-	class SKYLICHT_API CShaderManager	{
+	class SKYLICHT_API CShaderManager {
 	public:
 		DECLARE_SINGLETON(CShaderManager)
 
@@ -83,6 +83,10 @@ namespace Skylicht
 		/// Array for vec4 uniforms(max 10)
 		/// @see EUniformType, SHADER_VEC4
 		video::SVec4 ShaderVec4[10];
+
+		/// Array for uniform buffer objects(max 10)
+		/// @see EUniformType, UNIFORM_BUFFER
+		video::IHardwareBuffer* UBO[10];
 
 		/// Pointer to bone matrix array for skinning
 		/// @see EUniformType, BONE_MATRIX

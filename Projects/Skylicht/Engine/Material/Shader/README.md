@@ -41,7 +41,7 @@ Additionally, you can view sample shader files in the `Assets\BuiltIn\Shader` fo
 |-----------|-------------|-------|
 | name | This is the Uniform name attached to the vertex shader or fragment shader | |
 | type | The value passed to the uniform |See next table|
-| valueIndex| Is an input parameter for a value type | |
+| valueIndex| Is an input parameter for a value type. For `UNIFORM_BUFFER`, this is the slot in `CShaderManager::UBO[valueIndex]` | |
 | value | Default value ||
 | float | Number of elements in the array | Example:<br>1 is float<br>4 is float4<br>16 is float4x4 |
 | matrix| If a **uniform is a matrix**, this attribute is required for the Skylicht-Engine to transpose the matrix for DirectX |true|
@@ -77,6 +77,7 @@ Value table for the `type` property
 |SHADER_VEC2|float2| |
 |SHADER_VEC3|float3| |
 |SHADER_VEC4|float4| |
+|UNIFORM_BUFFER|uniform block / constant buffer|Binds the hardware constant buffer from `CShaderManager::UBO[valueIndex]` by calling `IMaterialRenderer::setShaderUBO`.<br>Use this for GLSL uniform blocks such as `layout(std140) uniform ...` or the matching HLSL `cbuffer`.|
 |SH_CONST|float4[4]| The value used to calculate ambient light color based on Spherical Harmonics (SH)<br>See `CIndirectLighting`|
 |CUSTOM_VALUE|| |
 |TEXTURE_MIPMAP_COUNT|float2| |
@@ -115,6 +116,33 @@ cbuffer cbPerObject
 	float4 uUVScale;
 };
 ```
+
+Uniform buffer example:
+
+```xml
+<vs>
+	<uniform name="cbPerFrame" type="UNIFORM_BUFFER" valueIndex="0"/>
+</vs>
+```
+
+In GLSL:
+
+```C
+layout(std140) uniform cbPerFrame
+{
+	mat4 uViewProjection;
+	vec4 uCameraPosition;
+};
+```
+
+Before drawing, assign a hardware constants buffer to the matching slot:
+
+```C
+CShaderManager::getInstance()->UBO[0] = perFrameBuffer;
+```
+
+The uniform block name in the shader (`cbPerFrame`) must match the XML `name`. The XML `valueIndex` selects the `UBO` array slot.
+
 ## resources
 ```xml
 <resources>
