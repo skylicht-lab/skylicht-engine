@@ -88,8 +88,8 @@ namespace video
 
 		bool update(const scene::E_HARDWARE_MAPPING mapping, const u32 size, const void* data);
 
-		inline GLuint getBufferID() const;
-		inline void removeFromArray(bool status);
+		GLuint getBufferID() const;
+		void removeFromArray(bool status);
 	
 	private:
 		COpenGLDriver* Driver;
