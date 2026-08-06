@@ -73,7 +73,7 @@
 #endif
 
 #ifdef LINUX
-    #define _IRR_POSIX_API_
+	#define _IRR_POSIX_API_
 	#define _IRR_LINUX_PLATFORM
 	#define _IRR_COMPILE_WITH_X11_
 	#define _IRR_COMPILE_WITH_X11_DEVICE_
@@ -128,7 +128,7 @@
 
 
 //! Maximum number of texture an SMaterial can have, up to 8 are supported by Irrlicht.
-#define _IRR_MATERIAL_MAX_TEXTURES_ 8
+#define _IRR_MATERIAL_MAX_TEXTURES_ 12
 
 //! Whether to support XML and XML-based formats (irrmesh, collada...)
 #define _IRR_COMPILE_WITH_XML_

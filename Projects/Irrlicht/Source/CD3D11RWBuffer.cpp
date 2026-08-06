@@ -16,13 +16,12 @@ namespace irr
 	namespace video
 	{
 		CD3D11RWBuffer::CD3D11RWBuffer(CD3D11Driver *driver, ECOLOR_FORMAT format, u32 numElements, void *initialData) :
-			IRWBuffer(format, numElements),
+			IHardwareBuffer(format, numElements, 0, EDT_DIRECT3D11),
 			Driver(driver)
 		{
-			DriverType = EDT_DIRECT3D11;
-
 			D3DFormat = Driver->getD3DFormatFromColorFormat(format);
 			u32 bytePerPixel = Driver->getBitsPerPixel(D3DFormat) / 8;
+			Size = bytePerPixel * numElements;
 
 			Device = driver->getExposedVideoData().D3D11.D3DDev11;
 			if (Device)
@@ -32,7 +31,7 @@ namespace irr
 			}
 
 			D3D11_BUFFER_DESC bufferDesc;
-			bufferDesc.ByteWidth = bytePerPixel * numElements;
+			bufferDesc.ByteWidth = Size;
 			bufferDesc.Usage = D3D11_USAGE_DEFAULT;
 			bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ;
 			bufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS;
@@ -106,6 +105,16 @@ namespace irr
 
 			// Otherwise, unmap this
 			Context->Unmap(Buffer, 0);
+		}
+
+		bool CD3D11RWBuffer::update(const scene::E_HARDWARE_MAPPING mapping, const u32 size, const void* data)
+		{
+			if (!Buffer || !data || size > Size)
+				return false;
+
+			Context->UpdateSubresource(Buffer, 0, NULL, data, 0, 0);
+			RequiredUpdate = false;
+			return true;
 		}
 	}
 }

@@ -419,7 +419,7 @@ namespace irr
 			TextureSlot[slot] = texture;
 		}
 
-		void CD3D11GPUCompute::setBuffer(int slot, IRWBuffer *buffer)
+		void CD3D11GPUCompute::setBuffer(int slot, IHardwareBuffer *buffer)
 		{
 			BufferSlot[slot] = buffer;
 		}

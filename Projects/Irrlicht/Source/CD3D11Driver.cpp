@@ -1430,9 +1430,9 @@ namespace irr
 		}
 
 		//! creates a buffer stored on gpu
-		IRWBuffer* CD3D11Driver::createRWBuffer(video::ECOLOR_FORMAT format, u32 numElements, void* initialData)
+		IHardwareBuffer* CD3D11Driver::createRWBuffer(video::ECOLOR_FORMAT format, u32 numElements, void* initialData)
 		{
-			return new CD3D11RWBuffer(this, format, numElements);
+			return new CD3D11RWBuffer(this, format, numElements, initialData);
 		}
 
 		void CD3D11Driver::setViewPort(const core::rect<s32>& area)

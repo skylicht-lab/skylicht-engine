@@ -8,6 +8,7 @@
 #include "IReferenceCounted.h"
 #include "EDriverTypes.h"
 #include "EHardwareBufferFlags.h"
+#include "SColor.h"
 
 namespace irr
 {
@@ -60,7 +61,12 @@ class IHardwareBuffer : public virtual IReferenceCounted
 {
 public:
 	IHardwareBuffer(const scene::E_HARDWARE_MAPPING mapping, const u32 flags, const u32 size, const E_HARDWARE_BUFFER_TYPE type, const E_DRIVER_TYPE driverType) :
-		Mapping(mapping), Flags(flags), Size(size), Type(type), DriverType(driverType), RequiredUpdate(true)
+		Mapping(mapping), Flags(flags), Size(size), Type(type), DriverType(driverType), Format(ECF_UNKNOWN), NumElements(0), RequiredUpdate(true)
+	{
+	}
+
+	IHardwareBuffer(const ECOLOR_FORMAT format, const u32 numElements, const u32 size, const E_DRIVER_TYPE driverType) :
+		Mapping(scene::EHM_NEVER), Flags(EHBF_COMPUTE_STRUCTURED), Size(size), Type(EHBT_COMPUTE), DriverType(driverType), Format(format), NumElements(numElements), RequiredUpdate(false)
 	{
 	}
 
@@ -70,6 +76,15 @@ public:
 
 	// Update hardware buffer.
 	virtual bool update(const scene::E_HARDWARE_MAPPING mapping, const u32 size, const void* data) = 0;
+
+	virtual void* lock(bool readOnly)
+	{
+		return 0;
+	}
+
+	virtual void unlock()
+	{
+	}
 
 	// Inform if update is required.
 	inline bool isRequiredUpdate() const
@@ -113,12 +128,24 @@ public:
 		return DriverType;
 	}
 
+	inline ECOLOR_FORMAT getColorFormat() const
+	{
+		return Format;
+	}
+
+	inline u32 getNumElements() const
+	{
+		return NumElements;
+	}
+
 protected:
 	scene::E_HARDWARE_MAPPING Mapping;
 	u32 Flags;
 	u32 Size;
 	E_HARDWARE_BUFFER_TYPE Type;
 	E_DRIVER_TYPE DriverType;
+	ECOLOR_FORMAT Format;
+	u32 NumElements;
 
 	bool RequiredUpdate;
 };

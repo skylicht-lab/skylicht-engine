@@ -10,7 +10,7 @@
 #ifdef _IRR_WINDOWS_
 #ifdef _IRR_COMPILE_WITH_DIRECT3D_11_
 
-#include "IRWBuffer.h"
+#include "IHardwareBuffer.h"
 
 namespace irr
 {
@@ -18,7 +18,7 @@ namespace irr
 	{
 		class CD3D11Driver;
 
-		class CD3D11RWBuffer : public IRWBuffer
+		class CD3D11RWBuffer : public IHardwareBuffer
 		{
 		public:
 			CD3D11RWBuffer(CD3D11Driver *driver, ECOLOR_FORMAT format, u32 numElements, void *initialData = NULL);
@@ -38,6 +38,8 @@ namespace irr
 			void* lock(bool readOnly);
 
 			void unlock();
+
+			bool update(const scene::E_HARDWARE_MAPPING mapping, const u32 size, const void* data);
 
 		protected:
 

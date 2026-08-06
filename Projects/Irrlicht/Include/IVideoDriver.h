@@ -21,7 +21,6 @@
 #include "SExposedVideoData.h"
 
 #include "IHardwareBuffer.h"
-#include "IRWBuffer.h"
 
 namespace irr
 {
@@ -1116,7 +1115,7 @@ namespace video
 		\return The gpu buffer object.
 		If you no longer need the image, you should call IImage::drop().
 		See IReferenceCounted::drop() for more information. */
-		virtual IRWBuffer* createRWBuffer(video::ECOLOR_FORMAT format, u32 numElements, void *initialData = NULL) = 0;
+		virtual IHardwareBuffer* createRWBuffer(video::ECOLOR_FORMAT format, u32 numElements, void *initialData = NULL) = 0;
 
 		//! Event handler for resize events. Only used by the engine internally.
 		/** Used to notify the driver that the window was resized.

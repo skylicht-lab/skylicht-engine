@@ -40,7 +40,7 @@ namespace Skylicht
 		protected:
 			IGPUCompute *m_shCompute;
 			
-			IRWBuffer *m_shBuffer;
+			IHardwareBuffer *m_shBuffer;
 
 			float *m_tangentToSpaceData;
 		public:

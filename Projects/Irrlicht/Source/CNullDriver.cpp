@@ -842,7 +842,7 @@ ITexture* CNullDriver::addTexture(const core::dimension2d<u32>& size,
 	return t;
 }
 
-IRWBuffer* CNullDriver::createRWBuffer(video::ECOLOR_FORMAT format, u32 numElements, void *initialData)
+IHardwareBuffer* CNullDriver::createRWBuffer(video::ECOLOR_FORMAT format, u32 numElements, void *initialData)
 {
 	return NULL;
 }

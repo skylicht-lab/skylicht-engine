@@ -176,7 +176,7 @@ void COpenGLSLMaterialRenderer::OnSetMaterial(const video::SMaterial& material,
 	if (material.MaterialType != lastMaterial.MaterialType || resetAllRenderstates)
 	{
 		if (Program)
-			Driver->extGlUseProgram(Program);		
+			Driver->extGlUseProgram(Program);
 	}
 
 	Driver->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);	

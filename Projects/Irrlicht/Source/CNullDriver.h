@@ -146,7 +146,7 @@ namespace video
 			SColor color) _IRR_OVERRIDE_;
 
 		//! creates a buffer stored on gpu
-		virtual IRWBuffer* createRWBuffer(video::ECOLOR_FORMAT format, u32 numElements, void *initialData = NULL) _IRR_OVERRIDE_;
+		virtual IHardwareBuffer* createRWBuffer(video::ECOLOR_FORMAT format, u32 numElements, void *initialData = NULL) _IRR_OVERRIDE_;
 
 		//! sets a viewport
 		virtual void setViewPort(const core::rect<s32>& area) _IRR_OVERRIDE_;
@@ -671,7 +671,7 @@ namespace video
 		
 		core::array<SSurface> Textures;
 		core::array<IVideoRenderTarget*> VRTs;
-		core::array<IRWBuffer*> RWBuffers;
+		core::array<IHardwareBuffer*> RWBuffers;
 
 		struct SOccQuery
 		{

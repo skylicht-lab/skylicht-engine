@@ -582,14 +582,18 @@ namespace Skylicht
 		float* color = new float[4 * imageSizeW * imageSizeH];
 		memset(color, 0, sizeof(float) * 4 * imageSizeW * imageSizeH);
 
-		float* c = color;
 		core::matrix4* m = transforms;
 
-		for (int i = 0, n = w * h; i < n; i++)
+		for (int y = 0; y < h; y++)
 		{
-			memcpy(c, m->pointer(), sizeof(float) * 16);
-			m++;
-			c += 16;
+			float* c = color + 4 * imageSizeW * y;
+
+			for (int x = 0; x < w; x++)
+			{
+				memcpy(c, m->pointer(), sizeof(float) * 16);
+				m++;
+				c += 16;
+			}
 		}
 
 		core::dimension2d<u32> size(imageSizeW, imageSizeH);
@@ -620,18 +624,68 @@ namespace Skylicht
 		float* color = new float[4 * imageSizeW * imageSizeH];
 		memset(color, 0, sizeof(float) * 4 * imageSizeW * imageSizeH);
 
-		float* c = color;
 		core::vector3df* p = vectors;
 
-		for (int i = 0, n = w * h; i < n; i++)
+		for (int y = 0; y < h; y++)
 		{
-			c[0] = p->X;
-			c[1] = p->Y;
-			c[2] = p->Z;
-			c[3] = 0.0f;
+			float* c = color + 4 * imageSizeW * y;
 
-			p++;
-			c += 4;
+			for (int x = 0; x < w; x++)
+			{
+				c[0] = p->X;
+				c[1] = p->Y;
+				c[2] = p->Z;
+				c[3] = 0.0f;
+
+				p++;
+				c += 4;
+			}
+		}
+
+		core::dimension2d<u32> size(imageSizeW, imageSizeH);
+		IImage* img = driver->createImageFromData(ECF_A32B32G32R32F, size, color);
+
+		bool configCreateMipmap = driver->getTextureCreationFlag(ETCF_CREATE_MIP_MAPS);
+		driver->setTextureCreationFlag(ETCF_CREATE_MIP_MAPS, false);
+		ITexture* transformTexture = driver->addTexture(name, img);
+		driver->setTextureCreationFlag(ETCF_CREATE_MIP_MAPS, configCreateMipmap);
+
+		img->drop();
+		delete[]color;
+
+		if (transformTexture)
+			registerTexture(transformTexture, name);
+
+		return transformTexture;
+	}
+
+	ITexture* CTextureManager::createFloatTexture2D(const char* name, float* vectors, int w, int h)
+	{
+		IVideoDriver* driver = getVideoDriver();
+		IrrlichtDevice* device = getIrrlichtDevice();
+
+		int imageSizeW = core::max_(w, 4);
+		int imageSizeH = core::max_(h, 4);
+
+		float* color = new float[4 * imageSizeW * imageSizeH];
+		memset(color, 0, sizeof(float) * 4 * imageSizeW * imageSizeH);
+
+		float* p = vectors;
+
+		for (int y = 0; y < h; y++)
+		{
+			float* c = color + 4 * imageSizeW * y;
+
+			for (int x = 0; x < w; x++)
+			{
+				c[0] = p[0];
+				c[1] = p[1];
+				c[2] = p[2];
+				c[3] = p[3];
+
+				p += 4;
+				c += 4;
+			}
 		}
 
 		core::dimension2d<u32> size(imageSizeW, imageSizeH);

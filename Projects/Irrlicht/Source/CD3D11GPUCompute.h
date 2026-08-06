@@ -30,7 +30,7 @@ namespace irr
 			ID3D10Blob* ShaderBuffer;
 
 			ITexture *TextureSlot[NUM_PARAMS_SUPPORT];
-			IRWBuffer *BufferSlot[NUM_PARAMS_SUPPORT];
+			IHardwareBuffer *BufferSlot[NUM_PARAMS_SUPPORT];
 
 			core::array<SShaderBuffer*> BufferArray;
 			core::array<SShaderVariable*> VariableArray;
@@ -51,7 +51,7 @@ namespace irr
 
 			virtual void setTexture(int slot, ITexture *texture);
 
-			virtual void setBuffer(int slot, IRWBuffer *buffer);
+			virtual void setBuffer(int slot, IHardwareBuffer *buffer);
 
 			virtual void dispatch(int threadGroupX, int threadGroupY, int threadGroupZ);
 

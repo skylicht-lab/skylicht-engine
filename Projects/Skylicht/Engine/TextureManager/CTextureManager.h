@@ -260,6 +260,17 @@ namespace Skylicht
 		 */
 		ITexture* createVectorTexture2D(const char* name, core::vector3df* vectors, int w, int h);
 
+
+		/**
+		 * @brief Create a 2D texture from a list of float4 values.
+		 * @param name Texture name.
+		 * @param vectors Array of float4 values.
+		 * @param w Width of vector array.
+		 * @param h Height of vector array.
+		 * @return Pointer to created texture.
+		 */
+		ITexture* createFloatTexture2D(const char* name, float* vectors, int w, int h);
+
 	protected:
 
 		/**

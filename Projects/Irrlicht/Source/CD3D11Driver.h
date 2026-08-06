@@ -223,7 +223,7 @@ namespace video
 		virtual ITexture* getTextureArray(IImage** images, u32 num);
 
 		//! creates a buffer stored on gpu
-		virtual IRWBuffer* createRWBuffer(video::ECOLOR_FORMAT format, u32 numElements, void *initialData = NULL);
+		virtual IHardwareBuffer* createRWBuffer(video::ECOLOR_FORMAT format, u32 numElements, void *initialData = NULL);
 
 		//! Clears the ZBuffer.
 		virtual void clearZBuffer();

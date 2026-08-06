@@ -15,7 +15,7 @@ namespace irr
 {
 	namespace video
 	{
-		class IRWBuffer;
+		class IHardwareBuffer;
 		class ITexture;
 
 		class IGPUCompute : public virtual IReferenceCounted
@@ -35,7 +35,7 @@ namespace irr
 
 			virtual void setTexture(int slot, ITexture *texture) = 0;
 
-			virtual void setBuffer(int slot, IRWBuffer *buffer) = 0;
+			virtual void setBuffer(int slot, IHardwareBuffer *buffer) = 0;
 
 			virtual void dispatch(int threadGroupX, int threadGroupY, int threadGroupZ) = 0;
 
