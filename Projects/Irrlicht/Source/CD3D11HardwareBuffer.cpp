@@ -43,6 +43,17 @@ CD3D11HardwareBuffer::CD3D11HardwareBuffer(CD3D11Driver* driver, E_HARDWARE_BUFF
 	RequiredUpdate = false;
 }
 
+CD3D11ConstBuffer::CD3D11ConstBuffer(CD3D11Driver* driver, u32 size, void* initialData) :
+	CD3D11HardwareBuffer(driver, EHBT_CONSTANTS, scene::EHM_STREAM, (size + 15) & ~15, 0)
+{
+#ifdef _DEBUG
+	setDebugName("CD3D11ConstBuffer");
+#endif
+
+	if (initialData)
+		update(scene::EHM_STREAM, size, initialData);
+}
+
 CD3D11HardwareBuffer::CD3D11HardwareBuffer(scene::IIndexBuffer* indexBuffer, CD3D11Driver* driver) :
 	IHardwareBuffer(scene::EHM_NEVER, 0, 0, EHBT_INDEX, EDT_DIRECT3D11), Device(NULL), Context(NULL),
 	Buffer(NULL), UAView(NULL), SRView(NULL), Driver(driver), TempStagingBuffer(NULL), UseTempStagingBuffer(false),
@@ -375,7 +386,7 @@ bool CD3D11HardwareBuffer::createInternalBuffer(const void* initialData)
 	data.SysMemSlicePitch = 0;
 
 	// Create buffer
-	hr = Device->CreateBuffer(&desc, &data, &Buffer);
+	hr = Device->CreateBuffer(&desc, initialData ? &data : NULL, &Buffer);
 	if (FAILED(hr))
 	{
 		os::Printer::log("Error creating hardware buffer", ELL_ERROR);

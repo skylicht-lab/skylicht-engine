@@ -15,6 +15,7 @@
 #include "IFileSystem.h"
 #include "irrMap.h"
 #include "CD3D11Driver.h"
+#include "CD3D11HardwareBuffer.h"
 #include "CD3D11CallBridge.h"
 
 #include <d3dcompiler.h>
@@ -416,68 +417,26 @@ bool CD3D11MaterialRenderer::setVariable(s32 id, const s32* ints, int count, E_S
 	return true;
 }
 
-bool CD3D11MaterialRenderer::setConstantBuffer(s32 id, const void* data, E_SHADER_TYPE type)
+s32 CD3D11MaterialRenderer::getShaderVariableID(const c8* name, E_SHADER_TYPE shaderType)
 {
-	SShaderBuffer* buff = getBuffer(type, id);
-
-	if(!buff)
-		return false;
-
-	D3D11_MAPPED_SUBRESOURCE mappedData;
-
-	HRESULT hr = Context->Map(buff->data, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData);
-
-	if(FAILED(hr))
-	{
-		logFormatError(hr, "Could not map constant buffer in shader");
-		return false;
-	}
-
-	memcpy(mappedData.pData, data, buff->size);
-
-	Context->Unmap(buff->data, 0);
-
-	return false;
-}
-
-
-s32 CD3D11MaterialRenderer::getConstantBufferID(const c8* name, E_SHADER_TYPE type)
-{
-	SShader* sh = shaders[type];
+	SShader* sh = shaders[shaderType];
 
 	if (sh)
 	{
-		const u32 size = sh->bufferArray.size();
+		const u32 variableCount = sh->variableArray.size();
 
-		for (u32 i = 0; i < size; ++i)
-		{
-			if (sh->bufferArray[i]->name == name)
-				return i;
-		}
-	}
-
-	core::stringc s = "HLSL buffer to get ID not found: '";
-	s += name;
-	s += "'. Available buffers are:";
-	os::Printer::log(s.c_str(), ELL_WARNING);
-
-	printBuffers(type);
-
-	return -1;
-}
-
-s32 CD3D11MaterialRenderer::getVariableID(const c8* name, E_SHADER_TYPE type)
-{
-	SShader* sh = shaders[type];
-
-	if (sh)
-	{
-		const u32 size = sh->variableArray.size();
-
-		for(u32 i = 0; i < size; ++i)
+		for (u32 i = 0; i < variableCount; ++i)
 		{
 			if (sh->variableArray[i]->name == name)
 				return i;
+		}
+
+		const u32 bufferCount = sh->bufferArray.size();
+
+		for (u32 i = 0; i < bufferCount; ++i)
+		{
+			if (sh->bufferArray[i]->name == name)
+				return sh->bufferArray[i]->bindPoint;
 		}
 	}
 
@@ -486,14 +445,9 @@ s32 CD3D11MaterialRenderer::getVariableID(const c8* name, E_SHADER_TYPE type)
 	s += "'. Available variables are:";
 	os::Printer::log(s.c_str(), ELL_WARNING);
 
-	printVariables(type);
+	printVariables(shaderType);
 
 	return -1;
-}
-
-s32 CD3D11MaterialRenderer::getShaderVariableID(const c8* name, E_SHADER_TYPE shaderType)
-{
-	return getVariableID(name, shaderType);
 }
 
 void CD3D11MaterialRenderer::setShaderVariable(s32 id, const f32 *value, int count, E_SHADER_TYPE shaderType)
@@ -501,6 +455,41 @@ void CD3D11MaterialRenderer::setShaderVariable(s32 id, const f32 *value, int cou
 	setVariable(id, value, count, shaderType);
 }
 
+void CD3D11MaterialRenderer::setShaderUBO(s32 id, const IHardwareBuffer* buffer, E_SHADER_TYPE shaderType)
+{
+	if (id < 0 || !buffer || buffer->getDriverType() != EDT_DIRECT3D11 || buffer->getType() != EHBT_CONSTANTS)
+		return;
+
+	ID3D11Buffer* d3dBuffer = static_cast<const CD3D11HardwareBuffer*>(buffer)->getBuffer();
+	if (!d3dBuffer)
+		return;
+
+	const UINT slot = (UINT)id;
+
+	switch (shaderType)
+	{
+	case EST_VERTEX_SHADER:
+		Context->VSSetConstantBuffers(slot, 1, &d3dBuffer);
+		break;
+	case EST_PIXEL_SHADER:
+		Context->PSSetConstantBuffers(slot, 1, &d3dBuffer);
+		break;
+	case EST_GEOMETRY_SHADER:
+		Context->GSSetConstantBuffers(slot, 1, &d3dBuffer);
+		break;
+	case EST_HULL_SHADER:
+		Context->HSSetConstantBuffers(slot, 1, &d3dBuffer);
+		break;
+	case EST_DOMAIN_SHADER:
+		Context->DSSetConstantBuffers(slot, 1, &d3dBuffer);
+		break;
+	case EST_COMPUTE_SHADER:
+		Context->CSSetConstantBuffers(slot, 1, &d3dBuffer);
+		break;
+	default:
+		break;
+	}
+}
 bool CD3D11MaterialRenderer::OnRender(IMaterialRendererServices* service, bool updateConstant)
 {
 	if (!Context)
@@ -871,6 +860,9 @@ void CD3D11MaterialRenderer::createResources(ID3D10Blob* code, E_SHADER_TYPE typ
 				reflectionBuffer->GetDesc(&bufferDesc);
 
 				SShaderBuffer* sBuffer = createConstantBuffer(bufferDesc);
+
+				if (sBuffer)
+					sBuffer->bindPoint = (s32)resourceDesc.BindPoint;
 
 				if (sBuffer)
 				{

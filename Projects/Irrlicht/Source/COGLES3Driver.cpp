@@ -150,6 +150,26 @@ namespace irr
 				Attribute[i].addLocationLayer();
 		}
 
+		COGLES3HardwareBuffer::COGLES3HardwareBuffer(COGLES3Driver* driver, E_HARDWARE_BUFFER_TYPE type,
+			scene::E_HARDWARE_MAPPING mapping, u32 size, u32 flags, const void* initialData) :
+			IHardwareBuffer(mapping, flags, size, type, EDT_OPENGLES), Driver(driver), BufferID(0),
+			RemoveFromArray(true), LinkedBuffer(0)
+		{
+#ifdef _DEBUG
+			setDebugName("COGLES3HardwareBuffer");
+#endif
+
+			update(mapping, size, initialData);
+		}
+
+		COGLES3ConstBuffer::COGLES3ConstBuffer(COGLES3Driver* driver, u32 size, void* initialData) :
+			COGLES3HardwareBuffer(driver, EHBT_CONSTANTS, scene::EHM_DYNAMIC, size, 0, initialData)
+		{
+#ifdef _DEBUG
+			setDebugName("COGLES3ConstBuffer");
+#endif
+		}
+
 		COGLES3HardwareBuffer::COGLES3HardwareBuffer(scene::IIndexBuffer* indexBuffer, COGLES3Driver* driver) :
 			IHardwareBuffer(scene::EHM_NEVER, 0, 0, EHBT_NONE, EDT_OPENGL), Driver(driver), BufferID(0),
 			RemoveFromArray(true), LinkedBuffer(0)
@@ -230,7 +250,7 @@ namespace irr
 			Mapping = mapping;
 			Size = size;
 
-			if (Mapping == scene::EHM_NEVER || Size == 0 || !data || !Driver)
+			if (Mapping == scene::EHM_NEVER || Size == 0 || !Driver)
 				return false;
 
 			GLenum target = 0;
@@ -242,6 +262,9 @@ namespace irr
 				break;
 			case EHBT_VERTEX:
 				target = GL_ARRAY_BUFFER;
+				break;
+			case EHBT_CONSTANTS:
+				target = GL_UNIFORM_BUFFER;
 				break;
 			default:
 				return false;
@@ -264,7 +287,15 @@ namespace irr
 			glBindBuffer(target, BufferID);
 
 			if (!createBuffer)
+			{
+				if (!data)
+				{
+					glBindBuffer(target, 0);
+					return false;
+				}
+
 				glBufferSubData(target, 0, Size, data);
+			}
 			else
 			{
 				if (Mapping == scene::EHM_STATIC)
@@ -715,6 +746,31 @@ namespace irr
 				return 0;
 
 			COGLES3HardwareBuffer* hardwareBuffer = new COGLES3HardwareBuffer(vertexBuffer, this);
+
+			bool extendArray = true;
+
+			for (u32 i = 0; i < HardwareBuffer.size(); ++i)
+			{
+				if (!HardwareBuffer[i])
+				{
+					HardwareBuffer[i] = hardwareBuffer;
+					extendArray = false;
+					break;
+				}
+			}
+
+			if (extendArray)
+				HardwareBuffer.push_back(hardwareBuffer);
+
+			return hardwareBuffer;
+		}
+
+		IHardwareBuffer* COGLES3Driver::createConstantBuffer(u32 size, void* initialData)
+		{
+			if (size == 0)
+				return 0;
+
+			COGLES3HardwareBuffer* hardwareBuffer = new COGLES3ConstBuffer(this, size, initialData);
 
 			bool extendArray = true;
 

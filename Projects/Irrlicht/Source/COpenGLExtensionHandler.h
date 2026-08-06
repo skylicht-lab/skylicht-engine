@@ -1272,6 +1272,9 @@ class COpenGLExtensionHandler
 	GLboolean extGlIsBuffer (GLuint buffer);
 	void extGlGetBufferParameteriv (GLenum target, GLenum pname, GLint *params);
 	void extGlGetBufferPointerv (GLenum target, GLenum pname, GLvoid **params);
+	void extGlBindBufferBase(GLenum target, GLuint index, GLuint buffer);
+	void extGlGetActiveUniformBlockName(GLuint program, GLuint uniformBlockIndex, GLsizei bufSize, GLsizei *length, GLchar *uniformBlockName);
+	void extGlUniformBlockBinding(GLuint program, GLuint uniformBlockIndex, GLuint uniformBlockBinding);
 	void extGlProvokingVertex(GLenum mode);
 	void extGlProgramParameteri(GLuint program, GLenum pname, GLint value);
 
@@ -1429,6 +1432,9 @@ class COpenGLExtensionHandler
 		PFNGLISBUFFERARBPROC pGlIsBufferARB;
 		PFNGLGETBUFFERPARAMETERIVARBPROC pGlGetBufferParameterivARB;
 		PFNGLGETBUFFERPOINTERVARBPROC pGlGetBufferPointervARB;
+		PFNGLBINDBUFFERBASEPROC pGlBindBufferBase;
+		PFNGLGETACTIVEUNIFORMBLOCKNAMEPROC pGlGetActiveUniformBlockName;
+		PFNGLUNIFORMBLOCKBINDINGPROC pGlUniformBlockBinding;
 		PFNGLPROVOKINGVERTEXPROC pGlProvokingVertexARB;
 		PFNGLPROVOKINGVERTEXEXTPROC pGlProvokingVertexEXT;
 		PFNGLPROGRAMPARAMETERIARBPROC pGlProgramParameteriARB;
@@ -2723,6 +2729,41 @@ inline void COpenGLExtensionHandler::extGlGetBufferPointerv(GLenum target, GLenu
 #endif
 }
 
+inline void COpenGLExtensionHandler::extGlBindBufferBase(GLenum target, GLuint index, GLuint buffer)
+{
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
+	if (pGlBindBufferBase)
+		pGlBindBufferBase(target, index, buffer);
+#elif defined(GL_ARB_uniform_buffer_object)
+	glBindBufferBase(target, index, buffer);
+#else
+	os::Printer::log("glBindBufferBase not supported", ELL_ERROR);
+#endif
+}
+
+inline void COpenGLExtensionHandler::extGlGetActiveUniformBlockName(GLuint program, GLuint uniformBlockIndex, GLsizei bufSize, GLsizei *length, GLchar *uniformBlockName)
+{
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
+	if (pGlGetActiveUniformBlockName)
+		pGlGetActiveUniformBlockName(program, uniformBlockIndex, bufSize, length, uniformBlockName);
+#elif defined(GL_ARB_uniform_buffer_object)
+	glGetActiveUniformBlockName(program, uniformBlockIndex, bufSize, length, uniformBlockName);
+#else
+	os::Printer::log("glGetActiveUniformBlockName not supported", ELL_ERROR);
+#endif
+}
+
+inline void COpenGLExtensionHandler::extGlUniformBlockBinding(GLuint program, GLuint uniformBlockIndex, GLuint uniformBlockBinding)
+{
+#ifdef _IRR_OPENGL_USE_EXTPOINTER_
+	if (pGlUniformBlockBinding)
+		pGlUniformBlockBinding(program, uniformBlockIndex, uniformBlockBinding);
+#elif defined(GL_ARB_uniform_buffer_object)
+	glUniformBlockBinding(program, uniformBlockIndex, uniformBlockBinding);
+#else
+	os::Printer::log("glUniformBlockBinding not supported", ELL_ERROR);
+#endif
+}
 
 inline void COpenGLExtensionHandler::extGlProvokingVertex(GLenum mode)
 {

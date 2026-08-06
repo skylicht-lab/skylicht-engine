@@ -77,6 +77,11 @@ public:
 	// Update hardware buffer.
 	virtual bool update(const scene::E_HARDWARE_MAPPING mapping, const u32 size, const void* data) = 0;
 
+	virtual bool update(const void* data, u32 size)
+	{
+		return update(Mapping, size, data);
+	}
+
 	virtual void* lock(bool readOnly)
 	{
 		return 0;

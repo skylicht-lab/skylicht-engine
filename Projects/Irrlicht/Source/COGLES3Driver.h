@@ -97,6 +97,8 @@ namespace irr
 		class COGLES3HardwareBuffer : public IHardwareBuffer
 		{
 		public:
+			COGLES3HardwareBuffer(COGLES3Driver* driver, E_HARDWARE_BUFFER_TYPE type, scene::E_HARDWARE_MAPPING mapping,
+				u32 size, u32 flags, const void* initialData = 0);
 			COGLES3HardwareBuffer(scene::IIndexBuffer* indexBuffer, COGLES3Driver* driver);
 			COGLES3HardwareBuffer(scene::IVertexBuffer* vertexBuffer, COGLES3Driver* driver);
 			~COGLES3HardwareBuffer();
@@ -113,6 +115,12 @@ namespace irr
 			bool RemoveFromArray;
 
 			void* LinkedBuffer;
+		};
+
+		class COGLES3ConstBuffer : public COGLES3HardwareBuffer
+		{
+		public:
+			COGLES3ConstBuffer(COGLES3Driver* driver, u32 size, void* initialData = 0);
 		};
 
 		class COGLES3Driver : public CNullDriver, public IMaterialRendererServices, public COGLES3ExtensionHandler
@@ -319,6 +327,9 @@ namespace irr
 
 			//! add texture array
 			virtual ITexture* getTextureArray(IImage** images, u32 num) _IRR_OVERRIDE_;
+
+			//! creates a constant/uniform buffer stored on gpu
+			virtual IHardwareBuffer* createConstantBuffer(u32 size, void *initialData = NULL) _IRR_OVERRIDE_;
 
 			//! Clears the ZBuffer.
 			virtual void clearZBuffer() _IRR_OVERRIDE_;

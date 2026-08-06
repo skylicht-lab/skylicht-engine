@@ -72,6 +72,12 @@ private:
 	void* LinkedBuffer;
 };
 
+class CD3D11ConstBuffer : public CD3D11HardwareBuffer
+{
+public:
+	CD3D11ConstBuffer(CD3D11Driver* driver, u32 size, void* initialData = 0);
+};
+
 }
 }
 

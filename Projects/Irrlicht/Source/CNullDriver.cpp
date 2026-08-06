@@ -1874,6 +1874,11 @@ IHardwareBuffer* CNullDriver::createHardwareBuffer(scene::IVertexBuffer* vertexB
 	return 0;
 }
 
+IHardwareBuffer* CNullDriver::createConstantBuffer(u32 size, void* initialData)
+{
+	return 0;
+}
+
 
 bool CNullDriver::isHardwareBufferRecommend(const scene::IMeshBuffer* mb)
 {

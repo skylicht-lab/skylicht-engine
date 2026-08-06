@@ -38,7 +38,7 @@ class CD3D11CallBridge;
 struct SShaderBuffer 
 {
 	SShaderBuffer()
-		: data(NULL), name(""), size(-1), cData(NULL)
+		: data(NULL), name(""), size(-1), bindPoint(-1), cData(NULL)
 	{
 	}
 
@@ -68,6 +68,9 @@ struct SShaderBuffer
 
 	// size in bytes
 	s32 size;
+
+	// cbuffer register slot
+	s32 bindPoint;
 
 	// data on the gpu
 	ID3D11Buffer* data;
@@ -197,17 +200,6 @@ public:
 
 	virtual bool setVariable(s32 id, const s32* ints, int count, E_SHADER_TYPE type);
 
-	virtual s32 getVariableID(const c8* name,E_SHADER_TYPE type);
-
-	virtual s32 getConstantBufferID(const c8* name,E_SHADER_TYPE type);
-
-	//! sets a constant buffer in the shader (only use this if you are know what you are doing).
-	//! Hint: http://blog.signalsondisplay.com/?p=244
-	//! \param id: Id of the constant buffer
-	//! \param data: Pointer to a structure that represents the buffer
-	//! \param type: Shader type.
-	virtual bool setConstantBuffer(s32 id, const void* data, E_SHADER_TYPE type);
-
 	virtual bool OnRender(IMaterialRendererServices* service, bool updateConstant);
 
 	virtual void OnSetMaterial(const video::SMaterial& material, const video::SMaterial& lastMaterial, bool resetAllRenderstates, video::IMaterialRendererServices* services);
@@ -221,10 +213,13 @@ public:
 	virtual u32 getShaderByteCodeSize() const;
 
 	//! get shader id
-	virtual s32 getShaderVariableID(const c8* name, E_SHADER_TYPE shaderType);
+	virtual s32 getShaderVariableID(const c8* name, E_SHADER_TYPE shaderType) _IRR_OVERRIDE_;
 
 	//! set shader value
-	virtual void setShaderVariable(s32 id, const f32 *value, int count, E_SHADER_TYPE shaderType);
+	virtual void setShaderVariable(s32 id, const f32 *value, int count, E_SHADER_TYPE shaderType) _IRR_OVERRIDE_;
+
+	//! set shader uniform/constant buffer
+	virtual void setShaderUBO(s32 id, const IHardwareBuffer* buffer, E_SHADER_TYPE shaderType) _IRR_OVERRIDE_;
 
 protected:
 	CD3D11MaterialRenderer(ID3D11Device* device, video::IVideoDriver* driver, CD3D11CallBridge* bridgeCalls, IShaderConstantSetCallBack* callback, IMaterialRenderer* baseRenderer, io::IFileSystem* fileSystem = 0, s32 userData = 0);

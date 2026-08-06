@@ -86,12 +86,6 @@ public:
 
 	// implementations for the render services
 	virtual void setBasicRenderStates(const SMaterial& material, const SMaterial& lastMaterial, bool resetAllRenderstates) _IRR_OVERRIDE_;
-	virtual s32 getVertexShaderConstantID(const c8* name);
-	virtual s32 getPixelShaderConstantID(const c8* name);
-	virtual bool setVertexShaderConstant(s32 index, const f32* floats, int count);
-	virtual bool setVertexShaderConstant(s32 index, const s32* ints, int count);
-	virtual bool setPixelShaderConstant(s32 index, const f32* floats, int count);
-	virtual bool setPixelShaderConstant(s32 index, const s32* ints, int count);
 	virtual IVideoDriver* getVideoDriver() _IRR_OVERRIDE_;
 
 	//! get shader id
@@ -99,6 +93,9 @@ public:
 
 	//! set shader value
 	virtual void setShaderVariable(s32 id, const f32 *value, int count, E_SHADER_TYPE shaderType) _IRR_OVERRIDE_;
+
+	//! set shader uniform/constant buffer
+	virtual void setShaderUBO(s32 id, const IHardwareBuffer* buffer, E_SHADER_TYPE shaderType) _IRR_OVERRIDE_;
 
 protected:
 
@@ -133,8 +130,15 @@ protected:
 		GLint location;
 	};
 
+	struct SUniformBlockInfo
+	{
+		core::stringc name;
+		GLuint index;
+	};
+
 	GLuint Program;
 	core::array<SUniformInfo> UniformInfo;
+	core::array<SUniformBlockInfo> UniformBlockInfo;
 	s32 UserData;
 };
 

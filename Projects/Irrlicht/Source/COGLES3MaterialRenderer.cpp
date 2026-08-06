@@ -98,6 +98,7 @@ namespace irr
 			}
 
 			UniformInfo.clear();
+			UniformBlockInfo.clear();
 		}
 
 
@@ -351,49 +352,82 @@ namespace irr
 			GLint num = 0;
 			glGetProgramiv(Program, GL_ACTIVE_UNIFORMS, &num);
 
-			if (num == 0)
-			{
-				// no uniforms
-				return true;
-			}
-
 			GLint maxlen = 0;
 			glGetProgramiv(Program, GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxlen);
 
-			if (maxlen == 0)
+			if (num > 0 && maxlen == 0)
 			{
 				os::Printer::log("GLSL: failed to retrieve uniform information", ELL_ERROR);
 				return false;
 			}
 
-			// seems that some implementations use an extra null terminator
-			++maxlen;
-			c8 *buf = new c8[maxlen];
-
 			UniformInfo.clear();
 			UniformInfo.reallocate(num);
 
-			for (GLint i = 0; i < num; ++i)
+			if (num > 0)
 			{
-				SUniformInfo ui;
-				memset(buf, 0, maxlen);
+				// seems that some implementations use an extra null terminator
+				++maxlen;
+				c8 *buf = new c8[maxlen];
 
-				GLint size;
-				glGetActiveUniform(Program, i, maxlen, 0, &size, &ui.type, reinterpret_cast<GLchar*>(buf));
+				for (GLint i = 0; i < num; ++i)
+				{
+					SUniformInfo ui;
+					memset(buf, 0, maxlen);
 
-				core::stringc name = "";
+					GLint size;
+					glGetActiveUniform(Program, i, maxlen, 0, &size, &ui.type, reinterpret_cast<GLchar*>(buf));
 
-				// array support.
-				for (u32 i = 0; buf[i] != '\0' && buf[i] != '['; ++i)
-					name += buf[i];
+					core::stringc name = "";
 
-				ui.name = name;
-				ui.location = glGetUniformLocation(Program, name.c_str());
+					// array support.
+					for (u32 i = 0; buf[i] != '\0' && buf[i] != '['; ++i)
+						name += buf[i];
 
-				UniformInfo.push_back(ui);
+					ui.name = name;
+					ui.location = glGetUniformLocation(Program, name.c_str());
+
+					UniformInfo.push_back(ui);
+				}
+
+				delete[] buf;
 			}
 
-			delete[] buf;
+			GLint numUniformBlocks = 0;
+			glGetProgramiv(Program, GL_ACTIVE_UNIFORM_BLOCKS, &numUniformBlocks);
+
+			UniformBlockInfo.clear();
+			UniformBlockInfo.reallocate(numUniformBlocks);
+
+			if (numUniformBlocks > 0)
+			{
+				GLint maxBlockNameLength = 0;
+				glGetProgramiv(Program, GL_ACTIVE_UNIFORM_BLOCK_MAX_NAME_LENGTH, &maxBlockNameLength);
+
+				if (maxBlockNameLength == 0)
+				{
+					os::Printer::log("GLSL: failed to retrieve uniform block information", ELL_ERROR);
+					return false;
+				}
+
+				c8 *buf = new c8[maxBlockNameLength];
+
+				for (GLint i = 0; i < numUniformBlocks; ++i)
+				{
+					SUniformBlockInfo ubi;
+					memset(buf, 0, maxBlockNameLength);
+
+					glGetActiveUniformBlockName(Program, i, maxBlockNameLength, 0, reinterpret_cast<GLchar*>(buf));
+
+					ubi.name = buf;
+					ubi.index = (GLuint)i;
+
+					UniformBlockInfo.push_back(ubi);
+				}
+
+				delete[] buf;
+			}
+
 			return true;
 		}
 
@@ -406,12 +440,8 @@ namespace irr
 			Driver->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
 		}
 
-		s32 COGLES3MaterialRenderer::getVertexShaderConstantID(const c8* name)
-		{
-			return getPixelShaderConstantID(name);
-		}
-
-		s32 COGLES3MaterialRenderer::getPixelShaderConstantID(const c8* name)
+		//! get shader id
+		s32 COGLES3MaterialRenderer::getShaderVariableID(const c8* name, E_SHADER_TYPE shaderType)
 		{
 			for (u32 i = 0; i < UniformInfo.size(); ++i)
 			{
@@ -419,119 +449,10 @@ namespace irr
 					return i;
 			}
 
-			return -1;
-		}
-
-		bool COGLES3MaterialRenderer::setVertexShaderConstant(s32 index, const f32* floats, int count)
-		{
-			return setPixelShaderConstant(index, floats, count);
-		}
-
-		bool COGLES3MaterialRenderer::setVertexShaderConstant(s32 index, const s32* ints, int count)
-		{
-			return setPixelShaderConstant(index, ints, count);
-		}
-
-		bool COGLES3MaterialRenderer::setPixelShaderConstant(s32 index, const f32* floats, int count)
-		{
-			if (index < 0 || UniformInfo[index].location < 0)
-				return false;
-
-			bool status = true;
-
-			switch (UniformInfo[index].type)
+			for (u32 i = 0; i < UniformBlockInfo.size(); ++i)
 			{
-			case GL_FLOAT:
-				glUniform1fv(UniformInfo[index].location, count, floats);
-				break;
-			case GL_FLOAT_VEC2:
-				glUniform2fv(UniformInfo[index].location, count / 2, floats);
-				break;
-			case GL_FLOAT_VEC3:
-				glUniform3fv(UniformInfo[index].location, count / 3, floats);
-				break;
-			case GL_FLOAT_VEC4:
-				glUniform4fv(UniformInfo[index].location, count / 4, floats);
-				break;
-			case GL_FLOAT_MAT2:
-				glUniformMatrix2fv(UniformInfo[index].location, count / 4, false, floats);
-				break;
-			case GL_FLOAT_MAT3:
-				glUniformMatrix3fv(UniformInfo[index].location, count / 9, false, floats);
-				break;
-			case GL_FLOAT_MAT4:
-				glUniformMatrix4fv(UniformInfo[index].location, count / 16, false, floats);
-				break;
-			case GL_SAMPLER_2D:
-			case GL_SAMPLER_3D:
-			case GL_SAMPLER_CUBE:
-			case GL_SAMPLER_2D_SHADOW:
-			case GL_SAMPLER_2D_ARRAY:
-			{
-				if (floats)
-				{
-					const GLint id = static_cast<const GLint>(*floats);
-					glUniform1i(UniformInfo[index].location, id);
-				}
-				else
-					status = false;
-			}
-			break;
-			default:
-				status = false;
-				break;
-			}
-			return status;
-		}
-
-		bool COGLES3MaterialRenderer::setPixelShaderConstant(s32 index, const s32* ints, int count)
-		{
-			if (index < 0 || UniformInfo[index].location < 0)
-				return false;
-
-			bool status = true;
-
-			switch (UniformInfo[index].type)
-			{
-			case GL_INT:
-			case GL_BOOL:
-				glUniform1iv(UniformInfo[index].location, count, reinterpret_cast<const GLint*>(ints));
-				break;
-			case GL_INT_VEC2:
-			case GL_BOOL_VEC2:
-				glUniform2iv(UniformInfo[index].location, count / 2, reinterpret_cast<const GLint*>(ints));
-				break;
-			case GL_INT_VEC3:
-			case GL_BOOL_VEC3:
-				glUniform3iv(UniformInfo[index].location, count / 3, reinterpret_cast<const GLint*>(ints));
-				break;
-			case GL_INT_VEC4:
-			case GL_BOOL_VEC4:
-				glUniform4iv(UniformInfo[index].location, count / 4, reinterpret_cast<const GLint*>(ints));
-				break;
-			case GL_SAMPLER_2D:
-			case GL_SAMPLER_3D:
-			case GL_SAMPLER_CUBE:
-			case GL_SAMPLER_2D_SHADOW:
-				glUniform1iv(UniformInfo[index].location, 1, reinterpret_cast<const GLint*>(ints));
-				break;
-			default:
-				status = false;
-				break;
-			}
-			return status;
-		}
-
-		//! get shader id
-		s32 COGLES3MaterialRenderer::getShaderVariableID(const c8* name, E_SHADER_TYPE shaderType)
-		{
-			if (shaderType == video::EST_VERTEX_SHADER)
-			{
-				return getPixelShaderConstantID(name);
-			}
-			else if (shaderType == video::EST_PIXEL_SHADER)
-			{
-				return getPixelShaderConstantID(name);
+				if (UniformBlockInfo[i].name == name)
+					return (s32)UniformBlockInfo[i].index;
 			}
 
 			return -1;
@@ -540,14 +461,60 @@ namespace irr
 		//! set shader value
 		void COGLES3MaterialRenderer::setShaderVariable(s32 id, const f32 *value, int count, E_SHADER_TYPE shaderType)
 		{
-			if (shaderType == video::EST_VERTEX_SHADER)
+			if (id < 0 || id >= (s32)UniformInfo.size() || UniformInfo[id].location < 0)
+				return;
+
+			switch (UniformInfo[id].type)
 			{
-				setVertexShaderConstant(id, value, count);
+			case GL_FLOAT:
+				glUniform1fv(UniformInfo[id].location, count, value);
+				break;
+			case GL_FLOAT_VEC2:
+				glUniform2fv(UniformInfo[id].location, count / 2, value);
+				break;
+			case GL_FLOAT_VEC3:
+				glUniform3fv(UniformInfo[id].location, count / 3, value);
+				break;
+			case GL_FLOAT_VEC4:
+				glUniform4fv(UniformInfo[id].location, count / 4, value);
+				break;
+			case GL_FLOAT_MAT2:
+				glUniformMatrix2fv(UniformInfo[id].location, count / 4, false, value);
+				break;
+			case GL_FLOAT_MAT3:
+				glUniformMatrix3fv(UniformInfo[id].location, count / 9, false, value);
+				break;
+			case GL_FLOAT_MAT4:
+				glUniformMatrix4fv(UniformInfo[id].location, count / 16, false, value);
+				break;
+			case GL_SAMPLER_2D:
+			case GL_SAMPLER_3D:
+			case GL_SAMPLER_CUBE:
+			case GL_SAMPLER_2D_SHADOW:
+			case GL_SAMPLER_2D_ARRAY:
+				if (value)
+				{
+					const GLint sampler = static_cast<const GLint>(*value);
+					glUniform1i(UniformInfo[id].location, sampler);
+				}
+				break;
+			default:
+				break;
 			}
-			else if (shaderType == video::EST_PIXEL_SHADER)
-			{
-				setPixelShaderConstant(id, value, count);
-			}
+		}
+
+		void COGLES3MaterialRenderer::setShaderUBO(s32 id, const IHardwareBuffer* buffer, E_SHADER_TYPE shaderType)
+		{
+			if (id < 0 || !buffer || buffer->getDriverType() != EDT_OPENGLES || buffer->getType() != EHBT_CONSTANTS)
+				return;
+
+			const COGLES3HardwareBuffer* glBuffer = static_cast<const COGLES3HardwareBuffer*>(buffer);
+			GLuint bufferID = glBuffer->getBufferID();
+			if (!bufferID || !Program)
+				return;
+
+			glUniformBlockBinding(Program, (GLuint)id, (GLuint)id);
+			glBindBufferBase(GL_UNIFORM_BUFFER, (GLuint)id, bufferID);
 		}
 
 		IVideoDriver* COGLES3MaterialRenderer::getVideoDriver()

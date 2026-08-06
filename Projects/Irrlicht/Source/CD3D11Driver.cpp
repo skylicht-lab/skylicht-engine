@@ -1435,6 +1435,31 @@ namespace irr
 			return new CD3D11RWBuffer(this, format, numElements, initialData);
 		}
 
+		IHardwareBuffer* CD3D11Driver::createConstantBuffer(u32 size, void* initialData)
+		{
+			if (size == 0)
+				return 0;
+
+			CD3D11HardwareBuffer* hardwareBuffer = new CD3D11ConstBuffer(this, size, initialData);
+
+			bool extendArray = true;
+
+			for (u32 i = 0; i < HardwareBuffer.size(); ++i)
+			{
+				if (!HardwareBuffer[i])
+				{
+					HardwareBuffer[i] = hardwareBuffer;
+					extendArray = false;
+					break;
+				}
+			}
+
+			if (extendArray)
+				HardwareBuffer.push_back(hardwareBuffer);
+
+			return hardwareBuffer;
+		}
+
 		void CD3D11Driver::setViewPort(const core::rect<s32>& area)
 		{
 			core::dimension2du size = getCurrentRenderTargetSize();

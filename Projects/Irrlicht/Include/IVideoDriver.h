@@ -1117,6 +1117,9 @@ namespace video
 		See IReferenceCounted::drop() for more information. */
 		virtual IHardwareBuffer* createRWBuffer(video::ECOLOR_FORMAT format, u32 numElements, void *initialData = NULL) = 0;
 
+		//! Creates a constant/uniform buffer stored on gpu.
+		virtual IHardwareBuffer* createConstantBuffer(u32 size, void *initialData = NULL) = 0;
+
 		//! Event handler for resize events. Only used by the engine internally.
 		/** Used to notify the driver that the window was resized.
 		Usually, there is no need to call this method. */

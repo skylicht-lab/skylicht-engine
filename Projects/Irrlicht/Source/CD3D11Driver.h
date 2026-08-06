@@ -225,6 +225,9 @@ namespace video
 		//! creates a buffer stored on gpu
 		virtual IHardwareBuffer* createRWBuffer(video::ECOLOR_FORMAT format, u32 numElements, void *initialData = NULL);
 
+		//! creates a constant/uniform buffer stored on gpu
+		virtual IHardwareBuffer* createConstantBuffer(u32 size, void *initialData = NULL) _IRR_OVERRIDE_;
+
 		//! Clears the ZBuffer.
 		virtual void clearZBuffer();
 

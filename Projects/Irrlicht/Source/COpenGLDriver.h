@@ -80,6 +80,8 @@ namespace video
 	class COpenGLHardwareBuffer : public IHardwareBuffer
 	{
 	public:
+		COpenGLHardwareBuffer(COpenGLDriver* driver, E_HARDWARE_BUFFER_TYPE type, scene::E_HARDWARE_MAPPING mapping,
+			u32 size, u32 flags, const void* initialData = 0);
 		COpenGLHardwareBuffer(scene::IIndexBuffer* indexBuffer, COpenGLDriver* driver);
 		COpenGLHardwareBuffer(scene::IVertexBuffer* vertexBuffer, COpenGLDriver* driver);
 		~COpenGLHardwareBuffer();
@@ -96,6 +98,12 @@ namespace video
 		bool RemoveFromArray;
 
 		void* LinkedBuffer;
+	};
+
+	class COpenGLConstBuffer : public COpenGLHardwareBuffer
+	{
+	public:
+		COpenGLConstBuffer(COpenGLDriver* driver, u32 size, void* initialData = 0);
 	};
 
 	class COpenGLDriver : public CNullDriver, public IMaterialRendererServices, public COpenGLExtensionHandler
@@ -327,6 +335,9 @@ namespace video
 
 		//! add texture array
 		virtual ITexture* getTextureArray(IImage** images, u32 num) _IRR_OVERRIDE_;
+
+		//! creates a constant/uniform buffer stored on gpu
+		virtual IHardwareBuffer* createConstantBuffer(u32 size, void *initialData = NULL) _IRR_OVERRIDE_;
 
 		//! Clears the ZBuffer.
 		virtual void clearZBuffer() _IRR_OVERRIDE_;

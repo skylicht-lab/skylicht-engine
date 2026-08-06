@@ -69,6 +69,7 @@ COpenGLExtensionHandler::COpenGLExtensionHandler() :
 	pGlGenBuffersARB(0), pGlBindBufferARB(0), pGlBufferDataARB(0), pGlDeleteBuffersARB(0),
 	pGlBufferSubDataARB(0), pGlGetBufferSubDataARB(0), pGlMapBufferARB(0), pGlUnmapBufferARB(0),
 	pGlIsBufferARB(0), pGlGetBufferParameterivARB(0), pGlGetBufferPointervARB(0),
+	pGlBindBufferBase(0), pGlGetActiveUniformBlockName(0), pGlUniformBlockBinding(0),
 	pGlProvokingVertexARB(0), pGlProvokingVertexEXT(0),
 	pGlProgramParameteriARB(0), pGlProgramParameteriEXT(0),
 	pGlGenQueriesARB(0), pGlDeleteQueriesARB(0), pGlIsQueryARB(0),
@@ -541,6 +542,9 @@ void COpenGLExtensionHandler::initExtensions(bool stencilBuffer)
 	pGlIsBufferARB= (PFNGLISBUFFERARBPROC) IRR_OGL_LOAD_EXTENSION("glIsBufferARB");
 	pGlGetBufferParameterivARB= (PFNGLGETBUFFERPARAMETERIVARBPROC) IRR_OGL_LOAD_EXTENSION("glGetBufferParameterivARB");
 	pGlGetBufferPointervARB= (PFNGLGETBUFFERPOINTERVARBPROC) IRR_OGL_LOAD_EXTENSION("glGetBufferPointervARB");
+	pGlBindBufferBase= (PFNGLBINDBUFFERBASEPROC) IRR_OGL_LOAD_EXTENSION("glBindBufferBase");
+	pGlGetActiveUniformBlockName= (PFNGLGETACTIVEUNIFORMBLOCKNAMEPROC) IRR_OGL_LOAD_EXTENSION("glGetActiveUniformBlockName");
+	pGlUniformBlockBinding= (PFNGLUNIFORMBLOCKBINDINGPROC) IRR_OGL_LOAD_EXTENSION("glUniformBlockBinding");
 	pGlProvokingVertexARB= (PFNGLPROVOKINGVERTEXPROC) IRR_OGL_LOAD_EXTENSION("glProvokingVertex");
 	pGlProvokingVertexEXT= (PFNGLPROVOKINGVERTEXEXTPROC) IRR_OGL_LOAD_EXTENSION("glProvokingVertexEXT");
 	pGlProgramParameteriARB= (PFNGLPROGRAMPARAMETERIARBPROC) IRR_OGL_LOAD_EXTENSION("glProgramParameteriARB");

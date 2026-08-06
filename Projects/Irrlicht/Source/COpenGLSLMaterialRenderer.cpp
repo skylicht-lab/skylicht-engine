@@ -99,6 +99,7 @@ COpenGLSLMaterialRenderer::~COpenGLSLMaterialRenderer()
 	}
 
 	UniformInfo.clear();
+	UniformBlockInfo.clear();
 }
 
 
@@ -378,51 +379,90 @@ bool COpenGLSLMaterialRenderer::linkProgram()
 	Driver->extGlGetProgramiv(Program, GL_ACTIVE_UNIFORMS, &num);
 #endif
 
-	if (num == 0)
-	{
-		// no uniforms
-		return true;
-	}
-
 	GLint maxlen = 0;
 #ifdef GL_VERSION_2_0
 	Driver->extGlGetProgramiv(Program, GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxlen);
 #endif
 
-	if (maxlen == 0)
+	if (num > 0 && maxlen == 0)
 	{
 		os::Printer::log("GLSL: failed to retrieve uniform information", ELL_ERROR);
 		return false;
 	}
 
-	// seems that some implementations use an extra null terminator
-	++maxlen;
-	c8 *buf = new c8[maxlen];
-
 	UniformInfo.clear();
 	UniformInfo.reallocate(num);
 
-	for (GLint i=0; i < num; ++i)
+	if (num > 0)
 	{
-		SUniformInfo ui;
-		memset(buf, 0, maxlen);
+		// seems that some implementations use an extra null terminator
+		++maxlen;
+		c8 *buf = new c8[maxlen];
 
-		GLint size;
-		Driver->extGlGetActiveUniform(Program, i, maxlen, 0, &size, &ui.type, reinterpret_cast<GLchar*>(buf));
+		for (GLint i=0; i < num; ++i)
+		{
+			SUniformInfo ui;
+			memset(buf, 0, maxlen);
 
-        core::stringc name = "";
+			GLint size;
+			Driver->extGlGetActiveUniform(Program, i, maxlen, 0, &size, &ui.type, reinterpret_cast<GLchar*>(buf));
 
-		// array support.
-		for (u32 i = 0; buf[i] != '\0' && buf[i] != '['; ++i)
-            name += buf[i];
+			core::stringc name = "";
 
-		ui.name = name;
-		ui.location = Driver->extGlGetUniformLocation(Program, name.c_str());
+			// array support.
+			for (u32 i = 0; buf[i] != '\0' && buf[i] != '['; ++i)
+				name += buf[i];
 
-		UniformInfo.push_back(ui);
+			ui.name = name;
+			ui.location = Driver->extGlGetUniformLocation(Program, name.c_str());
+
+			UniformInfo.push_back(ui);
+		}
+
+		delete [] buf;
 	}
 
-	delete [] buf;
+	UniformBlockInfo.clear();
+
+#if defined(GL_ARB_uniform_buffer_object)
+	if (Driver->FeatureAvailable[COpenGLExtensionHandler::IRR_ARB_uniform_buffer_object])
+	{
+		GLint numUniformBlocks = 0;
+		Driver->extGlGetProgramiv(Program, GL_ACTIVE_UNIFORM_BLOCKS, &numUniformBlocks);
+
+		UniformBlockInfo.reallocate(numUniformBlocks);
+
+		if (numUniformBlocks > 0)
+		{
+			GLint maxBlockNameLength = 0;
+			Driver->extGlGetProgramiv(Program, GL_ACTIVE_UNIFORM_BLOCK_MAX_NAME_LENGTH, &maxBlockNameLength);
+
+			if (maxBlockNameLength == 0)
+			{
+				os::Printer::log("GLSL: failed to retrieve uniform block information", ELL_ERROR);
+				return false;
+			}
+
+			c8 *buf = new c8[maxBlockNameLength];
+
+			for (GLint i=0; i < numUniformBlocks; ++i)
+			{
+				SUniformBlockInfo ubi;
+				memset(buf, 0, maxBlockNameLength);
+
+				Driver->extGlGetActiveUniformBlockName(Program, i, maxBlockNameLength, 0, reinterpret_cast<GLchar*>(buf));
+
+				ubi.name = buf;
+				ubi.index = (GLuint)i;
+
+				UniformBlockInfo.push_back(ubi);
+			}
+
+			delete [] buf;
+		}
+	}
+#endif
+
 	return true;
 }
 
@@ -435,12 +475,8 @@ void COpenGLSLMaterialRenderer::setBasicRenderStates(const SMaterial& material,
 	Driver->setBasicRenderStates(material, lastMaterial, resetAllRenderstates);
 }
 
-s32 COpenGLSLMaterialRenderer::getVertexShaderConstantID(const c8* name)
-{
-	return getPixelShaderConstantID(name);
-}
-
-s32 COpenGLSLMaterialRenderer::getPixelShaderConstantID(const c8* name)
+//! get shader id
+s32 COpenGLSLMaterialRenderer::getShaderVariableID(const c8* name, E_SHADER_TYPE shaderType)
 {
 	for (u32 i = 0; i < UniformInfo.size(); ++i)
 	{
@@ -448,131 +484,10 @@ s32 COpenGLSLMaterialRenderer::getPixelShaderConstantID(const c8* name)
 			return i;
 	}
 
-	return -1;
-}
-
-bool COpenGLSLMaterialRenderer::setVertexShaderConstant(s32 index, const f32* floats, int count)
-{
-	return setPixelShaderConstant(index, floats, count);
-}
-
-bool COpenGLSLMaterialRenderer::setVertexShaderConstant(s32 index, const s32* ints, int count)
-{
-	return setPixelShaderConstant(index, ints, count);
-}
-
-bool COpenGLSLMaterialRenderer::setPixelShaderConstant(s32 index, const f32* floats, int count)
-{
-#ifdef GL_ARB_shader_objects
-	if(index < 0 || UniformInfo[index].location < 0)
-		return false;
-
-	bool status = true;
-
-	switch (UniformInfo[index].type)
+	for (u32 i = 0; i < UniformBlockInfo.size(); ++i)
 	{
-		case GL_FLOAT:
-			Driver->extGlUniform1fv(UniformInfo[index].location, count, floats);
-			break;
-		case GL_FLOAT_VEC2:
-			Driver->extGlUniform2fv(UniformInfo[index].location, count/2, floats);
-			break;
-		case GL_FLOAT_VEC3:
-			Driver->extGlUniform3fv(UniformInfo[index].location, count/3, floats);
-			break;
-		case GL_FLOAT_VEC4:
-			Driver->extGlUniform4fv(UniformInfo[index].location, count/4, floats);
-			break;
-		case GL_FLOAT_MAT2:
-			Driver->extGlUniformMatrix2fv(UniformInfo[index].location, count/4, false, floats);
-			break;
-		case GL_FLOAT_MAT3:
-			Driver->extGlUniformMatrix3fv(UniformInfo[index].location, count/9, false, floats);
-			break;
-		case GL_FLOAT_MAT4:
-			Driver->extGlUniformMatrix4fv(UniformInfo[index].location, count/16, false, floats);
-			break;
-		case GL_SAMPLER_1D:
-		case GL_SAMPLER_2D:
-		case GL_SAMPLER_3D:
-		case GL_SAMPLER_CUBE:
-		case GL_SAMPLER_1D_SHADOW:
-		case GL_SAMPLER_2D_SHADOW:
-		case GL_SAMPLER_2D_ARRAY:
-			{
-				if(floats)
-				{
-					const GLint id = static_cast<const GLint>(*floats);
-					Driver->extGlUniform1iv(UniformInfo[index].location, 1, &id);
-				}
-				else
-					status = false;
-			}
-			break;
-		default:
-			status = false;
-			break;
-	}
-	return status;
-#else
-	return false;
-#endif
-}
-
-bool COpenGLSLMaterialRenderer::setPixelShaderConstant(s32 index, const s32* ints, int count)
-{
-#ifdef GL_ARB_shader_objects
-	if(index < 0 || UniformInfo[index].location < 0)
-		return false;
-
-	bool status = true;
-
-	switch (UniformInfo[index].type)
-	{
-		case GL_INT:
-		case GL_BOOL:
-			Driver->extGlUniform1iv(UniformInfo[index].location, count, reinterpret_cast<const GLint*>(ints));
-			break;
-		case GL_INT_VEC2:
-		case GL_BOOL_VEC2:
-			Driver->extGlUniform2iv(UniformInfo[index].location, count/2, reinterpret_cast<const GLint*>(ints));
-			break;
-		case GL_INT_VEC3:
-		case GL_BOOL_VEC3:
-			Driver->extGlUniform3iv(UniformInfo[index].location, count/3, reinterpret_cast<const GLint*>(ints));
-			break;
-		case GL_INT_VEC4:
-		case GL_BOOL_VEC4:
-			Driver->extGlUniform4iv(UniformInfo[index].location, count/4, reinterpret_cast<const GLint*>(ints));
-			break;
-		case GL_SAMPLER_1D:
-		case GL_SAMPLER_2D:
-		case GL_SAMPLER_3D:
-		case GL_SAMPLER_CUBE:
-		case GL_SAMPLER_1D_SHADOW:
-		case GL_SAMPLER_2D_SHADOW:
-			Driver->extGlUniform1iv(UniformInfo[index].location, 1, reinterpret_cast<const GLint*>(ints));
-			break;
-		default:
-			status = false;
-			break;
-	}
-	return status;
-#else
-	return false;
-#endif
-}
-
-//! get shader id
-s32 COpenGLSLMaterialRenderer::getShaderVariableID(const c8* name, E_SHADER_TYPE shaderType)
-{
-	if (shaderType == video::EST_VERTEX_SHADER)
-	{
-		return getPixelShaderConstantID(name);
-	}
-	else if (shaderType == video::EST_PIXEL_SHADER)
-	{
-		return getPixelShaderConstantID(name);
+		if (UniformBlockInfo[i].name == name)
+			return (s32)UniformBlockInfo[i].index;
 	}
 
 	return -1;
@@ -581,14 +496,69 @@ s32 COpenGLSLMaterialRenderer::getShaderVariableID(const c8* name, E_SHADER_TYPE
 //! set shader value
 void COpenGLSLMaterialRenderer::setShaderVariable(s32 id, const f32 *value, int count, E_SHADER_TYPE shaderType)
 {
-	if (shaderType == video::EST_VERTEX_SHADER)
+#ifdef GL_ARB_shader_objects
+	if (id < 0 || id >= (s32)UniformInfo.size() || UniformInfo[id].location < 0)
+		return;
+
+	switch (UniformInfo[id].type)
 	{
-		setVertexShaderConstant(id, value, count);
+		case GL_FLOAT:
+			Driver->extGlUniform1fv(UniformInfo[id].location, count, value);
+			break;
+		case GL_FLOAT_VEC2:
+			Driver->extGlUniform2fv(UniformInfo[id].location, count/2, value);
+			break;
+		case GL_FLOAT_VEC3:
+			Driver->extGlUniform3fv(UniformInfo[id].location, count/3, value);
+			break;
+		case GL_FLOAT_VEC4:
+			Driver->extGlUniform4fv(UniformInfo[id].location, count/4, value);
+			break;
+		case GL_FLOAT_MAT2:
+			Driver->extGlUniformMatrix2fv(UniformInfo[id].location, count/4, false, value);
+			break;
+		case GL_FLOAT_MAT3:
+			Driver->extGlUniformMatrix3fv(UniformInfo[id].location, count/9, false, value);
+			break;
+		case GL_FLOAT_MAT4:
+			Driver->extGlUniformMatrix4fv(UniformInfo[id].location, count/16, false, value);
+			break;
+		case GL_SAMPLER_1D:
+		case GL_SAMPLER_2D:
+		case GL_SAMPLER_3D:
+		case GL_SAMPLER_CUBE:
+		case GL_SAMPLER_1D_SHADOW:
+		case GL_SAMPLER_2D_SHADOW:
+		case GL_SAMPLER_2D_ARRAY:
+			if (value)
+			{
+				const GLint sampler = static_cast<const GLint>(*value);
+				Driver->extGlUniform1iv(UniformInfo[id].location, 1, &sampler);
+			}
+			break;
+		default:
+			break;
 	}
-	else if (shaderType == video::EST_PIXEL_SHADER)
-	{
-		setPixelShaderConstant(id, value, count);
-	}
+#endif
+}
+
+void COpenGLSLMaterialRenderer::setShaderUBO(s32 id, const IHardwareBuffer* buffer, E_SHADER_TYPE shaderType)
+{
+#if defined(GL_ARB_uniform_buffer_object)
+	if (!Driver->FeatureAvailable[COpenGLExtensionHandler::IRR_ARB_uniform_buffer_object])
+		return;
+
+	if (id < 0 || !buffer || buffer->getDriverType() != EDT_OPENGL || buffer->getType() != EHBT_CONSTANTS)
+		return;
+
+	const COpenGLHardwareBuffer* glBuffer = static_cast<const COpenGLHardwareBuffer*>(buffer);
+	GLuint bufferID = glBuffer->getBufferID();
+	if (!bufferID || !Program)
+		return;
+
+	Driver->extGlUniformBlockBinding(Program, (GLuint)id, (GLuint)id);
+	Driver->extGlBindBufferBase(GL_UNIFORM_BUFFER, (GLuint)id, bufferID);
+#endif
 }
 
 IVideoDriver* COpenGLSLMaterialRenderer::getVideoDriver()

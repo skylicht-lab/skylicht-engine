@@ -150,6 +150,26 @@ void COpenGLVertexDescriptor::addLocationLayer()
 		Attribute[i].addLocationLayer();
 }
 
+COpenGLHardwareBuffer::COpenGLHardwareBuffer(COpenGLDriver* driver, E_HARDWARE_BUFFER_TYPE type,
+	scene::E_HARDWARE_MAPPING mapping, u32 size, u32 flags, const void* initialData) :
+	IHardwareBuffer(mapping, flags, size, type, EDT_OPENGL), Driver(driver), BufferID(0),
+	RemoveFromArray(true), LinkedBuffer(0)
+{
+#ifdef _DEBUG
+	setDebugName("COpenGLHardwareBuffer");
+#endif
+
+	update(mapping, size, initialData);
+}
+
+COpenGLConstBuffer::COpenGLConstBuffer(COpenGLDriver* driver, u32 size, void* initialData) :
+	COpenGLHardwareBuffer(driver, EHBT_CONSTANTS, scene::EHM_DYNAMIC, size, 0, initialData)
+{
+#ifdef _DEBUG
+	setDebugName("COpenGLConstBuffer");
+#endif
+}
+
 COpenGLHardwareBuffer::COpenGLHardwareBuffer(scene::IIndexBuffer* indexBuffer, COpenGLDriver* driver) :
 	IHardwareBuffer(scene::EHM_NEVER, 0, 0, EHBT_NONE, EDT_OPENGL), Driver(driver), BufferID(0),
 	RemoveFromArray(true), LinkedBuffer(0)
@@ -232,7 +252,7 @@ bool COpenGLHardwareBuffer::update(const scene::E_HARDWARE_MAPPING mapping, cons
 	Mapping = mapping;
 	Size = size;
 
-	if (Mapping == scene::EHM_NEVER || Size == 0 || !data || !Driver || !Driver->FeatureAvailable[COpenGLDriver::IRR_ARB_vertex_buffer_object])
+	if (Mapping == scene::EHM_NEVER || Size == 0 || !Driver || !Driver->FeatureAvailable[COpenGLDriver::IRR_ARB_vertex_buffer_object])
 		return false;
 
 #if defined(GL_ARB_vertex_buffer_object)
@@ -245,6 +265,9 @@ bool COpenGLHardwareBuffer::update(const scene::E_HARDWARE_MAPPING mapping, cons
 		break;
 	case EHBT_VERTEX:
 		target = GL_ARRAY_BUFFER;
+		break;
+	case EHBT_CONSTANTS:
+		target = GL_UNIFORM_BUFFER;
 		break;
 	default:
 		return false;
@@ -267,7 +290,15 @@ bool COpenGLHardwareBuffer::update(const scene::E_HARDWARE_MAPPING mapping, cons
 	Driver->extGlBindBuffer(target, BufferID);
 
 	if (!createBuffer)
+	{
+		if (!data)
+		{
+			Driver->extGlBindBuffer(target, 0);
+			return false;
+		}
+
 		Driver->extGlBufferSubData(target, 0, Size, data);
+	}
 	else
 	{
 		if (Mapping == scene::EHM_STATIC)
@@ -1205,6 +1236,31 @@ IHardwareBuffer* COpenGLDriver::createHardwareBuffer(scene::IVertexBuffer* verte
 		return 0;
 
 	COpenGLHardwareBuffer* hardwareBuffer = new COpenGLHardwareBuffer(vertexBuffer, this);
+
+	bool extendArray = true;
+
+	for (u32 i = 0; i < HardwareBuffer.size(); ++i)
+	{
+		if (!HardwareBuffer[i])
+		{
+			HardwareBuffer[i] = hardwareBuffer;
+			extendArray = false;
+			break;
+		}
+	}
+
+	if (extendArray)
+		HardwareBuffer.push_back(hardwareBuffer);
+
+	return hardwareBuffer;
+}
+
+IHardwareBuffer* COpenGLDriver::createConstantBuffer(u32 size, void* initialData)
+{
+	if (size == 0)
+		return 0;
+
+	COpenGLHardwareBuffer* hardwareBuffer = new COpenGLConstBuffer(this, size, initialData);
 
 	bool extendArray = true;
 

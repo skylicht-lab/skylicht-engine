@@ -17,6 +17,7 @@ namespace video
 {
 
 class IVideoDriver;
+class IHardwareBuffer;
 class IMaterialRendererServices;
 
 //! Interface for material rendering.
@@ -98,6 +99,8 @@ public:
 	virtual s32 getShaderVariableID(const c8* name, E_SHADER_TYPE shaderType) { return -1; }
 
 	virtual void setShaderVariable(s32 id, const f32 *value, int count, E_SHADER_TYPE shaderType) {}
+
+	virtual void setShaderUBO(s32 id, const IHardwareBuffer* buffer, E_SHADER_TYPE shaderType) {}
 
 };
 
