@@ -3,7 +3,6 @@ package com.skylicht.engine3d;
 import android.Manifest;
 import android.annotation.SuppressLint;
 
-import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -22,7 +21,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
@@ -62,15 +60,12 @@ public class FullscreenActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
-
         super.onCreate(savedInstanceState);
 
         getOnBackPressedDispatcher().addCallback(this, mBackPressedCallback);
 
         // setup fullscreen
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        EdgeToEdge.enable(this);
         setupFullscreenWindow();
 
         NativeInterface.getInstance().setMainActivity(this);
@@ -298,89 +293,9 @@ public class FullscreenActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * DISPLAY READ WRITE PERMISSION
-     */
-
-    private static final int PERM_REQUEST_READWRITE = 1;
-
     private void checkReadWritePermission() {
-        // https://github.com/copolii/runtime_permissions/blob/master/app/src/main/java/ca/mahram/android/runtimepermissions
-
-        // todo check permission
-        // enable this code if you need a permission to write STORAGE
-        /*
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
-            GameInstance.HaveReadWritePermission = false;
-            showPermissionRationaleDialog();
-        }
-        else {
-            GameInstance.HaveReadWritePermission = true;
-        }
-        */
-
         // In Android 4.4 (API level 19) or higher, we do not need request Write for getExternalFilesDir() folder
         GameInstance.HaveReadWritePermission = true;
-    }
-
-    private void showPermissionRationaleDialog() {
-        final DialogInterface.OnClickListener listener = (dialog, which) -> {
-            if (DialogInterface.BUTTON_POSITIVE == which) {
-                requestWritePermission();
-            }
-        };
-
-        AlertDialog dialog = new AlertDialog.Builder(this).setTitle(R.string.write_access).setMessage(R.string.write_permission_rationale).setPositiveButton(android.R.string.ok, listener).setCancelable(false).create();
-        dialog.show();
-    }
-
-    ActivityResultLauncher<String> launcherPermission = registerForActivityResult(new ActivityResultContracts.RequestPermission(), result -> {
-        if (result) GameInstance.HaveReadWritePermission = true;
-        else onWritePermissionDenied(false);
-    });
-
-    void requestWritePermission() {
-        // ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, PERM_REQUEST_READWRITE);
-        launcherPermission.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-    }
-
-    /*
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == PERM_REQUEST_READWRITE) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                // DENIED
-                onWritePermissionDenied(false);
-            } else {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                    // OK RUN GAME
-                    GameInstance.HaveReadWritePermission = true;
-
-                } else {
-                    // SHOW ALERT
-                    onWritePermissionDenied(true);
-                }
-            }
-        }
-    }
-    */
-    void onWritePermissionDenied(boolean dontAskAgain) {
-        if (!dontAskAgain) {
-            final DialogInterface.OnClickListener listener = (dialog, which) -> {
-                if (which != DialogInterface.BUTTON_NEUTRAL) {
-                    GameInstance.Activity.finish();
-                    return;
-                }
-                runOnUiThread(() -> gotoSettings());
-            };
-
-            AlertDialog dialog = new AlertDialog.Builder(this).setTitle(R.string.permission_denied).setMessage(R.string.write_permission_denied).setPositiveButton(android.R.string.ok, listener).setNeutralButton(R.string.change, listener).setCancelable(false).create();
-            dialog.show();
-        } else {
-            runOnUiThread(() -> gotoSettings());
-        }
     }
 
     ActivityResultLauncher<Intent> launcherSetting = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> checkReadWritePermission());
