@@ -21,17 +21,13 @@ commands:
 
             sudo apt install -y python3 python3-pip python3-venv
 
-            python3 -m venv /opt/venv
+            python3 -m venv ./py_env
 
-            source /opt/venv/bin/activate
+            ./py_env/bin/pip3 install tinydb Pillow
 
-            pip3 install tinydb
+            ./py_env/bin/python3 BuildTextureCompressETC.py
 
-            pip3 install Pillow
-
-            python3 BuildTextureCompressETC.py
-
-            python3 BuildAssetBundles.py
+            ./py_env/bin/python3 BuildAssetBundles.py
 
             cd ..
           name: Build Assets, ETC Textures
