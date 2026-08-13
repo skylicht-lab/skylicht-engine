@@ -21,5 +21,5 @@ float4 main(PS_INPUT input) : SV_TARGET
 {	
 	float4 diffuseMap = uTexDiffuse.Sample(uTexDiffuseSampler, input.tex0);
 	float4 tilingMap = uTexTiling.Sample(uTexTilingSampler, input.tex1);
-	return float4(tilingMap.rgb * uColor.rgb * input.color.rgb, diffuseMap.a);
+	return float4(tilingMap.rgb * uColor.rgb * input.color.rgb, diffuseMap.a * uColor.a * input.color.a);
 }
