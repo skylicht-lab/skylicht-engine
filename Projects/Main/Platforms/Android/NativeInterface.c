@@ -42,7 +42,6 @@ void applicationTouchUp(int touchID, int x, int y);
 void applicationUpdateAccelerometer(float x, float y, float z);
 void applicationSetAccelerometer(int b);
 void applicationAddAPK(const char *path);
-void applicationSetDataFolder(const char *path);
 void applicationSetAppID(const char *id);
 void applicationSetSaveFolder(const char *path);
 void applicationSetDownloadFolder(const char *path);
@@ -196,18 +195,6 @@ JNIEXPORT void JNICALL JNI_FUNCTION(NativeInterface_addApkPath)(JNIEnv* env, job
 	applicationAddAPK(path);
 
 	(*env)->ReleaseStringUTFChars(env, apkPath, path);
-}
-
-// native member function setDataPath
-JNIEXPORT void JNICALL JNI_FUNCTION(NativeInterface_setDataPath)(JNIEnv* env, jobject thiz, jstring dataPath)
-{
-	const char *path = getJString(env, dataPath);
-
-	// set dataPath
-	__android_log_print(ANDROID_LOG_INFO, JNI_APPNAME, "Set data path: %s", path);
-	applicationSetDataFolder(path);
-
-	(*env)->ReleaseStringUTFChars(env, dataPath, path);
 }
 
 // native member function setApkPath

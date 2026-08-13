@@ -23,16 +23,21 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.res.Configuration;
+import android.graphics.Rect;
 import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.WindowMetrics;
 
 import java.io.File;
 
@@ -41,7 +46,7 @@ import java.io.File;
  * status bar and navigation/system bar) with user interaction.
  */
 public class FullscreenActivity extends AppCompatActivity {
-    private final Handler mHideHandler = new Handler();
+    private final Handler mHideHandler = new Handler(Looper.getMainLooper());
     private GLES3View mContentView;
     private final Runnable mHideRunnable = this::hide;
 
@@ -120,8 +125,7 @@ public class FullscreenActivity extends AppCompatActivity {
         NativeInterface.getInstance().setDeviceID(androidId);
 
         // set the screen size
-        DisplayMetrics dm = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(dm);
+        DisplayMetrics dm = getScreenMetrics();
         GameInstance.ScreenWidth = dm.widthPixels;
         GameInstance.ScreenHeight = dm.heightPixels;
 
@@ -137,6 +141,9 @@ public class FullscreenActivity extends AppCompatActivity {
         PlayStoreController.getInstance().init(this);
         InAppReview.getInstance().init(this);
         PostNotification.getInstance().init(this);
+
+        GoogleUMPManager.getInstance().initNative();
+        AdMobManager.getInstance().initNative();
     }
 
     private void setupFullscreenWindow() {
@@ -198,6 +205,24 @@ public class FullscreenActivity extends AppCompatActivity {
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
 
+    private DisplayMetrics getScreenMetrics() {
+        DisplayMetrics dm = new DisplayMetrics();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            WindowMetrics windowMetrics = getWindowManager().getCurrentWindowMetrics();
+            Rect bounds = windowMetrics.getBounds();
+            dm.widthPixels = bounds.width();
+            dm.heightPixels = bounds.height();
+        } else {
+            getLegacyScreenMetrics(dm);
+        }
+        return dm;
+    }
+
+    @SuppressWarnings("deprecation")
+    private void getLegacyScreenMetrics(DisplayMetrics dm) {
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+    }
+
     /**
      * BASIC ENGINE 3D EVENT
      */
@@ -239,7 +264,17 @@ public class FullscreenActivity extends AppCompatActivity {
     public boolean isNetworkAvailable() {
         Context context = getApplicationContext();
         final ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
-        return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
+        if (connectivityManager == null) {
+            return false;
+        }
+
+        Network activeNetwork = connectivityManager.getActiveNetwork();
+        if (activeNetwork == null) {
+            return false;
+        }
+
+        NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(activeNetwork);
+        return capabilities != null && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
     }
 
     public void openURL(final String url) {

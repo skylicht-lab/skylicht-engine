@@ -61,7 +61,7 @@ public class TextField {
             layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
             layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
             window.setAttributes(layoutParams);
-            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
             window.setDimAmount(0.0f);
         }
 

@@ -148,11 +148,29 @@ public class PlayStoreController implements PurchasesUpdatedListener {
         if (sInstance == null || sInstance.mBillingClient == null) return;
 
         List<QueryProductDetailsParams.Product> productList = new ArrayList<>();
-        for (String id : productIds) {
-            productList.add(QueryProductDetailsParams.Product.newBuilder()
-                    .setProductId(id)
-                    .setProductType(BillingClient.ProductType.INAPP)
-                    .build());
+        if (productIds != null) {
+            for (String id : productIds) {
+                if (id == null || id.isEmpty()) {
+                    continue;
+                }
+
+                productList.add(QueryProductDetailsParams.Product.newBuilder()
+                        .setProductId(id)
+                        .setProductType(BillingClient.ProductType.INAPP)
+                        .build());
+            }
+        }
+
+        if (productList.isEmpty()) {
+            sInstance.onProductsReceived(
+                    new String[0],
+                    new String[0],
+                    new String[0],
+                    new String[0],
+                    new double[0],
+                    new String[0]
+            );
+            return;
         }
 
         QueryProductDetailsParams params = QueryProductDetailsParams.newBuilder()
@@ -201,9 +219,6 @@ public class PlayStoreController implements PurchasesUpdatedListener {
             for (Purchase purchase : purchases) {
                 handlePurchase(purchase);
             }
-        } else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.USER_CANCELED) {
-            // Handle user cancel
-            onPurchaseFailed(mProductId, -2, "Cancel");
         } else {
             // Handle other errors
             onPurchaseFailed(mProductId, billingResult.getResponseCode(), billingResult.getDebugMessage());

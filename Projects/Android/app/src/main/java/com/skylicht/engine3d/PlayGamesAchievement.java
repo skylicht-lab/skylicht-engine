@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+
 import com.google.android.gms.games.AchievementsClient;
 import com.google.android.gms.games.AnnotatedData;
 import com.google.android.gms.games.achievement.Achievement;
@@ -11,10 +14,9 @@ import com.google.android.gms.games.achievement.AchievementBuffer;
 import com.google.android.gms.games.PlayGames;
 
 public class PlayGamesAchievement {
-    private static final int RC_ACHIEVEMENTS = 9003;
-
     public static PlayGamesAchievement sInstance = null;
     private AchievementsClient mAchievementsClient;
+    private ActivityResultLauncher<Intent> mAchievementsLauncher;
 
     static public PlayGamesAchievement getInstance() {
         if (sInstance == null) sInstance = new PlayGamesAchievement();
@@ -23,6 +25,10 @@ public class PlayGamesAchievement {
 
     public void init(Activity context) {
         mAchievementsClient = PlayGames.getAchievementsClient(context);
+        if (context instanceof FullscreenActivity) {
+            mAchievementsLauncher = ((FullscreenActivity)context).registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            });
+        }
         init();
     }
 
@@ -47,8 +53,13 @@ public class PlayGamesAchievement {
 
         GameInstance.Activity.runOnUiThread(() -> {
             mAchievementsClient.getAchievementsIntent()
-                    .addOnSuccessListener((Intent intent) ->
-                            GameInstance.Activity.startActivityForResult(intent, RC_ACHIEVEMENTS))
+                    .addOnSuccessListener((Intent intent) -> {
+                        if (mAchievementsLauncher != null) {
+                            mAchievementsLauncher.launch(intent);
+                        } else {
+                            GameInstance.Activity.startActivity(intent);
+                        }
+                    })
                     .addOnFailureListener(e ->
                             Log.w("Skylicht", e != null ? e.getMessage() : "Show achievements failed"));
         });

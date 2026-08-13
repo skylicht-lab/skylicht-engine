@@ -226,11 +226,6 @@ extern "C" {
 			CBuildConfig::getInstance()->APKPath.push_back(apkPath);
 	}
 
-	void applicationSetDataFolder(const char *dataPath)
-	{
-		CBuildConfig::getInstance()->DataFolder = dataPath;
-	}
-
 	void applicationSetSaveFolder(const char *savePath)
 	{
 		CBuildConfig::getInstance()->SaveFolder = savePath;
@@ -238,7 +233,7 @@ extern "C" {
 
 	void applicationSetDownloadFolder(const char *downloadPath)
 	{
-		CBuildConfig::getInstance()->SaveFolder = downloadPath;
+		CBuildConfig::getInstance()->DataFolder = downloadPath;
 	}
 
 	void applicationSetAppID(const char *id)

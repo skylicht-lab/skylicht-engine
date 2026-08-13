@@ -3,9 +3,6 @@ package com.skylicht.engine3d;
 import android.app.Activity;
 import android.util.Log;
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.games.GamesSignInClient;
 import com.google.android.gms.games.PlayGames;
 import com.google.android.gms.games.PlayGamesSdk;
@@ -67,22 +64,8 @@ public class PlayGamesSignIn {
 
     public void startSignOut() {
         GameInstance.Activity.runOnUiThread(() -> {
-            GoogleSignInClient signInClient = GoogleSignIn.getClient(
-                    GameInstance.Activity,
-                    GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN
-            );
-
-            signInClient.signOut()
-                    .addOnCompleteListener(task -> {
-                        mIsSignedIn = false;
-
-                        if (task.isSuccessful()) {
-                            Log.w("Skylicht", "Play Games sign out success");
-                        } else {
-                            Exception e = task.getException();
-                            Log.w("Skylicht", e != null ? e.getMessage() : "Play Games sign out failed");
-                        }
-                    });
+            mIsSignedIn = false;
+            Log.w("Skylicht", "Play Games Services v2 sign out is managed by system settings");
         });
     }
 
