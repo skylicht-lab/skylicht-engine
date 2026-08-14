@@ -52,8 +52,8 @@ SkylichtApplication* _angleApplication = NULL;
 	// get the name of the app
 	NSString* bundle = [[NSBundle mainBundle]bundleIdentifier];
 	
-	NSString* savePath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-	savePath = [savePath stringByAppendingFormat:@"/%@", bundle];
+	NSString *savePath = [NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+	savePath = [savePath stringByAppendingPathComponent:bundle];
 	
 	// set bundle id
 	char bundleID[1024];
@@ -72,11 +72,33 @@ SkylichtApplication* _angleApplication = NULL;
 			NSLog(@"Error %@", pError);
 		}
 	}
+
+	NSString* downloadPath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+	downloadPath = [downloadPath stringByAppendingPathComponent:bundle];
+
+	if([fileManager fileExistsAtPath:downloadPath] == NO)
+	{
+		NSError *pError;
+		if([fileManager createDirectoryAtPath:downloadPath withIntermediateDirectories:YES attributes:nil error:&pError] == NO)
+		{
+			downloadPath = savePath;
+			NSLog(@"Error %@", pError);
+		}
+	}
+	
+	// NSLog(@"Save path %@", savePath);
+	// NSLog(@"Download path %@", downloadPath);
 	
 	char path[1024];
 	savePath = [savePath stringByAppendingFormat:@"/"];
 	[savePath getCString:path maxLength:1024 encoding:NSASCIIStringEncoding];
 	_angleApplication->setSaveFolder(path);
+	
+	char download[1024];
+	downloadPath = [downloadPath stringByAppendingFormat:@"/"];
+	[downloadPath getCString:download maxLength:1024 encoding:NSASCIIStringEncoding];
+	_angleApplication->setDownloadFolder(download);
+
 	_angleApplication->initialize();
 }
 
@@ -152,7 +174,10 @@ SkylichtApplication* _angleApplication = NULL;
 	NSLog(@"appWillResignActive");
 	
 	if (_angleApplication)
-		_angleApplication->onPause();
+	{
+		_view.paused = YES;
+		_angleApplication->pause();
+	}
 }
 
 -(void)appWillBecomeActive:(NSNotification*)note
@@ -160,7 +185,10 @@ SkylichtApplication* _angleApplication = NULL;
 	NSLog(@"appWillBecomeActive");
 	
 	if (_angleApplication)
-		_angleApplication->onResume();
+	{
+		_angleApplication->resume();
+		_view.paused = NO;
+	}
 }
 
 -(void)appWillTerminate:(NSNotification*)note

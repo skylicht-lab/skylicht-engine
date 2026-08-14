@@ -106,6 +106,21 @@ void AngleApplication::swap()
 	mGLWindow->swap();
 }
 
+void AngleApplication::pause()
+{
+	if (mEGLWindow && mEGLWindow->isGLInitialized())
+	{
+		glFinish();
+		eglMakeCurrent(mEGLWindow->getDisplay(), EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+	}
+}
+
+void AngleApplication::resume()
+{
+	if (mGLWindow && mGLWindow->isGLInitialized())
+		mGLWindow->makeCurrent();
+}
+
 OSWindow *AngleApplication::getWindow() const
 {
 	return mOSWindow;

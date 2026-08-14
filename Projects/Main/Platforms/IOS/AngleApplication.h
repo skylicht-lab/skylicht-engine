@@ -46,6 +46,9 @@ class AngleApplication
 
     virtual void swap();
 
+    virtual void pause();
+    virtual void resume();
+
     virtual void onKeyUp(const Event::KeyEvent &keyEvent);
     virtual void onKeyDown(const Event::KeyEvent &keyEvent);
     virtual void onMouseMoved(const Event::MouseMoveEvent &mouseEvent);

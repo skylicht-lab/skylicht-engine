@@ -18,6 +18,9 @@ public:
     virtual void step(float dt, double totalTime);
     virtual void draw();    
     
+    virtual void pause();
+    virtual void resume();
+
     virtual void onResized(int width, int height);
     
     void onPause();
@@ -28,5 +31,6 @@ public:
     void onTouchUp(int touchID, int x, int y);
     
     void setSaveFolder(const char *folder);
+    void setDownloadFolder(const char *folder);
     void setBundleId(const char *bundleId);
 };

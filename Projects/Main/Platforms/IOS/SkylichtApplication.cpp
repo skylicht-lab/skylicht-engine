@@ -93,6 +93,18 @@ void SkylichtApplication::draw()
 	g_mainApp->mainLoop();
 }
 
+void SkylichtApplication::pause()
+{
+	g_mainApp->pause();
+	AngleApplication::pause();
+}
+
+void SkylichtApplication::resume()
+{
+	AngleApplication::resume();
+	g_mainApp->resume();
+}
+
 void SkylichtApplication::onResized(int width, int height)
 {
 	AngleApplication::onResized(width, height);
@@ -127,6 +139,11 @@ void SkylichtApplication::setSaveFolder(const char *folder)
 	CBuildConfig::getInstance()->SaveFolder = folder;
 }
 
+void SkylichtApplication::setDownloadFolder(const char *folder)
+{
+	CBuildConfig::getInstance()->DataFolder = folder;
+}
+
 void SkylichtApplication::setBundleId(const char *bundleId)
 {
 	CBuildConfig::getInstance()->AppID = bundleId;
@@ -135,9 +152,11 @@ void SkylichtApplication::setBundleId(const char *bundleId)
 void SkylichtApplication::onPause()
 {
 	g_mainApp->pause();
+	AngleApplication::pause();
 }
 
 void SkylichtApplication::onResume()
 {
+	AngleApplication::resume();
 	g_mainApp->resume();
 }

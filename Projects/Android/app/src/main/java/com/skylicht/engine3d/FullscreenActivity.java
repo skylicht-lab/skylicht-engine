@@ -141,9 +141,6 @@ public class FullscreenActivity extends AppCompatActivity {
         PlayStoreController.getInstance().init(this);
         InAppReview.getInstance().init(this);
         PostNotification.getInstance().init(this);
-
-        GoogleUMPManager.getInstance().initNative();
-        AdMobManager.getInstance().initNative();
     }
 
     private void setupFullscreenWindow() {
