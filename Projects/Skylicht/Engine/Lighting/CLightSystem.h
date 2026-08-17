@@ -67,9 +67,9 @@ namespace Skylicht
 		core::array<CLightCullingData*> m_spotLights;
 		core::array<CLightCullingData*> m_areaLights;
 		core::array<CLightCullingData*> m_dirLights;
-		core::array<CWorldTransformData*> m_pointLightTransforms;
-		core::array<CWorldTransformData*> m_spotLightTransforms;
-		core::array<CWorldTransformData*> m_areaLightTransforms;
+		core::array<CLightCullingData*> m_changedPointLights;
+		core::array<CLightCullingData*> m_changedSpotLights;
+		core::array<CLightCullingData*> m_changedAreaLights;
 
 		SCacheLight m_dirLightCache;
 		SCacheLight m_pointLightCache;
@@ -126,9 +126,8 @@ namespace Skylicht
 			CRenderLightData* data,
 			bool transformChanged,
 			u32 objLayer,
-			CLightCullingData** lights,
-			CWorldTransformData** transforms,
-			int lightCount,
+			CLightCullingData** changedLights,
+			int changedLightCount,
 			CRenderLightData::SCacheLight& cache,
 			size_t lightSignature);
 

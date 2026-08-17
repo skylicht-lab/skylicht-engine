@@ -92,9 +92,9 @@ namespace Skylicht
 		m_spotLights.set_used(0);
 		m_areaLights.set_used(0);
 		m_dirLights.set_used(0);
-		m_pointLightTransforms.set_used(0);
-		m_spotLightTransforms.set_used(0);
-		m_areaLightTransforms.set_used(0);
+		m_changedPointLights.set_used(0);
+		m_changedSpotLights.set_used(0);
+		m_changedAreaLights.set_used(0);
 
 		m_dirLightCache.resetSignature();
 		m_pointLightCache.resetSignature();
@@ -129,17 +129,20 @@ namespace Skylicht
 				break;
 			case CLight::PointLight:
 				m_pointLights.push_back(lightData);
-				m_pointLightTransforms.push_back(transformData);
+				if (transformData != NULL && transformData->NeedValidate)
+					m_changedPointLights.push_back(lightData);
 				addLightSignature(m_pointLightCache, entity, lightData);
 				break;
 			case CLight::SpotLight:
 				m_spotLights.push_back(lightData);
-				m_spotLightTransforms.push_back(transformData);
+				if (transformData != NULL && transformData->NeedValidate)
+					m_changedSpotLights.push_back(lightData);
 				addLightSignature(m_spotLightCache, entity, lightData);
 				break;
 			case CLight::AreaLight:
 				m_areaLights.push_back(lightData);
-				m_areaLightTransforms.push_back(transformData);
+				if (transformData != NULL && transformData->NeedValidate)
+					m_changedAreaLights.push_back(lightData);
 				addLightSignature(m_areaLightCache, entity, lightData);
 				break;
 			default:
@@ -224,7 +227,6 @@ namespace Skylicht
 
 		if (!data->LightCacheValid ||
 			data->CachedLightLayers != objLayer ||
-			data->CachedDirectionalLights.VisibleCount != lightCount ||
 			data->CachedDirectionalLights.Signature != m_dirLightCache.Signature)
 		{
 			SDistanceLightEntry entry;
@@ -261,7 +263,6 @@ namespace Skylicht
 
 			data->CachedDirectionalLights.Lights[0] = m_sorts.size() > 0 ? m_sorts[0].Data : NULL;
 			data->CachedDirectionalLights.Count = data->CachedDirectionalLights.Lights[0] ? 1 : 0;
-			data->CachedDirectionalLights.VisibleCount = lightCount;
 			data->CachedDirectionalLights.Signature = m_dirLightCache.Signature;
 		}
 
@@ -278,9 +279,8 @@ namespace Skylicht
 			data,
 			transformChanged,
 			objLayer,
-			lights,
-			m_pointLightTransforms.pointer(),
-			lightCount,
+			m_changedPointLights.pointer(),
+			m_changedPointLights.size(),
 			data->CachedPointLights,
 			m_pointLightCache.Signature))
 		{
@@ -305,9 +305,8 @@ namespace Skylicht
 			data,
 			transformChanged,
 			objLayer,
-			lights,
-			m_spotLightTransforms.pointer(),
-			lightCount,
+			m_changedSpotLights.pointer(),
+			m_changedSpotLights.size(),
 			data->CachedSpotLights,
 			m_spotLightCache.Signature))
 		{
@@ -332,9 +331,8 @@ namespace Skylicht
 			data,
 			transformChanged,
 			objLayer,
-			lights,
-			m_areaLightTransforms.pointer(),
-			lightCount,
+			m_changedAreaLights.pointer(),
+			m_changedAreaLights.size(),
 			data->CachedAreaLights,
 			m_areaLightCache.Signature))
 		{
@@ -439,34 +437,30 @@ namespace Skylicht
 		CRenderLightData* data,
 		bool transformChanged,
 		u32 objLayer,
-		CLightCullingData** lights,
-		CWorldTransformData** transforms,
-		int lightCount,
+		CLightCullingData** changedLights,
+		int changedLightCount,
 		CRenderLightData::SCacheLight& cache,
 		size_t lightSignature)
 	{
 		if (!data->LightCacheValid || data->CachedLightLayers != objLayer || transformChanged)
 			return true;
 
-		if (cache.VisibleCount != lightCount || cache.Signature != lightSignature)
+		if (cache.Signature != lightSignature)
 			return true;
 
 		float maxDistance = cache.Count > 0 ? cache.Distances[cache.Count - 1] : 0.0f;
 
-		for (int i = 0; i < lightCount; i++)
+		for (int i = 0; i < changedLightCount; i++)
 		{
-			CWorldTransformData* lightTransform = transforms[i];
-			if (lightTransform == NULL || !lightTransform->NeedValidate)
-				continue;
-
-			CLight* light = lights[i]->Light;
+			CLightCullingData* lightData = changedLights[i];
+			CLight* light = lightData->Light;
 			if ((objLayer & light->getLightLayers()) == 0)
 				continue;
 
 			bool cached = false;
 			for (int j = 0; j < cache.Count; j++)
 			{
-				if (cache.Lights[j] == lights[i])
+				if (cache.Lights[j] == lightData)
 				{
 					cached = true;
 					break;
@@ -476,7 +470,7 @@ namespace Skylicht
 			if (cached)
 				return true;
 
-			float distance = lights[i]->LightPosition.getDistanceFromSQ(data->CachedLightPosition);
+			float distance = lightData->LightPosition.getDistanceFromSQ(data->CachedLightPosition);
 			if (cache.Count < 4 || distance < maxDistance)
 				return true;
 		}
@@ -509,7 +503,6 @@ namespace Skylicht
 			}
 		}
 
-		cache.VisibleCount = lightCount;
 		cache.Signature = lightSignature;
 	}
 

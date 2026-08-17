@@ -43,7 +43,6 @@ namespace Skylicht
 			CLightCullingData* Lights[4];
 			float Distances[4];
 			int Count;
-			int VisibleCount;
 			size_t Signature;
 
 			SCacheLight()
@@ -54,7 +53,6 @@ namespace Skylicht
 			void invalidate()
 			{
 				Count = 0;
-				VisibleCount = 0;
 				Signature = 0;
 
 				for (int i = 0; i < 4; i++)
