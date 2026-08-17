@@ -6,11 +6,13 @@
 #include "Context/CContext.h"
 #include "Transform/CWorldTransformSystem.h"
 
-#include "Primitive/CPlane.h"
 #include "Primitive/CCube.h"
 #include "Primitive/CSphere.h"
 #include "SkySun/CSkySun.h"
+#include "Transform/CWorldTransformData.h"
 
+
+#include "LightProbes/CLightProbeRender.h"
 
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
@@ -39,8 +41,7 @@ void CViewInit::onInit()
 
 	CShaderManager* shaderMgr = CShaderManager::getInstance();
 	shaderMgr->initBasicShader();
-	shaderMgr->initSGForwarderShader();
-	shaderMgr->initSGDeferredShader();
+	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/SH.xml");
 
 	CGlyphFreetype* freetypeFont = CGlyphFreetype::getInstance();
 	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
@@ -110,14 +111,39 @@ void CViewInit::initScene()
 	lightTransform->setOrientation(direction, Transform::Oy);
 
 	// plane
-	CGameObject* grid = zone->createEmptyObject();
-	grid->setName("Plane");
-	grid->getTransformEuler()->setScale(core::vector3df(10.0f, 1.0f, 10.0f));
+	CGameObject* cubeObjs = zone->createEmptyObject();
+	cubeObjs->setName("Cubes");
 
-	CPlane* plane = grid->addComponent<CPlane>();
-	plane->getMaterial()->changeShader("BuiltIn/Shader/SpecularGlossiness/Deferred/MetersGrid.xml");
+	CCube* cubes = cubeObjs->addComponent<CCube>();
 
+	CMaterial* material = cubes->getMaterial();
+	material->changeShader("SampleInstancingPointLight/Shader/MobileSGColorPL.xml");
+	material->setUniform4("uColor", SColor(255, 150, 150, 150));
+	material->updateShaderParams();
 
+	int row = 10;
+	int col = 10;
+	float space = 5.0f;
+
+	float beginX = -row * space * 0.5f;
+	float beginZ = -col * space * 0.5f;
+	float x = beginX;
+	float z = beginZ;
+
+	cubes->removeAllEntities();
+
+	for (int i = 0; i < 10; i++)
+	{
+		for (int j = 0; j < 10; j++)
+		{
+			cubes->addPrimitive(core::vector3df(x, 0.0f, z), core::vector3df(), core::vector3df(1.0f, 1.0f, 1.0f));
+
+			x = x + space;
+		}
+
+		x = beginX;
+		z = z + space;
+	}
 
 	// rendering
 	u32 w = app->getWidth();
@@ -125,7 +151,11 @@ void CViewInit::initScene()
 
 	CContext* context = CContext::getInstance();
 
-	context->initRenderPipeline(w, h);
+	context->initShadowForwarderPipeline(w, h);
+	CPostProcessorRP* pp = context->getPostProcessorPipeline();
+	if (pp)
+		pp->enableAutoExposure(false);
+
 	context->setActiveZone(zone);
 	context->setActiveCamera(camera);
 	context->setGUICamera(guiCamera);
@@ -150,6 +180,7 @@ void CViewInit::onUpdate()
 
 		std::vector<std::string> listBundles;
 		listBundles.push_back("Common.zip");
+		listBundles.push_back("SampleInstancingPointLight.zip");
 
 #ifdef __EMSCRIPTEN__
 		const char* filename = listBundles[m_downloaded].c_str();
@@ -221,8 +252,8 @@ void CViewInit::onUpdate()
 		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
 	}
 	break;
-		}
 	}
+}
 
 void CViewInit::onRender()
 {
@@ -241,11 +272,12 @@ void CViewInit::onRender()
 			// light probe
 			CGameObject* lightProbeObj = zone->createEmptyObject();
 			CLightProbe* lightProbe = lightProbeObj->addComponent<CLightProbe>();
-			lightProbeObj->getTransformEuler()->setPosition(core::vector3df(0.0f, 1.0f, 0.0f));
+			lightProbeObj->getTransformEuler()->setPosition(core::vector3df(0.0f, 3.0f, 0.0f));
 
 			CGameObject* bakeCameraObj = scene->getZone(0)->createEmptyObject();
 			CCamera* bakeCamera = bakeCameraObj->addComponent<CCamera>();
 			scene->updateAddRemoveObject();
+			scene->update();
 
 			// bake light probe
 			Lightmapper::CLightmapper* lm = Lightmapper::CLightmapper::getInstance();
@@ -255,6 +287,8 @@ void CViewInit::onRender()
 			probes.push_back(lightProbe);
 
 			lm->bakeProbes(probes, bakeCamera, rp, scene->getEntityManager());
+
+			// CLightProbeRender::showProbe(true);
 		}
 	}
 	else
