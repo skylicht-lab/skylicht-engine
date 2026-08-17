@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CLightCullingData.h"
+#include "Entity/CEntityManager.h"
 #include "Entity/IRenderSystem.h"
 #include "Entity/CEntityGroup.h"
 #include "Transform/CWorldTransformData.h"
@@ -37,7 +38,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	class SKYLICHT_API CLightSystem : public IRenderSystem
+	class SKYLICHT_API CLightSystem : public IRenderSystem, public IEntityManagerCallback
 	{
 	protected:
 		struct SDistanceLightEntry
@@ -47,12 +48,37 @@ namespace Skylicht
 			float Distance;
 		};
 
+		struct SCacheLight
+		{
+			size_t Signature;
+			size_t LastSignature;
+			int LastCount;
+
+			SCacheLight();
+
+			void resetSignature();
+
+			void invalidate();
+
+			bool update(int count);
+		};
+
 		core::array<CLightCullingData*> m_pointLights;
 		core::array<CLightCullingData*> m_spotLights;
 		core::array<CLightCullingData*> m_areaLights;
 		core::array<CLightCullingData*> m_dirLights;
+		core::array<CWorldTransformData*> m_pointLightTransforms;
+		core::array<CWorldTransformData*> m_spotLightTransforms;
+		core::array<CWorldTransformData*> m_areaLightTransforms;
+
+		SCacheLight m_dirLightCache;
+		SCacheLight m_pointLightCache;
+		SCacheLight m_spotLightCache;
+		SCacheLight m_areaLightCache;
+		size_t m_lightCacheVersion;
 
 		CEntityGroup* m_group;
+		CEntityManager* m_entityManager;
 
 		CDirectionalLight* m_currentDLight;
 		CPointLight* m_currentPLight[4];
@@ -78,6 +104,10 @@ namespace Skylicht
 
 		virtual void postRender(CEntityManager* entityManager);
 
+		virtual void onEntityRemoved(CEntity* entity);
+
+		virtual void onEntityRemoved(CEntity** entity, int count);
+
 		void onBeginSetupLight(CRenderLightData* data, CWorldTransformData* transform);
 
 		void onEndSetupLight();
@@ -85,6 +115,30 @@ namespace Skylicht
 	protected:
 
 		void sortLights(const core::vector3df& position, u32 objLayer, CLightCullingData** lights, int lightCount);
+
+		void addLightSignature(SCacheLight& cache, CEntity* entity, CLightCullingData* light);
+
+		void updateLightCacheVersion();
+
+		void invalidateLightCacheVersion();
+
+		bool needSortCachedLights(
+			CRenderLightData* data,
+			bool transformChanged,
+			u32 objLayer,
+			CLightCullingData** lights,
+			CWorldTransformData** transforms,
+			int lightCount,
+			CRenderLightData::SCacheLight& cache,
+			size_t lightSignature);
+
+		void cacheSortedLights(
+			const core::vector3df& position,
+			u32 objLayer,
+			CLightCullingData** lights,
+			int lightCount,
+			CRenderLightData::SCacheLight& cache,
+			size_t lightSignature);
 
 	};
 }

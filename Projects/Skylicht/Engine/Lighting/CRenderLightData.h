@@ -24,10 +24,13 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
+#include <stddef.h>
 #include "Entity/IEntityData.h"
 
 namespace Skylicht
 {
+	class CLightCullingData;
+
 	class SKYLICHT_API CRenderLightData : public IEntityData
 	{
 	protected:
@@ -35,11 +38,50 @@ namespace Skylicht
 		bool EnableSortLight;
 
 	public:
+		struct SCacheLight
+		{
+			CLightCullingData* Lights[4];
+			float Distances[4];
+			int Count;
+			int VisibleCount;
+			size_t Signature;
+
+			SCacheLight()
+			{
+				invalidate();
+			}
+
+			void invalidate()
+			{
+				Count = 0;
+				VisibleCount = 0;
+				Signature = 0;
+
+				for (int i = 0; i < 4; i++)
+				{
+					Lights[i] = NULL;
+					Distances[i] = 0.0f;
+				}
+			}
+		};
+
+		bool LightCacheValid;
+		size_t CachedLightVersion;
+		core::vector3df CachedLightPosition;
+		u32 CachedLightLayers;
+
+		SCacheLight CachedDirectionalLights;
+		SCacheLight CachedPointLights;
+		SCacheLight CachedSpotLights;
+		SCacheLight CachedAreaLights;
+
 		CRenderLightData() :
 			LightLayers(1),
-			EnableSortLight(false)
+			EnableSortLight(false),
+			LightCacheValid(false),
+			CachedLightVersion(0),
+			CachedLightLayers(1)
 		{
-
 		}
 
 		virtual ~CRenderLightData()
@@ -54,7 +96,11 @@ namespace Skylicht
 
 		inline void setLightLayers(u32 layers)
 		{
-			LightLayers = layers;
+			if (LightLayers != layers)
+			{
+				LightLayers = layers;
+				invalidateLightCache();
+			}
 		}
 
 		inline u32 getLightLayers()
@@ -64,12 +110,26 @@ namespace Skylicht
 
 		inline void enableSortLight(bool b)
 		{
-			EnableSortLight = b;
+			if (EnableSortLight != b)
+			{
+				EnableSortLight = b;
+				invalidateLightCache();
+			}
 		}
 
 		inline bool isEnableSortLight()
 		{
 			return EnableSortLight;
+		}
+
+		inline void invalidateLightCache()
+		{
+			LightCacheValid = false;
+			CachedLightVersion = 0;
+			CachedDirectionalLights.invalidate();
+			CachedPointLights.invalidate();
+			CachedSpotLights.invalidate();
+			CachedAreaLights.invalidate();
 		}
 	};
 }

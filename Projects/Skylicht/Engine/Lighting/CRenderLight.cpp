@@ -68,13 +68,23 @@ namespace Skylicht
 	void CRenderLight::setLightLayers(u32 layers)
 	{
 		m_lightLayers = layers;
+		applyLightLayerForEntities();
+	}
 
+	void CRenderLight::enableSortLight(bool enable)
+	{
+		m_enableSortLight = enable;
+		applyLightLayerForEntities();
+	}
+
+	void CRenderLight::applyLightLayerForEntities()
+	{
 		for (u32 i = 0, n = m_entities.size(); i < n; i++)
 		{
 			CRenderLightData* data = m_entities[i]->getData<CRenderLightData>();
 			if (data != NULL)
 			{
-				data->setLightLayers(layers);
+				data->setLightLayers(m_lightLayers);
 				data->enableSortLight(m_enableSortLight);
 			}
 		}

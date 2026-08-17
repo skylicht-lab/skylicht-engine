@@ -187,6 +187,9 @@ void CViewInit::initScene()
 		z = z + space;
 	}
 
+	// enable sort light for render lighting
+	cubes->enableSortLight(true);
+
 	// point light
 	row = 4;
 	col = 4;

@@ -46,11 +46,18 @@ namespace Skylicht
 
 		virtual void setLightLayers(u32 layers);
 
+		virtual void enableSortLight(bool enable);
+
 		void loadLightLayers(CObjectSerializable* object);
 
 		inline u32 getLightLayers()
 		{
 			return m_lightLayers;
 		}
+
+	protected:
+
+		void applyLightLayerForEntities();
+
 	};
 }
