@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "Entity/CEntityPrefab.h"
-#include "Entity/CEntityHandler.h"
+#include "Lighting/CRenderLight.h"
 #include "Material/CMaterial.h"
 #include "Material/CMaterialManager.h"
 #include "RenderMesh/CRenderMeshData.h"
@@ -45,39 +45,39 @@ namespace Skylicht
 	/**
 	 * @brief High-level component for rendering standard 3D models.
 	 * @ingroup RenderMesh
-	 * 
+	 *
 	 * If not, the model will not render.
 	 * You can find more information in CShader, or in some example shaders in `BuiltIn\Shader\Toon`, `BuiltIn\Shader\SpecularGlossiness\Deferred`
-	 * 
+	 *
 	 * You can initialize CRenderMesh using either the Editor or code
 	 * @code
 	 * std::string folder = "SampleModels/BlendShape/";
 	 * std::string modelPath = "SampleModels/BlendShape/Cat.fbx";
 	 * std::string materialPath = "SampleModels/BlendShape/Cat.mat";
-	 * 
+	 *
 	 * CEntityPrefab* model = CMeshManager::getInstance()->loadModel(modelPath.c_str(), folder.c_str());
 	 * if (model)
 	 * {
 	 * 	CGameObject* renderObj = scene->createEmptyObject();
-	 * 
+	 *
 	 * 	CRenderMesh* renderer = renderObj->addComponent<CRenderMesh>();
 	 * 	renderer->initFromPrefab(model);
-	 * 
+	 *
 	 * 	std::vector<std::string> folders;
 	 * 	ArrayMaterial& materials = CMaterialManager::getInstance()->loadMaterial(
 	 * 		materialPath.c_str(),
 	 * 		true,
 	 * 		folders);
-	 * 
+	 *
 	 * 	renderer->initMaterial(materials);
-	 * 
+	 *
 	 * 	renderObj->addComponent<CIndirectLighting>();
 	 * }
 	 * @endcode
-	 * 
+	 *
 	 * @see CEntityPrefab, CMaterial, CMeshManager, CMaterialManager
 	 */
-	class SKYLICHT_API CRenderMesh : public CEntityHandler
+	class SKYLICHT_API CRenderMesh : public CRenderLight
 	{
 	protected:
 		CEntity* m_root;
@@ -96,8 +96,6 @@ namespace Skylicht
 		bool m_loadNormal;
 		bool m_fixInverseNormal;
 		bool m_enableInstancing;
-		u32 m_lightLayers;
-
 		bool m_shadowCasting;
 
 	public:
@@ -143,13 +141,6 @@ namespace Skylicht
 		inline bool isShadowCasting()
 		{
 			return m_shadowCasting;
-		}
-
-		void setLightLayers(u32 layers);
-
-		inline u32 getLightLayers()
-		{
-			return m_lightLayers;
 		}
 
 		void removeRenderMeshName(const char* name);

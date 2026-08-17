@@ -80,12 +80,10 @@ namespace Skylicht
 
 	CObjectSerializable* CPrimitive::createSerializable()
 	{
-		CObjectSerializable* object = CComponentSystem::createSerializable();
+		CObjectSerializable* object = CRenderLight::createSerializable();
 
 		object->autoRelease(new CBoolProperty(object, "instancing", m_instancing));
-
 		object->autoRelease(new CBoolProperty(object, "shadow casting", m_shadowCasting));
-
 		object->autoRelease(new CBoolProperty(object, "normal map", m_useNormalMap));
 
 		CColorProperty* color = new CColorProperty(object, "color", m_color);
@@ -121,7 +119,7 @@ namespace Skylicht
 
 	void CPrimitive::loadSerializable(CObjectSerializable* object)
 	{
-		CComponentSystem::loadSerializable(object);
+		CRenderLight::loadSerializable(object);
 
 		bool forceUpdateMaterial = false;
 		bool useMaterial = !m_materialPath.empty();
@@ -161,6 +159,8 @@ namespace Skylicht
 			m_customMaterial->setUniform4("uColor", m_color);
 			m_customMaterial->updateShaderParams();
 		}
+
+		loadLightLayers(object);
 
 		CArraySerializable* primitives = (CArraySerializable*)object->getProperty("Primitives");
 		if (primitives == NULL)
@@ -226,6 +226,7 @@ namespace Skylicht
 		primitiveData->Instancing = m_instancing;
 		primitiveData->NormalMap = m_useNormalMap;
 		primitiveData->RootEntity = m_gameObject->getEntity()->getIndex();
+		primitiveData->setLightLayers(m_lightLayers);
 
 		// Lighting
 		entity->addData<CIndirectLightingData>();

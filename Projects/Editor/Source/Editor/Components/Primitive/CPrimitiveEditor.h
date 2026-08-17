@@ -2,10 +2,10 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2022 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -27,23 +27,21 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Serializable/CObjectSerializable.h"
 #include "Editor/Components/CComponentEditor.h"
 #include "Activator/CEditorActivator.h"
-#include "RenderMesh/CRenderMeshInstancing.h"
+#include "Primitive/CPrimitive.h"
 #include "Editor/Components/Default/CDefaultEditor.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		class CRenderMeshInstancingEditor : public CDefaultEditor
+		class CPrimitiveEditor : public CDefaultEditor
 		{
 		public:
-			CRenderMeshInstancingEditor();
+			CPrimitiveEditor();
 
-			virtual ~CRenderMeshInstancingEditor();
+			virtual ~CPrimitiveEditor();
 
 			virtual void initGUI(CComponentSystem* target, CSpaceProperty* spaceProperty);
-
-			virtual void initCustomGUI(GUI::CBoxLayout* layout, CSpaceProperty* ui);
 
 			virtual void initCustomValueGUI(CObjectSerializable* obj, CValueProperty* data, GUI::CBoxLayout* layout, CSpaceProperty* ui);
 

@@ -193,6 +193,7 @@ namespace Skylicht
 				CWorldTransformData* transform = GET_ENTITY_DATA(spawnEntity, CWorldTransformData);
 
 				CRenderMeshData* spawnRender = spawnEntity->addData<CRenderMeshData>();
+				spawnRender->setLightLayers(m_lightLayers);
 				spawnRender->setMesh(srcRender->getMesh());
 				spawnRender->setVisible(false);
 
@@ -207,11 +208,13 @@ namespace Skylicht
 				indirectLighting->initSH();
 			}
 		}
+
+		setLightLayers(m_lightLayers);
 	}
 
 	CObjectSerializable* CRenderMeshInstancing::createSerializable()
 	{
-		CObjectSerializable* object = CComponentSystem::createSerializable();
+		CObjectSerializable* object = CRenderLight::createSerializable();
 
 		object->autoRelease(new CBoolProperty(object, "load normal", m_loadNormal));
 		object->autoRelease(new CBoolProperty(object, "inserse normal", m_fixInverseNormal));
@@ -241,7 +244,7 @@ namespace Skylicht
 
 	void CRenderMeshInstancing::loadSerializable(CObjectSerializable* object)
 	{
-		CComponentSystem::loadSerializable(object);
+		CRenderLight::loadSerializable(object);
 
 		bool loadNormal = object->get<bool>("load normal", true);
 		bool fixInverseNormal = object->get<bool>("inserse normal", true);
@@ -297,6 +300,8 @@ namespace Skylicht
 		{
 			releaseMaterial();
 		}
+
+		loadLightLayers(object);
 
 		// load entities
 		CArraySerializable* entities = (CArraySerializable*)object->getProperty("Entities");
@@ -514,6 +519,7 @@ namespace Skylicht
 
 		// add render mesh
 		CRenderMeshData* renderMesh = entity->addData<CRenderMeshData>();
+		renderMesh->setLightLayers(m_lightLayers);
 		renderMesh->setShareMesh(mesh);
 		renderMesh->setInstancing(true);
 

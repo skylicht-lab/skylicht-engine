@@ -2,10 +2,10 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2022 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -23,48 +23,36 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #include "pch.h"
-#include "CRenderMeshInstancingEditor.h"
+#include "CPrimitiveEditor.h"
 #include "Editor/Space/Property/CSpaceProperty.h"
-#include "Editor/SpaceController/CSceneController.h"
+#include "Primitive/CCube.h"
+#include "Primitive/CSphere.h"
+#include "Primitive/CPlane.h"
 
 namespace Skylicht
 {
 	namespace Editor
 	{
-		EDITOR_REGISTER(CRenderMeshInstancingEditor, CRenderMeshInstancing);
+		EDITOR_REGISTER(CPrimitiveEditor, CCube);
+		EDITOR_REGISTER(CPrimitiveEditor, CSphere);
+		EDITOR_REGISTER(CPrimitiveEditor, CPlane);
 
-		CRenderMeshInstancingEditor::CRenderMeshInstancingEditor()
+		CPrimitiveEditor::CPrimitiveEditor()
 		{
 
 		}
 
-		CRenderMeshInstancingEditor::~CRenderMeshInstancingEditor()
+		CPrimitiveEditor::~CPrimitiveEditor()
 		{
 
 		}
 
-		void CRenderMeshInstancingEditor::initGUI(CComponentSystem* target, CSpaceProperty* ui)
+		void CPrimitiveEditor::initGUI(CComponentSystem* target, CSpaceProperty* ui)
 		{
 			CDefaultEditor::initGUI(target, ui);
 		}
 
-		void CRenderMeshInstancingEditor::initCustomGUI(GUI::CBoxLayout* layout, CSpaceProperty* ui)
-		{
-			layout->addSpace(5.0f);
-
-			ui->addButton(layout, L"Add Entity")->OnPress = [&](GUI::CBase* button)
-				{
-					CRenderMeshInstancing* renderInstancing = (CRenderMeshInstancing*)m_component;
-					CEntity* newEntity = renderInstancing->spawn();
-
-					CSceneController* sceneController = CSceneController::getInstance();
-					sceneController->updateTreeNode(m_gameObject);
-					sceneController->deselectAllOnHierachy();
-					sceneController->selectOnHierachy(newEntity);
-				};
-		}
-
-		void CRenderMeshInstancingEditor::initCustomValueGUI(CObjectSerializable* obj, CValueProperty* data, GUI::CBoxLayout* boxLayout, CSpaceProperty* ui)
+		void CPrimitiveEditor::initCustomValueGUI(CObjectSerializable* obj, CValueProperty* data, GUI::CBoxLayout* boxLayout, CSpaceProperty* ui)
 		{
 			if (data->Name == "lightLayers")
 			{
@@ -76,7 +64,7 @@ namespace Skylicht
 			}
 		}
 
-		void CRenderMeshInstancingEditor::update()
+		void CPrimitiveEditor::update()
 		{
 
 		}

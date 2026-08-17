@@ -9,10 +9,53 @@
 #include "Primitive/CCube.h"
 #include "Primitive/CSphere.h"
 #include "SkySun/CSkySun.h"
+#include "SpriteDraw/CSprite.h"
 #include "Transform/CWorldTransformData.h"
-
+#include "Lighting/CPointLight.h"
 
 #include "LightProbes/CLightProbeRender.h"
+
+SColor HSVtoRGB255(float h, float s, float v) {
+	float c = v * s;
+	float x = c * (1.0f - std::abs(std::fmod(h / 60.0f, 2.0f) - 1.0f));
+	float m = v - c;
+
+	float r = 0.0f, g = 0.0f, b = 0.0f;
+
+	if (h >= 0.0f && h < 60.0f) {
+		r = c; g = x; b = 0.0f;
+	}
+	else if (h >= 60.0f && h < 120.0f) {
+		r = x; g = c; b = 0.0f;
+	}
+	else if (h >= 120.0f && h < 180.0f) {
+		r = 0.0f; g = c; b = x;
+	}
+	else if (h >= 180.0f && h < 240.0f) {
+		r = 0.0f; g = x; b = c;
+	}
+	else if (h >= 240.0f && h < 300.0f) {
+		r = x; g = 0.0f; b = c;
+	}
+	else if (h >= 300.0f && h < 360.0f) {
+		r = c; g = 0.0f; b = x;
+	}
+
+	return SColor(255,
+		static_cast<unsigned char>((r + m) * 255.0f),
+		static_cast<unsigned char>((g + m) * 255.0f),
+		static_cast<unsigned char>((b + m) * 255.0f)
+	);
+}
+
+SColor getRandomPointLightColor()
+{
+	float hue = os::Randomizer::frand() * 360;
+	float sat = 0.75f + (os::Randomizer::frand() * 0.3f);
+	float val = 0.85f + (os::Randomizer::frand() * 0.15f);
+
+	return HSVtoRGB255(hue, sat, val);
+}
 
 CViewInit::CViewInit() :
 	m_initState(CViewInit::DownloadBundles),
@@ -110,7 +153,7 @@ void CViewInit::initScene()
 	core::vector3df direction = core::vector3df(4.0f, -6.0f, -4.5f);
 	lightTransform->setOrientation(direction, Transform::Oy);
 
-	// plane
+	// cube
 	CGameObject* cubeObjs = zone->createEmptyObject();
 	cubeObjs->setName("Cubes");
 
@@ -121,22 +164,58 @@ void CViewInit::initScene()
 	material->setUniform4("uColor", SColor(255, 150, 150, 150));
 	material->updateShaderParams();
 
-	int row = 10;
-	int col = 10;
-	float space = 5.0f;
+	int row = 9;
+	int col = 9;
+	float space = 7.0f;
 
-	float beginX = -row * space * 0.5f;
-	float beginZ = -col * space * 0.5f;
+	float beginX = -(row - 1) * space * 0.5f;
+	float beginZ = -(col - 1) * space * 0.5f;
 	float x = beginX;
 	float z = beginZ;
 
 	cubes->removeAllEntities();
 
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < row; i++)
 	{
-		for (int j = 0; j < 10; j++)
+		for (int j = 0; j < col; j++)
 		{
 			cubes->addPrimitive(core::vector3df(x, 0.0f, z), core::vector3df(), core::vector3df(1.0f, 1.0f, 1.0f));
+			x = x + space;
+		}
+
+		x = beginX;
+		z = z + space;
+	}
+
+	// point light
+	row = 4;
+	col = 4;
+	space = 13.0f;
+
+	beginX = -(row - 1) * space * 0.5f;
+	beginZ = -(col - 1) * space * 0.5f;
+	x = beginX;
+	z = beginZ;
+
+	ITexture* lightTexture = CTextureManager::getInstance()->getTexture("Editor/Icon/Objects/Light.png");
+
+	for (int i = 0; i < row; i++)
+	{
+		for (int j = 0; j < col; j++)
+		{
+			SColor color = getRandomPointLightColor();
+
+			CGameObject* obj = zone->createEmptyObject();
+			CTransformEuler* transform = obj->getTransformEuler();
+			transform->setPosition(core::vector3df(x, 2.0f, z));
+
+			CSprite* sprite = obj->addComponent<CSprite>();
+			sprite->setTexture(lightTexture, 0.03f, color);
+			sprite->setBillboard(true);
+
+			CPointLight* pointLight = obj->addComponent<CPointLight>();
+			pointLight->setColor(color);
+			pointLight->setRadius(6.0f);
 
 			x = x + space;
 		}
@@ -180,6 +259,7 @@ void CViewInit::onUpdate()
 
 		std::vector<std::string> listBundles;
 		listBundles.push_back("Common.zip");
+		listBundles.push_back("Editor.zip");
 		listBundles.push_back("SampleInstancingPointLight.zip");
 
 #ifdef __EMSCRIPTEN__
@@ -288,7 +368,7 @@ void CViewInit::onRender()
 
 			lm->bakeProbes(probes, bakeCamera, rp, scene->getEntityManager());
 
-			// CLightProbeRender::showProbe(true);
+			CLightProbeRender::showProbe(true);
 		}
 	}
 	else

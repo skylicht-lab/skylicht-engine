@@ -31,6 +31,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "Material/Shader/ShaderCallback/CShaderSH.h"
 #include "Material/Shader/ShaderCallback/CShaderLighting.h"
+#include "Lighting/CLightSystem.h"
 
 namespace Skylicht
 {
@@ -239,6 +240,10 @@ namespace Skylicht
 		if (lightingData != NULL)
 			lightingData->applyShader();
 
+		CLightSystem* lightSystem = entityManager->getRenderSystem<CLightSystem>();
+		if (data->isSortingLights())
+			lightSystem->onBeginSetupLight(data, transform);
+
 		for (u32 i = 0, n = mesh->MeshBuffers.size(); i < n; i++)
 		{
 			mesh->Materials[i] = mat;
@@ -247,5 +252,8 @@ namespace Skylicht
 
 			mesh->Materials[i] = NULL;
 		}
+
+		if (data->isSortingLights())
+			lightSystem->onEndSetupLight();
 	}
 }

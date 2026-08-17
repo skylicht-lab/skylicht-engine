@@ -28,7 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Entity/IRenderSystem.h"
 #include "Entity/CEntityGroup.h"
 #include "Transform/CWorldTransformData.h"
-#include "RenderMesh/CRenderMeshData.h"
+#include "Lighting/CRenderLightData.h"
 
 #include "Lighting/CDirectionalLight.h"
 #include "Lighting/CPointLight.h"
@@ -78,7 +78,7 @@ namespace Skylicht
 
 		virtual void postRender(CEntityManager* entityManager);
 
-		void onBeginSetupLight(CRenderMeshData* data, CWorldTransformData* transform);
+		void onBeginSetupLight(CRenderLightData* data, CWorldTransformData* transform);
 
 		void onEndSetupLight();
 

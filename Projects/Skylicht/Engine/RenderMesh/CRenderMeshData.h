@@ -24,7 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Entity/IEntityData.h"
+#include "Lighting/CRenderLightData.h"
 #include "Material/CMaterial.h"
 #include "Instancing/SMeshInstancing.h"
 #include "CMesh.h"
@@ -34,7 +34,7 @@ namespace Skylicht
 {
 	class CEntityPrefab;
 
-	class SKYLICHT_API CRenderMeshData : public IEntityData
+	class SKYLICHT_API CRenderMeshData : public CRenderLightData
 	{
 	public:
 		static void setImportTextureFolder(std::vector<std::string>& folders);
@@ -53,8 +53,6 @@ namespace Skylicht
 		SMeshInstancing* MeshInstancing;
 
 		bool Visible;
-
-		u32 LightLayers;
 
 	public:
 
@@ -135,21 +133,6 @@ namespace Skylicht
 		inline bool isVisible()
 		{
 			return Visible;
-		}
-
-		inline bool isSortingLights()
-		{
-			return LightLayers != 1;
-		}
-
-		inline void setLightLayers(u32 layers)
-		{
-			LightLayers = layers;
-		}
-
-		inline u32 getLightLayers()
-		{
-			return LightLayers;
 		}
 
 		void setInstancing(bool b);

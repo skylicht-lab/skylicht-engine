@@ -2,10 +2,10 @@
 !@
 MIT License
 
-Copyright (c) 2021 Skylicht Technology CO., LTD
+Copyright (c) 2025 Skylicht Technology CO., LTD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-(the "Software"), to deal in the Software without restriction, including without limitation the Rights to use, copy, modify,
+(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify,
 merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
@@ -24,30 +24,33 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#include "Serializable/CObjectSerializable.h"
-#include "Editor/Components/CComponentEditor.h"
-#include "Activator/CEditorActivator.h"
-#include "RenderMesh/CRenderMeshInstancing.h"
-#include "Editor/Components/Default/CDefaultEditor.h"
+#include "Entity/CEntityHandler.h"
+#include "Lighting/CRenderLightData.h"
 
 namespace Skylicht
 {
-	namespace Editor
+	class SKYLICHT_API CRenderLight : public CEntityHandler
 	{
-		class CRenderMeshInstancingEditor : public CDefaultEditor
+	protected:
+		u32 m_lightLayers;
+		bool m_enableSortLight;
+
+	public:
+		CRenderLight();
+
+		virtual ~CRenderLight();
+
+		virtual CObjectSerializable* createSerializable();
+
+		virtual void loadSerializable(CObjectSerializable* object);
+
+		virtual void setLightLayers(u32 layers);
+
+		void loadLightLayers(CObjectSerializable* object);
+
+		inline u32 getLightLayers()
 		{
-		public:
-			CRenderMeshInstancingEditor();
-
-			virtual ~CRenderMeshInstancingEditor();
-
-			virtual void initGUI(CComponentSystem* target, CSpaceProperty* spaceProperty);
-
-			virtual void initCustomGUI(GUI::CBoxLayout* layout, CSpaceProperty* ui);
-
-			virtual void initCustomValueGUI(CObjectSerializable* obj, CValueProperty* data, GUI::CBoxLayout* layout, CSpaceProperty* ui);
-
-			virtual void update();
-		};
-	}
+			return m_lightLayers;
+		}
+	};
 }

@@ -116,7 +116,7 @@ namespace Skylicht
 
 	}
 
-	void CLightSystem::onBeginSetupLight(CRenderMeshData* data, CWorldTransformData* transform)
+	void CLightSystem::onBeginSetupLight(CRenderLightData* data, CWorldTransformData* transform)
 	{
 		m_currentDLight = CShaderLighting::getDirectionalLight();
 		for (int i = 0; i < 4; i++)

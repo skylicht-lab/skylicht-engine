@@ -25,13 +25,13 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "DataTypeIndex.h"
-#include "Entity/IEntityData.h"
+#include "Lighting/CRenderLightData.h"
 #include "Material/CMaterial.h"
 #include "Instancing/SPrimitiveMeshInstancing.h"
 
 namespace Skylicht
 {
-	class COMPONENT_API CPrimiviteData : public IEntityData
+	class COMPONENT_API CPrimiviteData : public CRenderLightData
 	{
 	public:
 		enum EPrimitive
