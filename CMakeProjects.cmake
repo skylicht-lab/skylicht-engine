@@ -33,6 +33,7 @@ if (BUILD_EXAMPLES AND BUILD_SKYLICHT_LIGHMAPPER)
 	endif()
 	
 	subdirs(Samples/Instancing)
+	subdirs(Samples/InstancingPointLight)
 	
 	if (BUILD_SKYLICHT_AUDIO)
 	subdirs(Samples/LuckyDraw)

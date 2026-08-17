@@ -674,6 +674,16 @@ namespace irr
 			return true;
 		}
 
+		void COGLES3Driver::resetRenderStates()
+		{
+			ResetRenderStates = true;
+		}
+
+		void COGLES3Driver::finish()
+		{
+			glFinish();
+		}
+
 
 		//! clears the zbuffer and color buffer
 		void COGLES3Driver::clearBuffers(bool backBuffer, bool zBuffer, bool stencilBuffer, SColor color)

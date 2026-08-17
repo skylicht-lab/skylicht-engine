@@ -682,6 +682,35 @@ namespace irr
 			return true;
 		}
 
+		void CD3D11Driver::resetRenderStates()
+		{
+			ResetRenderStates = true;
+		}
+
+		void CD3D11Driver::finish()
+		{
+			D3D11_QUERY_DESC desc;
+			desc.Query = D3D11_QUERY_EVENT;
+			desc.MiscFlags = 0;
+
+			ID3D11Query* query = NULL;
+			HRESULT hr = Device->CreateQuery(&desc, &query);
+			if (FAILED(hr))
+			{
+				Context->Flush();
+				return;
+			}
+
+			Context->End(query);
+			Context->Flush();
+
+			while (Context->GetData(query, NULL, 0, 0) == S_FALSE)
+			{
+			}
+
+			query->Release();
+		}
+
 		bool CD3D11Driver::queryFeature(E_VIDEO_DRIVER_FEATURE feature) const
 		{
 			if (!FeatureEnabled[feature])

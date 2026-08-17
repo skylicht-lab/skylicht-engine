@@ -80,6 +80,10 @@ namespace video
 		//! applications must call this method after performing any rendering. returns false if failed.
 		virtual bool endScene();
 
+		virtual void resetRenderStates() _IRR_OVERRIDE_;
+
+		virtual void finish() _IRR_OVERRIDE_;
+
 		//! queries the features of the driver, returns true if feature is available
 		virtual bool queryFeature(E_VIDEO_DRIVER_FEATURE feature) const;
 

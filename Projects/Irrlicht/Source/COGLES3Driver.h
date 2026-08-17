@@ -156,6 +156,10 @@ namespace irr
 			//! presents the rendered scene on the screen, returns false if failed
 			virtual bool endScene() _IRR_OVERRIDE_;
 
+			virtual void resetRenderStates() _IRR_OVERRIDE_;
+
+			virtual void finish() _IRR_OVERRIDE_;
+
 			virtual IHardwareBuffer* createHardwareBuffer(scene::IIndexBuffer* indexBuffer) _IRR_OVERRIDE_;
 
 			virtual IHardwareBuffer* createHardwareBuffer(scene::IVertexBuffer* vertexBuffer) _IRR_OVERRIDE_;

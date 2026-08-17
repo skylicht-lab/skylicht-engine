@@ -1147,6 +1147,16 @@ bool COpenGLDriver::endScene()
 	return false;
 }
 
+void COpenGLDriver::resetRenderStates()
+{
+	ResetRenderStates = true;
+}
+
+void COpenGLDriver::finish()
+{
+	glFinish();
+}
+
 
 //! clears the zbuffer and color buffer
 void COpenGLDriver::clearBuffers(bool backBuffer, bool zBuffer, bool stencilBuffer, SColor color)
