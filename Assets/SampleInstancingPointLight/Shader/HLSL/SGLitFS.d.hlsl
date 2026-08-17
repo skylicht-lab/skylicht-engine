@@ -28,6 +28,7 @@ struct PS_INPUT
 {
 	float4 pos : SV_POSITION;
 	float2 tex0 : TEXCOORD0;
+	float4 worldPos: WORLDPOS;
 	float3 worldNormal: WORLDNORMAL;
 	float3 worldViewDir: WORLDVIEWDIR;
 	float3 worldLightDir: WORLDLIGHTDIR;
@@ -44,6 +45,7 @@ struct PS_INPUT
 {
 	float4 pos : SV_POSITION;
 	float2 tex0 : TEXCOORD0;
+	float4 worldPos: WORLDPOS;
 	float3 worldNormal: WORLDNORMAL;
 	float3 worldViewDir: WORLDVIEWDIR;
 	float3 worldLightDir: WORLDLIGHTDIR;
@@ -68,11 +70,21 @@ cbuffer cbPerFrame
 #if defined(CUTOFF)
 	float uCutoff;
 #endif
+#if defined(POINTLIGHT)
+	float4 uCamPosition;
+	float4 uPLightPosition;
+	float4 uPLightAttenuation;
+	float4 uPLightColor;
+#endif
 	float4 uSHConst[4];
 };
 
 #include "../../../BuiltIn/Shader/PostProcessing/HLSL/LibToneMapping.hlsl"
 #include "../../../BuiltIn/Shader/SHAmbient/HLSL/SHAmbient.hlsl"
+
+#if defined(POINTLIGHT)
+#include "../../../BuiltIn/Shader/Light/HLSL/LibPointLight.hlsl"
+#endif
 
 #ifdef SHADOW
 #include "../../../BuiltIn/Shader/Shadow/HLSL/LibShadow.hlsl"
@@ -131,12 +143,29 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float ao = specMap.b;
 #endif
 
+	// Specular
+	float3 specularColor = float3(0.5, 0.5, 0.5);
+
 	// Lighting
 	float NdotL = max(dot(n, input.worldLightDir), 0.0);
 	float3 directionalLight = NdotL * lightColor;
+	
+#if defined(POINTLIGHT)
+	directionalLight = directionalLight + pointlight(
+		input.worldPos.xyz,
+		n,
+		uCamPosition.xyz,
+		uPLightColor, 
+		uPLightPosition.xyz,
+		uPLightAttenuation,
+		spec, 
+		gloss, 
+		specularColor);
+#endif
+
 #if defined(AO)
 	directionalLight *= ao;
-#endif	
+#endif
 	float3 color = directionalLight * diffuseColor * 0.3 * uLightMul.y;
 
 #if defined(PLANAR_REFLECTION)
@@ -145,7 +174,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 	color *= visibility;
 #endif
 
-	float3 f0 = float3(0.1, 0.1, 0.1);	
+	float3 f0 = float3(0.1, 0.1, 0.1);
 	float3 rc = lerp(f0, diffuseColor, spec) * (0.8 + gloss * 1.8);
 	
 	// projection uv
@@ -156,8 +185,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 	color += uTexReflect.SampleLevel(uTexReflectSampler, reflectUV.xy, 0.0).xyz * rc;
 	#endif
 #else
-	// Specular
-	float3 specularColor = float3(0.5, 0.5, 0.5);
+	
 	
 	float3 H = normalize(input.worldLightDir + input.worldViewDir);
 	float NdotE = max(0.0,dot(n, H));
@@ -165,7 +193,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 #if defined(AO)
 	specular *= ao;
 	ambientLighting *= ao;
-#endif		
+#endif
 	color += specular * specularColor * uLightMul.x;
 	
 #if defined(SHADOW)

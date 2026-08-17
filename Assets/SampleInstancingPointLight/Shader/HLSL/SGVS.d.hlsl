@@ -38,6 +38,7 @@ struct VS_OUTPUT
 {
 	float4 pos : SV_POSITION;
 	float2 tex0 : TEXCOORD0;
+	float4 worldPos: WORLDPOS;
 	float3 worldNormal: WORLDNORMAL;
 	float3 worldViewDir: WORLDVIEWDIR;
 	float3 worldLightDir: WORLDLIGHTDIR;
@@ -63,7 +64,7 @@ cbuffer cbPerObject
 	float4 uCameraPosition;
 	float4 uLightDirection;
 	
-#ifndef INSTANCING	
+#ifndef INSTANCING
 	float4 uUVScale;
 #endif
 
@@ -117,6 +118,8 @@ VS_OUTPUT main(VS_INPUT input)
 
 	output.worldViewDir = worldViewDir.xyz;
 	output.worldLightDir = normalize(uLightDirection.xyz);
+
+	output.worldPos = worldPos;
 
 #ifdef INSTANCING
 	output.pos = mul(worldPos, uVPMatrix);

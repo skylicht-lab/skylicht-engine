@@ -46,6 +46,7 @@ uniform mat4 uRTTMatrix;
 #endif
 
 out vec2 vTexCoord0;
+out vec4 vWorldPos;
 out vec3 vWorldNormal;
 out vec3 vWorldViewDir;
 out vec3 vWorldLightDir;
@@ -99,6 +100,7 @@ void main(void)
 
 	vWorldViewDir = worldViewDir.xyz;
 	vWorldLightDir = normalize(uLightDirection.xyz);
+	vWorldPos = worldPos;
 
 #ifdef INSTANCING
 	gl_Position = uVPMatrix * worldPos;

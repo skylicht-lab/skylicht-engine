@@ -12,6 +12,10 @@
 			<uniform name="uColor" type="MATERIAL_PARAM" valueIndex="1" value="1.0, 1.0, 1.0, 1.0" float="4"/>
 			<uniform name="uSpecGloss" type="MATERIAL_PARAM" valueIndex="2" value="0.4, 0.3, 0.0, 1.0" float="2"/>
 			<uniform name="uLightMul" type="MATERIAL_PARAM" valueIndex="3" value="1.0, 1.0" float="2"/>
+			<uniform name="uCamPosition" type="WORLD_CAMERA_POSITION" value="0.0, 0.0, 0.0, 1.0" float="4"/>
+			<uniform name="uPLightPosition" type="POINT_LIGHT_POSITION" value="0" float="4"/>
+			<uniform name="uPLightAttenuation" type="POINT_LIGHT_ATTENUATION" value="0" float="4"/>
+			<uniform name="uPLightColor" type="POINT_LIGHT_COLOR" value="1.0,1.0,1.0,1.0" float="4"/>
 			<uniform name="uSHConst" type="SH_CONST" value="0" float="4" array="4"/>
 		</fs>
 	</uniforms>
@@ -22,6 +26,6 @@
 			<ui control="UIFloat2" name="uLightMul" elementName="SpecMul;LightMul" min="0" max="2"/>
 		</ui>
 	</customUI>
-	<shader type="GLSL" vs="GLSL/SGColorVS.glsl" fs="GLSL/SGNoTextureFS.glsl" vs_source="GLSL/SGVS.d.glsl" fs_source="GLSL/SGLitFS.d.glsl" define="NO_NORMAL_MAP; NO_TEXTURE"/>
-	<shader type="HLSL" vs="HLSL/SGColorVS.hlsl" fs="HLSL/SGNoTextureFS.hlsl" vs_source="HLSL/SGVS.d.hlsl" fs_source="HLSL/SGLitFS.d.hlsl" define="NO_NORMAL_MAP; NO_TEXTURE"/>
+	<shader type="GLSL" vs="GLSL/SGColorVS.glsl" fs="GLSL/SGNoTextureFS.glsl" vs_source="GLSL/SGVS.d.glsl" fs_source="GLSL/SGLitFS.d.glsl" define="NO_NORMAL_MAP; NO_TEXTURE; POINTLIGHT"/>
+	<shader type="HLSL" vs="HLSL/SGColorVS.hlsl" fs="HLSL/SGNoTextureFS.hlsl" vs_source="HLSL/SGVS.d.hlsl" fs_source="HLSL/SGLitFS.d.hlsl" define="NO_NORMAL_MAP; NO_TEXTURE; POINTLIGHT"/>
 </shaderConfig>

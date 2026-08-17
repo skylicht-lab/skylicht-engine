@@ -191,9 +191,9 @@ void CViewInit::initScene()
 	cubes->enableSortLight(true);
 
 	// point light
-	row = 4;
-	col = 4;
-	space = 13.0f;
+	row = 8;
+	col = 8;
+	space = 7.0f;
 
 	beginX = -(row - 1) * space * 0.5f;
 	beginZ = -(col - 1) * space * 0.5f;
@@ -218,7 +218,8 @@ void CViewInit::initScene()
 
 			CPointLight* pointLight = obj->addComponent<CPointLight>();
 			pointLight->setColor(color);
-			pointLight->setRadius(6.0f);
+			pointLight->setIntensity(15.0f);
+			pointLight->setRadius(10.0f);
 
 			x = x + space;
 		}

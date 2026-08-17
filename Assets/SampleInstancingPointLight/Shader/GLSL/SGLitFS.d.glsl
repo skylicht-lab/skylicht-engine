@@ -36,9 +36,16 @@ uniform float uCutoff;
 #if defined(NO_TEXTURE) || defined(NO_SPECGLOSS)
 uniform vec2 uSpecGloss;
 #endif
+#if defined(POINTLIGHT)
+uniform vec4 uCamPosition;
+uniform vec4 uPLightPosition;
+uniform vec4 uPLightAttenuation;
+uniform vec4 uPLightColor;
+#endif
 uniform vec4 uSHConst[4];
 
 in vec2 vTexCoord0;
+in vec4 vWorldPos;
 in vec3 vWorldNormal;
 in vec3 vWorldViewDir;
 in vec3 vWorldLightDir;
@@ -62,6 +69,10 @@ out vec4 FragColor;
 
 #include "../../../BuiltIn/Shader/PostProcessing/GLSL/LibToneMapping.glsl"
 #include "../../../BuiltIn/Shader/SHAmbient/GLSL/SHAmbient.glsl"
+
+#if defined(POINTLIGHT)
+#include "../../../BuiltIn/Shader/Light/GLSL/LibPointLight.glsl"
+#endif
 
 #ifdef SHADOW
 #include "../../../BuiltIn/Shader/Shadow/GLSL/LibShadow.glsl"
@@ -121,9 +132,26 @@ void main(void)
 	float ao = specMap.b;
 #endif
 
+	// Specular
+	vec3 specularColor = vec3(0.5, 0.5, 0.5);
+
 	// Lighting
 	float NdotL = max(dot(n, vWorldLightDir), 0.0);
 	vec3 directionalLight = NdotL * lightColor;
+
+#if defined(POINTLIGHT)
+	directionalLight = directionalLight + pointlight(
+		vWorldPos.xyz,
+		n,
+		uCamPosition.xyz,
+		uPLightColor,
+		uPLightPosition.xyz,
+		uPLightAttenuation,
+		spec,
+		gloss,
+		specularColor);
+#endif
+
 #if defined(AO)
 	directionalLight *= ao;
 #endif		
@@ -147,9 +175,6 @@ void main(void)
 	#endif
 #else
 
-	// Specular	
-	vec3 specularColor = vec3(0.5, 0.5, 0.5);
-	
 	vec3 H = normalize(vWorldLightDir + vWorldViewDir);
 	float NdotE = max(0.0, dot(n, H));
 	float specular = pow(NdotE, 10.0 + 100.0 * gloss) * spec;
