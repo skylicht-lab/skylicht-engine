@@ -43,8 +43,12 @@ namespace Skylicht
 	CShader::CShader() :
 		m_listVSUniforms(NULL),
 		m_listFSUniforms(NULL),
+		m_listVSBuffers(NULL),
+		m_listFSBuffers(NULL),
 		m_numVSUniform(0),
 		m_numFSUniform(0),
+		m_numVSBuffer(0),
+		m_numFSBuffer(0),
 		m_deferred(false),
 		m_softwareSkinningShader(NULL),
 		m_skinning(false),
@@ -258,6 +262,7 @@ namespace Skylicht
 			"COLOR_INTENSITY",
 			"RENDER_TEXTURE_MATRIX",
 			"UNIFORM_BUFFER",
+			"LIGHT_INDEX",
 			"NULL"
 		};
 
@@ -618,6 +623,79 @@ namespace Skylicht
 		}
 	}
 
+	void CShader::parseBuffers(io::IXMLReader* xmlReader)
+	{
+		const wchar_t* wtext;
+		char text[1024];
+
+		bool inVS = true;
+
+		while (xmlReader->read())
+		{
+			switch (xmlReader->getNodeType())
+			{
+			case io::EXN_ELEMENT:
+			{
+				std::wstring nodeName = xmlReader->getNodeName();
+				if (nodeName == L"vs")
+					inVS = true;
+				else if (nodeName == L"fs")
+					inVS = false;
+				else if (nodeName == L"buffer")
+				{
+					SUniform* uniform = NULL;
+					if (inVS == true)
+					{
+						m_vsBuffers.push_back(SUniform());
+						uniform = &m_vsBuffers.getLast();
+					}
+					else
+					{
+						m_fsBuffers.push_back(SUniform());
+						uniform = &m_fsBuffers.getLast();
+					}
+
+					wtext = xmlReader->getAttributeValue(L"name");
+					CStringImp::convertUnicodeToUTF8(wtext, text);
+					uniform->Name = text;
+					uniform->Type = UNIFORM_BUFFER;
+
+					wtext = xmlReader->getAttributeValue(L"valueIndex");
+					if (wtext != NULL)
+					{
+						CStringImp::convertUnicodeToUTF8(wtext, text);
+						uniform->ValueIndex = atoi(text);
+					}
+
+					wtext = xmlReader->getAttributeValue(L"openGL");
+					if (wtext != NULL)
+					{
+						CStringImp::convertUnicodeToUTF8(wtext, text);
+						uniform->OpenGL = strcmp(text, "true") == 0;
+					}
+
+					wtext = xmlReader->getAttributeValue(L"directX");
+					if (wtext != NULL)
+					{
+						CStringImp::convertUnicodeToUTF8(wtext, text);
+						uniform->DirectX = strcmp(text, "true") == 0;
+					}
+				}
+			}
+			break;
+			case io::EXN_ELEMENT_END:
+			{
+				std::wstring nodeName = xmlReader->getNodeName();
+				if (nodeName == L"buffers")
+					return;
+			}
+			break;
+			default:
+				break;
+			}
+		}
+	}
+
 	void CShader::clear()
 	{
 		deleteAllUI();
@@ -625,14 +703,20 @@ namespace Skylicht
 
 		m_vsUniforms.clear();
 		m_fsUniforms.clear();
+		m_vsBuffers.clear();
+		m_fsBuffers.clear();
 
 		m_attributeMapping.clear();
 		m_dependents.clear();
 
 		m_listVSUniforms = NULL;
 		m_listFSUniforms = NULL;
+		m_listVSBuffers = NULL;
+		m_listFSBuffers = NULL;
 		m_numVSUniform = 0;
 		m_numFSUniform = 0;
+		m_numVSBuffer = 0;
+		m_numFSBuffer = 0;
 
 		m_initCallback = true;
 
@@ -801,6 +885,10 @@ namespace Skylicht
 					// the uniform <fs> must be like const cbPerFrame in shader
 					parseUniform(xmlReader);
 				}
+				else if (nodeName == L"buffers")
+				{
+					parseBuffers(xmlReader);
+				}
 				else if (nodeName == L"customUI")
 				{
 					parseUniformUI(xmlReader);
@@ -864,9 +952,13 @@ namespace Skylicht
 
 		m_listVSUniforms = m_vsUniforms.pointer();
 		m_listFSUniforms = m_fsUniforms.pointer();
+		m_listVSBuffers = m_vsBuffers.pointer();
+		m_listFSBuffers = m_fsBuffers.pointer();
 
 		m_numVSUniform = (int)m_vsUniforms.size();
 		m_numFSUniform = (int)m_fsUniforms.size();
+		m_numVSBuffer = (int)m_vsBuffers.size();
+		m_numFSBuffer = (int)m_fsBuffers.size();
 	}
 
 	void CShader::buildUIUniform()
@@ -1078,6 +1170,24 @@ namespace Skylicht
 #endif
 			}
 
+			for (int i = 0; i < m_numVSBuffer; i++)
+			{
+				SUniform& buffer = m_listVSBuffers[i];
+				if (isUniformAvaiable(buffer) == true)
+				{
+					buffer.UniformShaderID = matRender->getShaderVariableID(buffer.Name.c_str(), video::EST_VERTEX_SHADER);
+				}
+			}
+
+			for (int i = 0; i < m_numFSBuffer; i++)
+			{
+				SUniform& buffer = m_listFSBuffers[i];
+				if (isUniformAvaiable(buffer) == true)
+				{
+					buffer.UniformShaderID = matRender->getShaderVariableID(buffer.Name.c_str(), video::EST_PIXEL_SHADER);
+				}
+			}
+
 			m_initCallback = false;
 		}
 
@@ -1117,6 +1227,39 @@ namespace Skylicht
 				}
 			}
 		}
+
+		for (int i = 0; i < m_numVSBuffer; i++)
+		{
+			SUniform& buffer = m_listVSBuffers[i];
+			if (buffer.UniformShaderID >= 0)
+			{
+				setUniformBuffer(buffer, matRender, true);
+			}
+		}
+
+		for (int i = 0; i < m_numFSBuffer; i++)
+		{
+			SUniform& buffer = m_listFSBuffers[i];
+			if (buffer.UniformShaderID >= 0)
+			{
+				setUniformBuffer(buffer, matRender, false);
+			}
+		}
+	}
+
+	void CShader::setUniformBuffer(SUniform& uniformBuffer, IMaterialRenderer* matRender, bool vertexShader)
+	{
+		CShaderManager* shaderManager = CShaderManager::getInstance();
+		int paramID = uniformBuffer.ValueIndex;
+		video::IHardwareBuffer* buffer = NULL;
+
+		if (paramID >= 0 && paramID < 10)
+			buffer = shaderManager->UBO[paramID];
+
+		if (vertexShader == true)
+			matRender->setShaderUBO(uniformBuffer.UniformShaderID, buffer, video::EST_VERTEX_SHADER);
+		else
+			matRender->setShaderUBO(uniformBuffer.UniformShaderID, buffer, video::EST_PIXEL_SHADER);
 	}
 
 	bool CShader::setUniform(SUniform& uniform, IMaterialRenderer* matRender, bool vertexShader, bool updateTransform)
@@ -1322,21 +1465,6 @@ namespace Skylicht
 
 			break;
 		}
-		case UNIFORM_BUFFER:
-		{
-			CShaderManager* material = shaderManager;
-			int paramID = uniform.ValueIndex;
-			video::IHardwareBuffer* buffer = NULL;
-
-			if (paramID >= 0 && paramID < 10)
-				buffer = material->UBO[paramID];
-
-			if (vertexShader == true)
-				matRender->setShaderUBO(uniform.UniformShaderID, buffer, video::EST_VERTEX_SHADER);
-			else
-				matRender->setShaderUBO(uniform.UniformShaderID, buffer, video::EST_PIXEL_SHADER);
-		}
-		break;
 		case TEXTURE_MIPMAP_COUNT:
 		{
 			SMaterial* material = shaderManager->getCurrentMaterial();

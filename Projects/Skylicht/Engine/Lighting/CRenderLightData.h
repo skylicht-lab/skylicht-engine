@@ -35,6 +35,7 @@ namespace Skylicht
 	{
 	protected:
 		u32 LightLayers;
+
 		bool EnableSortLight;
 
 	public:
@@ -72,6 +73,8 @@ namespace Skylicht
 		SCacheLight CachedPointLights;
 		SCacheLight CachedSpotLights;
 		SCacheLight CachedAreaLights;
+
+		SVec4 LightIndex;
 
 		CRenderLightData() :
 			LightLayers(1),

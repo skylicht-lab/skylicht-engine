@@ -12,8 +12,11 @@
 #include "SpriteDraw/CSprite.h"
 #include "Transform/CWorldTransformData.h"
 #include "Lighting/CPointLight.h"
-
 #include "LightProbes/CLightProbeRender.h"
+
+// for SUBOLightBuffer
+#include "Material/Shader/ShaderCallback/CShaderLighting.h"
+#include "Lighting/CLightSystem.h"
 
 SColor HSVtoRGB255(float h, float s, float v) {
 	float c = v * s;
@@ -227,6 +230,23 @@ void CViewInit::initScene()
 		x = beginX;
 		z = z + space;
 	}
+
+	// init ubo to bake all point lights
+	IHardwareBuffer* plBuffer = getVideoDriver()->createConstantBuffer(sizeof(SUBOLightBuffer));
+
+	CLightSystem* lightSystem = zone->getEntityManager()->getRenderSystem<CLightSystem>();
+	lightSystem->setUBOPLight(plBuffer);
+
+	// assign ubo at slot 0
+	// see the shader: Assets/SampleInstancingPointLight/Shader/MobileSGColorPL.xml
+	// <buffers>
+	// 	<fs>
+	// 		<buffer name = "uListLights" type = "UNIFORM_BUFFER" valueIndex = "0"/>
+	// 	</fs>
+	// </buffers>
+	CShaderManager::getInstance()->UBO[0] = plBuffer;
+	plBuffer->drop();
+
 
 	// rendering
 	u32 w = app->getWidth();

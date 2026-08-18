@@ -8,17 +8,26 @@ struct PS_INPUT
 	float3 worldViewDir: WORLDVIEWDIR;
 	float3 worldLightDir: WORLDLIGHTDIR;
 };
-cbuffer cbPerFrame
+cbuffer cbPerFrame: register(b0)
 {
 	float4 uLightColor;
 	float4 uColor;
 	float2 uSpecGloss;
 	float2 uLightMul;
 	float4 uCamPosition;
-	float4 uPLightPosition;
-	float4 uPLightAttenuation;
-	float4 uPLightColor;
+	float4 uLightIndex;
 	float4 uSHConst[4];
+};
+struct PointLight {
+	float4 Position;
+	float4 Attenuation;
+	float4 Direction;
+	float4 Color;
+};
+cbuffer uListLights: register(b1)
+{
+	PointLight Lights[200];
+	int NumLights;
 };
 static const float gamma = 2.2;
 static const float invGamma = 1.0 / 2.2;
@@ -76,13 +85,25 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 specularColor = float3(0.5, 0.5, 0.5);
 	float NdotL = max(dot(n, input.worldLightDir), 0.0);
 	float3 directionalLight = NdotL * lightColor;
-	directionalLight = directionalLight + pointlight(
+	PointLight light = Lights[(int)uLightIndex.x];
+	directionalLight += pointlight(
 		input.worldPos.xyz,
 		n,
 		uCamPosition.xyz,
-		uPLightColor,
-		uPLightPosition.xyz,
-		uPLightAttenuation,
+		light.Color,
+		light.Position.xyz,
+		light.Attenuation,
+		spec,
+		gloss,
+		specularColor);
+	light = Lights[(int)uLightIndex.y];
+	directionalLight += pointlight(
+		input.worldPos.xyz,
+		n,
+		uCamPosition.xyz,
+		light.Color,
+		light.Position.xyz,
+		light.Attenuation,
 		spec,
 		gloss,
 		specularColor);

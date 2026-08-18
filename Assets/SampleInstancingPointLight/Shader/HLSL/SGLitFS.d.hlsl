@@ -59,7 +59,7 @@ struct PS_INPUT
 };
 #endif
 
-cbuffer cbPerFrame
+cbuffer cbPerFrame: register(b0)
 {
 	float4 uLightColor;
 	float4 uColor;
@@ -72,12 +72,25 @@ cbuffer cbPerFrame
 #endif
 #if defined(POINTLIGHT)
 	float4 uCamPosition;
-	float4 uPLightPosition;
-	float4 uPLightAttenuation;
-	float4 uPLightColor;
+	float4 uLightIndex;
 #endif
 	float4 uSHConst[4];
 };
+
+#if defined(POINTLIGHT)
+struct PointLight {
+	float4 Position;
+	float4 Attenuation;
+	float4 Direction;
+	float4 Color;
+};
+
+cbuffer uListLights: register(b1)
+{
+	PointLight Lights[200];
+	int NumLights;
+};
+#endif
 
 #include "../../../BuiltIn/Shader/PostProcessing/HLSL/LibToneMapping.hlsl"
 #include "../../../BuiltIn/Shader/SHAmbient/HLSL/SHAmbient.hlsl"
@@ -151,13 +164,28 @@ float4 main(PS_INPUT input) : SV_TARGET
 	float3 directionalLight = NdotL * lightColor;
 	
 #if defined(POINTLIGHT)
-	directionalLight = directionalLight + pointlight(
+	// light 1
+	PointLight light = Lights[(int)uLightIndex.x];
+	directionalLight += pointlight(
 		input.worldPos.xyz,
 		n,
 		uCamPosition.xyz,
-		uPLightColor, 
-		uPLightPosition.xyz,
-		uPLightAttenuation,
+		light.Color, 
+		light.Position.xyz,
+		light.Attenuation,
+		spec, 
+		gloss, 
+		specularColor);
+		
+	// light 2
+	light = Lights[(int)uLightIndex.y];
+	directionalLight += pointlight(
+		input.worldPos.xyz,
+		n,
+		uCamPosition.xyz,
+		light.Color, 
+		light.Position.xyz,
+		light.Attenuation,
 		spec, 
 		gloss, 
 		specularColor);

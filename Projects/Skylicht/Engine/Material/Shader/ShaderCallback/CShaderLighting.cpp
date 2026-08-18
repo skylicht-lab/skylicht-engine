@@ -40,6 +40,8 @@ namespace Skylicht
 
 	SColorf s_lightAmbient = SColorf(0.4f, 0.4f, 0.4f, 1.0f);
 
+	SVec4 s_lightIndex;
+
 	void CShaderLighting::setMainShadowLight(CDirectionalLight* light)
 	{
 		g_mainShadowLight = light;
@@ -95,6 +97,11 @@ namespace Skylicht
 	void CShaderLighting::setLightAmbient(const SColorf& c)
 	{
 		s_lightAmbient = c;
+	}
+
+	void CShaderLighting::setLightIndex(const SVec4& index)
+	{
+		s_lightIndex = index;
 	}
 
 
@@ -334,6 +341,20 @@ namespace Skylicht
 			shader->setColor(matRender, uniform->UniformShaderID, vertexShader, s_lightAmbient, 1.0f);
 		}
 		break;
+		case LIGHT_INDEX:
+		{
+			float constBuffer[] = {
+				s_lightIndex.X, // pointlight 1
+				s_lightIndex.Y, // pointlight 2
+				s_lightIndex.Z, // spotlight index
+				s_lightIndex.W // probe index
+			};
+
+			if (vertexShader == true)
+				matRender->setShaderVariable(uniform->UniformShaderID, constBuffer, 4, video::EST_VERTEX_SHADER);
+			else
+				matRender->setShaderVariable(uniform->UniformShaderID, constBuffer, 4, video::EST_PIXEL_SHADER);
+		}
 		default:
 			break;
 		}

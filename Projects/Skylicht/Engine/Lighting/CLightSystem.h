@@ -87,6 +87,9 @@ namespace Skylicht
 
 		core::array<SDistanceLightEntry> m_sorts;
 
+		IHardwareBuffer* m_uboPLight;
+		IHardwareBuffer* m_uboSLight;
+
 	public:
 		CLightSystem();
 
@@ -112,7 +115,15 @@ namespace Skylicht
 
 		void onEndSetupLight();
 
+		void onSetupLightIndex(CRenderLightData* data, CWorldTransformData* transform);
+
+		void setUBOPLight(IHardwareBuffer* buffer);
+
+		void setUBOSLight(IHardwareBuffer* buffer);
+
 	protected:
+
+		void updateUBOLight(core::array<CLightCullingData*>& light, IHardwareBuffer* buffer);
 
 		void sortLights(const core::vector3df& position, u32 objLayer, CLightCullingData** lights, int lightCount);
 

@@ -61,6 +61,8 @@ namespace Skylicht
 
 		bool ReleaseSH;
 
+		SVec4 LightIndex;
+
 	public:
 
 		CIndirectLightingData();

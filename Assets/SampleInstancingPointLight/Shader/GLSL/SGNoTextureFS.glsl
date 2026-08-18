@@ -7,10 +7,19 @@ uniform vec4 uColor;
 uniform vec2 uLightMul;
 uniform vec2 uSpecGloss;
 uniform vec4 uCamPosition;
-uniform vec4 uPLightPosition;
-uniform vec4 uPLightAttenuation;
-uniform vec4 uPLightColor;
+uniform vec4 uLightIndex;
 uniform vec4 uSHConst[4];
+struct PointLight {
+	vec4 Position;
+	vec4 Attenuation;
+	vec4 Direction;
+	vec4 Color;
+};
+layout(std140) uniform uListLights
+{
+	PointLight Lights[200];
+	int NumLights;
+} LightData;
 in vec2 vTexCoord0;
 in vec4 vWorldPos;
 in vec3 vWorldNormal;
@@ -73,13 +82,25 @@ void main(void)
 	vec3 specularColor = vec3(0.5, 0.5, 0.5);
 	float NdotL = max(dot(n, vWorldLightDir), 0.0);
 	vec3 directionalLight = NdotL * lightColor;
-	directionalLight = directionalLight + pointlight(
+	PointLight light = LightData.Lights[int(uLightIndex.x)];
+	directionalLight += pointlight(
 		vWorldPos.xyz,
 		n,
 		uCamPosition.xyz,
-		uPLightColor,
-		uPLightPosition.xyz,
-		uPLightAttenuation,
+		light.Color,
+		light.Position.xyz,
+		light.Attenuation,
+		spec,
+		gloss,
+		specularColor);
+	light = LightData.Lights[int(uLightIndex.y)];
+	directionalLight += pointlight(
+		vWorldPos.xyz,
+		n,
+		uCamPosition.xyz,
+		light.Color,
+		light.Position.xyz,
+		light.Attenuation,
 		spec,
 		gloss,
 		specularColor);

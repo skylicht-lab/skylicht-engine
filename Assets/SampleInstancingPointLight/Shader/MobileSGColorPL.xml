@@ -13,12 +13,15 @@
 			<uniform name="uSpecGloss" type="MATERIAL_PARAM" valueIndex="2" value="0.4, 0.3, 0.0, 1.0" float="2"/>
 			<uniform name="uLightMul" type="MATERIAL_PARAM" valueIndex="3" value="1.0, 1.0" float="2"/>
 			<uniform name="uCamPosition" type="WORLD_CAMERA_POSITION" value="0.0, 0.0, 0.0, 1.0" float="4"/>
-			<uniform name="uPLightPosition" type="POINT_LIGHT_POSITION" value="0" float="4"/>
-			<uniform name="uPLightAttenuation" type="POINT_LIGHT_ATTENUATION" value="0" float="4"/>
-			<uniform name="uPLightColor" type="POINT_LIGHT_COLOR" value="1.0,1.0,1.0,1.0" float="4"/>
+			<uniform name="uLightIndex" type="LIGHT_INDEX" value="0.0,0.0,0.0,0.0" float="4"/>
 			<uniform name="uSHConst" type="SH_CONST" value="0" float="4" array="4"/>
 		</fs>
 	</uniforms>
+	<buffers>
+		<fs>
+			<buffer name="uListLights" type="UNIFORM_BUFFER" valueIndex="0"/>
+		</fs>
+	</buffers>
 	<customUI>
 		<ui control="UIGroup" name="Customize">
 			<ui control="UIColor" name="uColor"/>
