@@ -30,6 +30,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Entity/CEntityGroup.h"
 #include "Transform/CWorldTransformData.h"
 #include "Lighting/CRenderLightData.h"
+#include "IndirectLighting/CIndirectLightingData.h"
 
 #include "Lighting/CDirectionalLight.h"
 #include "Lighting/CPointLight.h"
@@ -126,11 +127,11 @@ namespace Skylicht
 
 		virtual void onEntityRemoved(CEntity** entity, int count);
 
-		void onBeginSetupLight(CRenderLightData* data, CWorldTransformData* transform);
+		void onBeginSetupLight(CRenderLightData* data, CIndirectLightingData* indirectData, CWorldTransformData* transform);
 
 		void onEndSetupLight();
 
-		void onSetupLightIndex(CRenderLightData* data, CWorldTransformData* transform);
+		void onSetupLightIndex(CRenderLightData* data, CIndirectLightingData* indirectData, CWorldTransformData* transform);
 
 		void setUBOPLight(IHardwareBuffer* buffer);
 

@@ -28,6 +28,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Culling/CVisibleData.h"
 #include "Transform/CWorldTransformData.h"
 #include "Material/Shader/ShaderCallback/CShaderMaterial.h"
+#include "Lighting/CLightSystem.h"
 
 namespace Skylicht
 {
@@ -227,6 +228,8 @@ namespace Skylicht
 
 	void CPrimitiveRendererInstancing::update(CEntityManager* entityManager)
 	{
+		CLightSystem* lightSystem = entityManager->getRenderSystem<CLightSystem>();
+
 		for (auto& it : m_groups)
 		{
 			SPrimitiveGroup* group = it.second;
@@ -251,6 +254,15 @@ namespace Skylicht
 
 				// add transform
 				m_entities.push(primitive->Entity);
+
+				// sorting light
+				if (primitive->isSortingLights())
+				{
+					CIndirectLightingData* lightingData = GET_ENTITY_DATA(primitive->Entity, CIndirectLightingData);
+					CWorldTransformData* transform = GET_ENTITY_DATA(primitive->Entity, CWorldTransformData);
+
+					lightSystem->onSetupLightIndex(primitive, lightingData, transform);
+				}
 			}
 
 			SInstancingVertexBuffer* buffer = group->Buffer;
@@ -309,7 +321,7 @@ namespace Skylicht
 			if (!shader->isOpaque() != isTransparent)
 				continue;
 
-			CShaderMaterial::setMaterial(NULL);
+			CShaderMaterial::setMaterial(list[0]->Material);
 
 			for (u32 i = 0, n = mesh->MeshBuffers.size(); i < n; i++)
 			{

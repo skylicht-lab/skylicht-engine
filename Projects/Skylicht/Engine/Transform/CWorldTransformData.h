@@ -43,7 +43,6 @@ namespace Skylicht
 		CWorldTransformData* Parent;
 		bool HasLateChanged;
 		bool NeedValidateForLate;
-
 	public:
 		CWorldTransformData();
 

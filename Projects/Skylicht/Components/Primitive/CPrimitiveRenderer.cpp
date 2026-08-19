@@ -242,7 +242,7 @@ namespace Skylicht
 
 		CLightSystem* lightSystem = entityManager->getRenderSystem<CLightSystem>();
 		if (data->isSortingLights())
-			lightSystem->onBeginSetupLight(data, transform);
+			lightSystem->onBeginSetupLight(data, lightingData, transform);
 
 		for (u32 i = 0, n = mesh->MeshBuffers.size(); i < n; i++)
 		{

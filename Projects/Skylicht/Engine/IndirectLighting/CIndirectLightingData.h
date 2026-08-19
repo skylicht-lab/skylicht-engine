@@ -61,7 +61,7 @@ namespace Skylicht
 
 		bool ReleaseSH;
 
-		int ProbeIndex;
+		SVec4 LightIndex;
 
 	public:
 

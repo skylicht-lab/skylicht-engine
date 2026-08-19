@@ -5,7 +5,10 @@
 #include "CImguiManager.h"
 #include "imgui.h"
 
+#include "Primitive/CCube.h"
+
 CViewDemo::CViewDemo()
+	: m_cubes(NULL)
 {
 
 }
@@ -23,7 +26,9 @@ void CViewDemo::onInit()
 	CScene* scene = context->getScene();
 	scene->updateIndexSearchObject();
 
-
+	CGameObject* cubesObj = scene->searchObjectInChild(L"Cubes");
+	if (cubesObj != NULL)
+		m_cubes = cubesObj->getComponent<CCube>();
 }
 
 void CViewDemo::onDestroy()
@@ -37,6 +42,9 @@ void CViewDemo::onUpdate()
 	CScene* scene = context->getScene();
 	if (scene != NULL)
 		scene->update();
+
+	// imgui update
+	CImguiManager::getInstance()->onNewFrame();
 }
 
 void CViewDemo::onRender()
@@ -59,6 +67,42 @@ void CViewDemo::onRender()
 	{
 		CGraphics2D::getInstance()->render(guiCamera);
 	}
+
+	// imgui render
+	onGUI();
+	CImguiManager::getInstance()->onRender();
+}
+
+void CViewDemo::onGUI()
+{
+	bool open = true;
+
+	ImGuiWindowFlags window_flags = 0;
+
+	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(280, 120), ImGuiCond_FirstUseEver);
+
+	if (!ImGui::Begin("Instancing Point Light", &open, window_flags))
+	{
+		ImGui::End();
+		return;
+	}
+
+	if (m_cubes != NULL)
+	{
+		bool instancing = m_cubes->isInstancing();
+		if (ImGui::Checkbox("Instancing", &instancing))
+			m_cubes->setInstancing(instancing);
+	}
+	else
+	{
+		ImGui::Text("Cubes not found");
+	}
+
+	ImGui::Separator();
+	ImGui::Text("DrawCall: %d", getVideoDriver()->getDrawCall());
+
+	ImGui::End();
 }
 
 void CViewDemo::onPostRender()

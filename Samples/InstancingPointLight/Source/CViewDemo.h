@@ -1,10 +1,12 @@
 #pragma once
 
 #include "ViewManager/CView.h"
+#include "Primitive/CCube.h"
 
 class CViewDemo : public CView
 {
 protected:
+	CCube* m_cubes;
 
 public:
 	CViewDemo();
@@ -20,4 +22,8 @@ public:
 	virtual void onRender();
 
 	virtual void onPostRender();
+
+protected:
+
+	void onGUI();
 };

@@ -38,7 +38,9 @@ uniform vec2 uSpecGloss;
 #endif
 #if defined(POINTLIGHT)
 uniform vec4 uCamPosition;
+#ifndef INSTANCING
 uniform vec4 uLightIndex;
+#endif
 #endif
 uniform vec4 uSHConst[4];
 
@@ -53,7 +55,6 @@ struct PointLight {
 layout(std140) uniform uListLights
 {
 	PointLight Lights[200];
-	int NumLights;
 } LightData;
 #endif
 
@@ -67,6 +68,10 @@ in vec3 vWorldLightDir;
 in vec3 vWorldTangent;
 in vec3 vWorldBinormal;
 in float vTangentW;
+#endif
+
+#ifdef INSTANCING
+flat in vec4 vLightIndex;
 #endif
 
 #ifdef SHADOW
@@ -153,7 +158,11 @@ void main(void)
 	vec3 directionalLight = NdotL * lightColor;
 
 #if defined(POINTLIGHT)
+#if defined(INSTANCING)
+	PointLight light = LightData.Lights[int(vLightIndex.x)];
+#else
 	PointLight light = LightData.Lights[int(uLightIndex.x)];
+#endif
 	directionalLight += pointlight(
 		vWorldPos.xyz,
 		n,
@@ -165,7 +174,11 @@ void main(void)
 		gloss,
 		specularColor);
 	
+#if defined(INSTANCING)
+	light = LightData.Lights[int(vLightIndex.y)];
+#else
 	light = LightData.Lights[int(uLightIndex.y)];
+#endif
 	directionalLight += pointlight(
 		vWorldPos.xyz,
 		n,

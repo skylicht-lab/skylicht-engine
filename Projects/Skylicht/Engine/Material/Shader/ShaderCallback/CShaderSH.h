@@ -38,7 +38,6 @@ namespace Skylicht
 	struct SUBOProbeBuffer
 	{
 		SUBOProbe Probes[MAX_UBO_PROBES];
-		int NumProbes;
 	};
 
 	class SKYLICHT_API CShaderSH : public IShaderCallback

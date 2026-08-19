@@ -266,7 +266,13 @@ void CViewInit::initScene()
 
 	// Test no shadow cascade (30m far shadow)
 	context->getShadowMapRenderPipeline()->setNoShadowCascade(2048, 30.0f);
-	context->getPostProcessorPipeline()->enableAutoExposure(false);
+
+	CPostProcessorRP* pp = context->getPostProcessorPipeline();
+	if (pp)
+	{
+		pp->enableAutoExposure(false);
+		pp->setManualExposure(1.5f);
+	}
 }
 
 void CViewInit::onDestroy()

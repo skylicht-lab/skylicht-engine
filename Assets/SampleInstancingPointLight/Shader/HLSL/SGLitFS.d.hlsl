@@ -55,7 +55,8 @@ struct PS_INPUT
 #ifdef SHADOW
 	float3 depth: DEPTH;
 	float4 shadowCoord: SHADOWCOORD;
-#endif	
+#endif
+	nointerpolation float4 lightIndex: LIGHTINDEX;
 };
 #endif
 
@@ -72,7 +73,9 @@ cbuffer cbPerFrame: register(b0)
 #endif
 #if defined(POINTLIGHT)
 	float4 uCamPosition;
+#ifndef INSTANCING
 	float4 uLightIndex;
+#endif
 #endif
 	float4 uSHConst[4];
 };
@@ -87,8 +90,7 @@ struct PointLight {
 
 cbuffer uListLights: register(b1)
 {
-	PointLight Lights[200];
-	int NumLights;
+	PointLight Lights[200]: packoffset(c0);
 };
 #endif
 
@@ -165,7 +167,12 @@ float4 main(PS_INPUT input) : SV_TARGET
 	
 #if defined(POINTLIGHT)
 	// light 1
+#if defined(INSTANCING)
+	PointLight light = Lights[(int)input.lightIndex.x];
+#else
 	PointLight light = Lights[(int)uLightIndex.x];
+#endif
+
 	directionalLight += pointlight(
 		input.worldPos.xyz,
 		n,
@@ -178,7 +185,11 @@ float4 main(PS_INPUT input) : SV_TARGET
 		specularColor);
 		
 	// light 2
+#if defined(INSTANCING)
+	light = Lights[(int)input.lightIndex.y];
+#else
 	light = Lights[(int)uLightIndex.y];
+#endif
 	directionalLight += pointlight(
 		input.worldPos.xyz,
 		n,

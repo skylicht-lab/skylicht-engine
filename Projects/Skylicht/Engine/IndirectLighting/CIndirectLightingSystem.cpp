@@ -189,8 +189,8 @@ namespace Skylicht
 
 					*indirectData->Intensity = probe->Intensity * *indirectData->CustomIntensity;
 
-					indirectData->ProbeIndex = probe->UBOIndex;
 					indirectData->InvalidateProbe = false;
+					indirectData->LightIndex.W = (float)probe->UBOIndex;
 				}
 			}
 		}
@@ -208,17 +208,19 @@ namespace Skylicht
 		if (m_uboProbes)
 		{
 			m_uboProbes->grab();
-			updateUBOProbes(m_probes, m_uboProbes);
+
+			if (m_probes.size() > 0)
+				updateUBOProbes(m_probes, m_uboProbes);
 		}
 	}
 
 	void CIndirectLightingSystem::updateUBOProbes(core::array<CLightProbeData*>& probes, IHardwareBuffer* buffer)
 	{
 		SUBOProbeBuffer* probesBuffer = new SUBOProbeBuffer();
-		probesBuffer->NumProbes = core::min_(MAX_UBO_PROBES, (int)probes.size());
+		int numProbes = core::min_(MAX_UBO_PROBES, (int)probes.size());
 
 		// see more in CShaderSH::OnSetConstants
-		for (int i = 0; i < probesBuffer->NumProbes; i++)
+		for (int i = 0; i < numProbes; i++)
 		{
 			SUBOProbe& p = probesBuffer->Probes[i];
 			CLightProbeData* data = probes[i];

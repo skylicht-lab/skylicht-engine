@@ -41,7 +41,6 @@ namespace Skylicht
 	struct SUBOLightBuffer
 	{
 		SUBOPointLight Lights[MAX_UBO_POINT_LIGHTS];
-		int NumLights;
 	};
 
 	class CDirectionalLight;

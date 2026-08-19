@@ -275,7 +275,9 @@ namespace Skylicht
 		if (m_uboPLight)
 		{
 			m_uboPLight->grab();
-			updateUBOLight(m_pointLights, m_uboPLight);
+
+			if (m_pointLights.size() > 0)
+				updateUBOLight(m_pointLights, m_uboPLight);
 		}
 	}
 
@@ -289,19 +291,21 @@ namespace Skylicht
 		if (m_uboSLight)
 		{
 			m_uboSLight->grab();
-			updateUBOLight(m_spotLights, m_uboSLight);
+
+			if (m_spotLights.size() > 0)
+				updateUBOLight(m_spotLights, m_uboSLight);
 		}
 	}
 
 	void CLightSystem::updateUBOLight(core::array<CLightCullingData*>& light, IHardwareBuffer* buffer)
 	{
 		SUBOLightBuffer* lightBuffer = new SUBOLightBuffer();
-		lightBuffer->NumLights = core::min_(MAX_UBO_POINT_LIGHTS, (int)m_pointLights.size());
+		int numLights = core::min_(MAX_UBO_POINT_LIGHTS, (int)m_pointLights.size());
 
 		core::vector3df pos, dir;
 
 		// see more in CShaderLighting::OnSetConstants
-		for (int i = 0; i < lightBuffer->NumLights; i++)
+		for (int i = 0; i < numLights; i++)
 		{
 			SUBOPointLight& l = lightBuffer->Lights[i];
 			CPointLight* light = (CPointLight*)m_pointLights[i]->Light;
@@ -339,7 +343,7 @@ namespace Skylicht
 		delete lightBuffer;
 	}
 
-	void CLightSystem::onBeginSetupLight(CRenderLightData* data, CWorldTransformData* transform)
+	void CLightSystem::onBeginSetupLight(CRenderLightData* data, CIndirectLightingData* indirectData, CWorldTransformData* transform)
 	{
 		m_currentDLight = CShaderLighting::getDirectionalLight();
 		for (int i = 0; i < 4; i++)
@@ -353,7 +357,7 @@ namespace Skylicht
 			CShaderLighting::setAreaLight(NULL, i);
 		}
 
-		onSetupLightIndex(data, transform);
+		onSetupLightIndex(data, indirectData, transform);
 
 		if (data->CachedDirectionalLights.Lights[0] == NULL)
 			CShaderLighting::setDirectionalLight(NULL);
@@ -372,10 +376,11 @@ namespace Skylicht
 		for (int i = 0; i < lightCount; i++)
 			CShaderLighting::setAreaLight((CAreaLight*)data->CachedAreaLights.Lights[i]->Light, i);
 
-		CShaderLighting::setLightIndex(data->LightIndex);
+		if (indirectData)
+			CShaderLighting::setLightIndex(indirectData->LightIndex);
 	}
 
-	void CLightSystem::onSetupLightIndex(CRenderLightData* data, CWorldTransformData* transform)
+	void CLightSystem::onSetupLightIndex(CRenderLightData* data, CIndirectLightingData* indirectData, CWorldTransformData* transform)
 	{
 		u32 objLayer = data->getLightLayers();
 		core::vector3df position = transform->getWorldPosition();
@@ -498,14 +503,17 @@ namespace Skylicht
 		data->LightCacheValid = true;
 
 		// set index
-		if (data->CachedPointLights.Count >= 1)
-			data->LightIndex.X = (float)(data->CachedPointLights.Lights[0]->UBOIndex);
+		if (indirectData)
+		{
+			if (data->CachedPointLights.Count >= 1)
+				indirectData->LightIndex.X = (float)(data->CachedPointLights.Lights[0]->UBOIndex);
 
-		if (data->CachedPointLights.Count >= 2)
-			data->LightIndex.Y = (float)(data->CachedPointLights.Lights[1]->UBOIndex);
+			if (data->CachedPointLights.Count >= 2)
+				indirectData->LightIndex.Y = (float)(data->CachedPointLights.Lights[1]->UBOIndex);
 
-		if (data->CachedSpotLights.Count >= 1)
-			data->LightIndex.Z = (float)(data->CachedSpotLights.Lights[0]->UBOIndex);
+			if (data->CachedSpotLights.Count >= 1)
+				indirectData->LightIndex.Z = (float)(data->CachedSpotLights.Lights[0]->UBOIndex);
+		}
 	}
 
 	void CLightSystem::sortLights(const core::vector3df& position, u32 objLayer, CKDTree3f* kdtree)
@@ -603,13 +611,13 @@ namespace Skylicht
 
 		// test point light
 		changed = m_pointLightCache.update(pointLightCount);
-		if (changed && m_uboPLight)
+		if (m_uboPLight && changed)
 			updateUBOLight(m_pointLights, m_uboPLight);
 		cacheChanged |= changed;
 
 		// test spot light
 		changed = m_spotLightCache.update(spotLightCount);
-		if (changed && m_uboSLight)
+		if (m_uboSLight && changed)
 			updateUBOLight(m_spotLights, m_uboSLight);
 		cacheChanged |= changed;
 

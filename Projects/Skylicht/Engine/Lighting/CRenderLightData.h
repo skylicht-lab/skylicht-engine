@@ -74,8 +74,6 @@ namespace Skylicht
 		SCacheLight CachedSpotLights;
 		SCacheLight CachedAreaLights;
 
-		SVec4 LightIndex;
-
 		CRenderLightData() :
 			LightLayers(1),
 			EnableSortLight(false),

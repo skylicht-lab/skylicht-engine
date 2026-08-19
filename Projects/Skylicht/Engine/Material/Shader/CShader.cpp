@@ -1256,10 +1256,13 @@ namespace Skylicht
 		if (paramID >= 0 && paramID < 10)
 			buffer = shaderManager->UBO[paramID];
 
-		if (vertexShader == true)
-			matRender->setShaderUBO(uniformBuffer.UniformShaderID, buffer, video::EST_VERTEX_SHADER);
-		else
-			matRender->setShaderUBO(uniformBuffer.UniformShaderID, buffer, video::EST_PIXEL_SHADER);
+		if (buffer)
+		{
+			if (vertexShader == true)
+				matRender->setShaderUBO(uniformBuffer.UniformShaderID, buffer, video::EST_VERTEX_SHADER);
+			else
+				matRender->setShaderUBO(uniformBuffer.UniformShaderID, buffer, video::EST_PIXEL_SHADER);
+		}
 	}
 
 	bool CShader::setUniform(SUniform& uniform, IMaterialRenderer* matRender, bool vertexShader, bool updateTransform)

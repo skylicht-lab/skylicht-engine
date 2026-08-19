@@ -15,7 +15,7 @@ struct VS_OUTPUT
 	float3 worldViewDir: WORLDVIEWDIR;
 	float3 worldLightDir: WORLDLIGHTDIR;
 };
-cbuffer cbPerObject
+cbuffer cbPerObject: register(b0)
 {
 	float4x4 uMvpMatrix;
 	float4x4 uWorldMatrix;

@@ -199,7 +199,7 @@ namespace Skylicht
 			bool haveTransparent = false;
 
 			if (meshData->isSortingLights())
-				lightSystem->onBeginSetupLight(meshData, transform);
+				lightSystem->onBeginSetupLight(meshData, lightingData, transform);
 
 			for (u32 j = 0, m = mesh->getMeshBufferCount(); j < m; j++)
 			{
@@ -256,7 +256,10 @@ namespace Skylicht
 			driver->setTransform(video::ETS_WORLD, transform->World);
 
 			if (meshData->isSortingLights())
-				lightSystem->onBeginSetupLight(meshData, transform);
+			{
+				CIndirectLightingData* indirectData = GET_ENTITY_DATA(entity, CIndirectLightingData);
+				lightSystem->onBeginSetupLight(meshData, indirectData, transform);
+			}
 
 			CMesh* mesh = meshData->getMesh();
 			if (meshData->isSoftwareBlendShape())

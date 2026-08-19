@@ -44,8 +44,7 @@ namespace Skylicht
 		Intensity(NULL),
 		CustomIntensity(NULL),
 		LightLayers(1),
-		ReleaseSH(false),
-		ProbeIndex(0)
+		ReleaseSH(false)
 	{
 
 	}

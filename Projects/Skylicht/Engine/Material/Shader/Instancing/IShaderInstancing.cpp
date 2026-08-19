@@ -69,7 +69,8 @@ namespace Skylicht
 			m_vtxDescriptorForRenderLighting->addAttribute("inWorldMatrix2", 4, video::EVAS_TEXCOORD6, video::EVAT_FLOAT, 2);
 			m_vtxDescriptorForRenderLighting->addAttribute("inWorldMatrix3", 4, video::EVAS_TEXCOORD7, video::EVAT_FLOAT, 2);
 			m_vtxDescriptorForRenderLighting->addAttribute("inWorldMatrix4", 4, video::EVAS_TEXCOORD8, video::EVAT_FLOAT, 2);
-			m_vtxDescriptorForRenderLighting->addAttribute("inLightIndex", 4, video::EVAS_TEXCOORD9, video::EVAT_FLOAT, 2);
+
+			m_vtxDescriptorForRenderLighting->addAttribute("uLightIndex", 4, video::EVAS_TEXCOORD9, video::EVAT_FLOAT, 2);
 
 			m_vtxDescriptorForRenderLighting->setInstanceDataStepRate(video::EIDSR_PER_INSTANCE, 1);
 			m_vtxDescriptorForRenderLighting->setInstanceDataStepRate(video::EIDSR_PER_INSTANCE, 2);
@@ -316,6 +317,9 @@ namespace Skylicht
 				}
 				break;
 				}
+
+				// light affect for this entity
+				transform.LightIndex = indirectLighting->LightIndex;
 			}
 		}
 

@@ -162,6 +162,9 @@ void CViewInit::initScene()
 
 	CCube* cubes = cubeObjs->addComponent<CCube>();
 
+	// that because the shader we have tangent
+	cubes->setEnableNormalMap(true);
+
 	CMaterial* material = cubes->getMaterial();
 	material->changeShader("SampleInstancingPointLight/Shader/MobileSGColorPL.xml");
 	material->setUniform4("uColor", SColor(255, 150, 150, 150));
@@ -192,6 +195,7 @@ void CViewInit::initScene()
 
 	// enable sort light for render lighting
 	cubes->enableSortLight(true);
+	cubes->setInstancing(true);
 
 	// point light
 	row = 8;

@@ -494,12 +494,6 @@ bool CD3D11MaterialRenderer::OnRender(IMaterialRendererServices* service, bool u
 {
 	if (!Context)
 		return false;
-	
-	if (CallBack)
-		CallBack->OnSetConstants(service, UserData, updateConstant);
-
-	for (int i = EST_VERTEX_SHADER; i < EST_COUNT; i++)
-		uploadVariableToGPU((E_SHADER_TYPE)i);	
 
 	BridgeCalls->setVertexShader(shaders[EST_VERTEX_SHADER]);
 	BridgeCalls->setPixelShader(shaders[EST_PIXEL_SHADER]);
@@ -509,6 +503,12 @@ bool CD3D11MaterialRenderer::OnRender(IMaterialRendererServices* service, bool u
 	BridgeCalls->setDomainShader(shaders[EST_DOMAIN_SHADER]);
 	BridgeCalls->setComputeShader(shaders[EST_COMPUTE_SHADER]);
 	
+	if (CallBack)
+		CallBack->OnSetConstants(service, UserData, updateConstant);
+
+	for (int i = EST_VERTEX_SHADER; i < EST_COUNT; i++)
+		uploadVariableToGPU((E_SHADER_TYPE)i);
+
 	return true;
 }
 
