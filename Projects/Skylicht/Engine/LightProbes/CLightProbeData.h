@@ -36,6 +36,7 @@ namespace Skylicht
 
 		bool NeedValidate;
 
+		int UBOIndex;
 	public:
 		CLightProbeData();
 

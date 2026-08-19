@@ -295,15 +295,15 @@ namespace Skylicht
 
 	void CLightSystem::updateUBOLight(core::array<CLightCullingData*>& light, IHardwareBuffer* buffer)
 	{
-		SUBOLightBuffer lightBuffer;
-		lightBuffer.NumLights = core::min_(MAX_UBO_POINT_LIGHTS, (int)m_pointLights.size());
+		SUBOLightBuffer* lightBuffer = new SUBOLightBuffer();
+		lightBuffer->NumLights = core::min_(MAX_UBO_POINT_LIGHTS, (int)m_pointLights.size());
 
 		core::vector3df pos, dir;
 
 		// see more in CShaderLighting::OnSetConstants
-		for (int i = 0; i < lightBuffer.NumLights; i++)
+		for (int i = 0; i < lightBuffer->NumLights; i++)
 		{
-			SUBOPointLight& l = lightBuffer.Lights[i];
+			SUBOPointLight& l = lightBuffer->Lights[i];
 			CPointLight* light = (CPointLight*)m_pointLights[i]->Light;
 
 			pos = light->getPosition();
@@ -334,7 +334,9 @@ namespace Skylicht
 		}
 
 		// flush to hardware
-		buffer->update(&lightBuffer, sizeof(SUBOLightBuffer));
+		buffer->update(lightBuffer, sizeof(SUBOLightBuffer));
+
+		delete lightBuffer;
 	}
 
 	void CLightSystem::onBeginSetupLight(CRenderLightData* data, CWorldTransformData* transform)

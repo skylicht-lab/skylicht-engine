@@ -28,6 +28,19 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+#define MAX_UBO_PROBES 300
+
+	struct SUBOProbe
+	{
+		SVec4 SH4[4];
+	};
+
+	struct SUBOProbeBuffer
+	{
+		SUBOProbe Probes[MAX_UBO_PROBES];
+		int NumProbes;
+	};
+
 	class SKYLICHT_API CShaderSH : public IShaderCallback
 	{
 	public:

@@ -26,12 +26,15 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Entity/CEntityManager.h"
 #include "CIndirectLightingSystem.h"
 
+#include "Material/Shader/ShaderCallback/CShaderSH.h"
+
 namespace Skylicht
 {
 	CIndirectLightingSystem::CIndirectLightingSystem() :
 		m_probeChange(false),
 		m_groupLighting(NULL),
-		m_groupProbes(NULL)
+		m_groupProbes(NULL),
+		m_uboProbes(NULL)
 	{
 		m_kdtree = new CKDTree3f();
 	}
@@ -39,6 +42,9 @@ namespace Skylicht
 	CIndirectLightingSystem::~CIndirectLightingSystem()
 	{
 		delete m_kdtree;
+
+		if (m_uboProbes)
+			m_uboProbes->drop();
 	}
 
 	void CIndirectLightingSystem::beginQuery(CEntityManager* entityManager)
@@ -77,6 +83,8 @@ namespace Skylicht
 			entity = entities[i];
 
 			probeData = GET_ENTITY_DATA(entity, CLightProbeData);
+			probeData->UBOIndex = (int)m_probes.size();
+
 			m_probes.push_back(probeData);
 
 			transformData = GET_ENTITY_DATA(entity, CWorldTransformData);
@@ -132,6 +140,9 @@ namespace Skylicht
 				f32* m = worlds[i]->World.pointer();
 				m_kdtree->insert(m[12], m[13], m[14], data[i]);
 			}
+
+			if (m_uboProbes)
+				updateUBOProbes(m_probes, m_uboProbes);
 		}
 
 		if (m_probes.size() == 0)
@@ -177,11 +188,50 @@ namespace Skylicht
 					}
 
 					*indirectData->Intensity = probe->Intensity * *indirectData->CustomIntensity;
+
+					indirectData->ProbeIndex = probe->UBOIndex;
 					indirectData->InvalidateProbe = false;
 				}
 			}
 		}
 
 		m_probeChange = false;
+	}
+
+	void CIndirectLightingSystem::setUBOProbes(IHardwareBuffer* buffer)
+	{
+		if (m_uboProbes)
+			m_uboProbes->drop();
+
+		m_uboProbes = buffer;
+
+		if (m_uboProbes)
+		{
+			m_uboProbes->grab();
+			updateUBOProbes(m_probes, m_uboProbes);
+		}
+	}
+
+	void CIndirectLightingSystem::updateUBOProbes(core::array<CLightProbeData*>& probes, IHardwareBuffer* buffer)
+	{
+		SUBOProbeBuffer* probesBuffer = new SUBOProbeBuffer();
+		probesBuffer->NumProbes = core::min_(MAX_UBO_PROBES, (int)probes.size());
+
+		// see more in CShaderSH::OnSetConstants
+		for (int i = 0; i < probesBuffer->NumProbes; i++)
+		{
+			SUBOProbe& p = probesBuffer->Probes[i];
+			CLightProbeData* data = probes[i];
+
+			p.SH4[0] = data->SH[0];
+			p.SH4[1] = data->SH[1];
+			p.SH4[2] = data->SH[2];
+			p.SH4[3] = data->SH[3];
+		}
+
+		// flush to hardware
+		buffer->update(probesBuffer, sizeof(SUBOProbeBuffer));
+
+		delete probesBuffer;
 	}
 }
