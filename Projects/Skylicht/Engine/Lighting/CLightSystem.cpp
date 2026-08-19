@@ -66,10 +66,23 @@ namespace Skylicht
 		m_lightCacheVersion(1),
 		m_group(NULL),
 		m_entityManager(NULL),
+		m_pointLightKDTree(NULL),
+		m_spotLightKDTree(NULL),
+		m_areaLightKDTree(NULL),
+		m_pointLightKDTreeCount(-1),
+		m_spotLightKDTreeCount(-1),
+		m_areaLightKDTreeCount(-1),
+		m_pointLightKDTreeSignature(0),
+		m_spotLightKDTreeSignature(0),
+		m_areaLightKDTreeSignature(0),
 		m_currentDLight(NULL),
 		m_uboPLight(NULL),
 		m_uboSLight(NULL)
 	{
+		m_pointLightKDTree = new CKDTree3f();
+		m_spotLightKDTree = new CKDTree3f();
+		m_areaLightKDTree = new CKDTree3f();
+
 		for (int i = 0; i < 4; i++)
 		{
 			m_currentPLight[i] = NULL;
@@ -92,6 +105,10 @@ namespace Skylicht
 
 		if (m_uboSLight)
 			m_uboSLight->drop();
+
+		delete m_pointLightKDTree;
+		delete m_spotLightKDTree;
+		delete m_areaLightKDTree;
 	}
 
 	void CLightSystem::beginQuery(CEntityManager* entityManager)
@@ -109,6 +126,8 @@ namespace Skylicht
 		m_spotLightCache.resetSignature();
 		m_areaLightCache.resetSignature();
 
+		m_maxRange = 0.0f;
+
 		if (!m_group)
 		{
 			const u32 type[] = GET_LIST_ENTITY_DATA(CLightCullingData);
@@ -121,6 +140,10 @@ namespace Skylicht
 		entities = m_group->getEntities();
 		numEntity = m_group->getEntityCount();
 
+		size_t pointLightPositionSignature = LightSignatureOffset;
+		size_t spotLightPositionSignature = LightSignatureOffset;
+		size_t areaLightPositionSignature = LightSignatureOffset;
+
 		for (int i = 0; i < numEntity; i++)
 		{
 			CEntity* entity = entities[i];
@@ -132,30 +155,29 @@ namespace Skylicht
 			switch (lightData->LightType)
 			{
 			case CLight::DirectionalLight:
-				lightData->UBOIndex = (int)m_dirLights.size();
-				m_dirLights.push_back(lightData);
+				addLightToList(m_dirLights, lightData);
 				addLightSignature(m_dirLightCache, entity, lightData);
 				break;
 			case CLight::PointLight:
-				lightData->UBOIndex = (int)m_pointLights.size();
-				m_pointLights.push_back(lightData);
-				if (transformData != NULL && transformData->NeedValidate)
+				if (transformData->NeedValidate)
 					m_changedPointLights.push_back(lightData);
+				addLightToList(m_pointLights, lightData);
 				addLightSignature(m_pointLightCache, entity, lightData);
+				addLightPositionSignature(pointLightPositionSignature, lightData);
 				break;
 			case CLight::SpotLight:
-				lightData->UBOIndex = (int)m_spotLights.size();
-				m_spotLights.push_back(lightData);
-				if (transformData != NULL && transformData->NeedValidate)
+				if (transformData->NeedValidate)
 					m_changedSpotLights.push_back(lightData);
+				addLightToList(m_spotLights, lightData);
 				addLightSignature(m_spotLightCache, entity, lightData);
+				addLightPositionSignature(spotLightPositionSignature, lightData);
 				break;
 			case CLight::AreaLight:
-				lightData->UBOIndex = (int)m_areaLights.size();
-				m_areaLights.push_back(lightData);
-				if (transformData != NULL && transformData->NeedValidate)
+				if (transformData->NeedValidate)
 					m_changedAreaLights.push_back(lightData);
+				addLightToList(m_areaLights, lightData);
 				addLightSignature(m_areaLightCache, entity, lightData);
+				addLightPositionSignature(areaLightPositionSignature, lightData);
 				break;
 			default:
 				break;
@@ -163,7 +185,38 @@ namespace Skylicht
 
 		}
 
+		int pointLightCount = (int)m_pointLights.size();
+		int spotLightCount = (int)m_spotLights.size();
+		int areaLightCount = (int)m_areaLights.size();
+
+		if (m_pointLightKDTreeCount != pointLightCount || m_pointLightKDTreeSignature != pointLightPositionSignature)
+		{
+			rebuildLightKDTree(m_pointLightKDTree, m_pointLights);
+			m_pointLightKDTreeCount = pointLightCount;
+			m_pointLightKDTreeSignature = pointLightPositionSignature;
+		}
+
+		if (m_spotLightKDTreeCount != spotLightCount || m_spotLightKDTreeSignature != spotLightPositionSignature)
+		{
+			rebuildLightKDTree(m_spotLightKDTree, m_spotLights);
+			m_spotLightKDTreeCount = spotLightCount;
+			m_spotLightKDTreeSignature = spotLightPositionSignature;
+		}
+
+		if (m_areaLightKDTreeCount != areaLightCount || m_areaLightKDTreeSignature != areaLightPositionSignature)
+		{
+			rebuildLightKDTree(m_areaLightKDTree, m_areaLights);
+			m_areaLightKDTreeCount = areaLightCount;
+			m_areaLightKDTreeSignature = areaLightPositionSignature;
+		}
+
 		updateLightCacheVersion();
+	}
+
+	void CLightSystem::addLightToList(core::array<CLightCullingData*>& list, CLightCullingData* light)
+	{
+		light->UBOIndex = (int)list.size();
+		list.push_back(light);
 	}
 
 	void CLightSystem::init(CEntityManager* entityManager)
@@ -390,8 +443,7 @@ namespace Skylicht
 			cacheSortedLights(
 				position,
 				objLayer,
-				lights,
-				lightCount,
+				m_pointLightKDTree,
 				data->CachedPointLights,
 				m_pointLightCache.Signature);
 		}
@@ -412,8 +464,7 @@ namespace Skylicht
 			cacheSortedLights(
 				position,
 				objLayer,
-				lights,
-				lightCount,
+				m_spotLightKDTree,
 				data->CachedSpotLights,
 				m_spotLightCache.Signature);
 		}
@@ -434,8 +485,7 @@ namespace Skylicht
 			cacheSortedLights(
 				position,
 				objLayer,
-				lights,
-				lightCount,
+				m_areaLightKDTree,
 				data->CachedAreaLights,
 				m_areaLightCache.Signature);
 		}
@@ -456,37 +506,46 @@ namespace Skylicht
 			data->LightIndex.Z = (float)(data->CachedSpotLights.Lights[0]->UBOIndex);
 	}
 
-	void CLightSystem::sortLights(const core::vector3df& position, u32 objLayer, CLightCullingData** lights, int lightCount)
+	void CLightSystem::sortLights(const core::vector3df& position, u32 objLayer, CKDTree3f* kdtree)
 	{
 		SDistanceLightEntry entry;
 		m_sorts.set_used(0);
 
-		for (int i = 0; i < lightCount; i++)
+		if (kdtree != NULL && m_maxRange > 0.0f)
 		{
-			CLight* light = lights[i]->Light;
-			u32 lightLayer = light->getLightLayers();
+			kdtree->nearestRange(position, m_maxRange * 2.0f, m_kdNodes);
+			m_sorts.set_used(0);
 
-			if (objLayer & lightLayer)
+			CKDTree3f::SKDNode** nodes = m_kdNodes.pointer();
+			for (u32 i = 0, n = m_kdNodes.size(); i < n; i++)
 			{
-				entry.Data = lights[i];
-				entry.Light = light;
-				entry.Distance = lights[i]->LightPosition.getDistanceFromSQ(position);
+				CLightCullingData* lightData = (CLightCullingData*)nodes[i]->Data;
+				CLight* light = lightData->Light;
+				u32 lightLayer = light->getLightLayers();
 
-				bool inserted = false;
-				int n = m_sorts.size();
-				for (int j = 0; j < n; j++)
+				if (objLayer & lightLayer)
 				{
-					if (entry.Distance < m_sorts[j].Distance)
-					{
-						m_sorts.insert(entry, j);
-						inserted = true;
+					entry.Data = lightData;
+					entry.Light = light;
+					entry.Distance = lightData->LightPosition.getDistanceFromSQ(position);
+
+					if (m_sorts.size() < 4)
+						m_sorts.push_back(entry);
+
+					if (m_sorts.size() >= 4)
 						break;
-					}
 				}
-				if (!inserted)
-					m_sorts.push_back(entry);
 			}
 		}
+	}
+
+	void CLightSystem::rebuildLightKDTree(CKDTree3f* kdtree, core::array<CLightCullingData*>& lights)
+	{
+		kdtree->clear();
+
+		CLightCullingData** data = lights.pointer();
+		for (u32 i = 0, n = lights.size(); i < n; i++)
+			kdtree->insert(data[i]->LightPosition, data[i]);
 	}
 
 	void CLightSystem::addLightSignature(SCacheLight& cache, CEntity* entity, CLightCullingData* lightData)
@@ -500,6 +559,32 @@ namespace Skylicht
 
 		cache.Signature ^= value;
 		cache.Signature *= 16777619u;
+
+		m_maxRange = core::max_(m_maxRange, light->getRadius());
+	}
+
+	void CLightSystem::addLightPositionSignature(size_t& signature, CLightCullingData* lightData)
+	{
+		union SFloatBits
+		{
+			float F;
+			u32 U;
+		};
+
+		SFloatBits x;
+		SFloatBits y;
+		SFloatBits z;
+		x.F = lightData->LightPosition.X;
+		y.F = lightData->LightPosition.Y;
+		z.F = lightData->LightPosition.Z;
+
+		size_t value = (size_t)lightData;
+		value ^= (size_t)x.U;
+		value ^= (size_t)y.U << 8;
+		value ^= (size_t)z.U << 16;
+
+		signature ^= value;
+		signature *= 16777619u;
 	}
 
 	void CLightSystem::updateLightCacheVersion()
@@ -597,12 +682,11 @@ namespace Skylicht
 	void CLightSystem::cacheSortedLights(
 		const core::vector3df& position,
 		u32 objLayer,
-		CLightCullingData** lights,
-		int lightCount,
+		CKDTree3f* kdtree,
 		CRenderLightData::SCacheLight& cache,
 		size_t lightSignature)
 	{
-		sortLights(position, objLayer, lights, lightCount);
+		sortLights(position, objLayer, kdtree);
 
 		cache.Count = core::min_((int)m_sorts.size(), 4);
 		for (int i = 0; i < 4; i++)

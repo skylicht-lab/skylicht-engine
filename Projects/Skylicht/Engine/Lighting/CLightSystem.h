@@ -35,6 +35,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Lighting/CPointLight.h"
 #include "Lighting/CSpotLight.h"
 #include "Lighting/CAreaLight.h"
+#include "Utils/CKDTree3f.h"
 
 namespace Skylicht
 {
@@ -86,10 +87,24 @@ namespace Skylicht
 		CAreaLight* m_currentALight[4];
 
 		core::array<SDistanceLightEntry> m_sorts;
+		core::array<CKDTree3f::SKDNode*> m_kdNodes;
+
+		CKDTree3f* m_pointLightKDTree;
+		CKDTree3f* m_spotLightKDTree;
+		CKDTree3f* m_areaLightKDTree;
+
+		int m_pointLightKDTreeCount;
+		int m_spotLightKDTreeCount;
+		int m_areaLightKDTreeCount;
+
+		size_t m_pointLightKDTreeSignature;
+		size_t m_spotLightKDTreeSignature;
+		size_t m_areaLightKDTreeSignature;
 
 		IHardwareBuffer* m_uboPLight;
 		IHardwareBuffer* m_uboSLight;
 
+		float m_maxRange;
 	public:
 		CLightSystem();
 
@@ -123,11 +138,17 @@ namespace Skylicht
 
 	protected:
 
+		void addLightToList(core::array<CLightCullingData*>& list, CLightCullingData* light);
+
 		void updateUBOLight(core::array<CLightCullingData*>& light, IHardwareBuffer* buffer);
 
-		void sortLights(const core::vector3df& position, u32 objLayer, CLightCullingData** lights, int lightCount);
+		void sortLights(const core::vector3df& position, u32 objLayer, CKDTree3f* kdtree);
+
+		void rebuildLightKDTree(CKDTree3f* kdtree, core::array<CLightCullingData*>& lights);
 
 		void addLightSignature(SCacheLight& cache, CEntity* entity, CLightCullingData* light);
+
+		void addLightPositionSignature(size_t& signature, CLightCullingData* lightData);
 
 		void updateLightCacheVersion();
 
@@ -145,8 +166,7 @@ namespace Skylicht
 		void cacheSortedLights(
 			const core::vector3df& position,
 			u32 objLayer,
-			CLightCullingData** lights,
-			int lightCount,
+			CKDTree3f* kdtree,
 			CRenderLightData::SCacheLight& cache,
 			size_t lightSignature);
 
