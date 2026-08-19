@@ -120,28 +120,41 @@ cbuffer cbPerObject
 Uniform buffer example:
 
 ```xml
-<vs>
-	<uniform name="cbPerFrame" type="UNIFORM_BUFFER" valueIndex="0"/>
-</vs>
+<buffers>
+	<fs>
+		<buffer name="uListLights" type="UNIFORM_BUFFER" valueIndex="0"/>
+	</fs>
+</buffers>
 ```
 
 In GLSL:
 
 ```C
-layout(std140) uniform cbPerFrame
+layout(std140) uniform uListLights
 {
-	mat4 uViewProjection;
-	vec4 uCameraPosition;
+	PointLight Lights[200];
+	int NumLights;
+} LightData;
+```
+
+In HLSL:
+```
+cbuffer uListLights: register(b1)
+{
+	PointLight Lights[200];
+	int NumLights;
 };
 ```
 
 Before drawing, assign a hardware constants buffer to the matching slot:
 
 ```C
-CShaderManager::getInstance()->UBO[0] = perFrameBuffer;
+CShaderManager::getInstance()->UBO[0] = lightsBuffer;
 ```
 
-The uniform block name in the shader (`cbPerFrame`) must match the XML `name`. The XML `valueIndex` selects the `UBO` array slot.
+The uniform block name in the shader (`uListLights`) must match the XML `name`. The XML `valueIndex` selects the `UBO` array slot.
+
+<br>See example: `Samples\SampleInstancingPointLight`
 
 ## resources
 ```xml

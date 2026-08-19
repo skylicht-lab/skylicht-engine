@@ -51,6 +51,9 @@ namespace Skylicht
 
 		CEntityGroup* m_groupLighting;
 		CEntityGroup* m_groupProbes;
+
+		IHardwareBuffer* m_uboProbes;
+
 	public:
 		CIndirectLightingSystem();
 
@@ -63,5 +66,11 @@ namespace Skylicht
 		virtual void init(CEntityManager* entityManager);
 
 		virtual void update(CEntityManager* entityManager);
+
+		void setUBOProbes(IHardwareBuffer* buffer);
+
+	protected:
+
+		void updateUBOProbes(core::array<CLightProbeData*>& probes, IHardwareBuffer* buffer);
 	};
 }

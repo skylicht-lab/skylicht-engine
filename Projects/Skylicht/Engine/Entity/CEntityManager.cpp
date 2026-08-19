@@ -531,6 +531,8 @@ namespace Skylicht
 			}
 		}
 
+		getVideoDriver()->resetRenderStates();
+
 		// transparent pass
 		for (IRenderSystem*& s : m_sortRender)
 		{
@@ -582,6 +584,8 @@ namespace Skylicht
 				s->render(this);
 			}
 		}
+
+		getVideoDriver()->resetRenderStates();
 
 		for (IRenderSystem*& s : m_sortRender)
 		{

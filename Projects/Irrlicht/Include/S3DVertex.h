@@ -340,6 +340,13 @@ struct SVec4
 		Z = z;
 		W = w;
 	}
+	SVec4(const core::vector3df& v)
+	{
+		X = v.X;
+		Y = v.Y;
+		Z = v.Z;
+		W = 1.0f;
+	}
 
 	bool operator==(const SVec4& other) const
 	{

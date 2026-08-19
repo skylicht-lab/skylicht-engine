@@ -34,7 +34,8 @@ namespace Skylicht
 		Visible(true),
 		NeedValidate(true),
 		Light(NULL),
-		CameraDistance(0.0f)
+		CameraDistance(0.0f),
+		UBOIndex(0)
 	{
 
 	}

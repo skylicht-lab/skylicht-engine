@@ -1,0 +1,407 @@
+#include "pch.h"
+#include "CViewInit.h"
+#include "CViewDemo.h"
+
+#include "ViewManager/CViewManager.h"
+#include "Context/CContext.h"
+#include "Transform/CWorldTransformSystem.h"
+
+#include "Primitive/CCube.h"
+#include "Primitive/CSphere.h"
+#include "SkySun/CSkySun.h"
+#include "SpriteDraw/CSprite.h"
+#include "Transform/CWorldTransformData.h"
+#include "Lighting/CPointLight.h"
+#include "LightProbes/CLightProbeRender.h"
+
+// for SUBOLightBuffer
+#include "Material/Shader/ShaderCallback/CShaderLighting.h"
+#include "Lighting/CLightSystem.h"
+
+SColor HSVtoRGB255(float h, float s, float v) {
+	float c = v * s;
+	float x = c * (1.0f - std::abs(std::fmod(h / 60.0f, 2.0f) - 1.0f));
+	float m = v - c;
+
+	float r = 0.0f, g = 0.0f, b = 0.0f;
+
+	if (h >= 0.0f && h < 60.0f) {
+		r = c; g = x; b = 0.0f;
+	}
+	else if (h >= 60.0f && h < 120.0f) {
+		r = x; g = c; b = 0.0f;
+	}
+	else if (h >= 120.0f && h < 180.0f) {
+		r = 0.0f; g = c; b = x;
+	}
+	else if (h >= 180.0f && h < 240.0f) {
+		r = 0.0f; g = x; b = c;
+	}
+	else if (h >= 240.0f && h < 300.0f) {
+		r = x; g = 0.0f; b = c;
+	}
+	else if (h >= 300.0f && h < 360.0f) {
+		r = c; g = 0.0f; b = x;
+	}
+
+	return SColor(255,
+		static_cast<unsigned char>((r + m) * 255.0f),
+		static_cast<unsigned char>((g + m) * 255.0f),
+		static_cast<unsigned char>((b + m) * 255.0f)
+	);
+}
+
+SColor getRandomPointLightColor()
+{
+	float hue = os::Randomizer::frand() * 360;
+	float sat = 0.75f + (os::Randomizer::frand() * 0.3f);
+	float val = 0.85f + (os::Randomizer::frand() * 0.15f);
+
+	return HSVtoRGB255(hue, sat, val);
+}
+
+CViewInit::CViewInit() :
+	m_initState(CViewInit::DownloadBundles),
+	m_getFile(NULL),
+	m_downloaded(0),
+	m_bakeSHLighting(true)
+{
+
+}
+
+CViewInit::~CViewInit()
+{
+
+}
+
+io::path CViewInit::getBuiltInPath(const char* name)
+{
+	return getApplication()->getBuiltInPath(name);
+}
+
+void CViewInit::onInit()
+{
+	CBaseApp* app = getApplication();
+	app->showDebugConsole();
+	app->getFileSystem()->addFileArchive(getBuiltInPath("BuiltIn.zip"), false, false);
+
+	CShaderManager* shaderMgr = CShaderManager::getInstance();
+	shaderMgr->initBasicShader();
+	shaderMgr->loadShader("BuiltIn/Shader/SpecularGlossiness/Forward/SH.xml");
+
+	CGlyphFreetype* freetypeFont = CGlyphFreetype::getInstance();
+	freetypeFont->initFont("Segoe UI Light", "BuiltIn/Fonts/segoeui/segoeuil.ttf");
+
+	// init basic gui
+	CZone* zone = CContext::getInstance()->initScene()->createZone();
+	m_guiObject = zone->createEmptyObject();
+	CCanvas* canvas = m_guiObject->addComponent<CCanvas>();
+
+	// load font
+	m_font = new CGlyphFont();
+	m_font->setFont("Segoe UI Light", 25);
+
+	// create text
+	m_textInfo = canvas->createText(m_font);
+	m_textInfo->setTextAlign(EGUIHorizontalAlign::Center, EGUIVerticalAlign::Middle);
+	m_textInfo->setText(L"Init assets");
+
+	// create gui camera
+	CGameObject* guiCameraObject = zone->createEmptyObject();
+	CCamera* guiCamera = guiCameraObject->addComponent<CCamera>();
+	guiCamera->setProjectionType(CCamera::OrthoUI);
+	CContext::getInstance()->setGUICamera(guiCamera);
+}
+
+void CViewInit::initScene()
+{
+	CBaseApp* app = getApplication();
+
+	// create a scene
+	CScene* scene = CContext::getInstance()->getScene();
+	CZone* zone = scene->getZone(0);
+
+	// camera
+	CGameObject* camObj = zone->createEmptyObject();
+	camObj->addComponent<CCamera>();
+	camObj->addComponent<CEditorCamera>()->setMoveSpeed(2.0f);
+	camObj->addComponent<CFpsMoveCamera>()->setMoveSpeed(1.0f);
+
+	CCamera* camera = camObj->getComponent<CCamera>();
+	camera->setPosition(core::vector3df(0.0f, 5.0f, 10.0f));
+	camera->lookAt(core::vector3df(0.0f, 1.0f, 0.0f), core::vector3df(0.0f, 1.0f, 0.0f));
+
+	// gui camera
+	CGameObject* guiCameraObject = zone->createEmptyObject();
+	CCamera* guiCamera = guiCameraObject->addComponent<CCamera>();
+	guiCamera->setProjectionType(CCamera::OrthoUI);
+
+	// sky
+	CSkySun* skySun = zone->createEmptyObject()->addComponent<CSkySun>();
+
+	// reflection probe
+	CGameObject* reflectionProbeObj = zone->createEmptyObject();
+	CReflectionProbe* reflection = reflectionProbeObj->addComponent<CReflectionProbe>();
+	reflection->loadStaticTexture("Common/Textures/Sky/PaperMill");
+
+	// lighting
+	CGameObject* lightObj = zone->createEmptyObject();
+	CDirectionalLight* directionalLight = lightObj->addComponent<CDirectionalLight>();
+	SColor c(255, 255, 244, 214);
+	directionalLight->setColor(SColorf(c));
+
+	CTransformEuler* lightTransform = lightObj->getTransformEuler();
+	lightTransform->setPosition(core::vector3df(2.0f, 2.0f, 2.0f));
+
+	core::vector3df direction = core::vector3df(4.0f, -6.0f, -4.5f);
+	lightTransform->setOrientation(direction, Transform::Oy);
+
+	// cube
+	CGameObject* cubeObjs = zone->createEmptyObject();
+	cubeObjs->setName("Cubes");
+
+	CCube* cubes = cubeObjs->addComponent<CCube>();
+
+	// that because the shader we have tangent
+	cubes->setEnableNormalMap(true);
+
+	CMaterial* material = cubes->getMaterial();
+	material->changeShader("SampleInstancingPointLight/Shader/MobileSGColorPL.xml");
+	material->setUniform4("uColor", SColor(255, 150, 150, 150));
+	material->updateShaderParams();
+
+	int row = 9;
+	int col = 9;
+	float space = 7.0f;
+
+	float beginX = -(row - 1) * space * 0.5f;
+	float beginZ = -(col - 1) * space * 0.5f;
+	float x = beginX;
+	float z = beginZ;
+
+	cubes->removeAllEntities();
+
+	for (int i = 0; i < row; i++)
+	{
+		for (int j = 0; j < col; j++)
+		{
+			cubes->addPrimitive(core::vector3df(x, 0.0f, z), core::vector3df(), core::vector3df(1.0f, 1.0f, 1.0f));
+			x = x + space;
+		}
+
+		x = beginX;
+		z = z + space;
+	}
+
+	// enable sort light for render lighting
+	cubes->enableSortLight(true);
+	cubes->setInstancing(true);
+
+	// point light
+	row = 8;
+	col = 8;
+	space = 7.0f;
+
+	beginX = -(row - 1) * space * 0.5f;
+	beginZ = -(col - 1) * space * 0.5f;
+	x = beginX;
+	z = beginZ;
+
+	ITexture* lightTexture = CTextureManager::getInstance()->getTexture("Editor/Icon/Objects/Light.png");
+
+	for (int i = 0; i < row; i++)
+	{
+		for (int j = 0; j < col; j++)
+		{
+			SColor color = getRandomPointLightColor();
+
+			CGameObject* obj = zone->createEmptyObject();
+			CTransformEuler* transform = obj->getTransformEuler();
+			transform->setPosition(core::vector3df(x, 2.0f, z));
+
+			CSprite* sprite = obj->addComponent<CSprite>();
+			sprite->setTexture(lightTexture, 0.03f, color);
+			sprite->setBillboard(true);
+
+			CPointLight* pointLight = obj->addComponent<CPointLight>();
+			pointLight->setColor(color);
+			pointLight->setIntensity(15.0f);
+			pointLight->setRadius(10.0f);
+
+			x = x + space;
+		}
+
+		x = beginX;
+		z = z + space;
+	}
+
+	// init ubo to bake all point lights
+	IHardwareBuffer* plBuffer = getVideoDriver()->createConstantBuffer(sizeof(SUBOLightBuffer));
+
+	CLightSystem* lightSystem = zone->getEntityManager()->getRenderSystem<CLightSystem>();
+	lightSystem->setUBOPLight(plBuffer);
+
+	// assign ubo at slot 0
+	// see the shader: Assets/SampleInstancingPointLight/Shader/MobileSGColorPL.xml
+	// <buffers>
+	// 	<fs>
+	// 		<buffer name = "uListLights" type = "UNIFORM_BUFFER" valueIndex = "0"/>
+	// 	</fs>
+	// </buffers>
+	CShaderManager::getInstance()->UBO[0] = plBuffer;
+	plBuffer->drop();
+
+
+	// rendering
+	u32 w = app->getWidth();
+	u32 h = app->getHeight();
+
+	CContext* context = CContext::getInstance();
+
+	context->initShadowForwarderPipeline(w, h);
+	CPostProcessorRP* pp = context->getPostProcessorPipeline();
+	if (pp)
+		pp->enableAutoExposure(false);
+
+	context->setActiveZone(zone);
+	context->setActiveCamera(camera);
+	context->setGUICamera(guiCamera);
+	context->setDirectionalLight(directionalLight);
+}
+
+void CViewInit::onDestroy()
+{
+	m_guiObject->remove();
+	delete m_font;
+}
+
+void CViewInit::onUpdate()
+{
+	CContext* context = CContext::getInstance();
+
+	switch (m_initState)
+	{
+	case CViewInit::DownloadBundles:
+	{
+		io::IFileSystem* fileSystem = getApplication()->getFileSystem();
+
+		std::vector<std::string> listBundles;
+		listBundles.push_back("Common.zip");
+		listBundles.push_back("Editor.zip");
+		listBundles.push_back("SampleInstancingPointLight.zip");
+
+#ifdef __EMSCRIPTEN__
+		const char* filename = listBundles[m_downloaded].c_str();
+
+		if (m_getFile == NULL)
+		{
+			m_getFile = new CGetFileURL(filename, filename);
+			m_getFile->download(CGetFileURL::Get);
+
+			char log[512];
+			sprintf(log, "Download asset: %s", filename);
+			os::Printer::log(log);
+		}
+		else
+		{
+			char log[512];
+			sprintf(log, "Download asset: %s - %d%%", filename, m_getFile->getPercent());
+			m_textInfo->setText(log);
+
+			if (m_getFile->getState() == CGetFileURL::Finish)
+			{
+				// [bundles].zip
+				fileSystem->addFileArchive(filename, false, false);
+
+				if (++m_downloaded >= listBundles.size())
+					m_initState = CViewInit::InitScene;
+				else
+				{
+					delete m_getFile;
+					m_getFile = NULL;
+				}
+			}
+			else if (m_getFile->getState() == CGetFileURL::Error)
+			{
+				// retry download
+				delete m_getFile;
+				m_getFile = NULL;
+			}
+		}
+#else
+
+		for (std::string& bundle : listBundles)
+		{
+			const char* r = bundle.c_str();
+			fileSystem->addFileArchive(getBuiltInPath(r), false, false);
+		}
+
+		m_initState = CViewInit::InitScene;
+#endif
+	}
+	break;
+	case CViewInit::InitScene:
+	{
+		initScene();
+		m_initState = CViewInit::Finished;
+	}
+	break;
+	case CViewInit::Error:
+	{
+		// todo nothing with black screen
+	}
+	break;
+	default:
+	{
+		CScene* scene = context->getScene();
+		if (scene != NULL)
+			scene->update();
+
+		CViewManager::getInstance()->getLayer(0)->changeView<CViewDemo>();
+	}
+	break;
+	}
+}
+
+void CViewInit::onRender()
+{
+	if (m_initState == CViewInit::Finished)
+	{
+		CContext* context = CContext::getInstance();
+		CScene* scene = CContext::getInstance()->getScene();
+		CBaseRP* rp = CContext::getInstance()->getRenderPipeline();
+
+		if (m_bakeSHLighting == true)
+		{
+			m_bakeSHLighting = false;
+
+			CZone* zone = scene->getZone(0);
+
+			// light probe
+			CGameObject* lightProbeObj = zone->createEmptyObject();
+			CLightProbe* lightProbe = lightProbeObj->addComponent<CLightProbe>();
+			lightProbeObj->getTransformEuler()->setPosition(core::vector3df(0.0f, 3.0f, 0.0f));
+
+			CGameObject* bakeCameraObj = scene->getZone(0)->createEmptyObject();
+			CCamera* bakeCamera = bakeCameraObj->addComponent<CCamera>();
+			scene->updateAddRemoveObject();
+			scene->update();
+
+			// bake light probe
+			Lightmapper::CLightmapper* lm = Lightmapper::CLightmapper::getInstance();
+			lm->initBaker(64);
+
+			std::vector<CLightProbe*> probes;
+			probes.push_back(lightProbe);
+
+			lm->bakeProbes(probes, bakeCamera, rp, scene->getEntityManager());
+
+			CLightProbeRender::showProbe(true);
+		}
+	}
+	else
+	{
+		CCamera* guiCamera = CContext::getInstance()->getGUICamera();
+		CGraphics2D::getInstance()->render(guiCamera);
+	}
+}

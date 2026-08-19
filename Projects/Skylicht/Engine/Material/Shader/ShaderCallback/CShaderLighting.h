@@ -28,6 +28,21 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+#define MAX_UBO_POINT_LIGHTS 200
+
+	struct SUBOPointLight
+	{
+		SVec4 Position;
+		SVec4 Attenuation;
+		SVec4 Direction;
+		SColorf Color;
+	};
+
+	struct SUBOLightBuffer
+	{
+		SUBOPointLight Lights[MAX_UBO_POINT_LIGHTS];
+	};
+
 	class CDirectionalLight;
 	class CPointLight;
 	class CSpotLight;
@@ -70,5 +85,7 @@ namespace Skylicht
 
 
 		static void setLightAmbient(const SColorf& c);
+
+		static void setLightIndex(const SVec4& index);
 	};
 }

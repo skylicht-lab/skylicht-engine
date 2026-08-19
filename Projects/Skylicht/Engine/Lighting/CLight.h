@@ -235,7 +235,12 @@ namespace Skylicht
 
 		inline void setLightLayers(u32 layers)
 		{
-			m_lightLayers = layers;
+			if (m_lightLayers != layers)
+			{
+				m_lightLayers = layers;
+				if (m_cullingData)
+					m_cullingData->NeedValidate = true;
+			}
 		}
 
 		inline bool isAffectingDefaultObjects()
@@ -245,7 +250,12 @@ namespace Skylicht
 
 		inline void setLightPriority(u32 priority)
 		{
-			m_lightPriority = priority;
+			if (m_lightPriority != priority)
+			{
+				m_lightPriority = priority;
+				if (m_cullingData)
+					m_cullingData->NeedValidate = true;
+			}
 		}
 
 		inline u32 getLightPriority()

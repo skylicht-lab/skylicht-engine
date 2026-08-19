@@ -1,0 +1,236 @@
+#if defined(SHADOW)
+precision highp float;
+#else
+precision mediump float;
+#endif
+
+precision highp sampler2D;
+precision highp sampler2DArray;
+
+#ifndef NO_TEXTURE
+uniform sampler2D uTexDiffuse;
+
+#ifndef NO_NORMAL_MAP
+uniform sampler2D uTexNormal;
+#endif
+
+#ifndef NO_SPECGLOSS
+uniform sampler2D uTexSpecular;
+#endif
+#endif
+
+#if defined(PLANAR_REFLECTION)
+uniform sampler2D uTexReflect;
+#endif
+
+#if defined(SHADOW)
+uniform sampler2DArray uShadowMap;
+#endif
+
+uniform vec4 uLightColor;
+uniform vec4 uColor;
+uniform vec2 uLightMul;
+#if defined(CUTOFF)
+uniform float uCutoff;
+#endif
+#if defined(NO_TEXTURE) || defined(NO_SPECGLOSS)
+uniform vec2 uSpecGloss;
+#endif
+#if defined(POINTLIGHT)
+uniform vec4 uCamPosition;
+#ifndef INSTANCING
+uniform vec4 uLightIndex;
+#endif
+#endif
+uniform vec4 uSHConst[4];
+
+#if defined(POINTLIGHT)
+struct PointLight {
+	vec4 Position;
+	vec4 Attenuation;
+	vec4 Direction;
+	vec4 Color;
+};
+
+layout(std140) uniform uListLights
+{
+	PointLight Lights[200];
+} LightData;
+#endif
+
+in vec2 vTexCoord0;
+in vec4 vWorldPos;
+in vec3 vWorldNormal;
+in vec3 vWorldViewDir;
+in vec3 vWorldLightDir;
+
+#if defined(INSTANCING) || (!defined(NO_NORMAL_MAP) && !defined(NO_TEXTURE))
+in vec3 vWorldTangent;
+in vec3 vWorldBinormal;
+in float vTangentW;
+#endif
+
+#ifdef INSTANCING
+flat in vec4 vLightIndex;
+#endif
+
+#ifdef SHADOW
+in vec3 vDepth;
+in vec4 vShadowCoord;
+#endif
+
+#if defined(PLANAR_REFLECTION)
+in vec4 vReflectCoord;
+#endif
+
+out vec4 FragColor;
+
+#include "../../../BuiltIn/Shader/PostProcessing/GLSL/LibToneMapping.glsl"
+#include "../../../BuiltIn/Shader/SHAmbient/GLSL/SHAmbient.glsl"
+
+#if defined(POINTLIGHT)
+#include "../../../BuiltIn/Shader/Light/GLSL/LibPointLight.glsl"
+#endif
+
+#ifdef SHADOW
+#include "../../../BuiltIn/Shader/Shadow/GLSL/LibShadow.glsl"
+#endif
+
+const float PI = 3.1415926;
+
+void main(void)
+{
+#ifdef NO_TEXTURE
+	vec4 diffuseMap = uColor;
+	vec3 specMap = vec3(uSpecGloss, 1.0);
+#else
+	vec4 diffuseMap = texture(uTexDiffuse, vTexCoord0.xy) * uColor;
+
+#if defined(CUTOFF)
+	if (diffuseMap.a < uCutoff)
+		discard;
+#endif
+
+	#ifdef NO_SPECGLOSS
+	vec3 specMap = vec3(uSpecGloss, 1.0);
+	#else
+	vec3 specMap = texture(uTexSpecular, vTexCoord0.xy).xyz;
+	#endif
+	
+#endif
+
+#if defined(NO_NORMAL_MAP) || defined(NO_TEXTURE)
+	vec3 n = vWorldNormal;
+#else
+	vec3 normalMap = texture(uTexNormal, vTexCoord0.xy).xyz;
+	mat3 rotation = mat3(vWorldTangent, vWorldBinormal, vWorldNormal);
+	vec3 localCoords = normalMap * 2.0 - vec3(1.0, 1.0, 1.0);
+	localCoords.y *= vTangentW;
+	vec3 n = normalize(rotation * localCoords);
+#endif
+	
+#if defined(SHADOW)
+	// shadow
+	float depth = length(vDepth);
+	float visibility = shadow(vShadowCoord, depth);
+#endif
+	
+	// SH Ambient
+	vec3 ambientLighting = shAmbient(n);
+	
+	// Tone Mapping
+	ambientLighting = sRGB(ambientLighting);
+	vec3 diffuseColor = sRGB(diffuseMap.rgb);
+	vec3 lightColor = sRGB(uLightColor.rgb);
+
+	float spec = specMap.r;
+	float gloss = specMap.g;
+
+#if defined(AO)
+	float ao = specMap.b;
+#endif
+
+	// Specular
+	vec3 specularColor = vec3(0.5, 0.5, 0.5);
+
+	// Lighting
+	float NdotL = max(dot(n, vWorldLightDir), 0.0);
+	vec3 directionalLight = NdotL * lightColor;
+
+#if defined(POINTLIGHT)
+#if defined(INSTANCING)
+	PointLight light = LightData.Lights[int(vLightIndex.x)];
+#else
+	PointLight light = LightData.Lights[int(uLightIndex.x)];
+#endif
+	directionalLight += pointlight(
+		vWorldPos.xyz,
+		n,
+		uCamPosition.xyz,
+		light.Color, 
+		light.Position.xyz,
+		light.Attenuation,
+		spec,
+		gloss,
+		specularColor);
+	
+#if defined(INSTANCING)
+	light = LightData.Lights[int(vLightIndex.y)];
+#else
+	light = LightData.Lights[int(uLightIndex.y)];
+#endif
+	directionalLight += pointlight(
+		vWorldPos.xyz,
+		n,
+		uCamPosition.xyz,
+		light.Color, 
+		light.Position.xyz,
+		light.Attenuation,
+		spec,
+		gloss,
+		specularColor);
+#endif
+
+#if defined(AO)
+	directionalLight *= ao;
+#endif		
+	vec3 color = directionalLight * diffuseColor * 0.3 * uLightMul.y;
+
+#if defined(PLANAR_REFLECTION)
+
+#if defined(SHADOW)
+	color *= visibility;
+#endif
+
+	vec3 f0 = vec3(0.1, 0.1, 0.1);	
+	vec3 rc = mix(f0, diffuseColor, spec) * (0.8 + gloss * 1.8);
+	
+	// projection uv
+	vec3 reflectUV = vReflectCoord.xyz / vReflectCoord.w;
+	#if defined(REFLECTION_MIPMAP)
+	color += textureLod(uTexReflect, reflectUV.xy, (1.0 - gloss) * 7.0).xyz * rc;
+	#else
+	color += textureLod(uTexReflect, reflectUV.xy, 0.0).xyz * rc;
+	#endif
+#else
+
+	vec3 H = normalize(vWorldLightDir + vWorldViewDir);
+	float NdotE = max(0.0, dot(n, H));
+	float specular = pow(NdotE, 10.0 + 100.0 * gloss) * spec;
+#if defined(AO)
+	specular *= ao;
+	ambientLighting *= ao;
+#endif
+	color += specular * specularColor * uLightMul.x;
+
+#if defined(SHADOW)
+	color *= visibility;
+#endif
+
+#endif
+
+	// IBL lighting
+	color += ambientLighting * diffuseColor / PI;
+
+	FragColor = vec4(color, diffuseMap.a);
+}

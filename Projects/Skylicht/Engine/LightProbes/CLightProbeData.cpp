@@ -33,7 +33,8 @@ namespace Skylicht
 
 	CLightProbeData::CLightProbeData() :
 		NeedValidate(true),
-		Intensity(1.0f)
+		Intensity(1.0f),
+		UBOIndex(0)
 	{
 
 	}

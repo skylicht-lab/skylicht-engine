@@ -25,7 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CPrimiviteData.h"
-#include "Entity/CEntityHandler.h"
+#include "Lighting/CRenderLight.h"
 #include "RenderMesh/CMesh.h"
 
 namespace Skylicht
@@ -33,26 +33,26 @@ namespace Skylicht
 	/**
 	 * @brief Base class for primitive shape components (Cube, Sphere, Plane).
 	 * Supports multi-instance rendering within a single component, custom materials, and hardware instancing.
-	 * 
-	 * @note By default, primitives use **Deferred shaders**, which means they will only render 
-	 * on a **Deferred Pipeline**. If you are using a **Forward Pipeline** (common on mobile), 
+	 *
+	 * @note By default, primitives use **Deferred shaders**, which means they will only render
+	 * on a **Deferred Pipeline**. If you are using a **Forward Pipeline** (common on mobile),
 	 * you must call setCustomMaterial() with a material that uses a forward-compatible shader.
-	 * 
+	 *
 	 * ### Example
 	 * @code
 	 * // Create a component that manages multiple cube instances
 	 * CGameObject* cubeManager = zone->createEmptyObject();
 	 * CCube* cubes = cubeManager->addComponent<CCube>();
 	 * cubes->setInstancing(true); // Enable hardware instancing for performance
-	 * 
+	 *
 	 * // Add individual primitives at different positions/rotations
 	 * cubes->addPrimitive(core::vector3df(0, 0, 0), core::vector3df(0, 0, 0), core::vector3df(1, 1, 1));
 	 * cubes->addPrimitive(core::vector3df(2, 0, 0), core::vector3df(45, 45, 0), core::vector3df(1, 2, 1));
 	 * @endcode
-	 * 
+	 *
 	 * @ingroup Primitives
 	 */
-	class COMPONENT_API CPrimitive : public CEntityHandler
+	class COMPONENT_API CPrimitive : public CRenderLight
 	{
 	protected:
 		CPrimiviteData::EPrimitive m_type;

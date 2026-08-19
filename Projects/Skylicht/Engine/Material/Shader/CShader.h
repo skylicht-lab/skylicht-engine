@@ -88,7 +88,8 @@ namespace Skylicht
 		COLOR_INTENSITY,
 		RENDER_TEXTURE_MATRIX,
 		UNIFORM_BUFFER,
-		NUM_SHADER_TYPE,
+		LIGHT_INDEX,
+		NUM_SHADER_TYPE
 	};
 
 	/**
@@ -373,6 +374,12 @@ namespace Skylicht
 		/// Pixel / fragment shader uniforms
 		core::array<SUniform> m_fsUniforms;
 
+		/// Vertex shader uniform buffers
+		core::array<SUniform> m_vsBuffers;
+
+		/// Pixel / fragment shader uniform buffers
+		core::array<SUniform> m_fsBuffers;
+
 		/// UI elements
 		core::array<SUniformUI*> m_ui;
 
@@ -394,11 +401,23 @@ namespace Skylicht
 		/// Pointer to FS uniforms (m_fsUniforms)
 		SUniform* m_listFSUniforms;
 
+		/// Pointer to VS buffers (m_vsBuffers)
+		SUniform* m_listVSBuffers;
+
+		/// Pointer to FS buffers (m_fsBuffers)
+		SUniform* m_listFSBuffers;
+
 		/// Count of VS uniforms
 		int m_numVSUniform;
 
 		/// Count of FS uniforms
 		int m_numFSUniform;
+
+		/// Count of VS buffers
+		int m_numVSBuffer;
+
+		/// Count of FS buffers
+		int m_numFSBuffer;
 
 		/// GLSL shader source
 		SShader	m_glsl;
@@ -471,6 +490,12 @@ namespace Skylicht
 		 * @param xmlReader XML reader object.
 		 */
 		void parseUniform(io::IXMLReader* xmlReader);
+
+		/**
+		 * @brief Parse uniform buffer definitions from XML.
+		 * @param xmlReader XML reader object.
+		 */
+		void parseBuffers(io::IXMLReader* xmlReader);
 
 		/**
 		 * @brief Parse UI uniform definitions from XML.
@@ -886,6 +911,14 @@ namespace Skylicht
 		 * @return True if handled as built-in, false if should call plugin callback.
 		 */
 		bool setUniform(SUniform& uniform, IMaterialRenderer* matRender, bool vertexShader, bool updateTransform);
+
+		/**
+		 * @brief Bind a uniform / constant buffer for rendering.
+		 * @param uniformBuffer Reference to buffer binding info.
+		 * @param matRender Material renderer.
+		 * @param vertexShader True for vertex shader, false for pixel shader.
+		 */
+		void setUniformBuffer(SUniform& uniformBuffer, IMaterialRenderer* matRender, bool vertexShader);
 
 		/**
 		 * @brief Delete all UI elements.

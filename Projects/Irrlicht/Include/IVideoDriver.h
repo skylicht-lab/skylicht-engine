@@ -416,6 +416,12 @@ namespace video
 		\return False if failed and true if succeeded. */
 		virtual bool endScene() =0;
 
+		//! Forces render states to be reset on the next material update.
+		virtual void resetRenderStates() {}
+
+		//! Blocks until all previously submitted rendering commands are complete.
+		virtual void finish() {}
+
 		//! Queries the features of the driver.
 		/** Returns true if a feature is available
 		\param feature Feature to query.

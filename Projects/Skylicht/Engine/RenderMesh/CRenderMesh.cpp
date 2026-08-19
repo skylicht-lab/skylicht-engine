@@ -50,7 +50,6 @@ namespace Skylicht
 		m_loadNormal(true),
 		m_fixInverseNormal(true),
 		m_enableInstancing(false),
-		m_lightLayers(1),
 		m_shadowCasting(true)
 	{
 
@@ -97,7 +96,7 @@ namespace Skylicht
 
 	CObjectSerializable* CRenderMesh::createSerializable()
 	{
-		CObjectSerializable* object = CComponentSystem::createSerializable();
+		CObjectSerializable* object = CRenderLight::createSerializable();
 
 		object->autoRelease(new CBoolProperty(object, "load normal", m_loadNormal));
 		object->autoRelease(new CBoolProperty(object, "inserse normal", m_fixInverseNormal));
@@ -106,10 +105,6 @@ namespace Skylicht
 		object->autoRelease(new CBoolProperty(object, "instancing", m_enableInstancing));
 		object->autoRelease(new CBoolProperty(object, "shadowCasting", m_shadowCasting));
 
-		CUIntProperty* lightLayer = new CUIntProperty(object, "lightLayers", m_lightLayers);
-		lightLayer->setHidden(true);
-		object->autoRelease(lightLayer);
-
 		object->autoRelease(new CFilePathProperty(object, "mesh", m_meshFile.c_str(), CMeshManager::getMeshExts()));
 		object->autoRelease(new CFilePathProperty(object, "material", m_materialFile.c_str(), CMaterialManager::getMaterialExts()));
 		return object;
@@ -117,7 +112,7 @@ namespace Skylicht
 
 	void CRenderMesh::loadSerializable(CObjectSerializable* object)
 	{
-		CComponentSystem::loadSerializable(object);
+		CRenderLight::loadSerializable(object);
 
 		bool loadNormal = object->get<bool>("load normal", true);
 		bool fixInverseNormal = object->get<bool>("inserse normal", true);
@@ -126,8 +121,6 @@ namespace Skylicht
 		bool optimize = object->get<bool>("optimize", false);
 		bool instancing = object->get<bool>("instancing", false);
 		bool shadowCasting = object->get<bool>("shadowCasting", true);
-		bool sortingLights = object->get<bool>("sortingLights", false);
-		u32 lightLayers = object->get<u32>("lightLayers", 1);
 
 		std::string meshFile = object->get<std::string>("mesh", "");
 
@@ -181,9 +174,10 @@ namespace Skylicht
 			releaseMaterial();
 		}
 
+		loadLightLayers(object);
+
 		enableInstancing(instancing);
 		setShadowCasting(shadowCasting);
-		setLightLayers(lightLayers);
 	}
 
 	void CRenderMesh::refreshModelAndMaterial(bool reloadModel)
@@ -224,6 +218,8 @@ namespace Skylicht
 			initOptimizeFromPrefab(prefab);
 		else
 			initNoOptimizeFromPrefab(prefab);
+
+		setLightLayers(m_lightLayers);
 	}
 
 	void CRenderMesh::initNoOptimizeFromPrefab(CEntityPrefab* prefab)
@@ -274,6 +270,7 @@ namespace Skylicht
 			if (srcRender != NULL)
 			{
 				CRenderMeshData* spawnRender = spawnEntity->addData<CRenderMeshData>();
+				spawnRender->setLightLayers(m_lightLayers);
 				spawnRender->setMesh(srcRender->getMesh());
 				spawnRender->setSkinnedMesh(srcRender->isSkinnedMesh());
 				spawnRender->setSoftwareSkinning(srcRender->isSoftwareSkinning());
@@ -439,6 +436,7 @@ namespace Skylicht
 			if (srcRender != NULL)
 			{
 				CRenderMeshData* spawnRender = spawnEntity->addData<CRenderMeshData>();
+				spawnRender->setLightLayers(m_lightLayers);
 				spawnRender->setMesh(srcRender->getMesh());
 
 				// init software blendshape
@@ -579,14 +577,6 @@ namespace Skylicht
 			CVisibleData* visible = GET_ENTITY_DATA(r->Entity, CVisibleData);
 			visible->ShadowCasting = b;
 		}
-	}
-
-	void CRenderMesh::setLightLayers(u32 layers)
-	{
-		m_lightLayers = layers;
-
-		for (CRenderMeshData* r : m_renderers)
-			r->setLightLayers(layers);
 	}
 
 	void CRenderMesh::removeRenderMeshName(const char* name)
@@ -818,6 +808,7 @@ namespace Skylicht
 			if (srcRender != NULL)
 			{
 				CRenderMeshData* spawnRender = spawnEntity->addData<CRenderMeshData>();
+				spawnRender->setLightLayers(m_lightLayers);
 				spawnRender->setMesh(srcRender->getMesh());
 				spawnRender->setSkinnedMesh(srcRender->isSkinnedMesh());
 				spawnRender->setSoftwareSkinning(srcRender->isSoftwareSkinning());

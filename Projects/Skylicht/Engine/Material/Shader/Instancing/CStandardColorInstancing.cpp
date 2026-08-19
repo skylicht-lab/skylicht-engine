@@ -59,6 +59,8 @@ namespace Skylicht
 			m_vtxDescriptor->addAttribute("inWorldMatrix2", 4, video::EVAS_TEXCOORD4, video::EVAT_FLOAT, 2);
 			m_vtxDescriptor->addAttribute("inWorldMatrix3", 4, video::EVAS_TEXCOORD5, video::EVAT_FLOAT, 2);
 			m_vtxDescriptor->addAttribute("inWorldMatrix4", 4, video::EVAS_TEXCOORD6, video::EVAT_FLOAT, 2);
+			
+			m_vtxDescriptor->addAttribute("uLightIndex", 4, video::EVAS_TEXCOORD7, video::EVAT_FLOAT, 2);
 
 			m_vtxDescriptor->setInstanceDataStepRate(video::EIDSR_PER_INSTANCE, 1);
 			m_vtxDescriptor->setInstanceDataStepRate(video::EIDSR_PER_INSTANCE, 2);

@@ -35,9 +35,15 @@ namespace Skylicht
 	{
 		core::matrix4 World;
 
+		// x: pointlight id1
+		// y: pointlight id2
+		// z: spotlight id
+		// w: ambient probe id
+		SVec4 LightIndex;
+
 		bool operator==(const SVtxTransform& other) const
 		{
-			return World == other.World;
+			return World == other.World && LightIndex == other.LightIndex;
 		}
 	};
 

@@ -49,6 +49,8 @@ namespace Skylicht
 
 		float CameraDistance;
 
+		int UBOIndex;
+
 	public:
 		CLightCullingData();
 

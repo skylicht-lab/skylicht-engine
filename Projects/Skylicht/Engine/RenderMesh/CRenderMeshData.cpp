@@ -57,8 +57,7 @@ namespace Skylicht
 		IsInstancing(false),
 		IsSkinnedInstancing(false),
 		MeshInstancing(NULL),
-		Visible(true),
-		LightLayers(1)
+		Visible(true)
 	{
 
 	}
