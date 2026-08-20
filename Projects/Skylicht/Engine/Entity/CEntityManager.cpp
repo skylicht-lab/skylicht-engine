@@ -112,6 +112,7 @@ namespace Skylicht
 				m_callbacks.erase(i);
 				return;
 			}
+			++i;
 		}
 	}
 
