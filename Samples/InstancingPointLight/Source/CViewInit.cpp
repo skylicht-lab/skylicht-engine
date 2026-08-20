@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "CViewInit.h"
 #include "CViewDemo.h"
+#include "CLightBlinkComponent.h"
 
 #include "ViewManager/CViewManager.h"
 #include "Context/CContext.h"
@@ -165,6 +166,7 @@ void CViewInit::initScene()
 	// that because the shader we have tangent
 	cubes->setEnableNormalMap(true);
 
+	// load shader that have instancing and support point light
 	CMaterial* material = cubes->getMaterial();
 	material->changeShader("SampleInstancingPointLight/Shader/MobileSGColorPL.xml");
 	material->setUniform4("uColor", SColor(255, 150, 150, 150));
@@ -227,6 +229,8 @@ void CViewInit::initScene()
 			pointLight->setColor(color);
 			pointLight->setIntensity(15.0f);
 			pointLight->setRadius(10.0f);
+
+			obj->addComponent<CLightBlinkComponent>()->setDuration(2000.0f, 3000.0f);
 
 			x = x + space;
 		}

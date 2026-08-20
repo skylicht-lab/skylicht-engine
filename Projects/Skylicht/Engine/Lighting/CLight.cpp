@@ -46,7 +46,8 @@ namespace Skylicht
 		m_needValidate(true),
 		m_cullingData(NULL),
 		m_shadowTex(NULL),
-		m_shadowMatrices(NULL)
+		m_shadowMatrices(NULL),
+		m_changeRevision(0)
 	{
 		setRadius(3.0f);
 	}
@@ -94,6 +95,8 @@ namespace Skylicht
 
 		m_shadowTex = NULL;
 		m_cullingData->NeedValidate = true;
+
+		m_changeRevision++;
 	}
 
 	core::aabbox3df CLight::getBBBox()

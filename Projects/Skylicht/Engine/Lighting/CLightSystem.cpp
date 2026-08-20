@@ -35,7 +35,11 @@ namespace Skylicht
 
 	CLightSystem::SCacheLight::SCacheLight() :
 		Signature(LightSignatureOffset),
+		RevisionSignature(LightSignatureOffset),
+		PositionSignature(LightSignatureOffset),
 		LastSignature(0),
+		LastRevisionSignature(0),
+		LastPositionSignature(0),
 		LastCount(-1)
 	{
 
@@ -44,11 +48,15 @@ namespace Skylicht
 	void CLightSystem::SCacheLight::resetSignature()
 	{
 		Signature = LightSignatureOffset;
+		RevisionSignature = LightSignatureOffset;
+		PositionSignature = LightSignatureOffset;
 	}
 
 	void CLightSystem::SCacheLight::invalidate()
 	{
 		LastSignature = 0;
+		LastRevisionSignature = 0;
+		LastPositionSignature = 0;
 		LastCount = -1;
 	}
 
@@ -62,6 +70,15 @@ namespace Skylicht
 		return true;
 	}
 
+	bool CLightSystem::SCacheLight::updateRevision(int count)
+	{
+		if (LastCount == count && LastRevisionSignature == RevisionSignature)
+			return false;
+
+		LastRevisionSignature = RevisionSignature;
+		return true;
+	}
+
 	CLightSystem::CLightSystem() :
 		m_lightCacheVersion(1),
 		m_group(NULL),
@@ -69,15 +86,10 @@ namespace Skylicht
 		m_pointLightKDTree(NULL),
 		m_spotLightKDTree(NULL),
 		m_areaLightKDTree(NULL),
-		m_pointLightKDTreeCount(-1),
-		m_spotLightKDTreeCount(-1),
-		m_areaLightKDTreeCount(-1),
-		m_pointLightKDTreeSignature(0),
-		m_spotLightKDTreeSignature(0),
-		m_areaLightKDTreeSignature(0),
 		m_currentDLight(NULL),
 		m_uboPLight(NULL),
-		m_uboSLight(NULL)
+		m_uboSLight(NULL),
+		m_maxRange(10.0f)
 	{
 		m_pointLightKDTree = new CKDTree3f();
 		m_spotLightKDTree = new CKDTree3f();
@@ -140,10 +152,6 @@ namespace Skylicht
 		entities = m_group->getEntities();
 		numEntity = m_group->getEntityCount();
 
-		size_t pointLightPositionSignature = LightSignatureOffset;
-		size_t spotLightPositionSignature = LightSignatureOffset;
-		size_t areaLightPositionSignature = LightSignatureOffset;
-
 		for (int i = 0; i < numEntity; i++)
 		{
 			CEntity* entity = entities[i];
@@ -163,21 +171,23 @@ namespace Skylicht
 					m_changedPointLights.push_back(lightData);
 				addLightToList(m_pointLights, lightData);
 				addLightSignature(m_pointLightCache, entity, lightData);
-				addLightPositionSignature(pointLightPositionSignature, lightData);
+				addLightRevisionSignature(m_pointLightCache, lightData);
+				addLightPositionSignature(m_pointLightCache, lightData);
 				break;
 			case CLight::SpotLight:
 				if (transformData->NeedValidate)
 					m_changedSpotLights.push_back(lightData);
 				addLightToList(m_spotLights, lightData);
 				addLightSignature(m_spotLightCache, entity, lightData);
-				addLightPositionSignature(spotLightPositionSignature, lightData);
+				addLightRevisionSignature(m_spotLightCache, lightData);
+				addLightPositionSignature(m_spotLightCache, lightData);
 				break;
 			case CLight::AreaLight:
 				if (transformData->NeedValidate)
 					m_changedAreaLights.push_back(lightData);
 				addLightToList(m_areaLights, lightData);
 				addLightSignature(m_areaLightCache, entity, lightData);
-				addLightPositionSignature(areaLightPositionSignature, lightData);
+				addLightPositionSignature(m_areaLightCache, lightData);
 				break;
 			default:
 				break;
@@ -189,25 +199,22 @@ namespace Skylicht
 		int spotLightCount = (int)m_spotLights.size();
 		int areaLightCount = (int)m_areaLights.size();
 
-		if (m_pointLightKDTreeCount != pointLightCount || m_pointLightKDTreeSignature != pointLightPositionSignature)
+		if (m_pointLightCache.LastCount != pointLightCount || m_pointLightCache.LastPositionSignature != m_pointLightCache.PositionSignature)
 		{
 			rebuildLightKDTree(m_pointLightKDTree, m_pointLights);
-			m_pointLightKDTreeCount = pointLightCount;
-			m_pointLightKDTreeSignature = pointLightPositionSignature;
+			m_pointLightCache.LastPositionSignature = m_pointLightCache.PositionSignature;
 		}
 
-		if (m_spotLightKDTreeCount != spotLightCount || m_spotLightKDTreeSignature != spotLightPositionSignature)
+		if (m_spotLightCache.LastCount != spotLightCount || m_spotLightCache.LastPositionSignature != m_spotLightCache.PositionSignature)
 		{
 			rebuildLightKDTree(m_spotLightKDTree, m_spotLights);
-			m_spotLightKDTreeCount = spotLightCount;
-			m_spotLightKDTreeSignature = spotLightPositionSignature;
+			m_spotLightCache.LastPositionSignature = m_spotLightCache.PositionSignature;
 		}
 
-		if (m_areaLightKDTreeCount != areaLightCount || m_areaLightKDTreeSignature != areaLightPositionSignature)
+		if (m_areaLightCache.LastCount != areaLightCount || m_areaLightCache.LastPositionSignature != m_areaLightCache.PositionSignature)
 		{
 			rebuildLightKDTree(m_areaLightKDTree, m_areaLights);
-			m_areaLightKDTreeCount = areaLightCount;
-			m_areaLightKDTreeSignature = areaLightPositionSignature;
+			m_areaLightCache.LastPositionSignature = m_areaLightCache.PositionSignature;
 		}
 
 		updateLightCacheVersion();
@@ -300,7 +307,7 @@ namespace Skylicht
 	void CLightSystem::updateUBOLight(core::array<CLightCullingData*>& light, IHardwareBuffer* buffer)
 	{
 		SUBOLightBuffer* lightBuffer = new SUBOLightBuffer();
-		int numLights = core::min_(MAX_UBO_POINT_LIGHTS, (int)m_pointLights.size());
+		int numLights = core::min_(MAX_UBO_POINT_LIGHTS, (int)light.size());
 
 		core::vector3df pos, dir;
 
@@ -308,32 +315,32 @@ namespace Skylicht
 		for (int i = 0; i < numLights; i++)
 		{
 			SUBOPointLight& l = lightBuffer->Lights[i];
-			CPointLight* light = (CPointLight*)m_pointLights[i]->Light;
+			CPointLight* lightObject = (CPointLight*)light[i]->Light;
 
-			pos = light->getPosition();
+			pos = lightObject->getPosition();
 			l.Position.X = pos.X;
 			l.Position.Y = pos.Y;
 			l.Position.Z = pos.Z;
 
-			l.Color = light->getColor();
-			l.Color.a = light->getIntensity();
+			l.Color = lightObject->getColor();
+			l.Color.a = lightObject->getIntensity();
 
-			if (light->getLightTypeId() == (int)CLight::SpotLight)
+			if (lightObject->getLightTypeId() == (int)CLight::SpotLight)
 			{
-				dir = -light->getDirection();
+				dir = -lightObject->getDirection();
 				dir.normalize();
 				l.Direction.X = dir.X;
 				l.Direction.Y = dir.Y;
 				l.Direction.Z = dir.Z;
 
-				l.Attenuation.X = cosf(light->getSplotCutoff() * core::DEGTORAD * 0.5f);
-				l.Attenuation.Y = cosf(light->getSpotInnerCutof() * core::DEGTORAD * 0.5f);
-				l.Attenuation.Z = light->getAttenuation();
-				l.Attenuation.W = light->getSpotExponent();
+				l.Attenuation.X = cosf(lightObject->getSplotCutoff() * core::DEGTORAD * 0.5f);
+				l.Attenuation.Y = cosf(lightObject->getSpotInnerCutof() * core::DEGTORAD * 0.5f);
+				l.Attenuation.Z = lightObject->getAttenuation();
+				l.Attenuation.W = lightObject->getSpotExponent();
 			}
 			else
 			{
-				l.Attenuation.Y = light->getAttenuation();
+				l.Attenuation.Y = lightObject->getAttenuation();
 			}
 		}
 
@@ -573,7 +580,17 @@ namespace Skylicht
 		m_maxRange = core::max_(m_maxRange, light->getRadius());
 	}
 
-	void CLightSystem::addLightPositionSignature(size_t& signature, CLightCullingData* lightData)
+	void CLightSystem::addLightRevisionSignature(SCacheLight& cache, CLightCullingData* lightData)
+	{
+		CLight* light = lightData->Light;
+		size_t value = (size_t)lightData;
+		value ^= (size_t)light->getChangeRevision() << 1;
+
+		cache.RevisionSignature ^= value;
+		cache.RevisionSignature *= 16777619u;
+	}
+
+	void CLightSystem::addLightPositionSignature(SCacheLight& cache, CLightCullingData* lightData)
 	{
 		union SFloatBits
 		{
@@ -593,8 +610,8 @@ namespace Skylicht
 		value ^= (size_t)y.U << 8;
 		value ^= (size_t)z.U << 16;
 
-		signature ^= value;
-		signature *= 16777619u;
+		cache.PositionSignature ^= value;
+		cache.PositionSignature *= 16777619u;
 	}
 
 	void CLightSystem::updateLightCacheVersion()
@@ -611,13 +628,15 @@ namespace Skylicht
 
 		// test point light
 		changed = m_pointLightCache.update(pointLightCount);
-		if (m_uboPLight && changed)
+		bool uboChanged = m_pointLightCache.updateRevision(pointLightCount);
+		if (m_uboPLight && (changed || uboChanged))
 			updateUBOLight(m_pointLights, m_uboPLight);
 		cacheChanged |= changed;
 
 		// test spot light
 		changed = m_spotLightCache.update(spotLightCount);
-		if (m_uboSLight && changed)
+		uboChanged = m_spotLightCache.updateRevision(spotLightCount);
+		if (m_uboSLight && (changed || uboChanged))
 			updateUBOLight(m_spotLights, m_uboSLight);
 		cacheChanged |= changed;
 

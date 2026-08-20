@@ -53,7 +53,11 @@ namespace Skylicht
 		struct SCacheLight
 		{
 			size_t Signature;
+			size_t RevisionSignature;
+			size_t PositionSignature;
 			size_t LastSignature;
+			size_t LastRevisionSignature;
+			size_t LastPositionSignature;
 			int LastCount;
 
 			SCacheLight();
@@ -63,6 +67,8 @@ namespace Skylicht
 			void invalidate();
 
 			bool update(int count);
+
+			bool updateRevision(int count);
 		};
 
 		core::array<CLightCullingData*> m_pointLights;
@@ -93,14 +99,6 @@ namespace Skylicht
 		CKDTree3f* m_pointLightKDTree;
 		CKDTree3f* m_spotLightKDTree;
 		CKDTree3f* m_areaLightKDTree;
-
-		int m_pointLightKDTreeCount;
-		int m_spotLightKDTreeCount;
-		int m_areaLightKDTreeCount;
-
-		size_t m_pointLightKDTreeSignature;
-		size_t m_spotLightKDTreeSignature;
-		size_t m_areaLightKDTreeSignature;
 
 		IHardwareBuffer* m_uboPLight;
 		IHardwareBuffer* m_uboSLight;
@@ -149,7 +147,9 @@ namespace Skylicht
 
 		void addLightSignature(SCacheLight& cache, CEntity* entity, CLightCullingData* light);
 
-		void addLightPositionSignature(size_t& signature, CLightCullingData* lightData);
+		void addLightRevisionSignature(SCacheLight& cache, CLightCullingData* lightData);
+
+		void addLightPositionSignature(SCacheLight& cache, CLightCullingData* lightData);
 
 		void updateLightCacheVersion();
 

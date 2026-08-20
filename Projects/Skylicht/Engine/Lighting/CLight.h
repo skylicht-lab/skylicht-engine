@@ -98,6 +98,9 @@ namespace Skylicht
 		ITexture* m_shadowTex;
 
 		float* m_shadowMatrices;
+
+		int m_changeRevision;
+
 	public:
 		CLight();
 
@@ -115,6 +118,7 @@ namespace Skylicht
 		inline void setColor(const SColorf& c)
 		{
 			m_color = c;
+			m_changeRevision++;
 		}
 
 		inline float getAttenuation()
@@ -159,11 +163,13 @@ namespace Skylicht
 			r = core::max_(r, 0.01f);
 			m_radius = r;
 			m_attenuation = 1.0f / m_radius;
+			m_changeRevision++;
 		}
 
 		inline void setSpotAngle(float angle)
 		{
 			m_spotCutoff = angle;
+			m_changeRevision++;
 		}
 
 		inline float getSplotCutoff()
@@ -174,6 +180,7 @@ namespace Skylicht
 		inline void setSpotInnerAngle(float angle)
 		{
 			m_spotInnerCutoff = angle;
+			m_changeRevision++;
 		}
 
 		inline float getSpotInnerCutof()
@@ -184,6 +191,7 @@ namespace Skylicht
 		inline void setSpotExponent(float e)
 		{
 			m_spotExponent = e;
+			m_changeRevision++;
 		}
 
 		inline float getSpotExponent()
@@ -221,6 +229,7 @@ namespace Skylicht
 		inline void setIntensity(float f)
 		{
 			m_intensity = f;
+			m_changeRevision++;
 		}
 
 		inline float getIntensity()
@@ -283,6 +292,11 @@ namespace Skylicht
 		inline float* getShadowMatrices()
 		{
 			return m_shadowMatrices;
+		}
+
+		inline int getChangeRevision()
+		{
+			return m_changeRevision;
 		}
 	};
 }

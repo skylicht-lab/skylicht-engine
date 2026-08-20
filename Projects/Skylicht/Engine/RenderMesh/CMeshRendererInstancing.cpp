@@ -32,6 +32,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Material/Shader/ShaderCallback/CShaderLighting.h"
 #include "Material/Shader/ShaderCallback/CShaderMaterial.h"
 
+#include "Lighting/CLightSystem.h"
+
 namespace Skylicht
 {
 	CMeshRendererInstancing::CMeshRendererInstancing()
@@ -114,27 +116,38 @@ namespace Skylicht
 	{
 		u32 numEntity = m_meshs.size();
 
-		CRenderMeshData** renderData = m_meshs.pointer();
+		CLightSystem* lightSystem = entityManager->getRenderSystem<CLightSystem>();
 
+		CRenderMeshData** renderData = m_meshs.pointer();
 		CEntity** allEntities = entityManager->getEntities();
 
 		// update instancing
 		for (u32 i = 0; i < numEntity; i++)
 		{
-			SMeshInstancing* data = renderData[i]->getMeshInstancing();
+			CRenderMeshData* meshData = renderData[i];
+			SMeshInstancing* data = meshData->getMeshInstancing();
+
+			CEntity* entity = meshData->Entity;
 
 			SMeshInstancingGroup* group = data->InstancingGroup;
 			if (group == NULL)
 			{
 				group = new SMeshInstancingGroup();
-				group->RootEntityIndex = renderData[i]->EntityIndex;
+				group->RootEntityIndex = meshData->EntityIndex;
 
 				m_groups[data] = group;
 
 				data->InstancingGroup = group;
 			}
 
-			group->Entities.push(renderData[i]->Entity);
+			if (meshData->isEnableSortLight())
+			{
+				CWorldTransformData* transform = GET_ENTITY_DATA(entity, CWorldTransformData);
+				CIndirectLightingData* indirectData = GET_ENTITY_DATA(entity, CIndirectLightingData);
+				lightSystem->onSetupLightIndex(meshData, indirectData, transform);
+			}
+
+			group->Entities.push(entity);
 		}
 
 		// bake instancing in group
