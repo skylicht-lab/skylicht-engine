@@ -296,32 +296,48 @@ public class FullscreenActivity extends AppCompatActivity {
      * CREATE SAVE FOLDER
      */
 
-    protected boolean createFolder(String path) {
-        File folder = new File(path);
+    protected boolean createFolder(File folder) {
+        if (folder == null) {
+            return false;
+        }
 
         boolean success = true;
         if (!folder.exists()) {
-            success = folder.mkdir();
+            success = folder.mkdirs();
         }
 
         return success;
     }
 
+    protected File getStorageFolder(String type, File fallbackRoot) {
+        File folder = getApplicationContext().getExternalFilesDir(type);
+        if (folder != null) {
+            return folder;
+        }
+
+        Log.w("Skylicht", "External storage folder is unavailable: " + type);
+        if (fallbackRoot == null) {
+            return null;
+        }
+
+        return new File(fallbackRoot, type);
+    }
+
     protected void createSaveFolder() {
         // https://developer.android.com/training/data-storage
-        String dataFolder = getApplicationContext().getExternalFilesDir("data").getAbsolutePath();
+        File dataFolder = getStorageFolder("data", getFilesDir());
         if (createFolder(dataFolder)) {
-            NativeInterface.getInstance().setSaveFolder(dataFolder);
+            NativeInterface.getInstance().setSaveFolder(dataFolder.getAbsolutePath());
         } else {
             // Do something else on failure
             Log.w("Skylicht", "Can not create data folder: " + dataFolder);
         }
 
-        String downloadFolder = getApplicationContext().getExternalFilesDir("download").getAbsolutePath();
+        File downloadFolder = getStorageFolder("download", getCacheDir());
         if (createFolder(downloadFolder)) {
-            NativeInterface.getInstance().setDownloadFolder(downloadFolder);
+            NativeInterface.getInstance().setDownloadFolder(downloadFolder.getAbsolutePath());
         } else {
-            Log.w("Skylicht", "Can not create data folder: " + downloadFolder);
+            Log.w("Skylicht", "Can not create download folder: " + downloadFolder);
         }
     }
 
