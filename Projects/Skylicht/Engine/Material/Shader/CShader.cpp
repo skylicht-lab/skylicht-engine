@@ -1425,7 +1425,7 @@ namespace Skylicht
 		case SHADER_VEC2:
 		{
 			CShaderManager* material = shaderManager;
-			int paramID = (int)uniform.Value[0];
+			int paramID = (int)uniform.ValueIndex;
 			float v[2];
 			v[0] = material->ShaderVec2[paramID].X;
 			v[1] = material->ShaderVec2[paramID].Y;
@@ -1439,7 +1439,7 @@ namespace Skylicht
 		case SHADER_VEC3:
 		{
 			CShaderManager* material = shaderManager;
-			int paramID = (int)uniform.Value[0];
+			int paramID = (int)uniform.ValueIndex;
 			float v[3];
 			v[0] = material->ShaderVec3[paramID].X;
 			v[1] = material->ShaderVec3[paramID].Y;
@@ -1454,7 +1454,7 @@ namespace Skylicht
 		case SHADER_VEC4:
 		{
 			CShaderManager* material = shaderManager;
-			int paramID = (int)uniform.Value[0];
+			int paramID = (int)uniform.ValueIndex;
 			float v[4];
 			v[0] = material->ShaderVec4[paramID].X;
 			v[1] = material->ShaderVec4[paramID].Y;
@@ -1471,7 +1471,7 @@ namespace Skylicht
 		case TEXTURE_MIPMAP_COUNT:
 		{
 			SMaterial* material = shaderManager->getCurrentMaterial();
-			int textureID = (int)uniform.Value[0];
+			int textureID = (int)uniform.ValueIndex;
 			ITexture* texture = material->TextureLayer[textureID].Texture;
 
 			if (texture != NULL)
