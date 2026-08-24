@@ -11,6 +11,11 @@ SamplerState uTexNormalMapSampler : register(s1);
 Texture2D uTexSpecularMap : register(t2);
 SamplerState uTexSpecularMapSampler : register(s2);
 #endif
+
+#ifdef EMISSIVE
+Texture2D uTexEmissive : register(t5);
+SamplerState uTexEmissiveSampler : register(s5);
+#endif
 #endif
 
 #if defined(PLANAR_REFLECTION)
@@ -61,6 +66,9 @@ cbuffer cbPerFrame
 {
 	float4 uLightColor;
 	float4 uColor;
+#ifdef EMISSIVE
+	float4 uEmissive;
+#endif
 #if defined(NO_TEXTURE) || defined(NO_SPECGLOSS)
 	float2 uSpecGloss;
 #endif
@@ -176,6 +184,11 @@ float4 main(PS_INPUT input) : SV_TARGET
 
 	// IBL lighting
 	color += ambientLighting * diffuseColor / PI;
+
+#ifdef EMISSIVE
+	float3 emissiveMap = uTexEmissive.Sample(uTexEmissiveSampler, input.tex0).rgb * uEmissive.rgb * uEmissive.a;
+	color += sRGB(emissiveMap);
+#endif
 	
 	return float4(color, diffuseMap.a);
 }

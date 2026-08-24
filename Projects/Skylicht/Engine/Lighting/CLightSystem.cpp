@@ -138,7 +138,7 @@ namespace Skylicht
 		m_spotLightCache.resetSignature();
 		m_areaLightCache.resetSignature();
 
-		m_maxRange = 0.0f;
+		m_maxRange = 10.0f;
 
 		if (!m_group)
 		{
@@ -528,30 +528,41 @@ namespace Skylicht
 		SDistanceLightEntry entry;
 		m_sorts.set_used(0);
 
-		if (kdtree != NULL && m_maxRange > 0.0f)
+		float range = m_maxRange + 1.0f;
+
+		if (kdtree != NULL)
 		{
-			kdtree->nearestRange(position, m_maxRange * 2.0f, m_kdNodes);
-			m_sorts.set_used(0);
-
-			CKDTree3f::SKDNode** nodes = m_kdNodes.pointer();
-			for (u32 i = 0, n = m_kdNodes.size(); i < n; i++)
+			for (int i = 0; i < 3; i++)
 			{
-				CLightCullingData* lightData = (CLightCullingData*)nodes[i]->Data;
-				CLight* light = lightData->Light;
-				u32 lightLayer = light->getLightLayers();
+				kdtree->nearestRange(position, range, m_kdNodes);
+				m_sorts.set_used(0);
 
-				if (objLayer & lightLayer)
+				CKDTree3f::SKDNode** nodes = m_kdNodes.pointer();
+				for (u32 i = 0, n = m_kdNodes.size(); i < n; i++)
 				{
-					entry.Data = lightData;
-					entry.Light = light;
-					entry.Distance = lightData->LightPosition.getDistanceFromSQ(position);
+					CLightCullingData* lightData = (CLightCullingData*)nodes[i]->Data;
+					CLight* light = lightData->Light;
+					u32 lightLayer = light->getLightLayers();
 
-					if (m_sorts.size() < 4)
-						m_sorts.push_back(entry);
+					if (objLayer & lightLayer)
+					{
+						entry.Data = lightData;
+						entry.Light = light;
+						entry.Distance = lightData->LightPosition.getDistanceFromSQ(position);
 
-					if (m_sorts.size() >= 4)
-						break;
+						if (m_sorts.size() < 4)
+							m_sorts.push_back(entry);
+
+						if (m_sorts.size() >= 4)
+							break;
+					}
 				}
+
+				if (m_sorts.size() > 0)
+					break;
+
+				// try again in 3 times
+				range = range * 2.0f;
 			}
 		}
 	}

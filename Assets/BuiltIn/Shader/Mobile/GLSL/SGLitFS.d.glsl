@@ -17,6 +17,10 @@ uniform sampler2D uTexNormal;
 #ifndef NO_SPECGLOSS
 uniform sampler2D uTexSpecular;
 #endif
+
+#ifdef EMISSIVE
+uniform sampler2D uTexEmissive;
+#endif
 #endif
 
 #if defined(PLANAR_REFLECTION)
@@ -29,6 +33,9 @@ uniform sampler2DArray uShadowMap;
 
 uniform vec4 uLightColor;
 uniform vec4 uColor;
+#ifdef EMISSIVE
+uniform vec4 uEmissive;
+#endif
 uniform vec2 uLightMul;
 #if defined(CUTOFF)
 uniform float uCutoff;
@@ -167,6 +174,11 @@ void main(void)
 
 	// IBL lighting
 	color += ambientLighting * diffuseColor / PI;
+
+#ifdef EMISSIVE
+	vec3 emissiveMap = texture(uTexEmissive, vTexCoord0.xy).rgb * uEmissive.rgb * uEmissive.a;
+	color += sRGB(emissiveMap);
+#endif
 
 	FragColor = vec4(color, diffuseMap.a);
 }

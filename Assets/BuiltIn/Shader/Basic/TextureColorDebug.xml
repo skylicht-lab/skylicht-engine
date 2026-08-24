@@ -5,7 +5,7 @@
 		</vs>
 		<fs>
 			<uniform name="uTexDiffuse" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
-			<uniform name="uDebug" type="SHADER_VEC2" value="0" float="2"/>
+			<uniform name="uDebug" type="SHADER_VEC2" valueIndex="0" float="2"/>
 		</fs>
 	</uniforms>
 	<customUI>
