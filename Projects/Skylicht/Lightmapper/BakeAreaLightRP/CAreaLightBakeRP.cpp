@@ -205,7 +205,7 @@ namespace Skylicht
 		CShaderLighting::setAreaLight(NULL, 0);
 	}
 
-	void CAreaLightBakeRP::drawInstancingMeshBuffer(CMesh* mesh, int bufferID, int materialRenderID, CEntityManager* entityMgr, int entityID, bool skinnedMesh)
+	void CAreaLightBakeRP::drawInstancingMeshBuffer(CMesh* mesh, int bufferID, CShader* instancingShader, CEntityManager* entityMgr, int entityID, bool skinnedMesh)
 	{
 		// no render instancing mesh
 	}
