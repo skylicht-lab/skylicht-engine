@@ -5,7 +5,7 @@
 		</vs>
 		<fs>
 			<uniform name="uShadowMap" type="DEFAULT_VALUE" value="0" float="1" directX="false"/>
-			<uniform name="uTexNormal" type="DEFAULT_VALUE" value="1" float="1" directX="false"/>			
+			<uniform name="uTexNormal" type="DEFAULT_VALUE" value="1" float="1" directX="false"/>
 			
 			<uniform name="uLightPosition" type="AREA_LIGHT_POSITION" value="0" float="4"/>
 			<uniform name="uLightDirX" type="AREA_LIGHT_DIR_X" value="0" float="3"/>

@@ -166,10 +166,7 @@ namespace Skylicht
 		irrMaterial.BackfaceCulling = false;
 		irrMaterial.FrontfaceCulling = false;
 
-		ITexture* depthTexture = shadowRP->getDepthTexture();
-		depthTexture->regenerateMipMapLevels();
-
-		irrMaterial.TextureLayer[0].Texture = depthTexture;
+		irrMaterial.TextureLayer[0].Texture = shadowRP->getDepthTexture();
 		irrMaterial.TextureLayer[0].BilinearFilter = false;
 		irrMaterial.TextureLayer[0].TrilinearFilter = false;
 		irrMaterial.TextureLayer[0].AnisotropicFilter = 0;

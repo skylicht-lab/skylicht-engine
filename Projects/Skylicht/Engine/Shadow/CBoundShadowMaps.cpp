@@ -113,8 +113,15 @@ namespace Skylicht
 		core::matrix4 ortho;
 		ortho.buildProjectionMatrixOrthoLH(max.X - min.X, max.Y - min.Y, -m_nearOffset, m_nearOffset + cascadeExtents.Z + m_farValue);
 
+		core::vector3df viewDirection = center - lightPosition;
+		viewDirection.normalize();
+
+		core::vector3df up = Transform::Oy;
+		if (fabsf(viewDirection.dotProduct(up)) > 0.99f)
+			up = Transform::Oz;
+
 		core::matrix4 view;
-		view.buildCameraLookAtMatrixLH(lightPosition, center, Transform::Oy);
+		view.buildCameraLookAtMatrixLH(lightPosition, center, up);
 
 		m_projMatrices = ortho;
 		m_viewMatrices = view;
