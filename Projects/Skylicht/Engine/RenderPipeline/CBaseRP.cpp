@@ -185,8 +185,13 @@ namespace Skylicht
 						CIndirectLightingData* lightData = GET_ENTITY_DATA(entity->getEntity(entityId), CIndirectLightingData);
 						u32 textureID = (u32)uniform->Value[0];
 
-						if (lightData != NULL && lightData->ReflectionTexture != NULL && textureID < MATERIAL_MAX_TEXTURES)
-							irrMaterial.setTexture(textureID, lightData->ReflectionTexture);
+						if (lightData != NULL && textureID < MATERIAL_MAX_TEXTURES)
+						{
+							if (lightData->ReflectionTexture)
+								irrMaterial.setTexture(textureID, lightData->ReflectionTexture);
+							else
+								irrMaterial.setTexture(textureID, CTextureManager::getInstance()->getNullCubeTexture());
+						}
 					}
 				}
 			}

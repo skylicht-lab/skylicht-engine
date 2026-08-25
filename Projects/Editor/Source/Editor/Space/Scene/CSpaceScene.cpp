@@ -535,6 +535,7 @@ namespace Skylicht
 			CGameObject* lightProbesObj = zone->createEmptyObject();
 			lightProbesObj->setName(L"Light Probes");
 			lightProbesObj->addComponent<CLightProbes>();
+			lightProbesObj->getTransformEuler()->setPosition(core::vector3df(0.0f, 1.0f, 0.0f));
 
 			// reflection probe
 			CGameObject* reflectionProbesObj = zone->createEmptyObject();

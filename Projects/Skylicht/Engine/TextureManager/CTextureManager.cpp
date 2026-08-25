@@ -15,9 +15,31 @@ namespace Skylicht
 
 	CTextureManager::CTextureManager() :
 		m_nullNormalMap(NULL),
-		m_nullTexture(NULL)
+		m_nullTexture(NULL),
+		m_nullCubeTexture(NULL)
 	{
 		m_currentPackage = GlobalPackage;
+
+		IVideoDriver* driver = getVideoDriver();
+
+		m_nullNormalMap = driver->getTexture("BuiltIn/Textures/NullNormalMap.png");
+
+		m_nullTexture = driver->getTexture("BuiltIn/Textures/NullTexture.png");
+
+		m_nullCubeTexture = driver->addRenderTargetCubeTexture(core::dimension2du(128, 128), "nullCube", video::ECF_R8G8B8);
+		SColor color[6] = {
+			{255, 100, 100, 100},
+			{255, 100, 0, 0},
+			{255, 0, 100, 0},
+			{255, 0, 0, 100},
+			{255, 0, 100, 100},
+			{255, 100, 0, 100},
+		};
+		for (int i = 0; i < 6; i++)
+			driver->setRenderTargetCube(m_nullCubeTexture, (E_CUBEMAP_FACE)i, true, true, color[i]);
+
+		driver->setRenderTarget(NULL, false, false);
+		m_nullCubeTexture->regenerateMipMapLevels();
 	}
 
 	CTextureManager::~CTextureManager()
@@ -35,6 +57,12 @@ namespace Skylicht
 		{
 			driver->removeTexture(m_nullTexture);
 			m_nullTexture = NULL;
+		}
+
+		if (m_nullCubeTexture)
+		{
+			driver->removeTexture(m_nullCubeTexture);
+			m_nullCubeTexture = NULL;
 		}
 	}
 
@@ -372,13 +400,6 @@ namespace Skylicht
 			sprintf(errorLog, "Can not load texture: %s", path);
 			os::Printer::log(errorLog);
 		}
-
-		// load null
-		if (m_nullNormalMap == NULL)
-			m_nullNormalMap = driver->getTexture("BuiltIn/Textures/NullNormalMap.png");
-
-		if (m_nullTexture == NULL)
-			m_nullTexture = driver->getTexture("BuiltIn/Textures/NullTexture.png");
 
 		return texture;
 	}

@@ -131,7 +131,6 @@ namespace Skylicht
 		bakeSizeType->addEnumString("64", EReflectionSize::X64);
 		bakeSizeType->addEnumString("128", EReflectionSize::X128);
 		bakeSizeType->addEnumString("256", EReflectionSize::X256);
-		bakeSizeType->addEnumString("256", EReflectionSize::X256);
 		bakeSizeType->addEnumString("512", EReflectionSize::X512);
 		bakeSizeType->addEnumString("1024", EReflectionSize::X1024);
 		bakeSizeType->addEnumString("2048", EReflectionSize::X2048);

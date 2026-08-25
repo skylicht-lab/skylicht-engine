@@ -34,7 +34,7 @@ namespace Skylicht
 	/**
 	 * @brief Texture Manager class provides APIs to load, retrieve, check, and release textures within the engine
 	 * @ingroup Materials
-	 * 
+	 *
 	 * Example usage:
 	 * @code
 	 * ITexture *texture = CTextureManager::getInstance()->getTexture("BuiltIn/Textures/Skylicht.png");
@@ -87,6 +87,8 @@ namespace Skylicht
 		/// Default null texture.
 		ITexture* m_nullTexture;
 
+		/// Default null cube texture.
+		ITexture* m_nullCubeTexture;
 	public:
 		/**
 		 * @brief Constructor.
@@ -238,6 +240,15 @@ namespace Skylicht
 		ITexture* getNullTexture()
 		{
 			return m_nullTexture;
+		}
+
+		/**
+		 * @brief Get the default null texture.
+		 * @return Pointer to null texture.
+		 */
+		ITexture* getNullCubeTexture()
+		{
+			return m_nullCubeTexture;
 		}
 
 		/**
