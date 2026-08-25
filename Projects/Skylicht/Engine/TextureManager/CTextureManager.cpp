@@ -27,19 +27,22 @@ namespace Skylicht
 		m_nullTexture = driver->getTexture("BuiltIn/Textures/NullTexture.png");
 
 		m_nullCubeTexture = driver->addRenderTargetCubeTexture(core::dimension2du(128, 128), "nullCube", video::ECF_R8G8B8);
-		SColor color[6] = {
-			{255, 100, 100, 100},
-			{255, 100, 0, 0},
-			{255, 0, 100, 0},
-			{255, 0, 0, 100},
-			{255, 0, 100, 100},
-			{255, 100, 0, 100},
-		};
-		for (int i = 0; i < 6; i++)
-			driver->setRenderTargetCube(m_nullCubeTexture, (E_CUBEMAP_FACE)i, true, true, color[i]);
+		if (m_nullCubeTexture)
+		{
+			SColor color[6] = {
+				{255, 100, 100, 100},
+				{255, 100, 0, 0},
+				{255, 0, 100, 0},
+				{255, 0, 0, 100},
+				{255, 0, 100, 100},
+				{255, 100, 0, 100},
+			};
+			for (int i = 0; i < 6; i++)
+				driver->setRenderTargetCube(m_nullCubeTexture, (E_CUBEMAP_FACE)i, true, true, color[i]);
 
-		driver->setRenderTarget(NULL, false, false);
-		m_nullCubeTexture->regenerateMipMapLevels();
+			driver->setRenderTarget(NULL, false, false);
+			m_nullCubeTexture->regenerateMipMapLevels();
+		}
 	}
 
 	CTextureManager::~CTextureManager()
