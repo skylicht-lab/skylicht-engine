@@ -58,6 +58,13 @@ namespace Skylicht
 			layerSetting = settingFolder + "/LightLayer.xml";
 			if (m_lightLayer->load(layerSetting.c_str()) == false)
 				m_lightLayer->save(layerSetting.c_str());
+
+			// load custom override
+			layerSetting = settingFolder + "/ObjectLayerOverride.xml";
+			m_objectLayer->load(layerSetting.c_str());
+
+			layerSetting = settingFolder + "/LightLayerOverride.xml";
+			m_lightLayer->load(layerSetting.c_str());
 		}
 
 		void CProjectSettings::save()
