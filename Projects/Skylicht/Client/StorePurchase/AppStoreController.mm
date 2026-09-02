@@ -20,11 +20,14 @@ extern "C" {
     void appstore_onPurchaseFailed(const char* productId, int error, const char* message);
 }
 
+static AppStorePurchaseSucceededCallback g_purchaseSucceededCallback = NULL;
+
 @interface AppStoreManager : NSObject <SKProductsRequestDelegate, SKPaymentTransactionObserver>
 + (instancetype)sharedInstance;
 - (void)fetchProducts:(NSSet *)productIdentifiers;
 - (void)purchaseProduct:(NSString *)productIdentifier;
 - (void)restorePurchases;
+- (SKProduct *)productForIdentifier:(NSString *)productIdentifier;
 @end
 
 @implementation AppStoreManager {
@@ -84,6 +87,15 @@ static AppStoreManager *_sharedInstance = nil;
 
 - (void)restorePurchases {
     [[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
+}
+
+- (SKProduct *)productForIdentifier:(NSString *)productIdentifier {
+    for (SKProduct *product in _validProducts) {
+        if ([product.productIdentifier isEqualToString:productIdentifier]) {
+            return product;
+        }
+    }
+    return nil;
 }
 
 - (void)paymentQueue:(SKPaymentQueue *)queue restoreCompletedTransactionsFailedWithError:(NSError *)error {
@@ -150,6 +162,22 @@ static AppStoreManager *_sharedInstance = nil;
                 NSURL *receiptURL = [[NSBundle mainBundle] appStoreReceiptURL];
                 NSData *receiptData = [NSData dataWithContentsOfURL:receiptURL];
                 NSString *receiptString = [receiptData base64EncodedStringWithOptions:0];
+                if (transaction.transactionState == SKPaymentTransactionStatePurchased && g_purchaseSucceededCallback) {
+                    SKProduct *product = [self productForIdentifier:productId];
+                    NSString *currencyCode = @"";
+                    double unitPrice = 0.0;
+                    if (product) {
+                        currencyCode = [product.priceLocale objectForKey:NSLocaleCurrencyCode];
+                        unitPrice = [product.price doubleValue];
+                    }
+                    NSString *transactionId = transaction.transactionIdentifier ? transaction.transactionIdentifier : @"";
+
+                    g_purchaseSucceededCallback([productId UTF8String],
+                                                unitPrice,
+                                                [currencyCode UTF8String],
+                                                [transactionId UTF8String],
+                                                [receiptString UTF8String]);
+                }
                 
                 appstore_onPurchaseSucceeded([productId UTF8String], [receiptString UTF8String]);
                 [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
@@ -173,6 +201,11 @@ extern "C" {
 void appstore_init()
 {
     [AppStoreManager initialize];
+}
+
+void appstore_setPurchaseSucceededCallback(AppStorePurchaseSucceededCallback callback)
+{
+    g_purchaseSucceededCallback = callback;
 }
 
 void appstore_restorePurchase()
