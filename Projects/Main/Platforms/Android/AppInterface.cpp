@@ -23,6 +23,8 @@ https://github.com/skylicht-lab/skylicht-engine
 */
 
 #ifdef ANDROID
+#include <algorithm>
+
 #include <android/log.h>
 #include <jni.h>
 
@@ -223,7 +225,11 @@ extern "C" {
 	void applicationAddAPK(const char *apkPath)
 	{
 		if (apkPath != NULL)
-			CBuildConfig::getInstance()->APKPath.push_back(apkPath);
+		{
+			std::vector<std::string>& apkPaths = CBuildConfig::getInstance()->APKPath;
+			if (std::find(apkPaths.begin(), apkPaths.end(), apkPath) == apkPaths.end())
+				apkPaths.push_back(apkPath);
+		}
 	}
 
 	void applicationSetSaveFolder(const char *savePath)
