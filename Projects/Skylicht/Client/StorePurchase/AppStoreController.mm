@@ -9,7 +9,9 @@ extern "C" {
     void appstore_onInitializeFailed(int error, const char* message);
     void appstore_onFetchProductFailed(int error, const char* message);
     void appstore_onRestorePurchaseFailed(int error, const char* message);
+    void appstore_onRestorePurchaseCompleted();
     void appstore_onPurchaseSucceeded(const char* productId, const char* receipt);
+    void appstore_onPurchaseRestored(const char* productId, const char* receipt);
     void appstore_onProductsReceived(const char** productIds,
                                      const char** titles,
                                      const char** descriptions,
@@ -21,18 +23,22 @@ extern "C" {
 }
 
 static AppStorePurchaseSucceededCallback g_purchaseSucceededCallback = NULL;
+static const int PRODUCT_CONSUMABLE = 0;
+static const int PRODUCT_NON_CONSUMABLE = 1;
 
 @interface AppStoreManager : NSObject <SKProductsRequestDelegate, SKPaymentTransactionObserver>
 + (instancetype)sharedInstance;
 - (void)fetchProducts:(NSSet *)productIdentifiers;
 - (void)purchaseProduct:(NSString *)productIdentifier;
 - (void)restorePurchases;
+- (void)setProductTypes:(NSDictionary<NSString *, NSNumber *> *)productTypes;
 - (SKProduct *)productForIdentifier:(NSString *)productIdentifier;
 @end
 
 @implementation AppStoreManager {
     SKProductsRequest *_productsRequest;
     NSArray<SKProduct *> *_validProducts;
+    NSMutableDictionary<NSString *, NSNumber *> *_productTypes;
 }
 
 static AppStoreManager *_sharedInstance = nil;
@@ -52,6 +58,14 @@ static AppStoreManager *_sharedInstance = nil;
 
 + (instancetype)sharedInstance {
     return _sharedInstance;
+}
+
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        _productTypes = [[NSMutableDictionary alloc] init];
+    }
+    return self;
 }
 
 - (void)fetchProducts:(NSSet *)productIdentifiers {
@@ -89,6 +103,15 @@ static AppStoreManager *_sharedInstance = nil;
     [[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
 }
 
+- (void)setProductTypes:(NSDictionary<NSString *, NSNumber *> *)productTypes {
+    [_productTypes addEntriesFromDictionary:productTypes];
+}
+
+- (int)productTypeForIdentifier:(NSString *)productIdentifier {
+    NSNumber *type = [_productTypes objectForKey:productIdentifier];
+    return type ? [type intValue] : PRODUCT_CONSUMABLE;
+}
+
 - (SKProduct *)productForIdentifier:(NSString *)productIdentifier {
     for (SKProduct *product in _validProducts) {
         if ([product.productIdentifier isEqualToString:productIdentifier]) {
@@ -100,6 +123,10 @@ static AppStoreManager *_sharedInstance = nil;
 
 - (void)paymentQueue:(SKPaymentQueue *)queue restoreCompletedTransactionsFailedWithError:(NSError *)error {
     appstore_onRestorePurchaseFailed((int)error.code, [[error localizedDescription] UTF8String]);
+}
+
+- (void)paymentQueueRestoreCompletedTransactionsFinished:(SKPaymentQueue *)queue {
+    appstore_onRestorePurchaseCompleted();
 }
 
 #pragma mark - SKProductsRequestDelegate
@@ -157,12 +184,14 @@ static AppStoreManager *_sharedInstance = nil;
         NSString *productId = transaction.payment.productIdentifier;
         
         switch (transaction.transactionState) {
-            case SKPaymentTransactionStatePurchased:
-            case SKPaymentTransactionStateRestored: {
+            case SKPaymentTransactionStatePurchased: {
                 NSURL *receiptURL = [[NSBundle mainBundle] appStoreReceiptURL];
                 NSData *receiptData = [NSData dataWithContentsOfURL:receiptURL];
                 NSString *receiptString = [receiptData base64EncodedStringWithOptions:0];
-                if (transaction.transactionState == SKPaymentTransactionStatePurchased && g_purchaseSucceededCallback) {
+                if (receiptString == nil) {
+                    receiptString = @"";
+                }
+                if (g_purchaseSucceededCallback) {
                     SKProduct *product = [self productForIdentifier:productId];
                     NSString *currencyCode = @"";
                     double unitPrice = 0.0;
@@ -178,8 +207,25 @@ static AppStoreManager *_sharedInstance = nil;
                                                 [transactionId UTF8String],
                                                 [receiptString UTF8String]);
                 }
-                
+
                 appstore_onPurchaseSucceeded([productId UTF8String], [receiptString UTF8String]);
+                [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+                break;
+            }
+            case SKPaymentTransactionStateRestored: {
+                if ([self productTypeForIdentifier:productId] != PRODUCT_NON_CONSUMABLE) {
+                    [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+                    break;
+                }
+
+                NSURL *receiptURL = [[NSBundle mainBundle] appStoreReceiptURL];
+                NSData *receiptData = [NSData dataWithContentsOfURL:receiptURL];
+                NSString *receiptString = [receiptData base64EncodedStringWithOptions:0];
+                if (receiptString == nil) {
+                    receiptString = @"";
+                }
+
+                appstore_onPurchaseRestored([productId UTF8String], [receiptString UTF8String]);
                 [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
                 break;
             }
@@ -217,6 +263,16 @@ void appstore_initiatePurchase(const char* productId)
 {
     NSString *identifier = [NSString stringWithUTF8String:productId];
     [[AppStoreManager sharedInstance] purchaseProduct:identifier];
+}
+
+void appstore_setProductTypes(const char** productIds, const int* types, int count)
+{
+    NSMutableDictionary<NSString *, NSNumber *> *productTypes = [NSMutableDictionary dictionaryWithCapacity:count];
+    for(int i = 0; i < count; i++) {
+        NSString *identifier = [NSString stringWithUTF8String:productIds[i]];
+        [productTypes setObject:[NSNumber numberWithInt:types[i]] forKey:identifier];
+    }
+    [[AppStoreManager sharedInstance] setProductTypes:productTypes];
 }
 
 void appstore_fetchAdditionalProducts(const char** productIds, int count)

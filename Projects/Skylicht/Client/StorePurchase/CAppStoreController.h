@@ -14,6 +14,8 @@ namespace Skylicht
 
 		DECLARE_SINGLETON(CAppStoreController)
 
+		using IStoreController::fetchAdditionalProducts;
+
 		virtual void init();
 
 		virtual void restorePurchase();
@@ -21,6 +23,10 @@ namespace Skylicht
 		virtual void restart();
 
 		virtual void initiatePurchase(const char* productId);
+
+		virtual void setProductType(const char* productId, EIAPProductType type);
+
+		virtual void setProductTypes(const std::vector<SIAPProductConfig>& products);
 
 		virtual void fetchAdditionalProducts(const std::vector<std::string>& productIds);
 	};

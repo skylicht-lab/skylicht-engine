@@ -6,6 +6,7 @@ extern "C"
 {
 	void playStore_restorePurchase();
 	void playStore_initiatePurchase(const char* productId);
+	void playStore_setProductTypes(const char** productIds, const int* types, int count);
 	void playStore_fetchAdditionalProducts(const char** productIds, int count);
 	void playStore_restart();
 
@@ -27,6 +28,7 @@ extern "C"
 			p.LocalizedPrice = localizedPrices[i];
 			p.PriceValue = prices[i];
 			p.CurrencyCode = currencyCodes[i];
+			p.Type = Skylicht::CPlayStoreController::getInstance()->getProductType(productIds[i]);
 			products.push_back(p);
 		}
 		Skylicht::CPlayStoreController::getInstance()->notifyProductReceived(products);
@@ -48,9 +50,17 @@ extern "C"
 	{
 		Skylicht::CPlayStoreController::getInstance()->notifyRestorePurchaseFailed(error, message);
 	}
+	void playStore_onRestorePurchaseCompleted()
+	{
+		Skylicht::CPlayStoreController::getInstance()->notifyRestorePurchaseCompleted();
+	}
 	void playStore_onPurchaseSucceeded(const char* productId, const char* receipt)
 	{
 		Skylicht::CPlayStoreController::getInstance()->notifyPurchaseSucceeded(productId, receipt);
+	}
+	void playStore_onPurchaseRestored(const char* productId, const char* receipt)
+	{
+		Skylicht::CPlayStoreController::getInstance()->notifyPurchaseRestored(productId, receipt);
 	}
 
 	void playStore_onPurchaseFailed(const char* productId, int error, const char* message)
@@ -97,6 +107,30 @@ namespace Skylicht
 	{
 #ifdef ANDROID
 		playStore_initiatePurchase(productId);
+#endif
+	}
+
+	void CPlayStoreController::setProductType(const char* productId, EIAPProductType type)
+	{
+		SIAPProductConfig product(productId ? productId : "", type);
+		std::vector<SIAPProductConfig> products;
+		products.push_back(product);
+		setProductTypes(products);
+	}
+
+	void CPlayStoreController::setProductTypes(const std::vector<SIAPProductConfig>& products)
+	{
+		IStoreController::setProductTypes(products);
+
+#ifdef ANDROID
+		std::vector<const char*> ids;
+		std::vector<int> types;
+		for (size_t i = 0, n = products.size(); i < n; i++)
+		{
+			ids.push_back(products[i].ProductId.c_str());
+			types.push_back((int)products[i].Type);
+		}
+		playStore_setProductTypes(ids.data(), types.data(), (int)ids.size());
 #endif
 	}
 

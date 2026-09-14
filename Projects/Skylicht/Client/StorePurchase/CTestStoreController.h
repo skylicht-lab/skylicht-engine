@@ -14,6 +14,8 @@ namespace Skylicht
 
 		DECLARE_SINGLETON(CTestStoreController)
 
+		using IStoreController::fetchAdditionalProducts;
+
 		virtual void init();
 
 		virtual void restorePurchase();

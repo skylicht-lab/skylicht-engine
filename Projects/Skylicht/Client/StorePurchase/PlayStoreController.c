@@ -9,7 +9,9 @@ extern void playStore_onInitialized();
 extern void playStore_onInitializeFailed(int error, const char* message);
 extern void playStore_onFetchProductFailed(int error, const char* message);
 extern void playStore_onRestorePurchaseFailed(int error, const char* message);
+extern void playStore_onRestorePurchaseCompleted();
 extern void playStore_onPurchaseSucceeded(const char* productId, const char* receipt);
+extern void playStore_onPurchaseRestored(const char* productId, const char* receipt);
 extern void playStore_onPurchaseFailed(const char* productId, int error, const char* message);
 
 extern const char *getJString(JNIEnv* env, jstring jstr);
@@ -19,6 +21,7 @@ jclass g_classPlayStoreController = NULL;
 jmethodID g_restorePurchase;
 jmethodID g_restart;
 jmethodID g_initiatePurchase;
+jmethodID g_setProductTypes;
 jmethodID g_fetchAdditionalProducts;
 
 JNIEXPORT void JNICALL JNI_FUNCTION(PlayStoreController_init)(JNIEnv* env, jobject thiz)
@@ -31,6 +34,7 @@ JNIEXPORT void JNICALL JNI_FUNCTION(PlayStoreController_init)(JNIEnv* env, jobje
 	g_restorePurchase = (*env)->GetStaticMethodID(env, g_classPlayStoreController, "restorePurchase", "()V");
 	g_restart = (*env)->GetStaticMethodID(env, g_classPlayStoreController, "restart", "()V");
 	g_initiatePurchase = (*env)->GetStaticMethodID(env, g_classPlayStoreController, "initiatePurchase", "(Ljava/lang/String;)V");
+	g_setProductTypes = (*env)->GetStaticMethodID(env, g_classPlayStoreController, "setProductTypes", "([Ljava/lang/String;[I)V");
 	g_fetchAdditionalProducts = (*env)->GetStaticMethodID(env, g_classPlayStoreController, "fetchAdditionalProducts", "([Ljava/lang/String;)V");
 }
 
@@ -130,11 +134,25 @@ JNIEXPORT void JNICALL JNI_FUNCTION(PlayStoreController_onRestorePurchaseFailed)
 	(*env)->ReleaseStringUTFChars(env, message, cmsg);
 }
 
+JNIEXPORT void JNICALL JNI_FUNCTION(PlayStoreController_onRestorePurchaseCompleted)(JNIEnv* env, jobject thiz)
+{
+	playStore_onRestorePurchaseCompleted();
+}
+
 JNIEXPORT void JNICALL JNI_FUNCTION(PlayStoreController_onPurchaseSucceeded)(JNIEnv* env, jobject thiz, jstring productId, jstring receipt)
 {
 	const char *cid = getJString(env, productId);
 	const char *creceipt = getJString(env, receipt);
 	playStore_onPurchaseSucceeded(cid, creceipt);
+	(*env)->ReleaseStringUTFChars(env, productId, cid);
+	(*env)->ReleaseStringUTFChars(env, receipt, creceipt);
+}
+
+JNIEXPORT void JNICALL JNI_FUNCTION(PlayStoreController_onPurchaseRestored)(JNIEnv* env, jobject thiz, jstring productId, jstring receipt)
+{
+	const char *cid = getJString(env, productId);
+	const char *creceipt = getJString(env, receipt);
+	playStore_onPurchaseRestored(cid, creceipt);
 	(*env)->ReleaseStringUTFChars(env, productId, cid);
 	(*env)->ReleaseStringUTFChars(env, receipt, creceipt);
 }
@@ -174,6 +192,32 @@ void playStore_initiatePurchase(const char* productId)
 		jstring jproductId = (*env)->NewStringUTF(env, productId);
 		(*env)->CallStaticVoidMethod(env, g_classPlayStoreController, g_initiatePurchase, jproductId);
 		(*env)->DeleteLocalRef(env, jproductId);
+	}
+}
+
+void playStore_setProductTypes(const char** productIds, const int* types, int count)
+{
+	JNIEnv* env = skylichtGetJniEnv();
+	if (env != NULL && g_setProductTypes != NULL && g_classPlayStoreController != NULL)
+	{
+		jclass stringClass = (*env)->FindClass(env, "java/lang/String");
+		jobjectArray idArray = (*env)->NewObjectArray(env, count, stringClass, NULL);
+		jintArray typeArray = (*env)->NewIntArray(env, count);
+		jint* jtypes = (*env)->GetIntArrayElements(env, typeArray, NULL);
+
+		for (int i = 0; i < count; i++)
+		{
+			jstring string = (*env)->NewStringUTF(env, productIds[i]);
+			(*env)->SetObjectArrayElement(env, idArray, i, string);
+			(*env)->DeleteLocalRef(env, string);
+			jtypes[i] = types[i];
+		}
+
+		(*env)->ReleaseIntArrayElements(env, typeArray, jtypes, 0);
+		(*env)->CallStaticVoidMethod(env, g_classPlayStoreController, g_setProductTypes, idArray, typeArray);
+		(*env)->DeleteLocalRef(env, idArray);
+		(*env)->DeleteLocalRef(env, typeArray);
+		(*env)->DeleteLocalRef(env, stringClass);
 	}
 }
 

@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <string>
+#include <map>
 #include "SIAPProduct.h"
 
 class IStoreListener;
@@ -14,6 +15,8 @@ namespace Skylicht
 		std::vector<IStoreListener*> m_listener;
 
 		bool m_isInitialized;
+
+		std::map<std::string, EIAPProductType> m_productTypes;
 
 	public:
 		IStoreController();
@@ -32,7 +35,15 @@ namespace Skylicht
 
 		virtual void initiatePurchase(const char* productId) = 0;
 
+		virtual void setProductType(const char* productId, EIAPProductType type);
+
+		virtual void setProductTypes(const std::vector<SIAPProductConfig>& products);
+
+		EIAPProductType getProductType(const char* productId) const;
+
 		virtual void fetchAdditionalProducts(const std::vector<std::string>& productIds) = 0;
+
+		virtual void fetchAdditionalProducts(const std::vector<SIAPProductConfig>& products);
 
 		inline bool isInitialized() { return m_isInitialized; }
 
@@ -47,7 +58,11 @@ namespace Skylicht
 
 		void notifyRestorePurchaseFailed(int error, const char* message);
 
+		void notifyRestorePurchaseCompleted();
+
 		void notifyPurchaseSucceeded(const char* productId, const char* receipt);
+
+		void notifyPurchaseRestored(const char* productId, const char* receipt);
 
 		void notifyPurchaseFailed(const char* productId, int error, const char* message);
 	};

@@ -17,7 +17,11 @@ public:
 
 	virtual void onRestorePurchaseFailed(int error, const char* message) = 0;
 
+	virtual void onRestorePurchaseCompleted() {}
+
 	virtual void onPurchaseSucceeded(const char* productId, const char* receipt) = 0;
+
+	virtual void onPurchaseRestored(const char* productId, const char* receipt) {}
 
 	virtual void onPurchaseFailed(const char* productId, int error, const char* message) = 0;
 };

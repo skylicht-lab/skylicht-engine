@@ -47,6 +47,7 @@ namespace Skylicht
 			p.LocalizedPrice = "$0.00";
 			p.PriceValue = 0.0f;
 			p.CurrencyCode = "USD";
+			p.Type = getProductType(id.c_str());
 			products.push_back(p);
 		}
 		notifyProductReceived(products);

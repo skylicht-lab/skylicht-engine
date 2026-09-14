@@ -76,6 +76,13 @@ namespace Skylicht
 			l->onRestorePurchaseFailed(error, message);
 	}
 
+	void IStoreController::notifyRestorePurchaseCompleted()
+	{
+		std::vector<IStoreListener*> listeners = m_listener;
+		for (IStoreListener* l : listeners)
+			l->onRestorePurchaseCompleted();
+	}
+
 	void IStoreController::notifyPurchaseSucceeded(const char* productId, const char* receipt)
 	{
 		std::vector<IStoreListener*> listeners = m_listener;
@@ -83,11 +90,54 @@ namespace Skylicht
 			l->onPurchaseSucceeded(productId, receipt);
 	}
 
+	void IStoreController::notifyPurchaseRestored(const char* productId, const char* receipt)
+	{
+		std::vector<IStoreListener*> listeners = m_listener;
+		for (IStoreListener* l : listeners)
+			l->onPurchaseRestored(productId, receipt);
+	}
+
 	void IStoreController::notifyPurchaseFailed(const char* productId, int error, const char* message)
 	{
 		std::vector<IStoreListener*> listeners = m_listener;
 		for (IStoreListener* l : listeners)
 			l->onPurchaseFailed(productId, error, message);
+	}
+
+	void IStoreController::setProductType(const char* productId, EIAPProductType type)
+	{
+		if (productId == NULL || productId[0] == 0)
+			return;
+		m_productTypes[productId] = type;
+	}
+
+	void IStoreController::setProductTypes(const std::vector<SIAPProductConfig>& products)
+	{
+		for (const SIAPProductConfig& p : products)
+			setProductType(p.ProductId.c_str(), p.Type);
+	}
+
+	EIAPProductType IStoreController::getProductType(const char* productId) const
+	{
+		if (productId == NULL)
+			return IAP_CONSUMABLE;
+
+		std::map<std::string, EIAPProductType>::const_iterator it = m_productTypes.find(productId);
+		if (it != m_productTypes.end())
+			return it->second;
+
+		return IAP_CONSUMABLE;
+	}
+
+	void IStoreController::fetchAdditionalProducts(const std::vector<SIAPProductConfig>& products)
+	{
+		setProductTypes(products);
+
+		std::vector<std::string> productIds;
+		for (const SIAPProductConfig& p : products)
+			productIds.push_back(p.ProductId);
+
+		fetchAdditionalProducts(productIds);
 	}
 
 	IStoreController* getStoreController(bool isTesting)
