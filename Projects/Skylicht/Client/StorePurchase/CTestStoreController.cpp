@@ -21,7 +21,8 @@ namespace Skylicht
 
 	void CTestStoreController::restorePurchase()
 	{
-
+		// Always return failed for test
+		notifyRestorePurchaseFailed(-10, "Sandbox testing");
 	}
 
 	void CTestStoreController::restart()
