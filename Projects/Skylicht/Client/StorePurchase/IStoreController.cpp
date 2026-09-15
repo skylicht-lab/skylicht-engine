@@ -114,7 +114,7 @@ namespace Skylicht
 	void IStoreController::setProductTypes(const std::vector<SIAPProductConfig>& products)
 	{
 		for (const SIAPProductConfig& p : products)
-			setProductType(p.ProductId.c_str(), p.Type);
+			m_productTypes[p.ProductId.c_str()] = p.Type;
 	}
 
 	EIAPProductType IStoreController::getProductType(const char* productId) const
