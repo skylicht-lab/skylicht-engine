@@ -29,6 +29,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "ParticleSystem/Particles/CGroup.h"
 
 #include "ParticleSystem/Particles/Renderers/CQuadRenderer.h"
+#include "ParticleSystem/Particles/Renderers/CMeshParticleRenderer.h"
 
 namespace Skylicht
 {
@@ -77,11 +78,10 @@ namespace Skylicht
 				sy = renderer->SizeY;
 				sz = renderer->SizeZ;
 
-				if (renderer->getType() == Particle::Quad)
+				if (renderer->getType() != CPURenderer)
 				{
-					CQuadRenderer* quadRenderer = (CQuadRenderer*)renderer;
-					frameX = quadRenderer->getAtlasX();
-					frameY = quadRenderer->getAtlasY();
+					frameX = renderer->getAtlasX();
+					frameY = renderer->getAtlasY();
 				}
 			}
 
@@ -90,7 +90,7 @@ namespace Skylicht
 			float frameH = 1.0f / frameY;
 			u32 frame, row, col;
 
-// #pragma omp parallel for private(p, params, data, frame, row, col)
+			// #pragma omp parallel for private(p, params, data, frame, row, col)
 			for (int i = 0; i < num; i++)
 			{
 				p = particles + i;
