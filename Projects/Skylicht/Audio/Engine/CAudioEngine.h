@@ -38,6 +38,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "CAudioEmitter.h"
 #include "CAudioReader.h"
 
+#include <atomic>
+
 using namespace Skylicht::System;
 
 namespace Skylicht
@@ -67,14 +69,14 @@ namespace Skylicht
 		 * @ingroup Audio
 		 * @code
 		 * #include "SkylichtAudio.h"
-		 * 
+		 *
 		 * // Setup audio listener (e.g., from camera)
 		 * Audio::CAudioEngine::getSoundEngine()->setListener(
 		 *     pos.X, pos.Y, pos.Z,
 		 *     up.X, up.Y, up.Z,
 		 *     front.X, front.Y, front.Z
 		 * );
-		 * 
+		 *
 		 * // Create an emitter
 		 * Audio::CAudioEmitter* music = Audio::CAudioEngine::getSoundEngine()->createAudioEmitter("music.mp3", false);
 		 * music->play();
@@ -104,6 +106,8 @@ namespace Skylicht
 			SListener m_listener;
 
 			bool m_pause;
+
+			std::atomic<bool> m_requestStopAllSound;
 
 		public:
 			/**

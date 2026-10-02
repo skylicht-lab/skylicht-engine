@@ -57,6 +57,17 @@ namespace Skylicht
 			}
 		}
 
+		void CUIEventManager::releaseCapture(CUIBase* base)
+		{
+			for (auto it = m_multiTouchCapture.begin(); it != m_multiTouchCapture.end();)
+			{
+				if (it->second == base)
+					it = m_multiTouchCapture.erase(it);
+				else
+					++it;
+			}
+		}
+
 		bool CUIEventManager::OnProcessEvent(const SEvent& event)
 		{
 			if (event.EventType == EET_MOUSE_INPUT_EVENT)

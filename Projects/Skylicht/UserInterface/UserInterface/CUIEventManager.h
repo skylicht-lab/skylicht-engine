@@ -112,6 +112,9 @@ namespace Skylicht
 
 			void setMultiTouchCapture(int pointerId, CUIBase* base);
 
+			/** @brief Release all pointer captures belonging to a UI element. */
+			void releaseCapture(CUIBase* base);
+
 			inline void setCapture(int pointerId, CUIBase* base)
 			{
 				setMultiTouchCapture(pointerId, base);

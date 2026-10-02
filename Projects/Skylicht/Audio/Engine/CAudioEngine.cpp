@@ -71,7 +71,8 @@ namespace Skylicht
 			m_pause(false),
 			m_defaultStreamFactory(NULL),
 			m_driver(NULL),
-			m_thread(NULL)
+			m_thread(NULL),
+			m_requestStopAllSound(false)
 		{
 			m_mutex = IMutex::createMutex();
 		}
@@ -188,6 +189,10 @@ namespace Skylicht
 
 		void CAudioEngine::stopAllSound()
 		{
+#if defined(ANDROID) || defined(IOS)
+			// todo: fix ANR lock on Android and IOS when stop all sound
+			m_requestStopAllSound.store(true);
+#else
 			m_mutex->lock();
 			std::vector<CAudioEmitter*>::iterator i = m_emitters.begin(), end = m_emitters.end();
 			while (i != end)
@@ -196,11 +201,15 @@ namespace Skylicht
 				++i;
 			}
 			m_mutex->unlock();
+#endif
 		}
 
 		void CAudioEngine::updateEmitter()
 		{
 			m_mutex->lock();
+
+			// todo process stop all sound request
+			bool requestStop = m_requestStopAllSound.load();
 
 			// todo update sound engine
 			std::vector<CAudioEmitter*>::iterator i = m_emitters.begin(), end = m_emitters.end();
@@ -208,10 +217,13 @@ namespace Skylicht
 			while (i != end)
 			{
 				CAudioEmitter* emitter = (*i);
+				if (requestStop)
+					emitter->stop();
 				emitter->update();
 				++i;
 			}
 
+			m_requestStopAllSound.store(false);
 			m_mutex->unlock();
 		}
 
