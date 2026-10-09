@@ -197,10 +197,18 @@ FastWriter::enableYAMLCompatibility()
 std::string 
 FastWriter::write( const Value &root )
 {
+   writeCString( root );
+   return document_;
+}
+
+
+const char *
+FastWriter::writeCString( const Value &root )
+{
    document_ = "";
    writeValue( root );
    document_ += "\n";
-   return document_;
+   return document_.c_str();
 }
 
 

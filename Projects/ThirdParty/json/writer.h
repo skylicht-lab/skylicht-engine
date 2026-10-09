@@ -37,6 +37,12 @@ namespace Json {
    public: // overridden from Writer
       virtual std::string write( const Value &root );
 
+      /** Returns a buffer owned by this writer.
+       * Valid until the next write()/writeCString() call or writer destruction.
+       * Copy the contents before destroying the writer; do not free the pointer.
+       */
+      const char *writeCString( const Value &root );
+
    private:
       void writeValue( const Value &value );
 
