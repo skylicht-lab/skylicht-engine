@@ -60,8 +60,6 @@ namespace Skylicht
 			
 			virtual void uploadData(void* soundData, unsigned int bufferSize);
 			
-			virtual void lockThread();
-			virtual void unlockThread();
 			
 			virtual void fillBuffer(int* buffer, int nbSample, float gain = 1.0f);
 			

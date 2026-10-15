@@ -121,6 +121,9 @@ namespace Skylicht
 
 			void updateSourceBuffer();
 
+			// Caller must hold m_mutex.
+			void playInternal(bool fromBegin);
+
 		public:
 			CAudioEmitter(IStream* stream, IAudioDecoder::EDecoderType type, ISoundDriver* driver);
 
@@ -170,6 +173,7 @@ namespace Skylicht
 			 */
 			ISoundSource::ESourceState getState()
 			{
+				SScopeMutex scopelock(m_mutex);
 				return m_state;
 			}
 
@@ -247,6 +251,7 @@ namespace Skylicht
 			 */
 			virtual bool isLoop()
 			{
+				SScopeMutex scopelock(m_mutex);
 				return m_loop;
 			}
 
@@ -262,6 +267,7 @@ namespace Skylicht
 			 */
 			virtual float getPitch()
 			{
+				SScopeMutex scopelock(m_mutex);
 				return m_pitch;
 			}
 
@@ -277,6 +283,7 @@ namespace Skylicht
 			 */
 			virtual float getGain()
 			{
+				SScopeMutex scopelock(m_mutex);
 				return m_gain;
 			}
 
@@ -306,6 +313,7 @@ namespace Skylicht
 			 */
 			float getCurrentTime()
 			{
+				SScopeMutex scopelock(m_mutex);
 				return m_currentTime;
 			}
 

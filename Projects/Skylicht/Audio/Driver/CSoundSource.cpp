@@ -108,6 +108,7 @@ namespace Skylicht
 		
 		int CSoundSource::getBufferSize()
 		{
+			SScopeMutex scopeLock(m_mutex);
 			return m_bufferSize;
 		}
 		
@@ -151,11 +152,13 @@ namespace Skylicht
 		
 		ISoundSource::ESourceState CSoundSource::getState()
 		{
+			SScopeMutex scopeLock(m_mutex);
 			return m_state;
 		}
 		
 		void CSoundSource::setState(ESourceState state)
 		{
+			SScopeMutex scopeLock(m_mutex);
 			m_state = state;
 		}
 		
@@ -196,16 +199,6 @@ namespace Skylicht
 			m_buffers[m_driverBuffer].UsedSize = bufferSize;
 			m_buffers[m_driverBuffer].TotalSize = bufferSize;
 			m_buffers[m_driverBuffer].Free = false;
-		}
-		
-		void CSoundSource::lockThread()
-		{
-			m_mutex->lock();
-		}
-		
-		void CSoundSource::unlockThread()
-		{
-			m_mutex->unlock();
 		}
 		
 		void CSoundSource::fillBuffer(int* buffer, int nbSample, float gain)
@@ -293,36 +286,43 @@ namespace Skylicht
 		
 		void CSoundSource::setGain(float gain)
 		{
+			SScopeMutex scopeLock(m_mutex);
 			m_gain = gain;
 		}
 		
 		void CSoundSource::setPitch(float pitch)
 		{
+			SScopeMutex scopeLock(m_mutex);
 			m_pitch = pitch;
 		}
 		
 		void CSoundSource::setPosition(const SVector3& pos)
 		{
+			SScopeMutex scopeLock(m_mutex);
 			m_position = pos;
 		}
 		
 		void CSoundSource::setRollOff(float rollOff)
 		{
+			SScopeMutex scopeLock(m_mutex);
 			m_rollOff = rollOff;
 		}
 		
 		void CSoundSource::set3DSound(bool b)
 		{
+			SScopeMutex scopeLock(m_mutex);
 			m_is3DSound = b;
 		}
 		
 		float CSoundSource::getGain()
 		{
+			SScopeMutex scopeLock(m_mutex);
 			return m_gain;
 		}
 		
 		float CSoundSource::getPitch()
 		{
+			SScopeMutex scopeLock(m_mutex);
 			return m_pitch;
 		}
 		
@@ -332,11 +332,13 @@ namespace Skylicht
 		
 		float CSoundSource::getBufferLength()
 		{
+			SScopeMutex scopeLock(m_mutex);
 			return m_bufferDuration;
 		}
 		
 		int CSoundSource::getSampleRate()
 		{
+			SScopeMutex scopeLock(m_mutex);
 			return m_trackParams.SamplingRate;
 		}
 		

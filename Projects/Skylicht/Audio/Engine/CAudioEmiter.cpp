@@ -556,15 +556,12 @@ namespace Skylicht
 
 					if (m_source)
 					{
-						m_source->lockThread();
-
 						if (m_buffer)
 						{
 							for (int i = 0; i < m_numBuffer; i++)
 								memset(m_buffer[i], 0, m_bufferSize);
 						}
 
-						m_source->unlockThread();
 					}
 				}
 
@@ -573,6 +570,8 @@ namespace Skylicht
 
 		void CAudioEmitter::stopWithFade(float time)
 		{
+			SScopeMutex scopelock(m_mutex);
+
 			m_fadeGain = m_gain;
 			m_fadeout = time;
 			m_stopWithFade = time;
@@ -581,9 +580,11 @@ namespace Skylicht
 
 		void CAudioEmitter::playWithFade(float gain, float time)
 		{
+			SScopeMutex scopelock(m_mutex);
+
 			m_fadeGain = gain;
 			m_gain = 0.0f;
-			play();
+			playInternal(true);
 			m_fadeout = time;
 			m_playWithFade = time;
 			m_stopWithFade = -1.0f;
@@ -591,10 +592,10 @@ namespace Skylicht
 
 		void CAudioEmitter::seek(float time)
 		{
-			if (m_decoder == NULL && m_init == true)
-				return;
-
 			SScopeMutex scopelock(m_mutex);
+
+			if (m_decoder == NULL)
+				return;
 
 			STrackParams trackParam;
 			m_decoder->getTrackParam(&trackParam);
@@ -604,15 +605,12 @@ namespace Skylicht
 
 			if (m_state != ISoundSource::StatePause && m_source)
 			{
-				m_source->lockThread();
-
 				if (m_buffer)
 				{
 					for (int i = 0; i < m_numBuffer; i++)
 						memset(m_buffer[i], 0, m_bufferSize);
 				}
 
-				m_source->unlockThread();
 			}
 
 			m_currentTime = time;
@@ -620,10 +618,15 @@ namespace Skylicht
 
 		void CAudioEmitter::play(bool fromBegin)
 		{
+			SScopeMutex scopelock(m_mutex);
+			playInternal(fromBegin);
+		}
+
+		void CAudioEmitter::playInternal(bool fromBegin)
+		{
 			m_fadeout = -1.0f;
 			m_stopWithFade = -1.0f;
 
-			SScopeMutex scopelock(m_mutex);
 			m_state = ISoundSource::StatePlaying;
 
 			if (fromBegin && m_decoder)
@@ -639,7 +642,7 @@ namespace Skylicht
 
 		void CAudioEmitter::setGain(float g)
 		{
-			// SScopeMutex scopelock(m_mutex);
+			SScopeMutex scopelock(m_mutex);
 			m_gain = g;
 
 			// clamp the gain
@@ -651,17 +654,15 @@ namespace Skylicht
 
 		void CAudioEmitter::stop()
 		{
+			SScopeMutex scopelock(m_mutex);
+
 			if (m_state == ISoundSource::StateStopped)
 				return;
-
-			SScopeMutex scopelock(m_mutex);
 
 			// silent buffer
 			// fix bug dirty sample
 			if (m_state != ISoundSource::StateStopped && m_source)
 			{
-				m_source->lockThread();
-
 				if (m_buffer)
 				{
 					for (int i = 0; i < m_numBuffer; i++)
@@ -671,7 +672,6 @@ namespace Skylicht
 				if (m_decoder)
 					m_decoder->seek(0);
 
-				m_source->unlockThread();
 			}
 
 			m_state = ISoundSource::StateStopped;
@@ -681,24 +681,21 @@ namespace Skylicht
 
 		void CAudioEmitter::pause()
 		{
+			SScopeMutex scopelock(m_mutex);
+
 			if (m_state == ISoundSource::StatePause)
 				return;
-
-			SScopeMutex scopelock(m_mutex);
 
 			// silent buffer
 			// fix bug dirty sample
 			if (m_state != ISoundSource::StatePause && m_source)
 			{
-				m_source->lockThread();
-
 				if (m_buffer)
 				{
 					for (int i = 0; i < m_numBuffer; i++)
 						memset(m_buffer[i], 0, m_bufferSize);
 				}
 
-				m_source->unlockThread();
 			}
 
 			// CAudioEngine::getSoundEngine()->pushEvent(EVENT_PAUSE);
@@ -710,7 +707,7 @@ namespace Skylicht
 
 		void CAudioEmitter::setPitch(float p)
 		{
-			// SScopeMutex scopelock(m_mutex);
+			SScopeMutex scopelock(m_mutex);
 			m_pitch = p;
 
 			// clamp the pitch
@@ -722,7 +719,7 @@ namespace Skylicht
 
 		void CAudioEmitter::reset()
 		{
-			// SScopeMutex scopelock(m_mutex);
+			SScopeMutex scopelock(m_mutex);
 			m_state = ISoundSource::StateStopped;
 			if (m_source)
 				m_source->stop();
@@ -730,6 +727,8 @@ namespace Skylicht
 
 		void CAudioEmitter::stopStream()
 		{
+			SScopeMutex scopelock(m_mutex);
+
 			m_state = ISoundSource::StateStopped;
 			if (m_source)
 				m_source->stop();
@@ -739,18 +738,20 @@ namespace Skylicht
 
 		void CAudioEmitter::setLoop(bool loop)
 		{
-			// SScopeMutex scopelock(m_mutex);
+			SScopeMutex scopelock(m_mutex);
 			m_loop = loop;
 		}
 
 		bool CAudioEmitter::isPlaying()
 		{
+			SScopeMutex scopelock(m_mutex);
+
 			return m_state == ISoundSource::StatePlaying;
 		}
 
 		void CAudioEmitter::setPosition(float x, float y, float z)
 		{
-			// SScopeMutex scopelock(m_mutex);
+			SScopeMutex scopelock(m_mutex);
 			m_is3DSound = true;
 			m_position.X = x;
 			m_position.Y = y;
@@ -759,7 +760,7 @@ namespace Skylicht
 
 		void CAudioEmitter::setRollOff(float rollOff)
 		{
-			// SScopeMutex scopelock(m_mutex);
+			SScopeMutex scopelock(m_mutex);
 			m_rollOff = rollOff;
 		}
 	}

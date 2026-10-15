@@ -125,8 +125,6 @@ namespace Skylicht
 			virtual int getBufferSize() = 0;
 			virtual void uploadData(void* soundData, unsigned int bufferSize) = 0;
 			
-			virtual void lockThread() = 0;
-			virtual void unlockThread() = 0;
 			
 			virtual void setGain(float gain) = 0;
 			virtual void setPitch(float pitch) = 0;
