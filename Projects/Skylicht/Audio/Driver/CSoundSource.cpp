@@ -94,9 +94,14 @@ namespace Skylicht
 		
 		void CSoundSource::changeDuration(float duration)
 		{
-			// recalc buffer size
+			SScopeMutex scopeLock(m_mutex);
+
 			m_bufferDuration = duration;
-			
+
+			if (m_state == ISoundSource::StateInitial)
+				return;
+
+			// recalc buffer size
 			m_bufferSize = (int)(m_bufferDuration * m_trackParams.SamplingRate);
 			m_bufferSize = m_bufferSize * m_numChannels * m_bitPerSample / 8;
 		}

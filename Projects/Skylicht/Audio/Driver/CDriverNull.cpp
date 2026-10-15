@@ -85,6 +85,8 @@ namespace Skylicht
 		
 		void CDriverNull::changeDuration(float duration)
 		{
+			SScopeMutex lockScope(m_mutex);
+
 			m_bufferLength = duration;
 			
 			// loop all source
