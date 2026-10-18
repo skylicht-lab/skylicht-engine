@@ -32,6 +32,8 @@ namespace Skylicht
 		std::vector<SDelayCall*> m_insertCalls;
 		std::vector<SDelayCall*> m_removeCalls;
 
+		bool m_notifyClear;
+
 	public:
 		CTweenManager();
 

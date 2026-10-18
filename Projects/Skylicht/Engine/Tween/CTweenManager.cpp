@@ -5,7 +5,8 @@ namespace Skylicht
 {
 	IMPLEMENT_SINGLETON(CTweenManager);
 
-	CTweenManager::CTweenManager()
+	CTweenManager::CTweenManager() :
+		m_notifyClear(false)
 	{
 
 	}
@@ -17,6 +18,20 @@ namespace Skylicht
 
 	void CTweenManager::update()
 	{
+		// should clear all delay call
+		if (m_notifyClear)
+		{
+			for (SDelayCall* delayCall : m_insertCalls)
+				delete delayCall;
+			m_insertCalls.clear();
+
+			for (SDelayCall* delayCall : m_delayCalls)
+				delete delayCall;
+			m_delayCalls.clear();
+
+			m_notifyClear = false;
+		}
+
 		// delay call
 		m_delayCalls.insert(m_delayCalls.end(), m_insertCalls.begin(), m_insertCalls.end());
 		m_insertCalls.clear();
@@ -109,12 +124,6 @@ namespace Skylicht
 
 	void CTweenManager::clearDelayCall()
 	{
-		for (SDelayCall* delayCall : m_insertCalls)
-			delete delayCall;
-		m_insertCalls.clear();
-
-		for (SDelayCall* delayCall : m_delayCalls)
-			delete delayCall;
-		m_delayCalls.clear();
+		m_notifyClear = true;
 	}
 }
