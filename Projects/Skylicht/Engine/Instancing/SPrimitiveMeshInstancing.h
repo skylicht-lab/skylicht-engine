@@ -47,6 +47,7 @@ namespace Skylicht
 		IShaderInstancing* InstancingShader;
 		int PrimitiveType;
 		bool HaveTangent;
+		video::E_VERTEX_TYPE BaseVertexType;
 		CMesh* Mesh;
 
 		SPrimitiveMeshInstancing()

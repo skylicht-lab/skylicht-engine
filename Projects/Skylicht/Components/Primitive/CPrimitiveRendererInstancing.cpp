@@ -126,6 +126,7 @@ namespace Skylicht
 							SPrimitiveMeshInstancing* newInstancing = new SPrimitiveMeshInstancing();
 							newInstancing->InstancingShader = instancingShader;
 							newInstancing->Mesh = mesh;
+							newInstancing->BaseVertexType = vtxType;
 							newInstancing->HaveTangent = p->NormalMap;
 							newInstancing->PrimitiveType = p->Type;
 
@@ -147,7 +148,7 @@ namespace Skylicht
 							{
 								SInstancingVertexBuffer* buffer = new SInstancingVertexBuffer();
 
-								buffer->BaseVertexType = mesh->getVertexType();
+								buffer->BaseVertexType = instancingMesh->BaseVertexType;
 								buffer->Instancing = instancingShader->createInstancingVertexBuffer();
 								buffer->Instancing->setHardwareMappingHint(EHM_STREAM);
 
