@@ -99,15 +99,23 @@ namespace Skylicht
 
 			std::vector<CAudioEmitter*> m_emitters;
 
+			// Keep creation independent of the engine lock held during emitter updates.
+			IMutex* m_pendingEmittersMutex;
+
+			std::vector<CAudioEmitter*> m_pendingEmitters;
+
 			std::vector<CAudioReader*> m_readers;
 
 			std::map<std::string, IStream*>	m_fileToStream;
 
-			SListener m_listener;
+			std::atomic<SListener> m_listener;
 
 			bool m_pause;
 
 			std::atomic<bool> m_requestStopAllSound;
+
+			// Caller must hold m_mutex. The pending mutex is only held during the swap.
+			void flushPendingEmitters();
 
 		public:
 			/**
@@ -318,12 +326,12 @@ namespace Skylicht
 			void setListener(float posx, float posy, float posz, float upx, float upy, float upz, float frontx, float fronty, float frontz);
 
 			/**
-			 * @brief Get current listener parameters.
+			 * @brief Get a thread-safe snapshot of the current listener parameters.
 			 * @return SListener structure
 			 */
-			inline const SListener& getListener()
+			inline SListener getListener()
 			{
-				return m_listener;
+				return m_listener.load(std::memory_order_relaxed);
 			}
 
 			/**

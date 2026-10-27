@@ -72,14 +72,17 @@ namespace Skylicht
 			m_defaultStreamFactory(NULL),
 			m_driver(NULL),
 			m_thread(NULL),
+			m_listener(SListener()),
 			m_requestStopAllSound(false)
 		{
 			m_mutex = IMutex::createMutex();
+			m_pendingEmittersMutex = IMutex::createMutex();
 		}
 
 		CAudioEngine::~CAudioEngine()
 		{
 			shutdown();
+			delete m_pendingEmittersMutex;
 			delete m_mutex;
 		}
 
@@ -194,6 +197,7 @@ namespace Skylicht
 			m_requestStopAllSound.store(true);
 #else
 			m_mutex->lock();
+			flushPendingEmitters();
 			std::vector<CAudioEmitter*>::iterator i = m_emitters.begin(), end = m_emitters.end();
 			while (i != end)
 			{
@@ -204,9 +208,21 @@ namespace Skylicht
 #endif
 		}
 
+		void CAudioEngine::flushPendingEmitters()
+		{
+			std::vector<CAudioEmitter*> pending;
+			{
+				SScopeMutex lockScope(m_pendingEmittersMutex);
+				pending.swap(m_pendingEmitters);
+			}
+
+			m_emitters.insert(m_emitters.end(), pending.begin(), pending.end());
+		}
+
 		void CAudioEngine::updateEmitter()
 		{
 			m_mutex->lock();
+			flushPendingEmitters();
 
 			// todo process stop all sound request
 			bool requestStop = m_requestStopAllSound.load();
@@ -357,28 +373,25 @@ namespace Skylicht
 
 		CAudioEmitter* CAudioEngine::createAudioEmitter(IStream* stream, IAudioDecoder::EDecoderType decode)
 		{
-			SScopeMutex lockScope(m_mutex);
-
 			CAudioEmitter* emitter = new CAudioEmitter(stream, decode, m_driver);
-			m_emitters.push_back(emitter);
+			SScopeMutex lockScope(m_pendingEmittersMutex);
+			m_pendingEmitters.push_back(emitter);
 			return emitter;
 		}
 
 		CAudioEmitter* CAudioEngine::createAudioEmitter(const char* fileName, bool cache)
 		{
-			SScopeMutex lockScope(m_mutex);
-
 			CAudioEmitter* emitter = new CAudioEmitter(fileName, cache, m_driver);
-			m_emitters.push_back(emitter);
+			SScopeMutex lockScope(m_pendingEmittersMutex);
+			m_pendingEmitters.push_back(emitter);
 			return emitter;
 		}
 
 		CAudioEmitter* CAudioEngine::createRawAudioEmitter(IStream* stream)
 		{
-			SScopeMutex lockScope(m_mutex);
-
 			CAudioEmitter* emitter = new CAudioEmitter(stream, IAudioDecoder::RawWav, m_driver);
-			m_emitters.push_back(emitter);
+			SScopeMutex lockScope(m_pendingEmittersMutex);
+			m_pendingEmitters.push_back(emitter);
 			return emitter;
 		}
 
@@ -403,6 +416,7 @@ namespace Skylicht
 		void CAudioEngine::destroyEmitter(CAudioEmitter* emitter)
 		{
 			SScopeMutex lockScope(m_mutex);
+			flushPendingEmitters();
 			std::vector<CAudioEmitter*>::iterator i = m_emitters.begin(), end = m_emitters.end();
 
 			while (i != end)
@@ -448,6 +462,7 @@ namespace Skylicht
 		void CAudioEngine::destroyAllEmitter()
 		{
 			SScopeMutex lockScope(m_mutex);
+			flushPendingEmitters();
 			std::vector<CAudioEmitter*>::iterator i = m_emitters.begin(), end = m_emitters.end();
 
 			while (i != end)
@@ -475,18 +490,20 @@ namespace Skylicht
 
 		void CAudioEngine::setListener(float posx, float posy, float posz, float upx, float upy, float upz, float frontx, float fronty, float frontz)
 		{
-			SScopeMutex lockScope(m_mutex);
-			m_listener.Position.X = posx;
-			m_listener.Position.Y = posy;
-			m_listener.Position.Z = posz;
+			SListener listener;
+			listener.Position.X = posx;
+			listener.Position.Y = posy;
+			listener.Position.Z = posz;
 
-			m_listener.Up.X = upx;
-			m_listener.Up.Y = upy;
-			m_listener.Up.Z = upz;
+			listener.Up.X = upx;
+			listener.Up.Y = upy;
+			listener.Up.Z = upz;
 
-			m_listener.LookAt.X = frontx;
-			m_listener.LookAt.Y = fronty;
-			m_listener.LookAt.Z = frontz;
+			listener.LookAt.X = frontx;
+			listener.LookAt.Y = fronty;
+			listener.LookAt.Z = frontz;
+
+			m_listener.store(listener, std::memory_order_relaxed);
 		}
 	}
 }

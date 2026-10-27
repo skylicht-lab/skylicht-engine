@@ -345,7 +345,7 @@ namespace Skylicht
 		void CSoundSource::update3D()
 		{
 			// calc distance gain
-			const SListener& listener = CAudioEngine::getSoundEngine()->getListener();
+			const SListener listener = CAudioEngine::getSoundEngine()->getListener();
 			
 			m_distanceGain = calcDistanceGain(listener);
 			calcLeftRightGain(listener, m_leftGain, m_rightGain);
