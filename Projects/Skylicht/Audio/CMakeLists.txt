@@ -51,6 +51,11 @@ if (MSVC OR CYGWIN OR MINGW)
 endif()
 endif()
 
+if (CYGWIN OR MINGW)
+	# std::atomic<SListener> requires GCC's runtime for aggregate atomic operations.
+	target_link_libraries(Audio atomic)
+endif()
+
 if (INSTALL_LIBS)
 install(TARGETS Audio
 			EXPORT AudioTargets

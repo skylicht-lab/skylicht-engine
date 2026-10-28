@@ -274,6 +274,12 @@ struct timeval {
  * 'bool' stuff compatible with HP-UX headers.
  */
 
+/* C23 provides bool, true and false as language keywords. */
+#if defined(__STDC_VERSION__) && (__STDC_VERSION__ > 201710L) && \
+    !defined(HAVE_BOOL_T)
+#  define HAVE_BOOL_T
+#endif
+
 #if defined(__hpux) && !defined(HAVE_BOOL_T)
    typedef int bool;
 #  define false 0
