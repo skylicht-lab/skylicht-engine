@@ -229,7 +229,7 @@ public class FullscreenActivity extends AppCompatActivity {
         super.onPause();
 
         // pause native app
-        NativeInterface.getInstance().mainPauseApp();
+        mContentView.queueEvent(() -> NativeInterface.getInstance().mainPauseApp());
 
         mContentView.onPause();
     }
@@ -242,7 +242,7 @@ public class FullscreenActivity extends AppCompatActivity {
         delayedHide(0);
 
         createSaveFolder();
-        NativeInterface.getInstance().mainResumeApp(1);
+        mContentView.queueEvent(() -> NativeInterface.getInstance().mainResumeApp(1));
     }
 
     @Override

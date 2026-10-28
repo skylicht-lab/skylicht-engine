@@ -449,6 +449,9 @@ namespace Skylicht
 
 	void CApplication::resume(int showConnecting)
 	{
+		if (m_device == NULL)
+			return;
+
 		if (m_runGame == false)
 		{
 			os::Printer::log("CApplication::resume");
@@ -472,7 +475,9 @@ namespace Skylicht
 
 	void CApplication::resetTouch()
 	{
-		CTouchManager::getInstance()->resetTouch();
+		CTouchManager* touchManager = CTouchManager::getInstance();
+		if (touchManager)
+			touchManager->resetTouch();
 
 #ifdef BUILD_SKYLICHT_UI
 		if (UI::CUIEventManager::getInstance())
