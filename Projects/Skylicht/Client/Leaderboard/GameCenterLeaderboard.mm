@@ -36,7 +36,7 @@ void gamecenter_postScore(const char* id, int64_t score)
 
 		if (@available(iOS 14.0, *))
 		{
-			[GKLeaderboard submitScore:(NSInteger)score context:0 player:player leaderboardIDs:@[leaderboardID] withCompletionHandler:^(NSError* error)
+			[GKLeaderboard submitScore:(NSInteger)score context:0 player:player leaderboardIDs:@[leaderboardID] completionHandler:^(NSError* error)
 			{
 				if (error != nil)
 					NSLog(@"Skylicht: Post leaderboard score failed for %@: %@", leaderboardID, error);
