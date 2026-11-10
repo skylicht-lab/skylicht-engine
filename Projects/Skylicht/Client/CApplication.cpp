@@ -79,6 +79,8 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "InAppReview/CIOSInAppReview.h"
 #include "Achievement/CPlayGamesAchievement.h"
 #include "Achievement/CGameCenterAchievement.h"
+#include "Leaderboard/CPlayGamesLeaderboard.h"
+#include "Leaderboard/CGameCenterLeaderboard.h"
 #include "PostNotification/CAndroidPostNotification.h"
 #include "PostNotification/CIOSPostNotification.h"
 
@@ -216,6 +218,7 @@ namespace Skylicht
 #ifdef ANDROID
 		CPlayGamesSignIn::createGetInstance();
 		CPlayGamesAchievement::createGetInstance();
+		CPlayGamesLeaderboard::createGetInstance();
 		CAndroidTextField::createGetInstance();
 		CAndroidClipboard::createGetInstance();
 		CPlayStoreController::createGetInstance();
@@ -226,6 +229,7 @@ namespace Skylicht
 #ifdef IOS
 		CGameCenterSignIn::createGetInstance();
 		CGameCenterAchievement::createGetInstance();
+		CGameCenterLeaderboard::createGetInstance();
 		CIOSTextField::createGetInstance();
 		CAppStoreController::createGetInstance()->init();
 		CIOSInAppReview::createGetInstance();
@@ -239,6 +243,7 @@ namespace Skylicht
 	{
 #ifdef ANDROID
 		CPlayGamesSignIn::releaseInstance();
+		CPlayGamesLeaderboard::releaseInstance();
 		CPlayGamesAchievement::releaseInstance();
 		CPlayStoreController::releaseInstance();
 		CAndroidClipboard::releaseInstance();
@@ -249,6 +254,7 @@ namespace Skylicht
 
 #ifdef IOS
 		CGameCenterSignIn::releaseInstance();
+		CGameCenterLeaderboard::releaseInstance();
 		CGameCenterAchievement::releaseInstance();
 		CIOSTextField::releaseInstance();
 		CAppStoreController::releaseInstance();

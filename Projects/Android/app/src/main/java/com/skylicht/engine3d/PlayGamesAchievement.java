@@ -38,13 +38,53 @@ public class PlayGamesAchievement {
 
         GameInstance.Activity.runOnUiThread(() -> {
             if (percent >= 100.0f) {
-                mAchievementsClient.unlock(id);
-                Log.w("Skylicht", "Unlock achievement: " + id);
+                completeAchievement(id);
             } else if (step > 0) {
                 mAchievementsClient.setSteps(id, step);
                 Log.w("Skylicht", "Set achievement steps: " + id + " - " + step);
             }
         });
+    }
+
+    private void completeAchievement(String id) {
+        mAchievementsClient.load(false)
+                .addOnSuccessListener((AnnotatedData<AchievementBuffer> result) -> {
+                    AchievementBuffer achievements = result.get();
+                    if (achievements == null) {
+                        Log.w("Skylicht", "Missing achievement data: " + id);
+                        return;
+                    }
+
+                    try {
+                        for (int i = 0; i < achievements.getCount(); i++) {
+                            Achievement achievement = achievements.get(i);
+                            if (!id.equals(achievement.getAchievementId()))
+                                continue;
+
+                            if (achievement.getType() == Achievement.TYPE_INCREMENTAL) {
+                                // Incremental achievements unlock automatically at their total steps.
+                                int totalSteps = achievement.getTotalSteps();
+                                mAchievementsClient.setStepsImmediate(id, totalSteps)
+                                        .addOnSuccessListener(unlocked ->
+                                                Log.w("Skylicht", "Complete achievement steps: " + id + " - " + totalSteps + " - unlocked: " + unlocked))
+                                        .addOnFailureListener(e ->
+                                                Log.w("Skylicht", "Complete achievement failed: " + id, e));
+                            } else {
+                                mAchievementsClient.unlockImmediate(id)
+                                        .addOnSuccessListener(unused ->
+                                                Log.w("Skylicht", "Unlock achievement: " + id))
+                                        .addOnFailureListener(e ->
+                                                Log.w("Skylicht", "Unlock achievement failed: " + id, e));
+                            }
+                            return;
+                        }
+                        Log.w("Skylicht", "Achievement not found: " + id);
+                    } finally {
+                        achievements.release();
+                    }
+                })
+                .addOnFailureListener(e ->
+                        Log.w("Skylicht", "Load achievement for completion failed: " + id, e));
     }
 
     public void startShowDefaultAchievementsUI() {
