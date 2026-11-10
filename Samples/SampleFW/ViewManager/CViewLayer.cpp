@@ -12,7 +12,7 @@ CViewLayer::~CViewLayer()
 	destroyAllView();
 }
 
-void CViewLayer::update()
+void CViewLayer::destroyPendingView()
 {
 	int numView = (int)m_willDeleteView.size();
 	if (numView > 0)
@@ -25,10 +25,13 @@ void CViewLayer::update()
 
 		m_willDeleteView.clear();
 	}
+}
 
+void CViewLayer::update()
+{
 	m_view = NULL;
 
-	numView = (int)m_views.size();
+	int numView = (int)m_views.size();
 	if (numView > 0)
 	{
 		m_view = m_views[0];
@@ -61,8 +64,8 @@ void CViewLayer::onResume()
 	int numView = (int)m_views.size();
 	if (numView > 0)
 	{
-		if (m_view)
-			m_view->onResume();
+		if (m_views[0])
+			m_views[0]->onResume();
 	}
 }
 
@@ -71,8 +74,8 @@ void CViewLayer::onPause()
 	int numView = (int)m_views.size();
 	if (numView > 0)
 	{
-		if (m_view)
-			m_view->onPause();
+		if (m_views[0])
+			m_views[0]->onPause();
 	}
 }
 
@@ -81,8 +84,8 @@ bool CViewLayer::onBack()
 	int numView = (int)m_views.size();
 	if (numView > 0)
 	{
-		if (m_view)
-			return m_view->onBack();
+		if (m_views[0])
+			return m_views[0]->onBack();
 	}
 
 	return true;

@@ -65,3 +65,8 @@ bool CView::onBack()
 {
 	return false;
 }
+
+void CView::onResize(int w, int h)
+{
+
+}

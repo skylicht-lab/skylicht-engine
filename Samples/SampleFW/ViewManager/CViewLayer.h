@@ -19,6 +19,8 @@ public:
 
 	virtual ~CViewLayer();
 
+	void destroyPendingView();
+
 	void update();
 
 	void render();

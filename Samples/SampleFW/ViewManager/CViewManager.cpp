@@ -3,7 +3,8 @@
 
 IMPLEMENT_SINGLETON(CViewManager);
 
-CViewManager::CViewManager()
+CViewManager::CViewManager() :
+	m_uiQueueMutex(Skylicht::System::IMutex::createMutex())
 {
 	initViewLayer(1);
 }
@@ -11,6 +12,7 @@ CViewManager::CViewManager()
 CViewManager::~CViewManager()
 {
 	releaseAllLayer();
+	delete m_uiQueueMutex;
 }
 
 void CViewManager::initViewLayer(int numLayer)
@@ -32,8 +34,30 @@ void CViewManager::releaseAllLayer()
 	m_viewLayers.clear();
 }
 
+void CViewManager::runInUI(std::function<void()> func)
+{
+	Skylicht::System::SScopeMutex lockScope(m_uiQueueMutex);
+	m_willRunUI.push_back(func);
+}
+
 void CViewManager::update()
 {
+	{
+		Skylicht::System::SScopeMutex lockScope(m_uiQueueMutex);
+		for (std::function<void()>& func : m_willRunUI)
+			m_runInUI.push_back(func);
+		m_willRunUI.clear();
+	}
+
+	for (std::function<void()>& func : m_runInUI)
+		func();
+	m_runInUI.clear();
+
+	for (CViewLayer*& layer : m_viewLayers)
+	{
+		layer->destroyPendingView();
+	}
+
 	for (CViewLayer*& layer : m_viewLayers)
 	{
 		layer->update();

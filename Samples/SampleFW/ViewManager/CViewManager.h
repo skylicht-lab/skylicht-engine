@@ -3,6 +3,8 @@
 #include "Utils/CSingleton.h"
 #include "CViewLayer.h"
 
+#include "Thread/IMutex.h"
+
 class CViewManager
 {
 public:
@@ -10,6 +12,10 @@ public:
 
 protected:
 	std::vector<CViewLayer*> m_viewLayers;
+
+	std::vector<std::function<void()>> m_runInUI;
+	std::vector<std::function<void()>> m_willRunUI;
+	Skylicht::System::IMutex* m_uiQueueMutex;
 
 public:
 	CViewManager();
@@ -19,6 +25,8 @@ public:
 	void initViewLayer(int numLayer);
 
 	void releaseAllLayer();
+
+	void runInUI(std::function<void()> func);
 
 	inline int getLayerCount()
 	{
