@@ -204,7 +204,7 @@ jobs:
     #    path: Build
 
   IOS:
-    runs-on: macOS-14
+    runs-on: macos-15
     env:
       PLATFORM: SIMULATORARM64
     steps:

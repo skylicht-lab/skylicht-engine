@@ -1,4 +1,5 @@
 #include "pch.h"
+#include <cmath>
 #include "CViewInit.h"
 #include "CViewDemo.h"
 #include "CLightBlinkComponent.h"
