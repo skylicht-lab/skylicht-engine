@@ -11,3 +11,7 @@ Read these guides in order when creating an application with Skylicht Engine. Ex
 | 5 | [Localize.md](Localize.md) | Load translations with public SampleFW CLocalize, bind GUI localization callbacks, refresh open screens, and select fonts for different languages. |
 
 Start with the [engine README](../README.md) for engine build requirements. Source links in these guides refer to this checkout; verify API behavior again when upgrading the engine. Code fragments illustrate integration points rather than complete applications.
+
+## Debugging
+
+- [CrashHandler.md](CrashHandler.md): Enable Windows crash logs with USE_CRASHHANDLER, package matching PDBs, and trace crashes from a standalone EXE. Includes a sample application layout with engine DLLs and matching PDBs.

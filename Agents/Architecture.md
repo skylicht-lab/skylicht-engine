@@ -263,6 +263,16 @@ The renderer belongs to the scene's entity manager, not to the component that fi
 
 `removeEntity()` immediately marks an entity not alive and queues its cleanup. Data remains attached until `updateRemoveEntity()` runs, normally at the beginning of the next manager update. Cleanup destroys data and moves the entity into a reusable pool.
 
+### Update order and reference lifetime
+
+Component updates run inside `CScene::update()`, before entity-system updates. For each enabled zone, the scene processes pending object changes, runs enabled objects' component updates, then their enabled `endUpdate()` callbacks. After processing zones, it calls `CEntityManager::update()`, which first flushes queued entity removals, refreshes groups, and then runs each non-render system's `onQuery()` followed immediately by its `update()`.
+
+Removal is deferred until that flush, rather than guaranteed to wait one full frame. An entity removed during a component update can have its data freed later in the same scene update. An entity removed during a system update normally keeps its data until the next manager update. A component can therefore clean up references in `endUpdate()` before the flush, including references queued for removal during the previous system update, provided no earlier explicit flush or teardown has occurred.
+
+Temporary system lists cleared and rebuilt from valid query results before use do not need removal callbacks solely for those lists. Discarding stale pointer values without dereferencing them is safe after the data has been freed. References retained across updates, hidden-instance lists, and delayed operations need explicit lifetime management; never dereference an old data pointer to determine whether it is still valid.
+
+For retained references, implement `IEntityManagerCallback` and register it with `registerCallback()`. Both single-entity removal and batch teardown callbacks run before entity data is destroyed. Check the relevant data slot first and return for unrelated entities before scanning tracked collections. Handle both `onEntityRemoved(CEntity*)` and `onEntityRemoved(CEntity**, int)`, and pair registration with `unRegisterCallback()` while the manager still exists. These notifications cover entity removal; replacing or directly removing an individual data slot requires its own invalidation path.
+
 Consequences:
 
 - A non-null data pointer is not proof that an entity is alive.
