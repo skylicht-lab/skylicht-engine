@@ -80,6 +80,9 @@ namespace Skylicht
 	{
 		for (CCanvas* c : m_canvas)
 		{
+			if (std::find(m_pendingRemoveCanvas.begin(), m_pendingRemoveCanvas.end(), c) != m_pendingRemoveCanvas.end())
+				continue;
+
 			c->onResize();
 		}
 	}
@@ -116,19 +119,36 @@ namespace Skylicht
 
 	void CGraphics2D::addCanvas(CCanvas* canvas)
 	{
+		// Re-adding a canvas cancels its pending removal.
+		auto pending = std::find(m_pendingRemoveCanvas.begin(), m_pendingRemoveCanvas.end(), canvas);
+		if (pending != m_pendingRemoveCanvas.end())
+			m_pendingRemoveCanvas.erase(pending);
+
 		if (std::find(m_canvas.begin(), m_canvas.end(), canvas) == m_canvas.end())
 			m_canvas.push_back(canvas);
 	}
 
 	void CGraphics2D::removeCanvas(CCanvas* canvas)
 	{
-		std::vector<CCanvas*>::iterator i = std::find(m_canvas.begin(), m_canvas.end(), canvas);
-		if (i != m_canvas.end())
-			m_canvas.erase(i);
+		if (std::find(m_pendingRemoveCanvas.begin(), m_pendingRemoveCanvas.end(), canvas) == m_pendingRemoveCanvas.end())
+			m_pendingRemoveCanvas.push_back(canvas);
+	}
+
+	void CGraphics2D::removePendingCanvas()
+	{
+		for (CCanvas* canvas : m_pendingRemoveCanvas)
+		{
+			auto i = std::find(m_canvas.begin(), m_canvas.end(), canvas);
+			if (i != m_canvas.end())
+				m_canvas.erase(i);
+		}
+		m_pendingRemoveCanvas.clear();
 	}
 
 	void CGraphics2D::render(CCamera* camera)
 	{
+		removePendingCanvas();
+
 		if (camera == NULL)
 			return;
 
@@ -200,6 +220,10 @@ namespace Skylicht
 		// render graphics
 		for (CCanvas* canvas : m_canvas)
 		{
+			// A previous canvas may have removed this canvas during rendering.
+			if (std::find(m_pendingRemoveCanvas.begin(), m_pendingRemoveCanvas.end(), canvas) != m_pendingRemoveCanvas.end())
+				continue;
+
 			if (canvas->getGameObject()->isVisible() == false)
 				continue;
 
@@ -264,6 +288,8 @@ namespace Skylicht
 			m_2dMaterial.setTexture(i, NULL);
 			m_customMaterial.setTexture(i, NULL);
 		}
+
+		removePendingCanvas();
 	}
 
 	void CGraphics2D::beginRenderGUI(const core::matrix4& projection, const core::matrix4& view)
@@ -297,6 +323,9 @@ namespace Skylicht
 		m_buffer = m_allBuffers[m_bufferID];
 		m_vertices = (SVertexBuffer*)m_buffer->getVertexBuffer();
 		m_indices = (CIndexBuffer*)m_buffer->getIndexBuffer();
+
+		m_vertices->set_used(0);
+		m_indices->set_used(0);
 	}
 
 	void CGraphics2D::nextBuffer()
@@ -319,8 +348,11 @@ namespace Skylicht
 		else
 		{
 			m_buffer = m_allBuffers[m_bufferID];
+
 			m_vertices = (SVertexBuffer*)m_buffer->getVertexBuffer();
 			m_indices = (CIndexBuffer*)m_buffer->getIndexBuffer();
+			m_vertices->set_used(0);
+			m_indices->set_used(0);
 		}
 	}
 
