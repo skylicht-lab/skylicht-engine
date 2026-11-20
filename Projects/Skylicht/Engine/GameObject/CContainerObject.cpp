@@ -708,6 +708,10 @@ namespace Skylicht
 
 	void CContainerObject::removeObject(CGameObject* pObj)
 	{
+		std::vector<CComponentSystem*>& listComponents = pObj->getListComponent();
+		for (CComponentSystem* component : listComponents)
+			component->onDestroy();
+
 		m_remove.push_back(pObj);
 		m_updateRemoveAdd = true;
 		m_updateListChild = true;
