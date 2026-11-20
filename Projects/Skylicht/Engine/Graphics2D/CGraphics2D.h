@@ -72,7 +72,6 @@ namespace Skylicht
 		int m_bufferID;
 
 		std::vector<CCanvas*> m_canvas;
-		std::vector<CCanvas*> m_pendingRemoveCanvas;
 
 	protected:
 
@@ -220,8 +219,6 @@ namespace Skylicht
 		}
 
 	private:
-		void removePendingCanvas();
-
 		void updateRectBuffer(video::S3DVertex* vtx, const core::rectf& r, const core::matrix4& mat);
 
 		void updateRectTexcoordBuffer(

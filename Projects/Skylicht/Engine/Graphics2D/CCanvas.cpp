@@ -83,6 +83,9 @@ namespace Skylicht
 		delete m_root;
 
 		delete m_entityMgr;
+
+		// remove this canvas
+		CGraphics2D::getInstance()->removeCanvas(this);
 	}
 
 	void CCanvas::onDestroy()
