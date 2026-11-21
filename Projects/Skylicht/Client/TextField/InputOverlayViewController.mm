@@ -1,6 +1,7 @@
 #ifdef IOS
 
 #import "InputOverlayViewController.h"
+#import "IOSScene.h"
 #include <string>
 
 std::string g_defaultText;
@@ -10,6 +11,13 @@ bool g_secureInput = false;
 
 void textfield_show(const char* text, int maxLength, int height, bool password)
 {
+	UIViewController *presenter = irr::getIOSPresentingViewController();
+	if (presenter == nil)
+	{
+		NSLog(@"Skylicht: No active iOS scene window for text input");
+		return;
+	}
+
 	g_defaultText = text != NULL ? text : "";
 	g_requestHeight = height;
 	g_maxLength = maxLength;
@@ -18,7 +26,7 @@ void textfield_show(const char* text, int maxLength, int height, bool password)
 	InputOverlayViewController *inputVC = [[InputOverlayViewController alloc] init];
 	inputVC.modalPresentationStyle = UIModalPresentationOverFullScreen;
 	
-	[[[[UIApplication sharedApplication] keyWindow] rootViewController] presentViewController:inputVC animated:YES completion:nil];
+	[presenter presentViewController:inputVC animated:YES completion:nil];
 }
 
 void textfield_on_change(const char* text);

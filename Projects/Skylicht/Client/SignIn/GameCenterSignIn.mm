@@ -1,6 +1,7 @@
 #ifdef IOS
 
 #include "GameCenterSignIn.h"
+#include "IOSScene.h"
 
 #import <GameKit/GameKit.h>
 
@@ -29,7 +30,15 @@ void gamecenter_signIn()
 		
 		if (viewController != nil)
 		{
-			[[[[UIApplication sharedApplication] keyWindow] rootViewController] presentViewController:viewController animated:YES completion:nil];
+			dispatch_async(dispatch_get_main_queue(), ^{
+				UIViewController *presenter = irr::getIOSPresentingViewController();
+				if (presenter == nil)
+				{
+					gamecenter_signInFailed("No active iOS scene window for Game Center sign-in");
+					return;
+				}
+				[presenter presentViewController:viewController animated:YES completion:nil];
+			});
 		}
 		else if (localPlayer.isAuthenticated)
 		{

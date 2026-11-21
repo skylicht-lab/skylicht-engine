@@ -14,12 +14,19 @@
 
 #include "anglebase/no_destructor.h"
 #include "common/debug.h"
+#include "IOSScene.h"
 
 #import <UIKit/UIKit.h>
 
 static CALayer *rootLayer()
 {
-    return [[[[[UIApplication sharedApplication] delegate] window] rootViewController] view].layer;
+    UIWindow *window = irr::getIOSWindow();
+    if (window == nil || window.rootViewController == nil)
+    {
+        NSLog(@"ANGLE: No iOS scene window is available for the EGL surface");
+        return nil;
+    }
+    return window.rootViewController.view.layer;
 }
 
 bool IOSWindow::initializeImpl(const std::string &name, int width, int height)

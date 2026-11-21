@@ -12,8 +12,10 @@
 #import <netinet/in.h>
 
 #include "SkylichtApplication.h"
+#include "IOSScene.h"
 
 SkylichtApplication* _angleApplication = NULL;
+static __weak GameViewController *activeGameViewController = nil;
 
 @implementation GameViewController
 {
@@ -24,6 +26,7 @@ SkylichtApplication* _angleApplication = NULL;
 - (void)viewDidLoad
 {
 	[super viewDidLoad];
+	activeGameViewController = self;
 	
 	_view = (MTKView *)self.view;
 	_view.multipleTouchEnabled = YES;
@@ -35,19 +38,31 @@ SkylichtApplication* _angleApplication = NULL;
 	[_renderer mtkView:_view drawableSizeWillChange:_view.drawableSize];
 	
 	_view.delegate = _renderer;
-	
-	// init Angle Application
+
+	// Scene lifecycle events pause and resume rendering.
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appWillResignActive:) name:UISceneWillDeactivateNotification object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appWillBecomeActive:) name:UISceneDidActivateNotification object:nil];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+	[super viewDidAppear:animated];
+	if (_angleApplication != NULL)
+		return;
+
+	if (self.view.window == nil || irr::getIOSWindow() != self.view.window)
+	{
+		NSLog(@"ANGLE: Game view is not attached to the active iOS scene window");
+		return;
+	}
+
+	// Initialize ANGLE after the storyboard view is attached to its scene window.
 	int width = (int)_view.drawableSize.width;
 	int height = (int)_view.drawableSize.height;
 	
 	_angleApplication = new SkylichtApplication(0, NULL, width, height);
 	
 	[_renderer setApplication:_angleApplication];
-	
-	// register event (https://stackoverflow.com/questions/9011868/whats-the-best-way-to-detect-when-the-app-is-entering-the-background-for-my-vie)
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appWillResignActive:) name:UIApplicationWillResignActiveNotification object:nil];
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appWillBecomeActive:) name:UIApplicationDidBecomeActiveNotification object:nil];
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appWillTerminate:) name:UIApplicationWillTerminateNotification object:nil];
 	
 	// get the name of the app
 	NSString* bundle = [[NSBundle mainBundle]bundleIdentifier];
@@ -104,7 +119,11 @@ SkylichtApplication* _angleApplication = NULL;
 
 - (void)dealloc
 {
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+	if (activeGameViewController == self)
+		activeGameViewController = nil;
 	delete _angleApplication;
+	_angleApplication = NULL;
 }
 
 - (void)setLimitFPS: (int)fps
@@ -191,25 +210,11 @@ SkylichtApplication* _angleApplication = NULL;
 	}
 }
 
--(void)appWillTerminate:(NSNotification*)note
-{
-	[[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillResignActiveNotification object:nil];
-	[[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidBecomeActiveNotification  object:nil];
-	[[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillTerminateNotification object:nil];
-}
 @end
 
 extern "C" void application_setFPS(int fps)
 {
-	UIViewController *rootVC = [[[UIApplication sharedApplication]keyWindow]rootViewController];
-	if ([rootVC isKindOfClass:[GameViewController class]])
-	{
-		GameViewController *gameVC = (GameViewController *)rootVC;
-		if (fps <= 0)
-			[gameVC setLimitFPS:60];
-		else
-			[gameVC setLimitFPS:fps];
-	}
+	[activeGameViewController setLimitFPS:(fps <= 0 ? 60 : fps)];
 }
 
 extern "C" void application_openURL(const char *url)

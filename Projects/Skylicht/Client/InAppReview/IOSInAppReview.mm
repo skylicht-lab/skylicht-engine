@@ -5,17 +5,12 @@
 #import <StoreKit/StoreKit.h>
 
 #include "IOSInAppReview.h"
+#include "IOSScene.h"
 
 void ios_showInAppReview(bool isTesting)
 {
     if (@available(iOS 14.0, *)) {
-        UIWindowScene *scene = nil;
-        for (UIScene *s in [UIApplication sharedApplication].connectedScenes) {
-            if ([s isKindOfClass:[UIWindowScene class]]) {
-                scene = (UIWindowScene *)s;
-                break;
-            }
-        }
+        UIWindowScene *scene = irr::getIOSWindow().windowScene;
         if (scene) {
             [SKStoreReviewController requestReviewInScene:scene];
         }

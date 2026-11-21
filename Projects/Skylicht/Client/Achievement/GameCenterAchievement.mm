@@ -2,6 +2,7 @@
 
 #include "GameCenterAchievement.h"
 #include "CGameCenterAchievement.h"
+#include "IOSScene.h"
 
 #import <GameKit/GameKit.h>
 #import <UIKit/UIKit.h>
@@ -65,7 +66,7 @@ void gamecenter_showDefaultAchievementsUI()
 		gameCenterViewController.gameCenterDelegate = s_gameCenterAchievementDelegate;
 		gameCenterViewController.viewState = GKGameCenterViewControllerStateAchievements;
 
-		UIViewController* rootViewController = [[[UIApplication sharedApplication] keyWindow] rootViewController];
+		UIViewController* rootViewController = irr::getIOSPresentingViewController();
 		if (rootViewController == nil)
 			return;
 

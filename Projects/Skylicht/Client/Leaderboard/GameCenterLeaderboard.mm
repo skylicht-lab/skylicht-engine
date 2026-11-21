@@ -1,4 +1,5 @@
 #include "GameCenterLeaderboard.h"
+#include "IOSScene.h"
 
 #ifdef IOS
 #import <GameKit/GameKit.h>
@@ -67,9 +68,7 @@ void gamecenter_showDefaultLeaderboardUI(const char* id)
 		if (![GKLocalPlayer localPlayer].isAuthenticated)
 			return;
 
-		UIViewController* root = [[[UIApplication sharedApplication] keyWindow] rootViewController];
-		while (root.presentedViewController != nil)
-			root = root.presentedViewController;
+		UIViewController* root = irr::getIOSPresentingViewController();
 		if (root == nil)
 			return;
 
