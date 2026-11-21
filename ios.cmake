@@ -88,7 +88,8 @@
 #    CMAKE_OSX_SYSROOT, but can also be manually specified (although this should
 #    not be required).
 #
-# DEPLOYMENT_TARGET: Minimum SDK version to target. Default 6.0 on watchOS, 13.0 on tvOS+iOS/iPadOS, 11.0 on macOS, 1.0 on visionOS
+# DEPLOYMENT_TARGET: Minimum OS version to target. Defaults: iOS/iPadOS/tvOS/Mac Catalyst 15.0,
+#                    watchOS 8.0, macOS 11.0, visionOS 1.0 (Xcode 26 deployment ranges).
 #
 # NAMED_LANGUAGE_SUPPORT:
 #    ON (default) = Will require "enable_language(OBJC) and/or enable_language(OBJCXX)" for full OBJC|OBJCXX support
@@ -255,33 +256,28 @@ endif()
 set(NAMED_LANGUAGE_SUPPORT_INT ${NAMED_LANGUAGE_SUPPORT} CACHE BOOL
         "Whether or not to enable explicit named language support" FORCE)
 
+# Minimum targets for the Xcode 26 SDKs.
+if(PLATFORM MATCHES "WATCHOS")
+  set(_MIN_DEPLOYMENT_TARGET "8.0")
+elseif(PLATFORM MATCHES "VISIONOS")
+  set(_MIN_DEPLOYMENT_TARGET "1.0")
+elseif(PLATFORM MATCHES "^MAC_CATALYST")
+  # Mac Catalyst uses an iOS version for DEPLOYMENT_TARGET.
+  set(_MIN_DEPLOYMENT_TARGET "15.0")
+elseif(PLATFORM MATCHES "^MAC")
+  set(_MIN_DEPLOYMENT_TARGET "11.0")
+else()
+  set(_MIN_DEPLOYMENT_TARGET "15.0")
+endif()
+
 # Specify the minimum version of the deployment target.
 if(NOT DEFINED DEPLOYMENT_TARGET)
-  if (PLATFORM MATCHES "WATCHOS")
-    # Unless specified, SDK version 4.0 is used by default as minimum target version (watchOS).
-    set(DEPLOYMENT_TARGET "6.0")
-  elseif(PLATFORM STREQUAL "MAC")
-    # Unless specified, SDK version 10.13 (High Sierra) is used by default as the minimum target version (macos).
-    set(DEPLOYMENT_TARGET "11.0")
-  elseif(PLATFORM STREQUAL "VISIONOS" OR PLATFORM STREQUAL "SIMULATOR_VISIONOS" OR PLATFORM STREQUAL "SIMULATOR64_VISIONOS")
-    # Unless specified, SDK version 1.0 is used by default as minimum target version (visionOS).
-    set(DEPLOYMENT_TARGET "1.0")
-  elseif(PLATFORM STREQUAL "MAC_ARM64")
-    # Unless specified, SDK version 11.0 (Big Sur) is used by default as the minimum target version (macOS on arm).
-    set(DEPLOYMENT_TARGET "11.0")
-  elseif(PLATFORM STREQUAL "MAC_UNIVERSAL")
-    # Unless specified, SDK version 11.0 (Big Sur) is used by default as minimum target version for universal builds.
-    set(DEPLOYMENT_TARGET "11.0")
-  elseif(PLATFORM STREQUAL "MAC_CATALYST" OR PLATFORM STREQUAL "MAC_CATALYST_ARM64")
-    # Unless specified, SDK version 13.0 is used by default as the minimum target version (mac catalyst minimum requirement).
-    set(DEPLOYMENT_TARGET "13.1")
-  else()
-    # Unless specified, SDK version 11.0 is used by default as the minimum target version (iOS, tvOS).
-    set(DEPLOYMENT_TARGET "13.0")
-  endif()
+  set(DEPLOYMENT_TARGET "${_MIN_DEPLOYMENT_TARGET}")
   message(STATUS "[DEFAULTS] Using the default min-version since DEPLOYMENT_TARGET not provided!")
-elseif(DEFINED DEPLOYMENT_TARGET AND PLATFORM MATCHES "^MAC_CATALYST" AND ${DEPLOYMENT_TARGET} VERSION_LESS "13.1")
-  message(FATAL_ERROR "Mac Catalyst builds requires a minimum deployment target of 13.1!")
+endif()
+
+if(DEPLOYMENT_TARGET VERSION_LESS _MIN_DEPLOYMENT_TARGET)
+  message(FATAL_ERROR "${PLATFORM} DEPLOYMENT_TARGET must be at least ${_MIN_DEPLOYMENT_TARGET} (got ${DEPLOYMENT_TARGET}). Update DEPLOYMENT_TARGET or clear the old CMake cache.")
 endif()
 
 # Store the DEPLOYMENT_TARGET in the cache
@@ -297,6 +293,9 @@ elseif(PLATFORM STREQUAL "SIMULATOR" AND DEPLOYMENT_TARGET VERSION_GREATER_EQUAL
 endif()
 
 set(PLATFORM_INT "${PLATFORM}")
+
+# Use the on-disk lowercase platform name for iOS library paths (for example, Angle/lib/ios/simulatorarm64).
+string(TOLOWER "${PLATFORM_INT}" IOS_PLATFORM)
 
 if(DEFINED ARCHS)
   string(REPLACE ";" "-" ARCHS_SPLIT "${ARCHS}")
@@ -559,9 +558,12 @@ if(CMAKE_GENERATOR MATCHES "Xcode" AND PLATFORM_INT MATCHES "^MAC_CATALYST")
   set(CMAKE_XCODE_ATTRIBUTE_SUPPORTED_PLATFORMS "macosx")
   set(CMAKE_XCODE_ATTRIBUTE_SUPPORTS_MACCATALYST "YES")
   if(NOT DEFINED MACOSX_DEPLOYMENT_TARGET)
-    set(CMAKE_XCODE_ATTRIBUTE_MACOSX_DEPLOYMENT_TARGET "10.15")
+    set(CMAKE_XCODE_ATTRIBUTE_MACOSX_DEPLOYMENT_TARGET "${_MIN_DEPLOYMENT_TARGET}")
   else()
     set(CMAKE_XCODE_ATTRIBUTE_MACOSX_DEPLOYMENT_TARGET "${MACOSX_DEPLOYMENT_TARGET}")
+  endif()
+  if(CMAKE_XCODE_ATTRIBUTE_MACOSX_DEPLOYMENT_TARGET VERSION_LESS _MIN_DEPLOYMENT_TARGET)
+    message(FATAL_ERROR "Mac Catalyst MACOSX_DEPLOYMENT_TARGET must be at least ${_MIN_DEPLOYMENT_TARGET}.")
   endif()
 elseif(CMAKE_GENERATOR MATCHES "Xcode")
   set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
