@@ -9,6 +9,10 @@ Read these guides in order when creating an application with Skylicht Engine. Ex
 | 3 | [FirstInit.md](FirstInit.md) | Present the first loading frame, initialize in stages, and manage resource packages across menu/world transitions. |
 | 4 | [Camera.md](Camera.md) | Set up 2D/3D cameras, filter objects with layers and masks, compose a transparent 3D preview into GUI, project world positions into 2D indicators, and blend gameplay cameras with a brain and tweens. |
 | 5 | [Localize.md](Localize.md) | Load translations with public SampleFW CLocalize, bind GUI localization callbacks, refresh open screens, and select fonts for different languages. |
+| 6 | [SceneLoading.md](SceneLoading.md) | Import .scene files across loading frames, find objects by layer, apply materials and runtime components, preload particles, and activate the prepared scene. |
+| 7 | [CustomRenderSystem.md](CustomRenderSystem.md) | Create a custom render system: load materials, initialize quad and instance buffers, register the system, bind shader state, and submit transparent draws. |
+| 8 | [ParticleEntityInstancing.md](ParticleEntityInstancing.md) | Use particle instancing for entity-attached icons and lightweight projectile/mesh objects: synchronize state, handle callbacks and swapped indices, defer spawning, and release UserData safely. |
+| 9 | [MaterialShader.md](MaterialShader.md) | Author and load materials, clone runtime effects, switch shaders with UITexture mapping, bind uniforms, and generate predefined GLSL/HLSL variants with BuildShader.py. |
 
 Start with the [engine README](../README.md) for engine build requirements. Source links in these guides refer to this checkout; verify API behavior again when upgrading the engine. Code fragments illustrate integration points rather than complete applications.
 
