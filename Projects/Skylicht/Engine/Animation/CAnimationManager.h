@@ -36,12 +36,12 @@ namespace Skylicht
 	/**
 	 * @brief Singleton manager for loading, caching, and exporting animations.
 	 * @ingroup Animation
-	 * 
+	 *
 	 * Example: Loading and playing an animation
 	 * @code
 	 * // Load animation clip from file (.dae, .fbx, or .sanim)
 	 * CAnimationClip* clip = CAnimationManager::getInstance()->loadAnimation("Hero@Idle.sanim");
-	 * 
+	 *
 	 * if (clip)
 	 * {
 	 *     // Apply to a skeleton
@@ -57,7 +57,7 @@ namespace Skylicht
 	protected:
 		//! Cached animation clips indexed by resource path.
 		std::map<std::string, CAnimationClip*> m_clips;
-		
+
 		//! Cached animation containers indexed by name.
 		std::map<std::string, CAnimation*> m_animations;
 
@@ -89,6 +89,23 @@ namespace Skylicht
 		 * @return Pointer to the loaded CAnimationClip, or NULL on failure.
 		 */
 		CAnimationClip* loadAnimation(const char* resource);
+
+		static std::vector<std::string> CAnimationManager::getAnimExts();
+
+		static bool isAnimExt(const char* ext);
+
+		//! Checks whether an animation clip is cached without loading it.
+		bool isAnimLoaded(const char* resource);
+
+		//! Releases the cached animation clip for a resource.
+		void releaseResource(const char* resource);
+
+		//! Removes any cache entries referencing the clip, then deletes it.
+		void deleteClip(CAnimationClip* clip);
+
+		//! Reloads a clip. On success, the caller must call deleteClip(oldClip) after replacing its references.
+		//! On failure, retains the cached clip and sets oldClip to NULL.
+		CAnimationClip* reloadAnimation(const char* resource, CAnimationClip*& oldClip);
 
 		/**
 		 * @brief Loads an animation clip using a specific importer.

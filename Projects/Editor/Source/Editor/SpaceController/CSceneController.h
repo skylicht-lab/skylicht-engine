@@ -48,6 +48,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
+	class CAnimationClip;
+
 	namespace Editor
 	{
 		class CSceneController :
@@ -172,6 +174,8 @@ namespace Skylicht
 			void doFinishLoadScene();
 
 			void doMeshChange(const char* resource);
+
+			void doAnimChange(CAnimationClip* oldClip, CAnimationClip* newClip);
 
 			void doMaterialChange(const char* resource);
 

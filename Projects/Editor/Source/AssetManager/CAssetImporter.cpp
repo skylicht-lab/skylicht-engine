@@ -36,6 +36,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "TextureManager/CTextureManager.h"
 #include "Material/CMaterialManager.h"
 #include "MeshManager/CMeshManager.h"
+#include "Animation/CAnimationManager.h"
 #include "Graphics2D/SpriteFrame/CSpriteManager.h"
 #include "Graphics2D/SpriteFrame/CFontManager.h"
 
@@ -313,6 +314,7 @@ namespace Skylicht
 				else if (CMeshManager::isMeshExt(ext.c_str()))
 				{
 					CMeshManager* meshMgr = CMeshManager::getInstance();
+					CAnimationManager* animMgr = CAnimationManager::getInstance();
 
 					bool meshLoaded = false;
 
@@ -324,6 +326,17 @@ namespace Skylicht
 						CSceneController::getInstance()->doMeshChange(path.c_str());
 					}
 
+					if (animMgr->isAnimLoaded(path.c_str()))
+					{
+						CAnimationClip* oldClip = NULL;
+						CAnimationClip* newClip = animMgr->reloadAnimation(path.c_str(), oldClip);
+						if (newClip && oldClip)
+						{
+							CSceneController::getInstance()->doAnimChange(oldClip, newClip);
+							animMgr->deleteClip(oldClip);
+						}
+					}
+
 					if (!inEditorFolder)
 					{
 						std::string id = m_assetManager->getGenerateMetaGUID(path.c_str());
@@ -333,6 +346,21 @@ namespace Skylicht
 
 							if (!meshLoaded)
 								meshMgr->releaseResource(path.c_str());
+						}
+					}
+				}
+				else if (CAnimationManager::isAnimExt(ext.c_str()))
+				{
+					CAnimationManager* animMgr = CAnimationManager::getInstance();
+
+					if (animMgr->isAnimLoaded(path.c_str()))
+					{
+						CAnimationClip* oldClip = NULL;
+						CAnimationClip* newClip = animMgr->reloadAnimation(path.c_str(), oldClip);
+						if (newClip && oldClip)
+						{
+							CSceneController::getInstance()->doAnimChange(oldClip, newClip);
+							animMgr->deleteClip(oldClip);
 						}
 					}
 				}

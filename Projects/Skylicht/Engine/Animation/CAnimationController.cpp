@@ -82,7 +82,7 @@ namespace Skylicht
 	CObjectSerializable* CAnimationController::createSerializable()
 	{
 		CObjectSerializable* object = CComponentSystem::createSerializable();
-		object->autoRelease(new CFilePathProperty(object, "animation", m_animFile.c_str(), CMeshManager::getMeshExts()));
+		object->autoRelease(new CFilePathProperty(object, "animation", m_animFile.c_str(), CAnimationManager::getAnimExts()));
 		object->autoRelease(new CBoolProperty(object, "loop", m_loop));
 		return object;
 	}
@@ -110,6 +110,22 @@ namespace Skylicht
 
 		if (m_skeletons.size() > 0)
 			m_skeletons[0]->getTimeline().Loop = m_loop;
+	}
+
+	void CAnimationController::onAnimChange(CAnimationClip* oldClip, CAnimationClip* newClip)
+	{
+		if (!oldClip || !newClip)
+			return;
+
+		for (CSkeleton* skeleton : m_skeletons)
+		{
+			if (skeleton->getCurrentAnimation() != oldClip)
+				continue;
+
+			bool loop = skeleton->getTimeline().Loop;
+			bool pause = skeleton->getTimeline().Pause;
+			skeleton->setAnimation(newClip, loop, pause);
+		}
 	}
 
 	CSkeleton* CAnimationController::createSkeleton()

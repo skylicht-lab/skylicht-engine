@@ -35,6 +35,66 @@ namespace Skylicht
 		return anim;
 	}
 
+	bool CAnimationManager::isAnimLoaded(const char* resource)
+	{
+		return m_clips.find(resource) != m_clips.end();
+	}
+
+	void CAnimationManager::releaseResource(const char* resource)
+	{
+		auto it = m_clips.find(resource);
+		if (it != m_clips.end())
+			deleteClip(it->second);
+	}
+
+	void CAnimationManager::deleteClip(CAnimationClip* clip)
+	{
+		for (auto it = m_clips.begin(); it != m_clips.end();)
+		{
+			if (it->second == clip)
+				it = m_clips.erase(it);
+			else
+				++it;
+		}
+		delete clip;
+	}
+
+	CAnimationClip* CAnimationManager::reloadAnimation(const char* resource, CAnimationClip*& oldClip)
+	{
+		oldClip = NULL;
+		auto it = m_clips.find(resource);
+		if (it == m_clips.end())
+			return loadAnimation(resource);
+
+		CAnimationClip* previous = it->second;
+		m_clips.erase(it);
+		CAnimationClip* clip = loadAnimation(resource);
+		if (clip)
+			oldClip = previous;
+		else
+			m_clips[resource] = previous;
+		return clip;
+	}
+
+	std::vector<std::string> CAnimationManager::getAnimExts()
+	{
+		std::vector<std::string> meshExts = {
+			"fbx",
+			"dae",
+			"sanim"
+		};
+		return meshExts;
+	}
+
+	bool CAnimationManager::isAnimExt(const char* ext)
+	{
+		std::vector<std::string> listExt = getAnimExts();
+		for (auto s : listExt)
+			if (s == ext)
+				return true;
+		return false;
+	}
+
 	CAnimationClip* CAnimationManager::loadAnimation(const char* resource)
 	{
 		IAnimationImporter* importer = NULL;

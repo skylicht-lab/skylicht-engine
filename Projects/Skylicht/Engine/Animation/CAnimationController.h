@@ -93,6 +93,9 @@ namespace Skylicht
 		 */
 		CSkeleton* createSkeleton();
 
+		//! Replaces a reimported clip in every skeleton that uses it.
+		void onAnimChange(CAnimationClip* oldClip, CAnimationClip* newClip);
+
 		/**
 		 * @brief Creates a new skeleton managed by this controller, using the provided entities.
 		 * @param entities List of entities to initialize the skeleton with.

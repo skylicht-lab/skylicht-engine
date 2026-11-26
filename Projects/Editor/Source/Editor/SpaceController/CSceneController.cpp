@@ -44,6 +44,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Entity/CEntityHandler.h"
 #include "Entity/CEntityHandleData.h"
 
+#include "Animation/CAnimationController.h"
 #include "SpriteDraw/CSprite.h"
 #include "ParticleSystem/CParticleComponent.h"
 #include "ResourceSettings/CMeshExportSettings.h"
@@ -339,6 +340,20 @@ namespace Skylicht
 					if (hierachyController)
 						hierachyController->updateTreeNode(render->getGameObject());
 				}
+			}
+		}
+
+		void CSceneController::doAnimChange(CAnimationClip* oldClip, CAnimationClip* newClip)
+		{
+			if (m_scene == NULL)
+				return;
+
+			for (int i = 0, n = m_scene->getZoneCount(); i < n; i++)
+			{
+				CZone* zone = m_scene->getZone(i);
+				std::vector<CAnimationController*> controllers = zone->getComponentsInChild<CAnimationController>(false);
+				for (CAnimationController* controller : controllers)
+					controller->onAnimChange(oldClip, newClip);
 			}
 		}
 
