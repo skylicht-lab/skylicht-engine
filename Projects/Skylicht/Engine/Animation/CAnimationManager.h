@@ -66,6 +66,10 @@ namespace Skylicht
 
 		virtual ~CAnimationManager();
 
+		static std::vector<std::string> getAnimExts();
+
+		static bool isAnimExt(const char* ext);
+
 		/**
 		 * @brief Creates or retrieves a named animation container.
 		 * @param name The unique name for the container.
@@ -89,10 +93,6 @@ namespace Skylicht
 		 * @return Pointer to the loaded CAnimationClip, or NULL on failure.
 		 */
 		CAnimationClip* loadAnimation(const char* resource);
-
-		static std::vector<std::string> CAnimationManager::getAnimExts();
-
-		static bool isAnimExt(const char* ext);
 
 		//! Checks whether an animation clip is cached without loading it.
 		bool isAnimLoaded(const char* resource);
