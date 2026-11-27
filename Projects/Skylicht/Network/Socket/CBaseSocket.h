@@ -72,12 +72,13 @@ namespace Skylicht
 			/**
 			 * @brief Deliver received bytes and their source peer.
 			 *
-			 * The stream wraps a receive buffer valid only during this callback.
+			 * The non-null stream pointer is borrowed and valid only during this callback.
+			 * Do not delete or retain it; copy bytes if needed after the callback.
 			 * TCP may split or combine sends; UDP preserves datagram boundaries.
 			 * Validate lengths before reading values and frame TCP application messages.
 			 * Removing the peer or closing the transport invalidates the borrowed peer.
 			 */
-			std::function<void(CConnection*, CMemoryStream&)> OnReceived;
+			std::function<void(CConnection*, CMemoryStream*)> OnReceived;
 
 			/**
 			 * @brief Notify that a connected or pending peer was removed.

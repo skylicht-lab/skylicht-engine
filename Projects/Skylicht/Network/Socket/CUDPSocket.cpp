@@ -138,7 +138,7 @@ namespace Skylicht
 				CMemoryStream packet(m_buffer.data(), static_cast<unsigned int>(received));
 				auto callback = OnReceived;
 				if (callback)
-					callback(connection, packet);
+					callback(connection, &packet);
 				// Stop this update if the callback closed or reopened the socket.
 				if (m_revision != revision)
 					return false;

@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CUDPSocket.h"
+#include "IClientSocket.h"
 
 namespace Skylicht
 {
@@ -37,13 +38,16 @@ namespace Skylicht
 		 * Call update() regularly on the owning thread to send queued packets,
 		 * receive packets, and check timeouts.
 		 */
-		class CUDPClient : public CUDPSocket
+		class CUDPClient : public CUDPSocket, public IClientSocket
 		{
 		protected:
 			/// ID of the tracked server endpoint; zero before the first successful open.
 			irr::u32 m_serverID;
 
 		public:
+			CBaseSocket& getSocket() override { return *this; }
+			const CBaseSocket& getSocket() const override { return *this; }
+
 			/**
 			 * @brief Constructor. The socket is initially closed.
 			 */
@@ -62,13 +66,13 @@ namespace Skylicht
 			 * @return True if the server endpoint remains tracked after OnConnected returns.
 			 */
 			bool open(const char* serverAddress, irr::u16 serverPort,
-				irr::u16 localPort = 0, const char* bindAddress = "0.0.0.0");
+				irr::u16 localPort = 0, const char* bindAddress = "0.0.0.0") override;
 
 			/**
 			 * @brief Get the tracked server endpoint.
 			 * @return Borrowed pointer, or nullptr if the server is no longer tracked.
 			 */
-			CConnection* getServer() const;
+			CConnection* getServer() const override;
 
 			/**
 			 * @brief Copy a datagram into the send queue for the server.
@@ -76,14 +80,14 @@ namespace Skylicht
 			 * @param size Payload size in bytes, up to 65507.
 			 * @return True if queued; false if the peer, payload, or queue capacity is invalid.
 			 */
-			bool send(const void* data, std::size_t size);
+			bool send(const void* data, std::size_t size) override;
 
 			/**
 			 * @brief Queue the full contents of a memory stream for the server.
 			 * @param packet Stream to copy, independent of its current read position.
 			 * @return True if queued. This does not confirm delivery.
 			 */
-			bool send(CMemoryStream& packet);
+			bool send(CMemoryStream& packet) override;
 		};
 	}
 }

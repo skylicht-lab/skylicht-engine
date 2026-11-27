@@ -33,7 +33,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #include <sys/socket.h>
 #endif
 #include <cstring>
-#include <limits>
 
 namespace Skylicht
 {
@@ -201,8 +200,9 @@ namespace Skylicht
 			auto existing = m_endpointConnections.find(key);
 			if (existing != m_endpointConnections.end())
 				return getConnection(existing->second);
+			constexpr irr::u32 connectionIDLimit = 4000000000u;
 			if (!isOpen() || m_connections.size() >= m_maxConnections ||
-				m_connections.size() >= std::numeric_limits<irr::u32>::max())
+				m_connections.size() >= connectionIDLimit)
 				return nullptr;
 			char normalized[INET_ADDRSTRLEN];
 			if (!inet_ntop(AF_INET, &endpoint.sin_addr, normalized, sizeof(normalized)))
@@ -213,10 +213,10 @@ namespace Skylicht
 			irr::u32 id;
 			do
 			{
-				// Unsigned increment wraps to zero; zero is reserved for an invalid ID.
+				// Reuse IDs after the limit, skipping IDs still assigned to peers.
+				if (m_nextID > connectionIDLimit)
+					m_nextID = 1;
 				id = m_nextID++;
-				if (id == 0)
-					id = m_nextID++;
 			} while (m_connections.find(id) != m_connections.end());
 			CConnection* connection = new CConnection(id, normalized, endpoint,
 				static_cast<irr::u64>(CDateTimeUtils::getTimeBySecond()) * 1000, m_defaultTimeout);

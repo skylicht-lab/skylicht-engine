@@ -25,6 +25,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #pragma once
 
 #include "CTCPSocket.h"
+#include "IServerSocket.h"
 
 namespace Skylicht
 {
@@ -32,9 +33,18 @@ namespace Skylicht
 	{
 		/// @brief Accept multiple clients using non-blocking IPv4 TCP.
 		/// @ingroup Network
-		class CTCPServer : public CTCPSocket
+		class CTCPServer : public CTCPSocket, public IServerSocket
 		{
 		public:
+			bool send(irr::u32 connectionID, const void* data, std::size_t size) override
+			{ return CBaseSocket::send(connectionID, data, size); }
+
+			bool send(irr::u32 connectionID, CMemoryStream& packet) override
+			{ return CBaseSocket::send(connectionID, packet); }
+
+			CBaseSocket& getSocket() override { return *this; }
+			const CBaseSocket& getSocket() const override { return *this; }
+
 			/**
 			 * @brief Open and bind a non-blocking TCP server socket.
 			 * @param port Local port in host byte order, or zero to let the OS choose a port.
@@ -43,7 +53,7 @@ namespace Skylicht
 			 * @return True on success; false if validation or socket setup fails.
 			 */
 			bool open(irr::u16 port, std::size_t maxConnections = 16,
-				const char* bindAddress = "0.0.0.0");
+				const char* bindAddress = "0.0.0.0") override;
 
 			/**
 			 * @brief Queue a separate byte chunk for each currently tracked peer.
@@ -56,7 +66,7 @@ namespace Skylicht
 			 * @param ignoreID Connection ID to exclude, or zero to include all peers.
 			 * @return True if queued for all recipients; false if validation or capacity checks fail.
 			 */
-			bool broadcast(const void* data, std::size_t size, irr::u32 ignoreID = 0);
+			bool broadcast(const void* data, std::size_t size, irr::u32 ignoreID = 0) override;
 
 			/**
 			 * @brief Queue the full contents of a memory stream for the tracked peers.
@@ -64,7 +74,7 @@ namespace Skylicht
 			 * @param ignoreID Connection ID to exclude, or zero to include all peers.
 			 * @return True if queued for all recipients. This does not confirm delivery.
 			 */
-			bool broadcast(CMemoryStream& packet, irr::u32 ignoreID = 0);
+			bool broadcast(CMemoryStream& packet, irr::u32 ignoreID = 0) override;
 		};
 	}
 }
