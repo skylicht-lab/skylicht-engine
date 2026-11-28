@@ -98,6 +98,7 @@ namespace Skylicht
 				irr::u32 ConnectionID;
 				std::vector<unsigned char> Data;
 				std::size_t Offset = 0;
+				bool Binary = true;
 			};
 			std::map<irr::u32, CConnection*> m_connections;
 			std::map<STransportEndpoint, irr::u32> m_endpointConnections;

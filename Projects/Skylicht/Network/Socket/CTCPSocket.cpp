@@ -172,11 +172,17 @@ namespace Skylicht
 					// for data. If none is available, WSAEWOULDBLOCK/EAGAIN/EWOULDBLOCK
 					// is mapped to WouldBlock; stop receiving for this peer and retry next update.
 					STransportResult received = peer->m_transport->receive(m_buffer.data(), m_buffer.size());
+					if (received.Status == ETransportStatus::Truncated &&
+						received.Bytes > m_buffer.size() && received.Bytes <= MaxQueueBytes)
+					{
+						m_buffer.resize(received.Bytes);
+						received = peer->m_transport->receive(m_buffer.data(), m_buffer.size());
+					}
 					if (received.Status == ETransportStatus::WouldBlock || received.Status == ETransportStatus::Pending)
 						break;
 					if (received.Status == ETransportStatus::Interrupted)
 						continue;
-					if (received.Status != ETransportStatus::Done || !received.Bytes)
+					if (received.Status != ETransportStatus::Done)
 					{
 						bool error = received.Status != ETransportStatus::Closed;
 						if (error)
@@ -192,6 +198,7 @@ namespace Skylicht
 					CConnection* connection = getConnection(id);
 					connection->m_lastReceiveTime = static_cast<irr::u64>(CDateTimeUtils::getTimeBySecond()) * 1000;
 					CMemoryStream packet(m_buffer.data(), static_cast<unsigned int>(received.Bytes));
+					packet.setBinary(received.Binary);
 					auto callback = OnReceived;
 					if (callback)
 						callback(connection, &packet);
@@ -223,8 +230,8 @@ namespace Skylicht
 				}
 				++attempts;
 				STransportResult sent = peer->m_transport->send(packet->Data.data() + packet->Offset,
-					packet->Data.size() - packet->Offset);
-				if (sent.Status != ETransportStatus::Done || !sent.Bytes)
+					packet->Data.size() - packet->Offset, packet->Binary);
+				if (sent.Status != ETransportStatus::Done || (!sent.Bytes && !packet->Data.empty()))
 				{
 					if (sent.Status == ETransportStatus::WouldBlock || sent.Status == ETransportStatus::Pending ||
 						sent.Status == ETransportStatus::Interrupted || (sent.Status == ETransportStatus::Done && !sent.Bytes))

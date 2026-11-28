@@ -187,12 +187,17 @@ namespace Skylicht
 			return ETransportStatus::Done;
 		}
 
-		STransportResult CRawSocketTransport::send(const void* data, std::size_t size)
+		STransportResult CRawSocketTransport::send(const void* data, std::size_t size, bool /*binary*/)
 		{
 			if (m_mode != ETransportMode::Stream)
 				return ETransportStatus::Unsupported;
 			if (m_state != ETransportState::Ready)
 				return m_state == ETransportState::Connecting ? ETransportStatus::Pending : ETransportStatus::Closed;
+			return sendBytes(data, size);
+		}
+
+		STransportResult CRawSocketTransport::sendBytes(const void* data, std::size_t size)
+		{
 			if ((!data && size) || size > INT_MAX)
 				return setError(CSocketUtil::invalidArgument());
 			if (!size)
@@ -215,6 +220,11 @@ namespace Skylicht
 				return ETransportStatus::Unsupported;
 			if (m_state != ETransportState::Ready)
 				return m_state == ETransportState::Connecting ? ETransportStatus::Pending : ETransportStatus::Closed;
+			return receiveBytes(buffer, capacity);
+		}
+
+		STransportResult CRawSocketTransport::receiveBytes(void* buffer, std::size_t capacity)
+		{
 			if (!buffer || !capacity || capacity > INT_MAX)
 				return setError(CSocketUtil::invalidArgument());
 			// open() and accept() configure the socket as non-blocking, so recv() does

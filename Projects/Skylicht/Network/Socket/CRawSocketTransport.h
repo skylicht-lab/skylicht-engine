@@ -39,6 +39,10 @@ namespace Skylicht
 			 * @return WouldBlock, Interrupted, or Error with the native error captured.
 			 */
 			ETransportStatus socketFailure();
+			/// @brief Non-blocking native byte I/O without the outer protocol's Ready check.
+			/// Protocol subclasses use these while their own handshake is still pending.
+			STransportResult sendBytes(const void* data, std::size_t size);
+			STransportResult receiveBytes(void* buffer, std::size_t capacity);
 		public:
 			/** @brief Create a closed raw transport.
 			 * @param mode Stream selects TCP; Datagram selects UDP.
@@ -55,7 +59,7 @@ namespace Skylicht
 			/// @copydoc ITransport::update
 			ETransportStatus update(std::size_t budget) override;
 			/// @copydoc ITransport::send
-			STransportResult send(const void* data, std::size_t size) override;
+			STransportResult send(const void* data, std::size_t size, bool binary = true) override;
 			/// @copydoc ITransport::receive
 			STransportResult receive(void* buffer, std::size_t capacity) override;
 			/// @copydoc ITransport::sendTo

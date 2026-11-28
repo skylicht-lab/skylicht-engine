@@ -41,12 +41,18 @@ namespace Skylicht
 		unsigned int m_totalSize;
 		unsigned int m_pos;
 		bool m_fromMemory;
+		bool m_binary; // Payload metadata; never serialized.
 	public:
 		/**
 		 * @brief Create an owning memory stream.
 		 * @param initMem Initial buffer capacity in bytes.
 		 */
 		CMemoryStream(unsigned int initMem = 512);
+
+		/// @brief Tag payload as binary (default) or UTF-8 text; does not convert bytes.
+		void setBinary(bool binary) { m_binary = binary; }
+		/// @return Payload tag; copied with the stream and preserved by resetWrite().
+		bool isBinary() const { return m_binary; }
 
 		/**
 		 * @brief Wrap an existing memory block for reading or fixed-size writing.

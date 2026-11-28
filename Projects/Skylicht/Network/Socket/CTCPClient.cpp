@@ -83,7 +83,7 @@ namespace Skylicht
 
 		bool CTCPClient::send(CMemoryStream& packet)
 		{
-			return send(packet.getData(), packet.getSize());
+			return CTCPSocket::send(m_serverID, packet);
 		}
 	}
 }

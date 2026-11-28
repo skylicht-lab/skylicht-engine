@@ -27,7 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 namespace Skylicht
 {
-	CMemoryStream::CMemoryStream(unsigned int initMem)
+	CMemoryStream::CMemoryStream(unsigned int initMem) : m_binary(true)
 	{
 		m_memory = new unsigned char[initMem];
 		m_size = 0;
@@ -36,7 +36,7 @@ namespace Skylicht
 		m_fromMemory = false;
 	}
 
-	CMemoryStream::CMemoryStream(unsigned char* fromMem, unsigned int size)
+	CMemoryStream::CMemoryStream(unsigned char* fromMem, unsigned int size) : m_binary(true)
 	{
 		m_memory = fromMem;
 		m_size = size;
@@ -45,7 +45,7 @@ namespace Skylicht
 		m_fromMemory = true;
 	}
 
-	CMemoryStream::CMemoryStream(const CMemoryStream& stream)
+	CMemoryStream::CMemoryStream(const CMemoryStream& stream) : m_binary(stream.m_binary)
 	{
 		m_size = stream.m_size;
 		m_totalSize = stream.m_totalSize;
@@ -77,7 +77,7 @@ namespace Skylicht
 		unsigned char* newMemory = new unsigned char[newSize];
 		if (m_size)
 			memcpy(newMemory, m_memory, m_size);
-		delete m_memory;
+		delete[] m_memory;
 
 		m_memory = newMemory;
 		m_totalSize = newSize;

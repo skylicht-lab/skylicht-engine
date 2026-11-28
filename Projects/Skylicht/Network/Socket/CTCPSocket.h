@@ -35,8 +35,9 @@ namespace Skylicht
 		/// @brief Non-blocking IPv4 TCP transport. Call update() on the owning thread.
 		/// @ingroup Network
 		/**
-		 * OnReceived delivers arbitrary byte chunks, not message boundaries. Applications
-		 * must buffer and frame their protocol. Streams are valid only in the callback.
+		 * Raw TCP OnReceived delivers arbitrary byte chunks; applications frame their protocol.
+		 * Message transports deliver a complete message with CMemoryStream payload metadata.
+		 * Streams are valid only in the callback.
 		 * Peer pointers are borrowed and invalid after removal/close. Callbacks must not
 		 * throw, destroy this object, or recursively call update(). They may remove peers
 		 * or close/reopen the transport. UserData remains application-owned.

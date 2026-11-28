@@ -228,8 +228,7 @@ namespace Skylicht
 		{
 			if (!getConnection(connectionID) || !canQueue(data, size, 1))
 				return false;
-			if (size || m_queueEmptyPackets)
-				enqueue(connectionID, data, size);
+			enqueue(connectionID, data, size);
 			return true;
 		}
 
@@ -246,7 +245,11 @@ namespace Skylicht
 
 		bool CBaseSocket::send(irr::u32 connectionID, CMemoryStream& packet)
 		{
-			return send(connectionID, packet.getData(), packet.getSize());
+			if (!getConnection(connectionID) || !canQueue(packet.getData(), packet.getSize(), 1))
+				return false;
+			enqueue(connectionID, packet.getData(), packet.getSize());
+			m_queue.back().Binary = packet.isBinary();
+			return true;
 		}
 
 		CBaseSocket::CBaseSocket(std::size_t maxPayloadSize, bool queueEmptyPackets) :

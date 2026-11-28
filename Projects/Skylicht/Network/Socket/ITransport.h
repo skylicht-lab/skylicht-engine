@@ -79,12 +79,13 @@ namespace Skylicht
 		struct STransportResult
 		{
 			ETransportStatus Status; ///< Operation outcome, including EOF and temporary unavailability.
-			std::size_t Bytes; ///< Payload bytes consumed or received, excluding protocol overhead.
+			std::size_t Bytes; ///< Payload bytes; required capacity on Truncated for message stream backends.
+			bool Binary; ///< Decoded payload type, true for raw TCP/UDP and binary WebSocket messages.
 			/** @brief Construct a payload operation result.
 			 * @param status Operation outcome.
 			 * @param bytes Number of payload bytes accepted or received.
 			 */
-			STransportResult(ETransportStatus status, std::size_t bytes = 0) : Status(status), Bytes(bytes) {}
+			STransportResult(ETransportStatus status, std::size_t bytes = 0, bool binary = true) : Status(status), Bytes(bytes), Binary(binary) {}
 		};
 
 		/// @brief One non-blocking listener, stream channel, or shared datagram socket.
@@ -92,7 +93,7 @@ namespace Skylicht
 		/**
 		 * All operations run on the owning thread and never wait for readiness or DNS.
 		 * The owner is CBaseSocket or CConnection; transport pointers are never shared.
-		 * Stream backends may implement TLS or binary WebSocket payloads as a byte stream.
+		 * Stream backends may implement TLS or message-oriented WebSocket payloads.
 		 * Datagram backends must preserve packet boundaries. Unsupported operations return Unsupported.
 		 */
 		class ITransport
@@ -137,11 +138,13 @@ namespace Skylicht
 			/** @brief Submit stream payload bytes without waiting.
 			 * @param data Payload; may be nullptr only when size is zero.
 			 * @param size Payload length.
+			 * @param binary True (default) for binary WebSocket payloads, false for UTF-8 text.
+			 * Raw TCP ignores this flag. WebSocket accepts one complete message or none.
 			 * @return Bytes accepted by this transport, possibly partial. Accepted bytes must
 			 * be sent or copied before return; the caller may release them. Internal copies
 			 * must be bounded and flushed by update(). Zero-length sends are Done with zero bytes.
 			 */
-			virtual STransportResult send(const void* data, std::size_t size) = 0;
+			virtual STransportResult send(const void* data, std::size_t size, bool binary = true) = 0;
 			/** @brief Receive stream payload, including already decoded internal data.
 			 * @param buffer Destination buffer.
 			 * @param capacity Nonzero buffer size.

@@ -119,14 +119,6 @@ file(GLOB_RECURSE libmpg123_source
 setup_project_group("${libmpg123_source}" ${CMAKE_CURRENT_SOURCE_DIR})
 endif()
 
-if (BUILD_SKYLICHT_NETWORK)
-file(GLOB_RECURSE easywsclient_source 
-	./easywsclient/**.cpp 
-	./easywsclient/**.hpp
-	./easywsclient/**.h)
-setup_project_group("${easywsclient_source}" ${CMAKE_CURRENT_SOURCE_DIR})
-endif()
-
 add_library(ThirdParty ${ENGINE_SHARED_OR_STATIC_LIB}
 	${aes_gladman_source} 
 	${bzip2_source}
@@ -140,7 +132,6 @@ add_library(ThirdParty ${ENGINE_SHARED_OR_STATIC_LIB}
 	${freetype_source}
 	${libmpg123_source}
 	${kdtree_source}
-	${easywsclient_source}
 )
 
 set_target_properties(ThirdParty PROPERTIES VERSION ${SKYLICHT_VERSION})
