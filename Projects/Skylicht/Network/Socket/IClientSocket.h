@@ -35,23 +35,42 @@ namespace Skylicht
 		class IClientSocket
 		{
 		public:
+			/**
+			 * @brief Destroy the client interface.
+			 */
 			virtual ~IClientSocket() = default;
 
-			/// Access common socket state, callbacks, and polling without knowing the protocol.
-			virtual CBaseSocket& getSocket() = 0;
-			virtual const CBaseSocket& getSocket() const = 0;
-
-			/// Start communication with a numeric IPv4 server; success does not guarantee a handshake.
+			/**
+			 * @brief Start communication with a numeric IPv4 server.
+			 * @param serverAddress Numeric IPv4 server address; hostnames are not resolved.
+			 * @param serverPort Nonzero remote port in host byte order.
+			 * @param localPort Local port, or zero to let the OS select one.
+			 * @param bindAddress Numeric local IPv4 address; 0.0.0.0 binds all interfaces.
+			 * @return True if setup succeeds; this does not guarantee a completed handshake.
+			 */
 			virtual bool open(const char* serverAddress, irr::u16 serverPort,
 				irr::u16 localPort = 0, const char* bindAddress = "0.0.0.0") = 0;
 
-			/// Return the borrowed server peer, or nullptr when unavailable.
+			/**
+			 * @brief Get the tracked server endpoint.
+			 * @return Borrowed peer pointer, or nullptr when unavailable. Peer removal invalidates it.
+			 */
 			virtual CConnection* getServer() const = 0;
 
-			/// Queue bytes for the server. Payload limits and delivery semantics depend on transport.
+			/**
+			 * @brief Copy bytes into the send queue for the server.
+			 * @param data Payload buffer; may be nullptr when size is zero.
+			 * @param size Payload size in bytes, within the transport payload limit.
+			 * @return True if accepted; false for an invalid peer, payload, or full queue.
+			 * @note Success does not confirm delivery. Delivery semantics depend on the transport.
+			 */
 			virtual bool send(const void* data, std::size_t size) = 0;
 
-			/// Queue the complete stream for the server, independent of its read position.
+			/**
+			 * @brief Queue a copy of the full contents of a memory stream for the server.
+			 * @param packet Stream to copy, independent of its read position.
+			 * @return True if accepted into the queue; this does not confirm delivery.
+			 */
 			virtual bool send(CMemoryStream& packet) = 0;
 		};
 	}
