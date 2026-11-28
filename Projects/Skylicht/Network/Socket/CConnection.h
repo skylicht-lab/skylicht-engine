@@ -24,14 +24,8 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #pragma once
 
-#if defined(_WIN32)
-#include <winsock2.h>
-#else
-#include <netinet/in.h>
-#endif
-
 #include "irrTypes.h"
-#include "CSocketUtil.h"
+#include "ITransport.h"
 #include <string>
 
 namespace Skylicht
@@ -41,6 +35,7 @@ namespace Skylicht
 		class CBaseSocket;
 		class CUDPSocket;
 		class CTCPSocket;
+		class CTCPClient;
 
 		/// @brief Store peer information independently of the transport protocol.
 		/// @ingroup Network
@@ -54,29 +49,15 @@ namespace Skylicht
 			friend class CBaseSocket;
 			friend class CUDPSocket;
 			friend class CTCPSocket;
+			friend class CTCPClient;
 		protected:
-			/**
-			 * @brief Dedicated TCP socket used to send and receive data for this peer.
-			 *
-			 * On a TCP server, this is the connected socket returned by accept(), used
-			 * to receive requests from and send responses to the accepted client.
-			 * It is separate from the server's listening socket.
-			 * On a TCP client, this is the socket connected to the remote server,
-			 * transferred here after the connection completes.
-			 * UDP does not need a socket per peer: all peers share the transport's
-			 * socket and use m_socketAddress with sendto()/recvfrom(). This handle
-			 * therefore remains InvalidSocket for UDP and pending TCP connections.
-			 * The owning transport closes this handle when the peer is removed.
-			 */
-			CSocketUtil::Socket m_socket = CSocketUtil::InvalidSocket;
+			/// @brief Exclusively owned TCP channel, including pending connect/handshake.
+			/// UDP peers leave this null and use the CBaseSocket shared channel.
+			ITransport* m_transport = nullptr;
+			bool m_connected = false; ///< Whether OnConnected has been published for this TCP peer.
 			/// Unique nonzero connection ID within the owning transport.
 			irr::u32 m_id;
-			/// Numeric IPv4 address of the peer.
-			std::string m_address;
-			/// Remote port in host byte order.
-			irr::u16 m_port;
-			/// Cached native IPv4 endpoint, copied once and reused by socket operations.
-			sockaddr_in m_socketAddress;
+			STransportEndpoint m_endpoint; ///< Canonical remote endpoint with its cached native address.
 			/// Last receive time from CDateTimeUtils, in milliseconds with one-second resolution.
 			irr::u64 m_lastReceiveTime;
 			/// Receive inactivity timeout in milliseconds; zero disables timeout.
@@ -85,15 +66,16 @@ namespace Skylicht
 			/**
 			 * @brief Initialize peer information for the owning transport.
 			 * @param id Nonzero connection ID.
-			 * @param address Numeric IPv4 address.
-			 * @param socketAddress Validated native IPv4 endpoint, copied into the connection.
+			 * @param endpoint Validated, normalized remote endpoint, copied into the connection.
 			 * @param now Initial receive time in milliseconds from CDateTimeUtils.
 			 * @param timeout Receive inactivity timeout in milliseconds, or zero to disable.
 			 */
-			CConnection(irr::u32 id, const std::string& address,
-				const sockaddr_in& socketAddress, irr::u64 now, irr::u32 timeout);
+			CConnection(irr::u32 id, const STransportEndpoint& endpoint, irr::u64 now, irr::u32 timeout);
 
 		public:
+			/// @brief Release the exclusively owned peer transport without callbacks.
+			~CConnection();
+
 			CConnection(const CConnection&) = delete;
 			CConnection& operator=(const CConnection&) = delete;
 
@@ -110,13 +92,18 @@ namespace Skylicht
 			 * @brief Get the remote address.
 			 * @return Reference to the numeric IPv4 address.
 			 */
-			const std::string& getAddress() const { return m_address; }
+			const std::string& getAddress() const { return m_endpoint.Address; }
 
 			/**
 			 * @brief Get the remote port.
 			 * @return Port in host byte order.
 			 */
-			irr::u16 getPort() const { return m_port; }
+			irr::u16 getPort() const { return m_endpoint.Port; }
+
+			/** @brief Get the normalized remote endpoint and cached native address.
+			 * @return Borrowed reference, valid until this peer is removed.
+			 */
+			const STransportEndpoint& getEndpoint() const { return m_endpoint; }
 
 			/**
 			 * @brief Get the time of the last received data.

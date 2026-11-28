@@ -27,15 +27,6 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Utils/CMemoryStream.h"
 #include "Utils/CDateTimeUtils.h"
 
-#if defined(_WIN32)
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#else
-#include <arpa/inet.h>
-#include <cerrno>
-#include <sys/socket.h>
-#endif
-
 namespace Skylicht
 {
 	namespace Network
@@ -43,7 +34,6 @@ namespace Skylicht
 		void CUDPSocket::release()
 		{
 			m_remoteEndpoint = {};
-			m_remotePort = 0;
 			CBaseSocket::release();
 		}
 
@@ -56,15 +46,14 @@ namespace Skylicht
 			release();
 		}
 
-		void CUDPSocket::setRemote(const sockaddr_in& endpoint)
+		void CUDPSocket::setRemote(const STransportEndpoint& endpoint)
 		{
 			m_remoteEndpoint = endpoint;
-			m_remotePort = ntohs(endpoint.sin_port);
 		}
 
 		bool CUDPSocket::openSocket(const char* bindAddress, irr::u16 port, std::size_t maxConnections)
 		{
-			return CBaseSocket::openSocket(bindAddress, port, maxConnections, SOCK_DGRAM, IPPROTO_UDP);
+			return CBaseSocket::openSocket(bindAddress, port, maxConnections, ETransportMode::Datagram);
 		}
 
 		bool CUDPSocket::update(std::size_t maxReceivePackets, std::size_t maxSendPackets)
@@ -76,47 +65,41 @@ namespace Skylicht
 			// this socket on the same thread, changing m_revision before they return.
 			const auto revision = m_revision;
 			bool success = true;
+			ETransportStatus progress = m_transport->update(1);
+			if (progress == ETransportStatus::Error || progress == ETransportStatus::Closed)
+			{
+				m_lastError = m_transport->getLastError().Code;
+				return false;
+			}
 			for (std::size_t i = 0; i < maxReceivePackets; ++i)
 			{
-				sockaddr_in source = {};
-#if defined(_WIN32)
-				int length = sizeof(source);
-#else
-				socklen_t length = sizeof(source);
-#endif
-				int received = static_cast<int>(recvfrom(m_socket,
-					reinterpret_cast<char*>(m_buffer.data()), static_cast<int>(m_buffer.size()), 0,
-					reinterpret_cast<sockaddr*>(&source), &length));
-				if (received < 0)
+				STransportEndpoint remote;
+				STransportResult received = m_transport->receiveFrom(remote, m_buffer.data(), m_buffer.size());
+				if (received.Status == ETransportStatus::WouldBlock || received.Status == ETransportStatus::Pending)
+					break;
+				if (received.Status == ETransportStatus::Interrupted || received.Status == ETransportStatus::Truncated)
+					continue;
+				if (received.Status != ETransportStatus::Done)
 				{
-					int error = CSocketUtil::getSocketError();
-					// No datagram is available on the non-blocking socket; stop receiving this update.
-					if (CSocketUtil::wouldBlock(error))
-						break;
-					// The system call was interrupted (e.g. by a POSIX signal); retry within the receive budget.
-					if (CSocketUtil::interrupted(error))
-						continue;
-					m_lastError = error;
+					m_lastError = m_transport->getLastError().Code;
 					success = false;
 					break;
 				}
-				if (source.sin_family != AF_INET)
-					continue;
 				// Client only: accept datagrams from the configured server endpoint.
-				// A server has m_remotePort == 0 and accepts datagrams from multiple endpoints.
-				if (m_remotePort)
+				// A server has m_remoteEndpoint.Port == 0 and accepts datagrams from multiple endpoints.
+				if (m_remoteEndpoint.Port)
 				{
-					if (m_remoteEndpoint.sin_addr.s_addr != source.sin_addr.s_addr ||
-						m_remoteEndpoint.sin_port != source.sin_port)
+					if (m_remoteEndpoint.Address != remote.Address ||
+						m_remoteEndpoint.Port != remote.Port)
 						continue;
 					// A removed/timed-out client session requires an explicit open().
 					if (m_connections.empty())
 						continue;
 				}
-				CConnection* raw = getConnectionByEndpoint(source);
+				CConnection* raw = getConnectionByEndpoint(remote);
 				bool isNewConnection = raw == nullptr;
 				if (isNewConnection)
-					raw = addConnection(source);
+					raw = addConnection(remote);
 				if (!raw)
 					continue;
 				CConnection* connection = raw;
@@ -135,7 +118,7 @@ namespace Skylicht
 				connection = getConnection(connectionID);
 				if (!connection)
 					continue;
-				CMemoryStream packet(m_buffer.data(), static_cast<unsigned int>(received));
+				CMemoryStream packet(m_buffer.data(), static_cast<unsigned int>(received.Bytes));
 				auto callback = OnReceived;
 				if (callback)
 					callback(connection, &packet);
@@ -153,16 +136,13 @@ namespace Skylicht
 				CConnection* connection = getConnection(packet.ConnectionID);
 				if (connection)
 				{
-					const sockaddr_in& target = connection->m_socketAddress;
-					const char* bytes = packet.Data.empty() ? "" : reinterpret_cast<const char*>(packet.Data.data());
-					int sent = static_cast<int>(sendto(m_socket, bytes, static_cast<int>(packet.Data.size()), 0,
-						reinterpret_cast<const sockaddr*>(&target), sizeof(target)));
-					if (sent < 0)
+					STransportResult sent = m_transport->sendTo(connection->m_endpoint, packet.Data.data(), packet.Data.size());
+					if (sent.Status == ETransportStatus::WouldBlock || sent.Status == ETransportStatus::Pending ||
+						sent.Status == ETransportStatus::Interrupted)
+						break;
+					if (sent.Status != ETransportStatus::Done || sent.Bytes != packet.Data.size())
 					{
-						int error = CSocketUtil::getSocketError();
-						if (CSocketUtil::wouldBlock(error) || CSocketUtil::interrupted(error))
-							break;
-						m_lastError = error;
+						m_lastError = m_transport->getLastError().Code;
 						success = false;
 					}
 				}

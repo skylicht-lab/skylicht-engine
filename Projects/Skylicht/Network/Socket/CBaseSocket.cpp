@@ -24,14 +24,9 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CBaseSocket.h"
+#include "CRawSocketTransport.h"
 #include "Utils/CMemoryStream.h"
 #include "Utils/CDateTimeUtils.h"
-#if defined(_WIN32)
-#include <ws2tcpip.h>
-#else
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#endif
 #include <cstring>
 
 namespace Skylicht
@@ -40,20 +35,10 @@ namespace Skylicht
 	{
 		void CBaseSocket::release()
 		{
-			if (m_socket != InvalidSocket)
-			{
-				CSocketUtil::closeHandle(m_socket);
-				m_socket = InvalidSocket;
-			}
+			delete m_transport;
+			m_transport = nullptr;
 			for (auto& item : m_connections)
 				CBaseSocket::releaseConnection(item.second);
-#if defined(_WIN32)
-			if (m_wsaReady)
-			{
-				WSACleanup();
-				m_wsaReady = false;
-			}
-#endif
 			m_localPort = 0;
 			m_queue.clear();
 			m_queueBytes = 0;
@@ -78,48 +63,48 @@ namespace Skylicht
 			m_queueBytes += size;
 		}
 
+		bool CBaseSocket::setTransportFactory(const std::function<ITransport*(ETransportMode)>& factory)
+		{
+			if (m_closing || isOpen())
+				return false;
+			m_transportFactory = factory;
+			return true;
+		}
+
 		bool CBaseSocket::openSocket(const char* bindAddress, irr::u16 port, std::size_t maxConnections,
-			int socketType, int protocol)
+			ETransportMode mode)
 		{
 			if (m_closing)
 				return false;
 			close();
 			m_lastError = 0;
-			sockaddr_in local;
-			if (!maxConnections || !CSocketUtil::parseAddress(bindAddress, port, local))
+			STransportEndpoint local;
+			if (!maxConnections || !CSocketUtil::parseEndpoint(bindAddress, port, local))
 			{
 				m_lastError = CSocketUtil::invalidArgument();
 				return false;
 			}
-#if defined(_WIN32)
-			WSADATA wsa;
-			m_lastError = WSAStartup(MAKEWORD(2, 2), &wsa);
-			if (m_lastError)
-				return false;
-			m_wsaReady = true;
-#endif
-			m_socket = socket(AF_INET, socketType, protocol);
-			bool ready = m_socket != InvalidSocket;
-			if (ready)
-				ready = CSocketUtil::setNonBlocking(m_socket);
-			if (ready)
-				ready = bind(m_socket, reinterpret_cast<sockaddr*>(&local), sizeof(local)) == 0;
-			if (ready)
+			m_transport = m_transportFactory ? m_transportFactory(mode) : new CRawSocketTransport(mode);
+			if (!m_transport || m_transport->getMode() != mode)
 			{
-#if defined(_WIN32)
-				int length = sizeof(local);
-#else
-				socklen_t length = sizeof(local);
-#endif
-				ready = getsockname(m_socket, reinterpret_cast<sockaddr*>(&local), &length) == 0;
-			}
-			if (!ready)
-			{
-				m_lastError = CSocketUtil::getSocketError();
+				m_lastError = CSocketUtil::invalidArgument();
 				release();
 				return false;
 			}
-			m_localPort = ntohs(local.sin_port);
+			STransportEndpoint endpoint;
+			if (m_transport->open(local) != ETransportStatus::Done)
+			{
+				m_lastError = m_transport->getLastError().Code;
+				release();
+				return false;
+			}
+			if (!m_transport->getLocalEndpoint(endpoint))
+			{
+				m_lastError = CSocketUtil::invalidArgument();
+				release();
+				return false;
+			}
+			m_localPort = endpoint.Port;
 			m_maxConnections = maxConnections;
 			return true;
 		}
@@ -150,12 +135,19 @@ namespace Skylicht
 			return it == m_connections.end() ? nullptr : it->second;
 		}
 
+		CConnection* CBaseSocket::getConnectionByEndpoint(const STransportEndpoint& endpoint) const
+		{
+			STransportEndpoint key;
+			if (!CSocketUtil::parseEndpoint(endpoint.Address.c_str(), endpoint.Port, key))
+				return nullptr;
+			auto it = m_endpointConnections.find(key);
+			return it == m_endpointConnections.end() ? nullptr : getConnection(it->second);
+		}
+
 		CConnection* CBaseSocket::getConnectionByEndpoint(const sockaddr_in& endpoint) const
 		{
-			if (endpoint.sin_family != AF_INET)
-				return nullptr;
-			auto it = m_endpointConnections.find(std::make_pair(endpoint.sin_addr.s_addr, endpoint.sin_port));
-			return it == m_endpointConnections.end() ? nullptr : getConnection(it->second);
+			STransportEndpoint key;
+			return CSocketUtil::copyEndpoint(endpoint, key) ? getConnectionByEndpoint(key) : nullptr;
 		}
 
 		void CBaseSocket::removeConnection(irr::u32 id)
@@ -169,8 +161,7 @@ namespace Skylicht
 			if (it == m_connections.end())
 				return;
 			CConnection* connection = it->second;
-			const sockaddr_in& endpoint = connection->m_socketAddress;
-			m_endpointConnections.erase(std::make_pair(endpoint.sin_addr.s_addr, endpoint.sin_port));
+			m_endpointConnections.erase(connection->m_endpoint);
 			m_connections.erase(it);
 			releaseConnection(connection);
 			for (auto packet = m_queue.begin(); packet != m_queue.end();)
@@ -189,14 +180,14 @@ namespace Skylicht
 			delete connection;
 		}
 
-		CConnection* CBaseSocket::addConnection(const sockaddr_in& endpoint)
+		CConnection* CBaseSocket::addConnection(const STransportEndpoint& endpoint)
 		{
-			if (endpoint.sin_family != AF_INET || !endpoint.sin_port)
+			STransportEndpoint key;
+			if (!endpoint.Port || !CSocketUtil::parseEndpoint(endpoint.Address.c_str(), endpoint.Port, key))
 			{
 				m_lastError = CSocketUtil::invalidArgument();
 				return nullptr;
 			}
-			const auto key = std::make_pair(endpoint.sin_addr.s_addr, endpoint.sin_port);
 			auto existing = m_endpointConnections.find(key);
 			if (existing != m_endpointConnections.end())
 				return getConnection(existing->second);
@@ -204,12 +195,6 @@ namespace Skylicht
 			if (!isOpen() || m_connections.size() >= m_maxConnections ||
 				m_connections.size() >= connectionIDLimit)
 				return nullptr;
-			char normalized[INET_ADDRSTRLEN];
-			if (!inet_ntop(AF_INET, &endpoint.sin_addr, normalized, sizeof(normalized)))
-			{
-				m_lastError = CSocketUtil::getSocketError();
-				return nullptr;
-			}
 			irr::u32 id;
 			do
 			{
@@ -218,7 +203,7 @@ namespace Skylicht
 					m_nextID = 1;
 				id = m_nextID++;
 			} while (m_connections.find(id) != m_connections.end());
-			CConnection* connection = new CConnection(id, normalized, endpoint,
+			CConnection* connection = new CConnection(id, key,
 				static_cast<irr::u64>(CDateTimeUtils::getTimeBySecond()) * 1000, m_defaultTimeout);
 			m_endpointConnections.emplace(key, id);
 			m_connections.emplace(id, connection);
@@ -279,11 +264,8 @@ namespace Skylicht
 
 		void CBaseSocket::releaseConnection(CConnection* connection)
 		{
-			if (connection->m_socket != InvalidSocket)
-			{
-				CSocketUtil::closeHandle(connection->m_socket);
-				connection->m_socket = InvalidSocket;
-			}
+			delete connection->m_transport;
+			connection->m_transport = nullptr;
 		}
 
 		bool CBaseSocket::expireConnections()

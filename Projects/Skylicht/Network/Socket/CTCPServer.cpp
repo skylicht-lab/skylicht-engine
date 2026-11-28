@@ -34,9 +34,9 @@ namespace Skylicht
 		{
 			if (!openSocket(bindAddress, port, maxConnections))
 				return false;
-			if (listen(m_socket, SOMAXCONN) != 0)
+			if (m_transport->listen(SOMAXCONN) != ETransportStatus::Done)
 			{
-				m_lastError = CSocketUtil::getSocketError();
+				m_lastError = m_transport->getLastError().Code;
 				close();
 				return false;
 			}

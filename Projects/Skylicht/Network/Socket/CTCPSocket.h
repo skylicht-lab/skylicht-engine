@@ -45,7 +45,6 @@ namespace Skylicht
 		{
 		protected:
 			bool m_listening = false;
-			bool m_connecting = false;
 
 			/** @brief Initialize a closed transport with its protocol queue policy. */
 			CTCPSocket();
@@ -62,12 +61,6 @@ namespace Skylicht
 			 */
 			bool openSocket(const char* bindAddress, irr::u16 port, std::size_t maxConnections);
 
-			/**
-			 * @brief Close the departing TCP peer handle or cancel its pending connect.
-			 * @param connection Departing peer, already detached from the connection table.
-			 */
-			void releaseConnection(CConnection* connection) override;
-
 		public:
 			/** @brief Release native handles without invoking callbacks. */
 			~CTCPSocket() override;
@@ -76,7 +69,7 @@ namespace Skylicht
 			 * @brief Check for an owned listener, pending connect, or connected socket.
 			 * @return True if open; a pending connection may not have completed.
 			 */
-			bool isOpen() const override { return m_socket != InvalidSocket || !m_connections.empty(); }
+			bool isOpen() const override { return m_transport != nullptr || !m_connections.empty(); }
 
 			/**
 			 * @brief Poll connection setup, receive bytes, expire peers, and flush sends.

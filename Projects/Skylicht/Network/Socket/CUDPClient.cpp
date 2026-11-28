@@ -39,8 +39,8 @@ namespace Skylicht
 		{
 			if (!serverPort || !openSocket(bindAddress, localPort, 1))
 				return false;
-			sockaddr_in endpoint;
-			if (!CSocketUtil::parseAddress(serverAddress, serverPort, endpoint))
+			STransportEndpoint endpoint;
+			if (!CSocketUtil::parseEndpoint(serverAddress, serverPort, endpoint))
 			{
 				m_lastError = CSocketUtil::invalidArgument();
 				close();
