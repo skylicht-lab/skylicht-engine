@@ -27,19 +27,7 @@ https://github.com/skylicht-lab/skylicht-engine
 #include "Utils/CMemoryStream.h"
 #include "Utils/CDateTimeUtils.h"
 
-#if defined(_WIN32)
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#else
-#include <arpa/inet.h>
-#include <cerrno>
-#include <sys/socket.h>
-#endif
-
 #include <set>
-#if !defined(_WIN32)
-#include <poll.h>
-#endif
 
 namespace Skylicht
 {
@@ -47,7 +35,7 @@ namespace Skylicht
 	{
 		void CTCPSocket::release()
 		{
-			m_listening = m_connecting = false;
+			m_listening = false;
 			CBaseSocket::release();
 		}
 
@@ -62,18 +50,7 @@ namespace Skylicht
 
 		bool CTCPSocket::openSocket(const char* bindAddress, irr::u16 port, std::size_t maxConnections)
 		{
-			return CBaseSocket::openSocket(bindAddress, port, maxConnections, SOCK_STREAM, IPPROTO_TCP);
-		}
-
-		void CTCPSocket::releaseConnection(CConnection* connection)
-		{
-			if (m_connecting)
-			{
-				CSocketUtil::closeHandle(m_socket);
-				m_socket = InvalidSocket;
-				m_connecting = false;
-			}
-			CBaseSocket::releaseConnection(connection);
+			return CBaseSocket::openSocket(bindAddress, port, maxConnections, ETransportMode::Stream);
 		}
 
 		bool CTCPSocket::update(std::size_t maxReceivePackets, std::size_t maxSendPackets)
@@ -83,97 +60,69 @@ namespace Skylicht
 			m_lastError = 0;
 			const auto revision = m_revision;
 			bool success = true;
-			if (m_connecting)
-			{
-#if defined(_WIN32)
-				fd_set writable, errors;
-				FD_ZERO(&writable);
-				FD_ZERO(&errors);
-				FD_SET(m_socket, &writable);
-				FD_SET(m_socket, &errors);
-				timeval wait = {};
-				int ready = select(0, nullptr, &writable, &errors, &wait);
-#else
-				pollfd descriptor = {};
-				descriptor.fd = m_socket;
-				descriptor.events = POLLOUT;
-				int ready = poll(&descriptor, 1, 0);
-#endif
-				int error = 0;
-				if (ready < 0)
-				{
-					error = CSocketUtil::getSocketError();
-					if (CSocketUtil::interrupted(error))
-						error = 0;
-				}
-				else if (ready > 0)
-				{
-#if defined(_WIN32)
-					int length = sizeof(error);
-#else
-					socklen_t length = sizeof(error);
-#endif
-					if (getsockopt(m_socket, SOL_SOCKET, SO_ERROR, reinterpret_cast<char*>(&error), &length) != 0)
-						error = CSocketUtil::getSocketError();
-				}
-				irr::u32 id = m_connections.begin()->first;
-				if (error)
-				{
-					m_lastError = error;
-					disconnect(id, EDisconnectReason::Error);
-					success = false;
-				}
-				else if (ready > 0)
-				{
-					getConnection(id)->m_socket = m_socket;
-					m_socket = InvalidSocket;
-					m_connecting = false;
-					notifyConnected(id);
-				}
-				if (m_revision != revision)
-					return false;
-			}
-
 			if (m_listening)
 			{
 				for (std::size_t i = 0; i < maxReceivePackets; ++i)
 				{
-					sockaddr_in endpoint = {};
-#if defined(_WIN32)
-					int length = sizeof(endpoint);
-#else
-					socklen_t length = sizeof(endpoint);
-#endif
-					Socket peer = accept(m_socket, reinterpret_cast<sockaddr*>(&endpoint), &length);
-					if (peer == InvalidSocket)
+					ITransport* accepted = nullptr;
+					/**
+					 * @brief Poll the listener for one new client without waiting.
+					 * Done with a non-null accepted pointer means a new connection was
+					 * accepted; its transport may still need a protocol handshake.
+					 * WouldBlock means no new client is waiting in the accept queue.
+					 * Pending means the backend cannot provide a new connection yet.
+					 * Both leave accepted null and stop accepting for this update.
+					 * Interrupted leaves accepted null and retries within the accept budget;
+					 * other failures are handled below, without creating a peer.
+					 * Existing peers keep their CConnection transports and are never
+					 * returned by accept(). The OS may reuse a handle value only after
+					 * its previous socket has closed; that still represents a new socket.
+					 */
+					ETransportStatus status = m_transport->accept(accepted);
+					if (status == ETransportStatus::WouldBlock || status == ETransportStatus::Pending)
 					{
-						int error = CSocketUtil::getSocketError();
-						if (CSocketUtil::wouldBlock(error))
-							break;
-						if (CSocketUtil::interrupted(error))
-							continue;
-						m_lastError = error;
+						// WouldBlock: no new client is waiting to connect.
+						// Pending: the backend cannot provide a new connection yet.
+						break;
+					}
+					if (status == ETransportStatus::Interrupted)
+					{
+						// Accept was temporarily interrupted (e.g. EINTR on POSIX).
+						// No client was accepted; retry within this update's accept budget.
+						continue;
+					}
+					if (status != ETransportStatus::Done || !accepted)
+					{
+						// Accept failed, returned an unexpected status, or the backend reported
+						// Done without providing a transport. No peer is created in these cases.
+						// This is an accept/backend failure, not necessarily a client handshake failure.
+						delete accepted;
+						m_lastError = m_transport->getLastError().Code;
 						success = false;
 						break;
 					}
-					if (!CSocketUtil::setNonBlocking(peer))
+					STransportEndpoint remote;
+					if (accepted->getMode() != ETransportMode::Stream || !accepted->getRemoteEndpoint(remote))
 					{
-						m_lastError = CSocketUtil::getSocketError();
-						CSocketUtil::closeHandle(peer);
+						delete accepted;
+						m_lastError = CSocketUtil::invalidArgument();
 						success = false;
 						continue;
 					}
-					CConnection* connection = addConnection(endpoint);
-					if (!connection)
+					// A live endpoint must never have its exclusively owned transport overwritten.
+					if (getConnectionByEndpoint(remote))
 					{
-						CSocketUtil::closeHandle(peer);
+						delete accepted;
 						continue;
 					}
-					irr::u32 id = connection->getID();
-					connection->m_socket = peer;
-					notifyConnected(id);
-					if (m_revision != revision)
-						return false;
+					CConnection* connection = addConnection(remote);
+					if (!connection)
+					{
+						delete accepted;
+						continue;
+					}
+					connection->m_transport = accepted;
+					// Publish OnConnected only after update() completes any backend handshake.
 				}
 			}
 
@@ -183,23 +132,56 @@ namespace Skylicht
 				ids.push_back(item.first);
 			for (auto id : ids)
 			{
+				CConnection* channel = getConnection(id);
+				if (!channel || !channel->m_transport)
+					continue;
+				// Update Connecting transports to check whether the non-blocking client
+				// connection is still pending, has completed, or has failed.
+				// Also progress backend handshakes, even when the receive/send budgets are zero.
+				ETransportStatus progress = channel->m_transport->update(1);
+				if (progress == ETransportStatus::Error || progress == ETransportStatus::Closed)
+				{
+					if (progress == ETransportStatus::Error)
+					{
+						m_lastError = channel->m_transport->getLastError().Code;
+						success = false;
+					}
+					disconnect(id, progress == ETransportStatus::Error ? EDisconnectReason::Error : EDisconnectReason::RemoteClosed);
+					if (m_revision != revision)
+						return false;
+					continue;
+				}
+				if (channel->m_transport->getState() != ETransportState::Ready)
+					continue;
+				if (!channel->m_connected)
+				{
+					channel->m_connected = true;
+					if (!notifyConnected(id))
+					{
+						if (m_revision != revision)
+							return false;
+						continue;
+					}
+				}
 				for (std::size_t i = 0; i < maxReceivePackets; ++i)
 				{
 					CConnection* peer = getConnection(id);
-					if (!peer || peer->m_socket == InvalidSocket)
+					if (!peer || !peer->m_transport)
 						break;
-					int received = static_cast<int>(recv(peer->m_socket,
-						reinterpret_cast<char*>(m_buffer.data()), static_cast<int>(m_buffer.size()), 0));
-					if (received <= 0)
+					// The native socket is configured as non-blocking, so recv() never waits
+					// for data. If none is available, WSAEWOULDBLOCK/EAGAIN/EWOULDBLOCK
+					// is mapped to WouldBlock; stop receiving for this peer and retry next update.
+					STransportResult received = peer->m_transport->receive(m_buffer.data(), m_buffer.size());
+					if (received.Status == ETransportStatus::WouldBlock || received.Status == ETransportStatus::Pending)
+						break;
+					if (received.Status == ETransportStatus::Interrupted)
+						continue;
+					if (received.Status != ETransportStatus::Done || !received.Bytes)
 					{
-						int error = received < 0 ? CSocketUtil::getSocketError() : 0;
-						if (received < 0 && CSocketUtil::wouldBlock(error))
-							break;
-						if (received < 0 && CSocketUtil::interrupted(error))
-							continue;
+						bool error = received.Status != ETransportStatus::Closed;
 						if (error)
 						{
-							m_lastError = error;
+							m_lastError = peer->m_transport->getLastError().Code;
 							success = false;
 						}
 						disconnect(id, error ? EDisconnectReason::Error : EDisconnectReason::RemoteClosed);
@@ -209,7 +191,7 @@ namespace Skylicht
 					}
 					CConnection* connection = getConnection(id);
 					connection->m_lastReceiveTime = static_cast<irr::u64>(CDateTimeUtils::getTimeBySecond()) * 1000;
-					CMemoryStream packet(m_buffer.data(), static_cast<unsigned int>(received));
+					CMemoryStream packet(m_buffer.data(), static_cast<unsigned int>(received.Bytes));
 					auto callback = OnReceived;
 					if (callback)
 						callback(connection, &packet);
@@ -234,38 +216,32 @@ namespace Skylicht
 			{
 				irr::u32 id = packet->ConnectionID;
 				CConnection* peer = getConnection(id);
-				if (!peer || peer->m_socket == InvalidSocket || blocked.count(id))
+				if (!peer || !peer->m_transport || !peer->m_connected || blocked.count(id))
 				{
 					++packet;
 					continue;
 				}
 				++attempts;
-				int flags = 0;
-#if defined(MSG_NOSIGNAL)
-				flags = MSG_NOSIGNAL;
-#endif
-				int sent = static_cast<int>(::send(peer->m_socket,
-					reinterpret_cast<const char*>(packet->Data.data() + packet->Offset),
-					static_cast<int>(packet->Data.size() - packet->Offset), flags));
-				if (sent <= 0)
+				STransportResult sent = peer->m_transport->send(packet->Data.data() + packet->Offset,
+					packet->Data.size() - packet->Offset);
+				if (sent.Status != ETransportStatus::Done || !sent.Bytes)
 				{
-					int error = sent < 0 ? CSocketUtil::getSocketError() : CSocketUtil::invalidArgument();
-					if (CSocketUtil::wouldBlock(error) || CSocketUtil::interrupted(error))
+					if (sent.Status == ETransportStatus::WouldBlock || sent.Status == ETransportStatus::Pending ||
+						sent.Status == ETransportStatus::Interrupted || (sent.Status == ETransportStatus::Done && !sent.Bytes))
 					{
 						blocked.insert(id);
 						++packet;
 						continue;
 					}
-					m_lastError = error;
+					m_lastError = peer->m_transport->getLastError().Code;
 					success = false;
 					disconnect(id, EDisconnectReason::Error);
 					if (m_revision != revision)
 						return false;
-					// Disconnect callbacks can mutate the entire queue.
 					packet = m_queue.begin();
 					continue;
 				}
-				packet->Offset += static_cast<std::size_t>(sent);
+				packet->Offset += sent.Bytes;
 				if (packet->Offset == packet->Data.size())
 				{
 					m_queueBytes -= packet->Data.size();

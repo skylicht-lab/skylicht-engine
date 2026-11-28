@@ -45,9 +45,6 @@ namespace Skylicht
 			irr::u32 m_serverID;
 
 		public:
-			CBaseSocket& getSocket() override { return *this; }
-			const CBaseSocket& getSocket() const override { return *this; }
-
 			/**
 			 * @brief Constructor. The socket is initially closed.
 			 */

@@ -45,8 +45,7 @@ namespace Skylicht
 		{
 		protected:
 			/// Configured server endpoint for client-side receive filtering.
-			sockaddr_in m_remoteEndpoint = {};
-			irr::u16 m_remotePort = 0;
+			STransportEndpoint m_remoteEndpoint = {};
 
 			/** @brief Initialize a closed transport with its protocol queue policy. */
 			CUDPSocket();
@@ -65,9 +64,9 @@ namespace Skylicht
 
 			/**
 			 * @brief Restrict client reception to a remote endpoint.
-			 * @param endpoint Native IPv4 endpoint; zero port disables filtering.
+			 * @param endpoint Normalized IPv4 endpoint; zero port disables filtering.
 			 */
-			void setRemote(const sockaddr_in& endpoint);
+			void setRemote(const STransportEndpoint& endpoint);
 
 		public:
 			/** @brief Release native handles without invoking callbacks. */

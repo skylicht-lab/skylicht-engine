@@ -35,6 +35,8 @@ namespace Skylicht
 {
 	namespace Network
 	{
+		struct STransportEndpoint;
+
 		/// @brief Platform socket operations shared by TCP and UDP transports.
 		/// @ingroup Network
 		class CSocketUtil
@@ -42,9 +44,11 @@ namespace Skylicht
 		public:
 #if defined(_WIN32)
 			using Socket = SOCKET;
+			using AddressLength = int; ///< Native address length type.
 			static constexpr Socket InvalidSocket = INVALID_SOCKET;
 #else
 			using Socket = int;
+			using AddressLength = socklen_t; ///< Native address length type.
 			static constexpr Socket InvalidSocket = -1;
 #endif
 			/**
@@ -83,6 +87,23 @@ namespace Skylicht
 			static bool parseAddress(const char* ip, irr::u16 port, sockaddr_in& result);
 
 			/**
+			 * @brief Convert a native IPv4 endpoint to the transport endpoint representation.
+			 * @param address Native IPv4 address and port in network byte order.
+			 * @param result Output canonical address, host-order port, and cached native SocketAddress.
+			 * @return True on successful conversion; false leaves result unchanged.
+			 */
+			static bool copyEndpoint(const sockaddr_in& address, STransportEndpoint& result);
+
+			/**
+			 * @brief Validate and normalize an IPv4 endpoint, synchronizing its native cache.
+			 * @param ip Numeric IPv4 address; no DNS lookup.
+			 * @param port Port in host byte order; zero is allowed for local endpoints.
+			 * @param result Output canonical address, port, and native SocketAddress.
+			 * @return True on success; false leaves result unchanged.
+			 */
+			static bool parseEndpoint(const char* ip, irr::u16 port, STransportEndpoint& result);
+
+			/**
 			 * @brief Close a valid native socket handle.
 			 *
 			 * Does not call WSACleanup() or modify the caller's handle.
@@ -98,6 +119,7 @@ namespace Skylicht
 			 * @return True on success; otherwise read getSocketError() and close the handle.
 			 */
 			static bool setNonBlocking(Socket socket);
+
 		};
 	}
 }

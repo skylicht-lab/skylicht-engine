@@ -42,9 +42,6 @@ namespace Skylicht
 			bool send(irr::u32 connectionID, CMemoryStream& packet) override
 			{ return CBaseSocket::send(connectionID, packet); }
 
-			CBaseSocket& getSocket() override { return *this; }
-			const CBaseSocket& getSocket() const override { return *this; }
-
 			/**
 			 * @brief Open and bind a non-blocking TCP server socket.
 			 * @param port Local port in host byte order, or zero to let the OS choose a port.

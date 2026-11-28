@@ -24,6 +24,7 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "pch.h"
 #include "CSocketUtil.h"
+#include "ITransport.h"
 
 #if defined(_WIN32)
 #include <ws2tcpip.h>
@@ -101,6 +102,23 @@ namespace Skylicht
 #else
 			return error == EINTR;
 #endif
+		}
+
+		bool CSocketUtil::copyEndpoint(const sockaddr_in& address, STransportEndpoint& result)
+		{
+			char text[INET_ADDRSTRLEN];
+			if (address.sin_family != AF_INET || !inet_ntop(AF_INET, &address.sin_addr, text, sizeof(text)))
+				return false;
+			result.Address = text;
+			result.Port = ntohs(address.sin_port);
+			result.SocketAddress = address;
+			return true;
+		}
+
+		bool CSocketUtil::parseEndpoint(const char* ip, irr::u16 port, STransportEndpoint& result)
+		{
+			sockaddr_in address;
+			return parseAddress(ip, port, address) && copyEndpoint(address, result);
 		}
 
 		bool CSocketUtil::parseAddress(const char* ip, irr::u16 port, sockaddr_in& result)

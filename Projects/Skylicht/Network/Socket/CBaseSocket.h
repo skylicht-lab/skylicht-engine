@@ -26,11 +26,11 @@ https://github.com/skylicht-lab/skylicht-engine
 
 #include "CConnection.h"
 #include "CSocketUtil.h"
+#include "ITransport.h"
 #include <cstddef>
 #include <deque>
 #include <functional>
 #include <map>
-#include <utility>
 #include <vector>
 
 namespace Skylicht
@@ -90,12 +90,8 @@ namespace Skylicht
 			std::function<void(CConnection*, EDisconnectReason)> OnDisconnected;
 
 		protected:
-			using Socket = CSocketUtil::Socket;
-			static constexpr Socket InvalidSocket = CSocketUtil::InvalidSocket;
-#if defined(_WIN32)
-			bool m_wsaReady = false;
-#endif
-			Socket m_socket = InvalidSocket;
+			ITransport* m_transport = nullptr; ///< Owned listener or shared UDP channel.
+			std::function<ITransport*(ETransportMode)> m_transportFactory; ///< Creates exclusively owned closed channels.
 			bool m_closing = false;
 			struct SPacket
 			{
@@ -104,7 +100,7 @@ namespace Skylicht
 				std::size_t Offset = 0;
 			};
 			std::map<irr::u32, CConnection*> m_connections;
-			std::map<std::pair<irr::u32, irr::u16>, irr::u32> m_endpointConnections;
+			std::map<STransportEndpoint, irr::u32> m_endpointConnections;
 			std::deque<SPacket> m_queue;
 			std::vector<unsigned char> m_buffer;
 			std::size_t m_queueBytes = 0;
@@ -136,19 +132,18 @@ namespace Skylicht
 			 * @param bindAddress Numeric local IPv4 address.
 			 * @param port Local port in host byte order, or zero for an OS-selected port.
 			 * @param maxConnections Maximum tracked peers; must be nonzero.
-			 * @param socketType Native socket type, such as SOCK_STREAM or SOCK_DGRAM.
-			 * @param protocol Native protocol, such as IPPROTO_TCP or IPPROTO_UDP.
+			 * @param mode Stream or datagram semantics required from the factory.
 			 * @return True if validation, creation, configuration, and binding succeed.
 			 */
 			bool openSocket(const char* bindAddress, irr::u16 port, std::size_t maxConnections,
-				int socketType, int protocol);
+				ETransportMode mode);
 
 			/**
 			 * @brief Find or create peer metadata without invoking callbacks.
-			 * @param endpoint Native IPv4 endpoint with a nonzero remote port.
+			 * @param endpoint Numeric IPv4 endpoint with a nonzero remote port.
 			 * @return Borrowed peer pointer, or nullptr if validation or capacity checks fail.
 			 */
-			CConnection* addConnection(const sockaddr_in& endpoint);
+			CConnection* addConnection(const STransportEndpoint& endpoint);
 
 			/**
 			 * @brief Invoke OnConnected for a tracked peer.
@@ -209,6 +204,15 @@ namespace Skylicht
 			virtual ~CBaseSocket();
 
 			/**
+			 * @brief Configure creation of transport channels while this socket is closed.
+			 * @param factory Returns a new exclusively owned, closed channel of the requested
+			 * mode. Must not throw or reenter this socket. Empty restores the raw backend.
+			 * Accepted channels are created by the listener backend itself.
+			 * @return False if open or closing; true when the factory is installed.
+			 */
+			bool setTransportFactory(const std::function<ITransport*(ETransportMode)>& factory);
+
+			/**
 			 * @brief Disable copying of owned socket resources.
 			 */
 			CBaseSocket(const CBaseSocket&) = delete;
@@ -230,7 +234,7 @@ namespace Skylicht
 			 * @brief Check whether a listener, pending connect, or connected socket is owned.
 			 * @return True if open; this does not guarantee a completed connection.
 			 */
-			virtual bool isOpen() const { return m_socket != InvalidSocket; }
+			virtual bool isOpen() const { return m_transport != nullptr; }
 
 			/**
 			 * @brief Get the bound local port.
@@ -260,9 +264,15 @@ namespace Skylicht
 			CConnection* getConnection(irr::u32 id) const;
 
 			/**
-			 * @brief Find a peer by native IPv4 endpoint.
+			 * @brief Find a peer by its normalized IPv4 endpoint.
+			 * @param endpoint Numeric address and port in host byte order.
+			 * @return Borrowed peer pointer, or nullptr if absent or invalid.
+			 */
+			CConnection* getConnectionByEndpoint(const STransportEndpoint& endpoint) const;
+
+			/** @brief Find a peer using a native IPv4 endpoint for compatibility.
 			 * @param endpoint Native address and port in network byte order.
-			 * @return Borrowed peer pointer, or nullptr if absent or not IPv4.
+			 * @return Borrowed peer pointer, or nullptr if absent or invalid.
 			 */
 			CConnection* getConnectionByEndpoint(const sockaddr_in& endpoint) const;
 

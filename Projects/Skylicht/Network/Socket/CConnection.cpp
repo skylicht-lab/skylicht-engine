@@ -29,10 +29,13 @@ namespace Skylicht
 {
 	namespace Network
 	{
-		CConnection::CConnection(irr::u32 id, const std::string& address,
-			const sockaddr_in& socketAddress, irr::u64 now, irr::u32 timeout) :
-			m_id(id), m_address(address), m_port(ntohs(socketAddress.sin_port)),
-			m_socketAddress(socketAddress),
+		CConnection::~CConnection()
+		{
+			delete m_transport;
+		}
+
+		CConnection::CConnection(irr::u32 id, const STransportEndpoint& endpoint, irr::u64 now, irr::u32 timeout) :
+			m_id(id), m_endpoint(endpoint),
 			m_lastReceiveTime(now), m_timeout(timeout), UserData(nullptr)
 		{
 		}

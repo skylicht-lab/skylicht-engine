@@ -42,8 +42,8 @@ namespace Skylicht
 		{
 			if (!openSocket(bindAddress, localPort, 1))
 				return false;
-			sockaddr_in endpoint;
-			if (!serverPort || !CSocketUtil::parseAddress(serverAddress, serverPort, endpoint))
+			STransportEndpoint endpoint;
+			if (!serverPort || !CSocketUtil::parseEndpoint(serverAddress, serverPort, endpoint))
 			{
 				m_lastError = CSocketUtil::invalidArgument();
 				close();
@@ -56,25 +56,17 @@ namespace Skylicht
 				return false;
 			}
 			m_serverID = server->getID();
-			m_connecting = true;
-			int result = ::connect(m_socket, reinterpret_cast<const sockaddr*>(&endpoint), sizeof(endpoint));
-			if (result != 0)
+			server->m_transport = m_transport;
+			m_transport = nullptr;
+			ETransportStatus result = server->m_transport->connect(endpoint);
+			if (result != ETransportStatus::Done && result != ETransportStatus::Pending)
 			{
-				int error = CSocketUtil::getSocketError();
-#if defined(_WIN32)
-				bool pending = CSocketUtil::wouldBlock(error) || error == WSAEINPROGRESS || CSocketUtil::interrupted(error);
-#else
-				bool pending = CSocketUtil::wouldBlock(error) || error == EINPROGRESS || CSocketUtil::interrupted(error);
-#endif
-				if (!pending)
-				{
-					m_lastError = error;
-					const auto revision = m_revision;
-					disconnect(m_serverID, EDisconnectReason::Error);
-					if (m_revision == revision)
-						close();
-					return false;
-				}
+				m_lastError = server->m_transport->getLastError().Code;
+				const auto revision = m_revision;
+				disconnect(m_serverID, EDisconnectReason::Error);
+				if (m_revision == revision)
+					close();
+				return false;
 			}
 			return true;
 		}
